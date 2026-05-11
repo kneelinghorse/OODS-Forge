@@ -16,8 +16,8 @@ The five named forks where being wrong is expensive enough to warrant a research
 |---|---|---|---|
 | **D1** | Object Catalog schema shape | 🟢 Decided 2026-05-10 | [decisions/D1-object-catalog-schema.md](decisions/D1-object-catalog-schema.md) |
 | **D2** | Multi-fidelity render abstraction | 🟢 Decided 2026-05-10 (revisit when A2UI lands) | [decisions/D2-multi-fidelity-render.md](decisions/D2-multi-fidelity-render.md) |
-| **D3** | Forge ↔ concordance relationship | 🟡 Significantly informed by D1; full memo paced to concordance hosted-endpoint (s13+) | — |
-| **D4** | Forge ↔ semantic-federation integration shape | 🟡 Needs memo (Birch coordination) | — |
+| **D3** | Forge ↔ concordance relationship | 🟢 First-pass decided 2026-05-10 (2nd-pass paced to concordance s13+ hosted endpoint) | [decisions/D3-forge-concordance-relationship.md](decisions/D3-forge-concordance-relationship.md) |
+| **D4** | Forge ↔ semantic-federation integration shape | 🟢 First-pass decided 2026-05-10 (2nd-pass pending Birch coordination) | [decisions/D4-forge-federation-integration.md](decisions/D4-forge-federation-integration.md) |
 | **D5** | Public-vs-private spec boundary | ⚪ Deferred (working system + named milestone first) | — |
 
 🟢 decided — recommendation captured; implementation may begin
@@ -60,55 +60,31 @@ The five named forks where being wrong is expensive enough to warrant a research
 
 ## D3 — Forge ↔ Concordance Relationship
 
-**Why this matters:** Concordance is structurally upstream of Forge in the design intelligence stack. *How* upstream determines deployment topology, versioning model, scaling implications.
+**Status:** 🟢 First-pass decided 2026-05-10. Full memo at [decisions/D3-forge-concordance-relationship.md](decisions/D3-forge-concordance-relationship.md). Second-pass memo when concordance ships s13+ hosted endpoint OR when the cross-team planning conversation modifies any answers.
 
-**The fork:**
-- **Option A — Forge as concordance consumer** (Forge calls concordance over MCP/HTTP; concordance is a separate service Forge depends on). Clean boundary. Looser coupling. But Forge degrades if concordance is unreachable.
-- **Option B — Forge embeds concordance** (concordance code + indices live inside Forge; Forge calls them as in-process functions). Tightest coupling. No external dependency. But Forge inherits concordance's complexity (vector indices, FTS5, embeddings).
-- **Option C — Forge as peer of concordance** (both expose MCP surfaces; aquex-mcp routes; both are independently versioned). Most flexible. Most coordination overhead.
+**Recommendation in one line:** **Forge as concordance consumer** over HTTP (eventually MCP). Concordance hosts the corpus; Forge contributes canonical declarations via `POST /manifests` and queries the read endpoints at codegen / audit / brand-apply lifecycle moments. Forge vendors concordance's wire contract; gracefully degrades when concordance unreachable.
 
-**What the memo needs to address:**
-1. The runtime relationship (consumer/embedded/peer).
-2. The build-time relationship (where the manifest schema lives — separate repo? `schemas/`? as part of Forge?).
-3. Versioning compatibility: Forge v0.1 must work with concordance vN — what are the rules?
-4. Failure modes: what happens when concordance is unreachable or returns stale data?
-5. Cross-machine reality: concordance currently lives on Mac Studio; how does that affect the choice?
+**Answers to concordance's 5 open questions** (from their `oods-foundry-integration.md`): (1) API key v1 → OAuth later; (2) one concordance corpus per Forge workspace; (3) low QPS (<10 sustained); (4) p99 ≤500ms codegen-blocking / ≤100ms advisory; (5) concordance-hosted canonical, Forge-hosted fallback for offline dev.
 
-**Inputs to gather before authoring:**
-- Concordance v0.1 deployment shape (in testing; pace-dependent)
-- aquex-mcp routing capabilities (current state)
-- Stage1's deployment shape as a precedent (also adjacent service Forge consumes)
+**Unblocks:** F2 (concordance ingestion contract) with concrete shape; I1 (concordance live integration) with three-phase pacing — local → hosted → MCP adapter (longer horizon).
 
-**Why expensive if wrong:** lock-in risk; deployment topology is hard to change once external integrators rely on it.
-
-**Pacing:** memo can be authored in two passes — first pass (now, based on architecture doc + assumptions), second pass once concordance v0.1 schema/deployment stabilize. Don't wait for full readiness.
+**Cost estimate:** F2 v1 ~4-6 sessions; I1 proper gated on concordance shipping s13+ hosted endpoint.
 
 ---
 
 ## D4 — Forge ↔ Semantic-Federation Integration Shape
 
-**Why this matters:** Cedar policy gating happens at *some* layer. Wrong layer choice = governance leaks (Forge writes that bypass policy) or governance everywhere (every Forge tool call routes through policy evaluation, with the cost that implies).
+**Status:** 🟢 First-pass decided 2026-05-10. Full memo at [decisions/D4-forge-federation-integration.md](decisions/D4-forge-federation-integration.md). Second-pass memo pending Birch coordination conversation.
 
-**The fork:**
-- **Option A — Cedar at write-side only** (`map.apply`, `map.create`, etc. evaluate policy before writes; reads are unrestricted). Simple. Aligns with current write-side reconciliation thinking.
-- **Option B — Cedar at catalog-distribution layer** (the Object Catalog is a versioned artifact; semantic-federation produces *views* of it filtered by policy; Forge tools work against views). Cleanest from Forge's perspective; pushes complexity into federation.
-- **Option C — Both** (write-side + distribution-side). Most secure. Most complex.
+**Recommendation in one line:** **Write-side gating via OODS-subscriptions-style enforcement wrapper pattern.** Forge writable tools (`map.apply`, `map.create`, `map.update`, `map.delete`, `registry.snapshot.write`) call `evaluateCapability(state, context, action)` before mutating state. Reads unfiltered in v1. Distribution-side views (Option B) layerable as v2 evolution.
 
-**What the memo needs to address:**
-1. The integration layer (write-side / distribution / both).
-2. The Cedar policy shape — what entities/actions/resources Forge exposes to policy evaluation.
-3. How federated catalog views materialize (views computed at distribution time? at read time? cached?).
-4. Performance budget for policy evaluation per Forge call.
-5. How OODS-subscriptions-main's reference patterns map onto Forge's tool surface.
+**Three contexts to start** (mirroring OODS-subscriptions): `customer_portal`, `support_agent`, `automation`. Context resolution flows through MCP request headers / Aquex-mcp routing. Initial rule set is small: block customer writes to canonical catalog; allow support full writes; restrict automation to reconciliation paths.
 
-**Inputs to gather before authoring:**
-- OODS-subscriptions-main `docs/architecture.md`, `capability-rules.md`, `capability-evaluation.md`
-- Cedar policy language reference (AWS docs)
-- Birch's input on what semantic-federation v0.x actually expects from consumers
+**Sub-questions needing Birch input:** (1) Cedar adoption timeline (current reference uses JSON predicates, not Cedar DSL); (2) federation pattern beyond single-tenant; (3) hosted-evaluator transport choice (HTTP vs MCP).
 
-**Why expensive if wrong:** governance leaks are silent failures; governance everywhere is a performance tax that compounds.
+**Unblocks:** I2 (semantic-federation integration) with concrete v1 path. Sharpens F3 framing — Forge is the *first writable design-system MCP with capability-based governance.*
 
-**Pacing:** Birch coordination required before final form. Forge drives the integration solo; first pass of the memo can be authored without him; second pass with his feedback.
+**Cost estimate:** ~7-8 sessions for I2 v1 (vendor evaluator + first rule set + wrap 5 write tools + tests).
 
 ---
 
