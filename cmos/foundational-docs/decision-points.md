@@ -14,13 +14,13 @@ The five named forks where being wrong is expensive enough to warrant a research
 
 | # | Decision | Status | Memo |
 |---|---|---|---|
-| **D1** | Object Catalog schema shape | 🔴 Needs memo | — |
-| **D2** | Multi-fidelity render abstraction | 🔴 Needs memo | — |
-| **D3** | Forge ↔ concordance relationship | 🟡 Needs memo (paced to concordance v0.1) | — |
+| **D1** | Object Catalog schema shape | 🟢 Decided 2026-05-10 | [decisions/D1-object-catalog-schema.md](decisions/D1-object-catalog-schema.md) |
+| **D2** | Multi-fidelity render abstraction | 🟢 Decided 2026-05-10 (revisit when A2UI lands) | [decisions/D2-multi-fidelity-render.md](decisions/D2-multi-fidelity-render.md) |
+| **D3** | Forge ↔ concordance relationship | 🟡 Significantly informed by D1; full memo paced to concordance hosted-endpoint (s13+) | — |
 | **D4** | Forge ↔ semantic-federation integration shape | 🟡 Needs memo (Birch coordination) | — |
 | **D5** | Public-vs-private spec boundary | ⚪ Deferred (working system + named milestone first) | — |
 
-🔴 active blocker — should be addressed before related implementation begins
+🟢 decided — recommendation captured; implementation may begin
 🟡 paced — needs upstream signal before memo can be authored
 ⚪ deferred — explicitly held until trigger
 
@@ -28,56 +28,33 @@ The five named forks where being wrong is expensive enough to warrant a research
 
 ## D1 — Object Catalog Schema Shape
 
+**Status:** 🟢 Decided 2026-05-10. Full memo at [decisions/D1-object-catalog-schema.md](decisions/D1-object-catalog-schema.md).
+
+**Recommendation in one line:** Object Catalog is a **SemanticEntity-extended kernel with shape families implemented via URN multiplicity + projection_variants + an `oods.*` extension layer.** Each CatalogObject passes concordance's `manifest.schema.json` (v4.0) validation natively, plus carries Forge-specific render/codegen/brand annotations under the `oods` namespace.
+
 **Why this matters:** The Object Catalog is the central artifact. A2UI hosts consume it. semantic-federation governs it. Fidelity emitters render from it. Concordance canonicalizes against it. Schema migration is painful and visible to every external integrator.
 
-**The fork:**
-- **Option A — Single canonical shape per Object** (User has one schema; Subscription has one schema). Simple, easy to validate, clear governance. But contradicts the "shape families with discriminators" architectural call already implicit in `projection_variants[]` and the concordance research.
-- **Option B — Shape family with discriminators** (User has a base shape + N variant shapes selected by context: surface, brand, role, evidence). Aligns with concordance reality. More complex to validate, more powerful to render. The architectural call already implicit.
-- **Option C — Hybrid** (canonical "core" + opt-in variant family layer). Defers the call. Probably the wrong default — defers the actual question.
+**Key changes from the original A/B/C framing:** Concordance has already shipped wire contract v1.0.0 with a structurally complete `SemanticManifest` v4.0 schema (180-line JSON Schema, closed enums for pragmatic_role/edge-types/task-types, deferred-state-resolution semantics validated through 5 sprints of zero-drift scoring). Building a parallel schema would forfeit that work. The decision became *how* OODS-Forge's catalog relates to SemanticEntity, not whether to design from scratch. Option D (extension-via-kernel) emerged as the resolution.
 
-**What the memo needs to address:**
-1. The schema shape itself (JSON Schema + TypeScript types, draft).
-2. Versioning policy: additive-only fields, semver, deprecation rules.
-3. Round-trip behavior through `compose → validate → render → codegen → save`.
-4. Relationship to existing `projection_variants[]`, `ConfidenceDecomposition`, `evidence_ref` shapes already in the codebase.
-5. Compatibility with A2UI's catalog format (legibility constraint).
-6. Compatibility with concordance's `semantic-manifest.json` (ingestion constraint).
-7. Recommendation + rationale.
+**Unblocks:** F1 (Object Catalog spec v0.1), F2 (concordance ingestion contract), F3 (bidirectional MCP framing), C6 (Registry knowledge model depth), I1 (concordance live integration paced to concordance s13+ hosted endpoint).
 
-**Inputs to gather before authoring:**
-- The V2 draft's "registry knowledge model depth" axis (sprint-94 V2 doc)
-- The concordance manifest schema (currently in testing on Mac Studio)
-- A2UI v0.9 catalog format spec
-- The ORCA contract bilateral spec (Stage1 v1.x)
-- Storybook MCP Component Manifest format (for legibility comparison)
-
-**Why expensive if wrong:** every downstream consumer keys off this; schema migration is painful for external integrators.
+**Constrains:** D2 (multi-fidelity render now has a defined input shape), D3 (significantly informed but not fully closed — relationship mechanics still need a memo when concordance ships hosted endpoint), D4 (Cedar policy now has a concrete artifact to gate against).
 
 ---
 
 ## D2 — Multi-Fidelity Render Abstraction
 
-**Why this matters:** The fidelity ladder (boxes-and-arrows → wireframe → branded mockup → production code → runtime composition) is a major Position B/C lever. Each rung needs to render the *same* Object Catalog. The abstraction across rungs is what determines whether new fidelity rungs cost N or N² to add.
+**Status:** 🟢 Decided 2026-05-10 (first-pass; revisit when A2UI runtime emission lands). Full memo at [decisions/D2-multi-fidelity-render.md](decisions/D2-multi-fidelity-render.md).
 
-**The fork:**
-- **Option A — Per-fidelity emitter** (today's pattern: react-emitter.ts, vue-emitter.ts, html-emitter.ts; add boxes-emitter.ts, wireframe-emitter.ts, etc.). Simple, parallel, easy to start. But duplicates a lot of logic across emitters and tightly couples emitter implementation to fidelity choice.
-- **Option B — Shared "presentation graph" abstraction** (Object Catalog → presentation graph IR → fidelity-specific renderer). Higher upfront cost. Pays off across all fidelities + future runtime composition. Closer to A2UI's pattern of "structured intent → host renders."
-- **Option C — Hybrid** (presentation graph for lower fidelities; per-emitter for production code). Probably the right answer; the memo should pin where the line is.
+**Recommendation in one line:** Keep the per-fidelity emitter pattern. **Factor out a shared "structural pre-emit pass" (`runPreEmit()`) that every emitter consumes** — a `PreEmitContext` carrying the walked tree, slot bindings, pragmatic-role annotations, brand-resolved tokens, and protocol-axis enrichment. New fidelities (boxes-and-arrows, wireframe, A2UI runtime) are renderers that project from PreEmitContext onto their target format. Formal IR formalization is deferred until two emitters need the *same* structured output projection.
 
-**What the memo needs to address:**
-1. The presentation graph IR shape (if Option B or C).
-2. How current React/Vue/HTML emitters refactor (or don't) under the chosen abstraction.
-3. Where the runtime/build-time line falls (A2UI is runtime; current Forge is build-time; the ladder accommodates both).
-4. Concrete render examples at 3+ fidelities for a User object.
-5. Migration path: how does today's codegen evolve under the new abstraction?
+**Why this matters:** The fidelity ladder is a major Position B/C lever. Wrong abstraction here = either 5× duplication across emitters or 1× bad IR that locks fidelity options.
 
-**Inputs to gather before authoring:**
-- A2UI v0.9 wire format (the runtime-side reference)
-- Current emitter implementations (`packages/mcp-server/src/codegen/`)
-- Storybook MCP Component Manifest (the static-render reference)
-- Visual outputs at each fidelity to anchor the abstraction in real artifacts
+**Trigger to revisit:** when A2UI runtime emission is wired up (post-C5/C6) OR when a non-Forge consumer wants to author a custom renderer against the shared pass. Either fires → promote PreEmitContext to a formal typed intermediate with its own schema and contract tests.
 
-**Why expensive if wrong:** wrong choice = 5× duplication across emitters or 1× bad abstraction that locks fidelity options.
+**Unblocks:** C1 (boxes-and-arrows render), C2 (wireframe render), A2UI runtime emission (post-C5/C6).
+
+**Implementation cost estimate:** ~8-10 sessions to "two new fidelities live, abstraction validated" (3 sessions to refactor existing emitters, 1-2 sessions for `runPreEmit()` implementation, 2-3 for C1, 2 for C2).
 
 ---
 
