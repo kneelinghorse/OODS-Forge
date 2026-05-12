@@ -16,7 +16,7 @@ The five named forks where being wrong is expensive enough to warrant a research
 |---|---|---|---|
 | **D1** | Object Catalog schema shape | 🟢 Decided 2026-05-10 | [decisions/D1-object-catalog-schema.md](decisions/D1-object-catalog-schema.md) |
 | **D2** | Multi-fidelity render abstraction | 🟢 Decided 2026-05-10 (revisit when A2UI lands) | [decisions/D2-multi-fidelity-render.md](decisions/D2-multi-fidelity-render.md) |
-| **D3** | Forge ↔ concordance relationship | 🟢 First-pass decided 2026-05-10 (2nd-pass paced to concordance s13+ hosted endpoint) | [decisions/D3-forge-concordance-relationship.md](decisions/D3-forge-concordance-relationship.md) |
+| **D3** | Forge ↔ concordance relationship | 🟢 First-pass decided 2026-05-10; **externally ratified by concordance 2026-05-12** (2nd-pass paced to concordance s13+ hosted endpoint) | [decisions/D3-forge-concordance-relationship.md](decisions/D3-forge-concordance-relationship.md) |
 | **D4** | Forge ↔ semantic-federation integration shape | 🟢 First-pass decided 2026-05-10 (2nd-pass pending Birch coordination) | [decisions/D4-forge-federation-integration.md](decisions/D4-forge-federation-integration.md) |
 | **D5** | Public-vs-private spec boundary | ⚪ Deferred (working system + named milestone first) | — |
 
@@ -66,7 +66,9 @@ The five named forks where being wrong is expensive enough to warrant a research
 
 **Answers to concordance's 5 open questions** (from their `oods-foundry-integration.md`): (1) API key v1 → OAuth later; (2) one concordance corpus per Forge workspace; (3) low QPS (<10 sustained); (4) p99 ≤500ms codegen-blocking / ≤100ms advisory; (5) concordance-hosted canonical, Forge-hosted fallback for offline dev.
 
-**Unblocks:** F2 (concordance ingestion contract) with concrete shape; I1 (concordance live integration) with three-phase pacing — local → hosted → MCP adapter (longer horizon).
+**External ratification 2026-05-12:** Concordance confirmed D1's SemanticEntity-extension approach is structurally compatible (verified additionalProperties patterns at lines 70, 94, 116 of their manifest.schema.json). Our 5 D3 answers concretize their s13 mission slate (m01 hosted endpoint, m02 auth + multi-tenant, m03 observability). F1/F2/F3 unblocked from their side. Three info_push commitments queued. Full receipts in the D3 memo "External Ratification" section.
+
+**Unblocks:** F2 (concordance ingestion contract) with concrete shape AND specific file targets to vendor; I1 (concordance live integration) with three-phase pacing — local → hosted → MCP adapter (longer horizon).
 
 **Cost estimate:** F2 v1 ~4-6 sessions; I1 proper gated on concordance shipping s13+ hosted endpoint.
 

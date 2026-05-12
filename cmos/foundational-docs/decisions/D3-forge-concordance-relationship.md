@@ -1,7 +1,7 @@
 # D3 — Forge ↔ Concordance Relationship
 
-**Status:** Decided (first-pass; second pass paced to concordance s13+ hosted endpoint)
-**Date:** 2026-05-10
+**Status:** Decided (first-pass **externally ratified by concordance 2026-05-12**; second pass paced to concordance s13+ hosted endpoint)
+**Date:** 2026-05-10 (ratified 2026-05-12)
 **Authors:** Derek
 **Depends on:** [D1 — Object Catalog Schema Shape](D1-object-catalog-schema.md)
 
@@ -125,6 +125,93 @@ From `concordance/docs/oods-foundry-integration.md` "What we'd need from OODS to
 - Total to "F2 done; integration testable locally": **~4-6 sessions**
 
 I1 mission proper (live wiring to hosted endpoint) is gated on concordance shipping s13+ work; no Forge-side blocker.
+
+---
+
+## External Ratification (concordance response 2026-05-12)
+
+Concordance team replied to the OODS-Forge planning canon handshake on 2026-05-12. Full message archived at [`cmos/messages/inbound/2026-05-12-concordance-response.md`](../../messages/inbound/2026-05-12-concordance-response.md). Key receipts that sharpen this memo:
+
+### D1 verified structurally on the concordance wire
+
+Concordance confirmed the SemanticEntity-extension approach is structurally compatible by reading their own `contracts/manifest.schema.json` v1.0.0:
+
+- `SemanticEntity` carries `additionalProperties: true` (line 116) — accepts `oods.*` extension fields without translation
+- `TypedRelationship` (line 94) and `EvidenceRef` (line 70) likewise carry `additionalProperties: true`
+- Top-level `SemanticManifest` is `additionalProperties: false` (line 9) — `oods.*` lives at the entity level, not manifest level. **This is the exact architectural shape D1 assumed.** Our bet is externally verified.
+
+Concordance: "A Forge-emitted Object Catalog POSTs to `/manifests` with zero translation layer." The v0 round-trip gate (`ingested_entities == entities.length` + hash-stable `GET /entities/{urn}` round-trip) is testable today against `tests/test_v0_round_trip.py` extended with a Forge-emitted fixture.
+
+### D3 first-pass answers concretized concordance's s13 mission slate
+
+Each of our 5 first-pass answers maps to a specific concordance s13 mission they're queuing:
+
+| # | Forge first-pass | Concordance s13 mission consequence |
+|---|---|---|
+| 1 | API key per Forge instance | s13-m02 ships Bearer-token middleware + per-key request logging. `/version` stays unauthenticated (probe before handshake). |
+| 2 | One corpus per Forge workspace | s13-m02 picks corpus-per-workspace isolation. Shared-corpus deferred. |
+| 3 | <10 QPS sustained / <50 burst | Postgres+pgvector flip stays gated on actual QPS evidence; SQLite+FTS5+embeddings suffices for v1. |
+| 4 | p99 ≤500ms blocking / ≤100ms advisory | s13-m03 (observability) instruments p50/p95/p99 + per-endpoint QPS to prove against the budget continuously. |
+| 5 | Concordance-hosted canonical / Forge-hosted fallback | s13-m01 ships Dockerfile + hosted endpoint (Fly.io / Railway / Cloud Run candidates, picked at s13 entry). |
+
+### F2 pin-point file targets (canonical sources for Forge vendoring)
+
+Concordance named the exact files Forge should vendor for F2 pre-registration:
+
+- `contracts/manifest.schema.json` (manifest_version 4.0, wire v1.0.0) — the core SemanticManifest envelope schema
+- `contracts/recipes/*.json` (4 recipes, all v1.0.0) — `semantic_location`, `debug_or_explain`, `modify_ui_copy`, `action_eligibility`
+- `contracts/api/*.schema.json` — request/response wire shapes for the 7 read endpoints. `version-response.schema.json` is freshest (s12-m02)
+- `contracts/pragmatic-roles.json`, `contracts/edge-types.json`, `contracts/task-types.json` — closed enums
+
+Sync mechanism: `bin/sync-contracts.sh` (in diverge-and-concord). Same script divergent-inspector uses. F2 can either vendor via the same path or copy directly into `packages/mcp-server/src/concordance/contracts/`.
+
+### F1 bootstrap recipe (local integration test path)
+
+Concordance pinned the bootstrap recipe for F1 round-trip testing:
+
+```bash
+# In a checkout of diverge-and-concord
+cd concordance
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+concordance serve --port 8787 &
+
+# For ephemeral remote testing (optional)
+cloudflared tunnel --url http://localhost:8787   # s11-m01 #267 pattern
+```
+
+F1's round-trip test POSTs a Forge-emitted Object Catalog fixture against this local concordance and asserts:
+- HTTP 200 with `ingested_entities` matching `entities.length`
+- `GET /entities/{urn}` returns the canonical declaration with hash-stable round-trip
+
+### F3 framing — no overlap
+
+Concordance: "'first writable design-system MCP' is a clean positioning and reads cleanly against our 'semantic resolution service' framing without overlap — you write the catalog, we resolve intent against it. Both sit beneath any client (MCP or otherwise)." The two organs compose cleanly rather than competing.
+
+### Concordance's three info_push commitments
+
+To watch for in the Forge inbox:
+
+1. **s13-m01 close (hosted endpoint live):** endpoint URL, healthcheck verification, latency-spot-check vs. our p99 budget, API-key issuance path for s13-m02.
+2. **s13-m02 close (auth + multi-tenant boundary):** Bearer-token scheme details, key issuance flow, per-workspace corpus isolation shape.
+3. **Any wire-contract version bump:** both `manifest_version` (4.0 → 4.1, etc.) and `Concordance-Schema-Version` (1.0.0 → 1.1.0, etc.). Per concordance's semver discipline, minor = additive non-breaking; major = breaking + cross-project coordination.
+
+### Concordance's pacing pattern (signal for Forge planning)
+
+Concordance operates with a **SHIPPED-pattern**: one continuous build session per sprint. Sprints 9, 10, 11, 12 each closed end-to-end in one session. They don't pre-commit to dates on s13 close; info_push arrives within hours of close.
+
+Forge implication: F2 pre-registration (vendored contracts + AJV-validated input schemas + types + tests) lands before concordance ships s13-m01 (hosted endpoint) so we're a contract-gate-ready consumer when the wire goes live. This is exactly the sprint-91 contract-gate pattern applied to concordance.
+
+### Current concordance state (Sprint 12 SHIPPED 2026-05-10)
+
+For F2 context:
+- Wire contract tagged v1.0.0
+- `GET /version` live (returns `service_version`, `schema_version`, `recipe_versions`, `current_sprint_id`, `build_hash`)
+- `Concordance-Schema-Version: 1.0.0` header on every response (via `SchemaVersionHeaderMiddleware`)
+- Schema-drift CI gate enforces 13 byte-equal vendored↔canonical parity assertions
+- Recipe-quartet closed (4 recipes shipped)
+- Test posture: 627 passed + 8 permanent skips
+- New `plan.md` §6.1: "Post-roadmap production-readiness era (s13+)" framing
 
 ---
 
