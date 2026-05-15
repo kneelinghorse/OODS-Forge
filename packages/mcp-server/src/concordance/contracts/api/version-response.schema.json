@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://protocol.aquex.ai/contracts/api/version-response.schema.json",
+  "version": "1.0.0",
+  "$comment": "Single-sourced from concordance scope §7 + plan.md §7 risk note (schema drift between producer and consumer). GET /version response. Returns the runtime version-negotiation surface so external consumers (OODS Foundry, divergent-inspector at scale, future MCP-adapter clients) can pin a contract version they integrate against. Authored s12-m02.",
+  "title": "VersionResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "service_version",
+    "schema_version",
+    "recipe_versions",
+    "current_sprint_id"
+  ],
+  "properties": {
+    "service_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Concordance Python package version per pyproject.toml [project].version. Bumps on releases (no semver enforced at v0; the wire-contract semver is schema_version)."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Wire-contract version (semver). Read from contracts/manifest.schema.json's top-level 'version' field. Same value is emitted as the Concordance-Schema-Version response header on every endpoint. Semver semantics: minor bump = additive non-breaking; major bump = breaking + cross-project coordination per plan.md §4."
+    },
+    "recipe_versions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      },
+      "description": "Per-recipe semver. Keys: semantic_location, debug_or_explain, modify_ui_copy, action_eligibility. Values read from contracts/recipes/<recipe>.json's 'version' field. Recipes can evolve independently of the manifest schema; future bumps may differ across recipes."
+    },
+    "current_sprint_id": {
+      "type": "string",
+      "pattern": "^sprint-[0-9]+$",
+      "description": "Internal sprint identifier from src/concordance/eval/baselines.py CURRENT_SPRINT_ID. Useful for correlating runtime behavior with the SPRINT_BASELINES gate the harness enforces, and for build-vs-snapshot reasoning across the divergence pipeline."
+    },
+    "build_hash": {
+      "type": ["string", "null"],
+      "description": "git rev-parse HEAD when concordance is launched from a git checkout; null in non-git environments (e.g., installed wheel). Useful for cross-project reproducibility receipts."
+    }
+  }
+}

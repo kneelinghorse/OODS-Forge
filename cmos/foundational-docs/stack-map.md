@@ -60,21 +60,22 @@ Forge sits at the synthesis point: evidence comes in (from observe + canonicaliz
 - **Path:** `/Users/systemsystems/portfolio/Design-Tools/Stage1`
 - **Identity:** `cmos://kneelinghorse/stage1` (also surfaces as `cmos://derek/stage1` historically)
 - **Role:** Per-app evidence capture. DOM, computed styles, accessibility tree, network traces, API surface. ORCA inference produces objects/traits/actions/relationships.
-- **Current state:** Wire contract v1.7.0 live (info_push 2026-04-18, additive drift_report). Bilateral with OODS at v1.2.4.
+- **Current state:** **Stage1↔OODS bilateral wire contract v1.7.0** (additive, info_push 2026-04-18 adding `drift_report.json`). OODS-side bilateral pin holds at v1.2.4. Stage1 is currently **paused** for docs/housekeeping per project_stage1_v17_status memory — no upcoming bump expected in the sprint-97 window.
 - **Contract with Forge:**
   - **Outgoing to Forge:** `reconciliation_report.json` (write-side feed for `map.apply`); rollup artifacts (`identity_graph.json`, `capability_rollup.json`, `object_rollup.json`); `action_mappings.json` flat verb-keyed array; `drift_report.json` (read-side, additive).
   - **Incoming from Forge:** registry snapshot for graceful degradation. `manifest.inputs.oods_registry_fetch` shape consumed as `pre-supplied | transport | empty-fallback`.
 - **Key reference:** `Stage1/docs/contracts/stage1-oods-contract.md`
+- **Disambiguation:** the Stage1 wire contract version (v1.7.0) is an INDEPENDENT version axis from the Concordance wire contract (1.1.0, see below). They're versioned per-organ per-bilateral. Do not collapse them in tracking or in roadmap notation.
 
 ### CANONICALIZE: divergence-inspector + concordance
 - **Path:** `/Users/systemsystems/portfolio/diverge-and-concord/` (lives on Mac Studio under user `Darryl`; can migrate or query via CMOS messages)
 - **Identity:** services TBD (in testing); concordance is the online query service, divergence-inspector is the Stage1-clone batch pipeline.
 - **Role:** Mine canonical shape families from thousands of sampled sites. Four-protocol resolution (syntactic/semantic/pragmatic/relational) preserves explainability. Divergence analysis surfaces drivers per stratum.
-- **Current state:** Sprint-13 shipped 2026-05-14. Hosted endpoint live at `https://concordance-production.up.railway.app`; Bearer auth, per-workspace Postgres-schema tenancy, pgvector storage, and wire `1.1.0` are live.
+- **Current state:** Sprint-13 shipped 2026-05-14. Hosted endpoint live at `https://concordance-production.up.railway.app`; Bearer auth, per-workspace Postgres-schema tenancy, pgvector storage, and **Concordance wire contract `1.1.0`** are live. The locally-checked-out `diverge-and-concord/contracts/manifest.schema.json` still labels itself as wire 1.0.0 (the optional top-level `schema_version` field hasn't propagated to the checkout); the Forge validator bridges this with a strip-then-AJV pathway plus the documented warn/throw version policy (see [decisions/D3](decisions/D3-forge-concordance-relationship.md) + [technical/concordance-integration.md](technical/concordance-integration.md)).
 - **Contract with Forge:**
   - **Outgoing to Forge:** versioned `semantic-manifest.json` per site (entities, typed relationships, syntactic aliases, pragmatic roles, evidence refs), plus 7 read endpoints and 4 context-pack recipes.
   - **Incoming from Forge:** Forge-emitted Object Catalog manifests as canonical declarations via `/manifests`; entity-level `oods.*` extensions are valid SemanticEntity additions.
-- **Forge integration:** mission **I1** is unblocked from the Concordance side; Forge still needs F1/F2 contract gates, Bearer key issuance, and CORS allowlist decisions for browser-side calls.
+- **Forge integration:** mission **I1** unblocked from the Concordance side (s96-m03 preflight confirmed) AND from the Forge side (s97-m02/m03/m04 landed vendoring + AJV + client + env-gated smoke). The smoke is opt-in via `RUN_HOSTED_SMOKE=1` so default `pnpm test` never hits the live service.
 - **Key reference:** `/Users/systemsystems/portfolio/diverge-and-concord/Cannon Compass (concordance) + Stage1+semantic-service.md`
 
 ### COMPOSE/EMIT: OODS-Forge (us)
