@@ -70,11 +70,11 @@ Forge sits at the synthesis point: evidence comes in (from observe + canonicaliz
 - **Path:** `/Users/systemsystems/portfolio/diverge-and-concord/` (lives on Mac Studio under user `Darryl`; can migrate or query via CMOS messages)
 - **Identity:** services TBD (in testing); concordance is the online query service, divergence-inspector is the Stage1-clone batch pipeline.
 - **Role:** Mine canonical shape families from thousands of sampled sites. Four-protocol resolution (syntactic/semantic/pragmatic/relational) preserves explainability. Divergence analysis surfaces drivers per stratum.
-- **Current state:** End-to-end testing of first integrated runs (~2 weeks from stable shareable schema as of 2026-05-09). Renamed from "Cannon Compass."
+- **Current state:** Sprint-13 shipped 2026-05-14. Hosted endpoint live at `https://concordance-production.up.railway.app`; Bearer auth, per-workspace Postgres-schema tenancy, pgvector storage, and wire `1.1.0` are live.
 - **Contract with Forge:**
-  - **Outgoing to Forge:** versioned `semantic-manifest.json` per site (entities, typed relationships, syntactic aliases, pragmatic roles, evidence refs). Eventually shape families + divergence drivers as queryable artifacts.
-  - **Incoming from Forge:** none in v0.1; later, possibly Forge's emitted Object Catalogs as canonical templates the divergence pipeline aligns against.
-- **Forge integration:** mission **I1** (gated on schema stabilization). The most important integration mission once v0.1 ships.
+  - **Outgoing to Forge:** versioned `semantic-manifest.json` per site (entities, typed relationships, syntactic aliases, pragmatic roles, evidence refs), plus 7 read endpoints and 4 context-pack recipes.
+  - **Incoming from Forge:** Forge-emitted Object Catalog manifests as canonical declarations via `/manifests`; entity-level `oods.*` extensions are valid SemanticEntity additions.
+- **Forge integration:** mission **I1** is unblocked from the Concordance side; Forge still needs F1/F2 contract gates, Bearer key issuance, and CORS allowlist decisions for browser-side calls.
 - **Key reference:** `/Users/systemsystems/portfolio/diverge-and-concord/Cannon Compass (concordance) + Stage1+semantic-service.md`
 
 ### COMPOSE/EMIT: OODS-Forge (us)
@@ -84,7 +84,7 @@ Forge sits at the synthesis point: evidence comes in (from observe + canonicaliz
 - **Current state:** V1 shipped at 100/100 (sprint-91); write-side reconciliation loop live (sprints 90–95). Now planning V2 + Position B/C work.
 - **Outputs (today):** React/Vue/HTML codegen (× inline/tokens/tailwind); brand overlays; token artifacts; structured-data exports; reconciliation conflict artifacts.
 - **Outputs (planned per fidelity ladder):** boxes-and-arrows render, wireframe render, A2UI-compatible runtime composition, plus future fidelity rungs.
-- **Identity claim being formalized:** "first writable design-system MCP" (mission F3).
+- **Identity claim being formalized:** writable Object Catalog MCP with reconciliation semantics (mission F3).
 
 ### GOVERN/DISTRIBUTE: semantic-federation
 - **Path (reference):** `/Users/systemsystems/portfolio/Design-Tools/OODS-subscriptions-main`

@@ -11,7 +11,7 @@
 
 OODS-Forge is the **synthesis/composition organ** in the aquex.ai design intelligence stack — the part where evidence-backed shape families become composable, agent-operable, multi-fidelity design systems with reconciliation back into the evidence corpus. The strategic bet is that the layer *above* components is a real and currently underclaimed category, and the aquex portfolio (Stage1, divergence-inspector + concordance, OODS-Forge, semantic-federation, CMOS, agent-vitals, Aquex-mcp, TraceLab) collectively ships the first **Design Intelligence Platform**: observe → canonicalize → compose → govern → measure, all addressable through MCP.
 
-Forge's job inside that platform is to publish an **Object Catalog** spec, render it across a **fidelity ladder** (boxes-and-arrows → wireframe → branded mockup → production code → runtime composition), expose itself as the field's first **bidirectional MCP** for design systems, and consume canonical shape families from concordance to ground its schemas in real-world evidence rather than theory.
+Forge's job inside that platform is to publish an **Object Catalog** spec, render it across a **fidelity ladder** (boxes-and-arrows → wireframe → branded mockup → production code → runtime composition), expose itself as a **bidirectional Object Catalog MCP** for design-system reconciliation, and consume canonical shape families from concordance to ground its schemas in real-world evidence rather than theory.
 
 The plan is captured as a mission graph with four tracks, five named decision points, a set of quality bars carried forward from sprints 90–95, and no calendar. The unit of progress is sessions; quality and scalability are the constraints.
 
@@ -58,7 +58,7 @@ The architectural fork between "one canonical shape per concept" and "shape fami
 
 **Architectural call:** Forge plans assume **shape families with discriminators, backed by evidence-refs that trace to concordance manifests.** No theoretical canon. No flat single-shape schemas. Variant + evidence + confidence is the spine.
 
-See [technical/concordance-integration.md](technical/concordance-integration.md) (forthcoming) for the consumer-side contract direction.
+See [technical/concordance-integration.md](technical/concordance-integration.md) (planned) for the consumer-side contract direction.
 
 ---
 
@@ -67,9 +67,9 @@ See [technical/concordance-integration.md](technical/concordance-integration.md)
 The work falls into four tracks with dependencies. Full graph in [mission-graph.md](mission-graph.md).
 
 ### Foundation (must come first; in dependency order)
-- **F1 — Object Catalog spec v0.1** — *the central artifact.* What a published Object Catalog looks like as JSON Schema + TypeScript types. Consumed by A2UI hosts, semantic-federation, fidelity emitters, concordance ingestion. Spine.
-- **F2 — Concordance ingestion contract** — sister to Stage1's reconciliation contract. Forge consumes `semantic-manifest.json` from concordance to ground catalog generation in evidence.
-- **F3 — Bidirectional MCP framing** — formalize today's `map.apply` / `map.create` / `registry.snapshot` as a coherent public claim: the field's first writable design-system MCP server.
+- **F1 — Object Catalog spec v1.0.0** — *the central artifact.* What a published Object Catalog looks like as JSON Schema + TypeScript types. Consumed by A2UI hosts, semantic-federation, fidelity emitters, concordance ingestion. Spine.
+- **F2 — Concordance ingestion contract** — sister to Stage1's reconciliation contract. Forge consumes `semantic-manifest.json` from concordance to ground catalog generation in evidence; Concordance hosted endpoint + wire `1.1.0` are now live.
+- **F3 — Bidirectional MCP framing** — formalize today's writable reconciliation tools (`map.apply`, `map.create`, `map.update`, `map.delete`) plus read surfaces (`registry.snapshot`, catalog/object tools) as a coherent public claim: a writable Object Catalog MCP with reconciliation semantics.
 
 ### Capability (parallel after Foundation)
 - **C1 — Boxes-and-arrows render** (first non-prescriptive emitter; proves the multi-fidelity claim)
@@ -80,7 +80,7 @@ The work falls into four tracks with dependencies. Full graph in [mission-graph.
 - **C6 — Registry knowledge model depth** (V2 axis #5 — `disambiguation_decisions`, `preferred_term`, `capability`, `projection_variants` round-trip)
 
 ### Integration (gated on partner readiness)
-- **I1 — Concordance live integration** (when v0.1 schema stabilizes; ~currently testing end-to-end on Mac Studio)
+- **I1 — Concordance live integration** (unblocked by Concordance sprint-13: hosted endpoint, Bearer auth, per-workspace tenancy, wire `1.1.0`)
 - **I2 — semantic-federation integration** (Cedar policy + federated catalog distribution; reference: `/Design-Tools/OODS-subscriptions-main`; Birch coordination)
 - **I3 — agent-vitals telemetry hooks** (generated UI events flow back to observability)
 - **I4 — TraceLab evidence loop** (Forge usage data feeds corpus)
@@ -98,10 +98,10 @@ Five named forks where being wrong is expensive enough to warrant a research-sha
 
 | # | Decision | Why expensive if wrong | Status |
 |---|---|---|---|
-| **D1** | Object Catalog schema shape | Every downstream consumer keys off this; migration cost is high | Needs memo |
-| **D2** | Multi-fidelity render abstraction | Per-fidelity emitter duplicates logic; shared "presentation graph" pays off across all fidelities but is harder to design | Needs memo |
-| **D3** | Forge ↔ concordance relationship (consumer / peer / embedded) | Each option has different deployment, versioning, scaling implications; lock-in risk | Needs memo |
-| **D4** | Forge ↔ semantic-federation integration shape (Cedar at write-side / catalog-distribution / both) | Wrong choice = governance leaks or governance everywhere | Pending Birch coordination |
+| **D1** | Object Catalog schema shape | Every downstream consumer keys off this; migration cost is high | Decided — SemanticEntity-compatible manifest with entity-level `oods.*`; catalog version `1.0.0` |
+| **D2** | Multi-fidelity render abstraction | Per-fidelity emitter duplicates logic; shared "presentation graph" pays off across all fidelities but is harder to design | Decided first-pass — shared `runPreEmit()` before per-fidelity emitters |
+| **D3** | Forge ↔ concordance relationship (consumer / peer / embedded) | Each option has different deployment, versioning, scaling implications; lock-in risk | Decided + externally ratified; s13 hosted endpoint now live |
+| **D4** | Forge ↔ semantic-federation integration shape (Cedar at write-side / catalog-distribution / both) | Wrong choice = governance leaks or governance everywhere | Decided first-pass; second-pass pending Birch coordination |
 | **D5** | Public-vs-private spec boundary mechanics | What's open OODS spec, what's proprietary Forge engine, what's aquex platform; dual-license? open spec + closed reference impl? | Deferred until working system + named milestone |
 
 ---
@@ -119,7 +119,7 @@ Carrying forward what worked across sprints 90–95, plus what the new scope dem
 - **Pre-register schema shapes** ahead of partner emitter readiness. The contract-gate pattern (sprint-91) is now an evergreen rule.
 - **External E2E validation** before declaring scores. Internal scoring drifts from real consumer shape. Always validate against external production-shape fixtures.
 
-Full list in [quality-bars.md](quality-bars.md) (forthcoming break-out).
+Full list in [quality-bars.md](quality-bars.md).
 
 ---
 
@@ -160,11 +160,11 @@ This folder is the planning canon. Read in this order:
 
 Captured here so they don't get lost; resolved as planning progresses or as upstream context clarifies.
 
-1. **Concordance schema stabilization timing** — currently in end-to-end testing, ~2 weeks from a stable shareable schema. Forge's concordance integration (I1) paces to this signal. CMOS message to user `Darryl` (Mac Studio) is the canonical channel for state intel.
+1. **Concordance production wiring details** — hosted endpoint is live at `https://concordance-production.up.railway.app`, wire `1.1.0` is the current pin, and Bearer auth + per-workspace tenancy shipped 2026-05-14. Remaining Forge-side decisions: when to request the Bearer key, which browser dev origins to allow for CORS, and whether Concordance should continue sending info_push on every minor wire bump.
 2. **Birch coordination on D4** — semantic-federation integration shape is ultimately a two-founder decision. Forge drives the integration solo for now, getting feedback as we go. Reference repo for shape: `/Users/systemsystems/portfolio/Design-Tools/OODS-subscriptions-main`.
 3. **aquex.ai narrative for design intelligence** — the public positioning frame for "Design Intelligence Platform" doesn't exist yet on aquex.ai's site. Currently being defined inside Forge planning. May need a parallel aquex-side sprint to land the public story alongside Forge's first publishable artifact.
-4. **The runtime engine question** — when do we cross from build-time codegen to runtime composition? A2UI's host-renders pattern is runtime. Forge's emit-then-deploy pattern is build-time. The fidelity ladder accommodates both, but there's an architectural call about where the *primary* surface lives. Resolved implicitly via D2 (render abstraction) once that memo lands.
-5. **Lower-fidelity tooling depth** — boxes-and-arrows, wireframes, IA diagrams, user flows are all fidelity-ladder candidates. Order and depth of which to ship first is a Capability-track planning call once D1 lands.
+4. **The runtime engine question** — when do we cross from build-time codegen to runtime composition? A2UI's host-renders pattern is runtime. Forge's emit-then-deploy pattern is build-time. D2's shared pre-emit pass keeps both paths open; A2UI runtime emission is the trigger to revisit formal IR.
+5. **Lower-fidelity tooling depth** — boxes-and-arrows, wireframes, IA diagrams, user flows are all fidelity-ladder candidates. Order and depth of which to ship first is a Capability-track planning call after F1 proves the catalog shape.
 
 ---
 

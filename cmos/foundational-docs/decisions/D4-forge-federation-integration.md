@@ -46,7 +46,7 @@ The user's [strategic-position.md](../strategic-position.md) characterizes seman
 - semantic-federation is the broader concept (Cedar + federation are the destination), and OODS-subscriptions is the ABAC-half demonstration shipped first, OR
 - The Cedar framing is the architectural vocabulary; the implementation uses pragmatic JSON predicates
 
-This memo treats the current reference implementation as the v1 contract pattern. The eventual choice between continuing JSON predicates and migrating to Cedar's policy DSL is a sub-decision below the D-fork threshold (it doesn't change Forge's integration shape, only the rule expressivity).
+This memo treats the current reference implementation as the v1 contract pattern. The eventual choice between continuing JSON predicates and migrating to Cedar's policy DSL is a sub-decision below the D-fork threshold (it doesn't change Forge's integration shape, only the rule expressivity). One implementation caveat: the current OODS-subscriptions evaluator is billing-specific (`subscription`/`invoice` states and billing actions), so Forge I2 must extract or adapt the generic evaluator core before wrapping Forge tools.
 
 ---
 
@@ -71,7 +71,7 @@ Forge's writable tools call into `evaluateCapability(catalogState, context, acti
 **Specifically:**
 - `map.apply` evaluates against `{state: currentCatalogState, context: callerContext, action: "map.apply"}` before writing
 - `map.create`, `map.update`, `map.delete` follow the same pattern
-- `registry.snapshot` writes (the snapshot-emission side) check capability
+- Future catalog publish or snapshot-write operations check capability. Current `registry.snapshot` is read-only.
 - Future Object Catalog write operations (publish, ingest concordance manifest, accept Stage1 reconciliation report) all check capability at the mutation boundary
 
 **Pros:**
@@ -165,8 +165,7 @@ if (!result.allowed) {
    - `map.apply` — gate at entry; evaluate against current map state + caller context + `'map.apply'`
    - `map.create` — same pattern with `'map.create'`
    - `map.update`, `map.delete` — same pattern
-   - `registry.snapshot` (write side) — evaluate `'registry.snapshot.write'`
-   - Future Object Catalog write tools — same pattern with their action names
+   - Future Object Catalog write tools (`catalog.publish`, `registry.snapshot.write`, etc.) — same pattern with their action names
 
 6. **Read operations are unfiltered in v1.** No capability checks on `catalog.list`, `object.show`, `repl.render`, `code.generate`, fidelity emitters. This is the explicit v1 boundary; Option B addition is the explicit v2 work.
 
@@ -191,15 +190,15 @@ v1 implements (1). (2) and (3) are layerable extensions.
 ### What this unblocks
 
 - **I2 (semantic-federation integration)** — concrete path. I2 mission ships:
-  - Vendored semantic-federation evaluator (or package import if Birch publishes one)
+  - Generic semantic-federation evaluator core extracted/adapted from the billing-specific reference (or package import if Birch publishes one)
   - First rule set (3 contexts, ~10-15 rules across the writable tools)
-  - Enforcement wrappers on `map.apply`, `map.create`, `map.update`, `map.delete`, `registry.snapshot`
+  - Enforcement wrappers on `map.apply`, `map.create`, `map.update`, `map.delete`, plus scaffolding for future catalog publish/snapshot-write tools
   - Structured error contract published in tool docs
   - Unit tests on the evaluator + integration tests confirming denials propagate through the MCP layer
 
 - **F1 (Object Catalog spec)** — the `oods.render.brand_overlay` field's context-awareness story now has a frame. Brand selection can be capability-gated (e.g., `customer_portal` only sees a specific brand subset). Mechanics deferred to a future memo when the multi-brand-per-tenant case arrives.
 
-- **F3 (Bidirectional MCP framing)** — the public claim sharpens further. Forge is the *first writable design-system MCP with capability-based governance*. Read-only competitors (Figma MCP, Storybook MCP) don't enforce anything; Forge does.
+- **F3 (Bidirectional MCP framing)** — the public claim sharpens further. Forge is a writable Object Catalog MCP with capability-based governance.
 
 ### What this constrains
 
@@ -209,8 +208,8 @@ v1 implements (1). (2) and (3) are layerable extensions.
 
 ### Cost estimate
 
-- Vendor evaluator + rule files + schema: **~2 sessions**
-- Wrap 5 write tools (`map.apply`, `map.create`, `map.update`, `map.delete`, `registry.snapshot.write`): **~3-4 sessions**
+- Extract/adapt evaluator core + rule files + schema: **~2-3 sessions**
+- Wrap current write tools (`map.apply`, `map.create`, `map.update`, `map.delete`) and scaffold future publish/snapshot-write actions: **~3-4 sessions**
 - Unit + integration tests: **~2 sessions**
 - Total for I2 v1: **~7-8 sessions**
 

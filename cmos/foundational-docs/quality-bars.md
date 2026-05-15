@@ -25,7 +25,7 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 ### Pre-registered schema shapes ahead of partner emitter readiness
 - **Rule:** When a partner organ (concordance, semantic-federation, Stage1) is about to emit a new shape, OODS-Forge pre-registers the receiver shape (input schemas, contract tests, regenerated types, contract-doc updates) BEFORE the partner ships. Zero behavior change at our layer until partner flips on.
 - **Why:** Sprint 91 v1.4.0 contract-gate pattern. Pre-registering shapes beats retrofitting under pressure.
-- **Application:** F2 should land contract gates before concordance v0.1; future Stage1 contract bumps follow the same pattern.
+- **Application:** F2 should land contract gates against Concordance wire `1.1.0` before authenticated writes; future Stage1/Concordance contract bumps follow the same pattern.
 
 ---
 
@@ -66,7 +66,7 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 ### Additive-only versioning for stable contracts
 - **Rule:** Once a contract surface (Object Catalog, concordance ingestion, Stage1 reconciliation, semantic-federation policy interface) reaches v1.0, schema changes are additive only. Removals require new version numbers.
 - **Why:** External integrators rely on stable shapes. Breaking changes force coordination overhead that compounds across the stack.
-- **Application:** F1 (Object Catalog spec) adopts this from v0.1; the v0.x → v1.0 migration window is the last opportunity for breaking changes.
+- **Application:** F1 (Object Catalog spec) starts at catalog version `1.0.0`; breaking changes after that require a major version.
 
 ### Schemas reject unsupported versions gracefully
 - **Rule:** If Forge receives a contract version it doesn't support, it returns a clear, machine-readable error. Not a parse failure. Not silent degradation.
@@ -101,10 +101,10 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 - **Why:** future sessions need to discover the rationale; CMOS messages and session notes get pruned.
 - **Application:** decision memos commit alongside implementation; missions cite them; CMOS records reference them.
 
-### Public-facing claims (e.g. "first writable design-system MCP") are sourced
+### Public-facing claims (e.g. "writable Object Catalog MCP") are sourced
 - **Rule:** Claims that show up in product positioning are anchored in concrete artifacts (a tool spec, a doc, a fixture, a comparable product list).
 - **Why:** Position B/C imply external readers; sloppy claims dilute the wedge.
-- **Application:** F3 (bidirectional MCP framing) ships with a concrete public-facing doc that an external integrator can read once and implement against.
+- **Application:** F3 (bidirectional MCP framing) ships with a concrete public-facing doc that an external integrator can read once and implement against, with claims scoped to catalog/reconciliation writability.
 
 ---
 

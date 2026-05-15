@@ -16,7 +16,7 @@ The Object Catalog is the central artifact OODS-Forge produces. Every downstream
 - Concordance canonicalizes against it as the **declared/canonical side of the loop** (per [`concordance/docs/oods-foundry-integration.md`](file:///Users/systemsystems/portfolio/Design-Tools/diverge-and-concord/concordance/docs/oods-foundry-integration.md))
 - divergent-inspector emits SemanticEntities for the **actual/inspected side** of the loop
 
-What this decision was missing — and now isn't — is that **concordance has already published a stable v1.0.0 wire contract with a structurally complete schema** (`contracts/manifest.schema.json`, manifest_version `4.0`). The schema was tagged in concordance's Sprint 12 m02 after 5 sprints of byte-identical zero-drift scoring and four shipped recipes (`semantic_location`, `debug_or_explain`, `modify_ui_copy`, `action_eligibility`).
+What this decision was missing — and now isn't — is that **concordance has already published a stable wire contract with a structurally complete schema** (`contracts/manifest.schema.json`, manifest_version `4.0`). The schema was tagged as wire `1.0.0` in concordance's Sprint 12 m02 after 5 sprints of byte-identical zero-drift scoring and four shipped recipes (`semantic_location`, `debug_or_explain`, `modify_ui_copy`, `action_eligibility`). Concordance sprint-13 then bumped the canonical wire to `1.1.0` with one additive field: optional top-level `schema_version`.
 
 That changes the decision. We are not designing the Object Catalog schema from scratch. We are deciding **how OODS-Forge's Object Catalog relates to the SemanticEntity schema that concordance ingests**.
 
@@ -63,16 +63,19 @@ Defer the call: ship a "canonical core" schema and let variants be optional exte
 
 ### Specifically
 
-The OODS Object Catalog is a versioned collection of **CatalogObject** entries. Each CatalogObject is a SemanticEntity-compatible payload (passes `manifest.schema.json` v4.0 validation) plus a Forge-specific **render** annotation layer that's invisible to concordance ingestion.
+The OODS Object Catalog is a versioned collection of **CatalogObject** entries. Each CatalogObject is a SemanticEntity-compatible payload (passes `manifest.schema.json` validation) plus a Forge-specific **render** annotation layer that's invisible to concordance ingestion.
+
+Important envelope rule: a Forge-emitted Object Catalog posted to Concordance is a strict SemanticManifest envelope. Forge-specific catalog metadata does **not** live at the manifest root because Concordance keeps the top-level manifest closed. Catalog version `1.0.0` is carried in `source.oods_catalog_version` and may be repeated in entity-level `oods.catalog.version`; the only new top-level version field is Concordance's optional `schema_version`.
 
 ```jsonc
 {
-  "catalog_version": "1.0.0",   // OODS Object Catalog spec version
   "manifest_version": "4.0",    // concordance SemanticManifest version we conform to
+  "schema_version": "1.1.0",    // concordance wire-contract version, optional as of sprint-13
   "source": {
     "agent": "oods-forge",
     "stage": "compose",
-    "captured_at": "2026-05-10T..."
+    "captured_at": "2026-05-10T...",
+    "oods_catalog_version": "1.0.0"
   },
   "entities": [
     {
@@ -95,6 +98,9 @@ The OODS Object Catalog is a versioned collection of **CatalogObject** entries. 
 
       // OODS-Forge extension layer (Forge-specific, additionalProperties: true allows this)
       "oods": {
+        "catalog": {
+          "version": "1.0.0"
+        },
         "render": {
           "ui_schema_ref": "compose-abc123",         // Forge's existing UiSchema persistence
           "slots": [
@@ -137,14 +143,15 @@ The OODS Object Catalog is a versioned collection of **CatalogObject** entries. 
 
 5. **Preserves Forge's rendering hints in a namespaced extension.** The `oods` key is "additional property" from concordance's view (the schema explicitly allows `additionalProperties: true` on SemanticEntity). Concordance ingests SemanticEntity validity without caring about `oods`; Forge's pipeline consumes `oods` to drive codegen. **No translation cost. No fidelity loss.**
 
-6. **Supports the bidirectional-MCP claim.** A Forge Object Catalog entry IS a SemanticEntity. Forge can READ entities from concordance (canonical declarations come from us; inspections come back enriched with evidence). Forge can WRITE entities to concordance (every `map.apply` produces a SemanticEntity-shaped delta). The "first writable design-system MCP" framing (mission F3) lands cleanly on top of this design.
+6. **Supports the bidirectional-MCP claim.** A Forge Object Catalog entry IS a SemanticEntity. Forge can READ entities from concordance (canonical declarations come from us; inspections come back enriched with evidence). Forge can WRITE entities to concordance (every `map.apply` produces a SemanticEntity-shaped delta). The writable Object Catalog MCP framing (mission F3) lands cleanly on top of this design.
 
 7. **Inherits concordance's validator discipline.** SemanticEntity has hard validators (`element.object_action_present`, `pragmatic_role.in_enum`, `state.references_resolve` with deferred-queue semantics, `evidence.shape`, etc.). Forge reuses these for free at ingestion time. We add Forge-specific validators on the `oods` extension only.
 
 ### Versioning policy
 
-- **`catalog_version`** is the OODS Object Catalog spec version. Starts at `1.0.0`. Additive minor bumps for new optional fields under `oods.*`. Major bumps for any breaking change to the extension layer.
-- **`manifest_version`** tracks concordance's SemanticManifest version. We adopt v4.0 at v1.0.0 of our catalog. Coordinated bumps via the cross-project plan.md protocol when concordance bumps.
+- **OODS catalog version** starts at `1.0.0` and is represented as `source.oods_catalog_version` plus entity-level `oods.catalog.version`, not as a Forge-only top-level manifest property.
+- **`manifest_version`** tracks concordance's SemanticManifest protocol version. We adopt v4.0 at v1.0.0 of our catalog.
+- **`schema_version`** tracks concordance's wire-contract version. Forge pins `1.1.0` after Concordance sprint-13. Coordinated bumps follow the cross-project schema-evolution policy.
 - **`urn` versions** track per-concept evolution (e.g., `urn:proto:semantic:user-profile-card@1.0.0` → `@1.1.0` for additive presentation changes; `@2.0.0` for breaking redesigns).
 - **Validators on the `oods` extension** ship with the schema and emit `severity: error | warn` (matching concordance's pattern).
 
@@ -161,20 +168,20 @@ The OODS Object Catalog is a versioned collection of **CatalogObject** entries. 
 
 ### What this unblocks
 
-- **F1 mission (Object Catalog spec v0.1)** — implementation can now start. F1 ships:
+- **F1 mission (Object Catalog spec v1.0.0)** — implementation can now start. F1 ships:
   - JSON Schema + TypeScript types for CatalogObject + the `oods` extension layer
   - At least 3 production-shape fixtures (User, Product, Subscription)
   - Validators on the extension layer
-  - Test gate: a Forge-emitted Object Catalog passes concordance's `manifest.schema.json` validation
+  - Test gate: a Forge-emitted Object Catalog passes concordance's `manifest.schema.json` validation with no Forge-only fields at the manifest root
   - Test gate: a concordance `/manifests` POST round-trips a Forge-emitted catalog with `ingested_entities: N` matching catalog `entities.length`
 
-- **F2 mission (concordance ingestion contract)** — sister mission to F1. Pre-registers a Forge-side `semantic-manifest.json` consumer (validator + types + tests) before concordance v1.0.0 is wired to live integration. Sprint-91 contract-gate pattern.
+- **F2 mission (concordance ingestion contract)** — sister mission to F1. Pre-registers a Forge-side `semantic-manifest.json` consumer (validator + types + tests) against Concordance wire `1.1.0`. Sprint-91 contract-gate pattern.
 
-- **F3 mission (bidirectional MCP framing)** — the public claim sharpens. "Forge is the first writable design-system MCP" becomes concrete: Forge's `map.apply` / `map.create` / `registry.snapshot` tools all read and write SemanticEntity-compatible payloads. External integrators can target the SemanticEntity shape and get OODS-Forge legibility for free.
+- **F3 mission (bidirectional MCP framing)** — the public claim sharpens. Forge's writable reconciliation tools (`map.apply`, `map.create`, `map.update`, `map.delete`) and read surfaces (`registry.snapshot`, catalog/object tools) operate around SemanticEntity-compatible payloads. External integrators can target the SemanticEntity shape and get OODS-Forge legibility for free.
 
 - **C6 (Registry knowledge model depth, V2 axis #5)** — `disambiguation_decisions`, `preferred_term`, `capability`, `projection_variants` all have a clean home in the existing extension scheme.
 
-- **I1 (concordance live integration)** — pacing eased. F1+F2 land *before* concordance v0.1 is wired live, so the moment concordance's hosted endpoint comes online (their s13+), Forge is already integrated by contract.
+- **I1 (concordance live integration)** — pacing eased. Concordance's hosted endpoint is live, so F1+F2 now prepare Forge to move directly into hosted preflight and authenticated integration once a Bearer key is issued.
 
 ### What this constrains
 
@@ -186,9 +193,9 @@ The OODS Object Catalog is a versioned collection of **CatalogObject** entries. 
 
 ### What this requires from us going forward
 
-- **Coordination message to concordance** announcing Object Catalog v1.0.0 design intent and confirming SemanticManifest v4.0 compatibility. Sent via `cmos_message` to user `darryl` (see [reference_cross_machine_workflow.md](file:///Users/systemsystems/.claude/projects/-Users-systemsystems-portfolio-Design-Tools-OODS-Foundry-mcp/memory/reference_cross_machine_workflow.md)).
+- **Coordination message to concordance** announcing Object Catalog v1.0.0 design intent and confirming SemanticManifest v4.0 compatibility. Sent via `cmos_message` to user `darryl` (see [reference_cross_machine_workflow.md](file:///Users/systemsystems/.claude/projects/-Users-systemsystems-portfolio-Design-Tools-OODS-Foundry-mcp/memory/reference_cross_machine_workflow.md)); Concordance sprint-13 follow-up confirms hosted endpoint + wire `1.1.0` are now live.
 - **Vendoring the contracts** — `bin/sync-contracts.sh` (in diverge-and-concord) is the canonical sync pattern. OODS-Forge keeps its own vendored copy of `manifest.schema.json` + closed enums (`pragmatic-roles.json`, `edge-types.json`, `task-types.json`). When concordance bumps the canonical, we sync.
-- **Decision discipline** — every Forge extension to the catalog (anything under `oods.*`) is additive. Removals require a catalog `catalog_version` major bump. Quality-bar already named.
+- **Decision discipline** — every Forge extension to the catalog (anything under `oods.*`) is additive. Removals require a catalog version major bump. Quality-bar already named.
 
 ---
 

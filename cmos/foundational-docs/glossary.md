@@ -41,8 +41,8 @@ The multi-fidelity render model. The same Object Catalog renders across fideliti
 
 The render abstraction across fidelities is decision D2.
 
-### Bidirectional MCP
-The framing for Forge as the field's first writable design-system MCP server. *Reads*: catalog, schemas, mappings. *Writes*: accept evidence (Stage1 reconciliation reports, concordance manifests, agent-vitals telemetry), emit reconciled deltas. Today's `map.apply`, `map.create`, `registry.snapshot` are the seed; F3 mission productizes the public claim.
+### Bidirectional Object Catalog MCP
+The framing for Forge as a writable Object Catalog MCP with reconciliation semantics. *Reads*: catalog, schemas, mappings. *Writes*: accept evidence (Stage1 reconciliation reports, concordance manifests, agent-vitals telemetry), emit reconciled deltas. Today's write seeds are `map.apply`, `map.create`, `map.update`, and `map.delete`; `registry.snapshot` and catalog/object tools are read surfaces. F3 mission productizes the public claim.
 
 ### Shape Family
 A set of related Object schemas with discriminators, backed by evidence-refs from concordance. Replaces single-canonical-shape thinking. Already implicit in the existing `projection_variants[]` pattern; D1 makes it explicit in the Object Catalog.
