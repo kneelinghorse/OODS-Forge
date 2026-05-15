@@ -31,11 +31,12 @@ FOUNDATION ────► CAPABILITY ────► INTEGRATION
 
 The spine. Get this right or downstream rework cost is high.
 
-### F1 — Object Catalog spec v0.1
+### F1 — Object Catalog spec v1.0.0
 **Purpose:** Define what an OODS Object Catalog is as a published artifact. JSON Schema + TypeScript types. The artifact A2UI hosts can consume, semantic-federation can govern, fidelity emitters can render from, concordance can canonicalize against.
 **Dependencies:** Decision memo D1 (Object Catalog schema shape).
 **Success criteria:**
 - Stable schema with versioning policy (additive-only fields, semver, deprecation rules)
+- Strict SemanticManifest envelope compatibility: no Forge-only fields at manifest root; catalog version `1.0.0` is carried in `source` and entity-level `oods.*`
 - Round-trips through `compose → validate → render → codegen → save` without lossy translation
 - Fixture set with at least 3 production-shape examples (User, Product, Subscription minimum)
 - Reference catalog file consumable by an A2UI-style host (proof of legibility)
@@ -44,22 +45,24 @@ The spine. Get this right or downstream rework cost is high.
 
 ### F2 — Concordance ingestion contract
 **Purpose:** Sister to Stage1's reconciliation contract, but for canonical shape families instead of per-app fingerprints. Forge consumes `semantic-manifest.json` from concordance and translates it into Object Catalog candidates with evidence-refs.
-**Dependencies:** F1 (catalog needs a shape to ingest into); concordance v0.1 schema (paced externally).
+**Dependencies:** F1 (catalog needs a shape to ingest into); Concordance hosted endpoint + wire `1.1.0` are live as of 2026-05-14.
 **Success criteria:**
-- AJV-validated input schema for `semantic-manifest.json`
+- Vendored Concordance contracts pinned to wire `1.1.0` (`manifest.schema.json`, API schemas, recipes, closed enums)
+- AJV-validated input schema for `semantic-manifest.json`, including optional top-level `schema_version`
+- Client probes unauthenticated `GET /health` and `GET /version` against the hosted endpoint and enforces warn-on-minor / fail-on-major version policy
 - Translator produces Object Catalog deltas with `evidence_ref` chains intact
 - Round-trips a real concordance manifest through ingestion → catalog delta → reverse-lookup
-- Pre-registered as v0.1 contract gate before concordance v0.1 lands (sprint-91 pattern)
+- Authenticated integration test path is ready behind `CONCORDANCE_API_KEY`; key issuance remains out-of-band
 **Why expensive if wrong:** locks Forge into a translation shape that may not match concordance's emitted reality.
 
 ### F3 — Bidirectional MCP framing
-**Purpose:** Formalize today's `map.apply` / `map.create` / `registry.snapshot` as a coherent public claim — the field's first writable design-system MCP server. This is positioning work as much as engineering work.
+**Purpose:** Formalize today's write tools (`map.apply`, `map.create`, `map.update`, `map.delete`) and read tools (`registry.snapshot`, catalog/object tools) as a coherent public claim — a writable Object Catalog MCP with reconciliation semantics. This is positioning work as much as engineering work.
 **Dependencies:** F1 (the catalog is what gets written/read); D5 (open-vs-private mechanics — though deferred, the framing draft happens regardless).
 **Success criteria:**
 - Public-facing tool spec for the bidirectional surface (read tools + write tools + their contracts)
 - Idempotency guarantees, conflict semantics, dry-run defaults all named explicitly
 - Reference doc that an external integrator could read once and implement against
-- Contrast with read-only MCP-design servers (Figma, Storybook, Subframe) is sharp and fair
+- Contrast with component-context MCP surfaces is sharp and fair; the claim is catalog/reconciliation writability, not generic canvas mutation
 - Documented at `technical/bidirectional-mcp.md`
 **Why expensive if wrong:** the public claim is the wedge; sloppy framing dulls it.
 
@@ -107,9 +110,9 @@ Gated on partner organ readiness. Order is approximate — actual order depends 
 
 ### I1 — Concordance live integration
 **Purpose:** Wire the F2 contract to live concordance manifests. The first time Forge's catalog generation is grounded in real-world evidence at scale.
-**Gating signal:** concordance v0.1 schema published + first stable run available.
+**Gating signal:** F2 contract gate passes; Bearer key issued out-of-band for authenticated endpoints; CORS allowlist decided if browser-side calls are needed.
 **Dependencies:** F2.
-**Success criteria:** at least one full pipeline run from concordance manifest → Forge catalog delta → fidelity emission, with evidence-refs traceable end-to-end.
+**Success criteria:** at least one full pipeline run from hosted Concordance manifest/read endpoint → Forge catalog delta → fidelity emission, with evidence-refs traceable end-to-end and `X-Request-Id` captured in diagnostics.
 
 ### I2 — semantic-federation integration
 **Purpose:** Cedar policy + federated catalog distribution. Forge emits an Object Catalog; semantic-federation governs who sees what, in what scope.
@@ -155,11 +158,11 @@ Continuous. Gates every release.
 The strict-dependency view:
 
 1. **F1** has no soft dependencies (only D1 memo). **Start here.** Other foundation work is gated behind F1.
-2. **F2** depends on F1 (catalog shape) AND on concordance schema. Pre-register the contract gate during F1 work; live-integrate when concordance v0.1 ships.
+2. **F2** depends on F1 (catalog shape). Concordance wire `1.1.0` and hosted endpoint are live, so pre-register the contract gate during F1 work and then move directly to hosted preflight.
 3. **F3** can start in parallel with F1 (positioning work doesn't fully block on schema details). Final form locks once F1 stabilizes.
 4. **D2 memo** can land in parallel with F1 work (it's about render abstraction, not catalog shape). Then C1, C2 unblocked.
 5. **C3, C4, C5, C6** all depend on F1; can run in parallel after F1.
-6. **I1, I2, I3, I4** are gated on partner organs.
+6. **I1** is now Forge-gated (F2 pass + Bearer key); **I2, I3, I4** remain gated on partner/org readiness and local integration depth.
 7. **Q1, Q2, Q3** layer continuously over everything.
 
 The **most important first mission is F1** because it's the spine.

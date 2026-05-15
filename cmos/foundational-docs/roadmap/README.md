@@ -26,4 +26,4 @@ Each horizon doc:
 
 ## First artifact to author
 
-`near.md` for sprint-96. Recommended shape lives in [../mission-graph.md](../mission-graph.md) under "Sequencing Recommendation"; `near.md` translates that into concrete sprint missions.
+`near.md` is the active sprint-96 planning draft. Recommended shape lives in [../mission-graph.md](../mission-graph.md) under "Sequencing Recommendation"; `near.md` translates that into concrete sprint missions.

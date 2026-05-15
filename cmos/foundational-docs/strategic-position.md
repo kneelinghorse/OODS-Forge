@@ -56,7 +56,7 @@ Synthesis from web research 2026-05-09 (full citations in `_archive/` if needed;
 ### Standardized seams (the connectors that just arrived)
 - **DTCG 2025.10** — first stable design tokens spec (Oct 28 2025). Format war over.
 - **A2UI v0.9** — runtime UI wire format (Dec 2025). Catalog-shaped. MCP-compatible.
-- **MCP-for-design** — Figma MCP (beta), Storybook MCP (RFC late 2025, in preview, exposes Component Manifest), Subframe MCP, all live or near-live.
+- **MCP-for-design** — Figma MCP, Storybook MCP, Subframe MCP, all live or near-live as component/design context surfaces.
 - **Anthropic SKILL.md** — agent skill standard (Dec 2025). Adopted across Claude Code, Cursor, Codex, Gemini CLI.
 - **Headless primitives ecosystem** — shadcn/ui consumption pattern, Radix → Base UI, react-aria, Tailwind v4. Components ship as source-you-own, not packages-you-import.
 
@@ -98,9 +98,9 @@ Five vacant categories surfaced by the field analysis, with Forge's structural a
 **Gap:** A2UI says the host owns the catalog. Who *authors* the catalog from a real codebase, keeps it in sync as the codebase evolves, signs off the components an agent is allowed to call? No obvious tool.
 **Forge today:** `compose → validate → render → codegen → save` pipeline plus registry/snapshot already does most of this. The reframe is: position Forge as "the A2UI catalog factory."
 
-### 5. Bidirectional MCP for Design Systems
-**Gap:** Today's MCP design servers are read-only context surfaces. None accept "this variant worked in production, update yourself."
-**Forge today:** `map.apply`, `map.create`, `registry.snapshot` already write. The public framing as "first writable design-system MCP" is a precise market wedge.
+### 5. Bidirectional Object Catalog MCP for Design Systems
+**Gap:** Today's MCP design servers primarily expose component/design context or canvas operations. They do not expose a versioned object catalog that accepts evidence-backed reconciliation deltas and updates its own schema surface.
+**Forge today:** `map.apply`, `map.create`, `map.update`, and `map.delete` already mutate reconciliation state; `registry.snapshot` and catalog/object tools expose read surfaces. The public framing as a writable Object Catalog MCP with reconciliation semantics is the precise market wedge.
 
 ---
 

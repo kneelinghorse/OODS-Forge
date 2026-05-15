@@ -16,7 +16,7 @@ The five named forks where being wrong is expensive enough to warrant a research
 |---|---|---|---|
 | **D1** | Object Catalog schema shape | 🟢 Decided 2026-05-10 | [decisions/D1-object-catalog-schema.md](decisions/D1-object-catalog-schema.md) |
 | **D2** | Multi-fidelity render abstraction | 🟢 Decided 2026-05-10 (revisit when A2UI lands) | [decisions/D2-multi-fidelity-render.md](decisions/D2-multi-fidelity-render.md) |
-| **D3** | Forge ↔ concordance relationship | 🟢 First-pass decided 2026-05-10; **externally ratified by concordance 2026-05-12** (2nd-pass paced to concordance s13+ hosted endpoint) | [decisions/D3-forge-concordance-relationship.md](decisions/D3-forge-concordance-relationship.md) |
+| **D3** | Forge ↔ concordance relationship | 🟢 First-pass decided 2026-05-10; **externally ratified by concordance 2026-05-12**; sprint-13 production update received 2026-05-14 | [decisions/D3-forge-concordance-relationship.md](decisions/D3-forge-concordance-relationship.md) |
 | **D4** | Forge ↔ semantic-federation integration shape | 🟢 First-pass decided 2026-05-10 (2nd-pass pending Birch coordination) | [decisions/D4-forge-federation-integration.md](decisions/D4-forge-federation-integration.md) |
 | **D5** | Public-vs-private spec boundary | ⚪ Deferred (working system + named milestone first) | — |
 
@@ -30,13 +30,13 @@ The five named forks where being wrong is expensive enough to warrant a research
 
 **Status:** 🟢 Decided 2026-05-10. Full memo at [decisions/D1-object-catalog-schema.md](decisions/D1-object-catalog-schema.md).
 
-**Recommendation in one line:** Object Catalog is a **SemanticEntity-extended kernel with shape families implemented via URN multiplicity + projection_variants + an `oods.*` extension layer.** Each CatalogObject passes concordance's `manifest.schema.json` (v4.0) validation natively, plus carries Forge-specific render/codegen/brand annotations under the `oods` namespace.
+**Recommendation in one line:** Object Catalog is a **SemanticEntity-extended kernel with shape families implemented via URN multiplicity + projection_variants + an `oods.*` extension layer.** Each CatalogObject passes concordance's `manifest.schema.json` validation natively, plus carries Forge-specific render/codegen/brand annotations under the `oods` namespace. Catalog version stays `1.0.0`; Forge-specific catalog metadata is carried in `source` and entity-level `oods.*`, not at the strict SemanticManifest root.
 
 **Why this matters:** The Object Catalog is the central artifact. A2UI hosts consume it. semantic-federation governs it. Fidelity emitters render from it. Concordance canonicalizes against it. Schema migration is painful and visible to every external integrator.
 
 **Key changes from the original A/B/C framing:** Concordance has already shipped wire contract v1.0.0 with a structurally complete `SemanticManifest` v4.0 schema (180-line JSON Schema, closed enums for pragmatic_role/edge-types/task-types, deferred-state-resolution semantics validated through 5 sprints of zero-drift scoring). Building a parallel schema would forfeit that work. The decision became *how* OODS-Forge's catalog relates to SemanticEntity, not whether to design from scratch. Option D (extension-via-kernel) emerged as the resolution.
 
-**Unblocks:** F1 (Object Catalog spec v0.1), F2 (concordance ingestion contract), F3 (bidirectional MCP framing), C6 (Registry knowledge model depth), I1 (concordance live integration paced to concordance s13+ hosted endpoint).
+**Unblocks:** F1 (Object Catalog spec v1.0.0), F2 (concordance ingestion contract), F3 (bidirectional MCP framing), C6 (Registry knowledge model depth), I1 (concordance live integration now Forge-gated after Concordance sprint-13).
 
 **Constrains:** D2 (multi-fidelity render now has a defined input shape), D3 (significantly informed but not fully closed — relationship mechanics still need a memo when concordance ships hosted endpoint), D4 (Cedar policy now has a concrete artifact to gate against).
 
@@ -60,7 +60,7 @@ The five named forks where being wrong is expensive enough to warrant a research
 
 ## D3 — Forge ↔ Concordance Relationship
 
-**Status:** 🟢 First-pass decided 2026-05-10. Full memo at [decisions/D3-forge-concordance-relationship.md](decisions/D3-forge-concordance-relationship.md). Second-pass memo when concordance ships s13+ hosted endpoint OR when the cross-team planning conversation modifies any answers.
+**Status:** 🟢 First-pass decided 2026-05-10. Full memo at [decisions/D3-forge-concordance-relationship.md](decisions/D3-forge-concordance-relationship.md). Concordance sprint-13 shipped 2026-05-14 with hosted endpoint, Bearer auth, per-workspace tenancy, and wire `1.1.0`; second-pass memo only if live wiring changes the first-pass answers.
 
 **Recommendation in one line:** **Forge as concordance consumer** over HTTP (eventually MCP). Concordance hosts the corpus; Forge contributes canonical declarations via `POST /manifests` and queries the read endpoints at codegen / audit / brand-apply lifecycle moments. Forge vendors concordance's wire contract; gracefully degrades when concordance unreachable.
 
@@ -68,9 +68,9 @@ The five named forks where being wrong is expensive enough to warrant a research
 
 **External ratification 2026-05-12:** Concordance confirmed D1's SemanticEntity-extension approach is structurally compatible (verified additionalProperties patterns at lines 70, 94, 116 of their manifest.schema.json). Our 5 D3 answers concretize their s13 mission slate (m01 hosted endpoint, m02 auth + multi-tenant, m03 observability). F1/F2/F3 unblocked from their side. Three info_push commitments queued. Full receipts in the D3 memo "External Ratification" section.
 
-**Unblocks:** F2 (concordance ingestion contract) with concrete shape AND specific file targets to vendor; I1 (concordance live integration) with three-phase pacing — local → hosted → MCP adapter (longer horizon).
+**Unblocks:** F2 (concordance ingestion contract) with concrete shape AND specific file targets to vendor; I1 (concordance live integration) with three-phase pacing — local contract gate → hosted preflight/authenticated calls → MCP adapter (longer horizon).
 
-**Cost estimate:** F2 v1 ~4-6 sessions; I1 proper gated on concordance shipping s13+ hosted endpoint.
+**Cost estimate:** F2 v1 ~4-6 sessions; I1 proper is now gated by Forge's F2 contract gate plus Bearer key issuance.
 
 ---
 
@@ -78,13 +78,13 @@ The five named forks where being wrong is expensive enough to warrant a research
 
 **Status:** 🟢 First-pass decided 2026-05-10. Full memo at [decisions/D4-forge-federation-integration.md](decisions/D4-forge-federation-integration.md). Second-pass memo pending Birch coordination conversation.
 
-**Recommendation in one line:** **Write-side gating via OODS-subscriptions-style enforcement wrapper pattern.** Forge writable tools (`map.apply`, `map.create`, `map.update`, `map.delete`, `registry.snapshot.write`) call `evaluateCapability(state, context, action)` before mutating state. Reads unfiltered in v1. Distribution-side views (Option B) layerable as v2 evolution.
+**Recommendation in one line:** **Write-side gating via OODS-subscriptions-style enforcement wrapper pattern.** Forge writable tools (`map.apply`, `map.create`, `map.update`, `map.delete`, plus future catalog publish/snapshot-write tools) call `evaluateCapability(state, context, action)` before mutating state. Reads unfiltered in v1. Distribution-side views (Option B) layerable as v2 evolution.
 
 **Three contexts to start** (mirroring OODS-subscriptions): `customer_portal`, `support_agent`, `automation`. Context resolution flows through MCP request headers / Aquex-mcp routing. Initial rule set is small: block customer writes to canonical catalog; allow support full writes; restrict automation to reconciliation paths.
 
 **Sub-questions needing Birch input:** (1) Cedar adoption timeline (current reference uses JSON predicates, not Cedar DSL); (2) federation pattern beyond single-tenant; (3) hosted-evaluator transport choice (HTTP vs MCP).
 
-**Unblocks:** I2 (semantic-federation integration) with concrete v1 path. Sharpens F3 framing — Forge is the *first writable design-system MCP with capability-based governance.*
+**Unblocks:** I2 (semantic-federation integration) with concrete v1 path. Sharpens F3 framing — Forge is a writable Object Catalog MCP with capability-based governance.
 
 **Cost estimate:** ~7-8 sessions for I2 v1 (vendor evaluator + first rule set + wrap 5 write tools + tests).
 
