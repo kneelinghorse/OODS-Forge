@@ -24,6 +24,6 @@ Each horizon doc:
 `mid.md` updates as near sprints close.
 `far.md` updates when strategic position shifts (rare).
 
-## First artifact to author
+## Active artifact
 
-`near.md` is the active sprint-96 planning draft. Recommended shape lives in [../mission-graph.md](../mission-graph.md) under "Sequencing Recommendation"; `near.md` translates that into concrete sprint missions.
+`near.md` is the live near-horizon planning surface. As of sprint-98 close (2026-05-16) it carries sprint-96/97/98 outcomes and the sprint-99 candidate shape. Recommended sequencing lives in [../mission-graph.md](../mission-graph.md) under "Sequencing Recommendation"; `near.md` translates that into concrete sprint missions.

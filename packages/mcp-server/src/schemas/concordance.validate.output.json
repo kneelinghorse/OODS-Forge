@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/concordance.validate.output.json",
+  "title": "concordance.validate output",
+  "description": "Result of validating an Object Catalog manifest against the vendored Concordance wire contract.",
+  "type": "object",
+  "required": ["valid", "errors", "warnings", "schemaVersion", "diagnostics"],
+  "properties": {
+    "valid": {
+      "type": "boolean",
+      "description": "True iff the manifest passes AJV validation against the vendored manifest.schema.json (after schema_version strip)."
+    },
+    "errors": {
+      "type": "array",
+      "description": "AJV-native error shape, preserved for Pydantic detail.errors[] parity per the F2 / hosted Concordance convention.",
+      "items": { "$ref": "#/$defs/validationError" }
+    },
+    "warnings": {
+      "type": "array",
+      "description": "Non-fatal version-policy notes (e.g. patch or minor schema_version drift).",
+      "items": { "type": "string" }
+    },
+    "schemaVersion": {
+      "type": ["string", "null"],
+      "description": "schema_version observed on the manifest. Null when the manifest omits the field."
+    },
+    "versionPolicy": {
+      "type": "string",
+      "enum": ["exact", "patch", "minor", "major", "absent"],
+      "description": "Outcome of the version policy check against the Forge schema_version pin."
+    },
+    "diagnostics": {
+      "type": "object",
+      "required": ["expectedSchemaVersion", "source"],
+      "properties": {
+        "expectedSchemaVersion": {
+          "type": "string",
+          "description": "Forge's pinned Concordance schema_version (see version-policy.ts FORGE_SCHEMA_VERSION_PIN)."
+        },
+        "source": {
+          "type": "string",
+          "enum": ["inline", "file"],
+          "description": "Whether the validated manifest was provided inline or loaded from disk."
+        },
+        "manifestPath": {
+          "type": ["string", "null"],
+          "description": "Resolved manifest path when source=file. Always relative to projectRoot."
+        },
+        "entityCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of entities in the validated manifest (best-effort; 0 when the payload is malformed)."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "validationError": {
+      "type": "object",
+      "required": ["keyword", "instancePath", "message"],
+      "properties": {
+        "keyword": { "type": "string", "description": "AJV keyword that failed (e.g., required, type, additionalProperties)." },
+        "instancePath": { "type": "string", "description": "JSON pointer to the offending location in the payload." },
+        "schemaPath": { "type": "string", "description": "JSON pointer into the schema that produced this error." },
+        "params": { "type": "object" },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

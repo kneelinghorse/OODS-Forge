@@ -4,19 +4,17 @@ import type { HandlerSignatureMap } from './binding-utils.js';
 import {
   buildTailwindStaticClasses,
   buildTailwindVariantExpression,
-  collectTailwindVariantDefinitions,
   responsiveLayoutClasses,
   type TailwindVariantDefinition,
 } from './tailwind-codegen-utils.js';
 import {
   mapFieldType,
   snakeToCamel,
-  collectBindings,
   generateHandlerStubs,
-  collectPropDefaults,
   resolveChildContent,
   resolveFieldProps,
 } from './binding-utils.js';
+import { runPreEmit, type PreEmitContext } from './pre-emit.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (shared logic with tree-renderer.ts / react-emitter.ts)
@@ -164,21 +162,6 @@ function buildVueClassAttr(staticClasses: string, variantExpression: string | nu
     return `class="${escapeDoubleQuotedAttr(staticClasses)}"`;
   }
   return null;
-}
-
-// ---------------------------------------------------------------------------
-// Collect unique component names
-// ---------------------------------------------------------------------------
-
-function collectComponents(screens: UiElement[]): Set<string> {
-  const names = new Set<string>();
-  const stack = [...screens];
-  while (stack.length > 0) {
-    const node = stack.pop()!;
-    names.add(node.component);
-    if (node.children) stack.push(...node.children);
-  }
-  return names;
 }
 
 // ---------------------------------------------------------------------------
@@ -495,12 +478,9 @@ function detectComputedProperties(
 // ---------------------------------------------------------------------------
 
 function buildScriptSetup(
-  components: Set<string>,
-  options: CodegenOptions,
-  tailwindVariants: Map<string, TailwindVariantDefinition>,
-  objectSchema?: Record<string, FieldSchemaEntry>,
-  screens?: UiElement[],
+  ctx: PreEmitContext,
 ): string {
+  const { components, options, tailwindVariants, objectSchema, tree: screens } = ctx;
   const sorted = Array.from(components).sort();
   const lines: string[] = [];
   const hasObjectSchema = objectSchema && Object.keys(objectSchema).length > 0;
@@ -588,20 +568,18 @@ function buildScriptSetup(
     lines.push(`}>();`);
   }
 
-  // Handler stubs from bindings
-  if (screens) {
-    const handlers = collectBindings(screens);
-    const stubs = generateHandlerStubs(handlers, options.typescript, VUE_HANDLER_SIGNATURES);
-    if (stubs) {
-      lines.push('');
-      lines.push(stubs);
-    }
+  // Handler stubs from bindings (collected in the shared pre-emit pass)
+  const handlers = ctx.handlers;
+  const stubs = generateHandlerStubs(handlers, options.typescript, VUE_HANDLER_SIGNATURES);
+  if (stubs) {
+    lines.push('');
+    lines.push(stubs);
   }
 
   // Prop default declarations — skip names already declared as ref() or defineProps
-  if (hasObjectSchema && screens) {
+  if (hasObjectSchema) {
     const declaredNames = new Set(Object.keys(objectSchema!).map(snakeToCamel));
-    const propDefaults = collectPropDefaults(screens, objectSchema!);
+    const propDefaults = ctx.propDefaults;
     if (propDefaults.size > 0) {
       let emittedAny = false;
       for (const [propName, { formatted, isExpression }] of propDefaults) {
@@ -664,14 +642,12 @@ function buildScopedStyle(screens: UiElement[], options: CodegenOptions): string
  */
 export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const warnings: CodegenIssue[] = [];
-  const components = collectComponents(schema.screens);
-  const tailwindVariants = options.styling === 'tailwind'
-    ? collectTailwindVariantDefinitions(schema.screens)
-    : new Map<string, TailwindVariantDefinition>();
+  const ctx = runPreEmit(schema, { options });
+  const tailwindVariants = ctx.tailwindVariants;
 
   // Build template block
-  const screenTemplates = schema.screens
-    .map((screen) => emitTemplateNode(screen, 1, warnings, options, tailwindVariants, schema.objectSchema))
+  const screenTemplates = ctx.tree
+    .map((screen) => emitTemplateNode(screen, 1, warnings, options, tailwindVariants, ctx.objectSchema))
     .join('\n');
 
   const templateBlock = [
@@ -681,16 +657,10 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   ].join('\n');
 
   // Build script setup block
-  const scriptBlock = buildScriptSetup(
-    components,
-    options,
-    tailwindVariants,
-    schema.objectSchema,
-    schema.screens,
-  );
+  const scriptBlock = buildScriptSetup(ctx);
 
   // Build optional scoped style block
-  const styleBlock = buildScopedStyle(schema.screens, options);
+  const styleBlock = buildScopedStyle(ctx.tree, options);
 
   // Inject token overrides as CSS custom properties
   let tokenStyle = '';
