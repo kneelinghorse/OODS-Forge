@@ -212,16 +212,61 @@ At least three production-shape fixtures land alongside this spec in F1 implemen
 
 Fixture additions in sprint-97 (F1 implementation) may add an Account or Order shape; v1.0.0 ships with the three above as the minimum.
 
-### Fixture and schema file locations
+### Fixture and schema file locations (sprint-97 F1 — landed)
 
-| Artifact | Path (sprint-97 lands these) |
+| Artifact | Path |
 |---|---|
-| JSON Schema for the SemanticManifest + `oods.*` extension | `packages/mcp-server/src/concordance/contracts/manifest.schema.json` (vendored from Concordance) + `packages/mcp-server/src/catalog/oods-extension.schema.json` (Forge-authored) |
-| Generated TypeScript types | `packages/mcp-server/src/catalog/types.ts` |
-| Production-shape fixtures | `packages/mcp-server/test/fixtures/catalog/user-v1.json`, `product-v1.json`, `subscription-v1.json` |
-| Round-trip fixture for Concordance ingest | `packages/mcp-server/test/fixtures/catalog/roundtrip-v1.manifest.json` |
+| JSON Schema for the SemanticManifest envelope + `oods.*` extension (Forge-authored) | [`packages/mcp-server/src/object-catalog/schema.json`](../../../packages/mcp-server/src/object-catalog/schema.json) |
+| Vendored Concordance `manifest.schema.json` (for G1 byte-parity) | `packages/mcp-server/src/concordance/contracts/manifest.schema.json` *(lands in sprint-97 F2 via `diverge-and-concord/bin/sync-contracts.sh`)* |
+| TypeScript types (mirror of `schema.json`) | [`packages/mcp-server/src/object-catalog/types.ts`](../../../packages/mcp-server/src/object-catalog/types.ts) |
+| Production-shape fixtures | [`packages/mcp-server/src/object-catalog/fixtures/user.json`](../../../packages/mcp-server/src/object-catalog/fixtures/user.json), [`product.json`](../../../packages/mcp-server/src/object-catalog/fixtures/product.json), [`subscription.json`](../../../packages/mcp-server/src/object-catalog/fixtures/subscription.json) |
+| Gate tests (G1/G2/G3 in one file) | [`packages/mcp-server/src/object-catalog/gates.test.ts`](../../../packages/mcp-server/src/object-catalog/gates.test.ts) |
 
-These paths are the *plan*. F1 implementation may relocate within `packages/mcp-server/src/` if a cleaner home emerges, but the catalog fixture root must remain under `test/fixtures/catalog/` so the E2E gate can discover them by pattern.
+The fixtures live under `src/object-catalog/fixtures/` rather than `test/fixtures/catalog/` because the schema, types, fixtures, and gate tests form a single co-located authoring artifact. The E2E gate (G3 round-trip against local Concordance) lands in sprint-97 F2/F3 and discovers fixtures via this directory, not by `test/fixtures/` pattern.
+
+#### Minimal at-a-glance fixture shape
+
+The shape below is taken from [`fixtures/user.json`](../../../packages/mcp-server/src/object-catalog/fixtures/user.json) (`pragmatic_role: informational`, no SEMANTIC §6 conditional fired). See the file for the full shape; this snippet is the inline reading aid.
+
+```jsonc
+{
+  "manifest_version": "4.0",
+  "schema_version": "1.1.0",
+  "source": {
+    "agent": "oods-forge",
+    "stage": "compose",
+    "captured_at": "2026-05-15T00:00:00.000Z",
+    "oods_catalog_version": "1.0.0"   // load-bearing pin (D1)
+  },
+  "entities": [
+    {
+      "urn": "urn:proto:semantic:user-profile-card@1.0.0",
+      "element": { "type": "ui.surface.card", "name": "User profile card" },
+      "semantics": { "purpose": "show profile", "human_meaning": "..." },
+      "pragmatic_role": "informational",
+      // ... kernel fields (states/preconditions/effects/traits/context/locations/evidence_refs)
+      "oods": {                       // additionalProperties:true on SemanticEntity makes this legal
+        "catalog": { "version": "1.0.0" },
+        "render": {                   // load-bearing for runPreEmit() — D2
+          "ui_schema_ref": "compose-user-profile-desktop",
+          "slots": [
+            { "name": "avatar",   "binding": { "field": "user.photo_url" } },
+            { "name": "title",    "binding": { "field": "user.display_name" } },
+            { "name": "subtitle", "binding": { "field": "user.email" } }
+          ],
+          "brand_overlay": "brand-a"
+        },
+        "projection_variants": [      // load-bearing for runPreEmit() — D2
+          { "surface": "desktop", "ui_schema_ref": "compose-user-profile-desktop", "slots": [/*…*/], "brand_overlay": "brand-a" },
+          { "surface": "mobile",  "ui_schema_ref": "compose-user-profile-mobile",  "slots": [/*…*/], "brand_overlay": "brand-a" }
+        ]
+      }
+    }
+  ]
+}
+```
+
+The Product fixture exercises action-shaped entities (`element.object` + `element.action` + `pragmatic_role: primary_action` — fires SEMANTIC §6 in `schema.json`'s `allOf`). The Subscription fixture exercises `relationships.edges[]` (`renews_to`, `depends_on`) and the multi-state list (`active`, `paused`, `cancelled`).
 
 ---
 

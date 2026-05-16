@@ -41,10 +41,11 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 - **Why:** validated through sprints 92–95. Quality-first cadence held; scope inflation remains the named anti-pattern. Sprint 95's N=3 test confirmed the posture is genuinely flexible rather than a fixed shape.
 - **Application:** sprint planning starts at N≤5; expansion past 5 requires explicit rationale.
 
-### Per-mission commits at mission-complete time
-- **Rule:** Each mission commits its deliverables when the mission completes. Not at sprint end. Not in batch.
-- **Why:** Sprint 90/91 git hygiene debt. Single late-blob commits lose per-mission attribution. The +1 closeout convention's first deliverable is "verify per-mission commits exist" specifically because this discipline failed before.
-- **Application:** mission-complete is gated on commit existing. Missing commit = mission not complete.
+### End-of-sprint commit boundary inside the +1 closeout mission
+- **Rule:** Each sprint commits its full set of deliverables inside the closeout mission. The closeout commit message enumerates the mission IDs (`s97-m01, s97-m02, …`) so post-hoc bisection by mission scope is still possible. `git status` must be clean at session.complete time. Per-mission mid-sprint commits are still welcome when they're natural, but they're not required.
+- **Why:** The earlier sprint-91 decision #309 ("per-mission commits at mission-complete time") was retired by decision #408 after failing across 5 consecutive sprints (s90–s96) with no enforcement mechanism. Closeout-as-boundary is what actually held; closeout integrity is what matters for foundation/spec/contract sprints, not per-mission integrity. Bisection-by-mission is preserved via the enumerated commit message rather than via per-mission commits.
+- **Application:** every sprint's closeout mission has three explicit success criteria: (a) all sprint deliverables committed before session completes, (b) commit message lists mission IDs covered, (c) git status clean at session.complete time. First formal run was sprint-97 m05.
+- **Future tightening:** if a code-heavy sprint demands per-mission bisection later, per-mission discipline can be reintroduced with a different rule scoped only to code-producing missions (not foundation/spec/contract work).
 
 ---
 

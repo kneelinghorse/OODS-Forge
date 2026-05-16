@@ -1,0 +1,38 @@
+{
+  "$comment": "Single-sourced from concordance-semantic_protocol_service_scope.md §9.2. Declares the slots that POST /context-pack must populate when recipe='debug_or_explain'. Mirrors the semantic-location.json shape (per-slot derivation_rule, fail-loud loader). Sprint 9 m03 deliverable. Slot vocabulary follows the actual corpus edge-type inventory ('requires', 'triggers', 'produces', 'depends_on') rather than the scope's nominal 'recovers_from'/'governs' verbs — the corpus uses the inverse-direction 'requires' to encode 'this action recovers from this state' and 'depends_on' to encode 'this action is governed by this policy'.",
+  "version": "1.0.0",
+  "recipe": "debug_or_explain",
+  "description": "Used for queries like 'Why does checkout fail when the card is declined?' or 'Explain how the payment retry policy works'. Resolves a failure-state or causation-relevant entity and returns its proximate cause, recovery options, related policies, and evidence chain.",
+  "slots": [
+    {
+      "name": "failed_state",
+      "type": "object",
+      "required": true,
+      "derivation_rule": "If entity.element.type == 'state', return {urn, name, kind} for the entity itself (the canonical failed-state-node-wins-for-debug_or_explain rule per PRAGMATIC §3.2). Otherwise (the entity is a policy or object — definitional/explanatory framing rather than causal), return MissingSlot with reason naming the URN's actual kind. The latter case is expected for q19-style 'explain how X works' queries where the canonical answer is a policy entity, not a failure state."
+    },
+    {
+      "name": "proximate_cause",
+      "type": "list",
+      "required": true,
+      "derivation_rule": "Entities pointing AT this URN via incoming 'produces' or 'triggers' edges at depth=1 — i.e., the upstream nodes that led to this entity. Excludes incoming 'requires' edges, which encode recovery-binding rather than causation. Each entry is {urn, name, kind, edge_type}. Truncate to first 5 by deterministic order. Missing if no qualifying inbound edges exist."
+    },
+    {
+      "name": "recovery_options",
+      "type": "list",
+      "required": true,
+      "derivation_rule": "Entities with outbound 'requires' edges pointing AT this URN — i.e., actions or UI surfaces that name this state as a precondition. The corpus encodes 'X recovers from state Y' as 'X requires Y' (e.g., action-retry-payment requires state-card-declined). Each entry is {urn, name, kind}. Truncate to first 5 by deterministic order. Missing if no inbound requires edges (this state has no recovery surface in the catalog yet)."
+    },
+    {
+      "name": "related_policies",
+      "type": "list",
+      "required": true,
+      "derivation_rule": "Policy entities reachable via depth-2 traversal: walk recovery_options' outbound 'depends_on' edges and collect policy-kind entities. The corpus encodes 'recovery action governed by policy P' as 'recovery_action depends_on P'. For policy-kind seed URNs (the q19 definitional case), instead return {urn, name, kind} of the seed itself plus any depth-1 'depends_on' targets that are also policies. Truncate to 5. Missing if no policy entities are reachable."
+    },
+    {
+      "name": "evidence_chain",
+      "type": "list",
+      "required": true,
+      "derivation_rule": "Union of evidence_refs across the seed entity + proximate_cause + recovery_options entities. Each entry is the evidence_ref struct {id, protocol, kind, locator, matched, weight, provenance, captured_at}. Deduplicate by id. Truncate to first 8 entries (slightly higher than per-slot limits because evidence_chain is the cross-slot summary surface). Missing if no entity in the union has populated evidence_refs."
+    }
+  ]
+}
