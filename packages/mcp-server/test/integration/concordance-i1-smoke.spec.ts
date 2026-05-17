@@ -29,7 +29,9 @@ import {
   ConcordanceValidationError,
 } from '../../src/concordance/errors.js';
 import userFixture from '../../src/object-catalog/fixtures/user.json' with { type: 'json' };
+import productFixture from '../../src/object-catalog/fixtures/product.json' with { type: 'json' };
 import subscriptionFixture from '../../src/object-catalog/fixtures/subscription.json' with { type: 'json' };
+import billingFixture from '../fixtures/object-catalog/billing-multi-entity.json' with { type: 'json' };
 import { createHash } from 'node:crypto';
 
 const RUN = process.env.RUN_HOSTED_SMOKE === '1';
@@ -211,14 +213,14 @@ describe.skipIf(!ENABLED)('I1 — Authenticated hosted smoke', () => {
     expect(hashOf(first.data)).toBe(hashOf(second.data));
   });
 
-  // ── G3 hosted canonical-kernel stability gate (s98-m04) ─────────────────────
+  // ── G3 hosted canonical-kernel stability gate (s98-m04, extended s99-m03) ───
   //
   // Extends G3 from fixture-internal hash stability (src/object-catalog/
-  // gates.test.ts) to a live hosted round-trip. Forge POSTs the Subscription
-  // fixture (step 2a above), GETs /entities/{urn} back, strips the oods.*
-  // overlay from both sides, and asserts that every Forge-declared value
-  // appears verbatim in concordance's response. Concordance is allowed to
-  // materialize optional fields its Pydantic model exposes (null / empty
+  // gates.test.ts) to a live hosted round-trip. Forge POSTs each fixture
+  // manifest, GETs /entities/{urn} back per declared entity, strips the
+  // oods.* overlay from both sides, and asserts that every Forge-declared
+  // value appears verbatim in concordance's response. Concordance is allowed
+  // to materialize optional fields its Pydantic model exposes (null / empty
   // array / empty object) — that is JSON-API idiom, not mutation. It is NOT
   // allowed to drop a Forge-provided value or alter one to a non-default.
   //
@@ -226,29 +228,76 @@ describe.skipIf(!ENABLED)('I1 — Authenticated hosted smoke', () => {
   // and persists the kernel. This gate makes the "concordance preserves the
   // kernel verbatim" claim executable against the live service.
   //
-  // Idempotent: the subscription fixture URN is stable; re-runs just re-POST
-  // and re-GET the same URN.
-  it('G3 hosted canonical-kernel: every Forge-declared value preserved verbatim (subscription fixture)', async () => {
-    const sourceEntity = subscriptionFixture.entities[0];
-    const urn = sourceEntity.urn;
+  // Sprint-99 m03 extends from 1 fixture (subscription, sprint-98 m04) to 4:
+  //   - user (informational, no edges)
+  //   - product (action-shaped)
+  //   - subscription (relationships.edges with internal targets)
+  //   - billing-multi-entity (3 cross-linked entities; per-entity GET pattern)
+  //
+  // The multi-entity fixture is the novel pattern: one manifest POST creates
+  // 3 entities, then 3 separate GETs each diffKernel-checked against the
+  // corresponding source entity. This proves concordance preserves cross-
+  // entity relationships byte-faithful even when entities are re-emitted as
+  // separate per-entity reads.
+  //
+  // Reuses diffKernel() unchanged per decision #440 (canonical-kernel D1
+  // contract: future fixtures add by URN without modifying the helper).
+  //
+  // Idempotent: all fixture URNs are stable; re-runs re-POST + re-GET.
 
-    const fetched = await client.getEntity(urn);
-    // eslint-disable-next-line no-console
-    console.info(`[I1 G3] get status=${fetched.diagnostics.status} request_id=${fetched.diagnostics.requestId} duration_ms=${fetched.diagnostics.durationMs}`);
-    expect(fetched.diagnostics.status).toBe(200);
+  type FixtureCase = {
+    name: string;
+    manifest: { entities: Array<Record<string, unknown>> };
+  };
 
-    const forgeKernel = stripOodsExtension(sourceEntity as Record<string, unknown>);
-    const concordanceKernel = stripOodsExtension(fetched.data as Record<string, unknown>);
+  const fixtureCases: FixtureCase[] = [
+    { name: 'user', manifest: userFixture as FixtureCase['manifest'] },
+    { name: 'product', manifest: productFixture as FixtureCase['manifest'] },
+    { name: 'subscription', manifest: subscriptionFixture as FixtureCase['manifest'] },
+    { name: 'billing-multi-entity', manifest: billingFixture as FixtureCase['manifest'] },
+  ];
 
-    const diffs = diffKernel(forgeKernel, concordanceKernel, '$');
-    if (diffs.length > 0) {
-      throw new Error(
-        `G3 hosted canonical-kernel mismatch for ${urn}:\n` +
-          diffs.map((d) => `  - ${d}`).join('\n'),
+  for (const fixture of fixtureCases) {
+    it(`G3 ${fixture.name}: POST manifest + per-entity diffKernel deep-subset preserved`, async () => {
+      // POST manifest (idempotent re-ingest by URN); m03 retry surface
+      // absorbs any 429/5xx Railway rate-limit blips transparently.
+      const submit = await client.submitManifest(fixture.manifest);
+      // eslint-disable-next-line no-console
+      console.info(
+        `[G3 ${fixture.name}] submit status=${submit.diagnostics.status} ingested=${(submit.data as { ingested_entities?: number }).ingested_entities} schema_version=${submit.diagnostics.schemaVersion} request_id=${submit.diagnostics.requestId} duration_ms=${submit.diagnostics.durationMs}`,
       );
-    }
-    expect(diffs).toEqual([]);
-  });
+      expect([200, 201]).toContain(submit.diagnostics.status ?? 0);
+      expect((submit.data as { ingested_entities?: number }).ingested_entities).toBe(
+        fixture.manifest.entities.length,
+      );
+
+      // Per-entity GET + diffKernel. For single-entity fixtures this is one
+      // iteration; for billing-multi-entity it's three.
+      for (const sourceEntity of fixture.manifest.entities) {
+        const urn = (sourceEntity as { urn: string }).urn;
+        const fetched = await client.getEntity(urn);
+        // eslint-disable-next-line no-console
+        console.info(
+          `[G3 ${fixture.name}] get ${urn} status=${fetched.diagnostics.status} schema_version=${fetched.diagnostics.schemaVersion} request_id=${fetched.diagnostics.requestId} duration_ms=${fetched.diagnostics.durationMs}`,
+        );
+        expect(fetched.diagnostics.status).toBe(200);
+
+        const forgeKernel = stripOodsExtension(sourceEntity as Record<string, unknown>);
+        const concordanceKernel = stripOodsExtension(
+          fetched.data as Record<string, unknown>,
+        );
+
+        const diffs = diffKernel(forgeKernel, concordanceKernel, '$');
+        if (diffs.length > 0) {
+          throw new Error(
+            `G3 ${fixture.name} canonical-kernel mismatch for ${urn}:\n` +
+              diffs.map((d) => `  - ${d}`).join('\n'),
+          );
+        }
+        expect(diffs).toEqual([]);
+      }
+    });
+  }
 });
 
 // Always-visible status: if the two-gate guard isn't satisfied, surface a
