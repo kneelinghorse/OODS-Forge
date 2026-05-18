@@ -4,19 +4,17 @@ import type { HandlerSignatureMap } from './binding-utils.js';
 import {
   buildTailwindStaticClasses,
   buildTailwindVariantExpression,
-  collectTailwindVariantDefinitions,
   responsiveLayoutClasses,
   type TailwindVariantDefinition,
 } from './tailwind-codegen-utils.js';
 import {
   mapFieldType,
   snakeToCamel,
-  collectBindings,
   generateHandlerStubs,
-  collectPropDefaults,
   resolveChildContent,
   resolveFieldProps,
 } from './binding-utils.js';
+import { runPreEmit } from './pre-emit.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (mirrors tree-renderer.ts logic in React style format)
@@ -180,17 +178,6 @@ function buildReactClassAttr(staticClasses: string, variantExpression: string | 
 // ---------------------------------------------------------------------------
 // JSX tree emitter
 // ---------------------------------------------------------------------------
-
-function collectComponents(screens: UiElement[]): Set<string> {
-  const names = new Set<string>();
-  const stack = [...screens];
-  while (stack.length > 0) {
-    const node = stack.pop()!;
-    names.add(node.component);
-    if (node.children) stack.push(...node.children);
-  }
-  return names;
-}
 
 function emitNode(
   node: UiElement,
@@ -469,14 +456,13 @@ function buildImportList(_components: Set<string>, includeCva: boolean): string[
  */
 export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const warnings: CodegenIssue[] = [];
-  const components = collectComponents(schema.screens);
-  const tailwindVariants = options.styling === 'tailwind'
-    ? collectTailwindVariantDefinitions(schema.screens)
-    : new Map<string, TailwindVariantDefinition>();
+  const ctx = runPreEmit(schema, { options });
+  const components = ctx.components;
+  const tailwindVariants = ctx.tailwindVariants;
 
   // Generate JSX for each screen
-  const screenJsx = schema.screens
-    .map((screen) => emitNode(screen, 2, warnings, options, tailwindVariants, schema.objectSchema))
+  const screenJsx = ctx.tree
+    .map((screen) => emitNode(screen, 2, warnings, options, tailwindVariants, ctx.objectSchema))
     .join('\n');
 
   // Build the complete file
@@ -518,14 +504,12 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     lines.push(typeAnnotations, '');
   }
 
-  // Collect and generate handler stubs from bindings
-  const handlers = collectBindings(schema.screens);
+  // Handler stubs from bindings (collected in the shared pre-emit pass)
+  const handlers = ctx.handlers;
   const handlerStubs = generateHandlerStubs(handlers, options.typescript, REACT_HANDLER_SIGNATURES, '  ');
 
-  // Collect prop defaults from objectSchema field values on elements
-  const propDefaults = hasObjectSchema
-    ? collectPropDefaults(schema.screens, schema.objectSchema!)
-    : null;
+  // Prop defaults from objectSchema field values (collected in the shared pre-emit pass)
+  const propDefaults = hasObjectSchema ? ctx.propDefaults : null;
 
   // Destructure object schema fields from props for type-safe JSX references
   if (hasObjectSchema) {

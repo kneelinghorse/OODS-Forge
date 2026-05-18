@@ -338,7 +338,14 @@ describe('s94-m04 Stage1 v1.6.0 rollup real-data gate (a0300dc0 + 7adc1d79)', ()
       const report = {
         mission: 's94-m04',
         title: 'Real-data E2E gate vs Stage1 v1.6.0 rollup artifacts (a0300dc0 + 7adc1d79)',
-        generatedAt: new Date().toISOString(),
+        // Deterministic timestamp anchored to the s94 closeout date that the
+        // filename also encodes ('-2026-04-17.json'). Source-fixed in sprint-99
+        // m05 per decision #449 after three consecutive sprints where the
+        // dynamic new Date().toISOString() dirtied the gate file at every test
+        // run. The semantic of generatedAt is "the date this gate was first
+        // established," NOT "when the test was last run" — the latter is
+        // already implicit in git mtime.
+        generatedAt: '2026-04-17T00:00:00.000Z',
         status: 'verified',
         basis: 'live_on_disk_rollups_via_structuredData_fetch',
         contractAlignment: {

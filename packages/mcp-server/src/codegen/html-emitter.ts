@@ -3,6 +3,7 @@ import { renderDocument } from '../render/document.js';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions, CodegenResult } from './types.js';
 import { resolveChildContent, resolveFieldProps } from './binding-utils.js';
+import { runPreEmit } from './pre-emit.js';
 
 /**
  * Inject {{fieldName}} placeholder text into leaf nodes with field bindings.
@@ -48,11 +49,12 @@ function injectFieldPlaceholders(schema: UiSchema): UiSchema {
  * Produces a self-contained HTML document from the UiSchema.
  * Injects {{fieldName}} placeholders for field-bound components.
  */
-export function emit(schema: UiSchema, _options: CodegenOptions): CodegenResult {
+export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const warnings: CodegenResult['warnings'] = [];
 
   try {
-    const processedSchema = injectFieldPlaceholders(schema);
+    const ctx = runPreEmit(schema, { options });
+    const processedSchema = injectFieldPlaceholders(ctx.schema);
     const screenHtml = renderTree(processedSchema);
     const html = renderDocument({ screenHtml, schema: processedSchema });
 

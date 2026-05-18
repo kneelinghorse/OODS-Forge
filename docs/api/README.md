@@ -30,6 +30,7 @@ Auto-generated from JSON schemas and tool-descriptions.json.
 | [object.show](./object-show.md) | Show a full OODS object definition, including composed trait schema and view extensions. |
 | [registry.snapshot](./registry-snapshot.md) | Return the full registry state in one call: maps, traits, objects, etag, and generatedAt. Intended for reconciliation consumers that would otherwise need map.list plus N× map.resolve. |
 | [viz.compose](./viz-compose.md) | Compose a visualization schema from chart type, data bindings, and/or object viz traits. Returns schemaRef for pipeline reuse. schemaRef includes createdAt/expiresAt (default TTL: 30 minutes). Supports bar, line, area, and point chart types with axis, color, and size encodings. |
+| [concordance.validate](./concordance-validate.md) | Validate an Object Catalog manifest against the vendored Concordance wire contract. Accepts either an inline `manifest` object or a project-relative `manifestPath`. Returns valid/errors/warnings plus version-policy outcome (exact|patch|minor|major|absent) against the Forge schema_version pin. Errors preserve AJV instancePath/keyword/params shape for Pydantic detail.errors[] parity. Agent-callable only — manifest validation is NOT auto-baked into the compose/render pipeline yet. |
 
 ## On-demand Tools
 
