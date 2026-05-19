@@ -1,18 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   healthCheck,
   runMapApply,
   runPipeline,
-  runReviewTriage,
   runTool,
   type BridgeResponse,
   type MapApplyResult,
   type PipelineResult,
-  type ReviewTriageDecision,
-  type ReviewTriageResult,
-  type ReviewTriageVerdict,
 } from "./bridge-client";
-import { useDebounce, useSessionCache, useUrlParam } from "./hooks";
+import { useDebounce } from "./hooks";
 import { IntentInput } from "./components/IntentInput";
 import { Selectors } from "./components/Selectors";
 import { PreviewPanel } from "./components/PreviewPanel";
@@ -494,42 +490,6 @@ function resolveToolResult<T>(response: BridgeResponse<T>): T {
   throw new Error("Bridge returned an unexpected response shape.");
 }
 
-/**
- * Resolve a fixture-id string from a URL param against the known fixture catalog.
- * Falls back to "linear" for unknown / empty values.
- */
-function resolveFixtureIdParam(value: string): Stage1FixtureMeta["id"] {
-  return value in STAGE1_FIXTURES
-    ? (value as Stage1FixtureMeta["id"])
-    : "linear";
-}
-
-const MIN_CONFIDENCE_DEFAULT = 0.75;
-const MIN_CONFIDENCE_MIN = 0.5;
-const MIN_CONFIDENCE_MAX = 0.95;
-
-function parseMinConfidenceParam(value: string): number {
-  const num = Number.parseFloat(value);
-  if (!Number.isFinite(num)) return MIN_CONFIDENCE_DEFAULT;
-  return Math.min(MIN_CONFIDENCE_MAX, Math.max(MIN_CONFIDENCE_MIN, num));
-}
-
-/**
- * Session-scoped triage history: per-objectId record of operator decisions.
- * Drives the transcript export in StatusBar and the local UI "resolved" state.
- */
-export type TriageHistoryEntry = {
-  objectId: string;
-  verdict: ReviewTriageVerdict;
-  decidedAt: string;
-  reason?: string;
-  mapsCreated: ReviewTriageResult["mapsCreated"];
-  mapsUpdated: ReviewTriageResult["mapsUpdated"];
-  mapsRemoved: ReviewTriageResult["mapsRemoved"];
-  artifact: string;
-  errors: ReviewTriageResult["errors"];
-};
-
 export default function App() {
   const [view, setView] = useState<ViewMode>(getInitialView);
   const [intent, setIntent] = useState("");
@@ -537,26 +497,8 @@ export default function App() {
   const [styling, setStyling] = useState<Styling>("tokens");
   const [brand, setBrand] = useState<Brand>("default");
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [fixtureParam, setFixtureParam] = useUrlParam("fixture", "linear");
-  const [minConfidenceParam, setMinConfidenceParam] = useUrlParam(
-    "minConfidence",
-    String(MIN_CONFIDENCE_DEFAULT),
-  );
-  const stage1FixtureId = resolveFixtureIdParam(fixtureParam);
-  const setStage1FixtureId = useCallback(
-    (next: Stage1FixtureMeta["id"]) => setFixtureParam(next),
-    [setFixtureParam],
-  );
-  const minConfidence = parseMinConfidenceParam(minConfidenceParam);
-  const setMinConfidence = useCallback(
-    (next: number) => setMinConfidenceParam(next.toFixed(2)),
-    [setMinConfidenceParam],
-  );
-  const debouncedMinConfidence = useDebounce(minConfidence, 400);
-  const mapApplyCache = useSessionCache<MapApplyResult>("map-apply");
-  const [triageHistory, setTriageHistory] = useState<TriageHistoryEntry[]>([]);
-  const [triageBusy, setTriageBusy] = useState<Set<string>>(() => new Set());
-  const conflictArtifactPathRef = useRef<string | null>(null);
+  const [stage1FixtureId, setStage1FixtureId] =
+    useState<Stage1FixtureMeta["id"]>("linear");
 
   const [composeLoading, setComposeLoading] = useState(false);
   const [composeResult, setComposeResult] = useState<PipelineResult | null>(
@@ -640,28 +582,6 @@ export default function App() {
       setSyntheticPatchResult(null);
       setStage1Error(null);
       setStage1Loading(false);
-      conflictArtifactPathRef.current = null;
-      return;
-    }
-    const cacheKey = `${activeFixture.id}|${debouncedMinConfidence.toFixed(2)}`;
-    const cached = mapApplyCache.get(cacheKey);
-    if (cached) {
-      setStage1Result(cached);
-      setStage1Error(null);
-      setStage1Loading(false);
-      conflictArtifactPathRef.current = cached.conflictArtifactPath ?? null;
-      // Still load the synthetic patch fixture in parallel if we don't have it.
-      if (!syntheticPatchResult) {
-        try {
-          const synthetic = await runMapApply(
-            SYNTHETIC_PATCH_FIXTURE_PATH,
-            MIN_CONFIDENCE_DEFAULT,
-          );
-          setSyntheticPatchResult(resolveToolResult(synthetic));
-        } catch {
-          /* synthetic preview is non-fatal */
-        }
-      }
       return;
     }
     setStage1Loading(true);
@@ -669,14 +589,11 @@ export default function App() {
 
     try {
       const [realFixture, syntheticFixture] = await Promise.all([
-        runMapApply(activeFixture.reportPath, debouncedMinConfidence),
-        runMapApply(SYNTHETIC_PATCH_FIXTURE_PATH, MIN_CONFIDENCE_DEFAULT),
+        runMapApply(activeFixture.reportPath, 0.75),
+        runMapApply(SYNTHETIC_PATCH_FIXTURE_PATH, 0.75),
       ]);
 
-      const realResult = resolveToolResult(realFixture);
-      setStage1Result(realResult);
-      mapApplyCache.set(cacheKey, realResult);
-      conflictArtifactPathRef.current = realResult.conflictArtifactPath ?? null;
+      setStage1Result(resolveToolResult(realFixture));
       setSyntheticPatchResult(resolveToolResult(syntheticFixture));
     } catch (error) {
       const message =
@@ -685,108 +602,16 @@ export default function App() {
           : "Failed to load Stage1 playground data.";
       setStage1Error(message);
       setStage1Result(null);
-      conflictArtifactPathRef.current = null;
     } finally {
       setStage1Loading(false);
     }
-  }, [
-    activeFixture.id,
-    activeFixture.kind,
-    activeFixture.reportPath,
-    debouncedMinConfidence,
-    mapApplyCache,
-    syntheticPatchResult,
-    view,
-  ]);
+  }, [activeFixture.kind, activeFixture.reportPath, view]);
 
   useEffect(() => {
     if (view === "stage1") {
       loadStage1Demo();
     }
   }, [loadStage1Demo, view]);
-
-  const handleTriageVerdict = useCallback(
-    async (objectId: string, verdict: ReviewTriageVerdict) => {
-      const artifactPath = conflictArtifactPathRef.current;
-      if (!artifactPath) {
-        setStage1Error(
-          "Triage requires a conflict artifact path — none available for this fixture/threshold.",
-        );
-        return;
-      }
-      setTriageBusy((prev) => {
-        const next = new Set(prev);
-        next.add(objectId);
-        return next;
-      });
-      try {
-        const decision: ReviewTriageDecision = {
-          objectId,
-          verdict,
-          resolvedBy: "playground",
-        };
-        const response = await runReviewTriage({
-          conflictArtifactPath: artifactPath,
-          decisions: [decision],
-        });
-        if ("error" in response && response.error) {
-          setStage1Error(response.error.message);
-          return;
-        }
-        if (!("ok" in response) || !response.ok || !response.result) {
-          setStage1Error("review.triage returned an unexpected response shape.");
-          return;
-        }
-        const result = response.result;
-        setTriageHistory((prev) => [
-          ...prev,
-          {
-            objectId,
-            verdict,
-            decidedAt: new Date().toISOString(),
-            reason: decision.reason,
-            mapsCreated: result.mapsCreated,
-            mapsUpdated: result.mapsUpdated,
-            mapsRemoved: result.mapsRemoved,
-            artifact: result.artifact,
-            errors: result.errors,
-          },
-        ]);
-        // Drop the cached map.apply result so the next fixture/threshold read
-        // re-runs map.apply against the registry mutated by the triage call.
-        for (const key of [
-          `${activeFixture.id}|${debouncedMinConfidence.toFixed(2)}`,
-          `${activeFixture.id}|${minConfidence.toFixed(2)}`,
-        ]) {
-          mapApplyCache.invalidate(key);
-        }
-        // Optimistically remove the item from the local queued/conflicted view
-        // for accept/patch/dismiss verdicts (defer keeps the row but marks resolved).
-        setStage1Result((current) => {
-          if (!current) return current;
-          if (verdict === "defer") {
-            return current;
-          }
-          return {
-            ...current,
-            queued: current.queued.filter((q) => q.objectId !== objectId),
-            conflicted: current.conflicted.filter((c) => c.objectId !== objectId),
-          };
-        });
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "review.triage failed.";
-        setStage1Error(message);
-      } finally {
-        setTriageBusy((prev) => {
-          const next = new Set(prev);
-          next.delete(objectId);
-          return next;
-        });
-      }
-    },
-    [activeFixture.id, debouncedMinConfidence, mapApplyCache, minConfidence],
-  );
 
   const handleStarterSelect = useCallback(
     (starterIntent: string) => {
@@ -833,7 +658,7 @@ export default function App() {
     view === "compose"
       ? (composeResult?.summary ?? null)
       : stage1Result
-        ? `${activeFixture.label}: ${stage1Result.applied.length} applied, ${stage1Result.queued.length} queued, ${stage1Result.conflicted.length} conflicted @ minConfidence ${minConfidence.toFixed(2)}`
+        ? `${activeFixture.label}: ${stage1Result.applied.length} applied, ${stage1Result.queued.length} queued at minConfidence 0.75`
         : "Load a live reconciliation fixture through map_apply dry-run.";
 
   return (
@@ -965,13 +790,6 @@ export default function App() {
             result={stage1Result}
             syntheticPatchResult={syntheticPatchResult}
             loading={stage1Loading}
-            minConfidence={minConfidence}
-            onMinConfidenceChange={setMinConfidence}
-            minConfidenceMin={MIN_CONFIDENCE_MIN}
-            minConfidenceMax={MIN_CONFIDENCE_MAX}
-            triageBusy={triageBusy}
-            triageHistory={triageHistory}
-            onTriageVerdict={handleTriageVerdict}
           />
           <CodePanel
             code={stage1CodeSnippet}
@@ -988,17 +806,6 @@ export default function App() {
         metrics={view === "compose" ? (composeResult?.metrics ?? null) : null}
         pipeline={view === "compose" ? (composeResult?.pipeline ?? null) : null}
         summary={activeSummary}
-        transcript={
-          view === "stage1" && stage1Result
-            ? {
-                fixtureId: stage1FixtureId,
-                minConfidence,
-                mapApplyResult: stage1Result,
-                triageHistory,
-                artifactPath: conflictArtifactPathRef.current,
-              }
-            : null
-        }
       />
     </div>
   );

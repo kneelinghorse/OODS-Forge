@@ -224,7 +224,7 @@ describe('playground app', () => {
     );
     expect(await screen.findByText('https://linear.app/')).toBeTruthy();
     expect(
-      await screen.findByText(/80 applied, 13 queued, 0 conflicted @ minConfidence 0\.75/),
+      await screen.findByText(/80 applied, 13 queued at minConfidence 0\.75/),
     ).toBeTruthy();
 
     await user.click(screen.getByRole('button', { name: 'Stripe (v1.1.0)' }));
@@ -234,7 +234,7 @@ describe('playground app', () => {
     );
     expect(await screen.findByText('https://stripe.com/')).toBeTruthy();
     expect(
-      await screen.findByText(/170 applied, 25 queued, 0 conflicted @ minConfidence 0\.75/),
+      await screen.findByText(/170 applied, 25 queued at minConfidence 0\.75/),
     ).toBeTruthy();
   });
 });

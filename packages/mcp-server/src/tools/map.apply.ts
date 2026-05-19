@@ -16,7 +16,6 @@ import {
   type ComponentMapping,
 } from './map.shared.js';
 import type {
-  ConflictArtifactItem,
   MapApplyConflict,
   MapApplyInput,
   MapApplyOutput,
@@ -24,8 +23,6 @@ import type {
   MapApplyRoute,
   MapCreateInput,
   MapUpdateInput,
-  RemediationHint,
-  Stage1AlternateInterpretation,
   Stage1CandidateDiff,
   Stage1CandidateObject,
   Stage1ReconciliationReport,
@@ -34,7 +31,15 @@ import type {
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
 
-type ConflictArtifactEntry = ConflictArtifactItem;
+type ConflictArtifactEntry = {
+  objectId: string;
+  name: string;
+  action: string;
+  confidence: number;
+  existingMapId?: string;
+  reason: string;
+  candidate: Stage1CandidateObject;
+};
 
 type PatchPlan = {
   updates: MapUpdateInput['updates'];
@@ -71,7 +76,6 @@ export async function handle(input: MapApplyInput): Promise<MapApplyOutput> {
     const reason = candidate.verdict_reasoning ?? candidate.reasoning;
 
     if (candidate.confidence < minConfidence) {
-      const hints = buildRemediationHints(candidate, 'belowConfidence', minConfidence);
       queued.push({
         objectId: candidate.object_id,
         name: candidate.name,
@@ -83,7 +87,6 @@ export async function handle(input: MapApplyInput): Promise<MapApplyOutput> {
         ...(candidate.existing_map_id ? { existingMapId: candidate.existing_map_id } : {}),
         reason,
         ...(candidate.diff ? { diff: candidate.diff } : {}),
-        ...(hints.length > 0 ? { remediation_hints: hints } : {}),
       });
       artifactEntries.belowConfidence.push({
         objectId: candidate.object_id,
@@ -93,8 +96,6 @@ export async function handle(input: MapApplyInput): Promise<MapApplyOutput> {
         ...(candidate.existing_map_id ? { existingMapId: candidate.existing_map_id } : {}),
         reason,
         candidate,
-        remediation_hints: hints,
-        resolution_status: 'open',
       });
       diff.queued += 1;
       captureDiff(candidate.diff, diff);
@@ -143,7 +144,6 @@ export async function handle(input: MapApplyInput): Promise<MapApplyOutput> {
         break;
       }
       case 'conflict': {
-        const hints = buildRemediationHints(candidate, 'conflict', minConfidence);
         conflicted.push({
           objectId: candidate.object_id,
           name: candidate.name,
@@ -151,7 +151,6 @@ export async function handle(input: MapApplyInput): Promise<MapApplyOutput> {
           confidence: candidate.confidence,
           ...(candidate.existing_map_id ? { existingMapId: candidate.existing_map_id } : {}),
           reason,
-          ...(hints.length > 0 ? { remediation_hints: hints } : {}),
         });
         artifactEntries.conflicts.push({
           objectId: candidate.object_id,
@@ -161,8 +160,6 @@ export async function handle(input: MapApplyInput): Promise<MapApplyOutput> {
           ...(candidate.existing_map_id ? { existingMapId: candidate.existing_map_id } : {}),
           reason,
           candidate,
-          remediation_hints: hints,
-          resolution_status: 'open',
         });
         diff.conflict += 1;
         captureDiff(candidate.diff, diff);
@@ -458,94 +455,6 @@ function buildConflictArtifactPath(report: Stage1ReconciliationReport): string {
   const timestamp = report.generated_at.replace(/:/g, '-');
   const runId = slugify(report.target.id);
   return path.join('.oods', 'conflicts', `${timestamp}-${runId}.json`);
-}
-
-/**
- * Derive machine-readable remediation hints for an operator triage workflow.
- *
- * Hints are NOT auto-applied — they are recommendations that the review.triage
- * tool surfaces to a human operator (or downstream UI like C5a/C5b). Each hint
- * carries its own confidence so the UI can rank them. 1–3 hints per item,
- * ordered by confidence desc.
- *
- * The kinds we emit map onto operator verdicts: use_alternate_interpretation
- * suggests `patch` against an alternate role; merge_with_existing suggests
- * `patch` against the existing_map_id; reject_low_confidence suggests `defer`
- * or `dismiss`; manual_patch suggests `patch` with operator overrides; split
- * suggests escalating to multi-mapping work outside this tool's surface.
- */
-export function buildRemediationHints(
-  candidate: Stage1CandidateObject,
-  bucket: 'conflict' | 'belowConfidence',
-  minConfidence: number,
-): RemediationHint[] {
-  const hints: RemediationHint[] = [];
-
-  const alternates = candidate.alternate_interpretations ?? [];
-  alternates.forEach((alt, index) => {
-    const normalized = normalizeAlternate(alt);
-    if (!normalized) return;
-    hints.push({
-      kind: 'use_alternate_interpretation',
-      confidence: normalized.score,
-      reasoning: `Stage1 surfaced alternate role '${normalized.role}': ${normalized.reasoning}`,
-      refs: { alternateInterpretationIndex: index },
-    });
-  });
-
-  if (candidate.existing_map_id) {
-    if (bucket === 'conflict') {
-      hints.push({
-        kind: 'merge_with_existing',
-        confidence: Math.min(0.85, candidate.confidence + 0.05),
-        reasoning: `Patch existing mapping '${candidate.existing_map_id}' with the recommended trait set rather than creating a duplicate.`,
-        refs: { existingMapId: candidate.existing_map_id },
-      });
-    } else if (bucket === 'belowConfidence') {
-      hints.push({
-        kind: 'manual_patch',
-        confidence: Math.max(0.4, candidate.confidence),
-        reasoning: `Confidence ${candidate.confidence.toFixed(2)} is below the ${minConfidence.toFixed(2)} threshold; review the diff against '${candidate.existing_map_id}' and patch manually if the change is correct.`,
-        refs: { existingMapId: candidate.existing_map_id },
-      });
-    }
-  }
-
-  if (bucket === 'belowConfidence' && candidate.confidence < minConfidence - 0.15) {
-    hints.push({
-      kind: 'reject_low_confidence',
-      confidence: 1 - candidate.confidence,
-      reasoning: `Confidence ${candidate.confidence.toFixed(2)} is well below the ${minConfidence.toFixed(2)} threshold; consider deferring until Stage1 produces stronger evidence.`,
-    });
-  }
-
-  if (hints.length === 0) {
-    // Always guarantee at least one hint per item so consumers don't need to
-    // branch on emptiness — fall back to a generic manual-patch suggestion.
-    hints.push({
-      kind: 'manual_patch',
-      confidence: Math.max(0.3, candidate.confidence * 0.5),
-      reasoning:
-        bucket === 'conflict'
-          ? 'No alternate interpretations or existing mapping references available; operator should manually review trait set and patch or accept.'
-          : 'Confidence below threshold and no alternate signals available; operator should manually review evidence before accepting.',
-    });
-  }
-
-  hints.sort((a, b) => b.confidence - a.confidence);
-  return hints.slice(0, 3);
-}
-
-function normalizeAlternate(
-  alt: Stage1AlternateInterpretation,
-): { role: string; score: number; reasoning: string } | null {
-  if (typeof alt === 'string') {
-    return { role: alt, score: 0.5, reasoning: `Alternate role label '${alt}' surfaced by Stage1.` };
-  }
-  if (alt && typeof alt === 'object') {
-    return { role: alt.role, score: alt.score, reasoning: alt.reasoning };
-  }
-  return null;
 }
 
 function writeConflictArtifact(

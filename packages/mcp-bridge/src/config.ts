@@ -128,7 +128,6 @@ const FALLBACK_POLICY: AgentPolicyDoc = {
     { name: 'object.show', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'registry.snapshot', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'viz.compose', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'review.triage', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
   ],
 };
 

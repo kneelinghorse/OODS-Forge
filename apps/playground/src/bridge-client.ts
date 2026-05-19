@@ -109,21 +109,6 @@ export type MapApplyRoute = {
   };
 };
 
-export type RemediationHint = {
-  kind:
-    | "use_alternate_interpretation"
-    | "merge_with_existing"
-    | "reject_low_confidence"
-    | "manual_patch"
-    | "split";
-  confidence: number;
-  reasoning: string;
-  refs?: {
-    existingMapId?: string;
-    alternateInterpretationIndex?: number;
-  };
-};
-
 export type MapApplyQueued = {
   objectId: string;
   name: string;
@@ -135,7 +120,6 @@ export type MapApplyQueued = {
   existingMapId?: string;
   reason: string;
   diff?: MapApplyRoute["diff"];
-  remediation_hints?: RemediationHint[];
 };
 
 export type MapApplyConflict = {
@@ -145,7 +129,6 @@ export type MapApplyConflict = {
   confidence: number;
   existingMapId?: string;
   reason: string;
-  remediation_hints?: RemediationHint[];
 };
 
 export type MapApplyResult = {
@@ -190,65 +173,6 @@ export async function runMapApply(
     reportPath,
     minConfidence,
   });
-}
-
-// ---------------------------------------------------------------------------
-// review.triage (sprint-101 m01 → m04 playground integration)
-// ---------------------------------------------------------------------------
-
-export type ReviewTriageVerdict = "accept" | "patch" | "defer" | "dismiss";
-
-export type ReviewTriageDecision = {
-  objectId: string;
-  verdict: ReviewTriageVerdict;
-  reason?: string;
-  resolvedBy?: string;
-  patchOverrides?: Record<string, unknown>;
-};
-
-export type ReviewTriageInput = {
-  conflictArtifactPath: string;
-  projectRoot?: string;
-  decisions: ReviewTriageDecision[];
-  apply?: boolean;
-};
-
-export type ReviewTriageErrorKind =
-  | "already_resolved"
-  | "item_not_found"
-  | "missing_existing_mapping"
-  | "missing_recommended_traits"
-  | "map_call_failed"
-  | "invalid_verdict";
-
-export type ReviewTriageError = {
-  objectId: string;
-  kind: ReviewTriageErrorKind;
-  verdict?: ReviewTriageVerdict;
-  message: string;
-};
-
-export type ReviewTriageResult = {
-  summary: {
-    accepted: number;
-    patched: number;
-    deferred: number;
-    dismissed: number;
-  };
-  artifact: string;
-  mapsCreated: Array<{ objectId: string; mappingId: string }>;
-  mapsUpdated: Array<{ objectId: string; mappingId: string; changes: string[] }>;
-  mapsRemoved: Array<{ objectId: string; mappingId: string }>;
-  errors: ReviewTriageError[];
-};
-
-export async function runReviewTriage(
-  input: ReviewTriageInput,
-): Promise<BridgeResponse<ReviewTriageResult>> {
-  return runTool<ReviewTriageResult>(
-    "review_triage",
-    input as unknown as Record<string, unknown>,
-  );
 }
 
 export async function healthCheck(): Promise<{ ok: boolean }> {
