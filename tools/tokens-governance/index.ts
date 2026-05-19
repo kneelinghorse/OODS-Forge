@@ -255,7 +255,9 @@ function parseArgs(argv: string[]): CliOptions {
         index += 1;
         break;
       case 'labels':
-        ensureValue(flag, next);
+        if (next === undefined || next.startsWith('--')) {
+          throw new Error(`Expected a value after --${flag}`);
+        }
         options.labels = next
           .split(',')
           .map((label) => label.trim())

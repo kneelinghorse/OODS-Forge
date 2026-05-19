@@ -1,3 +1,4 @@
+import './load-env.js';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';

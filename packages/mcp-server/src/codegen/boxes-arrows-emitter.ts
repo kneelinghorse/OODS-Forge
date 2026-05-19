@@ -29,6 +29,7 @@ import type {
   SemanticEntity,
   TypedRelationship,
 } from '../object-catalog/types.js';
+import { dataAttr, escapeHtml } from './html-utils.js';
 import { runPreEmit, type CatalogAnnotations } from './pre-emit.js';
 
 export type BoxesArrowsFramework = 'boxes-arrows';
@@ -61,28 +62,6 @@ export interface BoxesArrowsResult {
     catalogVersion?: string;
     sourceAgent?: string;
   };
-}
-
-// ---------------------------------------------------------------------------
-// HTML escape + attribute helpers
-// ---------------------------------------------------------------------------
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function attr(name: string, value: string | number | undefined | null): string {
-  if (value === undefined || value === null || value === '') return '';
-  return ` ${name}="${escapeHtml(String(value))}"`;
-}
-
-function dataAttr(name: string, value: string | number | undefined | null): string {
-  return attr(`data-${name}`, value);
 }
 
 const ROLE_LABEL: Record<PragmaticRole, string> = {

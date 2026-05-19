@@ -244,4 +244,43 @@ describe('Q3 — review-emitter real-data E2E gate', () => {
       }
     });
   });
+
+  // ── Variant-aware slot rendering (D2 v2, s100-m03)
+  describe('variant-aware slot rendering (D2 v2, s100-m03)', () => {
+    // user fixture: desktop=3 slots (avatar/title/subtitle); mobile=2 slots (avatar/title).
+    const manifest = userFixture as ObjectCatalogManifest;
+
+    it('variant="desktop" renders the 3-slot desktop projection in data-slot-count', () => {
+      const result = emit(manifest, { variant: 'desktop' });
+      const doc = new JSDOM(result.code).window.document;
+      const entity = doc.querySelector('.entity[data-entity-urn="urn:proto:semantic:user-profile-card@1.0.0"]');
+      expect(entity?.getAttribute('data-slot-count')).toBe('3');
+    });
+
+    it('variant="mobile" renders the 2-slot mobile projection in data-slot-count', () => {
+      const result = emit(manifest, { variant: 'mobile' });
+      const doc = new JSDOM(result.code).window.document;
+      const entity = doc.querySelector('.entity[data-entity-urn="urn:proto:semantic:user-profile-card@1.0.0"]');
+      expect(entity?.getAttribute('data-slot-count')).toBe('2');
+    });
+
+    it('omitting variant falls back to canonical render slots (matches desktop)', () => {
+      const canonical = new JSDOM(emit(manifest).code).window.document;
+      const desktop = new JSDOM(emit(manifest, { variant: 'desktop' }).code).window.document;
+      const canonicalSlotCount = canonical
+        .querySelector('.entity[data-entity-urn="urn:proto:semantic:user-profile-card@1.0.0"]')
+        ?.getAttribute('data-slot-count');
+      const desktopSlotCount = desktop
+        .querySelector('.entity[data-entity-urn="urn:proto:semantic:user-profile-card@1.0.0"]')
+        ?.getAttribute('data-slot-count');
+      expect(canonicalSlotCount).toBe(desktopSlotCount);
+    });
+
+    it('unknown variant falls back to canonical render slots', () => {
+      const result = emit(manifest, { variant: 'watch' });
+      const doc = new JSDOM(result.code).window.document;
+      const entity = doc.querySelector('.entity[data-entity-urn="urn:proto:semantic:user-profile-card@1.0.0"]');
+      expect(entity?.getAttribute('data-slot-count')).toBe('3');
+    });
+  });
 });

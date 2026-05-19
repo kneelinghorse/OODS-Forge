@@ -159,3 +159,50 @@ describe('Q3 — multi-entity external billing fixture coverage', () => {
     expect(invoice?.querySelector('.role')).toBeNull();
   });
 });
+
+describe('Q3 — variant-aware slot rendering (D2 v2, s100-m03)', () => {
+  // user fixture declares two projection_variants:
+  //   desktop: 3 slots (avatar, title, subtitle)
+  //   mobile:  2 slots (avatar, title — no subtitle)
+  // oods.render.slots == desktop projection.
+  const manifest = userFixture as ObjectCatalogManifest;
+
+  it('variant="desktop" renders the 3-slot desktop projection', () => {
+    const result = emit(manifest, { variant: 'desktop' });
+    const doc = new JSDOM(result.code).window.document;
+    const slots = doc.querySelectorAll('.slot');
+    expect(slots.length).toBe(3);
+    expect(result.meta.slotsRendered).toBe(3);
+    const names = Array.from(slots).map((n) => n.getAttribute('data-slot-name'));
+    expect(names).toEqual(['avatar', 'title', 'subtitle']);
+  });
+
+  it('variant="mobile" renders the 2-slot mobile projection (subtitle omitted)', () => {
+    const result = emit(manifest, { variant: 'mobile' });
+    const doc = new JSDOM(result.code).window.document;
+    const slots = doc.querySelectorAll('.slot');
+    expect(slots.length).toBe(2);
+    expect(result.meta.slotsRendered).toBe(2);
+    const names = Array.from(slots).map((n) => n.getAttribute('data-slot-name'));
+    expect(names).toEqual(['avatar', 'title']);
+    expect(result.code).not.toContain('data-slot-name="subtitle"');
+  });
+
+  it('omitting variant falls back to canonical oods.render.slots (3 slots, matches desktop)', () => {
+    const canonical = emit(manifest);
+    const desktop = emit(manifest, { variant: 'desktop' });
+    expect(canonical.meta.slotsRendered).toBe(3);
+    expect(desktop.meta.slotsRendered).toBe(3);
+    // Slot names appear in the same order in both outputs.
+    const canonicalNames = Array.from(new JSDOM(canonical.code).window.document.querySelectorAll('.slot'))
+      .map((n) => n.getAttribute('data-slot-name'));
+    const desktopNames = Array.from(new JSDOM(desktop.code).window.document.querySelectorAll('.slot'))
+      .map((n) => n.getAttribute('data-slot-name'));
+    expect(canonicalNames).toEqual(desktopNames);
+  });
+
+  it('unknown variant falls back to canonical render slots (selectVariant fallthrough)', () => {
+    const result = emit(manifest, { variant: 'watch' });
+    expect(result.meta.slotsRendered).toBe(3);
+  });
+});

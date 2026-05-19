@@ -165,22 +165,28 @@ describe('wireframe-emitter — billing multi-entity fixture (3 entities, 3 cros
 });
 
 describe('wireframe-emitter — variant + options handling', () => {
-  // D2 generalization finding (s99-m01): the variant param is forwarded to
-  // runPreEmit() and influences the synthesized tree at ctx.schema.screens, but
-  // CatalogAnnotations.slots reads unconditionally from oods.render.slots — so
-  // both C1 and C2 currently render the canonical render slots regardless of
-  // variant. Variant-aware slot rendering would require extending
-  // CatalogAnnotations to expose the variant-selected slot list (or having the
-  // emitter walk ctx.schema.screens instead). Captured as a D2 v2 candidate,
-  // not silently extended per mission scope.
-  it('accepts the variant option without error (variant currently does not affect rendered slot list — see D2 finding)', () => {
+  // D2 v2 (s100-m03, resolves decision #451): buildCatalogAnnotations now uses
+  // selectVariant() so CatalogAnnotations.slots reflects the variant-selected
+  // slot list. variant='desktop' renders user.json's 3-slot desktop projection;
+  // variant='mobile' renders the 2-slot mobile projection. variant omitted
+  // falls back to canonical oods.render.slots.
+  it('variant-aware slot rendering: desktop (3 slots) vs mobile (2 slots)', () => {
     const desktop = emit(user, { variant: 'desktop' });
     const mobile = emit(user, { variant: 'mobile' });
+    const canonical = emit(user);
     expect(desktop.status).toBe('ok');
     expect(mobile.status).toBe('ok');
-    // Both render oods.render.slots (3 for user) regardless of variant.
+    expect(canonical.status).toBe('ok');
     expect(desktop.meta.slotsRendered).toBe(3);
-    expect(mobile.meta.slotsRendered).toBe(3);
+    expect(mobile.meta.slotsRendered).toBe(2);
+    // Canonical (no variant) still uses oods.render.slots — same as desktop in user.json.
+    expect(canonical.meta.slotsRendered).toBe(3);
+    // Mobile output omits the subtitle slot present on desktop.
+    expect(desktop.code).toContain('data-slot-name="subtitle"');
+    expect(mobile.code).not.toContain('data-slot-name="subtitle"');
+    // Both still emit avatar + title.
+    expect(mobile.code).toContain('data-slot-name="avatar"');
+    expect(mobile.code).toContain('data-slot-name="title"');
   });
 
   it('honors custom title option in <title> and <h1>', () => {
