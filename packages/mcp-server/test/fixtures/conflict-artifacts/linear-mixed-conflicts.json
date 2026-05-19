@@ -1,0 +1,136 @@
+{
+  "kind": "map.apply.conflicts",
+  "schemaVersion": "1.1.0",
+  "generatedAt": "2026-05-19T12:00:00.000Z",
+  "target": {
+    "id": "stage1-linear-fixture",
+    "url": "https://linear.app/"
+  },
+  "minConfidence": 0.75,
+  "reconciliationSummary": {
+    "mode": "reconciliation",
+    "existing_map_count": 42,
+    "verdict_counts": {
+      "create": 1,
+      "conflict": 2,
+      "skip": 0,
+      "patch": 0
+    }
+  },
+  "conflicts": [
+    {
+      "objectId": "obj-workspace-switcher",
+      "name": "Workspace Switcher",
+      "action": "conflict",
+      "confidence": 0.82,
+      "existingMapId": "linear-workspace-switcher",
+      "reason": "Existing mapping classifies this control as Stateful rather than Navigable, and the trait sets are incompatible without review.",
+      "candidate": {
+        "object_id": "obj-workspace-switcher",
+        "name": "Workspace Switcher",
+        "role": "menu",
+        "inferred_role": "navigation",
+        "inferred_role_score": 0.81,
+        "confidence": 0.82,
+        "recommended_oods_traits": ["Navigable", "Labelled"],
+        "recommended_domain": "navigation",
+        "action": "conflict",
+        "reasoning": "Observed behavior conflicts with the current registry mapping.",
+        "verdict_reasoning": "Existing mapping classifies this control as Stateful rather than Navigable, and the trait sets are incompatible without review.",
+        "existing_map_id": "linear-workspace-switcher",
+        "alternate_interpretations": [
+          { "role": "select", "score": 0.74, "reasoning": "Dropdown mechanics overlap with select-like controls." },
+          { "role": "action", "score": 0.68, "reasoning": "The trigger can also be interpreted as an action launcher." }
+        ]
+      },
+      "remediation_hints": [
+        {
+          "kind": "merge_with_existing",
+          "confidence": 0.87,
+          "reasoning": "Patch existing mapping 'linear-workspace-switcher' with the recommended trait set rather than creating a duplicate.",
+          "refs": { "existingMapId": "linear-workspace-switcher" }
+        },
+        {
+          "kind": "use_alternate_interpretation",
+          "confidence": 0.74,
+          "reasoning": "Stage1 surfaced alternate role 'select': Dropdown mechanics overlap with select-like controls.",
+          "refs": { "alternateInterpretationIndex": 0 }
+        },
+        {
+          "kind": "use_alternate_interpretation",
+          "confidence": 0.68,
+          "reasoning": "Stage1 surfaced alternate role 'action': The trigger can also be interpreted as an action launcher.",
+          "refs": { "alternateInterpretationIndex": 1 }
+        }
+      ],
+      "resolution_status": "open"
+    },
+    {
+      "objectId": "obj-command-menu",
+      "name": "Command Menu Trigger",
+      "action": "conflict",
+      "confidence": 0.78,
+      "reason": "Two distinct registry mappings claim this component; manual triage required.",
+      "candidate": {
+        "object_id": "obj-command-menu",
+        "name": "Command Menu Trigger",
+        "role": "button",
+        "inferred_role": "action",
+        "inferred_role_score": 0.79,
+        "confidence": 0.78,
+        "recommended_oods_traits": ["Stateful", "Labelled"],
+        "recommended_domain": "navigation",
+        "action": "conflict",
+        "reasoning": "Two distinct registry mappings claim this component.",
+        "verdict_reasoning": "Two distinct registry mappings claim this component; manual triage required."
+      },
+      "remediation_hints": [
+        {
+          "kind": "manual_patch",
+          "confidence": 0.39,
+          "reasoning": "No alternate interpretations or existing mapping references available; operator should manually review trait set and patch or accept."
+        }
+      ],
+      "resolution_status": "open"
+    }
+  ],
+  "belowConfidence": [
+    {
+      "objectId": "obj-experimental-badge",
+      "name": "Experimental Badge",
+      "action": "create",
+      "confidence": 0.61,
+      "reason": "Candidate remains actionable but should queue for review at the default minConfidence.",
+      "candidate": {
+        "object_id": "obj-experimental-badge",
+        "name": "Experimental Badge",
+        "role": "badge",
+        "inferred_role": "status",
+        "inferred_role_score": 0.64,
+        "confidence": 0.61,
+        "recommended_oods_traits": ["Labelled", "Stateful"],
+        "recommended_domain": "status",
+        "action": "create",
+        "reasoning": "Stage1 found a new badge-like status marker, but confidence is below the default OODS apply threshold.",
+        "verdict_reasoning": "Candidate remains actionable but should queue for review at the default minConfidence.",
+        "alternate_interpretations": [
+          { "role": "chip", "score": 0.55, "reasoning": "Could also be modeled as a chip indicator." }
+        ]
+      },
+      "remediation_hints": [
+        {
+          "kind": "use_alternate_interpretation",
+          "confidence": 0.55,
+          "reasoning": "Stage1 surfaced alternate role 'chip': Could also be modeled as a chip indicator.",
+          "refs": { "alternateInterpretationIndex": 0 }
+        },
+        {
+          "kind": "reject_low_confidence",
+          "confidence": 0.39,
+          "reasoning": "Confidence 0.61 is well below the 0.75 threshold; consider deferring until Stage1 produces stronger evidence."
+        }
+      ],
+      "resolution_status": "open"
+    }
+  ]
+}

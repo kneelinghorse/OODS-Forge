@@ -1,3 +1,14 @@
+import type { MapApplyResult } from "../bridge-client";
+import type { TriageHistoryEntry } from "../App";
+
+type TranscriptPayload = {
+  fixtureId: string;
+  minConfidence: number;
+  mapApplyResult: MapApplyResult;
+  triageHistory: TriageHistoryEntry[];
+  artifactPath: string | null;
+};
+
 type Props = {
   bridgeOk: boolean | null;
   loading: boolean;
@@ -15,7 +26,67 @@ type Props = {
     duration: number;
   } | null;
   summary: string | null;
+  transcript?: TranscriptPayload | null;
 };
+
+const TRANSCRIPT_SCHEMA_VERSION = "1.0.0";
+
+function buildTranscript(payload: TranscriptPayload): Record<string, unknown> {
+  const startTime = new Date().toISOString();
+  return {
+    schemaVersion: TRANSCRIPT_SCHEMA_VERSION,
+    source: "oods-playground/m04",
+    command: "replay",
+    tool: "map_apply+review_triage",
+    args: {
+      apply: false,
+      options: { approve: false },
+      payload: {
+        fixtureId: payload.fixtureId,
+        minConfidence: payload.minConfidence,
+      },
+    },
+    user: "playground",
+    hostname:
+      typeof window !== "undefined" && window.location
+        ? window.location.host
+        : "localhost",
+    startTime,
+    endTime: startTime,
+    exitCode: 0,
+    artifacts: payload.artifactPath
+      ? [
+          {
+            path: payload.artifactPath,
+            sha256: "",
+            role: "input",
+            name: "conflictArtifact",
+            purpose: "map.apply conflict artifact mutated by review.triage",
+          },
+        ]
+      : [],
+    redactions: [],
+    signature: { algo: "none", hash: "" },
+    meta: {
+      mapApplyResult: payload.mapApplyResult,
+      triageHistory: payload.triageHistory,
+    },
+  };
+}
+
+function downloadTranscript(payload: TranscriptPayload): void {
+  const transcript = buildTranscript(payload);
+  const blob = new Blob([JSON.stringify(transcript, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  link.download = `oods-transcript-${payload.fixtureId}-${timestamp}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 function formatError(error: string): { label: string; detail: string } {
   // Parse [step] prefix if present
@@ -26,7 +97,7 @@ function formatError(error: string): { label: string; detail: string } {
   return { label: 'Error', detail: error };
 }
 
-export function StatusBar({ bridgeOk, loading, error, metrics, pipeline, summary }: Props) {
+export function StatusBar({ bridgeOk, loading, error, metrics, pipeline, summary, transcript }: Props) {
   const err = error ? formatError(error) : null;
 
   return (
@@ -83,6 +154,20 @@ export function StatusBar({ bridgeOk, loading, error, metrics, pipeline, summary
           {pipeline.duration}ms
         </span>
       )}
+
+      {transcript ? (
+        <button
+          type="button"
+          onClick={() => downloadTranscript(transcript)}
+          className="rounded border border-cyan-500/40 px-2 py-0.5 text-[11px] font-medium text-cyan-200 transition-colors hover:bg-cyan-500/10"
+          data-action="transcript-export"
+          data-fixture={transcript.fixtureId}
+          data-min-confidence={transcript.minConfidence}
+          title="Download an OODS transcript JSON conforming to packages/artifacts/schemas/transcript.schema.json"
+        >
+          Export transcript
+        </button>
+      ) : null}
 
       {loading && <span className="text-indigo-400">Running...</span>}
     </div>

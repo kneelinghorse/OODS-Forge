@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/review.triage.output.json",
+  "title": "review.triage output",
+  "description": "Summary of one review.triage invocation: per-verdict counts, list of mapping mutations applied, and non-fatal per-decision errors.",
+  "type": "object",
+  "required": ["summary", "artifact", "mapsCreated", "mapsUpdated", "mapsRemoved", "errors"],
+  "properties": {
+    "summary": {
+      "type": "object",
+      "required": ["accepted", "patched", "deferred", "dismissed"],
+      "properties": {
+        "accepted": { "type": "integer", "minimum": 0 },
+        "patched": { "type": "integer", "minimum": 0 },
+        "deferred": { "type": "integer", "minimum": 0 },
+        "dismissed": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "string",
+      "description": "Project-relative path to the (possibly mutated) conflict artifact."
+    },
+    "mapsCreated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["objectId", "mappingId"],
+        "properties": {
+          "objectId": { "type": "string" },
+          "mappingId": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "mapsUpdated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["objectId", "mappingId", "changes"],
+        "properties": {
+          "objectId": { "type": "string" },
+          "mappingId": { "type": "string" },
+          "changes": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "mapsRemoved": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["objectId", "mappingId"],
+        "properties": {
+          "objectId": { "type": "string" },
+          "mappingId": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "errors": {
+      "type": "array",
+      "description": "Per-decision non-fatal failures. Items whose map.* call failed remain 'open' in the artifact so a retry can re-attempt them.",
+      "items": {
+        "type": "object",
+        "required": ["objectId", "kind", "message"],
+        "properties": {
+          "objectId": { "type": "string" },
+          "verdict": { "type": "string", "enum": ["accept", "patch", "defer", "dismiss"] },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "already_resolved",
+              "item_not_found",
+              "missing_existing_mapping",
+              "missing_recommended_traits",
+              "map_call_failed",
+              "invalid_verdict"
+            ]
+          },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

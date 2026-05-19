@@ -1,0 +1,332 @@
+{
+  "version": "2026.05",
+  "dsVersion": "2026-05-19",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "conflict-detail-screen",
+      "component": "Stack",
+      "layout": { "type": "stack", "gapToken": "section-default" },
+      "props": {
+        "data-surface": "c5-conflict-detail",
+        "data-fixture": "conflict-detail-sample",
+        "data-objectid": "obj-pricing-table"
+      },
+      "children": [
+        {
+          "id": "cd-header",
+          "component": "Stack",
+          "layout": { "type": "inline", "align": "space-between" },
+          "style": { "spacingToken": "inset-default" },
+          "props": { "data-region": "header" },
+          "children": [
+            {
+              "id": "cd-header-title",
+              "component": "Text",
+              "props": {
+                "text": "Pricing Table",
+                "data-role": "entity-name",
+                "data-entity-name": "Pricing Table"
+              }
+            },
+            {
+              "id": "cd-header-urn",
+              "component": "Text",
+              "props": {
+                "text": "obj-pricing-table",
+                "data-role": "entity-urn",
+                "data-entity-urn": "obj-pricing-table"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cd-candidate-summary",
+          "component": "Card",
+          "props": {
+            "data-region": "candidate-summary",
+            "data-confidence-tier": "high",
+            "data-confidence-score": "0.88",
+            "data-inferred-role": "data-display"
+          },
+          "children": [
+            {
+              "id": "cd-candidate-summary-header",
+              "component": "Text",
+              "props": { "text": "Stage1 Candidate", "data-role": "section-title" }
+            },
+            {
+              "id": "cd-candidate-summary-row",
+              "component": "Stack",
+              "layout": { "type": "inline", "align": "start" },
+              "children": [
+                {
+                  "id": "cd-candidate-tier",
+                  "component": "Badge",
+                  "props": {
+                    "label": "high (0.88)",
+                    "data-role": "confidence-badge",
+                    "data-confidence-tier": "high",
+                    "data-confidence-score": "0.88",
+                    "data-flagged-for-review": "false"
+                  }
+                },
+                {
+                  "id": "cd-candidate-role",
+                  "component": "Text",
+                  "props": {
+                    "text": "role: table → inferred data-display (0.93)",
+                    "data-role": "candidate-role",
+                    "data-inferred-role": "data-display",
+                    "data-inferred-role-score": "0.93"
+                  }
+                },
+                {
+                  "id": "cd-candidate-domain",
+                  "component": "Text",
+                  "props": {
+                    "text": "domain: billing",
+                    "data-role": "candidate-domain",
+                    "data-recommended-domain": "billing"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "cd-candidate-reasoning",
+              "component": "Text",
+              "props": {
+                "text": "Existing mapping uses Stateful+Listable; Stage1 recommends Stateful+Tabular+Selectable.",
+                "data-role": "verdict-reasoning"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cd-existing-mapping",
+          "component": "Card",
+          "props": {
+            "data-region": "existing-mapping",
+            "data-existing-map-id": "example-pricing-table"
+          },
+          "children": [
+            {
+              "id": "cd-existing-mapping-header",
+              "component": "Text",
+              "props": { "text": "Existing Mapping", "data-role": "section-title" }
+            },
+            {
+              "id": "cd-existing-mapping-id",
+              "component": "Text",
+              "props": {
+                "text": "id: example-pricing-table",
+                "data-role": "existing-map-id-label",
+                "data-existing-map-id": "example-pricing-table"
+              }
+            },
+            {
+              "id": "cd-existing-mapping-system",
+              "component": "Text",
+              "props": {
+                "text": "externalSystem: example",
+                "data-role": "existing-external-system",
+                "data-external-system": "example"
+              }
+            },
+            {
+              "id": "cd-existing-mapping-traits",
+              "component": "Stack",
+              "layout": { "type": "inline", "align": "start" },
+              "props": { "data-role": "existing-traits" },
+              "children": [
+                {
+                  "id": "cd-existing-trait-stateful",
+                  "component": "Badge",
+                  "props": { "label": "Stateful", "data-role": "trait-pill", "data-trait-name": "Stateful" }
+                },
+                {
+                  "id": "cd-existing-trait-listable",
+                  "component": "Badge",
+                  "props": { "label": "Listable", "data-role": "trait-pill", "data-trait-name": "Listable" }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cd-alternate-interpretations",
+          "component": "Card",
+          "props": { "data-region": "alternate-interpretations" },
+          "children": [
+            {
+              "id": "cd-alternates-header",
+              "component": "Text",
+              "props": { "text": "Alternate Interpretations", "data-role": "section-title" }
+            },
+            {
+              "id": "cd-alt-0",
+              "component": "Stack",
+              "layout": { "type": "inline", "align": "start" },
+              "props": {
+                "data-role": "alternate-interpretation",
+                "data-alternate-index": "0",
+                "data-alternate-role": "data-grid",
+                "data-alternate-score": "0.82"
+              },
+              "children": [
+                { "id": "cd-alt-0-role", "component": "Badge", "props": { "label": "data-grid (0.82)", "data-role": "alternate-badge" } },
+                { "id": "cd-alt-0-reasoning", "component": "Text", "props": { "text": "Cells exhibit grid-like keyboard navigation.", "data-role": "alternate-reasoning" } }
+              ]
+            },
+            {
+              "id": "cd-alt-1",
+              "component": "Stack",
+              "layout": { "type": "inline", "align": "start" },
+              "props": {
+                "data-role": "alternate-interpretation",
+                "data-alternate-index": "1",
+                "data-alternate-role": "list",
+                "data-alternate-score": "0.74"
+              },
+              "children": [
+                { "id": "cd-alt-1-role", "component": "Badge", "props": { "label": "list (0.74)", "data-role": "alternate-badge" } },
+                { "id": "cd-alt-1-reasoning", "component": "Text", "props": { "text": "Row-major layout could be modeled as a list of plans.", "data-role": "alternate-reasoning" } }
+              ]
+            },
+            {
+              "id": "cd-alt-2",
+              "component": "Stack",
+              "layout": { "type": "inline", "align": "start" },
+              "props": {
+                "data-role": "alternate-interpretation",
+                "data-alternate-index": "2",
+                "data-alternate-role": "form",
+                "data-alternate-score": "0.61"
+              },
+              "children": [
+                { "id": "cd-alt-2-role", "component": "Badge", "props": { "label": "form (0.61)", "data-role": "alternate-badge" } },
+                { "id": "cd-alt-2-reasoning", "component": "Text", "props": { "text": "Embedded plan-selection toggles add form-like semantics.", "data-role": "alternate-reasoning" } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cd-remediation-hints",
+          "component": "Card",
+          "props": { "data-region": "remediation-hints" },
+          "children": [
+            {
+              "id": "cd-hints-header",
+              "component": "Text",
+              "props": { "text": "Remediation Hints", "data-role": "section-title" }
+            },
+            {
+              "id": "cd-hint-0",
+              "component": "Stack",
+              "layout": { "type": "stack", "gapToken": "cluster-tight" },
+              "props": {
+                "data-role": "remediation-hint",
+                "data-hint-rank": "0",
+                "data-hint-kind": "merge_with_existing",
+                "data-hint-confidence": "0.9"
+              },
+              "children": [
+                { "id": "cd-hint-0-kind", "component": "Badge", "props": { "label": "merge_with_existing", "data-role": "hint-kind-badge", "data-hint-kind": "merge_with_existing" } },
+                { "id": "cd-hint-0-confidence", "component": "Badge", "props": { "label": "0.90", "data-role": "hint-confidence-badge", "data-hint-confidence": "0.9" } },
+                { "id": "cd-hint-0-reasoning", "component": "Text", "props": { "text": "Patch existing mapping 'example-pricing-table' with the recommended trait set rather than creating a duplicate.", "data-role": "hint-reasoning" } }
+              ]
+            },
+            {
+              "id": "cd-hint-1",
+              "component": "Stack",
+              "layout": { "type": "stack", "gapToken": "cluster-tight" },
+              "props": {
+                "data-role": "remediation-hint",
+                "data-hint-rank": "1",
+                "data-hint-kind": "use_alternate_interpretation",
+                "data-hint-confidence": "0.82"
+              },
+              "children": [
+                { "id": "cd-hint-1-kind", "component": "Badge", "props": { "label": "use_alternate_interpretation", "data-role": "hint-kind-badge", "data-hint-kind": "use_alternate_interpretation" } },
+                { "id": "cd-hint-1-confidence", "component": "Badge", "props": { "label": "0.82", "data-role": "hint-confidence-badge", "data-hint-confidence": "0.82" } },
+                { "id": "cd-hint-1-reasoning", "component": "Text", "props": { "text": "Stage1 surfaced alternate role 'data-grid': Cells exhibit grid-like keyboard navigation.", "data-role": "hint-reasoning" } }
+              ]
+            },
+            {
+              "id": "cd-hint-2",
+              "component": "Stack",
+              "layout": { "type": "stack", "gapToken": "cluster-tight" },
+              "props": {
+                "data-role": "remediation-hint",
+                "data-hint-rank": "2",
+                "data-hint-kind": "manual_patch",
+                "data-hint-confidence": "0.55"
+              },
+              "children": [
+                { "id": "cd-hint-2-kind", "component": "Badge", "props": { "label": "manual_patch", "data-role": "hint-kind-badge", "data-hint-kind": "manual_patch" } },
+                { "id": "cd-hint-2-confidence", "component": "Badge", "props": { "label": "0.55", "data-role": "hint-confidence-badge", "data-hint-confidence": "0.55" } },
+                { "id": "cd-hint-2-reasoning", "component": "Text", "props": { "text": "Operator may prefer to merge Selectable trait alone and defer Tabular until tabular keyboard nav is verified.", "data-role": "hint-reasoning" } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cd-trait-diff",
+          "component": "Card",
+          "props": { "data-region": "trait-diff" },
+          "children": [
+            {
+              "id": "cd-trait-diff-header",
+              "component": "Text",
+              "props": { "text": "Trait Diff", "data-role": "section-title" }
+            },
+            {
+              "id": "cd-trait-diff-added-group",
+              "component": "Stack",
+              "layout": { "type": "stack", "gapToken": "cluster-tight" },
+              "props": { "data-role": "trait-diff-group", "data-trait-diff-kind": "added" },
+              "children": [
+                { "id": "cd-trait-diff-added-label", "component": "Text", "props": { "text": "Added", "data-role": "trait-diff-group-label" } },
+                { "id": "cd-trait-added-tabular", "component": "Badge", "props": { "label": "Tabular", "data-role": "trait-diff-pill", "data-trait-diff-kind": "added", "data-trait-name": "Tabular" } },
+                { "id": "cd-trait-added-selectable", "component": "Badge", "props": { "label": "Selectable", "data-role": "trait-diff-pill", "data-trait-diff-kind": "added", "data-trait-name": "Selectable" } }
+              ]
+            },
+            {
+              "id": "cd-trait-diff-removed-group",
+              "component": "Stack",
+              "layout": { "type": "stack", "gapToken": "cluster-tight" },
+              "props": { "data-role": "trait-diff-group", "data-trait-diff-kind": "removed" },
+              "children": [
+                { "id": "cd-trait-diff-removed-label", "component": "Text", "props": { "text": "Removed", "data-role": "trait-diff-group-label" } },
+                { "id": "cd-trait-removed-listable", "component": "Badge", "props": { "label": "Listable", "data-role": "trait-diff-pill", "data-trait-diff-kind": "removed", "data-trait-name": "Listable" } }
+              ]
+            },
+            {
+              "id": "cd-trait-diff-unchanged-group",
+              "component": "Stack",
+              "layout": { "type": "stack", "gapToken": "cluster-tight" },
+              "props": { "data-role": "trait-diff-group", "data-trait-diff-kind": "unchanged" },
+              "children": [
+                { "id": "cd-trait-diff-unchanged-label", "component": "Text", "props": { "text": "Unchanged", "data-role": "trait-diff-group-label" } },
+                { "id": "cd-trait-unchanged-stateful", "component": "Badge", "props": { "label": "Stateful", "data-role": "trait-diff-pill", "data-trait-diff-kind": "unchanged", "data-trait-name": "Stateful" } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cd-verdict-actions",
+          "component": "Stack",
+          "layout": { "type": "inline", "align": "end" },
+          "style": { "spacingToken": "inset-default" },
+          "props": { "data-role": "verdict-actions", "data-objectid": "obj-pricing-table" },
+          "children": [
+            { "id": "cd-act-accept", "component": "Button", "props": { "label": "Accept", "data-action": "review.triage", "data-verdict": "accept", "data-objectid": "obj-pricing-table" } },
+            { "id": "cd-act-patch", "component": "Button", "props": { "label": "Patch", "data-action": "review.triage", "data-verdict": "patch", "data-objectid": "obj-pricing-table" } },
+            { "id": "cd-act-defer", "component": "Button", "props": { "label": "Defer", "data-action": "review.triage", "data-verdict": "defer", "data-objectid": "obj-pricing-table" } },
+            { "id": "cd-act-dismiss", "component": "Button", "props": { "label": "Dismiss", "data-action": "review.triage", "data-verdict": "dismiss", "data-objectid": "obj-pricing-table" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

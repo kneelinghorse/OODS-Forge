@@ -635,6 +635,7 @@ export type MapApplyQueued = {
   existingMapId?: string;
   reason: string;
   diff?: Stage1CandidateDiff;
+  remediation_hints?: RemediationHint[];
 };
 
 export type MapApplyConflict = {
@@ -644,6 +645,7 @@ export type MapApplyConflict = {
   confidence: number;
   existingMapId?: string;
   reason: string;
+  remediation_hints?: RemediationHint[];
 };
 
 export type MapApplyError = {
@@ -806,4 +808,126 @@ export type MapDeleteOutput = {
   };
   etag?: string;
   message?: string;
+};
+
+// -- review.triage (s101-m01) --
+//
+// Conflict-artifact schema extended additively with `remediation_hints[]`
+// (populated by map.apply.ts) and resolution-status fields (populated by
+// review.triage). Pre-existing readers ignore the new fields; tools that
+// were written against the s99/s100 shape continue to parse correctly.
+
+export type RemediationHintKind =
+  | "use_alternate_interpretation"
+  | "merge_with_existing"
+  | "reject_low_confidence"
+  | "manual_patch"
+  | "split";
+
+export type RemediationHint = {
+  kind: RemediationHintKind;
+  confidence: number;
+  reasoning: string;
+  refs?: {
+    existingMapId?: string;
+    alternateInterpretationIndex?: number;
+  };
+};
+
+export type ConflictResolutionStatus =
+  | "open"
+  | "accepted"
+  | "patched"
+  | "deferred"
+  | "dismissed";
+
+export type ConflictArtifactItem = {
+  objectId: string;
+  name: string;
+  action: string;
+  confidence: number;
+  existingMapId?: string;
+  reason: string;
+  candidate: Stage1CandidateObject;
+  remediation_hints?: RemediationHint[];
+  resolution_status?: ConflictResolutionStatus;
+  resolved_at?: string;
+  resolved_by?: string;
+  operator_reason?: string;
+};
+
+export type ConflictArtifact = {
+  kind: "map.apply.conflicts";
+  schemaVersion: string;
+  generatedAt: string;
+  target: {
+    id: string;
+    url?: string;
+  };
+  minConfidence: number;
+  reconciliationSummary: Stage1ReconciliationSummary | null;
+  conflicts: ConflictArtifactItem[];
+  belowConfidence: ConflictArtifactItem[];
+};
+
+export type ReviewTriageVerdict = "accept" | "patch" | "defer" | "dismiss";
+
+export type ReviewTriageDecision = {
+  objectId: string;
+  verdict: ReviewTriageVerdict;
+  reason?: string;
+  resolvedBy?: string;
+  patchOverrides?: MapUpdateInput["updates"];
+};
+
+export type ReviewTriageInput = {
+  conflictArtifactPath: string;
+  projectRoot?: string;
+  decisions: ReviewTriageDecision[];
+  apply?: boolean;
+};
+
+export type ReviewTriageErrorKind =
+  | "already_resolved"
+  | "item_not_found"
+  | "missing_existing_mapping"
+  | "missing_recommended_traits"
+  | "map_call_failed"
+  | "invalid_verdict";
+
+export type ReviewTriageError = {
+  objectId: string;
+  kind: ReviewTriageErrorKind;
+  verdict?: ReviewTriageVerdict;
+  message: string;
+};
+
+export type ReviewTriageMapCreatedRef = {
+  objectId: string;
+  mappingId: string;
+};
+
+export type ReviewTriageMapUpdatedRef = {
+  objectId: string;
+  mappingId: string;
+  changes: string[];
+};
+
+export type ReviewTriageMapRemovedRef = {
+  objectId: string;
+  mappingId: string;
+};
+
+export type ReviewTriageOutput = {
+  summary: {
+    accepted: number;
+    patched: number;
+    deferred: number;
+    dismissed: number;
+  };
+  artifact: string;
+  mapsCreated: ReviewTriageMapCreatedRef[];
+  mapsUpdated: ReviewTriageMapUpdatedRef[];
+  mapsRemoved: ReviewTriageMapRemovedRef[];
+  errors: ReviewTriageError[];
 };

@@ -158,7 +158,8 @@
         },
         "existingMapId": { "type": "string", "minLength": 1 },
         "reason": { "type": "string", "minLength": 1 },
-        "diff": { "$ref": "#/$defs/CandidateDiff" }
+        "diff": { "$ref": "#/$defs/CandidateDiff" },
+        "remediation_hints": { "$ref": "#/$defs/RemediationHints" }
       }
     },
     "ConflictRoute": {
@@ -171,7 +172,40 @@
         "action": { "const": "conflict" },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "existingMapId": { "type": "string", "minLength": 1 },
-        "reason": { "type": "string", "minLength": 1 }
+        "reason": { "type": "string", "minLength": 1 },
+        "remediation_hints": { "$ref": "#/$defs/RemediationHints" }
+      }
+    },
+    "RemediationHints": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["kind", "confidence", "reasoning"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "use_alternate_interpretation",
+              "merge_with_existing",
+              "reject_low_confidence",
+              "manual_patch",
+              "split"
+            ]
+          },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reasoning": { "type": "string", "minLength": 1 },
+          "refs": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "existingMapId": { "type": "string", "minLength": 1 },
+              "alternateInterpretationIndex": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
       }
     },
     "ApplyError": {

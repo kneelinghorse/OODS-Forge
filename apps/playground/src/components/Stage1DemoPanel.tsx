@@ -1,5 +1,8 @@
 import { useState } from "react";
-import type { MapApplyResult } from "../bridge-client";
+import type { MapApplyResult, ReviewTriageVerdict } from "../bridge-client";
+import { DiffInspector } from "./DiffInspector";
+import { GeneratedReviewQueue } from "./GeneratedReviewQueue";
+import type { TriageHistoryEntry } from "../App";
 
 export type Stage1ProjectionVariantSample = {
   id: string;
@@ -72,6 +75,13 @@ type Props = {
   result: MapApplyResult | null;
   syntheticPatchResult: MapApplyResult | null;
   loading: boolean;
+  minConfidence: number;
+  onMinConfidenceChange: (next: number) => void;
+  minConfidenceMin: number;
+  minConfidenceMax: number;
+  triageBusy: Set<string>;
+  triageHistory: TriageHistoryEntry[];
+  onTriageVerdict: (objectId: string, verdict: ReviewTriageVerdict) => void | Promise<void>;
 };
 
 function MetricCard({
@@ -311,10 +321,24 @@ export function Stage1DemoPanel({
   result,
   syntheticPatchResult,
   loading,
+  minConfidence,
+  onMinConfidenceChange,
+  minConfidenceMin,
+  minConfidenceMax,
+  triageBusy,
+  triageHistory,
+  onTriageVerdict,
 }: Props) {
   const patchPreview = syntheticPatchResult?.applied.find(
     (entry) => entry.action === "patch" && entry.diff,
   );
+  const resolvedObjectIds = new Set(triageHistory.map((entry) => entry.objectId));
+  const reviewQueueItems = result
+    ? [...result.conflicted, ...result.queued].filter(
+        (item) => !resolvedObjectIds.has(item.objectId),
+      )
+    : [];
+  const appliedWithDiff = result?.applied.filter((entry) => Boolean(entry.diff)) ?? [];
 
   return (
     <div className="flex-1 overflow-auto bg-[#0f1117]">
@@ -422,8 +446,39 @@ export function Stage1DemoPanel({
             <div className="rounded-2xl border border-gray-800 bg-gray-950/70 p-5">
               <SectionTitle
                 title="OODS Dry-Run Routing"
-                detail="map.apply @ minConfidence 0.75"
+                detail={`map.apply @ minConfidence ${minConfidence.toFixed(2)}`}
               />
+              <div
+                className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-cyan-400/25 bg-cyan-400/8 px-4 py-3"
+                data-region="min-confidence-slider"
+              >
+                <label
+                  htmlFor="min-confidence-input"
+                  className="text-[11px] uppercase tracking-[0.2em] text-cyan-200/80"
+                >
+                  minConfidence
+                </label>
+                <input
+                  id="min-confidence-input"
+                  type="range"
+                  min={minConfidenceMin}
+                  max={minConfidenceMax}
+                  step={0.05}
+                  value={minConfidence}
+                  onChange={(e) =>
+                    onMinConfidenceChange(Number.parseFloat(e.target.value))
+                  }
+                  className="h-2 flex-1 cursor-pointer accent-cyan-400"
+                  data-action="min-confidence-change"
+                  data-min-confidence={minConfidence}
+                  aria-valuemin={minConfidenceMin}
+                  aria-valuemax={minConfidenceMax}
+                  aria-valuenow={minConfidence}
+                />
+                <span className="font-mono text-sm text-cyan-100">
+                  {minConfidence.toFixed(2)}
+                </span>
+              </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <MetricCard
                   label="Applied"
@@ -481,47 +536,75 @@ export function Stage1DemoPanel({
             <div className="rounded-2xl border border-gray-800 bg-gray-950/70 p-5">
               <SectionTitle
                 title="Review Queue"
-                detail="queued object candidates"
+                detail={`${reviewQueueItems.length} items · ${triageHistory.length} resolved this session`}
               />
-              {!result?.queued.length && !loading ? (
-                <div className="mt-4 rounded-xl border border-dashed border-gray-800 px-4 py-6 text-sm text-gray-500">
-                  No queued candidates at the current threshold.
+              <p className="mt-1 text-[11px] text-gray-500">
+                Conflicted + queued rows. Verdicts call <code>review.triage</code>{" "}
+                via the bridge.
+              </p>
+              {loading ? (
+                <div
+                  className="mt-3 rounded border border-cyan-500/30 bg-cyan-500/8 px-3 py-2 text-xs text-cyan-100"
+                  data-role="queue-loading"
+                >
+                  Re-running map.apply at minConfidence {minConfidence.toFixed(2)}…
                 </div>
               ) : null}
-              <div className="mt-4 grid gap-3">
-                {result?.queued.map((entry) => (
-                  <article
-                    key={entry.objectId}
-                    className="relative overflow-hidden rounded-xl border border-amber-400/30 bg-[linear-gradient(135deg,rgba(251,191,36,0.08),rgba(15,23,42,0.96))] px-4 py-4 shadow-[0_14px_40px_-28px_rgba(251,191,36,0.55)]"
-                  >
-                    <div className="absolute right-4 top-4 rounded-full border border-amber-300/35 bg-amber-300/12 px-2 py-1 font-mono text-[11px] text-amber-100">
-                      {formatConfidence(entry.confidence)}
-                    </div>
-                    <div className="pr-16">
-                      <div className="text-[11px] uppercase tracking-[0.2em] text-amber-200/65">
-                        {entry.action}
-                      </div>
-                      <h4 className="mt-2 text-base font-semibold text-white">
-                        {entry.name}
-                      </h4>
-                      <p className="mt-2 text-sm leading-6 text-amber-50/85">
-                        {entry.reason}
-                      </p>
-                    </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {entry.recommendedOodsTraits.map((trait) => (
-                        <span
-                          key={`${entry.objectId}-${trait}`}
-                          className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-amber-50/80"
-                        >
-                          {trait}
-                        </span>
-                      ))}
-                    </div>
-                  </article>
-                ))}
+              <div className="mt-4">
+                <GeneratedReviewQueue
+                  items={reviewQueueItems}
+                  busy={triageBusy}
+                  onVerdict={(objectId, verdict) =>
+                    void onTriageVerdict(objectId, verdict)
+                  }
+                />
               </div>
+              {reviewQueueItems.length > 0 ? (
+                <div className="mt-4 space-y-3">
+                  {reviewQueueItems.map((item) => (
+                    <div
+                      key={`diff-${item.objectId}`}
+                      data-role="review-row-diff"
+                      data-objectid={item.objectId}
+                    >
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-gray-500">
+                        {item.name}
+                      </div>
+                      <DiffInspector
+                        diff={"diff" in item ? item.diff : undefined}
+                        remediationHints={item.remediation_hints}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
             </div>
+            {appliedWithDiff.length > 0 ? (
+              <div className="rounded-2xl border border-gray-800 bg-gray-950/70 p-5">
+                <SectionTitle
+                  title="Applied Diffs"
+                  detail={`${appliedWithDiff.length} applied items with field-level diff`}
+                />
+                <div className="mt-4 space-y-3">
+                  {appliedWithDiff.map((entry) => (
+                    <div
+                      key={`applied-diff-${entry.objectId}`}
+                      data-role="applied-diff"
+                      data-objectid={entry.objectId}
+                      className="rounded-lg border border-gray-800 bg-gray-900/60 px-3 py-2"
+                    >
+                      <div className="flex items-center justify-between gap-2 text-xs">
+                        <span className="font-medium text-gray-200">{entry.name}</span>
+                        <span className="font-mono text-[11px] text-cyan-300">
+                          {entry.action}
+                        </span>
+                      </div>
+                      <DiffInspector diff={entry.diff} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div className="space-y-6">
