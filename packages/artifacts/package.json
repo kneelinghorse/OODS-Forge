@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "test": "vitest run",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && mkdir -p dist/schemas && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true",
     "clean": "rimraf dist"
   },
   "dependencies": {

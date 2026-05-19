@@ -159,23 +159,155 @@ Test posture at sprint-99 close: **151 files / 2581 active pass / 8 skipped** (T
 
 ---
 
-## Sprint-100 Candidate Shape
+## Sprint-100 Outcomes (closed 2026-05-18)
 
-Sprint-99 left the C-track at 3-of-N emitters and the Integration-track with retry coverage on the three hot-path Concordance endpoints. Natural next moves spread back across all four tracks. Recommended N=5 with closeout.
+Sprint-100 ran the first post-pure-capability sprint after sprint-99. 5/5 missions delivered. Quality track expanded to 2 missions to absorb infra debt; m04 converted from implementation to formal re-defer with alternate promotion.
 
-Candidate missions (drafted; lock at sprint-100 planning):
+- **m01 Q1 Infra hygiene + project env loading** — three CI failure root causes fixed (`--labels ""` parser at `tools/tokens-governance/index.ts:257-265`; adapter fresh-install workspace-package build ordering at `.github/workflows/adapter-fresh-install.yml`; vr-test step-output guard with `continue-on-error: true` at `.github/workflows/ci.yml`). Node 20→24 across all 7 workflows. Dotenv wired end-to-end: `dotenv@17.4.2` in mcp-server + mcp-bridge deps; new `packages/mcp-server/test/setup-env.ts` + `vitest.config.ts` setupFiles; new `packages/mcp-server/src/load-env.ts` + `packages/mcp-bridge/src/load-env.ts` imported FIRST at the top of `src/index.ts` and `src/server.ts`; new `.env.example` with 8 variables; agents.md gained "Environment setup" section. End-state verified: `RUN_HOSTED_SMOKE=1 npx vitest run test/integration/concordance-i1-smoke.spec.ts` from a fresh shell ran 7 live tests against Railway in 4.65s with zero manual env exports. The CONCORDANCE_API_KEY false-deferral pattern recurring across s98/s99/review is now closed.
+- **m02 Q2 Bridge E2E green + coverage gate restored** — single 1-line build-script change at `packages/artifacts/package.json:14` fixed all 7 affected CI suites. Root cause: `@oods/artifacts` build was `tsc -p tsconfig.json` only and never copied `src/schemas/*.json` to `dist/schemas/`. Locally the directory existed from leftover builds; CI on fresh clones never had `transcript.schema.json`, so the MCP-server child spawned by the bridge crashed at import-time (validation.ts line 14), surfacing as `400 RUN_ERROR` on every `/run`. Fix mirrors the mcp-server pattern. 22/22 bridge-dependent tests pass locally after rebuild. Scope-growth contingency NOT triggered; no m02a/m02b split. Antipattern named for institutional memory: "fragile-build-chain-with-silent-fallback-masked-by-dev-machine-leftovers."
+- **m03 D2 v2 variant-aware CatalogAnnotations.slots** — approach (a) picked at mission-start: extend `buildCatalogAnnotations()` in `packages/mcp-server/src/codegen/pre-emit.ts` to use `selectVariant()` for slots + brand_overlay. 2-line change; all three C-track emitters unchanged. `runPreEmit(entity, { variant: 'mobile' })` on user.json now correctly returns 2 slots (mobile projection) vs `variant: 'desktop'` returning 3 slots; variant-omitted falls back to canonical `oods.render.slots` (byte-identical to pre-fix). 12 new Q3 E2E variant tests (4 per emitter × 3 emitters); 1 wireframe unit test updated from documenting-the-finding to asserting variant-correctness. **Decision #451 (D2 generalization finding from s99-m01) resolved.**
+- **m04 concordance.validate pipeline auto-integration: formal re-defer + alternate promoted** — usage-signal audit found ZERO production callers in three days since the tool shipped (s98-m03 2026-05-16). Re-deferred with three named next-trigger conditions: (a) 5+ tool invocations across 2+ workflows in one session, (b) real-world compose-time manifest error from outside the test suite, (c) downstream consumer explicit ask for `pipeline.handle({ validate: true })`. Alternate promoted: C-track shared HTML+escape util at `packages/mcp-server/src/codegen/html-utils.ts` — extracted from byte-identical copies in `boxes-arrows-emitter.ts`, `wireframe-emitter.ts`, `review-emitter.ts`. -66 lines of duplication, +12 new unit tests. **Decision #460 (rule-of-three fired, deferred for scope in s99-m04) resolved.**
+- **m05 closeout** — fourth formal run of decision #408. Single closeout commit enumerates s100-m01..m05. Decision #449 (rollup-regate hard contingency, source-fixed in s99-m05) did NOT recur; the deterministic timestamp from s99-m05 held.
 
-- **(Integration) concordance.validate pipeline auto-integration** — bake validation into compose/render as an optional `validate: true` step. The concordance.validate MCP tool has now shipped (s98-m03), retry on the validate path is hardened (s99-m02), and the multi-fixture round-trip is gated (s99-m03). The deferral basis ("until tool surface accrues real usage") needs an explicit re-evaluation in planning — if there's still no usage signal, defer again; if there is, this is the natural next mission.
-- **(Capability) D2 abstraction v2 — variant-aware CatalogAnnotations.slots** — addresses the s99-m01 finding cleanly. Either extend `CatalogAnnotations.slots` to be variant-driven (selectVariant-aware) OR refactor C1/C2 emitters to walk `ctx.schema.screens`. Becomes load-bearing the moment a multi-variant projection use case shows up (desktop vs mobile wireframe gallery, for example).
-- **(Capability) C-track refactor: shared HTML/escape util** — three emitters now duplicate `escapeHtml` + `attr` + `dataAttr` helpers (rule-of-three triggered with C3). Extract to `src/codegen/html-util.ts`; gate with byte-equal output for all three Q3 E2E suites.
-- **(Quality) Bridge E2E flakiness** — `test/e2e/*.e2e.spec.ts` files that spawn `mcp-bridge` subprocess can hit 180s timeout. Investigate startup ordering / port reuse / build-cache invalidation. Goal: re-establish full-suite green-on-CI without the bridge tests running serially.
-- **(Integration) I2 semantic-federation evaluator (D4 implementation)** — needs Birch involvement + adaptation from the billing-specific reference evaluator. Standalone planning artifact still required before implementation; tracking as alternate.
-- **(Capability) A2UI emitter prototype** — if A2UI is ready to land as the fourth C-track emitter, this is the natural trigger for a formal D2 v2 IR memo (two emitters needing the SAME structured output projection — A2UI runtime + structured-data export). Stage1 v1.7.0 drift contract being mostly additive means OODS-side load is low; capacity available.
+Test posture at sprint-100 close: **152 files / 2606 active pass / 10 skipped** (+25 active vs sprint-99 baseline; +12 from m03 Q3 E2E variant tests, +12 from m04 html-utils unit tests, +1 from m01 dependency-update test discovery). tsc --noEmit clean for both mcp-server and mcp-bridge. With m01+m02 fixes landed, the full CI matrix is expected to exit green on the next Forge-expansion push — the first time in several sprints.
 
-Alternates that didn't make the shortlist but are queueable:
+---
 
-- **Production blocking-timeout decision** — should the production codegen default of 5000ms be widened to absorb Railway cold-starts? Currently 5s for codegen-blocking with smoke spec carrying its own 15s override. Real incidents would force the decision; in their absence, the current split is correct. No change since sprint-98.
-- **CMOS bug-report follow-up** — sticky onboard.currentSprint pointer + PG mirror drift remain open since sprint-97 m05 filing. No SLA expected; watch inbox.
+## Sprint-101 Candidate Shape (forming 2026-05-18)
+
+To be locked at planning time. Surfaces worth re-evaluating:
+
+- **concordance.validate trigger watch (passive)** — three named triggers from s100-m04 decision; if signal is still zero by sprint-101 planning, drop the candidate entirely rather than defer a third time.
+- **A2UI emitter prototype** — IR-memo trigger candidate per decision #450 ("structured-output projection" need not yet present). Promotable when A2UI itself signals readiness.
+- **I2 semantic-federation evaluator (D4 implementation)** — still needs Birch involvement + standalone planning artifact before implementation.
+- **C-track sprint commit-discipline reintroduction** — sprint-100 ran code-heavy and the single closeout commit was healthy; per-mission discipline can be re-introduced if a future very-code-heavy sprint surfaces a real bisection need.
+- **Stale-learnings triage** — 23 stale flagged in s99 review, carried; do at planning's low-cost moment.
+- **Production blocking-timeout decision** — still no incident driver; stays deferred.
+- **CMOS onboard sticky-pointer + PG mirror drift** — filed 2026-05-15 as a CMOS-MCP bug; no SLA expected, watch the inbox.
+
+---
+
+## Sprint-100 Locked Shape (locked 2026-05-18) — superseded by Outcomes section above
+
+Sprint-100 pivots from pure capability/integration work to address two named infrastructure surfaces that have accumulated: CI failure debt (visible to anyone watching the repo, blocking honest signal from automated checks) and project env-loading (the CONCORDANCE_API_KEY false-deferral pattern across s98/s99/review revealed `.env` exists at root but no consumer loads it). The mixed-track shape from sprint-99 continues but Quality track expands to 2 missions to absorb the infra debt. N=5 with closeout.
+
+**CI failure scope confirmed (run 26049745235, 2026-05-18):**
+- 9 of 12 CI jobs pass; correctness-critical jobs (build/lint/typecheck/tenancy/tokens-validate/diagnostics-schema/a11y-contract/guardrails) all green
+- 4 failing jobs cluster into 4 root causes:
+  1. `--labels ""` empty-value bug in `tokens-governance` job invocation — affects 3 jobs across 2 workflows (CI's `tokens-governance (A)` + `(B)`, plus standalone `Token Governance Gate / enforce`)
+  2. Stale param assertions in `adapter-fresh-install` smoke test (`structuredData_fetch.dataset`, `tokens_build.brand`)
+  3. `vr-test` missing `CHROMATIC_PROJECT_TOKEN` secret — operational, not code
+  4. `coverage` job — 13 E2E tests across 7 suites fail with `Bridge /run 400 RUN_ERROR`; one underlying `ENOENT transcript.schema.json` artifact-ordering issue
+- Plus: Node 20 → Node 24 forced runner switch on 2026-06-02 affects all 7 workflows
+
+### s100-m01 — Q1 Infra hygiene + project env loading
+
+**Track:** Quality
+**Objective:** Eliminate the three mechanical CI failure modes, upgrade workflows to Node 24 ahead of the runner deadline, and wire dotenv so project env vars (`CONCORDANCE_API_KEY` and siblings) are automatically available to vitest, the MCP server, and any tool-spawned subshell. This closes the "false deferral" pattern that recurred across s98/s99/review.
+
+**Success criteria:**
+- `--labels` invocation in `ci.yml` (tokens-governance matrix) and `token-governance.yml` (enforce) handles empty PR-label sets without exit 1 — either omit the flag when value is empty or have the consumer accept empty string
+- Adapter fresh-install smoke test reconciled with current adapter contract: `structuredData_fetch` and `tokens_build` either expose `dataset`/`brand` params (if intentional) OR assertions updated to match current contract (whichever reflects the design decision)
+- `vr-test` no longer blocks CI: `continue-on-error: true` + skip-when-token-unset guard so absence of `CHROMATIC_PROJECT_TOKEN` is a clean skip rather than a hard failure; reversible to "enforce + provision" later by setting the secret and flipping the flag
+- All 7 workflows (`adapter-fresh-install.yml`, `ci.yml`, `deploy-storybook.yml`, `perf-harness.yml`, `pkg-compat.yml`, `refresh-structured-data.yml`, `token-governance.yml`) upgraded to actions running on Node 24 ahead of 2026-06-02 deadline
+- `dotenv` added as workspace devDep; `packages/mcp-server/test/setup-env.ts` resolves project-root `.env` and loads via `dotenv/config`; wired into `vitest.config.ts` via `setupFiles`
+- `import 'dotenv/config'` (with explicit project-root path) added to the top of `packages/mcp-server/src/index.ts` and any other long-running entry points (bridge, playground server if spawned outside an interactive shell)
+- `.env.example` committed at repo root listing all expected vars (`CONCORDANCE_API_KEY`, `CONCORDANCE_BASE_URL`, `CONCORDANCE_TIMEOUT_MS_BLOCKING`, `CONCORDANCE_TIMEOUT_MS_ADVISORY`, `CONCORDANCE_WORKSPACE`, `CONCORDANCE_SCHEMA_VERSION_OVERRIDE`, `CONCORDANCE_SKIP_INTEGRATION`, `CHROMATIC_PROJECT_TOKEN`) — `.gitignore` already allowlists this file
+- `agents.md` gains a setup paragraph: "Copy `.env.example` to `.env`, fill in `CONCORDANCE_API_KEY`. All test runners and entry points in this repo load `.env` automatically — no manual `export` needed."
+- **End-state verification:** `pnpm test test/integration/concordance-i1-smoke.spec.ts` with `RUN_HOSTED_SMOKE=1` runs against live concordance without any manual env exports, from a fresh shell or agent-spawned subshell
+
+**Deliverables:**
+- `.github/workflows/*.yml` updates (label-flag fix, Node 24 bump, vr-test guard)
+- `packages/mcp-server/test/setup-env.ts`
+- `packages/mcp-server/vitest.config.ts` `setupFiles` wiring
+- `packages/mcp-server/src/index.ts` dotenv import (+ other entry points as needed)
+- `scripts/mcp-adapter-fresh-install.mjs` and/or adapter param contract reconciliation
+- `.env.example` at repo root
+- `agents.md` env-setup paragraph
+- `pnpm-lock.yaml` (dotenv install)
+
+### s100-m02 — Q2 Bridge E2E green + coverage gate restored
+
+**Track:** Quality
+**Objective:** Root-cause the `Bridge /run 400 RUN_ERROR` pattern affecting ~13 E2E tests across 7 suites in CI, fix the underlying issue, restore the coverage CI job to green. This is the highest-risk mission of the sprint — scope could grow if root cause is non-trivial.
+
+**Success criteria:**
+- Mission-start audit answers: do these failures reproduce locally? (likely no, since sprint-99 closed with `tsc clean` + 2581 active pass); is the regression env-only (CI-spawn-time difference), config-only (policy.json or env), build-only (missing artifact), or product (real bug)?
+- The `ENOENT: transcript.schema.json` issue at `packages/artifacts/dist/schemas/` resolved — either build-step ordering ensures the file exists before bridge specs run, or the bridge spec gracefully handles absence, or the schema is copied/built earlier
+- All 7 affected suites pass in CI: `mapping-versioning.e2e`, `registry-gaps.e2e`, `fragment-integration.e2e`, `a11y-pipeline.e2e`, `design-compose.e2e`, `bridge/fragment-parity`, plus the remaining suites from the "7 failed suites" tally
+- Coverage CI job exits 0 with full coverage artifact upload
+- If root cause is a product regression rather than infra: fix is in scope, captured as a sprint-99 → sprint-100 regression note for memory
+- Mission notes document the root cause for future memory (especially valuable since "bridge E2E flakiness" was already named pre-sprint as a known-issue — this mission converts it from "flakiness" to "named cause + fix")
+- **Scope-growth contingency:** if mission-start investigation reveals the root cause requires architectural work (not config / build / small product fix), split mid-mission into m02a (root-cause + fix) and m02b (re-test + coverage gate). Decision rule: if the fix exceeds 2-3 hours of focused work, split. Alternate from sprint-99 candidate list promotes if split happens.
+
+**Deliverables:**
+- Whatever code/config/build change closes the root cause
+- Coverage job passing in CI
+- Mission notes (in CMOS decisions + closeout report) documenting the root cause for institutional memory
+
+### s100-m03 — D2 v2 variant-aware CatalogAnnotations.slots
+
+**Track:** Capability
+**Objective:** Close the s99-m01 finding by making `CatalogAnnotations.slots` honor variant selection end-to-end across all three C-track emitters. The finding (decision #451) is that the variant param synthesizes a variant-aware tree at `ctx.schema.screens` but `ctx.catalog.slots` remains canonical render-slots — meaning emitters render render-slots regardless of variant. This becomes load-bearing the moment a multi-variant projection use case (desktop vs mobile wireframe gallery) is needed; doing it now while the surface is fresh is cheaper than retrofitting later.
+
+**Success criteria:**
+- Approach picked at mission-start with brief rationale captured as a decision: either (a) extend `CatalogAnnotations.slots` to be variant-driven via `selectVariant()` inside `runPreEmit()`, OR (b) refactor C1/C2/C3 emitters to walk `ctx.schema.screens` instead of `ctx.catalog.slots`. (a) keeps emitters simple; (b) makes the data dependency explicit and removes a duplicated surface — likely (a) wins on emitter-side simplicity, but defer to mission-start
+- All three C-track emitters (boxes-arrows, wireframe, review) honor the `variant` emit option end-to-end: passing `variant: "mobile"` produces mobile-variant slot tree, `variant: "desktop"` produces desktop variant, omitting it falls back to canonical render-slots
+- At least one fixture exercises 2+ projection variants (either extend an existing fixture or add a new variant-bearing fixture); Q3 E2E gate proves variant-correctness per fidelity
+- All existing C-track Q3 E2E gates remain green for canonical-variant rendering (no behavior change for variant-unspecified calls)
+- Decision #451 (D2 v2 generalization finding) updated to "resolved by s100-m03 (approach X)" in the CMOS register
+
+**Deliverables:**
+- `packages/mcp-server/src/codegen/pre-emit.ts` (or emitter files, per approach choice)
+- New or extended fixture under `test/fixtures/object-catalog/`
+- Q3 E2E gate extension exercising variant-correctness across all 3 emitters
+
+### s100-m04 — concordance.validate pipeline auto-integration
+
+**Track:** Integration
+**Objective:** Re-evaluate the s98-m03 deferral basis ("until tool surface accrues real usage") now that the surface has had two sprints to accumulate, then either auto-bake into the compose/render pipeline or formally re-defer with a named trigger. This mission may end as implementation OR as a formal defer with alternate-mission promotion.
+
+**Success criteria:**
+- Mission-start: explicit usage-signal audit captured in a decision — how many tool invocations of `concordance.validate` since s98-m03? Any production gating need? Any agent or human caller actually using it? If signal is zero, mission converts to "explicit re-defer with named trigger + alternate mission promoted" and the alternate (A2UI prototype OR C-track shared util OR I2 evaluator planning artifact) lands in this slot.
+- If implementing: `pipeline.handle()` gains optional `validate: true` (default `false`; opt-in for this sprint to avoid breaking existing callers); when true, runs `concordance.validate` as a step between compose and render; surfaces validation errors as pipeline-level errors preserving the full AJV `errors[]` shape
+- Retry surface v0.2 (from s99-m02) is exercised on the auto-integration path — auto-bake leans on the same hardened endpoints
+- Tests cover: `validate: true` happy path; `validate: true` with manifest validation error (pipeline aborts cleanly with the AJV error context surfaced); `validate: false` is no-op (no behavior change for existing callers); 429/503 retry path on the auto-integration call site
+- If re-defer: clean decision memo names the next trigger condition (e.g., "first authenticated production caller of `concordance.validate` from outside the test suite," or "if compose-time manifest errors are reported by a real consumer") + alternate mission spec ready to fold into this slot
+
+**Deliverables:**
+- Either: `packages/mcp-server/src/tools/pipeline.ts` (or equivalent) handler update + tests
+- Or: defer-decision memo + alternate mission spec for this slot
+
+### s100-m05 — Closeout
+
+**Track:** Quality
+**Objective:** Fourth formal run of decision #408 (closeout-as-commit-boundary).
+
+**Success criteria:**
+- All sprint-100 deliverables committed in a single closeout commit enumerating mission IDs `s100-m01..m05`; tree clean at `cmos_session(action="complete")`
+- `tsc --noEmit` clean
+- Full test suite green — this is achievable for the first time in several sprints because s100-m02 fixes the bridge E2E surface that was previously skipping/failing
+- CMOS session-complete with decisions + learnings + next-steps captured
+- MEMORY.md updated with sprint-100 outcomes (canonical 8th-paragraph form)
+- `near.md` "Locked Shape" converted to "Outcomes (closed YYYY-MM-DD)" section
+- Closeout report at `cmos/reports/s100-m05-closeout-<date>.md`
+- Sprint-101 candidate shape drafted in `near.md`, informed by what landed in s100 and any new findings
+
+**Deliverables:**
+- Single closeout commit
+- Closeout report
+- MEMORY.md + near.md updates
+- CMOS session.complete
+
+---
+
+### Alternates considered and deferred (sprint-100 planning, 2026-05-18)
+
+- **C-track shared HTML+escape util** — rule-of-three triggered with C3 joining C1+C2 (decision #460). Real duplication but not load-bearing; defer until either (a) a fourth C-track emitter forces formalization or (b) someone is in the area for another reason. Promotable to s100-m04 slot if concordance.validate re-defers.
+- **A2UI emitter prototype** — natural D2 v2 IR-memo trigger (decision #450 names this as the trigger case for formal IR work). Stage1 v1.7.0 cadence is low-load on OODS side; capacity is available IF A2UI itself is ready to land. Deferred unless that readiness signal lands; promotable to s100-m04 slot.
+- **I2 semantic-federation evaluator (D4 implementation)** — still needs Birch involvement + standalone planning artifact before implementation. Not promotable to s100-m04 without that prework; alternate-of-alternates only.
+- **Production blocking-timeout decision** — no incident driving the 5s → wider question; defer.
+- **CMOS bug-report follow-up** — sticky `onboard.currentSprint` + PG mirror drift open since sprint-97 m05; no SLA expected, watch inbox.
 
 ---
 

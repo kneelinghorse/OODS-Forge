@@ -42,6 +42,7 @@ import type {
   OodsSlot,
   SemanticEntity,
 } from '../object-catalog/types.js';
+import { dataAttr, escapeHtml } from './html-utils.js';
 import { runPreEmit, type CatalogAnnotations } from './pre-emit.js';
 
 export type ReviewFramework = 'review';
@@ -91,30 +92,6 @@ export interface ReviewResult {
 }
 
 const DEFAULT_REVIEW_THRESHOLD = 0.7;
-
-// ---------------------------------------------------------------------------
-// HTML escape + attribute helpers (third consumer; will extract to a shared
-// codegen util in a future refactor — see boxes-arrows-emitter for the same
-// duplication note carried since wireframe).
-// ---------------------------------------------------------------------------
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function attr(name: string, value: string | number | undefined | null): string {
-  if (value === undefined || value === null || value === '') return '';
-  return ` ${name}="${escapeHtml(String(value))}"`;
-}
-
-function dataAttr(name: string, value: string | number | undefined | null): string {
-  return attr(`data-${name}`, value);
-}
 
 // ---------------------------------------------------------------------------
 // Confidence classification

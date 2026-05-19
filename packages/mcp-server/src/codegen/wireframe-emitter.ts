@@ -28,6 +28,7 @@ import type {
   OodsSlot,
   SemanticEntity,
 } from '../object-catalog/types.js';
+import { dataAttr, escapeHtml } from './html-utils.js';
 import { runPreEmit, type CatalogAnnotations } from './pre-emit.js';
 
 export type WireframeFramework = 'wireframe';
@@ -62,29 +63,6 @@ export interface WireframeResult {
   };
 }
 
-// ---------------------------------------------------------------------------
-// HTML escape + attribute helpers (duplicated from boxes-arrows-emitter; will
-// extract to a shared util when C3 lands the third consumer per the
-// rule-of-three).
-// ---------------------------------------------------------------------------
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function attr(name: string, value: string | number | undefined | null): string {
-  if (value === undefined || value === null || value === '') return '';
-  return ` ${name}="${escapeHtml(String(value))}"`;
-}
-
-function dataAttr(name: string, value: string | number | undefined | null): string {
-  return attr(`data-${name}`, value);
-}
 
 // ---------------------------------------------------------------------------
 // Per-entity rendering

@@ -59,6 +59,15 @@ Usage patterns:
 - Brand work: `tokens.build` for token artifacts, then `brand.apply` when you want overlays applied.
 - QA snapshots: `diag.snapshot` when you need a reproducible artifact bundle.
 
+## Environment setup
+
+Copy `.env.example` to `.env` and fill in `CONCORDANCE_API_KEY` (and any other
+secrets you need). All test runners (`vitest`), the MCP server entry point
+(`packages/mcp-server/src/index.ts`), and the bridge
+(`packages/mcp-bridge/src/server.ts`) load `.env` automatically via `dotenv` —
+no manual `export` needed before running tests or starting services. The
+`.gitignore` allowlists `.env.example` but blocks `.env` itself.
+
 ## Quick path to a first design action
 
 1. Read `README.md` for repo identity and links.

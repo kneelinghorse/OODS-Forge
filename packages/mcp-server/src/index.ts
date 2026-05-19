@@ -1,3 +1,4 @@
+import './load-env.js';
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import Fastify from 'fastify';

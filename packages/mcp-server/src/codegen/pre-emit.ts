@@ -55,8 +55,10 @@ export interface CatalogAnnotations {
   traits: string[];
   relationships: TypedRelationship[];
   evidenceRefs: EvidenceRef[];
+  /** brand_overlay for the selected variant (or canonical render when no variant param). */
   brandOverlay?: string;
   projectionVariants: OodsProjectionVariant[];
+  /** Slot tree for the selected variant (per PreEmitOptions.variant); canonical render.slots when no variant param. */
   slots: OodsSlot[];
   states: string[];
   preconditions: string[];
@@ -142,11 +144,14 @@ function collectComponents(screens: UiElement[]): Set<string> {
   return names;
 }
 
-function buildCatalogAnnotations(entity: SemanticEntity): CatalogAnnotations {
+function buildCatalogAnnotations(
+  entity: SemanticEntity,
+  variant?: string,
+): CatalogAnnotations {
   const oods = entity.oods ?? {};
-  const render = oods.render;
-  const slots = render?.slots ?? [];
-  const brandOverlay = render?.brand_overlay;
+  const selection = selectVariant(entity, variant);
+  const slots = selection?.slots ?? [];
+  const brandOverlay = selection?.brandOverlay;
   const projectionVariants = oods.projection_variants ?? [];
   const evidenceChain = oods.evidence_chain ?? [];
   const confidenceDecomposition = oods.confidence_decomposition;
@@ -325,7 +330,7 @@ export function runPreEmit(
     ? collectTailwindVariantDefinitions(schema.screens)
     : new Map<string, TailwindVariantDefinition>();
 
-  const catalog = entity ? buildCatalogAnnotations(entity) : undefined;
+  const catalog = entity ? buildCatalogAnnotations(entity, options.variant) : undefined;
 
   return {
     source,

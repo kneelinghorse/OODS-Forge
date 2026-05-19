@@ -208,3 +208,45 @@ describe('Q3 — multi-entity external billing fixture coverage', () => {
     expect(invoice?.getAttribute('data-element-action')).toBe('pay_now');
   });
 });
+
+describe('Q3 — variant-aware slot rendering (D2 v2, s100-m03)', () => {
+  // user fixture declares two projection_variants:
+  //   desktop: 3 slots (avatar, title, subtitle)
+  //   mobile:  2 slots (avatar, title — no subtitle)
+  const manifest = userFixture as ObjectCatalogManifest;
+
+  it('variant="desktop" renders the 3-slot desktop projection', () => {
+    const result = emit(manifest, { variant: 'desktop' });
+    const doc = new JSDOM(result.code).window.document;
+    const slots = doc.querySelectorAll('.slot');
+    expect(slots.length).toBe(3);
+    const names = Array.from(slots).map((n) => n.getAttribute('data-slot-name'));
+    expect(names).toEqual(['avatar', 'title', 'subtitle']);
+  });
+
+  it('variant="mobile" renders the 2-slot mobile projection (subtitle omitted)', () => {
+    const result = emit(manifest, { variant: 'mobile' });
+    const doc = new JSDOM(result.code).window.document;
+    const slots = doc.querySelectorAll('.slot');
+    expect(slots.length).toBe(2);
+    const names = Array.from(slots).map((n) => n.getAttribute('data-slot-name'));
+    expect(names).toEqual(['avatar', 'title']);
+    expect(result.code).not.toContain('data-slot-name="subtitle"');
+  });
+
+  it('omitting variant falls back to canonical oods.render.slots (matches desktop in user.json)', () => {
+    const canonical = new JSDOM(emit(manifest).code).window.document;
+    const desktop = new JSDOM(emit(manifest, { variant: 'desktop' }).code).window.document;
+    const canonicalNames = Array.from(canonical.querySelectorAll('.slot'))
+      .map((n) => n.getAttribute('data-slot-name'));
+    const desktopNames = Array.from(desktop.querySelectorAll('.slot'))
+      .map((n) => n.getAttribute('data-slot-name'));
+    expect(canonicalNames).toEqual(desktopNames);
+  });
+
+  it('unknown variant falls back to canonical render slots', () => {
+    const result = emit(manifest, { variant: 'watch' });
+    const doc = new JSDOM(result.code).window.document;
+    expect(doc.querySelectorAll('.slot').length).toBe(3);
+  });
+});
