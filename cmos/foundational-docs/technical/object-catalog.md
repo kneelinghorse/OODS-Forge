@@ -212,6 +212,18 @@ At least three production-shape fixtures land alongside this spec in F1 implemen
 
 Fixture additions in sprint-97 (F1 implementation) may add an Account or Order shape; v1.0.0 ships with the three above as the minimum.
 
+### Schema.org alignment for content domain pack (sprint-102 m01 — landed)
+
+The content/publishing domain pack added in sprint-102 m01 (Article / Author / Comment, plus a multi-entity content-pack manifest) carries Schema.org URIs in each entity's `context.schemaorg` field, so Concordance can canonicalize against this pack when real evidence accrues.
+
+| Entity URN | Schema.org URI |
+|---|---|
+| `urn:proto:semantic:article-detail@1.0.0` | [`https://schema.org/Article`](https://schema.org/Article) |
+| `urn:proto:semantic:author-profile@1.0.0` | [`https://schema.org/Person`](https://schema.org/Person) |
+| `urn:proto:semantic:comment-threaded@1.0.0` | [`https://schema.org/Comment`](https://schema.org/Comment) |
+
+`context.schemaorg` is a renderer-discretionary field — it does not affect runPreEmit() output or any current emitter behavior. It exists as a future grounding pointer for canonical-shape mining: when Concordance evidence accrues against these URNs, the Schema.org URI provides a canonical external referent for shape reconciliation. The field rides on `context.additionalProperties: true` and is safe to add without a major version bump.
+
 ### Fixture and schema file locations (sprint-97 F1 — landed)
 
 | Artifact | Path |

@@ -74,10 +74,12 @@ The work falls into four tracks with dependencies. Full graph in [mission-graph.
 ### Capability (parallel after Foundation)
 - **C1 — Boxes-and-arrows render** (first non-prescriptive emitter; proves the multi-fidelity claim)
 - **C2 — Wireframe render** (second non-prescriptive emitter)
-- **C3 — Operator review/recovery workflows** (V2 axis #2)
-- **C4 — Playground operator DX upgrade** (V2 axis #3)
-- **C5 — Codegen for evidence-backed flows** (V2 axis #4 — review queue / conflict detail / apply summary surfaces)
+- **C3 — Agent-callable review/recovery decision logic** (V2 axis #2 — MCP tool surface for resolving low-confidence reconciliation conflicts by policy; not a human UI)
+- **C4 — Playground as taste-judgment surface** (V2 axis #3 — playground reserved for human evaluation of visual outputs: wireframes, user flows, branded mockups; not a triage/operator UI)
+- **C5 — Codegen for evidence-backed flows** (V2 axis #4 — review-queue, conflict-detail, apply-summary as structured agent-readable artifacts, not human-clickable UIs)
 - **C6 — Registry knowledge model depth** (V2 axis #5 — `disambiguation_decisions`, `preferred_term`, `capability`, `projection_variants` round-trip)
+
+**On human audit surfaces** (added 2026-05-20 after the sprint-101 failure): the work + validation surfaces are for agents. Human audit/verification capabilities may eventually look similar to C3/C5 surfaces, but are explicitly deferred until real-world data drives what actually needs human review. Keeping the work at the agent surface avoids the overhead of human UI for items that are policy-resolvable. Human UI is reserved for taste judgments and visual-output evaluation (C4), not low-confidence-item triage. Sprint-101 attempted the human-operator framing prematurely and was discarded; see `cmos/reports/s101-failed-sprint-review-2026-05-19.md`.
 
 ### Integration (gated on partner readiness)
 - **I1 — Concordance live integration** (unblocked by Concordance sprint-13: hosted endpoint, Bearer auth, per-workspace tenancy, wire `1.1.0`)

@@ -31,17 +31,15 @@ Match existing style. Don't refactor what isn't broken.
 Define success criteria. Loop until verified.
 Strong success criteria let Claude loop independently.
 
-### Rule 5 — Use the model only for judgment calls
+### Rule 5 — Capture decisions and learnings
 
-Use for: classification, drafting, summarization, extraction.
-Do NOT use for: routing, retries, deterministic transforms.
-If code can answer, code answers.
+Non-trivial choices belong in CMOS. Decisions to `cmos_decisions`, cross-cutting patterns to `cmos_learnings`.
+If future-you needs to know why, capture it now.
 
-### Rule 6 — Token budgets are not advisory
+### Rule 6 — Closeout is the commit boundary
 
-Per-task: 4,000 tokens. Per-session: 30,000 tokens.
-If approaching budget, summarize and start fresh.
-Surface the breach. Do not silently overrun.
+One commit per sprint, made by the m05 closeout mission. Enumerate mission IDs in the commit message for bisection.
+Per-mission commits only when a sprint surfaces a real bisection need beyond enumeration.
 
 ### Rule 7 — Surface conflicts, don't average them
 
@@ -70,9 +68,17 @@ If you think a convention is harmful, surface it. Don't fork silently.
 
 ### Rule 12 — Fail loud
 
-"Completed" is wrong if anything was skipped silently.
-"Tests pass" is wrong if any were skipped.
-Default to surfacing uncertainty, not hiding it.
+"Completed" is wrong if anything was skipped silently. "Tests pass" is wrong if any were skipped.
+Flag uncertainty before stating a fact, statistic, date, or technical detail — never fill gaps with plausible-sounding information.
+
+### Rule 13 — No filler openings
+
+Start with the answer. No "Great question!", "Of course!", "Certainly!", or warmup acknowledgments.
+
+### Rule 14 — Match response length to task
+
+Simple questions get short answers. Complex tasks get full responses.
+Don't pad with restatements or closing sentences that repeat what was just said.
 
 ---
 
