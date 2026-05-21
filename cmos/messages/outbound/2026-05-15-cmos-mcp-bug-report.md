@@ -70,3 +70,25 @@ No expected SLA from this message. Filing as `intel_alert` rather than `backlog_
 
 OODS-Foundry-MCP
 sprint-96 just closed; sprint-97 planning in progress
+
+---
+
+## Amendment 2026-05-20: Bug 1 recurrence (3rd observation)
+
+**Symptom unchanged.** At the start of the sprint-102 review session (2026-05-20T23:17), `cmos_agent_onboard()` returned `currentSprint: sprint-101` (status: **Failed**) despite sprint-102 having been Completed via `cmos_sprint(action="complete")` 31 minutes earlier (2026-05-20T22:46:43). Project state at the time of the bad pointer:
+
+- sprint-102 status: **Completed** (4/4 missions Completed)
+- sprint-101 status: **Failed** (discarded 2026-05-19; explicitly NOT the active sprint)
+- Most recently completed sprint: sprint-102
+
+The same workaround documented in the original bug report (cross-check onboard's `currentSprint` against `cmos_sprint(action="list")` or call `cmos_sprint(action="show", sprintId="sprint-102")` directly) was applied. The expected behavior — `currentSprint` falling through to the latest **Completed** sprint when no sprint is **Active** and ignoring **Failed** as well as **Archived** — is named here for clarity: the pointer should resolve to **the most recent sprint where status is "Completed" (or "Active" if any)**, treating Failed/Archived/etc. as terminal/excluded.
+
+This is the third documented recurrence. Original 2026-04-16 (sticky on sprint-69 Archived), 2026-05-15 (sticky on Sprint 30 Completed, very stale), 2026-05-20 (sticky on sprint-101 Failed, 1 day stale). The pattern crosses three different terminal/non-active states, suggesting the underlying heuristic doesn't filter on status at all — it picks based on some other field (sprint ID lexical sort? creation time? last-modified that isn't being updated when status changes?). Worth investigating that specifically.
+
+PG mirror drift (Bug 2) also persists as of 2026-05-20: 6 tables mismatched (sprints +17, missions +83, sessions +50, strategic_decisions +234, learnings +89, mission_dependencies +55). Last sync 2026-05-06. Strategic_decisions delta has grown from +106 (2026-05-15) to +234 in five days — the long-tail tables are accelerating, not converging.
+
+Bug 3 (session.complete decisions not persisted as strategic_decisions rows) not re-verified in this amendment; no new evidence either way.
+
+No expected SLA. Filing as a quiet amendment for context.
+
+— OODS-Foundry-MCP, sprint-102 closed, sprint-103 planning in progress

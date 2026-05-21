@@ -99,6 +99,99 @@
         "notes": { "type": "string" }
       }
     },
+    "disambiguation_decisions": {
+      "type": "array",
+      "description": "Draft v1.4.0-gated review-decision events to APPEND to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.",
+      "items": {
+        "type": "object",
+        "required": ["decision_id", "decision_type", "scope", "status", "target_kind", "target_id", "selected_value", "rationale", "decided_at"],
+        "additionalProperties": false,
+        "properties": {
+          "decision_id": { "type": "string", "minLength": 1 },
+          "decision_type": { "type": "string", "enum": ["preferred_name", "preferred_role", "mapping_rejection", "canonical_term"] },
+          "scope": { "type": "string", "enum": ["run", "target", "registry"] },
+          "status": { "type": "string", "enum": ["proposed", "accepted", "rejected", "promoted"] },
+          "target_kind": { "type": "string", "enum": ["candidate_object", "candidate_action", "preferred_term"] },
+          "target_id": { "type": "string", "minLength": 1 },
+          "selected_value": { "type": "string", "minLength": 1 },
+          "rationale": { "type": "string", "minLength": 1 },
+          "alternatives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["value"],
+              "additionalProperties": false,
+              "properties": {
+                "value": { "type": "string", "minLength": 1 },
+                "score": { "type": "number", "minimum": 0, "maximum": 1 },
+                "reasoning": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          "preferred_term_id": { "type": "string", "minLength": 1 },
+          "decided_by": { "type": "string", "enum": ["human", "agent", "system"] },
+          "decided_at": { "type": "string", "format": "date-time" },
+          "metadata": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
+    "preferred_terms": {
+      "type": "array",
+      "description": "Draft v1.4.0-gated canonical-term entities to APPEND to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.",
+      "items": {
+        "type": "object",
+        "required": ["entity_type", "id", "slug", "label", "aliases", "scope"],
+        "additionalProperties": false,
+        "properties": {
+          "entity_type": { "const": "preferred_term" },
+          "id": { "type": "string", "minLength": 1 },
+          "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "label": { "type": "string", "minLength": 1 },
+          "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "scope": { "type": "string", "enum": ["target", "registry"] },
+          "domain": { "type": "string", "minLength": 1 },
+          "source_decision_ids": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "metadata": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "Draft v1.4.0-gated first-class capability entities to APPEND to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.",
+      "items": {
+        "type": "object",
+        "required": ["entity_type", "id", "slug", "name", "canonical_verb"],
+        "additionalProperties": false,
+        "properties": {
+          "entity_type": { "const": "capability" },
+          "id": { "type": "string", "minLength": 1 },
+          "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "name": { "type": "string", "minLength": 1 },
+          "canonical_verb": { "type": "string", "minLength": 1 },
+          "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "oods_traits": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "projection_variant_ids": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "preconditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type"],
+              "additionalProperties": false,
+              "properties": {
+                "type": { "type": "string", "enum": ["auth", "role", "state", "data"] },
+                "description": { "type": "string" },
+                "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+                "evidence_chain": {
+                  "type": "array",
+                  "items": { "type": "object", "additionalProperties": true }
+                }
+              }
+            }
+          },
+          "metadata": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
     "projection_variants": {
       "type": "array",
       "description": "Stage1 v1.5.0 cross-surface identity variants. Each element describes one surface-specific projection of this component mapping (desktop/mobile/modal/sidebar).",

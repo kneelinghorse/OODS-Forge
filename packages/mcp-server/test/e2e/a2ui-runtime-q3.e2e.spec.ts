@@ -44,7 +44,12 @@ import contentPackFixture from '../fixtures/object-catalog/content-pack.json' wi
 
 import serverToClientSchema from '../../src/a2ui/contracts/v0_9/server_to_client.json' with { type: 'json' };
 import commonTypesSchema from '../../src/a2ui/contracts/v0_9/common_types.json' with { type: 'json' };
-import minimalCatalogSchema from '../../src/a2ui/contracts/v0_9/catalogs/minimal/catalog.json' with { type: 'json' };
+// Sprint-103 m03: emitter now targets the Forge custom catalog (minimal + Image).
+// The Forge catalog is a strict superset of minimal for the 5 shared components,
+// so every assertion below that previously validated against minimal continues
+// to validate against Forge — and image-kind slots now emit Image components
+// that minimal alone cannot validate.
+import forgeCatalogSchema from '../../src/a2ui/contracts/v0_9/catalogs/forge/catalog.json' with { type: 'json' };
 
 import type {
   ObjectCatalogManifest,
@@ -87,7 +92,7 @@ beforeAll(() => {
   // indexes the schema under both the override key AND its inherent $id, so a
   // single addSchema call covers both lookups.
   ajv.addSchema(
-    minimalCatalogSchema,
+    forgeCatalogSchema,
     'https://a2ui.org/specification/v0_9/catalog.json',
   );
   validateMessage = ajv.compile(serverToClientSchema);
@@ -310,8 +315,10 @@ describe('Q3 — a2ui-runtime-emitter cross-fixture conformance', () => {
     expect(validatedMessages).toBe(totalMessages);
   });
 
-  it('image-slot fallback warning fires whenever a fixture uses hero/avatar/media/thumb', () => {
+  it('image slots emit Image components (no OODS-A2UI-IMAGE-FALLBACK warning) across every fixture that carries hero/avatar/media/thumb (s103-m03)', () => {
     // Article has `hero`, Author has `avatar`, Product has `media`, Comment has `avatar`.
+    // Pre-s103-m03 these fell back to Text + per-occurrence warning; s103-m03 closes the
+    // gap with the Forge custom catalog's Image component.
     const fixturesWithImages: GateFixture[] = [
       ['content-article', articleFixture as ObjectCatalogManifest],
       ['content-author', authorFixture as ObjectCatalogManifest],
@@ -323,7 +330,18 @@ describe('Q3 — a2ui-runtime-emitter cross-fixture conformance', () => {
       const imageWarnings = r.warnings.filter(
         (w) => w.code === 'OODS-A2UI-IMAGE-FALLBACK',
       );
-      expect(imageWarnings.length, `${name} expected image fallback warnings`).toBeGreaterThan(0);
+      expect(
+        imageWarnings.length,
+        `${name} unexpectedly produced OODS-A2UI-IMAGE-FALLBACK warnings (Forge catalog should now cover image slots natively)`,
+      ).toBe(0);
+      const { updates } = partitionMessages(r.messages);
+      const imageNodes = updates.flatMap((u) =>
+        u.updateComponents.components.filter((c) => c.component === 'Image'),
+      );
+      expect(
+        imageNodes.length,
+        `${name} expected at least one Image component (image-kind slot present in fixture)`,
+      ).toBeGreaterThan(0);
     }
   });
 });

@@ -96,12 +96,36 @@ export async function handle(input: MapCreateInput): Promise<MapCreateOutput> {
       : {}),
   };
 
+  // v1.4.0 stubs: append to top-level registry arrays when present (s103-m02).
+  // Pass-through only — current OODS consumers don't act on these fields.
+  const incomingDecisions = input.disambiguation_decisions ?? [];
+  const incomingPreferredTerms = input.preferred_terms ?? [];
+  const incomingCapabilities = input.capabilities ?? [];
+
   if (!applied) {
     warnings.push(
       'Dry run: mapping not persisted. Set apply=true to write to artifacts/structured-data/component-mappings.json.',
     );
   } else {
     doc.mappings.push(mapping);
+    if (incomingDecisions.length > 0) {
+      doc.disambiguation_decisions = [
+        ...(doc.disambiguation_decisions ?? []),
+        ...incomingDecisions,
+      ];
+    }
+    if (incomingPreferredTerms.length > 0) {
+      doc.preferred_terms = [
+        ...(doc.preferred_terms ?? []),
+        ...incomingPreferredTerms,
+      ];
+    }
+    if (incomingCapabilities.length > 0) {
+      doc.capabilities = [
+        ...(doc.capabilities ?? []),
+        ...incomingCapabilities,
+      ];
+    }
     saveMappings(doc);
   }
 

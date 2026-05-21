@@ -190,21 +190,132 @@ Sprint-101 failure mode (planning on a hallucinated user) did not recur. Rule 1 
 
 ---
 
-## Sprint-103 Candidate Shape (forming 2026-05-20)
+## Sprint-103 Outcomes (closed 2026-05-21)
 
-To be locked at planning time. Surfaces worth re-evaluating, informed especially by s102-m03 taking the implementation path (so the named alternates that would have promoted on memo-only — C6 registry knowledge-model depth and variant-emission deepening — remain available as standing candidates).
+Sprint-103 ran N=4 (3 work + 1 closeout) — second consecutive lean sprint as a confidence pass after the sprint-101 recovery. 4/4 missions delivered. Test posture: 163 files / 2962 active pass / 10 skipped (+1 file / +107 active vs sprint-102 close 158/2855). tsc --noEmit clean for both mcp-server and mcp-bridge. Full closeout report at `cmos/reports/s103-m04-closeout-2026-05-21.md`.
 
-- **C6 Registry knowledge-model depth** — disambiguation_decisions, preferred_term, capability, projection_variants round-trip. Named as default alternate for s102-m03's memo-only contingency; would have promoted if A2UI memo-only fired. Standing capability-track candidate. Schema stubs (`disambiguation_decisions`, `preferred_term`, `capability`) at v1.4.0 remain opt-in pending Stage1 emitter work; round-trip implementation is the OODS-side work.
-- **A2UI custom-catalog extension for Image** — extend Forge's emit with an inline custom catalog declaring Image atop minimal (`acceptsInlineCatalogs:true`), OR target A2UI's basic catalog if it has an Image component. Closes the OODS-A2UI-IMAGE-FALLBACK warning surface. Promote when image-rendering becomes a real consumer ask, OR when a host wants the basic-catalog vocabulary instead of minimal.
-- **A2UI host conformance testing** — exercise the emitted v0.9 stream against an actual host (Lit web renderer or Google ADK A2uiSchemaManager). Today's tests AJV-validate against the spec schemas; live host validation is the next-step real-world signal. Promotable when an accessible test endpoint exists or it's worth standing one up locally (e.g., a Lit-renderer harness).
-- **A2UI v0.10 migration** — v0.10 is in-flight upstream with no published schemas yet. If v0.10 publishes its schemas before s103 planning, this becomes concrete migration work tracked by the sprint-97 m02 strip-then-AJV version-policy pattern. Today's vendored v0.9 schemas are version-pinned with `const "v0.9"`. Passive watch otherwise.
-- **Concordance grounding of content-pack** — schema.org-aligned content fixtures are ready for concordance canonicalization once concordance has reason to ingest the publishing domain. Passive carry-forward.
+- **s103-m01 — Reframed C3 `review.resolve` agent-callable policy tool.** First MCP tool in the post-`db3b3b0` C3 reframing. Pure-function evaluator (D4 pattern, ordered first-match-wins) at `packages/mcp-server/src/codegen/review-policy.ts` with 3 predicate kinds: confidence_threshold / signal_type_floor / entity_urn_match (glob with `*` and `?`; URN punctuation escaped literally). Handler at `packages/mcp-server/src/tools/review.resolve.ts` mirroring `concordance.validate`'s two-way manifest|manifestPath input. AJV input + output schemas under `packages/mcp-server/src/schemas/review.resolve.{input,output}.json` with embedded policy-bundle `$defs`. 5-surface registration (registry.json + registry.ts FALLBACK + index.ts toolSpecs + security/policy.json + adapter tool-descriptions.json). Mission-start audit captured as CMOS decision BEFORE code per Rule 1; convergence: IMPLEMENTATION path, no D-memo fork. 70 new tests (25 evaluator unit + 20 handler unit + 25 Q3 E2E AJV-validated). Default action `defer` (unmatched items surface). Agent-callable; no playground UI.
+- **s103-m02 — C6 v1.4.0 registry round-trip via Proposal A (top-level, not per-mapping).** Decision #484 from sprint-101 carry-forward salvaged. `component-mapping.schema.json` adds top-level optional `disambiguation_decisions[]` / `preferred_terms[]` / `capabilities[]` with inlined Stage1 entity $defs. `map.create` handler appends to top-level arrays on `apply=true` (additive only). `registry.snapshot` output schema + handler surface them losslessly when present, omitted entirely otherwise (byte-equivalent for legacy callers). 2 contract fixtures (`test/fixtures/object-catalog/registry-v14-{synthetic,stage1-shape}.json`). 13 round-trip tests covering G1 fixture validation, G2 bilateral non-regression (production doc still validates), G3 round-trip (5: persists on apply=true, on-disk validates, dry-run skips, omission keeps doc clean, multiple calls APPEND), G4 `projection_variants` round-trip via `runPreEmit` (4: mobile/desktop/canonical/production-user). selectVariant() pathway (s100-m03) confirmed survives JSON serialization.
+- **s103-m03 — A2UI Image custom-catalog extension.** Closed OODS-A2UI-IMAGE-FALLBACK from s102-m03 (decision #533). New Forge custom catalog at `packages/mcp-server/src/a2ui/contracts/v0_9/catalogs/forge/catalog.json` — strict superset of minimal (Text/Row/Column/Button/TextField) plus Image (url=DynamicString required, alt optional, fit optional). Canonical catalogId `oods-forge:catalog/v1` exported as `FORGE_CATALOG_ID`. Emitter emits Image components for image-kind slots with `url=DataBinding`, `alt=slot.name`, `accessibility.label=slot.name`; OODS-A2UI-IMAGE-FALLBACK warning retired by changing the surface (Rule 12 preserved — warning fired BECAUSE of real gap; closing the gap retires the warning). `meta.catalogProfile` flipped 'minimal' → 'forge'. **Rule 12 + Rule 1 application:** A2UI v0.9 vendored schemas have NO `acceptsInlineCatalogs:true` field that the mission spec referenced; rather than fake the extension, spec-compliant alternative chosen (separate catalog file referenced by ID). Captured as a CMOS decision. Existing 98 Q3 cases preserved in count (AJV setup switched to Forge catalog, behavior assertion inverted for image fallback). New focused 24-test image-specific E2E gate at `test/e2e/a2ui-image-q3.e2e.spec.ts`.
+- **s103-m04 — Closeout (6th formal #408 run).** Single closeout commit enumerates s103-m01..m04. NO janitorial per `feedback_hygiene_in_planning_not_missions.md` (hygiene was executed in the 2026-05-20 planning session).
+
+Sprint-101 failure-mode regression check: no recurrence. Rule 1 + Rule 3 + Rule 12 actively applied throughout. **Two consecutive lean sprints (s102 + s103) shipped clean post-recovery — sprint-104 can restore to N=5.**
+
+---
+
+## Sprint-104 Candidate Shape (drafted 2026-05-21)
+
+Recommendation: **N=5 (4 work + 1 closeout)** — restore to default cadence after two consecutive successful lean sprints. Mix Capability + Quality + Integration as needed at planning.
+
+Candidate missions for the s104 planning session:
+
+- **A2UI host conformance test harness** — exercise the emitted v0.9 stream against an actual host (Lit web renderer locally, OR Google ADK A2uiSchemaManager-driven validation). The Image catalog landing in s103-m03 unblocks meaningful host-side rendering. Natural s104 capstone.
+- **C5 evidence-backed agent-readable artifacts** — per the C3/C4/C5 reframing, C5 is the structured-artifact surface. With C3 (`review.resolve`) shipped, C5 is the next natural rung: codegen review-queue / conflict-detail / apply-summary surfaces as structured machine-readable artifacts (NOT human-clickable UIs), composable with the C3 policy tool.
+- **`review.resolve` real-world usage signal watch** — like the s100-m04 `concordance.validate` trigger watch, observe usage of the new C3 tool over 1-2 sprints. Promotion candidates: pipeline auto-integration (if real callers surface), policy-bundle persistence as a registry artifact, `review.batch` for high-throughput batches.
+- **Concordance grounding of the content domain pack** — schema.org alignment named in s102-m01 needs to land in `cmos/foundational-docs/technical/object-catalog.md` for canonicalization. Passive carry-forward unless a downstream Concordance ingest decision lands.
+- **I2 semantic-federation evaluator (D4 implementation)** — still needs Birch coordination + standalone planning artifact before implementation. Same posture as sprint-101/102/103.
+
+---
+
+## Sprint-103 Locked Shape (locked 2026-05-20) — superseded by Outcomes section above
+
+Sprint-103 locked at N=4 (3 work + 1 closeout) — second consecutive lean sprint as a confidence pass after the sprint-101 recovery. Theme: execute the post-s101 **C3/C4/C5 reframing** that landed in `db3b3b0 docs(foundational): reframe C3/C4/C5 to drop human-operator framing` by shipping the reframed C3 surface (agent-callable, policy-based; not a human UI); then deepen the registry knowledge model via C6 round-trip; then close the OODS-A2UI-IMAGE-FALLBACK gap from s102-m03. Hygiene work executed in s103 planning session (this session) per `feedback_hygiene_in_planning_not_missions.md` — not folded into any build mission. Standing alternates dropped from candidate-watch: `concordance.validate` auto-integration trigger-watch (zero usage signal in 2+ sprints) is closed unless a downstream consumer surfaces.
+
+### s103-m01 — Reframed C3: Agent-callable policy-based conflict-resolution MCP tool
+
+**Track:** Capability
+**Objective:** Ship the first agent-callable MCP tool that takes a low-confidence reconciliation conflict artifact + a policy bundle as input, applies the policy, and produces a resolved-delta (accept / patch / defer / dismiss) with an audit trail. This is the **decision-logic** surface for the C3 reframing — explicitly NOT a human UI, NOT a renderer. The s99-m04 review-emitter renders confidence tiers; this tool *resolves* the flagged items by policy.
+
+**Mission-start audit (mandatory per Rule 1, captured as CMOS decision BEFORE any code):** answer (a) what policy axes exist (confidence threshold? signal-type? entity URN match? brand_overlay?), (b) input shape (conflict artifact + policy bundle as separate args? merged? per-workspace policy at registry?), (c) output shape (resolved-delta schema + audit-trail schema), (d) relationship to existing `oods.confidence_decomposition` field shipped in s97-F1 and consumed by s99-m04 review-emitter, (e) policy-evaluator pattern adopted (D4 OODS-subscriptions evaluator wrapper? bespoke? new D-memo needed?). If audit surfaces 5+ session rework — e.g., the policy shape forks into a real D-memo — convert to memo-only path and promote alternate (default alternate: A2UI host conformance testing).
+
+**Success criteria:**
+- MCP tool registered in all 5 places (registry.json + registry.ts FALLBACK + index.ts toolSpecs + security/policy.json + adapter tool-descriptions.json)
+- Input + output JSON schemas defined; AJV-validated
+- Policy bundle shape captured as a TypeScript type + JSON schema; at least 3 policy types named (e.g., `confidence_threshold`, `signal_type_block`, `entity_urn_match`)
+- Resolved-delta and audit-trail shapes captured similarly
+- Unit tests cover: each policy type's evaluator; ambiguous-policy precedence; no-matching-policy default behavior; malformed-policy rejection
+- Q3 E2E gate: at least one real-data scenario using the s99-m04 `subscription-low-confidence.json` synthetic fixture (the only LOW-tier surface in the fixture set) — the tool produces a resolved-delta + audit-trail for that entity
+- Agent-callable: the tool docstring + tool-descriptions.json entry explicitly state "consumed by orchestrating agents; no playground UI required"
+
+**Deliverables:**
+- `packages/mcp-server/src/tools/review-resolve.ts` (or similarly-named) with handler
+- `packages/mcp-server/src/codegen/review-policy.ts` (policy evaluator)
+- New JSON schemas under `packages/mcp-server/src/contracts/review-policy/`
+- Mission-start audit decision in CMOS
+- Unit + Q3 E2E test files
+
+### s103-m02 — C6 Registry knowledge-model depth round-trip
+
+**Track:** Capability
+**Objective:** Implement the OODS-side round-trip for the v1.4.0 schema stubs (`disambiguation_decisions`, `preferred_term`, `capability`, `projection_variants`) that have been opt-in pending Stage1 emitter work. The round-trip is the OODS-side implementation gap; Stage1 producing real instances of these fields is a separate concern. Closes the largest remaining gap in the canonical mission-graph C-track.
+
+**Success criteria:**
+- All four v1.4.0 schema stubs round-trip cleanly through `compose → validate → save → load`
+- `registry.snapshot` returns each field's contents losslessly
+- `map.create` accepts each field's input shape
+- At least 2 end-to-end contract fixtures exercise the full v1.4.0 registry shape (one synthetic, one mirroring Stage1's expected emission shape)
+- Bilateral tests: existing Stage1 v1.6.0 fixtures continue to validate (no regression)
+- `projection_variants` round-trip in particular: the existing `selectVariant()` pathway (s100-m03) is exercised in a round-trip context, not just at render-time
+
+**Deliverables:**
+- Schema updates under `packages/mcp-server/src/object-catalog/` and `packages/mcp-server/src/contracts/`
+- Tool-handler updates for `registry.snapshot`, `map.create` (and any others touched)
+- 2 new contract fixtures under `test/fixtures/object-catalog/`
+- Unit + contract tests
+
+### s103-m03 — A2UI Image custom-catalog extension
+
+**Track:** Capability
+**Objective:** Close the OODS-A2UI-IMAGE-FALLBACK warning surface from s102-m03 by extending Forge's A2UI emit with an inline custom catalog that declares an Image component atop the minimal catalog (`acceptsInlineCatalogs:true` pattern). Image slots in the Object Catalog (slot.kind='image') emit as A2UI `Image` components with the URL bound via DataBinding instead of falling back to Text.
+
+**Success criteria:**
+- A2UI emit detects `slot.kind === 'image'` and emits `Image` components instead of `Text` with the fail-loud warning
+- Custom catalog declared inline in the A2UI message stream using A2UI's `acceptsInlineCatalogs:true` extension point
+- Existing 98 Q3 E2E AJV-validated tests still pass (custom catalog is additive)
+- New Q3 tests assert: image slots emit Image components; non-image slots unchanged; OODS-A2UI-IMAGE-FALLBACK warning no longer fires for image-bearing fixtures
+- Content-pack fixture (s102-m01) used as primary test surface (article/author/comment have image slots: heroImage, avatar, etc.)
+- All emitted messages AJV-validated against vendored A2UI v0.9 schemas; custom catalog validates against the A2UI catalog-extension contract
+
+**Deliverables:**
+- `packages/mcp-server/src/codegen/a2ui-runtime-emitter.ts` updates
+- Possibly: new `packages/mcp-server/src/a2ui/catalogs/forge-image-extension.ts` (inline custom catalog declaration)
+- New + extended Q3 E2E tests
+
+### s103-m04 — Closeout (6th formal run of decision #408)
+
+**Track:** Quality
+**Objective:** Sixth formal run of decision #408 closeout-as-commit-boundary. Single closeout commit on Forge-expansion enumerating `s103-m01..m04` in commit body for bisection. Standard MEMORY.md + near.md + CMOS session-complete + closeout report. **No janitorial work** — per `feedback_hygiene_in_planning_not_missions.md`, hygiene was done in the s103 planning session (this session), not in m04.
+
+**Success criteria:**
+- All sprint-103 deliverables committed in a single closeout commit
+- `tsc --noEmit` clean for both mcp-server and mcp-bridge
+- Full test suite green; new tests from m01/m02/m03 all pass
+- CMOS session.complete with decisions + learnings + next-steps captured
+- MEMORY.md updated with sprint-103 outcomes (one-line under "Latest complete sprint")
+- near.md "Sprint-103 Locked Shape" converted to "Sprint-103 Outcomes (closed YYYY-MM-DD)"
+- Closeout report at `cmos/reports/s103-m04-closeout-<date>.md`
+- Sprint-104 candidate shape drafted
+
+**Deliverables:**
+- Single closeout commit
+- Closeout report
+- MEMORY.md + near.md updates
+- CMOS session.complete
+
+---
+
+### Standing alternates (deferred from sprint-103 planning, 2026-05-20)
+
+- **A2UI host conformance test harness** — exercise the emitted v0.9 stream against an actual host (Lit web renderer or Google ADK A2uiSchemaManager). Sprint-104 natural capstone after s103-m03 closes the Image gap. Promotable as s103-m01 alternate if reframed C3 audit forces memo-only.
+- **A2UI v0.10 migration** — passive watch; v0.10 has no published schemas yet. Concrete migration work when schemas ship; tracked by the sprint-97 m02 strip-then-AJV version-policy pattern.
+- **Concordance grounding of content-pack** — passive carry-forward; concordance has to have reason to ingest the publishing domain first.
 - **I2 semantic-federation evaluator (D4 implementation)** — still needs Birch involvement + standalone planning artifact before implementation. Same posture as sprint-101/102.
-- **concordance.validate trigger watch** — three named triggers from s100-m04; zero usage signal in two-plus sprints. **Recommendation:** drop the candidate by s103 planning unless a usage signal lands. Repeated passive defer is anti-pattern.
-- **Stale-learnings triage** — still 23 flagged at threshold 20; not load-bearing. Opportunistic-if-cheap during planning or closeout.
 - **Production blocking-timeout decision** — no incident driver. Stays deferred.
-- **CMOS onboard sticky-pointer + PG mirror drift** — filed 2026-05-15 as CMOS-MCP bug; 6 table mismatches still observed at session start. No SLA expected; passive watch.
-- **MEMORY.md/topic-file refactor** — still over the 24.4KB warning after this sprint's trim. Standing tech debt; full refactor when cheap.
+- **CMOS onboard sticky-pointer + PG mirror drift** — passive watch; no SLA expected. 3rd recurrence amended into the 2026-05-15 bug report in s103 planning session.
+
+### Closed candidates (no longer on the watch list)
+
+- **`concordance.validate` auto-integration trigger watch** — closed in s103 planning. Zero usage signal across 2+ sprints since the tool shipped at s98-m03; repeated passive defer is anti-pattern. Re-opens only if a downstream consumer explicitly asks for `pipeline.handle({ validate: true })`.
 
 ---
 

@@ -11,11 +11,18 @@
  * are preserved through different vehicles (surfaceId, component id, DataBinding
  * path).
  *
- * Targets the A2UI **minimal** catalog (Text / Row / Column / Button /
- * TextField) so emitted messages validate against the v0.9 spec without
- * declaring a custom Forge catalog. Image-kind slots are surfaced as Text with
- * a fail-loud warning (Rule 12) — extending the catalog with an Image
- * component is named as future work, not silently filled in.
+ * Targets the OODS-Forge custom A2UI catalog v1 (sprint-103 m03) — a strict
+ * superset of the upstream minimal catalog: Text / Row / Column / Button /
+ * TextField PLUS Image. Image-kind slots emit as Image components with the URL
+ * bound via DataBinding, closing the OODS-A2UI-IMAGE-FALLBACK gap surfaced at
+ * sprint-102 m03 where image slots used to fall back to Text with a warning.
+ *
+ * The custom catalog file lives at
+ * `packages/mcp-server/src/a2ui/contracts/v0_9/catalogs/forge/catalog.json`.
+ * Hosts that load this catalog by `catalogId = oods-forge:catalog/v1` can
+ * render image slots natively. The Forge catalog's component definitions
+ * mirror minimal exactly for the 5 shared components, so anything that
+ * previously validated against minimal continues to validate against Forge.
  *
  * Consumes runPreEmit() unchanged. Per the s102-m03 mission-end protocol, the
  * D2 generalization assessment is captured as a separate decision; this
@@ -87,10 +94,20 @@ export interface A2uiButtonComponent {
   accessibility?: A2uiAccessibilityAttributes;
 }
 
+export interface A2uiImageComponent {
+  id: string;
+  component: 'Image';
+  url: A2uiDynamicString;
+  alt?: A2uiDynamicString;
+  fit?: 'cover' | 'contain' | 'fill';
+  accessibility?: A2uiAccessibilityAttributes;
+}
+
 export type A2uiComponent =
   | A2uiTextComponent
   | A2uiColumnComponent
-  | A2uiButtonComponent;
+  | A2uiButtonComponent
+  | A2uiImageComponent;
 
 export interface A2uiCreateSurfaceMessage {
   version: 'v0.9';
@@ -119,13 +136,18 @@ export type A2uiMessage = A2uiCreateSurfaceMessage | A2uiUpdateComponentsMessage
 export interface A2uiRuntimeOptions {
   /** When set, only this projection variant is emitted per entity. */
   variant?: string;
-  /** Override the per-entity catalogId. Default: `oods-forge:<urn>` per entity. */
+  /** Override the per-surface catalogId. Default: `oods-forge:catalog/v1` (Forge custom catalog). */
   catalogId?: string;
   /** Theme primary color (CSS hex). Overrides brand→hex resolution. */
   primaryColor?: string;
   /** Map of brand_overlay name → primary hex. Defaults provided for brand-a / brand-b. */
   brandOverlayHexMap?: Record<string, string>;
 }
+
+/** Canonical Forge custom catalog ID. Used as the createSurface.catalogId for every
+ *  emitted surface. The catalog file lives at
+ *  packages/mcp-server/src/a2ui/contracts/v0_9/catalogs/forge/catalog.json. */
+export const FORGE_CATALOG_ID = 'oods-forge:catalog/v1';
 
 export interface A2uiRuntimeIssue {
   code: string;
@@ -146,7 +168,7 @@ export interface A2uiRuntimeResult {
   errors?: A2uiRuntimeIssue[];
   meta: {
     a2uiSpecVersion: 'v0.9';
-    catalogProfile: 'minimal';
+    catalogProfile: 'forge';
     entitiesRendered: number;
     surfacesRendered: number;
     componentsRendered: number;
@@ -249,9 +271,7 @@ export function fieldToJsonPointer(field: string): string {
 const ROOT_ID = 'root';
 
 function projectSlot(
-  entityUrn: string,
   slot: OodsSlot,
-  warnings: A2uiRuntimeIssue[],
 ): { rootRef: string; components: A2uiComponent[] } {
   const kind = inferSlotKind(slot);
   const id = slot.name;
@@ -261,20 +281,14 @@ function projectSlot(
 
   switch (kind) {
     case 'image':
-      warnings.push({
-        code: 'OODS-A2UI-IMAGE-FALLBACK',
-        message: `Slot "${slot.name}" inferred as image; A2UI minimal catalog has no Image component — emitted as Text fallback carrying the URL via DataBinding. Extend the catalog with an Image component when image rendering becomes required.`,
-        entity: entityUrn,
-        slot: slot.name,
-      });
       return {
         rootRef: id,
         components: [
           {
             id,
-            component: 'Text',
-            variant: 'body',
-            text: dataBinding,
+            component: 'Image',
+            url: dataBinding,
+            alt: slot.name,
             accessibility,
           },
         ],
@@ -401,7 +415,7 @@ function emitEntityForVariant(
       });
       continue;
     }
-    const projected = projectSlot(entity.urn, slot, warnings);
+    const projected = projectSlot(slot);
     components.push(...projected.components);
     childRefs.push(projected.rootRef);
     for (const c of projected.components) seenIds.add(c.id);
@@ -499,7 +513,7 @@ export function emit(
     errors: errors.length > 0 ? errors : undefined,
     meta: {
       a2uiSpecVersion: 'v0.9',
-      catalogProfile: 'minimal',
+      catalogProfile: 'forge',
       entitiesRendered: manifest.entities.length,
       surfacesRendered,
       componentsRendered,

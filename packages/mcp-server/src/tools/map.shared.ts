@@ -6,7 +6,12 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Stage1ProjectionVariant } from "./types.js";
+import type {
+  Stage1CapabilityEntity,
+  Stage1DisambiguationDecision,
+  Stage1PreferredTermEntity,
+  Stage1ProjectionVariant,
+} from "./types.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "../../../../");
@@ -84,6 +89,12 @@ export type MappingsDoc = {
   version: string;
   stats: { mappingCount: number; systemCount: number };
   mappings: ComponentMapping[];
+  /** Draft v1.4.0-gated registry-level review-decision events. Additive; absent on pre-v1.4.0 docs. */
+  disambiguation_decisions?: Stage1DisambiguationDecision[];
+  /** Draft v1.4.0-gated canonical-term entities. Additive; absent on pre-v1.4.0 docs. */
+  preferred_terms?: Stage1PreferredTermEntity[];
+  /** Draft v1.4.0-gated first-class capability entities. Additive; absent on pre-v1.4.0 docs. */
+  capabilities?: Stage1CapabilityEntity[];
 };
 
 export function getMappingsPath(): string {
