@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-forge.local/schemas/apply-summary.output.json",
+  "title": "Apply Summary Output Artifact (C5, s104-m04)",
+  "description": "Structured delta artifact produced by the apply-summary emitter — the third and final C5 surface. Captures the post-review.resolve decision state per entity, aggregate decision counts, and an audit trail echo that lets agents persist the apply-summary for replay/audit/handoff without rerunning review.resolve. Composes the full C5 chain: review-queue (m02) → review.resolve (s103-m01) → apply-summary (this).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["entries", "summary", "auditTrail"],
+  "properties": {
+    "entries": {
+      "type": "array",
+      "description": "One entry per resolution. Order preserves review.resolve's iteration order over the source manifest — the order an agent saw at queue/decide time. Element name + type are resolved by joining each resolution to manifest.entities (best-effort; entries whose urn is not present in the manifest still surface but with empty element fields).",
+      "items": { "$ref": "#/$defs/ApplySummaryEntry" }
+    },
+    "summary": { "$ref": "#/$defs/ApplySummaryAggregates" },
+    "auditTrail": { "$ref": "#/$defs/ApplySummaryAuditTrail" },
+    "source": { "$ref": "#/$defs/ApplySummarySource" }
+  },
+  "$defs": {
+    "ApplySummaryEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "urn",
+        "decision",
+        "reason",
+        "policyId",
+        "evaluatedScore",
+        "evaluatedTier",
+        "elementName",
+        "elementType"
+      ],
+      "properties": {
+        "urn": { "type": "string" },
+        "decision": {
+          "type": "string",
+          "enum": ["accept", "patch", "defer", "dismiss"]
+        },
+        "reason": {
+          "type": "string",
+          "description": "Verbatim policy reason from review.resolve EvaluationResult."
+        },
+        "policyId": {
+          "type": "string",
+          "description": "Matching policy id, or 'default' when no policy matched."
+        },
+        "evaluatedScore": {
+          "type": ["number", "null"],
+          "description": "confidence_decomposition.total at evaluation time, or null."
+        },
+        "evaluatedTier": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "unknown"]
+        },
+        "elementName": {
+          "type": "string",
+          "description": "Mirror of manifest.entities[urn].element.name; empty string when the entity is not in the source manifest (defensive — review.resolve and the manifest should always be in sync)."
+        },
+        "elementType": {
+          "type": "string",
+          "description": "Mirror of manifest.entities[urn].element.type; empty string when not in source manifest."
+        }
+      }
+    },
+    "ApplySummaryAggregates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entriesTotal",
+        "decisionCounts",
+        "defaultActionUsed",
+        "matchedPolicyIds"
+      ],
+      "properties": {
+        "entriesTotal": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total decision entries (mirrors resolutions.length)."
+        },
+        "decisionCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["accept", "patch", "defer", "dismiss"],
+          "properties": {
+            "accept": { "type": "integer", "minimum": 0 },
+            "patch": { "type": "integer", "minimum": 0 },
+            "defer": { "type": "integer", "minimum": 0 },
+            "dismiss": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "defaultActionUsed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of entries whose policyId === 'default'. A signal for 'how much work is the policy bundle actually doing'."
+        },
+        "matchedPolicyIds": {
+          "type": "array",
+          "description": "Sorted, deduplicated list of policy ids that matched at least one entity. Mirror of auditTrail.matchedPolicyIds.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "ApplySummaryAuditTrail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluatedAt", "defaultAction", "entityCount", "matchedPolicyIds"],
+      "properties": {
+        "evaluatedAt": {
+          "type": "string",
+          "description": "ISO-8601 timestamp mirrored from review.resolve auditTrail."
+        },
+        "defaultAction": {
+          "type": "string",
+          "enum": ["accept", "patch", "defer", "dismiss"]
+        },
+        "entityCount": { "type": "integer", "minimum": 0 },
+        "policyBundleId": {
+          "type": "string",
+          "description": "auditTrail.policyBundle.id when the bundle named itself. Optional."
+        },
+        "matchedPolicyIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "ApplySummarySource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceManifest": {
+          "type": "string",
+          "description": "Identifier of the source manifest (options.sourceManifestId, defaulting to manifest.source.agent or 'unknown')."
+        },
+        "manifestPath": {
+          "type": "string",
+          "description": "Project-relative path the manifest was loaded from (mirror of review.resolve diagnostics.manifestPath). Optional."
+        }
+      }
+    }
+  }
+}

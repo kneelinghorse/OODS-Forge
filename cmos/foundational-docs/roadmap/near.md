@@ -203,17 +203,92 @@ Sprint-101 failure-mode regression check: no recurrence. Rule 1 + Rule 3 + Rule 
 
 ---
 
-## Sprint-104 Candidate Shape (drafted 2026-05-21)
+## Sprint-104 Outcomes (closed 2026-05-21)
 
-Recommendation: **N=5 (4 work + 1 closeout)** — restore to default cadence after two consecutive successful lean sprints. Mix Capability + Quality + Integration as needed at planning.
+Sprint-104 restored default cadence **N=5 (4 work + 1 closeout)** after two consecutive lean confidence-pass sprints (s102 + s103) shipped clean post-s101 recovery. **5/5 missions delivered.** Theme realized: reached the A2UI host conformance rung that the s102-m03 closeout named as future work, and **closed C5 fully** in one sprint by shipping all three agent-readable structured-artifact surfaces named in the mission-graph success criterion.
 
-Candidate missions for the s104 planning session:
+Sprint title: **"A2UI Host Conformance (Lit local) + C5 Full Close."**
 
-- **A2UI host conformance test harness** — exercise the emitted v0.9 stream against an actual host (Lit web renderer locally, OR Google ADK A2uiSchemaManager-driven validation). The Image catalog landing in s103-m03 unblocks meaningful host-side rendering. Natural s104 capstone.
-- **C5 evidence-backed agent-readable artifacts** — per the C3/C4/C5 reframing, C5 is the structured-artifact surface. With C3 (`review.resolve`) shipped, C5 is the next natural rung: codegen review-queue / conflict-detail / apply-summary surfaces as structured machine-readable artifacts (NOT human-clickable UIs), composable with the C3 policy tool.
-- **`review.resolve` real-world usage signal watch** — like the s100-m04 `concordance.validate` trigger watch, observe usage of the new C3 tool over 1-2 sprints. Promotion candidates: pipeline auto-integration (if real callers surface), policy-bundle persistence as a registry artifact, `review.batch` for high-throughput batches.
-- **Concordance grounding of the content domain pack** — schema.org alignment named in s102-m01 needs to land in `cmos/foundational-docs/technical/object-catalog.md` for canonicalization. Passive carry-forward unless a downstream Concordance ingest decision lands.
-- **I2 semantic-federation evaluator (D4 implementation)** — still needs Birch coordination + standalone planning artifact before implementation. Same posture as sprint-101/102/103.
+Full closeout report at `cmos/reports/s104-m05-closeout-2026-05-21.md`. End-of-sprint posture: **5 of 6 C-axes closed** (C1/C2/C3/C5/C6 ✓; only C4 remains and per db3b3b0 may not survive as a separate axis). Test posture: 173 files / 3406 active / 10 skipped (+444 active vs s103 close). Rule 1 mission-start audit pattern n=7 clean runs.
+
+Mission slate locked from the s103 closeout candidate shape (decision #562):
+
+### s104-m01 — A2UI host conformance harness (Lit local)
+
+**Track:** Integration / Capstone
+**Objective:** Ship the first A2UI host conformance harness via a Lit local renderer. Closes the "Position B claim proven at the emitter side" caveat from the s102-m03 closeout. Validates beyond AJV: wire-shape conformance does not prove that a real host instantiates the component tree (DataBinding paths resolve, component references don't dangle, render order is consistent).
+
+**Lit-vs-ADK choice locked in this planning session (PS-2026-05-21-003):** Lit local renderer chosen. Reasoning: cheap-and-deterministic-first pattern (mirrors s97-m04 → s98-m04 concordance smoke evolution). ADK `A2uiSchemaManager` becomes a future env-gated upgrade.
+
+**Mission-start audit (mandatory per Rule 1):** five axes captured as a CMOS decision BEFORE harness code:
+- (a) AJV-vs-host gate boundary — what does host conformance catch that AJV doesn't? Answer with at least one concrete test case.
+- (b) Host adapter shape — a2ui-message → Lit component tree mapping pattern. Single function? Per-component dispatch? Where does `oods-forge:catalog/v1` registration happen?
+- (c) First conformance fixture set — all 98 Q3 cases? a focused subset? new fixtures?
+- (d) Failure-mode contract — emitter regression vs harness drift, distinguished how in CI output?
+- (e) CI shape — `@lit-labs/ssr` vs happy-dom vs jsdom?
+
+Convergence to IMPLEMENTATION path is default; divergence (5+ session rework on any one axis) triggers memo-only fork and promotes default alternate (a fourth C5 surface variant OR a real concordance ingest probe).
+
+### s104-m02 — C5 review-queue agent-readable artifact
+
+**Track:** Capability
+**Objective:** First of three C5 surfaces. Ship a structured machine-readable JSON emitter producing a "review queue" artifact — the list of entities needing review with their confidence tier + lowest-signal breakdown — as input agents pass to `review.resolve` (s103-m01). NOT a human UI; an agent-consumed JSON artifact composable with the C3 policy tool. Reuses the s103-m01 + s99-m04 patterns (emitter, AJV schema, PreEmitContext consumer, unit + Q3 tests).
+
+### s104-m03 — C5 conflict-detail agent-readable artifact
+
+**Track:** Capability
+**Objective:** Second C5 surface, pattern reuse from m02. Per-entity deep breakdown of WHY a single low-confidence entity needs review — full signal list, evidence gaps, entity context. Consumable by orchestrating agents reasoning about a specific conflict before invoking `review.resolve`.
+
+### s104-m04 — C5 apply-summary agent-readable artifact
+
+**Track:** Capability
+**Objective:** Third and final C5 surface. **Closes C5 fully** — mission-graph success criterion ("three reconciliation surfaces") satisfied. Structured delta after `review.resolve` decisions are applied, with full audit trail. Transcript artifact agents can persist for replay/audit/handoff. Q3 gate composes m02 → `review.resolve` → m04 end-to-end.
+
+### s104-m05 — Closeout (7th formal run of decision #408)
+
+**Track:** Quality
+**Objective:** Seventh formal #408 run. Single closeout commit enumerating s104-m01..m05. No janitorial — planning-session hygiene was executed in this session (PS-2026-05-21-003) per the addendum to `feedback_hygiene_in_planning_not_missions.md`. Closeout report verifies C5 full closure + Position B host-side conformance milestone.
+
+### Standing alternates (deferred from s104 planning)
+
+- **`review.resolve` real-world usage signal watch** — passive planning-session checkpoint for s105, not a build mission. Promotion candidates: pipeline auto-integration, policy-bundle persistence as registry artifact, `review.batch` for throughput.
+- **Concordance grounding of content-pack** — schema.org alignment already landed in s102-m01 (object-catalog.md line 215; the stale carry-forward next-step is dropped). Real concordance ingest of the publishing domain remains a partner-side prerequisite; no Forge-side work to do until then.
+- **I2 semantic-federation evaluator (D4 implementation)** — still gated on Birch coordination. Same posture as s101/s102/s103.
+- **A2UI ADK `A2uiSchemaManager` env-gated upgrade** — future capstone after Lit local lands; promotes when partner integration calls for it.
+
+### C-track status after s104
+
+Closed by end of s104: C1 (s98-m02), C2 (s99-m02), C3 (s99-m04 emitter + s103-m01 `review.resolve`), C5 (s104-m02..m04 this sprint), C6 (s103-m02). **Five of six C-axes closed.** Only C4 remains, and per the db3b3b0 reframing C4 may not survive as a separate axis.
+
+---
+
+---
+
+## Sprint-105 Candidate Shape (drafted 2026-05-21 at s104 close)
+
+Drafted at the close of s104 to inform the s105 planning session. **NOT locked** — the planning session will pick.
+
+- **C4 reframing decision** — only C4 remains on the C-track and per the db3b3b0 reframing C4 may not survive as a separate axis. A planning-session decision is needed: drop C4 entirely, OR redefine it explicitly (currently "playground as taste-judgment surface"), OR fold its scope into the I-track. Recommended planning-session item, NOT a build mission.
+- **`review.resolve` real-world usage signal watch** — still passive after s104. With the C5 chain now complete, usage may begin materializing. Promotion candidates if signal surfaces: pipeline auto-integration (auto-bake `review.resolve` into the compose pipeline), policy-bundle persistence as registry artifact (so policy bundles can be named + reused), `review.batch` for high-throughput batches.
+- **A2UI ADK `A2uiSchemaManager` env-gated upgrade** — natural progression after Lit local harness lands. Same pattern as concordance smoke s97-m04 → s98-m04 (local env-gated harness shipped first, live partner exercise came later). Gated on partner integration calling for it.
+- **I2 semantic-federation evaluator (D4 implementation)** — still gated on Birch coordination. Same posture as s101 through s104.
+- **9 known instances of the Vite URL transform incompatibility** in `src/tools/*` and `src/index.ts` (learning captured in s104-m01 implementation). NOT s105-blocking; the trigger is "any test that needs happy-dom env on those modules." Surface for any future sprint that wants happy-dom coverage of the MCP-tool side.
+- **Concordance grounding of content domain pack** — schema.org alignment landed in s102-m01 already; full concordance ingest remains a partner-side prerequisite. Same posture as s103 + s104.
+- **C-track completion?** Depending on the C4 reframing decision, sprint-105 or sprint-106 may close the C-track entirely. After that the natural sprint shape returns to a Foundation/Integration mix.
+
+Sprint shape recommendation: **N=5 (4 work + 1 closeout)** — default cadence holds. Three consecutive successful sprints post-recovery (s102 + s103 + s104).
+
+---
+
+## Sprint-104 Candidate Shape (drafted 2026-05-21) — superseded by Outcomes above
+
+(Original candidate shape preserved for traceability — slate selection reasoning at decision #562 + PS-2026-05-21-003.)
+
+- **A2UI host conformance test harness** → locked as m01 (Lit local).
+- **C5 evidence-backed agent-readable artifacts** → locked as m02 + m03 + m04 (three surfaces, full C5 closure).
+- **`review.resolve` real-world usage signal watch** → standing alternate (passive checkpoint, not a build mission).
+- **Concordance grounding of content-pack** → standing alternate (schema.org alignment already landed s102-m01; concordance ingest gated partner-side).
+- **I2 semantic-federation evaluator (D4 implementation)** → standing alternate (Birch coordination still pending).
 
 ---
 

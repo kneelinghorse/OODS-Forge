@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-forge.local/schemas/conflict-detail.output.json",
+  "title": "Conflict Detail Output Artifact (C5, s104-m03)",
+  "description": "Single-entity deep breakdown artifact produced by the conflict-detail emitter. Composable with s103-m01 review.resolve and s104-m02 review-queue: queue gives the list of items needing review; conflict-detail gives the WHY for a specific item; review.resolve applies policy to resolve. Surfaces FULL confidence signals (not top-N), evidence gaps (low signals OR missing evidence_refs OR missing confidence_decomposition), and entity context (projection variants, brand overlay, schema.org URL).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["urn", "tier", "score", "flaggedForReview", "element", "signals", "gaps"],
+  "properties": {
+    "urn": {
+      "type": "string",
+      "description": "Entity URN."
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["high", "medium", "low", "unknown"],
+      "description": "Confidence tier classification per review-emitter.classifyTier."
+    },
+    "score": {
+      "type": ["number", "null"],
+      "description": "confidence_decomposition.total, or null when absent."
+    },
+    "flaggedForReview": {
+      "type": "boolean",
+      "description": "True when needsReview(score, reviewThreshold) — score < threshold OR tier=unknown."
+    },
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "object": { "type": "string" },
+        "action": { "type": "string" }
+      }
+    },
+    "signals": {
+      "type": "array",
+      "description": "FULL set of signals from oods.confidence_decomposition.signals — NOT truncated. Empty when confidence_decomposition is absent. Sorted by score ascending so the weakest signals lead.",
+      "items": { "$ref": "#/$defs/ConflictDetailSignal" }
+    },
+    "gaps": {
+      "type": "array",
+      "description": "Evidence gaps detected on this entity. Three sources: 'signal' (signal.score < evidenceGapThreshold), 'evidence_refs' (evidence_refs[] empty or absent), 'confidence_decomposition' (no confidence_decomposition emitted). Order: confidence_decomposition gap first (if any), then evidence_refs gap (if any), then signal gaps (ascending by signal.score).",
+      "items": { "$ref": "#/$defs/ConflictDetailGap" }
+    },
+    "context": { "$ref": "#/$defs/ConflictDetailContext" },
+    "source": { "$ref": "#/$defs/ConflictDetailSource" }
+  },
+  "$defs": {
+    "ConflictDetailSignal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "score"],
+      "properties": {
+        "name": { "type": "string" },
+        "score": { "type": "number" },
+        "hint": { "type": "string" }
+      }
+    },
+    "ConflictDetailGap": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "name", "score", "threshold"],
+          "properties": {
+            "source": { "const": "signal" },
+            "name": { "type": "string", "description": "Signal name from confidence_decomposition.signals[].name." },
+            "score": { "type": "number" },
+            "threshold": { "type": "number", "description": "Effective evidenceGapThreshold the signal fell under." },
+            "hint": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "detail"],
+          "properties": {
+            "source": { "const": "evidence_refs" },
+            "detail": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "detail"],
+          "properties": {
+            "source": { "const": "confidence_decomposition" },
+            "detail": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "ConflictDetailContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional entity context. Each field is mirrored verbatim from the source entity when present and omitted otherwise — additionalProperties:false makes presence/absence observable to gate consumers.",
+      "properties": {
+        "projectionVariants": {
+          "type": "array",
+          "description": "Mirror of oods.projection_variants[].surface — variant names only, not full slot definitions.",
+          "items": { "type": "string" }
+        },
+        "brandOverlay": {
+          "type": "string",
+          "description": "Mirror of oods.render.brand_overlay when present."
+        },
+        "schemaorg": {
+          "type": "string",
+          "description": "Mirror of entity.context.schemaorg when present (s102-m01 content domain pack convention)."
+        }
+      }
+    },
+    "ConflictDetailSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceManifest": { "type": "string", "description": "Identifier of the manifest the entity came from (options.sourceManifestId)." }
+      }
+    }
+  }
+}

@@ -124,7 +124,12 @@ const TAILWIND_TEXT_SIZE_SCALE = new Map<number, string>([
   [36, '4xl'],
 ]);
 
-const MCP_SERVER_DIR = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
+// Use path.dirname(fileURLToPath(import.meta.url)) instead of
+// `new URL('../..', import.meta.url)` because Vite (used by vitest) rewrites
+// the new-URL-with-import.meta.url pattern into its @fs dev-server URL for
+// asset handling, which breaks fileURLToPath under non-default test
+// environments (s104-m01 — happy-dom host-conformance gate).
+const MCP_SERVER_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const REPO_ROOT = path.resolve(MCP_SERVER_DIR, '..', '..');
 
 const DEFAULT_TOKENS_PATH = path.join(REPO_ROOT, 'packages', 'tokens', 'dist', 'tailwind', 'tokens.json');
