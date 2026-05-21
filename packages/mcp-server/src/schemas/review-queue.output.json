@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-forge.local/schemas/review-queue.output.json",
+  "title": "Review Queue Output Artifact (C5, s104-m02)",
+  "description": "Agent-readable JSON artifact produced by the review-queue emitter. Composable with s103-m01 review.resolve as the INPUT to policy evaluation. Each entry summarizes an entity's confidence tier and the top-N lowest sub-signals from oods.confidence_decomposition; the summary aggregates per-tier counts and the review-flagged count.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["entries", "summary", "source"],
+  "properties": {
+    "entries": {
+      "type": "array",
+      "description": "One entry per included entity. Sorted by score ascending (lowest-confidence first, unknown-tier entities precede all numeric scores). Includes all manifest entities by default; when options.flaggedOnly is true, only entries with flaggedForReview=true are present.",
+      "items": { "$ref": "#/$defs/ReviewQueueEntry" }
+    },
+    "summary": { "$ref": "#/$defs/ReviewQueueSummary" },
+    "source": { "$ref": "#/$defs/ReviewQueueSource" }
+  },
+  "$defs": {
+    "ReviewQueueEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "urn",
+        "tier",
+        "score",
+        "flaggedForReview",
+        "lowestSignals",
+        "elementName",
+        "elementType"
+      ],
+      "properties": {
+        "urn": {
+          "type": "string",
+          "description": "Entity URN (mirrors manifest.entities[].urn)."
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "unknown"],
+          "description": "Confidence tier classification per review-emitter.classifyTier — high ≥0.8, medium 0.5–0.8, low <0.5, unknown when confidence_decomposition is absent."
+        },
+        "score": {
+          "type": ["number", "null"],
+          "description": "confidence_decomposition.total, or null when confidence_decomposition is absent on the entity."
+        },
+        "flaggedForReview": {
+          "type": "boolean",
+          "description": "True when the entity needs human review per review-emitter.needsReview — score < reviewThreshold OR tier === 'unknown'."
+        },
+        "lowestSignals": {
+          "type": "array",
+          "description": "Top-N lowest-scoring sub-signals (ascending by score, stable for ties). Empty array when confidence_decomposition is absent or has no signals. N is options.lowestSignalsN (default 3).",
+          "items": { "$ref": "#/$defs/ReviewQueueSignal" }
+        },
+        "elementName": {
+          "type": "string",
+          "description": "Mirror of entity.element.name. Surfaced so consuming agents can display the queue without re-resolving the entity from the source manifest."
+        },
+        "elementType": {
+          "type": "string",
+          "description": "Mirror of entity.element.type (e.g., ui.surface.card)."
+        }
+      }
+    },
+    "ReviewQueueSignal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "score"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Signal identifier from oods.confidence_decomposition.signals[].name."
+        },
+        "score": {
+          "type": "number",
+          "description": "Sub-signal score (typically 0–1)."
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional explanatory hint mirrored from oods.confidence_decomposition.signals[].hint."
+        }
+      }
+    },
+    "ReviewQueueSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entitiesTotal",
+        "entitiesIncluded",
+        "flaggedCount",
+        "tierCounts",
+        "reviewThreshold",
+        "lowestSignalsN",
+        "flaggedOnly"
+      ],
+      "properties": {
+        "entitiesTotal": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total entities in the source manifest (regardless of flaggedOnly)."
+        },
+        "entitiesIncluded": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Entities included in entries[] after applying flaggedOnly filter."
+        },
+        "flaggedCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of entities for which needsReview() is true — below threshold OR tier=unknown. Counted across ALL manifest entities, not just included ones."
+        },
+        "tierCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["high", "medium", "low", "unknown"],
+          "properties": {
+            "high": { "type": "integer", "minimum": 0 },
+            "medium": { "type": "integer", "minimum": 0 },
+            "low": { "type": "integer", "minimum": 0 },
+            "unknown": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "reviewThreshold": {
+          "type": "number",
+          "description": "Effective review threshold (options.reviewThreshold, default 0.7). Surfaced for reproducibility."
+        },
+        "lowestSignalsN": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Effective top-N selector for lowestSignals (options.lowestSignalsN, default 3)."
+        },
+        "flaggedOnly": {
+          "type": "boolean",
+          "description": "Effective options.flaggedOnly value (default false)."
+        }
+      }
+    },
+    "ReviewQueueSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceManifest"],
+      "properties": {
+        "sourceManifest": {
+          "type": "string",
+          "description": "Identifier of the manifest the queue was derived from. Default: manifest.source.agent (or 'unknown' when manifest.source is absent). Surfaced so agents can trace queue → manifest provenance."
+        },
+        "agent": {
+          "type": "string",
+          "description": "Mirror of manifest.source.agent when present."
+        },
+        "stage": {
+          "type": "string",
+          "description": "Mirror of manifest.source.stage when present."
+        },
+        "capturedAt": {
+          "type": "string",
+          "description": "Mirror of manifest.source.captured_at when present."
+        },
+        "catalogVersion": {
+          "type": "string",
+          "description": "Mirror of manifest.source.oods_catalog_version when present."
+        }
+      }
+    }
+  }
+}

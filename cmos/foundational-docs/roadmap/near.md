@@ -203,11 +203,13 @@ Sprint-101 failure-mode regression check: no recurrence. Rule 1 + Rule 3 + Rule 
 
 ---
 
-## Sprint-104 Locked Shape (locked 2026-05-21)
+## Sprint-104 Outcomes (closed 2026-05-21)
 
-Sprint-104 restores default cadence **N=5 (4 work + 1 closeout)** after two consecutive lean confidence-pass sprints (s102 + s103) shipped clean post-s101 recovery. Theme: reach the A2UI host conformance rung that the s102-m03 closeout named as future work, and **close C5 fully** in one sprint by shipping all three agent-readable structured-artifact surfaces named in the mission-graph success criterion.
+Sprint-104 restored default cadence **N=5 (4 work + 1 closeout)** after two consecutive lean confidence-pass sprints (s102 + s103) shipped clean post-s101 recovery. **5/5 missions delivered.** Theme realized: reached the A2UI host conformance rung that the s102-m03 closeout named as future work, and **closed C5 fully** in one sprint by shipping all three agent-readable structured-artifact surfaces named in the mission-graph success criterion.
 
 Sprint title: **"A2UI Host Conformance (Lit local) + C5 Full Close."**
+
+Full closeout report at `cmos/reports/s104-m05-closeout-2026-05-21.md`. End-of-sprint posture: **5 of 6 C-axes closed** (C1/C2/C3/C5/C6 ✓; only C4 remains and per db3b3b0 may not survive as a separate axis). Test posture: 173 files / 3406 active / 10 skipped (+444 active vs s103 close). Rule 1 mission-start audit pattern n=7 clean runs.
 
 Mission slate locked from the s103 closeout candidate shape (decision #562):
 
@@ -260,7 +262,25 @@ Closed by end of s104: C1 (s98-m02), C2 (s99-m02), C3 (s99-m04 emitter + s103-m0
 
 ---
 
-## Sprint-104 Candidate Shape (drafted 2026-05-21) — superseded by Locked Shape above
+---
+
+## Sprint-105 Candidate Shape (drafted 2026-05-21 at s104 close)
+
+Drafted at the close of s104 to inform the s105 planning session. **NOT locked** — the planning session will pick.
+
+- **C4 reframing decision** — only C4 remains on the C-track and per the db3b3b0 reframing C4 may not survive as a separate axis. A planning-session decision is needed: drop C4 entirely, OR redefine it explicitly (currently "playground as taste-judgment surface"), OR fold its scope into the I-track. Recommended planning-session item, NOT a build mission.
+- **`review.resolve` real-world usage signal watch** — still passive after s104. With the C5 chain now complete, usage may begin materializing. Promotion candidates if signal surfaces: pipeline auto-integration (auto-bake `review.resolve` into the compose pipeline), policy-bundle persistence as registry artifact (so policy bundles can be named + reused), `review.batch` for high-throughput batches.
+- **A2UI ADK `A2uiSchemaManager` env-gated upgrade** — natural progression after Lit local harness lands. Same pattern as concordance smoke s97-m04 → s98-m04 (local env-gated harness shipped first, live partner exercise came later). Gated on partner integration calling for it.
+- **I2 semantic-federation evaluator (D4 implementation)** — still gated on Birch coordination. Same posture as s101 through s104.
+- **9 known instances of the Vite URL transform incompatibility** in `src/tools/*` and `src/index.ts` (learning captured in s104-m01 implementation). NOT s105-blocking; the trigger is "any test that needs happy-dom env on those modules." Surface for any future sprint that wants happy-dom coverage of the MCP-tool side.
+- **Concordance grounding of content domain pack** — schema.org alignment landed in s102-m01 already; full concordance ingest remains a partner-side prerequisite. Same posture as s103 + s104.
+- **C-track completion?** Depending on the C4 reframing decision, sprint-105 or sprint-106 may close the C-track entirely. After that the natural sprint shape returns to a Foundation/Integration mix.
+
+Sprint shape recommendation: **N=5 (4 work + 1 closeout)** — default cadence holds. Three consecutive successful sprints post-recovery (s102 + s103 + s104).
+
+---
+
+## Sprint-104 Candidate Shape (drafted 2026-05-21) — superseded by Outcomes above
 
 (Original candidate shape preserved for traceability — slate selection reasoning at decision #562 + PS-2026-05-21-003.)
 
