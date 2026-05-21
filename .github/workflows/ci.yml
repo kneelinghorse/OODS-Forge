@@ -488,3 +488,33 @@ jobs:
           name: coverage-${{ github.run_id }}
           path: coverage
           if-no-files-found: warn
+
+  scale-determinism:
+    name: scale-determinism
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Q1 determinism gate — mission-graph V2 axis #7. Runs map.apply at
+    # 100/500/1000 mapping states in parallel via vitest's default threads
+    # pool. Separate from the release gate (#408 closeout boundary) until
+    # the 3-sprint determinism streak (s105 baseline → s106/s107 sustain)
+    # demonstrates the suite is reproducibly green.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run scale-tier suite
+        run: pnpm --filter @oods/mcp-server run test:scale

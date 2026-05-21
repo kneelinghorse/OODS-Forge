@@ -148,6 +148,26 @@ secrets you need). All test runners (`vitest`), the MCP server entry point
 no manual `export` needed before running tests or starting services. The
 `.gitignore` allowlists `.env.example` but blocks `.env` itself.
 
+### Scale-tier determinism suite (opt-in)
+
+The Q1 determinism gate (mission-graph V2 axis #7) runs `map.apply` against
+synthesized reconciliation reports at 100/500/1000 candidate_objects. Run it
+with:
+
+```
+pnpm --filter @oods/mcp-server run test:scale
+```
+
+The suite lives at `packages/mcp-server/test/scale/` with its own vitest
+config (`vitest.scale.config.ts`). It is **excluded from the default
+vitest run** so normal `pnpm test` / `npx vitest` stay fast; CI runs it as a
+separate `scale-determinism` job. Each test creates a unique temp dir under
+`os.tmpdir()` and sets `MCP_MAPPINGS_PATH` to that dir for the test scope,
+keeping parallel workers isolated. The fixture synthesizer is seeded
+(mulberry32) — same seed produces byte-identical output. Release-gate
+integration is deferred until s106 + s107 sustain the 3-sprint determinism
+streak per the s105-m03 mission-start audit (decision #614).
+
 ### OTLP telemetry (optional)
 
 The MCP server emits OpenTelemetry traces over OTLP/HTTP when
