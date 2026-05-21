@@ -9,6 +9,7 @@ import { isAllowed, tryAcquireSlot, releaseSlot, tryConsumeToken, timeoutMsFor }
 import { resolveToolRegistry } from './tools/registry.js';
 import { isToolError } from './errors/tool-error.js';
 import { LEGACY_CODE_MAP } from './errors/registry.js';
+import { initTelemetry, shutdownTelemetry, startToolSpan, recordSpanError, recordAjvFailure } from './telemetry/otel.js';
 
 type ResponseMeta = { requestId: string; latency: number; timestamp: string };
 function buildMeta(requestId: string, startMs: number): ResponseMeta {
@@ -205,6 +206,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/review.resolve.input.json',
     outputSchema: './schemas/review.resolve.output.json',
   },
+  'fidelity.preview': {
+    modulePath: './tools/fidelity.preview.js',
+    inputSchema: './schemas/fidelity.preview.input.json',
+    outputSchema: './schemas/fidelity.preview.output.json',
+  },
 };
 
 const schemaCache = new Map<string, object>();
@@ -294,11 +300,13 @@ async function stdioLoop() {
           process.stdout.write(JSON.stringify({ id, error: e, meta: buildMeta(requestId, startMs) }) + '\n');
           continue;
         }
+        const span = startToolSpan({ toolName: tool, role, requestId });
         try {
           const reg = tools[tool];
           const validateIn = ajv.compile(reg.inputSchema);
           if (!validateIn(input)) {
             const formatted = formatSchemaInputError(tool, validateIn.errors as any);
+            recordAjvFailure(span, 'input', Array.isArray(validateIn.errors) ? validateIn.errors.length : 1);
             const details: Record<string, unknown> = { errors: formatted.details };
             if (formatted.hint) details.hint = formatted.hint;
             if (formatted.expected) details.expected = formatted.expected;
@@ -307,19 +315,27 @@ async function stdioLoop() {
             continue;
           }
           const timeout = timeoutMsFor(tool);
-          const result = await Promise.race([
-            reg.handle(input),
-            new Promise<never>((_, reject) => setTimeout(() => reject(Object.assign(err(ERROR_CODES.TIMEOUT, `Timeout after ${timeout}ms`, { timeoutMs: timeout }), { code: LEGACY_CODE_MAP.TIMEOUT })), timeout))
-          ]);
+          let result: unknown;
+          try {
+            result = await Promise.race([
+              reg.handle(input),
+              new Promise<never>((_, reject) => setTimeout(() => reject(Object.assign(err(ERROR_CODES.TIMEOUT, `Timeout after ${timeout}ms`, { timeoutMs: timeout }), { code: LEGACY_CODE_MAP.TIMEOUT })), timeout))
+            ]);
+          } catch (handlerErr) {
+            recordSpanError(span, handlerErr, (handlerErr as { code?: string })?.code);
+            throw handlerErr;
+          }
           const validateOut = ajv.compile(reg.outputSchema);
           if (!validateOut(result)) {
             const formatted = formatValidationErrors(validateOut.errors as any, { prefix: 'Output validation failed' });
+            recordAjvFailure(span, 'output', Array.isArray(validateOut.errors) ? validateOut.errors.length : 1);
             const e = { ...err(ERROR_CODES.SCHEMA_OUTPUT, formatted.message, { errors: formatted.details }), code: LEGACY_CODE_MAP.SCHEMA_OUTPUT };
             process.stdout.write(JSON.stringify({ id, error: e, meta: buildMeta(requestId, startMs) }) + '\n');
             continue;
           }
           process.stdout.write(JSON.stringify({ id, result, meta: buildMeta(requestId, startMs) }) + '\n');
         } finally {
+          span.end();
           releaseSlot(tool);
         }
       } catch (e: any) {
@@ -339,5 +355,20 @@ async function stdioLoop() {
     }
   });
 }
+
+const telemetryInit = await initTelemetry();
+if (telemetryInit.enabled) {
+  // eslint-disable-next-line no-console
+  console.error(`[mcp] OTLP telemetry enabled → ${telemetryInit.endpoint}`);
+}
+
+let shuttingDown = false;
+async function gracefulShutdown(): Promise<void> {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  await shutdownTelemetry();
+}
+process.on('SIGTERM', () => { void gracefulShutdown().then(() => process.exit(0)); });
+process.on('SIGINT', () => { void gracefulShutdown().then(() => process.exit(0)); });
 
 await Promise.all([startHealthServer(), stdioLoop()]);

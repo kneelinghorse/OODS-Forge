@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   healthCheck,
+  runFidelityPreview,
   runMapApply,
   runPipeline,
   runTool,
   type BridgeResponse,
+  type FidelityKind,
+  type FidelityPreviewResult,
   type MapApplyResult,
   type PipelineResult,
 } from "./bridge-client";
 import { useDebounce } from "./hooks";
 import { IntentInput } from "./components/IntentInput";
-import { Selectors } from "./components/Selectors";
+import { Selectors, type Fidelity } from "./components/Selectors";
 import { PreviewPanel } from "./components/PreviewPanel";
 import { CodePanel } from "./components/CodePanel";
 import { StatusBar } from "./components/StatusBar";
@@ -20,6 +23,7 @@ import {
   type Stage1FixtureMeta,
 } from "./components/Stage1DemoPanel";
 import { CapabilityPanel } from "./components/CapabilityPanel";
+import { FixturePicker } from "./components/FixturePicker";
 import {
   LINEAR_V16_ROLLUPS,
   STRIPE_V16_ROLLUPS,
@@ -30,6 +34,15 @@ type Framework = "react" | "vue" | "html";
 type Styling = "inline" | "tokens" | "tailwind";
 type Brand = "default" | "A" | "B";
 type ViewMode = "compose" | "stage1";
+
+// Brand state on the playground is "default"|"A"|"B"; the branded-mockup
+// emitter wants "brand-a"|"brand-b" per s102-m02. "default" means "let the
+// emitter use its own default" → undefined.
+function brandToOverlay(brand: Brand): string | undefined {
+  if (brand === "A") return "brand-a";
+  if (brand === "B") return "brand-b";
+  return undefined;
+}
 
 const STAGE1_FIXTURES: Record<Stage1FixtureMeta["id"], Stage1FixtureMeta> = {
   linear: {
@@ -493,6 +506,8 @@ function resolveToolResult<T>(response: BridgeResponse<T>): T {
 export default function App() {
   const [view, setView] = useState<ViewMode>(getInitialView);
   const [intent, setIntent] = useState("");
+  const [fidelity, setFidelity] = useState<Fidelity>("production");
+  const [fidelityFixture, setFidelityFixture] = useState<string>("user");
   const [framework, setFramework] = useState<Framework>("react");
   const [styling, setStyling] = useState<Styling>("tokens");
   const [brand, setBrand] = useState<Brand>("default");
@@ -505,6 +520,11 @@ export default function App() {
     null,
   );
   const [composeError, setComposeError] = useState<string | null>(null);
+
+  const [fidelityResult, setFidelityResult] =
+    useState<FidelityPreviewResult | null>(null);
+  const [fidelityLoading, setFidelityLoading] = useState(false);
+  const [fidelityError, setFidelityError] = useState<string | null>(null);
 
   const [stage1Loading, setStage1Loading] = useState(false);
   const [stage1Result, setStage1Result] = useState<MapApplyResult | null>(null);
@@ -567,10 +587,53 @@ export default function App() {
   }, [debouncedIntent, framework, styling, view]);
 
   useEffect(() => {
-    if (view === "compose" && debouncedIntent.trim()) {
+    if (
+      view === "compose" &&
+      fidelity === "production" &&
+      debouncedIntent.trim()
+    ) {
       runComposePipeline();
     }
-  }, [debouncedIntent, runComposePipeline, view]);
+  }, [debouncedIntent, runComposePipeline, view, fidelity]);
+
+  const runFidelityPath = useCallback(async () => {
+    if (view !== "compose" || fidelity === "production") return;
+    setFidelityLoading(true);
+    setFidelityError(null);
+
+    const response = await runFidelityPreview({
+      fidelityKind: fidelity as FidelityKind,
+      fixture: fidelityFixture,
+      options: {
+        ...(fidelity === "branded-mockup"
+          ? { brandOverlay: brandToOverlay(brand) }
+          : {}),
+      },
+    });
+
+    setFidelityLoading(false);
+
+    if ("error" in response && response.error) {
+      setFidelityError(response.error.message);
+      setFidelityResult(null);
+      return;
+    }
+    if ("ok" in response && response.ok && response.result) {
+      const result = response.result;
+      setFidelityResult(result);
+      if (result.status === "error" && result.errors.length > 0) {
+        setFidelityError(
+          `[${result.errors[0].code}] ${result.errors[0].message}`,
+        );
+      }
+    }
+  }, [view, fidelity, fidelityFixture, brand]);
+
+  useEffect(() => {
+    if (view === "compose" && fidelity !== "production") {
+      runFidelityPath();
+    }
+  }, [view, fidelity, fidelityFixture, brand, runFidelityPath]);
 
   const loadStage1Demo = useCallback(async () => {
     if (view !== "stage1") return;
@@ -652,10 +715,22 @@ export default function App() {
     [activeFixture, framework, styling],
   );
 
-  const activeLoading = view === "compose" ? composeLoading : stage1Loading;
-  const activeError = view === "compose" ? composeError : stage1Error;
-  const activeSummary =
-    view === "compose"
+  const inFidelityMode = view === "compose" && fidelity !== "production";
+  const activeLoading = inFidelityMode
+    ? fidelityLoading
+    : view === "compose"
+      ? composeLoading
+      : stage1Loading;
+  const activeError = inFidelityMode
+    ? fidelityError
+    : view === "compose"
+      ? composeError
+      : stage1Error;
+  const activeSummary = inFidelityMode
+    ? fidelityResult
+      ? `${fidelity} · ${fidelityFixture} · ${fidelityResult.meta.entityCount} entit${fidelityResult.meta.entityCount === 1 ? "y" : "ies"}${fidelityResult.warnings.length > 0 ? ` · ${fidelityResult.warnings.length} warning${fidelityResult.warnings.length === 1 ? "" : "s"}` : ""}`
+      : null
+    : view === "compose"
       ? (composeResult?.summary ?? null)
       : stage1Result
         ? `${activeFixture.label}: ${stage1Result.applied.length} applied, ${stage1Result.queued.length} queued at minConfidence 0.75`
@@ -713,10 +788,12 @@ export default function App() {
             </button>
           ) : null}
           <Selectors
+            fidelity={fidelity}
             framework={framework}
             styling={styling}
             brand={brand}
             theme={theme}
+            onFidelityChange={setFidelity}
             onFrameworkChange={setFramework}
             onStylingChange={setStyling}
             onBrandChange={setBrand}
@@ -729,24 +806,49 @@ export default function App() {
       {view === "compose" ? (
         <>
           <div className="shrink-0 space-y-2 border-b border-gray-800 px-5 py-3">
-            <IntentInput
-              value={intent}
-              onChange={setIntent}
-              loading={composeLoading}
-            />
-            <StarterPrompts onSelect={handleStarterSelect} />
+            {fidelity === "production" ? (
+              <>
+                <IntentInput
+                  value={intent}
+                  onChange={setIntent}
+                  loading={composeLoading}
+                />
+                <StarterPrompts onSelect={handleStarterSelect} />
+              </>
+            ) : (
+              <FixturePicker
+                value={fidelityFixture}
+                onChange={setFidelityFixture}
+              />
+            )}
           </div>
 
           <div className="flex min-h-0 flex-1">
             <PreviewPanel
-              html={composeResult?.render?.html ?? null}
+              html={
+                fidelity === "production"
+                  ? (composeResult?.render?.html ?? null)
+                  : (fidelityResult?.html ?? null)
+              }
               theme={theme}
-              loading={composeLoading}
+              loading={
+                fidelity === "production" ? composeLoading : fidelityLoading
+              }
             />
             <CodePanel
-              code={composeResult?.code?.output ?? null}
-              framework={composeResult?.code?.framework ?? framework}
-              loading={composeLoading}
+              code={
+                fidelity === "production"
+                  ? (composeResult?.code?.output ?? null)
+                  : (fidelityResult?.html ?? null)
+              }
+              framework={
+                fidelity === "production"
+                  ? (composeResult?.code?.framework ?? framework)
+                  : fidelity
+              }
+              loading={
+                fidelity === "production" ? composeLoading : fidelityLoading
+              }
             />
           </div>
         </>

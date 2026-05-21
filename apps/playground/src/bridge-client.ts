@@ -175,6 +175,47 @@ export async function runMapApply(
   });
 }
 
+export type FidelityKind =
+  | "boxes-arrows"
+  | "wireframe"
+  | "review"
+  | "branded-mockup";
+
+export type FidelityPreviewIssue = {
+  code: string;
+  message: string;
+  entity?: string;
+};
+
+export type FidelityPreviewResult = {
+  status: "ok" | "warning" | "error";
+  fidelityKind: FidelityKind;
+  fixture: string;
+  html: string;
+  warnings: FidelityPreviewIssue[];
+  errors: FidelityPreviewIssue[];
+  meta: {
+    entityCount: number;
+    appliedBrandOverlay?: string;
+  };
+};
+
+export async function runFidelityPreview(input: {
+  fidelityKind: FidelityKind;
+  fixture: string;
+  options?: {
+    variant?: string;
+    brandOverlay?: string;
+    reviewThreshold?: number;
+    includeStyles?: boolean;
+  };
+}): Promise<BridgeResponse<FidelityPreviewResult>> {
+  return runTool<FidelityPreviewResult>(
+    "fidelity_preview",
+    input as Record<string, unknown>,
+  );
+}
+
 export async function healthCheck(): Promise<{ ok: boolean }> {
   try {
     const res = await fetch(`${BASE}/health`);
