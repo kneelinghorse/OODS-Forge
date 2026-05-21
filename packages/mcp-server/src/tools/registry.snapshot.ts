@@ -31,6 +31,18 @@ export async function handle(_input: RegistrySnapshotInput): Promise<RegistrySna
     traits,
     objects,
     generatedAt,
+    // v1.4.0 stub round-trip (s103-m02): top-level arrays are surfaced losslessly
+    // when present. Omitted entirely on pre-v1.4.0 docs so the snapshot stays
+    // byte-equivalent for legacy callers.
+    ...(mappingsDoc.disambiguation_decisions && mappingsDoc.disambiguation_decisions.length > 0
+      ? { disambiguation_decisions: mappingsDoc.disambiguation_decisions }
+      : {}),
+    ...(mappingsDoc.preferred_terms && mappingsDoc.preferred_terms.length > 0
+      ? { preferred_terms: mappingsDoc.preferred_terms }
+      : {}),
+    ...(mappingsDoc.capabilities && mappingsDoc.capabilities.length > 0
+      ? { capabilities: mappingsDoc.capabilities }
+      : {}),
   };
 
   return {

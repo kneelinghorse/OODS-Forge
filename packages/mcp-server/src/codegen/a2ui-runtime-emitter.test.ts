@@ -89,10 +89,10 @@ describe('a2ui-runtime-emitter — top-level emit shape', () => {
     }
   });
 
-  it('records meta.a2uiSpecVersion=v0.9 and catalogProfile=minimal', () => {
+  it('records meta.a2uiSpecVersion=v0.9 and catalogProfile=forge', () => {
     const r = emit(user);
     expect(r.meta.a2uiSpecVersion).toBe('v0.9');
-    expect(r.meta.catalogProfile).toBe('minimal');
+    expect(r.meta.catalogProfile).toBe('forge');
     expect(r.meta.entitiesRendered).toBe(user.entities.length);
     expect(r.meta.surfacesRendered).toBe(r.messages.length / 2);
   });
@@ -208,18 +208,25 @@ describe('a2ui-runtime-emitter — slot-kind dispatch', () => {
     }
   });
 
-  it('falls back to Text for image slots and emits an OODS-A2UI-IMAGE-FALLBACK warning per occurrence', () => {
+  it('emits Image (not Text-fallback) for image slots and no OODS-A2UI-IMAGE-FALLBACK warning fires', () => {
+    // s103-m03 closed the s102-m03 fallback gap: the Forge custom catalog adds an
+    // Image component that carries the URL via DataBinding, so image-kind slots
+    // are rendered natively.
     const r = emit(article, { variant: 'detail' });
     const heroWarnings = r.warnings.filter(
-      (w) => w.code === 'OODS-A2UI-IMAGE-FALLBACK' && w.slot === 'hero',
+      (w) => w.code === 'OODS-A2UI-IMAGE-FALLBACK',
     );
-    expect(heroWarnings.length).toBeGreaterThan(0);
+    expect(heroWarnings).toHaveLength(0);
     const { updates } = partitionMessages(r.messages);
     const heroNode = updates[0].updateComponents.components.find(
       (c) => c.id === 'hero',
-    ) as A2uiTextComponent | undefined;
+    );
     expect(heroNode).toBeDefined();
-    expect(heroNode!.component).toBe('Text');
+    expect(heroNode!.component).toBe('Image');
+    // url binding points into the article data model
+    const heroImage = heroNode as { component: 'Image'; url: { path?: string } | string };
+    expect(typeof heroImage.url).toBe('object');
+    expect((heroImage.url as { path: string }).path).toMatch(/^\/[a-z]/);
   });
 
   it('preserves accessibility.label = slot.name on each slot component', () => {

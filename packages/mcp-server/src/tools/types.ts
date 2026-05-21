@@ -462,6 +462,9 @@ export type MapCreateInput = {
     notes?: string;
   };
   projection_variants?: Stage1ProjectionVariant[];
+  disambiguation_decisions?: Stage1DisambiguationDecision[];
+  preferred_terms?: Stage1PreferredTermEntity[];
+  capabilities?: Stage1CapabilityEntity[];
 };
 
 export type MapCreateErrorDetail = {
@@ -720,6 +723,12 @@ export type RegistrySnapshotOutput = {
   objects: Record<string, RegistrySnapshotObjectInfo>;
   etag: string;
   generatedAt: string;
+  /** Draft v1.4.0-gated registry-level review-decision events. Omitted when the mapping doc carries none. */
+  disambiguation_decisions?: Stage1DisambiguationDecision[];
+  /** Draft v1.4.0-gated canonical-term entities. Omitted when the mapping doc carries none. */
+  preferred_terms?: Stage1PreferredTermEntity[];
+  /** Draft v1.4.0-gated first-class capability entities. Omitted when the mapping doc carries none. */
+  capabilities?: Stage1CapabilityEntity[];
 };
 
 export type MapListInput = {

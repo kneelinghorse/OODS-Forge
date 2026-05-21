@@ -17,6 +17,9 @@
 | `metadata` | object | No |  |  |
 | `metadata.author` | string | No |  |  |
 | `metadata.notes` | string | No |  |  |
+| `disambiguation_decisions` | object[] | No |  | Draft v1.4.0-gated review-decision events to APPEND to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape. |
+| `preferred_terms` | object[] | No |  | Draft v1.4.0-gated canonical-term entities to APPEND to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape. |
+| `capabilities` | object[] | No |  | Draft v1.4.0-gated first-class capability entities to APPEND to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape. |
 | `projection_variants` | object[] | No |  | Stage1 v1.5.0 cross-surface identity variants. Each element describes one surface-specific projection of this component mapping (desktop/mobile/modal/sidebar). |
 
 ## Output Shape

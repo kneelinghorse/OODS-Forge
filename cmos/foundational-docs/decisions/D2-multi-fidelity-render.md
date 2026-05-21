@@ -1,9 +1,11 @@
 # D2 — Multi-Fidelity Render Abstraction
 
-**Status:** Decided (first-pass; revisit when A2UI runtime emission lands)
-**Date:** 2026-05-10
+**Status:** Decided (first-pass; revisit trigger fired and resolved at sprint-102 m03)
+**Date:** 2026-05-10 (revisit-outcome update 2026-05-20)
 **Authors:** Derek
 **Depends on:** [D1 — Object Catalog Schema Shape](D1-object-catalog-schema.md)
+
+> **Revisit-trigger outcome (2026-05-20, sprint-102 m03):** A2UI runtime emission shipped as the fourth `runPreEmit()` consumer and the FIRST consumer with an output-format axis change (HTML → JSON message stream). The `runPreEmit()` / `PreEmitContext` / `CatalogAnnotations` shape required **zero modifications**. Per-variant emission still uses the s100-m03 `selectVariant()` pathway unchanged. The "formal IR" trigger condition named in this memo (two emitters needing the same structured output projection) did NOT fire. Formal IR formalization remains deferred. Concrete evidence: CMOS strategic decision #530. Next re-evaluation: when a second JSON-shaped emitter ships (candidate triggers: A2UI v0.10 if breaking; AG-UI Protocol if it surfaces).
 
 ---
 

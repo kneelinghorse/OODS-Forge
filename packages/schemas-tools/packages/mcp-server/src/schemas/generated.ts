@@ -715,6 +715,18 @@ export namespace ComponentMappingSchemaSchema {
      * Array of component mapping records.
      */
     mappings: ComponentMapping[];
+    /**
+     * Draft v1.4.0-gated review-decision events promoted into the registry. Top-level (cross-mapping). Additive stub only; absent on pre-v1.4.0 docs.
+     */
+    disambiguation_decisions?: Stage1DisambiguationDecision[];
+    /**
+     * Draft v1.4.0-gated canonical-term entities promoted into the registry. Top-level (cross-mapping). Additive stub only; absent on pre-v1.4.0 docs.
+     */
+    preferred_terms?: Stage1PreferredTermEntity[];
+    /**
+     * Draft v1.4.0-gated first-class capability entities rolled up across mappings. Top-level (cross-mapping). Additive stub only; absent on pre-v1.4.0 docs.
+     */
+    capabilities?: Stage1CapabilityEntity[];
   }
   export interface ComponentMapping {
     /**
@@ -744,6 +756,10 @@ export namespace ComponentMappingSchemaSchema {
      */
     confidence: 'auto' | 'manual';
     metadata?: MappingMetadata;
+    /**
+     * Draft v1.4.0-gated cross-surface identity relation. Optional stub only; current handlers neither emit nor mutate it.
+     */
+    projection_variants?: ProjectionVariant[];
   }
   export interface PropMapping {
     /**
@@ -777,8 +793,201 @@ export namespace ComponentMappingSchemaSchema {
      */
     notes?: string;
   }
+  export interface ProjectionVariant {
+    /**
+     * Stable identifier for the cross-surface projection.
+     */
+    id: string;
+    /**
+     * Surface label such as desktop, mobile, modal, or sidebar.
+     */
+    surface: string;
+    /**
+     * Surface-specific component label when it differs from the canonical map name.
+     */
+    external_component?: string;
+    /**
+     * Optional first-class capability entity linked to this projection.
+     */
+    capability_id?: string;
+    /**
+     * Representative selector or cluster signature.
+     */
+    selector?: string;
+    /**
+     * Confidence of the cross-surface identity merge.
+     */
+    confidence?: number;
+    /**
+     * Evidence supporting the identity-resolution link.
+     */
+    evidence_chain?: {
+      [k: string]: any;
+    }[];
+    /**
+     * Open metadata bag reserved for future v1.4.0+ relation details.
+     */
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+  export interface Stage1DisambiguationDecision {
+    decision_id: string;
+    decision_type: 'preferred_name' | 'preferred_role' | 'mapping_rejection' | 'canonical_term';
+    scope: 'run' | 'target' | 'registry';
+    status: 'proposed' | 'accepted' | 'rejected' | 'promoted';
+    target_kind: 'candidate_object' | 'candidate_action' | 'preferred_term';
+    target_id: string;
+    selected_value: string;
+    rationale: string;
+    alternatives?: {
+      value: string;
+      score?: number;
+      reasoning?: string;
+    }[];
+    preferred_term_id?: string;
+    decided_by?: 'human' | 'agent' | 'system';
+    decided_at: string;
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+  export interface Stage1PreferredTermEntity {
+    entity_type: 'preferred_term';
+    id: string;
+    slug: string;
+    label: string;
+    aliases: string[];
+    scope: 'target' | 'registry';
+    domain?: string;
+    source_decision_ids?: string[];
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+  export interface Stage1CapabilityEntity {
+    entity_type: 'capability';
+    id: string;
+    slug: string;
+    name: string;
+    canonical_verb: string;
+    aliases?: string[];
+    oods_traits?: string[];
+    projection_variant_ids?: string[];
+    preconditions?: {
+      type: 'auth' | 'role' | 'state' | 'data';
+      description?: string;
+      confidence?: number;
+      evidence_chain?: {
+        [k: string]: any;
+      }[];
+    }[];
+    metadata?: {
+      [k: string]: any;
+    };
+  }
 }
 export type ComponentMappingSchema = ComponentMappingSchemaSchema.ComponentMappingSchema;
+
+// Source: concordance.validate.input.json
+export namespace ConcordanceValidateInputSchema {
+  /**
+   * Validate an Object Catalog manifest against the vendored Concordance wire contract. Provide either an inline `manifest` object OR a relative `manifestPath` to a JSON file. Exactly one of the two is required.
+   */
+  export type ConcordanceValidateInput = ConcordanceValidateInput1 & ConcordanceValidateInput2;
+  export type ConcordanceValidateInput2 = {
+    [k: string]: any;
+  };
+
+  export interface ConcordanceValidateInput1 {
+    /**
+     * Inline Object Catalog manifest object. Mutually exclusive with manifestPath.
+     */
+    manifest?: {
+      [k: string]: any;
+    };
+    /**
+     * Project-relative path to a manifest JSON file. Absolute paths and parent-directory traversal (..) are rejected.
+     */
+    manifestPath?: string;
+    /**
+     * Optional override for the project root used to resolve manifestPath. Defaults to process.cwd().
+     */
+    projectRoot?: string;
+    /**
+     * When true, a ConcordanceVersionError (major schema_version mismatch) is surfaced as a tool error. When false (default), the same condition is reported as a structured error in the response.
+     */
+    throwOnVersionError?: boolean;
+  }
+}
+export type ConcordanceValidateInput = ConcordanceValidateInputSchema.ConcordanceValidateInput;
+
+// Source: concordance.validate.output.json
+export namespace ConcordanceValidateOutputSchema {
+  /**
+   * Result of validating an Object Catalog manifest against the vendored Concordance wire contract.
+   */
+  export interface ConcordanceValidateOutput {
+    /**
+     * True iff the manifest passes AJV validation against the vendored manifest.schema.json (after schema_version strip).
+     */
+    valid: boolean;
+    /**
+     * AJV-native error shape, preserved for Pydantic detail.errors[] parity per the F2 / hosted Concordance convention.
+     */
+    errors: ValidationError[];
+    /**
+     * Non-fatal version-policy notes (e.g. patch or minor schema_version drift).
+     */
+    warnings: string[];
+    /**
+     * schema_version observed on the manifest. Null when the manifest omits the field.
+     */
+    schemaVersion: string | null;
+    /**
+     * Outcome of the version policy check against the Forge schema_version pin.
+     */
+    versionPolicy?: 'exact' | 'patch' | 'minor' | 'major' | 'absent';
+    diagnostics: {
+      /**
+       * Forge's pinned Concordance schema_version (see version-policy.ts FORGE_SCHEMA_VERSION_PIN).
+       */
+      expectedSchemaVersion: string;
+      /**
+       * Whether the validated manifest was provided inline or loaded from disk.
+       */
+      source: 'inline' | 'file';
+      /**
+       * Resolved manifest path when source=file. Always relative to projectRoot.
+       */
+      manifestPath?: string | null;
+      /**
+       * Number of entities in the validated manifest (best-effort; 0 when the payload is malformed).
+       */
+      entityCount?: number;
+    };
+  }
+  export interface ValidationError {
+    /**
+     * AJV keyword that failed (e.g., required, type, additionalProperties).
+     */
+    keyword: string;
+    /**
+     * JSON pointer to the offending location in the payload.
+     */
+    instancePath: string;
+    /**
+     * JSON pointer into the schema that produced this error.
+     */
+    schemaPath?: string;
+    params?: {
+      [k: string]: any;
+    };
+    message: string;
+    [k: string]: any;
+  }
+}
+export type ConcordanceValidateOutput = ConcordanceValidateOutputSchema.ConcordanceValidateOutput;
 
 // Source: design.compose.input.json
 export namespace DesignComposeInputSchema {
@@ -1401,6 +1610,307 @@ export namespace JsonSchemaDraft07Schema {
 }
 export type JsonSchemaDraft07 = JsonSchemaDraft07Schema.JsonSchemaDraft07;
 
+// Source: map.apply.input.json
+export namespace MapApplyInputSchema {
+  /**
+   * Apply Stage1 reconciliation verdicts to the component-mapping registry. Accepts exactly one of inline report or reportPath.
+   */
+  export type MapApplyInput = MapApplyInput1 & MapApplyInput2;
+  export type CandidateObject = CandidateObject1 & {
+    object_id: string;
+    name: string;
+    role: string;
+    inferred_role?: string;
+    inferred_role_score?: number;
+    confidence: number;
+    /**
+     * @minItems 1
+     */
+    recommended_oods_traits: [string, ...string[]];
+    recommended_domain?: string;
+    action: 'create' | 'patch' | 'skip' | 'conflict';
+    reasoning: string;
+    verdict_reasoning?: string;
+    existing_map_id?: string;
+    external_component?: string;
+    diff?: CandidateDiff;
+    alternate_interpretations?: AlternateInterpretation[];
+    evidence_chain?: EvidenceRef[];
+    /**
+     * Stage1 v1.5.0 cross-surface identity variants. When present on a candidate_object, map.apply threads them through to the persisted mapping on both create and patch verdicts.
+     */
+    projection_variants?: {
+      id: string;
+      surface: string;
+      external_component?: string;
+      capability_id?: string;
+      selector?: string;
+      confidence?: number;
+      evidence_chain?: {
+        [k: string]: any;
+      }[];
+      metadata?: {
+        [k: string]: any;
+      };
+    }[];
+  };
+  export type CandidateObject1 = {
+    [k: string]: any;
+  } & {
+    [k: string]: any;
+  } & {
+    [k: string]: any;
+  };
+  export type AlternateInterpretation =
+    | string
+    | {
+        role: string;
+        score: number;
+        reasoning: string;
+      };
+  export type AlternateVerb =
+    | string
+    | {
+        verb_id: string;
+        score: number;
+        reasoning: string;
+      };
+  export type MapApplyInput2 = {
+    [k: string]: any;
+  };
+
+  export interface MapApplyInput1 {
+    /**
+     * When true, persist registry mutations. Defaults to dry-run.
+     */
+    apply?: boolean;
+    /**
+     * Candidates below this threshold are routed to queued instead of being applied.
+     */
+    minConfidence?: number;
+    /**
+     * Filesystem path to a reconciliation_report.json artifact.
+     */
+    reportPath?: string;
+    report?: ReconciliationReport;
+  }
+  export interface ReconciliationReport {
+    kind: 'reconciliation_report';
+    schema_version: string;
+    generated_at: string;
+    target: {
+      id: string;
+      url?: string;
+    };
+    /**
+     * @minItems 1
+     */
+    candidate_objects: [CandidateObject, ...CandidateObject1[]];
+    candidate_actions?: CandidateAction[];
+    candidate_traits?: {
+      [k: string]: any;
+    }[];
+    conflicts?: Conflict[];
+    coverage_gaps?: {
+      [k: string]: any;
+    }[];
+    validation_failures?: {
+      [k: string]: any;
+    }[];
+    /**
+     * Draft v1.4.0-gated review-decision ingress. Optional and ignored by current v1.3.x write-side behavior.
+     */
+    disambiguation_decisions?: DisambiguationDecision[];
+    manifest?: Manifest;
+    reconciliation_summary?: ReconciliationSummary;
+  }
+  export interface CandidateDiff {
+    added_traits: string[];
+    removed_traits: string[];
+    changed_fields: CandidateDiffField[];
+  }
+  export interface CandidateDiffField {
+    field: string;
+    from?: any;
+    to?: any;
+  }
+  export interface EvidenceRef {
+    [k: string]: any;
+  }
+  export interface CandidateAction {
+    action_id: string;
+    name: string;
+    verb: string;
+    source_object_id?: string;
+    confidence?: number;
+    suggested_oods_trait?: string;
+    suggested_action?: string;
+    reasoning?: string;
+    alternate_verbs?: AlternateVerb[];
+    preconditions?: ActionPrecondition[];
+  }
+  export interface ActionPrecondition {
+    type: 'auth' | 'role' | 'state' | 'data';
+    description?: string;
+    confidence?: number;
+    evidence_chain?: EvidenceRef[];
+  }
+  export interface Conflict {
+    type: string;
+    description: string;
+    severity: 'info' | 'warning' | 'error';
+    action_id?: string;
+    object_id?: string;
+    existing_map_id?: string;
+  }
+  /**
+   * Draft v1.4.0-gated review-decision payload. OODS accepts the shape but current map.apply handlers ignore it.
+   */
+  export interface DisambiguationDecision {
+    decision_id: string;
+    decision_type: 'preferred_name' | 'preferred_role' | 'mapping_rejection' | 'canonical_term';
+    scope: 'run' | 'target' | 'registry';
+    status: 'proposed' | 'accepted' | 'rejected' | 'promoted';
+    target_kind: 'candidate_object' | 'candidate_action' | 'preferred_term';
+    target_id: string;
+    selected_value: string;
+    rationale: string;
+    alternatives?: DisambiguationAlternative[];
+    preferred_term_id?: string;
+    decided_by?: 'human' | 'agent' | 'system';
+    decided_at: string;
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+  export interface DisambiguationAlternative {
+    value: string;
+    score?: number;
+    reasoning?: string;
+  }
+  export interface Manifest {
+    inputs?: {
+      oods_registry_fetch?: RegistryFetchTelemetry;
+    };
+  }
+  export interface RegistryFetchTelemetry {
+    source: 'pre-supplied' | 'transport' | 'empty-fallback';
+    entries_count: number;
+    warnings?: string[];
+  }
+  export interface ReconciliationSummary {
+    mode: string;
+    existing_map_count: number;
+    verdict_counts: {
+      create?: number;
+      patch?: number;
+      skip?: number;
+      conflict?: number;
+    };
+  }
+}
+export type MapApplyInput = MapApplyInputSchema.MapApplyInput;
+
+// Source: map.apply.output.json
+export namespace MapApplyOutputSchema {
+  /**
+   * Dry-run or apply report for Stage1 reconciliation verdict routing.
+   */
+  export interface MapApplyOutput {
+    applied: AppliedRoute[];
+    skipped: SkippedRoute[];
+    queued: QueuedRoute[];
+    conflicted: ConflictRoute[];
+    errors: ApplyError[];
+    diff: DiffSummary;
+    conflictArtifactPath?: string;
+    etag: string;
+  }
+  export interface AppliedRoute {
+    objectId: string;
+    name: string;
+    action: 'create' | 'patch';
+    confidence: number;
+    /**
+     * @minItems 1
+     */
+    recommendedOodsTraits: [string, ...string[]];
+    existingMapId?: string;
+    mappingId?: string;
+    reason: string;
+    persisted: boolean;
+    diff?: CandidateDiff;
+  }
+  export interface CandidateDiff {
+    added_traits: string[];
+    removed_traits: string[];
+    changed_fields: CandidateDiffField[];
+  }
+  export interface CandidateDiffField {
+    field: string;
+    from?: any;
+    to?: any;
+  }
+  export interface SkippedRoute {
+    objectId: string;
+    name: string;
+    action: 'skip';
+    confidence: number;
+    /**
+     * @minItems 1
+     */
+    recommendedOodsTraits: [string, ...string[]];
+    existingMapId?: string;
+    mappingId?: string;
+    reason: string;
+    persisted: boolean;
+    diff?: CandidateDiff;
+  }
+  export interface QueuedRoute {
+    objectId: string;
+    name: string;
+    action: 'create' | 'patch' | 'skip' | 'conflict';
+    confidence: number;
+    threshold: number;
+    queueReason: 'below_confidence';
+    /**
+     * @minItems 1
+     */
+    recommendedOodsTraits: [string, ...string[]];
+    existingMapId?: string;
+    reason: string;
+    diff?: CandidateDiff;
+  }
+  export interface ConflictRoute {
+    objectId: string;
+    name: string;
+    action: 'conflict';
+    confidence: number;
+    existingMapId?: string;
+    reason: string;
+  }
+  export interface ApplyError {
+    objectId?: string;
+    name?: string;
+    action?: 'create' | 'patch' | 'skip' | 'conflict';
+    message: string;
+    details?: {
+      [k: string]: any;
+    };
+  }
+  export interface DiffSummary {
+    create: number;
+    patch: number;
+    skip: number;
+    conflict: number;
+    queued: number;
+    changedFields: string[];
+    addedTraits: string[];
+    removedTraits: string[];
+  }
+}
+export type MapApplyOutput = MapApplyOutputSchema.MapApplyOutput;
+
 // Source: map.create.input.json
 export namespace MapCreateInputSchema {
   /**
@@ -1431,8 +1941,12 @@ export namespace MapCreateInputSchema {
     propMappings?: {
       externalProp: string;
       oodsProp: string;
+      /**
+       * Prop coercion. Accepts a structured CoercionDef, a raw string label (Stage1 v1.6.0 emits enum-map | type-cast | identity as pass-through hints), or null for identity.
+       */
       coercion?:
         | null
+        | string
         | {
             type: 'enum';
             mapping: {
@@ -1460,6 +1974,111 @@ export namespace MapCreateInputSchema {
       author?: string;
       notes?: string;
     };
+    /**
+     * Draft v1.4.0-gated review-decision events to APPEND to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.
+     */
+    disambiguation_decisions?: {
+      decision_id: string;
+      decision_type: 'preferred_name' | 'preferred_role' | 'mapping_rejection' | 'canonical_term';
+      scope: 'run' | 'target' | 'registry';
+      status: 'proposed' | 'accepted' | 'rejected' | 'promoted';
+      target_kind: 'candidate_object' | 'candidate_action' | 'preferred_term';
+      target_id: string;
+      selected_value: string;
+      rationale: string;
+      alternatives?: {
+        value: string;
+        score?: number;
+        reasoning?: string;
+      }[];
+      preferred_term_id?: string;
+      decided_by?: 'human' | 'agent' | 'system';
+      decided_at: string;
+      metadata?: {
+        [k: string]: any;
+      };
+    }[];
+    /**
+     * Draft v1.4.0-gated canonical-term entities to APPEND to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.
+     */
+    preferred_terms?: {
+      entity_type: 'preferred_term';
+      id: string;
+      slug: string;
+      label: string;
+      aliases: string[];
+      scope: 'target' | 'registry';
+      domain?: string;
+      source_decision_ids?: string[];
+      metadata?: {
+        [k: string]: any;
+      };
+    }[];
+    /**
+     * Draft v1.4.0-gated first-class capability entities to APPEND to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.
+     */
+    capabilities?: {
+      entity_type: 'capability';
+      id: string;
+      slug: string;
+      name: string;
+      canonical_verb: string;
+      aliases?: string[];
+      oods_traits?: string[];
+      projection_variant_ids?: string[];
+      preconditions?: {
+        type: 'auth' | 'role' | 'state' | 'data';
+        description?: string;
+        confidence?: number;
+        evidence_chain?: {
+          [k: string]: any;
+        }[];
+      }[];
+      metadata?: {
+        [k: string]: any;
+      };
+    }[];
+    /**
+     * Stage1 v1.5.0 cross-surface identity variants. Each element describes one surface-specific projection of this component mapping (desktop/mobile/modal/sidebar).
+     */
+    projection_variants?: {
+      /**
+       * Stable identifier for the projection variant.
+       */
+      id: string;
+      /**
+       * Surface label such as desktop, mobile, modal, or sidebar.
+       */
+      surface: string;
+      /**
+       * Surface-specific component label when it differs from the canonical map name.
+       */
+      external_component?: string;
+      /**
+       * Optional first-class capability entity linked to this projection.
+       */
+      capability_id?: string;
+      /**
+       * Representative selector or cluster signature.
+       */
+      selector?: string;
+      /**
+       * Confidence of the cross-surface identity merge.
+       */
+      confidence?: number;
+      /**
+       * Evidence supporting the identity-resolution link.
+       */
+      evidence_chain?: {
+        [k: string]: any;
+      }[];
+      /**
+       * Open metadata bag for future relation details.
+       */
+      metadata?: {
+        [k: string]: any;
+      };
+    }[];
   }
 }
 export type MapCreateInput = MapCreateInputSchema.MapCreateInput;
@@ -1556,6 +2175,14 @@ export namespace MapListInputSchema {
      * Filter mappings to a specific external system (e.g., 'material').
      */
     externalSystem?: string;
+    /**
+     * Pagination cursor. Use the previous page's nextCursor to continue. When cursor or limit is provided, pagination defaults to 100 items per page.
+     */
+    cursor?: string;
+    /**
+     * Page size for pagination. Omitting both cursor and limit preserves the legacy full-list response.
+     */
+    limit?: number;
   }
 }
 export type MapListInput = MapListInputSchema.MapListInput;
@@ -1583,7 +2210,11 @@ export namespace MapListOutputSchema {
     /**
      * Current ETag of the mappings file.
      */
-    etag?: string;
+    etag: string;
+    /**
+     * Pagination cursor for the next page when additional mappings remain.
+     */
+    nextCursor?: string;
   }
 }
 export type MapListOutput = MapListOutputSchema.MapListOutput;
@@ -1669,8 +2300,12 @@ export namespace MapUpdateInputSchema {
       propMappings?: {
         externalProp: string;
         oodsProp: string;
+        /**
+         * Prop coercion. Accepts a structured CoercionDef, a raw string label (Stage1 v1.6.0 emits enum-map | type-cast | identity as pass-through hints), or null for identity.
+         */
         coercion?:
           | null
+          | string
           | {
               type: 'enum';
               mapping: {
@@ -1694,6 +2329,23 @@ export namespace MapUpdateInputSchema {
        * Update notes in metadata.
        */
       notes?: string;
+      /**
+       * Replace Stage1 v1.5.0 cross-surface projection variants. Pass an empty array to clear; omit to leave unchanged.
+       */
+      projection_variants?: {
+        id: string;
+        surface: string;
+        external_component?: string;
+        capability_id?: string;
+        selector?: string;
+        confidence?: number;
+        evidence_chain?: {
+          [k: string]: any;
+        }[];
+        metadata?: {
+          [k: string]: any;
+        };
+      }[];
     };
   }
 }
@@ -2092,6 +2744,109 @@ export namespace PipelineOutputSchema {
   }
 }
 export type PipelineOutput = PipelineOutputSchema.PipelineOutput;
+
+// Source: registry.snapshot.input.json
+export namespace RegistrySnapshotInputSchema {
+  /**
+   * Bulk-read the current OODS registry state (maps, traits, objects) in a single call.
+   */
+  export interface RegistrySnapshotInput {}
+}
+export type RegistrySnapshotInput = RegistrySnapshotInputSchema.RegistrySnapshotInput;
+
+// Source: registry.snapshot.output.json
+export namespace RegistrySnapshotOutputSchema {
+  /**
+   * Single-call bulk snapshot of the mapping registry plus trait/object catalogs.
+   */
+  export interface RegistrySnapshotOutput {
+    maps: {
+      [k: string]: any;
+    }[];
+    traits: {
+      [k: string]: TraitInfo;
+    };
+    objects: {
+      [k: string]: ObjectInfo;
+    };
+    etag: string;
+    generatedAt: string;
+    /**
+     * Draft v1.4.0-gated review-decision events surfaced losslessly from the mapping doc. Omitted when none are present.
+     */
+    disambiguation_decisions?: {
+      [k: string]: any;
+    }[];
+    /**
+     * Draft v1.4.0-gated canonical-term entities surfaced losslessly. Omitted when none are present.
+     */
+    preferred_terms?: {
+      [k: string]: any;
+    }[];
+    /**
+     * Draft v1.4.0-gated first-class capability entities surfaced losslessly. Omitted when none are present.
+     */
+    capabilities?: {
+      [k: string]: any;
+    }[];
+  }
+  export interface TraitInfo {
+    name: string;
+    version: string;
+    description: string;
+    category: string;
+    tags?: string[];
+    contexts?: string[];
+    viewExtensions?: {
+      [k: string]: any;
+    }[];
+    parameters?: {
+      [k: string]: any;
+    }[];
+    schema?: {
+      [k: string]: any;
+    };
+    semantics?: {
+      [k: string]: any;
+    };
+    tokens?: {
+      [k: string]: any;
+    };
+    dependencies?: string[];
+    metadata?: {
+      [k: string]: any;
+    };
+    objects?: string[];
+    source?: string;
+  }
+  export interface ObjectInfo {
+    name: string;
+    version: string;
+    domain: string;
+    description: string;
+    tags?: string[];
+    traits?: TraitRef[];
+    fields?: string[];
+    semantics?: {
+      [k: string]: any;
+    };
+    tokens?: {
+      [k: string]: any;
+    };
+    metadata?: {
+      [k: string]: any;
+    };
+    source?: string;
+  }
+  export interface TraitRef {
+    reference: string;
+    alias?: string | null;
+    parameters?: {
+      [k: string]: any;
+    };
+  }
+}
+export type RegistrySnapshotOutput = RegistrySnapshotOutputSchema.RegistrySnapshotOutput;
 
 // Source: release.tag.input.json
 export namespace ReleaseTagInputSchema {
@@ -2951,6 +3706,142 @@ export namespace ReplValidateOutputSchema {
 }
 export type ReplValidateOutput = ReplValidateOutputSchema.ReplValidateOutput;
 
+// Source: review.resolve.input.json
+export namespace ReviewResolveInputSchema {
+  /**
+   * Resolve low-confidence reconciliation conflicts in an Object Catalog manifest by applying a policy bundle. Each entity gets one decision (accept|patch|defer|dismiss) plus an audit trail. Agent-callable; no playground UI required. Provide either an inline `manifest` object OR a relative `manifestPath`. Exactly one of the two is required.
+   */
+  export type ReviewResolveInput = ReviewResolveInput1 & ReviewResolveInput2;
+  export type Predicate = PredicateConfidenceThreshold | PredicateSignalTypeFloor | PredicateEntityUrnMatch;
+  export type Decision = 'accept' | 'patch' | 'defer' | 'dismiss';
+  export type ReviewResolveInput2 = {
+    [k: string]: any;
+  };
+
+  export interface ReviewResolveInput1 {
+    /**
+     * Inline Object Catalog manifest object. Mutually exclusive with manifestPath.
+     */
+    manifest?: {
+      [k: string]: any;
+    };
+    /**
+     * Project-relative path to a manifest JSON file. Absolute paths and parent-directory traversal (..) are rejected.
+     */
+    manifestPath?: string;
+    /**
+     * Optional override for the project root used to resolve manifestPath. Defaults to process.cwd().
+     */
+    projectRoot?: string;
+    policies: PolicyBundle;
+    /**
+     * Decision applied when no policy matches an entity. Defaults to 'defer' so unmatched items surface for follow-up rather than being silently accepted.
+     */
+    defaultAction?: 'accept' | 'patch' | 'defer' | 'dismiss';
+  }
+  /**
+   * Ordered policy bundle. First match wins per entity; no-match falls to defaultAction.
+   */
+  export interface PolicyBundle {
+    /**
+     * Optional bundle identifier echoed in the audit trail for reproducibility.
+     */
+    id?: string;
+    policies: Policy[];
+  }
+  export interface Policy {
+    id: string;
+    when: Predicate;
+    then: Decision;
+    /**
+     * Human-readable reason surfaced verbatim in the resolution when this policy matches.
+     */
+    reason?: string;
+  }
+  /**
+   * Match when entity.oods.confidence_decomposition.total < threshold. With matchUnknown=true, also matches entities with no confidence_decomposition.
+   */
+  export interface PredicateConfidenceThreshold {
+    kind: 'confidence_threshold';
+    threshold: number;
+    matchUnknown?: boolean;
+  }
+  /**
+   * Match when a named signal's score < floor. Does not match when the signal is absent or when confidence_decomposition is absent.
+   */
+  export interface PredicateSignalTypeFloor {
+    kind: 'signal_type_floor';
+    signal: string;
+    floor: number;
+  }
+  /**
+   * Match by entity URN. Provide exactly one of `urn` (exact string match) or `pattern` (glob with * and ?).
+   */
+  export interface PredicateEntityUrnMatch {
+    kind: 'entity_urn_match';
+    urn?: string;
+    pattern?: string;
+  }
+}
+export type ReviewResolveInput = ReviewResolveInputSchema.ReviewResolveInput;
+
+// Source: review.resolve.output.json
+export namespace ReviewResolveOutputSchema {
+  export type Decision = 'accept' | 'patch' | 'defer' | 'dismiss';
+  export type Tier = 'high' | 'medium' | 'low' | 'unknown';
+
+  /**
+   * Per-entity resolutions + audit trail produced by applying a policy bundle to an Object Catalog manifest.
+   */
+  export interface ReviewResolveOutput {
+    resolutions: Resolution[];
+    auditTrail: {
+      /**
+       * ISO timestamp of evaluation. Echoed for reproducibility.
+       */
+      evaluatedAt: string;
+      defaultAction: Decision;
+      /**
+       * Number of entities that produced a resolution (entities without a urn are skipped and counted in warnings).
+       */
+      entityCount: number;
+      /**
+       * Verbatim echo of the input policy bundle for reproducibility.
+       */
+      policyBundle: {
+        [k: string]: any;
+      };
+      /**
+       * Sorted unique policy IDs that matched at least one entity.
+       */
+      matchedPolicyIds: string[];
+    };
+    warnings: string[];
+    diagnostics: {
+      source: 'inline' | 'file';
+      /**
+       * Resolved manifest path when source=file. Always relative to projectRoot.
+       */
+      manifestPath: string | null;
+    };
+  }
+  export interface Resolution {
+    urn: string;
+    decision: Decision;
+    reason: string;
+    /**
+     * ID of the matching policy, or 'default' when no policy matched.
+     */
+    policyId: string;
+    /**
+     * Total score from confidence_decomposition. Null when the field is absent.
+     */
+    evaluatedScore: number | null;
+    evaluatedTier: Tier;
+  }
+}
+export type ReviewResolveOutput = ReviewResolveOutputSchema.ReviewResolveOutput;
+
 // Source: schema.delete.input.json
 export namespace SchemaDeleteInputSchema {
   export interface SchemaDeleteInput {
@@ -3069,13 +3960,241 @@ export namespace SchemaSaveOutputSchema {
 }
 export type SchemaSaveOutput = SchemaSaveOutputSchema.SchemaSaveOutput;
 
+// Source: stage1-capability-entity.json
+export namespace Stage1CapabilityEntitySchema {
+  /**
+   * Draft v1.4.0-gated first-class capability entity for Stage1 capability rollup output. Additive stub only; no current OODS handler consumes it.
+   */
+  export interface Stage1CapabilityEntity {
+    entity_type: 'capability';
+    /**
+     * Stable identifier for the rolled-up capability.
+     */
+    id: string;
+    /**
+     * Kebab-case capability slug.
+     */
+    slug: string;
+    /**
+     * Display label for the capability.
+     */
+    name: string;
+    /**
+     * Verb that anchors the capability across surfaces.
+     */
+    canonical_verb: string;
+    /**
+     * Alternate verbs or labels that resolve to the same capability.
+     */
+    aliases?: string[];
+    /**
+     * Canonical OODS traits associated with the capability.
+     */
+    oods_traits?: string[];
+    /**
+     * Map-side projection_variants that present this capability.
+     */
+    projection_variant_ids?: string[];
+    /**
+     * Optional preconditions aggregated across action exposures.
+     */
+    preconditions?: {
+      type: 'auth' | 'role' | 'state' | 'data';
+      description?: string;
+      confidence?: number;
+      evidence_chain?: {
+        [k: string]: any;
+      }[];
+    }[];
+    /**
+     * Open metadata bag reserved for future capability/API linkage.
+     */
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+}
+export type Stage1CapabilityEntity = Stage1CapabilityEntitySchema.Stage1CapabilityEntity;
+
+// Source: stage1-disambiguation-decision.json
+export namespace Stage1DisambiguationDecisionSchema {
+  /**
+   * Draft v1.4.0-gated review-decision shape for reconciliation_report.disambiguation_decisions[]. Additive stub only; current OODS handlers do not consume it.
+   */
+  export interface Stage1DisambiguationDecision {
+    /**
+     * Stable identifier for the decision event.
+     */
+    decision_id: string;
+    /**
+     * Kind of disambiguation outcome produced during review.
+     */
+    decision_type: 'preferred_name' | 'preferred_role' | 'mapping_rejection' | 'canonical_term';
+    /**
+     * Decision lifetime. Registry scope means the decision is eligible for OODS promotion.
+     */
+    scope: 'run' | 'target' | 'registry';
+    /**
+     * Lifecycle state of the decision.
+     */
+    status: 'proposed' | 'accepted' | 'rejected' | 'promoted';
+    /**
+     * Which Stage1 surface the decision applies to.
+     */
+    target_kind: 'candidate_object' | 'candidate_action' | 'preferred_term';
+    /**
+     * Identifier of the reviewed object/action/term.
+     */
+    target_id: string;
+    /**
+     * Canonical value selected by the reviewer.
+     */
+    selected_value: string;
+    /**
+     * Human-readable explanation for the selection.
+     */
+    rationale: string;
+    /**
+     * Competing interpretations considered during review.
+     */
+    alternatives?: {
+      value: string;
+      score?: number;
+      reasoning?: string;
+    }[];
+    /**
+     * Optional promoted preferred_term/disambiguation entity id once the decision graduates from run-scoped state.
+     */
+    preferred_term_id?: string;
+    /**
+     * Actor that finalized the decision.
+     */
+    decided_by?: 'human' | 'agent' | 'system';
+    /**
+     * When the decision was made.
+     */
+    decided_at: string;
+    /**
+     * Open metadata bag reserved for future v1.4.0+ contract details.
+     */
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+}
+export type Stage1DisambiguationDecision = Stage1DisambiguationDecisionSchema.Stage1DisambiguationDecision;
+
+// Source: stage1-preferred-term-entity.json
+export namespace Stage1PreferredTermEntitySchema {
+  /**
+   * Draft v1.4.0-gated OODS registry entity for promoted disambiguation/canonical-term decisions. Additive stub only.
+   */
+  export interface Stage1PreferredTermEntity {
+    entity_type: 'preferred_term';
+    /**
+     * Stable registry identifier for the promoted term entity.
+     */
+    id: string;
+    /**
+     * Kebab-case canonical slug.
+     */
+    slug: string;
+    /**
+     * Human-readable canonical label.
+     */
+    label: string;
+    /**
+     * Alternate labels that collapse into the canonical term.
+     */
+    aliases: string[];
+    /**
+     * Target-scoped during incubation, registry-scoped once promoted.
+     */
+    scope: 'target' | 'registry';
+    /**
+     * Optional domain or namespace for the term.
+     */
+    domain?: string;
+    /**
+     * Decision ids that promoted this term into the registry.
+     */
+    source_decision_ids?: string[];
+    /**
+     * Open metadata bag reserved for future registry-side term semantics.
+     */
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+}
+export type Stage1PreferredTermEntity = Stage1PreferredTermEntitySchema.Stage1PreferredTermEntity;
+
+// Source: stage1-projection-variant.json
+export namespace Stage1ProjectionVariantSchema {
+  /**
+   * Draft v1.4.0-gated cross-surface identity relation for component mappings. Represents one surface-specific projection of a canonical map/capability.
+   */
+  export interface Stage1ProjectionVariant {
+    /**
+     * Stable identifier for the projection variant.
+     */
+    id: string;
+    /**
+     * Surface label such as desktop, mobile, modal, or sidebar.
+     */
+    surface: string;
+    /**
+     * Observed surface-specific component label when it differs from the canonical map name.
+     */
+    external_component?: string;
+    /**
+     * Optional first-class capability entity linked to this surface projection.
+     */
+    capability_id?: string;
+    /**
+     * Representative selector or cluster signature for the surface projection.
+     */
+    selector?: string;
+    /**
+     * Confidence score for the identity-resolution link.
+     */
+    confidence?: number;
+    /**
+     * Evidence supporting the cross-surface identity merge.
+     */
+    evidence_chain?: {
+      [k: string]: any;
+    }[];
+    /**
+     * Open metadata bag reserved for future cross-surface identity details.
+     */
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+}
+export type Stage1ProjectionVariant = Stage1ProjectionVariantSchema.Stage1ProjectionVariant;
+
 // Source: structuredData.fetch.input.json
 export namespace StructuredDataFetchInputSchema {
-  export interface StructuredDataFetchInput {
+  export type StructuredDataFetchInput = StructuredDataFetchInput1 & StructuredDataFetchInput2;
+  export type StructuredDataFetchInput2 = {
+    [k: string]: any;
+  };
+
+  export interface StructuredDataFetchInput1 {
     /**
-     * Structured dataset to return.
+     * Local structured dataset to return (components/tokens/manifest). Mutually exclusive with kind+runPath.
      */
-    dataset: 'components' | 'tokens' | 'manifest';
+    dataset?: 'components' | 'tokens' | 'manifest';
+    /**
+     * Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset.
+     */
+    kind?: 'identity_graph' | 'capability_rollup' | 'object_rollup' | 'drift_report';
+    /**
+     * Filesystem path to a Stage1 run directory or its artifacts/ subdirectory. Required when kind is set.
+     */
+    runPath?: string;
     /**
      * Return matched=true without payload when the ETag matches.
      */
@@ -3085,7 +4204,7 @@ export namespace StructuredDataFetchInputSchema {
      */
     includePayload?: boolean;
     /**
-     * Request a specific date-stamped version (e.g., '2026-02-24'). Omit for latest.
+     * Request a specific date-stamped version (e.g., '2026-02-24'). Omit for latest. Applies to dataset mode only.
      */
     version?: string;
     /**
@@ -3100,9 +4219,21 @@ export type StructuredDataFetchInput = StructuredDataFetchInputSchema.Structured
 export namespace StructuredDataFetchOutputSchema {
   export interface StructuredDataFetchOutput {
     /**
-     * Dataset that was requested.
+     * Dataset that was requested (dataset mode only).
      */
-    dataset: 'components' | 'tokens' | 'manifest';
+    dataset?: 'components' | 'tokens' | 'manifest';
+    /**
+     * Stage1 structured artifact kind that was requested (kind mode only).
+     */
+    kind?: 'identity_graph' | 'capability_rollup' | 'object_rollup' | 'drift_report';
+    /**
+     * Stage1 artifact schema_version (kind mode only).
+     */
+    schemaVersion?: string;
+    /**
+     * Stage1 run_id extracted from the artifact (kind mode only).
+     */
+    runId?: string;
     /**
      * Version tag (usually the YYYY-MM-DD stamp from the manifest).
      */
@@ -3157,6 +4288,10 @@ export namespace StructuredDataFetchOutputSchema {
       domainCount?: number;
       patternCount?: number;
       traitOverlayCount?: number;
+      nodeCount?: number;
+      capabilityCount?: number;
+      projectionVariantCount?: number;
+      signalCount?: number;
       tokenCounts?: {
         referenceTokens?: number;
         themeTokens?: number;

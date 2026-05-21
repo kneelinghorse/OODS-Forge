@@ -200,6 +200,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/concordance.validate.input.json',
     outputSchema: './schemas/concordance.validate.output.json',
   },
+  'review.resolve': {
+    modulePath: './tools/review.resolve.js',
+    inputSchema: './schemas/review.resolve.input.json',
+    outputSchema: './schemas/review.resolve.output.json',
+  },
 };
 
 const schemaCache = new Map<string, object>();
