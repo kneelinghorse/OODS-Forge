@@ -24,6 +24,7 @@ import {
 } from "./components/Stage1DemoPanel";
 import { CapabilityPanel } from "./components/CapabilityPanel";
 import { FixturePicker } from "./components/FixturePicker";
+import { ReconcileView } from "./components/ReconcileView";
 import {
   LINEAR_V16_ROLLUPS,
   STRIPE_V16_ROLLUPS,
@@ -33,7 +34,7 @@ import {
 type Framework = "react" | "vue" | "html";
 type Styling = "inline" | "tokens" | "tailwind";
 type Brand = "default" | "A" | "B";
-type ViewMode = "compose" | "stage1";
+type ViewMode = "compose" | "stage1" | "reconcile";
 
 // Brand state on the playground is "default"|"A"|"B"; the branded-mockup
 // emitter wants "brand-a"|"brand-b" per s102-m02. "default" means "let the
@@ -342,12 +343,18 @@ function rollupBundleFor(id: Stage1FixtureMeta["id"]): RollupBundle {
 }
 
 function getInitialView(): ViewMode {
-  return window.location.hash === "#stage1" ? "stage1" : "compose";
+  if (window.location.hash === "#stage1") return "stage1";
+  if (window.location.hash === "#reconcile") return "reconcile";
+  return "compose";
 }
 
 function setViewHash(next: ViewMode): void {
   if (next === "stage1") {
     window.location.hash = "stage1";
+    return;
+  }
+  if (next === "reconcile") {
+    window.location.hash = "reconcile";
     return;
   }
   window.history.replaceState(
@@ -720,21 +727,27 @@ export default function App() {
     ? fidelityLoading
     : view === "compose"
       ? composeLoading
-      : stage1Loading;
+      : view === "stage1"
+        ? stage1Loading
+        : false;
   const activeError = inFidelityMode
     ? fidelityError
     : view === "compose"
       ? composeError
-      : stage1Error;
+      : view === "stage1"
+        ? stage1Error
+        : null;
   const activeSummary = inFidelityMode
     ? fidelityResult
       ? `${fidelity} · ${fidelityFixture} · ${fidelityResult.meta.entityCount} entit${fidelityResult.meta.entityCount === 1 ? "y" : "ies"}${fidelityResult.warnings.length > 0 ? ` · ${fidelityResult.warnings.length} warning${fidelityResult.warnings.length === 1 ? "" : "s"}` : ""}`
       : null
     : view === "compose"
       ? (composeResult?.summary ?? null)
-      : stage1Result
-        ? `${activeFixture.label}: ${stage1Result.applied.length} applied, ${stage1Result.queued.length} queued at minConfidence 0.75`
-        : "Load a live reconciliation fixture through map_apply dry-run.";
+      : view === "stage1"
+        ? stage1Result
+          ? `${activeFixture.label}: ${stage1Result.applied.length} applied, ${stage1Result.queued.length} queued at minConfidence 0.75`
+          : "Load a live reconciliation fixture through map_apply dry-run."
+        : "C5 chain · select a fixture and a policy bundle, then step through queue → resolve → summary.";
 
   return (
     <div className="flex h-screen flex-col bg-[#0f1117] text-gray-200">
@@ -764,9 +777,23 @@ export default function App() {
             >
               Stage1
             </button>
+            <button
+              onClick={() => handleViewChange("reconcile")}
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                view === "reconcile"
+                  ? "bg-indigo-500 text-white"
+                  : "text-gray-400 hover:bg-gray-900 hover:text-gray-100"
+              }`}
+            >
+              Reconcile
+            </button>
           </div>
           <span className="font-mono text-xs text-gray-500">
-            {view === "stage1" ? "#stage1" : "v0.1"}
+            {view === "stage1"
+              ? "#stage1"
+              : view === "reconcile"
+                ? "#reconcile"
+                : "v0.1"}
           </span>
         </div>
 
@@ -852,6 +879,8 @@ export default function App() {
             />
           </div>
         </>
+      ) : view === "reconcile" ? (
+        <ReconcileView />
       ) : activeFixture.kind === "rollups" ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-wrap items-center gap-2 border-b border-gray-800 bg-slate-950/40 px-5 py-2">

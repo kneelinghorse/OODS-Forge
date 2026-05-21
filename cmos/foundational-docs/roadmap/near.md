@@ -264,7 +264,57 @@ Closed by end of s104: C1 (s98-m02), C2 (s99-m02), C3 (s99-m04 emitter + s103-m0
 
 ---
 
-## Sprint-105 Locked Shape (locked 2026-05-21 in PS-2026-05-21-006)
+## Sprint-105 Outcomes (closed 2026-05-21)
+
+Sprint-105 held default cadence **N=5 (4 work + 1 closeout)** for the fourth consecutive sprint post-s101 recovery. **5/5 missions delivered.** Theme realized: first sprint to push the **I** and **Q** tracks since their introduction in the mission graph — C-track effectively closed at 5/5 axes shipped (C4 was dropped in this sprint's planning session).
+
+Sprint title: **"I3 Telemetry + Playground Catch-up + Q1 Determinism."**
+
+Full closeout report at `cmos/reports/s105-m05-closeout-2026-05-21.md`. End-of-sprint posture: **5 of 6 C-axes closed** (C1/C2/C3/C5/C6 ✓; C4 DROPPED — replacement watch = "playground taste-judgment usage signal"). Test posture (default suite): 176 files / 3492 active / 10 skipped (+86 vs s104 close). Scale suite (opt-in): 2 files / 14 active / 0 skipped. **Rule 1 mission-start audit pattern n=11 clean runs.** Rule 12 spec-discrepancy callout fired on THREE of four missions (m02 framework-vs-fidelity / m03 pipeline-doesn't-have-N-cardinality / m04 no-MCP-tool-wraps-C5-emitters) — exactly the failure mode the post-s101 rule set was designed to catch.
+
+### s105-m01 — I3 telemetry scaffolding (OTLP)
+
+**OPENS I3.** Env-var-gated lazy OTel SDK + OTLP HTTP exporter; zero runtime overhead when unset. Dispatcher span at `src/index.ts` wraps every MCP tool call with `forge.tool.<name>` + `SpanKind.SERVER` + `rpc.*` semconv + `oods.*` custom attrs. SIGTERM/SIGINT drain. 16 unit tests via InMemorySpanExporter. Dashboard hookup deferred (agent-vitals dashboard is WIP).
+
+### s105-m02 — Playground HTML emitter coverage (fidelity.preview)
+
+Closes the playground demo gap that was open since s98 (C1) + s99 (C2) + s99 (C3-emitter) + s102 (branded-mockup). Rule 12 SPEC DISCREPANCY callout caught the framework-vs-fidelity structural error BEFORE code: emitters consume ObjectCatalogManifest not UiSchema. Audit pivoted to a new MCP tool `fidelity.preview` rather than extending the framework enum. Separate Fidelity selector orthogonal to Framework. Server-resident FIXTURE_PATHS allow-list (9 Q3 fixtures, eliminates path traversal). 26 unit tests including path-traversal rejection.
+
+### s105-m03 — Q1 determinism baseline
+
+**OPENS Q1 (not closes).** 1 of 3 sprints in the V2 axis #7 success-criterion streak. Rule 12 SPEC DISCREPANCY callout scoped the mission to map.apply-only (pipeline has no N-cardinality input). Seeded mulberry32 ReconciliationReport synthesizer + companion MappingsDoc seed helper. 9 determinism tests + 5 map.apply scale tests across the 100/500/1000 tier grid. Opt-in `pnpm test:scale` + separate `scale-determinism` CI job (not on the release gate yet). Reproducibility evidence: 3 consecutive local runs green at ~2.4s. Parallel-test isolation via per-test temp dirs + `MCP_MAPPINGS_PATH`.
+
+### s105-m04 — Playground JSON-artifact wave (C5 chain + review.resolve invocation)
+
+Closes the playground demo gap for the most strategically significant work since sprint-100 (C5 chain shipped in s104 with zero demo path). Rule 12 SPEC DISCREPANCY callout: no MCP tool wraps the three C5 emitters; only review.resolve from s103-m01 is a tool. Audit chose ONE composite tool `review.chain` over three separate emitter-tools per Rule 2. New "Reconcile" view (third top-level tab #reconcile) with step-through state machine (queue → resolve → summary), structured panels with raw-JSON toggle per panel, fixture picker, 2-option policy radio (flag-below-0.5 / dismiss-all bundles inlined from s104-m04 Q3 e2e). 18 unit tests + live-bridge smoke trio × 2 bundles = 6/6 green. Two-policy-layer convention captured (bridge `configs/agent/policy.json` + server `src/security/policy.json` both required).
+
+### s105-m05 — Closeout (this mission)
+
+Eighth formal run of decision #408. Single closeout commit enumerating s105-m01..m05. NO janitorial per `feedback_hygiene_in_planning_not_missions.md` — planning-session hygiene was executed in PS-2026-05-21-006 with its own commit per the addendum rule. Closeout report verifies I3 + Q1 honest framing (OPENED, not CLOSED) and the C-track final disposition (5/5 + C4 dropped).
+
+### C-track status after s105
+
+**End-of-sprint posture: 5 of 6 axes shipped.** C1 (s98-m02), C2 (s99-m02), C3 (s99-m04 emitter + s103-m01 tool), C5 (s104-m02..m04), C6 (s103-m02). **C4 DROPPED** as a separate axis in PS-2026-05-21-006 — replacement watch item is "playground taste-judgment usage signal" (passive, promotes only on signal). The natural C-track close was visualized at planning lock.
+
+### Sprint-106 candidate shape (drafted at s105 close)
+
+- **Q1 SUSTAIN — sprint 2 of 3.** Scale-determinism CI job needs to stay green for the full sprint to count toward the 3-sprint streak. Could be a single tiny mission or absorbed into the closeout.
+- **I3 dashboard hookup IF agent-vitals dashboard lands.** Gated on dashboard availability.
+- **`review.resolve` real-world usage signal watch** — passive; the C5 chain now has both agent-callable and inspection surfaces.
+- **A2UI ADK `A2uiSchemaManager` env-gated upgrade** — natural progression after Lit local; partner-gated.
+- **I2 semantic-federation evaluator (D4 implementation)** — Birch-gated.
+- **9 known Vite URL transform instances** — trigger-gated on happy-dom env requirement.
+- **Concordance grounding of content domain pack** — partner-gated.
+- **Playground taste-judgment usage signal** — passive watch (promoted from former C4).
+- **Two-policy-layer convention** — small hygiene addition to CLAUDE.md / agents.md surfaced from m04 debugging.
+
+Sprint shape recommendation: **N=4 or N=5 with closeout** depending on whether the agent-vitals dashboard or Birch signal materializes.
+
+---
+
+---
+
+## Sprint-105 Locked Shape (locked 2026-05-21 in PS-2026-05-21-006) — superseded by Outcomes above
 
 N=5 (4 work + 1 closeout). Title: "I3 Telemetry + Playground Catch-up + Q1 Determinism." First sprint to push the I and Q tracks since their introduction in the mission graph — C-track effectively closed (C4 dropped this planning session, 5/5 axes shipped).
 

@@ -211,6 +211,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/fidelity.preview.input.json',
     outputSchema: './schemas/fidelity.preview.output.json',
   },
+  'review.chain': {
+    modulePath: './tools/review.chain.js',
+    inputSchema: './schemas/review.chain.input.json',
+    outputSchema: './schemas/review.chain.output.json',
+  },
 };
 
 const schemaCache = new Map<string, object>();

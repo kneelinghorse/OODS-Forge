@@ -43,9 +43,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Server-resident fixtures the playground (or any caller) may name. Keeps
 // fixture loading on a tight allow-list — no caller-supplied paths are
-// resolved, eliminating path-traversal risk.
+// resolved, eliminating path-traversal risk. Exported so other playground-
+// affordance tools (review.chain) reuse the same allow-list rather than
+// duplicating it.
 const PACKAGE_ROOT = path.resolve(__dirname, '..', '..');
-const FIXTURE_PATHS: Record<string, string> = {
+export const FIXTURE_PATHS: Record<string, string> = {
   user: path.join(PACKAGE_ROOT, 'src', 'object-catalog', 'fixtures', 'user.json'),
   product: path.join(PACKAGE_ROOT, 'src', 'object-catalog', 'fixtures', 'product.json'),
   subscription: path.join(PACKAGE_ROOT, 'src', 'object-catalog', 'fixtures', 'subscription.json'),

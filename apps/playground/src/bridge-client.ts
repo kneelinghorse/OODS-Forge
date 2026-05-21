@@ -216,6 +216,157 @@ export async function runFidelityPreview(input: {
   );
 }
 
+// ---------------------------------------------------------------------------
+// review.chain — C5 chain MCP tool (sprint-105 m04)
+// ---------------------------------------------------------------------------
+
+export type PolicyDecision = 'accept' | 'patch' | 'defer' | 'dismiss';
+export type ConfidenceTier = 'high' | 'medium' | 'low' | 'unknown';
+
+export type PolicyPredicate =
+  | { kind: 'confidence_threshold'; threshold: number; matchUnknown?: boolean }
+  | { kind: 'signal_type_floor'; signal: string; floor: number }
+  | { kind: 'entity_urn_match'; urn?: string; pattern?: string };
+
+export type Policy = {
+  id: string;
+  when: PolicyPredicate;
+  then: PolicyDecision;
+  reason?: string;
+};
+
+export type PolicyBundle = {
+  id?: string;
+  policies: Policy[];
+};
+
+export type ReviewChainSignal = {
+  name: string;
+  score: number;
+  hint?: string;
+};
+
+export type ReviewChainQueueEntry = {
+  urn: string;
+  tier: ConfidenceTier;
+  score: number | null;
+  flaggedForReview: boolean;
+  lowestSignals: ReviewChainSignal[];
+  elementName: string;
+  elementType: string;
+};
+
+export type ReviewChainQueueSummary = {
+  entitiesTotal: number;
+  entitiesIncluded: number;
+  flaggedCount: number;
+  tierCounts: { high: number; medium: number; low: number; unknown: number };
+  reviewThreshold: number;
+  lowestSignalsN: number;
+  flaggedOnly: boolean;
+};
+
+export type ReviewChainQueueArtifact = {
+  entries: ReviewChainQueueEntry[];
+  summary: ReviewChainQueueSummary;
+  source: { sourceManifest: string; [key: string]: unknown };
+};
+
+export type ReviewChainGap =
+  | { source: 'signal'; name: string; score: number; threshold: number; hint?: string }
+  | { source: 'evidence_refs'; detail: string }
+  | { source: 'confidence_decomposition'; detail: string };
+
+export type ReviewChainConflictDetailArtifact = {
+  urn: string;
+  tier: ConfidenceTier;
+  score: number | null;
+  flaggedForReview: boolean;
+  element: { name: string; type: string; object?: string; action?: string };
+  signals: ReviewChainSignal[];
+  gaps: ReviewChainGap[];
+  context?: {
+    projectionVariants?: string[];
+    brandOverlay?: string;
+    schemaorg?: string;
+  };
+  source?: { sourceManifest?: string };
+};
+
+export type ReviewChainResolution = {
+  urn: string;
+  decision: PolicyDecision;
+  reason: string;
+  policyId: string;
+  evaluatedScore: number | null;
+  evaluatedTier: ConfidenceTier;
+};
+
+export type ReviewChainAuditTrail = {
+  evaluatedAt: string;
+  defaultAction: PolicyDecision;
+  entityCount: number;
+  policyBundle: PolicyBundle;
+  matchedPolicyIds: string[];
+};
+
+export type ReviewChainSummaryEntry = {
+  urn: string;
+  decision: PolicyDecision;
+  reason: string;
+  policyId: string;
+  evaluatedScore: number | null;
+  evaluatedTier: ConfidenceTier;
+  elementName: string;
+  elementType: string;
+};
+
+export type ReviewChainSummaryArtifact = {
+  entries: ReviewChainSummaryEntry[];
+  summary: {
+    entriesTotal: number;
+    decisionCounts: { accept: number; patch: number; defer: number; dismiss: number };
+    defaultActionUsed: number;
+    matchedPolicyIds: string[];
+  };
+  auditTrail: {
+    evaluatedAt: string;
+    defaultAction: PolicyDecision;
+    entityCount: number;
+    policyBundleId?: string;
+    matchedPolicyIds: string[];
+  };
+  source?: { sourceManifest?: string; manifestPath?: string };
+};
+
+export type ReviewChainResult = {
+  queue: ReviewChainQueueArtifact;
+  resolutions: ReviewChainResolution[];
+  auditTrail: ReviewChainAuditTrail;
+  conflictDetails: Array<{ urn: string; detail: ReviewChainConflictDetailArtifact }>;
+  summary: ReviewChainSummaryArtifact;
+  diagnostics: {
+    fixture: string;
+    fixtureSource: 'allow-list';
+    policyBundleId?: string;
+    entityCount: number;
+    flaggedCount: number;
+  };
+};
+
+export async function runReviewChain(input: {
+  fixture: string;
+  policies: PolicyBundle;
+  options?: {
+    reviewThreshold?: number;
+    lowestSignalsN?: number;
+    evidenceGapThreshold?: number;
+    defaultAction?: PolicyDecision;
+  };
+}): Promise<BridgeResponse<ReviewChainResult>> {
+  return runTool<ReviewChainResult>('review_chain', input as Record<string, unknown>);
+}
+
 export async function healthCheck(): Promise<{ ok: boolean }> {
   try {
     const res = await fetch(`${BASE}/health`);

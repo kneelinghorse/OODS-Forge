@@ -33,6 +33,7 @@ Auto-generated from JSON schemas and tool-descriptions.json.
 | [concordance.validate](./concordance-validate.md) | Validate an Object Catalog manifest against the vendored Concordance wire contract. Accepts either an inline `manifest` object or a project-relative `manifestPath`. Returns valid/errors/warnings plus version-policy outcome (exact|patch|minor|major|absent) against the Forge schema_version pin. Errors preserve AJV instancePath/keyword/params shape for Pydantic detail.errors[] parity. Agent-callable only — manifest validation is NOT auto-baked into the compose/render pipeline yet. |
 | [review.resolve](./review-resolve.md) | Resolve low-confidence reconciliation conflicts in an Object Catalog manifest by applying a policy bundle. Each entity gets one decision (accept|patch|defer|dismiss) with reason + matching policyId + evaluatedScore + evaluatedTier, plus an audit trail (evaluatedAt, defaultAction, policyBundle echo, matchedPolicyIds). Accepts either an inline `manifest` or a project-relative `manifestPath`; `policies` bundle is required. Three predicate kinds supported: confidence_threshold (score vs threshold), signal_type_floor (named signal vs floor), entity_urn_match (urn or glob pattern). Ordered rules, first-match-wins, defaultAction='defer' covers no-match. Consumed by orchestrating agents; no playground UI required. |
 | [fidelity.preview](./fidelity-preview.md) | MCP tool: fidelity.preview |
+| [review.chain](./review-chain.md) | MCP tool: review.chain |
 
 ## On-demand Tools
 

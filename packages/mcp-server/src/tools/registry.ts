@@ -46,6 +46,7 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'concordance.validate',
     'review.resolve',
     'fidelity.preview',
+    'review.chain',
   ],
   onDemand: [
     'diag.snapshot',
