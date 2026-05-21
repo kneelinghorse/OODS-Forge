@@ -264,9 +264,25 @@ Closed by end of s104: C1 (s98-m02), C2 (s99-m02), C3 (s99-m04 emitter + s103-m0
 
 ---
 
-## Sprint-105 Candidate Shape (drafted 2026-05-21 at s104 close)
+## Sprint-105 Locked Shape (locked 2026-05-21 in PS-2026-05-21-006)
 
-Drafted at the close of s104 to inform the s105 planning session. **NOT locked** — the planning session will pick.
+N=5 (4 work + 1 closeout). Title: "I3 Telemetry + Playground Catch-up + Q1 Determinism." First sprint to push the I and Q tracks since their introduction in the mission graph — C-track effectively closed (C4 dropped this planning session, 5/5 axes shipped).
+
+- **s105-m01 — I3 telemetry scaffolding (OTLP).** Env-var-gated lazy OTel SDK + OTLP HTTP exporter; 5 trace span kinds (compose, validate, render, codegen, map.apply) + 2 metrics; minimum dep set (api + sdk-trace-node + exporter-trace-otlp-http; no auto-instrumentations); InMemorySpanExporter for tests; no dashboard hookup (agent-vitals dashboard is WIP). Mission-start audit on 5 axes per Rule 1.
+- **s105-m02 — Playground HTML emitter coverage.** Wire C1 boxes-arrows + C2 wireframe + C3 review-emitter + branded mockup into the compose-view selector. Mechanical; closes the playground demo gap audited in this planning session.
+- **s105-m03 — Q1 determinism baseline.** Real artifacts at 100/500/1000 mapping states; parallel test execution; pipeline + map.apply paths exercised at scale. Honest framing: opens Q1, does NOT close it (mission-graph criterion requires 3-sprint streak; s105 is sprint 1 of 3).
+- **s105-m04 — Playground JSON-artifact wave.** Wire C5 chain (review-queue + conflict-detail + apply-summary) + review.resolve invocation button. Step-through chain UX; structured panels + raw-JSON toggle; default policy bundle hard-wired (no policy-editor UI per post-C4-drop discipline). Depends on m02.
+- **s105-m05 — Closeout (8th formal #408 run).** Single closeout commit enumerating s105-m01..m05; closeout report verifies I3/Q1 honest framing + C-track final disposition.
+
+**Standing alternates (deferred from s105 to passive watch):** review.resolve real-world usage signal, A2UI ADK A2uiSchemaManager, I2 semantic-federation (Birch-gated), 9 Vite URL transform instances (trigger-gated), concordance grounding of content-pack (partner-gated), **playground taste-judgment usage signal** (new watch — promoted from former C4 after disposition).
+
+**C4 disposition (this planning session):** DROPPED as a separate axis. The reframed "playground as taste-judgment surface" still carried human-UI framing — the same shape that caused the s101 failure mode. Documentation drift fixed in same hygiene commit (mission-graph.md C3/C4/C5 stanzas + overview.md C-track list + human-audit paragraph).
+
+---
+
+## Sprint-105 Candidate Shape (drafted 2026-05-21 at s104 close) — superseded by Locked Shape above
+
+(Original candidate shape preserved for traceability — slate selection reasoning at decisions #601 + #602 + PS-2026-05-21-006.)
 
 - **C4 reframing decision** — only C4 remains on the C-track and per the db3b3b0 reframing C4 may not survive as a separate axis. A planning-session decision is needed: drop C4 entirely, OR redefine it explicitly (currently "playground as taste-judgment surface"), OR fold its scope into the I-track. Recommended planning-session item, NOT a build mission.
 - **`review.resolve` real-world usage signal watch** — still passive after s104. With the C5 chain now complete, usage may begin materializing. Promotion candidates if signal surfaces: pipeline auto-integration (auto-bake `review.resolve` into the compose pipeline), policy-bundle persistence as registry artifact (so policy bundles can be named + reused), `review.batch` for high-throughput batches.
