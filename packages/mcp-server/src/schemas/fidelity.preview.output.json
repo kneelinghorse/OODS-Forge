@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/fidelity.preview.output.json",
+  "title": "Fidelity preview output",
+  "description": "Rendered HTML for a non-production fidelity emitter, plus warnings, errors, and metadata.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "fidelityKind", "fixture", "html", "warnings", "errors", "meta"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "warning", "error"],
+      "description": "ok = clean run; warning = non-fatal issues but html is valid; error = errors[] populated and html may be empty/partial."
+    },
+    "fidelityKind": {
+      "type": "string",
+      "enum": ["boxes-arrows", "wireframe", "review", "branded-mockup"]
+    },
+    "fixture": {
+      "type": "string",
+      "minLength": 1
+    },
+    "html": {
+      "type": "string",
+      "description": "Complete HTML output ready to insert into a preview surface (may include a <style> block when includeStyles is true)."
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "entity": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "entity": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entityCount"],
+      "properties": {
+        "entityCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of entities in the resolved manifest."
+        },
+        "appliedBrandOverlay": {
+          "type": "string",
+          "description": "Echoed brandOverlay when present (branded-mockup fidelity only)."
+        }
+      }
+    }
+  }
+}

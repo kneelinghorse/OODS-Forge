@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/review.chain.input.json",
+  "title": "review.chain input",
+  "description": "Compose the four C5-reframed surfaces (review-queue → review.resolve → conflict-detail → apply-summary) against a server-resident Object Catalog fixture and a policy bundle. Primary consumer is the playground Reconcile view (s105-m04). Fixture name resolved against the same allow-list as fidelity.preview — no caller-supplied paths.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixture", "policies"],
+  "properties": {
+    "fixture": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-RC-001."
+    },
+    "policies": {
+      "$ref": "#/$defs/policyBundle"
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reviewThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Threshold below which entities are flagged for review by the queue and detail emitters. Default 0.7."
+        },
+        "lowestSignalsN": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Top-N selector for per-entry lowestSignals in the queue artifact. Default 3."
+        },
+        "evidenceGapThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Signal-level threshold used by conflict-detail to classify signal gaps. Default 0.5."
+        },
+        "defaultAction": {
+          "$ref": "#/$defs/decision",
+          "description": "Decision applied by review.resolve when no policy matches. Default 'defer'."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "decision": {
+      "type": "string",
+      "enum": ["accept", "patch", "defer", "dismiss"]
+    },
+    "policyBundle": {
+      "type": "object",
+      "description": "Ordered policy bundle. First match wins per entity; no-match falls to options.defaultAction.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Optional bundle identifier echoed in diagnostics.policyBundleId for reproducibility."
+        },
+        "policies": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/policy" }
+        }
+      },
+      "required": ["policies"],
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "when": { "$ref": "#/$defs/predicate" },
+        "then": { "$ref": "#/$defs/decision" },
+        "reason": { "type": "string" }
+      },
+      "required": ["id", "when", "then"],
+      "additionalProperties": false
+    },
+    "predicate": {
+      "oneOf": [
+        { "$ref": "#/$defs/predicateConfidenceThreshold" },
+        { "$ref": "#/$defs/predicateSignalTypeFloor" },
+        { "$ref": "#/$defs/predicateEntityUrnMatch" }
+      ]
+    },
+    "predicateConfidenceThreshold": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "confidence_threshold" },
+        "threshold": { "type": "number" },
+        "matchUnknown": { "type": "boolean", "default": false }
+      },
+      "required": ["kind", "threshold"],
+      "additionalProperties": false
+    },
+    "predicateSignalTypeFloor": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "signal_type_floor" },
+        "signal": { "type": "string", "minLength": 1 },
+        "floor": { "type": "number" }
+      },
+      "required": ["kind", "signal", "floor"],
+      "additionalProperties": false
+    },
+    "predicateEntityUrnMatch": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "entity_urn_match" },
+        "urn": { "type": "string", "minLength": 1 },
+        "pattern": { "type": "string", "minLength": 1 }
+      },
+      "required": ["kind"],
+      "additionalProperties": false
+    }
+  }
+}

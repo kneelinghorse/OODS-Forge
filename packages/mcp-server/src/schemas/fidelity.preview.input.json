@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/fidelity.preview.input.json",
+  "title": "Fidelity preview input",
+  "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Server resolves the fixture name to a vetted file on disk; no caller-supplied paths.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fidelityKind", "fixture"],
+  "properties": {
+    "fidelityKind": {
+      "type": "string",
+      "enum": ["boxes-arrows", "wireframe", "review", "branded-mockup"],
+      "description": "Which HTML fidelity emitter to invoke."
+    },
+    "fixture": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-FP-001."
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Projection-variant selector passed through to the emitter (see s100-m03 selectVariant() / runPreEmit())."
+        },
+        "brandOverlay": {
+          "type": "string",
+          "description": "Brand overlay name for the branded-mockup fidelity. Ignored by other fidelities. Unknown names emit OODS-BM-002 and fall back to brand-a per s102-m02."
+        },
+        "reviewThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Threshold below which entities are flagged for review. Default 0.7. Ignored by non-review fidelities."
+        },
+        "includeStyles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Inline <style> block toggle. Default true; set false to receive markup without CSS."
+        }
+      }
+    }
+  }
+}

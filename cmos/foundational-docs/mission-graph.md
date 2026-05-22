@@ -82,25 +82,23 @@ After Foundation lands, these run roughly in parallel. Each is a V2 axis or a Po
 **Dependencies:** C1 (validates the abstraction shape).
 **Success criteria:** wireframe output for the same fixtures C1 covers, with structural fidelity (slots, presentation hints) preserved.
 
-### C3 — Operator review/recovery workflows
-**Purpose:** V2 axis #2. Queued/conflicted reconciliation items get accepted/patched/deferred/dismissed without manual JSON editing.
+### C3 — Agent-callable review/recovery decision logic
+**Purpose:** V2 axis #2. MCP tool surface for resolving low-confidence reconciliation conflicts by policy (accept / patch / defer / dismiss). Agent-callable, not a human UI. Reframed per `db3b3b0 docs(foundational): reframe C3/C4/C5 to drop human-operator framing` (2026-05-20).
 **Dependencies:** F1.
-**Success criteria:** 100% of conflict artifacts include machine-readable remediation hints; UI surface in playground or via dedicated tool surface.
-
-### C4 — Playground operator DX upgrade
-**Purpose:** V2 axis #3. Switch fixtures, tune thresholds, inspect diffs, export transcripts in one session, ≤2 view changes per task, no bridge restarts.
-**Dependencies:** C3 (the review/recovery workflows are part of what playground exposes).
-**Success criteria:** session walkthroughs in playground show end-to-end operator flow without context loss.
+**Success criteria:** policy-based evaluator + agent-callable MCP tool; resolved-delta + audit-trail produced for any input manifest + policy bundle; conflict artifacts carry machine-readable evidence (signals + decomposition) sufficient for policy evaluation.
 
 ### C5 — Codegen for evidence-backed flows
-**Purpose:** V2 axis #4. Three reconciliation surfaces (review queue, conflict detail, apply summary) generate cleanly across React/Vue/HTML × inline/tokens/tailwind.
+**Purpose:** V2 axis #4. Three reconciliation surfaces (review-queue, conflict-detail, apply-summary) as structured agent-readable artifacts, not human-clickable UIs. Reframed per `db3b3b0` (2026-05-20).
 **Dependencies:** F1, C3.
-**Success criteria:** generated UIs work without manual patch-up; cross-framework parity verified.
+**Success criteria:** all three artifacts AJV-validated against closed JSON schemas; Q3 chain test composes queue → review.resolve → apply-summary end-to-end across the fixture set.
 
 ### C6 — Registry knowledge model depth
 **Purpose:** V2 axis #5. `disambiguation_decisions`, `preferred_term`, `capability`, `projection_variants` round-trip through schemas/tools/`registry.snapshot` without lossy translation.
 **Dependencies:** F1; F2 (concordance feeds these shapes).
 **Success criteria:** ≥2 end-to-end contract fixtures with the full v1.4.0+ registry shape; bilateral with Stage1 + concordance.
+
+### C4 — Retired (2026-05-21)
+Dropped during s105 planning (PS-2026-05-21-006). The `db3b3b0` reframing ("playground as taste-judgment surface") still carried human-UI framing — the same shape that caused the s101 failure mode (building human UI without real usage signal). Playground taste-judgment work now sits on a passive watch shelf, promoted only when real usage signal materializes — same posture as `review.resolve` usage, ADK A2uiSchemaManager, I2 Birch coordination, concordance grounding. End-of-s105-planning C-track posture: 5/5 effective axes (C1, C2, C3, C5, C6).
 
 ---
 
@@ -161,7 +159,7 @@ The strict-dependency view:
 2. **F2** depends on F1 (catalog shape). Concordance wire `1.1.0` and hosted endpoint are live, so pre-register the contract gate during F1 work and then move directly to hosted preflight.
 3. **F3** can start in parallel with F1 (positioning work doesn't fully block on schema details). Final form locks once F1 stabilizes.
 4. **D2 memo** can land in parallel with F1 work (it's about render abstraction, not catalog shape). Then C1, C2 unblocked.
-5. **C3, C4, C5, C6** all depend on F1; can run in parallel after F1.
+5. **C3, C5, C6** all depend on F1; can run in parallel after F1. (C4 retired 2026-05-21 — see Capability track note below.)
 6. **I1** is now Forge-gated (F2 pass + Bearer key); **I2, I3, I4** remain gated on partner/org readiness and local integration depth.
 7. **Q1, Q2, Q3** layer continuously over everything.
 

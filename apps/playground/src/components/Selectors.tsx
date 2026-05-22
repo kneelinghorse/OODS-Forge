@@ -1,8 +1,17 @@
+export type Fidelity =
+  | "production"
+  | "boxes-arrows"
+  | "wireframe"
+  | "review"
+  | "branded-mockup";
+
 type Props = {
+  fidelity: Fidelity;
   framework: string;
   styling: string;
   brand: string;
   theme: string;
+  onFidelityChange: (v: Fidelity) => void;
   onFrameworkChange: (v: "react" | "vue" | "html") => void;
   onStylingChange: (v: "inline" | "tokens" | "tailwind") => void;
   onBrandChange: (v: "default" | "A" | "B") => void;
@@ -45,61 +54,93 @@ function Pill({
   );
 }
 
+// Brand is only meaningful for production (data-resolved-brand wrapper) and
+// branded-mockup (passed as options.brandOverlay to the emitter). Other
+// fidelities don't read brand state; hiding the selector removes the no-op
+// control. See PS-2026-05-21-007 / s105-m02 audit axis (b).
+const BRAND_AWARE_FIDELITIES: ReadonlySet<Fidelity> = new Set([
+  "production",
+  "branded-mockup",
+]);
+
 export function Selectors({
+  fidelity,
   framework,
   styling,
   brand,
   theme,
+  onFidelityChange,
   onFrameworkChange,
   onStylingChange,
   onBrandChange,
   onThemeChange,
   showBrandTheme = true,
 }: Props) {
+  const isProduction = fidelity === "production";
+  const showBrand = showBrandTheme && BRAND_AWARE_FIDELITIES.has(fidelity);
+
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 flex-wrap">
       <Pill
-        label="Framework"
-        value={framework}
+        label="Fidelity"
+        value={fidelity}
         options={[
-          { value: "react", label: "React" },
-          { value: "vue", label: "Vue" },
-          { value: "html", label: "HTML" },
+          { value: "production", label: "Production" },
+          { value: "boxes-arrows", label: "Boxes" },
+          { value: "wireframe", label: "Wireframe" },
+          { value: "review", label: "Review" },
+          { value: "branded-mockup", label: "Mockup" },
         ]}
-        onChange={(v) => onFrameworkChange(v as "react" | "vue" | "html")}
+        onChange={(v) => onFidelityChange(v as Fidelity)}
       />
-      <Pill
-        label="Styling"
-        value={styling}
-        options={[
-          { value: "tokens", label: "Tokens" },
-          { value: "tailwind", label: "Tailwind" },
-          { value: "inline", label: "Inline" },
-        ]}
-        onChange={(v) => onStylingChange(v as "inline" | "tokens" | "tailwind")}
-      />
-      {showBrandTheme ? (
+      {isProduction ? (
         <>
           <Pill
-            label="Brand"
-            value={brand}
+            label="Framework"
+            value={framework}
             options={[
-              { value: "default", label: "Default" },
-              { value: "A", label: "Brand A" },
-              { value: "B", label: "Brand B" },
+              { value: "react", label: "React" },
+              { value: "vue", label: "Vue" },
+              { value: "html", label: "HTML" },
             ]}
-            onChange={(v) => onBrandChange(v as "default" | "A" | "B")}
+            onChange={(v) => onFrameworkChange(v as "react" | "vue" | "html")}
           />
           <Pill
-            label="Theme"
-            value={theme}
+            label="Styling"
+            value={styling}
             options={[
-              { value: "light", label: "Light" },
-              { value: "dark", label: "Dark" },
+              { value: "tokens", label: "Tokens" },
+              { value: "tailwind", label: "Tailwind" },
+              { value: "inline", label: "Inline" },
             ]}
-            onChange={(v) => onThemeChange(v as "light" | "dark")}
+            onChange={(v) =>
+              onStylingChange(v as "inline" | "tokens" | "tailwind")
+            }
           />
         </>
+      ) : null}
+      {showBrand ? (
+        <Pill
+          label="Brand"
+          value={brand}
+          options={[
+            { value: "default", label: "Default" },
+            { value: "A", label: "Brand A" },
+            { value: "B", label: "Brand B" },
+          ]}
+          onChange={(v) => onBrandChange(v as "default" | "A" | "B")}
+        />
+      ) : null}
+      {showBrandTheme && isProduction ? (
+        <Pill
+          label="Theme"
+          value={theme}
+          options={[
+            { value: "light", label: "Light" },
+            { value: "dark", label: "Dark" },
+          ]}
+          onChange={(v) => onThemeChange(v as "light" | "dark")}
+        />
       ) : null}
     </div>
   );

@@ -3,6 +3,16 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['test/**/*.spec.ts', 'src/**/*.test.ts'],
+    // Scale-tier suite (test/scale/**) is opt-in via vitest.scale.config.ts.
+    // Per the s105-m03 audit (decision #614), scale tests run as a separate
+    // CI check before any release-gate integration; folding them into the
+    // default suite would couple release stability to determinism work that
+    // hasn't yet sustained the 3-sprint streak.
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      'test/scale/**',
+    ],
     environment: 'node',
     testTimeout: 20_000,
     hookTimeout: 180_000,

@@ -148,6 +148,53 @@ secrets you need). All test runners (`vitest`), the MCP server entry point
 no manual `export` needed before running tests or starting services. The
 `.gitignore` allowlists `.env.example` but blocks `.env` itself.
 
+### Scale-tier determinism suite (opt-in)
+
+The Q1 determinism gate (mission-graph V2 axis #7) runs `map.apply` against
+synthesized reconciliation reports at 100/500/1000 candidate_objects. Run it
+with:
+
+```
+pnpm --filter @oods/mcp-server run test:scale
+```
+
+The suite lives at `packages/mcp-server/test/scale/` with its own vitest
+config (`vitest.scale.config.ts`). It is **excluded from the default
+vitest run** so normal `pnpm test` / `npx vitest` stay fast; CI runs it as a
+separate `scale-determinism` job. Each test creates a unique temp dir under
+`os.tmpdir()` and sets `MCP_MAPPINGS_PATH` to that dir for the test scope,
+keeping parallel workers isolated. The fixture synthesizer is seeded
+(mulberry32) — same seed produces byte-identical output. Release-gate
+integration is deferred until s106 + s107 sustain the 3-sprint determinism
+streak per the s105-m03 mission-start audit (decision #614).
+
+### OTLP telemetry (optional)
+
+The MCP server emits OpenTelemetry traces over OTLP/HTTP when
+`OODS_OTLP_ENDPOINT` is set. When unset (the default), the OTel SDK is never
+loaded — zero runtime overhead, zero import-time cost beyond the small
+`@opentelemetry/api` package's no-op tracer.
+
+- `OODS_OTLP_ENDPOINT` — full OTLP traces endpoint, e.g.
+  `http://localhost:4318/v1/traces`. Setting this enables telemetry.
+- `OODS_OTLP_SERVICE_NAME` — overrides the default service name
+  (`oods-forge-mcp-server`). The standard `OTEL_SERVICE_NAME` env var also
+  works and takes precedence if set.
+- `OODS_OTLP_HEADERS` — comma-separated `key=value` pairs for the OTLP
+  exporter (e.g. `Authorization=Bearer xyz,x-team=design`).
+
+Every MCP tool dispatch produces a span named `forge.tool.<tool_name>` (e.g.
+`forge.tool.design.compose`, `forge.tool.map.apply`) with `SpanKind.SERVER`.
+Span attributes follow OTel `rpc.*` semantic conventions
+(`rpc.system="oods-forge"`, `rpc.service="mcp-server"`, `rpc.method=<tool>`),
+plus custom `oods.*` attributes (`oods.role`, `oods.request_id`,
+`oods.ajv_failed`, `oods.ajv_layer`, `oods.error_code`,
+`oods.ajv_error_count`). The five mission-named span kinds — compose,
+validate, render, codegen, map.apply — are the priority observability
+targets; other tool dispatches also produce spans for coverage. No metrics
+layer is emitted at v1; invocation counts and AJV failure counts are
+derivable from span data via the OTel collector's spanmetrics processor.
+
 ## Quick path to a first design action
 
 1. Read `README.md` for repo identity and links.
