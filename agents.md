@@ -6,7 +6,9 @@ Welcome, agents. This repo is the MCP interface to OODS Foundry: the place where
 
 ## Hard Operating Rules
 
-**These rules are not optional. They were instituted on 2026-05-19 after sprint-101 was discarded as a complete planning failure. See `cmos/reports/s101-failed-sprint-review-2026-05-19.md` for the incident record.**
+**Foundational — preserve this block when customizing the rest of this file.**
+
+**These rules are not optional.**
 
 These rules apply to every task in this project unless explicitly overridden.
 Bias: caution over speed on non-trivial work.
@@ -36,10 +38,9 @@ Strong success criteria let Claude loop independently.
 Non-trivial choices belong in CMOS. Decisions to `cmos_decisions`, cross-cutting patterns to `cmos_learnings`.
 If future-you needs to know why, capture it now.
 
-### Rule 6 — Closeout is the commit boundary
+### Rule 6 — Commit at coherent boundaries
 
-One commit per sprint, made by the m05 closeout mission. Enumerate mission IDs in the commit message for bisection.
-Per-mission commits only when a sprint surfaces a real bisection need beyond enumeration.
+Commit at mission close, sprint close, or day boundary. Per-mission commits only when a sprint surfaces a real bisection need.
 
 ### Rule 7 — Surface conflicts, don't average them
 
