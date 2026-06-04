@@ -9,7 +9,9 @@
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `fidelityKind` | `boxes-arrows` \| `wireframe` \| `review` \| `branded-mockup` | Yes |  | Which HTML fidelity emitter to invoke. |
-| `fixture` | string | Yes |  | Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-FP-001. |
+| `fixture` | string | No |  | Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-FP-001. Mutually exclusive with `manifest`. |
+| `manifest` | object | No |  | Inline Object Catalog manifest to render — an alternative to `fixture`. Data only; no file path is accepted, so this does not reopen the traversal surface the fixture allow-list closes. Must contain an `entities` array. Mutually exclusive with `fixture`. Malformed input returns OODS-FP-005. |
+| `manifest.entities` | unknown[] | Yes |  | Object Catalog entities to render. |
 | `options` | object | No |  |  |
 | `options.variant` | string | No |  | Projection-variant selector passed through to the emitter (see s100-m03 selectVariant() / runPreEmit()). |
 | `options.brandOverlay` | string | No |  | Brand overlay name for the branded-mockup fidelity. Ignored by other fidelities. Unknown names emit OODS-BM-002 and fall back to brand-a per s102-m02. |
@@ -39,7 +41,6 @@
 
 ```json
 {
-  "fidelityKind": "boxes-arrows",
-  "fixture": "<fixture>"
+  "fidelityKind": "boxes-arrows"
 }
 ```

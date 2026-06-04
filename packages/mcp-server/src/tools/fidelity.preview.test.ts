@@ -1,3 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { describe, expect, it } from 'vitest';
 import {
   handle,
@@ -7,6 +11,15 @@ import {
 } from './fidelity.preview.js';
 
 const ALL_KINDS: FidelityKind[] = ['boxes-arrows', 'wireframe', 'review', 'branded-mockup'];
+
+// Inline-manifest fixtures: load real on-disk manifests and feed them through the
+// inline `manifest` path (no fixture name) to prove the inline source renders
+// identically to the named-fixture source.
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const loadManifest = (rel: string): unknown => JSON.parse(fs.readFileSync(path.join(HERE, rel), 'utf8'));
+const USER_MANIFEST = loadManifest('../object-catalog/fixtures/user.json');
+const CONTENT_PACK_MANIFEST = loadManifest('../../test/fixtures/object-catalog/content-pack.json');
+const LOW_CONF_MANIFEST = loadManifest('../../test/fixtures/object-catalog/subscription-low-confidence.json');
 
 describe('tools/fidelity.preview', () => {
   describe('happy path — all 4 fidelities × representative fixture', () => {
@@ -137,6 +150,62 @@ describe('tools/fidelity.preview', () => {
       });
       expect(out.status).toBe('error');
       expect(out.errors[0].code).toBe('OODS-FP-003');
+    });
+  });
+
+  describe('inline manifest source (agents render their own manifests, no fixture committed here)', () => {
+    it('renders an inline manifest for wireframe — source echoed as (inline)', async () => {
+      const out = await handle({ fidelityKind: 'wireframe', manifest: USER_MANIFEST });
+      expect(out.status).toMatch(/^(ok|warning)$/);
+      expect(out.fixture).toBe('(inline)');
+      expect(out.html.length).toBeGreaterThan(0);
+      expect(out.errors).toEqual([]);
+      expect(out.meta.entityCount).toBeGreaterThan(0);
+    });
+
+    it('inline manifest renders byte-identically to the equivalent named fixture', async () => {
+      const viaFixture = await handle({ fidelityKind: 'boxes-arrows', fixture: 'user' });
+      const viaInline = await handle({ fidelityKind: 'boxes-arrows', manifest: USER_MANIFEST });
+      expect(viaInline.html).toBe(viaFixture.html);
+      expect(viaInline.meta.entityCount).toBe(viaFixture.meta.entityCount);
+    });
+
+    it('renders an inline multi-entity manifest', async () => {
+      const out = await handle({ fidelityKind: 'boxes-arrows', manifest: CONTENT_PACK_MANIFEST });
+      expect(out.status).toMatch(/^(ok|warning)$/);
+      expect(out.meta.entityCount).toBe(3);
+    });
+
+    it('inline manifest honors emitter options (review threshold)', async () => {
+      const strict = await handle({ fidelityKind: 'review', manifest: LOW_CONF_MANIFEST, options: { reviewThreshold: 0.9 } });
+      const lax = await handle({ fidelityKind: 'review', manifest: LOW_CONF_MANIFEST, options: { reviewThreshold: 0.1 } });
+      expect(strict.status).toMatch(/^(ok|warning)$/);
+      expect(strict.html).not.toBe(lax.html);
+    });
+
+    it('rejects when NEITHER fixture nor manifest is supplied — OODS-FP-004', async () => {
+      const out = await handle({ fidelityKind: 'wireframe' });
+      expect(out.status).toBe('error');
+      expect(out.errors[0].code).toBe('OODS-FP-004');
+      expect(out.html).toBe('');
+    });
+
+    it('rejects when BOTH fixture and manifest are supplied — OODS-FP-004', async () => {
+      const out = await handle({ fidelityKind: 'wireframe', fixture: 'user', manifest: USER_MANIFEST });
+      expect(out.status).toBe('error');
+      expect(out.errors[0].code).toBe('OODS-FP-004');
+    });
+
+    it('rejects a malformed inline manifest (no entities array) — OODS-FP-005', async () => {
+      const out = await handle({ fidelityKind: 'wireframe', manifest: { not: 'a catalog' } });
+      expect(out.status).toBe('error');
+      expect(out.errors[0].code).toBe('OODS-FP-005');
+    });
+
+    it('rejects a non-object inline manifest — OODS-FP-005', async () => {
+      const out = await handle({ fidelityKind: 'wireframe', manifest: 'just a string' });
+      expect(out.status).toBe('error');
+      expect(out.errors[0].code).toBe('OODS-FP-005');
     });
   });
 

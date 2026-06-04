@@ -2,10 +2,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/fidelity.preview.input.json",
   "title": "Fidelity preview input",
-  "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Server resolves the fixture name to a vetted file on disk; no caller-supplied paths.",
+  "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (resolved against a vetted allow-list — no caller-supplied paths), or an inline `manifest` object (data only — also never a path). The inline path lets an agent render a manifest it authored in its own repo without committing a fixture here.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["fidelityKind", "fixture"],
+  "required": ["fidelityKind"],
+  "oneOf": [
+    { "required": ["fixture"] },
+    { "required": ["manifest"] }
+  ],
   "properties": {
     "fidelityKind": {
       "type": "string",
@@ -15,7 +19,18 @@
     "fixture": {
       "type": "string",
       "minLength": 1,
-      "description": "Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-FP-001."
+      "description": "Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-FP-001. Mutually exclusive with `manifest`."
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["entities"],
+      "description": "Inline Object Catalog manifest to render — an alternative to `fixture`. Data only; no file path is accepted, so this does not reopen the traversal surface the fixture allow-list closes. Must contain an `entities` array. Mutually exclusive with `fixture`. Malformed input returns OODS-FP-005.",
+      "properties": {
+        "entities": {
+          "type": "array",
+          "description": "Object Catalog entities to render."
+        }
+      }
     },
     "options": {
       "type": "object",
