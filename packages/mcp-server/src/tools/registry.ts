@@ -43,7 +43,6 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'object.show',
     'registry.snapshot',
     'viz.compose',
-    'concordance.validate',
     'review.resolve',
     'fidelity.preview',
     'review.chain',

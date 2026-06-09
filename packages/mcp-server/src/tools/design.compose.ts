@@ -20,6 +20,7 @@ import {
   listTemplate,
   cardTemplate,
   timelineTemplate,
+  landingTemplate,
   resetIdCounter,
   isSlotElement,
   uid,
@@ -142,7 +143,7 @@ export interface DesignComposeInput {
   intent?: string;
   object?: string;
   context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
-  layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'auto';
+  layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'landing' | 'auto';
   preferences?: {
     theme?: string;
     metricColumns?: number;
@@ -271,7 +272,7 @@ export interface DesignComposeOutput {
 /*  Layout detection                                                   */
 /* ------------------------------------------------------------------ */
 
-type LayoutType = 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline';
+type LayoutType = 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'landing';
 type FormFieldSlotConfig = {
   description?: string;
   intent?: string;
@@ -281,10 +282,19 @@ type FormFieldSlotConfig = {
 const LAYOUT_KEYWORDS: Record<LayoutType, string[]> = {
   dashboard: ['dashboard', 'metrics', 'overview', 'analytics', 'stats', 'kpi', 'monitor'],
   form: ['form', 'registration', 'signup', 'sign-up', 'edit', 'input', 'submit', 'settings', 'configure'],
-  detail: ['detail', 'profile', 'view', 'show', 'record', 'entity', 'page', 'inspect'],
+  // 'page' moved to `landing` in s106-m04: it is a generic content-page signal
+  // ("landing page", "home page", "about page"), not a detail signal. The 7
+  // remaining keywords are unambiguous detail signals. A phrase like "detail
+  // page" still scores detail AND landing; the tie resolves to detail because
+  // detectLayout's stable sort preserves insertion order (detail precedes
+  // landing), so strong layout keywords always win their ties.
+  detail: ['detail', 'profile', 'view', 'show', 'record', 'entity', 'inspect'],
   list: ['list', 'table', 'browse', 'search', 'catalog', 'directory', 'index', 'inventory'],
   card: ['card', 'summary', 'compact', 'preview', 'snippet'],
   timeline: ['timeline', 'events', 'history', 'audit', 'changelog', 'activity'],
+  // Content / marketing pages (s106-m04). Listed last so its keyword ties with
+  // any data-view layout resolve to the data-view layout.
+  landing: ['landing', 'marketing', 'homepage', 'home page', 'content page', 'page', 'hero', 'splash'],
 };
 
 function hasLayoutKeyword(intent: string, keyword: string): boolean {
@@ -298,7 +308,7 @@ function escapeRegex(value: string): string {
 
 function detectLayout(intent: string): { layout: LayoutType; confidence: number } {
   const lower = intent.toLowerCase();
-  const scores: Record<LayoutType, number> = { dashboard: 0, form: 0, detail: 0, list: 0, card: 0, timeline: 0 };
+  const scores: Record<LayoutType, number> = { dashboard: 0, form: 0, detail: 0, list: 0, card: 0, timeline: 0, landing: 0 };
 
   for (const [layout, keywords] of Object.entries(LAYOUT_KEYWORDS) as [LayoutType, string[]][]) {
     for (const kw of keywords) {
@@ -450,6 +460,10 @@ function selectTemplate(
       });
     case 'timeline':
       return timelineTemplate({
+        theme: preferences?.theme,
+      });
+    case 'landing':
+      return landingTemplate({
         theme: preferences?.theme,
       });
   }

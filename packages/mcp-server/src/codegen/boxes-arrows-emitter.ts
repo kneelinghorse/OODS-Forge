@@ -71,6 +71,10 @@ const ROLE_LABEL: Record<PragmaticRole, string> = {
   recovery_action: 'Recovery action',
   navigation: 'Navigation',
   informational: 'Informational',
+  page: 'Page',
+  landing: 'Landing page',
+  section: 'Section',
+  index: 'Index',
 };
 
 function roleLabel(role: PragmaticRole | undefined): string {
@@ -277,12 +281,20 @@ const STYLE = `
   .entity[data-role="recovery_action"] { border-color: #1e8f4a; }
   .entity[data-role="navigation"] { border-color: #7b3aa5; }
   .entity[data-role="informational"] { border-color: #3a3f47; }
+  .entity[data-role="page"] { border-color: #0e7c86; }
+  .entity[data-role="landing"] { border-color: #b25e09; }
+  .entity[data-role="section"] { border-color: #5a6470; }
+  .entity[data-role="index"] { border-color: #8a6d1f; }
   .entity-header { border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 0.5rem; }
   .entity-header .role { display: inline-block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #1f2329; color: #ffffff; padding: 0.1rem 0.5rem; border-radius: 0.25rem; margin: 0 0 0.25rem; }
   .entity[data-role="primary_action"] .role { background: #1351c4; }
   .entity[data-role="destructive_action"] .role { background: #c4263b; }
   .entity[data-role="recovery_action"] .role { background: #1e8f4a; }
   .entity[data-role="navigation"] .role { background: #7b3aa5; }
+  .entity[data-role="page"] .role { background: #0e7c86; }
+  .entity[data-role="landing"] .role { background: #b25e09; }
+  .entity[data-role="section"] .role { background: #5a6470; }
+  .entity[data-role="index"] .role { background: #8a6d1f; }
   .urn { margin: 0.25rem 0 0; font-size: 0.85em; }
   .traits { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.35rem; }
   .trait { display: inline-block; padding: 0.15rem 0.55rem; background: #eef0f4; border: 1px solid #c8cdd4; border-radius: 1rem; font-size: 0.8em; }

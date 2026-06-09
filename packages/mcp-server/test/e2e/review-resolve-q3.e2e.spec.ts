@@ -28,7 +28,7 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - subpath import for draft-2020-12 support (matches concordance/validator.ts pattern)
+// @ts-ignore - subpath import for draft-2020-12 support (matches lib/ajv.ts pattern)
 import Ajv2020Import from 'ajv/dist/2020.js';
 import addFormatsImport from 'ajv-formats';
 import type { ValidateFunction } from 'ajv';

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://diverge-and-concord.local/contracts/manifest.schema.json",
+  "$id": "https://oods-forge.local/object-catalog/protocol/manifest.schema.json",
   "version": "1.0.0",
   "title": "SemanticManifest",
-  "description": "Wire format emitted by divergent-inspector and ingested by concordance. Mirrors protocols/SEMANTIC_PROTOCOL.md v4.0. v0 scope: structural validation only — cross-manifest state-reference resolution and registered-trait checks happen at ingest time, not here. Wire-contract version 1.0.0 tagged in s12-m02 — semver semantics: x.y bump = additive non-breaking, x bump = breaking + cross-project coordination.",
+  "description": "Forge-owned SemanticManifest envelope. Frozen from the (now-sunset) Concordance wire contract v1.0.0 and relocated here in s106-m02 when the Concordance integration was torn down; Forge owns the semantic protocol (decision #634). Structural validation only — used by the Object Catalog G1 gate via manifest-validator.ts. Version semantics retained: x.y bump = additive non-breaking, x bump = breaking.",
   "type": "object",
   "required": ["manifest_version", "source", "entities"],
   "additionalProperties": false,
@@ -49,7 +49,11 @@
         "destructive_action",
         "recovery_action",
         "navigation",
-        "informational"
+        "informational",
+        "page",
+        "landing",
+        "section",
+        "index"
       ]
     },
     "Provenance": {

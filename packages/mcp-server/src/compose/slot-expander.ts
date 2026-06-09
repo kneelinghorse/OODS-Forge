@@ -42,7 +42,7 @@ export interface ExpansionResult {
 
 export interface ExpansionContext {
   /** Layout type */
-  layout: 'detail' | 'dashboard' | 'form' | 'list' | 'card' | 'timeline';
+  layout: 'detail' | 'dashboard' | 'form' | 'list' | 'card' | 'timeline' | 'landing';
   /** Object field schema */
   fields: Record<string, FieldDefinition>;
   /** Semantic types from object (maps field name to semantic type) */
@@ -500,6 +500,15 @@ export function expandSlots(
         slotsAdded: 0,
         expanded: false,
         reason: 'Timeline layout manages entry slots via template — no expansion needed',
+      };
+      break;
+
+    case 'landing':
+      result = {
+        template,
+        slotsAdded: 0,
+        expanded: false,
+        reason: 'Landing/content-page layout composes from intent, not object fields — no expansion needed',
       };
       break;
   }

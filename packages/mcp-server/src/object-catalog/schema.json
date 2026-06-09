@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oods-forge.local/object-catalog/schema.json",
   "title": "OODS Object Catalog v1.0.0",
-  "description": "Forge-emitted Object Catalog. A strict SemanticManifest envelope (Concordance wire 1.1.0) with typed oods.* extensions on each SemanticEntity. The top-level manifest closes (additionalProperties:false); SemanticEntity stays open (additionalProperties:true) per Concordance's contract — that affordance is where oods.* lives. Implements D1.",
+  "description": "Forge-emitted Object Catalog. A strict SemanticManifest envelope (Forge-owned, frozen from the former Concordance wire 1.1.0) with typed oods.* extensions on each SemanticEntity. The top-level manifest closes (additionalProperties:false); SemanticEntity stays open (additionalProperties:true) — that affordance is where oods.* lives. Implements D1.",
   "type": "object",
   "required": ["manifest_version", "source", "entities"],
   "additionalProperties": false,
@@ -10,12 +10,12 @@
     "manifest_version": {
       "type": "string",
       "const": "4.0",
-      "description": "Concordance SemanticManifest protocol version. Pinned to 4.0 for catalog v1.0.0."
+      "description": "SemanticManifest protocol version (Forge-owned). Pinned to 4.0 for catalog v1.0.0."
     },
     "schema_version": {
       "type": "string",
       "const": "1.1.0",
-      "description": "Concordance wire-contract version. Optional emission post-sprint-13; Forge pins 1.1.0."
+      "description": "SemanticManifest schema_version (Forge-owned envelope). Forge pins 1.1.0."
     },
     "source": {
       "type": "object",
@@ -53,13 +53,18 @@
     },
     "PragmaticRole": {
       "type": "string",
+      "description": "Functional/structural role of a semantic entity. Action-shaped roles (the first four) trigger element.object_action_present. The page/IA roles (page, landing, section, index; s106-m03) are page-level, non-action roles for site-map entities.",
       "enum": [
         "primary_action",
         "secondary_action",
         "destructive_action",
         "recovery_action",
         "navigation",
-        "informational"
+        "informational",
+        "page",
+        "landing",
+        "section",
+        "index"
       ]
     },
     "Provenance": {
@@ -190,7 +195,7 @@
     "OodsExtension": {
       "type": "object",
       "additionalProperties": true,
-      "description": "Forge-authored entity-level extension. Concordance ingests this transparently via SemanticEntity.additionalProperties:true.",
+      "description": "Forge-authored entity-level extension. Carried on SemanticEntity via additionalProperties:true.",
       "properties": {
         "catalog": { "$ref": "#/$defs/OodsCatalog" },
         "render": { "$ref": "#/$defs/OodsRender" },

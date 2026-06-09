@@ -29,7 +29,7 @@
 
 import { describe, expect, it, beforeAll } from 'vitest';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - subpath import for draft-2020-12 support (matches concordance/validator.ts pattern)
+// @ts-ignore - subpath import for draft-2020-12 support (matches lib/ajv.ts pattern)
 import Ajv2020Import from 'ajv/dist/2020.js';
 import type { ValidateFunction } from 'ajv';
 

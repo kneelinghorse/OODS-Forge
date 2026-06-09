@@ -11,7 +11,12 @@ export type FidelityKind = 'boxes-arrows' | 'wireframe' | 'review' | 'branded-mo
 
 export type FidelityPreviewInput = {
   fidelityKind: FidelityKind;
-  fixture: string;
+  // Provide exactly one source: a named server-resident `fixture`, or an inline
+  // `manifest` object. No caller-supplied file path is ever accepted — this keeps
+  // the path-traversal-free posture of the fixture allow-list while letting agents
+  // render manifests they author in their own repo without committing fixtures here.
+  fixture?: string;
+  manifest?: unknown;
   options?: {
     variant?: string;
     brandOverlay?: string;
@@ -76,6 +81,33 @@ function loadFixture(name: string): { manifest: unknown } {
   return { manifest };
 }
 
+// Resolve the manifest source to render. Exactly one of `fixture` (named, vetted,
+// on-disk) or `manifest` (inline object) must be supplied. The inline path accepts
+// data only — never a path — so it does not reopen the traversal surface the fixture
+// allow-list closes. `source` is echoed back so callers can tell which path was taken
+// ('(inline)' for the inline case).
+function resolveManifest(input: FidelityPreviewInput): { manifest: unknown; source: string } {
+  const hasFixture = typeof input.fixture === 'string' && input.fixture.length > 0;
+  const hasManifest = input.manifest !== undefined && input.manifest !== null;
+  if (hasFixture === hasManifest) {
+    throw Object.assign(
+      new Error("Provide exactly one of 'fixture' (named server-resident) or 'manifest' (inline object)."),
+      { code: 'OODS-FP-004' },
+    );
+  }
+  if (hasManifest) {
+    const m = input.manifest;
+    if (typeof m !== 'object' || m === null || !Array.isArray((m as { entities?: unknown }).entities)) {
+      throw Object.assign(
+        new Error("Inline 'manifest' must be an Object Catalog manifest object with an 'entities' array."),
+        { code: 'OODS-FP-005' },
+      );
+    }
+    return { manifest: m, source: '(inline)' };
+  }
+  return { manifest: loadFixture(input.fixture as string).manifest, source: input.fixture as string };
+}
+
 function countEntities(manifest: unknown): number {
   if (manifest && typeof manifest === 'object' && Array.isArray((manifest as { entities?: unknown[] }).entities)) {
     return (manifest as { entities: unknown[] }).entities.length;
@@ -84,13 +116,13 @@ function countEntities(manifest: unknown): number {
 }
 
 export async function handle(input: FidelityPreviewInput): Promise<FidelityPreviewOutput> {
-  const { fidelityKind, fixture, options = {} } = input;
+  const { fidelityKind, options = {} } = input;
 
   if (!SUPPORTED_KINDS.has(fidelityKind)) {
     return {
       status: 'error',
       fidelityKind,
-      fixture,
+      fixture: input.fixture ?? '(inline)',
       html: '',
       warnings: [],
       errors: [{ code: 'OODS-FP-003', message: `Unsupported fidelityKind '${fidelityKind}'. Supported: ${Array.from(SUPPORTED_KINDS).join(', ')}` }],
@@ -99,15 +131,16 @@ export async function handle(input: FidelityPreviewInput): Promise<FidelityPrevi
   }
 
   let manifest: unknown;
+  let source: string;
   try {
-    ({ manifest } = loadFixture(fixture));
+    ({ manifest, source } = resolveManifest(input));
   } catch (e) {
     const code = (e as { code?: string })?.code || 'OODS-FP-001';
     const message = e instanceof Error ? e.message : String(e);
     return {
       status: 'error',
       fidelityKind,
-      fixture,
+      fixture: input.fixture ?? '(inline)',
       html: '',
       warnings: [],
       errors: [{ code, message }],
@@ -178,7 +211,7 @@ export async function handle(input: FidelityPreviewInput): Promise<FidelityPrevi
   return {
     status,
     fidelityKind,
-    fixture,
+    fixture: source,
     html,
     warnings,
     errors,
