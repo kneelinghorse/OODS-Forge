@@ -312,6 +312,20 @@ Sprint shape recommendation: **N=4 or N=5 with closeout** depending on whether t
 
 ---
 
+### Sprint-106 Locked Shape (locked 2026-06-09 in PS-2026-06-09-001) — supersedes the candidate above
+
+N=5 (4 work + 1 closeout). Theme: **consumer-driven hardening + Concordance teardown** — first sprint scoped by real consumer usage (Synthesis-Workbench comment-layer + The Academy IA/landing-page work). Full build-ready specs live in CMOS missions `s106-m01..m05` (`cmos_mission show`); summary:
+
+- **s106-m01 — Harden the fragment-anchor contract.** Declare `data-oods-label` the durable, structure-independent anchor and `data-oods-node-id` best-effort (it's a per-compose-run `uid()` counter, so it shifts on structural change); extend the parity contract test to the `repl.render` format:fragments path. Unblocks Workbench's comment layer. Q1/Q2 reply already sent (msg 188672a7); their "add anchors" request (3e8a67fb) withdrawn.
+- **s106-m02 — Concordance teardown.** Remove the sunset integration (decision #633); RELOCATE the protocol contracts Forge owns (`pragmatic-roles.json` etc., currently under `concordance/contracts/`) to a Forge-owned path; re-home Object Catalog G1 validation onto a Forge-owned schema.
+- **s106-m03 — pragmatic_role page/IA roles.** *Requires m02* (protocol re-home). Expand the Forge-owned enum with page/IA roles so site-map pages aren't forced into navigation/informational. Additive.
+- **s106-m04 — design.compose content-page support (scoping-first).** Audit + scoping decision for content/marketing-page layouts ("landing page" currently routes to detail/Tabs because "page" is a detail keyword); first template OR memo-fork if > 1 mission.
+- **s106-m05 — Closeout (9th #408) + Q1 determinism sustain (sprint 2 of 3).** Single closeout commit; verify the scale suite green; land the two-policy-layer doc (#622); resolve the build-freshness gate.
+
+Mission-start audit (Rule 1) required on m01–m04. Parked / NOT in slate: OODS Forge dashboard re-slug (dashboard team, DB-upload timeout); I3 dashboard hookup (agent-vitals gated); I2 semantic-federation (Birch-gated); React Flow IA canvas (lives in Workbench, not Forge); the standing passive watches.
+
+---
+
 ---
 
 ## Sprint-105 Locked Shape (locked 2026-05-21 in PS-2026-05-21-006) — superseded by Outcomes above
