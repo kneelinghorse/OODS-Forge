@@ -171,6 +171,10 @@ const ROLE_LABEL: Record<PragmaticRole, string> = {
   recovery_action: 'Recovery',
   navigation: 'Navigation',
   informational: 'Informational',
+  page: 'Page',
+  landing: 'Landing',
+  section: 'Section',
+  index: 'Index',
 };
 
 function renderSlot(slot: OodsSlot): string {

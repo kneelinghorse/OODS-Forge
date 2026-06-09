@@ -16,5 +16,8 @@ export type { CardOptions } from './card.js';
 export { timelineTemplate } from './timeline.js';
 export type { TimelineOptions } from './timeline.js';
 
+export { landingTemplate } from './landing.js';
+export type { LandingOptions } from './landing.js';
+
 export type { Slot, TemplateResult } from './types.js';
 export { isSlotElement, resetIdCounter, uid, wrapSchema, slotElement } from './types.js';

@@ -264,6 +264,32 @@ Closed by end of s104: C1 (s98-m02), C2 (s99-m02), C3 (s99-m04 emitter + s103-m0
 
 ---
 
+## Sprint-106 Outcomes (closed 2026-06-09)
+
+Sprint-106 held default cadence **N=5 (4 work + 1 closeout)** for the fifth consecutive sprint post-s101 recovery. **5/5 missions delivered.** Theme realized: first sprint scoped by real consumer usage (Synthesis-Workbench comment-layer + The Academy IA/landing-page). Test posture (default suite): **170 files / 3396 active / 0 skipped** (−6 files vs s105 close — the Concordance teardown removed 9 test files net of 3 new contract specs; 0 skips because all prior env-gated skips lived in deleted Concordance live tests). Scale suite (opt-in): 2 files / 14 active / 0 skipped. **Rule 1 mission-start audit pattern: n=15 clean IMPLEMENTATION-path runs** (m01–m04 all IMPLEMENTATION). **Rule 12 spec-discrepancy callout fired on three of four work missions** (m01 named test-file targets the wrong attribute family; m02 pragmatic-roles.json is NOT consumed by the $def + the audit agent mis-dispositioned all refs as "keep"; m03 SEMANTIC_PROTOCOL.md source lives only in the sunset diverge-and-concord repo) — each named and scoped before wasted work.
+
+### s106-m01 — Harden the fragment-anchor contract
+
+Contract + tests + docs only, **no renderer change** (anchors already at `component-map.ts:120,122`). Declared `data-oods-label` the durable structure-independent anchor and `data-oods-node-id` best-effort (per-compose-run `uid()` counter). New `test/contracts/fragment-anchor-contract.spec.ts` (presence + determinism + a 3→5-tab structural re-compose proving label-stable / node-id-shifts). Hand-authored `docs/integration/fragment-anchor-contract.md`. SPEC-DISCREPANCY: the named `emitter-data-attr-parity.spec.ts` covers a different attribute family → took the criterion's "OR a focused test" path. Also: `docs/api/` is generator-owned, so the contract doc went to `docs/integration/`.
+
+### s106-m02 — Concordance teardown + re-home
+
+Deleted `src/concordance/` (2,766 LOC), the `concordance.validate` tool + 2 schemas + all 5 registration sites, the integration/live tests + `auth-hygiene.spec.ts` (subject gone), and the sync script. RELOCATED the Forge-owned protocol vocab (pragmatic-roles/edge-types/task-types + the frozen `manifest.schema.json`) to `src/object-catalog/protocol/`; DELETED the Concordance-integration-only contracts (api schemas, recipes). RE-HOMED Object Catalog G1 onto a de-branded `manifest-validator.ts` (40 catalog tests green, zero coverage loss). grep-clean of `../concordance/` imports; agents.md/.env.example/docs updated.
+
+### s106-m03 — pragmatic_role page/IA roles
+
+Additively expanded the Forge-owned enum with 4 non-action page/IA roles — `page`, `landing`, `section`, `index` (dropped the redundant `hub` candidate). The action-shaped validator is an allowlist `if-then`, so new roles needed no validator change. All live-enum sites kept in sync (schema.json $def, types.ts union, frozen manifest.schema.json, both ROLE_LABEL maps + boxes-arrows CSS). New `test/contracts/pragmatic-role-ia.spec.ts` (G1 + non-action + render round-trip via the inline-manifest path).
+
+### s106-m04 — design.compose content-page support
+
+IMPLEMENTATION path (5-agent scoping audit sized it SMALL). New `src/compose/templates/landing.ts` (hero + section-stack + CTA + footer, intent-only, existing components). Fixed the `page`→detail collision by moving `page` to the `landing` keyword set (ties with strong data-view keywords resolve to the data-view layout via stable sort). `landing` made a first-class layout (intent + explicit param). Found/fixed a second narrower `LayoutType` union in `slot-expander.ts`. 10 tests; `docs/api/design-compose.md` regenerated.
+
+### s106-m05 — Closeout (this mission)
+
+Ninth formal run of decision #408. Single closeout commit enumerating s106-m01..m05. **Q1 determinism scale suite green = sprint 2 of 3** toward the V2-axis-7 release-gate flip (s105=1/3; s107=3/3; gate flips at s108 / s107-retro). Two-policy-layer convention (#622) landed in agents.md. Build-freshness gate resolved via root build.
+
+---
+
 ## Sprint-105 Outcomes (closed 2026-05-21)
 
 Sprint-105 held default cadence **N=5 (4 work + 1 closeout)** for the fourth consecutive sprint post-s101 recovery. **5/5 missions delivered.** Theme realized: first sprint to push the **I** and **Q** tracks since their introduction in the mission graph — C-track effectively closed at 5/5 axes shipped (C4 was dropped in this sprint's planning session).

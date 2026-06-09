@@ -1,10 +1,11 @@
 /**
  * Object Catalog v1.0.0 — Named gate tests (G1, G2, G3).
  *
- * G1 — Concordance manifest validation. Validates each fixture against the
- *      VENDORED Concordance manifest.schema.json (sprint-97 F2 landed). Uses
- *      validateManifest() which applies version-policy on schema_version and
- *      then runs strict AJV. The negative case enforces additionalProperties
+ * G1 — Manifest envelope validation. Validates each fixture against the
+ *      Forge-owned manifest.schema.json (frozen SemanticManifest envelope,
+ *      re-homed under object-catalog/protocol/ in s106-m02). Uses
+ *      validateManifest() which applies the schema_version policy and then
+ *      runs strict AJV. The negative case enforces additionalProperties
  *      at the manifest root — a Forge-only key MUST fail.
  *
  * G2 — Forge extension validation. AJV against the OodsExtension $def in
@@ -27,7 +28,7 @@ import userFixture from './fixtures/user.json' with { type: 'json' };
 import productFixture from './fixtures/product.json' with { type: 'json' };
 import subscriptionFixture from './fixtures/subscription.json' with { type: 'json' };
 import type { ObjectCatalogManifest } from './types.js';
-import { validateManifest } from '../concordance/validator.js';
+import { validateManifest } from './manifest-validator.js';
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
@@ -73,9 +74,9 @@ function reverseKeys<T>(value: T): T {
   return out as T;
 }
 
-describe('G1 — Forge-emitted catalog passes vendored Concordance manifest.schema.json', () => {
+describe('G1 — Forge-emitted catalog passes the Forge-owned manifest.schema.json', () => {
   for (const [name, fixture] of fixtures) {
-    it(`${name} fixture validates against the vendored Concordance schema`, () => {
+    it(`${name} fixture validates against the Forge-owned manifest schema`, () => {
       const result = validateManifest(fixture);
       if (!result.valid) {
         throw new Error(

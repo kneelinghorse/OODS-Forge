@@ -29,7 +29,14 @@ export type PragmaticRole =
   | 'destructive_action'
   | 'recovery_action'
   | 'navigation'
-  | 'informational';
+  | 'informational'
+  // Page/IA roles (s106-m03): page-level roles for site-map entities so pages
+  // are not forced into navigation/informational. Non-action — they do NOT
+  // trigger the element.object_action_present validator.
+  | 'page'
+  | 'landing'
+  | 'section'
+  | 'index';
 
 export type RelationshipDirection = 'out' | 'in' | 'undirected';
 

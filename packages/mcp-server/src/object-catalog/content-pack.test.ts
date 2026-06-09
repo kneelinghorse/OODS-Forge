@@ -20,7 +20,7 @@ import authorFixture from './fixtures/content/author.json' with { type: 'json' }
 import commentFixture from './fixtures/content/comment.json' with { type: 'json' };
 import contentPackFixture from '../../test/fixtures/object-catalog/content-pack.json' with { type: 'json' };
 import type { ObjectCatalogManifest, SemanticEntity } from './types.js';
-import { validateManifest } from '../concordance/validator.js';
+import { validateManifest } from './manifest-validator.js';
 import { runPreEmit } from '../codegen/pre-emit.js';
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
@@ -73,9 +73,9 @@ function findEntity(manifest: ObjectCatalogManifest, urn: string): SemanticEntit
   return manifest.entities.find((e) => e.urn === urn);
 }
 
-describe('content pack G1 — each single-entity fixture passes the vendored Concordance manifest schema', () => {
+describe('content pack G1 — each single-entity fixture passes the Forge-owned manifest schema', () => {
   for (const [name, fixture] of singleEntityFixtures) {
-    it(`${name} fixture validates against the vendored Concordance schema`, () => {
+    it(`${name} fixture validates against the Forge-owned manifest schema`, () => {
       const result = validateManifest(fixture);
       if (!result.valid) {
         throw new Error(
@@ -87,7 +87,7 @@ describe('content pack G1 — each single-entity fixture passes the vendored Con
     });
   }
 
-  it('multi-entity content-pack manifest validates against the vendored Concordance schema', () => {
+  it('multi-entity content-pack manifest validates against the Forge-owned manifest schema', () => {
     const result = validateManifest(contentPack);
     if (!result.valid) {
       throw new Error(
