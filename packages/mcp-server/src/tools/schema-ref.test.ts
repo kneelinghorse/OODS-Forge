@@ -38,7 +38,7 @@ describe('computeTtlWarning', () => {
     expect(warning).toBeDefined();
     expect(warning!.message).toContain(record.ref);
     expect(warning!.remainingMs).toBeLessThanOrEqual(4 * 60 * 1000);
-    expect(warning!.recommendation).toContain('schema.save');
+    expect(warning!.recommendation).toContain('action=save');
   });
 
   it('returns warning when TTL is exactly 5 minutes', () => {
@@ -86,6 +86,6 @@ describe('computeTtlWarning', () => {
     const now = Date.now();
     const record = makeRecordAt(now, 2 * 60 * 1000);
     const warning = computeTtlWarning(record, now);
-    expect(warning!.recommendation).toMatch(/schema\.save|re-compose/);
+    expect(warning!.recommendation).toMatch(/action=save|re-compose/);
   });
 });

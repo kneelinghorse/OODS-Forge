@@ -38,8 +38,8 @@ async function runBridgeRender(port: number, input: ReplRenderInput): Promise<Re
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      tool: 'repl_render',
-      input,
+      tool: 'repl',
+      input: { action: 'render', ...input },
     }),
   });
 
@@ -65,7 +65,7 @@ async function runDirectMcpRender(input: ReplRenderInput): Promise<ReplRenderOut
   child.stderr.setEncoding('utf8');
 
   const requestId = 1;
-  child.stdin.write(`${JSON.stringify({ id: requestId, tool: 'repl.render', input })}\n`, 'utf8');
+  child.stdin.write(`${JSON.stringify({ id: requestId, tool: 'repl', input: { action: 'render', ...input } })}\n`, 'utf8');
 
   const result = await new Promise<ReplRenderOutput>((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Timed out waiting for MCP stdio response')), 20_000);

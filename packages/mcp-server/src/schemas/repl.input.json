@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/repl.input.json",
+  "title": "Agentic REPL (grouped) input",
+  "description": "Grouped action-parameter tool consolidating repl.render and repl.validate. Select the per-action body via the top-level `action` discriminator. Each branch reproduces the exact body of the corresponding per-action input schema, with `action` added to the allowed property set. Per-action handlers, schemas, and the external repl_render/repl_validate tools are unchanged; this is a zero-functionality-loss bolt-on.",
+  "type": "object",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "render",
+        "validate"
+      ],
+      "description": "Selects the per-action handler. 'render' -> repl.render, 'validate' -> repl.validate."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "render"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "render"
+          },
+          "dslVersion": {
+            "type": "string",
+            "description": "DSL version to use for this request. Defaults to the current version (1.0)."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "full",
+              "patch"
+            ],
+            "default": "full"
+          },
+          "schema": {
+            "$ref": "./repl.ui.schema.json"
+          },
+          "schemaRef": {
+            "type": "string",
+            "description": "Reference to a cached UiSchema returned by design.compose."
+          },
+          "patch": {
+            "$ref": "./repl.patch.json"
+          },
+          "baseTree": {
+            "$ref": "./repl.ui.schema.json"
+          },
+          "researchContext": {
+            "type": "object",
+            "description": "Optional research bundle from Stage1 discovery to influence rendering.",
+            "additionalProperties": true
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "includeTree": {
+                "type": "boolean",
+                "default": true
+              }
+            },
+            "additionalProperties": false,
+            "default": {}
+          },
+          "output": {
+            "type": "object",
+            "description": "Optional render output controls. Omitting this object preserves full-document behavior.",
+            "properties": {
+              "format": {
+                "type": "string",
+                "enum": [
+                  "document",
+                  "fragments"
+                ],
+                "default": "document"
+              },
+              "strict": {
+                "type": "boolean",
+                "default": false
+              },
+              "includeCss": {
+                "type": "boolean",
+                "default": true
+              },
+              "compact": {
+                "type": "boolean",
+                "description": "When true, omit the full token CSS from the response and return a tokenCssRef instead. Reduces response size by ~40%. Default false for repl.render, true for pipeline.",
+                "default": false
+              },
+              "depth": {
+                "type": "number",
+                "description": "Reserved for v2 fragment-depth controls; currently ignored."
+              },
+              "showConfidence": {
+                "type": "boolean",
+                "description": "When true, emit data-oods-confidence and data-confidence-level attributes on rendered components that carry composition confidence metadata. Low-confidence components (below confidenceThreshold) also receive an oods-low-confidence CSS class. Default false.",
+                "default": false
+              },
+              "confidenceThreshold": {
+                "type": "number",
+                "description": "Confidence threshold for low-confidence affordance. Components with confidence below this value receive the oods-low-confidence CSS class. Only effective when showConfidence is true. Default 0.5.",
+                "default": 0.5,
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "apply": {
+            "type": "boolean"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "full"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "anyOf": [
+                {
+                  "required": [
+                    "schema"
+                  ]
+                },
+                {
+                  "required": [
+                    "schemaRef"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "not": {
+                "required": [
+                  "mode"
+                ]
+              }
+            },
+            "then": {
+              "anyOf": [
+                {
+                  "required": [
+                    "schema"
+                  ]
+                },
+                {
+                  "required": [
+                    "schemaRef"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "patch"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "required": [
+                "patch",
+                "baseTree"
+              ]
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "validate"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "validate"
+          },
+          "dslVersion": {
+            "type": "string",
+            "description": "DSL version to use for this request. Defaults to the current version (1.0)."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "full",
+              "patch"
+            ],
+            "default": "full"
+          },
+          "schema": {
+            "$ref": "./repl.ui.schema.json"
+          },
+          "schemaRef": {
+            "type": "string",
+            "description": "Reference to a cached UiSchema returned by design.compose."
+          },
+          "patch": {
+            "$ref": "./repl.patch.json",
+            "description": "Required when mode='patch'. Accepts JSON Patch array or node patch object(s)."
+          },
+          "baseTree": {
+            "$ref": "./repl.ui.schema.json",
+            "description": "Required when mode='patch' to provide the base UiSchema to patch."
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "includeNormalized": {
+                "type": "boolean",
+                "default": true
+              },
+              "checkComponents": {
+                "type": "boolean",
+                "default": true
+              },
+              "checkA11y": {
+                "type": "boolean",
+                "default": false,
+                "description": "When true, run WCAG contrast checks against design tokens and surface failures as A11Y_CONTRAST warnings."
+              }
+            },
+            "additionalProperties": false,
+            "default": {}
+          },
+          "apply": {
+            "type": "boolean",
+            "description": "Accepted for bridge dry-run/apply mode parity (this tool is apply-capable); ignored by this action."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "full"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "anyOf": [
+                {
+                  "required": [
+                    "schema"
+                  ]
+                },
+                {
+                  "required": [
+                    "schemaRef"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "not": {
+                "required": [
+                  "mode"
+                ]
+              }
+            },
+            "then": {
+              "anyOf": [
+                {
+                  "required": [
+                    "schema"
+                  ]
+                },
+                {
+                  "required": [
+                    "schemaRef"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "patch"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "required": [
+                "patch"
+              ]
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

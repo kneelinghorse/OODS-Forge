@@ -16,7 +16,8 @@ export type SchemaInputErrorDetails = {
 };
 
 function needsPatchHint(tool: string, errors: AjvError[] | null | undefined): boolean {
-  if (tool !== 'repl.validate' || !errors) return false;
+  // s107-m01b: repl.validate consolidated into the grouped `repl` tool (action=validate).
+  if (tool !== 'repl' || !errors) return false;
   return errors.some((err) => {
     if (!err) return false;
     if (typeof err.instancePath === 'string' && err.instancePath.startsWith('/patch')) return true;

@@ -114,20 +114,19 @@ const FALLBACK_POLICY: AgentPolicyDoc = {
     { name: 'release.tag', modes: ['dry-run', 'apply'], approval: 'required', allow: ['maintainer'] },
     { name: 'tokens.build', modes: ['dry-run'], approval: 'optional' },
     { name: 'structuredData.fetch', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'repl.validate', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'repl.render', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
     { name: 'catalog.list', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'code.generate', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'design.compose', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'pipeline', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'map.apply', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
-    { name: 'map.create', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
-    { name: 'map.list', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'map.resolve', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'object.list', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
-    { name: 'object.show', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'registry.snapshot', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'viz.compose', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
+    // Grouped action-parameter tools (s107-m01/m01b) — delegate to the
+    // per-action handlers; the per-action tool names were removed in m01b.
+    { name: 'map', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
+    { name: 'schema', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
+    { name: 'object', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
+    { name: 'repl', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },
+    { name: 'review', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
   ],
 };
 

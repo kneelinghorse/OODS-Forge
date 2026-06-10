@@ -7,6 +7,7 @@ import { handle as codeGenerateHandle } from './code.generate.js';
 import { handle as schemaSaveHandle } from './schema/save.js';
 import { resolveSchemaRef, computeTtlWarning } from './schema-ref.js';
 import { loadOodsrc } from '../lib/oodsrc.js';
+import type { LayoutInput } from '../compose/layout-types.js';
 
 type PipelineStep = 'compose' | 'validate' | 'render' | 'codegen' | 'save';
 
@@ -15,7 +16,7 @@ export type PipelineInput = {
   object?: string;
   intent?: string;
   context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
-  layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'auto';
+  layout?: LayoutInput;
   preferences?: DesignComposeInput['preferences'];
   /** Sprint 88: Stage1 BridgeSummary action_mappings, flat verb-keyed. */
   actionMappings?: ActionMapping[];

@@ -22,17 +22,17 @@ function readJson<T>(repoRelativePath: string): T {
 }
 
 describe('bridge policy contracts', () => {
-  it('allows apply mode for repl.render in configs/agent/policy.json', () => {
+  it('allows apply mode for the grouped repl tool in configs/agent/policy.json', () => {
     const policy = readJson<AgentPolicyDoc>('configs/agent/policy.json');
-    const replRender = policy.tools.find((tool) => tool.name === 'repl.render');
+    const replRender = policy.tools.find((tool) => tool.name === 'repl');
 
     expect(replRender).toBeDefined();
     expect(replRender?.modes ?? []).toContain('apply');
   });
 
-  it('does not mark repl.render as read-only in mcp-server security policy', () => {
+  it('does not mark the grouped repl tool as read-only in mcp-server security policy', () => {
     const policy = readJson<ServerSecurityPolicyDoc>('packages/mcp-server/src/security/policy.json');
-    const replRender = policy.rules.find((rule) => rule.tool === 'repl.render');
+    const replRender = policy.rules.find((rule) => rule.tool === 'repl');
 
     expect(replRender).toBeDefined();
     expect(replRender?.readOnly).not.toBe(true);

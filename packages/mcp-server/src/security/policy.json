@@ -1,34 +1,55 @@
 {
   "artifactsBase": "artifacts/current-state",
-  "roles": ["designer", "maintainer"],
+  "roles": [
+    "designer",
+    "maintainer"
+  ],
   "rules": [
     {
       "tool": "tokens.build",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 60000,
       "ratePerMinute": 30,
       "concurrency": 1
     },
     {
       "tool": "brand.apply",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 120000,
       "ratePerMinute": 12,
       "concurrency": 1
     },
     {
       "tool": "diag.snapshot",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 120000,
       "ratePerMinute": 12,
       "concurrency": 1
     },
     {
       "tool": "catalog.list",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "readOnly": true,
       "timeoutMs": 30000,
       "ratePerMinute": 60,
@@ -36,95 +57,123 @@
     },
     {
       "tool": "structuredData.fetch",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "repl.validate",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "repl.render",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
       "timeoutMs": 30000,
       "ratePerMinute": 60,
       "concurrency": 4
     },
     {
       "tool": "release.verify",
-      "allow": ["maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 180000,
       "ratePerMinute": 6,
       "concurrency": 1
     },
     {
       "tool": "release.tag",
-      "allow": ["maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 60000,
       "ratePerMinute": 6,
       "concurrency": 1
     },
     {
       "tool": "reviewKit.create",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 90000,
       "ratePerMinute": 30,
       "concurrency": 1
     },
     {
       "tool": "a11y.scan",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 120000,
       "ratePerMinute": 12,
       "concurrency": 1
     },
     {
       "tool": "purity.audit",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 120000,
       "ratePerMinute": 12,
       "concurrency": 1
     },
     {
       "tool": "vrt.run",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 120000,
       "ratePerMinute": 12,
       "concurrency": 1
     },
     {
       "tool": "billing.reviewKit",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 120000,
       "ratePerMinute": 20,
       "concurrency": 1
     },
     {
       "tool": "billing.switchFixtures",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 90000,
       "ratePerMinute": 20,
       "concurrency": 1
     },
     {
       "tool": "code.generate",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "readOnly": true,
       "timeoutMs": 30000,
       "ratePerMinute": 60,
@@ -132,7 +181,10 @@
     },
     {
       "tool": "design.compose",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "readOnly": true,
       "timeoutMs": 30000,
       "ratePerMinute": 60,
@@ -140,135 +192,45 @@
     },
     {
       "tool": "pipeline",
-      "allow": ["designer", "maintainer"],
-      "writes": [".oods/schemas/**"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        ".oods/schemas/**"
+      ],
       "timeoutMs": 60000,
       "ratePerMinute": 40,
       "concurrency": 2
     },
     {
-      "tool": "map.apply",
-      "allow": ["designer", "maintainer"],
-      "writes": ["artifacts/structured-data/component-mappings.json", ".oods/conflicts/**"],
-      "timeoutMs": 60000,
-      "ratePerMinute": 30,
-      "concurrency": 1
-    },
-    {
-      "tool": "map.create",
-      "allow": ["designer", "maintainer"],
-      "writes": ["artifacts/structured-data/component-mappings.json"],
-      "timeoutMs": 30000,
-      "ratePerMinute": 30,
-      "concurrency": 1
-    },
-    {
-      "tool": "map.list",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "map.resolve",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
       "tool": "registry.snapshot",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "readOnly": true,
       "timeoutMs": 30000,
       "ratePerMinute": 60,
       "concurrency": 4
-    },
-    {
-      "tool": "object.list",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "object.show",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "schema.save",
-      "allow": ["designer", "maintainer"],
-      "writes": [".oods/schemas/**"],
-      "timeoutMs": 30000,
-      "ratePerMinute": 30,
-      "concurrency": 1
-    },
-    {
-      "tool": "schema.load",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "schema.list",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "schema.delete",
-      "allow": ["designer", "maintainer"],
-      "writes": [".oods/schemas/**"],
-      "timeoutMs": 30000,
-      "ratePerMinute": 30,
-      "concurrency": 1
     },
     {
       "tool": "health",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "readOnly": true,
       "timeoutMs": 30000,
       "ratePerMinute": 60,
       "concurrency": 4
-    },
-    {
-      "tool": "map.update",
-      "allow": ["designer", "maintainer"],
-      "writes": ["artifacts/structured-data/component-mappings.json"],
-      "timeoutMs": 30000,
-      "ratePerMinute": 30,
-      "concurrency": 1
-    },
-    {
-      "tool": "map.delete",
-      "allow": ["designer", "maintainer"],
-      "writes": ["artifacts/structured-data/component-mappings.json"],
-      "timeoutMs": 30000,
-      "ratePerMinute": 30,
-      "concurrency": 1
     },
     {
       "tool": "viz.compose",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
-      "timeoutMs": 30000,
-      "ratePerMinute": 60,
-      "concurrency": 4
-    },
-    {
-      "tool": "review.resolve",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "readOnly": true,
       "timeoutMs": 30000,
       "ratePerMinute": 60,
@@ -276,18 +238,75 @@
     },
     {
       "tool": "fidelity.preview",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "readOnly": true,
       "timeoutMs": 30000,
       "ratePerMinute": 30,
       "concurrency": 4
     },
     {
-      "tool": "review.chain",
-      "allow": ["designer", "maintainer"],
-      "readOnly": true,
+      "tool": "map",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "artifacts/structured-data/component-mappings.json",
+        ".oods/conflicts/**"
+      ],
+      "timeoutMs": 60000,
+      "ratePerMinute": 30,
+      "concurrency": 1
+    },
+    {
+      "tool": "schema",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        ".oods/schemas/**"
+      ],
       "timeoutMs": 30000,
       "ratePerMinute": 30,
+      "concurrency": 1
+    },
+    {
+      "tool": "object",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "repl",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "review",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
       "concurrency": 4
     }
   ],
@@ -296,5 +315,10 @@
     "concurrency": 1,
     "ratePerMinute": 60
   },
-  "redactions": ["$HOME", "GITHUB_TOKEN", "/Users/*/secrets/*", "CHROMATIC_PROJECT_TOKEN"]
+  "redactions": [
+    "$HOME",
+    "GITHUB_TOKEN",
+    "/Users/*/secrets/*",
+    "CHROMATIC_PROJECT_TOKEN"
+  ]
 }

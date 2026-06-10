@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://designlab.local/schemas/review.input.json",
+  "title": "review input (grouped)",
+  "description": "Grouped action-parameter tool consolidating the review family (resolve, chain) into one MCP tool. The `action` discriminator selects the per-action body; each branch reproduces the exact per-action input schema (review.resolve.input.json / review.chain.input.json) with `action` added to its allowed properties. Per-action handlers and their behaviour are unchanged — this is a zero-functionality-loss consolidation.",
+  "type": "object",
+  "required": ["action"],
+  "properties": {
+    "action": {
+      "description": "Which review operation to perform. resolve: apply a policy bundle to a manifest, producing per-entity decisions + audit trail. chain: compose the four C5 surfaces (queue → resolve → conflict-detail → apply-summary) against a server-resident fixture.",
+      "enum": ["resolve", "chain"]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "action": { "const": "resolve" } },
+        "required": ["action"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": { "const": "resolve" },
+          "manifest": {
+            "description": "Inline Object Catalog manifest object. Mutually exclusive with manifestPath.",
+            "type": "object"
+          },
+          "manifestPath": {
+            "description": "Project-relative path to a manifest JSON file. Absolute paths and parent-directory traversal (..) are rejected.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "projectRoot": {
+            "description": "Optional override for the project root used to resolve manifestPath. Defaults to process.cwd().",
+            "type": "string",
+            "minLength": 1
+          },
+          "policies": {
+            "$ref": "#/$defs/policyBundle"
+          },
+          "defaultAction": {
+            "$ref": "#/$defs/decision",
+            "description": "Decision applied when no policy matches an entity. Defaults to 'defer' so unmatched items surface for follow-up rather than being silently accepted."
+          }
+        },
+        "required": ["policies"],
+        "oneOf": [
+          { "required": ["manifest"] },
+          { "required": ["manifestPath"] }
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "if": {
+        "properties": { "action": { "const": "chain" } },
+        "required": ["action"]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fixture", "policies"],
+        "properties": {
+          "action": { "const": "chain" },
+          "fixture": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-RC-001."
+          },
+          "policies": {
+            "$ref": "#/$defs/policyBundle"
+          },
+          "options": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "reviewThreshold": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Threshold below which entities are flagged for review by the queue and detail emitters. Default 0.7."
+              },
+              "lowestSignalsN": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Top-N selector for per-entry lowestSignals in the queue artifact. Default 3."
+              },
+              "evidenceGapThreshold": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Signal-level threshold used by conflict-detail to classify signal gaps. Default 0.5."
+              },
+              "defaultAction": {
+                "$ref": "#/$defs/decision",
+                "description": "Decision applied by review.resolve when no policy matches. Default 'defer'."
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "decision": {
+      "type": "string",
+      "enum": ["accept", "patch", "defer", "dismiss"]
+    },
+    "policyBundle": {
+      "type": "object",
+      "description": "Ordered policy bundle. First match wins per entity; no-match falls to defaultAction.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Optional bundle identifier echoed in the audit trail for reproducibility."
+        },
+        "policies": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/policy" }
+        }
+      },
+      "required": ["policies"],
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "when": { "$ref": "#/$defs/predicate" },
+        "then": { "$ref": "#/$defs/decision" },
+        "reason": {
+          "type": "string",
+          "description": "Human-readable reason surfaced verbatim in the resolution when this policy matches."
+        }
+      },
+      "required": ["id", "when", "then"],
+      "additionalProperties": false
+    },
+    "predicate": {
+      "oneOf": [
+        { "$ref": "#/$defs/predicateConfidenceThreshold" },
+        { "$ref": "#/$defs/predicateSignalTypeFloor" },
+        { "$ref": "#/$defs/predicateEntityUrnMatch" }
+      ]
+    },
+    "predicateConfidenceThreshold": {
+      "type": "object",
+      "description": "Match when entity.oods.confidence_decomposition.total < threshold. With matchUnknown=true, also matches entities with no confidence_decomposition.",
+      "properties": {
+        "kind": { "const": "confidence_threshold" },
+        "threshold": { "type": "number" },
+        "matchUnknown": { "type": "boolean", "default": false }
+      },
+      "required": ["kind", "threshold"],
+      "additionalProperties": false
+    },
+    "predicateSignalTypeFloor": {
+      "type": "object",
+      "description": "Match when a named signal's score < floor. Does not match when the signal is absent or when confidence_decomposition is absent.",
+      "properties": {
+        "kind": { "const": "signal_type_floor" },
+        "signal": { "type": "string", "minLength": 1 },
+        "floor": { "type": "number" }
+      },
+      "required": ["kind", "signal", "floor"],
+      "additionalProperties": false
+    },
+    "predicateEntityUrnMatch": {
+      "type": "object",
+      "description": "Match by entity URN. Provide exactly one of `urn` (exact string match) or `pattern` (glob with * and ?).",
+      "properties": {
+        "kind": { "const": "entity_urn_match" },
+        "urn": { "type": "string", "minLength": 1 },
+        "pattern": { "type": "string", "minLength": 1 }
+      },
+      "required": ["kind"],
+      "additionalProperties": false
+    }
+  }
+}

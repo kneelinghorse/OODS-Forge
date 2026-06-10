@@ -124,19 +124,19 @@ class SchemaNamespace {
   constructor(private client: OodsClient) {}
 
   async save(input: SchemaSaveInput): Promise<SchemaSaveOutput> {
-    return this.client.call<SchemaSaveOutput>('schema.save', input as Record<string, unknown>);
+    return this.client.call<SchemaSaveOutput>('schema', { action: 'save', ...(input as Record<string, unknown>) });
   }
 
   async load(input: SchemaLoadInput): Promise<SchemaLoadOutput> {
-    return this.client.call<SchemaLoadOutput>('schema.load', input as Record<string, unknown>);
+    return this.client.call<SchemaLoadOutput>('schema', { action: 'load', ...(input as Record<string, unknown>) });
   }
 
   async list(input: SchemaListInput = {}): Promise<SchemaListOutput> {
-    return this.client.call<SchemaListOutput>('schema.list', input as Record<string, unknown>);
+    return this.client.call<SchemaListOutput>('schema', { action: 'list', ...(input as Record<string, unknown>) });
   }
 
   async delete(input: SchemaDeleteInput): Promise<SchemaDeleteOutput> {
-    return this.client.call<SchemaDeleteOutput>('schema.delete', input as Record<string, unknown>);
+    return this.client.call<SchemaDeleteOutput>('schema', { action: 'delete', ...(input as Record<string, unknown>) });
   }
 }
 
@@ -144,11 +144,11 @@ class ObjectsNamespace {
   constructor(private client: OodsClient) {}
 
   async list(input: ObjectListInput = {}): Promise<ObjectListOutput> {
-    return this.client.call<ObjectListOutput>('object.list', input as Record<string, unknown>);
+    return this.client.call<ObjectListOutput>('object', { action: 'list', ...(input as Record<string, unknown>) });
   }
 
   async show(input: ObjectShowInput): Promise<ObjectShowOutput> {
-    return this.client.call<ObjectShowOutput>('object.show', input as Record<string, unknown>);
+    return this.client.call<ObjectShowOutput>('object', { action: 'show', ...(input as Record<string, unknown>) });
   }
 }
 
@@ -156,22 +156,22 @@ class MapsNamespace {
   constructor(private client: OodsClient) {}
 
   async create(input: MapCreateInput): Promise<MapCreateOutput> {
-    return this.client.call<MapCreateOutput>('map.create', input as Record<string, unknown>);
+    return this.client.call<MapCreateOutput>('map', { action: 'create', ...(input as Record<string, unknown>) });
   }
 
   async list(input: MapListInput = {}): Promise<MapListOutput> {
-    return this.client.call<MapListOutput>('map.list', input as Record<string, unknown>);
+    return this.client.call<MapListOutput>('map', { action: 'list', ...(input as Record<string, unknown>) });
   }
 
   async resolve(input: MapResolveInput): Promise<MapResolveOutput> {
-    return this.client.call<MapResolveOutput>('map.resolve', input as Record<string, unknown>);
+    return this.client.call<MapResolveOutput>('map', { action: 'resolve', ...(input as Record<string, unknown>) });
   }
 
   async update(input: MapUpdateInput): Promise<MapUpdateOutput> {
-    return this.client.call<MapUpdateOutput>('map.update', input as Record<string, unknown>);
+    return this.client.call<MapUpdateOutput>('map', { action: 'update', ...(input as Record<string, unknown>) });
   }
 
   async delete(input: MapDeleteInput): Promise<MapDeleteOutput> {
-    return this.client.call<MapDeleteOutput>('map.delete', input as Record<string, unknown>);
+    return this.client.call<MapDeleteOutput>('map', { action: 'delete', ...(input as Record<string, unknown>) });
   }
 }

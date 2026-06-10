@@ -112,7 +112,7 @@ describe('mapping + versioning bridge E2E', () => {
   });
 
   it('map.create → map.list → map.resolve round-trip via bridge (multi-system)', async () => {
-    const createdMaterial = await runBridgeTool(bridge!.port, 'map_create', {
+    const createdMaterial = await runBridgeTool(bridge!.port, 'map', { action: 'create',
       apply: true,
       externalSystem: 'material',
       externalComponent: 'Button',
@@ -123,7 +123,7 @@ describe('mapping + versioning bridge E2E', () => {
       confidence: 'auto',
     });
 
-    const createdChakra = await runBridgeTool(bridge!.port, 'map_create', {
+    const createdChakra = await runBridgeTool(bridge!.port, 'map', { action: 'create',
       apply: true,
       externalSystem: 'chakra',
       externalComponent: 'Button',
@@ -144,21 +144,21 @@ describe('mapping + versioning bridge E2E', () => {
     expect(createdChakra.etag).toMatch(/^[a-f0-9]{64}$/);
     expect(createdChakra.applied).toBe(true);
 
-    const materialListed = await runBridgeTool(bridge!.port, 'map_list', {
+    const materialListed = await runBridgeTool(bridge!.port, 'map', { action: 'list',
       externalSystem: 'material',
     });
 
     expect(materialListed.totalCount).toBeGreaterThanOrEqual(1);
     expect(materialListed.mappings.some((m: any) => m.id === 'material-button')).toBe(true);
 
-    const chakraListed = await runBridgeTool(bridge!.port, 'map_list', {
+    const chakraListed = await runBridgeTool(bridge!.port, 'map', { action: 'list',
       externalSystem: 'chakra',
     });
 
     expect(chakraListed.totalCount).toBeGreaterThanOrEqual(1);
     expect(chakraListed.mappings.some((m: any) => m.id === 'chakra-button')).toBe(true);
 
-    const resolvedMaterial = await runBridgeTool(bridge!.port, 'map_resolve', {
+    const resolvedMaterial = await runBridgeTool(bridge!.port, 'map', { action: 'resolve',
       externalSystem: 'material',
       externalComponent: 'Button',
     });
@@ -169,7 +169,7 @@ describe('mapping + versioning bridge E2E', () => {
     expect(resolvedMaterial.propTranslations.length).toBe(1);
     expect(resolvedMaterial.propTranslations[0].coercionType).toBe('enum');
 
-    const resolvedChakra = await runBridgeTool(bridge!.port, 'map_resolve', {
+    const resolvedChakra = await runBridgeTool(bridge!.port, 'map', { action: 'resolve',
       externalSystem: 'chakra',
       externalComponent: 'Button',
     });

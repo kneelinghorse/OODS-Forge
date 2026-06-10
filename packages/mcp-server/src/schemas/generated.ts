@@ -149,6 +149,91 @@ export namespace A11yScanInputSchema {
 }
 export type A11yScanInput = A11yScanInputSchema.A11YScanInput;
 
+// Source: apply-summary.output.json
+export namespace ApplySummaryOutputSchema {
+  /**
+   * Structured delta artifact produced by the apply-summary emitter — the third and final C5 surface. Captures the post-review.resolve decision state per entity, aggregate decision counts, and an audit trail echo that lets agents persist the apply-summary for replay/audit/handoff without rerunning review.resolve. Composes the full C5 chain: review-queue (m02) → review.resolve (s103-m01) → apply-summary (this).
+   */
+  export interface ApplySummaryOutput {
+    /**
+     * One entry per resolution. Order preserves review.resolve's iteration order over the source manifest — the order an agent saw at queue/decide time. Element name + type are resolved by joining each resolution to manifest.entities (best-effort; entries whose urn is not present in the manifest still surface but with empty element fields).
+     */
+    entries: ApplySummaryEntry[];
+    summary: ApplySummaryAggregates;
+    auditTrail: ApplySummaryAuditTrail;
+    source?: ApplySummarySource;
+  }
+  export interface ApplySummaryEntry {
+    urn: string;
+    decision: 'accept' | 'patch' | 'defer' | 'dismiss';
+    /**
+     * Verbatim policy reason from review.resolve EvaluationResult.
+     */
+    reason: string;
+    /**
+     * Matching policy id, or 'default' when no policy matched.
+     */
+    policyId: string;
+    /**
+     * confidence_decomposition.total at evaluation time, or null.
+     */
+    evaluatedScore: number | null;
+    evaluatedTier: 'high' | 'medium' | 'low' | 'unknown';
+    /**
+     * Mirror of manifest.entities[urn].element.name; empty string when the entity is not in the source manifest (defensive — review.resolve and the manifest should always be in sync).
+     */
+    elementName: string;
+    /**
+     * Mirror of manifest.entities[urn].element.type; empty string when not in source manifest.
+     */
+    elementType: string;
+  }
+  export interface ApplySummaryAggregates {
+    /**
+     * Total decision entries (mirrors resolutions.length).
+     */
+    entriesTotal: number;
+    decisionCounts: {
+      accept: number;
+      patch: number;
+      defer: number;
+      dismiss: number;
+    };
+    /**
+     * Count of entries whose policyId === 'default'. A signal for 'how much work is the policy bundle actually doing'.
+     */
+    defaultActionUsed: number;
+    /**
+     * Sorted, deduplicated list of policy ids that matched at least one entity. Mirror of auditTrail.matchedPolicyIds.
+     */
+    matchedPolicyIds: string[];
+  }
+  export interface ApplySummaryAuditTrail {
+    /**
+     * ISO-8601 timestamp mirrored from review.resolve auditTrail.
+     */
+    evaluatedAt: string;
+    defaultAction: 'accept' | 'patch' | 'defer' | 'dismiss';
+    entityCount: number;
+    /**
+     * auditTrail.policyBundle.id when the bundle named itself. Optional.
+     */
+    policyBundleId?: string;
+    matchedPolicyIds: string[];
+  }
+  export interface ApplySummarySource {
+    /**
+     * Identifier of the source manifest (options.sourceManifestId, defaulting to manifest.source.agent or 'unknown').
+     */
+    sourceManifest?: string;
+    /**
+     * Project-relative path the manifest was loaded from (mirror of review.resolve diagnostics.manifestPath). Optional.
+     */
+    manifestPath?: string;
+  }
+}
+export type ApplySummaryOutput = ApplySummaryOutputSchema.ApplySummaryOutput;
+
 // Source: billing.reviewKit.input.json
 export namespace BillingReviewKitInputSchema {
   /**
@@ -715,6 +800,18 @@ export namespace ComponentMappingSchemaSchema {
      * Array of component mapping records.
      */
     mappings: ComponentMapping[];
+    /**
+     * Draft v1.4.0-gated review-decision events promoted into the registry. Top-level (cross-mapping). Additive stub only; absent on pre-v1.4.0 docs.
+     */
+    disambiguation_decisions?: Stage1DisambiguationDecision[];
+    /**
+     * Draft v1.4.0-gated canonical-term entities promoted into the registry. Top-level (cross-mapping). Additive stub only; absent on pre-v1.4.0 docs.
+     */
+    preferred_terms?: Stage1PreferredTermEntity[];
+    /**
+     * Draft v1.4.0-gated first-class capability entities rolled up across mappings. Top-level (cross-mapping). Additive stub only; absent on pre-v1.4.0 docs.
+     */
+    capabilities?: Stage1CapabilityEntity[];
   }
   export interface ComponentMapping {
     /**
@@ -819,8 +916,156 @@ export namespace ComponentMappingSchemaSchema {
       [k: string]: any;
     };
   }
+  export interface Stage1DisambiguationDecision {
+    decision_id: string;
+    decision_type: 'preferred_name' | 'preferred_role' | 'mapping_rejection' | 'canonical_term';
+    scope: 'run' | 'target' | 'registry';
+    status: 'proposed' | 'accepted' | 'rejected' | 'promoted';
+    target_kind: 'candidate_object' | 'candidate_action' | 'preferred_term';
+    target_id: string;
+    selected_value: string;
+    rationale: string;
+    alternatives?: {
+      value: string;
+      score?: number;
+      reasoning?: string;
+    }[];
+    preferred_term_id?: string;
+    decided_by?: 'human' | 'agent' | 'system';
+    decided_at: string;
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+  export interface Stage1PreferredTermEntity {
+    entity_type: 'preferred_term';
+    id: string;
+    slug: string;
+    label: string;
+    aliases: string[];
+    scope: 'target' | 'registry';
+    domain?: string;
+    source_decision_ids?: string[];
+    metadata?: {
+      [k: string]: any;
+    };
+  }
+  export interface Stage1CapabilityEntity {
+    entity_type: 'capability';
+    id: string;
+    slug: string;
+    name: string;
+    canonical_verb: string;
+    aliases?: string[];
+    oods_traits?: string[];
+    projection_variant_ids?: string[];
+    preconditions?: {
+      type: 'auth' | 'role' | 'state' | 'data';
+      description?: string;
+      confidence?: number;
+      evidence_chain?: {
+        [k: string]: any;
+      }[];
+    }[];
+    metadata?: {
+      [k: string]: any;
+    };
+  }
 }
 export type ComponentMappingSchema = ComponentMappingSchemaSchema.ComponentMappingSchema;
+
+// Source: conflict-detail.output.json
+export namespace ConflictDetailOutputSchema {
+  export type ConflictDetailGap =
+    | {
+        source: 'signal';
+        /**
+         * Signal name from confidence_decomposition.signals[].name.
+         */
+        name: string;
+        score: number;
+        /**
+         * Effective evidenceGapThreshold the signal fell under.
+         */
+        threshold: number;
+        hint?: string;
+      }
+    | {
+        source: 'evidence_refs';
+        detail: string;
+      }
+    | {
+        source: 'confidence_decomposition';
+        detail: string;
+      };
+
+  /**
+   * Single-entity deep breakdown artifact produced by the conflict-detail emitter. Composable with s103-m01 review.resolve and s104-m02 review-queue: queue gives the list of items needing review; conflict-detail gives the WHY for a specific item; review.resolve applies policy to resolve. Surfaces FULL confidence signals (not top-N), evidence gaps (low signals OR missing evidence_refs OR missing confidence_decomposition), and entity context (projection variants, brand overlay, schema.org URL).
+   */
+  export interface ConflictDetailOutput {
+    /**
+     * Entity URN.
+     */
+    urn: string;
+    /**
+     * Confidence tier classification per review-emitter.classifyTier.
+     */
+    tier: 'high' | 'medium' | 'low' | 'unknown';
+    /**
+     * confidence_decomposition.total, or null when absent.
+     */
+    score: number | null;
+    /**
+     * True when needsReview(score, reviewThreshold) — score < threshold OR tier=unknown.
+     */
+    flaggedForReview: boolean;
+    element: {
+      name: string;
+      type: string;
+      object?: string;
+      action?: string;
+    };
+    /**
+     * FULL set of signals from oods.confidence_decomposition.signals — NOT truncated. Empty when confidence_decomposition is absent. Sorted by score ascending so the weakest signals lead.
+     */
+    signals: ConflictDetailSignal[];
+    /**
+     * Evidence gaps detected on this entity. Three sources: 'signal' (signal.score < evidenceGapThreshold), 'evidence_refs' (evidence_refs[] empty or absent), 'confidence_decomposition' (no confidence_decomposition emitted). Order: confidence_decomposition gap first (if any), then evidence_refs gap (if any), then signal gaps (ascending by signal.score).
+     */
+    gaps: ConflictDetailGap[];
+    context?: ConflictDetailContext;
+    source?: ConflictDetailSource;
+  }
+  export interface ConflictDetailSignal {
+    name: string;
+    score: number;
+    hint?: string;
+  }
+  /**
+   * Optional entity context. Each field is mirrored verbatim from the source entity when present and omitted otherwise — additionalProperties:false makes presence/absence observable to gate consumers.
+   */
+  export interface ConflictDetailContext {
+    /**
+     * Mirror of oods.projection_variants[].surface — variant names only, not full slot definitions.
+     */
+    projectionVariants?: string[];
+    /**
+     * Mirror of oods.render.brand_overlay when present.
+     */
+    brandOverlay?: string;
+    /**
+     * Mirror of entity.context.schemaorg when present (s102-m01 content domain pack convention).
+     */
+    schemaorg?: string;
+  }
+  export interface ConflictDetailSource {
+    /**
+     * Identifier of the manifest the entity came from (options.sourceManifestId).
+     */
+    sourceManifest?: string;
+  }
+}
+export type ConflictDetailOutput = ConflictDetailOutputSchema.ConflictDetailOutput;
 
 // Source: design.compose.input.json
 export namespace DesignComposeInputSchema {
@@ -850,9 +1095,9 @@ export namespace DesignComposeInputSchema {
      */
     context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
     /**
-     * Layout template to use. 'auto' infers the best template from intent keywords.
+     * Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords.
      */
-    layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'auto';
+    layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'landing' | 'auto';
     preferences?: {
       /**
        * Theme token (e.g., 'light', 'dark').
@@ -1183,6 +1428,99 @@ export namespace DesignComposeOutputSchema {
   }
 }
 export type DesignComposeOutput = DesignComposeOutputSchema.DesignComposeOutput;
+
+// Source: fidelity.preview.input.json
+export namespace FidelityPreviewInputSchema {
+  /**
+   * Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup). Supply EXACTLY ONE manifest source: a named server-resident `fixture` (resolved against a vetted allow-list — no caller-supplied paths), or an inline `manifest` object (data only — also never a path). The inline path lets an agent render a manifest it authored in its own repo without committing a fixture here.
+   */
+  export type FidelityPreviewInput = FidelityPreviewInput1 & FidelityPreviewInput2;
+  export type FidelityPreviewInput2 = {
+    [k: string]: any;
+  };
+
+  export interface FidelityPreviewInput1 {
+    /**
+     * Which HTML fidelity emitter to invoke.
+     */
+    fidelityKind: 'boxes-arrows' | 'wireframe' | 'review' | 'branded-mockup';
+    /**
+     * Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-FP-001. Mutually exclusive with `manifest`.
+     */
+    fixture?: string;
+    /**
+     * Inline Object Catalog manifest to render — an alternative to `fixture`. Data only; no file path is accepted, so this does not reopen the traversal surface the fixture allow-list closes. Must contain an `entities` array. Mutually exclusive with `fixture`. Malformed input returns OODS-FP-005.
+     */
+    manifest?: {
+      /**
+       * Object Catalog entities to render.
+       */
+      entities: any[];
+      [k: string]: any;
+    };
+    options?: {
+      /**
+       * Projection-variant selector passed through to the emitter (see s100-m03 selectVariant() / runPreEmit()).
+       */
+      variant?: string;
+      /**
+       * Brand overlay name for the branded-mockup fidelity. Ignored by other fidelities. Unknown names emit OODS-BM-002 and fall back to brand-a per s102-m02.
+       */
+      brandOverlay?: string;
+      /**
+       * Threshold below which entities are flagged for review. Default 0.7. Ignored by non-review fidelities.
+       */
+      reviewThreshold?: number;
+      /**
+       * Inline <style> block toggle. Default true; set false to receive markup without CSS.
+       */
+      includeStyles?: boolean;
+    };
+  }
+}
+export type FidelityPreviewInput = FidelityPreviewInputSchema.FidelityPreviewInput;
+
+// Source: fidelity.preview.output.json
+export namespace FidelityPreviewOutputSchema {
+  /**
+   * Rendered HTML for a non-production fidelity emitter, plus warnings, errors, and metadata.
+   */
+  export interface FidelityPreviewOutput {
+    /**
+     * ok = clean run; warning = non-fatal issues but html is valid; error = errors[] populated and html may be empty/partial.
+     */
+    status: 'ok' | 'warning' | 'error';
+    fidelityKind: 'boxes-arrows' | 'wireframe' | 'review' | 'branded-mockup';
+    fixture: string;
+    /**
+     * Complete HTML output ready to insert into a preview surface (may include a <style> block when includeStyles is true).
+     */
+    html: string;
+    warnings: {
+      code: string;
+      message: string;
+      entity?: string;
+      [k: string]: any;
+    }[];
+    errors: {
+      code: string;
+      message: string;
+      entity?: string;
+      [k: string]: any;
+    }[];
+    meta: {
+      /**
+       * Number of entities in the resolved manifest.
+       */
+      entityCount: number;
+      /**
+       * Echoed brandOverlay when present (branded-mockup fidelity only).
+       */
+      appliedBrandOverlay?: string;
+    };
+  }
+}
+export type FidelityPreviewOutput = FidelityPreviewOutputSchema.FidelityPreviewOutput;
 
 // Source: generic.input.json
 export namespace GenericInputSchema {
@@ -1774,8 +2112,12 @@ export namespace MapCreateInputSchema {
     propMappings?: {
       externalProp: string;
       oodsProp: string;
+      /**
+       * Prop coercion. Accepts a structured CoercionDef, a raw string label (Stage1 v1.6.0 emits enum-map | type-cast | identity as pass-through hints), or null for identity.
+       */
       coercion?:
         | null
+        | string
         | {
             type: 'enum';
             mapping: {
@@ -1803,6 +2145,70 @@ export namespace MapCreateInputSchema {
       author?: string;
       notes?: string;
     };
+    /**
+     * Draft v1.4.0-gated review-decision events to APPEND to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.
+     */
+    disambiguation_decisions?: {
+      decision_id: string;
+      decision_type: 'preferred_name' | 'preferred_role' | 'mapping_rejection' | 'canonical_term';
+      scope: 'run' | 'target' | 'registry';
+      status: 'proposed' | 'accepted' | 'rejected' | 'promoted';
+      target_kind: 'candidate_object' | 'candidate_action' | 'preferred_term';
+      target_id: string;
+      selected_value: string;
+      rationale: string;
+      alternatives?: {
+        value: string;
+        score?: number;
+        reasoning?: string;
+      }[];
+      preferred_term_id?: string;
+      decided_by?: 'human' | 'agent' | 'system';
+      decided_at: string;
+      metadata?: {
+        [k: string]: any;
+      };
+    }[];
+    /**
+     * Draft v1.4.0-gated canonical-term entities to APPEND to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.
+     */
+    preferred_terms?: {
+      entity_type: 'preferred_term';
+      id: string;
+      slug: string;
+      label: string;
+      aliases: string[];
+      scope: 'target' | 'registry';
+      domain?: string;
+      source_decision_ids?: string[];
+      metadata?: {
+        [k: string]: any;
+      };
+    }[];
+    /**
+     * Draft v1.4.0-gated first-class capability entities to APPEND to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.
+     */
+    capabilities?: {
+      entity_type: 'capability';
+      id: string;
+      slug: string;
+      name: string;
+      canonical_verb: string;
+      aliases?: string[];
+      oods_traits?: string[];
+      projection_variant_ids?: string[];
+      preconditions?: {
+        type: 'auth' | 'role' | 'state' | 'data';
+        description?: string;
+        confidence?: number;
+        evidence_chain?: {
+          [k: string]: any;
+        }[];
+      }[];
+      metadata?: {
+        [k: string]: any;
+      };
+    }[];
     /**
      * Stage1 v1.5.0 cross-surface identity variants. Each element describes one surface-specific projection of this component mapping (desktop/mobile/modal/sidebar).
      */
@@ -1930,6 +2336,26 @@ export namespace MapDeleteOutputSchema {
 }
 export type MapDeleteOutput = MapDeleteOutputSchema.MapDeleteOutput;
 
+// Source: map.input.json
+export namespace MapInputSchema {
+  /**
+   * Grouped action-parameter tool for the component-mapping registry family. Routes on the required `action` discriminator to the per-action handlers (apply, create, list, resolve, update, delete). Each branch reproduces the exact body of the corresponding per-action input schema with `action` added as an allowed property.
+   */
+  export type MapInput = MapInput1 & MapInput2;
+  export type MapInput1 = {
+    [k: string]: any;
+  };
+
+  export interface MapInput2 {
+    /**
+     * Selects the per-action handler to invoke.
+     */
+    action: 'apply' | 'create' | 'list' | 'resolve' | 'update' | 'delete';
+    [k: string]: any;
+  }
+}
+export type MapInput = MapInputSchema.MapInput;
+
 // Source: map.list.input.json
 export namespace MapListInputSchema {
   /**
@@ -1983,6 +2409,230 @@ export namespace MapListOutputSchema {
   }
 }
 export type MapListOutput = MapListOutputSchema.MapListOutput;
+
+// Source: map.output.json
+export namespace MapOutputSchema {
+  /**
+   * Grouped output for the map family. anyOf (NOT oneOf) of each per-action output body — per-action outputs share fields like status/etag and would match more than one branch, which would fail oneOf.
+   */
+  export type MapOutput = ApplyOutput | CreateOutput | ListOutput | ResolveOutput | UpdateOutput | DeleteOutput;
+
+  export interface ApplyOutput {
+    applied: AppliedRoute[];
+    skipped: SkippedRoute[];
+    queued: QueuedRoute[];
+    conflicted: ConflictRoute[];
+    errors: ApplyError[];
+    diff: DiffSummary;
+    conflictArtifactPath?: string;
+    etag: string;
+  }
+  export interface AppliedRoute {
+    objectId: string;
+    name: string;
+    action: 'create' | 'patch';
+    confidence: number;
+    /**
+     * @minItems 1
+     */
+    recommendedOodsTraits: [string, ...string[]];
+    existingMapId?: string;
+    mappingId?: string;
+    reason: string;
+    persisted: boolean;
+    diff?: CandidateDiff;
+  }
+  export interface CandidateDiff {
+    added_traits: string[];
+    removed_traits: string[];
+    changed_fields: CandidateDiffField[];
+  }
+  export interface CandidateDiffField {
+    field: string;
+    from?: any;
+    to?: any;
+  }
+  export interface SkippedRoute {
+    objectId: string;
+    name: string;
+    action: 'skip';
+    confidence: number;
+    /**
+     * @minItems 1
+     */
+    recommendedOodsTraits: [string, ...string[]];
+    existingMapId?: string;
+    mappingId?: string;
+    reason: string;
+    persisted: boolean;
+    diff?: CandidateDiff;
+  }
+  export interface QueuedRoute {
+    objectId: string;
+    name: string;
+    action: 'create' | 'patch' | 'skip' | 'conflict';
+    confidence: number;
+    threshold: number;
+    queueReason: 'below_confidence';
+    /**
+     * @minItems 1
+     */
+    recommendedOodsTraits: [string, ...string[]];
+    existingMapId?: string;
+    reason: string;
+    diff?: CandidateDiff;
+  }
+  export interface ConflictRoute {
+    objectId: string;
+    name: string;
+    action: 'conflict';
+    confidence: number;
+    existingMapId?: string;
+    reason: string;
+  }
+  export interface ApplyError {
+    objectId?: string;
+    name?: string;
+    action?: 'create' | 'patch' | 'skip' | 'conflict';
+    message: string;
+    details?: {
+      [k: string]: any;
+    };
+  }
+  export interface DiffSummary {
+    create: number;
+    patch: number;
+    skip: number;
+    conflict: number;
+    queued: number;
+    changedFields: string[];
+    addedTraits: string[];
+    removedTraits: string[];
+  }
+  export interface CreateOutput {
+    status: 'ok' | 'error';
+    /**
+     * The created mapping record.
+     */
+    mapping: {
+      [k: string]: any;
+    };
+    /**
+     * SHA256 ETag of the updated mappings file.
+     */
+    etag: string;
+    /**
+     * Whether the mapping was persisted to disk.
+     */
+    applied?: boolean;
+    /**
+     * Non-fatal warnings (e.g., unknown traits).
+     */
+    warnings?: string[];
+    /**
+     * Agent-friendly error details following formatValidationErrors().
+     */
+    errors?: {
+      message: string;
+      details: {
+        field: string;
+        message: string;
+        keyword: string;
+      }[];
+    };
+  }
+  export interface ListOutput {
+    /**
+     * Matching mapping records.
+     */
+    mappings: {
+      [k: string]: any;
+    }[];
+    /**
+     * Number of mappings returned.
+     */
+    totalCount: number;
+    stats: {
+      mappingCount: number;
+      systemCount: number;
+    };
+    /**
+     * Current ETag of the mappings file.
+     */
+    etag: string;
+    /**
+     * Pagination cursor for the next page when additional mappings remain.
+     */
+    nextCursor?: string;
+  }
+  export interface ResolveOutput {
+    status: 'ok' | 'not_found';
+    /**
+     * The resolved mapping record (present when status=ok).
+     */
+    mapping?: {
+      [k: string]: any;
+    };
+    /**
+     * Flattened prop translations with coercion details.
+     */
+    propTranslations?: {
+      externalProp: string;
+      oodsProp: string;
+      coercionType?: string | null;
+      coercionDetail?: {
+        [k: string]: any;
+      } | null;
+      [k: string]: any;
+    }[];
+    /**
+     * Explanation when status=not_found.
+     */
+    message?: string;
+  }
+  export interface UpdateOutput {
+    status: 'ok' | 'error';
+    /**
+     * The updated mapping record (present when status=ok).
+     */
+    mapping?: {
+      [k: string]: any;
+    };
+    /**
+     * SHA256 etag of the mappings file after update.
+     */
+    etag?: string;
+    /**
+     * List of fields that were changed.
+     */
+    changes?: string[];
+    /**
+     * Error or informational message.
+     */
+    message?: string;
+  }
+  export interface DeleteOutput {
+    status: 'ok' | 'error';
+    /**
+     * Summary of the deleted mapping.
+     */
+    deleted?: {
+      id?: string;
+      externalSystem?: string;
+      externalComponent?: string;
+      [k: string]: any;
+    };
+    /**
+     * SHA256 etag of the mappings file after deletion.
+     */
+    etag?: string;
+    /**
+     * Error message when status=error.
+     */
+    message?: string;
+  }
+}
+export type MapOutput = MapOutputSchema.MapOutput;
 
 // Source: map.resolve.input.json
 export namespace MapResolveInputSchema {
@@ -2065,8 +2715,12 @@ export namespace MapUpdateInputSchema {
       propMappings?: {
         externalProp: string;
         oodsProp: string;
+        /**
+         * Prop coercion. Accepts a structured CoercionDef, a raw string label (Stage1 v1.6.0 emits enum-map | type-cast | identity as pass-through hints), or null for identity.
+         */
         coercion?:
           | null
+          | string
           | {
               type: 'enum';
               mapping: {
@@ -2141,6 +2795,26 @@ export namespace MapUpdateOutputSchema {
 }
 export type MapUpdateOutput = MapUpdateOutputSchema.MapUpdateOutput;
 
+// Source: object.input.json
+export namespace ObjectInputSchema {
+  /**
+   * Grouped action-parameter tool consolidating the object.* read family (list, show). The top-level `action` selects which per-action contract applies; each branch reproduces the exact body of the original per-action input schema (object.<action>.input.json) with the discriminator key `action` added to its allowed properties. Zero functionality loss — handlers are delegated unchanged.
+   */
+  export type ObjectInput = ObjectInput1 & ObjectInput2;
+  export type ObjectInput1 = {
+    [k: string]: any;
+  };
+
+  export interface ObjectInput2 {
+    /**
+     * Selects the per-action contract: 'list' returns all domain objects with optional filters; 'show' returns the full composed definition for one object.
+     */
+    action: 'list' | 'show';
+    [k: string]: any;
+  }
+}
+export type ObjectInput = ObjectInputSchema.ObjectInput;
+
 // Source: object.list.input.json
 export namespace ObjectListInputSchema {
   export interface ObjectListInput {
@@ -2182,6 +2856,85 @@ export namespace ObjectListOutputSchema {
   }
 }
 export type ObjectListOutput = ObjectListOutputSchema.ObjectListOutput;
+
+// Source: object.output.json
+export namespace ObjectOutputSchema {
+  /**
+   * Grouped output for the object.* read family. anyOf (not oneOf) — per-action outputs are structurally distinct here, but anyOf is the safe consolidation contract: a handler result is valid if it matches the corresponding per-action output body. Each branch is the verbatim body of object.<action>.output.json.
+   */
+  export type ObjectOutput =
+    | {
+        objects: {
+          name: string;
+          domain: string;
+          version: string;
+          maturity: string | null;
+          description: string;
+          traits: string[];
+          fieldCount: number;
+          tags: string[];
+        }[];
+        totalCount: number;
+        filters: {
+          domain: string | null;
+          maturity: string | null;
+          trait: string | null;
+        };
+      }
+    | {
+        name: string;
+        version: string;
+        domain: string;
+        description: string;
+        tags: string[];
+        maturity: string | null;
+        traits: {
+          name: string;
+          alias: string | null;
+          parameters: {
+            [k: string]: any;
+          } | null;
+        }[];
+        schema: {
+          [k: string]: {
+            type: string;
+            required: boolean;
+            description: string;
+            default?: any;
+            defaultFromParameter?: string;
+            validation?: {
+              [k: string]: any;
+            };
+            [k: string]: any;
+          };
+        };
+        semantics: {
+          [k: string]: {
+            semantic_type: string;
+            token_mapping: string;
+            ui_hints?: {
+              [k: string]: string | boolean | number;
+            };
+          };
+        };
+        viewExtensions: {
+          [k: string]: {
+            component: string;
+            position?: string;
+            priority?: number;
+            props?: {
+              [k: string]: any;
+            };
+          }[];
+        };
+        tokens: {
+          [k: string]: any;
+        };
+        warnings: string[];
+        filePath: string;
+      };
+}
+export type ObjectOutput = ObjectOutputSchema.ObjectOutput;
 
 // Source: object.show.input.json
 export namespace ObjectShowInputSchema {
@@ -2278,9 +3031,9 @@ export namespace PipelineInputSchema {
      */
     context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
     /**
-     * Layout template to use.
+     * Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords.
      */
-    layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'auto';
+    layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'landing' | 'auto';
     preferences?: {
       /**
        * Theme token (e.g., 'light', 'dark').
@@ -2532,6 +3285,24 @@ export namespace RegistrySnapshotOutputSchema {
     };
     etag: string;
     generatedAt: string;
+    /**
+     * Draft v1.4.0-gated review-decision events surfaced losslessly from the mapping doc. Omitted when none are present.
+     */
+    disambiguation_decisions?: {
+      [k: string]: any;
+    }[];
+    /**
+     * Draft v1.4.0-gated canonical-term entities surfaced losslessly. Omitted when none are present.
+     */
+    preferred_terms?: {
+      [k: string]: any;
+    }[];
+    /**
+     * Draft v1.4.0-gated first-class capability entities surfaced losslessly. Omitted when none are present.
+     */
+    capabilities?: {
+      [k: string]: any;
+    }[];
   }
   export interface TraitInfo {
     name: string;
@@ -2652,6 +3423,237 @@ export namespace ReleaseVerifyOutputSchema {
   }
 }
 export type ReleaseVerifyOutput = ReleaseVerifyOutputSchema.ReleaseVerifyOutput;
+
+// Source: repl.input.json
+export namespace ReplInputSchema {
+  /**
+   * Grouped action-parameter tool consolidating repl.render and repl.validate. Select the per-action body via the top-level `action` discriminator. Each branch reproduces the exact body of the corresponding per-action input schema, with `action` added to the allowed property set. Per-action handlers, schemas, and the external repl_render/repl_validate tools are unchanged; this is a zero-functionality-loss bolt-on.
+   */
+  export type ReplInput = ReplInput1 & ReplInput2;
+  export type ReplInput1 = {
+    [k: string]: any;
+  };
+
+  export interface ReplInput2 {
+    /**
+     * Selects the per-action handler. 'render' -> repl.render, 'validate' -> repl.validate.
+     */
+    action: 'render' | 'validate';
+    [k: string]: any;
+  }
+}
+export type ReplInput = ReplInputSchema.ReplInput;
+
+// Source: repl.output.json
+export namespace ReplOutputSchema {
+  /**
+   * Grouped output for the repl action-parameter tool. anyOf (NOT oneOf) of the exact per-action output bodies — repl.render and repl.validate outputs share fields (status/mode/dslVersion/errors/warnings) and would match more than one oneOf branch. Each branch keeps additionalProperties:false so a render payload validates only against the render branch and a validate payload only against the validate branch.
+   */
+  export type ReplOutput = AgenticREPLRenderOutput | AgenticREPLValidateOutput;
+  /**
+   * Patch input can be either a JSON Patch array (RFC 6902 subset), a single node patch object, or an array of node patch objects.
+   */
+  export type AgenticREPLPatch = JsonPatchArray | NodePatch | [NodePatch, ...NodePatch[]];
+  /**
+   * Array of JSON Patch operations.
+   *
+   * @minItems 1
+   */
+  export type JsonPatchArray = [JsonPatchOp, ...JsonPatchOp[]];
+
+  export interface AgenticREPLRenderOutput {
+    status: 'ok' | 'error';
+    mode: 'full' | 'patch';
+    dslVersion: string;
+    registryVersion?: string | null;
+    errors: Issue[];
+    warnings: Issue[];
+    renderedTree?: AgenticREPLUISchema;
+    normalizedPatch?: AgenticREPLPatch;
+    appliedPatch?: boolean;
+    preview?: {
+      screens?: string[];
+      routes?: string[];
+      activeScreen?: string | null;
+      summary?: string;
+      notes?: string[];
+      /**
+       * Passed-through research context for the preview renderer
+       */
+      researchContext?: {
+        [k: string]: any;
+      };
+    };
+    /**
+     * Standalone HTML5 document generated when apply=true, output.format=document (or omitted), and render validation passes.
+     */
+    html?: string;
+    /**
+     * Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS.
+     */
+    tokenCssRef?: string;
+    /**
+     * Fragment payload keyed by canonical node id when output.format=fragments.
+     */
+    fragments?: {
+      [k: string]: {
+        nodeId: string;
+        component: string;
+        html: string;
+        cssRefs: string[];
+      };
+    };
+    /**
+     * Resolved CSS map keyed by cssRef identifier.
+     */
+    css?: {
+      [k: string]: string;
+    };
+    /**
+     * Echoes normalized output controls used by the renderer.
+     */
+    output?: {
+      format: 'document' | 'fragments';
+      strict: boolean;
+      compact?: boolean;
+    };
+    meta?: {
+      screenCount?: number;
+      nodeCount?: number;
+      duplicateIds?: string[];
+      missingComponents?: string[];
+    };
+  }
+  export interface Issue {
+    code: string;
+    message: string;
+    path?: string;
+    hint?: string;
+    severity?: 'error' | 'warning';
+    component?: string;
+    nodeId?: string;
+  }
+  export interface AgenticREPLUISchema {
+    $schema?: string;
+    version: string;
+    dsVersion?: string;
+    theme?: string;
+    /**
+     * @minItems 1
+     */
+    screens: [UiElement, ...UiElement[]];
+    /**
+     * Object-level semantic token overrides. Keys are token paths (e.g., 'billing.subscription.status.active'), values are CSS variable references (e.g., 'var(--semantic-success)').
+     */
+    tokenOverrides?: {
+      [k: string]: string;
+    };
+    /**
+     * Object field schema for codegen. Maps field names to type metadata from composed object traits.
+     */
+    objectSchema?: {
+      [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface UiElement {
+    id: string;
+    component: string;
+    route?: string;
+    layout?: Layout;
+    style?: Style;
+    props?: Props;
+    bindings?: Bindings;
+    children?: UiElement[];
+    meta?: Meta;
+  }
+  export interface Layout {
+    type?: 'stack' | 'grid' | 'inline' | 'section' | 'sidebar';
+    align?: 'start' | 'center' | 'end' | 'space-between';
+    gapToken?: string;
+  }
+  export interface Style {
+    spacingToken?: string;
+    radiusToken?: string;
+    shadowToken?: string;
+    colorToken?: string;
+    typographyToken?: string;
+    [k: string]: any;
+  }
+  export interface Props {
+    [k: string]: any;
+  }
+  export interface Bindings {
+    [k: string]: string;
+  }
+  export interface Meta {
+    label?: string;
+    intent?: string;
+    notes?: string;
+    confidence?: number;
+    confidenceLevel?: 'high' | 'medium' | 'low';
+    /**
+     * Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object (Path B, Sprint 89). Consumers surface this so authors can fill the alias table incrementally.
+     */
+    unresolvedEntity?: string;
+  }
+  export interface FieldSchemaEntry {
+    /**
+     * Field data type (string, integer, number, boolean, datetime, email, etc.).
+     */
+    type: string;
+    /**
+     * Whether the field is required.
+     */
+    required: boolean;
+    /**
+     * Human-readable field description.
+     */
+    description?: string;
+    /**
+     * Allowed values for enum-constrained fields.
+     */
+    enum?: string[];
+    /**
+     * Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status').
+     */
+    semanticType?: string;
+  }
+  /**
+   * JSON Patch operation (subset of RFC 6902). Must be used inside an array.
+   */
+  export interface JsonPatchOp {
+    op: 'add' | 'remove' | 'replace';
+    path: string;
+    value?: any;
+  }
+  /**
+   * Node patch referencing a nodeId plus a relative path within that node.
+   */
+  export interface NodePatch {
+    nodeId: string;
+    path: string;
+    value?: any;
+    op?: 'add' | 'remove' | 'replace';
+  }
+  export interface AgenticREPLValidateOutput {
+    status: 'ok' | 'invalid';
+    mode: 'full' | 'patch';
+    dslVersion: string;
+    registryVersion?: string | null;
+    errors: Issue[];
+    warnings: Issue[];
+    normalizedTree?: AgenticREPLUISchema;
+    normalizedPatch?: AgenticREPLPatch;
+    appliedPatch?: boolean;
+    meta?: {
+      screenCount?: number;
+      nodeCount?: number;
+      duplicateIds?: string[];
+      missingComponents?: string[];
+    };
+  }
+}
+export type ReplOutput = ReplOutputSchema.ReplOutput;
 
 // Source: repl.patch.json
 export namespace ReplPatchSchema {
@@ -3449,6 +4451,505 @@ export namespace ReplValidateOutputSchema {
 }
 export type ReplValidateOutput = ReplValidateOutputSchema.ReplValidateOutput;
 
+// Source: review-queue.output.json
+export namespace ReviewQueueOutputSchema {
+  /**
+   * Agent-readable JSON artifact produced by the review-queue emitter. Composable with s103-m01 review.resolve as the INPUT to policy evaluation. Each entry summarizes an entity's confidence tier and the top-N lowest sub-signals from oods.confidence_decomposition; the summary aggregates per-tier counts and the review-flagged count.
+   */
+  export interface ReviewQueueOutput {
+    /**
+     * One entry per included entity. Sorted by score ascending (lowest-confidence first, unknown-tier entities precede all numeric scores). Includes all manifest entities by default; when options.flaggedOnly is true, only entries with flaggedForReview=true are present.
+     */
+    entries: ReviewQueueEntry[];
+    summary: ReviewQueueSummary;
+    source: ReviewQueueSource;
+  }
+  export interface ReviewQueueEntry {
+    /**
+     * Entity URN (mirrors manifest.entities[].urn).
+     */
+    urn: string;
+    /**
+     * Confidence tier classification per review-emitter.classifyTier — high ≥0.8, medium 0.5–0.8, low <0.5, unknown when confidence_decomposition is absent.
+     */
+    tier: 'high' | 'medium' | 'low' | 'unknown';
+    /**
+     * confidence_decomposition.total, or null when confidence_decomposition is absent on the entity.
+     */
+    score: number | null;
+    /**
+     * True when the entity needs human review per review-emitter.needsReview — score < reviewThreshold OR tier === 'unknown'.
+     */
+    flaggedForReview: boolean;
+    /**
+     * Top-N lowest-scoring sub-signals (ascending by score, stable for ties). Empty array when confidence_decomposition is absent or has no signals. N is options.lowestSignalsN (default 3).
+     */
+    lowestSignals: ReviewQueueSignal[];
+    /**
+     * Mirror of entity.element.name. Surfaced so consuming agents can display the queue without re-resolving the entity from the source manifest.
+     */
+    elementName: string;
+    /**
+     * Mirror of entity.element.type (e.g., ui.surface.card).
+     */
+    elementType: string;
+  }
+  export interface ReviewQueueSignal {
+    /**
+     * Signal identifier from oods.confidence_decomposition.signals[].name.
+     */
+    name: string;
+    /**
+     * Sub-signal score (typically 0–1).
+     */
+    score: number;
+    /**
+     * Optional explanatory hint mirrored from oods.confidence_decomposition.signals[].hint.
+     */
+    hint?: string;
+  }
+  export interface ReviewQueueSummary {
+    /**
+     * Total entities in the source manifest (regardless of flaggedOnly).
+     */
+    entitiesTotal: number;
+    /**
+     * Entities included in entries[] after applying flaggedOnly filter.
+     */
+    entitiesIncluded: number;
+    /**
+     * Count of entities for which needsReview() is true — below threshold OR tier=unknown. Counted across ALL manifest entities, not just included ones.
+     */
+    flaggedCount: number;
+    tierCounts: {
+      high: number;
+      medium: number;
+      low: number;
+      unknown: number;
+    };
+    /**
+     * Effective review threshold (options.reviewThreshold, default 0.7). Surfaced for reproducibility.
+     */
+    reviewThreshold: number;
+    /**
+     * Effective top-N selector for lowestSignals (options.lowestSignalsN, default 3).
+     */
+    lowestSignalsN: number;
+    /**
+     * Effective options.flaggedOnly value (default false).
+     */
+    flaggedOnly: boolean;
+  }
+  export interface ReviewQueueSource {
+    /**
+     * Identifier of the manifest the queue was derived from. Default: manifest.source.agent (or 'unknown' when manifest.source is absent). Surfaced so agents can trace queue → manifest provenance.
+     */
+    sourceManifest: string;
+    /**
+     * Mirror of manifest.source.agent when present.
+     */
+    agent?: string;
+    /**
+     * Mirror of manifest.source.stage when present.
+     */
+    stage?: string;
+    /**
+     * Mirror of manifest.source.captured_at when present.
+     */
+    capturedAt?: string;
+    /**
+     * Mirror of manifest.source.oods_catalog_version when present.
+     */
+    catalogVersion?: string;
+  }
+}
+export type ReviewQueueOutput = ReviewQueueOutputSchema.ReviewQueueOutput;
+
+// Source: review.chain.input.json
+export namespace ReviewChainInputSchema {
+  export type Predicate = PredicateConfidenceThreshold | PredicateSignalTypeFloor | PredicateEntityUrnMatch;
+  export type Decision = 'accept' | 'patch' | 'defer' | 'dismiss';
+
+  /**
+   * Compose the four C5-reframed surfaces (review-queue → review.resolve → conflict-detail → apply-summary) against a server-resident Object Catalog fixture and a policy bundle. Primary consumer is the playground Reconcile view (s105-m04). Fixture name resolved against the same allow-list as fidelity.preview — no caller-supplied paths.
+   */
+  export interface ReviewChainInput {
+    /**
+     * Named server-resident Object Catalog fixture. Allow-listed at the handler — unknown names return OODS-RC-001.
+     */
+    fixture: string;
+    policies: PolicyBundle;
+    options?: {
+      /**
+       * Threshold below which entities are flagged for review by the queue and detail emitters. Default 0.7.
+       */
+      reviewThreshold?: number;
+      /**
+       * Top-N selector for per-entry lowestSignals in the queue artifact. Default 3.
+       */
+      lowestSignalsN?: number;
+      /**
+       * Signal-level threshold used by conflict-detail to classify signal gaps. Default 0.5.
+       */
+      evidenceGapThreshold?: number;
+      /**
+       * Decision applied by review.resolve when no policy matches. Default 'defer'.
+       */
+      defaultAction?: 'accept' | 'patch' | 'defer' | 'dismiss';
+    };
+  }
+  /**
+   * Ordered policy bundle. First match wins per entity; no-match falls to options.defaultAction.
+   */
+  export interface PolicyBundle {
+    /**
+     * Optional bundle identifier echoed in diagnostics.policyBundleId for reproducibility.
+     */
+    id?: string;
+    policies: Policy[];
+  }
+  export interface Policy {
+    id: string;
+    when: Predicate;
+    then: Decision;
+    reason?: string;
+  }
+  export interface PredicateConfidenceThreshold {
+    kind: 'confidence_threshold';
+    threshold: number;
+    matchUnknown?: boolean;
+  }
+  export interface PredicateSignalTypeFloor {
+    kind: 'signal_type_floor';
+    signal: string;
+    floor: number;
+  }
+  export interface PredicateEntityUrnMatch {
+    kind: 'entity_urn_match';
+    urn?: string;
+    pattern?: string;
+  }
+}
+export type ReviewChainInput = ReviewChainInputSchema.ReviewChainInput;
+
+// Source: review.chain.output.json
+export namespace ReviewChainOutputSchema {
+  /**
+   * Composite C5 chain output: queue + resolutions + auditTrail + per-flagged conflictDetails + apply-summary artifact + chain diagnostics. Each artifact's deep shape is validated separately at the per-emitter level (review-queue.output.json, conflict-detail.output.json, apply-summary.output.json). This schema enforces the top-level chain shape only.
+   */
+  export interface ReviewChainOutput {
+    /**
+     * Review-queue artifact. Deep shape validated by review-queue.output.json.
+     */
+    queue: {
+      [k: string]: any;
+    };
+    /**
+     * Per-entity policy resolutions from review.resolve.
+     */
+    resolutions: {
+      urn: string;
+      decision: 'accept' | 'patch' | 'defer' | 'dismiss';
+      reason: string;
+      policyId: string;
+      evaluatedScore?: number | null;
+      evaluatedTier?: 'high' | 'medium' | 'low' | 'unknown';
+      [k: string]: any;
+    }[];
+    /**
+     * review.resolve audit trail echoed verbatim.
+     */
+    auditTrail: {
+      [k: string]: any;
+    };
+    /**
+     * One entry per flaggedForReview entry in queue.entries. detail deep shape validated by conflict-detail.output.json.
+     */
+    conflictDetails: {
+      urn: string;
+      detail: {
+        [k: string]: any;
+      };
+    }[];
+    /**
+     * Apply-summary artifact. Deep shape validated by apply-summary.output.json.
+     */
+    summary: {
+      [k: string]: any;
+    };
+    diagnostics: {
+      fixture: string;
+      fixtureSource: 'allow-list';
+      policyBundleId?: string;
+      entityCount: number;
+      flaggedCount: number;
+    };
+  }
+}
+export type ReviewChainOutput = ReviewChainOutputSchema.ReviewChainOutput;
+
+// Source: review.input.json
+export namespace ReviewInputSchema {
+  /**
+   * Grouped action-parameter tool consolidating the review family (resolve, chain) into one MCP tool. The `action` discriminator selects the per-action body; each branch reproduces the exact per-action input schema (review.resolve.input.json / review.chain.input.json) with `action` added to its allowed properties. Per-action handlers and their behaviour are unchanged — this is a zero-functionality-loss consolidation.
+   */
+  export type ReviewInput = ReviewInput1 & ReviewInput2;
+  export type ReviewInput1 = {
+    [k: string]: any;
+  };
+
+  export interface ReviewInput2 {
+    /**
+     * Which review operation to perform. resolve: apply a policy bundle to a manifest, producing per-entity decisions + audit trail. chain: compose the four C5 surfaces (queue → resolve → conflict-detail → apply-summary) against a server-resident fixture.
+     */
+    action: 'resolve' | 'chain';
+    [k: string]: any;
+  }
+}
+export type ReviewInput = ReviewInputSchema.ReviewInput;
+
+// Source: review.output.json
+export namespace ReviewOutputSchema {
+  /**
+   * Grouped output schema for the review family. anyOf (NOT oneOf) of each per-action output body: per-action outputs share fields (e.g. resolutions/auditTrail/diagnostics) and would match more than one oneOf branch. Each action's exact output schema body is reproduced under $defs and referenced here, so a result valid under the old per-action output schema is valid under this grouped schema, and vice versa for the union.
+   */
+  export type ReviewOutput = ResolveOutput | ChainOutput;
+  export type ResolveOutputDecision = 'accept' | 'patch' | 'defer' | 'dismiss';
+  export type ResolveOutputTier = 'high' | 'medium' | 'low' | 'unknown';
+
+  export interface ResolveOutput {
+    resolutions: ResolveOutputResolution[];
+    auditTrail: {
+      /**
+       * ISO timestamp of evaluation. Echoed for reproducibility.
+       */
+      evaluatedAt: string;
+      defaultAction: ResolveOutputDecision;
+      /**
+       * Number of entities that produced a resolution (entities without a urn are skipped and counted in warnings).
+       */
+      entityCount: number;
+      /**
+       * Verbatim echo of the input policy bundle for reproducibility.
+       */
+      policyBundle: {
+        [k: string]: any;
+      };
+      /**
+       * Sorted unique policy IDs that matched at least one entity.
+       */
+      matchedPolicyIds: string[];
+    };
+    warnings: string[];
+    diagnostics: {
+      source: 'inline' | 'file';
+      /**
+       * Resolved manifest path when source=file. Always relative to projectRoot.
+       */
+      manifestPath: string | null;
+    };
+  }
+  export interface ResolveOutputResolution {
+    urn: string;
+    decision: ResolveOutputDecision;
+    reason: string;
+    /**
+     * ID of the matching policy, or 'default' when no policy matched.
+     */
+    policyId: string;
+    /**
+     * Total score from confidence_decomposition. Null when the field is absent.
+     */
+    evaluatedScore: number | null;
+    evaluatedTier: ResolveOutputTier;
+  }
+  export interface ChainOutput {
+    /**
+     * Review-queue artifact. Deep shape validated by review-queue.output.json.
+     */
+    queue: {
+      [k: string]: any;
+    };
+    /**
+     * Per-entity policy resolutions from review.resolve.
+     */
+    resolutions: {
+      urn: string;
+      decision: 'accept' | 'patch' | 'defer' | 'dismiss';
+      reason: string;
+      policyId: string;
+      evaluatedScore?: number | null;
+      evaluatedTier?: 'high' | 'medium' | 'low' | 'unknown';
+      [k: string]: any;
+    }[];
+    /**
+     * review.resolve audit trail echoed verbatim.
+     */
+    auditTrail: {
+      [k: string]: any;
+    };
+    /**
+     * One entry per flaggedForReview entry in queue.entries. detail deep shape validated by conflict-detail.output.json.
+     */
+    conflictDetails: {
+      urn: string;
+      detail: {
+        [k: string]: any;
+      };
+    }[];
+    /**
+     * Apply-summary artifact. Deep shape validated by apply-summary.output.json.
+     */
+    summary: {
+      [k: string]: any;
+    };
+    diagnostics: {
+      fixture: string;
+      fixtureSource: 'allow-list';
+      policyBundleId?: string;
+      entityCount: number;
+      flaggedCount: number;
+    };
+  }
+}
+export type ReviewOutput = ReviewOutputSchema.ReviewOutput;
+
+// Source: review.resolve.input.json
+export namespace ReviewResolveInputSchema {
+  /**
+   * Resolve low-confidence reconciliation conflicts in an Object Catalog manifest by applying a policy bundle. Each entity gets one decision (accept|patch|defer|dismiss) plus an audit trail. Agent-callable; no playground UI required. Provide either an inline `manifest` object OR a relative `manifestPath`. Exactly one of the two is required.
+   */
+  export type ReviewResolveInput = ReviewResolveInput1 & ReviewResolveInput2;
+  export type Predicate = PredicateConfidenceThreshold | PredicateSignalTypeFloor | PredicateEntityUrnMatch;
+  export type Decision = 'accept' | 'patch' | 'defer' | 'dismiss';
+  export type ReviewResolveInput2 = {
+    [k: string]: any;
+  };
+
+  export interface ReviewResolveInput1 {
+    /**
+     * Inline Object Catalog manifest object. Mutually exclusive with manifestPath.
+     */
+    manifest?: {
+      [k: string]: any;
+    };
+    /**
+     * Project-relative path to a manifest JSON file. Absolute paths and parent-directory traversal (..) are rejected.
+     */
+    manifestPath?: string;
+    /**
+     * Optional override for the project root used to resolve manifestPath. Defaults to process.cwd().
+     */
+    projectRoot?: string;
+    policies: PolicyBundle;
+    /**
+     * Decision applied when no policy matches an entity. Defaults to 'defer' so unmatched items surface for follow-up rather than being silently accepted.
+     */
+    defaultAction?: 'accept' | 'patch' | 'defer' | 'dismiss';
+  }
+  /**
+   * Ordered policy bundle. First match wins per entity; no-match falls to defaultAction.
+   */
+  export interface PolicyBundle {
+    /**
+     * Optional bundle identifier echoed in the audit trail for reproducibility.
+     */
+    id?: string;
+    policies: Policy[];
+  }
+  export interface Policy {
+    id: string;
+    when: Predicate;
+    then: Decision;
+    /**
+     * Human-readable reason surfaced verbatim in the resolution when this policy matches.
+     */
+    reason?: string;
+  }
+  /**
+   * Match when entity.oods.confidence_decomposition.total < threshold. With matchUnknown=true, also matches entities with no confidence_decomposition.
+   */
+  export interface PredicateConfidenceThreshold {
+    kind: 'confidence_threshold';
+    threshold: number;
+    matchUnknown?: boolean;
+  }
+  /**
+   * Match when a named signal's score < floor. Does not match when the signal is absent or when confidence_decomposition is absent.
+   */
+  export interface PredicateSignalTypeFloor {
+    kind: 'signal_type_floor';
+    signal: string;
+    floor: number;
+  }
+  /**
+   * Match by entity URN. Provide exactly one of `urn` (exact string match) or `pattern` (glob with * and ?).
+   */
+  export interface PredicateEntityUrnMatch {
+    kind: 'entity_urn_match';
+    urn?: string;
+    pattern?: string;
+  }
+}
+export type ReviewResolveInput = ReviewResolveInputSchema.ReviewResolveInput;
+
+// Source: review.resolve.output.json
+export namespace ReviewResolveOutputSchema {
+  export type Decision = 'accept' | 'patch' | 'defer' | 'dismiss';
+  export type Tier = 'high' | 'medium' | 'low' | 'unknown';
+
+  /**
+   * Per-entity resolutions + audit trail produced by applying a policy bundle to an Object Catalog manifest.
+   */
+  export interface ReviewResolveOutput {
+    resolutions: Resolution[];
+    auditTrail: {
+      /**
+       * ISO timestamp of evaluation. Echoed for reproducibility.
+       */
+      evaluatedAt: string;
+      defaultAction: Decision;
+      /**
+       * Number of entities that produced a resolution (entities without a urn are skipped and counted in warnings).
+       */
+      entityCount: number;
+      /**
+       * Verbatim echo of the input policy bundle for reproducibility.
+       */
+      policyBundle: {
+        [k: string]: any;
+      };
+      /**
+       * Sorted unique policy IDs that matched at least one entity.
+       */
+      matchedPolicyIds: string[];
+    };
+    warnings: string[];
+    diagnostics: {
+      source: 'inline' | 'file';
+      /**
+       * Resolved manifest path when source=file. Always relative to projectRoot.
+       */
+      manifestPath: string | null;
+    };
+  }
+  export interface Resolution {
+    urn: string;
+    decision: Decision;
+    reason: string;
+    /**
+     * ID of the matching policy, or 'default' when no policy matched.
+     */
+    policyId: string;
+    /**
+     * Total score from confidence_decomposition. Null when the field is absent.
+     */
+    evaluatedScore: number | null;
+    evaluatedTier: Tier;
+  }
+}
+export type ReviewResolveOutput = ReviewResolveOutputSchema.ReviewResolveOutput;
+
 // Source: schema.delete.input.json
 export namespace SchemaDeleteInputSchema {
   export interface SchemaDeleteInput {
@@ -3475,6 +4976,26 @@ export namespace SchemaDeleteOutputSchema {
   }
 }
 export type SchemaDeleteOutput = SchemaDeleteOutputSchema.SchemaDeleteOutput;
+
+// Source: schema.input.json
+export namespace SchemaInputSchema {
+  /**
+   * Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Mirrors the established review.chain discriminated-union precedent using plain JSON-Schema if/then (no AJV discriminator keyword).
+   */
+  export type SchemaInput = SchemaInput1 & SchemaInput2;
+  export type SchemaInput1 = {
+    [k: string]: any;
+  };
+
+  export interface SchemaInput2 {
+    /**
+     * Selects the schema-family operation to dispatch.
+     */
+    action: 'save' | 'load' | 'list' | 'delete';
+    [k: string]: any;
+  }
+}
+export type SchemaInput = SchemaInputSchema.SchemaInput;
 
 // Source: schema.list.input.json
 export namespace SchemaListInputSchema {
@@ -3528,6 +5049,61 @@ export namespace SchemaLoadOutputSchema {
   }
 }
 export type SchemaLoadOutput = SchemaLoadOutputSchema.SchemaLoadOutput;
+
+// Source: schema.output.json
+export namespace SchemaOutputSchema {
+  /**
+   * Grouped output for the schema family. anyOf (NOT oneOf) of each per-action output body — per-action object outputs share fields (name/version/createdAt/tags) and would match more than one oneOf branch. The list branch is a bare array; the delete branch wraps in { deleted, schema }.
+   */
+  export type SchemaOutput =
+    | {
+        name: string;
+        version: number;
+        object?: string;
+        context?: string;
+        author?: string;
+        createdAt: string;
+        updatedAt: string;
+        tags: string[];
+      }
+    | {
+        schemaRef: string;
+        name: string;
+        version: number;
+        object?: string;
+        context?: string;
+        author?: string;
+        createdAt: string;
+        updatedAt: string;
+        tags: string[];
+      }
+    | {
+        name: string;
+        schemaRef: string;
+        version: number;
+        object?: string;
+        context?: string;
+        author?: string;
+        createdAt: string;
+        updatedAt: string;
+        tags: string[];
+      }[]
+    | {
+        deleted: true;
+        schema: {
+          name: string;
+          schemaRef: string;
+          version: number;
+          object?: string;
+          context?: string;
+          author?: string;
+          createdAt: string;
+          updatedAt: string;
+          tags: string[];
+        };
+      };
+}
+export type SchemaOutput = SchemaOutputSchema.SchemaOutput;
 
 // Source: schema.save.input.json
 export namespace SchemaSaveInputSchema {
@@ -3784,11 +5360,24 @@ export type Stage1ProjectionVariant = Stage1ProjectionVariantSchema.Stage1Projec
 
 // Source: structuredData.fetch.input.json
 export namespace StructuredDataFetchInputSchema {
-  export interface StructuredDataFetchInput {
+  export type StructuredDataFetchInput = StructuredDataFetchInput1 & StructuredDataFetchInput2;
+  export type StructuredDataFetchInput2 = {
+    [k: string]: any;
+  };
+
+  export interface StructuredDataFetchInput1 {
     /**
-     * Structured dataset to return.
+     * Local structured dataset to return (components/tokens/manifest). Mutually exclusive with kind+runPath.
      */
-    dataset: 'components' | 'tokens' | 'manifest';
+    dataset?: 'components' | 'tokens' | 'manifest';
+    /**
+     * Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset.
+     */
+    kind?: 'identity_graph' | 'capability_rollup' | 'object_rollup' | 'drift_report';
+    /**
+     * Filesystem path to a Stage1 run directory or its artifacts/ subdirectory. Required when kind is set.
+     */
+    runPath?: string;
     /**
      * Return matched=true without payload when the ETag matches.
      */
@@ -3798,7 +5387,7 @@ export namespace StructuredDataFetchInputSchema {
      */
     includePayload?: boolean;
     /**
-     * Request a specific date-stamped version (e.g., '2026-02-24'). Omit for latest.
+     * Request a specific date-stamped version (e.g., '2026-02-24'). Omit for latest. Applies to dataset mode only.
      */
     version?: string;
     /**
@@ -3813,9 +5402,21 @@ export type StructuredDataFetchInput = StructuredDataFetchInputSchema.Structured
 export namespace StructuredDataFetchOutputSchema {
   export interface StructuredDataFetchOutput {
     /**
-     * Dataset that was requested.
+     * Dataset that was requested (dataset mode only).
      */
-    dataset: 'components' | 'tokens' | 'manifest';
+    dataset?: 'components' | 'tokens' | 'manifest';
+    /**
+     * Stage1 structured artifact kind that was requested (kind mode only).
+     */
+    kind?: 'identity_graph' | 'capability_rollup' | 'object_rollup' | 'drift_report';
+    /**
+     * Stage1 artifact schema_version (kind mode only).
+     */
+    schemaVersion?: string;
+    /**
+     * Stage1 run_id extracted from the artifact (kind mode only).
+     */
+    runId?: string;
     /**
      * Version tag (usually the YYYY-MM-DD stamp from the manifest).
      */
@@ -3870,6 +5471,10 @@ export namespace StructuredDataFetchOutputSchema {
       domainCount?: number;
       patternCount?: number;
       traitOverlayCount?: number;
+      nodeCount?: number;
+      capabilityCount?: number;
+      projectionVariantCount?: number;
+      signalCount?: number;
       tokenCounts?: {
         referenceTokens?: number;
         themeTokens?: number;

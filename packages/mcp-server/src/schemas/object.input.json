@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "object input",
+  "description": "Grouped action-parameter tool consolidating the object.* read family (list, show). The top-level `action` selects which per-action contract applies; each branch reproduces the exact body of the original per-action input schema (object.<action>.input.json) with the discriminator key `action` added to its allowed properties. Zero functionality loss — handlers are delegated unchanged.",
+  "type": "object",
+  "required": ["action"],
+  "properties": {
+    "action": {
+      "enum": ["list", "show"],
+      "description": "Selects the per-action contract: 'list' returns all domain objects with optional filters; 'show' returns the full composed definition for one object."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "action": { "const": "list" } },
+        "required": ["action"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": { "const": "list" },
+          "domain": {
+            "type": "string",
+            "description": "Filter to objects in a specific domain (e.g. 'core.identity', 'saas.billing')"
+          },
+          "maturity": {
+            "type": "string",
+            "enum": ["draft", "alpha", "beta", "stable"],
+            "description": "Filter by metadata maturity level"
+          },
+          "trait": {
+            "type": "string",
+            "description": "Filter to objects composing a given trait (e.g. 'Priceable', 'lifecycle/Stateful')"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "if": {
+        "properties": { "action": { "const": "show" } },
+        "required": ["action"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": { "const": "show" },
+          "name": {
+            "type": "string",
+            "description": "Object name to look up (e.g. 'User', 'Product', 'Invoice')"
+          },
+          "context": {
+            "type": "string",
+            "description": "Optional: filter view_extensions to a single context (e.g. 'detail', 'list', 'form', 'timeline', 'card', 'inline')"
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}
