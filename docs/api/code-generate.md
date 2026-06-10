@@ -11,7 +11,7 @@
 | `dslVersion` | string | No |  | DSL version to use for this request. Defaults to the current version (1.0). |
 | `schema` | _ref_ | No |  | A validated UiSchema tree to generate code from. |
 | `schemaRef` | string | No |  | Reference to a cached UiSchema returned by design.compose. |
-| `framework` | `react` \| `vue` \| `html` | Yes |  | Target framework for code generation. HTML delegates to existing repl.render document mode. |
+| `framework` | `react` \| `vue` \| `html` | Yes |  | Target framework for code generation. HTML delegates to the `repl` tool's `render` action (document mode). |
 | `options` | object | No | `{}` |  |
 | `options.typescript` | boolean | No | `true` | When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML. |
 | `options.styling` | `inline` \| `tokens` \| `tailwind` | No | `"tokens"` | Styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. |

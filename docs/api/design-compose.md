@@ -21,7 +21,7 @@
 | `preferences.tabLabels` | string[] | No |  | Custom tab labels for detail layout. |
 | `preferences.componentOverrides` | Record<string, string> | No |  | Slot-name → component-name overrides (e.g., { 'items': 'Table' }). |
 | `options` | object | No |  |  |
-| `options.validate` | boolean | No | `true` | Auto-validate the generated schema via repl.validate. |
+| `options.validate` | boolean | No | `true` | Auto-validate the generated schema via the `repl` tool's `validate` action. |
 | `options.topN` | integer | No | `3` | Number of component candidates to return per slot. |
 
 ## Output Shape
