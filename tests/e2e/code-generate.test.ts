@@ -187,6 +187,8 @@ describe('code.generate E2E — round-trip pipeline', () => {
       mode: 'full',
       schema: ROUND_TRIP_SCHEMA,
       apply: true,
+      // repl.render now defaults compact; code.generate emits full CSS.
+      output: { compact: false },
     });
 
     expect(htmlResult.status).toBe('ok');

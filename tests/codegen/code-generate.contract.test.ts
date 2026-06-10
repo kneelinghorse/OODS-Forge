@@ -372,6 +372,9 @@ describe('code.generate contracts — HTML', () => {
       mode: 'full',
       schema: NESTED_SCHEMA,
       apply: true,
+      // repl.render now defaults compact (token CSS omitted); code.generate
+      // emits a full standalone document, so compare full-vs-full.
+      output: { compact: false },
     });
 
     expect(codeGenResult.status).toBe('ok');
@@ -392,6 +395,7 @@ describe('code.generate contracts — HTML', () => {
       mode: 'full',
       schema: LAYOUT_SCHEMA,
       apply: true,
+      output: { compact: false }, // full CSS to match code.generate
     });
 
     expect(codeGenResult.status).toBe('ok');
@@ -406,6 +410,7 @@ describe('code.generate contracts — HTML', () => {
       mode: 'full',
       schema: ALL_PROPS_SCHEMA,
       apply: true,
+      output: { compact: false }, // full CSS to match code.generate
     });
 
     expect(codeGenResult.status).toBe('ok');
