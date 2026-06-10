@@ -33,7 +33,7 @@ describe('repl.render fragment mode', () => {
       mode: 'full',
       schema: fragmentSchema,
       apply: true,
-      output: { format: 'fragments', strict: false },
+      output: { format: 'fragments', strict: false, compact: false },
     });
 
     expect(result.status).toBe('ok');
@@ -41,6 +41,7 @@ describe('repl.render fragment mode', () => {
     expect(result.output).toEqual({ format: 'fragments', strict: false });
     expect(result.fragments).toBeDefined();
     expect(result.css).toBeDefined();
+    expect(result.css?.['css.tokens']).toBeDefined();
     expect(Object.keys(result.fragments ?? {})).toEqual(['fragment-button', 'fragment-card', 'fragment-badge']);
 
     const button = result.fragments?.['fragment-button'];
@@ -62,7 +63,7 @@ describe('repl.render fragment mode', () => {
       mode: 'full',
       schema: fragmentSchema,
       apply: true,
-      output: { format: 'fragments', includeCss: false },
+      output: { format: 'fragments', includeCss: false, compact: false },
     });
 
     expect(result.status).toBe('ok');
@@ -92,7 +93,7 @@ describe('repl.render fragment mode', () => {
       mode: 'full',
       schema: fragmentSchema,
       apply: true,
-      output: { format: 'document', strict: true },
+      output: { format: 'document', strict: true, compact: false },
     });
     expect(explicitDocument.status).toBe('ok');
     expect(explicitDocument.html).toContain('<!DOCTYPE html>');
@@ -107,6 +108,6 @@ describe('repl.render fragment mode', () => {
     expect(defaultDocument.status).toBe('ok');
     expect(defaultDocument.html).toContain('<!DOCTYPE html>');
     expect(defaultDocument.fragments).toBeUndefined();
-    expect(defaultDocument.output).toEqual({ format: 'document', strict: false });
+    expect(defaultDocument.output).toEqual({ format: 'document', strict: false, compact: true });
   });
 });

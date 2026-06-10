@@ -498,9 +498,11 @@ jobs:
     timeout-minutes: 15
     # Q1 determinism gate — mission-graph V2 axis #7. Runs map.apply at
     # 100/500/1000 mapping states in parallel via vitest's default threads
-    # pool. Separate from the release gate (#408 closeout boundary) until
-    # the 3-sprint determinism streak (s105 baseline → s106/s107 sustain)
-    # demonstrates the suite is reproducibly green.
+    # pool. The 3-sprint reproducibility streak (s105 baseline → s106/s107
+    # sustain = 3/3) is complete, so per #614 this is now a standing release
+    # gate verified at the #408 sprint-closeout boundary (see
+    # cmos/foundational-docs/quality-bars.md); this CI job runs it per-PR for
+    # early signal.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

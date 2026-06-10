@@ -2,6 +2,12 @@ import { describe, expect, it } from 'vitest';
 import type { UiSchema } from '../../src/schemas/generated.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
 
+// NOTE: these tests call renderHandle() directly, bypassing AJV. The compact
+// default is true at BOTH layers (schema + handler) so the bridge transport and
+// a direct import behave identically. Tests that need the full token CSS pass
+// output.compact=false explicitly; the AJV schema-default injection is covered
+// in repl.group.test.ts.
+
 const testSchema: UiSchema = {
   version: '2026.02',
   screens: [
@@ -35,12 +41,12 @@ describe('repl.render compact mode', () => {
       expect(result.output).toEqual({ format: 'document', strict: false, compact: true });
     });
 
-    it('includes token CSS by default (compact=false)', async () => {
+    it('includes token CSS when compact=false (explicit opt-out)', async () => {
       const result = await renderHandle({
         mode: 'full',
         schema: testSchema,
         apply: true,
-        output: { format: 'document' },
+        output: { format: 'document', compact: false },
       });
 
       expect(result.status).toBe('ok');
@@ -90,12 +96,12 @@ describe('repl.render compact mode', () => {
       expect(result.output).toEqual({ format: 'fragments', strict: false, compact: true });
     });
 
-    it('includes css.tokens in fragments by default', async () => {
+    it('includes css.tokens in fragments when compact=false (explicit opt-out)', async () => {
       const result = await renderHandle({
         mode: 'full',
         schema: testSchema,
         apply: true,
-        output: { format: 'fragments' },
+        output: { format: 'fragments', compact: false },
       });
 
       expect(result.status).toBe('ok');
@@ -125,8 +131,8 @@ describe('repl.render compact mode', () => {
     });
   });
 
-  describe('backward compatibility', () => {
-    it('compact defaults to false — no tokenCssRef when omitted', async () => {
+  describe('default behavior', () => {
+    it('compact defaults to true — tokenCssRef present, token CSS omitted when output omitted', async () => {
       const result = await renderHandle({
         mode: 'full',
         schema: testSchema,
@@ -134,8 +140,8 @@ describe('repl.render compact mode', () => {
       });
 
       expect(result.status).toBe('ok');
-      expect(result.tokenCssRef).toBeUndefined();
-      expect(result.html).toContain('data-source="tokens"');
+      expect(result.tokenCssRef).toBe('tokens.build');
+      expect(result.html).not.toContain('data-source="tokens"');
     });
 
     it('no tokenCssRef when apply=false', async () => {

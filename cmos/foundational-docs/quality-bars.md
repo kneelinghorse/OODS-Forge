@@ -47,6 +47,11 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 - **Application:** every sprint's closeout mission has three explicit success criteria: (a) all sprint deliverables committed before session completes, (b) commit message lists mission IDs covered, (c) git status clean at session.complete time. First formal run was sprint-97 m05.
 - **Future tightening:** if a code-heavy sprint demands per-mission bisection later, per-mission discipline can be reintroduced with a different rule scoped only to code-producing missions (not foundation/spec/contract work).
 
+### Scale-determinism (Q1) verified green at sprint close
+- **Rule:** Every sprint closeout verifies the scale-determinism suite (`pnpm --filter @oods/mcp-server run test:scale`) green at 100/500/1000 — the Q1 mission-graph release gate (V2 axis #7, decision #614). This sprint-close/#408 boundary is the load-bearing gate; the standalone `scale-determinism` CI job runs it per-PR for early signal.
+- **Why:** The 3-sprint reproducibility streak (s105=1/3 baseline, s106=2/3, s107=3/3) completed per #614, flipping the gate from "prove it's reproducible" to "keep it reproducible." Determinism regressions in `map.apply` are silent and only surface at scale; the closeout check is what holds the property sprint-over-sprint instead of letting it drift. Resolved at s107-retro (PS-2026-06-10-004) as a closeout criterion rather than a CI aggregator gate job — `ci.yml` has no release-gate job; the #408 closeout boundary is the gate.
+- **Application:** the closeout mission's success criteria add (d) `test:scale` green at 100/500/1000 before session.complete. First formal run: the s107-retro pass.
+
 ---
 
 ## Decision Conventions

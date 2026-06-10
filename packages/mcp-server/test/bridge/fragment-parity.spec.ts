@@ -129,7 +129,7 @@ describe('bridge fragment parity', () => {
       mode: 'full',
       schema,
       apply: true,
-      output: { format: 'fragments', strict: false, includeCss: true },
+      output: { format: 'fragments', strict: false, includeCss: true, compact: false },
     };
 
     const [bridgeResult, directResult] = await Promise.all([
