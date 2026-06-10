@@ -51,6 +51,9 @@ jobs:
       - name: Build packages
         run: pnpm run build:packages
 
+      - name: Check generated schema types are fresh
+        run: pnpm --filter @oods/schemas-tools run generate:check
+
       - name: Build workspace
         run: pnpm run build
 

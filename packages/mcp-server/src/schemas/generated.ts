@@ -570,7 +570,7 @@ export namespace CodeGenerateInputSchema {
      */
     schemaRef?: string;
     /**
-     * Target framework for code generation. HTML delegates to existing repl.render document mode.
+     * Target framework for code generation. HTML delegates to the `repl` tool's `render` action (document mode).
      */
     framework: 'react' | 'vue' | 'html';
     options?: {
@@ -1128,7 +1128,7 @@ export namespace DesignComposeInputSchema {
     };
     options?: {
       /**
-       * Auto-validate the generated schema via repl.validate.
+       * Auto-validate the generated schema via the `repl` tool's `validate` action.
        */
       validate?: boolean;
       /**

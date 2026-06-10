@@ -474,6 +474,76 @@ function loadCodeConnectIndex(): StoryIndex {
   return index;
 }
 
+/**
+ * Content/steer props for primitive components whose dataset `traitUsages` are empty,
+ * so `extractPropSchema` would otherwise return `{}` and leave agents unable to learn
+ * the real content prop (Synthesis-Workbench signal, 2026-06: composing Text with
+ * `{content}` rendered an empty <p> because the content prop is actually `text`).
+ *
+ * Source of truth = the per-renderer `consumedProps` + content resolution in
+ * src/render/component-map.ts. Kept honest by a behavioral parity test that renders
+ * each primitive with its advertised prop and asserts the value reaches the HTML.
+ * Layout containers (e.g. Stack) read no scalar props — they take children — so they
+ * are intentionally absent here and keep an empty propSchema.
+ */
+export interface PrimitivePropSchemaEntry {
+  type: 'string' | 'array' | 'boolean' | 'number';
+  description: string;
+}
+
+export const PRIMITIVE_PROP_SCHEMAS: Record<string, Record<string, PrimitivePropSchemaEntry>> = {
+  Text: {
+    text: { type: 'string', description: 'Text content (primary). Falls back to `value`, then the node label.' },
+    value: { type: 'string', description: 'Alternate text content used when `text` is absent.' },
+    as: { type: 'string', description: 'HTML tag override: p, span, small, strong, em, label, or h1–h6 (default p).' },
+  },
+  Button: {
+    label: { type: 'string', description: 'Button label (primary). Falls back to `text`, then the node label.' },
+    text: { type: 'string', description: 'Alternate button label used when `label` is absent.' },
+    type: { type: 'string', description: 'Native button type: button | submit | reset (default button).' },
+  },
+  Card: {
+    body: { type: 'string', description: 'Card body text rendered when no child nodes are supplied.' },
+  },
+  Table: {
+    columns: { type: 'array', description: 'Column definitions: { key, label } objects or plain strings.' },
+    rows: { type: 'array', description: 'Row data: objects keyed by column, arrays, or scalars.' },
+  },
+  Tabs: {
+    tabs: { type: 'array', description: 'Tab definitions: { id, label, panel|content } objects or plain strings.' },
+    activeTab: { type: 'string', description: 'Id of the initially active tab (defaults to the first tab).' },
+  },
+  Input: {
+    value: { type: 'string', description: 'Input value.' },
+    placeholder: { type: 'string', description: 'Placeholder text.' },
+    type: { type: 'string', description: 'Native input type (text, email, number, …; default text).' },
+    name: { type: 'string', description: 'Form field name.' },
+    required: { type: 'boolean', description: 'Marks the field as required.' },
+    disabled: { type: 'boolean', description: 'Disables the input.' },
+  },
+  Select: {
+    options: { type: 'array', description: 'Option list: { value, label } objects or scalars.' },
+    value: { type: 'string', description: 'Selected value (string, or array for multi-select).' },
+  },
+};
+
+/**
+ * Merge primitive content-prop schemas into a component's prop schema without
+ * overriding any trait-derived entry. No-op for non-primitive components.
+ */
+function mergePrimitivePropSchema(
+  componentName: string,
+  propSchema: Record<string, unknown>,
+): void {
+  const primitive = PRIMITIVE_PROP_SCHEMAS[componentName];
+  if (!primitive) return;
+  for (const [propName, entry] of Object.entries(primitive)) {
+    if (!(propName in propSchema)) {
+      propSchema[propName] = { ...entry, source: 'primitive-renderer' };
+    }
+  }
+}
+
 function extractPropSchema(traitUsages: TraitUsage[]): Record<string, unknown> {
   const propSchema: Record<string, unknown> = {};
 
@@ -559,6 +629,7 @@ function enrichComponentsToDetail(
     const source = componentIndex.get(component.name);
     const traitUsages = source?.traitUsages || [];
     const propSchema = extractPropSchema(traitUsages);
+    mergePrimitivePropSchema(component.name, propSchema);
     const slots = extractSlotDefinitions(traitUsages);
 
     return {

@@ -2,8 +2,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { getAjv } from '../../src/lib/ajv.js';
 import inputSchema from '../../src/schemas/catalog.list.input.json' assert { type: 'json' };
 import outputSchema from '../../src/schemas/catalog.list.output.json' assert { type: 'json' };
-import { handle } from '../../src/tools/catalog.list.js';
+import { handle, PRIMITIVE_PROP_SCHEMAS } from '../../src/tools/catalog.list.js';
+import { renderMappedComponent } from '../../src/render/component-map.js';
 import type { CatalogListInput, CatalogListOutput } from '../../src/tools/types.js';
+import type { UiElement } from '../../src/schemas/generated.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -257,6 +259,53 @@ describe('catalog.list', () => {
         expect(propMeta).toBeDefined();
         expect(typeof propMeta).toBe('object');
       });
+    }
+  });
+
+  it('surfaces real content props in propSchema for primitive components (Workbench signal)', async () => {
+    const output: CatalogListOutput = await handle({ detail: 'full' });
+    const byName = new Map(output.components.map((c) => [c.name, c]));
+
+    for (const [componentName, props] of Object.entries(PRIMITIVE_PROP_SCHEMAS)) {
+      const component = byName.get(componentName);
+      expect(component, `${componentName} should be in the catalog`).toBeDefined();
+      if (!component) continue;
+
+      // Primitives have empty traitUsages, so every advertised prop must be surfaced.
+      for (const [propName, entry] of Object.entries(props)) {
+        const surfaced = component.propSchema[propName] as
+          | { type?: string; description?: string; source?: string }
+          | undefined;
+        expect(surfaced, `${componentName}.${propName} should be advertised`).toBeDefined();
+        expect(surfaced?.type).toBe(entry.type);
+        expect(surfaced?.source).toBe('primitive-renderer');
+        expect(typeof surfaced?.description).toBe('string');
+      }
+    }
+
+    // The exact case from the Workbench report: Text advertises `text`, not `content`.
+    const text = byName.get('Text');
+    expect(Object.keys(text?.propSchema ?? {})).toContain('text');
+    expect(Object.keys(text?.propSchema ?? {})).not.toContain('content');
+  });
+
+  it('advertised primitive content props actually render (parity guard vs renderer drift)', () => {
+    const el = (component: string, props: Record<string, unknown>): UiElement =>
+      ({ id: `${component}-1`, component, props }) as UiElement;
+
+    const cases: Array<{ component: string; props: Record<string, unknown>; expected: string }> = [
+      { component: 'Text', props: { text: 'Hello world' }, expected: 'Hello world' },
+      { component: 'Button', props: { label: 'Save changes' }, expected: 'Save changes' },
+      { component: 'Card', props: { body: 'Card body copy' }, expected: 'Card body copy' },
+      { component: 'Select', props: { options: ['Alpha', 'Beta'] }, expected: '<option' },
+      { component: 'Tabs', props: { tabs: ['Overview', 'Details'] }, expected: 'Overview' },
+      { component: 'Table', props: { columns: ['Name'], rows: [{ Name: 'Acme' }] }, expected: 'Name' },
+      { component: 'Input', props: { value: 'typed value' }, expected: 'typed value' },
+    ];
+
+    for (const { component, props, expected } of cases) {
+      const html = renderMappedComponent(el(component, props), '');
+      expect(html, `${component} should render its advertised content prop`).toContain(expected);
     }
   });
 

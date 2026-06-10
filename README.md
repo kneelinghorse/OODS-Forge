@@ -18,7 +18,7 @@ Design system Storybook: https://kneelinghorse.github.io/OODS-Foundry/
 ### 2) Validate (schema checking + accessibility)
 
 - Validate and normalize Design Lab UiSchema payloads (and patches) deterministically.
-- Use `repl.validate` to check trees and `repl.render` to apply patches + emit preview metadata.
+- Use `repl` (`action: validate`) to check trees and `repl` (`action: render`) to render previews + apply patches.
 - Enable `checkA11y: true` to run 18 WCAG contrast rules alongside structural validation.
 - Use `a11y.scan` for a standalone accessibility contrast report against DTCG design tokens.
 
@@ -32,15 +32,15 @@ Design system Storybook: https://kneelinghorse.github.io/OODS-Foundry/
 - Describe what you want in natural language and get a valid UiSchema back.
 - Use `design.compose` for general UI, `viz.compose` for chart schemas, and `pipeline` when you want compose → validate → render → code generation in one call.
 - `schemaRef` values returned by `design.compose`, `viz.compose`, `pipeline`, and `schema.load` expire after 30 minutes unless you persist them with `schema.save`.
-- Auto-validates generated schemas via `repl.validate`.
+- Auto-validates generated schemas via `repl` (`action: validate`).
 
 ### 5) Export + interoperate
 
 - Generate framework-specific code from validated schemas.
 - Use `code.generate` for React/TSX, Vue SFC, or standalone HTML output.
-- Use the `map.*` tools (`create`, `list`, `resolve`, `update`, `delete`) to map external design system components (Material UI, Ant Design, etc.) to OODS traits with prop translations and coercion strategies.
-- Use `schema.save`, `schema.load`, `schema.list`, and `schema.delete` to persist and reuse schema work across sessions.
-- Use `object.list`, `object.show`, and `health` to inspect object definitions and live server readiness.
+- Use the `map` tool (`action`: `create`, `list`, `resolve`, `update`, `delete`) to map external design system components (Material UI, Ant Design, etc.) to OODS traits with prop translations and coercion strategies.
+- Use `schema` (`action`: `save`, `load`, `list`, `delete`) to persist and reuse schema work across sessions.
+- Use `object` (`action`: `list`, `show`) and `health` to inspect object definitions and live server readiness.
 
 ## Two repos, two roles
 
@@ -78,23 +78,24 @@ Full schema and field reference: `docs/mcp/Tool-Specs.md` → "Project-level def
 ## Cross-tool semantics
 
 - `schemaRef` TTL: refs returned by `design.compose`, `viz.compose`, `pipeline`, and `schema.load` last 30 minutes. Persist them with `schema.save` when the workflow spans sessions or multiple review loops.
-- `apply`: write-capable tools default to dry-run/preview behavior. Set `apply: true` only when you want artifacts written or heavy outputs returned. For `repl.render`, HTML/fragments are returned only when `apply: true`.
-- `compact`: `pipeline` defaults to compact render output and returns `tokenCssRef` instead of inlining token CSS. `repl.render` keeps full token CSS by default; opt into compact behavior with `output.compact: true`.
-- Trait names: `catalog.list` and `map.*` use canonical structured-data trait names such as `Stateful` or `Priceable`. `object.list` accepts full or suffix-matched namespaced object traits such as `lifecycle/Stateful` or `Stateful`. `viz.compose` explicit traits use hyphenated viz IDs such as `mark-bar` and `encoding-position-x`.
+- `apply`: write-capable tools default to dry-run/preview behavior. Set `apply: true` only when you want artifacts written or heavy outputs returned. For `repl` (`action: render`), HTML/fragments are returned only when `apply: true`.
+- `compact`: `pipeline` defaults to compact render output and returns `tokenCssRef` instead of inlining token CSS. `repl` (`action: render`) keeps full token CSS by default; opt into compact behavior with `output.compact: true`.
+- Trait names: `catalog.list` and `map` use canonical structured-data trait names such as `Stateful` or `Priceable`. `object.list` accepts full or suffix-matched namespaced object traits such as `lifecycle/Stateful` or `Stateful`. `viz.compose` explicit traits use hyphenated viz IDs such as `mark-bar` and `encoding-position-x`.
 - Override escape hatch: when `design.compose` returns a low-confidence selection or `reviewHint`, pin only that slot with `preferences.componentOverrides`, for example `{"object":"Subscription","context":"detail","preferences":{"componentOverrides":{"tab-0":"Card"}}}`.
 
-## MCP tool surface (31 tools)
+## MCP tool surface (25 tools)
 
 Registry source of truth: `packages/mcp-server/src/tools/registry.json`.
 
-**Auto-registered (22 tools)** — available by default:
+**Auto-registered (16 tools)** — available by default. The five CRUD families are exposed as single action-parameter tools (`repl`, `map`, `schema`, `object`, `review`); select the operation via a top-level `action`, e.g. `repl({action:'render'})` or `map({action:'create'})`:
 
 | Group | Tools |
 |------|-------|
-| Core design/runtime | `tokens.build`, `structuredData.fetch`, `repl.validate`, `repl.render`, `brand.apply`, `catalog.list`, `health` |
-| Composition + generation | `design.compose`, `viz.compose`, `pipeline`, `code.generate` |
-| Mapping + schema persistence | `map.create`, `map.list`, `map.resolve`, `map.update`, `map.delete`, `schema.save`, `schema.load`, `schema.list`, `schema.delete` |
-| Registry inspection | `object.list`, `object.show` |
+| Core design/runtime | `tokens.build`, `structuredData.fetch`, `repl` (`render`/`validate`), `brand.apply`, `catalog.list`, `health` |
+| Composition + generation | `design.compose`, `viz.compose`, `pipeline`, `code.generate`, `fidelity.preview` |
+| Mapping + schema persistence | `map` (`create`/`list`/`resolve`/`update`/`delete`), `schema` (`save`/`load`/`list`/`delete`) |
+| Registry inspection | `object` (`list`/`show`), `registry.snapshot` |
+| Review | `review` (`resolve`/`chain`) |
 
 **On-demand (9 tools)** — enable with `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`:
 
