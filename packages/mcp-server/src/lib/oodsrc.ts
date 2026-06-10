@@ -11,6 +11,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { CodegenFramework, CodegenStyling } from '../tools/types.js';
+import { LAYOUT_INPUT_VALUES, type LayoutInput } from '../compose/layout-types.js';
 
 export interface OodsrcConfig {
   /** Default codegen framework: react | vue | html */
@@ -24,7 +25,7 @@ export interface OodsrcConfig {
   /** Default view context */
   context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
   /** Default layout */
-  layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'auto';
+  layout?: LayoutInput;
   /** Default composition preferences */
   preferences?: {
     theme?: string;
@@ -43,7 +44,7 @@ export interface OodsrcConfig {
 const VALID_FRAMEWORKS = new Set(['react', 'vue', 'html']);
 const VALID_STYLINGS = new Set(['inline', 'tokens', 'tailwind']);
 const VALID_CONTEXTS = new Set(['detail', 'list', 'form', 'timeline', 'card', 'inline']);
-const VALID_LAYOUTS = new Set(['dashboard', 'form', 'detail', 'list', 'auto']);
+const VALID_LAYOUTS = new Set<string>(LAYOUT_INPUT_VALUES);
 
 /** Cached config to avoid re-reading the file on every tool call within a session. */
 let cachedConfig: OodsrcConfig | null = null;

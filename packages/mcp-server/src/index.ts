@@ -41,16 +41,6 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/structuredData.fetch.input.json',
     outputSchema: './schemas/structuredData.fetch.output.json',
   },
-  'repl.validate': {
-    modulePath: './tools/repl.validate.js',
-    inputSchema: './schemas/repl.validate.input.json',
-    outputSchema: './schemas/repl.validate.output.json',
-  },
-  'repl.render': {
-    modulePath: './tools/repl.render.js',
-    inputSchema: './schemas/repl.render.input.json',
-    outputSchema: './schemas/repl.render.output.json',
-  },
   'brand.apply': {
     modulePath: './tools/brand.apply.js',
     inputSchema: './schemas/brand.apply.input.json',
@@ -126,90 +116,51 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/health.input.json',
     outputSchema: './schemas/health.output.json',
   },
-  'map.apply': {
-    modulePath: './tools/map.apply.js',
-    inputSchema: './schemas/map.apply.input.json',
-    outputSchema: './schemas/map.apply.output.json',
-  },
-  'map.create': {
-    modulePath: './tools/map.create.js',
-    inputSchema: './schemas/map.create.input.json',
-    outputSchema: './schemas/map.create.output.json',
-  },
-  'map.list': {
-    modulePath: './tools/map.list.js',
-    inputSchema: './schemas/map.list.input.json',
-    outputSchema: './schemas/map.list.output.json',
-  },
-  'map.resolve': {
-    modulePath: './tools/map.resolve.js',
-    inputSchema: './schemas/map.resolve.input.json',
-    outputSchema: './schemas/map.resolve.output.json',
-  },
-  'map.update': {
-    modulePath: './tools/map.update.js',
-    inputSchema: './schemas/map.update.input.json',
-    outputSchema: './schemas/map.update.output.json',
-  },
-  'map.delete': {
-    modulePath: './tools/map.delete.js',
-    inputSchema: './schemas/map.delete.input.json',
-    outputSchema: './schemas/map.delete.output.json',
-  },
-  'object.list': {
-    modulePath: './tools/object.list.js',
-    inputSchema: './schemas/object.list.input.json',
-    outputSchema: './schemas/object.list.output.json',
-  },
-  'object.show': {
-    modulePath: './tools/object.show.js',
-    inputSchema: './schemas/object.show.input.json',
-    outputSchema: './schemas/object.show.output.json',
-  },
   'registry.snapshot': {
     modulePath: './tools/registry.snapshot.js',
     inputSchema: './schemas/registry.snapshot.input.json',
     outputSchema: './schemas/registry.snapshot.output.json',
-  },
-  'schema.save': {
-    modulePath: './tools/schema/save.js',
-    inputSchema: './schemas/schema.save.input.json',
-    outputSchema: './schemas/schema.save.output.json',
-  },
-  'schema.load': {
-    modulePath: './tools/schema/load.js',
-    inputSchema: './schemas/schema.load.input.json',
-    outputSchema: './schemas/schema.load.output.json',
-  },
-  'schema.list': {
-    modulePath: './tools/schema/list.js',
-    inputSchema: './schemas/schema.list.input.json',
-    outputSchema: './schemas/schema.list.output.json',
-  },
-  'schema.delete': {
-    modulePath: './tools/schema/delete.js',
-    inputSchema: './schemas/schema.delete.input.json',
-    outputSchema: './schemas/schema.delete.output.json',
   },
   'viz.compose': {
     modulePath: './tools/viz.compose.js',
     inputSchema: './schemas/viz.compose.input.json',
     outputSchema: './schemas/viz.compose.output.json',
   },
-  'review.resolve': {
-    modulePath: './tools/review.resolve.js',
-    inputSchema: './schemas/review.resolve.input.json',
-    outputSchema: './schemas/review.resolve.output.json',
-  },
   'fidelity.preview': {
     modulePath: './tools/fidelity.preview.js',
     inputSchema: './schemas/fidelity.preview.input.json',
     outputSchema: './schemas/fidelity.preview.output.json',
   },
-  'review.chain': {
-    modulePath: './tools/review.chain.js',
-    inputSchema: './schemas/review.chain.input.json',
-    outputSchema: './schemas/review.chain.output.json',
+  // --- Grouped action-parameter tools (s107-m01/m01b). Each delegates to the
+  //     retained per-action handler modules via a thin `action` switch; the
+  //     grouped input schema reproduces every per-action body under an
+  //     `action` discriminator, the output schema is an anyOf union. The
+  //     per-action tool *registrations* were removed in m01b (surface cut
+  //     27→16); the handler modules, their schemas, and their tests stay. ---
+  'map': {
+    modulePath: './tools/map.js',
+    inputSchema: './schemas/map.input.json',
+    outputSchema: './schemas/map.output.json',
+  },
+  'schema': {
+    modulePath: './tools/schema/index.js',
+    inputSchema: './schemas/schema.input.json',
+    outputSchema: './schemas/schema.output.json',
+  },
+  'object': {
+    modulePath: './tools/object.js',
+    inputSchema: './schemas/object.input.json',
+    outputSchema: './schemas/object.output.json',
+  },
+  'repl': {
+    modulePath: './tools/repl.js',
+    inputSchema: './schemas/repl.input.json',
+    outputSchema: './schemas/repl.output.json',
+  },
+  'review': {
+    modulePath: './tools/review.js',
+    inputSchema: './schemas/review.input.json',
+    outputSchema: './schemas/review.output.json',
   },
 };
 

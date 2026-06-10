@@ -114,13 +114,15 @@ describe('telemetry/otel', () => {
       expect(exported.attributes['oods.request_id']).toBeUndefined();
     });
 
-    it('emits the 5 named span kinds (compose, validate, render, codegen, map.apply)', () => {
+    // s107-m01b: validate/render consolidated into the `repl` tool and apply
+    // into `map`, so the priority span names are now per grouped tool (the
+    // sub-action lives in the input.action discriminator, not the span name).
+    it('emits the priority named span kinds (compose, repl, codegen, map)', () => {
       const targets = [
         { tool: 'design.compose', expectedName: 'forge.tool.design.compose' },
-        { tool: 'repl.validate', expectedName: 'forge.tool.repl.validate' },
-        { tool: 'repl.render', expectedName: 'forge.tool.repl.render' },
+        { tool: 'repl', expectedName: 'forge.tool.repl' },
         { tool: 'code.generate', expectedName: 'forge.tool.code.generate' },
-        { tool: 'map.apply', expectedName: 'forge.tool.map.apply' },
+        { tool: 'map', expectedName: 'forge.tool.map' },
       ];
 
       for (const t of targets) {

@@ -12,7 +12,7 @@
 | `object` | string | No |  | Object name from the OODS registry (e.g., Subscription, User). |
 | `intent` | string | No |  | Natural-language description of the desired UI. |
 | `context` | `detail` \| `list` \| `form` \| `timeline` \| `card` \| `inline` | No |  | View context for object-aware composition. |
-| `layout` | `dashboard` \| `form` \| `detail` \| `list` \| `card` \| `timeline` \| `auto` | No |  | Layout template to use. |
+| `layout` | `dashboard` \| `form` \| `detail` \| `list` \| `card` \| `timeline` \| `landing` \| `auto` | No |  | Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords. |
 | `preferences` | object | No |  |  |
 | `preferences.theme` | string | No |  | Theme token (e.g., 'light', 'dark'). |
 | `preferences.metricColumns` | integer | No |  | Number of metric columns for dashboard layout. |

@@ -104,7 +104,8 @@ describe('Sprint 71 fixes', () => {
     });
 
     it('documents apply defaults for tools that use apply param', () => {
-      const toolsWithApply = ['tokens.build', 'brand.apply', 'map.apply', 'map.create', 'repl.render'];
+      // s107-m01b: map.apply/map.create/repl.render consolidated into the grouped map/repl tools.
+      const toolsWithApply = ['tokens.build', 'brand.apply', 'map', 'repl'];
       for (const tool of toolsWithApply) {
         expect(descriptions[tool]).toBeDefined();
         expect(descriptions[tool].toLowerCase()).toMatch(/apply/);
@@ -117,8 +118,8 @@ describe('Sprint 71 fixes', () => {
       expect(descriptions['viz.compose']).toMatch(/TTL|expires|30/i);
     });
 
-    it('documents schema.save as persistence path', () => {
-      expect(descriptions['schema.save']).toMatch(/persist|TTL/i);
+    it('documents schema (action=save) as persistence path', () => {
+      expect(descriptions['schema']).toMatch(/persist|TTL/i);
     });
 
     it('documents availableCategories for catalog.list', () => {

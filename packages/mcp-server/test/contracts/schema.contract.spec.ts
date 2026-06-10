@@ -298,7 +298,7 @@ describe('formatValidationErrors', () => {
 });
 
 describe('formatSchemaInputError', () => {
-  it('adds patch hints for repl.validate patch errors', () => {
+  it('adds patch hints for repl (validate) patch errors', () => {
     const errors = [
       {
         keyword: 'required',
@@ -308,7 +308,8 @@ describe('formatSchemaInputError', () => {
       },
     ];
 
-    const result = formatSchemaInputError('repl.validate', errors as any);
+    // s107-m01b: the framework dispatches the grouped `repl` tool (action=validate).
+    const result = formatSchemaInputError('repl', errors as any);
     expect(result.hint).toContain('Valid patch examples');
     expect(result.expected?.patch).toContain('JSON Patch');
   });

@@ -2,6 +2,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { compile, type Options } from 'json-schema-to-typescript';
 
 type CliArgs = {
@@ -10,7 +11,12 @@ type CliArgs = {
   check: boolean;
 };
 
-const DEFAULT_SCHEMAS_DIR = path.resolve(process.cwd(), 'packages/mcp-server/src/schemas');
+// Resolve defaults from this file's location (repo-root-relative), NOT the
+// current working directory — running the generator from packages/schemas-tools
+// used to nest a stray copy at packages/schemas-tools/packages/mcp-server/...
+// (s106 review). Explicit --schemas/--out overrides still resolve against cwd.
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+const DEFAULT_SCHEMAS_DIR = path.resolve(REPO_ROOT, 'packages/mcp-server/src/schemas');
 const DEFAULT_OUT_FILE = path.resolve(DEFAULT_SCHEMAS_DIR, 'generated.ts');
 
 function printUsage(): void {

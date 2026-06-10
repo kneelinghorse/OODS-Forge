@@ -12,13 +12,16 @@ function read(relativePath: string): string {
 
 describe('s90 registration audit', () => {
   const requiredMentions: Array<{ label: string; file: string; patterns: string[] }> = [
-    { label: 'registry.json', file: 'packages/mcp-server/src/tools/registry.json', patterns: ['"map.apply"', '"registry.snapshot"'] },
-    { label: 'registry.ts', file: 'packages/mcp-server/src/tools/registry.ts', patterns: ["'map.apply'", "'registry.snapshot'"] },
-    { label: 'policy.json', file: 'packages/mcp-server/src/security/policy.json', patterns: ['"tool": "map.apply"', '"tool": "registry.snapshot"'] },
-    { label: 'generated.ts', file: 'packages/mcp-server/src/schemas/generated.ts', patterns: ['// Source: map.apply.input.json', '// Source: registry.snapshot.input.json'] },
-    { label: 'tool-descriptions.json', file: 'packages/mcp-adapter/tool-descriptions.json', patterns: ['"map.apply"', '"registry.snapshot"'] },
-    { label: 'mcp-bridge config', file: 'packages/mcp-bridge/src/config.ts', patterns: ["name: 'map.apply'", "name: 'registry.snapshot'"] },
-    { label: 'server index', file: 'packages/mcp-server/src/index.ts', patterns: ["'map.apply': {", "'registry.snapshot': {"] },
+    // s107-m01b: the per-action tool names (map.apply, …) were consolidated into
+    // grouped action-parameter tools and their standalone registrations removed.
+    // Track the grouped `map` tool here; registry.snapshot stays as a standalone control.
+    { label: 'registry.json', file: 'packages/mcp-server/src/tools/registry.json', patterns: ['"map"', '"registry.snapshot"'] },
+    { label: 'registry.ts', file: 'packages/mcp-server/src/tools/registry.ts', patterns: ["'map'", "'registry.snapshot'"] },
+    { label: 'policy.json', file: 'packages/mcp-server/src/security/policy.json', patterns: ['"tool": "map"', '"tool": "registry.snapshot"'] },
+    { label: 'generated.ts', file: 'packages/mcp-server/src/schemas/generated.ts', patterns: ['// Source: map.input.json', '// Source: registry.snapshot.input.json'] },
+    { label: 'tool-descriptions.json', file: 'packages/mcp-adapter/tool-descriptions.json', patterns: ['"map"', '"registry.snapshot"'] },
+    { label: 'mcp-bridge config', file: 'packages/mcp-bridge/src/config.ts', patterns: ["name: 'map'", "name: 'registry.snapshot'"] },
+    { label: 'server index', file: 'packages/mcp-server/src/index.ts', patterns: ["'map': {", "'registry.snapshot': {"] },
     { label: 'error registry', file: 'packages/mcp-server/src/errors/registry.ts', patterns: ['OODS-V201', 'OODS-N014'] },
   ];
 

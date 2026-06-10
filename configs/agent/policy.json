@@ -10,7 +10,9 @@
     "concurrency": 1
   },
   "defaults": {
-    "modes": ["dry-run"],
+    "modes": [
+      "dry-run"
+    ],
     "approval": "optional",
     "ratePerMinute": 12,
     "concurrency": 1
@@ -27,273 +29,319 @@
     {
       "name": "diag.snapshot",
       "description": "Diagnostics snapshot (artifacts + bundle index)",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 12
     },
     {
       "name": "reviewKit.create",
       "description": "Creates review kit bundle for stories or contexts",
-      "modes": ["dry-run", "apply"],
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "required",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "brand.apply",
       "description": "Applies brand tokens to repository artifacts",
-      "modes": ["dry-run", "apply"],
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "required",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 12
     },
     {
       "name": "billing.reviewKit",
       "description": "Builds billing review kit bundle",
-      "modes": ["dry-run", "apply"],
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "required",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "billing.switchFixtures",
       "description": "Switches billing fixtures in repo contexts",
-      "modes": ["dry-run", "apply"],
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "required",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "purity.audit",
       "description": "Runs UI purity audit",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 6
     },
     {
       "name": "vrt.run",
       "description": "Runs Chromatic/VR test harness",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 6
     },
     {
       "name": "a11y.scan",
       "description": "Runs accessibility scans on curated stories",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 6
     },
     {
       "name": "release.verify",
       "description": "Pre-release verification checks",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["maintainer"],
+      "allow": [
+        "maintainer"
+      ],
       "ratePerMinute": 6
     },
     {
       "name": "release.tag",
       "description": "Tags release candidate",
-      "modes": ["dry-run", "apply"],
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "required",
-      "allow": ["maintainer"],
+      "allow": [
+        "maintainer"
+      ],
       "ratePerMinute": 6
     },
     {
       "name": "tokens.build",
       "description": "Builds token artifacts for storybook",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 12
     },
     {
       "name": "structuredData.fetch",
       "description": "Fetches structured component/token/manifest datasets",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "repl.validate",
-      "description": "Validates Agentic REPL UI JSON against the DSL and registry",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "repl.render",
-      "description": "Applies REPL patches or full trees for preview generation",
-      "modes": ["dry-run", "apply"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "catalog.list",
       "description": "Lists component catalog with filtering and code references",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "code.generate",
       "description": "Generates framework-specific code from validated UiSchema",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "design.compose",
       "description": "Composes UiSchema from intent using layout templates and component selection",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "pipeline",
       "description": "Runs compose, validate, render, and code generation in a single call with optional schema persistence",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "viz.compose",
       "description": "Composes visualization schema from chart type, data bindings, and object viz traits",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 20
     },
     {
       "name": "health",
       "description": "MCP server readiness and subsystem status",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 30
-    },
-    {
-      "name": "object.list",
-      "description": "List OODS objects with optional filtering",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "object.show",
-      "description": "Show full OODS object definition including traits and view extensions",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "schema.save",
-      "description": "Persist a composed UiSchema by name from schemaRef",
-      "modes": ["dry-run", "apply"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "schema.load",
-      "description": "Load a previously saved schema by name",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "schema.list",
-      "description": "List saved schema metadata with optional filtering",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "schema.delete",
-      "description": "Delete a saved schema by name",
-      "modes": ["dry-run", "apply"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 12
-    },
-    {
-      "name": "map.apply",
-      "description": "Apply a Stage1 reconciliation_report to the mapping registry (dry-run by default)",
-      "modes": ["dry-run", "apply"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "map.create",
-      "description": "Create component-to-trait mapping between external design system and OODS",
-      "modes": ["dry-run", "apply"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "map.list",
-      "description": "List component-to-trait mappings with optional filtering",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "map.resolve",
-      "description": "Resolve external component to OODS trait mapping with property translations",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "map.update",
-      "description": "Update an existing component-to-trait mapping by ID",
-      "modes": ["dry-run", "apply"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "map.delete",
-      "description": "Delete a component-to-trait mapping by ID",
-      "modes": ["dry-run", "apply"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 12
     },
     {
       "name": "fidelity.preview",
       "description": "Render an Object Catalog manifest through one of the non-production HTML fidelity emitters (boxes-arrows, wireframe, review, branded-mockup) by named fixture.",
-      "modes": ["dry-run"],
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 30
     },
     {
-      "name": "review.chain",
-      "description": "Compose the C5 chain (review-queue → review.resolve → conflict-detail → apply-summary) against a server-resident Object Catalog fixture and a policy bundle. Read-only; surfaces agent-readable JSON artifacts for the playground Reconcile view.",
-      "modes": ["dry-run"],
+      "name": "map",
+      "description": "Grouped mapping-registry tool. action: apply|create|list|resolve|update|delete. Consolidates the map.* family; same per-action behavior selected by the action discriminator.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "schema",
+      "description": "Grouped schema-store tool. action: save|load|list|delete. Consolidates the schema.* family; same per-action behavior selected by the action discriminator.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "object",
+      "description": "Grouped object-registry tool. action: list|show. Consolidates the object.* family; same per-action behavior selected by the action discriminator.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "repl",
+      "description": "Grouped Design Lab REPL tool. action: render|validate. Consolidates the repl.* family; same per-action behavior selected by the action discriminator.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "review",
+      "description": "Grouped reconciliation-review tool. action: resolve|chain. Consolidates the review.* family; same per-action behavior selected by the action discriminator.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 30
     }
   ],
@@ -311,24 +359,16 @@
         "billing.reviewKit",
         "billing.switchFixtures",
         "structuredData.fetch",
-        "repl.validate",
-        "repl.render",
         "catalog.list",
         "code.generate",
         "design.compose",
         "pipeline",
         "viz.compose",
-        "object.list",
-        "object.show",
-        "schema.save",
-        "schema.load",
-        "schema.list",
-        "schema.delete",
-        "map.create",
-        "map.list",
-        "map.resolve",
-        "map.update",
-        "map.delete"
+        "map",
+        "schema",
+        "object",
+        "repl",
+        "review"
       ],
       "notes": "Apply requests must include the approval header value defined above."
     },
@@ -337,7 +377,23 @@
       "provider": "openai",
       "role": "designer",
       "defaultMode": "dry-run",
-      "tools": ["health", "diag.snapshot", "brand.apply", "reviewKit.create", "structuredData.fetch", "repl.validate", "repl.render", "catalog.list", "code.generate", "design.compose", "pipeline", "viz.compose", "object.list", "object.show", "schema.save", "schema.load", "schema.list", "schema.delete", "map.create", "map.list", "map.resolve", "map.update", "map.delete"],
+      "tools": [
+        "health",
+        "diag.snapshot",
+        "brand.apply",
+        "reviewKit.create",
+        "structuredData.fetch",
+        "catalog.list",
+        "code.generate",
+        "design.compose",
+        "pipeline",
+        "viz.compose",
+        "map",
+        "schema",
+        "object",
+        "repl",
+        "review"
+      ],
       "notes": "Apply requires approval token and is rate limited to prevent context overrun."
     }
   ]

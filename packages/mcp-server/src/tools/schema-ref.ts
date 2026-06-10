@@ -137,7 +137,7 @@ export function computeTtlWarning(record: SchemaRefRecord, now = nowMs()): TtlWa
     return {
       message: `SchemaRef "${record.ref}" has expired.`,
       remainingMs: 0,
-      recommendation: 'Re-compose to obtain a fresh schemaRef, or use schema.save to persist before expiry.',
+      recommendation: 'Re-compose to obtain a fresh schemaRef, or use schema (action=save) to persist before expiry.',
     };
   }
 
@@ -146,7 +146,7 @@ export function computeTtlWarning(record: SchemaRefRecord, now = nowMs()): TtlWa
     return {
       message: `SchemaRef "${record.ref}" expires in ~${remainingMin} minute${remainingMin === 1 ? '' : 's'}.`,
       remainingMs,
-      recommendation: 'Call schema.save to persist the schema, or re-compose to obtain a fresh schemaRef.',
+      recommendation: 'Call schema (action=save) to persist the schema, or re-compose to obtain a fresh schemaRef.',
     };
   }
 

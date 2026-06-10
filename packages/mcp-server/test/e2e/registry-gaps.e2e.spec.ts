@@ -36,8 +36,8 @@ async function runBridgeRender(port: number, input: ReplRenderInput): Promise<Re
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      tool: 'repl_render',
-      input,
+      tool: 'repl',
+      input: { action: 'render', ...input },
     }),
   });
   const payload = await response.json();

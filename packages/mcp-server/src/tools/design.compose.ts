@@ -44,6 +44,7 @@ import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldP
 import { collectDashboardViewExtensions, collectViewExtensions } from '../compose/view-extension-collector.js';
 import type { SlotPlan } from '../compose/view-extension-collector.js';
 import { expandSlots, groupFieldsIntoSlots, type ExpansionContext } from '../compose/slot-expander.js';
+import type { LayoutType, LayoutInput } from '../compose/layout-types.js';
 import type { FieldPatternMatch } from '../compose/field-patterns.js';
 import { inferSlotPosition } from '../compose/position-affinity.js';
 import { selectPattern, type CompositionContext } from '../compose/slot-patterns.js';
@@ -143,7 +144,7 @@ export interface DesignComposeInput {
   intent?: string;
   object?: string;
   context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
-  layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'landing' | 'auto';
+  layout?: LayoutInput;
   preferences?: {
     theme?: string;
     metricColumns?: number;
@@ -272,7 +273,6 @@ export interface DesignComposeOutput {
 /*  Layout detection                                                   */
 /* ------------------------------------------------------------------ */
 
-type LayoutType = 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'landing';
 type FormFieldSlotConfig = {
   description?: string;
   intent?: string;

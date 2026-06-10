@@ -140,7 +140,7 @@ describe('OodsClient', () => {
 
       await client.schema.save({ name: 'test', schemaRef: 'ref:1' });
 
-      expect(mockCall).toHaveBeenCalledWith('schema.save', { name: 'test', schemaRef: 'ref:1' });
+      expect(mockCall).toHaveBeenCalledWith('schema', { action: 'save', name: 'test', schemaRef: 'ref:1' });
     });
 
     it('schema.load delegates correctly', async () => {
@@ -149,7 +149,7 @@ describe('OodsClient', () => {
 
       await client.schema.load({ name: 'test' });
 
-      expect(mockCall).toHaveBeenCalledWith('schema.load', { name: 'test' });
+      expect(mockCall).toHaveBeenCalledWith('schema', { action: 'load', name: 'test' });
     });
 
     it('schema.list delegates correctly', async () => {
@@ -158,7 +158,7 @@ describe('OodsClient', () => {
 
       await client.schema.list({ tags: ['v1'] });
 
-      expect(mockCall).toHaveBeenCalledWith('schema.list', { tags: ['v1'] });
+      expect(mockCall).toHaveBeenCalledWith('schema', { action: 'list', tags: ['v1'] });
     });
 
     it('schema.delete delegates correctly', async () => {
@@ -167,7 +167,7 @@ describe('OodsClient', () => {
 
       await client.schema.delete({ name: 'test' });
 
-      expect(mockCall).toHaveBeenCalledWith('schema.delete', { name: 'test' });
+      expect(mockCall).toHaveBeenCalledWith('schema', { action: 'delete', name: 'test' });
     });
   });
 
@@ -178,7 +178,7 @@ describe('OodsClient', () => {
 
       await client.objects.list({ domain: 'core.identity' });
 
-      expect(mockCall).toHaveBeenCalledWith('object.list', { domain: 'core.identity' });
+      expect(mockCall).toHaveBeenCalledWith('object', { action: 'list', domain: 'core.identity' });
     });
 
     it('objects.show delegates correctly', async () => {
@@ -187,7 +187,7 @@ describe('OodsClient', () => {
 
       await client.objects.show({ name: 'User' });
 
-      expect(mockCall).toHaveBeenCalledWith('object.show', { name: 'User' });
+      expect(mockCall).toHaveBeenCalledWith('object', { action: 'show', name: 'User' });
     });
   });
 
@@ -202,7 +202,8 @@ describe('OodsClient', () => {
         oodsTraits: ['Clickable'],
       });
 
-      expect(mockCall).toHaveBeenCalledWith('map.create', {
+      expect(mockCall).toHaveBeenCalledWith('map', {
+        action: 'create',
         externalSystem: 'mui',
         externalComponent: 'Button',
         oodsTraits: ['Clickable'],

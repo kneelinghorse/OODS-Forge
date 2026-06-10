@@ -17,6 +17,7 @@ import type { UiElement } from '../schemas/generated.js';
 import type { TemplateResult } from './templates/types.js';
 import { uid, slotElement } from './templates/types.js';
 import type { FieldDefinition } from '../objects/types.js';
+import type { LayoutType } from './layout-types.js';
 import { detectFieldPatterns, type FieldPatternMatch } from './field-patterns.js';
 
 /* ------------------------------------------------------------------ */
@@ -42,7 +43,7 @@ export interface ExpansionResult {
 
 export interface ExpansionContext {
   /** Layout type */
-  layout: 'detail' | 'dashboard' | 'form' | 'list' | 'card' | 'timeline' | 'landing';
+  layout: LayoutType;
   /** Object field schema */
   fields: Record<string, FieldDefinition>;
   /** Semantic types from object (maps field name to semantic type) */
