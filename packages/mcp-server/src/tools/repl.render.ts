@@ -39,7 +39,13 @@ function normalizeStrict(input: ReplRenderInput): boolean {
 }
 
 function normalizeCompact(input: ReplRenderInput): boolean {
-  return input.output?.compact ?? false;
+  // Default compact=true: omit the ~79KB token CSS so MCP responses stay within
+  // result-size caps (Workbench signal). Kept in lock-step with the schema
+  // default (repl.render.input.json / repl.input.json) so the bridge transport
+  // and a direct handler import produce identical output — the transparency
+  // invariant the bridge/e2e parity tests guard. Opt back into full token CSS
+  // with output.compact=false (or fetch it via the tokenCssRef + tokens.build).
+  return input.output?.compact ?? true;
 }
 
 function normalizeIncludeCss(input: ReplRenderInput): boolean {

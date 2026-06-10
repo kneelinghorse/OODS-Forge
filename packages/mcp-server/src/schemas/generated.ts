@@ -3735,7 +3735,7 @@ export namespace ReplRenderInputSchema {
       strict?: boolean;
       includeCss?: boolean;
       /**
-       * When true, omit the full token CSS from the response and return a tokenCssRef instead. Reduces response size by ~40%. Default false for repl.render, true for pipeline.
+       * When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Reduces response size by ~40%. Defaults to true to keep MCP responses within result-size caps.
        */
       compact?: boolean;
       /**

@@ -102,6 +102,42 @@ describe('tools/repl grouped action-parameter consolidation', () => {
     }
   });
 
+  describe('compact default flip (Workbench signal): MCP surface defaults to compact', () => {
+    // Workbench hit MCP result-size caps because repl.render inlined ~79KB of
+    // token CSS. The default is now compact=true at both layers (schema +
+    // handler), so AJV injects it on the validated tool path and a direct
+    // handler import behaves identically — see normalizeCompact() in
+    // repl.render.ts.
+    it('grouped repl render injects compact=true when output omits it', () => {
+      const payload = {
+        action: 'render',
+        schema: UI_SCHEMA,
+        output: { format: 'document' },
+      } as Record<string, unknown>;
+      expect(validateGroupedIn(payload)).toBe(true);
+      expect((payload.output as Record<string, unknown>).compact).toBe(true);
+    });
+
+    it('per-action repl.render schema injects the same compact=true default (parity)', () => {
+      const payload = {
+        schema: UI_SCHEMA,
+        output: { format: 'document' },
+      } as Record<string, unknown>;
+      expect(validateRenderIn(payload)).toBe(true);
+      expect((payload.output as Record<string, unknown>).compact).toBe(true);
+    });
+
+    it('explicit compact=false is preserved (opt-out still works)', () => {
+      const payload = {
+        action: 'render',
+        schema: UI_SCHEMA,
+        output: { format: 'document', compact: false },
+      } as Record<string, unknown>;
+      expect(validateGroupedIn(payload)).toBe(true);
+      expect((payload.output as Record<string, unknown>).compact).toBe(false);
+    });
+  });
+
   describe('negative parity: INVALID payloads are rejected by the grouped schema', () => {
     it('missing action is rejected', () => {
       expect(validateGroupedIn({ schema: UI_SCHEMA })).toBe(false);
