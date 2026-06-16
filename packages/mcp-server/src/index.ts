@@ -126,6 +126,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/viz.compose.input.json',
     outputSchema: './schemas/viz.compose.output.json',
   },
+  'viz.render': {
+    modulePath: './tools/viz.render.js',
+    inputSchema: './schemas/viz.render.input.json',
+    outputSchema: './schemas/viz.render.output.json',
+  },
   'fidelity.preview': {
     modulePath: './tools/fidelity.preview.js',
     inputSchema: './schemas/fidelity.preview.input.json',

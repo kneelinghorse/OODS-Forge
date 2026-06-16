@@ -5707,6 +5707,225 @@ export namespace VizComposeOutputSchema {
 }
 export type VizComposeOutput = VizComposeOutputSchema.VizComposeOutput;
 
+// Source: viz.render.input.json
+export namespace VizRenderInputSchema {
+  /**
+   * Render a real, data-bound visualization spec from inline data rows (or a cached datasetRef). Supply chartType + encodings for explicit mode, or omit chartType to let the recommender choose one from inferred field profiles (suggest mode). Compiles to a Vega-Lite spec; set output.echarts to also return an ECharts option.
+   */
+  export type VizRenderInput = VizRenderInput1 & VizRenderInput2 & VizRenderInput3;
+  export type VizRenderInput1 = {
+    [k: string]: any;
+  };
+  /**
+   * An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+   */
+  export type EncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+      };
+  export type VizRenderInput3 = {
+    [k: string]: any;
+  };
+
+  export interface VizRenderInput2 {
+    /**
+     * DSL version to use for this request. Defaults to the current version (1.0).
+     */
+    dslVersion?: string;
+    /**
+     * Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value.
+     *
+     * @minItems 1
+     * @maxItems 5000
+     */
+    rows?: [
+      {
+        [k: string]: any;
+      },
+      ...{
+        [k: string]: any;
+      }[]
+    ];
+    /**
+     * Reference to a previously cached dataset (schemaRef-style TTL cache) to use instead of inline rows. Provide exactly one of 'rows' or 'datasetRef'.
+     */
+    datasetRef?: string;
+    /**
+     * Beachhead chart type (maps to a mark trait: bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect). Omit to enter suggest mode (the recommender chooses from the inferred field profiles).
+     */
+    chartType?: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+    /**
+     * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
+     */
+    encodings?: {
+      x?: EncodingBinding;
+      y?: EncodingBinding;
+      color?: EncodingBinding;
+      size?: EncodingBinding;
+      shape?: EncodingBinding;
+      detail?: EncodingBinding;
+    };
+    /**
+     * Optional stable identifier for the produced spec.
+     */
+    id?: string;
+    /**
+     * Optional human-friendly chart title.
+     */
+    name?: string;
+    /**
+     * Optional override for the synthesized accessibility description. When omitted, a non-empty description is generated from the encodings.
+     */
+    description?: string;
+    /**
+     * Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior.
+     */
+    output?: {
+      /**
+       * When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps.
+       */
+      compact?: boolean;
+      /**
+       * Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec. Decision 3: Vega-Lite is compact-default, ECharts is opt-in full.
+       */
+      echarts?: boolean;
+      /**
+       * When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip).
+       */
+      includeNormalizedSpec?: boolean;
+    };
+  }
+}
+export type VizRenderInput = VizRenderInputSchema.VizRenderInput;
+
+// Source: viz.render.output.json
+export namespace VizRenderOutputSchema {
+  /**
+   * A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The Vega-Lite spec is always present; the ECharts option is opt-in (output.echarts).
+   */
+  export interface VizRenderOutput {
+    /**
+     * Whether rendering succeeded.
+     */
+    status: 'ok' | 'error';
+    /**
+     * Resolved chart type (bar, line, area, scatter, heatmap; empty on error).
+     */
+    chartType?: string;
+    /**
+     * Whether the chart type was supplied explicitly or chosen by the recommender.
+     */
+    mode?: 'explicit' | 'suggest';
+    /**
+     * The compiled, renderable Vega-Lite spec — the primary payload a consumer renders. An empty object on error.
+     */
+    spec: {
+      [k: string]: any;
+    };
+    /**
+     * The compiled ECharts option. Present only when output.echarts was requested (opt-in full path).
+     */
+    echartsSpec?: {
+      [k: string]: any;
+    };
+    /**
+     * The intermediate NormalizedVizSpec IR. Present only when output.includeNormalizedSpec is true.
+     */
+    normalizedSpec?: {
+      [k: string]: any;
+    };
+    /**
+     * The non-empty accessibility description carried by the spec (always synthesized when not provided).
+     */
+    a11yDescription?: string;
+    /**
+     * Present in suggest mode: the recommender pick that drove the chart type.
+     */
+    suggestion?: {
+      patternId: string;
+      score: number;
+    };
+    /**
+     * Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef).
+     */
+    specRef?: string;
+    /**
+     * ISO timestamp when the specRef was created.
+     */
+    specRefCreatedAt?: string;
+    /**
+     * ISO timestamp when the specRef expires.
+     */
+    specRefExpiresAt?: string;
+    /**
+     * Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS.
+     */
+    tokenCssRef?: string;
+    /**
+     * Echoes the normalized output controls used by the renderer.
+     */
+    output?: {
+      compact: boolean;
+      echarts?: boolean;
+      includeNormalizedSpec?: boolean;
+    };
+    /**
+     * Fatal errors (present and non-empty when status is 'error').
+     */
+    errors?: Issue[];
+    /**
+     * Non-fatal issues encountered during rendering.
+     */
+    warnings: Issue[];
+    meta?: {
+      /**
+       * Primary renderer for the spec payload (always vega-lite in Phase 0).
+       */
+      renderer?: 'vega-lite' | 'echarts';
+      /**
+       * Resolved mark trait (e.g. MarkBar).
+       */
+      mark?: string;
+      /**
+       * Number of data rows bound into the spec.
+       */
+      rowCount?: number;
+      /**
+       * Field names present in the data.
+       */
+      fields?: string[];
+      /**
+       * Inferred field profiles (present in suggest mode).
+       */
+      inferredFields?: {
+        name: string;
+        type: 'quantitative' | 'temporal' | 'nominal' | 'ordinal';
+        role: 'measure' | 'dimension';
+        cardinality?: number;
+      }[];
+    };
+  }
+  export interface Issue {
+    code: string;
+    message: string;
+    path?: string;
+    hint?: string;
+    severity?: 'error' | 'warning';
+  }
+}
+export type VizRenderOutput = VizRenderOutputSchema.VizRenderOutput;
+
 // Canonical aliases for shared REPL/UI schema shapes.
 export type UiElement = UiSchemaSchema.UiElement;
 export type UiLayout = UiSchemaSchema.Layout;

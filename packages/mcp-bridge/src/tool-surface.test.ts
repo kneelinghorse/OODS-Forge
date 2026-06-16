@@ -18,6 +18,19 @@ describe('resolveBridgeToolSurface', () => {
     expect(surface.enabled).not.toContain('reviewKit.create');
   });
 
+  it('exposes viz.render on the default bridge surface (bridge<->direct parity)', () => {
+    const surface = resolveBridgeToolSurface(
+      serverCwd,
+      bridgeConfig.tools.allowed,
+      { MCP_TOOLSET: 'default', MCP_EXTRA_TOOLS: '' } as NodeJS.ProcessEnv,
+    );
+    // viz.render is an auto tool in the server registry AND allow-listed on the
+    // bridge, so the bridge-resolved surface must include it — matching the
+    // direct server surface (no exposure drift between the two serving paths).
+    expect(surface.enabled).toContain('viz.render');
+    expect(bridgeConfig.tools.allowed).toContain('viz.render');
+  });
+
   it('includes on-demand tools when MCP_TOOLSET=all', () => {
     const surface = resolveBridgeToolSurface(
       serverCwd,

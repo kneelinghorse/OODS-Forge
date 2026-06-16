@@ -3,7 +3,11 @@ import type { UiSchema } from '../schemas/generated.js';
 
 export type SchemaRefRecord = {
   ref: string;
-  schema: UiSchema;
+  // Loosened UiSchema -> unknown (sprint-109 Decision 1) so the same TTL cache
+  // can hold viz specs/datasets (datasetRef + specRef) as well as UiSchemas.
+  // The UiSchema-typed accessors below preserve type safety for their callers
+  // via internal casts; generic callers use createValueRef / resolveValueRef.
+  schema: unknown;
   source: string;
   createdAt: string;
   expiresAt: string;
@@ -67,7 +71,7 @@ type HydrateSchemaRefOptions = {
   source?: string;
 };
 
-export function hydrateSchemaRef(schema: UiSchema, options: HydrateSchemaRefOptions = {}): SchemaRefRecord {
+export function hydrateSchemaRef(schema: unknown, options: HydrateSchemaRefOptions = {}): SchemaRefRecord {
   const source = options.source ?? 'compose';
   const ref = options.ref?.trim() ? options.ref : buildRef(source);
   const createdAtMs = nowMs();
@@ -102,7 +106,9 @@ export function resolveSchemaRef(ref: string): { ok: true; record: SchemaRefReco
     CACHE.delete(ref);
     return { ok: false, reason: 'expired' };
   }
-  return { ok: true, record, schema: structuredClone(record.schema) };
+  // The UiSchema-typed accessors only resolve refs created via createSchemaRef,
+  // so this cast is sound; generic values use resolveValueRef.
+  return { ok: true, record, schema: structuredClone(record.schema) as UiSchema };
 }
 
 export function describeSchemaRef(record: SchemaRefRecord): Pick<SchemaRefRecord, 'ref' | 'source' | 'createdAt' | 'expiresAt'> {
@@ -112,6 +118,25 @@ export function describeSchemaRef(record: SchemaRefRecord): Pick<SchemaRefRecord
     createdAt: record.createdAt,
     expiresAt: record.expiresAt,
   };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Generic value refs (sprint-109 m04) — same TTL cache, any value.  */
+/*  Used by viz.render for datasetRef (input) + specRef (output).     */
+/* ------------------------------------------------------------------ */
+
+export function createValueRef(value: unknown, source = 'value'): SchemaRefRecord {
+  return hydrateSchemaRef(value, { source });
+}
+
+export function resolveValueRef(
+  ref: string,
+): { ok: true; record: SchemaRefRecord; value: unknown } | { ok: false; reason: 'missing' | 'expired' } {
+  const result = resolveSchemaRef(ref);
+  if (!result.ok) {
+    return result;
+  }
+  return { ok: true, record: result.record, value: result.schema };
 }
 
 /* ------------------------------------------------------------------ */

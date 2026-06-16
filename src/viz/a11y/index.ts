@@ -1,5 +1,4 @@
-export * from './table-generator.js';
-export * from './narrative-generator.js';
-export * from './equivalence-rules.js';
-export * from './data-analysis.js';
-export * from './facet-table-generator.js';
+// Re-export shim — this module moved to @oods/viz-core (sprint-109 m01 beachhead
+// extraction). Kept so in-repo design-system/Storybook/test consumers stay
+// source-compatible; the full consumer rewire is deferred to Phase 1 (#681).
+export * from '../../../packages/viz-core/src/a11y/index.js';
