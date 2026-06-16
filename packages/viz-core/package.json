@@ -1,0 +1,49 @@
+{
+  "name": "@oods/viz-core",
+  "version": "0.1.0",
+  "description": "Headless visualization engine for the OODS design system: NormalizedVizSpec IR + validator, Vega-Lite/ECharts spec adapters, chart recommender, and accessibility synthesis.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Design System Team",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "visualization",
+    "vega-lite",
+    "echarts",
+    "design-system",
+    "charts",
+    "accessibility"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "prepack": "pnpm run build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@oods/tokens": "workspace:*",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packageManager": "pnpm@9.12.2"
+}

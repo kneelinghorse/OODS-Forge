@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/viz.render.output.json",
+  "title": "Viz render output",
+  "description": "A real, data-bound visualization spec plus the resolved chart type, accessibility description, and any recommender suggestion. Spec-as-payload (the UiSchema component wrapper is deferred to Phase 2). The Vega-Lite spec is always present; the ECharts option is opt-in (output.echarts).",
+  "type": "object",
+  "required": ["status", "spec", "warnings"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"],
+      "description": "Whether rendering succeeded."
+    },
+    "chartType": {
+      "type": "string",
+      "description": "Resolved chart type (bar, line, area, scatter, heatmap; empty on error)."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["explicit", "suggest"],
+      "description": "Whether the chart type was supplied explicitly or chosen by the recommender."
+    },
+    "spec": {
+      "type": "object",
+      "description": "The compiled, renderable Vega-Lite spec — the primary payload a consumer renders. An empty object on error.",
+      "additionalProperties": true
+    },
+    "echartsSpec": {
+      "type": "object",
+      "description": "The compiled ECharts option. Present only when output.echarts was requested (opt-in full path).",
+      "additionalProperties": true
+    },
+    "normalizedSpec": {
+      "type": "object",
+      "description": "The intermediate NormalizedVizSpec IR. Present only when output.includeNormalizedSpec is true.",
+      "additionalProperties": true
+    },
+    "a11yDescription": {
+      "type": "string",
+      "description": "The non-empty accessibility description carried by the spec (always synthesized when not provided)."
+    },
+    "suggestion": {
+      "type": "object",
+      "description": "Present in suggest mode: the recommender pick that drove the chart type.",
+      "required": ["patternId", "score"],
+      "properties": {
+        "patternId": { "type": "string" },
+        "score": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "specRef": {
+      "type": "string",
+      "description": "Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef)."
+    },
+    "specRefCreatedAt": {
+      "type": "string",
+      "description": "ISO timestamp when the specRef was created."
+    },
+    "specRefExpiresAt": {
+      "type": "string",
+      "description": "ISO timestamp when the specRef expires."
+    },
+    "tokenCssRef": {
+      "type": "string",
+      "description": "Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS."
+    },
+    "output": {
+      "type": "object",
+      "description": "Echoes the normalized output controls used by the renderer.",
+      "required": ["compact"],
+      "properties": {
+        "compact": { "type": "boolean" },
+        "echarts": { "type": "boolean" },
+        "includeNormalizedSpec": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue" },
+      "description": "Fatal errors (present and non-empty when status is 'error')."
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue" },
+      "description": "Non-fatal issues encountered during rendering."
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "renderer": {
+          "type": "string",
+          "enum": ["vega-lite", "echarts"],
+          "description": "Primary renderer for the spec payload (always vega-lite in Phase 0)."
+        },
+        "mark": {
+          "type": "string",
+          "description": "Resolved mark trait (e.g. MarkBar)."
+        },
+        "rowCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of data rows bound into the spec."
+        },
+        "fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Field names present in the data."
+        },
+        "inferredFields": {
+          "type": "array",
+          "description": "Inferred field profiles (present in suggest mode).",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "role"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["quantitative", "temporal", "nominal", "ordinal"] },
+              "role": { "type": "string", "enum": ["measure", "dimension"] },
+              "cardinality": { "type": "integer", "minimum": 0 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "path": { "type": "string" },
+        "hint": { "type": "string" },
+        "severity": { "type": "string", "enum": ["error", "warning"] }
+      },
+      "additionalProperties": false
+    }
+  }
+}

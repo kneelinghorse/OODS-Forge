@@ -29,6 +29,7 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'health',
     'registry.snapshot',
     'viz.compose',
+    'viz.render',
     'fidelity.preview',
     'map',
     'schema',

@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/viz.render.input.json",
+  "title": "Viz render input",
+  "description": "Render a real, data-bound visualization spec from inline data rows (or a cached datasetRef). Supply chartType + encodings for explicit mode, or omit chartType to let the recommender choose one from inferred field profiles (suggest mode). Compiles to a Vega-Lite spec; set output.echarts to also return an ECharts option.",
+  "type": "object",
+  "properties": {
+    "dslVersion": {
+      "type": "string",
+      "description": "DSL version to use for this request. Defaults to the current version (1.0)."
+    },
+    "rows": {
+      "type": "array",
+      "description": "Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value.",
+      "items": { "type": "object", "additionalProperties": true },
+      "minItems": 1,
+      "maxItems": 5000
+    },
+    "datasetRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference to a previously cached dataset (schemaRef-style TTL cache) to use instead of inline rows. Provide exactly one of 'rows' or 'datasetRef'."
+    },
+    "chartType": {
+      "type": "string",
+      "enum": ["bar", "line", "area", "scatter", "heatmap"],
+      "description": "Beachhead chart type (maps to a mark trait: bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect). Omit to enter suggest mode (the recommender chooses from the inferred field profiles)."
+    },
+    "encodings": {
+      "type": "object",
+      "description": "Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).",
+      "properties": {
+        "x": { "$ref": "#/$defs/encodingBinding" },
+        "y": { "$ref": "#/$defs/encodingBinding" },
+        "color": { "$ref": "#/$defs/encodingBinding" },
+        "size": { "$ref": "#/$defs/encodingBinding" },
+        "shape": { "$ref": "#/$defs/encodingBinding" },
+        "detail": { "$ref": "#/$defs/encodingBinding" }
+      },
+      "additionalProperties": false
+    },
+    "id": {
+      "type": "string",
+      "description": "Optional stable identifier for the produced spec."
+    },
+    "name": {
+      "type": "string",
+      "description": "Optional human-friendly chart title."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional override for the synthesized accessibility description. When omitted, a non-empty description is generated from the encodings."
+    },
+    "output": {
+      "type": "object",
+      "description": "Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior.",
+      "properties": {
+        "compact": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps."
+        },
+        "echarts": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec. Decision 3: Vega-Lite is compact-default, ECharts is opt-in full."
+        },
+        "includeNormalizedSpec": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip)."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    { "required": ["rows"] },
+    { "required": ["datasetRef"] }
+  ],
+  "allOf": [
+    {
+      "if": { "required": ["chartType"] },
+      "then": {
+        "required": ["encodings"],
+        "properties": {
+          "encodings": { "required": ["x", "y"] }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "encodingBinding": {
+      "description": "An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.",
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        {
+          "type": "object",
+          "required": ["field"],
+          "properties": {
+            "field": { "type": "string", "minLength": 1 },
+            "aggregate": {
+              "type": "string",
+              "enum": ["sum", "count", "average", "median", "min", "max", "distinct"]
+            },
+            "scale": {
+              "type": "string",
+              "enum": ["linear", "temporal", "log", "sqrt", "band", "point"]
+            },
+            "timeUnit": {
+              "type": "string",
+              "enum": ["year", "quarter", "month", "week", "day", "hour", "minute", "second"]
+            },
+            "sort": {
+              "oneOf": [
+                { "type": "string", "enum": ["none", "ascending", "descending"] },
+                {
+                  "type": "object",
+                  "required": ["field", "order"],
+                  "properties": {
+                    "field": { "type": "string" },
+                    "order": { "type": "string", "enum": ["ascending", "descending"] }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "title": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}
