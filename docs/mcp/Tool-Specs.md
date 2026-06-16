@@ -57,7 +57,7 @@ Precedence: explicit param → `.oodsrc` value → hardcoded default.
 
 ## Cross-tool semantics
 
-- `schemaRef` TTL: refs returned by `design.compose`, `viz.compose`, `pipeline`, and `schema.load` expire after 30 minutes. Persist work with `schema.save` before expiry if you need cross-session reuse.
+- `schemaRef` TTL: refs returned by `design.compose`, `viz.compose`, `pipeline`, and `schema.load` (and the `specRef` trio from `viz.render`) expire after 30 minutes. Persist work with `schema.save` before expiry if you need cross-session reuse.
 - `apply`: write-capable tools default to dry-run/preview behavior. Set `apply: true` only when you want artifacts written or heavy outputs returned. `repl.render` returns HTML/fragments only when `apply: true`.
 - `compact`: `pipeline` defaults to compact render output and returns `tokenCssRef` instead of inlining token CSS. `repl.render` keeps full token CSS by default; opt into compact mode with `output.compact: true`.
 - Trait-name formats vary by tool family:
@@ -314,6 +314,90 @@ Notes:
 - Unknown components in non-strict fragment mode produce per-node errors without blocking sibling rendering.
 - `schemaRef` can be passed instead of `schema` when using a cached schema from `design.compose`.
 - Patch mode requires both `baseTree` and `patch`.
+
+---
+
+### `viz.render`
+
+- **Input schema**: `packages/mcp-server/src/schemas/viz.render.input.json`
+- **Output schema**: `packages/mcp-server/src/schemas/viz.render.output.json`
+- **Policy**: designer, maintainer | read-only (no writes) | timeout 30s | rate 60/min | concurrency 4
+- **Purpose**: Turn inline data `rows` (or a cached `datasetRef`) into a real, renderable Vega-Lite spec via the headless `@oods/viz-core` engine. Supply `chartType` + `encodings` for explicit mode, or omit `chartType` to let the recommender pick one from inferred field profiles (suggest mode). Set `output.echarts: true` to also return an ECharts option. Beachhead chart types: `bar`, `line`, `area`, `scatter`, `heatmap`.
+- **vs `viz.compose`**: `viz.render` replaces the field-names-only `viz.compose` scaffold. It binds the actual data into `data.values`, so the returned spec is genuinely renderable (proven via `vl.compile` + `vega.parse` goldens), not just AJV-valid. `viz.compose` remains callable but is deprecated.
+- **Compact note**: Mirrors `repl.render`/`pipeline` — `output.compact` defaults to `true`, which omits the full token CSS and returns a `tokenCssRef` (fetch the CSS via `tokens.build`); set `output.compact: false` to inline it.
+
+Example input (explicit mode):
+```json
+{
+  "rows": [
+    { "region": "North", "quarter": "2024-01", "revenue": 120000 },
+    { "region": "South", "quarter": "2024-01", "revenue": 135000 }
+  ],
+  "chartType": "bar",
+  "encodings": { "x": "region", "y": { "field": "revenue", "aggregate": "sum" } }
+}
+```
+
+Example input (suggest mode — omit `chartType`, the recommender chooses):
+```json
+{
+  "rows": [
+    { "quarter": "2024-01", "revenue": 120000 },
+    { "quarter": "2024-02", "revenue": 128000 }
+  ]
+}
+```
+
+Example input (ECharts opt-in + inline token CSS):
+```json
+{
+  "rows": [{ "x": "A", "y": 1 }, { "x": "B", "y": 3 }],
+  "chartType": "line",
+  "encodings": { "x": "x", "y": "y" },
+  "output": { "echarts": true, "compact": false }
+}
+```
+
+Example input (cached `datasetRef` instead of inline rows):
+```json
+{
+  "datasetRef": "viz-render-dataset-abc123",
+  "chartType": "scatter",
+  "encodings": { "x": "revenue", "y": "units" }
+}
+```
+
+Example output (compact, explicit mode — abbreviated):
+```json
+{
+  "status": "ok",
+  "mode": "explicit",
+  "chartType": "bar",
+  "spec": {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "data": { "values": [{ "region": "North", "quarter": "2024-01", "revenue": 120000 }] },
+    "mark": { "type": "bar" },
+    "encoding": {
+      "x": { "field": "region", "type": "ordinal" },
+      "y": { "field": "revenue", "type": "quantitative", "aggregate": "sum" }
+    }
+  },
+  "a11yDescription": "Bar chart of sum of revenue by region.",
+  "tokenCssRef": "tokens.build",
+  "specRef": "viz-render-9f1c…",
+  "warnings": [],
+  "output": { "compact": true },
+  "meta": { "renderer": "vega-lite", "mark": "MarkBar", "rowCount": 2, "fields": ["region", "quarter", "revenue"] }
+}
+```
+
+Notes:
+- **Data path**: provide exactly one of `rows` (primary; inline, a few hundred rows is the sweet spot) or `datasetRef` (a previously cached dataset on the schemaRef-style TTL cache). In Phase 0 there is no `datasetRef` producer beyond the value cache, so inline `rows` is the main path.
+- **Explicit vs suggest**: when `chartType` is set, `encodings` with at least `x` and `y` is required. Omit `chartType` to enter suggest mode, where field profiles are inferred and the recommender returns a `suggestion` (`{ patternId, score }`) alongside `inferredFields` in `meta`.
+- **Output controls**: `output.compact` (default `true`) returns `tokenCssRef` instead of inlining token CSS; `output.echarts` (default `false`) also returns `echartsSpec`; `output.includeNormalizedSpec` (default `false`) also returns the intermediate `NormalizedVizSpec` IR.
+- **Renderability**: the `spec` is a compiled Vega-Lite spec that passes `vl.compile` + `vega.parse` (locked by the render-fidelity goldens), with the input rows bound into `data.values` — a consumer (e.g. Workbench) renders it; the server does not SSR.
+- `specRef`/`specRefCreatedAt`/`specRefExpiresAt`: a TTL reference trio for pipeline reuse, mirroring `viz.compose`'s `schemaRef`.
+- Full parameter/output tables: [viz.render](../api/viz-render.md).
 
 ---
 
@@ -990,7 +1074,7 @@ These tools are part of the default auto-registered surface and have full parame
 | `schema.delete` | Delete a saved schema | Removes the saved schema and index metadata entry | [schema.delete](../api/schema-delete.md) |
 | `object.list` | Browse canonical OODS objects | Trait filter accepts `lifecycle/Stateful` or suffix form `Stateful` | [object.list](../api/object-list.md) |
 | `object.show` | Show a full object definition with composed traits and view extensions | Optional context filter narrows the view-extension surface | [object.show](../api/object-show.md) |
-| `viz.compose` | Compose chart schemas from explicit bindings or object viz traits | Explicit `traits` use viz ids such as `mark-bar` and `encoding-position-x` | [viz.compose](../api/viz-compose.md) |
+| `viz.compose` | (Deprecated; use `viz.render`) Compose chart schemas from explicit bindings or object viz traits | Explicit `traits` use viz ids such as `mark-bar` and `encoding-position-x` | [viz.compose](../api/viz-compose.md) |
 
 ---
 
