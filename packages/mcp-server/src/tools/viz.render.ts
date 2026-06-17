@@ -85,19 +85,31 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
         fields: collectFieldNames(rows),
         ...(built.inferredFields
           ? {
-              inferredFields: built.inferredFields.map((f) => ({
-                name: f.name,
-                type: f.type,
-                role: f.role,
-                cardinality: f.cardinality,
-              })),
+              // Project the full data-aware profile (every key is enumerated in
+              // the output schema's inferredFields item; FieldProfile carries no
+              // extra keys, so the spread stays additionalProperties-clean).
+              inferredFields: built.inferredFields.map((f) => ({ ...f })),
             }
           : {}),
       },
     };
 
     if (built.suggestion) {
-      out.suggestion = built.suggestion;
+      // Map explicitly (NOT a spread of built.suggestion) so the engine's
+      // internal `signals` is surfaced as `rationale` and never leaks an
+      // unschema'd key; attach the normalized confidence + runner-up alternatives.
+      out.suggestion = {
+        patternId: built.suggestion.patternId,
+        score: built.suggestion.score,
+        rationale: [...built.suggestion.signals],
+        confidence: normalizeConfidence(built.suggestion.score),
+        ...(built.alternatives && built.alternatives.length > 0
+          ? { alternatives: built.alternatives.map((a) => ({ ...a })) }
+          : {}),
+      };
+    }
+    if (built.lowConfidence !== undefined) {
+      out.lowConfidence = built.lowConfidence;
     }
     if (includeNormalized) {
       out.normalizedSpec = built.spec as unknown as VizRenderOutput['normalizedSpec'];
@@ -130,6 +142,17 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
             : 'OODS-V129';
     return errorOut(code, message, compact, wantEcharts);
   }
+}
+
+// Confidence normalization (s110-m04 design call; default per decision #698:
+// score / max-possible). MAX_MATCH_SCORE is the empirical strong-canonical-match
+// ceiling — three range matches (+4 each), a goal match (+5), ~two attribute
+// matches (+2 each), plus the canonical nudge. A pick at/above it is fully
+// confident; weaker picks scale down linearly, clamped to [0,1].
+const MAX_MATCH_SCORE = 25;
+
+function normalizeConfidence(score: number): number {
+  return Math.max(0, Math.min(1, score / MAX_MATCH_SCORE));
 }
 
 function errorOut(code: string, message: string, compact: boolean, wantEcharts: boolean): VizRenderOutput {

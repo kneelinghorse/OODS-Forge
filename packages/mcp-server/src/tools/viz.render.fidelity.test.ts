@@ -131,4 +131,24 @@ describe('viz.render render fidelity (renderable, not just AJV-valid)', () => {
       assertDrewMarks(svg, svgMark);
     },
   );
+
+  it('suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary', async () => {
+    const out = await render({ rows: SALES });
+    expect(out.status).toBe('ok');
+    expect(out.mode).toBe('suggest');
+
+    const spec = out.spec as unknown as vl.TopLevelSpec;
+    // Data survives end-to-end.
+    expect((spec as Record<string, any>).data?.values).toHaveLength(SALES.length);
+
+    // Golden: lock the CHOSEN chartType + the pristine spec, so a recommendation
+    // change surfaces as a snapshot diff at the render boundary (the CASES above
+    // are all explicit chartType; this is the suggest-mode fidelity case).
+    expect({ chartType: out.chartType, mark: out.meta?.mark, spec }).toMatchSnapshot();
+
+    // Renderable: the recommended chart compiles, parses, and draws real geometry.
+    const svg = await renderSvg(spec);
+    expect(svg).toContain('<svg');
+    expect(svg).toMatch(/<(path|line|rect|symbol)\b/);
+  });
 });

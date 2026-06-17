@@ -1,4 +1,5 @@
 import type { NormalizedVizSpec, TraitBinding } from '../spec/normalized-viz-spec.js';
+import { deriveTrend, pearson, toNumber } from '../analysis/stats.js';
 import { formatDimension, formatNumeric } from './format.js';
 
 export type ChartShape = 'bar' | 'line' | 'point' | 'area' | 'mixed' | 'unknown';
@@ -31,8 +32,6 @@ export interface VizDataAnalysis {
   readonly correlation?: number;
 }
 
-const TREND_EPSILON = 0.015;
-
 export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   const bindings = resolvePrimaryBindings(spec);
   const rows = collectRows(spec);
@@ -47,7 +46,7 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   const dimensionValues = bindings.dimensionField ? extractDimensions(rows, bindings.dimensionField) : [];
   const sizeValues = bindings.sizeField ? extractNumericValues(rows, bindings.sizeField) : [];
   const colorCategories = bindings.colorField ? extractCategories(rows, bindings.colorField) : [];
-  const trendInfo = deriveTrend(first, last);
+  const trendInfo = first && last ? deriveTrend(first.value, last.value) : undefined;
   const correlation = deriveCorrelation(rows, bindings);
 
   return {
@@ -213,17 +212,6 @@ function extractCategories(rows: readonly Record<string, unknown>[], field: stri
   return [...set];
 }
 
-function toNumber(value: unknown): number | null {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value;
-  }
-  if (typeof value === 'string' && value.trim() !== '') {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-  return null;
-}
-
 function findExtreme(points: readonly DataPoint[], kind: 'min' | 'max'): DataPoint | undefined {
   if (points.length === 0) {
     return undefined;
@@ -236,21 +224,6 @@ function findExtreme(points: readonly DataPoint[], kind: 'min' | 'max'): DataPoi
   }, points[0]);
 }
 
-function deriveTrend(first?: DataPoint, last?: DataPoint): { trend: 'increasing' | 'decreasing' | 'flat'; delta: number } | undefined {
-  if (!first || !last) {
-    return undefined;
-  }
-  const delta = last.value - first.value;
-  const relative = first.value !== 0 ? Math.abs(delta / first.value) : Math.abs(delta);
-  if (relative < TREND_EPSILON) {
-    return { trend: 'flat', delta };
-  }
-  return {
-    trend: delta >= 0 ? 'increasing' : 'decreasing',
-    delta,
-  };
-}
-
 function deriveCorrelation(
   rows: readonly Record<string, unknown>[],
   bindings: ReturnType<typeof resolvePrimaryBindings>
@@ -258,35 +231,21 @@ function deriveCorrelation(
   if (!bindings.dimensionField || !bindings.measureField) {
     return undefined;
   }
-  const pairs: Array<[number, number]> = [];
+  const xs: number[] = [];
+  const ys: number[] = [];
   rows.forEach((row) => {
     const x = toNumber(row[bindings.dimensionField as keyof typeof row]);
     const y = toNumber(row[bindings.measureField as keyof typeof row]);
     if (x === null || y === null) {
       return;
     }
-    pairs.push([x, y]);
+    xs.push(x);
+    ys.push(y);
   });
-  if (pairs.length < 3) {
-    return undefined;
-  }
-  const meanX = pairs.reduce((sum, [x]) => sum + x, 0) / pairs.length;
-  const meanY = pairs.reduce((sum, [, y]) => sum + y, 0) / pairs.length;
-  let numerator = 0;
-  let denominatorX = 0;
-  let denominatorY = 0;
-  for (const [x, y] of pairs) {
-    const dx = x - meanX;
-    const dy = y - meanY;
-    numerator += dx * dy;
-    denominatorX += dx * dx;
-    denominatorY += dy * dy;
-  }
-  const denominator = Math.sqrt(denominatorX * denominatorY);
-  if (denominator === 0) {
-    return undefined;
-  }
-  return Number((numerator / denominator).toFixed(3));
+  // The single Pearson implementation lives in analysis/stats. It returns null
+  // for <3 paired points or zero variance — surfaced here as undefined, the
+  // narrator's unchanged contract.
+  return pearson(xs, ys) ?? undefined;
 }
 
 export function describeDataPoint(point: DataPoint | undefined, measureLabel?: string): string | undefined {

@@ -38,7 +38,8 @@
 | `echartsSpec` | object | No | The compiled ECharts option. Present only when output.echarts was requested (opt-in full path). |
 | `normalizedSpec` | object | No | The intermediate NormalizedVizSpec IR. Present only when output.includeNormalizedSpec is true. |
 | `a11yDescription` | string | No | The non-empty accessibility description carried by the spec (always synthesized when not provided). |
-| `suggestion` | object | No | Present in suggest mode: the recommender pick that drove the chart type. |
+| `suggestion` | object | No | Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives. |
+| `lowConfidence` | boolean | No | Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced). |
 | `specRef` | string | No | Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef). |
 | `specRefCreatedAt` | string | No | ISO timestamp when the specRef was created. |
 | `specRefExpiresAt` | string | No | ISO timestamp when the specRef expires. |

@@ -41,13 +41,42 @@
     },
     "suggestion": {
       "type": "object",
-      "description": "Present in suggest mode: the recommender pick that drove the chart type.",
+      "description": "Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives.",
       "required": ["patternId", "score"],
       "properties": {
         "patternId": { "type": "string" },
-        "score": { "type": "number" }
+        "score": { "type": "number" },
+        "rationale": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Human-readable scorer signals explaining why this pattern was chosen (data-aware justifications)."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Normalized confidence in the pick (score / max-match-score, clamped to [0,1])."
+        },
+        "alternatives": {
+          "type": "array",
+          "description": "Runner-up recommendations, best first.",
+          "items": {
+            "type": "object",
+            "required": ["patternId", "score", "chartType"],
+            "properties": {
+              "patternId": { "type": "string" },
+              "score": { "type": "number" },
+              "chartType": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
       },
       "additionalProperties": false
+    },
+    "lowConfidence": {
+      "type": "boolean",
+      "description": "Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced)."
     },
     "specRef": {
       "type": "string",
@@ -118,7 +147,20 @@
               "name": { "type": "string" },
               "type": { "type": "string", "enum": ["quantitative", "temporal", "nominal", "ordinal"] },
               "role": { "type": "string", "enum": ["measure", "dimension"] },
-              "cardinality": { "type": "integer", "minimum": 0 }
+              "cardinality": { "type": "integer", "minimum": 0 },
+              "distinctRatio": { "type": "number", "minimum": 0, "maximum": 1 },
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "mean": { "type": "number" },
+              "stddev": { "type": "number" },
+              "skew": { "type": "number" },
+              "outlierCount": { "type": "integer", "minimum": 0 },
+              "hasNegative": { "type": "boolean" },
+              "hasZero": { "type": "boolean" },
+              "isInteger": { "type": "boolean" },
+              "temporalGranularity": { "type": "string", "enum": ["year", "quarter", "month", "day", "time"] },
+              "temporalRegular": { "type": "boolean" },
+              "geoKind": { "type": "string", "enum": ["lat", "lon", "region", "none"] }
             },
             "additionalProperties": false
           }

@@ -43,6 +43,23 @@ export interface PatternHeuristics {
   readonly requiresGrouping?: boolean;
   readonly allowNegative?: boolean;
   readonly density?: DensityPreference;
+  // --- sprint-110 m03 data-aware constraints (optional; unset = no-op) --------
+  /**
+   * Largest distinct-category count this pattern renders legibly (a slot/legend
+   * cap). When the data's max nominal cardinality exceeds it the pattern is
+   * penalised — promotes the prose "avoid more than N series" cautions to a
+   * scoreable constraint.
+   */
+  readonly maxSeriesCardinality?: number;
+  /** This pattern is the right home for a strongly-correlated measure pair. */
+  readonly prefersCorrelation?: boolean;
+  /**
+   * Canonical perceptual rank (1 = most canonical for its niche). Used as a tiny
+   * sub-integer tie-break nudge so the canonical pattern edges out score-identical
+   * twins BEFORE the alphabetical fallback — never large enough to overturn a
+   * count-shape or goal decision.
+   */
+  readonly perceptualRank?: number;
 }
 
 export interface PatternGuidance {
@@ -142,6 +159,8 @@ const registry = [
       goal: ['comparison'],
       requiresGrouping: true,
       density: 'flex',
+      maxSeriesCardinality: 5,
+      perceptualRank: 1,
     },
     related: ['stacked-bar', 'stacked-100-bar'],
   },
@@ -215,6 +234,7 @@ const registry = [
       stacking: 'required',
       density: 'flex',
       partToWhole: true,
+      maxSeriesCardinality: 5,
     },
     related: ['stacked-100-bar'],
   },
@@ -282,6 +302,7 @@ const registry = [
       stacking: 'required',
       partToWhole: true,
       density: 'flex',
+      maxSeriesCardinality: 5,
     },
     related: ['stacked-bar'],
   },
@@ -338,6 +359,7 @@ const registry = [
       goal: ['comparison'],
       allowNegative: true,
       density: 'sparse',
+      perceptualRank: 1,
     },
     related: ['grouped-bar'],
   },
@@ -402,6 +424,7 @@ const registry = [
       goal: ['trend'],
       requiresGrouping: true,
       density: 'flex',
+      perceptualRank: 1,
     },
     related: ['target-band-line'],
   },
@@ -523,6 +546,7 @@ const registry = [
       temporals: { min: 1, max: 1 },
       goal: ['trend', 'composition'],
       density: 'flex',
+      perceptualRank: 1,
     },
     related: ['target-band-line'],
   },
@@ -649,6 +673,8 @@ const registry = [
       dimensions: { min: 1, max: 2 },
       goal: ['relationship', 'distribution'],
       density: 'flex',
+      prefersCorrelation: true,
+      perceptualRank: 1,
     },
     related: ['bubble-distribution'],
   },
@@ -709,6 +735,7 @@ const registry = [
       goal: ['intensity'],
       matrix: true,
       density: 'dense',
+      perceptualRank: 1,
     },
     related: ['correlation-matrix'],
   },
@@ -769,6 +796,7 @@ const registry = [
       goal: ['relationship', 'intensity'],
       matrix: true,
       density: 'dense',
+      perceptualRank: 2,
     },
     related: ['time-grid-heatmap'],
   },
@@ -1029,6 +1057,7 @@ const registry = [
       goal: ['relationship', 'comparison'],
       density: 'flex',
       multiMetrics: true,
+      perceptualRank: 2,
     },
     related: ['correlation-scatter'],
   },
@@ -1092,6 +1121,7 @@ const registry = [
       requiresGrouping: true,
       density: 'flex',
       concatPreferred: true,
+      perceptualRank: 2,
     },
     related: ['multi-series-line'],
   },
@@ -1151,6 +1181,8 @@ const registry = [
       requiresGrouping: true,
       density: 'flex',
       concatPreferred: true,
+      maxSeriesCardinality: 5,
+      perceptualRank: 2,
     },
     related: ['grouped-bar'],
   },
@@ -1210,6 +1242,7 @@ const registry = [
       goal: ['trend'],
       requiresGrouping: true,
       density: 'dense',
+      perceptualRank: 3,
     },
     related: ['facet-small-multiples-line'],
   },
@@ -1336,6 +1369,7 @@ const registry = [
       stacking: 'required',
       requiresGrouping: true,
       density: 'flex',
+      maxSeriesCardinality: 6,
     },
     related: ['stacked-bar', 'grouped-bar'],
   },
