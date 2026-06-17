@@ -103,7 +103,7 @@ function selectField(stats: FieldStats, tokens: readonly string[]): string | und
         priority: tokenIndex(tokens, token),
       })),
     )
-    .sort((a, b) => b.score - a.score || a.priority - b.priority || a.key.localeCompare(b.key));
+    .sort((a, b) => b.score - a.score || a.priority - b.priority || compareKeys(a.key, b.key));
   return ranked[0]?.key;
 }
 
@@ -134,4 +134,13 @@ function fieldMatchesToken(field: string, token: string): boolean {
 function tokenIndex(tokens: readonly string[], token: string): number {
   const index = tokens.indexOf(token);
   return index >= 0 ? index : tokens.length;
+}
+
+// Locale-INDEPENDENT tie-break: order by UTF-16 code unit, NEVER
+// String.prototype.localeCompare. localeCompare is host-locale / ICU dependent
+// and is spec-permitted to vary across engines — using it here was a determinism
+// hole (same rows could select a different geo field on a different machine).
+// `<`/`>` on strings compares code units, which is deterministic and host-independent.
+function compareKeys(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
 }

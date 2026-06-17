@@ -12,6 +12,9 @@ import {
   type ChartType,
   type SchemaIntent,
 } from '@oods/viz-core';
+// detectGeoFields is an internal profiler helper (not in the public barrel);
+// import it directly to cover its locale-independent tie-break.
+import { detectGeoFields } from '../src/analysis/geo-detection.js';
 
 const SALES = [
   { region: 'North', quarter: '2024-01', revenue: 120000 },
@@ -276,6 +279,36 @@ describe('inferFieldProfile — determinism (the moat)', () => {
     expect(byName.region.geoKind).toBe('region');
     expect(byName.revenue).toMatchObject({ type: 'quantitative', hasNegative: true, hasZero: true });
     expect(byName.month).toMatchObject({ type: 'temporal', temporalGranularity: 'month', temporalRegular: true });
+  });
+});
+
+describe('detectGeoFields — locale-independent tie-break (determinism)', () => {
+  // Both columns match the SAME region token ('region') with equal occurrence, so
+  // they tie on score AND priority and fall to the key tie-break — the path that
+  // previously used host-locale localeCompare (a determinism hole). 'region_code'
+  // sorts before 'sales_region' by UTF-16 code unit ('r' < 's'), so it is the
+  // deterministic winner regardless of column or host locale.
+  it('resolves a score+priority tie by code point, independent of column order', () => {
+    const colsForward = [
+      { region_code: 'A1', sales_region: 'North', value: 1 },
+      { region_code: 'B2', sales_region: 'South', value: 2 },
+    ];
+    const colsReversed = [
+      { sales_region: 'North', region_code: 'A1', value: 1 },
+      { sales_region: 'South', region_code: 'B2', value: 2 },
+    ];
+    expect(detectGeoFields(colsForward).regionField).toBe('region_code');
+    expect(detectGeoFields(colsReversed).regionField).toBe('region_code');
+  });
+
+  it('selects the same geo field across repeated runs', () => {
+    const rows = [
+      { region_code: 'A1', sales_region: 'North' },
+      { region_code: 'B2', sales_region: 'South' },
+    ];
+    const runs = Array.from({ length: 5 }, () => detectGeoFields(rows).regionField);
+    expect(new Set(runs).size).toBe(1);
+    expect(runs[0]).toBe('region_code');
   });
 });
 
