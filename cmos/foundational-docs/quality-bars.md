@@ -58,6 +58,11 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 - **Permanent fix (open, NOT a Forge repo mission):** teach the cmos build-freshness probe the `dist/src/**` layout, or exclude the shim dir — a CMOS-MCP-side change (next-step #400). Until then, this convention holds.
 - **Application:** the closeout mission's success criteria add (e) changed-package dists rebuilt + the `forceComplete` reason recorded when BUILD_STALE fires.
 
+### Frozen-lockfile install + root typecheck at closeout (#740)
+- **Rule:** Every sprint closeout runs `pnpm install --frozen-lockfile` (CI's install mode) and the ROOT `pnpm typecheck` (`tsc --noEmit` over `src/**`) before session.complete — IN ADDITION to the per-package `tsc` + package suites. Mandatory whenever a sprint edits any `package.json` dependency OR widens a shared `@oods/viz-core` type.
+- **Why:** s111 closed "green" locally yet CI went RED on push with two failures the per-package gates structurally could not see (#740): (i) `ERR_PNPM_OUTDATED_LOCKFILE` — a new type-only devDependency was added to a package without regenerating `pnpm-lock.yaml`, so CI's `--frozen-lockfile` install failed before any build/test ran, taking down ALL jobs (fix 692a27b); (ii) `TS2739` in `src/viz/patterns/scaffold-generator.ts` — widening viz-core's `ChartType` union propagates into `src/` via the `src/viz/patterns` re-export shim, breaking three exhaustive `Record<ChartType>` maps that ONLY the root typecheck (not per-package `tsc`) covers (fix cb1a545). The per-package gates are necessary but NOT sufficient. (s112 m01 hit the exact same `ChartType`-widening coupling and fixed it in-mission because this gate was run.)
+- **Application:** the closeout mission's success criteria add (f) `pnpm install --frozen-lockfile` succeeds (lockfile in sync) and (g) root `pnpm typecheck` exits 0.
+
 ---
 
 ## Decision Conventions

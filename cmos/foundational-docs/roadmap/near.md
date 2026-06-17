@@ -29,6 +29,22 @@ Concordance production facts from `cmos/planning/info-push-to-oods-foundry-mcp.m
 
 ---
 
+## Viz Flagship Arc — current horizon (s108–s113)
+
+**This is the live horizon. The dated sprint shapes below (s96–s100, s101–s104 candidates) are historical record, retained for point-in-time integrity (decision #679) — NOT the current plan.**
+
+Data-viz is the Forge flagship (decision #680; [forge-viz-flagship-strategy.md](../../planning/forge-viz-flagship-strategy.md)). The arc since the pivot:
+
+- **s108–s109 — Phase 0 (reconnect):** extracted the headless engine as `@oods/viz-core` and wired `src/viz` → MCP via the new `viz.render` (replacing the field-names-only `viz.compose` placeholder).
+- **s110 — Phase 1 (data-aware intelligence):** real data profiling → a Draco-class recommender (smarter SELECTION among the beachhead types), plus the `viz-determinism` + `scale-determinism` CI gates.
+- **s111 — hierarchy/network unlock:** treemap / sunburst / sankey / force_graph reachable through `viz.render` (additive EChartsPrimary port).
+- **s112 — geo unlock + debt + Phase-2 scoping:** choropleth / bubble_map reachable (now **11 chart types**); #681 generated-type retarget done; viz-core coverage gate added; closeout criteria hardened (#740 frozen-lockfile + root typecheck); this memo.
+- **s113 (candidate) — Phase 2 (dashboards), BUILD:** a decision-centric linked multi-chart dashboard — `DashboardSpec` IR + headless auto-layout + a `dashboard.render` MCP surface + headless linked-selection/KPI + determinism goldens. Scoped + sized in [forge-viz-phase2-scoping-memo.md](../../planning/forge-viz-phase2-scoping-memo.md). Phase 2 is **mostly BUILD, not expose** — the live tree carries only a spatial-only cross-filter substrate, no generic dashboard spec / auto-layout / linked selection / KPI layer.
+
+Deferred across the arc (the sprint-101 over-scope guard): the ~137-site `src/viz` consumer rewire + shim deletion; NL→viz + semantic-layer (metrics) grounding (Phase 3); agentic exploration / eval harness (Phase 4); server-side SSR rendering.
+
+---
+
 ## Sprint-96 Recommended Shape
 
 Sprint-96 should be a Foundation sprint with one live-integration preflight. Keep N=5 including closeout.

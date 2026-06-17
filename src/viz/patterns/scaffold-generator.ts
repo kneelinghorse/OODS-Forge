@@ -501,6 +501,11 @@ const chartMarkByType: Record<ChartPattern['chartType'], MarkSpec['trait']> = {
   sunburst: 'MarkSunburst',
   sankey: 'MarkSankey',
   force_graph: 'MarkGraph',
+  // sprint-112 geo types (explicit-only; rendered via the headless spatial ECharts
+  // adapters in @oods/viz-core, not the tabular GoG path) — entries keep this map
+  // total now that ChartType widened (the #740 root-typecheck coupling).
+  choropleth: 'MarkChoropleth',
+  bubble_map: 'MarkBubble',
 };
 
 const layoutFrameByChartType: Record<ChartPattern['chartType'], { width: number; height: number; padding: number }> = {
@@ -513,6 +518,8 @@ const layoutFrameByChartType: Record<ChartPattern['chartType'], { width: number;
   sunburst: { width: 560, height: 560, padding: 24 },
   sankey: { width: 860, height: 480, padding: 24 },
   force_graph: { width: 760, height: 560, padding: 24 },
+  choropleth: { width: 860, height: 520, padding: 24 },
+  bubble_map: { width: 860, height: 520, padding: 24 },
 };
 
 const componentByChartType: Record<
@@ -528,6 +535,8 @@ const componentByChartType: Record<
   sunburst: { component: 'Sunburst', importPath: '@/components/viz/Sunburst.js' },
   sankey: { component: 'Sankey', importPath: '@/components/viz/Sankey.js' },
   force_graph: { component: 'ForceGraph', importPath: '@/components/viz/ForceGraph.js' },
+  choropleth: { component: 'ChoroplethMap', importPath: '@/components/viz/spatial/ChoroplethMap.js' },
+  bubble_map: { component: 'BubbleMap', importPath: '@/components/viz/spatial/BubbleMap.js' },
 };
 
 const hookImportPaths = new Map<string, string>([

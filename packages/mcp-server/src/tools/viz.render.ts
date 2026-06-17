@@ -10,11 +10,14 @@
 // must stay additionalProperties-clean).
 
 import {
+  adaptBubbleToECharts,
+  adaptChoroplethToECharts,
   adaptGraphToECharts,
   adaptSankeyToECharts,
   adaptSunburstToECharts,
   adaptTreemapToECharts,
   buildVizSpecFromRows,
+  registerGeoJson,
   toEChartsOption,
   toVegaLiteSpec,
   type BuildVizSpecInput,
@@ -22,6 +25,7 @@ import {
   type NetworkInput,
   type NormalizedVizSpec,
   type SankeyInput,
+  type SpatialSpec,
 } from '@oods/viz-core';
 import type { VizRenderInput, VizRenderOutput } from '../schemas/generated.js';
 import { createValueRef, describeSchemaRef, resolveValueRef } from './schema-ref.js';
@@ -166,13 +170,13 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
 // path: each builds a metadata-only spec, dispatches to its ported adapter with the
 // SEPARATE data branch (hierarchy or sankey), and auto-promotes the ECharts option
 // as the primary payload (these chart types have no Vega-Lite equivalent).
-type EChartsPrimaryType = 'treemap' | 'sunburst' | 'sankey' | 'force_graph';
+type EChartsPrimaryType = 'treemap' | 'sunburst' | 'sankey' | 'force_graph' | 'choropleth' | 'bubble_map';
 
 interface EChartsPrimaryConfig {
   readonly mark: string;
   readonly label: string;
   readonly noun: string;
-  readonly dataBranch: 'hierarchy' | 'sankey' | 'network';
+  readonly dataBranch: 'hierarchy' | 'sankey' | 'network' | 'geo';
 }
 
 const ECHARTS_PRIMARY: Record<EChartsPrimaryType, EChartsPrimaryConfig> = {
@@ -180,6 +184,14 @@ const ECHARTS_PRIMARY: Record<EChartsPrimaryType, EChartsPrimaryConfig> = {
   sunburst: { mark: 'MarkSunburst', label: 'Sunburst', noun: 'hierarchical data', dataBranch: 'hierarchy' },
   sankey: { mark: 'MarkSankey', label: 'Sankey diagram', noun: 'flow data', dataBranch: 'sankey' },
   force_graph: { mark: 'MarkGraph', label: 'Force-directed graph', noun: 'network data', dataBranch: 'network' },
+  // sprint-112 geo: choropleth/bubble_map carry the 'geo' branch (inline geometry +
+  // per-type encoding) and dispatch to the ported spatial adapters. Like the
+  // hierarchy/flow types they have no Vega-Lite equivalent, so the ECharts option
+  // is the primary payload. UNLIKE them they are NOT self-contained: the
+  // FeatureCollection rides back on echartsSpec.__registration (the client
+  // re-registers the map by name).
+  choropleth: { mark: 'MarkChoropleth', label: 'Choropleth map', noun: 'regional values', dataBranch: 'geo' },
+  bubble_map: { mark: 'MarkBubble', label: 'Bubble map', noun: 'geographic points', dataBranch: 'geo' },
 };
 
 function isEChartsPrimaryType(chartType: VizRenderInput['chartType']): chartType is EChartsPrimaryType {
@@ -187,7 +199,9 @@ function isEChartsPrimaryType(chartType: VizRenderInput['chartType']): chartType
     chartType === 'treemap' ||
     chartType === 'sunburst' ||
     chartType === 'sankey' ||
-    chartType === 'force_graph'
+    chartType === 'force_graph' ||
+    chartType === 'choropleth' ||
+    chartType === 'bubble_map'
   );
 }
 
@@ -228,6 +242,14 @@ function renderEChartsPrimary(
       const hierarchy = branchData as unknown as HierarchyInput;
       option = adaptSunburstToECharts(spec, hierarchy);
       nodeCount = hierarchyNodeCount(hierarchy);
+    } else if (chartType === 'choropleth' || chartType === 'bubble_map') {
+      // Geo dispatch: build a SpatialSpec from the 'geo' branch and render via the
+      // ported spatial adapter. The adapter attaches the FeatureCollection on
+      // option.__registration (the not-self-contained escape hatch); the JSON
+      // projection below preserves it while dropping the tooltip-formatter closure.
+      const result = renderGeoOption(input, chartType, branchData as GeoBranch, spec.a11y.description);
+      option = result.option;
+      nodeCount = result.count;
     } else {
       const hierarchy = branchData as unknown as HierarchyInput;
       option = adaptTreemapToECharts(spec, hierarchy);
@@ -287,10 +309,10 @@ function renderEChartsPrimary(
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     const name = err instanceof Error ? err.name : 'Error';
-    // SankeyValidationError = invalid input data (like VizSpecBuilderError -> V126);
-    // EChartsAdapterError -> V128; anything else -> V129.
+    // SankeyValidationError / GeoInputError = invalid input data (like
+    // VizSpecBuilderError -> V126); EChartsAdapterError -> V128; else -> V129.
     const code =
-      name === 'SankeyValidationError'
+      name === 'SankeyValidationError' || name === 'GeoInputError'
         ? 'OODS-V126'
         : name === 'EChartsAdapterError'
           ? 'OODS-V128'
@@ -319,6 +341,114 @@ function buildEChartsPrimarySpec(
     encoding: {},
     a11y: { description },
   } as NormalizedVizSpec;
+}
+
+// ---- geo render path (sprint-112 m02): choropleth + bubble_map -----------------
+// The 'geo' branch carries inline geometry + per-type encoding; here we shape it
+// into a slim SpatialSpec and a parsed FeatureCollection and hand both to the
+// ported spatial adapter. The adapters validate layers/data themselves; we add
+// per-type input guards (typed GeoInputError -> OODS-V126) so a missing
+// valueField / lng-lat / geometry yields a clean bad-input error, not a crash.
+type GeoBranch = NonNullable<VizRenderInput['geo']>;
+type GeoChartType = 'choropleth' | 'bubble_map';
+
+class GeoInputError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'GeoInputError';
+  }
+}
+
+// Provenance-only dimensions (carried in usermeta.oods.dimensions; not load-bearing
+// for the headless option — the client sizes the canvas).
+const DEFAULT_GEO_DIMENSIONS = { width: 860, height: 520 } as const;
+
+// Resolve the inline geometry to a GeoJSON FeatureCollection (converting TopoJSON
+// via the ported registration normalizer). Returns undefined when no geometry was
+// supplied (allowed for bubble_map — the client may register a base map).
+function resolveFeatureCollection(geo: GeoBranch) {
+  const source = geo.geojson ?? geo.topojson;
+  if (!source) {
+    return undefined;
+  }
+  return registerGeoJson('geo', source as Parameters<typeof registerGeoJson>[1], {
+    topoObjectName: geo.topoObjectName,
+  }).geoJson;
+}
+
+function renderGeoOption(
+  input: VizRenderInput,
+  chartType: GeoChartType,
+  geo: GeoBranch,
+  description: string,
+): { option: ReturnType<typeof adaptChoroplethToECharts>; count: number } {
+  const rows = (geo.rows ?? []) as Array<Record<string, unknown>>;
+  const id = input.id ?? `viz:${chartType}`;
+  const name = input.name;
+
+  if (chartType === 'choropleth') {
+    const geoData = resolveFeatureCollection(geo);
+    if (!geoData) {
+      throw new GeoInputError("choropleth requires inline geometry ('geo.geojson' or 'geo.topojson').");
+    }
+    if (!geo.valueField) {
+      throw new GeoInputError("choropleth requires 'geo.valueField' (the metric that colours each region).");
+    }
+    const spec: SpatialSpec = {
+      id,
+      ...(name ? { name } : {}),
+      type: 'spatial',
+      data: geo.join
+        ? {
+            type: 'data.geo.join',
+            source: 'inline',
+            geoSource: 'inline',
+            joinKey: geo.join.dataKey,
+            geoKey: geo.join.featureProperty,
+          }
+        : { values: rows },
+      layers: [
+        {
+          type: 'regionFill',
+          encoding: { color: { field: geo.valueField, ...(geo.colorScale ? { scale: geo.colorScale } : {}) } },
+        },
+      ],
+      a11y: { description },
+    };
+    const option = adaptChoroplethToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
+    return { option, count: geoData.features.length };
+  }
+
+  // bubble_map
+  if (!geo.longitudeField || !geo.latitudeField) {
+    throw new GeoInputError("bubble_map requires 'geo.longitudeField' and 'geo.latitudeField'.");
+  }
+  if (rows.length === 0) {
+    throw new GeoInputError("bubble_map requires 'geo.rows' (the points to plot).");
+  }
+  const geoData = resolveFeatureCollection(geo);
+  const spec: SpatialSpec = {
+    id,
+    ...(name ? { name } : {}),
+    type: 'spatial',
+    data: { values: [] },
+    layers: [
+      {
+        type: 'symbol',
+        encoding: {
+          longitude: { field: geo.longitudeField },
+          latitude: { field: geo.latitudeField },
+          ...(geo.sizeField ? { size: { field: geo.sizeField } } : {}),
+          ...(geo.colorField
+            ? { color: { field: geo.colorField, ...(geo.colorScale ? { scale: geo.colorScale } : {}) } }
+            : {}),
+        },
+      },
+    ],
+    a11y: { description },
+  };
+  const option = adaptBubbleToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
+  return { option, count: rows.length };
 }
 
 // Count of hierarchy nodes bound into the chart (surfaced as meta.rowCount — the

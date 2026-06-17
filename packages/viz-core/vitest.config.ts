@@ -16,5 +16,25 @@ export default defineConfig({
     include: ['test/**/*.spec.ts'],
     environment: 'node',
     testTimeout: 20_000,
+    // Coverage gate (sprint-112 m04). Root CI's coverage only includes the repo
+    // `src/**`, so @oods/viz-core's own recommender / profiler / adapters were never
+    // MEASURED. Enabled here so the viz-determinism CI step (`pnpm --filter
+    // @oods/viz-core test`) enforces it. `all: true` counts untested files at 0% so
+    // a new uncovered module is caught. Thresholds are MEASURED FLOORS (~5pts below
+    // the 2026-06 actuals: stmts/lines 54.6%, branches 66.4%, functions 50.8%) — a
+    // real floor that does not red on minor unrelated churn, NOT an aspiration.
+    coverage: {
+      enabled: true,
+      provider: 'v8',
+      include: ['src/**'],
+      all: true,
+      reporter: ['text-summary'],
+      thresholds: {
+        statements: 50,
+        branches: 60,
+        functions: 45,
+        lines: 50,
+      },
+    },
   },
 });

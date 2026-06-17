@@ -1,9 +1,11 @@
 // The 5 tabular marks plus the network/hierarchy types unlocked additively in
-// sprint-111 (treemap m01; sunburst + sankey m03; force_graph m04). These are
+// sprint-111 (treemap m01; sunburst + sankey m03; force_graph m04) and the geo
+// types unlocked in sprint-112 (choropleth + bubble_map, m01). These are
 // EXPLICIT-ONLY: none has an entry in the pattern registry below and none is ever
 // produced by the recommender — each reaches rendering only through its dedicated
-// adapter (adaptTreemapToECharts / adaptSunburstToECharts / adaptSankeyToECharts),
-// so widening the union here is type-surface only, not a new suggestable pattern.
+// adapter (adaptTreemapToECharts / adaptSunburstToECharts / adaptSankeyToECharts /
+// adaptChoroplethToECharts / adaptBubbleToECharts), so widening the union here is
+// type-surface only, not a new suggestable pattern.
 export type ChartType =
   | 'bar'
   | 'line'
@@ -13,7 +15,9 @@ export type ChartType =
   | 'treemap'
   | 'sunburst'
   | 'sankey'
-  | 'force_graph';
+  | 'force_graph'
+  | 'choropleth'
+  | 'bubble_map';
 export type IntentGoal =
   | 'comparison'
   | 'trend'

@@ -1,11 +1,7 @@
-// VENDORED into @oods/viz-core (sprint-109 m01, beachhead extraction).
-// Source of truth remains generated/types/viz/normalized-viz-spec.ts at the repo
-// root, emitted by the codegen pipeline from schemas/viz/normalized-viz-spec.schema.json.
-// Phase 1 (#681 DEFERRED: "generated-type retarget") will repoint codegen to emit
-// directly into this package and remove this vendored copy + the repo-root duplication.
-// Keep in sync with the repo-root original until then.
-
-// Auto-generated from viz/normalized-viz-spec.schema.json. Do not edit manually.
+// GENERATED into @oods/viz-core by scripts/types/generate.ts (generate:schema-types),
+// from schemas/viz/normalized-viz-spec.schema.json. #681 retarget (sprint-112 m04):
+// this file IS the live source of truth — do NOT edit by hand. Change the schema and
+// re-run `pnpm generate:schema-types`; CI runs it with --check to catch drift.
 
 /**
  * Layout trait that augments the normalized spec with facet/layer/concat metadata.

@@ -11,6 +11,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  adaptBubbleToECharts,
+  adaptChoroplethToECharts,
   adaptGraphToECharts,
   adaptSankeyToECharts,
   adaptSunburstToECharts,
@@ -21,8 +23,10 @@ import {
   toSchemaIntent,
   validateNormalizedVizSpec,
   type NormalizedVizSpec,
+  type SpatialSpec,
 } from '@oods/viz-core';
 import {
+  synthesizeGeoInput,
   synthesizeHierarchyInput,
   synthesizeNetworkInput,
   synthesizeSankeyInput,
@@ -134,6 +138,79 @@ describe('viz network/hierarchy scale-tier option determinism', () => {
       const a = adaptGraphToECharts(metaSpec('MarkGraph'), synthesizeNetworkInput({ tier, seed: 1 }));
       const b = adaptGraphToECharts(metaSpec('MarkGraph'), synthesizeNetworkInput({ tier, seed: 2 }));
       expect(JSON.stringify(a)).not.toEqual(JSON.stringify(b));
+    });
+  }
+});
+
+// sprint-112 m03: the geo adapters' OPTION is deterministic at scale too — same
+// seed -> byte-identical choropleth/bubble ECharts option for 100/500/1000 regions
+// (JSON.stringify drops the tooltip-formatter closure + the symbolSize function, so
+// this compares the transmittable option viz.render returns). The stateless
+// registration + code-point-ordered join are what make this hold across the suite.
+const GEO_DIMS = { width: 860, height: 520 } as const;
+
+function geoChoroSpec(): SpatialSpec {
+  return {
+    id: 'viz:choropleth',
+    name: 'choropleth',
+    type: 'spatial',
+    data: { type: 'data.geo.join', source: 'inline', geoSource: 'inline', joinKey: 'region', geoKey: 'region' },
+    layers: [{ type: 'regionFill', encoding: { color: { field: 'value', scale: 'linear' } } }],
+    a11y: { description: 'choropleth scale-tier determinism fixture.' },
+  };
+}
+function geoBubbleSpec(): SpatialSpec {
+  return {
+    id: 'viz:bubble',
+    name: 'bubble',
+    type: 'spatial',
+    data: { values: [] },
+    layers: [
+      {
+        type: 'symbol',
+        encoding: {
+          longitude: { field: 'lng' },
+          latitude: { field: 'lat' },
+          size: { field: 'value', scale: 'sqrt' },
+          color: { field: 'value', scale: 'linear' },
+        },
+      },
+    ],
+    a11y: { description: 'bubble scale-tier determinism fixture.' },
+  };
+}
+
+const choroOption = (seed: number, tier: VizScaleTier) => {
+  const g = synthesizeGeoInput({ tier, seed });
+  return adaptChoroplethToECharts(
+    geoChoroSpec(),
+    g.geojson as Parameters<typeof adaptChoroplethToECharts>[1],
+    g.rows,
+    GEO_DIMS,
+  );
+};
+const bubbleOption = (seed: number, tier: VizScaleTier) => {
+  const g = synthesizeGeoInput({ tier, seed });
+  return adaptBubbleToECharts(
+    geoBubbleSpec(),
+    g.geojson as Parameters<typeof adaptBubbleToECharts>[1],
+    g.rows,
+    GEO_DIMS,
+  );
+};
+
+describe('viz geo scale-tier option determinism', () => {
+  for (const tier of TIERS) {
+    it(`tier=${tier}: choropleth option is byte-identical for the same seed`, () => {
+      expect(JSON.stringify(choroOption(SEED, tier))).toEqual(JSON.stringify(choroOption(SEED, tier)));
+    });
+
+    it(`tier=${tier}: bubble option is byte-identical for the same seed`, () => {
+      expect(JSON.stringify(bubbleOption(SEED, tier))).toEqual(JSON.stringify(bubbleOption(SEED, tier)));
+    });
+
+    it(`tier=${tier}: different seeds -> different choropleth option (synth is seed-sensitive)`, () => {
+      expect(JSON.stringify(choroOption(1, tier))).not.toEqual(JSON.stringify(choroOption(2, tier)));
     });
   }
 });

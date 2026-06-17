@@ -5868,9 +5868,86 @@ export namespace VizRenderInputSchema {
       }[];
     };
     /**
-     * Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles).
+     * Geo data for chartType 'choropleth' or 'bubble_map' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Carries INLINE geometry (a GeoJSON FeatureCollection in 'geojson', or a TopoJSON Topology in 'topojson' + 'topoObjectName'), an optional 'join' that merges tabular 'rows' into features by key, and the per-type encoding: 'valueField' colours regions for choropleth; 'longitudeField'/'latitudeField' (+ optional 'sizeField'/'colorField') place points for bubble_map. Geometry is supplied INLINE — it is never fetched over the network. NOTE: geo specs are NOT self-contained (unlike treemap/sankey): the resolved FeatureCollection rides back on echartsSpec.__registration and the client re-registers the map by name before rendering. Geometry payloads can be large (a world atlas is ~100KB) — prefer a pre-simplified TopoJSON.
      */
-    chartType?: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap' | 'treemap' | 'sunburst' | 'sankey' | 'force_graph';
+    geo?: {
+      /**
+       * Inline GeoJSON FeatureCollection (type:'FeatureCollection', features:[...]). Required for choropleth (the regions); optional base map for bubble_map.
+       */
+      geojson?: {
+        [k: string]: any;
+      };
+      /**
+       * Inline TopoJSON Topology (type:'Topology'); converted to a GeoJSON FeatureCollection. Set 'topoObjectName' when the topology holds more than one object.
+       */
+      topojson?: {
+        [k: string]: any;
+      };
+      /**
+       * Which TopoJSON object to extract (defaults to the sole object when there is exactly one).
+       */
+      topoObjectName?: string;
+      /**
+       * Tabular records: for choropleth, the values joined into features (paired with 'join'); for bubble_map, the points to plot.
+       *
+       * @maxItems 5000
+       */
+      rows?: {
+        [k: string]: any;
+      }[];
+      /**
+       * Choropleth join: merge each row into the feature whose 'featureProperty' equals the row's 'dataKey' value.
+       */
+      join?: {
+        /**
+         * Key in each tabular row.
+         */
+        dataKey: string;
+        /**
+         * Matching property name in each feature's properties.
+         */
+        featureProperty: string;
+      };
+      /**
+       * Choropleth: the numeric field — in feature properties, or merged in via 'join' — whose value colours each region. Required for choropleth.
+       */
+      valueField?: string;
+      /**
+       * Bubble map: the row field holding longitude. Required for bubble_map.
+       */
+      longitudeField?: string;
+      /**
+       * Bubble map: the row field holding latitude. Required for bubble_map.
+       */
+      latitudeField?: string;
+      /**
+       * Bubble map: optional row field driving bubble size.
+       */
+      sizeField?: string;
+      /**
+       * Bubble map: optional row field driving bubble colour.
+       */
+      colorField?: string;
+      /**
+       * Optional colour scale (defaults to a continuous linear ramp). 'ordinal' paints discrete per-category colours.
+       */
+      colorScale?: 'linear' | 'quantize' | 'quantile' | 'threshold' | 'ordinal';
+    };
+    /**
+     * Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network/geo charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links); 'choropleth' and 'bubble_map' take the 'geo' data branch (inline geometry + per-type encoding). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles).
+     */
+    chartType?:
+      | 'bar'
+      | 'line'
+      | 'area'
+      | 'scatter'
+      | 'heatmap'
+      | 'treemap'
+      | 'sunburst'
+      | 'sankey'
+      | 'force_graph'
+      | 'choropleth'
+      | 'bubble_map';
     /**
      * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
      */
