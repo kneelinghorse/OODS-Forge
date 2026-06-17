@@ -11,13 +11,24 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  adaptGraphToECharts,
+  adaptSankeyToECharts,
+  adaptSunburstToECharts,
+  adaptTreemapToECharts,
   buildVizSpecFromRows,
   inferFieldProfile,
   suggestPatterns,
   toSchemaIntent,
   validateNormalizedVizSpec,
+  type NormalizedVizSpec,
 } from '@oods/viz-core';
-import { synthesizeVizRows, type VizScaleTier } from './viz-synth.js';
+import {
+  synthesizeHierarchyInput,
+  synthesizeNetworkInput,
+  synthesizeSankeyInput,
+  synthesizeVizRows,
+  type VizScaleTier,
+} from './viz-synth.js';
 
 const TIERS: VizScaleTier[] = [100, 500, 1000];
 const SEED = 42;
@@ -71,6 +82,57 @@ describe('viz scale-tier determinism', () => {
     it(`tier=${tier}: different seeds -> different rows (synth is seed-sensitive)`, () => {
       const a = synthesizeVizRows({ tier, seed: 1 });
       const b = synthesizeVizRows({ tier, seed: 2 });
+      expect(JSON.stringify(a)).not.toEqual(JSON.stringify(b));
+    });
+  }
+});
+
+// sprint-111 m05: the network/hierarchy adapters' OPTION is deterministic — at
+// scale, the SAME seed must yield a byte-identical ECharts option for each of the 4
+// new types. (JSON.stringify drops the tooltip-formatter closure, so this compares
+// the transmittable, deterministic option — matching what viz.render returns. The
+// client-side force LAYOUT is not part of the option and is out of scope.)
+function metaSpec(mark: string): NormalizedVizSpec {
+  return {
+    $schema: 'https://oods.dev/viz-spec/v1',
+    id: `viz:${mark}`,
+    name: mark,
+    data: { values: [] },
+    marks: [{ trait: mark }],
+    encoding: {},
+    a11y: { description: `${mark} scale-tier determinism fixture.` },
+  } as NormalizedVizSpec;
+}
+
+describe('viz network/hierarchy scale-tier option determinism', () => {
+  for (const tier of TIERS) {
+    it(`tier=${tier}: treemap option is byte-identical for the same seed`, () => {
+      const a = adaptTreemapToECharts(metaSpec('MarkTreemap'), synthesizeHierarchyInput({ tier, seed: SEED }));
+      const b = adaptTreemapToECharts(metaSpec('MarkTreemap'), synthesizeHierarchyInput({ tier, seed: SEED }));
+      expect(JSON.stringify(a)).toEqual(JSON.stringify(b));
+    });
+
+    it(`tier=${tier}: sunburst option is byte-identical for the same seed`, () => {
+      const a = adaptSunburstToECharts(metaSpec('MarkSunburst'), synthesizeHierarchyInput({ tier, seed: SEED }));
+      const b = adaptSunburstToECharts(metaSpec('MarkSunburst'), synthesizeHierarchyInput({ tier, seed: SEED }));
+      expect(JSON.stringify(a)).toEqual(JSON.stringify(b));
+    });
+
+    it(`tier=${tier}: sankey option is byte-identical for the same seed`, () => {
+      const a = adaptSankeyToECharts(metaSpec('MarkSankey'), synthesizeSankeyInput({ tier, seed: SEED }));
+      const b = adaptSankeyToECharts(metaSpec('MarkSankey'), synthesizeSankeyInput({ tier, seed: SEED }));
+      expect(JSON.stringify(a)).toEqual(JSON.stringify(b));
+    });
+
+    it(`tier=${tier}: force_graph option is byte-identical for the same seed`, () => {
+      const a = adaptGraphToECharts(metaSpec('MarkGraph'), synthesizeNetworkInput({ tier, seed: SEED }));
+      const b = adaptGraphToECharts(metaSpec('MarkGraph'), synthesizeNetworkInput({ tier, seed: SEED }));
+      expect(JSON.stringify(a)).toEqual(JSON.stringify(b));
+    });
+
+    it(`tier=${tier}: different seeds -> different graph option (synth is seed-sensitive)`, () => {
+      const a = adaptGraphToECharts(metaSpec('MarkGraph'), synthesizeNetworkInput({ tier, seed: 1 }));
+      const b = adaptGraphToECharts(metaSpec('MarkGraph'), synthesizeNetworkInput({ tier, seed: 2 }));
       expect(JSON.stringify(a)).not.toEqual(JSON.stringify(b));
     });
   }

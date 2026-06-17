@@ -1,4 +1,19 @@
-export type ChartType = 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+// The 5 tabular marks plus the network/hierarchy types unlocked additively in
+// sprint-111 (treemap m01; sunburst + sankey m03; force_graph m04). These are
+// EXPLICIT-ONLY: none has an entry in the pattern registry below and none is ever
+// produced by the recommender — each reaches rendering only through its dedicated
+// adapter (adaptTreemapToECharts / adaptSunburstToECharts / adaptSankeyToECharts),
+// so widening the union here is type-surface only, not a new suggestable pattern.
+export type ChartType =
+  | 'bar'
+  | 'line'
+  | 'area'
+  | 'scatter'
+  | 'heatmap'
+  | 'treemap'
+  | 'sunburst'
+  | 'sankey'
+  | 'force_graph';
 export type IntentGoal =
   | 'comparison'
   | 'trend'

@@ -538,10 +538,11 @@ jobs:
     timeout-minutes: 15
     # sprint-110 m05: close the CI gap where the data-aware recommender's own
     # suites do NOT run under root CI. Runs @oods/viz-core's tests (profiler /
-    # intent / scorer + the committed golden profiles), the colocated viz.render
-    # render-fidelity + handler goldens, and the mcp-bridge tool-surface test
-    # (#696b) — so a recommender/profiler determinism regression FAILS root CI,
-    # not just `pnpm --filter`.
+    # intent / scorer + the committed golden profiles + the sprint-111 network/
+    # hierarchy ECharts-option goldens), the colocated viz.render render-fidelity
+    # + handler + network-fidelity goldens, and the mcp-bridge tool-surface test
+    # (#696b) — so a recommender/profiler/adapter determinism regression FAILS root
+    # CI, not just `pnpm --filter`.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -570,7 +571,7 @@ jobs:
         run: pnpm --filter @oods/viz-core test
 
       - name: Run colocated viz.render goldens
-        run: pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts
+        run: pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts
 
       - name: Run mcp-bridge tool-surface test
         run: pnpm --filter @oods/mcp-bridge test

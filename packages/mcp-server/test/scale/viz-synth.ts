@@ -65,3 +65,75 @@ export function synthesizeVizRows(options: VizSynthOptions): Array<Record<string
   }
   return rows;
 }
+
+// ---------------------------------------------------------------------------
+// Network/hierarchy synthesizers (sprint-111 m05).
+//
+// The viz scale tier above feeds the tabular profiler/recommender determinism
+// gate. These produce the NEW network/hierarchy contracts (HierarchyInput /
+// SankeyInput / NetworkInput) at the same tiers, so "same seed -> byte-identical
+// ECharts option" can be asserted at scale for treemap/sunburst/sankey/force_graph.
+// Same (tier, seed) -> identical structure (mulberry32, no Math.random/Date leaks).
+// Each is constructed to be VALID for its adapter (sankey: every link valued +
+// referencing existing nodes; hierarchy: every parentId references an earlier node).
+// ---------------------------------------------------------------------------
+
+const GROUPS = ['frontend', 'backend', 'data', 'infra'] as const;
+
+/** Deterministic adjacency_list hierarchy: node 0 is the root, every later node
+ *  attaches to an earlier node (an acyclic tree by construction). */
+export function synthesizeHierarchyInput(options: VizSynthOptions): {
+  type: 'adjacency_list';
+  data: Array<{ id: string; parentId: string | null; value: number; name: string }>;
+} {
+  const rand = mulberry32(options.seed);
+  const data: Array<{ id: string; parentId: string | null; value: number; name: string }> = [];
+  for (let i = 0; i < options.tier; i += 1) {
+    const parentIndex = i === 0 ? null : Math.floor(rand() * i); // always an earlier node
+    data.push({
+      id: `n${i}`,
+      parentId: parentIndex === null ? null : `n${parentIndex}`,
+      value: 1 + Math.floor(rand() * 100),
+      name: `Node ${i}`,
+    });
+  }
+  return { type: 'adjacency_list', data };
+}
+
+/** Deterministic sankey: a forward chain (n_i -> n_{i+1}) so every link is valued
+ *  and references existing nodes (passes validateSankeyInput). */
+export function synthesizeSankeyInput(options: VizSynthOptions): {
+  nodes: Array<{ name: string }>;
+  links: Array<{ source: string; target: string; value: number }>;
+} {
+  const rand = mulberry32(options.seed);
+  const nodes = Array.from({ length: options.tier }, (_, i) => ({ name: `n${i}` }));
+  const links: Array<{ source: string; target: string; value: number }> = [];
+  for (let i = 0; i < options.tier - 1; i += 1) {
+    links.push({ source: `n${i}`, target: `n${i + 1}`, value: 1 + Math.floor(rand() * 50) });
+  }
+  return { nodes, links };
+}
+
+/** Deterministic network: grouped nodes + forward links between existing nodes. */
+export function synthesizeNetworkInput(options: VizSynthOptions): {
+  nodes: Array<{ id: string; group: string; value: number }>;
+  links: Array<{ source: string; target: string; value: number }>;
+} {
+  const rand = mulberry32(options.seed);
+  const nodes = Array.from({ length: options.tier }, (_, i) => ({
+    id: `n${i}`,
+    group: GROUPS[i % GROUPS.length],
+    value: 1 + Math.floor(rand() * 20),
+  }));
+  const links: Array<{ source: string; target: string; value: number }> = [];
+  for (let i = 0; i < options.tier - 1; i += 1) {
+    const target = i + 1 + Math.floor(rand() * Math.max(1, options.tier - i - 1));
+    links.push({
+      source: `n${i}`,
+      target: `n${Math.min(target, options.tier - 1)}`,
+      value: 1 + Math.floor(rand() * 10),
+    });
+  }
+  return { nodes, links };
+}
