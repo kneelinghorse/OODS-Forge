@@ -332,7 +332,9 @@ jobs:
   a11y-contract:
     name: a11y-contract
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 15m was chronically tight for build-storybook + the Playwright Chromium
+    # download + the a11y run, intermittently timing out on the install step.
+    timeout-minutes: 25
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
