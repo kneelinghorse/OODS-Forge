@@ -495,6 +495,12 @@ const chartMarkByType: Record<ChartPattern['chartType'], MarkSpec['trait']> = {
   area: 'MarkArea',
   scatter: 'MarkPoint',
   heatmap: 'MarkRect',
+  // sprint-111 network/hierarchy types (explicit-only; rendered via the dedicated
+  // ECharts adapters, not the tabular GoG path) — entries keep this map total.
+  treemap: 'MarkTreemap',
+  sunburst: 'MarkSunburst',
+  sankey: 'MarkSankey',
+  force_graph: 'MarkGraph',
 };
 
 const layoutFrameByChartType: Record<ChartPattern['chartType'], { width: number; height: number; padding: number }> = {
@@ -503,6 +509,10 @@ const layoutFrameByChartType: Record<ChartPattern['chartType'], { width: number;
   area: { width: 720, height: 360, padding: 24 },
   scatter: { width: 720, height: 420, padding: 24 },
   heatmap: { width: 720, height: 420, padding: 24 },
+  treemap: { width: 720, height: 480, padding: 24 },
+  sunburst: { width: 560, height: 560, padding: 24 },
+  sankey: { width: 860, height: 480, padding: 24 },
+  force_graph: { width: 760, height: 560, padding: 24 },
 };
 
 const componentByChartType: Record<
@@ -514,6 +524,10 @@ const componentByChartType: Record<
   area: { component: 'AreaChart', importPath: '@/components/viz/AreaChart.js' },
   scatter: { component: 'ScatterChart', importPath: '@/components/viz/ScatterChart.js' },
   heatmap: { component: 'Heatmap', importPath: '@/components/viz/Heatmap.js' },
+  treemap: { component: 'Treemap', importPath: '@/components/viz/Treemap.js' },
+  sunburst: { component: 'Sunburst', importPath: '@/components/viz/Sunburst.js' },
+  sankey: { component: 'Sankey', importPath: '@/components/viz/Sankey.js' },
+  force_graph: { component: 'ForceGraph', importPath: '@/components/viz/ForceGraph.js' },
 };
 
 const hookImportPaths = new Map<string, string>([
