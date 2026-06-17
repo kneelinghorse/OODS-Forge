@@ -97,6 +97,10 @@ describe('@oods/viz-core — chart recommender', () => {
     };
 
     const [top] = suggestPatterns(schema, { limit: 1 });
+    // grouped-bar and detail-overview-bar are otherwise score-identical (their
+    // only difference, concatPreferred, is unweighted); m03's perceptualRank
+    // (grouped-bar=1 < detail-overview-bar=2) is the canonical nudge that puts
+    // grouped-bar on top before the alphabetical tie-break would pick the other.
     expect(top.pattern.id).toBe('grouped-bar');
     expect(top.score).toBeGreaterThan(0);
   });

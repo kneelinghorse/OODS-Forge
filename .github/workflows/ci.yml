@@ -521,5 +521,56 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # The viz scale tier (test/scale/viz-determinism.spec.ts) imports the built
+      # @oods/viz-core, so the workspace packages must be built first.
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Build packages
+        run: pnpm run build:packages
+
       - name: Run scale-tier suite
         run: pnpm --filter @oods/mcp-server run test:scale
+
+  viz-determinism:
+    name: viz-determinism
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # sprint-110 m05: close the CI gap where the data-aware recommender's own
+    # suites do NOT run under root CI. Runs @oods/viz-core's tests (profiler /
+    # intent / scorer + the committed golden profiles), the colocated viz.render
+    # render-fidelity + handler goldens, and the mcp-bridge tool-surface test
+    # (#696b) — so a recommender/profiler determinism regression FAILS root CI,
+    # not just `pnpm --filter`.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Run @oods/viz-core suite (profiler + recommender + golden profiles)
+        run: pnpm --filter @oods/viz-core test
+
+      - name: Run colocated viz.render goldens
+        run: pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts
+
+      - name: Run mcp-bridge tool-surface test
+        run: pnpm --filter @oods/mcp-bridge test

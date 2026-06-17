@@ -388,3 +388,90 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'scatter'
   },
 }
 `;
+
+exports[`viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 1`] = `
+{
+  "chartType": "line",
+  "mark": "MarkLine",
+  "spec": {
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "data": {
+      "values": [
+        {
+          "quarter": "2024-01",
+          "region": "North",
+          "revenue": 120000,
+          "units": 340,
+        },
+        {
+          "quarter": "2024-01",
+          "region": "South",
+          "revenue": 135000,
+          "units": 410,
+        },
+        {
+          "quarter": "2024-02",
+          "region": "North",
+          "revenue": 128000,
+          "units": 360,
+        },
+        {
+          "quarter": "2024-02",
+          "region": "South",
+          "revenue": 142000,
+          "units": 430,
+        },
+        {
+          "quarter": "2024-03",
+          "region": "North",
+          "revenue": 131000,
+          "units": 372,
+        },
+        {
+          "quarter": "2024-03",
+          "region": "South",
+          "revenue": 150000,
+          "units": 455,
+        },
+      ],
+    },
+    "description": "Line chart of revenue by quarter, split by region.",
+    "encoding": {
+      "color": {
+        "field": "region",
+        "scale": {
+          "type": "band",
+        },
+        "type": "nominal",
+      },
+      "x": {
+        "field": "quarter",
+        "scale": {
+          "type": "time",
+        },
+        "type": "temporal",
+      },
+      "y": {
+        "field": "revenue",
+        "scale": {
+          "type": "linear",
+        },
+        "type": "quantitative",
+      },
+    },
+    "mark": {
+      "type": "line",
+    },
+    "title": "Line chart",
+    "usermeta": {
+      "oods": {
+        "a11y": {
+          "description": "Line chart of revenue by quarter, split by region.",
+        },
+        "name": "Line chart",
+        "specId": "viz:line",
+      },
+    },
+  },
+}
+`;

@@ -5850,12 +5850,32 @@ export namespace VizRenderOutputSchema {
      */
     a11yDescription?: string;
     /**
-     * Present in suggest mode: the recommender pick that drove the chart type.
+     * Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives.
      */
     suggestion?: {
       patternId: string;
       score: number;
+      /**
+       * Human-readable scorer signals explaining why this pattern was chosen (data-aware justifications).
+       */
+      rationale?: string[];
+      /**
+       * Normalized confidence in the pick (score / max-match-score, clamped to [0,1]).
+       */
+      confidence?: number;
+      /**
+       * Runner-up recommendations, best first.
+       */
+      alternatives?: {
+        patternId: string;
+        score: number;
+        chartType: string;
+      }[];
     };
+    /**
+     * Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced).
+     */
+    lowConfidence?: boolean;
     /**
      * Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef).
      */
@@ -5913,6 +5933,19 @@ export namespace VizRenderOutputSchema {
         type: 'quantitative' | 'temporal' | 'nominal' | 'ordinal';
         role: 'measure' | 'dimension';
         cardinality?: number;
+        distinctRatio?: number;
+        min?: number;
+        max?: number;
+        mean?: number;
+        stddev?: number;
+        skew?: number;
+        outlierCount?: number;
+        hasNegative?: boolean;
+        hasZero?: boolean;
+        isInteger?: boolean;
+        temporalGranularity?: 'year' | 'quarter' | 'month' | 'day' | 'time';
+        temporalRegular?: boolean;
+        geoKind?: 'lat' | 'lon' | 'region' | 'none';
       }[];
     };
   }

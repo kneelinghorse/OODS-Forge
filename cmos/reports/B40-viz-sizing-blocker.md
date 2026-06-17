@@ -1,3 +1,14 @@
+> **STALE / CLOSED — resolved (sprint-110 m06 closeout GC, 2026-06-16).**
+> The root-cause styling change (commit `12552d3`) was reverted by commit
+> `51456b0`, so this blocker no longer reproduces. It only ever affected the
+> hierarchy/network components (Sunburst / Treemap / Sankey / ForceGraph), which
+> are **outside the @oods/viz-core Phase-1 beachhead** (the 5 marks
+> bar/line/area/scatter/heatmap). Phase 1 (data-aware intelligence) did not touch
+> these components and the deferred boundary holds. Retained for history; no
+> action required. (Refs: decision #698 deferred boundary; #693/#696.)
+
+---
+
 # B40 Blocker: Viz Component Sizing Broken
 
 **Date**: 2025-12-04
