@@ -153,12 +153,20 @@ const ENCODING_TRAIT: Record<EncodingChannel, string> = {
 };
 
 // chartType -> mark trait, matching the adapter MARK_TRAIT_MAP (scatter => point/MarkPoint).
+// The network/hierarchy types (treemap/sunburst/sankey) keep these Record<ChartType>
+// maps total; they are explicit-only and render through their dedicated adapters,
+// never through this builder's assembleSpec, so the entries are for type-exhaustiveness,
+// not exercised code paths (sprint-111 m01/m03).
 const CHART_TYPE_MARK: Record<ChartType, string> = {
   bar: 'MarkBar',
   line: 'MarkLine',
   area: 'MarkArea',
   scatter: 'MarkPoint',
   heatmap: 'MarkRect',
+  treemap: 'MarkTreemap',
+  sunburst: 'MarkSunburst',
+  sankey: 'MarkSankey',
+  force_graph: 'MarkGraph',
 };
 
 const CHART_TYPE_LABEL: Record<ChartType, string> = {
@@ -167,6 +175,10 @@ const CHART_TYPE_LABEL: Record<ChartType, string> = {
   area: 'Area chart',
   scatter: 'Scatter plot',
   heatmap: 'Heatmap',
+  treemap: 'Treemap',
+  sunburst: 'Sunburst',
+  sankey: 'Sankey diagram',
+  force_graph: 'Force-directed graph',
 };
 
 // --- semantic-type thresholds (literature-defensible, documented — NOT magic) -

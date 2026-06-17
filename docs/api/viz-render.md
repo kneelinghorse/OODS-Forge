@@ -11,7 +11,14 @@
 | `dslVersion` | string | No |  | DSL version to use for this request. Defaults to the current version (1.0). |
 | `rows` | object[] | No |  | Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value. |
 | `datasetRef` | string | No |  | Reference to a previously cached dataset (schemaRef-style TTL cache) to use instead of inline rows. Provide exactly one of 'rows' or 'datasetRef'. |
-| `chartType` | `bar` \| `line` \| `area` \| `scatter` \| `heatmap` | No |  | Beachhead chart type (maps to a mark trait: bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect). Omit to enter suggest mode (the recommender chooses from the inferred field profiles). |
+| `hierarchy` | any | No |  | Hierarchy data for chartType 'treemap' or 'sunburst' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A discriminated union on 'type': 'adjacency_list' (flat nodes linked by parentId; a node whose parent is missing becomes its own root) or 'nested' (a single root node with children). |
+| `sankey` | object | No |  | Flow data for chartType 'sankey' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes plus value-weighted links; every link MUST carry a numeric 'value' (the link width IS the flow magnitude) and reference existing node names. |
+| `sankey.nodes` | object[] | Yes |  | Flow nodes. Each carries a unique 'name'; an optional numeric 'value' overrides the computed throughput. |
+| `sankey.links` | object[] | Yes |  | Directed, value-weighted flows between nodes. |
+| `network` | object | No |  | Network data for chartType 'force_graph' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes (each with a unique 'id'; an optional 'group' drives category colour) and directed links (optional numeric 'value'). |
+| `network.nodes` | object[] | Yes |  | Graph nodes. Each carries a unique 'id'; optional 'group' (category) and 'value' (sizing). |
+| `network.links` | object[] | Yes |  | Directed edges between nodes (an empty array is allowed for an all-isolated-nodes graph). |
+| `chartType` | `bar` \| `line` \| `area` \| `scatter` \| `heatmap` \| `treemap` \| `sunburst` \| `sankey` \| `force_graph` | No |  | Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles). |
 | `encodings` | object | No |  | Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode). |
 | `encodings.x` | _ref_ | No |  |  |
 | `encodings.y` | _ref_ | No |  |  |

@@ -10,10 +10,18 @@
 // must stay additionalProperties-clean).
 
 import {
+  adaptGraphToECharts,
+  adaptSankeyToECharts,
+  adaptSunburstToECharts,
+  adaptTreemapToECharts,
   buildVizSpecFromRows,
   toEChartsOption,
   toVegaLiteSpec,
   type BuildVizSpecInput,
+  type HierarchyInput,
+  type NetworkInput,
+  type NormalizedVizSpec,
+  type SankeyInput,
 } from '@oods/viz-core';
 import type { VizRenderInput, VizRenderOutput } from '../schemas/generated.js';
 import { createValueRef, describeSchemaRef, resolveValueRef } from './schema-ref.js';
@@ -24,6 +32,15 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
   const includeNormalized = input.output?.includeNormalizedSpec ?? false;
+
+  // ---- hierarchy/network branch (sprint-111): treemap/sunburst/sankey (force
+  // lands in m04) are EXPLICIT-ONLY and DECOUPLED — each carries a dedicated data
+  // branch (hierarchy or sankey, not rows) and has no Vega-Lite equivalent, so the
+  // ECharts option is the PRIMARY payload. The schema couples each chartType with
+  // its data branch, so the chartType check is sufficient to dispatch. ----
+  if (isEChartsPrimaryType(input.chartType)) {
+    return renderEChartsPrimary(input, input.chartType, compact, includeNormalized);
+  }
 
   // ---- resolve data: inline rows (primary) or a cached datasetRef ----
   let rows: Array<Record<string, unknown>>;
@@ -142,6 +159,183 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
             : 'OODS-V129';
     return errorOut(code, message, compact, wantEcharts);
   }
+}
+
+// ---- ECharts-primary render path (sprint-111 m02 treemap; m03 sunburst+sankey) -
+// treemap/sunburst/sankey are EXPLICIT-ONLY and DECOUPLED from the rows/recommender
+// path: each builds a metadata-only spec, dispatches to its ported adapter with the
+// SEPARATE data branch (hierarchy or sankey), and auto-promotes the ECharts option
+// as the primary payload (these chart types have no Vega-Lite equivalent).
+type EChartsPrimaryType = 'treemap' | 'sunburst' | 'sankey' | 'force_graph';
+
+interface EChartsPrimaryConfig {
+  readonly mark: string;
+  readonly label: string;
+  readonly noun: string;
+  readonly dataBranch: 'hierarchy' | 'sankey' | 'network';
+}
+
+const ECHARTS_PRIMARY: Record<EChartsPrimaryType, EChartsPrimaryConfig> = {
+  treemap: { mark: 'MarkTreemap', label: 'Treemap', noun: 'hierarchical data', dataBranch: 'hierarchy' },
+  sunburst: { mark: 'MarkSunburst', label: 'Sunburst', noun: 'hierarchical data', dataBranch: 'hierarchy' },
+  sankey: { mark: 'MarkSankey', label: 'Sankey diagram', noun: 'flow data', dataBranch: 'sankey' },
+  force_graph: { mark: 'MarkGraph', label: 'Force-directed graph', noun: 'network data', dataBranch: 'network' },
+};
+
+function isEChartsPrimaryType(chartType: VizRenderInput['chartType']): chartType is EChartsPrimaryType {
+  return (
+    chartType === 'treemap' ||
+    chartType === 'sunburst' ||
+    chartType === 'sankey' ||
+    chartType === 'force_graph'
+  );
+}
+
+function renderEChartsPrimary(
+  input: VizRenderInput,
+  chartType: EChartsPrimaryType,
+  compact: boolean,
+  includeNormalized: boolean,
+): VizRenderOutput {
+  const config = ECHARTS_PRIMARY[chartType];
+
+  // The registered schema couples each chartType with its required data branch (AJV
+  // runs before dispatch); this guard is defensive for direct callers.
+  const branchData = (input as Record<string, unknown>)[config.dataBranch];
+  if (!branchData) {
+    return errorOut(
+      'OODS-V123',
+      `chartType "${chartType}" requires a "${config.dataBranch}" data branch.`,
+      compact,
+      false,
+    );
+  }
+
+  try {
+    const spec = buildEChartsPrimarySpec(input, chartType, config);
+
+    let option: ReturnType<typeof adaptTreemapToECharts>;
+    let nodeCount: number;
+    if (chartType === 'sankey') {
+      const sankey = branchData as unknown as SankeyInput;
+      option = adaptSankeyToECharts(spec, sankey);
+      nodeCount = sankey.nodes.length;
+    } else if (chartType === 'force_graph') {
+      const network = branchData as unknown as NetworkInput;
+      option = adaptGraphToECharts(spec, network);
+      nodeCount = network.nodes.length;
+    } else if (chartType === 'sunburst') {
+      const hierarchy = branchData as unknown as HierarchyInput;
+      option = adaptSunburstToECharts(spec, hierarchy);
+      nodeCount = hierarchyNodeCount(hierarchy);
+    } else {
+      const hierarchy = branchData as unknown as HierarchyInput;
+      option = adaptTreemapToECharts(spec, hierarchy);
+      nodeCount = hierarchyNodeCount(hierarchy);
+    }
+
+    // The adapters embed a tooltip `formatter` FUNCTION for client-side rendering;
+    // functions are not JSON-transmittable (they are dropped over the MCP wire) and
+    // are not structured-cloneable (the specRef cache). Project the option to its
+    // transmittable JSON form so the returned echartsSpec matches what a consumer
+    // actually receives — and so the specRef can cache it. (ECharts falls back to
+    // its default tooltip; a future adapter pass could emit a string-template
+    // formatter to preserve the custom tooltip across JSON transport.)
+    const echartsOption = JSON.parse(JSON.stringify(option)) as Record<string, unknown>;
+
+    const out: VizRenderOutput = {
+      status: 'ok',
+      chartType,
+      mode: 'explicit',
+      // No Vega-Lite equivalent: `spec` (Vega-Lite) is the empty placeholder and
+      // the ECharts option is auto-promoted as the primary renderable payload —
+      // returned WITHOUT the caller opting into output.echarts.
+      spec: {},
+      echartsSpec: echartsOption as unknown as VizRenderOutput['echartsSpec'],
+      a11yDescription: spec.a11y.description,
+      warnings: [],
+      output: {
+        compact,
+        echarts: true,
+        ...(includeNormalized ? { includeNormalizedSpec: true } : {}),
+      },
+      meta: {
+        renderer: 'echarts',
+        mark: config.mark,
+        rowCount: nodeCount,
+        fields: [],
+      },
+    };
+
+    if (includeNormalized) {
+      // Metadata-only IR for these charts (the data lives in the data branch +
+      // echartsSpec, not the IR) — emitted as a debug aid.
+      out.normalizedSpec = spec as unknown as VizRenderOutput['normalizedSpec'];
+    }
+    if (compact) {
+      out.tokenCssRef = 'tokens.build';
+    }
+
+    // specRef references the PRIMARY payload (the JSON-safe ECharts option) for pipeline reuse.
+    const record = createValueRef(echartsOption, 'viz.render');
+    const ref = describeSchemaRef(record);
+    out.specRef = ref.ref;
+    out.specRefCreatedAt = ref.createdAt;
+    out.specRefExpiresAt = ref.expiresAt;
+
+    return out;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const name = err instanceof Error ? err.name : 'Error';
+    // SankeyValidationError = invalid input data (like VizSpecBuilderError -> V126);
+    // EChartsAdapterError -> V128; anything else -> V129.
+    const code =
+      name === 'SankeyValidationError'
+        ? 'OODS-V126'
+        : name === 'EChartsAdapterError'
+          ? 'OODS-V128'
+          : 'OODS-V129';
+    return errorOut(code, message, compact, false);
+  }
+}
+
+// Minimal NormalizedVizSpec scaffolding for the ECharts-primary adapters. The
+// adapters read only metadata (name/id/a11y/config/interactions) — the chart data
+// is the SEPARATE input branch — so this carries no encoding/marks data of its own.
+function buildEChartsPrimarySpec(
+  input: VizRenderInput,
+  chartType: EChartsPrimaryType,
+  config: EChartsPrimaryConfig,
+): NormalizedVizSpec {
+  const description = input.description?.trim()
+    ? input.description.trim()
+    : `${config.label} of ${input.name ?? config.noun}.`;
+  return {
+    $schema: 'https://oods.dev/viz-spec/v1',
+    id: input.id ?? `viz:${chartType}`,
+    ...(input.name ? { name: input.name } : {}),
+    data: { values: [] },
+    marks: [{ trait: config.mark }],
+    encoding: {},
+    a11y: { description },
+  } as NormalizedVizSpec;
+}
+
+// Count of hierarchy nodes bound into the chart (surfaced as meta.rowCount — the
+// hierarchy analog of tabular row count).
+function hierarchyNodeCount(input: HierarchyInput): number {
+  if (input.type === 'adjacency_list') {
+    return input.data.length;
+  }
+  const count = (node: { children?: ReadonlyArray<unknown> }): number =>
+    1 +
+    (Array.isArray(node.children)
+      ? node.children.reduce(
+          (sum: number, child) => sum + count(child as { children?: ReadonlyArray<unknown> }),
+          0,
+        )
+      : 0);
+  return count(input.data);
 }
 
 // Confidence normalization (s110-m04 design call; default per decision #698:
