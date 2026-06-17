@@ -34,7 +34,7 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 ### +1 closeout mission every sprint
 - **Rule:** Every sprint includes a final mission named "closeout" with concrete deliverables: commit verification, branch push, counterparty ack (if cross-project), session capture+complete, MEMORY.md update, closeout report.
 - **Why:** Sprints 90–91 retro-split failure mode. Floating "commit per-mission" policy didn't change behavior; trackable closeout mission did. Validated 4 consecutive sprints (s92–s95) zero retro-splits.
-- **Application:** every sprint plan reserves the +1 slot.
+- **Application:** every sprint plan reserves the +1 slot. The closeout must explicitly `cmos_session complete` the linked **build** session (with summary + nextSteps) as a distinct step — completing the *sprint* (`cmos_sprint complete`) does NOT complete the active build session. (s110 closed the sprint but left build session PS-2026-06-16-004 active, which blocked the next session-start until it was completed retroactively during the s110 review.)
 
 ### N≤5 mission posture (with N=3 flex)
 - **Rule:** Default sprint shape is 4–5 missions including closeout. Flex to N=3 occasionally to validate posture flexibility.
@@ -51,6 +51,12 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 - **Rule:** Every sprint closeout verifies the scale-determinism suite (`pnpm --filter @oods/mcp-server run test:scale`) green at 100/500/1000 — the Q1 mission-graph release gate (V2 axis #7, decision #614). This sprint-close/#408 boundary is the load-bearing gate; the standalone `scale-determinism` CI job runs it per-PR for early signal.
 - **Why:** The 3-sprint reproducibility streak (s105=1/3 baseline, s106=2/3, s107=3/3) completed per #614, flipping the gate from "prove it's reproducible" to "keep it reproducible." Determinism regressions in `map.apply` are silent and only surface at scale; the closeout check is what holds the property sprint-over-sprint instead of letting it drift. Resolved at s107-retro (PS-2026-06-10-004) as a closeout criterion rather than a CI aggregator gate job — `ci.yml` has no release-gate job; the #408 closeout boundary is the gate.
 - **Application:** the closeout mission's success criteria add (d) `test:scale` green at 100/500/1000 before session.complete. First formal run: the s107-retro pass.
+
+### Build-freshness at closeout (BUILD_STALE handling)
+- **Rule:** Rebuild the dists of the packages actually changed this sprint, then close via `forceComplete` with a recorded reason. The cmos build-freshness probe reports BUILD_STALE `dist-missing` at every closeout because this repo builds bare-`tsc` → `dist/src/**`, a layout the probe does not recognize; the 5 perennially-flagged files are unchanged `src/viz` re-export shims from the s109 extraction. `forceComplete`-with-recorded-reason is the standing closeout path (decisions #693/#696a/#716).
+- **Why:** BUILD_STALE recurred at s109 and s110 exactly as #696a predicted; re-deciding `forceComplete` every closeout is waste. Adopting it as a documented convention stops it surfacing as a per-sprint decision.
+- **Permanent fix (open, NOT a Forge repo mission):** teach the cmos build-freshness probe the `dist/src/**` layout, or exclude the shim dir — a CMOS-MCP-side change (next-step #400). Until then, this convention holds.
+- **Application:** the closeout mission's success criteria add (e) changed-package dists rebuilt + the `forceComplete` reason recorded when BUILD_STALE fires.
 
 ---
 
