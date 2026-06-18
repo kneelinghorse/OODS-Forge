@@ -369,3 +369,118 @@ exports[`dashboard.render render-fidelity goldens (sprint-113 m06) > the metric-
   "warnings": [],
 }
 `;
+
+exports[`dashboard.render render-fidelity goldens (sprint-113 m06) > the period-axis composed payload matches the committed golden (v0.2) 1`] = `
+{
+  "a11y": {
+    "description": "Monthly revenue with an explicit period axis.",
+    "panelOrder": [
+      "kpi-rev",
+      "trend",
+    ],
+    "readingOrder": "kpi-first",
+  },
+  "layout": [
+    {
+      "h": 1,
+      "id": "kpi-rev",
+      "w": 3,
+      "x": 0,
+      "y": 0,
+    },
+    {
+      "h": 2,
+      "id": "trend",
+      "w": 6,
+      "x": 3,
+      "y": 0,
+    },
+  ],
+  "links": [],
+  "meta": {
+    "crossFiltered": false,
+    "datasetCount": 1,
+    "errorPanelCount": 0,
+    "panelCount": 2,
+  },
+  "output": {
+    "compact": true,
+  },
+  "panels": [
+    {
+      "a11yDescription": "Latest Revenue: 120 (increasing, delta 10 vs prior period).",
+      "delta": 10,
+      "deltaPct": 0.090909,
+      "formatted": "120",
+      "id": "kpi-rev",
+      "kind": "kpi",
+      "sparkline": [
+        100,
+        110,
+        120,
+      ],
+      "title": "Latest Revenue",
+      "trendDirection": "increasing",
+      "value": 120,
+    },
+    {
+      "a11yDescription": "Line chart of sum of revenue by month.",
+      "chartType": "line",
+      "id": "trend",
+      "kind": "chart",
+      "renderer": "vega-lite",
+      "spec": {
+        "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+        "data": {
+          "values": [
+            {
+              "month": "2024-03",
+              "region": "West",
+              "revenue": 120,
+            },
+            {
+              "month": "2024-01",
+              "region": "West",
+              "revenue": 100,
+            },
+            {
+              "month": "2024-02",
+              "region": "West",
+              "revenue": 110,
+            },
+          ],
+        },
+        "description": "Line chart of sum of revenue by month.",
+        "encoding": {
+          "x": {
+            "field": "month",
+            "type": "ordinal",
+          },
+          "y": {
+            "aggregate": "sum",
+            "field": "revenue",
+            "type": "quantitative",
+          },
+        },
+        "mark": {
+          "type": "line",
+        },
+        "title": "Line chart",
+        "usermeta": {
+          "oods": {
+            "a11y": {
+              "description": "Line chart of sum of revenue by month.",
+            },
+            "name": "Line chart",
+            "specId": "trend",
+          },
+        },
+      },
+    },
+  ],
+  "schemaVersion": "v0.1",
+  "status": "ok",
+  "tokenCssRef": "tokens.build",
+  "warnings": [],
+}
+`;

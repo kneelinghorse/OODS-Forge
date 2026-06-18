@@ -155,8 +155,32 @@ function buildKpiResult(panel: KpiPanel, rows: Row[]): PanelResult {
 
 function kpiA11y(panel: KpiPanel, kpi: ReturnType<typeof computeKpi>): string {
   const label = panel.title ?? panel.field;
-  const trend = kpi.delta === null ? '' : ` (${kpi.trendDirection}, delta ${kpi.delta})`;
-  return `${label}: ${kpi.formatted}${trend}.`;
+  if (kpi.delta === null) {
+    return `${label}: ${kpi.formatted}.`;
+  }
+  // periodField ABSENT keeps the EXACT v0.1 string (byte-identical additivity —
+  // the comparison there is by ROW, so it must NOT claim a period basis). With an
+  // explicit period axis (v0.2) the basis names the period it was measured against.
+  const basis = panel.periodField ? periodBasisLabel(panel.comparison) : '';
+  const suffix = basis ? ` ${basis}` : '';
+  return `${label}: ${kpi.formatted} (${kpi.trendDirection}, delta ${kpi.delta}${suffix}).`;
+}
+
+// The period-basis phrase for the a11y string, gated to the period-based bases
+// (the frozen seam (h) wording). 'target' is not period-relative, so it adds no
+// phrase even under an explicit periodField.
+function periodBasisLabel(comparison: KpiPanel['comparison']): string {
+  if (!comparison) {
+    return '';
+  }
+  if (comparison.basis === 'prior_period') {
+    return 'vs prior period';
+  }
+  if (comparison.basis === 'window') {
+    const n = Math.max(1, Math.trunc(comparison.window ?? 1));
+    return `over the last ${n} periods`;
+  }
+  return '';
 }
 
 type ChartPanel = Extract<Panel, { kind: 'chart' }>;

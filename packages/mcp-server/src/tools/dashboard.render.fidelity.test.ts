@@ -50,6 +50,30 @@ function redact(out: DashboardRenderOutput): Omit<DashboardRenderOutput, 'specRe
   return rest;
 }
 
+// Period-axis variant (sprint-114 m05): an explicit periodField drives the KPI
+// onto a parsed + sorted time axis. Rows are intentionally out of period order
+// so the snapshot locks the SORTED compute (latest = max period) + the period-
+// gated a11y wording, distinct from the row-order METRIC_OVERVIEW above.
+const PERIOD_OVERVIEW: DashboardRenderInput = {
+  schemaVersion: 'v0.1',
+  title: 'Monthly Revenue (period axis)',
+  datasets: [
+    {
+      id: 'sales',
+      rows: [
+        { region: 'West', month: '2024-03', revenue: 120 },
+        { region: 'West', month: '2024-01', revenue: 100 },
+        { region: 'West', month: '2024-02', revenue: 110 },
+      ],
+    },
+  ],
+  panels: [
+    { id: 'kpi-rev', kind: 'kpi', title: 'Latest Revenue', datasetId: 'sales', field: 'revenue', periodField: 'month', aggregate: 'latest', comparison: { basis: 'prior_period' } },
+    { id: 'trend', kind: 'chart', chartType: 'line', datasetId: 'sales', encodings: { x: 'month', y: { field: 'revenue', aggregate: 'sum' } } },
+  ],
+  a11y: { description: 'Monthly revenue with an explicit period axis.' },
+} as DashboardRenderInput;
+
 describe('dashboard.render render-fidelity goldens (sprint-113 m06)', () => {
   it('the metric-overview composed payload matches the committed golden', async () => {
     const out = await handle(METRIC_OVERVIEW);
@@ -60,6 +84,22 @@ describe('dashboard.render render-fidelity goldens (sprint-113 m06)', () => {
   it('same input -> byte-identical composed payload (determinism gate)', async () => {
     const a = redact(await handle(METRIC_OVERVIEW));
     const b = redact(await handle(METRIC_OVERVIEW));
+    expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+  });
+
+  it('the period-axis composed payload matches the committed golden (v0.2)', async () => {
+    const out = await handle(PERIOD_OVERVIEW);
+    expect(out.status).toBe('ok');
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.value).toBe(120); // max period (2024-03)
+    expect(kpi.delta).toBe(10); // vs prior period (2024-02 = 110)
+    expect(kpi.a11yDescription).toBe('Latest Revenue: 120 (increasing, delta 10 vs prior period).');
+    expect(redact(out)).toMatchSnapshot();
+  });
+
+  it('period-axis: same input -> byte-identical composed payload (determinism gate)', async () => {
+    const a = redact(await handle(PERIOD_OVERVIEW));
+    const b = redact(await handle(PERIOD_OVERVIEW));
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
   });
 });

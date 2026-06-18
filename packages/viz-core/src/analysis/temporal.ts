@@ -13,7 +13,7 @@
 
 export type TemporalGranularity = 'year' | 'quarter' | 'month' | 'day' | 'time';
 
-interface ParsedTemporal {
+export interface ParsedTemporal {
   readonly granularity: TemporalGranularity;
   readonly year: number;
   /** 0-based month index (0 = January). */
@@ -161,7 +161,7 @@ export function everyValueIsTemporal(present: ReadonlyArray<unknown>): boolean {
   return present.every((v) => parseTemporalValue(v, false) !== null);
 }
 
-function unitIndexFor(parsed: ParsedTemporal, target: TemporalGranularity): number {
+export function unitIndexFor(parsed: ParsedTemporal, target: TemporalGranularity): number {
   switch (target) {
     case 'year':
       return parsed.year;
@@ -174,6 +174,23 @@ function unitIndexFor(parsed: ParsedTemporal, target: TemporalGranularity): numb
     case 'time':
       return parsed.utcMs;
   }
+}
+
+/**
+ * The FINEST granularity present across the parsed cells (e.g. a column mixing
+ * 'month' and 'day' values keys at 'day'). Empty input defaults to 'year' (the
+ * coarsest), but callers pass a non-empty array. Used by summarizeTemporal AND
+ * the KPI period-axis builder (sprint-114) so both scan the GRANULARITY_RANK
+ * table the same way.
+ */
+export function finestGranularity(parsed: ReadonlyArray<ParsedTemporal>): TemporalGranularity {
+  let granularity: TemporalGranularity = 'year';
+  for (const p of parsed) {
+    if (GRANULARITY_RANK[p.granularity] > GRANULARITY_RANK[granularity]) {
+      granularity = p.granularity;
+    }
+  }
+  return granularity;
 }
 
 /**
@@ -199,12 +216,7 @@ export function summarizeTemporal(
     return null;
   }
 
-  let granularity: TemporalGranularity = 'year';
-  for (const p of parsed) {
-    if (GRANULARITY_RANK[p.granularity] > GRANULARITY_RANK[granularity]) {
-      granularity = p.granularity;
-    }
-  }
+  const granularity = finestGranularity(parsed);
 
   const distinct = [...new Set(parsed.map((p) => unitIndexFor(p, granularity)))].sort((a, b) => a - b);
   if (distinct.length <= 2) {
