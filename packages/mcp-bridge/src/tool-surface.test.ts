@@ -31,6 +31,18 @@ describe('resolveBridgeToolSurface', () => {
     expect(bridgeConfig.tools.allowed).toContain('viz.render');
   });
 
+  it('exposes dashboard.render on the default bridge surface (bridge<->direct parity)', () => {
+    const surface = resolveBridgeToolSurface(
+      serverCwd,
+      bridgeConfig.tools.allowed,
+      { MCP_TOOLSET: 'default', MCP_EXTRA_TOOLS: '' } as NodeJS.ProcessEnv,
+    );
+    // dashboard.render is an auto tool in the server registry AND allow-listed on
+    // the bridge (sprint-113 m05), so the bridge-resolved surface must include it.
+    expect(surface.enabled).toContain('dashboard.render');
+    expect(bridgeConfig.tools.allowed).toContain('dashboard.render');
+  });
+
   it('includes on-demand tools when MCP_TOOLSET=all', () => {
     const surface = resolveBridgeToolSurface(
       serverCwd,

@@ -1,0 +1,371 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dashboard.render render-fidelity goldens (sprint-113 m06) > the metric-overview composed payload matches the committed golden 1`] = `
+{
+  "a11y": {
+    "description": "Revenue overview dashboard.",
+    "panelOrder": [
+      "kpi-rev",
+      "trend",
+      "breakdown",
+      "geo",
+    ],
+    "readingOrder": "kpi-first",
+  },
+  "layout": [
+    {
+      "h": 1,
+      "id": "kpi-rev",
+      "w": 3,
+      "x": 0,
+      "y": 0,
+    },
+    {
+      "h": 2,
+      "id": "trend",
+      "w": 6,
+      "x": 3,
+      "y": 0,
+    },
+    {
+      "h": 2,
+      "id": "breakdown",
+      "w": 6,
+      "x": 0,
+      "y": 2,
+    },
+    {
+      "h": 2,
+      "id": "geo",
+      "w": 6,
+      "x": 6,
+      "y": 2,
+    },
+  ],
+  "links": [
+    {
+      "operator": "in",
+      "source": "breakdown",
+      "sourceField": "region",
+      "target": "trend",
+    },
+  ],
+  "meta": {
+    "crossFiltered": false,
+    "datasetCount": 1,
+    "errorPanelCount": 0,
+    "panelCount": 4,
+  },
+  "output": {
+    "compact": true,
+  },
+  "panels": [
+    {
+      "a11yDescription": "Total Revenue: 390 (increasing, delta 90).",
+      "delta": 90,
+      "deltaPct": 0.3,
+      "formatted": "390",
+      "id": "kpi-rev",
+      "kind": "kpi",
+      "sparkline": [
+        100,
+        80,
+        120,
+        90,
+      ],
+      "thresholdBreached": true,
+      "title": "Total Revenue",
+      "trendDirection": "increasing",
+      "value": 390,
+    },
+    {
+      "a11yDescription": "Line chart of sum of revenue by month.",
+      "chartType": "line",
+      "id": "trend",
+      "kind": "chart",
+      "renderer": "vega-lite",
+      "spec": {
+        "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+        "data": {
+          "values": [
+            {
+              "month": "Jan",
+              "region": "West",
+              "revenue": 100,
+            },
+            {
+              "month": "Jan",
+              "region": "East",
+              "revenue": 80,
+            },
+            {
+              "month": "Feb",
+              "region": "West",
+              "revenue": 120,
+            },
+            {
+              "month": "Feb",
+              "region": "East",
+              "revenue": 90,
+            },
+          ],
+        },
+        "description": "Line chart of sum of revenue by month.",
+        "encoding": {
+          "x": {
+            "field": "month",
+            "type": "ordinal",
+          },
+          "y": {
+            "aggregate": "sum",
+            "field": "revenue",
+            "type": "quantitative",
+          },
+        },
+        "mark": {
+          "type": "line",
+        },
+        "title": "Line chart",
+        "usermeta": {
+          "oods": {
+            "a11y": {
+              "description": "Line chart of sum of revenue by month.",
+            },
+            "name": "Line chart",
+            "specId": "trend",
+          },
+        },
+      },
+    },
+    {
+      "a11yDescription": "Bar chart of sum of revenue by region.",
+      "chartType": "bar",
+      "id": "breakdown",
+      "kind": "chart",
+      "renderer": "vega-lite",
+      "spec": {
+        "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+        "data": {
+          "values": [
+            {
+              "month": "Jan",
+              "region": "West",
+              "revenue": 100,
+            },
+            {
+              "month": "Jan",
+              "region": "East",
+              "revenue": 80,
+            },
+            {
+              "month": "Feb",
+              "region": "West",
+              "revenue": 120,
+            },
+            {
+              "month": "Feb",
+              "region": "East",
+              "revenue": 90,
+            },
+          ],
+        },
+        "description": "Bar chart of sum of revenue by region.",
+        "encoding": {
+          "x": {
+            "field": "region",
+            "type": "ordinal",
+          },
+          "y": {
+            "aggregate": "sum",
+            "field": "revenue",
+            "type": "quantitative",
+          },
+        },
+        "mark": {
+          "type": "bar",
+        },
+        "title": "Bar chart",
+        "usermeta": {
+          "oods": {
+            "a11y": {
+              "description": "Bar chart of sum of revenue by region.",
+            },
+            "name": "Bar chart",
+            "specId": "breakdown",
+          },
+        },
+      },
+    },
+    {
+      "a11yDescription": "Choropleth map of regional values.",
+      "chartType": "choropleth",
+      "echartsSpec": {
+        "__registration": {
+          "geoJson": {
+            "features": [
+              {
+                "geometry": {
+                  "coordinates": [
+                    [
+                      [
+                        0,
+                        0,
+                      ],
+                      [
+                        2,
+                        0,
+                      ],
+                      [
+                        2,
+                        2,
+                      ],
+                      [
+                        0,
+                        2,
+                      ],
+                      [
+                        0,
+                        0,
+                      ],
+                    ],
+                  ],
+                  "type": "Polygon",
+                },
+                "properties": {
+                  "name": "West",
+                  "region": "West",
+                  "revenue": 220,
+                },
+                "type": "Feature",
+              },
+              {
+                "geometry": {
+                  "coordinates": [
+                    [
+                      [
+                        2,
+                        0,
+                      ],
+                      [
+                        4,
+                        0,
+                      ],
+                      [
+                        4,
+                        2,
+                      ],
+                      [
+                        2,
+                        2,
+                      ],
+                      [
+                        2,
+                        0,
+                      ],
+                    ],
+                  ],
+                  "type": "Polygon",
+                },
+                "properties": {
+                  "name": "East",
+                  "region": "East",
+                  "revenue": 170,
+                },
+                "type": "Feature",
+              },
+            ],
+            "type": "FeatureCollection",
+          },
+          "name": "map-geo",
+        },
+        "aria": {
+          "description": "Choropleth map of regional values.",
+          "enabled": true,
+        },
+        "geo": {
+          "emphasis": {
+            "itemStyle": {
+              "areaColor": "rgb(248, 249, 250)",
+            },
+          },
+          "itemStyle": {
+            "areaColor": "#f2f2f2",
+            "borderColor": "rgb(233, 236, 239)",
+          },
+          "label": {
+            "show": false,
+          },
+          "map": "map-geo",
+          "roam": false,
+        },
+        "series": [
+          {
+            "data": [
+              {
+                "name": "West",
+                "rawProperties": {
+                  "name": "West",
+                  "region": "West",
+                  "revenue": 220,
+                },
+                "value": 220,
+              },
+              {
+                "name": "East",
+                "rawProperties": {
+                  "name": "East",
+                  "region": "East",
+                  "revenue": 170,
+                },
+                "value": 170,
+              },
+            ],
+            "emphasis": {
+              "focus": "self",
+            },
+            "geoIndex": 0,
+            "map": "map-geo",
+            "name": "Choropleth",
+            "type": "map",
+          },
+        ],
+        "tooltip": {
+          "trigger": "item",
+        },
+        "usermeta": {
+          "oods": {
+            "a11y": {
+              "description": "Choropleth map of regional values.",
+            },
+            "dimensions": {
+              "height": 520,
+              "width": 860,
+            },
+            "specId": "geo",
+          },
+        },
+        "visualMap": {
+          "calculable": true,
+          "inRange": {
+            "color": [
+              "rgb(223, 237, 252)",
+              "rgb(68, 114, 161)",
+              "rgb(0, 55, 119)",
+            ],
+          },
+          "max": 220,
+          "min": 170,
+          "type": "continuous",
+        },
+      },
+      "id": "geo",
+      "kind": "chart",
+      "renderer": "echarts",
+    },
+  ],
+  "schemaVersion": "v0.1",
+  "status": "ok",
+  "tokenCssRef": "tokens.build",
+  "warnings": [],
+}
+`;

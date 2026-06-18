@@ -53,10 +53,20 @@ const VIZ_CORE_IR_BANNER =
   '// this file IS the live source of truth — do NOT edit by hand. Change the schema and\n' +
   '// re-run `pnpm generate:schema-types`; CI runs it with --check to catch drift.\n';
 
+const DASHBOARD_SPEC_BANNER =
+  '// GENERATED into @oods/viz-core by scripts/types/generate.ts (generate:schema-types),\n' +
+  '// from schemas/viz/dashboard-spec.schema.json. #681 retarget (sprint-113 m01): this\n' +
+  '// file IS the live source of truth — do NOT edit by hand. Change the schema and\n' +
+  '// re-run `pnpm generate:schema-types`; CI runs it with --check to catch drift.\n';
+
 const SCHEMA_ROUTES: Record<string, SchemaRoute> = {
   'viz/normalized-viz-spec.schema.json': {
     outFile: 'packages/viz-core/src/spec/normalized-viz-spec.types.ts',
     banner: VIZ_CORE_IR_BANNER,
+  },
+  'viz/dashboard-spec.schema.json': {
+    outFile: 'packages/viz-core/src/spec/dashboard.types.ts',
+    banner: DASHBOARD_SPEC_BANNER,
   },
   'viz/force-output.schema.json': 'skip',
   'viz/hierarchy-input.schema.json': 'skip',

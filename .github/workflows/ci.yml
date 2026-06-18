@@ -575,8 +575,8 @@ jobs:
       - name: Run @oods/viz-core suite (profiler + recommender + golden profiles)
         run: pnpm --filter @oods/viz-core test
 
-      - name: Run colocated viz.render goldens
-        run: pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts
+      - name: Run colocated viz.render + dashboard.render goldens
+        run: pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/dashboard.render.test.ts src/tools/dashboard.render.fidelity.test.ts
 
       - name: Run mcp-bridge tool-surface test
         run: pnpm --filter @oods/mcp-bridge test

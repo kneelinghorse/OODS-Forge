@@ -1,0 +1,453 @@
+// GENERATED into @oods/viz-core by scripts/types/generate.ts (generate:schema-types),
+// from schemas/viz/dashboard-spec.schema.json. #681 retarget (sprint-113 m01): this
+// file IS the live source of truth — do NOT edit by hand. Change the schema and
+// re-run `pnpm generate:schema-types`; CI runs it with --check to catch drift.
+
+/**
+ * A dashboard panel: a chart panel (one of the 11 viz.render chartTypes + its data branch) or a kpi tile. Discriminated on `kind`.
+ */
+export type Panel = ChartPanel | KpiPanel;
+/**
+ * A chart panel — a viz.render-shaped descriptor: chartType (the authoritative 11-value enum) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.
+ */
+export type ChartPanel = ChartPanel1 & {
+  id: string;
+  kind: 'chart';
+  title?: string;
+  /**
+   * Optional per-panel accessibility description override (flat string, mirrors the viz.render input).
+   */
+  description?: string;
+  /**
+   * The authoritative viz.render chartType enum (11 values).
+   */
+  chartType:
+    | 'bar'
+    | 'line'
+    | 'area'
+    | 'scatter'
+    | 'heatmap'
+    | 'treemap'
+    | 'sunburst'
+    | 'sankey'
+    | 'force_graph'
+    | 'choropleth'
+    | 'bubble_map';
+  /**
+   * References a top-level dataset by id. Required for the tabular types (bar/line/area/scatter/heatmap).
+   */
+  datasetId?: string;
+  encodings?: Encodings;
+  hierarchy?: HierarchyData;
+  sankey?: SankeyData;
+  network?: NetworkData;
+  geo?: GeoData;
+};
+export type ChartPanel1 = {
+  [k: string]: unknown;
+} & {
+  [k: string]: unknown;
+} & {
+  [k: string]: unknown;
+} & {
+  [k: string]: unknown;
+} & {
+  [k: string]: unknown;
+} & {
+  [k: string]: unknown;
+};
+/**
+ * An encoding binding: a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.
+ */
+export type EncodingBinding =
+  | string
+  | {
+      field: string;
+      aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+      scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+      timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+      sort?:
+        | ('none' | 'ascending' | 'descending')
+        | {
+            field: string;
+            order: 'ascending' | 'descending';
+          };
+      title?: string;
+    };
+/**
+ * Hierarchy data for treemap/sunburst panels — discriminated union on 'type' (mirrors the viz.render hierarchy branch).
+ */
+export type HierarchyData =
+  | {
+      type: 'adjacency_list';
+      /**
+       * @minItems 1
+       */
+      data: [
+        {
+          id: string;
+          parentId: string | null;
+          value: number;
+          name?: string;
+          [k: string]: unknown;
+        },
+        ...{
+          id: string;
+          parentId: string | null;
+          value: number;
+          name?: string;
+          [k: string]: unknown;
+        }[]
+      ];
+    }
+  | {
+      type: 'nested';
+      data: HierarchyNode;
+    };
+
+/**
+ * Declarative, headless dashboard IR (sprint-113 Phase-2, envelope Option C). Composes bare viz.render chart specs as panels + layout + cross-filter links + KPI tiles — the fixed 'metric overview' template (KPI row + trend + breakdown + optional geo). Chart-level specs (viz.render) are UNCHANGED; this IR sits ABOVE them.
+ */
+export interface DashboardSpecV01 {
+  /**
+   * IR version discriminant (V01 convention). A future template/shape change bumps to v0.2.
+   */
+  schemaVersion: 'v0.1';
+  /**
+   * Stable identifier for the dashboard instance.
+   */
+  id?: string;
+  /**
+   * Human-friendly dashboard title surfaced in UI + narration.
+   */
+  title?: string;
+  /**
+   * SEAM (a) cross-panel DATA-SHARING. Shared, named tabular datasets. Tabular chart panels and KPI panels reference one by `datasetId`; sharing a dataset is what makes cross-filter possible (panels filter the same dimensional space).
+   *
+   * @minItems 1
+   */
+  datasets: [Dataset, ...Dataset[]];
+  /**
+   * Heterogeneous panels: chart (any of the 11 viz.render chartTypes + its data branch) or kpi tiles.
+   *
+   * @minItems 1
+   */
+  panels: [Panel, ...Panel[]];
+  layout?: DashboardLayout;
+  /**
+   * Cross-filter wiring: a selection on a source panel filters a target panel. Declared in v1 (schema-frozen) so m04 adds only a reducer, not a schema change.
+   */
+  links?: DashboardLink[];
+  crossFilter?: CrossFilterConfig;
+  /**
+   * SEAM (b) partial-panel ERROR policy. 'placeholder' = render an a11y-described error panel in-place (default — don't void the dashboard); 'omit' = drop the failed panel from the layout.
+   */
+  onPanelError?: 'placeholder' | 'omit';
+  a11y: DashboardA11YSpec;
+  /**
+   * SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). KPI threshold colors are NOT resolved inline.
+   */
+  tokenCssRef?: string;
+}
+/**
+ * A named shared dataset. Panels reference it by id; cross-filter operates over its shared dimensional space.
+ */
+export interface Dataset {
+  id: string;
+  /**
+   * Flat tabular rows (field name -> value), bounded like viz.render.
+   *
+   * @minItems 1
+   * @maxItems 5000
+   */
+  rows: [
+    {
+      [k: string]: unknown;
+    },
+    ...{
+      [k: string]: unknown;
+    }[]
+  ];
+}
+/**
+ * Channel -> field bindings for tabular chart panels (mirrors the viz.render encodings shape).
+ */
+export interface Encodings {
+  x?: EncodingBinding;
+  y?: EncodingBinding;
+  color?: EncodingBinding;
+  size?: EncodingBinding;
+  shape?: EncodingBinding;
+  detail?: EncodingBinding;
+}
+/**
+ * A nested-hierarchy node: a name, an optional numeric value, and optional recursive children.
+ */
+export interface HierarchyNode {
+  name: string;
+  value?: number;
+  children?: HierarchyNode[];
+  [k: string]: unknown;
+}
+/**
+ * Flow data for a sankey panel — nodes plus value-weighted links (mirrors the viz.render sankey branch).
+ */
+export interface SankeyData {
+  /**
+   * @minItems 1
+   */
+  nodes: [
+    {
+      name: string;
+      value?: number;
+      [k: string]: unknown;
+    },
+    ...{
+      name: string;
+      value?: number;
+      [k: string]: unknown;
+    }[]
+  ];
+  /**
+   * @minItems 1
+   */
+  links: [
+    {
+      source: string;
+      target: string;
+      value: number;
+      [k: string]: unknown;
+    },
+    ...{
+      source: string;
+      target: string;
+      value: number;
+      [k: string]: unknown;
+    }[]
+  ];
+}
+/**
+ * Network data for a force_graph panel — nodes plus directed links (mirrors the viz.render network branch). An empty links array is allowed.
+ */
+export interface NetworkData {
+  /**
+   * @minItems 1
+   */
+  nodes: [
+    {
+      id: string;
+      group?: string;
+      value?: number;
+      [k: string]: unknown;
+    },
+    ...{
+      id: string;
+      group?: string;
+      value?: number;
+      [k: string]: unknown;
+    }[]
+  ];
+  links: {
+    source: string;
+    target: string;
+    value?: number;
+    [k: string]: unknown;
+  }[];
+}
+/**
+ * Geo data for choropleth/bubble_map panels — inline geometry + per-type encoding (mirrors the viz.render geo branch). Geometry is supplied INLINE, never fetched.
+ */
+export interface GeoData {
+  /**
+   * Inline GeoJSON FeatureCollection.
+   */
+  geojson?: {
+    [k: string]: unknown;
+  };
+  /**
+   * Inline TopoJSON Topology (converted to a FeatureCollection).
+   */
+  topojson?: {
+    [k: string]: unknown;
+  };
+  topoObjectName?: string;
+  /**
+   * @maxItems 5000
+   */
+  rows?: {
+    [k: string]: unknown;
+  }[];
+  join?: {
+    dataKey: string;
+    featureProperty: string;
+  };
+  /**
+   * Choropleth: the numeric field colouring each region. Required for choropleth.
+   */
+  valueField?: string;
+  /**
+   * Bubble map: the longitude field. Required for bubble_map.
+   */
+  longitudeField?: string;
+  /**
+   * Bubble map: the latitude field. Required for bubble_map.
+   */
+  latitudeField?: string;
+  sizeField?: string;
+  colorField?: string;
+  colorScale?: 'linear' | 'quantize' | 'quantile' | 'threshold' | 'ordinal';
+}
+/**
+ * A KPI tile — the only NEW panel primitive (trend/breakdown/geo already ship as chart types). Reserves value/aggregate/comparison/threshold metadata; the actual compute is deferred to m03 (which reduces the cross-filtered dataset rows to a renderer-agnostic payload).
+ */
+export interface KpiPanel {
+  id: string;
+  kind: 'kpi';
+  title?: string;
+  description?: string;
+  /**
+   * References a top-level dataset by id.
+   */
+  datasetId: string;
+  /**
+   * The metric field aggregated into the KPI value.
+   */
+  field: string;
+  /**
+   * Point-in-time aggregate. Adds 'latest' (most recent value by row order) to the viz.render aggregate set, for point-in-time KPIs.
+   */
+  aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct' | 'latest';
+  comparison?: KpiComparison;
+  threshold?: KpiThreshold;
+  /**
+   * Optional renderer-agnostic number-format hint (e.g. 'currency', '0.0%').
+   */
+  format?: string;
+  /**
+   * Optional unit label.
+   */
+  unit?: string;
+}
+/**
+ * Comparison basis for the KPI delta. stats.ts deriveTrend is first-vs-last only; this reserves prior-period / target / window bases (computation deferred to m03).
+ */
+export interface KpiComparison {
+  basis: 'prior_period' | 'target' | 'window';
+  /**
+   * For basis 'prior_period': the field carrying the prior value/period key.
+   */
+  field?: string;
+  /**
+   * For basis 'target': the explicit target to compare against.
+   */
+  value?: number;
+  /**
+   * For basis 'window': the trailing window size.
+   */
+  window?: number;
+}
+/**
+ * Threshold / anomaly metadata. SEMANTIC only (direction/value) — colors do NOT resolve inline (SEAM e: tokens deferred to the consumer CSS bundle). m03 computes the breach/anomaly flag (reusing stats.ts stddev/tukey for the outlier detector).
+ */
+export interface KpiThreshold {
+  /**
+   * Whether a breach is the value above or below the threshold.
+   */
+  direction?: 'above' | 'below';
+  /**
+   * Threshold value.
+   */
+  value?: number;
+  /**
+   * Optional anomaly detector to flag (Phase-4 narration deferred — flag only).
+   */
+  anomaly?: 'stddev_outlier';
+}
+/**
+ * Optional layout hints consumed by the m02 deterministic auto-layout resolver. Absent hints -> declared panel order + KPI-row-first defaults; the resolver emits abstract {x,y,w,h} (renderer-agnostic, the client sizes the canvas).
+ */
+export interface DashboardLayout {
+  /**
+   * Grid column count.
+   */
+  columns?: number;
+  /**
+   * Per-panel grid hints (gridSpan / order). A panel without a placement uses resolver defaults.
+   */
+  placements?: PanelPlacement[];
+}
+export interface PanelPlacement {
+  panelId: string;
+  /**
+   * How many grid columns the panel spans.
+   */
+  gridSpan?: number;
+  /**
+   * Explicit ordering hint (lower = earlier).
+   */
+  order?: number;
+}
+/**
+ * A cross-filter link: a selection on the source panel filters the target panel. The predicate vocabulary reuses the SectionFilter operator grammar. m04 adds the reducer; this schema does not change.
+ */
+export interface DashboardLink {
+  id?: string;
+  /**
+   * Source panel id (its selection drives the filter).
+   */
+  source: string;
+  /**
+   * Target panel id (filtered by the source selection).
+   */
+  target: string;
+  /**
+   * Dimension the source selection is on (defaults to the source panel's primary dimension).
+   */
+  sourceField?: string;
+  /**
+   * Field on the target to filter (defaults to sourceField).
+   */
+  targetField?: string;
+  /**
+   * Predicate operator (SectionFilter grammar). Defaults to 'in' for categorical/point selections.
+   */
+  operator?: '==' | '!=' | 'in' | 'not_in' | '>' | '>=' | '<' | '<=';
+  /**
+   * Per-link override of crossFilter.combine (v1 supports 'and' only).
+   */
+  combine?: 'and';
+}
+/**
+ * SEAM (c) cross-source LINK combination. Default: each active source ANDs a predicate; a panel ignores its OWN source selection (skip-self). Per-link override via DashboardLink.combine.
+ */
+export interface CrossFilterConfig {
+  /**
+   * How predicates from multiple active sources combine (v1: 'and' only).
+   */
+  combine?: 'and';
+  /**
+   * When true, a panel ignores selections that originated from itself.
+   */
+  ignoreSelfSource?: boolean;
+}
+/**
+ * SEAM (d) dashboard-level accessibility: a cross-panel summary + reading/focus order. The per-chart AccessibilitySpec stays per-panel; this is the dashboard envelope.
+ */
+export interface DashboardA11YSpec {
+  /**
+   * Cross-panel screen-reader summary of the whole dashboard.
+   */
+  description: string;
+  /**
+   * Short ARIA label applied to the dashboard container.
+   */
+  ariaLabel?: string;
+  /**
+   * Panel reading/focus order. 'kpi-first' surfaces the KPI row before charts (the metric-overview default); 'declared' uses panel declaration order.
+   */
+  readingOrder?: 'kpi-first' | 'declared';
+  narrative?: {
+    summary?: string;
+    keyFindings?: string[];
+  };
+}

@@ -131,6 +131,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/viz.render.input.json',
     outputSchema: './schemas/viz.render.output.json',
   },
+  'dashboard.render': {
+    modulePath: './tools/dashboard.render.js',
+    inputSchema: './schemas/dashboard.render.input.json',
+    outputSchema: './schemas/dashboard.render.output.json',
+  },
   'fidelity.preview': {
     modulePath: './tools/fidelity.preview.js',
     inputSchema: './schemas/fidelity.preview.input.json',

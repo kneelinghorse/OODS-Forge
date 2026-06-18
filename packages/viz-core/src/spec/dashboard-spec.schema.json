@@ -1,0 +1,485 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods.dev/schemas/viz/dashboard-spec.schema.json",
+  "title": "Dashboard Spec v0.1",
+  "type": "object",
+  "description": "Declarative, headless dashboard IR (sprint-113 Phase-2, envelope Option C). Composes bare viz.render chart specs as panels + layout + cross-filter links + KPI tiles — the fixed 'metric overview' template (KPI row + trend + breakdown + optional geo). Chart-level specs (viz.render) are UNCHANGED; this IR sits ABOVE them.",
+  "$comment": "FROZEN SEAMS — mission-start audit (s113-m01, Rule 1). These 5 integration seams are frozen NOW so m02/m03/m04 add code, not schema churn. (a) CROSS-PANEL DATA-SHARING: shared dataset-level rows at `datasets[]`; panels reference a dataset by `datasetId` + field refs in `encodings` — NOT inline-rows-per-panel, which bloats payload AND blocks cross-filter (tabular panels must share a dimensional space). Non-tabular branches (hierarchy/sankey/network/geo) are structurally distinct and carried inline on the panel. (b) PARTIAL-PANEL ERROR policy: `onPanelError` default 'placeholder' — render an a11y-described error panel in-place, don't void the whole dashboard. (c) CROSS-SOURCE LINK combination: `crossFilter` default { combine:'and', ignoreSelfSource:true } — each active source ANDs a predicate; a panel ignores its OWN source selection; per-link override via `links[].combine`. (d) DASHBOARD-LEVEL A11Y: `a11y` (required) carries a cross-panel summary + `readingOrder` default 'kpi-first' (KPI row read/focused before charts); the per-chart AccessibilitySpec stays per-panel. (e) TOKEN strategy: one dashboard-level `tokenCssRef` (deferred to the consumer CSS bundle per viz.render's compact/tokenCssRef posture); KPI threshold metadata is SEMANTIC only (`threshold.direction`/`value`) — colors do NOT resolve inline. ALSO frozen in m01 (as hand-authored TS, not this schema, since they are runtime interaction state not declarative config): the Selection / SelectionState types in packages/viz-core/src/spec/dashboard-selection.ts, so m03 (cross-filter resolver) and m04 (linked-selection reducer) depend ONLY on m01. The links predicate vocabulary reuses the SectionFilter operator grammar (==|!=|in|not_in|>|>=|<|<=). DEFERRED: brush/interval RANGE selections (point/categorical only v1); anomaly narration (threshold/outlier flag only); the general composer (fixed template first). DOWNSTREAM CONTRACT CLARIFICATIONS (frozen so m02-m05 add code, not schema): (i) KPI TIME AXIS — the KPI sparkline, comparison.basis 'window', and aggregate 'latest' ALL read DATASET ROW ORDER as the time axis (rows arrive pre-ordered from the producer); there is no separate KPI period/time field in v1 (an explicit period axis would be a v0.2 additive field — the most likely future churn point). (ii) CROSS-FILTER SOURCE DIMENSION — DashboardLink.sourceField defaults to the source panel's primary dimension = a TABULAR panel's encodings.x field; a non-tabular source panel (hierarchy/sankey/network/geo) has no encodings block and MUST set links[].sourceField explicitly, else it is not a valid v1 cross-filter source. (iii) SELECTION VALUES — cross-filter Selection.values are string|number ONLY in v1 (boolean dimensions out of scope), so the m04 canonical-ordering normalizer never sorts a boolean. (iv) VENDORED COPY — packages/viz-core/src/spec/dashboard-spec.schema.json is a hand-synced byte-identical copy of this source (the validator inlines it); a viz-core parity test asserts identity, but re-copy on every edit and keep it in the s113 closeout gate sweep.",
+  "required": ["schemaVersion", "datasets", "panels", "a11y"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "v0.1",
+      "description": "IR version discriminant (V01 convention). A future template/shape change bumps to v0.2."
+    },
+    "id": {
+      "type": "string",
+      "description": "Stable identifier for the dashboard instance."
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-friendly dashboard title surfaced in UI + narration."
+    },
+    "datasets": {
+      "type": "array",
+      "minItems": 1,
+      "description": "SEAM (a) cross-panel DATA-SHARING. Shared, named tabular datasets. Tabular chart panels and KPI panels reference one by `datasetId`; sharing a dataset is what makes cross-filter possible (panels filter the same dimensional space).",
+      "items": { "$ref": "#/definitions/Dataset" }
+    },
+    "panels": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Heterogeneous panels: chart (any of the 11 viz.render chartTypes + its data branch) or kpi tiles.",
+      "items": { "$ref": "#/definitions/Panel" }
+    },
+    "layout": { "$ref": "#/definitions/DashboardLayout" },
+    "links": {
+      "type": "array",
+      "description": "Cross-filter wiring: a selection on a source panel filters a target panel. Declared in v1 (schema-frozen) so m04 adds only a reducer, not a schema change.",
+      "items": { "$ref": "#/definitions/DashboardLink" }
+    },
+    "crossFilter": { "$ref": "#/definitions/CrossFilterConfig" },
+    "onPanelError": {
+      "type": "string",
+      "enum": ["placeholder", "omit"],
+      "default": "placeholder",
+      "description": "SEAM (b) partial-panel ERROR policy. 'placeholder' = render an a11y-described error panel in-place (default — don't void the dashboard); 'omit' = drop the failed panel from the layout."
+    },
+    "a11y": { "$ref": "#/definitions/DashboardA11ySpec" },
+    "tokenCssRef": {
+      "type": "string",
+      "description": "SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). KPI threshold colors are NOT resolved inline."
+    }
+  },
+  "definitions": {
+    "Dataset": {
+      "type": "object",
+      "required": ["id", "rows"],
+      "additionalProperties": false,
+      "description": "A named shared dataset. Panels reference it by id; cross-filter operates over its shared dimensional space.",
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5000,
+          "description": "Flat tabular rows (field name -> value), bounded like viz.render.",
+          "items": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
+    "Panel": {
+      "description": "A dashboard panel: a chart panel (one of the 11 viz.render chartTypes + its data branch) or a kpi tile. Discriminated on `kind`.",
+      "oneOf": [
+        { "$ref": "#/definitions/ChartPanel" },
+        { "$ref": "#/definitions/KpiPanel" }
+      ]
+    },
+    "ChartPanel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "chartType"],
+      "description": "A chart panel — a viz.render-shaped descriptor: chartType (the authoritative 11-value enum) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.",
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "const": "chart" },
+        "title": { "type": "string" },
+        "description": {
+          "type": "string",
+          "description": "Optional per-panel accessibility description override (flat string, mirrors the viz.render input)."
+        },
+        "chartType": {
+          "type": "string",
+          "enum": ["bar", "line", "area", "scatter", "heatmap", "treemap", "sunburst", "sankey", "force_graph", "choropleth", "bubble_map"],
+          "description": "The authoritative viz.render chartType enum (11 values)."
+        },
+        "datasetId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "References a top-level dataset by id. Required for the tabular types (bar/line/area/scatter/heatmap)."
+        },
+        "encodings": { "$ref": "#/definitions/Encodings" },
+        "hierarchy": { "$ref": "#/definitions/HierarchyData" },
+        "sankey": { "$ref": "#/definitions/SankeyData" },
+        "network": { "$ref": "#/definitions/NetworkData" },
+        "geo": { "$ref": "#/definitions/GeoData" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["chartType"],
+            "properties": { "chartType": { "enum": ["bar", "line", "area", "scatter", "heatmap"] } }
+          },
+          "then": {
+            "required": ["datasetId", "encodings"],
+            "properties": { "encodings": { "required": ["x", "y"] } }
+          }
+        },
+        {
+          "if": {
+            "required": ["chartType"],
+            "properties": { "chartType": { "enum": ["treemap", "sunburst"] } }
+          },
+          "then": { "required": ["hierarchy"] }
+        },
+        {
+          "if": {
+            "required": ["chartType"],
+            "properties": { "chartType": { "const": "sankey" } }
+          },
+          "then": { "required": ["sankey"] }
+        },
+        {
+          "if": {
+            "required": ["chartType"],
+            "properties": { "chartType": { "const": "force_graph" } }
+          },
+          "then": { "required": ["network"] }
+        },
+        {
+          "if": {
+            "required": ["chartType"],
+            "properties": { "chartType": { "const": "choropleth" } }
+          },
+          "then": {
+            "required": ["geo"],
+            "properties": {
+              "geo": {
+                "required": ["valueField"],
+                "anyOf": [{ "required": ["geojson"] }, { "required": ["topojson"] }]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["chartType"],
+            "properties": { "chartType": { "const": "bubble_map" } }
+          },
+          "then": {
+            "required": ["geo"],
+            "properties": { "geo": { "required": ["longitudeField", "latitudeField", "rows"] } }
+          }
+        }
+      ]
+    },
+    "KpiPanel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "datasetId", "field"],
+      "description": "A KPI tile — the only NEW panel primitive (trend/breakdown/geo already ship as chart types). Reserves value/aggregate/comparison/threshold metadata; the actual compute is deferred to m03 (which reduces the cross-filtered dataset rows to a renderer-agnostic payload).",
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "const": "kpi" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "datasetId": { "type": "string", "minLength": 1, "description": "References a top-level dataset by id." },
+        "field": { "type": "string", "minLength": 1, "description": "The metric field aggregated into the KPI value." },
+        "aggregate": {
+          "type": "string",
+          "enum": ["sum", "count", "average", "median", "min", "max", "distinct", "latest"],
+          "default": "sum",
+          "description": "Point-in-time aggregate. Adds 'latest' (most recent value by row order) to the viz.render aggregate set, for point-in-time KPIs."
+        },
+        "comparison": { "$ref": "#/definitions/KpiComparison" },
+        "threshold": { "$ref": "#/definitions/KpiThreshold" },
+        "format": { "type": "string", "description": "Optional renderer-agnostic number-format hint (e.g. 'currency', '0.0%')." },
+        "unit": { "type": "string", "description": "Optional unit label." }
+      }
+    },
+    "KpiComparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis"],
+      "description": "Comparison basis for the KPI delta. stats.ts deriveTrend is first-vs-last only; this reserves prior-period / target / window bases (computation deferred to m03).",
+      "properties": {
+        "basis": { "type": "string", "enum": ["prior_period", "target", "window"] },
+        "field": { "type": "string", "description": "For basis 'prior_period': the field carrying the prior value/period key." },
+        "value": { "type": "number", "description": "For basis 'target': the explicit target to compare against." },
+        "window": { "type": "integer", "minimum": 1, "description": "For basis 'window': the trailing window size." }
+      }
+    },
+    "KpiThreshold": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Threshold / anomaly metadata. SEMANTIC only (direction/value) — colors do NOT resolve inline (SEAM e: tokens deferred to the consumer CSS bundle). m03 computes the breach/anomaly flag (reusing stats.ts stddev/tukey for the outlier detector).",
+      "properties": {
+        "direction": { "type": "string", "enum": ["above", "below"], "description": "Whether a breach is the value above or below the threshold." },
+        "value": { "type": "number", "description": "Threshold value." },
+        "anomaly": { "type": "string", "enum": ["stddev_outlier"], "description": "Optional anomaly detector to flag (Phase-4 narration deferred — flag only)." }
+      }
+    },
+    "Encodings": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Channel -> field bindings for tabular chart panels (mirrors the viz.render encodings shape).",
+      "properties": {
+        "x": { "$ref": "#/definitions/EncodingBinding" },
+        "y": { "$ref": "#/definitions/EncodingBinding" },
+        "color": { "$ref": "#/definitions/EncodingBinding" },
+        "size": { "$ref": "#/definitions/EncodingBinding" },
+        "shape": { "$ref": "#/definitions/EncodingBinding" },
+        "detail": { "$ref": "#/definitions/EncodingBinding" }
+      }
+    },
+    "EncodingBinding": {
+      "description": "An encoding binding: a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.",
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        {
+          "type": "object",
+          "required": ["field"],
+          "additionalProperties": false,
+          "properties": {
+            "field": { "type": "string", "minLength": 1 },
+            "aggregate": { "type": "string", "enum": ["sum", "count", "average", "median", "min", "max", "distinct"] },
+            "scale": { "type": "string", "enum": ["linear", "temporal", "log", "sqrt", "band", "point"] },
+            "timeUnit": { "type": "string", "enum": ["year", "quarter", "month", "week", "day", "hour", "minute", "second"] },
+            "sort": {
+              "oneOf": [
+                { "type": "string", "enum": ["none", "ascending", "descending"] },
+                {
+                  "type": "object",
+                  "required": ["field", "order"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "field": { "type": "string" },
+                    "order": { "type": "string", "enum": ["ascending", "descending"] }
+                  }
+                }
+              ]
+            },
+            "title": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "HierarchyData": {
+      "description": "Hierarchy data for treemap/sunburst panels — discriminated union on 'type' (mirrors the viz.render hierarchy branch).",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "data"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "adjacency_list" },
+            "data": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["id", "parentId", "value"],
+                "additionalProperties": true,
+                "properties": {
+                  "id": { "type": "string", "minLength": 1 },
+                  "parentId": { "type": ["string", "null"] },
+                  "value": { "type": "number" },
+                  "name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "data"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "nested" },
+            "data": { "$ref": "#/definitions/HierarchyNode" }
+          }
+        }
+      ]
+    },
+    "HierarchyNode": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": true,
+      "description": "A nested-hierarchy node: a name, an optional numeric value, and optional recursive children.",
+      "properties": {
+        "name": { "type": "string" },
+        "value": { "type": "number" },
+        "children": { "type": "array", "items": { "$ref": "#/definitions/HierarchyNode" } }
+      }
+    },
+    "SankeyData": {
+      "type": "object",
+      "required": ["nodes", "links"],
+      "additionalProperties": false,
+      "description": "Flow data for a sankey panel — nodes plus value-weighted links (mirrors the viz.render sankey branch).",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": true,
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "value": { "type": "number" }
+            }
+          }
+        },
+        "links": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["source", "target", "value"],
+            "additionalProperties": true,
+            "properties": {
+              "source": { "type": "string", "minLength": 1 },
+              "target": { "type": "string", "minLength": 1 },
+              "value": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "NetworkData": {
+      "type": "object",
+      "required": ["nodes", "links"],
+      "additionalProperties": false,
+      "description": "Network data for a force_graph panel — nodes plus directed links (mirrors the viz.render network branch). An empty links array is allowed.",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "additionalProperties": true,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "group": { "type": "string" },
+              "value": { "type": "number" }
+            }
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source", "target"],
+            "additionalProperties": true,
+            "properties": {
+              "source": { "type": "string", "minLength": 1 },
+              "target": { "type": "string", "minLength": 1 },
+              "value": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "GeoData": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Geo data for choropleth/bubble_map panels — inline geometry + per-type encoding (mirrors the viz.render geo branch). Geometry is supplied INLINE, never fetched.",
+      "properties": {
+        "geojson": { "type": "object", "additionalProperties": true, "description": "Inline GeoJSON FeatureCollection." },
+        "topojson": { "type": "object", "additionalProperties": true, "description": "Inline TopoJSON Topology (converted to a FeatureCollection)." },
+        "topoObjectName": { "type": "string", "minLength": 1 },
+        "rows": {
+          "type": "array",
+          "maxItems": 5000,
+          "items": { "type": "object", "additionalProperties": true }
+        },
+        "join": {
+          "type": "object",
+          "required": ["dataKey", "featureProperty"],
+          "additionalProperties": false,
+          "properties": {
+            "dataKey": { "type": "string", "minLength": 1 },
+            "featureProperty": { "type": "string", "minLength": 1 }
+          }
+        },
+        "valueField": { "type": "string", "minLength": 1, "description": "Choropleth: the numeric field colouring each region. Required for choropleth." },
+        "longitudeField": { "type": "string", "minLength": 1, "description": "Bubble map: the longitude field. Required for bubble_map." },
+        "latitudeField": { "type": "string", "minLength": 1, "description": "Bubble map: the latitude field. Required for bubble_map." },
+        "sizeField": { "type": "string", "minLength": 1 },
+        "colorField": { "type": "string", "minLength": 1 },
+        "colorScale": { "type": "string", "enum": ["linear", "quantize", "quantile", "threshold", "ordinal"] }
+      }
+    },
+    "DashboardLayout": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional layout hints consumed by the m02 deterministic auto-layout resolver. Absent hints -> declared panel order + KPI-row-first defaults; the resolver emits abstract {x,y,w,h} (renderer-agnostic, the client sizes the canvas).",
+      "properties": {
+        "columns": { "type": "integer", "minimum": 1, "default": 12, "description": "Grid column count." },
+        "placements": {
+          "type": "array",
+          "description": "Per-panel grid hints (gridSpan / order). A panel without a placement uses resolver defaults.",
+          "items": { "$ref": "#/definitions/PanelPlacement" }
+        }
+      }
+    },
+    "PanelPlacement": {
+      "type": "object",
+      "required": ["panelId"],
+      "additionalProperties": false,
+      "properties": {
+        "panelId": { "type": "string", "minLength": 1 },
+        "gridSpan": { "type": "integer", "minimum": 1, "description": "How many grid columns the panel spans." },
+        "order": { "type": "integer", "description": "Explicit ordering hint (lower = earlier)." }
+      }
+    },
+    "DashboardLink": {
+      "type": "object",
+      "required": ["source", "target"],
+      "additionalProperties": false,
+      "description": "A cross-filter link: a selection on the source panel filters the target panel. The predicate vocabulary reuses the SectionFilter operator grammar. m04 adds the reducer; this schema does not change.",
+      "properties": {
+        "id": { "type": "string" },
+        "source": { "type": "string", "minLength": 1, "description": "Source panel id (its selection drives the filter)." },
+        "target": { "type": "string", "minLength": 1, "description": "Target panel id (filtered by the source selection)." },
+        "sourceField": { "type": "string", "description": "Dimension the source selection is on (defaults to the source panel's primary dimension)." },
+        "targetField": { "type": "string", "description": "Field on the target to filter (defaults to sourceField)." },
+        "operator": {
+          "type": "string",
+          "enum": ["==", "!=", "in", "not_in", ">", ">=", "<", "<="],
+          "description": "Predicate operator (SectionFilter grammar). Defaults to 'in' for categorical/point selections."
+        },
+        "combine": {
+          "type": "string",
+          "enum": ["and"],
+          "description": "Per-link override of crossFilter.combine (v1 supports 'and' only)."
+        }
+      }
+    },
+    "CrossFilterConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "SEAM (c) cross-source LINK combination. Default: each active source ANDs a predicate; a panel ignores its OWN source selection (skip-self). Per-link override via DashboardLink.combine.",
+      "properties": {
+        "combine": { "type": "string", "enum": ["and"], "default": "and", "description": "How predicates from multiple active sources combine (v1: 'and' only)." },
+        "ignoreSelfSource": { "type": "boolean", "default": true, "description": "When true, a panel ignores selections that originated from itself." }
+      }
+    },
+    "DashboardA11ySpec": {
+      "type": "object",
+      "required": ["description"],
+      "additionalProperties": false,
+      "description": "SEAM (d) dashboard-level accessibility: a cross-panel summary + reading/focus order. The per-chart AccessibilitySpec stays per-panel; this is the dashboard envelope.",
+      "properties": {
+        "description": { "type": "string", "minLength": 1, "description": "Cross-panel screen-reader summary of the whole dashboard." },
+        "ariaLabel": { "type": "string", "description": "Short ARIA label applied to the dashboard container." },
+        "readingOrder": {
+          "type": "string",
+          "enum": ["kpi-first", "declared"],
+          "default": "kpi-first",
+          "description": "Panel reading/focus order. 'kpi-first' surfaces the KPI row before charts (the metric-overview default); 'declared' uses panel declaration order."
+        },
+        "narrative": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "summary": { "type": "string" },
+            "keyFindings": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    }
+  }
+}

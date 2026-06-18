@@ -9,6 +9,18 @@
 // Spec IR + AJV validator
 export * from './spec/normalized-viz-spec.js';
 
+// Dashboard IR + AJV validator (sprint-113 m01) — composes bare viz.render chart
+// specs as panels + layout + cross-filter links + KPI tiles (Option C).
+export * from './spec/dashboard-spec.js';
+
+// Runtime cross-filter selection types (sprint-113 m01) — Selection / SelectionState
+// frozen here so m03 (resolver) + m04 (linked-selection reducer) depend only on m01.
+export * from './spec/dashboard-selection.js';
+
+// Headless dashboard primitives (sprint-113) — pure deterministic helpers over
+// the DashboardSpec IR (m02 auto-layout; m03 KPI + cross-filter resolver; ...).
+export * from './dashboard/index.js';
+
 // Network/hierarchy data contracts (treemap/sunburst/force/sankey inputs).
 // These are carried as the SEPARATE adapter `input` param — decoupled from the IR.
 export * from './spec/network-flow.js';

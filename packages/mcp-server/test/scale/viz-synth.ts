@@ -192,3 +192,51 @@ export function synthesizeGeoInput(options: VizSynthOptions): {
   }
   return { geojson: { type: 'FeatureCollection', features }, rows };
 }
+
+// ---------------------------------------------------------------------------
+// Dashboard synthesizer (sprint-113 m06).
+//
+// Composes the per-type synths into a LEAN metric-overview DashboardSpec scaled
+// to the tier. The shared tabular dataset (KPI row + trend + breakdown) scales to
+// `tier` rows — that is the cross-filter/KPI determinism-relevant path; the geo
+// panel is CAPPED to a small fixed region count (sliced from the seeded geo synth)
+// so the heavy ECharts render stays bounded under the 60s scale budget. Same
+// (tier, seed) -> byte-identical composed dashboard; different seed -> divergent
+// (the seeded tabular + geo values differ). Realistic dashboards are 4-12 panels;
+// this is 4. mulberry32-only via the per-type synths; no Math.random/Date leaks.
+// ---------------------------------------------------------------------------
+
+/** Region cap for the geo panel — keeps the per-render cost flat across tiers. */
+const DASHBOARD_GEO_CAP = 24;
+
+export function synthesizeDashboardSpec(options: VizSynthOptions): Record<string, unknown> {
+  const rows = synthesizeVizRows(options);
+  const geo = synthesizeGeoInput(options);
+  const geoFeatures = geo.geojson.features.slice(0, DASHBOARD_GEO_CAP);
+  const geoRows = geo.rows.slice(0, DASHBOARD_GEO_CAP).map((r) => ({ region: r.region, value: r.value }));
+
+  return {
+    schemaVersion: 'v0.1',
+    title: `Synthetic ${options.tier}-row dashboard`,
+    datasets: [{ id: 'main', rows }],
+    panels: [
+      { id: 'kpi-rev', kind: 'kpi', title: 'Total Revenue', datasetId: 'main', field: 'revenue', aggregate: 'sum', comparison: { basis: 'prior_period' } },
+      { id: 'trend', kind: 'chart', chartType: 'line', datasetId: 'main', encodings: { x: 'month', y: { field: 'revenue', aggregate: 'sum' } } },
+      { id: 'breakdown', kind: 'chart', chartType: 'bar', datasetId: 'main', encodings: { x: 'region', y: { field: 'revenue', aggregate: 'sum' } } },
+      {
+        id: 'geo',
+        kind: 'chart',
+        chartType: 'choropleth',
+        geo: {
+          geojson: { type: 'FeatureCollection', features: geoFeatures },
+          rows: geoRows,
+          join: { dataKey: 'region', featureProperty: 'region' },
+          valueField: 'value',
+        },
+      },
+    ],
+    layout: { columns: 12 },
+    links: [{ source: 'breakdown', target: 'trend', sourceField: 'region', operator: 'in' }],
+    a11y: { description: `Synthetic metric-overview dashboard over ${options.tier} rows.`, readingOrder: 'kpi-first' },
+  };
+}

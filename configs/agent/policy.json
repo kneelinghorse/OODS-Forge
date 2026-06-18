@@ -264,6 +264,19 @@
       "ratePerMinute": 20
     },
     {
+      "name": "dashboard.render",
+      "description": "Renders a composed metric-overview dashboard (KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec; composes per-panel viz specs in-process with deterministic layout, KPI compute, and cross-filtering. Returns the resolved layout + per-panel specs + a synthesized a11y block and a specRef for pipeline reuse.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
       "name": "health",
       "description": "MCP server readiness and subsystem status",
       "modes": [
@@ -378,6 +391,7 @@
         "pipeline",
         "viz.compose",
         "viz.render",
+        "dashboard.render",
         "map",
         "schema",
         "object",
@@ -403,6 +417,7 @@
         "pipeline",
         "viz.compose",
         "viz.render",
+        "dashboard.render",
         "map",
         "schema",
         "object",
