@@ -62,3 +62,31 @@ describe('viz.render registration audit (sprint-109 m05)', () => {
     expect(read('configs/agent/policy.json')).toContain('"name": "viz.render"');
   });
 });
+
+// sprint-113 m05: dashboard.render must be wired into the SAME 8 surfaces as
+// viz.render (Option C composes it on top), or the aquex adapter and the :4466
+// bridge would expose/authorize it inconsistently. generated.ts is the 8th site
+// (regenerated via @oods/schemas-tools, never hand-edited).
+describe('dashboard.render registration audit (sprint-113 m05)', () => {
+  const dashboardRenderMentions: Array<{ label: string; file: string; pattern: string }> = [
+    { label: 'server dispatch (index.ts)', file: 'packages/mcp-server/src/index.ts', pattern: "'dashboard.render': {" },
+    { label: 'registry.json (enablement)', file: 'packages/mcp-server/src/tools/registry.json', pattern: '"dashboard.render"' },
+    { label: 'registry.ts FALLBACK', file: 'packages/mcp-server/src/tools/registry.ts', pattern: "'dashboard.render'" },
+    { label: 'server-layer policy.json', file: 'packages/mcp-server/src/security/policy.json', pattern: '"tool": "dashboard.render"' },
+    { label: 'agent-layer configs/agent/policy.json', file: 'configs/agent/policy.json', pattern: '"name": "dashboard.render"' },
+    { label: 'mcp-bridge FALLBACK config', file: 'packages/mcp-bridge/src/config.ts', pattern: "name: 'dashboard.render'" },
+    { label: 'mcp-adapter tool-descriptions.json', file: 'packages/mcp-adapter/tool-descriptions.json', pattern: '"dashboard.render"' },
+    { label: 'generated.ts (typed contract)', file: 'packages/mcp-server/src/schemas/generated.ts', pattern: '// Source: dashboard.render.input.json' },
+  ];
+
+  for (const entry of dashboardRenderMentions) {
+    it(`registers dashboard.render in ${entry.label}`, () => {
+      expect(read(entry.file)).toContain(entry.pattern);
+    });
+  }
+
+  it('exposes dashboard.render on BOTH policy layers (two-layer convention #622)', () => {
+    expect(read('packages/mcp-server/src/security/policy.json')).toContain('"tool": "dashboard.render"');
+    expect(read('configs/agent/policy.json')).toContain('"name": "dashboard.render"');
+  });
+});

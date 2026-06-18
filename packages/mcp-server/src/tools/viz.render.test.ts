@@ -435,3 +435,169 @@ describe('viz.render handler — force_graph (network) path', () => {
     expect(JSON.stringify(dispatched.echartsSpec)).toEqual(JSON.stringify(direct.echartsSpec));
   });
 });
+
+// sprint-112 m02 — choropleth + bubble_map reach the agent surface, reusing the
+// ECharts-primary plumbing via the new 'geo' data branch (inline geometry + per-type
+// encoding). UNLIKE the hierarchy/flow types these are NOT self-contained: the
+// FeatureCollection rides back on echartsSpec.__registration so the client can
+// re-register the map by name before rendering.
+const US_STATES = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      id: 'CA',
+      properties: { region: 'CA', state_name: 'California' },
+      geometry: { type: 'Polygon', coordinates: [[[-124, 32], [-114, 32], [-114, 42], [-124, 42], [-124, 32]]] },
+    },
+    {
+      type: 'Feature',
+      id: 'NV',
+      properties: { region: 'NV', state_name: 'Nevada' },
+      geometry: { type: 'Polygon', coordinates: [[[-120, 35], [-114, 35], [-114, 42], [-120, 42], [-120, 35]]] },
+    },
+  ],
+};
+const SALES_BY_STATE = [
+  { state: 'CA', sales: 580 },
+  { state: 'NV', sales: 96 },
+];
+const STATES_TOPO = {
+  type: 'Topology',
+  arcs: [[[-124, 32], [-114, 32], [-114, 42], [-124, 42], [-124, 32]]],
+  objects: {
+    states: {
+      type: 'GeometryCollection',
+      geometries: [{ type: 'Polygon', properties: { region: 'CA', state_name: 'California' }, arcs: [[0]] }],
+    },
+  },
+};
+const CITIES = [
+  { city: 'San Francisco', lng: -122.4, lat: 37.8, pop: 874 },
+  { city: 'Las Vegas', lng: -115.1, lat: 36.2, pop: 646 },
+];
+
+describe('viz.render handler — choropleth (geo) path', () => {
+  const CHORO_INPUT = {
+    chartType: 'choropleth',
+    geo: {
+      geojson: US_STATES,
+      rows: SALES_BY_STATE,
+      join: { dataKey: 'state', featureProperty: 'region' },
+      valueField: 'sales',
+      colorScale: 'linear',
+    },
+    name: 'Sales by state',
+  };
+
+  it('renders a join into a renderable ECharts choropleth (series type map, AJV-valid output)', async () => {
+    const out = await render(CHORO_INPUT);
+
+    expect(out.status).toBe('ok');
+    expect(out.chartType).toBe('choropleth');
+    expect(out.mode).toBe('explicit');
+    expect(validateOutput(out)).toBe(true);
+
+    const series = (out.echartsSpec as Record<string, any>).series;
+    expect(series[0].type).toBe('map');
+    // Region names from the join geoKey; values from the merged rows.
+    expect(series[0].data.map((d: any) => d.name)).toEqual(['CA', 'NV']);
+    expect(series[0].data.map((d: any) => d.value)).toEqual([580, 96]);
+    expect(out.meta?.renderer).toBe('echarts');
+    expect(out.meta?.mark).toBe('MarkChoropleth');
+    expect(out.meta?.rowCount).toBe(US_STATES.features.length);
+    expect((out.a11yDescription ?? '').length).toBeGreaterThan(0);
+  });
+
+  it('carries the FeatureCollection back on echartsSpec.__registration (NOT self-contained)', async () => {
+    const out = await render(CHORO_INPUT);
+    const registration = (out.echartsSpec as Record<string, any>).__registration;
+    expect(registration?.geoJson?.type).toBe('FeatureCollection');
+    expect(registration.geoJson.features).toHaveLength(2);
+    // The join merged the tabular value into the feature so the client has it too.
+    expect(registration.geoJson.features[0].properties.sales).toBe(580);
+  });
+
+  it('converts inline TopoJSON to a FeatureCollection', async () => {
+    const out = await render({
+      chartType: 'choropleth',
+      geo: { topojson: STATES_TOPO, topoObjectName: 'states', valueField: 'sales' },
+    });
+    expect(out.status).toBe('ok');
+    expect(validateOutput(out)).toBe(true);
+    const registration = (out.echartsSpec as Record<string, any>).__registration;
+    expect(registration.geoJson.features).toHaveLength(1);
+    expect(registration.geoJson.features[0].properties.region).toBe('CA');
+  });
+
+  it('ECharts-primary: echartsSpec auto-promoted without output.echarts; Vega-Lite spec is the empty placeholder', async () => {
+    const out = await render(CHORO_INPUT);
+    expect(out.echartsSpec).toBeTruthy();
+    expect(out.spec).toEqual({});
+    expect(out.output?.echarts).toBe(true);
+  });
+
+  it('input schema couples choropleth with a valued geo branch (rejects rows-only / missing valueField / missing geometry)', () => {
+    expect(validateInput(CHORO_INPUT)).toBe(true);
+    expect(validateInput({ chartType: 'choropleth', rows: SALES_BY_STATE })).toBe(false);
+    expect(validateInput({ chartType: 'choropleth', geo: { geojson: US_STATES } })).toBe(false); // no valueField
+    expect(validateInput({ chartType: 'choropleth', geo: { valueField: 'sales' } })).toBe(false); // no geometry
+  });
+
+  it('defensive guard: a direct call missing valueField fails loud with OODS-V126', async () => {
+    const out = await render({ chartType: 'choropleth', geo: { geojson: US_STATES } });
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V126');
+  });
+
+  it('determinism: identical choropleth input yields an identical echartsSpec', async () => {
+    const a = await render(CHORO_INPUT);
+    const b = await render(CHORO_INPUT);
+    expect(JSON.stringify(b.echartsSpec)).toEqual(JSON.stringify(a.echartsSpec));
+  });
+});
+
+describe('viz.render handler — bubble_map (geo) path', () => {
+  const BUBBLE_INPUT = {
+    chartType: 'bubble_map',
+    geo: {
+      geojson: US_STATES,
+      rows: CITIES,
+      longitudeField: 'lng',
+      latitudeField: 'lat',
+      sizeField: 'pop',
+      colorField: 'pop',
+      colorScale: 'linear',
+    },
+    name: 'City population',
+  };
+
+  it('renders points into a geo-anchored ECharts scatter (AJV-valid output)', async () => {
+    const out = await render(BUBBLE_INPUT);
+
+    expect(out.status).toBe('ok');
+    expect(out.chartType).toBe('bubble_map');
+    expect(validateOutput(out)).toBe(true);
+
+    const series = (out.echartsSpec as Record<string, any>).series;
+    expect(series[0].type).toBe('scatter');
+    expect(series[0].coordinateSystem).toBe('geo');
+    expect(series[0].data).toHaveLength(2);
+    // value = [lng, lat, size, color]
+    expect(series[0].data[0].value[0]).toBe(-122.4);
+    expect(out.meta?.mark).toBe('MarkBubble');
+    expect(out.meta?.rowCount).toBe(CITIES.length);
+  });
+
+  it('input schema couples bubble_map with a points-bearing geo branch (rejects missing lng/lat or rows)', () => {
+    expect(validateInput(BUBBLE_INPUT)).toBe(true);
+    expect(validateInput({ chartType: 'bubble_map', geo: { rows: CITIES, longitudeField: 'lng' } })).toBe(false); // no lat
+    expect(validateInput({ chartType: 'bubble_map', geo: { longitudeField: 'lng', latitudeField: 'lat' } })).toBe(false); // no rows
+  });
+
+  it('determinism: identical bubble_map input yields an identical echartsSpec', async () => {
+    const a = await render(BUBBLE_INPUT);
+    const b = await render(BUBBLE_INPUT);
+    expect(JSON.stringify(b.echartsSpec)).toEqual(JSON.stringify(a.echartsSpec));
+  });
+});

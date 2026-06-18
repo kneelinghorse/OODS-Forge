@@ -30,6 +30,7 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'registry.snapshot',
     'viz.compose',
     'viz.render',
+    'dashboard.render',
     'fidelity.preview',
     'map',
     'schema',

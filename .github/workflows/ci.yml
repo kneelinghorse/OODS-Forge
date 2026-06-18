@@ -54,6 +54,9 @@ jobs:
       - name: Check generated schema types are fresh
         run: pnpm --filter @oods/schemas-tools run generate:check
 
+      - name: Check schema-derived types are fresh (Generator B, #681 retarget)
+        run: pnpm run generate:schema-types -- --check
+
       - name: Build workspace
         run: pnpm run build
 
@@ -332,7 +335,9 @@ jobs:
   a11y-contract:
     name: a11y-contract
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 15m was chronically tight for build-storybook + the Playwright Chromium
+    # download + the a11y run, intermittently timing out on the install step.
+    timeout-minutes: 25
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -539,10 +544,10 @@ jobs:
     # sprint-110 m05: close the CI gap where the data-aware recommender's own
     # suites do NOT run under root CI. Runs @oods/viz-core's tests (profiler /
     # intent / scorer + the committed golden profiles + the sprint-111 network/
-    # hierarchy ECharts-option goldens), the colocated viz.render render-fidelity
-    # + handler + network-fidelity goldens, and the mcp-bridge tool-surface test
-    # (#696b) — so a recommender/profiler/adapter determinism regression FAILS root
-    # CI, not just `pnpm --filter`.
+    # hierarchy + sprint-112 geo ECharts-option goldens), the colocated viz.render
+    # render-fidelity + handler + network-fidelity + geo-fidelity goldens, and the
+    # mcp-bridge tool-surface test (#696b) — so a recommender/profiler/adapter
+    # determinism regression FAILS root CI, not just `pnpm --filter`.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -570,8 +575,8 @@ jobs:
       - name: Run @oods/viz-core suite (profiler + recommender + golden profiles)
         run: pnpm --filter @oods/viz-core test
 
-      - name: Run colocated viz.render goldens
-        run: pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts
+      - name: Run colocated viz.render + dashboard.render goldens
+        run: pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/dashboard.render.test.ts src/tools/dashboard.render.fidelity.test.ts
 
       - name: Run mcp-bridge tool-surface test
         run: pnpm --filter @oods/mcp-bridge test

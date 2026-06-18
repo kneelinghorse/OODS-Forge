@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/dashboard.render.output.json",
+  "title": "Dashboard render output",
+  "description": "A composed metric-overview dashboard: the resolved abstract layout, per-panel compiled payloads (chart specs / KPI values / a11y-described error placeholders), the declared cross-filter links, the dashboard-level a11y block, and ONE dashboard-level specRef for pipeline reuse. Per-panel viz.render specRefs are suppressed; geo panels preserve their echartsSpec.__registration FeatureCollection.",
+  "type": "object",
+  "required": ["status", "panels", "warnings"],
+  "additionalProperties": false,
+  "properties": {
+    "status": { "type": "string", "enum": ["ok", "error"], "description": "Whether the dashboard composed successfully (ok even when individual panels failed to a placeholder)." },
+    "schemaVersion": { "type": "string", "description": "Echoes the DashboardSpec IR version." },
+    "panels": {
+      "type": "array",
+      "description": "Per-panel compiled results, in declared panel order. A chart panel carries its compiled spec; a kpi panel carries computed values; a failed panel becomes an a11y-described error placeholder (onPanelError default).",
+      "items": { "$ref": "#/$defs/panelResult" }
+    },
+    "layout": {
+      "type": "array",
+      "description": "The resolved abstract grid placements (m02), one per rendered panel.",
+      "items": { "$ref": "#/$defs/placement" }
+    },
+    "links": {
+      "type": "array",
+      "description": "The declared cross-filter links (echoed). The cross-filter resolver applies any active 'selection' to each panel before render.",
+      "items": { "type": "object", "additionalProperties": true }
+    },
+    "a11y": { "$ref": "#/$defs/dashboardA11y" },
+    "tokenCssRef": { "type": "string", "description": "Deferred token CSS reference when compact mode is on (use tokens.build)." },
+    "specRef": { "type": "string", "description": "One dashboard-level reference to the composed payload for pipeline reuse." },
+    "specRefCreatedAt": { "type": "string" },
+    "specRefExpiresAt": { "type": "string" },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Echoes the normalized output controls.",
+      "properties": {
+        "compact": { "type": "boolean" },
+        "echarts": { "type": "boolean" }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "panelCount": { "type": "integer", "minimum": 0 },
+        "datasetCount": { "type": "integer", "minimum": 0 },
+        "crossFiltered": { "type": "boolean", "description": "True when an active selection was applied." },
+        "errorPanelCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "errors": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/issue" } }
+  },
+  "$defs": {
+    "placement": {
+      "type": "object",
+      "required": ["id", "x", "y", "w", "h"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "x": { "type": "integer", "minimum": 0 },
+        "y": { "type": "integer", "minimum": 0 },
+        "w": { "type": "integer", "minimum": 1 },
+        "h": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "panelResult": {
+      "description": "A compiled panel result — chart, kpi, or error placeholder (discriminated on 'kind').",
+      "oneOf": [
+        { "$ref": "#/$defs/chartPanelResult" },
+        { "$ref": "#/$defs/kpiPanelResult" },
+        { "$ref": "#/$defs/errorPanelResult" }
+      ]
+    },
+    "chartPanelResult": {
+      "type": "object",
+      "required": ["id", "kind", "chartType", "renderer"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "chart" },
+        "title": { "type": "string" },
+        "chartType": { "type": "string" },
+        "renderer": { "type": "string", "enum": ["vega-lite", "echarts"] },
+        "spec": { "type": "object", "additionalProperties": true, "description": "Compiled Vega-Lite spec (tabular), or {} for ECharts-primary panels." },
+        "echartsSpec": { "type": "object", "additionalProperties": true, "description": "Compiled ECharts option (ECharts-primary panels + opt-in tabular). Geo panels carry the FeatureCollection on echartsSpec.__registration." },
+        "a11yDescription": { "type": "string" }
+      }
+    },
+    "kpiPanelResult": {
+      "type": "object",
+      "required": ["id", "kind", "value", "trendDirection"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "kpi" },
+        "title": { "type": "string" },
+        "value": { "type": "number" },
+        "formatted": { "type": "string" },
+        "delta": { "type": ["number", "null"] },
+        "deltaPct": { "type": ["number", "null"] },
+        "trendDirection": { "type": "string", "enum": ["increasing", "decreasing", "flat"] },
+        "sparkline": { "type": "array", "items": { "type": "number" } },
+        "thresholdBreached": { "type": "boolean" },
+        "anomaly": { "type": "boolean" },
+        "a11yDescription": { "type": "string" }
+      }
+    },
+    "errorPanelResult": {
+      "type": "object",
+      "required": ["id", "kind", "error"],
+      "additionalProperties": false,
+      "description": "Partial-panel error policy (SEAM b, default 'placeholder'): a panel that failed to render, kept in-place and a11y-described, so it does not void the dashboard.",
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "error" },
+        "title": { "type": "string" },
+        "chartType": { "type": "string" },
+        "error": { "$ref": "#/$defs/issue" },
+        "a11yDescription": { "type": "string" }
+      }
+    },
+    "dashboardA11y": {
+      "type": "object",
+      "required": ["description"],
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string" },
+        "ariaLabel": { "type": "string" },
+        "readingOrder": { "type": "string", "enum": ["kpi-first", "declared"] },
+        "panelOrder": { "type": "array", "items": { "type": "string" }, "description": "Panel ids in reading/focus order (KPI row first by default)." },
+        "narrative": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "summary": { "type": "string" },
+            "keyFindings": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "required": ["code", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "severity": { "type": "string", "enum": ["error", "warning"] }
+      }
+    }
+  }
+}

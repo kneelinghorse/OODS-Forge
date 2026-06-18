@@ -121,6 +121,7 @@ const FALLBACK_POLICY: AgentPolicyDoc = {
     { name: 'registry.snapshot', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'viz.compose', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'viz.render', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
+    { name: 'dashboard.render', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     // Grouped action-parameter tools (s107-m01/m01b) — delegate to the
     // per-action handlers; the per-action tool names were removed in m01b.
     { name: 'map', modes: ['dry-run', 'apply'], approval: 'optional', allow: ['designer'] },

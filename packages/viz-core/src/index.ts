@@ -9,9 +9,25 @@
 // Spec IR + AJV validator
 export * from './spec/normalized-viz-spec.js';
 
+// Dashboard IR + AJV validator (sprint-113 m01) — composes bare viz.render chart
+// specs as panels + layout + cross-filter links + KPI tiles (Option C).
+export * from './spec/dashboard-spec.js';
+
+// Runtime cross-filter selection types (sprint-113 m01) — Selection / SelectionState
+// frozen here so m03 (resolver) + m04 (linked-selection reducer) depend only on m01.
+export * from './spec/dashboard-selection.js';
+
+// Headless dashboard primitives (sprint-113) — pure deterministic helpers over
+// the DashboardSpec IR (m02 auto-layout; m03 KPI + cross-filter resolver; ...).
+export * from './dashboard/index.js';
+
 // Network/hierarchy data contracts (treemap/sunburst/force/sankey inputs).
 // These are carried as the SEPARATE adapter `input` param — decoupled from the IR.
 export * from './spec/network-flow.js';
+
+// Geo (choropleth/bubble_map) data contract — the slim SpatialSpec subset the
+// headless spatial adapters read (sprint-112 m01). Distinct from the IR.
+export * from './spec/spatial.js';
 
 // Spec -> renderer adapters (pure, headless transformers)
 export * from './adapters/vega-lite-adapter.js';
@@ -28,6 +44,10 @@ export * from './adapters/echarts/sunburst-adapter.js';
 export * from './adapters/echarts/sankey-utils.js';
 export * from './adapters/echarts/sankey-adapter.js';
 export * from './adapters/echarts/graph-adapter.js';
+
+// Geo (choropleth/bubble_map) ECharts adapters (sprint-112). Explicit-only types
+// that build their ECharts option from a parsed FeatureCollection + tabular data.
+export * from './adapters/spatial/index.js';
 
 // Chart recommender + pattern catalogue
 export * from './patterns/suggest-chart.js';

@@ -36,6 +36,48 @@ const STATIC_EXPORTS: ReadonlyArray<{ modulePath: string; fileName: string }> = 
   { modulePath: './preferences.d', fileName: 'preferences.d.ts' },
 ];
 
+// #681 retarget (sprint-112 m04): per-schema output routing. The viz IR is the
+// LIVE source of truth for @oods/viz-core, so its generated type is emitted
+// DIRECTLY into the package (no repo-root generated/types duplicate / vendored
+// copy that drifts). The other viz data-contract schemas are hand-authored in
+// viz-core (spec/network-flow.ts, spec/spatial.ts) and their generated forms had
+// ZERO importers — so they are SKIPPED. A routed file is NOT a generated/types
+// barrel member. Everything not listed here emits to the default generated/types/
+// tree, unchanged. `--check` still covers routed files so the headless IR can't
+// silently drift.
+type SchemaRoute = { readonly outFile: string; readonly banner: string } | 'skip';
+
+const VIZ_CORE_IR_BANNER =
+  '// GENERATED into @oods/viz-core by scripts/types/generate.ts (generate:schema-types),\n' +
+  '// from schemas/viz/normalized-viz-spec.schema.json. #681 retarget (sprint-112 m04):\n' +
+  '// this file IS the live source of truth — do NOT edit by hand. Change the schema and\n' +
+  '// re-run `pnpm generate:schema-types`; CI runs it with --check to catch drift.\n';
+
+const DASHBOARD_SPEC_BANNER =
+  '// GENERATED into @oods/viz-core by scripts/types/generate.ts (generate:schema-types),\n' +
+  '// from schemas/viz/dashboard-spec.schema.json. #681 retarget (sprint-113 m01): this\n' +
+  '// file IS the live source of truth — do NOT edit by hand. Change the schema and\n' +
+  '// re-run `pnpm generate:schema-types`; CI runs it with --check to catch drift.\n';
+
+const SCHEMA_ROUTES: Record<string, SchemaRoute> = {
+  'viz/normalized-viz-spec.schema.json': {
+    outFile: 'packages/viz-core/src/spec/normalized-viz-spec.types.ts',
+    banner: VIZ_CORE_IR_BANNER,
+  },
+  'viz/dashboard-spec.schema.json': {
+    outFile: 'packages/viz-core/src/spec/dashboard.types.ts',
+    banner: DASHBOARD_SPEC_BANNER,
+  },
+  'viz/force-output.schema.json': 'skip',
+  'viz/hierarchy-input.schema.json': 'skip',
+  'viz/network-input.schema.json': 'skip',
+  'viz/sankey-input.schema.json': 'skip',
+  'viz/sankey-output.schema.json': 'skip',
+  'viz/spatial-spec.schema.json': 'skip',
+  'viz/sunburst-output.schema.json': 'skip',
+  'viz/treemap-output.schema.json': 'skip',
+};
+
 function parseArgs(argv: string[]): CliOptions {
   const options: CliOptions = {
     schemaDir: 'schemas',
@@ -167,8 +209,19 @@ async function generateTypes(options: CliOptions): Promise<GenerationResult[]> {
 
   for (const schemaPath of schemaFiles) {
     const relative = path.relative(options.schemaDir, schemaPath);
+    const routeKey = relative.split(path.sep).join('/');
+    const route = SCHEMA_ROUTES[routeKey];
+
+    if (route === 'skip') {
+      if (!options.silent) {
+        console.log(`• ${routeKey} — skipped (#681: hand-authored in @oods/viz-core)`);
+      }
+      continue;
+    }
+
     const outputRelative = relative.replace(/\.schema\.json$/i, '.ts');
-    const outputPath = path.join(options.outDir, outputRelative);
+    const outputPath = route ? path.resolve(ROOT_DIR, route.outFile) : path.join(options.outDir, outputRelative);
+    const banner = route ? route.banner : `// Auto-generated from ${relative}. Do not edit manually.\n`;
 
     const raw = await readFile(schemaPath, 'utf8');
     const parsed = JSON.parse(raw) as JSONSchema;
@@ -177,7 +230,7 @@ async function generateTypes(options: CliOptions): Promise<GenerationResult[]> {
 
     const compiled = await compile(sanitized, typeName, {
       cwd: ROOT_DIR,
-      bannerComment: `// Auto-generated from ${relative}. Do not edit manually.\n`,
+      bannerComment: banner,
       style: {
         singleQuote: true,
       },
@@ -195,14 +248,18 @@ async function generateTypes(options: CliOptions): Promise<GenerationResult[]> {
 
     if (!options.silent) {
       const label = status === 'skipped' ? 'would change' : status;
-      console.log(`• ${outputRelative} — ${label}`);
+      const where = route ? route.outFile : outputRelative;
+      console.log(`• ${where} — ${label}`);
     }
 
-    results.push({
-      file: outputPath,
-      relative: outputRelative,
-      status,
-    });
+    // Rerouted files (e.g. the viz-core IR) are NOT generated/types barrel members.
+    if (!route) {
+      results.push({
+        file: outputPath,
+        relative: outputRelative,
+        status,
+      });
+    }
   }
 
   const indexStatus = await writeIndex(results, options);
