@@ -17,6 +17,8 @@ import {
   computeKpi,
   resolveCrossFilter,
   resolveDashboardLayout,
+  resolveDashboardNarrative,
+  type DashboardKpiSummary,
   type KpiPanel,
   type Panel,
   type SelectionState,
@@ -24,6 +26,7 @@ import {
 import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from '../schemas/generated.js';
 import { handle as vizRenderHandle } from './viz.render.js';
 import { createValueRef, describeSchemaRef } from './schema-ref.js';
+import { composeDashboardHtml } from './dashboard.render.html.js';
 
 type Row = Record<string, unknown>;
 type PanelResult = DashboardRenderOutput['panels'][number];
@@ -34,6 +37,7 @@ const TABULAR_TYPES = new Set(['bar', 'line', 'area', 'scatter', 'heatmap']);
 export async function handle(input: DashboardRenderInput): Promise<DashboardRenderOutput> {
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
+  const wantHtml = input.output?.html ?? false;
   const ignoreSelfSource = input.crossFilter?.ignoreSelfSource ?? true;
   const onPanelError = input.onPanelError ?? 'placeholder';
   const selection = (input.selection ?? undefined) as SelectionState | undefined;
@@ -95,12 +99,23 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const layout = resolveDashboardLayout(placedPanels, input.layout);
   const panelOrder = readingOrder(placedPanels, input.a11y?.readingOrder, layout);
 
+  // Narrative (m04): on the EXPORT path, COMPUTE a cross-panel narrative from the KPI
+  // signals (author-supplied narrative still wins, via the reused override). Gated on
+  // wantHtml so the non-export output stays byte-identical to s114 (seam e) — absent
+  // path keeps the author echo exactly. The computed narrative flows into BOTH the
+  // JSON a11y block AND the HTML export (which reads dashboardA11y).
+  const narrative: NonNullable<DashboardRenderOutput['a11y']>['narrative'] = wantHtml
+    ? toNarrativeOutput(
+        resolveDashboardNarrative(input.a11y.narrative, collectKpiSummaries(panelResults), input.a11y.description),
+      )
+    : input.a11y.narrative;
+
   const dashboardA11y: DashboardRenderOutput['a11y'] = {
     description: input.a11y.description,
     ...(input.a11y.ariaLabel ? { ariaLabel: input.a11y.ariaLabel } : {}),
     readingOrder: input.a11y.readingOrder ?? 'kpi-first',
     panelOrder,
-    ...(input.a11y.narrative ? { narrative: input.a11y.narrative } : {}),
+    ...(narrative ? { narrative } : {}),
   };
 
   const result: DashboardRenderOutput = {
@@ -111,7 +126,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     links: (input.links ?? []) as DashboardRenderOutput['links'],
     a11y: dashboardA11y,
     warnings,
-    output: { compact, ...(wantEcharts ? { echarts: true } : {}) },
+    output: { compact, ...(wantEcharts ? { echarts: true } : {}), ...(wantHtml ? { html: true } : {}) },
     meta: {
       panelCount: panelResults.length,
       datasetCount: input.datasets.length,
@@ -124,6 +139,19 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     result.tokenCssRef = 'tokens.build';
   }
 
+  // Opt-in render-to-SVG export (seam (b)/(e)): compose a self-contained HTML doc
+  // ONLY when requested, so the absent path stays byte-identical to s114. Brand-token
+  // inlining + the computed narrative land in m04.
+  if (wantHtml) {
+    result.html = await composeDashboardHtml({
+      title: input.title,
+      panels: panelResults,
+      layout,
+      a11y: dashboardA11y,
+      columns: input.layout?.columns ?? 12,
+    });
+  }
+
   // ONE dashboard-level specRef over the composed payload (the N per-panel refs
   // viz.render minted are suppressed). Reference the deterministic payload only.
   const record = createValueRef({ panels: panelResults, layout }, 'dashboard.render');
@@ -133,6 +161,28 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   result.specRefExpiresAt = ref.expiresAt;
 
   return result;
+}
+
+// Project the computed KPI panel results into the narrative input (m04). Label falls
+// back to the panel id; semantic flags pass through.
+function collectKpiSummaries(panels: readonly PanelResult[]): DashboardKpiSummary[] {
+  return panels
+    .filter((p): p is Extract<PanelResult, { kind: 'kpi' }> => p.kind === 'kpi')
+    .map((k) => ({
+      label: k.title ?? k.id,
+      formatted: k.formatted ?? String(k.value),
+      trendDirection: k.trendDirection,
+      delta: k.delta ?? null,
+      ...(k.thresholdBreached !== undefined ? { thresholdBreached: k.thresholdBreached } : {}),
+      ...(k.anomaly !== undefined ? { anomaly: k.anomaly } : {}),
+    }));
+}
+
+function toNarrativeOutput(n: {
+  readonly summary: string;
+  readonly keyFindings: readonly string[];
+}): NonNullable<DashboardRenderOutput['a11y']>['narrative'] {
+  return { summary: n.summary, keyFindings: [...n.keyFindings] };
 }
 
 function buildKpiResult(panel: KpiPanel, rows: Row[]): PanelResult {

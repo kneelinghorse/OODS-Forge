@@ -31,11 +31,7 @@ export function generateNarrativeSummary(spec: NormalizedVizSpec): NarrativeResu
   };
 
   const derived = deriveNarrativeFromData(analysis, labels);
-  const providedSummary = spec.a11y.narrative?.summary?.trim();
-  const providedFindings = spec.a11y.narrative?.keyFindings?.filter((finding) => finding && finding.trim() !== '') ?? [];
-
-  const summary = (providedSummary || derived.summary || spec.a11y.description).trim();
-  const keyFindings = providedFindings.length > 0 ? providedFindings : derived.keyFindings;
+  const { summary, keyFindings } = applyNarrativeOverride(spec.a11y.narrative, derived, spec.a11y.description);
 
   return {
     status: summary.length > 0 ? 'ready' : 'insufficient-data',
@@ -43,6 +39,32 @@ export function generateNarrativeSummary(spec: NormalizedVizSpec): NarrativeResu
     keyFindings,
     analysis,
   } satisfies NarrativeResult;
+}
+
+/** An author-supplied narrative override (summary and/or key findings). */
+export interface ProvidedNarrative {
+  readonly summary?: string;
+  readonly keyFindings?: readonly string[];
+}
+
+/**
+ * The author-override fallback shared by the single-chart narrative
+ * (generateNarrativeSummary) and the dashboard narrative (deriveDashboardNarrative):
+ * an author-supplied summary/findings WINS, else the data-derived value, else the
+ * fallback summary. Extracted so both paths use ONE precedence implementation
+ * (sprint-115 m04) — there is no parallel override logic to drift.
+ */
+export function applyNarrativeOverride(
+  provided: ProvidedNarrative | undefined,
+  derived: { readonly summary?: string; readonly keyFindings: readonly string[] },
+  fallbackSummary: string,
+): { summary: string; keyFindings: readonly string[] } {
+  const providedSummary = provided?.summary?.trim();
+  const providedFindings = provided?.keyFindings?.filter((finding) => finding && finding.trim() !== '') ?? [];
+
+  const summary = (providedSummary || derived.summary || fallbackSummary).trim();
+  const keyFindings = providedFindings.length > 0 ? providedFindings : derived.keyFindings;
+  return { summary, keyFindings };
 }
 
 function deriveNarrativeFromData(analysis: VizDataAnalysis, labels: NarrativeLabels): {

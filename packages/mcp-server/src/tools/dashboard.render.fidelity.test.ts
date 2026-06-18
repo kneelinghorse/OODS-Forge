@@ -103,3 +103,38 @@ describe('dashboard.render render-fidelity goldens (sprint-113 m06)', () => {
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
   });
 });
+
+// Sprint-115 m05 — the net-new RENDERED-OUTPUT (HTML) golden harness + the opt-in
+// additivity parity proof. The METRIC_OVERVIEW golden above is the s114 byte-level
+// baseline (its snapshot must show 0 deletions); these add the export-path goldens.
+const METRIC_OVERVIEW_HTML: DashboardRenderInput = { ...METRIC_OVERVIEW, output: { html: true } } as DashboardRenderInput;
+
+describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
+  it('the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo placeholder + inlined tokens + narrative)', async () => {
+    const out = await handle(METRIC_OVERVIEW_HTML);
+    expect(out.status).toBe('ok');
+    expect(typeof out.html).toBe('string');
+    expect(out.html).toMatchSnapshot();
+  });
+
+  it('output.html=true -> byte-identical HTML run-to-run (rendered-output determinism gate)', async () => {
+    const a = await handle(METRIC_OVERVIEW_HTML);
+    const b = await handle(METRIC_OVERVIEW_HTML);
+    expect(a.html).toBe(b.html);
+  });
+
+  it('additivity parity: output.html ABSENT is byte-identical to the s114 baseline (no leaked export surface)', async () => {
+    const out = await handle(METRIC_OVERVIEW);
+    // No export field, no output echo, no computed narrative leaked onto the default path.
+    expect(out.html).toBeUndefined();
+    expect(out.output).toEqual({ compact: true });
+    expect((out.a11y as Record<string, unknown>).narrative).toBeUndefined();
+    // Numbers AND the existing a11y string match the s114 baseline (the byte-level proof,
+    // alongside the unchanged METRIC_OVERVIEW snapshot = 0 deletions above).
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.value).toBe(390);
+    expect(kpi.delta).toBe(90);
+    expect(kpi.thresholdBreached).toBe(true);
+    expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
+  });
+});

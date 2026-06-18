@@ -26,6 +26,7 @@
     },
     "a11y": { "$ref": "#/$defs/dashboardA11y" },
     "tokenCssRef": { "type": "string", "description": "Deferred token CSS reference when compact mode is on (use tokens.build)." },
+    "html": { "type": "string", "description": "Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and an a11y-described placeholder for ECharts-primary (geo) panels. Absent leaves the rest of the payload byte-identical." },
     "specRef": { "type": "string", "description": "One dashboard-level reference to the composed payload for pipeline reuse." },
     "specRefCreatedAt": { "type": "string" },
     "specRefExpiresAt": { "type": "string" },
@@ -35,7 +36,8 @@
       "description": "Echoes the normalized output controls.",
       "properties": {
         "compact": { "type": "boolean" },
-        "echarts": { "type": "boolean" }
+        "echarts": { "type": "boolean" },
+        "html": { "type": "boolean" }
       }
     },
     "meta": {

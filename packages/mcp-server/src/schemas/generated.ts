@@ -1232,6 +1232,10 @@ export namespace DashboardRenderInputSchema {
        * When true, also include the ECharts option for tabular panels (ECharts-primary panels always include it).
        */
       echarts?: boolean;
+      /**
+       * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and an a11y-described placeholder for ECharts-primary panels (geo). Absent/false leaves the output byte-identical to the compact/echarts payload.
+       */
+      html?: boolean;
     };
   }
   /**
@@ -1609,6 +1613,10 @@ export namespace DashboardRenderOutputSchema {
      */
     tokenCssRef?: string;
     /**
+     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and an a11y-described placeholder for ECharts-primary (geo) panels. Absent leaves the rest of the payload byte-identical.
+     */
+    html?: string;
+    /**
      * One dashboard-level reference to the composed payload for pipeline reuse.
      */
     specRef?: string;
@@ -1620,6 +1628,7 @@ export namespace DashboardRenderOutputSchema {
     output?: {
       compact?: boolean;
       echarts?: boolean;
+      html?: boolean;
     };
     meta?: {
       panelCount?: number;

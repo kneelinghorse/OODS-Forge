@@ -1,0 +1,49 @@
+{
+  "name": "@oods/viz-render",
+  "version": "0.1.0",
+  "description": "Deterministic Vega-Lite -> SVG rendering runtime for the OODS design system. Turns a compiled Vega-Lite spec into a byte-stable, headless SVG string (no jsdom/canvas) for on-brand, accessible export. The rendering runtime lives HERE; @oods/viz-core stays the zero-runtime spec transformer.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Design System Team",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "visualization",
+    "vega-lite",
+    "vega",
+    "svg",
+    "render",
+    "design-system",
+    "accessibility"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "prepack": "pnpm run build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "vega": "^6.2.0",
+    "vega-lite": "^6.4.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packageManager": "pnpm@9.12.2"
+}

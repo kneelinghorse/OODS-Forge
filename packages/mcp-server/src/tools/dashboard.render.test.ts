@@ -178,3 +178,128 @@ describe('dashboard.render', () => {
     expect(kpi.a11yDescription).toBe('Rev: 200 (increasing, delta 50).');
   });
 });
+
+// Strip the additive export surface — the html field, the output echo, the per-call
+// specRef trio, AND the export-computed a11y.narrative (m04) — leaving the composed
+// payload (panels/layout/links/meta/the rest of a11y) the export MUST NOT perturb.
+// The absent-path-vs-s114 byte-identity (seam e) is proven by the fidelity golden.
+function corePayload(out: Record<string, unknown>): Record<string, unknown> {
+  const { html: _h, output: _o, specRef: _r, specRefCreatedAt: _c, specRefExpiresAt: _e, a11y, ...rest } = out as Record<string, unknown>;
+  const { narrative: _n, ...a11yRest } = (a11y ?? {}) as Record<string, unknown>;
+  return { ...rest, a11y: a11yRest };
+}
+
+describe('dashboard.render — output.html export (sprint-115 m03)', () => {
+  it('omits the html field entirely when output.html is absent (opt-in additive)', async () => {
+    const out = await handle(metricOverview());
+    expect(validateOutput(out)).toBe(true);
+    expect(out.html).toBeUndefined();
+    expect(out.output).toEqual({ compact: true }); // no html echo
+  });
+
+  it('composes a self-contained, AJV-valid HTML document when output.html=true', async () => {
+    const out = await handle(metricOverview({ output: { html: true } }));
+    expect(validateOutput(out)).toBe(true);
+    const html = out.html as string;
+
+    // Self-contained document shell.
+    expect(html.startsWith('<!DOCTYPE html>')).toBe(true);
+    expect(html).toContain('<style>');
+    expect(html.trimEnd().endsWith('</html>')).toBe(true);
+    expect(out.output).toEqual({ compact: true, html: true }); // echoed control
+
+    // Vega-Lite panels (trend + breakdown) rendered to INLINE SVG (the moat: pixels).
+    const svgCount = (html.match(/<svg/g) ?? []).length;
+    expect(svgCount).toBeGreaterThanOrEqual(2);
+
+    // KPI tile carries the computed value + its a11y string.
+    expect(html).toContain('Total Revenue');
+    expect(html).toContain('390');
+    expect(html).toContain('Total Revenue: 390 (increasing, delta 90).');
+
+    // ECharts-primary (geo) panel -> a11y-described placeholder, NOT rendered.
+    expect(html).toContain('oods-placeholder-geo');
+
+    // Layout + dashboard a11y are present by construction.
+    expect(html).toContain('grid-template-columns:repeat(12,1fr)');
+    expect(html).toContain('role="region"');
+    expect(html).toContain('Revenue overview dashboard.');
+  });
+
+  it('places panels per the resolved grid while DOM order is KPI-first (a11y reading order)', async () => {
+    const out = await handle(metricOverview({ output: { html: true } }));
+    const html = out.html as string;
+    // KPI gridSpan 3 -> grid-column span 3, row 1.
+    expect(html).toContain('grid-column:1/span 3;grid-row:1/span');
+    // KPI tile appears before the first chart <figure> in document order (reading order).
+    expect(html.indexOf('Total Revenue')).toBeLessThan(html.indexOf('<figure'));
+  });
+
+  it('leaves the composed payload byte-identical to the no-export path (export adds only html + narrative)', async () => {
+    const base = await handle(metricOverview());
+    const withHtml = await handle(metricOverview({ output: { html: true } }));
+    // panels, layout, links, meta, status, schemaVersion, tokenCssRef + the rest of a11y unchanged.
+    expect(JSON.stringify(corePayload(withHtml))).toBe(JSON.stringify(corePayload(base)));
+    // the export ADDS a computed narrative; the no-export path keeps the author echo (absent here).
+    expect((base.a11y as Record<string, unknown>).narrative).toBeUndefined();
+    expect((withHtml.a11y as Record<string, unknown>).narrative).toBeDefined();
+  });
+
+  it('produces byte-identical HTML for identical input (determinism gate)', async () => {
+    const a = await handle(metricOverview({ output: { html: true } }));
+    const b = await handle(metricOverview({ output: { html: true } }));
+    expect(a.html).toBe(b.html);
+  });
+});
+
+describe('dashboard.render — on-brand + accessible export (sprint-115 m04)', () => {
+  it('inlines RESOLVED brand tokens as a :root block (no var() references, self-contained)', async () => {
+    const out = await handle(metricOverview({ output: { html: true } }));
+    const html = out.html as string;
+    const rootMatch = html.match(/:root\{([^}]*)\}/);
+    expect(rootMatch).not.toBeNull();
+    const root = rootMatch?.[1] ?? '';
+    // The export's CSS custom properties are bound to RESOLVED values, not references —
+    // so the artifact is on-brand standalone without an external token bundle.
+    expect(root).toContain('--oods-color-fg:');
+    expect(root).toContain('--oods-color-bg:');
+    expect(root).not.toContain('var(');
+  });
+
+  it('does NOT inline tokens into the compact JSON path (export-only; tokenCssRef stays deferred)', async () => {
+    const out = await handle(metricOverview()); // no output.html
+    expect(out.tokenCssRef).toBe('tokens.build'); // compact JSON keeps the deferred ref
+    expect(out.html).toBeUndefined();
+  });
+
+  it('COMPUTES the dashboard narrative from KPI flags (summary + key findings)', async () => {
+    const out = await handle(metricOverview({ output: { html: true } }));
+    const narrative = (out.a11y as Record<string, unknown>).narrative as { summary: string; keyFindings: string[] };
+    expect(narrative.summary).toContain('1 key metric');
+    expect(narrative.summary).toContain('breached threshold'); // KPI 390 breaches the 350 threshold
+    expect(narrative.keyFindings.some((f) => f.includes('Total Revenue: 390') && f.includes('threshold breached'))).toBe(true);
+    // ...and it is embedded in the export markup (the agent-readable summary).
+    expect(out.html).toContain('oods-dashboard-narrative');
+    expect(out.html).toContain('1 key metric');
+  });
+
+  it('lets an author-supplied narrative WIN byte-identically (reused override fallback)', async () => {
+    const authored = { summary: 'Q3 revenue is on track.', keyFindings: ['West leads', 'East lagging'] };
+    const out = await handle(
+      metricOverview({ output: { html: true }, a11y: { description: 'Revenue overview dashboard.', readingOrder: 'kpi-first', narrative: authored } }),
+    );
+    expect((out.a11y as Record<string, unknown>).narrative).toEqual(authored);
+    expect(out.html).toContain('Q3 revenue is on track.');
+    expect(out.html).toContain('West leads');
+  });
+
+  it('carries the cross-panel summary + per-panel a11y roles + reading order in the markup', async () => {
+    const html = (await handle(metricOverview({ output: { html: true } }))).html as string;
+    expect(html).toContain('role="region"'); // dashboard container
+    expect(html).toContain('Revenue overview dashboard.'); // cross-panel summary
+    expect(html).toMatch(/<section class="oods-panel oods-kpi"[^>]*aria-label=/); // KPI tile labelled
+    expect(html).toMatch(/<figure class="oods-panel oods-chart" role="figure"[^>]*aria-label=/); // chart figure labelled
+    expect(html).toContain('oods-placeholder-geo'); // geo placeholder present
+    expect(html).toMatch(/role="img"[^>]*aria-label="Choropleth/); // geo placeholder a11y-described
+  });
+});
