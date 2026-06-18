@@ -1232,6 +1232,10 @@ export namespace DashboardRenderInputSchema {
        * When true, also include the ECharts option for tabular panels (ECharts-primary panels always include it).
        */
       echarts?: boolean;
+      /**
+       * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and an a11y-described placeholder for ECharts-primary panels (geo). Absent/false leaves the output byte-identical to the compact/echarts payload.
+       */
+      html?: boolean;
     };
   }
   /**
@@ -1399,7 +1403,11 @@ export namespace DashboardRenderInputSchema {
      */
     field: string;
     /**
-     * Point-in-time aggregate. Adds 'latest' (most recent value by row order) to the viz.render aggregate set, for point-in-time KPIs.
+     * Optional (v0.2, sprint-114) name of the time column. When present, the KPI metric series is built along a parsed and sorted period axis (via analysis/temporal.ts) instead of dataset row order: aggregate 'latest' is the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. Absent means row-order, byte-identical to v0.1.
+     */
+    periodField?: string;
+    /**
+     * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs.
      */
     aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct' | 'latest';
     comparison?: KpiComparison;
@@ -1419,7 +1427,7 @@ export namespace DashboardRenderInputSchema {
   export interface KpiComparison {
     basis: 'prior_period' | 'target' | 'window';
     /**
-     * For basis 'prior_period': the field carrying the prior value/period key.
+     * RESERVED (v0.2): a future sibling-baseline column name. NOT the prior_period key; under an explicit KpiPanel.periodField, prior_period/window are derived from the DISTINCT periods of the metric series itself. Unread in v1.
      */
     field?: string;
     /**
@@ -1605,6 +1613,10 @@ export namespace DashboardRenderOutputSchema {
      */
     tokenCssRef?: string;
     /**
+     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and an a11y-described placeholder for ECharts-primary (geo) panels. Absent leaves the rest of the payload byte-identical.
+     */
+    html?: string;
+    /**
      * One dashboard-level reference to the composed payload for pipeline reuse.
      */
     specRef?: string;
@@ -1616,6 +1628,7 @@ export namespace DashboardRenderOutputSchema {
     output?: {
       compact?: boolean;
       echarts?: boolean;
+      html?: boolean;
     };
     meta?: {
       panelCount?: number;

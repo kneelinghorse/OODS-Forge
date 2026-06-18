@@ -89,6 +89,96 @@ describe('@oods/viz-core — computeKpi', () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// Explicit period axis (v0.2, sprint-114). WHY these matter: s113 read DATASET
+// ROW ORDER as the time axis everywhere; periodField makes the axis a PARSED +
+// SORTED period via temporal.ts. The opt-in additivity contract is the load-
+// bearing invariant — periodField ABSENT must stay byte-identical to s113 (the
+// row-order goldens above are that guard); periodField PRESENT must sort, drop
+// unparseable, keep duplicates stable, key at the finest granularity, and slice
+// baselines by DISTINCT period (not row).
+// ---------------------------------------------------------------------------
+const periodRows = (pairs: Array<[number, string]>) => pairs.map(([revenue, period]) => ({ revenue, period }));
+// Deliberately out of period order so a row-order read and a period read DIVERGE.
+const UNSORTED = periodRows([[200, '2024-03'], [100, '2024-01'], [150, '2024-02']]);
+const periodPanel = (o: Partial<KpiPanel> = {}) => kpiPanel({ periodField: 'period', ...o });
+
+describe('@oods/viz-core — computeKpi explicit period axis (v0.2, sprint-114)', () => {
+  it('sorts an unsorted row set by period; latest = max period; sparkline is period-ordered', () => {
+    expect(computeKpi(periodPanel({ aggregate: 'latest' }), UNSORTED).value).toBe(200);
+    expect(computeKpi(periodPanel({ aggregate: 'sum' }), UNSORTED).value).toBe(450);
+    expect(computeKpi(periodPanel({ aggregate: 'average' }), UNSORTED).value).toBe(150);
+    expect(computeKpi(periodPanel(), UNSORTED).sparkline).toEqual([100, 150, 200]);
+  });
+
+  it('ABSENT periodField stays pure row order (the opt-in additivity contract)', () => {
+    // Same rows, no periodField: latest = LAST ROW (150), sparkline in row order.
+    expect(computeKpi(kpiPanel({ aggregate: 'latest' }), UNSORTED).value).toBe(150);
+    expect(computeKpi(kpiPanel(), UNSORTED).sparkline).toEqual([200, 100, 150]);
+  });
+
+  it('prior_period excludes the single most-recent DISTINCT period', () => {
+    // latest = Mar 200; prior_period -> exclude Mar -> latest of {Jan,Feb} = 150 -> delta 50
+    const r = computeKpi(periodPanel({ aggregate: 'latest', comparison: { basis: 'prior_period' } }), UNSORTED);
+    expect(r.delta).toBe(50);
+    expect(r.trendDirection).toBe('increasing');
+  });
+
+  it('window excludes the last N DISTINCT periods (not the last N rows)', () => {
+    // window 2 -> exclude Feb+Mar -> latest of {Jan} = 100 -> delta 100
+    expect(computeKpi(periodPanel({ aggregate: 'latest', comparison: { basis: 'window', window: 2 } }), UNSORTED).delta).toBe(100);
+  });
+
+  it('slices baselines by DISTINCT period even when the latest period has duplicate rows', () => {
+    // Mar has TWO rows (40, 50). prior_period must drop BOTH (distinct period),
+    // not just the last row: sum 130 vs prior {Jan10,Feb30}=40 -> delta 90.
+    // (A row-based slice would drop only 50 -> prior 80 -> delta 50, which this rejects.)
+    const dupLatest = periodRows([[10, '2024-01'], [30, '2024-02'], [40, '2024-03'], [50, '2024-03']]);
+    const r = computeKpi(periodPanel({ aggregate: 'sum', comparison: { basis: 'prior_period' } }), dupLatest);
+    expect(r.value).toBe(130);
+    expect(r.delta).toBe(90);
+    expect(computeKpi(periodPanel(), dupLatest).sparkline).toEqual([10, 30, 40, 50]); // dup-period rows kept in input order
+  });
+
+  it('window N>1 slices by DISTINCT periods even when a non-latest period repeats', () => {
+    // Feb has TWO rows. distinct periods = {Jan,Feb,Mar}; window 2 -> exclude Feb+Mar
+    // -> prior = {Jan 10} sum 10; value sum 100 -> delta 90.
+    // (A row-based 'last 2 rows' slice would keep [10,20] sum 30 -> delta 70, which this rejects.)
+    const dupMiddle = periodRows([[10, '2024-01'], [20, '2024-02'], [30, '2024-02'], [40, '2024-03']]);
+    expect(computeKpi(periodPanel({ aggregate: 'sum', comparison: { basis: 'window', window: 2 } }), dupMiddle).delta).toBe(90);
+  });
+
+  it('drops rows whose period cell is unparseable (mirrors numericSeries dropping non-numerics)', () => {
+    const withGarbage = periodRows([[10, '2024-01'], [999, 'garbage'], [20, '2024-02']]);
+    expect(computeKpi(periodPanel({ aggregate: 'sum' }), withGarbage).value).toBe(30); // 999 dropped
+    expect(computeKpi(periodPanel(), withGarbage).sparkline).toEqual([10, 20]);
+  });
+
+  it('coerces mixed granularity to the finest present (year -> month)', () => {
+    const mixed = periodRows([[5, '2023'], [7, '2024-06'], [6, '2024-01']]);
+    // finest = month: 2023 -> 2024-01 -> 2024-06, so latest = 2024-06 = 7
+    expect(computeKpi(periodPanel({ aggregate: 'latest' }), mixed).value).toBe(7);
+    expect(computeKpi(periodPanel(), mixed).sparkline).toEqual([5, 6, 7]);
+  });
+
+  it('sorts correctly at quarter, day, and time granularity (unitIndexFor branches)', () => {
+    expect(computeKpi(periodPanel(), periodRows([[3, '2024-Q3'], [1, '2023-Q4'], [2, '2024-Q1']])).sparkline).toEqual([1, 2, 3]);
+    expect(computeKpi(periodPanel(), periodRows([[2, '2024-01-15'], [1, '2024-01-02']])).sparkline).toEqual([1, 2]);
+    expect(computeKpi(periodPanel(), periodRows([[2, '2024-01-01T10:00'], [1, '2024-01-01T08:00']])).sparkline).toEqual([1, 2]);
+  });
+
+  it('behaves like an empty set when periodField is set but no period parses', () => {
+    const r = computeKpi(periodPanel({ comparison: { basis: 'prior_period' } }), periodRows([[10, 'x'], [20, 'y']]));
+    expect(r).toMatchObject({ value: 0, delta: null, deltaPct: null, trendDirection: 'flat' });
+    expect(r.sparkline).toBeUndefined();
+  });
+
+  it('is deterministic on the period path — running twice is byte-identical', () => {
+    const panel = periodPanel({ aggregate: 'average', comparison: { basis: 'window', window: 2 }, threshold: { anomaly: 'stddev_outlier' } });
+    expect(JSON.stringify(computeKpi(panel, UNSORTED))).toBe(JSON.stringify(computeKpi(panel, UNSORTED)));
+  });
+});
+
 function round6(n: number): number {
   const r = Number(n.toFixed(6));
   return r === 0 ? 0 : r;

@@ -50,6 +50,30 @@ function redact(out: DashboardRenderOutput): Omit<DashboardRenderOutput, 'specRe
   return rest;
 }
 
+// Period-axis variant (sprint-114 m05): an explicit periodField drives the KPI
+// onto a parsed + sorted time axis. Rows are intentionally out of period order
+// so the snapshot locks the SORTED compute (latest = max period) + the period-
+// gated a11y wording, distinct from the row-order METRIC_OVERVIEW above.
+const PERIOD_OVERVIEW: DashboardRenderInput = {
+  schemaVersion: 'v0.1',
+  title: 'Monthly Revenue (period axis)',
+  datasets: [
+    {
+      id: 'sales',
+      rows: [
+        { region: 'West', month: '2024-03', revenue: 120 },
+        { region: 'West', month: '2024-01', revenue: 100 },
+        { region: 'West', month: '2024-02', revenue: 110 },
+      ],
+    },
+  ],
+  panels: [
+    { id: 'kpi-rev', kind: 'kpi', title: 'Latest Revenue', datasetId: 'sales', field: 'revenue', periodField: 'month', aggregate: 'latest', comparison: { basis: 'prior_period' } },
+    { id: 'trend', kind: 'chart', chartType: 'line', datasetId: 'sales', encodings: { x: 'month', y: { field: 'revenue', aggregate: 'sum' } } },
+  ],
+  a11y: { description: 'Monthly revenue with an explicit period axis.' },
+} as DashboardRenderInput;
+
 describe('dashboard.render render-fidelity goldens (sprint-113 m06)', () => {
   it('the metric-overview composed payload matches the committed golden', async () => {
     const out = await handle(METRIC_OVERVIEW);
@@ -61,5 +85,56 @@ describe('dashboard.render render-fidelity goldens (sprint-113 m06)', () => {
     const a = redact(await handle(METRIC_OVERVIEW));
     const b = redact(await handle(METRIC_OVERVIEW));
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+  });
+
+  it('the period-axis composed payload matches the committed golden (v0.2)', async () => {
+    const out = await handle(PERIOD_OVERVIEW);
+    expect(out.status).toBe('ok');
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.value).toBe(120); // max period (2024-03)
+    expect(kpi.delta).toBe(10); // vs prior period (2024-02 = 110)
+    expect(kpi.a11yDescription).toBe('Latest Revenue: 120 (increasing, delta 10 vs prior period).');
+    expect(redact(out)).toMatchSnapshot();
+  });
+
+  it('period-axis: same input -> byte-identical composed payload (determinism gate)', async () => {
+    const a = redact(await handle(PERIOD_OVERVIEW));
+    const b = redact(await handle(PERIOD_OVERVIEW));
+    expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+  });
+});
+
+// Sprint-115 m05 — the net-new RENDERED-OUTPUT (HTML) golden harness + the opt-in
+// additivity parity proof. The METRIC_OVERVIEW golden above is the s114 byte-level
+// baseline (its snapshot must show 0 deletions); these add the export-path goldens.
+const METRIC_OVERVIEW_HTML: DashboardRenderInput = { ...METRIC_OVERVIEW, output: { html: true } } as DashboardRenderInput;
+
+describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
+  it('the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo placeholder + inlined tokens + narrative)', async () => {
+    const out = await handle(METRIC_OVERVIEW_HTML);
+    expect(out.status).toBe('ok');
+    expect(typeof out.html).toBe('string');
+    expect(out.html).toMatchSnapshot();
+  });
+
+  it('output.html=true -> byte-identical HTML run-to-run (rendered-output determinism gate)', async () => {
+    const a = await handle(METRIC_OVERVIEW_HTML);
+    const b = await handle(METRIC_OVERVIEW_HTML);
+    expect(a.html).toBe(b.html);
+  });
+
+  it('additivity parity: output.html ABSENT is byte-identical to the s114 baseline (no leaked export surface)', async () => {
+    const out = await handle(METRIC_OVERVIEW);
+    // No export field, no output echo, no computed narrative leaked onto the default path.
+    expect(out.html).toBeUndefined();
+    expect(out.output).toEqual({ compact: true });
+    expect((out.a11y as Record<string, unknown>).narrative).toBeUndefined();
+    // Numbers AND the existing a11y string match the s114 baseline (the byte-level proof,
+    // alongside the unchanged METRIC_OVERVIEW snapshot = 0 deletions above).
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.value).toBe(390);
+    expect(kpi.delta).toBe(90);
+    expect(kpi.thresholdBreached).toBe(true);
+    expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
   });
 });

@@ -314,7 +314,11 @@ export interface KpiPanel {
    */
   field: string;
   /**
-   * Point-in-time aggregate. Adds 'latest' (most recent value by row order) to the viz.render aggregate set, for point-in-time KPIs.
+   * Optional (v0.2, sprint-114) name of the time column. When PRESENT, the KPI metric series is built along a PARSED + SORTED period axis (via the UTC-pinned analysis/temporal.ts) instead of dataset row order: aggregate 'latest' = the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. ABSENT => row-order, byte-identical to v0.1. See frozen seam (v) in $comment.
+   */
+  periodField?: string;
+  /**
+   * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs.
    */
   aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct' | 'latest';
   comparison?: KpiComparison;
@@ -334,7 +338,7 @@ export interface KpiPanel {
 export interface KpiComparison {
   basis: 'prior_period' | 'target' | 'window';
   /**
-   * For basis 'prior_period': the field carrying the prior value/period key.
+   * RESERVED (v0.2): a future sibling-baseline column name. NOT the prior_period key — under an explicit KpiPanel.periodField, prior_period/window are derived from the DISTINCT periods of the metric series itself (see frozen seam (v) in $comment). Unread in v1.
    */
   field?: string;
   /**

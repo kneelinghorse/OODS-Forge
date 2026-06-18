@@ -63,6 +63,11 @@ Carried forward from sprints 90–95 plus what Position B/C scope demands. Each 
 - **Why:** s111 closed "green" locally yet CI went RED on push with two failures the per-package gates structurally could not see (#740): (i) `ERR_PNPM_OUTDATED_LOCKFILE` — a new type-only devDependency was added to a package without regenerating `pnpm-lock.yaml`, so CI's `--frozen-lockfile` install failed before any build/test ran, taking down ALL jobs (fix 692a27b); (ii) `TS2739` in `src/viz/patterns/scaffold-generator.ts` — widening viz-core's `ChartType` union propagates into `src/` via the `src/viz/patterns` re-export shim, breaking three exhaustive `Record<ChartType>` maps that ONLY the root typecheck (not per-package `tsc`) covers (fix cb1a545). The per-package gates are necessary but NOT sufficient. (s112 m01 hit the exact same `ChartType`-widening coupling and fixed it in-mission because this gate was run.)
 - **Application:** the closeout mission's success criteria add (f) `pnpm install --frozen-lockfile` succeeds (lockfile in sync) and (g) root `pnpm typecheck` exits 0.
 
+### Contract + viz test scope green at closeout (#419)
+- **Rule:** Every sprint closeout runs the root contract + viz test scope (`pnpm vitest run tests/contracts tests/viz`, the narrow fast form) GREEN before session.complete — IN ADDITION to the per-package suites + colocated goldens.
+- **Why:** the `tests/contracts/schema-types.contract.test.ts` drift guard structurally lives outside both the per-package suites and the colocated `src/tools/**` goldens (the root core/coverage vitest projects exclude `tests/**`), so it can sit RED unnoticed — which it did across part of the viz arc. It is DOUBLY load-bearing on any sprint that regenerates a routed type: s114 regenerates the very `dashboard.types.ts` that contract test guards. Pairs with the viz `all:true` coverage floor, which a newly-exported-but-untested symbol can silently dip.
+- **Application:** the closeout mission's success criteria add (h) `pnpm vitest run tests/contracts tests/viz` exits 0 before session.complete. First formal run: s114 m06.
+
 ---
 
 ## Decision Conventions
