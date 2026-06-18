@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { SCHEMA_ROUTES } from '../../scripts/types/schema-routes.js';
 
 const ROOT = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
 const SCHEMA_DIR = path.join(ROOT, 'schemas');
@@ -36,7 +37,19 @@ describe('Schema-derived types', () => {
 
     for (const schema of schemas) {
       const relative = path.relative(SCHEMA_DIR, schema);
-      const expected = path.join(GENERATED_DIR, relative.replace(/\.schema\.json$/i, '.ts'));
+      const routeKey = relative.split(path.sep).join('/');
+      const route = SCHEMA_ROUTES[routeKey];
+
+      // #681: schemas hand-authored in @oods/viz-core are intentionally never generated.
+      if (route === 'skip') {
+        continue;
+      }
+
+      // Routed schemas (e.g. the viz-core IR) generate INTO their package, not generated/types/.
+      const expected = route
+        ? path.join(ROOT, route.outFile)
+        : path.join(GENERATED_DIR, relative.replace(/\.schema\.json$/i, '.ts'));
+
       if (!existsSync(expected)) {
         missing.push(`${relative} → ${path.relative(ROOT, expected)}`);
       }
