@@ -91,7 +91,40 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V120', { code: 'OODS-V120', category: 'validation', message: 'Invalid chart type', retryable: true }],
   ['OODS-V121', { code: 'OODS-V121', category: 'validation', message: 'Missing viz traits', retryable: true }],
   ['OODS-V122', { code: 'OODS-V122', category: 'validation', message: 'No viz mark traits on object', retryable: true }],
+  // viz.render data-source + compile failures (thrown via errorOut in viz.render.ts /
+  // dashboard.render.ts but previously unregistered — createError silently degraded them to
+  // server_error/non-retryable). V123-V126 are recoverable input problems (retryable); the
+  // V127/V128/V129 compile/render failures are deterministic (retryable:false). All stay
+  // category 'validation' to hold the V-prefix=category invariant (registry.test.ts:28-42)
+  // and keep the thrown code strings byte-identical (no renumber to S-codes).
+  ['OODS-V123', { code: 'OODS-V123', category: 'validation', message: 'Missing or invalid viz data source', retryable: true }],
+  ['OODS-V124', { code: 'OODS-V124', category: 'validation', message: 'Dataset reference expired', retryable: true }],
+  ['OODS-V125', { code: 'OODS-V125', category: 'validation', message: 'Dataset reference resolved to empty or non-array rows', retryable: true }],
+  ['OODS-V126', { code: 'OODS-V126', category: 'validation', message: 'Invalid viz spec input', retryable: true }],
+  ['OODS-V127', { code: 'OODS-V127', category: 'validation', message: 'Vega-Lite spec compilation failed', retryable: false }],
+  ['OODS-V128', { code: 'OODS-V128', category: 'validation', message: 'ECharts option compilation failed', retryable: false }],
+  ['OODS-V129', { code: 'OODS-V129', category: 'validation', message: 'Viz render failed', retryable: false }],
   ['OODS-V130', { code: 'OODS-V130', category: 'validation', message: 'Unresolved governed measure', retryable: false }],
+  // Field-presence strict check (sprint-118 m05): a referenced field (KPI field/periodField,
+  // chart encoding) absent from every row under the opt-in strictFields flag. Recoverable —
+  // the agent can fix the field name and retry — so retryable:true.
+  ['OODS-V131', { code: 'OODS-V131', category: 'validation', message: 'Referenced field absent from dataset', retryable: true }],
+  // Governed-measure registry governance (sprint-118 m03), routed through the
+  // dashboard.render onPanelError seam (NOT a thrown ToolError). V132: the registry
+  // artifact failed AJV-validate-at-load (fail-closed, not a silent empty Map). V133:
+  // a non-additive measure (additive:false) was asked for a `sum` rollup — a summed
+  // ratio/price is meaningless. Both are config/governance failures (retryable:false).
+  ['OODS-V132', { code: 'OODS-V132', category: 'validation', message: 'Malformed measure registry', retryable: false }],
+  ['OODS-V133', { code: 'OODS-V133', category: 'validation', message: 'Non-additive measure rollup blocked', retryable: false }],
+  // Geo-join surfacing (sprint-118 m06): a choropleth corridor whose join key has no matching
+  // map feature — silently dropped today, surfaced under the strictFields flag. Recoverable
+  // (the agent can fix the M49→ISO crosswalk and retry) — retryable:true.
+  ['OODS-V134', { code: 'OODS-V134', category: 'validation', message: 'Geo join: corridor has no matching map feature', retryable: true }],
+  // A11y contrast (sprint-118 m07): a resolved brand-token colour pair fails WCAG contrast,
+  // surfaced under output.contrastScan. A V-code (NOT 'OODS-A001' — registry.test.ts:18 regex
+  // /^OODS-[VNCSRR]\d{3}$/ + prefix=category have no 'A'). retryable:false (a brand-token config
+  // issue, not a transient/recoverable input).
+  ['OODS-V135', { code: 'OODS-V135', category: 'validation', message: 'Brand token pair fails WCAG contrast', retryable: false }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

@@ -17,11 +17,21 @@ const DEFAULT_AREA_COLOR = 'var(--sys-surface-strong, #f2f2f2)';
 const DEFAULT_BORDER_COLOR = 'var(--sys-border-subtle, #e0e0e0)';
 const DEFAULT_EMPHASIS_COLOR = 'var(--sys-surface-raised, #dbeafe)';
 
+/** Geo-join diagnostics (sprint-118 m06): data records / features that did not join. */
+interface GeoJoinDiagnostics {
+  /** Row join-key values with NO matching map feature (silently dropped today). */
+  readonly unmatchedData: string[];
+  /** Map feature ids with no matching data record. */
+  readonly unmatchedFeatures: string[];
+}
+
 interface ChoroplethBuildResult {
   readonly series: MapSeriesOption;
   readonly visualMap: VisualMapComponentOption;
   readonly registration: GeoRegistration;
   readonly geo: GeoComponentOption;
+  /** Present only when the join left something unmatched (additive; existing consumers ignore it). */
+  readonly diagnostics?: GeoJoinDiagnostics;
 }
 
 function pruneUndefined<T extends object>(input: T): T {
@@ -107,10 +117,10 @@ export function buildChoropleth(
   const nameField = join?.geoKey ?? 'name';
 
   const features = geoData.features;
-  const mergedFeatures =
-    join && data
-      ? joinGeoWithData(features, data, { geoKey: join.geoKey, dataKey: join.joinKey }).features
-      : features;
+  // Capture the FULL join result (sprint-118 m06): today only `.features` is consumed and the
+  // unmatchedData/unmatchedFeatures lists are silently dropped. Thread them up as diagnostics.
+  const joinResult = join && data ? joinGeoWithData(features, data, { geoKey: join.geoKey, dataKey: join.joinKey }) : null;
+  const mergedFeatures = joinResult ? joinResult.features : features;
 
   const domainValues = collectDomainValues(mergedFeatures, layer.encoding.color.field);
   const visualMap = createVisualMapForScale({
@@ -143,11 +153,17 @@ export function buildChoropleth(
     emphasis: { focus: 'self' },
   }) as unknown as MapSeriesOption;
 
+  const diagnostics: GeoJoinDiagnostics | undefined =
+    joinResult && (joinResult.unmatchedData.length > 0 || joinResult.unmatchedFeatures.length > 0)
+      ? { unmatchedData: joinResult.unmatchedData, unmatchedFeatures: joinResult.unmatchedFeatures }
+      : undefined;
+
   return {
     series,
     visualMap,
     registration,
     geo,
+    ...(diagnostics ? { diagnostics } : {}),
   };
 }
 
@@ -194,6 +210,13 @@ export function adaptChoroplethToECharts(
 
   // Expose registration info for callers who need manual map registration.
   (option as Record<string, unknown>).__registration = result.registration;
+
+  // Expose geo-join diagnostics (sprint-118 m06) ONLY when something was unmatched — mirrors the
+  // __registration escape hatch. viz.render reads this to emit OODS-V134 under a flag, then STRIPS
+  // it from the returned echartsSpec so the default path stays byte-identical (silent-drop preserved).
+  if (result.diagnostics) {
+    (option as Record<string, unknown>).__joinDiagnostics = result.diagnostics;
+  }
 
   return option;
 }

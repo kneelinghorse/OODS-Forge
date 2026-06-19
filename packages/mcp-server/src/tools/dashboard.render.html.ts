@@ -21,6 +21,7 @@
 
 import { renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
 import { resolveTokenToColor } from '@oods/viz-core';
+import { contrastRatio } from '@oods/a11y-tools';
 import type { DashboardRenderOutput } from '../schemas/generated.js';
 
 // Brand-token inlining (m04): map the export's CSS custom-property names to the OODS
@@ -52,9 +53,62 @@ function resolveBrandTokens(): Record<string, string> {
   return resolved;
 }
 
+// Contrast scan (sprint-118 m07 piece A): the brand-token colour pairs the export actually
+// paints, checked at the WCAG AA normal-text threshold (4.5:1). Run over the ALREADY-RESOLVED
+// hexes from resolveBrandTokens() with the pure contrastRatio() — NO filesystem read (the
+// disk-reading validate-contrast loadTokenData path is deliberately NOT wired).
+const CONTRAST_PAIRS: ReadonlyArray<{ id: string; fg: string; bg: string; threshold: number }> = [
+  { id: 'fg-on-bg', fg: '--oods-color-fg', bg: '--oods-color-bg', threshold: 4.5 },
+  { id: 'positive-on-panel-bg', fg: '--oods-color-positive', bg: '--oods-color-panel-bg', threshold: 4.5 },
+  { id: 'negative-on-panel-bg', fg: '--oods-color-negative', bg: '--oods-color-panel-bg', threshold: 4.5 },
+  { id: 'muted-on-panel-bg', fg: '--oods-color-muted', bg: '--oods-color-panel-bg', threshold: 4.5 },
+];
+
+export interface ContrastFinding {
+  readonly pair: string;
+  readonly ratio: number;
+  readonly threshold: number;
+}
+
+/**
+ * Scan the export's resolved brand-token colour pairs for WCAG contrast failures (pure, no fs).
+ * Pass `tokensOverride` to scan a specific palette (tests); otherwise the default brand resolves.
+ */
+export function scanBrandContrast(tokensOverride?: Readonly<Record<string, string>>): ContrastFinding[] {
+  const tokens = tokensOverride ?? resolveBrandTokens();
+  const findings: ContrastFinding[] = [];
+  for (const pair of CONTRAST_PAIRS) {
+    const fg = tokens[pair.fg];
+    const bg = tokens[pair.bg];
+    if (!fg || !bg) {
+      continue;
+    }
+    // contrastRatio only understands #rgb/#rrggbb. A token that resolves to a CSS system colour
+    // (e.g. 'CanvasText') is context-dependent and cannot be statically contrast-checked — skip it.
+    let ratio: number;
+    try {
+      ratio = Number(contrastRatio(fg, bg).toFixed(2));
+    } catch {
+      continue;
+    }
+    if (ratio < pair.threshold) {
+      findings.push({ pair: pair.id, ratio, threshold: pair.threshold });
+    }
+  }
+  return findings;
+}
+
 type PanelResult = DashboardRenderOutput['panels'][number];
 type Placement = NonNullable<DashboardRenderOutput['layout']>[number];
 type DashboardA11y = DashboardRenderOutput['a11y'];
+
+/** Per-tabular-chart-panel data for the SR-only data-table (sprint-118 m07 piece B). */
+export interface ChartTableData {
+  /** The charted columns (the panel's encoding fields) — the table cells. */
+  readonly columns: readonly string[];
+  /** The (cross-filtered) rows fed to the chart — carry every field so the caption tally can read the quality column. */
+  readonly rows: ReadonlyArray<Record<string, unknown>>;
+}
 
 export interface ComposeHtmlArgs {
   readonly title?: string;
@@ -68,11 +122,19 @@ export interface ComposeHtmlArgs {
    * emitter and inlined into the document in m04; undefined in m03.
    */
   readonly tokens?: Readonly<Record<string, string>>;
+  /**
+   * SR-only data-table rows per tabular chart panel (sprint-118 m07, output.dataTable). When a
+   * panel has an entry, an oods-visually-hidden <table> is appended inside its <figure>. Undefined
+   * keeps the HTML byte-identical.
+   */
+  readonly tableData?: ReadonlyMap<string, ChartTableData>;
+  /** Column whose data-quality codes (E/I/X/blank) are tallied into each data-table <caption> (output.dataQualityField). */
+  readonly dataQualityField?: string;
 }
 
 /** Render the opt-in self-contained HTML export for a composed dashboard. */
 export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<string> {
-  const { title, panels, layout, a11y, columns, tokens } = args;
+  const { title, panels, layout, a11y, columns, tokens, tableData, dataQualityField } = args;
   // m04: resolve the brand tokens once. Caller override wins; else the default brand.
   const resolvedTokens = tokens ?? resolveBrandTokens();
 
@@ -86,7 +148,7 @@ export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<strin
     if (!panel) {
       continue;
     }
-    cells.push(await renderPanelCell(panel, placementById.get(id), resolvedTokens));
+    cells.push(await renderPanelCell(panel, placementById.get(id), resolvedTokens, tableData?.get(id), dataQualityField));
   }
 
   const docTitle = title ?? 'Dashboard';
@@ -124,6 +186,8 @@ async function renderPanelCell(
   panel: PanelResult,
   placement: Placement | undefined,
   tokens: Readonly<Record<string, string>> | undefined,
+  table: ChartTableData | undefined,
+  dataQualityField: string | undefined,
 ): Promise<string> {
   const style = placement ? ` style="${gridStyle(placement)}"` : '';
 
@@ -136,7 +200,7 @@ async function renderPanelCell(
   // chart panel: a non-empty `spec` is a Vega-Lite spec we can render to SVG.
   if (panel.spec && Object.keys(panel.spec).length > 0) {
     const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { tokens });
-    return chartCell(panel.title, panel.a11yDescription, svg, style);
+    return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
   }
   // ECharts-primary (geo): empty spec + echartsSpec -> a11y-described placeholder.
   return placeholderCell(panel.title, panel.a11yDescription, style, 'geo');
@@ -170,6 +234,8 @@ function chartCell(
   a11yDescription: string | undefined,
   svg: string,
   style: string,
+  table: ChartTableData | undefined,
+  dataQualityField: string | undefined,
 ): string {
   const parts: string[] = [
     `<figure class="oods-panel oods-chart" role="figure"${style}${ariaLabelAttr(a11yDescription ?? title)}>`,
@@ -178,8 +244,50 @@ function chartCell(
     parts.push(`<figcaption>${esc(title)}</figcaption>`);
   }
   parts.push(svg);
+  // SR-only data-table (m07 piece B) — the chart's data, accessible to a screen reader.
+  if (table) {
+    parts.push(dataTableHtml(table, dataQualityField));
+  }
   parts.push('</figure>');
   return parts.join('');
+}
+
+/** A screen-reader-only data-table for a chart panel (sprint-118 m07). */
+function dataTableHtml(table: ChartTableData, dataQualityField: string | undefined): string {
+  const parts: string[] = ['<table class="oods-visually-hidden oods-chart-data">'];
+  // E/I/X tally caption (m07 piece C) — only when a data-quality column is named.
+  if (dataQualityField) {
+    parts.push(`<caption>${esc(tallyDataQuality(table.rows, dataQualityField))}</caption>`);
+  }
+  parts.push(
+    `<thead><tr>${table.columns.map((c) => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead>`,
+  );
+  parts.push('<tbody>');
+  for (const row of table.rows) {
+    parts.push(`<tr>${table.columns.map((c) => `<td>${esc(formatCell(row[c]))}</td>`).join('')}</tr>`);
+  }
+  parts.push('</tbody></table>');
+  return parts.join('');
+}
+
+/** Tally FAOSTAT-style data-quality flags (E=estimated / I=imputed / X=external / blank=official). */
+function tallyDataQuality(rows: ReadonlyArray<Record<string, unknown>>, field: string): string {
+  let estimated = 0;
+  let imputed = 0;
+  let external = 0;
+  let official = 0;
+  for (const row of rows) {
+    const code = String(row[field] ?? '').trim().toUpperCase();
+    if (code === 'E') estimated += 1;
+    else if (code === 'I') imputed += 1;
+    else if (code === 'X') external += 1;
+    else official += 1; // blank / 'A' / official
+  }
+  return `Data quality: ${official} official, ${estimated} estimated, ${imputed} imputed, ${external} external.`;
+}
+
+function formatCell(value: unknown): string {
+  return value === null || value === undefined ? '' : String(value);
 }
 
 function placeholderCell(

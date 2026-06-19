@@ -26,9 +26,10 @@ import {
 import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from '../schemas/generated.js';
 import { handle as vizRenderHandle } from './viz.render.js';
 import { createValueRef, describeSchemaRef } from './schema-ref.js';
-import { composeDashboardHtml } from './dashboard.render.html.js';
-import { loadMeasureRegistry } from './measure-registry.js';
+import { composeDashboardHtml, scanBrandContrast, type ChartTableData } from './dashboard.render.html.js';
+import { loadMeasureRegistry, MalformedMeasureRegistryError } from './measure-registry.js';
 import { resolveMeasurePanel } from './measure-resolver.js';
+import { absentFields, referencedEncodingFields } from './field-presence.js';
 
 type Row = Record<string, unknown>;
 type PanelResult = DashboardRenderOutput['panels'][number];
@@ -40,11 +41,18 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
   const wantHtml = input.output?.html ?? false;
+  // A11y completeness (sprint-118 m07) — all default-off so the absent path is byte-identical.
+  const wantDataTable = input.output?.dataTable ?? false;
+  const wantContrastScan = input.output?.contrastScan ?? false;
+  const dataQualityField = input.output?.dataQualityField;
   const ignoreSelfSource = input.crossFilter?.ignoreSelfSource ?? true;
   const onPanelError = input.onPanelError ?? 'placeholder';
   // Phase-3 governed-measure resolution (sprint-117) — gated, default OFF so the
   // absent/false path is byte-identical to s116 (measureRef stays inert).
   const resolveMeasures = input.resolveMeasures ?? false;
+  // Field-presence strict check (sprint-118 m05) — gated, default OFF so the absent/false
+  // path is byte-identical (the frozen-D6 silent-empty asymmetry preserved).
+  const strictFields = input.strictFields ?? false;
   const selection = (input.selection ?? undefined) as SelectionState | undefined;
   const crossFiltered = selection !== undefined && Object.keys(selection).length > 0;
 
@@ -72,8 +80,39 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       // byte-identical to s116).
       let kpiPanel = panel;
       if (resolveMeasures && panel.measureRef) {
-        const registry = loadMeasureRegistry();
-        if (!registry.has(panel.measureRef)) {
+        let registry;
+        try {
+          registry = loadMeasureRegistry();
+        } catch (err) {
+          if (!(err instanceof MalformedMeasureRegistryError)) throw err;
+          // V132 (sprint-118 m03): the registry artifact is present but malformed. FAIL
+          // CLOSED through the SAME partial-panel seam — never a silent empty Map, which
+          // would masquerade as a V130 unknown-measure miss and hide the config rot.
+          if (onPanelError === 'omit') {
+            warnings.push({
+              code: 'OODS-V132',
+              message: `KPI panel "${panel.id}" omitted: the governed-measure registry is malformed.`,
+              severity: 'warning',
+            });
+            continue;
+          }
+          errorPanelCount += 1;
+          panelResults.push({
+            id: panel.id,
+            kind: 'error',
+            ...(panel.title ? { title: panel.title } : {}),
+            error: {
+              code: 'OODS-V132',
+              message: `KPI panel "${panel.id}" cannot resolve "${panel.measureRef}": the governed-measure registry is malformed.`,
+              severity: 'error',
+            },
+            a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: the governed-measure registry is malformed.`,
+          });
+          placedPanels.push(panel);
+          continue;
+        }
+        const entry = registry.get(panel.measureRef);
+        if (!entry) {
           // Unresolvable governed measure = a provenance failure, NOT a silent
           // value:0. Route through the SAME partial-panel seam the chart branch
           // uses (NOT a thrown ToolError, which would void sibling panels).
@@ -100,12 +139,103 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
           placedPanels.push(panel);
           continue;
         }
+        if (entry.additive === false && entry.aggregate === 'sum') {
+          // V133 (sprint-118 m03): a non-additive measure asked for a `sum` rollup. A
+          // summed ratio/price (e.g. value/quantity) is meaningless — block it instead of
+          // silently summing. ONLY summation is blocked; average/latest/min/max/distinct/
+          // count are fine. (The registry aggregate OVERRIDES the author's per D4, so the
+          // effective aggregate is entry.aggregate.) Route through the SAME seam.
+          if (onPanelError === 'omit') {
+            warnings.push({
+              code: 'OODS-V133',
+              message: `KPI panel "${panel.id}" omitted: non-additive measure "${panel.measureRef}" cannot be summed.`,
+              severity: 'warning',
+            });
+            continue;
+          }
+          errorPanelCount += 1;
+          panelResults.push({
+            id: panel.id,
+            kind: 'error',
+            ...(panel.title ? { title: panel.title } : {}),
+            error: {
+              code: 'OODS-V133',
+              message: `KPI panel "${panel.id}" blocks a non-additive rollup: measure "${panel.measureRef}" cannot be summed.`,
+              severity: 'error',
+            },
+            a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: non-additive measure "${panel.measureRef}" cannot be summed.`,
+          });
+          placedPanels.push(panel);
+          continue;
+        }
         kpiPanel = resolveMeasurePanel(panel, registry);
       }
       const rows = filterRows(kpiPanel.id, datasetRows.get(kpiPanel.datasetId) ?? []);
+      if (strictFields) {
+        // V131: a referenced field (the resolved field + optional periodField) absent from
+        // every NON-empty row is a typo, NOT a silent value:0. Route through the SAME seam.
+        const refs = kpiPanel.periodField ? [kpiPanel.field, kpiPanel.periodField] : [kpiPanel.field];
+        const missing = absentFields(rows, refs);
+        if (missing.length > 0) {
+          if (onPanelError === 'omit') {
+            warnings.push({
+              code: 'OODS-V131',
+              message: `KPI panel "${panel.id}" omitted: field(s) absent from the dataset: ${missing.join(', ')}.`,
+              severity: 'warning',
+            });
+            continue;
+          }
+          errorPanelCount += 1;
+          panelResults.push({
+            id: panel.id,
+            kind: 'error',
+            ...(panel.title ? { title: panel.title } : {}),
+            error: {
+              code: 'OODS-V131',
+              message: `KPI panel "${panel.id}" references field(s) absent from the dataset: ${missing.join(', ')}.`,
+              severity: 'error',
+            },
+            a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: field(s) absent from the dataset: ${missing.join(', ')}.`,
+          });
+          placedPanels.push(panel);
+          continue;
+        }
+      }
       panelResults.push(buildKpiResult(kpiPanel, rows));
       placedPanels.push(kpiPanel);
       continue;
+    }
+
+    // chart panel — under strictFields, a tabular panel's encoding fields must be present in the
+    // resolved rows BEFORE rendering, so a typo surfaces as V131 (not a confident-wrong spec).
+    if (strictFields && TABULAR_TYPES.has(panel.chartType)) {
+      const chartRows = filterRows(panel.id, datasetRows.get(panel.datasetId ?? '') ?? []);
+      const missing = absentFields(chartRows, referencedEncodingFields(panel.encodings));
+      if (missing.length > 0) {
+        if (onPanelError === 'omit') {
+          warnings.push({
+            code: 'OODS-V131',
+            message: `panel "${panel.id}" omitted: encoding field(s) absent from the dataset: ${missing.join(', ')}.`,
+            severity: 'warning',
+          });
+          continue;
+        }
+        errorPanelCount += 1;
+        panelResults.push({
+          id: panel.id,
+          kind: 'error',
+          ...(panel.title ? { title: panel.title } : {}),
+          chartType: panel.chartType,
+          error: {
+            code: 'OODS-V131',
+            message: `panel "${panel.id}" references encoding field(s) absent from the dataset: ${missing.join(', ')}.`,
+            severity: 'error',
+          },
+          a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: encoding field(s) absent from the dataset: ${missing.join(', ')}.`,
+        });
+        placedPanels.push(panel);
+        continue;
+      }
     }
 
     // chart panel — render in-process via viz.render
@@ -159,6 +289,18 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     ...(narrative ? { narrative } : {}),
   };
 
+  // A11y contrast scan (sprint-118 m07 piece A): when requested, scan the export's resolved
+  // brand-token pairs (no fs) and surface failures as OODS-V135 warnings. Default-off ⇒ no-op.
+  if (wantContrastScan) {
+    for (const finding of scanBrandContrast()) {
+      warnings.push({
+        code: 'OODS-V135',
+        message: `Brand token pair "${finding.pair}" fails WCAG contrast: measured ${finding.ratio}:1, need ≥${finding.threshold}:1.`,
+        severity: 'warning',
+      });
+    }
+  }
+
   const result: DashboardRenderOutput = {
     status: 'ok',
     schemaVersion: input.schemaVersion,
@@ -167,7 +309,13 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     links: (input.links ?? []) as DashboardRenderOutput['links'],
     a11y: dashboardA11y,
     warnings,
-    output: { compact, ...(wantEcharts ? { echarts: true } : {}), ...(wantHtml ? { html: true } : {}) },
+    output: {
+      compact,
+      ...(wantEcharts ? { echarts: true } : {}),
+      ...(wantHtml ? { html: true } : {}),
+      ...(wantDataTable ? { dataTable: true } : {}),
+      ...(wantContrastScan ? { contrastScan: true } : {}),
+    },
     meta: {
       panelCount: panelResults.length,
       datasetCount: input.datasets.length,
@@ -184,12 +332,26 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   // ONLY when requested, so the absent path stays byte-identical to s114. Brand-token
   // inlining + the computed narrative land in m04.
   if (wantHtml) {
+    // SR data-table (m07 piece B): thread the charted rows per tabular chart panel. Built ONLY
+    // under output.dataTable so the default HTML stays byte-identical (no table appended).
+    let tableData: Map<string, ChartTableData> | undefined;
+    if (wantDataTable) {
+      tableData = new Map<string, ChartTableData>();
+      for (const panel of input.panels as Panel[]) {
+        if (panel.kind === 'chart' && TABULAR_TYPES.has(panel.chartType)) {
+          const rows = filterRows(panel.id, datasetRows.get(panel.datasetId ?? '') ?? []);
+          tableData.set(panel.id, { columns: referencedEncodingFields(panel.encodings), rows });
+        }
+      }
+    }
     result.html = await composeDashboardHtml({
       title: input.title,
       panels: panelResults,
       layout,
       a11y: dashboardA11y,
       columns: input.layout?.columns ?? 12,
+      ...(tableData ? { tableData } : {}),
+      ...(dataQualityField ? { dataQualityField } : {}),
     });
   }
 

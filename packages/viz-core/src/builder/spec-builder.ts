@@ -458,12 +458,21 @@ function buildSuggested(input: BuildVizSpecInput): BuildVizSpecResult {
   // No top pick (every pattern scored below the filter), or a top whose score is
   // below the confidence floor, means the chartType is a fallback, not a positive
   // recommendation — surface that instead of silently returning a bar.
-  const lowConfidence = !top || top.score < LOW_CONFIDENCE_SCORE;
+  // GEO HONESTY (sprint-118 m04): the pattern pool ranks only the 5 tabular marks, so geo-shaped
+  // rows get a CONFIDENT bar instead of a map. Coordinate fields (lat/lon) are unambiguous map
+  // intent — flag low-confidence and tell the agent to ask for choropleth/bubble_map explicitly.
+  // Gate on lat/lon ONLY, NOT 'region': a 'region' column is a common categorical dimension (e.g.
+  // region+revenue is a clean bar), so flagging it would wrongly low-confidence a count-shape.
+  const geoShaped = profiles.some((p) => p.geoKind === 'lat' || p.geoKind === 'lon');
+  const lowConfidence = geoShaped || !top || top.score < LOW_CONFIDENCE_SCORE;
   const alternatives = ranked.slice(1).map((s) => ({
     patternId: s.pattern.id,
     score: s.score,
     chartType: s.pattern.chartType,
   }));
+
+  const geoSignal =
+    'geographic coordinate fields detected but the recommender only ranks tabular charts — specify choropleth or bubble_map explicitly';
 
   const spec = assembleSpec(input, chartType, encoding);
   return {
@@ -471,7 +480,7 @@ function buildSuggested(input: BuildVizSpecInput): BuildVizSpecResult {
     chartType,
     mode: 'suggest',
     suggestion: top
-      ? { patternId: top.pattern.id, score: top.score, signals: top.signals }
+      ? { patternId: top.pattern.id, score: top.score, signals: geoShaped ? [...top.signals, geoSignal] : top.signals }
       : undefined,
     inferredFields: profiles,
     lowConfidence,
@@ -662,6 +671,14 @@ function inferFieldType(name: string, present: ReadonlyArray<unknown>): FieldTyp
     if (nameHintsZip(name) || nameHintsCurrencyCode(name)) {
       return 'nominal';
     }
+    // (3b) A measure-named numeric column is a quantitative measure even when it is a small
+    //      repeated integer set — the name disambiguates a real metric from a true ordinal
+    //      scale (sprint-118 m04). Conservative tokens; EXCLUDES 'count'/'score' (which are
+    //      legitimately ordinal). Only changes columns that rule (4) would otherwise type
+    //      ordinal — high-cardinality measures already fall through to (5) quantitative.
+    if (nameHintsMeasure(name)) {
+      return 'quantitative';
+    }
     // (4) A small, repeated set of integers is an ordinal scale.
     const distinct = new Set(nums).size;
     if (
@@ -704,6 +721,16 @@ function nameHintsYear(name: string): boolean {
 function nameHintsZip(name: string): boolean {
   const tokens = fieldNameTokens(name);
   return ['zip', 'zipcode', 'postal', 'postalcode', 'postcode', 'fips'].some((t) => tokens.includes(t));
+}
+
+// A conservative measure-name token set (sprint-118 m04). DELIBERATELY excludes 'count' and
+// 'score' — those are commonly genuine ordinal scales, so keeping them out preserves the
+// rule-(4) ordinal typing for e.g. a 'rating'/'count' column.
+function nameHintsMeasure(name: string): boolean {
+  const tokens = fieldNameTokens(name);
+  return ['value', 'val', 'quantity', 'qty', 'amount', 'amt', 'price', 'cost', 'total', 'revenue', 'sales'].some((t) =>
+    tokens.includes(t),
+  );
 }
 
 function nameHintsCurrencyCode(name: string): boolean {

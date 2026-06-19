@@ -29,6 +29,28 @@
       "measureRole": "dimension",
       "displayName": "Distinct Revenue Points",
       "provenance": "OODS governed measure; cardinality of distinct revenue values. NOTE: computeKpi aggregates only NUMERIC cells (numericSeries drops non-numerics), so a distinct/count measure MUST target a numeric entityField — a categorical field (e.g. region) would compute to 0. Exercises the 'distinct' aggregate and the 'dimension' measureRole classifier."
+    },
+    "gm.export.value.total": {
+      "name": "Total Export Value",
+      "entityField": "value",
+      "aggregate": "sum",
+      "measureRole": "metric",
+      "additive": true,
+      "displayName": "Total Export Value",
+      "format": "currency",
+      "unit": "1000 USD",
+      "provenance": "FAOSTAT TradeFlow export value (element 5922). ADDITIVE across corridors/commodities — the positive additivity case (sprint-118 m03). Mirrors the m01 fixture GOVERNED_MEASURES."
+    },
+    "gm.export.unit_price": {
+      "name": "Export Unit Price",
+      "entityField": "unit_price",
+      "aggregate": "sum",
+      "measureRole": "metric",
+      "additive": false,
+      "displayName": "Export Unit Price",
+      "format": "number",
+      "unit": "1000 USD/t",
+      "provenance": "value / quantity, a per-corridor ratio. NON-additive — SUM(unit_price) is meaningless, so the m03 additivity gate BLOCKS a sum rollup with OODS-V133 (the negative case; flips m01 bug-shaker #2 green). Mirrors the m01 fixture GOVERNED_MEASURES."
     }
   }
 }

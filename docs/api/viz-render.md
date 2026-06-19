@@ -41,6 +41,7 @@
 | `id` | string | No |  | Optional stable identifier for the produced spec. |
 | `name` | string | No |  | Optional human-friendly chart title. |
 | `description` | string | No |  | Optional override for the synthesized accessibility description. When omitted, a non-empty description is generated from the encodings. |
+| `strictFields` | boolean | No | `false` | Field/key-presence STRICT switch (sprint-118 m05/m06). When true, a referenced data key that does not resolve is surfaced in `warnings` instead of a silent confident-wrong result: (m05) an explicit tabular chart whose encoding references a field ABSENT from every (non-empty) row → OODS-V131; (m06) a choropleth corridor whose join key has NO matching map feature → OODS-V134 (per unmatched corridor). DEFAULT false keeps today's behavior byte-identical (the geo silent-drop preserved). The dashboard.render strict check (its own `strictFields`) escalates V131 to an error panel via `onPanelError`. |
 | `output` | object | No |  | Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior. |
 | `output.compact` | boolean | No | `true` | When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps. |
 | `output.echarts` | boolean | No | `false` | Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec. Decision 3: Vega-Lite is compact-default, ECharts is opt-in full. |
