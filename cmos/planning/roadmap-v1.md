@@ -1,5 +1,7 @@
 # OODS Foundry MCP — V1 Roadmap
 
+> **⚠️ SUPERSEDED for forward planning (2026-06-19).** This is the V1 baseline-gate record (V1 reached 100/100 at sprint-83). The live roadmap is [forge-viz-flagship-strategy.md](./forge-viz-flagship-strategy.md) + the phase memos + [../foundational-docs/roadmap/near.md](../foundational-docs/roadmap/near.md). Retained for V1 baseline history only.
+
 > Updated: 2026-04-18 | Sprint 95 closeout verified
 
 ## Current State

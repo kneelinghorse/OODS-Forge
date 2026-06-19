@@ -49,6 +49,7 @@
 | `meta` | object | No |  |
 | `errors` | _ref_[] | No |  |
 | `warnings` | _ref_[] | Yes |  |
+| `a11yContrast` | _ref_ | No |  |
 
 ## Error Codes
 

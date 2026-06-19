@@ -1,7 +1,7 @@
 # Near Roadmap
 
 **Status:** Active draft
-**Date:** 2026-05-15
+**Date:** 2026-05-15 (Viz Flagship Arc refreshed 2026-06-19 at the sprint-120 review)
 **Scope:** Next 1-3 sprints
 **Companion to:** [../mission-graph.md](../mission-graph.md)
 
@@ -29,7 +29,7 @@ Concordance production facts from `cmos/planning/info-push-to-oods-foundry-mcp.m
 
 ---
 
-## Viz Flagship Arc — current horizon (s108–s113)
+## Viz Flagship Arc — current horizon (s108–s120)
 
 **This is the live horizon. The dated sprint shapes below (s96–s100, s101–s104 candidates) are historical record, retained for point-in-time integrity (decision #679) — NOT the current plan.**
 
@@ -39,9 +39,22 @@ Data-viz is the Forge flagship (decision #680; [forge-viz-flagship-strategy.md](
 - **s110 — Phase 1 (data-aware intelligence):** real data profiling → a Draco-class recommender (smarter SELECTION among the beachhead types), plus the `viz-determinism` + `scale-determinism` CI gates.
 - **s111 — hierarchy/network unlock:** treemap / sunburst / sankey / force_graph reachable through `viz.render` (additive EChartsPrimary port).
 - **s112 — geo unlock + debt + Phase-2 scoping:** choropleth / bubble_map reachable (now **11 chart types**); #681 generated-type retarget done; viz-core coverage gate added; closeout criteria hardened (#740 frozen-lockfile + root typecheck); this memo.
-- **s113 (candidate) — Phase 2 (dashboards), BUILD:** a decision-centric linked multi-chart dashboard — `DashboardSpec` IR + headless auto-layout + a `dashboard.render` MCP surface + headless linked-selection/KPI + determinism goldens. Scoped + sized in [forge-viz-phase2-scoping-memo.md](../../planning/forge-viz-phase2-scoping-memo.md). Phase 2 is **mostly BUILD, not expose** — the live tree carries only a spatial-only cross-filter substrate, no generic dashboard spec / auto-layout / linked selection / KPI layer.
+- **s113 — Phase 2 (dashboards) SHIPPED** *(was the s113 candidate)*: a decision-centric linked multi-chart dashboard — `DashboardSpec` IR + headless auto-layout + the `dashboard.render` MCP surface + headless linked-selection/KPI + determinism goldens — built fully additively, repo-root `src/` untouched (`dd1528b`). Scoped + sized in [forge-viz-phase2-scoping-memo.md](../../planning/forge-viz-phase2-scoping-memo.md).
+- **s114–s115 — depth + polish:** shared-type widening + KPI temporal/period axis (`temporal.ts`, `periodField`); accessibility narrative generation over chart data (`a11y/narrative-generator.ts` — narrative over *raw data*, NOT the deferred narrative-over-measures).
+- **s116–s117 — Phase 3 substrate SHIPPED:** inert `KpiPanel.measureRef` descriptor (s116, `263ff07`) → governed-measure registry + flag-gated mcp-server resolver (s117, `d03b08e`). A panel's `measureRef` now resolves to real compute inputs against a governed registry; `resolveMeasures` default-off, fail-closed (`V130`/`V132`/`V133`). This is the substrate the [Phase-3 memo](../../planning/forge-viz-phase3-scoping-memo.md) authorized in shape.
+- **s118 — Phase-3 hardening + Phase-4 seed:** measure-registry schema/validation hardening; the first Phase-4 eval-harness seed (FAOSTAT fixture + colocated E2E).
+- **s119 — geo breadth:** `flow_map` (origin→destination arcs), the 6th explicit-only geo type, on the existing `geo` data branch (no AJV widening) (`98c2a77`).
+- **s120 — chord + divergent B1:** `chord` (the 7th explicit-only ECharts-primary type, native ECharts-6 `series.type:'chord'`) + B1 surface-aware-text (inert inverse-surface selector) (`f76fdd8`). **Now 13 chart types** — 5 recommender-visible (tabular) + 8 explicit-only (treemap / sunburst / sankey / force_graph / choropleth / bubble_map / flow_map / chord).
 
-Deferred across the arc (the sprint-101 over-scope guard): the ~137-site `src/viz` consumer rewire + shim deletion; NL→viz + semantic-layer (metrics) grounding (Phase 3); agentic exploration / eval harness (Phase 4); server-side SSR rendering.
+Still deferred (the sprint-101 over-scope guard; refreshed 2026-06-19 at the s120 review):
+- the ~137-site `src/viz` consumer rewire + shim deletion;
+- **NL→viz + narrative/insight *over measures*** — the Phase-3 **differentiator**. Its substrate shipped (s116–s117) but this frontier half is unbuilt and unscheduled; it is the single biggest roadmap-vs-reality tracking gap. Distinct from the shipped a11y narrative (which is over raw data, not measures);
+- full agentic exploration / eval harness (Phase 4 — only a seed landed s118);
+- server-side SSR rendering.
+
+**Tracked candidate (s122+; Derek 2026-06-19):** data-aware *recommendation* of the 8 explicit-only types — today the recommender selects only the 5 tabular types (`spec-builder.ts:448-453`); covering hierarchy/network/geo/chord is future scope, not a permanent boundary (extends next-steps #428/#516).
+
+**Next committed sprint — s121 (divergent-inspector debt — LOCKED 2026-06-19):** BUILD both — B2 = a new `size` scalar-token group (`--oods-size-spacing-*`/`--oods-size-font-*`, matching darryl's measured keys) + B3 = an inline token-delta render path (`tokenOverlay` on the repl render path, resolved server-side to a scoped `:root{}` override; render-only, honors never-apply=true). 6 missions (planning PS-2026-06-19-013; grounding wf_ff62655a-53a; critic wf_0d8c7b8f-99f → AMEND-THEN-LOCK). Closes the divergent-inspector debt. Not a Viz Flagship arc item; runs in parallel.
 
 ---
 

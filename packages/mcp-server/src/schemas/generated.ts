@@ -4458,6 +4458,12 @@ export namespace ReplRenderInputSchema {
        * Confidence threshold for low-confidence affordance. Components with confidence below this value receive the oods-low-confidence CSS class. Only effective when showConfidence is true. Default 0.5.
        */
       confidenceThreshold?: number;
+      /**
+       * Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), ignored for fragments; distinct from the FS-resolved named brandOverlay on fidelity.preview.
+       */
+      tokenOverlay?: {
+        [k: string]: any;
+      };
     };
     apply?: boolean;
   }

@@ -122,4 +122,31 @@ describe('renderDocument', () => {
     expect(html).toContain('data-brand="default&#39;brand"');
     expect(html.endsWith('</html>')).toBe(true);
   });
+
+  it('wires the Button padding to the size.spacing scalar tokens with literal fallbacks (sprint-121 m03)', () => {
+    // B2 geometry scalar-token contract: the Button padding consumes
+    // --oods-size-spacing-sm/-md (the size.* scalars from m01/m02) with the prior
+    // 0.5rem/0.875rem literals as var() fallbacks, so default-absent rendering stays
+    // byte-stable while a loaded tokens.css resolves the vars to 8px/14px.
+    const html = renderDocument({ screenHtml: '<div>Test</div>' });
+    const buttonBlock = html.slice(html.indexOf('[data-oods-component="Button"]'));
+    expect(buttonBlock).toContain('var(--oods-size-spacing-sm, 0.5rem)');
+    expect(buttonBlock).toContain('var(--oods-size-spacing-md, 0.875rem)');
+  });
+
+  it('inlines an inline tokenOverlay :root override into the components <style> (sprint-121 m05)', () => {
+    // The repl render path resolves a tokenOverlay to a scoped :root{} block and passes it as
+    // componentCss; renderDocument must emit it into the raw <style data-source="components">.
+    const overlayBlock = ':root {\n  --oods-size-spacing-sm: 10px;\n}\n';
+    const html = renderDocument({ screenHtml: '<div>Test</div>', componentCss: overlayBlock });
+    const componentsStyle = html.slice(html.indexOf('<style data-source="components">'));
+    expect(componentsStyle).toContain(':root {\n  --oods-size-spacing-sm: 10px;\n}');
+    // ...and the Button still references that exact var, so the override actually lands on it.
+    expect(componentsStyle).toContain('var(--oods-size-spacing-sm, 0.5rem)');
+  });
+
+  it('omits any token override when no componentCss overlay is supplied (default-absent) (sprint-121 m05)', () => {
+    const html = renderDocument({ screenHtml: '<div>Test</div>' });
+    expect(html).not.toContain('--oods-size-spacing-sm: 10px');
+  });
 });

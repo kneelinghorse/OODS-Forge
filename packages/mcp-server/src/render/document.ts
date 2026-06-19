@@ -38,7 +38,7 @@ const DEFAULT_COMPONENT_CSS = `
   background: var(--sys-surface-interactive-primary-default, var(--ref-color-primary-500, #4f46e5));
   color: var(--sys-text-on-interactive, var(--ref-color-neutral-0, #ffffff));
   font-family: inherit;
-  padding: 0.5rem 0.875rem;
+  padding: var(--oods-size-spacing-sm, 0.5rem) var(--oods-size-spacing-md, 0.875rem);
 }
 [data-oods-component="Card"] {
   border: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));
@@ -94,6 +94,14 @@ const DEFAULT_COMPONENT_CSS = `
 // themselves remap to dark values (DARK_THEME_OVERRIDES below + tokens.css), so an
 // inverse element inside a dark doc flips to a LIGHT surface / DARK text — the
 // cascade order is correct, just inverted-of-inverted by design.
+// sprint-121 m03 (B2 geometry scalar-token contract): the Button `padding` above
+// consumes --oods-size-spacing-sm/-md (the new size.* scalar contract from m01/m02)
+// with the prior literals 0.5rem/0.875rem kept as var() fallbacks. When tokens.css
+// is absent (compact mode) or the vars are unset, padding resolves to the EXACT
+// prior values, so default rendering is byte-stable; with tokens.css loaded the vars
+// resolve through size.spacing → sys → theme → ref.space.scale (8px/14px), numerically
+// identical at the 16px root. font (size.font.*) is seeded NOT consumed — the Button
+// has no font-size and wiring one would be net-new visual, not fallback-safe.
 
 /**
  * CSS block that remaps --theme-* variables to --theme-dark-* under [data-theme="dark"].

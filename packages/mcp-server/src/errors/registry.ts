@@ -125,6 +125,12 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // /^OODS-[VNCSRR]\d{3}$/ + prefix=category have no 'A'). retryable:false (a brand-token config
   // issue, not a transient/recoverable input).
   ['OODS-V135', { code: 'OODS-V135', category: 'validation', message: 'Brand token pair fails WCAG contrast', retryable: false }],
+  // Inline tokenOverlay value safety (sprint-121 m04): a token-overlay value containing CSS/HTML
+  // metacharacters (< > { } ; @, comment sequences, control chars) that could break out of the
+  // raw-emitted <style data-source="components"> sink (document.ts:220 has no escaping). Distinct
+  // from V113 'Unsafe key' (key denylist) — this inspects VALUES. retryable:false (a malicious or
+  // malformed value won't succeed on retry; the agent must supply a clean CSS color/length/number).
+  ['OODS-V136', { code: 'OODS-V136', category: 'validation', message: 'Unsafe token-overlay value', retryable: false }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
