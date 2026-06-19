@@ -231,6 +231,11 @@
       "type": "string",
       "description": "Optional override for the synthesized accessibility description. When omitted, a non-empty description is generated from the encodings."
     },
+    "strictFields": {
+      "type": "boolean",
+      "default": false,
+      "description": "Field/key-presence STRICT switch (sprint-118 m05/m06). When true, a referenced data key that does not resolve is surfaced in `warnings` instead of a silent confident-wrong result: (m05) an explicit tabular chart whose encoding references a field ABSENT from every (non-empty) row → OODS-V131; (m06) a choropleth corridor whose join key has NO matching map feature → OODS-V134 (per unmatched corridor). DEFAULT false keeps today's behavior byte-identical (the geo silent-drop preserved). The dashboard.render strict check (its own `strictFields`) escalates V131 to an error panel via `onPanelError`."
+    },
     "output": {
       "type": "object",
       "description": "Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior.",

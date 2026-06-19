@@ -564,3 +564,44 @@ describe('correlation — single Pearson implementation', () => {
     expect(narratorCorrelation).toBeGreaterThan(0.9);
   });
 });
+
+describe('recommender + inference honesty (sprint-118 m04)', () => {
+  it('a measure-named low-cardinality integer column types quantitative, not ordinal', () => {
+    // Shape alone trips rule (4): all-integer, present 20 >= 8, distinct 4 <= 12, ratio 0.2.
+    // 'qty' is in the conservative measure token set, so nameHintsMeasure rescues it.
+    const rows = Array.from({ length: 20 }, (_, i) => ({ shipment_qty: (i % 4) + 1 }));
+    const [qty] = inferFieldProfile(rows);
+    expect(qty).toMatchObject({ name: 'shipment_qty', type: 'quantitative', role: 'measure' });
+  });
+
+  it("a non-measure-named low-cardinality integer column ('count') still types ordinal", () => {
+    // 'count' is DELIBERATELY excluded from the token set (a legitimate ordinal scale).
+    const rows = Array.from({ length: 20 }, (_, i) => ({ count: (i % 4) + 1 }));
+    const [count] = inferFieldProfile(rows);
+    expect(count).toMatchObject({ name: 'count', type: 'ordinal', role: 'dimension' });
+  });
+
+  it('geo-coordinate (lat/lon) flat rows flag lowConfidence + a geo rationale', () => {
+    const rows = [
+      { city: 'A', lat: 40, lon: -74, pop: 800 },
+      { city: 'B', lat: 34, lon: -118, pop: 600 },
+      { city: 'C', lat: 41, lon: -87, pop: 500 },
+      { city: 'D', lat: 29, lon: -95, pop: 400 },
+    ];
+    const result = buildVizSpecFromRows({ rows });
+    expect(result.lowConfidence).toBe(true);
+    expect((result.suggestion?.signals ?? []).some((s) => /choropleth|bubble_map/.test(s))).toBe(true);
+  });
+
+  it("a bare 'region' categorical (no coordinates) does NOT flag geo lowConfidence", () => {
+    // region is a common categorical dimension, not map intent — geoShaped gates on lat/lon
+    // ONLY, so a clean region+measure count-shape stays a confident recommendation.
+    const rows = [
+      { region: 'North', revenue: 120 },
+      { region: 'South', revenue: 135 },
+      { region: 'East', revenue: 128 },
+      { region: 'West', revenue: 142 },
+    ];
+    expect(buildVizSpecFromRows({ rows }).lowConfidence).toBe(false);
+  });
+});

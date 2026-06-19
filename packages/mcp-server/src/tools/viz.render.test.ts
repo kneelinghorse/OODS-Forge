@@ -5,6 +5,7 @@ import { getAjv } from '../lib/ajv.js';
 import type { VizRenderInput } from '../schemas/generated.js';
 import { handle } from './viz.render.js';
 import { createValueRef, resolveValueRef } from './schema-ref.js';
+import { getDefinition, isRetryable } from '../errors/registry.js';
 
 const outputSchema = JSON.parse(
   readFileSync(new URL('../schemas/viz.render.output.json', import.meta.url), 'utf8'),
@@ -600,4 +601,34 @@ describe('viz.render handler — bubble_map (geo) path', () => {
     const b = await render(BUBBLE_INPUT);
     expect(JSON.stringify(b.echartsSpec)).toEqual(JSON.stringify(a.echartsSpec));
   });
+});
+
+describe('viz error-code registry (sprint-118 m02): V123-V129 resolve, not silently degraded', () => {
+  // These codes are THROWN via errorOut() across viz.render.ts (V123 :57/:74/:221; V124 :57;
+  // V125 :65; V126 :158/:316; V127 :159; V128 :161/:318; V129 :163/:319) and dashboard.render.ts
+  // (V129 :116), but were ABSENT from errors/registry.ts — so createError() degraded them to
+  // category 'server_error' / retryable:false. Now registered: V123-V126 are recoverable input
+  // problems (retryable:true); V127/V128/V129 are deterministic compile/render failures
+  // (retryable:false). All stay category 'validation' (V-prefix=category invariant,
+  // registry.test.ts:28-42), so the thrown code strings need no renumber. This block is
+  // CI-wired via the ci.yml by-name goldens list; errors/registry.test.ts is NOT in that list.
+  const EXPECTED: ReadonlyArray<readonly [string, string, boolean]> = [
+    ['OODS-V123', 'validation', true],
+    ['OODS-V124', 'validation', true],
+    ['OODS-V125', 'validation', true],
+    ['OODS-V126', 'validation', true],
+    ['OODS-V127', 'validation', false],
+    ['OODS-V128', 'validation', false],
+    ['OODS-V129', 'validation', false],
+  ];
+  for (const [code, category, retryable] of EXPECTED) {
+    it(`${code} is registered as category ${category} / retryable ${retryable}`, () => {
+      const def = getDefinition(code);
+      expect(def).toBeDefined();
+      expect(def?.category).toBe(category);
+      expect(def?.retryable).toBe(retryable);
+      // isRetryable() reads the same registered entry — parity guard against drift.
+      expect(isRetryable(code)).toBe(retryable);
+    });
+  }
 });

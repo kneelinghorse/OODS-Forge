@@ -1,8 +1,10 @@
-import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import fs, { readFileSync } from 'node:fs';
+import { describe, expect, it, vi } from 'vitest';
 import { getAjv } from '../lib/ajv.js';
 import type { DashboardRenderInput } from '../schemas/generated.js';
 import { handle } from './dashboard.render.js';
+import { resetMeasureRegistryCache } from './measure-registry.js';
+import { scanBrandContrast } from './dashboard.render.html.js';
 
 // Reconstruct the server boundary in-test: compile the SAME schema JSONs the
 // dispatch loop uses with the SAME getAjv() instance, call handle() directly.
@@ -432,5 +434,157 @@ describe('dashboard.render — governed-measure resolution (sprint-117)', () => 
     const outT = await handle(titled);
     const kpiT = outT.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof outT.panels[number], { kind: 'kpi' }>;
     expect(kpiT.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
+  });
+});
+
+describe('dashboard.render — measure governance: additivity gate + fail-closed registry (sprint-118 m03)', () => {
+  // A KPI panel resolving a governed measure under resolveMeasures:true. gm.export.value.total
+  // is ADDITIVE (resolves + computes); gm.export.unit_price is NON-additive (a value/quantity
+  // ratio) and a `sum` rollup is BLOCKED with V133; a malformed registry FAILS CLOSED with V132.
+  function exportKpi(measureRef: string, extra: Record<string, unknown> = {}): DashboardRenderInput {
+    return {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'flows', rows: [{ value: 100, unit_price: 0.4 }, { value: 200, unit_price: 0.6 }] }],
+      panels: [{ id: 'kpi', kind: 'kpi', title: 'Measure', datasetId: 'flows', field: 'value', aggregate: 'sum', measureRef }],
+      a11y: { description: 'measure governance' },
+      resolveMeasures: true,
+      ...extra,
+    } as DashboardRenderInput;
+  }
+
+  it('an ADDITIVE measure (gm.export.value.total) resolves to value/sum and computes — no V133', async () => {
+    const out = await handle(exportKpi('gm.export.value.total'));
+    expect(validateOutput(out)).toBe(true);
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.kind).toBe('kpi'); // NOT an error panel
+    expect(kpi.value).toBe(300); // sum of value (100 + 200); registry field overrides author
+    expect(out.meta?.errorPanelCount).toBe(0);
+  });
+
+  it('a NON-additive measure (gm.export.unit_price) summed is BLOCKED with an OODS-V133 error panel', async () => {
+    const out = await handle(exportKpi('gm.export.unit_price'));
+    expect(validateOutput(out)).toBe(true);
+    expect(out.status).toBe('ok'); // siblings are not voided
+    const err = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'error' }>;
+    expect(err.kind).toBe('error');
+    expect(err.error.code).toBe('OODS-V133');
+    expect(err.error.severity).toBe('error');
+    expect(err.a11yDescription).toContain('cannot be summed');
+    expect(out.meta?.errorPanelCount).toBe(1);
+  });
+
+  it('a NON-additive measure under onPanelError:"omit" warns (V133) + drops the panel', async () => {
+    const out = await handle(exportKpi('gm.export.unit_price', { onPanelError: 'omit' }));
+    expect(out.panels.find((p) => p.id === 'kpi')).toBeUndefined();
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V133' && w.severity === 'warning' && w.message.includes('kpi'))).toBe(true);
+  });
+
+  it('only SUMMATION is blocked — a non-additive measure is unaffected when resolveMeasures is off', async () => {
+    const out = await handle(exportKpi('gm.export.unit_price', { resolveMeasures: false }));
+    // flag off -> measureRef stays inert (s116 path), the author field/aggregate compute; no V133.
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.kind).toBe('kpi');
+    expect(out.meta?.errorPanelCount).toBe(0);
+  });
+
+  it('a MALFORMED registry FAILS CLOSED with OODS-V132 — NOT a silent V130 unknown-measure miss', async () => {
+    // Well-formed JSON that VIOLATES the schema (entry missing required entityField/aggregate/
+    // measureRole). The loader must fail closed, NOT degrade to an empty Map (which would
+    // surface as V130 and mask the config rot). Spy the shared node:fs object property.
+    const spy = vi.spyOn(fs, 'readFileSync').mockReturnValue('{"measures":{"gm.bad":{"name":"Bad"}}}');
+    resetMeasureRegistryCache();
+    try {
+      const out = await handle(exportKpi('gm.bad'));
+      expect(validateOutput(out)).toBe(true);
+      const err = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'error' }>;
+      expect(err.kind).toBe('error');
+      expect(err.error.code).toBe('OODS-V132'); // fail closed, NOT V130
+    } finally {
+      spy.mockRestore();
+      resetMeasureRegistryCache(); // restore the real registry for subsequent tests
+    }
+  });
+});
+
+describe('dashboard.render — a11y completeness: contrast scan + SR data-table + E/I/X (sprint-118 m07)', () => {
+  const FLOWS = [
+    { partner: 'USA', revenue: 100, flag: 'E' },
+    { partner: 'Brazil', revenue: 80, flag: 'I' },
+    { partner: 'India', revenue: 60, flag: 'X' },
+    { partner: 'China', revenue: 40, flag: '' },
+  ];
+  function chartDash(extra: Record<string, unknown> = {}): DashboardRenderInput {
+    return {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'flows', rows: FLOWS }],
+      panels: [{ id: 'bars', kind: 'chart', chartType: 'bar', datasetId: 'flows', encodings: { x: 'partner', y: { field: 'revenue', aggregate: 'sum' } } }],
+      a11y: { description: 'flows' },
+      ...extra,
+    } as DashboardRenderInput;
+  }
+
+  // (A) contrast scan — unit-test the pure scanner with controlled palettes (the default brand
+  // may pass all pairs; this proves the V135 logic independent of the brand tokens).
+  it('(A) scanBrandContrast flags a low-contrast pair and passes a high-contrast one', () => {
+    const failing = scanBrandContrast({ '--oods-color-fg': '#999999', '--oods-color-bg': '#aaaaaa' });
+    expect(failing.some((f) => f.pair === 'fg-on-bg' && f.ratio < f.threshold)).toBe(true);
+    const passing = scanBrandContrast({ '--oods-color-fg': '#000000', '--oods-color-bg': '#ffffff' });
+    expect(passing.some((f) => f.pair === 'fg-on-bg')).toBe(false);
+  });
+
+  it('(A) output.contrastScan runs the scan and echoes the control; any finding is a well-formed OODS-V135', async () => {
+    const out = await handle(chartDash({ output: { contrastScan: true } }));
+    expect(validateOutput(out)).toBe(true);
+    expect((out.output as Record<string, unknown>).contrastScan).toBe(true);
+    for (const w of out.warnings ?? []) {
+      if (w.code === 'OODS-V135') {
+        expect(w.severity).toBe('warning');
+        expect(w.message).toMatch(/contrast/i);
+      }
+    }
+  });
+
+  it('(A) contrastScan OFF emits no V135 + does not echo the control (default-off inert)', async () => {
+    const out = await handle(chartDash());
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V135')).toBe(false);
+    expect((out.output as Record<string, unknown>).contrastScan).toBeUndefined();
+  });
+
+  // (B) SR data-table.
+  it('(B) output.dataTable appends an SR-only data-table whose cells equal the charted rows', async () => {
+    const out = await handle(chartDash({ output: { html: true, dataTable: true } }));
+    const html = out.html as string;
+    expect(html).toContain('oods-chart-data');
+    expect(html).toContain('oods-visually-hidden'); // SR-only
+    // the charted columns (encoding fields) head the table, and the cell values are present.
+    expect(html).toMatch(/<th scope="col">partner<\/th>/);
+    expect(html).toContain('>USA<');
+    expect(html).toContain('>Brazil<');
+  });
+
+  it('(B) output.dataTable is run-to-run deterministic', async () => {
+    const a = await handle(chartDash({ output: { html: true, dataTable: true } }));
+    const b = await handle(chartDash({ output: { html: true, dataTable: true } }));
+    expect(a.html).toBe(b.html);
+  });
+
+  it('(B) dataTable OFF keeps the HTML free of any data-table (additive)', async () => {
+    const out = await handle(chartDash({ output: { html: true } }));
+    expect(out.html as string).not.toContain('oods-chart-data');
+  });
+
+  // (C) E/I/X caption tally.
+  it('(C) output.dataQualityField tallies E/I/X into the data-table caption', async () => {
+    const out = await handle(chartDash({ output: { html: true, dataTable: true, dataQualityField: 'flag' } }));
+    const html = out.html as string;
+    expect(html).toMatch(/<caption>Data quality:/);
+    expect(html).toContain('1 estimated'); // one 'E' row
+    expect(html).toContain('1 imputed'); // one 'I' row
+    expect(html).toContain('1 external'); // one 'X' row
+    expect(html).toContain('1 official'); // the blank row
+  });
+
+  it('(input) the schema accepts the new output controls', () => {
+    expect(validateInput(chartDash({ output: { html: true, dataTable: true, contrastScan: true, dataQualityField: 'flag' } }))).toBe(true);
   });
 });

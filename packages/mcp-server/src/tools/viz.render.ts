@@ -29,6 +29,7 @@ import {
 } from '@oods/viz-core';
 import type { VizRenderInput, VizRenderOutput } from '../schemas/generated.js';
 import { createValueRef, describeSchemaRef, resolveValueRef } from './schema-ref.js';
+import { absentFields, referencedEncodingFields } from './field-presence.js';
 
 type Issue = VizRenderOutput['warnings'][number];
 
@@ -74,6 +75,18 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
     return errorOut('OODS-V123', 'Provide either inline rows or a datasetRef.', compact, wantEcharts);
   }
 
+  // strictFields (sprint-118 m05): surface a tabular encoding field that is absent from every
+  // row as OODS-V131 (WARN) instead of a silent confident-wrong spec. Scoped to the tabular
+  // rows+encodings path (the hierarchy/sankey/geo branches returned earlier). Default false ⇒
+  // warnings stays []. The dashboard.render strict check escalates V131 to an error panel.
+  const fieldWarnings: VizRenderOutput['warnings'] = input.strictFields
+    ? absentFields(rows, referencedEncodingFields(input.encodings)).map((field) => ({
+        code: 'OODS-V131',
+        message: `Referenced field "${field}" is absent from the data rows.`,
+        severity: 'warning' as const,
+      }))
+    : [];
+
   // ---- build the NormalizedVizSpec + compile to the renderer payload ----
   try {
     const built = buildVizSpecFromRows({
@@ -93,7 +106,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
       mode: built.mode,
       spec,
       a11yDescription: built.spec.a11y.description,
-      warnings: [],
+      warnings: fieldWarnings,
       output: {
         compact,
         ...(wantEcharts ? { echarts: true } : {}),
@@ -265,6 +278,21 @@ function renderEChartsPrimary(
     // formatter to preserve the custom tooltip across JSON transport.)
     const echartsOption = JSON.parse(JSON.stringify(option)) as Record<string, unknown>;
 
+    // Geo-join surfacing (sprint-118 m06): the choropleth adapter attaches __joinDiagnostics when a
+    // corridor's join key had no matching map feature. Read it, then STRIP it from echartsSpec so the
+    // default (flag-off) path is byte-identical to today (silent drop preserved — geo goldens unchanged).
+    // Under strictFields, emit OODS-V134 per unmatched corridor onto warnings[].
+    const joinDiagnostics = echartsOption.__joinDiagnostics as { unmatchedData?: string[] } | undefined;
+    delete echartsOption.__joinDiagnostics;
+    const geoWarnings: VizRenderOutput['warnings'] =
+      input.strictFields && joinDiagnostics?.unmatchedData?.length
+        ? joinDiagnostics.unmatchedData.map((key) => ({
+            code: 'OODS-V134',
+            message: `Geo join: corridor "${key}" has no matching map feature.`,
+            severity: 'warning' as const,
+          }))
+        : [];
+
     const out: VizRenderOutput = {
       status: 'ok',
       chartType,
@@ -275,7 +303,7 @@ function renderEChartsPrimary(
       spec: {},
       echartsSpec: echartsOption as unknown as VizRenderOutput['echartsSpec'],
       a11yDescription: spec.a11y.description,
-      warnings: [],
+      warnings: geoWarnings,
       output: {
         compact,
         echarts: true,

@@ -1213,6 +1213,10 @@ export namespace DashboardRenderInputSchema {
      * Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT false keeps measureRef fully inert and the output byte-identical to s116. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels).
      */
     resolveMeasures?: boolean;
+    /**
+     * Field-presence STRICT switch (sprint-118 m05). When true, a referenced field absent from EVERY resolved (non-empty) row is surfaced as OODS-V131 at the ingestion boundary instead of a silent value:0 / confident-wrong spec: a KPI panel's field (+ periodField) and a tabular chart panel's encoding fields (x/y/color/size/shape/detail) must each be a key in >=1 row, else the panel is routed through `onPanelError` (placeholder = a11y-described error panel; omit = warning + drop). DEFAULT false keeps the legacy silent-empty behavior byte-identical. Scoped to field-presence ONLY — the frozen-D6 missing-datasetId silent-empty path (empty rows) is unchanged. A render-call control (like resolveMeasures); never reaches computeKpi.
+     */
+    strictFields?: boolean;
     a11y: DashboardA11YSpec;
     /**
      * SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). KPI threshold colors are NOT resolved inline.
@@ -1240,6 +1244,18 @@ export namespace DashboardRenderInputSchema {
        * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and an a11y-described placeholder for ECharts-primary panels (geo). Absent/false leaves the output byte-identical to the compact/echarts payload.
        */
       html?: boolean;
+      /**
+       * A11y completeness (sprint-118 m07). When true AND output.html is set, append a screen-reader-only data-table inside each tabular chart <figure> whose cells equal the charted rows (the chart's encoding columns). DEFAULT false keeps the HTML byte-identical.
+       */
+      dataTable?: boolean;
+      /**
+       * A11y completeness (sprint-118 m07). When true, run a WCAG contrast scan over the export's ALREADY-RESOLVED brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below threshold. DEFAULT false emits nothing.
+       */
+      contrastScan?: boolean;
+      /**
+       * A11y completeness (sprint-118 m07). When set (e.g. 'flag') AND output.dataTable is on, tally that column's data-quality codes (FAOSTAT E=estimated / I=imputed / X=external / blank=official) into a <caption> footnote per data-table. Pure presentation over a parameter — no Forge-side fetch.
+       */
+      dataQualityField?: string;
     };
   }
   /**
@@ -1637,6 +1653,8 @@ export namespace DashboardRenderOutputSchema {
       compact?: boolean;
       echarts?: boolean;
       html?: boolean;
+      dataTable?: boolean;
+      contrastScan?: boolean;
     };
     meta?: {
       panelCount?: number;
@@ -6627,6 +6645,10 @@ export namespace VizRenderInputSchema {
      * Optional override for the synthesized accessibility description. When omitted, a non-empty description is generated from the encodings.
      */
     description?: string;
+    /**
+     * Field/key-presence STRICT switch (sprint-118 m05/m06). When true, a referenced data key that does not resolve is surfaced in `warnings` instead of a silent confident-wrong result: (m05) an explicit tabular chart whose encoding references a field ABSENT from every (non-empty) row → OODS-V131; (m06) a choropleth corridor whose join key has NO matching map feature → OODS-V134 (per unmatched corridor). DEFAULT false keeps today's behavior byte-identical (the geo silent-drop preserved). The dashboard.render strict check (its own `strictFields`) escalates V131 to an error panel via `onPanelError`.
+     */
+    strictFields?: boolean;
     /**
      * Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior.
      */

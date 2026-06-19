@@ -82,6 +82,13 @@ describe('joinGeoWithData — merges tabular rows into feature properties (order
     const joined = joinGeoWithData(GEO.features, partial, { geoKey: 'region', dataKey: 'state' });
     expect(joined.unmatchedFeatures).toEqual(['NV']);
   });
+
+  it('reports a DATA row whose join key has no matching feature as unmatchedData (sprint-118 m06)', () => {
+    const withOrphan = [...SALES, { state: 'XX', sales: 99 }];
+    const joined = joinGeoWithData(GEO.features, withOrphan, { geoKey: 'region', dataKey: 'state' });
+    expect(joined.unmatchedData).toContain('XX');
+    expect(joined.features.map((f) => f.id)).toEqual(['CA', 'NV']); // the orphan is NOT fabricated into a feature
+  });
 });
 
 describe('adaptChoroplethToECharts — decoupled spec+geo → renderable map option', () => {
@@ -139,6 +146,18 @@ describe('adaptChoroplethToECharts — decoupled spec+geo → renderable map opt
     expect((option.aria as { enabled?: boolean }).enabled).toBe(true);
     expect((option.aria as { description?: string }).description).toBe('Sales by US state.');
     expect((option.usermeta as { oods?: Record<string, unknown> }).oods!.specId).toBe('viz:choropleth-test');
+  });
+
+  it('surfaces an unmatched corridor on __joinDiagnostics (sprint-118 m06; silently dropped before)', () => {
+    const withOrphan = [...SALES, { state: 'XX', sales: 99 }];
+    const option = adaptChoroplethToECharts(choroplethSpec(), GEO, withOrphan, DIMENSIONS) as Record<string, unknown>;
+    const diagnostics = option.__joinDiagnostics as { unmatchedData?: string[] } | undefined;
+    expect(diagnostics?.unmatchedData).toContain('XX');
+  });
+
+  it('attaches NO __joinDiagnostics when every row matches (additive: absent on the happy path)', () => {
+    const option = adaptChoroplethToECharts(choroplethSpec(), GEO, SALES, DIMENSIONS) as Record<string, unknown>;
+    expect(option.__joinDiagnostics).toBeUndefined();
   });
 
   it('is DETERMINISTIC — identical (spec, geo, data) yields a byte-identical serialized option', () => {

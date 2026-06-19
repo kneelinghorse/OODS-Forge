@@ -16,6 +16,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { KpiPanel } from '@oods/viz-core';
+// AJV-validate-at-load (sprint-118 m03): a FRESH Ajv2020 with NO useDefaults — do NOT
+// reuse lib/ajv.ts getAjv() (useDefaults:true would mutate-fill entries). Mirrors the
+// manifest-validator precedent (object-catalog/manifest-validator.ts:30,92-95).
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - subpath import for draft-2020-12 support
+import Ajv2020Import from 'ajv/dist/2020.js';
+import addFormatsImport from 'ajv-formats';
+import measureRegistrySchema from '../schemas/measure-registry.schema.json' with { type: 'json' };
+
+const Ajv2020: any = (Ajv2020Import as any).default ?? Ajv2020Import;
+const addFormats: any = (addFormatsImport as any).default ?? addFormatsImport;
+const ajv = new Ajv2020({ allErrors: true, strict: false });
+addFormats(ajv);
+const validateRegistry = ajv.compile(measureRegistrySchema);
 
 // A single governed-measure entry. entityField + aggregate are the AUTHORITATIVE
 // compute inputs (they OVERRIDE the author's field/aggregate when resolved);
@@ -34,6 +48,13 @@ export interface MeasureEntry {
    * (SemanticMapping) — none of those meanings apply here.
    */
   measureRole: string;
+  /**
+   * Whether the measure is additive across rows (sprint-118 m03). ABSENT === true
+   * (back-compat: the s117 entries carry no `additive` and stay byte-identical). When
+   * false, a `sum` rollup is BLOCKED at the resolver boundary with OODS-V133 — summing a
+   * ratio/price (e.g. value/quantity) is meaningless. Only summation is blocked.
+   */
+  additive?: boolean;
   /** Optional UI label. */
   displayName?: string;
   /** Optional renderer-agnostic number-format hint. */
@@ -62,31 +83,67 @@ const REGISTRY_PATH = path.join(__dirname, '..', 'schemas', 'measure-registry.js
 let cached: Map<string, MeasureEntry> | undefined;
 
 /**
+ * Raised when the registry artifact is PRESENT but malformed — unparseable JSON or
+ * AJV-invalid against measure-registry.schema.json. Carries OODS-V132; the resolver
+ * routes it through the dashboard.render onPanelError seam (FAIL CLOSED), never a
+ * silent empty Map (which would masquerade as a V130 unknown-measure miss).
+ */
+export class MalformedMeasureRegistryError extends Error {
+  readonly code = 'OODS-V132';
+  constructor(detail: string) {
+    super(`Malformed measure registry: ${detail}`);
+    this.name = 'MalformedMeasureRegistryError';
+  }
+}
+
+/**
  * Load (and memoize) the governed-measure registry as a Map keyed by measure
- * reference. A FILE read/parse FAILURE falls back to an EMPTY registry (the
- * registry.ts FALLBACK posture) — distinct from a missing measure KEY, which is
- * the resolver's unresolvable-measure hard-error case (OODS-V130, s117-m03).
+ * reference. Failure posture (sprint-118 m03):
+ *   - FILE missing/unreadable  -> EMPTY registry (the s117 fallback; every measureRef
+ *     then resolves to undefined -> V130 downstream, never a silent value:0).
+ *   - PRESENT but malformed     -> THROW MalformedMeasureRegistryError (V132, fail closed).
+ * A missing measure KEY (registry valid, ref absent) stays the resolver's V130 case.
  */
 export function loadMeasureRegistry(): Map<string, MeasureEntry> {
   if (cached) {
     return cached;
   }
   const registry = new Map<string, MeasureEntry>();
+  let raw: string;
   try {
-    const raw = fs.readFileSync(REGISTRY_PATH, 'utf8');
-    const parsed = JSON.parse(raw) as MeasureRegistryFile;
-    if (parsed.measures && typeof parsed.measures === 'object') {
-      for (const [key, entry] of Object.entries(parsed.measures)) {
-        registry.set(key, entry);
-      }
-    }
+    raw = fs.readFileSync(REGISTRY_PATH, 'utf8');
   } catch {
-    // Empty registry on read/parse failure: every measureRef then resolves to
-    // undefined, surfaced downstream as an unresolvable-measure error — never a
-    // silent value:0.
+    // File missing/unreadable ONLY: keep the empty-registry fallback.
+    cached = registry;
+    return cached;
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new MalformedMeasureRegistryError('registry JSON is unparseable');
+  }
+  if (!validateRegistry(parsed)) {
+    const first = validateRegistry.errors?.[0];
+    const where = first ? `${first.instancePath || '/'} ${first.message ?? ''}`.trim() : 'failed schema validation';
+    throw new MalformedMeasureRegistryError(where);
+  }
+  const file = parsed as MeasureRegistryFile;
+  if (file.measures && typeof file.measures === 'object') {
+    for (const [key, entry] of Object.entries(file.measures)) {
+      registry.set(key, entry);
+    }
   }
   cached = registry;
   return cached;
+}
+
+/**
+ * TEST SEAM (sprint-118 m03): clear the memoized registry so a test can re-load after
+ * mocking the file (e.g. the malformed-registry fail-closed path). Inert in production.
+ */
+export function resetMeasureRegistryCache(): void {
+  cached = undefined;
 }
 
 /**
