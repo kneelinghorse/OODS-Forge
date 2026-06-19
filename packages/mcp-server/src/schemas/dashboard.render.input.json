@@ -63,6 +63,11 @@
       "default": "placeholder",
       "description": "SEAM (b) partial-panel ERROR policy. 'placeholder' = render an a11y-described error panel in-place (default \u2014 don't void the dashboard); 'omit' = drop the failed panel from the layout."
     },
+    "resolveMeasures": {
+      "type": "boolean",
+      "default": false,
+      "description": "Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT false keeps measureRef fully inert and the output byte-identical to s116. A render-call control (like `selection`/`output`), so it lives only on the tool input \u2014 NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels)."
+    },
     "a11y": {
       "$ref": "#/$defs/DashboardA11ySpec"
     },

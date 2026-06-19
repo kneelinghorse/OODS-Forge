@@ -84,6 +84,13 @@ async function readJson(file: string): Promise<Record<string, unknown>> {
   return JSON.parse(raw) as Record<string, unknown>;
 }
 
+// Data artifacts that live alongside the JSON SCHEMAS but are NOT schemas and
+// must never be compiled into generated.ts. measure-registry.json (sprint-117)
+// is a governed-measure DATA file; compiling it throws 'Unable to determine root
+// type' and reds generate:check. It still bundles to dist/ via the package.json
+// wildcard cp — only the type generator skips it.
+const NON_SCHEMA_DATA_FILES = new Set(['measure-registry.json']);
+
 async function collectSchemaFiles(dir: string): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   const files: string[] = [];
@@ -95,7 +102,7 @@ async function collectSchemaFiles(dir: string): Promise<string[]> {
         files.push(...nested);
         return;
       }
-      if (entry.isFile() && entry.name.endsWith('.json')) {
+      if (entry.isFile() && entry.name.endsWith('.json') && !NON_SCHEMA_DATA_FILES.has(entry.name)) {
         files.push(fullPath);
       }
     })

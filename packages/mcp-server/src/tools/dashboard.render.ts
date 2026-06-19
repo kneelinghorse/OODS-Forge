@@ -27,6 +27,8 @@ import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from
 import { handle as vizRenderHandle } from './viz.render.js';
 import { createValueRef, describeSchemaRef } from './schema-ref.js';
 import { composeDashboardHtml } from './dashboard.render.html.js';
+import { loadMeasureRegistry } from './measure-registry.js';
+import { resolveMeasurePanel } from './measure-resolver.js';
 
 type Row = Record<string, unknown>;
 type PanelResult = DashboardRenderOutput['panels'][number];
@@ -40,6 +42,9 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const wantHtml = input.output?.html ?? false;
   const ignoreSelfSource = input.crossFilter?.ignoreSelfSource ?? true;
   const onPanelError = input.onPanelError ?? 'placeholder';
+  // Phase-3 governed-measure resolution (sprint-117) — gated, default OFF so the
+  // absent/false path is byte-identical to s116 (measureRef stays inert).
+  const resolveMeasures = input.resolveMeasures ?? false;
   const selection = (input.selection ?? undefined) as SelectionState | undefined;
   const crossFiltered = selection !== undefined && Object.keys(selection).length > 0;
 
@@ -61,9 +66,45 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
 
   for (const panel of input.panels as Panel[]) {
     if (panel.kind === 'kpi') {
-      const rows = filterRows(panel.id, datasetRows.get(panel.datasetId) ?? []);
-      panelResults.push(buildKpiResult(panel, rows));
-      placedPanels.push(panel);
+      // Resolve a governed measureRef -> field/aggregate BEFORE compute when the
+      // flag is on AND the panel carries one; otherwise pass through untouched
+      // (the `resolveMeasures && panel.measureRef` guard keeps the default path
+      // byte-identical to s116).
+      let kpiPanel = panel;
+      if (resolveMeasures && panel.measureRef) {
+        const registry = loadMeasureRegistry();
+        if (!registry.has(panel.measureRef)) {
+          // Unresolvable governed measure = a provenance failure, NOT a silent
+          // value:0. Route through the SAME partial-panel seam the chart branch
+          // uses (NOT a thrown ToolError, which would void sibling panels).
+          if (onPanelError === 'omit') {
+            warnings.push({
+              code: 'OODS-V130',
+              message: `KPI panel "${panel.id}" omitted: references unknown governed measure "${panel.measureRef}".`,
+              severity: 'warning',
+            });
+            continue;
+          }
+          errorPanelCount += 1;
+          panelResults.push({
+            id: panel.id,
+            kind: 'error',
+            ...(panel.title ? { title: panel.title } : {}),
+            error: {
+              code: 'OODS-V130',
+              message: `KPI panel "${panel.id}" references unknown governed measure "${panel.measureRef}".`,
+              severity: 'error',
+            },
+            a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: unknown governed measure "${panel.measureRef}".`,
+          });
+          placedPanels.push(panel);
+          continue;
+        }
+        kpiPanel = resolveMeasurePanel(panel, registry);
+      }
+      const rows = filterRows(kpiPanel.id, datasetRows.get(kpiPanel.datasetId) ?? []);
+      panelResults.push(buildKpiResult(kpiPanel, rows));
+      placedPanels.push(kpiPanel);
       continue;
     }
 

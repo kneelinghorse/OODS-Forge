@@ -155,4 +155,24 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     const withRefOut = redact(await handle(withRef));
     expect(JSON.stringify(withRefOut)).toBe(JSON.stringify(baseline));
   });
+
+  it('additivity parity: resolveMeasures=true + a KNOWN measureRef ("gm.revenue.total") leaves the composed payload byte-identical to the baseline (sprint-117)', async () => {
+    // gm.revenue.total resolves to the SAME field/aggregate the golden panel already
+    // declares, and injects no comparison/threshold the author didn't already supply,
+    // so the ENTIRE composed payload must stay byte-identical to METRIC_OVERVIEW. This
+    // is the RESOLVED-but-identical proof (the flag-ON sibling of the inert clone
+    // above) — no toMatchSnapshot, so the committed METRIC_OVERVIEW snapshot is
+    // untouched (0 deletions).
+    const resolved = {
+      ...METRIC_OVERVIEW,
+      resolveMeasures: true,
+      panels: METRIC_OVERVIEW.panels.map((p, i) =>
+        i === 0
+          ? { ...(p as Record<string, unknown>), measureRef: 'gm.revenue.total' }
+          : { ...(p as Record<string, unknown>) }),
+    } as DashboardRenderInput;
+    const baseline = redact(await handle(METRIC_OVERVIEW));
+    const resolvedOut = redact(await handle(resolved));
+    expect(JSON.stringify(resolvedOut)).toBe(JSON.stringify(baseline));
+  });
 });

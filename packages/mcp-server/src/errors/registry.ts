@@ -91,6 +91,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V120', { code: 'OODS-V120', category: 'validation', message: 'Invalid chart type', retryable: true }],
   ['OODS-V121', { code: 'OODS-V121', category: 'validation', message: 'Missing viz traits', retryable: true }],
   ['OODS-V122', { code: 'OODS-V122', category: 'validation', message: 'No viz mark traits on object', retryable: true }],
+  ['OODS-V130', { code: 'OODS-V130', category: 'validation', message: 'Unresolved governed measure', retryable: false }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
