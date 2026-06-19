@@ -1,12 +1,14 @@
 // The 5 tabular marks plus the network/hierarchy types unlocked additively in
 // sprint-111 (treemap m01; sunburst + sankey m03; force_graph m04), the geo
-// types unlocked in sprint-112 (choropleth + bubble_map, m01), and flow_map (the
-// origin→destination ARC) added in sprint-119 m01. These are EXPLICIT-ONLY: none
-// has an entry in the pattern registry below and none is ever produced by the
-// recommender — each reaches rendering only through its dedicated adapter
+// types unlocked in sprint-112 (choropleth + bubble_map, m01), flow_map (the
+// origin→destination ARC) added in sprint-119 m01, and chord (the native
+// ECharts-6 ribbon diagram) added in sprint-120 m01. These are EXPLICIT-ONLY:
+// none has an entry in the pattern registry below and none is ever produced by
+// the recommender — each reaches rendering only through its dedicated adapter
 // (adaptTreemapToECharts / adaptSunburstToECharts / adaptSankeyToECharts /
-// adaptChoroplethToECharts / adaptBubbleToECharts / adaptFlowLineToECharts), so
-// widening the union here is type-surface only, not a new suggestable pattern.
+// adaptChoroplethToECharts / adaptBubbleToECharts / adaptFlowLineToECharts /
+// adaptChordToECharts), so widening the union here is type-surface only, not a
+// new suggestable pattern.
 export type ChartType =
   | 'bar'
   | 'line'
@@ -19,7 +21,8 @@ export type ChartType =
   | 'force_graph'
   | 'choropleth'
   | 'bubble_map'
-  | 'flow_map';
+  | 'flow_map'
+  | 'chord';
 export type IntentGoal =
   | 'comparison'
   | 'trend'

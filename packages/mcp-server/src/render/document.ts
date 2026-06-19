@@ -77,7 +77,23 @@ const DEFAULT_COMPONENT_CSS = `
   border-left: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));
   padding-left: var(--ref-space-inset-compact, 8px);
 }
+[data-oods-surface="inverse"] {
+  background: var(--sys-surface-inverse, var(--ref-color-neutral-900, #0f172a));
+  color: var(--sys-text-inverse, var(--ref-color-neutral-0, #ffffff));
+}
 `.trim();
+// sprint-120 m02 (B1 surface-aware-text): the [data-oods-surface="inverse"] rule
+// above wires the already-present --sys-text-inverse / --sys-surface-inverse tokens
+// into a usable selector. It is UNCONDITIONAL and INERT — nothing in the renderer
+// emits the [data-oods-surface="inverse"] marker today (only data-a2ui-surface
+// exists, on a different adapter), so the rule matches ZERO nodes and no current
+// render output changes. It references no [data-oods-component] selector, so the
+// css-extractor folds it into baseRules → css.base (entries.size stays 7). A
+// consumer that opts an element into the marker gets a dark surface + light text.
+// KNOWN dark double-flip: under [data-theme="dark"] the --sys-*-inverse tokens
+// themselves remap to dark values (DARK_THEME_OVERRIDES below + tokens.css), so an
+// inverse element inside a dark doc flips to a LIGHT surface / DARK text — the
+// cascade order is correct, just inverted-of-inverted by design.
 
 /**
  * CSS block that remaps --theme-* variables to --theme-dark-* under [data-theme="dark"].

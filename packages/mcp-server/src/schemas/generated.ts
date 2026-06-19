@@ -6543,6 +6543,47 @@ export namespace VizRenderInputSchema {
       ];
     };
     /**
+     * Chord data for chartType 'chord' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A native ECharts ribbon diagram: a ring of category arcs connected by weighted ribbons. Sankey-shaped — nodes plus value-weighted links; every link MUST carry a numeric 'value' (the ribbon width IS the flow magnitude) and reference existing node names.
+     */
+    chord?: {
+      /**
+       * Ring arcs. Each carries a unique 'name'.
+       *
+       * @minItems 1
+       */
+      nodes: [
+        {
+          name: string;
+          value?: number;
+          [k: string]: any;
+        },
+        ...{
+          name: string;
+          value?: number;
+          [k: string]: any;
+        }[]
+      ];
+      /**
+       * Directed, value-weighted ribbons between ring arcs (matched to arcs by name).
+       *
+       * @minItems 1
+       */
+      links: [
+        {
+          source: string;
+          target: string;
+          value: number;
+          [k: string]: any;
+        },
+        ...{
+          source: string;
+          target: string;
+          value: number;
+          [k: string]: any;
+        }[]
+      ];
+    };
+    /**
      * Network data for chartType 'force_graph' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes (each with a unique 'id'; an optional 'group' drives category colour) and directed links (optional numeric 'value').
      */
     network?: {
@@ -6666,7 +6707,7 @@ export namespace VizRenderInputSchema {
       curvature?: number;
     };
     /**
-     * Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network/geo charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links); 'choropleth', 'bubble_map', and 'flow_map' take the 'geo' data branch (inline geometry + per-type encoding — flow_map draws origin→destination arcs). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles).
+     * Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network/geo charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links); 'choropleth', 'bubble_map', and 'flow_map' take the 'geo' data branch (inline geometry + per-type encoding — flow_map draws origin→destination arcs); 'chord' takes the 'chord' data branch (sankey-shaped nodes + value-weighted links — a ring of category arcs joined by ribbons whose width is the value). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles).
      */
     chartType?:
       | 'bar'
@@ -6680,7 +6721,8 @@ export namespace VizRenderInputSchema {
       | 'force_graph'
       | 'choropleth'
       | 'bubble_map'
-      | 'flow_map';
+      | 'flow_map'
+      | 'chord';
     /**
      * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
      */

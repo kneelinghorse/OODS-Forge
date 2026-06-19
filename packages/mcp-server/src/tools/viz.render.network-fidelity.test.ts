@@ -48,12 +48,23 @@ const NETWORK = {
     { source: 'api', target: 'db', value: 2 },
   ],
 };
+// sprint-120 m01 chord — sankey-shaped (required-value links), but rendered as a
+// native series.type:'chord' ring (its own ECharts-primary type, the 'chord' branch).
+const CHORD = {
+  nodes: [{ name: 'AMER' }, { name: 'EMEA' }, { name: 'APAC' }],
+  links: [
+    { source: 'AMER', target: 'EMEA', value: 42 },
+    { source: 'EMEA', target: 'APAC', value: 31 },
+    { source: 'APAC', target: 'AMER', value: 25 },
+  ],
+};
 
 const CASES: ReadonlyArray<readonly [string, Record<string, unknown>]> = [
   ['treemap', { chartType: 'treemap', hierarchy: HIERARCHY }],
   ['sunburst', { chartType: 'sunburst', hierarchy: HIERARCHY }],
   ['sankey', { chartType: 'sankey', sankey: SANKEY }],
   ['force_graph', { chartType: 'force_graph', network: NETWORK }],
+  ['chord', { chartType: 'chord', chord: CHORD }],
 ];
 
 describe('viz.render network/hierarchy render-fidelity goldens', () => {

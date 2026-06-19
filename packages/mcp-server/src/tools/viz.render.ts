@@ -11,6 +11,7 @@
 
 import {
   adaptBubbleToECharts,
+  adaptChordToECharts,
   adaptChoroplethToECharts,
   adaptFlowLineToECharts,
   adaptGraphToECharts,
@@ -184,13 +185,13 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
 // path: each builds a metadata-only spec, dispatches to its ported adapter with the
 // SEPARATE data branch (hierarchy or sankey), and auto-promotes the ECharts option
 // as the primary payload (these chart types have no Vega-Lite equivalent).
-type EChartsPrimaryType = 'treemap' | 'sunburst' | 'sankey' | 'force_graph' | 'choropleth' | 'bubble_map' | 'flow_map';
+type EChartsPrimaryType = 'treemap' | 'sunburst' | 'sankey' | 'force_graph' | 'choropleth' | 'bubble_map' | 'flow_map' | 'chord';
 
 interface EChartsPrimaryConfig {
   readonly mark: string;
   readonly label: string;
   readonly noun: string;
-  readonly dataBranch: 'hierarchy' | 'sankey' | 'network' | 'geo';
+  readonly dataBranch: 'hierarchy' | 'sankey' | 'network' | 'geo' | 'chord';
 }
 
 const ECHARTS_PRIMARY: Record<EChartsPrimaryType, EChartsPrimaryConfig> = {
@@ -210,6 +211,12 @@ const ECHARTS_PRIMARY: Record<EChartsPrimaryType, EChartsPrimaryConfig> = {
   // system. Reuses the 'geo' data branch + the __registration escape hatch exactly
   // like choropleth/bubble_map; rendered via the headless flow-line spatial adapter.
   flow_map: { mark: 'MarkFlow', label: 'Flow map', noun: 'origin→destination flows', dataBranch: 'geo' },
+  // sprint-120 m01 chord: native ECharts-6 series.type:'chord' ribbon diagram —
+  // category↔category weighted flows (ribbon width = edge.value). Carries a NEW
+  // dedicated 'chord' data branch (sankey-shaped: required source/target/value); the
+  // IR reuses SankeyInput. Rendered via the headless chord adapter; self-contained
+  // (no __registration), so the option is the primary payload like sankey.
+  chord: { mark: 'MarkChord', label: 'Chord diagram', noun: 'category↔category weighted flows', dataBranch: 'chord' },
 };
 
 function isEChartsPrimaryType(chartType: VizRenderInput['chartType']): chartType is EChartsPrimaryType {
@@ -220,7 +227,8 @@ function isEChartsPrimaryType(chartType: VizRenderInput['chartType']): chartType
     chartType === 'force_graph' ||
     chartType === 'choropleth' ||
     chartType === 'bubble_map' ||
-    chartType === 'flow_map'
+    chartType === 'flow_map' ||
+    chartType === 'chord'
   );
 }
 
@@ -253,6 +261,12 @@ function renderEChartsPrimary(
       const sankey = branchData as unknown as SankeyInput;
       option = adaptSankeyToECharts(spec, sankey);
       nodeCount = sankey.nodes.length;
+    } else if (chartType === 'chord') {
+      // chord rides the dedicated 'chord' branch (sankey-shaped: required
+      // source/target/value); the IR reuses SankeyInput. Ribbon width = edge.value.
+      const chord = branchData as unknown as SankeyInput;
+      option = adaptChordToECharts(spec, chord);
+      nodeCount = chord.nodes.length;
     } else if (chartType === 'force_graph') {
       const network = branchData as unknown as NetworkInput;
       option = adaptGraphToECharts(spec, network);

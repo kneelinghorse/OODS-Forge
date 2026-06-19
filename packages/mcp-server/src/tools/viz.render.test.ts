@@ -379,6 +379,83 @@ describe('viz.render handler — sankey (flow) path', () => {
   });
 });
 
+// sprint-120 m01 — chord reaches the agent surface via a NEW dedicated 'chord'
+// data branch (sankey-shaped: required source/target/value). It is the 7th
+// explicit-only ECharts-primary type — a native series.type:'chord' ribbon
+// diagram (ring of category arcs; ribbon width = edge.value). The IR reuses
+// SankeyInput; the 'network' branch stays untouched.
+const TRADE_CHORD = {
+  nodes: [{ name: 'AMER' }, { name: 'EMEA' }, { name: 'APAC' }],
+  links: [
+    { source: 'AMER', target: 'EMEA', value: 42 },
+    { source: 'EMEA', target: 'APAC', value: 31 },
+    { source: 'APAC', target: 'AMER', value: 25 },
+  ],
+};
+
+describe('viz.render handler — chord (ring) path', () => {
+  it('renders nodes+links into a renderable native ECharts chord (AJV-valid output)', async () => {
+    const out = await render({ chartType: 'chord', chord: TRADE_CHORD });
+    expect(out.status).toBe('ok');
+    expect(out.chartType).toBe('chord');
+    expect(validateOutput(out)).toBe(true);
+
+    const series = (out.echartsSpec as Record<string, any>).series;
+    expect(series[0].type).toBe('chord');
+    // chord lays out its own ring — it rides no cartesian/polar grid.
+    expect(series[0].coordinateSystem).toBe('none');
+    expect(series[0].nodes).toHaveLength(3); // 3 ring arcs
+    expect(series[0].links).toHaveLength(3);
+    // edges match arcs BY NAME, and value (the ribbon width) survives unprecomputed.
+    expect(series[0].links[0]).toMatchObject({ source: 'AMER', target: 'EMEA', value: 42 });
+    expect(out.meta?.renderer).toBe('echarts');
+    expect(out.meta?.mark).toBe('MarkChord');
+    expect(out.meta?.rowCount).toBe(3);
+    expect((out.a11yDescription ?? '').length).toBeGreaterThan(0);
+  });
+
+  it('emits a JSON-transmittable STRING tooltip formatter (no closure dropped over the wire)', async () => {
+    // The critic gate: a FUNCTION formatter is dropped by JSON.parse(JSON.stringify)
+    // at the render boundary AND invisible to the jsonSafe golden — chord must use a
+    // string template so the custom tooltip survives transport.
+    const out = await render({ chartType: 'chord', chord: TRADE_CHORD });
+    expect(typeof (out.echartsSpec as Record<string, any>).tooltip.formatter).toBe('string');
+  });
+
+  it('input schema couples chord with the chord branch + requires link values', () => {
+    expect(validateInput({ chartType: 'chord', chord: TRADE_CHORD })).toBe(true);
+    // missing branch entirely
+    expect(validateInput({ chartType: 'chord' })).toBe(false);
+    // wrong branch (sankey/network do not satisfy the chord requirement)
+    expect(validateInput({ chartType: 'chord', sankey: ENERGY_FLOW })).toBe(false);
+    expect(validateInput({ chartType: 'chord', network: SERVICE_MAP })).toBe(false);
+    // a link without a numeric value (the ribbon width) is rejected
+    expect(
+      validateInput({ chartType: 'chord', chord: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'A', target: 'B' }] } }),
+    ).toBe(false);
+  });
+
+  it('the chord branch leaves the network branch untouched (force_graph still rejects a chord branch)', () => {
+    // Proves the dedicated branch did not widen/re-gate the network coupling.
+    expect(validateInput({ chartType: 'force_graph', chord: TRADE_CHORD })).toBe(false);
+  });
+
+  it('determinism: identical chord input yields an identical echartsSpec', async () => {
+    const a = await render({ chartType: 'chord', chord: TRADE_CHORD });
+    const b = await render({ chartType: 'chord', chord: TRADE_CHORD });
+    expect(JSON.stringify(b.echartsSpec)).toEqual(JSON.stringify(a.echartsSpec));
+  });
+
+  it('registered-path parity: input/output AJV-validate and the echartsSpec is byte-identical across paths', async () => {
+    const input = { chartType: 'chord', chord: TRADE_CHORD };
+    const direct = await render(input);
+    expect(validateInput(input)).toBe(true);
+    const dispatched = await render(input);
+    expect(validateOutput(dispatched)).toBe(true);
+    expect(JSON.stringify(dispatched.echartsSpec)).toEqual(JSON.stringify(direct.echartsSpec));
+  });
+});
+
 // sprint-111 m04 — force_graph reaches the agent surface via the network branch.
 // Determinism scope (mission-start audit): the OPTION (nodes/links + force params)
 // is golden-able; the iterative force layout runs client-side and is out of scope.
