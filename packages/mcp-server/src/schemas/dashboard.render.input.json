@@ -389,6 +389,11 @@
           "minLength": 1,
           "description": "Optional (v0.2, sprint-114) name of the time column. When present, the KPI metric series is built along a parsed and sorted period axis (via analysis/temporal.ts) instead of dataset row order: aggregate 'latest' is the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. Absent means row-order, byte-identical to v0.1."
         },
+        "measureRef": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Reserved (sprint-116, Phase-3 beachhead): an optional bare governed-measure reference, a provenance/identity key (e.g. 'gm.revenue'). Inert in v1: unread by computeKpi and never echoed to output. field and aggregate stay the authoritative compute inputs, so an absent or present measureRef yields byte-identical compute (no golden re-bake) and schemaVersion stays 'v0.1'. Validation is string-only this sprint: not an inline {name,field,aggregate,role} object, and no registry/enum lookup. Reserved for the governed-measure resolver (measureRef to field and aggregate at the mcp-server boundary) in a subsequent gated sprint."
+        },
         "aggregate": {
           "type": "string",
           "enum": [

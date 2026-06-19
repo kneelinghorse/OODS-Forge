@@ -216,6 +216,28 @@ describe('@oods/viz-core — DashboardSpec validator', () => {
       const spec = { ...validFixture(), onPanelError: 'explode' };
       expect(validateDashboardSpec(spec).valid).toBe(false);
     });
+
+    it('ACCEPTS a KpiPanel carrying the inert measureRef descriptor (SEAM vi — sprint-116 Phase-3 beachhead)', () => {
+      // measureRef is an optional bare string on the additionalProperties:false
+      // KpiPanel. It must VALIDATE (the descriptor is parsed) — it stays inert at
+      // compute time, but the IR seam must ACCEPT it, else any spec carrying a
+      // governed-measure provenance tag is AJV-rejected at the boundary.
+      const spec = validFixture();
+      const panels = [...spec.panels];
+      panels[0] = { ...(panels[0] as Record<string, unknown>), measureRef: 'gm.revenue' } as DashboardSpec['panels'][number];
+      const result = validateDashboardSpec({ ...spec, panels });
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('rejects a non-string measureRef — it is a BARE STRING, never an inline object (SEAM vi, memo §3.3)', () => {
+      // The object form {name,field,aggregate,role} is explicitly disallowed so the
+      // descriptor cannot drift against the authoritative field/aggregate inputs.
+      const spec = validFixture();
+      const panels = [...spec.panels];
+      panels[0] = { ...(panels[0] as Record<string, unknown>), measureRef: { name: 'gm.revenue' } } as DashboardSpec['panels'][number];
+      expect(validateDashboardSpec({ ...spec, panels }).valid).toBe(false);
+    });
   });
 
   describe('assert / is / schema surface', () => {

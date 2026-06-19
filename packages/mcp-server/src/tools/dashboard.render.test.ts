@@ -49,6 +49,34 @@ describe('dashboard.render', () => {
     expect(validateInput(metricOverview())).toBe(true);
   });
 
+  it('accepts an inert measureRef on the KPI panel at the boundary and re-bakes NO KPI number or a11y string (sprint-116)', async () => {
+    // metricOverview() merges its argument at the ENVELOPE top level, so a
+    // top-level measureRef would be rejected by the dashboard-level
+    // additionalProperties:false. Deep-clone it INTO the KPI panel instead
+    // (a separate cloned fixture — never the shared metricOverview() output reused
+    // across assertions). measureRef is a governed-measure provenance tag; the
+    // contract is "accepted at the boundary, unread by compute, never echoed".
+    const base = metricOverview();
+    const panels = base.panels.map((p) => ({ ...(p as Record<string, unknown>) }));
+    (panels[0] as Record<string, unknown>).measureRef = 'gm.revenue';
+    const withRef = { ...base, panels } as DashboardRenderInput;
+
+    // (1) The input boundary ACCEPTS the descriptor.
+    expect(validateInput(withRef)).toBe(true);
+
+    // (2) Compute is byte-identical to the s114 baseline — measureRef is unread.
+    const out = await handle(withRef);
+    expect(validateOutput(out)).toBe(true);
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.value).toBe(390);
+    expect(kpi.delta).toBe(90);
+    expect(kpi.thresholdBreached).toBe(true);
+    expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
+
+    // (3) measureRef is NEVER echoed onto the output KPI panel.
+    expect((kpi as Record<string, unknown>).measureRef).toBeUndefined();
+  });
+
   it('composes a renderable, AJV-valid metric-overview dashboard', async () => {
     const out = await handle(metricOverview());
     expect(validateOutput(out)).toBe(true);

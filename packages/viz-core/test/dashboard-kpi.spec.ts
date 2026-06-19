@@ -179,6 +179,29 @@ describe('@oods/viz-core — computeKpi explicit period axis (v0.2, sprint-114)'
   });
 });
 
+// ---------------------------------------------------------------------------
+// measureRef inertness (sprint-116, Phase-3 beachhead). WHY this matters: the
+// measureRef descriptor is a governed-measure provenance tag, and the frozen
+// contract (schema seam (vi)) is "ABSENT or PRESENT => byte-identical compute,
+// no golden re-bake" — field + aggregate stay the authoritative compute inputs.
+// computeKpi must NEVER read panel.measureRef. This guard reds the moment any
+// compute branch starts consuming it (e.g. a premature resolver lands here
+// instead of at the deferred mcp-server boundary).
+// ---------------------------------------------------------------------------
+describe('@oods/viz-core — computeKpi measureRef is inert (sprint-116)', () => {
+  it('changes nothing — byte-identical output with vs without measureRef (row-order path)', () => {
+    const base = kpiPanel({ aggregate: 'latest', comparison: { basis: 'prior_period' }, threshold: { direction: 'above', value: 100, anomaly: 'stddev_outlier' } });
+    const withRef = kpiPanel({ ...base, measureRef: 'gm.revenue' });
+    expect(JSON.stringify(computeKpi(withRef, SERIES))).toBe(JSON.stringify(computeKpi(base, SERIES)));
+  });
+
+  it('changes nothing on the explicit-period path either', () => {
+    const base = periodPanel({ aggregate: 'sum', comparison: { basis: 'window', window: 2 } });
+    const withRef = periodPanel({ ...base, measureRef: 'gm.revenue' });
+    expect(JSON.stringify(computeKpi(withRef, UNSORTED))).toBe(JSON.stringify(computeKpi(base, UNSORTED)));
+  });
+});
+
 function round6(n: number): number {
   const r = Number(n.toFixed(6));
   return r === 0 ? 0 : r;

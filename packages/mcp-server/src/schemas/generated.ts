@@ -1407,6 +1407,10 @@ export namespace DashboardRenderInputSchema {
      */
     periodField?: string;
     /**
+     * Reserved (sprint-116, Phase-3 beachhead): an optional bare governed-measure reference, a provenance/identity key (e.g. 'gm.revenue'). Inert in v1: unread by computeKpi and never echoed to output. field and aggregate stay the authoritative compute inputs, so an absent or present measureRef yields byte-identical compute (no golden re-bake) and schemaVersion stays 'v0.1'. Validation is string-only this sprint: not an inline {name,field,aggregate,role} object, and no registry/enum lookup. Reserved for the governed-measure resolver (measureRef to field and aggregate at the mcp-server boundary) in a subsequent gated sprint.
+     */
+    measureRef?: string;
+    /**
      * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs.
      */
     aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct' | 'latest';

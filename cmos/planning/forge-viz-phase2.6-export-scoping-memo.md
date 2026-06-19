@@ -5,6 +5,8 @@
 
 ---
 
+> **⚠️ CORRECTION (2026-06-18, post-sprint, by derek): the "consumer pull" / "demand signal" framing in this memo is RETRACTED.** There is NO external consumer that pulls from Forge, and Forge is NOT a hosted service (no current plans to be one). The real and only consumer of `output.html` is an AGENT using the Forge MCP tools to render its own composed dashboard. The mission that assumed a `cmos-dashboard` cutover (m06) was correctly dropped. Headless integrations and any production-site dependency are SEPARATE initiatives requiring explicit discussion — never an implied sprint goal. See the standing project constraint captured this date (CONSUMER MODEL). The export capability itself is real and shipped; only its consumer-pull justification was the error.
+
 ## 0. TL;DR
 
 Across phases 0/1/2/2.5 the viz arc has promised **"on-brand, accessible output *by construction*"** — but `dashboard.render` output **never becomes pixels.** `@oods/viz-core` carries **zero rendering runtime**, and the one real shipped consumer (`cmos-dashboard` on Railway) hand-rolls chart.js@4 from a CDN to redraw the exact shape Forge already composes.
