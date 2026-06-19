@@ -44,6 +44,7 @@ export * from './adapters/echarts/sunburst-adapter.js';
 export * from './adapters/echarts/sankey-utils.js';
 export * from './adapters/echarts/sankey-adapter.js';
 export * from './adapters/echarts/graph-adapter.js';
+export * from './adapters/echarts/chord-adapter.js';
 
 // Geo (choropleth/bubble_map) ECharts adapters (sprint-112). Explicit-only types
 // that build their ECharts option from a parsed FeatureCollection + tabular data.

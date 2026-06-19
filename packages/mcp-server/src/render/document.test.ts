@@ -59,6 +59,22 @@ describe('renderDocument', () => {
     expect(html).toContain('var(--ref-border-radius-md');
   });
 
+  it('wires the inverse-surface tokens into an inert [data-oods-surface="inverse"] rule (sprint-120 m02)', () => {
+    // B1 surface-aware-text: the rule consumes the already-present --sys-text-inverse
+    // + --sys-surface-inverse tokens. It is a pure-projection (#875) addition — a
+    // string assertion is the right test because NOTHING emits the marker, so there
+    // is no end-to-end behavior to exercise; this guards against the wiring regressing.
+    const html = renderDocument({ screenHtml: '<div>Test</div>' });
+    const inverseBlock = html.slice(html.indexOf('[data-oods-surface="inverse"]'));
+
+    expect(html).toContain('[data-oods-surface="inverse"]');
+    expect(inverseBlock).toContain('var(--sys-surface-inverse');
+    expect(inverseBlock).toContain('var(--sys-text-inverse');
+    // Reference-token fallbacks are preserved (no --sys dependency at render time).
+    expect(inverseBlock).toContain('var(--ref-color-neutral-900');
+    expect(inverseBlock).toContain('var(--ref-color-neutral-0');
+  });
+
   it('forces the Button to inherit the surface sans font (sprint-119 m02)', () => {
     // A native <button> does NOT inherit font-family by default (the UA paints it
     // in -webkit-small-control), so without an explicit `inherit` a tokens-styled

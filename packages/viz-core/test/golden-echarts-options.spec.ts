@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { FeatureCollection } from 'geojson';
 import {
   adaptBubbleToECharts,
+  adaptChordToECharts,
   adaptChoroplethToECharts,
   adaptGraphToECharts,
   adaptSankeyToECharts,
@@ -82,6 +83,16 @@ const NETWORK_GRAPH: NetworkInput = {
     { source: 'api', target: 'cache', value: 1 },
   ],
 };
+// chord reuses the SankeyInput contract (required-value links) but renders as a
+// native series.type:'chord' ring — sankey-shaped data, distinct ECharts series.
+const CHORD_FLOW: SankeyInput = {
+  nodes: [{ name: 'AMER' }, { name: 'EMEA' }, { name: 'APAC' }],
+  links: [
+    { source: 'AMER', target: 'EMEA', value: 42 },
+    { source: 'EMEA', target: 'APAC', value: 31 },
+    { source: 'APAC', target: 'AMER', value: 25 },
+  ],
+};
 
 // --- geo fixtures (sprint-112 m03): two adjacent states + joinable rows + points -
 const GEO_DIMS = { width: 860, height: 520 } as const;
@@ -153,6 +164,13 @@ const CASES: ReadonlyArray<readonly [string, () => unknown]> = [
   // __registration FeatureCollection are pinned. Both adapters are pure → goldenable.
   ['choropleth (join)', () => adaptChoroplethToECharts(choroplethSpec(), GEO_FC, GEO_SALES, GEO_DIMS)],
   ['bubble_map (points)', () => adaptBubbleToECharts(bubbleSpec(), GEO_FC, GEO_CITIES, GEO_DIMS)],
+  // sprint-120 m01: native series.type:'chord'. The JSON-safe option keeps the
+  // string-template tooltip (no closure to drop) and the per-arc resolved colours.
+  // NOTE: the describe title is intentionally NOT widened — the snapshot key is
+  // prefixed by that title, so renaming it would re-key (delete + rewrite) the 7
+  // existing goldens, violating the additive-floor 0-deletion constraint. Adding a
+  // CASES row alone keys exactly ONE new snapshot (a pure addition).
+  ['chord (ring)', () => adaptChordToECharts(spec('viz:chord', 'Trade corridors', 'MarkChord', 'Chord of regional trade.'), CHORD_FLOW)],
 ];
 
 describe('golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map', () => {
