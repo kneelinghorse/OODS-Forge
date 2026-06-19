@@ -1,5 +1,7 @@
 # OODS Foundry MCP — Roadmap V2 Draft
 
+> **⚠️ SUPERSEDED (2026-06-19).** Predates the data-viz flagship pivot (decision #680); its candidate axes map to now-closed C/I/Q tracks. The live roadmap is [forge-viz-flagship-strategy.md](./forge-viz-flagship-strategy.md) + the phase memos + [../foundational-docs/roadmap/near.md](../foundational-docs/roadmap/near.md). Retained as draft history.
+
 > Updated: 2026-04-16
 > Status: Draft for Sprint 91 closeout / Sprint 92+ planning
 > Cross-reference: [roadmap-v1.md](./roadmap-v1.md)

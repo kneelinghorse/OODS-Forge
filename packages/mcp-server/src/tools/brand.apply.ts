@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import { todayDir, loadPolicy, withinAllowed, type Policy } from '../lib/security.js';
 import { isUnsafeKey } from '../lib/safety.js';
+import { emitRootBlock, type OverlayDeclaration } from '../render/brand-overlay.js';
 import { writeTranscript, writeBundleIndex, sha256File } from '../lib/transcript.js';
 import type {
   ArtifactDetail,
@@ -324,19 +325,21 @@ async function generateCssSnapshot(
   details: ArtifactDetail[],
   allowWrite: (candidate: string) => void
 ): Promise<void> {
-  const lines: string[] = [];
-  const seen = new Set<string>();
+  // FS artifact: keep the brand-suffixed names (pointerToCssVariable) and opt OUT of value
+  // sanitization so variables.css stays byte-identical to its historical output (the inline
+  // tokenOverlay path is the HTML sink that sanitizes; this .css file is not). emitRootBlock
+  // owns the :root{} shape + first-wins dedup + the empty-case fallback comment.
+  const declarations: OverlayDeclaration[] = [];
   for (const change of changes) {
     if (typeof change.after !== 'string') continue;
     const cssVar = pointerToCssVariable(brand, change.pointer);
-    if (!cssVar || seen.has(cssVar)) continue;
-    seen.add(cssVar);
-    lines.push(`  ${cssVar}: ${change.after};`);
+    if (!cssVar) continue;
+    declarations.push({ name: cssVar, value: change.after });
   }
-  const contents =
-    lines.length > 0
-      ? [':root {', ...lines, '}', ''].join('\n')
-      : `/* No variable changes detected for brand ${brand}. */\n`;
+  const contents = emitRootBlock(declarations, {
+    sanitizeValues: false,
+    emptyFallback: `/* No variable changes detected for brand ${brand}. */\n`,
+  });
   const cssPath = path.join(runDir, 'variables.css');
   allowWrite(cssPath);
   fs.writeFileSync(cssPath, contents, 'utf8');

@@ -1,11 +1,13 @@
 # Forge Viz — Phase 3 (Semantic Grounding) Scoping & Decision Memo
 
+> **⏩ SHIPPED — updated 2026-06-19 at the sprint-120 review.** The two-sprint beachhead this memo authorized *in shape* has landed: the inert `KpiPanel.measureRef` descriptor in **sprint-116** (`263ff07`) and the governed-measure registry + flag-gated mcp-server resolver in **sprint-117** (`d03b08e`). Real code, not stubs: `measure-registry.json` (5 `gm.*` measures), `measure-resolver.ts` (`resolveMeasurePanel` at `dashboard.render.ts:185`), `resolveMeasures` flag (default-off, fail-closed; `V130`/`V132`/`V133`). The "FUTURE sprint" / "SUBSEQUENT, gated resolution sprint" framing below is the original point-in-time recommendation, retained for record. **Still unbuilt — the Phase-3 differentiator: NL→viz + narrative/insight *over measures*** (the a11y narrative shipped in s115 is over *raw data*, not measures). Tracked on [../foundational-docs/roadmap/near.md](../foundational-docs/roadmap/near.md).
+
 | | |
 |---|---|
 | **Sprint** | sprint-115 |
 | **Mission** | s115-m08 |
 | **Date** | 2026-06-18 |
-| **Status** | ratify-ready (pending derek) |
+| **Status** | **SHIPPED** — ratified-by-build (s116 descriptor `263ff07` + s117 registry/resolver `d03b08e`); see banner above |
 
 **Companion docs:** `forge-viz-flagship-strategy.md` §4 (roadmap) + §5 (open questions) + §6 (sizing) and `forge-viz-phase2.6-export-scoping-memo.md` (the export-seam precedent this memo's additivity discipline mirrors). *Anchoring note: the strategy's §5 is a flat numbered list (items 1–5, lines 98–102); this memo writes "§5.N" to mean item N of that list — §5.1 = item 1 (data source, line 98), §5.4 = item 4 (scope of BI, line 101) — consistent with the doc's own "§5.1–5.3" shorthand at `forge-viz-flagship-strategy.md:108`.*
 
@@ -150,7 +152,7 @@ What both Phase-3 sprints explicitly **exclude** (held for later phases): NL→v
 | §3 | Does a governed-measure model exist? | **No** (verified — `catalog.list` is a component/trait catalog; viz-core compute is catalog-free). Measures live in a **new registry** (storage backend deferred; standalone-artifact lean) resolved by a **mcp-server resolver**, keeping viz-core pure. |
 | §4 | First Phase-3 beachhead | **Inert `KpiPanel.measureRef` descriptor ONLY** (bare string, zero catalog read, no engine change). Registry + gated mcp-server resolver are **authorized in shape but built in a subsequent resolution sprint**. No NL/insight/composer; no new data-source contract. |
 
-**Status: ratify-ready (pending derek).** Ratifying this memo authorizes the *registry data-model shape*, the *binding contract + resolver location*, and the *two-sprint beachhead boundary* above (descriptor-only first, registry+resolver second); it does **not** authorize the Phase-3 build, which remains gated on this ratification plus the strategy's Phase-0-first sequencing.
+**Status: SHIPPED — ratified-by-build (s116 + s117, 2026-06-19).** This memo authorized the *registry data-model shape*, the *binding contract + resolver location*, and the *two-sprint beachhead boundary* above (descriptor-only first, registry+resolver second) — all now built and merged. The original wording ("does not authorize the Phase-3 build, which remains gated on this ratification") is the point-in-time framing; in practice the build proceeded directly across s116→s117. The remaining Phase-3 work (NL→viz + narrative over measures) is unbuilt and tracked on the near roadmap.
 
 ---
 

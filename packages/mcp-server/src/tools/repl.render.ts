@@ -9,6 +9,7 @@ import {
 } from './repl.utils.js';
 import { getCssForComponents } from '../render/css-extractor.js';
 import { renderDocument } from '../render/document.js';
+import { resolveTokenOverlay } from '../render/brand-overlay.js';
 import { renderFragmentsWithErrors, renderTree } from '../render/tree-renderer.js';
 import type {
   ReplIssue,
@@ -50,6 +51,13 @@ function normalizeCompact(input: ReplRenderInput): boolean {
 
 function normalizeIncludeCss(input: ReplRenderInput): boolean {
   return input.output?.includeCss ?? true;
+}
+
+function normalizeTokenOverlay(input: ReplRenderInput): Record<string, unknown> | undefined {
+  const overlay = input.output?.tokenOverlay;
+  return overlay && typeof overlay === 'object' && !Array.isArray(overlay)
+    ? (overlay as Record<string, unknown>)
+    : undefined;
 }
 
 function toComponentCssRef(componentName: string): string {
@@ -284,11 +292,19 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
         status = 'error';
       }
     } else {
+      // Document path only (apply===true is already guaranteed by the guard above). An inline
+      // tokenOverlay, when present, resolves to a sanitized scoped :root{} block appended to the
+      // component CSS so the override reaches the same DOM vars the components consume. Absent or
+      // empty overlay => no componentCss passed => byte-identical to the prior document output.
+      // The fragments branch and the echoed output.output assembly are never touched.
       const screenHtml = renderTree(workingTree);
+      const overlay = normalizeTokenOverlay(input);
+      const overlayBlock = overlay ? resolveTokenOverlay(overlay) : '';
       output.html = renderDocument({
         screenHtml,
         schema: workingTree,
         compact,
+        ...(overlayBlock ? { componentCss: overlayBlock } : {}),
       });
     }
 

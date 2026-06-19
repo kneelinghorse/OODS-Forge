@@ -203,4 +203,66 @@ describe('tools/repl grouped action-parameter consolidation', () => {
       await expect(groupedHandle({ action: 'nope' } as any)).rejects.toThrow('Unknown action: nope');
     });
   });
+
+  describe('inline tokenOverlay (sprint-121 m05): accepted by both schemas, wired document-only', () => {
+    const OVERLAY = { size: { spacing: { sm: '10px' } } };
+    const OVERRIDE = ':root {\n  --oods-size-spacing-sm: 10px;\n}';
+
+    it('validates through BOTH repl.input.json (the live grouped tool) and repl.render.input.json', () => {
+      const grouped = { action: 'render', schema: UI_SCHEMA, output: { tokenOverlay: clone(OVERLAY) } };
+      expect(validateGroupedIn(grouped), JSON.stringify(validateGroupedIn.errors)).toBe(true);
+      const perAction = { schema: UI_SCHEMA, output: { tokenOverlay: clone(OVERLAY) } };
+      expect(validateRenderIn(perAction), JSON.stringify(validateRenderIn.errors)).toBe(true);
+    });
+
+    it('resolves the overlay into the document <style> at apply=true', async () => {
+      const out = (await renderHandle({
+        schema: UI_SCHEMA,
+        apply: true,
+        output: { format: 'document', compact: false, tokenOverlay: clone(OVERLAY) },
+      } as any)) as any;
+      expect(out.html).toContain(OVERRIDE);
+    });
+
+    it('never echoes tokenOverlay into output.output (exact shape preserved)', async () => {
+      const out = (await renderHandle({
+        schema: UI_SCHEMA,
+        apply: true,
+        output: { format: 'document', compact: false, tokenOverlay: clone(OVERLAY) },
+      } as any)) as any;
+      expect(out.output).toEqual({ format: 'document', strict: false });
+    });
+
+    it('absent overlay => no override in html (default-absent byte-identity)', async () => {
+      const out = (await renderHandle({
+        schema: UI_SCHEMA,
+        apply: true,
+        output: { format: 'document', compact: false },
+      } as any)) as any;
+      expect(out.html ?? '').not.toContain('--oods-size-spacing-sm: 10px');
+    });
+
+    it('rejects a malicious overlay value before any HTML is emitted (OODS-V136)', async () => {
+      await expect(
+        renderHandle({
+          schema: UI_SCHEMA,
+          apply: true,
+          output: {
+            format: 'document',
+            compact: false,
+            tokenOverlay: { size: { spacing: { sm: '10px</style><script>1' } } },
+          },
+        } as any),
+      ).rejects.toMatchObject({ opiCode: 'OODS-V136' });
+    });
+
+    it('fragments format ignores the overlay (never dirties fragment output)', async () => {
+      const out = (await renderHandle({
+        schema: UI_SCHEMA,
+        apply: true,
+        output: { format: 'fragments', compact: false, tokenOverlay: clone(OVERLAY) },
+      } as any)) as any;
+      expect(JSON.stringify(out)).not.toContain('--oods-size-spacing-sm: 10px');
+    });
+  });
 });

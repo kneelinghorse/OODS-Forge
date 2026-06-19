@@ -7,8 +7,8 @@ Mission graph artifacts at different horizons. The strategic frame and full trac
 | Doc | Scope |
 |---|---|
 | `near.md` | Next 1–3 sprints. Concrete missions with success criteria, dependencies, and recommended sprint shape. |
-| `mid.md` | Horizon after near; track-level sequencing without sprint-level missions. Updated when near.md commits land. |
-| `far.md` | Position B/C destination state. Aspirational shape, not commitments. Updated when strategic context shifts. |
+| `mid.md` | Horizon after near; track-level sequencing without sprint-level missions. Updated when near.md commits land. *(not yet created — `near.md` is the only live tier)* |
+| `far.md` | Position B/C destination state. Aspirational shape, not commitments. Updated when strategic context shifts. *(not yet created)* |
 
 ## Authoring convention
 
@@ -26,4 +26,4 @@ Each horizon doc:
 
 ## Active artifact
 
-`near.md` is the live near-horizon planning surface. As of sprint-98 close (2026-05-16) it carries sprint-96/97/98 outcomes and the sprint-99 candidate shape. Recommended sequencing lives in [../mission-graph.md](../mission-graph.md) under "Sequencing Recommendation"; `near.md` translates that into concrete sprint missions.
+`near.md` is the live near-horizon planning surface. Its **Viz Flagship Arc** is refreshed through **sprint-120 close (2026-06-19)** and tracks the s108–s120 horizon; the dated s96–s104 sprint shapes below it are retained as historical record (decision #679). Recommended sequencing lives in [../mission-graph.md](../mission-graph.md) under "Sequencing Recommendation"; `near.md` translates that into concrete sprint missions.

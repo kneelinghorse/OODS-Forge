@@ -1,3 +1,5 @@
+> **⚠️ SUPERSEDED (2026-06-19).** Early suggested shape; predates the data-viz flagship pivot (decision #680) and still uses pre-rename "Foundry" framing. The live roadmap is [forge-viz-flagship-strategy.md](./forge-viz-flagship-strategy.md) + the phase memos + [../foundational-docs/roadmap/near.md](../foundational-docs/roadmap/near.md). Retained as historical input.
+
 Phase 1 — Viz foundation pack (v1, atomic patterns only)
 
 Goal: Bring trait + spec + a11y primitives into Foundry, tying them to the canonical objects, but keep the renderer story simple (Vega-Lite for atomic charts, ECharts optional).
