@@ -318,6 +318,10 @@ export interface KpiPanel {
    */
   periodField?: string;
   /**
+   * RESERVED (sprint-116, Phase-3 beachhead): an OPTIONAL bare governed-measure reference — a provenance/identity key (e.g. 'gm.revenue'). INERT in v1: UNREAD by computeKpi and NEVER echoed to output; field + aggregate stay the authoritative compute inputs, so an ABSENT or PRESENT measureRef yields byte-identical compute (no golden re-bake) and schemaVersion stays const 'v0.1'. Validation is string-only this sprint — NOT an inline {name,field,aggregate,role} object, and no registry/enum/$ref lookup. Reserved for the governed-measure resolver (measureRef -> field + aggregate at the mcp-server boundary) in a SUBSEQUENT gated sprint. See frozen seam (vi) in $comment.
+   */
+  measureRef?: string;
+  /**
    * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs.
    */
   aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct' | 'latest';

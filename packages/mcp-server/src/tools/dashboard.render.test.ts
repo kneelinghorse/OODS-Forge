@@ -49,6 +49,34 @@ describe('dashboard.render', () => {
     expect(validateInput(metricOverview())).toBe(true);
   });
 
+  it('accepts an inert measureRef on the KPI panel at the boundary and re-bakes NO KPI number or a11y string (sprint-116)', async () => {
+    // metricOverview() merges its argument at the ENVELOPE top level, so a
+    // top-level measureRef would be rejected by the dashboard-level
+    // additionalProperties:false. Deep-clone it INTO the KPI panel instead
+    // (a separate cloned fixture — never the shared metricOverview() output reused
+    // across assertions). measureRef is a governed-measure provenance tag; the
+    // contract is "accepted at the boundary, unread by compute, never echoed".
+    const base = metricOverview();
+    const panels = base.panels.map((p) => ({ ...(p as Record<string, unknown>) }));
+    (panels[0] as Record<string, unknown>).measureRef = 'gm.revenue';
+    const withRef = { ...base, panels } as DashboardRenderInput;
+
+    // (1) The input boundary ACCEPTS the descriptor.
+    expect(validateInput(withRef)).toBe(true);
+
+    // (2) Compute is byte-identical to the s114 baseline — measureRef is unread.
+    const out = await handle(withRef);
+    expect(validateOutput(out)).toBe(true);
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.value).toBe(390);
+    expect(kpi.delta).toBe(90);
+    expect(kpi.thresholdBreached).toBe(true);
+    expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
+
+    // (3) measureRef is NEVER echoed onto the output KPI panel.
+    expect((kpi as Record<string, unknown>).measureRef).toBeUndefined();
+  });
+
   it('composes a renderable, AJV-valid metric-overview dashboard', async () => {
     const out = await handle(metricOverview());
     expect(validateOutput(out)).toBe(true);
@@ -301,5 +329,108 @@ describe('dashboard.render — on-brand + accessible export (sprint-115 m04)', (
     expect(html).toMatch(/<figure class="oods-panel oods-chart" role="figure"[^>]*aria-label=/); // chart figure labelled
     expect(html).toContain('oods-placeholder-geo'); // geo placeholder present
     expect(html).toMatch(/role="img"[^>]*aria-label="Choropleth/); // geo placeholder a11y-described
+  });
+});
+
+describe('dashboard.render — governed-measure resolution (sprint-117)', () => {
+  // Inject a measureRef INTO a cloned KPI panel (never a top-level envelope merge —
+  // the dashboard-level additionalProperties:false rejects a top-level measureRef).
+  // resolveMeasures IS a top-level render control, so it merges via metricOverview's
+  // `extra`. Clone panels so the shared metricOverview() output is never mutated.
+  function withMeasureRef(ref: string, extra: Record<string, unknown> = {}): DashboardRenderInput {
+    const base = metricOverview(extra);
+    const panels = base.panels.map((p) => ({ ...(p as Record<string, unknown>) }));
+    panels[0] = { ...(panels[0] as Record<string, unknown>), measureRef: ref };
+    return { ...base, panels } as DashboardRenderInput;
+  }
+
+  it('(a) resolves a KNOWN measureRef to the SAME numbers as the raw-field golden', async () => {
+    const ir = withMeasureRef('gm.revenue.total', { resolveMeasures: true });
+    expect(validateInput(ir)).toBe(true);
+    const out = await handle(ir);
+    expect(validateOutput(out)).toBe(true);
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    // gm.revenue.total resolves to field 'revenue' / aggregate 'sum'; the author
+    // already supplied comparison/threshold (?? fill is a no-op) -> the golden numbers.
+    expect(kpi.value).toBe(390);
+    expect(kpi.delta).toBe(90);
+    expect(kpi.thresholdBreached).toBe(true);
+    expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
+    // Resolution is strictly input-side: measureRef/field are NEVER echoed to output.
+    expect((kpi as Record<string, unknown>).measureRef).toBeUndefined();
+    expect((kpi as Record<string, unknown>).field).toBeUndefined();
+  });
+
+  it('(b) an UNKNOWN measureRef (placeholder) -> OODS-V130 error panel, DISTINCT from the legacy silent-empty missing-datasetId path', async () => {
+    const ir = withMeasureRef('gm.nope.unknown', { resolveMeasures: true });
+    const out = await handle(ir);
+    expect(validateOutput(out)).toBe(true);
+    expect(out.status).toBe('ok'); // sibling panels are NOT voided
+    const errPanel = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'error' }>;
+    expect(errPanel.kind).toBe('error');
+    expect(errPanel.error.code).toBe('OODS-V130');
+    expect(errPanel.error.severity).toBe('error');
+    expect(errPanel.a11yDescription).toContain('unknown governed measure "gm.nope.unknown"');
+    expect(out.meta?.errorPanelCount).toBe(1);
+
+    // CONTRAST: a missing datasetId is the LEGACY silent-empty path — a kpi panel
+    // with value 0, NOT an OODS-V130 error (D6: that asymmetry is unchanged this sprint).
+    const silent = await handle({
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'sales', rows: SALES }],
+      panels: [{ id: 'kpi-rev', kind: 'kpi', title: 'Total Revenue', datasetId: 'does-not-exist', field: 'revenue', aggregate: 'sum' }],
+      a11y: { description: 'silent-empty contrast' },
+    } as DashboardRenderInput);
+    const silentKpi = silent.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof silent.panels[number], { kind: 'kpi' }>;
+    expect(silentKpi.kind).toBe('kpi');
+    expect(silentKpi.value).toBe(0);
+    expect(silent.meta?.errorPanelCount).toBe(0);
+  });
+
+  it('(b) an UNKNOWN measureRef under onPanelError:"omit" warns + drops the panel; siblings unaffected', async () => {
+    const ir = withMeasureRef('gm.nope.unknown', { resolveMeasures: true, onPanelError: 'omit' });
+    const out = await handle(ir);
+    expect(validateOutput(out)).toBe(true);
+    expect(out.panels.find((p) => p.id === 'kpi-rev')).toBeUndefined(); // dropped
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V130' && w.severity === 'warning' && w.message.includes('kpi-rev'))).toBe(true);
+    // the chart siblings still render.
+    expect(out.panels.find((p) => p.id === 'trend')).toBeDefined();
+    expect(out.panels.find((p) => p.id === 'breakdown')).toBeDefined();
+  });
+
+  it('(c) resolveMeasures false + an inert measureRef is byte-identical to the s116 inert path', async () => {
+    const ir = withMeasureRef('gm.revenue.total', { resolveMeasures: false });
+    const out = await handle(ir);
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    // flag off -> measureRef stays inert; the author field computes the golden numbers.
+    expect(kpi.value).toBe(390);
+    expect(kpi.delta).toBe(90);
+    expect(kpi.thresholdBreached).toBe(true);
+    expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
+    expect((kpi as Record<string, unknown>).measureRef).toBeUndefined();
+  });
+
+  it('(d) a11y: an UNTITLED resolved panel labels by the RESOLVED field; a TITLED panel stays title-stable', async () => {
+    // UNTITLED panel — author field 'month'/aggregate 'count' are the inert echo; the
+    // registry OVERRIDES them to revenue/sum, so the a11y label (panel.title ??
+    // panel.field) must read the RESOLVED field 'revenue', NOT the author's 'month'.
+    const untitled = {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'sales', rows: SALES }],
+      panels: [{ id: 'kpi', kind: 'kpi', datasetId: 'sales', field: 'month', aggregate: 'count', measureRef: 'gm.revenue.total' }],
+      a11y: { description: 'untitled resolved panel' },
+      resolveMeasures: true,
+    } as DashboardRenderInput;
+    const outU = await handle(untitled);
+    const kpiU = outU.panels.find((p) => p.id === 'kpi') as Extract<typeof outU.panels[number], { kind: 'kpi' }>;
+    expect(kpiU.value).toBe(390); // resolved to revenue/sum (NOT month/count)
+    // label = RESOLVED field; registry defaults (target 300 / above 350) ?? fill too.
+    expect(kpiU.a11yDescription).toBe('revenue: 390 (increasing, delta 90).');
+
+    // TITLED panel (the golden) — the title is the label, stable across the override.
+    const titled = withMeasureRef('gm.revenue.total', { resolveMeasures: true });
+    const outT = await handle(titled);
+    const kpiT = outT.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof outT.panels[number], { kind: 'kpi' }>;
+    expect(kpiT.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
   });
 });

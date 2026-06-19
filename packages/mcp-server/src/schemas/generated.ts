@@ -1209,6 +1209,10 @@ export namespace DashboardRenderInputSchema {
      * SEAM (b) partial-panel ERROR policy. 'placeholder' = render an a11y-described error panel in-place (default — don't void the dashboard); 'omit' = drop the failed panel from the layout.
      */
     onPanelError?: 'placeholder' | 'omit';
+    /**
+     * Phase-3 governed-measure RESOLUTION switch (sprint-117). When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT false keeps measureRef fully inert and the output byte-identical to s116. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels).
+     */
+    resolveMeasures?: boolean;
     a11y: DashboardA11YSpec;
     /**
      * SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). KPI threshold colors are NOT resolved inline.
@@ -1406,6 +1410,10 @@ export namespace DashboardRenderInputSchema {
      * Optional (v0.2, sprint-114) name of the time column. When present, the KPI metric series is built along a parsed and sorted period axis (via analysis/temporal.ts) instead of dataset row order: aggregate 'latest' is the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. Absent means row-order, byte-identical to v0.1.
      */
     periodField?: string;
+    /**
+     * Reserved (sprint-116, Phase-3 beachhead): an optional bare governed-measure reference, a provenance/identity key (e.g. 'gm.revenue'). Inert in v1: unread by computeKpi and never echoed to output. field and aggregate stay the authoritative compute inputs, so an absent or present measureRef yields byte-identical compute (no golden re-bake) and schemaVersion stays 'v0.1'. Validation is string-only this sprint: not an inline {name,field,aggregate,role} object, and no registry/enum lookup. Reserved for the governed-measure resolver (measureRef to field and aggregate at the mcp-server boundary) in a subsequent gated sprint.
+     */
+    measureRef?: string;
     /**
      * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs.
      */
