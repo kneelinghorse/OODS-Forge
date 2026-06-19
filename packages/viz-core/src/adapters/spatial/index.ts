@@ -12,4 +12,5 @@ export * from './echarts-geo-registration.js';
 export * from './echarts-visualmap-generator.js';
 export * from './echarts-choropleth-adapter.js';
 export * from './echarts-bubble-adapter.js';
+export * from './echarts-flow-line-adapter.js';
 export * from './echarts-spatial-adapter.js';

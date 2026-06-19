@@ -2,7 +2,7 @@ import fs, { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { getAjv } from '../lib/ajv.js';
 import type { DashboardRenderInput } from '../schemas/generated.js';
-import { handle } from './dashboard.render.js';
+import { handle, toA11yContrastBlock } from './dashboard.render.js';
 import { resetMeasureRegistryCache } from './measure-registry.js';
 import { scanBrandContrast } from './dashboard.render.html.js';
 
@@ -548,6 +548,24 @@ describe('dashboard.render — a11y completeness: contrast scan + SR data-table 
     const out = await handle(chartDash());
     expect((out.warnings ?? []).some((w) => w.code === 'OODS-V135')).toBe(false);
     expect((out.output as Record<string, unknown>).contrastScan).toBeUndefined();
+  });
+
+  // (A) sprint-119 m03 — toA11yContrastBlock: the POPULATED structured-block mapping.
+  // The default brand passes contrast (no failing pairs), so a non-empty a11yContrast
+  // never arises end-to-end; this unit-tests the mapping with controlled findings so the
+  // severity-injection + failing-count logic can actually fail if it regresses (Rule 9).
+  it('(A) toA11yContrastBlock mirrors findings as warning-severity rows + counts failures', () => {
+    const block = toA11yContrastBlock([
+      { pair: 'fg-on-bg', ratio: 3.2, threshold: 4.5 },
+      { pair: 'muted-on-panel-bg', ratio: 4.1, threshold: 4.5 },
+    ]);
+    expect(block.findings).toEqual([
+      { pair: 'fg-on-bg', ratio: 3.2, threshold: 4.5, severity: 'warning' },
+      { pair: 'muted-on-panel-bg', ratio: 4.1, threshold: 4.5, severity: 'warning' },
+    ]);
+    expect(block.summary).toEqual({ failing: 2 });
+    // empty findings still yields a well-formed block (scan ran, found nothing).
+    expect(toA11yContrastBlock([])).toEqual({ findings: [], summary: { failing: 0 } });
   });
 
   // (B) SR data-table.

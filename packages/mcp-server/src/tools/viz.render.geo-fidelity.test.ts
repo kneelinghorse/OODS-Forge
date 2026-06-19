@@ -42,6 +42,10 @@ const CITIES = [
   { city: 'San Francisco', lng: -122.4, lat: 37.8, pop: 874 },
   { city: 'Las Vegas', lng: -115.1, lat: 36.2, pop: 646 },
 ];
+const TRADE_FLOWS = [
+  { from: 'CA', to: 'NV', oLng: -120, oLat: 37, dLng: -116, dLat: 39, volume: 540 },
+  { from: 'NV', to: 'CA', oLng: -116, oLat: 39, dLng: -120, dLat: 37, volume: 210 },
+];
 
 const CASES: ReadonlyArray<readonly [string, Record<string, unknown>]> = [
   [
@@ -72,6 +76,23 @@ const CASES: ReadonlyArray<readonly [string, Record<string, unknown>]> = [
         colorScale: 'linear',
       },
       name: 'City population',
+    },
+  ],
+  [
+    'flow_map',
+    {
+      chartType: 'flow_map',
+      geo: {
+        geojson: US_STATES,
+        rows: TRADE_FLOWS,
+        originLongitudeField: 'oLng',
+        originLatitudeField: 'oLat',
+        destinationLongitudeField: 'dLng',
+        destinationLatitudeField: 'dLat',
+        strengthField: 'volume',
+        curvature: 0.3,
+      },
+      name: 'Trade flows',
     },
   ],
 ];

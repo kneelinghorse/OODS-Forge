@@ -53,7 +53,8 @@
       }
     },
     "errors": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
-    "warnings": { "type": "array", "items": { "$ref": "#/$defs/issue" } }
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+    "a11yContrast": { "$ref": "#/$defs/a11yContrast" }
   },
   "$defs": {
     "placement": {
@@ -151,6 +152,34 @@
         "code": { "type": "string" },
         "message": { "type": "string" },
         "severity": { "type": "string", "enum": ["error", "warning"] }
+      }
+    },
+    "contrastFinding": {
+      "type": "object",
+      "required": ["pair", "ratio", "threshold", "severity"],
+      "additionalProperties": false,
+      "properties": {
+        "pair": { "type": "string", "description": "The contrast pair id (e.g. 'fg-on-bg')." },
+        "ratio": { "type": "number", "description": "Measured WCAG contrast ratio (e.g. 3.2)." },
+        "threshold": { "type": "number", "description": "Required minimum ratio (e.g. 4.5)." },
+        "severity": { "type": "string", "enum": ["error", "warning"], "description": "Always 'warning' — a failing pair, mirroring the OODS-V135 warning." }
+      }
+    },
+    "a11yContrast": {
+      "type": "object",
+      "required": ["findings"],
+      "additionalProperties": false,
+      "description": "Structured WCAG contrast findings — present ONLY when output.contrastScan=true. Machine-readable mirror of the OODS-V135 warnings (the failing brand-token colour pairs from scanBrandContrast). ABSENT on the default path, so the default render stays byte-identical.",
+      "properties": {
+        "findings": { "type": "array", "items": { "$ref": "#/$defs/contrastFinding" } },
+        "summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Roll-up of the contrast scan.",
+          "properties": {
+            "failing": { "type": "integer", "minimum": 0, "description": "Number of brand-token pairs below their WCAG threshold." }
+          }
+        }
       }
     }
   }

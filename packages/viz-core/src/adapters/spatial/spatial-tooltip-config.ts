@@ -76,6 +76,32 @@ export function createBubbleTooltipFields(options: {
   return fields;
 }
 
+export function createFlowLineTooltipFields(options: {
+  readonly originLongitudeField: string;
+  readonly originLatitudeField: string;
+  readonly destinationLongitudeField: string;
+  readonly destinationLatitudeField: string;
+  readonly strengthField?: string;
+  readonly extraFields?: readonly string[];
+}): readonly SpatialTooltipField[] {
+  const fields: SpatialTooltipField[] = [
+    { field: options.originLongitudeField, title: 'Origin longitude' },
+    { field: options.originLatitudeField, title: 'Origin latitude' },
+    { field: options.destinationLongitudeField, title: 'Destination longitude' },
+    { field: options.destinationLatitudeField, title: 'Destination latitude' },
+  ];
+
+  if (options.strengthField) {
+    fields.push({ field: options.strengthField, title: 'Strength' });
+  }
+
+  (options.extraFields ?? []).forEach((field) => {
+    fields.push({ field, title: toTitle(field) });
+  });
+
+  return fields;
+}
+
 export function buildEChartsTooltipFormatter(
   fields: readonly SpatialTooltipField[]
 ): (params: { readonly data?: Record<string, unknown>; readonly name?: string }) => string {

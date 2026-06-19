@@ -169,6 +169,7 @@ const CHART_TYPE_MARK: Record<ChartType, string> = {
   force_graph: 'MarkGraph',
   choropleth: 'MarkChoropleth',
   bubble_map: 'MarkBubble',
+  flow_map: 'MarkFlow',
 };
 
 const CHART_TYPE_LABEL: Record<ChartType, string> = {
@@ -183,6 +184,7 @@ const CHART_TYPE_LABEL: Record<ChartType, string> = {
   force_graph: 'Force-directed graph',
   choropleth: 'Choropleth map',
   bubble_map: 'Bubble map',
+  flow_map: 'Flow map',
 };
 
 // --- semantic-type thresholds (literature-defensible, documented — NOT magic) -

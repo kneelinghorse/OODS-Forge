@@ -13,10 +13,12 @@
  *     the headless adapters take an already-parsed `geoData: FeatureCollection`
  *     and a separate `data: DataRecord[]`, so these inline field descriptors are
  *     never read.
- *   - DROPPED RouteLayer / RouteEndpointEncoding / CurvatureEncoding / isRouteLayer
- *     — the choropleth + bubble adapters only ever build from `regionFill` and
- *     `symbol` layers (route/flow lines are an unbuilt, out-of-beachhead feature),
- *     so SpatialLayer narrows to RegionFillLayer | SymbolLayer.
+ *   - REVIVED RouteLayer / RouteEndpointEncoding / CurvatureEncoding / isRouteLayer
+ *     (sprint-119 m01) — recovered VERBATIM from commit c67edb8 to back the new
+ *     flow_map (origin→destination ARC) geo type, the 6th explicit-only geo render.
+ *     They were originally trimmed in the s112 port as an unbuilt, out-of-beachhead
+ *     feature; flow_map is that beachhead, so SpatialLayer now widens back to
+ *     RegionFillLayer | SymbolLayer | RouteLayer.
  *   - MADE `projection` OPTIONAL (it is required in the source contract). Headless
  *     ECharts owns the projection via the client-side registerMap; neither adapter
  *     reads spec.projection. It is carried optional so the m02 handler may pass an
@@ -120,10 +122,44 @@ export interface SymbolLayer {
 }
 
 /**
- * Union of the spatial layer types the headless adapters build. Route/flow-line
- * layers are intentionally out of this slim subset (see audit header).
+ * Route endpoint encoding (flow_map — recovered VERBATIM from c67edb8, sprint-119 m01).
  */
-export type SpatialLayer = RegionFillLayer | SymbolLayer;
+export interface RouteEndpointEncoding {
+  field: string;
+  longitude?: string;
+  latitude?: string;
+}
+
+/**
+ * Curvature encoding for route layer (flow_map — recovered VERBATIM from c67edb8).
+ */
+export interface CurvatureEncoding {
+  value?: number;
+}
+
+/**
+ * Route/flow line layer type (the flow_map origin→destination ARC — recovered
+ * VERBATIM from c67edb8, sprint-119 m01).
+ */
+export interface RouteLayer {
+  type: 'route';
+  encoding: {
+    start: RouteEndpointEncoding;
+    end: RouteEndpointEncoding;
+    strokeWidth?: StrokeWidthEncoding;
+    color?: ColorEncoding;
+    opacity?: OpacityEncoding;
+    curvature?: CurvatureEncoding;
+  };
+  zIndex?: number;
+}
+
+/**
+ * Union of the spatial layer types the headless adapters build. RouteLayer (the
+ * flow_map ARC) rejoined the subset in sprint-119 m01 alongside the s112 choropleth
+ * (regionFill) + bubble_map (symbol) types.
+ */
+export type SpatialLayer = RegionFillLayer | SymbolLayer | RouteLayer;
 
 // =============================================================================
 // Data + geo source
@@ -276,4 +312,9 @@ export function isRegionFillLayer(layer: SpatialLayer): layer is RegionFillLayer
 /** Type guard for SymbolLayer. */
 export function isSymbolLayer(layer: SpatialLayer): layer is SymbolLayer {
   return layer.type === 'symbol';
+}
+
+/** Type guard for RouteLayer (flow_map — recovered VERBATIM from c67edb8, sprint-119 m01). */
+export function isRouteLayer(layer: SpatialLayer): layer is RouteLayer {
+  return layer.type === 'route';
 }

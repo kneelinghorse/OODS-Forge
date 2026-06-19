@@ -26,7 +26,7 @@ import {
 import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from '../schemas/generated.js';
 import { handle as vizRenderHandle } from './viz.render.js';
 import { createValueRef, describeSchemaRef } from './schema-ref.js';
-import { composeDashboardHtml, scanBrandContrast, type ChartTableData } from './dashboard.render.html.js';
+import { composeDashboardHtml, scanBrandContrast, type ChartTableData, type ContrastFinding } from './dashboard.render.html.js';
 import { loadMeasureRegistry, MalformedMeasureRegistryError } from './measure-registry.js';
 import { resolveMeasurePanel } from './measure-resolver.js';
 import { absentFields, referencedEncodingFields } from './field-presence.js';
@@ -36,6 +36,20 @@ type PanelResult = DashboardRenderOutput['panels'][number];
 type Issue = NonNullable<DashboardRenderOutput['warnings']>[number];
 
 const TABULAR_TYPES = new Set(['bar', 'line', 'area', 'scatter', 'heatmap']);
+
+/**
+ * Project scanBrandContrast's ContrastFinding[] into the opt-in a11yContrast output
+ * block (sprint-119 m03). Every finding is a failing pair (ratio < threshold), so
+ * each becomes a 'warning'-severity row mirroring its OODS-V135 warning; the summary
+ * carries the failing count. Pure + exported so the populated mapping is unit-testable
+ * (the default brand passes contrast, so a non-empty block never arises end-to-end).
+ */
+export function toA11yContrastBlock(findings: ContrastFinding[]): NonNullable<DashboardRenderOutput['a11yContrast']> {
+  return {
+    findings: findings.map((finding) => ({ ...finding, severity: 'warning' as const })),
+    summary: { failing: findings.length },
+  };
+}
 
 export async function handle(input: DashboardRenderInput): Promise<DashboardRenderOutput> {
   const compact = input.output?.compact ?? true;
@@ -291,14 +305,19 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
 
   // A11y contrast scan (sprint-118 m07 piece A): when requested, scan the export's resolved
   // brand-token pairs (no fs) and surface failures as OODS-V135 warnings. Default-off ⇒ no-op.
+  // sprint-119 m03: ALSO echo the SAME findings as an opt-in structured a11yContrast block
+  // (no recompute — scanBrandContrast is called once; its s118 non-hex guard already applies).
+  let a11yContrast: DashboardRenderOutput['a11yContrast'];
   if (wantContrastScan) {
-    for (const finding of scanBrandContrast()) {
+    const contrastFindings = scanBrandContrast();
+    for (const finding of contrastFindings) {
       warnings.push({
         code: 'OODS-V135',
         message: `Brand token pair "${finding.pair}" fails WCAG contrast: measured ${finding.ratio}:1, need ≥${finding.threshold}:1.`,
         severity: 'warning',
       });
     }
+    a11yContrast = toA11yContrastBlock(contrastFindings);
   }
 
   const result: DashboardRenderOutput = {
@@ -309,6 +328,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     links: (input.links ?? []) as DashboardRenderOutput['links'],
     a11y: dashboardA11y,
     warnings,
+    ...(a11yContrast ? { a11yContrast } : {}),
     output: {
       compact,
       ...(wantEcharts ? { echarts: true } : {}),

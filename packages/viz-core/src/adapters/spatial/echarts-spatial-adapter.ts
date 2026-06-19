@@ -5,9 +5,10 @@
 
 import type { FeatureCollection } from 'geojson';
 import type { EChartsOption, GeoComponentOption, SeriesOption, VisualMapComponentOption } from 'echarts';
-import { isRegionFillLayer, isSymbolLayer, type SpatialSpec } from '../../spec/spatial.js';
+import { isRegionFillLayer, isRouteLayer, isSymbolLayer, type SpatialSpec } from '../../spec/spatial.js';
 import { buildChoropleth, type ChoroplethBuildResult } from './echarts-choropleth-adapter.js';
 import { buildBubbleSeries, type BubbleBuildResult } from './echarts-bubble-adapter.js';
+import { buildFlowLineSeries, type FlowLineBuildResult } from './echarts-flow-line-adapter.js';
 import type { DataRecord } from './geo-data-joiner.js';
 
 export interface EChartsSpatialAdapterInput {
@@ -51,9 +52,10 @@ export function adaptToECharts(input: EChartsSpatialAdapterInput): EChartsSpatia
   const { spec, geoData, data, dimensions } = input;
   const regionLayers = spec.layers.filter(isRegionFillLayer);
   const symbolLayers = spec.layers.filter(isSymbolLayer);
+  const routeLayers = spec.layers.filter(isRouteLayer);
 
-  if (regionLayers.length === 0 && symbolLayers.length === 0) {
-    throw new EChartsSpatialAdapterError('Spatial spec must include at least one regionFill or symbol layer.');
+  if (regionLayers.length === 0 && symbolLayers.length === 0 && routeLayers.length === 0) {
+    throw new EChartsSpatialAdapterError('Spatial spec must include at least one regionFill, symbol, or route layer.');
   }
 
   const tabularData = resolveData(spec, data);
@@ -83,6 +85,22 @@ export function adaptToECharts(input: EChartsSpatialAdapterInput): EChartsSpatia
 
     for (const layer of symbolLayers) {
       const result: BubbleBuildResult = buildBubbleSeries(spec, layer, tabularData, geoData);
+      series.push(result.series as SeriesOption);
+      if (result.visualMap) {
+        visualMaps.push(result.visualMap);
+      }
+      geo = geo ?? (result.geo as GeoComponentOption);
+      geoRegistration = geoRegistration ?? result.registration?.geoJson;
+    }
+  }
+
+  if (routeLayers.length > 0) {
+    if (!tabularData || tabularData.length === 0) {
+      throw new EChartsSpatialAdapterError('Flow map route layers require tabular data records (the origin→destination flows).');
+    }
+
+    for (const layer of routeLayers) {
+      const result: FlowLineBuildResult = buildFlowLineSeries(spec, layer, tabularData, geoData);
       series.push(result.series as SeriesOption);
       if (result.visualMap) {
         visualMaps.push(result.visualMap);

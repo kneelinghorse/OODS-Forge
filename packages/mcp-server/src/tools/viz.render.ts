@@ -12,6 +12,7 @@
 import {
   adaptBubbleToECharts,
   adaptChoroplethToECharts,
+  adaptFlowLineToECharts,
   adaptGraphToECharts,
   adaptSankeyToECharts,
   adaptSunburstToECharts,
@@ -183,7 +184,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
 // path: each builds a metadata-only spec, dispatches to its ported adapter with the
 // SEPARATE data branch (hierarchy or sankey), and auto-promotes the ECharts option
 // as the primary payload (these chart types have no Vega-Lite equivalent).
-type EChartsPrimaryType = 'treemap' | 'sunburst' | 'sankey' | 'force_graph' | 'choropleth' | 'bubble_map';
+type EChartsPrimaryType = 'treemap' | 'sunburst' | 'sankey' | 'force_graph' | 'choropleth' | 'bubble_map' | 'flow_map';
 
 interface EChartsPrimaryConfig {
   readonly mark: string;
@@ -205,6 +206,10 @@ const ECHARTS_PRIMARY: Record<EChartsPrimaryType, EChartsPrimaryConfig> = {
   // re-registers the map by name).
   choropleth: { mark: 'MarkChoropleth', label: 'Choropleth map', noun: 'regional values', dataBranch: 'geo' },
   bubble_map: { mark: 'MarkBubble', label: 'Bubble map', noun: 'geographic points', dataBranch: 'geo' },
+  // sprint-119 m01 flow_map: origin→destination ARC lines on the geo coordinate
+  // system. Reuses the 'geo' data branch + the __registration escape hatch exactly
+  // like choropleth/bubble_map; rendered via the headless flow-line spatial adapter.
+  flow_map: { mark: 'MarkFlow', label: 'Flow map', noun: 'origin→destination flows', dataBranch: 'geo' },
 };
 
 function isEChartsPrimaryType(chartType: VizRenderInput['chartType']): chartType is EChartsPrimaryType {
@@ -214,7 +219,8 @@ function isEChartsPrimaryType(chartType: VizRenderInput['chartType']): chartType
     chartType === 'sankey' ||
     chartType === 'force_graph' ||
     chartType === 'choropleth' ||
-    chartType === 'bubble_map'
+    chartType === 'bubble_map' ||
+    chartType === 'flow_map'
   );
 }
 
@@ -255,7 +261,7 @@ function renderEChartsPrimary(
       const hierarchy = branchData as unknown as HierarchyInput;
       option = adaptSunburstToECharts(spec, hierarchy);
       nodeCount = hierarchyNodeCount(hierarchy);
-    } else if (chartType === 'choropleth' || chartType === 'bubble_map') {
+    } else if (chartType === 'choropleth' || chartType === 'bubble_map' || chartType === 'flow_map') {
       // Geo dispatch: build a SpatialSpec from the 'geo' branch and render via the
       // ported spatial adapter. The adapter attaches the FeatureCollection on
       // option.__registration (the not-self-contained escape hatch); the JSON
@@ -378,7 +384,7 @@ function buildEChartsPrimarySpec(
 // per-type input guards (typed GeoInputError -> OODS-V126) so a missing
 // valueField / lng-lat / geometry yields a clean bad-input error, not a crash.
 type GeoBranch = NonNullable<VizRenderInput['geo']>;
-type GeoChartType = 'choropleth' | 'bubble_map';
+type GeoChartType = 'choropleth' | 'bubble_map' | 'flow_map';
 
 class GeoInputError extends Error {
   constructor(message: string) {
@@ -445,6 +451,49 @@ function renderGeoOption(
     };
     const option = adaptChoroplethToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
     return { option, count: geoData.features.length };
+  }
+
+  if (chartType === 'flow_map') {
+    // flow_map: origin→destination ARC lines on the geo coordinate system. The geo
+    // coordinateSystem needs a registered base map, so inline geometry is required
+    // (it rides back on echartsSpec.__registration, exactly like choropleth).
+    const geoData = resolveFeatureCollection(geo);
+    if (!geoData) {
+      throw new GeoInputError("flow_map requires inline base geometry ('geo.geojson' or 'geo.topojson') for the geo coordinate system.");
+    }
+    if (
+      !geo.originLongitudeField ||
+      !geo.originLatitudeField ||
+      !geo.destinationLongitudeField ||
+      !geo.destinationLatitudeField
+    ) {
+      throw new GeoInputError(
+        "flow_map requires 'geo.originLongitudeField', 'geo.originLatitudeField', 'geo.destinationLongitudeField', and 'geo.destinationLatitudeField'.",
+      );
+    }
+    if (rows.length === 0) {
+      throw new GeoInputError("flow_map requires 'geo.rows' (the origin→destination flows).");
+    }
+    const spec: SpatialSpec = {
+      id,
+      ...(name ? { name } : {}),
+      type: 'spatial',
+      data: { values: [] },
+      layers: [
+        {
+          type: 'route',
+          encoding: {
+            start: { field: geo.originLongitudeField, longitude: geo.originLongitudeField, latitude: geo.originLatitudeField },
+            end: { field: geo.destinationLongitudeField, longitude: geo.destinationLongitudeField, latitude: geo.destinationLatitudeField },
+            ...(geo.strengthField ? { strokeWidth: { field: geo.strengthField } } : {}),
+            ...(geo.curvature !== undefined ? { curvature: { value: geo.curvature } } : {}),
+          },
+        },
+      ],
+      a11y: { description },
+    };
+    const option = adaptFlowLineToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
+    return { option, count: rows.length };
   }
 
   // bubble_map

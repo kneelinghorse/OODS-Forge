@@ -506,6 +506,9 @@ const chartMarkByType: Record<ChartPattern['chartType'], MarkSpec['trait']> = {
   // total now that ChartType widened (the #740 root-typecheck coupling).
   choropleth: 'MarkChoropleth',
   bubble_map: 'MarkBubble',
+  // sprint-119 m01 flow_map (origin→destination ARC; explicit-only via the headless
+  // spatial flow-line adapter) — keeps this map total now that ChartType widened.
+  flow_map: 'MarkFlow',
 };
 
 const layoutFrameByChartType: Record<ChartPattern['chartType'], { width: number; height: number; padding: number }> = {
@@ -520,6 +523,7 @@ const layoutFrameByChartType: Record<ChartPattern['chartType'], { width: number;
   force_graph: { width: 760, height: 560, padding: 24 },
   choropleth: { width: 860, height: 520, padding: 24 },
   bubble_map: { width: 860, height: 520, padding: 24 },
+  flow_map: { width: 860, height: 520, padding: 24 },
 };
 
 const componentByChartType: Record<
@@ -537,6 +541,7 @@ const componentByChartType: Record<
   force_graph: { component: 'ForceGraph', importPath: '@/components/viz/ForceGraph.js' },
   choropleth: { component: 'ChoroplethMap', importPath: '@/components/viz/spatial/ChoroplethMap.js' },
   bubble_map: { component: 'BubbleMap', importPath: '@/components/viz/spatial/BubbleMap.js' },
+  flow_map: { component: 'FlowMap', importPath: '@/components/viz/spatial/FlowMap.js' },
 };
 
 const hookImportPaths = new Map<string, string>([
