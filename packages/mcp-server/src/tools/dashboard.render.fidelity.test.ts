@@ -176,3 +176,43 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     expect(JSON.stringify(resolvedOut)).toBe(JSON.stringify(baseline));
   });
 });
+
+// Sprint-119 m03 — the opt-in structured a11yContrast block. Default-off is
+// byte-identical (the block is ABSENT, the METRIC_OVERVIEW golden above shows 0
+// deletions); contrastScan=true echoes the SAME findings the OODS-V135 warnings
+// carry, as a machine-readable mirror under a new snapshot key.
+const METRIC_OVERVIEW_CONTRAST: DashboardRenderInput = {
+  ...METRIC_OVERVIEW,
+  output: { contrastScan: true },
+} as DashboardRenderInput;
+
+describe('dashboard.render a11yContrast output block (sprint-119 m03)', () => {
+  it('additivity: contrastScan ABSENT leaves a11yContrast undefined + output echo unchanged (byte-identical)', async () => {
+    const out = await handle(METRIC_OVERVIEW);
+    expect(out.a11yContrast).toBeUndefined();
+    expect(out.output).toEqual({ compact: true });
+  });
+
+  it('contrastScan=true emits a structured block whose findings mirror the OODS-V135 warning pairs', async () => {
+    const out = await handle(METRIC_OVERVIEW_CONTRAST);
+    expect(out.status).toBe('ok');
+    expect(out.a11yContrast).toBeDefined();
+    const block = out.a11yContrast!;
+    const v135 = (out.warnings ?? []).filter((w) => w.code === 'OODS-V135');
+    // The block is the machine-readable mirror of the V135 warnings: same count, same
+    // pairs, every finding a 'warning'-severity row, and the summary counts the failures.
+    expect(block.findings).toHaveLength(v135.length);
+    for (const finding of block.findings) {
+      expect(finding.severity).toBe('warning');
+      expect(v135.some((w) => w.message.includes(`"${finding.pair}"`))).toBe(true);
+    }
+    expect(block.summary).toEqual({ failing: block.findings.length });
+    expect(block).toMatchSnapshot();
+  });
+
+  it('contrastScan=true -> byte-identical a11yContrast block run-to-run (determinism gate)', async () => {
+    const a = await handle(METRIC_OVERVIEW_CONTRAST);
+    const b = await handle(METRIC_OVERVIEW_CONTRAST);
+    expect(JSON.stringify(a.a11yContrast)).toBe(JSON.stringify(b.a11yContrast));
+  });
+});

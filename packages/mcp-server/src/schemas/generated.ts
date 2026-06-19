@@ -1667,6 +1667,7 @@ export namespace DashboardRenderOutputSchema {
     };
     errors?: Issue[];
     warnings: Issue[];
+    a11yContrast?: A11YContrast;
   }
   export interface ChartPanelResult {
     id: string;
@@ -1737,6 +1738,39 @@ export namespace DashboardRenderOutputSchema {
       summary?: string;
       keyFindings?: string[];
     };
+  }
+  /**
+   * Structured WCAG contrast findings — present ONLY when output.contrastScan=true. Machine-readable mirror of the OODS-V135 warnings (the failing brand-token colour pairs from scanBrandContrast). ABSENT on the default path, so the default render stays byte-identical.
+   */
+  export interface A11YContrast {
+    findings: ContrastFinding[];
+    /**
+     * Roll-up of the contrast scan.
+     */
+    summary?: {
+      /**
+       * Number of brand-token pairs below their WCAG threshold.
+       */
+      failing?: number;
+    };
+  }
+  export interface ContrastFinding {
+    /**
+     * The contrast pair id (e.g. 'fg-on-bg').
+     */
+    pair: string;
+    /**
+     * Measured WCAG contrast ratio (e.g. 3.2).
+     */
+    ratio: number;
+    /**
+     * Required minimum ratio (e.g. 4.5).
+     */
+    threshold: number;
+    /**
+     * Always 'warning' — a failing pair, mirroring the OODS-V135 warning.
+     */
+    severity: 'error' | 'warning';
   }
 }
 export type DashboardRenderOutput = DashboardRenderOutputSchema.DashboardRenderOutput;
@@ -6542,7 +6576,7 @@ export namespace VizRenderInputSchema {
       }[];
     };
     /**
-     * Geo data for chartType 'choropleth' or 'bubble_map' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Carries INLINE geometry (a GeoJSON FeatureCollection in 'geojson', or a TopoJSON Topology in 'topojson' + 'topoObjectName'), an optional 'join' that merges tabular 'rows' into features by key, and the per-type encoding: 'valueField' colours regions for choropleth; 'longitudeField'/'latitudeField' (+ optional 'sizeField'/'colorField') place points for bubble_map. Geometry is supplied INLINE — it is never fetched over the network. NOTE: geo specs are NOT self-contained (unlike treemap/sankey): the resolved FeatureCollection rides back on echartsSpec.__registration and the client re-registers the map by name before rendering. Geometry payloads can be large (a world atlas is ~100KB) — prefer a pre-simplified TopoJSON.
+     * Geo data for chartType 'choropleth', 'bubble_map', or 'flow_map' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Carries INLINE geometry (a GeoJSON FeatureCollection in 'geojson', or a TopoJSON Topology in 'topojson' + 'topoObjectName'), an optional 'join' that merges tabular 'rows' into features by key, and the per-type encoding: 'valueField' colours regions for choropleth; 'longitudeField'/'latitudeField' (+ optional 'sizeField'/'colorField') place points for bubble_map; 'originLongitudeField'/'originLatitudeField'/'destinationLongitudeField'/'destinationLatitudeField' (+ optional 'strengthField'/'curvature') draw origin→destination ARCS for flow_map. Geometry is supplied INLINE — it is never fetched over the network. NOTE: geo specs are NOT self-contained (unlike treemap/sankey): the resolved FeatureCollection rides back on echartsSpec.__registration and the client re-registers the map by name before rendering. Geometry payloads can be large (a world atlas is ~100KB) — prefer a pre-simplified TopoJSON.
      */
     geo?: {
       /**
@@ -6606,9 +6640,33 @@ export namespace VizRenderInputSchema {
        * Optional colour scale (defaults to a continuous linear ramp). 'ordinal' paints discrete per-category colours.
        */
       colorScale?: 'linear' | 'quantize' | 'quantile' | 'threshold' | 'ordinal';
+      /**
+       * Flow map: the row field holding the ORIGIN longitude. Required for flow_map.
+       */
+      originLongitudeField?: string;
+      /**
+       * Flow map: the row field holding the ORIGIN latitude. Required for flow_map.
+       */
+      originLatitudeField?: string;
+      /**
+       * Flow map: the row field holding the DESTINATION longitude. Required for flow_map.
+       */
+      destinationLongitudeField?: string;
+      /**
+       * Flow map: the row field holding the DESTINATION latitude. Required for flow_map.
+       */
+      destinationLatitudeField?: string;
+      /**
+       * Flow map: optional numeric row field whose magnitude drives each arc's line width (via a continuous visualMap).
+       */
+      strengthField?: string;
+      /**
+       * Flow map: optional arc curveness (0 = straight, ~0.3 default). Bends each origin→destination line into an arc.
+       */
+      curvature?: number;
     };
     /**
-     * Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network/geo charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links); 'choropleth' and 'bubble_map' take the 'geo' data branch (inline geometry + per-type encoding). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles).
+     * Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network/geo charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links); 'choropleth', 'bubble_map', and 'flow_map' take the 'geo' data branch (inline geometry + per-type encoding — flow_map draws origin→destination arcs). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles).
      */
     chartType?:
       | 'bar'
@@ -6621,7 +6679,8 @@ export namespace VizRenderInputSchema {
       | 'sankey'
       | 'force_graph'
       | 'choropleth'
-      | 'bubble_map';
+      | 'bubble_map'
+      | 'flow_map';
     /**
      * Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).
      */

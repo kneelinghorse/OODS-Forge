@@ -59,6 +59,17 @@ describe('renderDocument', () => {
     expect(html).toContain('var(--ref-border-radius-md');
   });
 
+  it('forces the Button to inherit the surface sans font (sprint-119 m02)', () => {
+    // A native <button> does NOT inherit font-family by default (the UA paints it
+    // in -webkit-small-control), so without an explicit `inherit` a tokens-styled
+    // Button renders in the platform font instead of the root's font.family.sans
+    // (#oods-preview-root sets --ref-typography-families-sans). `inherit` resolves
+    // up to that root rule — and to a brand override delivered via the client overlay.
+    const html = renderDocument({ screenHtml: '<div>Test</div>' });
+    const buttonBlock = html.slice(html.indexOf('[data-oods-component="Button"]'));
+    expect(buttonBlock).toContain('font-family: inherit;');
+  });
+
   it('injects dark theme overrides when theme is dark', () => {
     const html = renderDocument({
       screenHtml: '<div>Dark</div>',

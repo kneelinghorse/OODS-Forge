@@ -37,6 +37,7 @@ const DEFAULT_COMPONENT_CSS = `
   border-radius: var(--ref-border-radius-md, 12px);
   background: var(--sys-surface-interactive-primary-default, var(--ref-color-primary-500, #4f46e5));
   color: var(--sys-text-on-interactive, var(--ref-color-neutral-0, #ffffff));
+  font-family: inherit;
   padding: 0.5rem 0.875rem;
 }
 [data-oods-component="Card"] {
