@@ -15,7 +15,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { KpiPanel } from '@oods/viz-core';
+import type { KpiPanel, TemporalGranularity } from '@oods/viz-core';
 // AJV-validate-at-load (sprint-118 m03): a FRESH Ajv2020 with NO useDefaults — do NOT
 // reuse lib/ajv.ts getAjv() (useDefaults:true would mutate-fill entries). Mirrors the
 // manifest-validator precedent (object-catalog/manifest-validator.ts:30,92-95).
@@ -55,6 +55,13 @@ export interface MeasureEntry {
    * ratio/price (e.g. value/quantity) is meaningless. Only summation is blocked.
    */
   additive?: boolean;
+  /**
+   * Optional declared time-grain (sprint-122 m02). When set AND resolveMeasures=true, the
+   * panel's actual period data is validated against this grain at resolve time — the finest
+   * observed granularity of the periodField cells must equal expectedGrain, else OODS-V138.
+   * ABSENT === no grain check (back-compat). In lockstep with measure-registry.schema.json.
+   */
+  expectedGrain?: TemporalGranularity;
   /** Optional UI label. */
   displayName?: string;
   /** Optional renderer-agnostic number-format hint. */

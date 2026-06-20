@@ -39,6 +39,11 @@
           "type": "boolean",
           "description": "Whether the measure is additive across rows (sprint-118 m03). Absent === true (back-compat). When false, a `sum` rollup is BLOCKED at the resolver boundary with OODS-V133 (a summed ratio/price is meaningless)."
         },
+        "expectedGrain": {
+          "type": "string",
+          "enum": ["year", "quarter", "month", "day", "time"],
+          "description": "Optional declared time-grain (sprint-122 m02). When set AND resolveMeasures=true, the panel's actual period data (its periodField cells) is validated against this grain at resolve time: the finest observed granularity must equal expectedGrain, else the panel is routed through onPanelError as OODS-V138. Mirrors the analysis/temporal.ts TemporalGranularity members. ABSENT = no grain check (back-compat; the 5 s117/s118 entries stay unseeded so faostat-e2e/fidelity goldens are 0-diff)."
+        },
         "displayName": { "type": "string", "description": "Optional UI label." },
         "format": { "type": "string", "description": "Optional renderer-agnostic number-format hint." },
         "unit": { "type": "string", "description": "Optional unit label." },

@@ -64,3 +64,9 @@ export * from './a11y/index.js';
 export * from './transforms/stack-transform.js';
 export * from './encoding/color-intensity-mapper.js';
 export * from './tokens/scale-token-mapper.js';
+
+// Temporal analysis runtime (sprint-110) — the finest-granularity scan + the UTC-pinned cell
+// parser, surfaced on the barrel for the mcp-server measure time-grain check (sprint-122 m02).
+// NAMED (not `export *`) so the TemporalGranularity TYPE stays the single re-export from
+// builder/spec-builder.ts (an `export *` here would duplicate it).
+export { finestGranularity, parseTemporalValue } from './analysis/temporal.js';
