@@ -131,6 +131,19 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // from V113 'Unsafe key' (key denylist) — this inspects VALUES. retryable:false (a malicious or
   // malformed value won't succeed on retry; the agent must supply a clean CSS color/length/number).
   ['OODS-V136', { code: 'OODS-V136', category: 'validation', message: 'Unsafe token-overlay value', retryable: false }],
+  // Measure-registry DEPTH (sprint-122). Routed through the dashboard.render onPanelError seam
+  // (NOT thrown). V137: a KPI panel resolved to NO field — measureRef-only with resolveMeasures
+  // OFF (or the ref unresolved), so there is nothing to aggregate. Fail loud instead of a silent
+  // value:0. Recoverable — the agent can supply a field or enable resolveMeasures — retryable:true.
+  ['OODS-V137', { code: 'OODS-V137', category: 'validation', message: 'KPI panel has no resolvable field (measureRef unresolved)', retryable: true }],
+  // V138 (sprint-122 m02): a governed measure declares an expectedGrain but the panel's actual
+  // period data does not match it (or the panel has no periodField to check). A measure/data
+  // governance mismatch — like V132/V133, not transiently recoverable — so retryable:false.
+  ['OODS-V138', { code: 'OODS-V138', category: 'validation', message: 'Measure time-grain mismatch', retryable: false }],
+  // V139 (sprint-122 m03): under the opt-in strictDatasets flag, a KPI panel references a datasetId
+  // NOT present in datasets[] — lifted from the frozen-D6 silent value:0 to a fail-loud panel,
+  // matching how chart panels already fail (V123). Recoverable (fix the datasetId) — retryable:true.
+  ['OODS-V139', { code: 'OODS-V139', category: 'validation', message: 'KPI panel references unknown dataset', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

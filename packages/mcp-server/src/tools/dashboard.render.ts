@@ -15,6 +15,8 @@
 import {
   applyCrossFilter,
   computeKpi,
+  finestGranularity,
+  parseTemporalValue,
   resolveCrossFilter,
   resolveDashboardLayout,
   resolveDashboardNarrative,
@@ -22,6 +24,7 @@ import {
   type KpiPanel,
   type Panel,
   type SelectionState,
+  type TemporalGranularity,
 } from '@oods/viz-core';
 import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from '../schemas/generated.js';
 import { handle as vizRenderHandle } from './viz.render.js';
@@ -67,6 +70,11 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   // Field-presence strict check (sprint-118 m05) — gated, default OFF so the absent/false
   // path is byte-identical (the frozen-D6 silent-empty asymmetry preserved).
   const strictFields = input.strictFields ?? false;
+  // D6 unknown-datasetId STRICT switch (sprint-122 m03) — gated, default OFF so the absent/false
+  // path is byte-identical to the frozen-D6 silent value:0. Lifts ONLY a KPI panel whose datasetId
+  // is absent from datasets[] to a fail-loud V139 (a KNOWN dataset cross-filtered to [] still
+  // renders value:0; chart panels keep their own V123 path).
+  const strictDatasets = input.strictDatasets ?? false;
   const selection = (input.selection ?? undefined) as SelectionState | undefined;
   const crossFiltered = selection !== undefined && Object.keys(selection).length > 0;
 
@@ -93,6 +101,10 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       // (the `resolveMeasures && panel.measureRef` guard keeps the default path
       // byte-identical to s116).
       let kpiPanel = panel;
+      // M2 (sprint-122): a resolved governed measure may declare an expectedGrain. Hoisted OUT
+      // of the resolveMeasures block (where `entry` is in scope) because the grain check needs
+      // `rows`, fetched AFTER the block closes. Stays undefined on the default/unresolved path.
+      let expectedGrain: TemporalGranularity | undefined;
       if (resolveMeasures && panel.measureRef) {
         let registry;
         try {
@@ -182,7 +194,70 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
           placedPanels.push(panel);
           continue;
         }
+        // The entry passed the V132/V130/V133 gates — capture its optional declared time-grain
+        // for the post-rows V138 check (entry goes OUT of scope when this block closes).
+        expectedGrain = entry.expectedGrain;
         kpiPanel = resolveMeasurePanel(panel, registry);
+      }
+      // V137 (sprint-122 m01): a KPI panel resolved to NO field — a measureRef-only panel with
+      // resolveMeasures OFF (the block above is skipped so field is never filled), or otherwise
+      // field-less. The IR cast at the loop head types `field` as string, but a tool-input panel
+      // that drops it (schema A no longer requires `field`) is `undefined` at RUNTIME. Fail loud
+      // through the SAME onPanelError seam instead of letting computeKpi silently aggregate a
+      // missing field to value:0. Fires UNCONDITIONALLY (NOT gated by strictFields).
+      if (!kpiPanel.field) {
+        if (onPanelError === 'omit') {
+          warnings.push({
+            code: 'OODS-V137',
+            message: `KPI panel "${panel.id}" omitted: no resolvable field (measureRef unresolved).`,
+            severity: 'warning',
+          });
+          continue;
+        }
+        errorPanelCount += 1;
+        panelResults.push({
+          id: panel.id,
+          kind: 'error',
+          ...(panel.title ? { title: panel.title } : {}),
+          error: {
+            code: 'OODS-V137',
+            message: `KPI panel "${panel.id}" has no resolvable field: a measureRef-only panel requires resolveMeasures and a known governed measure.`,
+            severity: 'error',
+          },
+          a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: no resolvable field (measureRef unresolved).`,
+        });
+        placedPanels.push(panel);
+        continue;
+      }
+      // V139 (sprint-122 m03): under strictDatasets, a KPI panel referencing a datasetId NOT in
+      // datasets[] fails LOUD (matching how chart panels fail via V123) instead of the frozen-D6
+      // silent value:0. Read .has() on the RAW pre-filter Map BEFORE the `?? []` collapse below so
+      // an UNKNOWN id (.has()===false) is distinguished from a KNOWN dataset cross-filtered to []
+      // (which keeps .has()===true and STILL renders value:0 — the Derek-ratified unknown-id-ONLY
+      // scope). kpiPanel.datasetId === panel.datasetId (resolveMeasurePanel never touches it).
+      if (strictDatasets && !datasetRows.has(kpiPanel.datasetId)) {
+        if (onPanelError === 'omit') {
+          warnings.push({
+            code: 'OODS-V139',
+            message: `KPI panel "${panel.id}" omitted: references unknown dataset "${kpiPanel.datasetId}".`,
+            severity: 'warning',
+          });
+          continue;
+        }
+        errorPanelCount += 1;
+        panelResults.push({
+          id: panel.id,
+          kind: 'error',
+          ...(panel.title ? { title: panel.title } : {}),
+          error: {
+            code: 'OODS-V139',
+            message: `KPI panel "${panel.id}" references unknown dataset "${kpiPanel.datasetId}".`,
+            severity: 'error',
+          },
+          a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: references unknown dataset "${kpiPanel.datasetId}".`,
+        });
+        placedPanels.push(panel);
+        continue;
       }
       const rows = filterRows(kpiPanel.id, datasetRows.get(kpiPanel.datasetId) ?? []);
       if (strictFields) {
@@ -210,6 +285,67 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
               severity: 'error',
             },
             a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: field(s) absent from the dataset: ${missing.join(', ')}.`,
+          });
+          placedPanels.push(panel);
+          continue;
+        }
+      }
+      // V138 (sprint-122 m02): when the resolved governed measure declares an expectedGrain,
+      // validate the panel's ACTUAL period data against it. The finest observed granularity of
+      // the periodField cells must equal the declared grain, else the measure is being read at
+      // the wrong cadence — route through the SAME onPanelError seam. Fires ONLY when a measure
+      // resolved an expectedGrain (the default/unseeded path is byte-untouched). temporal parsing
+      // is UTC-pinned/deterministic (golden-safe); rows are params (consumer-model clean).
+      if (expectedGrain) {
+        if (!kpiPanel.periodField) {
+          if (onPanelError === 'omit') {
+            warnings.push({
+              code: 'OODS-V138',
+              message: `KPI panel "${panel.id}" omitted: measure expects time-grain "${expectedGrain}" but the panel declares no periodField.`,
+              severity: 'warning',
+            });
+            continue;
+          }
+          errorPanelCount += 1;
+          panelResults.push({
+            id: panel.id,
+            kind: 'error',
+            ...(panel.title ? { title: panel.title } : {}),
+            error: {
+              code: 'OODS-V138',
+              message: `KPI panel "${panel.id}" measure expects time-grain "${expectedGrain}" but the panel declares no periodField to check.`,
+              severity: 'error',
+            },
+            a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: measure expects time-grain "${expectedGrain}" but no periodField is set.`,
+          });
+          placedPanels.push(panel);
+          continue;
+        }
+        const periodField = kpiPanel.periodField;
+        const parsed = rows
+          .map((r) => parseTemporalValue(r[periodField], true))
+          .filter((p): p is NonNullable<typeof p> => p !== null);
+        const observed = finestGranularity(parsed);
+        if (observed !== expectedGrain) {
+          if (onPanelError === 'omit') {
+            warnings.push({
+              code: 'OODS-V138',
+              message: `KPI panel "${panel.id}" omitted: measure expects time-grain "${expectedGrain}" but the period data is "${observed}".`,
+              severity: 'warning',
+            });
+            continue;
+          }
+          errorPanelCount += 1;
+          panelResults.push({
+            id: panel.id,
+            kind: 'error',
+            ...(panel.title ? { title: panel.title } : {}),
+            error: {
+              code: 'OODS-V138',
+              message: `KPI panel "${panel.id}" measure expects time-grain "${expectedGrain}" but the period data is "${observed}".`,
+              severity: 'error',
+            },
+            a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: measure expects time-grain "${expectedGrain}" but the data is "${observed}".`,
           });
           placedPanels.push(panel);
           continue;

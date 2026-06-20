@@ -1217,6 +1217,10 @@ export namespace DashboardRenderInputSchema {
      * Field-presence STRICT switch (sprint-118 m05). When true, a referenced field absent from EVERY resolved (non-empty) row is surfaced as OODS-V131 at the ingestion boundary instead of a silent value:0 / confident-wrong spec: a KPI panel's field (+ periodField) and a tabular chart panel's encoding fields (x/y/color/size/shape/detail) must each be a key in >=1 row, else the panel is routed through `onPanelError` (placeholder = a11y-described error panel; omit = warning + drop). DEFAULT false keeps the legacy silent-empty behavior byte-identical. Scoped to field-presence ONLY — the frozen-D6 missing-datasetId silent-empty path (empty rows) is unchanged. A render-call control (like resolveMeasures); never reaches computeKpi.
      */
     strictFields?: boolean;
+    /**
+     * Unknown-datasetId STRICT switch (sprint-122 m03). When true, a KPI panel whose datasetId is NOT present in datasets[] fails through onPanelError (OODS-V139). A KNOWN dataset that filters/cross-filters to zero rows STILL renders value:0 (unchanged). Does NOT affect chart panels (their missing-datasetId path keeps OODS-V123). Default false = the legacy frozen-D6 silent-empty behavior, byte-identical.
+     */
+    strictDatasets?: boolean;
     a11y: DashboardA11YSpec;
     /**
      * SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). KPI threshold colors are NOT resolved inline.
@@ -1421,7 +1425,7 @@ export namespace DashboardRenderInputSchema {
     /**
      * The metric field aggregated into the KPI value.
      */
-    field: string;
+    field?: string;
     /**
      * Optional (v0.2, sprint-114) name of the time column. When present, the KPI metric series is built along a parsed and sorted period axis (via analysis/temporal.ts) instead of dataset row order: aggregate 'latest' is the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. Absent means row-order, byte-identical to v0.1.
      */
