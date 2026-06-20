@@ -1,5 +1,6 @@
 import { isUnsafeKey } from '../lib/safety.js';
 import { ToolError } from '../errors/tool-error.js';
+import type { StyleLibraryArtifact } from './style-library.js';
 
 /**
  * Shared CSS-emit helper for the two token-overlay paths (sprint-121 B3):
@@ -172,4 +173,99 @@ function collectLeaves(node: unknown, pathSegments: string[], out: OverlayDeclar
       collectLeaves(child, [...pathSegments, key], out);
     }
   }
+}
+
+/**
+ * SKIN-path entry point (sprint-123 A1): resolve a measured COLOUR delta to a sanitized,
+ * scoped `:root{}` override on the --sys-/--ref- skin. Distinct from resolveTokenOverlay — it
+ * does NOT call canonicalCssVarName (which hard-prefixes every name --oods- and throws V136 on
+ * any --sys-/--ref- target). Instead it walks the delta to FULL dotted leaf-path keys (e.g.
+ * ['color','surface','default'] -> 'color.surface.default') and looks each up in the Forge-owned
+ * style library: a HIT pushes the mapped --sys-* declaration; a MISS throws OODS-V140. Values
+ * still route through emitRootBlock(sanitizeValues:true) — the <style> sink is unescaped, so the
+ * value side reuses the same sanitisation + first-wins dedup as the token path. Returns '' for an
+ * empty delta (-> default-absent render stays byte-identical).
+ */
+export function resolveSkinOverlay(
+  delta: Record<string, unknown>,
+  library: StyleLibraryArtifact,
+): string {
+  const declarations: OverlayDeclaration[] = [];
+  collectSkinDeclarations(delta, [], library, declarations);
+  return emitRootBlock(declarations, { sanitizeValues: true });
+}
+
+/**
+ * Walk a measured colour delta to leaf values, naming each by its FULL dotted leaf-path looked
+ * up in the style library. Structurally mirrors collectLeaves (bare + DTCG `$value` leaves,
+ * isUnsafeKey denylist, array-leaf rejection) but maps the name via the library instead of
+ * canonicalCssVarName, so the --oods-/V136 token path stays verbatim.
+ */
+function collectSkinDeclarations(
+  node: unknown,
+  pathSegments: string[],
+  library: StyleLibraryArtifact,
+  out: OverlayDeclaration[],
+): void {
+  if (node === null || node === undefined) return;
+
+  if (typeof node === 'string' || typeof node === 'number') {
+    out.push(mapSkinLeaf(pathSegments, String(node), library));
+    return;
+  }
+
+  if (Array.isArray(node)) {
+    throw new ToolError(
+      'OODS-V136',
+      `Skin-overlay leaf must be a string or number, got an array at "${pathSegments.join('.')}".`,
+      { path: pathSegments },
+    );
+  }
+
+  if (typeof node === 'object') {
+    const obj = node as Record<string, unknown>;
+    // DTCG leaf: collapse {$value, $type?, $description?} to its $value; the logical key comes
+    // from the path WITHOUT the $value segment, so $type/$description never leak into the lookup.
+    if (Object.prototype.hasOwnProperty.call(obj, '$value')) {
+      const v = obj['$value'];
+      if (typeof v === 'string' || typeof v === 'number') {
+        out.push(mapSkinLeaf(pathSegments, String(v), library));
+        return;
+      }
+      throw new ToolError(
+        'OODS-V136',
+        `DTCG $value must be a string or number at "${pathSegments.join('.')}".`,
+        { path: pathSegments },
+      );
+    }
+    for (const [key, child] of Object.entries(obj)) {
+      if (isUnsafeKey(key)) {
+        throw new ToolError('OODS-V113', `Unsafe key "${key}" is not allowed in skin deltas.`, { key });
+      }
+      collectSkinDeclarations(child, [...pathSegments, key], library, out);
+    }
+  }
+}
+
+/**
+ * Map one leaf to its --sys-/--ref- declaration via the style library. An unmapped FULL leaf-path
+ * key is a closed-table config error -> OODS-V140 (non-retryable). The mapped name is the trusted
+ * --sys-* literal from the library (constrained by the artifact schema's name pattern); only the
+ * VALUE is consumer-supplied, and emitRootBlock sanitises it.
+ */
+function mapSkinLeaf(
+  pathSegments: string[],
+  value: string,
+  library: StyleLibraryArtifact,
+): OverlayDeclaration {
+  const fullKey = pathSegments.join('.');
+  const mapped = library.mappings[fullKey];
+  if (mapped === undefined) {
+    throw new ToolError(
+      'OODS-V140',
+      `Unmapped style-library logical key: "${fullKey}". No --sys-/--ref- target is registered for it.`,
+      { key: fullKey },
+    );
+  }
+  return { name: mapped, value };
 }

@@ -4468,6 +4468,12 @@ export namespace ReplRenderInputSchema {
       tokenOverlay?: {
         [k: string]: any;
       };
+      /**
+       * Inline measured-COLOUR delta resolved against the Forge-owned style library to a scoped :root{} override on the --sys-/--ref- skin (distinct from tokenOverlay's --oods- token path); applied only in document output (format=document), gated by apply===true. An unmapped logical key fails loud with OODS-V140. Lands in the same components <style> block as tokenOverlay; default-absent is byte-identical.
+       */
+      skinOverlay?: {
+        [k: string]: any;
+      };
     };
     apply?: boolean;
   }

@@ -310,6 +310,35 @@ describe('detectGeoFields — locale-independent tie-break (determinism)', () =>
     expect(new Set(runs).size).toBe(1);
     expect(runs[0]).toBe('region_code');
   });
+
+  it('resolves a locale-divergent (é/z) score+priority tie by code point, not ICU collation', () => {
+    // The region_code/sales_region pair above CANNOT catch a regression back to
+    // localeCompare: 'r' < 's' agrees in BOTH UTF-16 code-unit and ICU collation. These
+    // keys DIVERGE — at index 7 they differ by 'z' (U+007A) vs the precomposed 'é'
+    // (U+00E9). By code unit 0x7A < 0xE9, so compareKeys ranks 'region_zone' first
+    // (deterministic, host-independent). Under a regression to ICU localeCompare, 'é'
+    // collates BEFORE 'z', so 'region_éire' would win and these assertions would fail.
+    // Field names are lowercased (normalizeFieldName), so the divergence MUST use a
+    // DIACRITIC, not case; the 'é' sits in the NON-token suffix so both keys still split to
+    // include the 'region' token (REGION_TOKENS) and reach the tie-break. DO NOT 'simplify'
+    // these back to an ASCII pair — that silently re-opens the localeCompare blind spot (#410).
+    const DIVERGENT = 'region_éire';
+    // Fixture self-guard: the é MUST be PRECOMPOSED (U+00E9) so 0xE9 sits at the divergence
+    // index. An NFD-normalised source ('e' + U+0301) would put 0x65 there and quietly invert
+    // the contrast — fail loud if the file was re-encoded.
+    expect(DIVERGENT.codePointAt(7)).toBe(0xe9);
+
+    const colsForward = [
+      { region_zone: 'A1', [DIVERGENT]: 'North', value: 1 },
+      { region_zone: 'B2', [DIVERGENT]: 'South', value: 2 },
+    ];
+    const colsReversed = [
+      { [DIVERGENT]: 'North', region_zone: 'A1', value: 1 },
+      { [DIVERGENT]: 'South', region_zone: 'B2', value: 2 },
+    ];
+    expect(detectGeoFields(colsForward).regionField).toBe('region_zone');
+    expect(detectGeoFields(colsReversed).regionField).toBe('region_zone');
+  });
 });
 
 describe('toSchemaIntent — data-aware derivation (m02)', () => {

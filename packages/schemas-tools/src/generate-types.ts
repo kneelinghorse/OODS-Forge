@@ -90,9 +90,18 @@ async function readJson(file: string): Promise<Record<string, unknown>> {
 // measure-registry.schema.json (sprint-118 m03) IS a valid schema but is used ONLY
 // for runtime AJV-validate-at-load — generating a MeasureRegistrySchema type would
 // collide with the hand-written MeasureEntry interface (a dual-source-of-truth smell),
-// so it is skip-listed too. Both still bundle to dist/ via the package.json wildcard
-// cp — only the type generator skips them; generated.ts stays byte-identical.
-const NON_SCHEMA_DATA_FILES = new Set(['measure-registry.json', 'measure-registry.schema.json']);
+// so it is skip-listed too. style-library.json + style-library-artifact.schema.json
+// (sprint-123 A1) are the colour-skin counterpart and follow the same recipe: the data
+// file has no root type (would red generate:check) and the schema is runtime-validate-
+// only (a generated type would collide with the hand-written StyleLibraryArtifact
+// interface). Both still bundle to dist/ via the package.json wildcard cp — only the
+// type generator skips them; generated.ts stays byte-identical.
+const NON_SCHEMA_DATA_FILES = new Set([
+  'measure-registry.json',
+  'measure-registry.schema.json',
+  'style-library-artifact.schema.json',
+  'style-library.json',
+]);
 
 async function collectSchemaFiles(dir: string): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
