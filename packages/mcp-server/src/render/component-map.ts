@@ -243,13 +243,14 @@ function renderGrid(node: UiElement, childrenHtml = ''): string {
     gridStyles.push(`grid-template-rows:repeat(${rows}, minmax(0, 1fr))`);
   }
   if (gap) {
-    gridStyles.push(`gap:var(--ref-spacing-${normalizeGridToken(gap)})`);
+    // #552: canonical reference prefix is --ref-space-* (was the dead --ref-spacing-*).
+    gridStyles.push(`gap:var(--ref-space-${normalizeGridToken(gap)})`);
   }
   if (columnGap) {
-    gridStyles.push(`column-gap:var(--ref-spacing-${normalizeGridToken(columnGap)})`);
+    gridStyles.push(`column-gap:var(--ref-space-${normalizeGridToken(columnGap)})`);
   }
   if (rowGap) {
-    gridStyles.push(`row-gap:var(--ref-spacing-${normalizeGridToken(rowGap)})`);
+    gridStyles.push(`row-gap:var(--ref-space-${normalizeGridToken(rowGap)})`);
   }
 
   // Merge with any existing style from layout/style token resolution

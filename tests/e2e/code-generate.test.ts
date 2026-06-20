@@ -158,8 +158,8 @@ describe('code.generate E2E — round-trip pipeline', () => {
     expect(reactResult.code).toContain('Button');
 
     // Verify layout tokens are translated
-    expect(reactResult.code).toContain('var(--ref-spacing-lg)');
-    expect(reactResult.code).toContain('var(--ref-spacing-md)');
+    expect(reactResult.code).toContain('var(--ref-space-lg)');
+    expect(reactResult.code).toContain('var(--ref-space-md)');
   });
 
   it('validate → render → code.generate (Vue) is consistent', async () => {

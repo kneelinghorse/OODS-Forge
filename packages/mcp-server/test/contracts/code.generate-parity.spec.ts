@@ -85,7 +85,7 @@ describe('code.generate parity', () => {
     expect(react.status).toBe('ok');
     expect(vue.status).toBe('ok');
 
-    expect(react.code).toContain("style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-spacing-md)', padding: 'var(--ref-spacing-sm)' }}");
+    expect(react.code).toContain("style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-md)', padding: 'var(--ref-space-sm)' }}");
     expect(react.code).not.toMatch(/style=\{\{\{/);
     expect(vue.code).toContain('style="display: flex; flex-direction: column; gap: var(--ref-spacing-md); padding: var(--ref-spacing-sm)"');
   });

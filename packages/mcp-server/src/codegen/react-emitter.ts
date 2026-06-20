@@ -25,7 +25,10 @@ function normalizeToken(token: string): string {
 }
 
 function tokenVar(group: string, token: string): string {
-  return `var(--ref-${group}-${normalizeToken(token)})`;
+  // #552: the spacing group's canonical reference prefix is --ref-space-* (what
+  // packages/tokens emits); 'spacing' was a dead namespace that never resolved.
+  // Other groups (radius/shadow/color/typography) keep their --ref-<group>- prefix.
+  return `var(--ref-${group === 'spacing' ? 'space' : group}-${normalizeToken(token)})`;
 }
 
 const ALIGN_MAP: Record<NonNullable<UiLayout['align']>, string> = {

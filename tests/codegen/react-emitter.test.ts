@@ -330,7 +330,7 @@ describe('react-emitter', () => {
     ]);
 
     const result = emit(schema, defaultOptions);
-    expect(result.code).toContain('var(--ref-spacing-md)');
+    expect(result.code).toContain('var(--ref-space-md)');
   });
 
   // -------------------------------------------------------------------------
@@ -354,7 +354,7 @@ describe('react-emitter', () => {
 
     const result = emit(schema, defaultOptions);
 
-    expect(result.code).toContain('var(--ref-spacing-lg)');
+    expect(result.code).toContain('var(--ref-space-lg)');
     expect(result.code).toContain('var(--ref-radius-md)');
     expect(result.code).toContain('var(--ref-shadow-sm)');
     expect(result.code).toContain('var(--ref-color-primary)');

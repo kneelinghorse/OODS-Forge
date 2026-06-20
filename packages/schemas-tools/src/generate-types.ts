@@ -96,11 +96,18 @@ async function readJson(file: string): Promise<Record<string, unknown>> {
 // only (a generated type would collide with the hand-written StyleLibraryArtifact
 // interface). Both still bundle to dist/ via the package.json wildcard cp — only the
 // type generator skips them; generated.ts stays byte-identical.
+// style-library-contribution.schema.json (sprint-124 m02) is the INBOUND counterpart —
+// the DRAFT format divergent-inspector sends measured fingerprints back in. It is SPEC-
+// ONLY this sprint (no runtime ingestion loader yet; ingestion is deferred until the
+// format is ratified with darryl), so it is skip-listed to keep generated.ts a NO-OP for
+// an unratified format — emitting a type now would lock a shape that is still being
+// co-authored. Same wildcard cp bundles it to dist/.
 const NON_SCHEMA_DATA_FILES = new Set([
   'measure-registry.json',
   'measure-registry.schema.json',
   'style-library-artifact.schema.json',
   'style-library.json',
+  'style-library-contribution.schema.json',
 ]);
 
 async function collectSchemaFiles(dir: string): Promise<string[]> {

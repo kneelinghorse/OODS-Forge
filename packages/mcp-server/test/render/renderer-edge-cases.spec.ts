@@ -223,7 +223,7 @@ describe('renderer edge cases: Grid layout props', () => {
     ]);
     const result = await renderFull(schema);
     expect(result.status).toBe('ok');
-    expect(result.html).toContain('var(--ref-spacing-cluster-tight)');
+    expect(result.html).toContain('var(--ref-space-cluster-tight)');
   });
 
   it('Grid applies separate columnGap and rowGap', async () => {
@@ -239,8 +239,8 @@ describe('renderer edge cases: Grid layout props', () => {
     ]);
     const result = await renderFull(schema);
     expect(result.status).toBe('ok');
-    expect(result.html).toContain('var(--ref-spacing-cluster-tight)');
-    expect(result.html).toContain('var(--ref-spacing-inset-default)');
+    expect(result.html).toContain('var(--ref-space-cluster-tight)');
+    expect(result.html).toContain('var(--ref-space-inset-default)');
   });
 });
 

@@ -474,6 +474,11 @@ function expandTokenCandidates(tokenKey: string, utility: TailwindUtility): stri
   };
 
   add(tokenKey);
+  // #552: NOT retired. react-emitter + component-map now emit --ref-space-* directly,
+  // but vue-emitter (out of #552 scope) and any dotted ref.spacing.* token ref still
+  // feed ref-spacing-* into this resolver, so the spacing→space repair must stay until
+  // those producers are converted. (The theme-/sys- variants below back the still-broken
+  // tree-renderer sys-spacing path, also out of scope.)
   add(tokenKey.replace(/^ref-spacing-/, 'ref-space-'));
   add(tokenKey.replace(/^theme-spacing-/, 'theme-space-'));
   add(tokenKey.replace(/^sys-spacing-/, 'sys-space-'));

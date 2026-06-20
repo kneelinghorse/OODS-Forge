@@ -28,7 +28,7 @@ describe('react-emitter', () => {
       const result = emit(schema, defaultOpts);
       expect(result.status).toBe('ok');
       // Must have style={{ ... }} (double brace), NOT style={{{ ... }}} (triple)
-      expect(result.code).toContain("style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-spacing-md)' }}");
+      expect(result.code).toContain("style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-md)' }}");
       expect(result.code).not.toMatch(/style=\{\{\{/);
     });
 
@@ -40,7 +40,7 @@ describe('react-emitter', () => {
         children: [],
       });
       const result = emit(schema, defaultOpts);
-      expect(result.code).toContain("style={{ borderRadius: 'var(--ref-radius-sm)', padding: 'var(--ref-spacing-lg)' }}");
+      expect(result.code).toContain("style={{ borderRadius: 'var(--ref-radius-sm)', padding: 'var(--ref-space-lg)' }}");
       expect(result.code).not.toMatch(/style=\{\{\{/);
     });
 

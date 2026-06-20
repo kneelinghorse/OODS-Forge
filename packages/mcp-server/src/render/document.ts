@@ -39,6 +39,7 @@ const DEFAULT_COMPONENT_CSS = `
   color: var(--sys-text-on-interactive, var(--ref-color-neutral-0, #ffffff));
   font-family: inherit;
   padding: var(--oods-size-spacing-sm, 0.5rem) var(--oods-size-spacing-md, 0.875rem);
+  font-size: var(--oods-size-font-md, 16px);
 }
 [data-oods-component="Card"] {
   border: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));
@@ -100,8 +101,17 @@ const DEFAULT_COMPONENT_CSS = `
 // is absent (compact mode) or the vars are unset, padding resolves to the EXACT
 // prior values, so default rendering is byte-stable; with tokens.css loaded the vars
 // resolve through size.spacing → sys → theme → ref.space.scale (8px/14px), numerically
-// identical at the 16px root. font (size.font.*) is seeded NOT consumed — the Button
-// has no font-size and wiring one would be net-new visual, not fallback-safe.
+// identical at the 16px root. (font size.font.* was seeded-not-consumed at s121; s124-m01
+// now wires it — see the next block.)
+// sprint-124 m01 (B2 follow-on / divergent A2, darryl's font ask): the Button `font-size`
+// above consumes --oods-size-font-md with a 16px LITERAL fallback. Same padding precedent,
+// applied to font: the guarantee is COMPUTED-parity, NOT byte-parity. The Button had no
+// font-size and inherited the browser default 16px (#oods-preview-root sets font-family
+// only), and the chain --oods-size-font-md→--sys-text-size-md→--ref-typography-sizes-md
+// resolves to 16px, so the literal fallback reproduces the current rendered size exactly —
+// brand-A render is unchanged. The Button-rule goldens re-bake to include the new
+// declaration; an overlay-supplied measured font value now LANDS on the Button
+// (resolveTokenOverlay emits --oods-size-font-md via the canonicalCssVarName path).
 
 /**
  * CSS block that remaps --theme-* variables to --theme-dark-* under [data-theme="dark"].
@@ -168,12 +178,32 @@ let cachedTokensCss: string | null = null;
 
 function loadTokensCss(): string {
   if (cachedTokensCss !== null) return cachedTokensCss;
+  let content: string;
   try {
-    cachedTokensCss = fs.readFileSync(TOKENS_CSS_PATH, 'utf8');
+    content = fs.readFileSync(TOKENS_CSS_PATH, 'utf8');
   } catch {
+    // Genuine missing file (tokens never built) — a STABLE absence, so cache ''
+    // and stop re-stat'ing on every render.
     cachedTokensCss = '';
+    return cachedTokensCss;
   }
+  // sprint-124 m04 (#554) empty-read race guard: a zero-length read means a
+  // concurrent tokens rebuild has rimraf'd + not-yet-rewritten tokens.css. Return
+  // '' WITHOUT caching so the next render re-reads once the rebuild completes —
+  // caching '' here would poison every later render and fake a size/render
+  // regression. Only a non-empty read is cached.
+  if (content.length === 0) return '';
+  cachedTokensCss = content;
   return cachedTokensCss;
+}
+
+/**
+ * Test-only seam: clears the module-level tokens.css cache so a unit test can
+ * exercise the #554 empty-read race guard (assert that a zero-length read is NOT
+ * cached). Not used by the render path.
+ */
+export function resetTokensCssCache(): void {
+  cachedTokensCss = null;
 }
 
 function normalizeTheme(input: RenderDocumentInput): string {

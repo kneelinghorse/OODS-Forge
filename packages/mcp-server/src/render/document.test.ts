@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { readTokensCssForDocument, renderDocument } from './document.js';
+import fs from 'node:fs';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { readTokensCssForDocument, renderDocument, resetTokensCssCache } from './document.js';
 
 describe('renderDocument', () => {
   it('produces a valid standalone HTML5 document with defaults', () => {
@@ -134,6 +135,17 @@ describe('renderDocument', () => {
     expect(buttonBlock).toContain('var(--oods-size-spacing-md, 0.875rem)');
   });
 
+  it('wires the Button font-size to the size.font scalar token with a 16px literal fallback (sprint-124 m01 / divergent A2)', () => {
+    // A2 font ask: the Button font-size consumes --oods-size-font-md with a 16px literal
+    // fallback. COMPUTED-parity not byte-parity (the s121 padding precedent applied to font):
+    // the Button had no font-size and inherited the browser default 16px, and the token chain
+    // --oods-size-font-md→--sys-text-size-md→--ref-typography-sizes-md resolves to 16px, so the
+    // fallback reproduces the current rendered size — an overlay-supplied measured font now lands.
+    const html = renderDocument({ screenHtml: '<div>Test</div>' });
+    const buttonBlock = html.slice(html.indexOf('[data-oods-component="Button"]'));
+    expect(buttonBlock).toContain('var(--oods-size-font-md, 16px)');
+  });
+
   it('inlines an inline tokenOverlay :root override into the components <style> (sprint-121 m05)', () => {
     // The repl render path resolves a tokenOverlay to a scoped :root{} block and passes it as
     // componentCss; renderDocument must emit it into the raw <style data-source="components">.
@@ -148,5 +160,46 @@ describe('renderDocument', () => {
   it('omits any token override when no componentCss overlay is supplied (default-absent) (sprint-121 m05)', () => {
     const html = renderDocument({ screenHtml: '<div>Test</div>' });
     expect(html).not.toContain('--oods-size-spacing-sm: 10px');
+  });
+});
+
+describe('loadTokensCss empty-read race guard (sprint-124 m04 / #554)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    resetTokensCssCache();
+  });
+
+  it('does NOT cache a zero-length read — a mid-rebuild rimraf must not poison the cache', () => {
+    // WHY this matters: caching '' from a transient empty read makes EVERY later
+    // render serve empty tokens.css, faking a size/render regression (#554/#902).
+    // The guard must keep '' uncached so the next render re-reads after the rebuild.
+    resetTokensCssCache();
+    const spy = vi.spyOn(fs, 'readFileSync').mockReturnValue('');
+    // Rebuild in flight: file exists but is zero-length -> '' returned, NOT cached.
+    expect(readTokensCssForDocument()).toBe('');
+    // Rebuild completes; the very next read MUST re-read and pick up the content.
+    spy.mockReturnValue(':root { --proof: 1; }');
+    expect(readTokensCssForDocument()).toBe(':root { --proof: 1; }');
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('caches a non-empty read once — steady state does not re-read on the second call', () => {
+    resetTokensCssCache();
+    const spy = vi.spyOn(fs, 'readFileSync').mockReturnValue(':root { --x: 1; }');
+    expect(readTokensCssForDocument()).toBe(':root { --x: 1; }');
+    expect(readTokensCssForDocument()).toBe(':root { --x: 1; }');
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('caches an empty string on a GENUINE missing file (stable absence, not a race)', () => {
+    resetTokensCssCache();
+    const err = Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+    const spy = vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
+      throw err;
+    });
+    expect(readTokensCssForDocument()).toBe('');
+    // A genuine ENOENT is a stable absence — cache it so we stop re-stat'ing.
+    expect(readTokensCssForDocument()).toBe('');
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
