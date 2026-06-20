@@ -593,8 +593,8 @@ describe('XSS: Grid component token injection', () => {
       makeNode('Grid', { columns: 3, gap: 'inset-default', rowGap: 'cluster-tight' }),
     );
     expect(html).toContain('grid-template-columns:repeat(3, minmax(0, 1fr))');
-    expect(html).toContain('gap:var(--ref-spacing-inset-default)');
-    expect(html).toContain('row-gap:var(--ref-spacing-cluster-tight)');
+    expect(html).toContain('gap:var(--ref-space-inset-default)');
+    expect(html).toContain('row-gap:var(--ref-space-cluster-tight)');
   });
 });
 

@@ -208,9 +208,9 @@ describe('code.generate contracts — React', () => {
     // Alignment
     expect(result.code).toContain("alignItems: 'center'");
     // Gap token
-    expect(result.code).toContain('var(--ref-spacing-lg)');
+    expect(result.code).toContain('var(--ref-space-lg)');
     // Style tokens
-    expect(result.code).toContain('var(--ref-spacing-md)');
+    expect(result.code).toContain('var(--ref-space-md)');
     expect(result.code).toContain('var(--ref-radius-lg)');
   });
 

@@ -199,7 +199,8 @@ describe('tokens mode specifics', () => {
     });
 
     it('references spacing tokens', () => {
-      expect(result.code).toContain('var(--ref-spacing-');
+      // #552: react-emitter now emits the canonical --ref-space-* prefix.
+      expect(result.code).toContain('var(--ref-space-');
     });
 
     it('references radius tokens', () => {
