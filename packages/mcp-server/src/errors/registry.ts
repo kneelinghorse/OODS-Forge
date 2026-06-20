@@ -144,6 +144,12 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // NOT present in datasets[] — lifted from the frozen-D6 silent value:0 to a fail-loud panel,
   // matching how chart panels already fail (V123). Recoverable (fix the datasetId) — retryable:true.
   ['OODS-V139', { code: 'OODS-V139', category: 'validation', message: 'KPI panel references unknown dataset', retryable: true }],
+  // V140 (sprint-123 A1): a measured colour delta carries a logical leaf-path key (e.g.
+  // 'color.brand.secondary') that the Forge-owned style library does not map to a --sys-/
+  // --ref- skin var. A CLOSED-table config error (like V136/V132/V133/V135) — the key
+  // can't become mapped on retry; the agent must use a registered key or the library must
+  // add the mapping — so retryable:false.
+  ['OODS-V140', { code: 'OODS-V140', category: 'validation', message: 'Unmapped style-library logical key', retryable: false }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
