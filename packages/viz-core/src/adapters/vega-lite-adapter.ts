@@ -334,6 +334,15 @@ function convertInteractionBindings(
 }
 
 function inferFieldType(channel: ChannelName, binding: EncodingBinding): 'quantitative' | 'temporal' | 'ordinal' | 'nominal' {
+  // A data-aware or caller-declared field type wins over channel-default
+  // inference (sprint-125: m01 stamps an unscaled binding's profiled FieldType
+  // here; m02 lets a caller override it directly). The scale branches below stay
+  // authoritative whenever the caller declared a scale — m01 leaves binding.type
+  // unset in that case, so this short-circuit never fires for a scaled binding.
+  if (binding.type) {
+    return binding.type;
+  }
+
   if (binding.timeUnit || binding.scale === 'temporal') {
     return 'temporal';
   }

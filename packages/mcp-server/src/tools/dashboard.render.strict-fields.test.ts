@@ -48,6 +48,33 @@ describe('dashboard.render — strictFields field-presence (sprint-118 m05)', ()
     expect(validateInput(typoKpi())).toBe(true);
   });
 
+  it('accepts encodings.*.type on a chart panel and threads the override into the panel spec (m02 — both surfaces)', async () => {
+    // The dashboard.render surface gets the SAME escape hatch as viz.render: an
+    // encoding object carrying `type` was AJV-rejected before m02. revenue is a
+    // quantitative measure; forcing nominal proves accept + caller-override flow.
+    const chartDash = {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'sales', rows: ROWS }],
+      panels: [
+        {
+          id: 'chart',
+          kind: 'chart',
+          chartType: 'scatter',
+          datasetId: 'sales',
+          encodings: { x: 'region', y: { field: 'revenue', type: 'nominal' } },
+        },
+      ],
+      a11y: { description: 'type override' },
+    } as DashboardRenderInput;
+
+    expect(validateInput(chartDash)).toBe(true);
+    const out = await handle(chartDash);
+    expect(out.status).toBe('ok');
+    const chart = out.panels.find((p) => p.id === 'chart') as Record<string, any>;
+    expect(chart.kind).toBe('chart');
+    expect((chart.spec as Record<string, any>).encoding.y.type).toBe('nominal');
+  });
+
   it('(1) flag OFF: a typo KPI field stays the legacy silent-empty value:0 — no V131 (frozen D6)', async () => {
     const out = await handle(typoKpi());
     expect(validateOutput(out)).toBe(true);

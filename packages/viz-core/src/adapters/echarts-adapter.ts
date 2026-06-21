@@ -462,6 +462,17 @@ function defaultAxis(channel: 'x' | 'y'): EChartsAxis {
 }
 
 function inferAxisType(channel: 'x' | 'y', binding: EncodingBinding): EChartsAxis['type'] {
+  // A data-aware or caller-declared field type maps directly onto the ECharts
+  // axis kind so the vega + echarts dual outputs AGREE (sprint-125 m01/m02).
+  // Without this, an explicit `quantitative` would still fall to the echarts
+  // category-axis channel default below while vega honored the type — the
+  // silent dual-output trap.
+  if (binding.type) {
+    if (binding.type === 'temporal') return 'time';
+    if (binding.type === 'quantitative') return 'value';
+    return 'category'; // ordinal | nominal
+  }
+
   if (binding.scale === 'temporal' || binding.timeUnit) {
     return 'time';
   }

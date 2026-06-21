@@ -115,8 +115,8 @@ describe('tree-renderer', () => {
   it('resolves style tokens to CSS variable references with sys fallback to ref', () => {
     const html = renderTree(schemaFixture);
 
-    expect(html).toContain('gap:var(--sys-spacing-inset-default, var(--ref-spacing-inset-default))');
-    expect(html).toContain('padding:var(--sys-spacing-inset-default, var(--ref-spacing-inset-default))');
+    expect(html).toContain('gap:var(--sys-space-inset-default, var(--ref-space-inset-default))');
+    expect(html).toContain('padding:var(--sys-space-inset-default, var(--ref-space-inset-default))');
     expect(html).toContain('border-radius:var(--sys-radius-md, var(--ref-radius-md))');
     expect(html).toContain('box-shadow:var(--sys-shadow-lg, var(--ref-shadow-lg))');
     expect(html).toContain('color:var(--sys-color-text-primary, var(--ref-color-text-primary))');
@@ -139,7 +139,7 @@ describe('tree-renderer', () => {
       typographyToken: 'body-default',
     });
 
-    expect(resolved.padding).toBe('var(--sys-spacing-inset-default, var(--ref-spacing-inset-default))');
+    expect(resolved.padding).toBe('var(--sys-space-inset-default, var(--ref-space-inset-default))');
     expect(resolved['border-radius']).toBe('var(--sys-radius-sm, var(--ref-radius-sm))');
     expect(resolved['box-shadow']).toBe('var(--sys-shadow-md, var(--ref-shadow-md))');
     expect(resolved.color).toBe('var(--sys-color-text-primary, var(--ref-color-text-primary))');

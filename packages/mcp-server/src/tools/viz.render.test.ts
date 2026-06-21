@@ -88,6 +88,25 @@ describe('viz.render handler', () => {
     expect(validateOutput(out)).toBe(true);
   });
 
+  it('accepts encodings.*.type and lets a caller override the inferred field type (m02 escape hatch)', async () => {
+    // Before m02 an encoding object carrying `type` was AJV-REJECTED
+    // (additionalProperties:false on the binding). revenue is a quantitative
+    // measure; forcing it to nominal proves the schema accepts `type` AND the
+    // caller override wins over the engine's inference and reaches the spec + IR.
+    const input = {
+      rows: SALES,
+      chartType: 'scatter',
+      encodings: { x: 'region', y: { field: 'revenue', type: 'nominal' } },
+      output: { includeNormalizedSpec: true },
+    };
+    expect(validateInput(input)).toBe(true);
+
+    const out = await render(input);
+    expect(out.status).toBe('ok');
+    expect((out.spec as Record<string, any>).encoding.y.type).toBe('nominal');
+    expect((out.normalizedSpec as Record<string, any>).encoding.y.type).toBe('nominal');
+  });
+
   it('echarts opt-in also returns an ECharts option', async () => {
     const out = await render({
       rows: SALES,

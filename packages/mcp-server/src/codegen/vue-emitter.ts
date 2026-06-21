@@ -15,6 +15,7 @@ import {
   resolveFieldProps,
 } from './binding-utils.js';
 import { runPreEmit, type PreEmitContext } from './pre-emit.js';
+import { resolveSpacingLeaf } from '../render/spacing-leaf.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (shared logic with tree-renderer.ts / react-emitter.ts)
@@ -25,6 +26,12 @@ function normalizeToken(token: string): string {
 }
 
 function tokenVar(group: string, token: string): string {
+  // sprint-125 m03: converge onto the canonical --ref-space-* prefix (was the dead
+  // --ref-spacing-*, diverging from react-emitter) and resolve a bare t-shirt size
+  // (sm/md/lg) to its scale-<size> leaf so the var actually resolves.
+  if (group === 'spacing') {
+    return `var(--ref-space-${normalizeToken(resolveSpacingLeaf(token))})`;
+  }
   return `var(--ref-${group}-${normalizeToken(token)})`;
 }
 

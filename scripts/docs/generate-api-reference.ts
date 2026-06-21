@@ -295,6 +295,14 @@ function generateIndex(tools: Array<{ name: string; description: string; tier: s
 
 // ── Main ──────────────────────────────────────────────────────────────────
 
+// sprint-125 m05: --check regenerates into memory and compares against the
+// committed docs/api/* — exit 1 on any diff — so a schema/description change that
+// isn't re-baked reds CI (mirrors the schemas-tools generate-types.ts --check
+// freshness gate). Preferred over `git diff --exit-code`, which would false-fail
+// on any unrelated dirty generated file. A bare `--` (from `pnpm ... -- --check`)
+// is ignored by the includes() check.
+const CHECK = process.argv.slice(2).includes('--check');
+
 const descriptions = readJson<Record<string, string>>(DESCRIPTIONS_PATH);
 const registry = readJson<{ auto: string[]; onDemand: string[] }>(REGISTRY_PATH);
 
@@ -303,10 +311,10 @@ const allTools = [
   ...registry.onDemand.map((name) => ({ name, tier: 'on-demand' as const })),
 ];
 
-fs.mkdirSync(OUT_DIR, { recursive: true });
-
+// Compute every output file's content IN MEMORY first, so --check can compare
+// against the committed copy without touching the filesystem.
+const outputs = new Map<string, string>();
 const indexEntries: Array<{ name: string; description: string; tier: string }> = [];
-let generated = 0;
 
 for (const { name, tier } of allTools) {
   const inputPath = path.join(SCHEMAS_DIR, `${name}.input.json`);
@@ -329,16 +337,31 @@ for (const { name, tier } of allTools) {
   const description = descriptions[name] ?? `MCP tool: ${name}`;
 
   const markdown = generateToolDoc(name, description, inputSchema, outputSchema, tier);
-  const outFile = path.join(OUT_DIR, `${toolSlug(name)}.md`);
-  fs.writeFileSync(outFile, markdown, 'utf-8');
-
+  outputs.set(path.join(OUT_DIR, `${toolSlug(name)}.md`), markdown);
   indexEntries.push({ name, description, tier });
-  generated++;
 }
 
-// Write index
-const indexMd = generateIndex(indexEntries);
-fs.writeFileSync(path.join(OUT_DIR, 'README.md'), indexMd, 'utf-8');
+outputs.set(path.join(OUT_DIR, 'README.md'), generateIndex(indexEntries));
 
-console.log(`Generated ${generated} API reference docs in ${OUT_DIR}`);
-console.log(`Index: ${path.join(OUT_DIR, 'README.md')}`);
+if (CHECK) {
+  const stale: string[] = [];
+  for (const [file, content] of outputs) {
+    const current = fs.existsSync(file) ? fs.readFileSync(file, 'utf-8') : null;
+    if (current !== content) {
+      stale.push(path.relative(ROOT, file));
+    }
+  }
+  if (stale.length > 0) {
+    console.error(`✗ docs/api is STALE — ${stale.length} file(s) differ from the schemas/descriptions. Re-run \`pnpm run docs:api\` and commit:`);
+    for (const f of stale) console.error(`  - ${f}`);
+    process.exit(1);
+  }
+  console.log(`✔ docs/api is fresh (${outputs.size} files checked).`);
+} else {
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  for (const [file, content] of outputs) {
+    fs.writeFileSync(file, content, 'utf-8');
+  }
+  console.log(`Generated ${outputs.size} API reference docs in ${OUT_DIR}`);
+  console.log(`Index: ${path.join(OUT_DIR, 'README.md')}`);
+}

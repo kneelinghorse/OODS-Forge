@@ -2,9 +2,9 @@
 //
 // Public surface mirrors the original src/viz/index.ts headless exports (minus
 // the React hooks, which stay in src/viz) and additionally exposes the chart
-// recommender so the MCP viz.render handler can consume it. The deferred
-// spatial / network / echarts-complex clusters are NOT part of this beachhead
-// (Phase 1).
+// recommender so the MCP viz.render handler can consume it. The spatial (geo) /
+// network / hierarchy / echarts-complex chart clusters that began deferred have
+// since shipped (sprints 111–120) and are exported below.
 
 // Spec IR + AJV validator
 export * from './spec/normalized-viz-spec.js';

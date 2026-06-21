@@ -85,8 +85,9 @@ describe('code.generate parity', () => {
     expect(react.status).toBe('ok');
     expect(vue.status).toBe('ok');
 
-    expect(react.code).toContain("style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-md)', padding: 'var(--ref-space-sm)' }}");
+    expect(react.code).toContain("style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-scale-md)', padding: 'var(--ref-space-scale-sm)' }}");
     expect(react.code).not.toMatch(/style=\{\{\{/);
-    expect(vue.code).toContain('style="display: flex; flex-direction: column; gap: var(--ref-spacing-md); padding: var(--ref-spacing-sm)"');
+    // sprint-125 m03: vue converged onto react's canonical --ref-space-* + scale-<size> leaf.
+    expect(vue.code).toContain('style="display: flex; flex-direction: column; gap: var(--ref-space-scale-md); padding: var(--ref-space-scale-sm)"');
   });
 });

@@ -15,6 +15,7 @@ import {
   resolveFieldProps,
 } from './binding-utils.js';
 import { runPreEmit } from './pre-emit.js';
+import { resolveSpacingLeaf } from '../render/spacing-leaf.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (mirrors tree-renderer.ts logic in React style format)
@@ -28,7 +29,12 @@ function tokenVar(group: string, token: string): string {
   // #552: the spacing group's canonical reference prefix is --ref-space-* (what
   // packages/tokens emits); 'spacing' was a dead namespace that never resolved.
   // Other groups (radius/shadow/color/typography) keep their --ref-<group>- prefix.
-  return `var(--ref-${group === 'spacing' ? 'space' : group}-${normalizeToken(token)})`;
+  // sprint-125 m03: a bare t-shirt size (sm/md/lg) resolves to its scale-<size>
+  // leaf so var(--ref-space-md) → var(--ref-space-scale-md) actually resolves.
+  if (group === 'spacing') {
+    return `var(--ref-space-${normalizeToken(resolveSpacingLeaf(token))})`;
+  }
+  return `var(--ref-${group}-${normalizeToken(token)})`;
 }
 
 const ALIGN_MAP: Record<NonNullable<UiLayout['align']>, string> = {

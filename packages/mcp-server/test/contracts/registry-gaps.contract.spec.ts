@@ -210,9 +210,9 @@ describe('Grid component rendering', () => {
     expect(gridFragment.html).toContain('display:grid');
     expect(gridFragment.html).toContain('grid-template-columns:repeat(3, minmax(0, 1fr))');
     expect(gridFragment.html).toContain('grid-template-rows:repeat(2, minmax(0, 1fr))');
-    expect(gridFragment.html).toContain('gap:var(--ref-space-md)');
-    expect(gridFragment.html).toContain('column-gap:var(--ref-space-sm)');
-    expect(gridFragment.html).toContain('row-gap:var(--ref-space-lg)');
+    expect(gridFragment.html).toContain('gap:var(--ref-space-scale-md)');
+    expect(gridFragment.html).toContain('column-gap:var(--ref-space-scale-sm)');
+    expect(gridFragment.html).toContain('row-gap:var(--ref-space-scale-lg)');
   });
 
   it('Grid renders children inside grid layout', async () => {

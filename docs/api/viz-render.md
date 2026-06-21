@@ -1,6 +1,6 @@
 # viz.render
 
-> Render a real, data-bound visualization spec from inline rows (or a datasetRef). Supply chartType+encodings for explicit mode, or omit chartType for recommender-driven suggest mode. Returns a compiled Vega-Lite spec (ECharts opt-in via output.echarts) with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports bar, line, area, scatter, heatmap.
+> Render a real, data-bound visualization spec from inline rows (or a datasetRef). Supply chartType+encodings for explicit mode, or omit chartType for recommender-driven suggest mode. Returns a compiled Vega-Lite spec (ECharts opt-in via output.echarts) with a synthesized a11y description; compact by default with a specRef trio for pipeline reuse. Supports 13 chart types: 5 tabular (bar, line, area, scatter, heatmap) in both suggest and explicit mode, plus 8 explicit-only (treemap, sunburst, sankey, force_graph, chord, choropleth, bubble_map, flow_map).
 
 **Registration:** auto
 

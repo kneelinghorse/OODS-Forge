@@ -1131,6 +1131,10 @@ export namespace DashboardRenderInputSchema {
         field: string;
         aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
         scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
         timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
         sort?:
           | ('none' | 'ascending' | 'descending')
@@ -6449,6 +6453,10 @@ export namespace VizRenderInputSchema {
         field: string;
         aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
         scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
         timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
         sort?:
           | ('none' | 'ascending' | 'descending')
