@@ -1,6 +1,6 @@
 <template>
   <Stack id="detail-page-screen" data-oods-component="Stack">
-      <Card id="detail-card" data-oods-component="Card" data-layout="sidebar" style="align-items: start; display: grid; gap: var(--ref-spacing-lg); grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem)">
+      <Card id="detail-card" data-oods-component="Card" data-layout="sidebar" style="align-items: start; display: grid; gap: var(--ref-space-scale-lg); grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem)">
             <div data-sidebar-main>
               <Stack id="detail-main-stack" data-oods-component="Stack">
                         <DetailHeader id="detail-header" data-oods-component="DetailHeader" status="Active" subtitle="Enterprise" title="Account 2049" />

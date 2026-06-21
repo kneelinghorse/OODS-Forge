@@ -56,6 +56,11 @@ export interface EncodingInput {
   readonly timeUnit?: TraitBinding['timeUnit'];
   readonly sort?: TraitBinding['sort'];
   readonly title?: string;
+  /**
+   * Force the Vega-Lite/ECharts field type (sprint-125 m02 manual escape hatch).
+   * A caller-declared type wins over m01's data-aware profile inference.
+   */
+  readonly type?: TraitBinding['type'];
 }
 
 export interface BuildVizSpecInput {
@@ -233,8 +238,12 @@ export function buildVizSpecFromRows(input: BuildVizSpecInput): BuildVizSpecResu
  * Determinism is the contract — same rows yield a byte-identical FieldProfile[]
  * (fixed reduction order, 6dp rounding, UTC-pinned date parsing).
  *
- * Still gates SUGGEST mode only — explicit mode (caller declares chartType +
- * encodings) never relies on inference.
+ * Drives SUGGEST-mode recommendation AND, since sprint-125 m01, EXPLICIT-mode
+ * data-aware channel typing: buildExplicit profiles the rows and stamps each
+ * unscaled binding's data-derived FieldType onto it, so an all-distinct-float
+ * axis no longer falls to the adapter's ordinal/nominal channel default. A
+ * caller-declared scale/aggregate/timeUnit still wins (the deliberate
+ * discrete-numeric-axis escape).
  */
 export function inferFieldProfile(
   rows: ReadonlyArray<Record<string, unknown>>,
@@ -439,8 +448,40 @@ function buildExplicit(input: BuildVizSpecInput, chartType: ChartType): BuildViz
     );
   }
 
+  applyDataAwareTypes(encoding, input.rows);
+
   const spec = assembleSpec(input, chartType, encoding);
   return { spec, chartType, mode: 'explicit' };
+}
+
+/**
+ * Explicit-mode data-aware typing (sprint-125 m01, Forge-Demos P0-1). The
+ * adapters type an unscaled x/y as ordinal and an unscaled color as nominal from
+ * channel defaults alone, so all-distinct floats render on a discrete axis. Here
+ * we profile the rows and stamp the data-derived FieldType onto each binding the
+ * caller did NOT already constrain with a scale / aggregate / timeUnit — those
+ * are deliberate declarations (the discrete-numeric-axis escape) the adapter's
+ * existing scale branches must still own. The adapters short-circuit on
+ * `binding.type` before their channel defaults, so this corrects the type without
+ * touching any scaled/aggregated binding. A caller-declared type (sprint-125 m02
+ * escape hatch, threaded through normalizeEncodings) is also left untouched — the
+ * manual override wins over the data-aware profile.
+ */
+function applyDataAwareTypes(
+  encoding: Partial<Record<EncodingChannel, TraitBinding>>,
+  rows: ReadonlyArray<Record<string, unknown>>,
+): void {
+  const typeByField = new Map(inferFieldProfile(rows).map((p) => [p.name, p.type]));
+  for (const channel of Object.keys(encoding) as EncodingChannel[]) {
+    const binding = encoding[channel];
+    if (!binding || binding.type || binding.scale || binding.aggregate || binding.timeUnit) {
+      continue;
+    }
+    const inferred = typeByField.get(binding.field);
+    if (inferred) {
+      binding.type = inferred;
+    }
+  }
 }
 
 // --- suggest mode -----------------------------------------------------------
@@ -623,6 +664,7 @@ function normalizeEncodings(
       ...(value.timeUnit ? { timeUnit: value.timeUnit } : {}),
       ...(value.sort ? { sort: value.sort } : {}),
       ...(value.title ? { title: value.title } : {}),
+      ...(value.type ? { type: value.type } : {}),
     };
   }
   return out;

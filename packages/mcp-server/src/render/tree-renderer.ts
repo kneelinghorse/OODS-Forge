@@ -1,6 +1,7 @@
 import type { UiElement, UiLayout, UiSchema, UiStyle } from '../schemas/generated.js';
 import { renderMappedComponent } from './component-map.js';
 import { escapeHtml } from './escape-html.js';
+import { resolveSpacingLeaf } from './spacing-leaf.js';
 
 type CssDeclarations = Record<string, string>;
 export interface FragmentResult {
@@ -34,8 +35,13 @@ function normalizeToken(token: string): string {
 }
 
 function tokenVar(group: string, token: string): string {
-  const normalized = normalizeToken(token);
-  return `var(--sys-${group}-${normalized}, var(--ref-${group}-${normalized}))`;
+  // sprint-125 m03: converge onto the canonical space prefix (the spacing group
+  // emitted dead --sys-spacing-/--ref-spacing-; built tokens define only
+  // --sys-space-*/--ref-space-*) and resolve a bare t-shirt size (sm/md/lg) to its
+  // scale-<size> leaf. Other groups keep their own prefix + leaf untouched.
+  const resolvedGroup = group === 'spacing' ? 'space' : group;
+  const normalized = normalizeToken(group === 'spacing' ? resolveSpacingLeaf(token) : token);
+  return `var(--sys-${resolvedGroup}-${normalized}, var(--ref-${resolvedGroup}-${normalized}))`;
 }
 
 function toCssString(declarations: CssDeclarations): string {

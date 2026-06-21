@@ -229,7 +229,8 @@ describe('tokens mode specifics', () => {
     });
 
     it('references spacing tokens', () => {
-      expect(result.code).toContain('var(--ref-spacing-');
+      // sprint-125 m03: vue converged onto the canonical --ref-space-* prefix (was --ref-spacing-).
+      expect(result.code).toContain('var(--ref-space-');
     });
 
     it('references radius tokens', () => {

@@ -57,6 +57,9 @@ jobs:
       - name: Check schema-derived types are fresh (Generator B, #681 retarget)
         run: pnpm run generate:schema-types -- --check
 
+      - name: Check API reference docs are fresh (sprint-125 m05)
+        run: pnpm -w run docs:api -- --check
+
       - name: Build workspace
         run: pnpm run build
 

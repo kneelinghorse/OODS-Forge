@@ -139,6 +139,10 @@ export interface TraitBinding {
   bin?: boolean;
   timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
   scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+  /**
+   * Vega-Lite field type. When set, short-circuits channel-default and scale-derived type inference in the adapters (explicit-mode data-aware typing, sprint-125 m01).
+   */
+  type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
   sort?:
     | ('none' | 'ascending' | 'descending')
     | {

@@ -1,5 +1,6 @@
 import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
+import { resolveSpacingLeaf } from './spacing-leaf.js';
 
 export type ComponentRenderer = (node: UiElement, childrenHtml?: string) => string;
 
@@ -244,13 +245,14 @@ function renderGrid(node: UiElement, childrenHtml = ''): string {
   }
   if (gap) {
     // #552: canonical reference prefix is --ref-space-* (was the dead --ref-spacing-*).
-    gridStyles.push(`gap:var(--ref-space-${normalizeGridToken(gap)})`);
+    // sprint-125 m03: resolve a bare t-shirt size (sm/md/lg) to its scale-<size> leaf.
+    gridStyles.push(`gap:var(--ref-space-${normalizeGridToken(resolveSpacingLeaf(gap))})`);
   }
   if (columnGap) {
-    gridStyles.push(`column-gap:var(--ref-space-${normalizeGridToken(columnGap)})`);
+    gridStyles.push(`column-gap:var(--ref-space-${normalizeGridToken(resolveSpacingLeaf(columnGap))})`);
   }
   if (rowGap) {
-    gridStyles.push(`row-gap:var(--ref-space-${normalizeGridToken(rowGap)})`);
+    gridStyles.push(`row-gap:var(--ref-space-${normalizeGridToken(resolveSpacingLeaf(rowGap))})`);
   }
 
   // Merge with any existing style from layout/style token resolution

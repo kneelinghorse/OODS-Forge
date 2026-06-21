@@ -13,7 +13,7 @@ export const GeneratedUI: React.FC = () => {
   return (
     <>
       <Stack id="detail-page-screen" data-oods-component="Stack">
-            <Card id="detail-card" data-oods-component="Card" data-layout="sidebar" style={{ alignItems: 'start', display: 'grid', gap: 'var(--ref-space-lg)', gridTemplateColumns: 'minmax(0, 1fr) minmax(16rem, 24rem)' }}>
+            <Card id="detail-card" data-oods-component="Card" data-layout="sidebar" style={{ alignItems: 'start', display: 'grid', gap: 'var(--ref-space-scale-lg)', gridTemplateColumns: 'minmax(0, 1fr) minmax(16rem, 24rem)' }}>
                     <div data-sidebar-main>
                       <Stack id="detail-main-stack" data-oods-component="Stack">
                                   <DetailHeader id="detail-header" data-oods-component="DetailHeader" status="Active" subtitle="Enterprise" title="Account 2049" />

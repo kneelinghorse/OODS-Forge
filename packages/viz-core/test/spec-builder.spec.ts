@@ -5,6 +5,7 @@ import {
   fieldCorrelation,
   inferFieldProfile,
   suggestPatterns,
+  toEChartsOption,
   toSchemaIntent,
   toVegaLiteSpec,
   validateNormalizedVizSpec,
@@ -101,6 +102,66 @@ describe('buildVizSpecFromRows — explicit mode', () => {
       description: 'Quarterly revenue per region.',
     });
     expect(spec.a11y.description).toBe('Quarterly revenue per region.');
+  });
+
+  // sprint-125 m01 (Forge-Demos P0-1): two distinct float columns whose names trip
+  // NO measure/year/zip hint, so the ONLY typing signal is the data itself.
+  const FLOATS = [
+    { sensorA: 40.71, sensorB: 12.34 },
+    { sensorA: 34.05, sensorB: 56.78 },
+    { sensorA: 41.88, sensorB: 90.12 },
+    { sensorA: 29.76, sensorB: 33.45 },
+  ];
+
+  it('types an unscaled all-distinct-float x/y as quantitative, not the ordinal channel default (P0-1)', () => {
+    // Before m01 an unscaled explicit x/y fell to the adapter channel default
+    // (ordinal), so all-distinct floats rendered on a discrete axis. The builder
+    // now stamps the data-derived FieldType onto the binding.
+    const { spec } = buildVizSpecFromRows({
+      rows: FLOATS,
+      chartType: 'scatter',
+      encodings: { x: 'sensorA', y: 'sensorB' },
+    });
+    // The binding carries the data-derived type…
+    expect(spec.encoding.x?.type).toBe('quantitative');
+    expect(spec.encoding.y?.type).toBe('quantitative');
+    // …and it reaches the rendered Vega-Lite spec (the actual bug surface — this
+    // was 'ordinal' before the fix, so the assertion fails on the old engine).
+    const vl = toVegaLiteSpec(spec) as { encoding: Record<string, { type: string }> };
+    expect(vl.encoding.x.type).toBe('quantitative');
+    expect(vl.encoding.y.type).toBe('quantitative');
+  });
+
+  it('preserves a caller-declared scale over the data profile (discrete-numeric-axis escape)', () => {
+    // A caller declaring scale:'band' deliberately wants a discrete axis; m01
+    // leaves binding.type UNSET for scaled bindings, so the adapter's band→ordinal
+    // branch still wins. The sibling unscaled y still gets the quantitative type.
+    const { spec } = buildVizSpecFromRows({
+      rows: FLOATS,
+      chartType: 'scatter',
+      encodings: { x: { field: 'sensorA', scale: 'band' }, y: 'sensorB' },
+    });
+    expect(spec.encoding.x?.type).toBeUndefined();
+    const vl = toVegaLiteSpec(spec) as { encoding: Record<string, { type: string }> };
+    expect(vl.encoding.x.type).toBe('ordinal');
+    expect(vl.encoding.y.type).toBe('quantitative');
+  });
+
+  it('a caller-declared type overrides the data profile, and vega + echarts agree (m02)', () => {
+    // sensorA all-distinct floats → m01 would profile quantitative. A caller
+    // forcing type:'nominal' must WIN (caller > profile), and BOTH adapters must
+    // honor it — vega 'nominal' / echarts 'category' — else the dual outputs
+    // silently diverge (an explicit quantitative on a category echarts axis).
+    const { spec } = buildVizSpecFromRows({
+      rows: FLOATS,
+      chartType: 'bar',
+      encodings: { x: { field: 'sensorA', type: 'nominal' }, y: 'sensorB' },
+    });
+    expect(spec.encoding.x?.type).toBe('nominal');
+    const vl = toVegaLiteSpec(spec) as { encoding: Record<string, { type: string }> };
+    expect(vl.encoding.x.type).toBe('nominal');
+    const ec = toEChartsOption(spec) as { xAxis?: { type?: string } };
+    expect(ec.xAxis?.type).toBe('category');
   });
 
   it('throws when x or y is missing in explicit mode', () => {
