@@ -216,12 +216,21 @@ metadata:
     - User
     - Invoice
   governanceExamples:
+    # Illustrative only. The LIVE authority for the subscription machine is
+    # src/domain/billing/states.ts (SUBSCRIPTION_TRANSITIONS); transitionRules here
+    # is documentation and is intentionally NOT wired into the runtime machine, to
+    # avoid a second source of truth (see the s126-m01 single-source guard). Mirrors
+    # the extend-8 set: terminated is terminal ([]) and pending_cancellation is
+    # reversible back to active.
     - name: Subscription lifecycle
       transitionRules:
-        draft: [active, archived]
-        active: [paused, delinquent, terminated]
+        future: [trialing, active, terminated]
+        trialing: [active, terminated]
+        active: [paused, pending_cancellation, past_due, terminated]
         paused: [active, terminated]
-        delinquent: [active, terminated]
+        pending_cancellation: [active, terminated]
+        past_due: [active, unpaid, terminated]
+        unpaid: [terminated]
         terminated: []
       requireTransitionReason: true
     - name: Content publishing

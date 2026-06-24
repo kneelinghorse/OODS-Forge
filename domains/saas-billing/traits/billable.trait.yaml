@@ -1,7 +1,13 @@
 trait:
   name: SaaSBillingBillable
   version: 1.0.0
-  description: Normalizes recurring price configuration for SaaS plans including cadence, currency, and trial policy.
+  description: >-
+    Normalizes recurring price configuration for SaaS plans including cadence, currency,
+    and trial policy. NOTE (trait-split gap, s126-m04): this domain trait does NOT model
+    proration — no supportProration/proration_amount/proration_date/prorationBehavior. A
+    Subscription composing only SaaSBillingBillable silently cannot prorate. To enable
+    proration, compose the CORE financial/Billable trait (which owns the proration
+    semantics). See traits/financial/Billable.trait.yaml.
   category: domain
   tags:
     - billing

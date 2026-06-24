@@ -74,7 +74,7 @@ describe('Canonical object registry integration', () => {
       expectedFields: ['subscription_id', 'status', 'current_period_end'],
       expectedTraits: ['Stateful', 'Cancellable', 'Timestampable', 'Billable', 'Archivable'],
       unionSnippet:
-        "status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'delinquent' | 'terminated';",
+        "status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';",
     },
   ];
 

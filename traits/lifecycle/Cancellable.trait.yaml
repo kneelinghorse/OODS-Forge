@@ -44,7 +44,13 @@ schema:
   cancel_at_period_end:
     type: boolean
     required: true
-    description: Indicates whether cancellation occurs at the natural period end instead of immediately.
+    description: >-
+      Whether cancellation occurs at the natural period end instead of immediately.
+      When true the entity is in a REVERSIBLE pending-cancellation state: the schedule
+      can be undone (set back to false) any time before period end, returning the entity
+      to active. This is distinct from a terminal cancellation (a `terminated`/canceled
+      subscription), which is irreversible and non-reactivatable. Mirrors Stripe's
+      cancel_at_period_end flag (docs.stripe.com/billing/subscriptions/cancel).
     default: false
   cancellation_reason:
     type: string

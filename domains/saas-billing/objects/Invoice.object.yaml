@@ -81,7 +81,10 @@ schema:
   dunning_step:
     type: string
     required: false
-    description: "Current dunning playbook step (ex: reminder_1, reminder_final, collections)."
+    description: >-
+      Current dunning playbook step label (ex: reminder_1, reminder_final, collections).
+      The structured retry window (attempt_count + next_payment_attempt) is provided by
+      the composed SaaSBillingPayable trait; this field is the human-readable step name.
   payment_source:
     type: string
     required: false

@@ -181,7 +181,7 @@ export interface Subscription {
    * Source: Subscription (object override)
    * Overrides: Stateful
    */
-  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'delinquent' | 'terminated';
+  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';
 
   /**
    * Primary identifier used across billing and lifecycle systems.

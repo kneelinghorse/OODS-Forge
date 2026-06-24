@@ -63,6 +63,12 @@ export function adaptToECharts(input: EChartsSpatialAdapterInput): EChartsSpatia
   const visualMaps: VisualMapComponentOption[] = [];
   let geo: GeoComponentOption | undefined;
   let geoRegistration: FeatureCollection | undefined;
+  // Accumulate geo-join diagnostics across ALL region layers (sprint-126 m06 / Forge-Demos #11).
+  // The single-layer choropleth adapter attaches __joinDiagnostics, but this multi-layer
+  // dispatcher previously discarded result.diagnostics, so OODS-V134 unmatched-region warnings
+  // never reached consumers on the layers:[regionFill, route] overlay path.
+  type JoinDiagnostics = NonNullable<ChoroplethBuildResult['diagnostics']>;
+  let joinDiagnostics: { unmatchedData: string[]; unmatchedFeatures: string[] } | undefined;
 
   if (regionLayers.length > 0) {
     if (!geoData) {
@@ -75,6 +81,12 @@ export function adaptToECharts(input: EChartsSpatialAdapterInput): EChartsSpatia
       visualMaps.push(result.visualMap);
       geo = geo ?? (result.geo as GeoComponentOption);
       geoRegistration = geoRegistration ?? result.registration.geoJson;
+      if (result.diagnostics) {
+        const diagnostics: JoinDiagnostics = result.diagnostics;
+        joinDiagnostics ??= { unmatchedData: [], unmatchedFeatures: [] };
+        joinDiagnostics.unmatchedData.push(...diagnostics.unmatchedData);
+        joinDiagnostics.unmatchedFeatures.push(...diagnostics.unmatchedFeatures);
+      }
     }
   }
 
@@ -133,6 +145,19 @@ export function adaptToECharts(input: EChartsSpatialAdapterInput): EChartsSpatia
 
   if (geoRegistration) {
     (option as Record<string, unknown>).__registration = geoRegistration;
+  }
+
+  // Expose merged geo-join diagnostics ONLY when something was unmatched, mirroring the
+  // single-layer choropleth adapter's __joinDiagnostics escape hatch (and the __registration
+  // pattern above). Dedupe across layers so a region unmatched in multiple layers reports once;
+  // Set preserves insertion order, keeping output deterministic. viz.render reads this to emit
+  // OODS-V134, then strips it so the default (fully-matched) path stays byte-identical.
+  if (joinDiagnostics) {
+    const dedupe = (values: string[]): string[] => Array.from(new Set(values));
+    (option as Record<string, unknown>).__joinDiagnostics = {
+      unmatchedData: dedupe(joinDiagnostics.unmatchedData),
+      unmatchedFeatures: dedupe(joinDiagnostics.unmatchedFeatures),
+    };
   }
 
   return {
