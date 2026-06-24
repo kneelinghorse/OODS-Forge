@@ -1,6 +1,6 @@
 object:
   name: Subscription
-  version: 1.0.0
+  version: 2.0.0
   domain: saas.billing
   description: Canonical SaaS subscription object composed from lifecycle, pricing, and usage traits with provider mapping.
   tags:
@@ -13,16 +13,19 @@ traits:
     alias: SubscriptionLifecycle
     parameters:
       states:
+        # Canonical Stripe-literal extend-8 set (single source of truth:
+        # src/domain/billing/states.ts SUBSCRIPTION_STATES; enforced by the
+        # state-set-convergence guard). Normalized from the prior divergent
+        # 10-state list: non_renewing → pending_cancellation; incomplete →
+        # future; incomplete_expired + canceled → terminated; added unpaid.
         - future
         - trialing
         - active
-        - past_due
         - paused
         - pending_cancellation
-        - non_renewing
-        - incomplete
-        - incomplete_expired
-        - canceled
+        - past_due
+        - unpaid
+        - terminated
       initialState: future
   - name: SaaSBillingBillable
     alias: PlanDetails
@@ -70,6 +73,20 @@ schema:
     type: email
     required: false
     description: Contact email for the assigned customer owner.
+  status:
+    type: string
+    required: true
+    description: Current lifecycle status of the subscription (canonical extend-8 set).
+    validation:
+      enum:
+        - future
+        - trialing
+        - active
+        - paused
+        - pending_cancellation
+        - past_due
+        - unpaid
+        - terminated
   status_note:
     type: string
     required: false
@@ -129,6 +146,9 @@ semantics:
   account_owner_email:
     semantic_type: billing.subscription.account_owner_email
     token_mapping: tokenMap(billing.subscription.account_owner_email)
+  status:
+    semantic_type: billing.subscription.status
+    token_mapping: tokenMap(billing.subscription.status.*)
   status_note:
     semantic_type: billing.subscription.status_note
     token_mapping: tokenMap(billing.subscription.status_note)
@@ -162,6 +182,14 @@ tokens:
   billing.subscription.account_owner: "var(--cmp-text-subtle)"
   billing.subscription.health_score: "var(--cmp-text-success)"
   billing.subscription.risk_segment: "var(--cmp-badge-text-warning)"
+  billing.subscription.status.future: "var(--semantic-info)"
+  billing.subscription.status.trialing: "var(--semantic-info)"
+  billing.subscription.status.active: "var(--semantic-success)"
+  billing.subscription.status.paused: "var(--semantic-warning)"
+  billing.subscription.status.pending_cancellation: "var(--semantic-info)"
+  billing.subscription.status.past_due: "var(--semantic-danger)"
+  billing.subscription.status.unpaid: "var(--semantic-danger)"
+  billing.subscription.status.terminated: "var(--semantic-neutral)"
 
 metadata:
   owners:

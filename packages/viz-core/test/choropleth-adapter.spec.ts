@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { FeatureCollection } from 'geojson';
 import {
   adaptChoroplethToECharts,
+  adaptToECharts,
   joinGeoWithData,
   registerGeoJson,
   type SpatialSpec,
@@ -199,5 +200,56 @@ describe('registerGeoJson — pure + stateless (the m01 headless-registration au
     expect(registration.geoJson.type).toBe('FeatureCollection');
     expect(registration.geoJson.features).toHaveLength(1);
     expect(registration.geoJson.features[0].properties?.region).toBe('CA');
+  });
+});
+
+describe('adaptToECharts — multi-layer dispatcher surfaces geo-join diagnostics (sprint-126 m06 / Forge-Demos #11)', () => {
+  // Before this fix the dispatcher read result.series/visualMap/geo/registration but
+  // DISCARDED result.diagnostics, so OODS-V134 unmatched-region warnings never reached
+  // consumers on the multi-layer overlay path (only the single-layer choropleth adapter
+  // attached __joinDiagnostics).
+  const ORPHAN = [...SALES, { state: 'XX', sales: 99 }];
+
+  it('surfaces an unmatched data row on __joinDiagnostics (was silently discarded)', () => {
+    const { echartsOption } = adaptToECharts({
+      spec: choroplethSpec(),
+      geoData: GEO,
+      data: ORPHAN,
+      dimensions: DIMENSIONS,
+    });
+    const diagnostics = (echartsOption as Record<string, unknown>).__joinDiagnostics as
+      | { unmatchedData?: string[] }
+      | undefined;
+    expect(diagnostics?.unmatchedData).toContain('XX');
+  });
+
+  it('attaches NO __joinDiagnostics when every row matches (additive: absent on the happy path)', () => {
+    const { echartsOption } = adaptToECharts({
+      spec: choroplethSpec(),
+      geoData: GEO,
+      data: SALES,
+      dimensions: DIMENSIONS,
+    });
+    expect((echartsOption as Record<string, unknown>).__joinDiagnostics).toBeUndefined();
+  });
+
+  it('merges + dedupes diagnostics across multiple region layers (reports a shared orphan once)', () => {
+    const twoRegionLayers = choroplethSpec({
+      layers: [
+        { type: 'regionFill', encoding: { color: { field: 'sales', scale: 'linear' } } },
+        { type: 'regionFill', encoding: { color: { field: 'sales', scale: 'linear' } } },
+      ],
+    });
+    const { echartsOption } = adaptToECharts({
+      spec: twoRegionLayers,
+      geoData: GEO,
+      data: ORPHAN,
+      dimensions: DIMENSIONS,
+    });
+    const diagnostics = (echartsOption as Record<string, unknown>).__joinDiagnostics as
+      | { unmatchedData?: string[] }
+      | undefined;
+    // The same orphan is unmatched in both layers but must be reported exactly once.
+    expect(diagnostics?.unmatchedData?.filter((v) => v === 'XX')).toHaveLength(1);
   });
 });

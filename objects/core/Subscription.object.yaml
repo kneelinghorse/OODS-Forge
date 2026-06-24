@@ -1,6 +1,6 @@
 object:
   name: Subscription
-  version: 1.0.0
+  version: 2.0.0
   domain: core.billing
   description: Canonical subscription record composing lifecycle, billing, and cancellation semantics.
   tags:
@@ -18,7 +18,8 @@ traits:
         - active
         - paused
         - pending_cancellation
-        - delinquent
+        - past_due
+        - unpaid
         - terminated
       initialState: future
   - name: lifecycle/Cancellable
@@ -86,7 +87,8 @@ schema:
         - active
         - paused
         - pending_cancellation
-        - delinquent
+        - past_due
+        - unpaid
         - terminated
   cancel_at_period_end:
     type: boolean
@@ -195,7 +197,8 @@ tokens:
   billing.subscription.status.active: "var(--semantic-success)"
   billing.subscription.status.paused: "var(--semantic-warning)"
   billing.subscription.status.pending_cancellation: "var(--semantic-info)"
-  billing.subscription.status.delinquent: "var(--semantic-danger)"
+  billing.subscription.status.past_due: "var(--semantic-danger)"
+  billing.subscription.status.unpaid: "var(--semantic-danger)"
   billing.subscription.status.terminated: "var(--semantic-neutral)"
   billing.subscription.interval.monthly: "var(--text-subtle)"
   billing.plan.amount: "var(--text-strong)"
@@ -207,6 +210,13 @@ metadata:
   steward: design@oods.systems
   maturity: beta
   changelog:
+    - version: 2.0.0
+      date: "2026-06-24"
+      description: >-
+        Converge status onto the canonical Stripe-literal extend-8 state set.
+        Replace the consolidated `delinquent` with `past_due` (retries ongoing →
+        grace access) + `unpaid` (retries exhausted → access revoked). BREAKING:
+        `delinquent` is removed from the status enum. Source: docs.stripe.com/api/subscriptions/object.
     - version: 1.0.0
       date: "2025-10-21"
       description: Initial subscription composition integrating State, Cancellation, Billing, and Timeline traits.
