@@ -286,7 +286,8 @@ describe('vue-emitter', () => {
     ]);
 
     const result = emit(schema, tsOptions);
-    expect(result.code).toContain('var(--ref-spacing-md)');
+    // converged onto the canonical --ref-space-* prefix + scale-<size> leaf (sprint-125 m03)
+    expect(result.code).toContain('var(--ref-space-scale-md)');
   });
 
   // -------------------------------------------------------------------------
@@ -309,7 +310,7 @@ describe('vue-emitter', () => {
     ]);
 
     const result = emit(schema, tsOptions);
-    expect(result.code).toContain('var(--ref-spacing-lg)');
+    expect(result.code).toContain('var(--ref-space-scale-lg)');
     expect(result.code).toContain('var(--ref-radius-md)');
     expect(result.code).toContain('var(--ref-shadow-sm)');
     expect(result.code).toContain('var(--ref-color-primary)');

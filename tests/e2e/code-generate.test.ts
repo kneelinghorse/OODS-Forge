@@ -157,9 +157,9 @@ describe('code.generate E2E — round-trip pipeline', () => {
     expect(reactResult.code).toContain('Card');
     expect(reactResult.code).toContain('Button');
 
-    // Verify layout tokens are translated
-    expect(reactResult.code).toContain('var(--ref-space-lg)');
-    expect(reactResult.code).toContain('var(--ref-space-md)');
+    // Verify layout tokens are translated (t-shirt sizes → scale-<size> leaf, sprint-125 m03)
+    expect(reactResult.code).toContain('var(--ref-space-scale-lg)');
+    expect(reactResult.code).toContain('var(--ref-space-scale-md)');
   });
 
   it('validate → render → code.generate (Vue) is consistent', async () => {

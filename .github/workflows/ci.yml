@@ -368,8 +368,21 @@ jobs:
       - name: Build Storybook
         run: pnpm run build-storybook
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Install Playwright (Chromium)
-        run: pnpm exec playwright install --with-deps chromium
+        # Dropped --with-deps: it apt-installs system libs under root and chronically
+        # HUNG ~24min (the s125/s126 a11y-contract 25min timeouts), while build-storybook
+        # itself is only ~46s. ubuntu-24.04 hosted runners already ship Chromium's system
+        # libs; the cache above skips the browser download on a hit, and a genuine missing
+        # lib now fails fast with a clear error instead of a 24-minute hang.
+        run: pnpm exec playwright install chromium
 
       - name: Run accessibility contract
         run: pnpm run a11y:diff

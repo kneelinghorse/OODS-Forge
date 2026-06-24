@@ -330,7 +330,8 @@ describe('react-emitter', () => {
     ]);
 
     const result = emit(schema, defaultOptions);
-    expect(result.code).toContain('var(--ref-space-md)');
+    // t-shirt spacing sizes resolve to their scale-<size> leaf (sprint-125 m03 #552)
+    expect(result.code).toContain('var(--ref-space-scale-md)');
   });
 
   // -------------------------------------------------------------------------
@@ -354,7 +355,7 @@ describe('react-emitter', () => {
 
     const result = emit(schema, defaultOptions);
 
-    expect(result.code).toContain('var(--ref-space-lg)');
+    expect(result.code).toContain('var(--ref-space-scale-lg)');
     expect(result.code).toContain('var(--ref-radius-md)');
     expect(result.code).toContain('var(--ref-shadow-sm)');
     expect(result.code).toContain('var(--ref-color-primary)');

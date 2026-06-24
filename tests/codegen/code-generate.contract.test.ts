@@ -207,10 +207,10 @@ describe('code.generate contracts — React', () => {
     expect(result.code).toContain("flexDirection: 'row'");
     // Alignment
     expect(result.code).toContain("alignItems: 'center'");
-    // Gap token
-    expect(result.code).toContain('var(--ref-space-lg)');
+    // Gap token (t-shirt sizes resolve to scale-<size> leaf, sprint-125 m03)
+    expect(result.code).toContain('var(--ref-space-scale-lg)');
     // Style tokens
-    expect(result.code).toContain('var(--ref-space-md)');
+    expect(result.code).toContain('var(--ref-space-scale-md)');
     expect(result.code).toContain('var(--ref-radius-lg)');
   });
 
@@ -301,8 +301,8 @@ describe('code.generate contracts — Vue', () => {
     expect(result.code).toContain('data-sidebar-aside');
     // Inline: flex row
     expect(result.code).toContain('flex-direction: row');
-    // Token vars
-    expect(result.code).toContain('var(--ref-spacing-lg)');
+    // Token vars (Vue converged onto --ref-space-* + scale-<size> leaf, sprint-125 m03)
+    expect(result.code).toContain('var(--ref-space-scale-lg)');
   });
 
   it('maps all prop types correctly with Vue syntax', async () => {
