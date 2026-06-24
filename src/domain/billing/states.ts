@@ -181,7 +181,7 @@ export const SUBSCRIPTION_TRANSITIONS: StateTransition<SubscriptionState, Subscr
     event: 'unschedule_cancellation',
     to: 'active',
     description:
-      'Reverse a scheduled cancellation before period end (Stripe: set cancel_at_period_end=false). Reversible only while pending — a terminated subscription cannot be reactivated.',
+      'Reverse a scheduled cancellation before period end (set cancel_at_period_end=false). Reversible only while pending — a terminated subscription cannot be reactivated.',
   },
   
   // Active ↔ Past Due (retries ongoing, recoverable)

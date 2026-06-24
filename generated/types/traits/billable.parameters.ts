@@ -27,6 +27,10 @@ export interface BillableTraitParameters {
    */
   supportProration?: boolean;
   /**
+   * Default policy for billing mid-cycle changes (mirrors Stripe proration_behavior): create_prorations (default), always_invoice, or none. Drives charge timing; only meaningful when supportProration is true.
+   */
+  prorationBehavior?: 'create_prorations' | 'always_invoice' | 'none';
+  /**
    * Day of the month for renewal anchoring. 0 means no anchoring.
    */
   cycleAnchorDay?: number;

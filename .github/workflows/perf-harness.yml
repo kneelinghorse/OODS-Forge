@@ -41,8 +41,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        # Dropped --with-deps: the apt system-deps install chronically hung the
+        # a11y-contract job ~24min in CI; ubuntu hosted runners ship Chromium's libs and
+        # the cache above skips the browser download on a hit. See ci.yml a11y-contract.
+        run: npx playwright install chromium
 
       - name: Build Storybook
         run: pnpm run build-storybook
