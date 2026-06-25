@@ -46,11 +46,13 @@ Data-viz is the Forge flagship (decision #680; [forge-viz-flagship-strategy.md](
 - **s119 — geo breadth:** `flow_map` (origin→destination arcs), the 6th explicit-only geo type, on the existing `geo` data branch (no AJV widening) (`98c2a77`).
 - **s120 — chord + divergent B1:** `chord` (the 7th explicit-only ECharts-primary type, native ECharts-6 `series.type:'chord'`) + B1 surface-aware-text (inert inverse-surface selector) (`f76fdd8`). **Now 13 chart types** — 5 recommender-visible (tabular) + 8 explicit-only (treemap / sunburst / sankey / force_graph / choropleth / bubble_map / flow_map / chord).
 
-Still deferred (the sprint-101 over-scope guard; refreshed 2026-06-19 at the s120 review):
+Still deferred (the sprint-101 over-scope guard; refreshed 2026-06-19 at the s120 review; narrative-over-measures split out + flipped to in-progress 2026-06-25 at s129):
 - the ~137-site `src/viz` consumer rewire + shim deletion;
-- **NL→viz + narrative/insight *over measures*** — the Phase-3 **differentiator**. Its substrate shipped (s116–s117) but this frontier half is unbuilt and unscheduled; it is the single biggest roadmap-vs-reality tracking gap. Distinct from the shipped a11y narrative (which is over raw data, not measures);
-- full agentic exploration / eval harness (Phase 4 — only a seed landed s118);
+- **NL→viz** — natural-language → viz/dashboard spec. Still unbuilt and unscheduled; the remaining half of the Phase-3 **differentiator** after narrative-over-measures landed (see below). Was previously tracked jointly with narrative-over-measures as the single biggest roadmap-vs-reality gap;
+- full agentic exploration / eval harness (Phase 4 — only the s118 FAOSTAT seed landed);
 - server-side SSR rendering.
+
+**In progress — narrative *over measures* (s129, the Phase-3 differentiator's first half):** the deterministic insight narrative now speaks over the **governed-measure registry** (s116–s117 substrate), not just raw data. DELIVERED surface — **KPI-panel measures only**: measure-CONTEXT (the governed `displayName`/`unit`/`format` + `threshold.value`) is verbalized on the JSON `includeA11y` path — the dashboard-level `a11y.narrative` (its compute gate-lifted to `wantHtml || wantA11y` so it reaches the JSON/MCP agent, not only the HTML export) + the KPI `a11yDescription` string — guarded by `OODS-V141`, a measure-narrative equivalence drift between the verbalized governed threshold and the panel's resolved threshold. This is **not** a blanket "narrative-over-measures shipped": NL→viz, measure *business-intent* inference, the comparison-basis "vs target" clause, structured per-KPI `panels[].a11y`, and chart-panel measure resolution all stay deferred carry-forwards. Distinct from the s114–s115 a11y narrative (over raw data, not measures).
 
 **Tracked candidate (s122+; Derek 2026-06-19):** data-aware *recommendation* of the 8 explicit-only types — today the recommender selects only the 5 tabular types (`spec-builder.ts:448-453`); covering hierarchy/network/geo/chord is future scope, not a permanent boundary (extends next-steps #428/#516).
 

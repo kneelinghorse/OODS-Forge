@@ -150,6 +150,15 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // can't become mapped on retry; the agent must use a registered key or the library must
   // add the mapping — so retryable:false.
   ['OODS-V140', { code: 'OODS-V140', category: 'validation', message: 'Unmapped style-library logical key', retryable: false }],
+  // V141 (sprint-129 m03): MEASURE-NARRATIVE equivalence. Routed through the dashboard.render
+  // onPanelError seam (NOT thrown), and fires ONLY when the measure narrative is surfaced
+  // (wantHtml || wantA11y) AFTER a measure resolved (chains after V130/V132/V133/V137/V138/V139).
+  // The narrative verbalizes the GOVERNED measure-context (the registry entry's defaultThreshold);
+  // if the panel's RESOLVED threshold (measure-resolver output, author-overridable per D4) DIVERGES
+  // from that governed value, the verbalized "threshold X breached" would misrepresent the threshold
+  // the breach was computed against — a registry-vs-rendered drift, NOT a same-source value==value
+  // tautology. Recoverable (align or drop the override, or don't surface the narrative) — retryable:true.
+  ['OODS-V141', { code: 'OODS-V141', category: 'validation', message: 'Measure-narrative context drifts from the resolved governed measure', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

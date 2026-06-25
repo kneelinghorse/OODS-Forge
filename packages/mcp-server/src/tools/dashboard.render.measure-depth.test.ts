@@ -328,3 +328,68 @@ describe('dashboard.render — M3 strictDatasets unknown-datasetId (sprint-122, 
     expect(err.error.code).not.toBe('OODS-V139'); // chart path unaffected by strictDatasets
   });
 });
+
+// ───────────────────────────────────────────────────────────────────────────
+// s129-m03 — measure-NARRATIVE equivalence (OODS-V141). NON-TAUTOLOGICAL: the
+// measure narrative verbalizes the GOVERNED threshold (the registry entry's
+// defaultThreshold); if the panel's RESOLVED threshold (author-overridable per D4)
+// DIVERGES from it, the verbalized "threshold X breached" would misrepresent the
+// threshold the breach computes against. V141 fail-closes — but ONLY when the
+// narrative is actually surfaced (wantHtml || wantA11y). gm.revenue.total (real
+// registry) governs defaultThreshold {above, 350}, the wedge for a forge-able drift.
+// ───────────────────────────────────────────────────────────────────────────
+describe('dashboard.render — measure-narrative equivalence (sprint-129, OODS-V141)', () => {
+  function measureNarrativeKpi(thresholdValue: number, extra: Record<string, unknown> = {}): DashboardRenderInput {
+    return {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'sales', rows: ROWS }],
+      panels: [{ id: 'kpi', kind: 'kpi', title: 'Revenue', datasetId: 'sales', measureRef: 'gm.revenue.total', threshold: { direction: 'above', value: thresholdValue } }],
+      a11y: { description: 'measure-narrative equivalence' },
+      resolveMeasures: true,
+      ...extra,
+    } as DashboardRenderInput;
+  }
+
+  it('V141 fires (error panel) when the narrative is surfaced AND the resolved threshold diverges from the governed default', async () => {
+    // author threshold 300 OVERRIDES gm.revenue.total's governed default 350 -> the narrative would
+    // verbalize 350 while the breach computes against 300. Registry-vs-rendered drift -> fail closed.
+    const out = await handle(measureNarrativeKpi(300, { output: { includeA11y: true } }));
+    expect(validateOutput(out)).toBe(true);
+    const err = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'error' }>;
+    expect(err.kind).toBe('error');
+    expect(err.error.code).toBe('OODS-V141');
+    expect(err.error.severity).toBe('error');
+    expect(err.error.message).toContain('350'); // the governed default
+    expect(err.error.message).toContain('300'); // the resolved/effective threshold
+    expect(out.meta?.errorPanelCount).toBe(1);
+  });
+
+  it('V141 does NOT fire when the narrative is NOT surfaced (no includeA11y / no html) — the panel renders', async () => {
+    // The SAME divergence, but no narrative surface: V141 is scoped to the measure-narrative path,
+    // so a non-narrative render is byte-identical (the author override still wins for compute, D4).
+    const out = await handle(measureNarrativeKpi(300));
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.kind).toBe('kpi'); // NOT a V141 error
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V141')).toBe(false);
+    expect(out.meta?.errorPanelCount).toBe(0);
+  });
+
+  it('V141 does NOT fire when the resolved threshold MATCHES the governed default (no drift) under includeA11y', async () => {
+    // author threshold {above, 350} == gm.revenue.total defaultThreshold {above, 350} -> no divergence.
+    const out = await handle(measureNarrativeKpi(350, { output: { includeA11y: true } }));
+    expect(validateOutput(out)).toBe(true);
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.kind).toBe('kpi'); // renders normally
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V141')).toBe(false);
+    // the gate-lifted narrative is present (the additive surface), proving V141 did not suppress it.
+    expect((out.a11y as Record<string, unknown>).narrative).toBeDefined();
+  });
+
+  it('V141 under onPanelError:"omit" -> warning + dropped panel (the same seam as the other V13x codes)', async () => {
+    const out = await handle(measureNarrativeKpi(300, { output: { includeA11y: true }, onPanelError: 'omit' }));
+    expect(out.panels.find((p) => p.id === 'kpi')).toBeUndefined(); // dropped
+    expect(
+      (out.warnings ?? []).some((w) => w.code === 'OODS-V141' && w.severity === 'warning' && w.message.includes('kpi')),
+    ).toBe(true);
+  });
+});

@@ -22,6 +22,25 @@ interface NarrativeLabels {
 }
 
 /**
+ * Governed-measure context (sprint-129 m01) threaded into the narrative when a KPI
+ * signal resolves over the measure registry. The measure's `displayName` maps to the
+ * already-present `measureLabel`; this carries the remaining governed fields a resolved
+ * registry entry holds (`measure-registry.ts` `MeasureEntry`: `unit` / `format` + the
+ * governed `threshold.value`). `comparison.basis` is DELIBERATELY NOT carried — it is
+ * not threaded into `DashboardKpiSummary` today and the "vs target" clause stays
+ * deferred. ONE shared shape, reused by `AnalysisNarrativeInput`, `AnalysisTableInput`,
+ * and (sprint-129 m02) the dashboard KPI summary — NOT a parallel metadata type.
+ */
+export interface MeasureNarrativeContext {
+  /** Resolved measure unit label, e.g. '1000 USD'. Mirrors `MeasureEntry.unit`. */
+  readonly unit?: string;
+  /** Renderer-agnostic number-format hint, e.g. 'currency'. Mirrors `MeasureEntry.format`. */
+  readonly format?: string;
+  /** Governed threshold value from the resolved registry entry (`threshold.value`). */
+  readonly thresholdValue?: number;
+}
+
+/**
  * A pre-built-analysis input for the input-shaped (non-cartesian) sources whose
  * data never flows through a NormalizedVizSpec (sprint-128 m01). Carries the
  * VizDataAnalysis plus the labels + author-override knobs the cartesian path
@@ -38,6 +57,12 @@ export interface AnalysisNarrativeInput {
   readonly narrative?: ProvidedNarrative;
   /** Mirrors spec.a11y.description (the fallback summary). */
   readonly fallbackSummary?: string;
+  /**
+   * Governed-measure context (sprint-129 m01). OPTIONAL — absent === the s128 narrative
+   * output byte-for-byte. When it carries governed content, a leading measure-context
+   * key finding verbalizes the measureLabel/unit/format/threshold the registry governs.
+   */
+  readonly measureContext?: MeasureNarrativeContext;
 }
 
 interface ResolvedNarrativeInputs {
@@ -45,6 +70,8 @@ interface ResolvedNarrativeInputs {
   readonly labels: NarrativeLabels;
   readonly narrative: ProvidedNarrative | undefined;
   readonly fallbackSummary: string;
+  /** Present only on the analysis branch; the cartesian spec path carries no measure context. */
+  readonly measureContext?: MeasureNarrativeContext;
 }
 
 /**
@@ -64,6 +91,7 @@ function resolveNarrativeInputs(input: NormalizedVizSpec | AnalysisNarrativeInpu
       },
       narrative: input.narrative,
       fallbackSummary: input.fallbackSummary ?? '',
+      measureContext: input.measureContext,
     };
   }
   return {
@@ -80,9 +108,9 @@ function resolveNarrativeInputs(input: NormalizedVizSpec | AnalysisNarrativeInpu
 }
 
 export function generateNarrativeSummary(input: NormalizedVizSpec | AnalysisNarrativeInput): NarrativeResult {
-  const { analysis, labels, narrative, fallbackSummary } = resolveNarrativeInputs(input);
+  const { analysis, labels, narrative, fallbackSummary, measureContext } = resolveNarrativeInputs(input);
 
-  const derived = deriveNarrativeFromData(analysis, labels);
+  const derived = deriveNarrativeFromData(analysis, labels, measureContext);
   const { summary, keyFindings } = applyNarrativeOverride(narrative, derived, fallbackSummary);
 
   return {
@@ -119,7 +147,11 @@ export function applyNarrativeOverride(
   return { summary, keyFindings };
 }
 
-function deriveNarrativeFromData(analysis: VizDataAnalysis, labels: NarrativeLabels): {
+function deriveNarrativeFromData(
+  analysis: VizDataAnalysis,
+  labels: NarrativeLabels,
+  measureContext?: MeasureNarrativeContext,
+): {
   readonly summary?: string;
   readonly keyFindings: string[];
 } {
@@ -169,14 +201,42 @@ function deriveNarrativeFromData(analysis: VizDataAnalysis, labels: NarrativeLab
     }
   }
 
-  const keyFindings = buildKeyFindings(analysis, labels);
+  const keyFindings = buildKeyFindings(analysis, labels, measureContext);
   return {
     summary: summaryParts.join(' ').trim() || undefined,
     keyFindings,
   };
 }
 
-function buildKeyFindings(analysis: VizDataAnalysis, labels: NarrativeLabels): string[] {
+/**
+ * Verbalize the governed measure context (sprint-129 m01) as ONE leading key finding —
+ * the measure displayName (the existing `measureLabel`) plus the governed unit / format /
+ * threshold the registry holds. Returns undefined when the context carries no governed
+ * field beyond the label, so an empty `{}` measureContext stays byte-identical.
+ */
+function describeMeasureContext(
+  measureLabel: string | undefined,
+  ctx: MeasureNarrativeContext,
+): string | undefined {
+  const parts = [`Measure: ${measureLabel ?? 'value'}`];
+  if (ctx.unit) {
+    parts.push(`unit ${ctx.unit}`);
+  }
+  if (ctx.format) {
+    parts.push(`format ${ctx.format}`);
+  }
+  if (ctx.thresholdValue !== undefined) {
+    parts.push(`threshold ${formatNumeric(ctx.thresholdValue)}`);
+  }
+  // Only surface when at least one governed field beyond the label is present.
+  return parts.length > 1 ? parts.join('; ') : undefined;
+}
+
+function buildKeyFindings(
+  analysis: VizDataAnalysis,
+  labels: NarrativeLabels,
+  measureContext?: MeasureNarrativeContext,
+): string[] {
   const findings: string[] = [];
   if (analysis.max) {
     findings.push(`High ${labels.measureLabel ?? 'value'}: ${describeDataPoint(analysis.max, labels.measureLabel)}`);
@@ -202,7 +262,13 @@ function buildKeyFindings(analysis: VizDataAnalysis, labels: NarrativeLabels): s
   if (analysis.rowCount > 0 && findings.length === 0) {
     findings.push(`${analysis.rowCount} rows analysed.`);
   }
-  return findings.slice(0, 5);
+  // Measure-context (sprint-129 m01) leads the findings so the governed frame is read
+  // first; absent (or governed-content-free) context leaves the s128 output untouched.
+  const measureFinding = measureContext
+    ? describeMeasureContext(labels.measureLabel, measureContext)
+    : undefined;
+  const ordered = measureFinding ? [measureFinding, ...findings] : findings;
+  return ordered.slice(0, 5);
 }
 
 function resolveFieldLabel(spec: NormalizedVizSpec, channel: keyof NormalizedVizSpec['encoding']): string | undefined {

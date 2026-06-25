@@ -10,7 +10,7 @@
 // (applyNarrativeOverride) rather than reimplemented, so an author-supplied
 // narrative wins with byte-identical precedence to the single-chart path.
 
-import { applyNarrativeOverride, type ProvidedNarrative } from './narrative-generator.js';
+import { applyNarrativeOverride, type MeasureNarrativeContext, type ProvidedNarrative } from './narrative-generator.js';
 
 /** One KPI's computed signal, projected for narration. */
 export interface DashboardKpiSummary {
@@ -23,6 +23,13 @@ export interface DashboardKpiSummary {
   readonly delta: number | null;
   readonly thresholdBreached?: boolean;
   readonly anomaly?: boolean;
+  /**
+   * Governed-measure context (sprint-129 m02) — present only when a measure resolved
+   * under resolveMeasures. The SAME shared shape m01 put on the single-chart narrative
+   * input (no fork). When present, the unit annotates the formatted value and the
+   * governed threshold value enriches the breach flag; absent === byte-identical to s116.
+   */
+  readonly measureContext?: MeasureNarrativeContext;
 }
 
 export interface DashboardNarrative {
@@ -56,15 +63,20 @@ export function deriveDashboardNarrative(
   const keyFindings = kpis
     .map((k) => {
       const deltaPhrase = k.delta === null ? '' : `, delta ${k.delta}`;
+      // Measure-context (sprint-129 m02): the governed unit annotates the value and the
+      // governed threshold value enriches the breach flag. Absent === byte-identical to s116.
+      const unit = k.measureContext?.unit;
+      const formatted = unit ? `${k.formatted} ${unit}` : k.formatted;
+      const thresholdValue = k.measureContext?.thresholdValue;
       const flags: string[] = [];
       if (k.thresholdBreached) {
-        flags.push('threshold breached');
+        flags.push(thresholdValue !== undefined ? `threshold ${thresholdValue} breached` : 'threshold breached');
       }
       if (k.anomaly) {
         flags.push('anomaly');
       }
       const flagPhrase = flags.length > 0 ? ` — ${flags.join(', ')}` : '';
-      return `${k.label}: ${k.formatted} (${k.trendDirection}${deltaPhrase})${flagPhrase}`;
+      return `${k.label}: ${formatted} (${k.trendDirection}${deltaPhrase})${flagPhrase}`;
     })
     .slice(0, 5);
 
