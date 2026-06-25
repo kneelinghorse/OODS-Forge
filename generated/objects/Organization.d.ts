@@ -47,7 +47,7 @@ export interface Organization {
    *
    * Default: 'good_standing'
    */
-  billing_status: 'good_standing' | 'past_due' | 'delinquent' | 'suspended';
+  billing_status: 'good_standing' | 'past_due' | 'unpaid' | 'suspended';
 
   /**
    * Registered delivery channels with provider configuration (email/SMS/push/in_app/webhook).

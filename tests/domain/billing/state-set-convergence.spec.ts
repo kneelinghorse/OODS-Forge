@@ -80,3 +80,55 @@ describe('subscription state-set convergence guard', () => {
     expect(saas.schema?.status?.validation?.enum).toEqual(CANONICAL);
   });
 });
+
+/**
+ * Account billing-status convergence guard (s127-m01).
+ *
+ * `Organization.billing_status` is a SEPARATE, deliberately COARSER account-health
+ * vocabulary than the subscription lifecycle — a 4-state set, not the 8-state
+ * `SUBSCRIPTION_STATES`. The s126 review caught that it still carried the retired
+ * consolidated `delinquent` value after Subscription converged. This guard pins:
+ *   (a) the Organization account vocabulary, order-exact, with no `delinquent`; and
+ *   (b) the saas-billing token-map subscription domain == `SUBSCRIPTION_STATES`, so the
+ *       presentation-token source cannot silently re-diverge from the canonical set or
+ *       re-introduce an orphaned `delinquent` subscription token.
+ */
+const ACCOUNT_BILLING_STATES = [
+  'good_standing',
+  'past_due',
+  'unpaid',
+  'suspended',
+] as const;
+
+interface OrganizationObjectYaml {
+  schema?: {
+    billing_status?: { validation?: { enum?: string[] } };
+  };
+}
+
+interface StatusTokenMap {
+  domains?: Record<string, Record<string, unknown>>;
+}
+
+function loadJsonFile<T>(relPath: string): T {
+  return JSON.parse(readFileSync(path.resolve(relPath), 'utf8')) as T;
+}
+
+describe('account billing-status convergence guard', () => {
+  it('Organization.billing_status is the coarse 4-state account vocabulary, order-exact', () => {
+    const org = yaml.load(
+      readFileSync(path.resolve('objects/core/Organization.object.yaml'), 'utf8')
+    ) as OrganizationObjectYaml;
+    const enumValues = org.schema?.billing_status?.validation?.enum;
+    expect(enumValues).toEqual([...ACCOUNT_BILLING_STATES]);
+    // The retired consolidated `delinquent` account state must not reappear.
+    expect(enumValues).not.toContain('delinquent');
+  });
+
+  it('the saas-billing token-map subscription domain == SUBSCRIPTION_STATES with no orphaned delinquent', () => {
+    const tokenMap = loadJsonFile<StatusTokenMap>('tokens/maps/saas-billing.status-map.json');
+    const subscriptionStatuses = Object.keys(tokenMap.domains?.subscription ?? {});
+    expect(subscriptionStatuses).toEqual(CANONICAL);
+    expect(subscriptionStatuses).not.toContain('delinquent');
+  });
+});

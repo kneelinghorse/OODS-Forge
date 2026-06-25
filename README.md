@@ -83,16 +83,16 @@ Full schema and field reference: `docs/mcp/Tool-Specs.md` → "Project-level def
 - Trait names: `catalog.list` and `map` use canonical structured-data trait names such as `Stateful` or `Priceable`. `object.list` accepts full or suffix-matched namespaced object traits such as `lifecycle/Stateful` or `Stateful`. `viz.compose` explicit traits use hyphenated viz IDs such as `mark-bar` and `encoding-position-x`.
 - Override escape hatch: when `design.compose` returns a low-confidence selection or `reviewHint`, pin only that slot with `preferences.componentOverrides`, for example `{"object":"Subscription","context":"detail","preferences":{"componentOverrides":{"tab-0":"Card"}}}`.
 
-## MCP tool surface (25 tools)
+## MCP tool surface (27 tools)
 
 Registry source of truth: `packages/mcp-server/src/tools/registry.json`.
 
-**Auto-registered (16 tools)** — available by default. The five CRUD families are exposed as single action-parameter tools (`repl`, `map`, `schema`, `object`, `review`); select the operation via a top-level `action`, e.g. `repl({action:'render'})` or `map({action:'create'})`:
+**Auto-registered (18 tools)** — available by default. The five CRUD families are exposed as single action-parameter tools (`repl`, `map`, `schema`, `object`, `review`); select the operation via a top-level `action`, e.g. `repl({action:'render'})` or `map({action:'create'})`:
 
 | Group | Tools |
 |------|-------|
 | Core design/runtime | `tokens.build`, `structuredData.fetch`, `repl` (`render`/`validate`), `brand.apply`, `catalog.list`, `health` |
-| Composition + generation | `design.compose`, `viz.compose`, `pipeline`, `code.generate`, `fidelity.preview` |
+| Composition + generation | `design.compose`, `viz.compose`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview` |
 | Mapping + schema persistence | `map` (`create`/`list`/`resolve`/`update`/`delete`), `schema` (`save`/`load`/`list`/`delete`) |
 | Registry inspection | `object` (`list`/`show`), `registry.snapshot` |
 | Review | `review` (`resolve`/`chain`) |
