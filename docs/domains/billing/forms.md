@@ -24,4 +24,4 @@ Billing form surfaces share a single token-driven contract so subscription and i
 
 - Form badges resolve through `configs/ui/status-map.json`, which binds the detail/form contexts to the canonical `tokens/maps/saas-billing.status-map.json` manifest.
 - `apps/explorer/src/config/statusMap.ts` exposes helpers (`pickStatusByIndex`, `selectStatuses`) so JSX never hardcodes enum strings when choosing sample states.
-- `scripts/lint/enum-to-token.ts` runs as `pnpm lint:enum-map` to block literal `StatusChip` statuses or ad-hoc tone maps.
+- `scripts/lint/enum-to-token.ts` runs as `pnpm lint:enum-to-token` to block literal `StatusChip` statuses or ad-hoc tone maps.

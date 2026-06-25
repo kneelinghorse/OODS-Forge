@@ -91,6 +91,20 @@ jobs:
       - name: Enum convergence lint
         run: pnpm run lint:enum-convergence
 
+      # Dormant guards wired into CI (sprint-128 m04). Each passes on clean HEAD
+      # (no baseline grandfathering); a new violation now reds the lint job.
+      - name: Enum-to-token map lint
+        run: pnpm run lint:enum-to-token
+
+      - name: Audit-log immutability lint
+        run: pnpm run lint:audit-log
+
+      - name: Brand-bleed lint
+        run: pnpm run lint:brand-bleed
+
+      - name: Tokens lint
+        run: pnpm run lint:tokens
+
   typecheck:
     name: typecheck
     runs-on: ubuntu-latest

@@ -39,9 +39,67 @@ export type AccessibleTableResult =
       readonly analysis: VizDataAnalysis;
     };
 
-export function generateAccessibleTable(spec: NormalizedVizSpec): AccessibleTableResult {
-  const analysis = analyzeVizSpec(spec);
-  if (spec.a11y.tableFallback?.enabled === false) {
+/**
+ * A pre-built-analysis input for the input-shaped (non-cartesian) sources whose
+ * data never flows through a NormalizedVizSpec (sprint-128 m01). Carries the
+ * VizDataAnalysis plus the knobs the cartesian path otherwise reads off the spec
+ * (column order/labels, caption, row-key prefix, fallback toggle). All optional
+ * except the analysis, with the same defaults the spec path resolves to.
+ */
+export interface AnalysisTableInput {
+  readonly analysis: VizDataAnalysis;
+  /** Mirrors spec.a11y.tableFallback?.enabled — default enabled. */
+  readonly tableFallbackEnabled?: boolean;
+  /** Mirrors spec.portability?.tableColumnOrder. */
+  readonly columnOrder?: readonly string[] | null;
+  /** field → human label; mirrors the encoding/legend title resolution. */
+  readonly columnLabels?: Readonly<Record<string, string>>;
+  /** Mirrors resolveCaption(spec). */
+  readonly caption?: string;
+  /** Row-key prefix; mirrors spec.id. */
+  readonly id?: string;
+}
+
+interface ResolvedTableInputs {
+  readonly analysis: VizDataAnalysis;
+  readonly enabled: boolean;
+  readonly columnOrder?: readonly string[] | null;
+  readonly resolveLabel: (field: string) => string | undefined;
+  readonly caption: string;
+  readonly idPrefix: string;
+}
+
+/**
+ * Normalize the two accepted inputs to a single shape. The spec branch is
+ * byte-identical to the pre-m01 behavior (same analysis, column order, label
+ * resolution, caption, id); the analysis branch supplies those from the input
+ * object with the spec-path defaults.
+ */
+function resolveTableInputs(input: NormalizedVizSpec | AnalysisTableInput): ResolvedTableInputs {
+  if ('analysis' in input) {
+    return {
+      analysis: input.analysis,
+      enabled: input.tableFallbackEnabled !== false,
+      columnOrder: input.columnOrder,
+      resolveLabel: (field) => input.columnLabels?.[field],
+      caption: input.caption ?? 'Data table for Visualization',
+      idPrefix: input.id ?? 'viz',
+    };
+  }
+  return {
+    analysis: analyzeVizSpec(input),
+    enabled: input.a11y.tableFallback?.enabled !== false,
+    columnOrder: input.portability?.tableColumnOrder,
+    resolveLabel: (field) => findColumnLabel(input, field),
+    caption: resolveCaption(input),
+    idPrefix: input.id ?? 'viz',
+  };
+}
+
+export function generateAccessibleTable(input: NormalizedVizSpec | AnalysisTableInput): AccessibleTableResult {
+  const { analysis, enabled, columnOrder, resolveLabel, caption, idPrefix } = resolveTableInputs(input);
+
+  if (!enabled) {
     return {
       status: 'disabled',
       message: 'Table fallback disabled in spec.a11y.tableFallback.enabled.',
@@ -57,7 +115,7 @@ export function generateAccessibleTable(spec: NormalizedVizSpec): AccessibleTabl
     };
   }
 
-  const columns = deriveColumns(spec, analysis.rows);
+  const columns = deriveColumns(analysis.rows, columnOrder, resolveLabel);
   if (columns.length === 0) {
     return {
       status: 'unavailable',
@@ -67,15 +125,13 @@ export function generateAccessibleTable(spec: NormalizedVizSpec): AccessibleTabl
   }
 
   const rows = analysis.rows.map<AccessibleTableRow>((row, index) => ({
-    key: `${spec.id ?? 'viz'}:row:${index}`,
+    key: `${idPrefix}:row:${index}`,
     cells: columns.map((column) => ({
       field: column.field,
       raw: row[column.field],
       text: formatValue(row[column.field]),
     })),
   }));
-
-  const caption = resolveCaption(spec);
 
   return {
     status: 'ready',
@@ -86,8 +142,12 @@ export function generateAccessibleTable(spec: NormalizedVizSpec): AccessibleTabl
   };
 }
 
-function deriveColumns(spec: NormalizedVizSpec, rows: readonly Record<string, unknown>[]): AccessibleTableColumn[] {
-  const order = normalizeColumnOrder(spec.portability?.tableColumnOrder);
+function deriveColumns(
+  rows: readonly Record<string, unknown>[],
+  columnOrder: readonly string[] | null | undefined,
+  resolveLabel: (field: string) => string | undefined,
+): AccessibleTableColumn[] {
+  const order = normalizeColumnOrder(columnOrder);
   const discovered = new Set<string>();
 
   rows.forEach((row) => {
@@ -108,7 +168,7 @@ function deriveColumns(spec: NormalizedVizSpec, rows: readonly Record<string, un
 
   return orderedFields.map((field) => ({
     field,
-    label: findColumnLabel(spec, field) ?? humanize(field),
+    label: resolveLabel(field) ?? humanize(field),
     isNumeric: rows.every((row) => typeof row[field] === 'number' || typeof row[field] === 'undefined'),
   }));
 }

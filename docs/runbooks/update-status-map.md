@@ -11,7 +11,7 @@
 
 ## Commands to Run
 ```bash
-pnpm lint:enum-map
+pnpm lint:enum-to-token
 pnpm build:tokens
 pnpm test apps/explorer/__tests__/smoke.context.spec.tsx
 ```
@@ -23,7 +23,7 @@ pnpm test apps/explorer/__tests__/smoke.context.spec.tsx
 ## Common Failure Modes
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| lint:enum-map fails | Literal status strings in code | Replace with token map-driven values |
+| lint:enum-to-token fails | Literal status strings in code | Replace with token map-driven values |
 | StatusChip shows neutral tone | Token reference missing tone keywords | Use `color.text.*` / `color.background.*` tokens with tone names |
 | Icon shows bullet glyph | Icon name missing or invalid | Use a valid `icon.status.*` name |
 | Storybook mismatch | Story not updated with new status | Add a story entry for the new status |

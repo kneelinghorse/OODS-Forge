@@ -57,6 +57,7 @@ export function toA11yContrastBlock(findings: ContrastFinding[]): NonNullable<Da
 export async function handle(input: DashboardRenderInput): Promise<DashboardRenderOutput> {
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
+  const wantA11y = input.output?.includeA11y ?? false;
   const wantHtml = input.output?.html ?? false;
   // A11y completeness (sprint-118 m07) — all default-off so the absent path is byte-identical.
   const wantDataTable = input.output?.dataTable ?? false;
@@ -389,7 +390,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     }
 
     // chart panel — render in-process via viz.render
-    const vizInput = buildPanelVizInput(panel, datasetRows, filterRows, wantEcharts);
+    const vizInput = buildPanelVizInput(panel, datasetRows, filterRows, wantEcharts, wantA11y);
     const out = await vizRenderHandle(vizInput);
 
     if (out.status !== 'ok') {
@@ -471,6 +472,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       ...(wantHtml ? { html: true } : {}),
       ...(wantDataTable ? { dataTable: true } : {}),
       ...(wantContrastScan ? { contrastScan: true } : {}),
+      ...(wantA11y ? { includeA11y: true } : {}),
     },
     meta: {
       panelCount: panelResults.length,
@@ -610,6 +612,13 @@ function buildChartResult(panel: ChartPanel, out: Awaited<ReturnType<typeof vizR
   if (out.echartsSpec) {
     result.echartsSpec = out.echartsSpec;
   }
+  // FD#10 (sprint-128 m03): propagate the per-panel structured a11y (table +
+  // narrative) up to the dashboard surface — viz.render only ran the analyzers
+  // when includeA11y was threaded into the per-panel input, so this is present
+  // exactly when the dashboard output.includeA11y flag is on.
+  if (out.a11y) {
+    result.a11y = out.a11y;
+  }
   return result as unknown as PanelResult;
 }
 
@@ -618,12 +627,17 @@ function buildPanelVizInput(
   datasetRows: Map<string, Row[]>,
   filterRows: (panelId: string, rows: Row[]) => Row[],
   wantEcharts: boolean,
+  wantA11y: boolean,
 ): VizRenderInput {
   const base: Record<string, unknown> = {
     chartType: panel.chartType,
     // Per-panel compact: the dashboard owns the single tokenCssRef; panels never
     // inline token CSS. ECharts opt-in flows from the dashboard output control.
-    output: { compact: true, ...(wantEcharts ? { echarts: true } : {}) },
+    output: {
+      compact: true,
+      ...(wantEcharts ? { echarts: true } : {}),
+      ...(wantA11y ? { includeA11y: true } : {}),
+    },
   };
   if (panel.id) base.id = panel.id;
   if (panel.title) base.name = panel.title;

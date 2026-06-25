@@ -728,3 +728,55 @@ describe('viz error-code registry (sprint-118 m02): V123-V129 resolve, not silen
     });
   }
 });
+
+// FD#10 (sprint-128 m03): structured two-part a11y (accessible table + narrative)
+// surfaced over the wire under the additive, default-off output.includeA11y flag —
+// for every chart family, derived from the SAME data source the chart renders from.
+describe('viz.render handler — structured a11y over MCP (output.includeA11y)', () => {
+  const BAR = {
+    rows: SALES,
+    chartType: 'bar',
+    encodings: { x: 'region', y: { field: 'revenue', aggregate: 'sum' } },
+  } as const;
+  const CHORO = {
+    chartType: 'choropleth',
+    geo: {
+      geojson: US_STATES,
+      rows: SALES_BY_STATE,
+      join: { dataKey: 'state', featureProperty: 'region' },
+      valueField: 'sales',
+    },
+    name: 'Sales by state',
+  } as const;
+
+  const surfaces: Array<{ name: string; input: Record<string, unknown> }> = [
+    { name: 'bar (cartesian)', input: { ...BAR } },
+    { name: 'treemap (hierarchy)', input: { chartType: 'treemap', hierarchy: ORG_TREE } },
+    { name: 'sankey (flow)', input: { chartType: 'sankey', sankey: ENERGY_FLOW } },
+    { name: 'force_graph (network)', input: { chartType: 'force_graph', network: SERVICE_MAP } },
+    { name: 'choropleth (geo)', input: { ...CHORO } },
+  ];
+
+  it.each(surfaces)('emits an additive, schema-valid a11y table+narrative for $name', async ({ input }) => {
+    const out = await render({ ...input, output: { includeA11y: true } });
+    expect(out.status).toBe('ok');
+    expect(validateOutput(out)).toBe(true);
+    expect(out.output?.includeA11y).toBe(true);
+    expect(out.a11y).toBeDefined();
+    expect((out.a11y?.narrative?.summary ?? '').length).toBeGreaterThan(0);
+    expect((out.a11y?.table?.rows ?? []).length).toBeGreaterThan(0);
+    expect((out.a11y?.table?.columns ?? []).length).toBeGreaterThan(0);
+  });
+
+  it.each(surfaces)('omits a11y entirely (byte-identical) when the flag is off for $name', async ({ input }) => {
+    const off = await render({ ...input });
+    expect(off.a11y).toBeUndefined();
+    expect(off.output?.includeA11y).toBeUndefined();
+  });
+
+  it('keeps a11yDescription unchanged whether or not includeA11y is set', async () => {
+    const on = await render({ chartType: 'sankey', sankey: ENERGY_FLOW, output: { includeA11y: true } });
+    const off = await render({ chartType: 'sankey', sankey: ENERGY_FLOW });
+    expect(on.a11yDescription).toEqual(off.a11yDescription);
+  });
+});

@@ -606,3 +606,39 @@ describe('dashboard.render — a11y completeness: contrast scan + SR data-table 
     expect(validateInput(chartDash({ output: { html: true, dataTable: true, contrastScan: true, dataQualityField: 'flag' } }))).toBe(true);
   });
 });
+
+// FD#10 (sprint-128 m03): the dashboard surface (the s113 flagship headline)
+// propagates per-panel structured a11y so a non-cartesian panel INSIDE a dashboard
+// also exposes the table+narrative — not just a11yDescription.
+describe('dashboard.render — per-panel structured a11y (output.includeA11y)', () => {
+  it('attaches a11y.table+narrative to every chart panel (incl. the choropleth) and stays schema-valid', async () => {
+    const out = await handle(metricOverview({ output: { includeA11y: true } }));
+    expect(validateOutput(out)).toBe(true);
+    expect(out.output?.includeA11y).toBe(true);
+
+    const charts = out.panels.filter(
+      (p): p is Extract<typeof out.panels[number], { kind: 'chart' }> => p.kind === 'chart',
+    );
+    expect(charts.length).toBeGreaterThanOrEqual(3); // line + bar + choropleth
+    for (const panel of charts) {
+      expect(panel.a11y, `panel ${panel.id} a11y`).toBeDefined();
+      expect((panel.a11y?.narrative?.summary ?? '').length).toBeGreaterThan(0);
+      expect((panel.a11y?.table?.rows ?? []).length).toBeGreaterThan(0);
+    }
+  });
+
+  it('omits panel a11y entirely (byte-identical) when the flag is off', async () => {
+    const out = await handle(metricOverview());
+    const charts = out.panels.filter(
+      (p): p is Extract<typeof out.panels[number], { kind: 'chart' }> => p.kind === 'chart',
+    );
+    for (const panel of charts) {
+      expect(panel.a11y).toBeUndefined();
+    }
+    expect(out.output?.includeA11y).toBeUndefined();
+  });
+
+  it('(input) the schema accepts output.includeA11y', () => {
+    expect(validateInput(metricOverview({ output: { includeA11y: true } }))).toBe(true);
+  });
+});

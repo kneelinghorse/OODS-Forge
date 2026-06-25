@@ -39,7 +39,8 @@
         "echarts": { "type": "boolean" },
         "html": { "type": "boolean" },
         "dataTable": { "type": "boolean" },
-        "contrastScan": { "type": "boolean" }
+        "contrastScan": { "type": "boolean" },
+        "includeA11y": { "type": "boolean" }
       }
     },
     "meta": {
@@ -89,7 +90,67 @@
         "renderer": { "type": "string", "enum": ["vega-lite", "echarts"] },
         "spec": { "type": "object", "additionalProperties": true, "description": "Compiled Vega-Lite spec (tabular), or {} for ECharts-primary panels." },
         "echartsSpec": { "type": "object", "additionalProperties": true, "description": "Compiled ECharts option (ECharts-primary panels + opt-in tabular). Geo panels carry the FeatureCollection on echartsSpec.__registration." },
-        "a11yDescription": { "type": "string" }
+        "a11yDescription": { "type": "string" },
+        "a11y": { "$ref": "#/$defs/structuredA11y" }
+      }
+    },
+    "structuredA11y": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Structured two-part text alternative (accessible data table + narrative summary) for this panel, derived from the SAME data source the panel renders from (Forge-Demos FD#10). Present only when the dashboard output.includeA11y is true (additive; default-off keeps the wire byte-identical).",
+      "properties": {
+        "table": {
+          "type": "object",
+          "required": ["caption", "columns", "rows"],
+          "additionalProperties": false,
+          "properties": {
+            "caption": { "type": "string" },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["field", "label", "isNumeric"],
+                "additionalProperties": false,
+                "properties": {
+                  "field": { "type": "string" },
+                  "label": { "type": "string" },
+                  "isNumeric": { "type": "boolean" }
+                }
+              }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["cells"],
+                "additionalProperties": false,
+                "properties": {
+                  "cells": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["field", "text"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "field": { "type": "string" },
+                        "text": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "narrative": {
+          "type": "object",
+          "required": ["summary", "keyFindings"],
+          "additionalProperties": false,
+          "properties": {
+            "summary": { "type": "string" },
+            "keyFindings": { "type": "array", "items": { "type": "string" } }
+          }
+        }
       }
     },
     "kpiPanelResult": {

@@ -55,6 +55,7 @@
 | `output.compact` | boolean | No | `true` | When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps. |
 | `output.echarts` | boolean | No | `false` | Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec. Decision 3: Vega-Lite is compact-default, ECharts is opt-in full. |
 | `output.includeNormalizedSpec` | boolean | No | `false` | When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip). |
+| `output.includeA11y` | boolean | No | `false` | When true, also return a STRUCTURED two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from — for every chart type, cartesian and non-cartesian alike (Forge-Demos FD#10). DEFAULT false keeps the wire byte-identical (only a11yDescription). |
 
 ## Output Shape
 
@@ -67,6 +68,7 @@
 | `echartsSpec` | object | No | The compiled ECharts option. Present only when output.echarts was requested (opt-in full path). |
 | `normalizedSpec` | object | No | The intermediate NormalizedVizSpec IR. Present only when output.includeNormalizedSpec is true. |
 | `a11yDescription` | string | No | The non-empty accessibility description carried by the spec (always synthesized when not provided). |
+| `a11y` | object | No | Structured two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from (Forge-Demos FD#10). Present only when output.includeA11y is true (additive; default-off keeps the wire byte-identical). An agent reads this to verify/iterate its own chart without re-deriving the data. |
 | `suggestion` | object | No | Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives. |
 | `lowConfidence` | boolean | No | Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced). |
 | `specRef` | string | No | Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef). |

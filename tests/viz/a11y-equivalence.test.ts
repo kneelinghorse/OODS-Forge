@@ -2,6 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { generateAccessibleTable } from '../../src/viz/a11y/table-generator.js';
 import { generateNarrativeSummary } from '../../src/viz/a11y/narrative-generator.js';
 import { validateVizEquivalenceRules } from '../../src/viz/a11y/equivalence-rules.js';
+import {
+  analyzeHierarchy,
+  analyzeNetwork,
+  analyzeSankey,
+  analyzeSpatial,
+  type HierarchyInput,
+  type NetworkInput,
+  type SankeyInput,
+  type SpatialFeatureRow,
+} from '../../src/viz/a11y/index.js';
 import { createBarChartSpec } from '../components/viz/__fixtures__/barChartSpec.js';
 import { createLineChartSpec } from '../components/viz/__fixtures__/lineChartSpec.js';
 
@@ -52,5 +62,59 @@ describe('Viz accessibility suite', () => {
     const rule = results.find((entry) => entry.id === 'A11Y-R-03');
     expect(rule?.passed).toBe(false);
     expect(rule?.message).toMatch(/table fallback/i);
+  });
+});
+
+// FD#10 (sprint-128 m03): the non-cartesian families now derive the SAME
+// structured two-part a11y (accessible table + narrative) from their own input
+// contracts via the shared generators — no throwaway cartesian spec.
+describe('Non-cartesian a11y equivalence (FD#10)', () => {
+  const HIERARCHY: HierarchyInput = {
+    type: 'adjacency_list',
+    data: [
+      { id: 'root', parentId: null, value: 0 },
+      { id: 'a', parentId: 'root', value: 30, name: 'Alpha' },
+      { id: 'b', parentId: 'root', value: 70, name: 'Beta' },
+    ],
+  };
+  const SANKEY: SankeyInput = {
+    nodes: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
+    links: [
+      { source: 'A', target: 'B', value: 5 },
+      { source: 'A', target: 'C', value: 15 },
+    ],
+  };
+  const NETWORK: NetworkInput = {
+    nodes: [{ id: 'n1' }, { id: 'n2' }, { id: 'n3' }],
+    links: [
+      { source: 'n1', target: 'n2' },
+      { source: 'n1', target: 'n3' },
+    ],
+  };
+  const SPATIAL: SpatialFeatureRow[] = [
+    { id: 's1', featureLabel: 'California', values: { region: 's1', value: 100 } },
+    { id: 's2', featureLabel: 'Texas', values: { region: 's2', value: 60 } },
+  ];
+
+  const cases = [
+    { name: 'treemap/sunburst (hierarchy)', analyze: () => analyzeHierarchy(HIERARCHY) },
+    { name: 'sankey/chord (flow)', analyze: () => analyzeSankey(SANKEY) },
+    { name: 'force_graph (network)', analyze: () => analyzeNetwork(NETWORK) },
+    { name: 'choropleth/bubble_map/flow_map (spatial)', analyze: () => analyzeSpatial({ features: SPATIAL }) },
+  ];
+
+  it.each(cases)('produces a ready table + narrative for $name', ({ analyze }) => {
+    const analysis = analyze();
+    const table = generateAccessibleTable({ analysis });
+    const narrative = generateNarrativeSummary({ analysis, chartLabel: 'Chart' });
+    expect(table.status).toBe('ready');
+    expect(narrative.status).toBe('ready');
+    expect(narrative.keyFindings.length).toBeGreaterThan(0);
+  });
+
+  it.each(cases)('is deterministic across repeated derivation for $name', ({ analyze }) => {
+    const once = generateAccessibleTable({ analysis: analyze() });
+    const twice = generateAccessibleTable({ analysis: analyze() });
+    expect(JSON.stringify(once)).toBe(JSON.stringify(twice));
   });
 });

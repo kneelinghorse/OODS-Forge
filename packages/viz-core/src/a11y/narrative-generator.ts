@@ -21,17 +21,69 @@ interface NarrativeLabels {
   readonly colorLabel?: string;
 }
 
-export function generateNarrativeSummary(spec: NormalizedVizSpec): NarrativeResult {
-  const analysis = analyzeVizSpec(spec);
-  const labels: NarrativeLabels = {
-    chartLabel: spec.name ?? spec.a11y.ariaLabel ?? spec.id ?? 'This visualization',
-    measureLabel: resolveFieldLabel(spec, 'y'),
-    dimensionLabel: resolveFieldLabel(spec, 'x'),
-    colorLabel: resolveFieldLabel(spec, 'color'),
+/**
+ * A pre-built-analysis input for the input-shaped (non-cartesian) sources whose
+ * data never flows through a NormalizedVizSpec (sprint-128 m01). Carries the
+ * VizDataAnalysis plus the labels + author-override knobs the cartesian path
+ * otherwise reads off the spec. All optional except the analysis.
+ */
+export interface AnalysisNarrativeInput {
+  readonly analysis: VizDataAnalysis;
+  /** Mirrors spec.name ?? spec.a11y.ariaLabel ?? spec.id — default 'This visualization'. */
+  readonly chartLabel?: string;
+  readonly measureLabel?: string;
+  readonly dimensionLabel?: string;
+  readonly colorLabel?: string;
+  /** Mirrors spec.a11y.narrative (author override). */
+  readonly narrative?: ProvidedNarrative;
+  /** Mirrors spec.a11y.description (the fallback summary). */
+  readonly fallbackSummary?: string;
+}
+
+interface ResolvedNarrativeInputs {
+  readonly analysis: VizDataAnalysis;
+  readonly labels: NarrativeLabels;
+  readonly narrative: ProvidedNarrative | undefined;
+  readonly fallbackSummary: string;
+}
+
+/**
+ * Normalize the two accepted inputs to a single shape. The spec branch is
+ * byte-identical to the pre-m01 behavior (same analysis, labels, author override,
+ * fallback); the analysis branch supplies those from the input object.
+ */
+function resolveNarrativeInputs(input: NormalizedVizSpec | AnalysisNarrativeInput): ResolvedNarrativeInputs {
+  if ('analysis' in input) {
+    return {
+      analysis: input.analysis,
+      labels: {
+        chartLabel: input.chartLabel ?? 'This visualization',
+        measureLabel: input.measureLabel,
+        dimensionLabel: input.dimensionLabel,
+        colorLabel: input.colorLabel,
+      },
+      narrative: input.narrative,
+      fallbackSummary: input.fallbackSummary ?? '',
+    };
+  }
+  return {
+    analysis: analyzeVizSpec(input),
+    labels: {
+      chartLabel: input.name ?? input.a11y.ariaLabel ?? input.id ?? 'This visualization',
+      measureLabel: resolveFieldLabel(input, 'y'),
+      dimensionLabel: resolveFieldLabel(input, 'x'),
+      colorLabel: resolveFieldLabel(input, 'color'),
+    },
+    narrative: input.a11y.narrative,
+    fallbackSummary: input.a11y.description,
   };
+}
+
+export function generateNarrativeSummary(input: NormalizedVizSpec | AnalysisNarrativeInput): NarrativeResult {
+  const { analysis, labels, narrative, fallbackSummary } = resolveNarrativeInputs(input);
 
   const derived = deriveNarrativeFromData(analysis, labels);
-  const { summary, keyFindings } = applyNarrativeOverride(spec.a11y.narrative, derived, spec.a11y.description);
+  const { summary, keyFindings } = applyNarrativeOverride(narrative, derived, fallbackSummary);
 
   return {
     status: summary.length > 0 ? 'ready' : 'insufficient-data',
