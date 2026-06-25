@@ -26,10 +26,12 @@ interface NarrativeLabels {
  * signal resolves over the measure registry. The measure's `displayName` maps to the
  * already-present `measureLabel`; this carries the remaining governed fields a resolved
  * registry entry holds (`measure-registry.ts` `MeasureEntry`: `unit` / `format` + the
- * governed `threshold.value`). `comparison.basis` is DELIBERATELY NOT carried — it is
- * not threaded into `DashboardKpiSummary` today and the "vs target" clause stays
- * deferred. ONE shared shape, reused by `AnalysisNarrativeInput`, `AnalysisTableInput`,
- * and (sprint-129 m02) the dashboard KPI summary — NOT a parallel metadata type.
+ * governed `threshold.value`) plus (sprint-130 m01) the RESOLVED comparison basis/value
+ * the KPI delta was computed against — `kpiPanel.comparison` AFTER `resolveMeasurePanel`
+ * (author-override-wins), so the "vs target N" clause names the ACTUAL baseline, not a
+ * governed default an override superseded. ONE shared shape, reused by
+ * `AnalysisNarrativeInput`, `AnalysisTableInput`, and (sprint-129 m02) the dashboard KPI
+ * summary (`DashboardKpiSummary`) — NOT a parallel metadata type.
  */
 export interface MeasureNarrativeContext {
   /** Resolved measure unit label, e.g. '1000 USD'. Mirrors `MeasureEntry.unit`. */
@@ -38,6 +40,24 @@ export interface MeasureNarrativeContext {
   readonly format?: string;
   /** Governed threshold value from the resolved registry entry (`threshold.value`). */
   readonly thresholdValue?: number;
+  /**
+   * Governed threshold DIRECTION from the resolved registry entry (`threshold.direction`),
+   * sprint-130 m04. Not verbalized — carried so the mcp-server V142 guard can detect an author
+   * direction-only override that flips the computeKpi breach while the narrative still names the
+   * governed direction (a registry-vs-rendered drift). Absent-safe across all three consumers.
+   */
+  readonly thresholdDirection?: 'above' | 'below';
+  /**
+   * RESOLVED comparison basis (sprint-130 m01) — `kpiPanel.comparison.basis` AFTER
+   * `resolveMeasurePanel`. Mirrors `KpiComparison.basis`. Only `'target'` is verbalized
+   * this sprint (as "vs target N"); the period bases carry no static value to name.
+   */
+  readonly comparisonBasis?: 'prior_period' | 'target' | 'window';
+  /**
+   * RESOLVED comparison value (sprint-130 m01) — `kpiPanel.comparison.value`, the explicit
+   * target for basis 'target'. Mirrors `KpiComparison.value`. The N in "vs target N".
+   */
+  readonly comparisonValue?: number;
 }
 
 /**
@@ -214,7 +234,7 @@ function deriveNarrativeFromData(
  * threshold the registry holds. Returns undefined when the context carries no governed
  * field beyond the label, so an empty `{}` measureContext stays byte-identical.
  */
-function describeMeasureContext(
+export function describeMeasureContext(
   measureLabel: string | undefined,
   ctx: MeasureNarrativeContext,
 ): string | undefined {
@@ -227,6 +247,12 @@ function describeMeasureContext(
   }
   if (ctx.thresholdValue !== undefined) {
     parts.push(`threshold ${formatNumeric(ctx.thresholdValue)}`);
+  }
+  // s130-m02: name the RESOLVED comparison baseline the delta was computed against. Only the
+  // 'target' basis carries a static value to verbalize (prior_period/window are series-derived);
+  // the `vs target N` literal is IDENTICAL to the cross-panel emit site in dashboard-narrative.ts.
+  if (ctx.comparisonBasis === 'target' && ctx.comparisonValue !== undefined) {
+    parts.push(`vs target ${formatNumeric(ctx.comparisonValue)}`);
   }
   // Only surface when at least one governed field beyond the label is present.
   return parts.length > 1 ? parts.join('; ') : undefined;

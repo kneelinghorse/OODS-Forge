@@ -117,3 +117,33 @@ describe('deriveDashboardNarrative — measure context (sprint-129 m02)', () => 
     ]);
   });
 });
+
+describe('deriveDashboardNarrative — comparison-basis "vs target" (sprint-130 m02)', () => {
+  it('appends "vs target N" after the delta when the resolved basis is target (the IDENTICAL single-chart literal)', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Total Revenue', formatted: '390', trendDirection: 'increasing', delta: 90,
+      thresholdBreached: true, measureContext: { thresholdValue: 350, comparisonBasis: 'target', comparisonValue: 300 },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual([
+      'Total Revenue: 390 (increasing, delta 90 vs target 300) — threshold 350 breached',
+    ]);
+  });
+
+  it('does NOT append a clause for a non-target basis (prior_period is series-derived, no static value)', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Total Revenue', formatted: '390', trendDirection: 'increasing', delta: 90,
+      measureContext: { comparisonBasis: 'prior_period' },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual(['Total Revenue: 390 (increasing, delta 90)']);
+  });
+
+  it('a measureContext WITHOUT comparison fields is byte-identical (no clause) — the s129 fixtures are unaffected', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Total Revenue', formatted: '390', trendDirection: 'increasing', delta: 90,
+      thresholdBreached: true, measureContext: { unit: 'USD', thresholdValue: 350 },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual([
+      'Total Revenue: 390 USD (increasing, delta 90) — threshold 350 breached',
+    ]);
+  });
+});

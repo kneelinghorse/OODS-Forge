@@ -692,6 +692,15 @@ describe('dashboard.render — measure-grounded narrative (sprint-129 m02)', () 
     expect(narrativeOf(out)?.keyFindings.some((f) => f.includes('1000 USD'))).toBe(true);
   });
 
+  it('the unit-on-the-string is a STRUCTURAL invariant — byte-exact resolved a11yDescription (sprint-130 m04)', async () => {
+    // Converts the data-coupled toContain('1000 USD') above into a structural guard: the WHOLE
+    // string is registry-DERIVED. gm.export.value.total carries no defaultComparison -> delta null ->
+    // the bare `${label}: ${formatted}.` form, with the governed unit appended to the value.
+    const out = await handle(exportDash({ output: { includeA11y: true } }));
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.a11yDescription).toBe('Exports: 300 1000 USD.');
+  });
+
   it('flag-OFF (no includeA11y / no html) keeps the narrative ABSENT — the gate lift is byte-identical there', async () => {
     const out = await handle(withMeasureRefN('gm.revenue.total', { resolveMeasures: true }));
     expect(narrativeOf(out)).toBeUndefined();

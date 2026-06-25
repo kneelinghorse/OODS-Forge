@@ -11,6 +11,7 @@
 // narrative wins with byte-identical precedence to the single-chart path.
 
 import { applyNarrativeOverride, type MeasureNarrativeContext, type ProvidedNarrative } from './narrative-generator.js';
+import { formatNumeric } from './format.js';
 
 /** One KPI's computed signal, projected for narration. */
 export interface DashboardKpiSummary {
@@ -68,6 +69,13 @@ export function deriveDashboardNarrative(
       const unit = k.measureContext?.unit;
       const formatted = unit ? `${k.formatted} ${unit}` : k.formatted;
       const thresholdValue = k.measureContext?.thresholdValue;
+      // s130-m02: name the RESOLVED comparison baseline the delta was computed against. Only the
+      // 'target' basis carries a static value to verbalize; the `vs target N` literal is IDENTICAL
+      // to the single-chart emit site in narrative-generator.ts (describeMeasureContext) — no fork.
+      const targetPhrase =
+        k.measureContext?.comparisonBasis === 'target' && k.measureContext.comparisonValue !== undefined
+          ? ` vs target ${formatNumeric(k.measureContext.comparisonValue)}`
+          : '';
       const flags: string[] = [];
       if (k.thresholdBreached) {
         flags.push(thresholdValue !== undefined ? `threshold ${thresholdValue} breached` : 'threshold breached');
@@ -76,7 +84,7 @@ export function deriveDashboardNarrative(
         flags.push('anomaly');
       }
       const flagPhrase = flags.length > 0 ? ` — ${flags.join(', ')}` : '';
-      return `${k.label}: ${formatted} (${k.trendDirection}${deltaPhrase})${flagPhrase}`;
+      return `${k.label}: ${formatted} (${k.trendDirection}${deltaPhrase}${targetPhrase})${flagPhrase}`;
     })
     .slice(0, 5);
 

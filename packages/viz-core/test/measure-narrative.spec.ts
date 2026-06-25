@@ -93,6 +93,38 @@ describe('generateNarrativeSummary — measure-context (sprint-129 m01)', () => 
   });
 });
 
+describe('generateNarrativeSummary — comparison-basis "vs target" (sprint-130 m02)', () => {
+  it('appends "vs target N" when the RESOLVED comparison basis is target (the IDENTICAL cross-panel literal)', () => {
+    const narrative = generateNarrativeSummary({
+      analysis: analyzeSankey(SANKEY),
+      measureLabel: 'Flow',
+      measureContext: { ...MEASURE_CTX, comparisonBasis: 'target', comparisonValue: 300 },
+    });
+    // The clause rides INSIDE the leading measure finding, after the governed threshold.
+    expect(narrative.keyFindings[0]).toBe('Measure: Flow; unit 1000 USD; format currency; threshold 350; vs target 300');
+    expect(narrative.keyFindings.slice(1)).toEqual(S128_FINDINGS);
+  });
+
+  it('does NOT verbalize a non-target basis (prior_period/window carry no static value to name)', () => {
+    const prior = generateNarrativeSummary({
+      analysis: analyzeSankey(SANKEY),
+      measureLabel: 'Flow',
+      measureContext: { thresholdValue: 100, comparisonBasis: 'prior_period' },
+    });
+    expect(prior.keyFindings[0]).toBe('Measure: Flow; threshold 100');
+    expect(prior.keyFindings.some((f) => f.includes('vs target'))).toBe(false);
+  });
+
+  it('requires BOTH basis=target AND a present value — a target basis with no value adds no clause', () => {
+    const narrative = generateNarrativeSummary({
+      analysis: analyzeSankey(SANKEY),
+      measureLabel: 'Flow',
+      measureContext: { unit: 'USD', comparisonBasis: 'target' },
+    });
+    expect(narrative.keyFindings[0]).toBe('Measure: Flow; unit USD');
+  });
+});
+
 describe('generateAccessibleTable — measure-context unit caption (sprint-129 m01)', () => {
   it('names the governed unit in the resolved caption when present', () => {
     const table = generateAccessibleTable({

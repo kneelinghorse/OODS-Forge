@@ -392,4 +392,166 @@ describe('dashboard.render — measure-narrative equivalence (sprint-129, OODS-V
       (out.warnings ?? []).some((w) => w.code === 'OODS-V141' && w.severity === 'warning' && w.message.includes('kpi')),
     ).toBe(true);
   });
+
+  // s130-m04 — OODS-V142: the DIRECTION sibling of V141. gm.revenue.total governs {above, 350}; an
+  // author override that keeps value 350 but flips direction to 'below' leaves V141 silent (values
+  // equal) yet flips the breach while the narrative still names the governed 'above'. resolveMeasurePanel
+  // replaces the WHOLE threshold object, so this is reachable.
+  function directionKpi(direction: 'above' | 'below', extra: Record<string, unknown> = {}): DashboardRenderInput {
+    return {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'sales', rows: ROWS }],
+      panels: [{ id: 'kpi', kind: 'kpi', title: 'Revenue', datasetId: 'sales', measureRef: 'gm.revenue.total', threshold: { direction, value: 350 } }],
+      a11y: { description: 'threshold direction drift' },
+      resolveMeasures: true,
+      ...extra,
+    } as DashboardRenderInput;
+  }
+
+  it('V142 fires (error panel) when an author direction-only override flips the governed threshold direction', async () => {
+    // value 350 == governed 350 -> V141 silent; direction 'below' != governed 'above' -> V142.
+    const out = await handle(directionKpi('below', { output: { includeA11y: true } }));
+    expect(validateOutput(out)).toBe(true);
+    const err = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'error' }>;
+    expect(err.kind).toBe('error');
+    expect(err.error.code).toBe('OODS-V142');
+    expect(err.error.message).toContain('above'); // the governed direction
+    expect(err.error.message).toContain('below'); // the resolved/effective direction
+    expect(out.meta?.errorPanelCount).toBe(1);
+  });
+
+  it('V142 does NOT fire when the resolved direction MATCHES the governed default (no drift)', async () => {
+    const out = await handle(directionKpi('above', { output: { includeA11y: true } }));
+    expect(validateOutput(out)).toBe(true);
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.kind).toBe('kpi'); // renders normally
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V142')).toBe(false);
+  });
+
+  it('V142 does NOT fire when the narrative is NOT surfaced (no includeA11y / no html)', async () => {
+    // Same direction divergence, but no narrative surface -> the guard is scoped to the narrative path.
+    const out = await handle(directionKpi('below'));
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.kind).toBe('kpi');
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V142')).toBe(false);
+  });
+
+  it('V142 under onPanelError:"omit" -> warning + dropped panel (the same seam as V141)', async () => {
+    const out = await handle(directionKpi('below', { output: { includeA11y: true }, onPanelError: 'omit' }));
+    expect(out.panels.find((p) => p.id === 'kpi')).toBeUndefined();
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V142' && w.severity === 'warning')).toBe(true);
+  });
+});
+
+describe('dashboard.render — comparison-basis "vs target" narrative (sprint-130, m02)', () => {
+  // gm.revenue.total carries defaultComparison {basis:'target', value:300}; with NO author
+  // comparison override the RESOLVED comparison is that governed target, so the cross-panel
+  // narrative names what the delta (180 - 300 = -120) was computed against. No threshold
+  // override -> the resolved threshold equals the governed default (350) -> no V141 drift.
+  function targetKpi(extra: Record<string, unknown> = {}): DashboardRenderInput {
+    return {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'sales', rows: ROWS }],
+      panels: [{ id: 'kpi', kind: 'kpi', title: 'Revenue', datasetId: 'sales', measureRef: 'gm.revenue.total' }],
+      a11y: { description: 'comparison-basis narrative' },
+      resolveMeasures: true,
+      ...extra,
+    } as DashboardRenderInput;
+  }
+
+  const narrativeOf = (out: Awaited<ReturnType<typeof handle>>) =>
+    (out.a11y as Record<string, unknown>).narrative as { summary: string; keyFindings: string[] } | undefined;
+
+  it('the RESOLVED target value reaches the cross-panel a11y.narrative as "vs target N" under includeA11y', async () => {
+    const out = await handle(targetKpi({ output: { includeA11y: true } }));
+    expect(validateOutput(out)).toBe(true);
+    const finding = narrativeOf(out)?.keyFindings.find((f) => f.startsWith('Revenue: 180'));
+    expect(finding).toBeDefined();
+    expect(finding).toContain('vs target 300'); // names the governed baseline the delta was computed against
+  });
+
+  it('the per-panel a11yDescription stays bare — the "vs target" clause is the cross-panel surface ONLY (m01 call B)', async () => {
+    const out = await handle(targetKpi({ output: { includeA11y: true } }));
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.a11yDescription).toContain('Revenue: 180');
+    expect(kpi.a11yDescription).not.toContain('vs target'); // frozen seam (h): no comparison clause on the terse string
+  });
+
+  it('flag-OFF (no includeA11y) keeps the narrative ABSENT — the clause is gated behind the narrative surface', async () => {
+    const out = await handle(targetKpi());
+    expect(narrativeOf(out)).toBeUndefined();
+  });
+
+  // s130-m04: the FROZEN includeA11y=true, html=false a11y.narrative golden — the #525 JSON surface
+  // the agent actually reads (the only prior frozen narrative bytes were html=true in the fidelity
+  // snap). Byte-exact so the verbalization (incl. the m02 'vs target' clause) cannot drift silently.
+  // No author threshold override -> resolved threshold == governed (350/above) -> no V141/V142.
+  it('FROZEN a11y.narrative golden (includeA11y, no html) — byte-exact over the resolved measure narrative', async () => {
+    const out = await handle(targetKpi({ output: { includeA11y: true, html: false } }));
+    expect(narrativeOf(out)).toEqual({
+      summary: '1 key metric tracked.',
+      keyFindings: ['Revenue: 180 (decreasing, delta -120 vs target 300)'],
+    });
+  });
+});
+
+describe('dashboard.render — EXPLICIT chart-panel measure narrative (sprint-130, m03)', () => {
+  // A bar chart panel may carry an OPTIONAL measureRef. Resolution is NARRATIVE-ONLY — the
+  // governed context decorates the per-panel a11y.narrative; the chart's encodings/compute are
+  // untouched (resolveMeasurePanel is KPI-typed). gm.export.value.total is unit-bearing ('1000 USD')
+  // so it exercises the unit clause (revenue measures carry no unit).
+  function chartMeasureDash(extra: Record<string, unknown> = {}, panelExtra: Record<string, unknown> = {}): DashboardRenderInput {
+    return {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'exports', rows: [{ region: 'West', value: 100 }, { region: 'East', value: 200 }] }],
+      panels: [
+        {
+          id: 'chart',
+          kind: 'chart',
+          chartType: 'bar',
+          datasetId: 'exports',
+          encodings: { x: 'region', y: { field: 'value', aggregate: 'sum' } },
+          ...panelExtra,
+        },
+      ],
+      a11y: { description: 'chart measure narrative' },
+      ...extra,
+    } as DashboardRenderInput;
+  }
+  const chartOf = (out: Awaited<ReturnType<typeof handle>>) =>
+    out.panels.find((p) => p.id === 'chart') as Extract<typeof out.panels[number], { kind: 'chart' }>;
+
+  it('the input schema accepts measureRef on a chart panel', () => {
+    expect(validateInput(chartMeasureDash({ resolveMeasures: true }, { measureRef: 'gm.export.value.total' }))).toBe(true);
+  });
+
+  it('decorates the chart per-panel a11y.narrative with the governed measure leading finding (unit-bearing)', async () => {
+    const out = await handle(chartMeasureDash({ resolveMeasures: true, output: { includeA11y: true } }, { measureRef: 'gm.export.value.total' }));
+    expect(validateOutput(out)).toBe(true);
+    const chart = chartOf(out);
+    // The SAME describeMeasureContext literal the KPI/single-chart paths emit (no fork), prepended.
+    expect(chart.a11y?.narrative?.keyFindings?.[0]).toBe('Measure: Total Export Value; unit 1000 USD; format currency');
+  });
+
+  it('flag-OFF (resolveMeasures off) is byte-identical — no measure finding even with measureRef + includeA11y', async () => {
+    const withRef = await handle(chartMeasureDash({ output: { includeA11y: true } }, { measureRef: 'gm.export.value.total' }));
+    const noRef = await handle(chartMeasureDash({ output: { includeA11y: true } }));
+    expect(chartOf(withRef).a11y?.narrative?.keyFindings?.[0]).not.toContain('Measure:');
+    expect(chartOf(withRef).a11y?.narrative).toEqual(chartOf(noRef).a11y?.narrative); // narrative byte-identical
+  });
+
+  it('UNKNOWN chart measureRef under resolveMeasures = HARD-ERROR (OODS-V130, mirroring the KPI path)', async () => {
+    const out = await handle(chartMeasureDash({ resolveMeasures: true, output: { includeA11y: true } }, { measureRef: 'gm.nope.unknown' }));
+    const err = out.panels.find((p) => p.id === 'chart') as Extract<typeof out.panels[number], { kind: 'error' }>;
+    expect(err.kind).toBe('error');
+    expect(err.error.code).toBe('OODS-V130');
+    expect(err.error.message).toContain('gm.nope.unknown');
+    expect(out.meta?.errorPanelCount).toBe(1);
+  });
+
+  it('UNKNOWN chart measureRef under onPanelError:"omit" -> V130 warning + dropped panel (the KPI seam)', async () => {
+    const out = await handle(chartMeasureDash({ resolveMeasures: true, output: { includeA11y: true }, onPanelError: 'omit' }, { measureRef: 'gm.nope.unknown' }));
+    expect(out.panels.find((p) => p.id === 'chart')).toBeUndefined();
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V130' && w.severity === 'warning')).toBe(true);
+  });
 });
