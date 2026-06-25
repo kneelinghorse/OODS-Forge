@@ -534,7 +534,7 @@ function parseCreateOptions(args: string[]): CreateOptions {
   let directory: string | undefined;
   let trait = 'content/Labelled';
   let domain = 'custom.drafts';
-  let description = 'TODO: Describe this object.';
+  let description = '';
   let force = false;
   while (queue.length > 0) {
     const token = queue.shift();
@@ -1082,7 +1082,7 @@ function registerCommands(): void {
         `  name: ${pascalName}`,
         '  version: 0.1.0',
         `  domain: ${options.domain}`,
-        `  description: ${options.description}`,
+        `  description: ${options.description || `${pascalName} object.`}`,
         '  tags:',
         '    - draft',
         '    - experimental',
@@ -1101,8 +1101,7 @@ function registerCommands(): void {
         '    description: Human-readable label shown in UI contexts.',
         '',
         'metadata:',
-        '  owners:',
-        '    - TODO: add owner emails',
+        '  owners: []',
         '  changelog:',
         '    - version: 0.1.0',
         `      date: "${todayIso()}"`,
