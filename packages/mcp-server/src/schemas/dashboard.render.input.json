@@ -126,6 +126,11 @@
           "type": "string",
           "minLength": 1,
           "description": "A11y completeness (sprint-118 m07). When set (e.g. 'flag') AND output.dataTable is on, tally that column's data-quality codes (FAOSTAT E=estimated / I=imputed / X=external / blank=official) into a <caption> footnote per data-table. Pure presentation over a parameter — no Forge-side fetch."
+        },
+        "includeA11y": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, attach a STRUCTURED two-part text alternative (accessible data table + narrative summary) to each chart panel result (panels[].a11y), derived from the SAME data source the panel renders from (Forge-Demos FD#10) — for cartesian and non-cartesian panels alike. DEFAULT false keeps the wire byte-identical (panels carry only a11yDescription)."
         }
       }
     }

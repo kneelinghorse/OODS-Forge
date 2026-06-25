@@ -18,16 +18,26 @@ import {
   adaptSankeyToECharts,
   adaptSunburstToECharts,
   adaptTreemapToECharts,
+  analyzeHierarchy,
+  analyzeNetwork,
+  analyzeSankey,
+  analyzeSpatial,
   buildVizSpecFromRows,
+  generateAccessibleTable,
+  generateNarrativeSummary,
   registerGeoJson,
   toEChartsOption,
   toVegaLiteSpec,
+  type AccessibleTableResult,
   type BuildVizSpecInput,
   type HierarchyInput,
+  type NarrativeResult,
   type NetworkInput,
   type NormalizedVizSpec,
   type SankeyInput,
+  type SpatialFeatureRow,
   type SpatialSpec,
+  type VizDataAnalysis,
 } from '@oods/viz-core';
 import type { VizRenderInput, VizRenderOutput } from '../schemas/generated.js';
 import { createValueRef, describeSchemaRef, resolveValueRef } from './schema-ref.js';
@@ -39,6 +49,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
   const includeNormalized = input.output?.includeNormalizedSpec ?? false;
+  const includeA11y = input.output?.includeA11y ?? false;
 
   // ---- hierarchy/network branch (sprint-111): treemap/sunburst/sankey (force
   // lands in m04) are EXPLICIT-ONLY and DECOUPLED — each carries a dedicated data
@@ -46,7 +57,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   // ECharts option is the PRIMARY payload. The schema couples each chartType with
   // its data branch, so the chartType check is sufficient to dispatch. ----
   if (isEChartsPrimaryType(input.chartType)) {
-    return renderEChartsPrimary(input, input.chartType, compact, includeNormalized);
+    return renderEChartsPrimary(input, input.chartType, compact, includeNormalized, includeA11y);
   }
 
   // ---- resolve data: inline rows (primary) or a cached datasetRef ----
@@ -113,6 +124,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
         compact,
         ...(wantEcharts ? { echarts: true } : {}),
         ...(includeNormalized ? { includeNormalizedSpec: true } : {}),
+        ...(includeA11y ? { includeA11y: true } : {}),
       },
       meta: {
         renderer: 'vega-lite',
@@ -155,6 +167,11 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
     }
     if (compact) {
       out.tokenCssRef = 'tokens.build';
+    }
+    if (includeA11y) {
+      // Structured a11y from the SAME spec the chart renders from (cartesian path
+      // unchanged: the generators run analyzeVizSpec on built.spec, byte-identical).
+      out.a11y = toWireA11y(generateAccessibleTable(built.spec), generateNarrativeSummary(built.spec));
     }
 
     // specRef for downstream pipeline reuse (mirrors viz.compose schemaRef).
@@ -237,6 +254,7 @@ function renderEChartsPrimary(
   chartType: EChartsPrimaryType,
   compact: boolean,
   includeNormalized: boolean,
+  includeA11y: boolean,
 ): VizRenderOutput {
   const config = ECHARTS_PRIMARY[chartType];
 
@@ -328,6 +346,7 @@ function renderEChartsPrimary(
         compact,
         echarts: true,
         ...(includeNormalized ? { includeNormalizedSpec: true } : {}),
+        ...(includeA11y ? { includeA11y: true } : {}),
       },
       meta: {
         renderer: 'echarts',
@@ -336,6 +355,27 @@ function renderEChartsPrimary(
         fields: [],
       },
     };
+
+    if (includeA11y) {
+      // Structured a11y derived DIRECTLY from the non-cartesian input branch
+      // (FD#10): treemap/sunburst via analyzeHierarchy, sankey/chord via
+      // analyzeSankey, force_graph via analyzeNetwork, geo via analyzeSpatial —
+      // routed through the SAME generators every type uses.
+      const { analysis, measureLabel } = analyzeEChartsPrimary(chartType, branchData);
+      out.a11y = toWireA11y(
+        generateAccessibleTable({
+          analysis,
+          ...(spec.name ? { caption: `Data table for ${spec.name}` } : {}),
+          id: spec.id,
+        }),
+        generateNarrativeSummary({
+          analysis,
+          chartLabel: spec.name ?? config.label,
+          ...(measureLabel ? { measureLabel } : {}),
+          fallbackSummary: spec.a11y.description,
+        }),
+      );
+    }
 
     if (includeNormalized) {
       // Metadata-only IR for these charts (the data lives in the data branch +
@@ -540,6 +580,75 @@ function renderGeoOption(
   };
   const option = adaptBubbleToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
   return { option, count: rows.length };
+}
+
+// ---- structured a11y projection (sprint-128 m03, FD#10) -----------------------
+// Project the engine's table + narrative results onto the additive wire shape, and
+// pick the right input-shaped analyzer per non-cartesian type so the structured
+// a11y derives from the SAME data source the chart renders from.
+type WireA11y = NonNullable<VizRenderOutput['a11y']>;
+
+function toWireA11y(table: AccessibleTableResult, narrative: NarrativeResult): WireA11y {
+  const wire: WireA11y = {
+    narrative: { summary: narrative.summary, keyFindings: [...narrative.keyFindings] },
+  };
+  if (table.status === 'ready') {
+    wire.table = {
+      caption: table.caption,
+      columns: table.columns.map((column) => ({
+        field: column.field,
+        label: column.label,
+        isNumeric: column.isNumeric,
+      })),
+      rows: table.rows.map((row) => ({
+        cells: row.cells.map((cell) => ({ field: cell.field, text: cell.text })),
+      })),
+    };
+  }
+  return wire;
+}
+
+function analyzeEChartsPrimary(
+  chartType: EChartsPrimaryType,
+  branchData: unknown,
+): { analysis: VizDataAnalysis; measureLabel?: string } {
+  switch (chartType) {
+    case 'treemap':
+    case 'sunburst':
+      return { analysis: analyzeHierarchy(branchData as HierarchyInput), measureLabel: 'Value' };
+    case 'sankey':
+    case 'chord':
+      return { analysis: analyzeSankey(branchData as SankeyInput), measureLabel: 'Flow' };
+    case 'force_graph':
+      return { analysis: analyzeNetwork(branchData as NetworkInput), measureLabel: 'Connections' };
+    default:
+      return analyzeGeoForA11y(chartType, branchData as GeoBranch);
+  }
+}
+
+// Geo a11y: the bound `rows` ARE the per-feature data (one row per region / point /
+// flow); map them to the SpatialFeatureRow shape analyzeSpatial consumes, using the
+// per-type metric as the measure and the join key (or a `name` field) as the label.
+function analyzeGeoForA11y(
+  chartType: GeoChartType,
+  geo: GeoBranch,
+): { analysis: VizDataAnalysis; measureLabel?: string } {
+  const rows = (geo.rows ?? []) as Array<Record<string, unknown>>;
+  const valueField =
+    chartType === 'choropleth'
+      ? geo.valueField
+      : chartType === 'bubble_map'
+        ? geo.sizeField ?? geo.colorField
+        : geo.strengthField;
+  const labelField = geo.join?.dataKey;
+  const features: SpatialFeatureRow[] = rows.map((row, index) => {
+    const label = (labelField ? row[labelField] : undefined) ?? row.name ?? `Feature ${index + 1}`;
+    return { id: String(label), featureLabel: String(label), values: row };
+  });
+  return {
+    analysis: analyzeSpatial({ features, ...(valueField ? { valueField } : {}) }),
+    ...(valueField ? { measureLabel: valueField } : {}),
+  };
 }
 
 // Count of hierarchy nodes bound into the chart (surfaced as meta.rowCount — the

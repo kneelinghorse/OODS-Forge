@@ -254,6 +254,20 @@ for (const [domain, entries] of Object.entries(statusMap.domains)) {
 
 export const STATUS_DOMAINS: readonly StatusDomain[] = Object.freeze(Array.from(registry.keys()));
 
+// Legacy inbound-tolerance aliases (sprint-128 m04 — Derek-ratified option C, the
+// named reversal of s127's drop; #939(4)). A retired status string resolves to its
+// canonical successor's PRESENTATION (and thus tone), so the registry AGREES with
+// the withStatusBadge modifier — which keeps its own `delinquent → tone:'critical'`
+// alias — instead of neutral-falling-back. `delinquent` was split into past_due +
+// unpaid; `unpaid` (retries exhausted, service revoked) is the convergent critical
+// target. Deliberately a CODE alias, NOT a token-map entry: the s127 convergence
+// guard pins the saas-billing subscription domain to SUBSCRIPTION_STATES, so an
+// orphaned `delinquent` token must NOT reappear there (live bare-`delinquent`
+// producers still exist, e.g. Table.stories.tsx — converge, don't drop).
+const LEGACY_STATUS_ALIASES: Record<StatusDomain, Record<string, string>> = {
+  subscription: { delinquent: 'unpaid' },
+};
+
 export function getStatusPresentation(domain: StatusDomain, status: string): StatusPresentation {
   const domainMap = registry.get(domain);
   if (!domainMap) {
@@ -264,6 +278,16 @@ export function getStatusPresentation(domain: StatusDomain, status: string): Sta
   const entry = domainMap.get(normalizedStatus);
   if (entry) {
     return entry;
+  }
+
+  // A retired status resolves to its successor's presentation, relabeled to the
+  // requested status (so `delinquent` shows "Delinquent" at the successor's tone).
+  const aliasTarget = LEGACY_STATUS_ALIASES[domain]?.[normalizedStatus];
+  if (aliasTarget) {
+    const aliased = domainMap.get(aliasTarget);
+    if (aliased) {
+      return { ...aliased, status, label: toLabel(status) };
+    }
   }
 
   return buildFallbackPresentation(domain, status, 'neutral');

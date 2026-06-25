@@ -32,10 +32,38 @@ export interface VizDataAnalysis {
   readonly correlation?: number;
 }
 
-export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
-  const bindings = resolvePrimaryBindings(spec);
-  const rows = collectRows(spec);
-  const dataPoints = buildDataPoints(rows, bindings);
+/**
+ * Bindings + pre-built data points for one analysis. The cartesian path
+ * (analyzeVizSpec) resolves these from a NormalizedVizSpec; the input-shaped
+ * non-cartesian analyzers (analyzeHierarchy/analyzeSankey/analyzeNetwork,
+ * sprint-128 m01) build their own rows + data points and pass them here, so
+ * every chart type computes its extrema/total/mean through ONE implementation.
+ */
+export interface VizDataAnalysisInput {
+  readonly mark: ChartShape;
+  readonly rows: readonly Record<string, unknown>[];
+  readonly dataPoints: readonly DataPoint[];
+  readonly dimensionField?: string;
+  readonly measureField?: string;
+  readonly colorField?: string;
+  readonly sizeField?: string;
+  /**
+   * Cartesian-only: derive a first→last trend. Non-cartesian rows have no
+   * inherent ordering, so the analyzers leave this off (no spurious trend).
+   */
+  readonly computeTrend?: boolean;
+  /** Cartesian-only Pearson r; non-cartesian sources leave this undefined. */
+  readonly correlation?: number;
+}
+
+/**
+ * The shared extrema/total/mean/category core. Pure: given the rows, the
+ * measure data points, and the field bindings, produce the VizDataAnalysis the
+ * table + narrative generators consume. analyzeVizSpec is the cartesian wrapper;
+ * the non-cartesian analyzers are the input-shaped wrappers.
+ */
+export function buildVizDataAnalysis(input: VizDataAnalysisInput): VizDataAnalysis {
+  const { mark, rows, dataPoints, dimensionField, measureField, colorField, sizeField } = input;
   const min = findExtreme(dataPoints, 'min');
   const max = findExtreme(dataPoints, 'max');
   const first = dataPoints.at(0);
@@ -43,18 +71,17 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   const numericValues = dataPoints.map((point) => point.value);
   const total = numericValues.length > 0 ? numericValues.reduce((sum, value) => sum + value, 0) : undefined;
   const mean = numericValues.length > 0 && total !== undefined ? total / numericValues.length : undefined;
-  const dimensionValues = bindings.dimensionField ? extractDimensions(rows, bindings.dimensionField) : [];
-  const sizeValues = bindings.sizeField ? extractNumericValues(rows, bindings.sizeField) : [];
-  const colorCategories = bindings.colorField ? extractCategories(rows, bindings.colorField) : [];
-  const trendInfo = first && last ? deriveTrend(first.value, last.value) : undefined;
-  const correlation = deriveCorrelation(rows, bindings);
+  const dimensionValues = dimensionField ? extractDimensions(rows, dimensionField) : [];
+  const sizeValues = sizeField ? extractNumericValues(rows, sizeField) : [];
+  const colorCategories = colorField ? extractCategories(rows, colorField) : [];
+  const trendInfo = input.computeTrend && first && last ? deriveTrend(first.value, last.value) : undefined;
 
   return {
-    mark: bindings.mark,
-    dimensionField: bindings.dimensionField,
-    measureField: bindings.measureField,
-    colorField: bindings.colorField,
-    sizeField: bindings.sizeField,
+    mark,
+    dimensionField,
+    measureField,
+    colorField,
+    sizeField,
     rows,
     rowCount: rows.length,
     dimensionValues,
@@ -69,8 +96,25 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     mean,
     trend: trendInfo?.trend,
     trendDelta: trendInfo?.delta,
-    correlation,
+    correlation: input.correlation,
   } satisfies VizDataAnalysis;
+}
+
+export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
+  const bindings = resolvePrimaryBindings(spec);
+  const rows = collectRows(spec);
+  const dataPoints = buildDataPoints(rows, bindings);
+  return buildVizDataAnalysis({
+    mark: bindings.mark,
+    rows,
+    dataPoints,
+    dimensionField: bindings.dimensionField,
+    measureField: bindings.measureField,
+    colorField: bindings.colorField,
+    sizeField: bindings.sizeField,
+    computeTrend: true,
+    correlation: deriveCorrelation(rows, bindings),
+  });
 }
 
 function resolvePrimaryBindings(spec: NormalizedVizSpec): {

@@ -1264,6 +1264,10 @@ export namespace DashboardRenderInputSchema {
        * A11y completeness (sprint-118 m07). When set (e.g. 'flag') AND output.dataTable is on, tally that column's data-quality codes (FAOSTAT E=estimated / I=imputed / X=external / blank=official) into a <caption> footnote per data-table. Pure presentation over a parameter — no Forge-side fetch.
        */
       dataQualityField?: string;
+      /**
+       * When true, attach a STRUCTURED two-part text alternative (accessible data table + narrative summary) to each chart panel result (panels[].a11y), derived from the SAME data source the panel renders from (Forge-Demos FD#10) — for cartesian and non-cartesian panels alike. DEFAULT false keeps the wire byte-identical (panels carry only a11yDescription).
+       */
+      includeA11y?: boolean;
     };
   }
   /**
@@ -1663,6 +1667,7 @@ export namespace DashboardRenderOutputSchema {
       html?: boolean;
       dataTable?: boolean;
       contrastScan?: boolean;
+      includeA11y?: boolean;
     };
     meta?: {
       panelCount?: number;
@@ -1696,6 +1701,30 @@ export namespace DashboardRenderOutputSchema {
       [k: string]: any;
     };
     a11yDescription?: string;
+    a11y?: StructuredA11Y;
+  }
+  /**
+   * Structured two-part text alternative (accessible data table + narrative summary) for this panel, derived from the SAME data source the panel renders from (Forge-Demos FD#10). Present only when the dashboard output.includeA11y is true (additive; default-off keeps the wire byte-identical).
+   */
+  export interface StructuredA11Y {
+    table?: {
+      caption: string;
+      columns: {
+        field: string;
+        label: string;
+        isNumeric: boolean;
+      }[];
+      rows: {
+        cells: {
+          field: string;
+          text: string;
+        }[];
+      }[];
+    };
+    narrative?: {
+      summary: string;
+      keyFindings: string[];
+    };
   }
   export interface KpiPanelResult {
     id: string;
@@ -6790,6 +6819,10 @@ export namespace VizRenderInputSchema {
        * When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip).
        */
       includeNormalizedSpec?: boolean;
+      /**
+       * When true, also return a STRUCTURED two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from — for every chart type, cartesian and non-cartesian alike (Forge-Demos FD#10). DEFAULT false keeps the wire byte-identical (only a11yDescription).
+       */
+      includeA11y?: boolean;
     };
   }
   /**
@@ -6845,6 +6878,35 @@ export namespace VizRenderOutputSchema {
      */
     a11yDescription?: string;
     /**
+     * Structured two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from (Forge-Demos FD#10). Present only when output.includeA11y is true (additive; default-off keeps the wire byte-identical). An agent reads this to verify/iterate its own chart without re-deriving the data.
+     */
+    a11y?: {
+      /**
+       * Accessible data table. Present when a table could be derived (omitted when the source had no inline rows / the fallback was disabled).
+       */
+      table?: {
+        caption: string;
+        columns: {
+          field: string;
+          label: string;
+          isNumeric: boolean;
+        }[];
+        rows: {
+          cells: {
+            field: string;
+            text: string;
+          }[];
+        }[];
+      };
+      /**
+       * Narrative summary + key findings derived from the data.
+       */
+      narrative?: {
+        summary: string;
+        keyFindings: string[];
+      };
+    };
+    /**
      * Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives.
      */
     suggestion?: {
@@ -6894,6 +6956,7 @@ export namespace VizRenderOutputSchema {
       compact: boolean;
       echarts?: boolean;
       includeNormalizedSpec?: boolean;
+      includeA11y?: boolean;
     };
     /**
      * Fatal errors (present and non-empty when status is 'error').

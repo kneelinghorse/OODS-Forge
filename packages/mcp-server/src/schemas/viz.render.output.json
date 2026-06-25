@@ -39,6 +39,67 @@
       "type": "string",
       "description": "The non-empty accessibility description carried by the spec (always synthesized when not provided)."
     },
+    "a11y": {
+      "type": "object",
+      "description": "Structured two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from (Forge-Demos FD#10). Present only when output.includeA11y is true (additive; default-off keeps the wire byte-identical). An agent reads this to verify/iterate its own chart without re-deriving the data.",
+      "properties": {
+        "table": {
+          "type": "object",
+          "description": "Accessible data table. Present when a table could be derived (omitted when the source had no inline rows / the fallback was disabled).",
+          "required": ["caption", "columns", "rows"],
+          "properties": {
+            "caption": { "type": "string" },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["field", "label", "isNumeric"],
+                "properties": {
+                  "field": { "type": "string" },
+                  "label": { "type": "string" },
+                  "isNumeric": { "type": "boolean" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["cells"],
+                "properties": {
+                  "cells": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["field", "text"],
+                      "properties": {
+                        "field": { "type": "string" },
+                        "text": { "type": "string" }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "narrative": {
+          "type": "object",
+          "description": "Narrative summary + key findings derived from the data.",
+          "required": ["summary", "keyFindings"],
+          "properties": {
+            "summary": { "type": "string" },
+            "keyFindings": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "suggestion": {
       "type": "object",
       "description": "Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives.",
@@ -101,7 +162,8 @@
       "properties": {
         "compact": { "type": "boolean" },
         "echarts": { "type": "boolean" },
-        "includeNormalizedSpec": { "type": "boolean" }
+        "includeNormalizedSpec": { "type": "boolean" },
+        "includeA11y": { "type": "boolean" }
       },
       "additionalProperties": false
     },

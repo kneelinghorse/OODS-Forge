@@ -14,4 +14,4 @@
 
 ## Tier 4 (Retrieval)
 - "StatusChip tone inference"
-- "lint:enum-map rules"
+- "lint:enum-to-token rules"

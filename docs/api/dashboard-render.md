@@ -30,6 +30,7 @@
 | `output.dataTable` | boolean | No | `false` | A11y completeness (sprint-118 m07). When true AND output.html is set, append a screen-reader-only data-table inside each tabular chart <figure> whose cells equal the charted rows (the chart's encoding columns). DEFAULT false keeps the HTML byte-identical. |
 | `output.contrastScan` | boolean | No | `false` | A11y completeness (sprint-118 m07). When true, run a WCAG contrast scan over the export's ALREADY-RESOLVED brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below threshold. DEFAULT false emits nothing. |
 | `output.dataQualityField` | string | No |  | A11y completeness (sprint-118 m07). When set (e.g. 'flag') AND output.dataTable is on, tally that column's data-quality codes (FAOSTAT E=estimated / I=imputed / X=external / blank=official) into a <caption> footnote per data-table. Pure presentation over a parameter — no Forge-side fetch. |
+| `output.includeA11y` | boolean | No | `false` | When true, attach a STRUCTURED two-part text alternative (accessible data table + narrative summary) to each chart panel result (panels[].a11y), derived from the SAME data source the panel renders from (Forge-Demos FD#10) — for cartesian and non-cartesian panels alike. DEFAULT false keeps the wire byte-identical (panels carry only a11yDescription). |
 
 ## Output Shape
 
