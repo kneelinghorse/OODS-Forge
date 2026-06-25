@@ -42,6 +42,10 @@ export type ChartPanel = ChartPanel1 & {
   sankey?: SankeyData;
   network?: NetworkData;
   geo?: GeoData;
+  /**
+   * OPTIONAL governed-measure reference (sprint-130 m03). When `resolveMeasures` is set, the resolved registry entry's governed context (displayName/unit/format/threshold/comparison) DECORATES this chart panel's a11y narrative as a leading measure finding. NARRATIVE-ONLY: unlike KpiPanel.measureRef it does NOT rewrite the chart's compute inputs (resolveMeasurePanel is KPI-typed); the chart's encodings/data branch are untouched. An UNKNOWN measureRef under resolveMeasures is a hard error (OODS-V130), mirroring the KPI path (governance consistency). Absent or flag-off === byte-identical.
+   */
+  measureRef?: string;
 };
 export type ChartPanel1 = {
   [k: string]: unknown;

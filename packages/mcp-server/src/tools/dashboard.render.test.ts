@@ -642,3 +642,83 @@ describe('dashboard.render — per-panel structured a11y (output.includeA11y)', 
     expect(validateInput(metricOverview({ output: { includeA11y: true } }))).toBe(true);
   });
 });
+
+// sprint-129 m02 — measure-grounded narrative through the KPI path. When a KPI resolves a
+// governed measure, the resolved entry's unit annotates the value and the governed threshold
+// value enriches the breach flag — on the per-panel a11yDescription string (unit only, the terse
+// surface) AND the gate-lifted cross-panel a11y.narrative (unit + threshold). The GATE LIFT (m01
+// call B) makes that narrative reach the JSON wire under includeA11y, not only the html export.
+// Absent measure / flag-off is byte-identical. comparison.basis is NOT threaded ('vs target' struck).
+describe('dashboard.render — measure-grounded narrative (sprint-129 m02)', () => {
+  // metricOverview's kpi-rev (value 390, breaches the 350 threshold) + a measureRef on it.
+  function withMeasureRefN(ref: string, extra: Record<string, unknown> = {}): DashboardRenderInput {
+    const base = metricOverview(extra);
+    const panels = base.panels.map((p) => ({ ...(p as Record<string, unknown>) }));
+    panels[0] = { ...(panels[0] as Record<string, unknown>), measureRef: ref };
+    return { ...base, panels } as DashboardRenderInput;
+  }
+
+  // A KPI on a UNIT-bearing governed measure (gm.export.value.total -> unit '1000 USD', additive).
+  function exportDash(extra: Record<string, unknown> = {}): DashboardRenderInput {
+    return {
+      schemaVersion: 'v0.1',
+      datasets: [{ id: 'flows', rows: [{ value: 100 }, { value: 200 }] }],
+      panels: [{ id: 'kpi', kind: 'kpi', title: 'Exports', datasetId: 'flows', field: 'value', aggregate: 'sum', measureRef: 'gm.export.value.total' }],
+      a11y: { description: 'export value' },
+      resolveMeasures: true,
+      ...extra,
+    } as DashboardRenderInput;
+  }
+
+  const narrativeOf = (out: Awaited<ReturnType<typeof handle>>) =>
+    (out.a11y as Record<string, unknown>).narrative as { summary: string; keyFindings: string[] } | undefined;
+
+  it('GATE LIFT: the cross-panel narrative reaches the JSON a11y.narrative under includeA11y (no html)', async () => {
+    const out = await handle(withMeasureRefN('gm.revenue.total', { resolveMeasures: true, output: { includeA11y: true } }));
+    expect(validateOutput(out)).toBe(true);
+    const narrative = narrativeOf(out);
+    expect(narrative).toBeDefined();
+    // gm.revenue.total governs threshold {above, 350}; the KPI 390 breaches it -> the governed value
+    // enriches the breach flag in the cross-panel finding (now JSON-reachable via the gate lift).
+    expect(narrative?.keyFindings.some((f) => f.includes('Total Revenue: 390') && f.includes('threshold 350 breached'))).toBe(true);
+  });
+
+  it('the governed UNIT annotates BOTH the KPI a11yDescription string and the cross-panel narrative', async () => {
+    const out = await handle(exportDash({ output: { includeA11y: true } }));
+    expect(validateOutput(out)).toBe(true);
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.value).toBe(300); // gm.export.value.total -> field 'value' / sum (100 + 200)
+    expect(kpi.a11yDescription).toContain('1000 USD'); // unit appended to the per-panel string
+    expect(narrativeOf(out)?.keyFindings.some((f) => f.includes('1000 USD'))).toBe(true);
+  });
+
+  it('the unit-on-the-string is a STRUCTURAL invariant — byte-exact resolved a11yDescription (sprint-130 m04)', async () => {
+    // Converts the data-coupled toContain('1000 USD') above into a structural guard: the WHOLE
+    // string is registry-DERIVED. gm.export.value.total carries no defaultComparison -> delta null ->
+    // the bare `${label}: ${formatted}.` form, with the governed unit appended to the value.
+    const out = await handle(exportDash({ output: { includeA11y: true } }));
+    const kpi = out.panels.find((p) => p.id === 'kpi') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    expect(kpi.a11yDescription).toBe('Exports: 300 1000 USD.');
+  });
+
+  it('flag-OFF (no includeA11y / no html) keeps the narrative ABSENT — the gate lift is byte-identical there', async () => {
+    const out = await handle(withMeasureRefN('gm.revenue.total', { resolveMeasures: true }));
+    expect(narrativeOf(out)).toBeUndefined();
+  });
+
+  it('resolveMeasures OFF: the includeA11y narrative is NOT measure-enriched (plain breach flag, no value, no unit)', async () => {
+    // metricOverview carries no measureRef; resolveMeasures default-off -> no measure-context flows.
+    const out = await handle(metricOverview({ output: { includeA11y: true } }));
+    const revFinding = narrativeOf(out)?.keyFindings.find((f) => f.startsWith('Total Revenue:'));
+    expect(revFinding).toContain('threshold breached'); // the plain s116 flag (no governed value)
+    expect(revFinding).not.toContain('threshold 350'); // NOT measure-enriched
+    expect(revFinding).not.toContain('USD'); // no unit
+  });
+
+  it('the per-panel a11yDescription stays byte-identical for a unit-less resolved measure (gm.revenue.total)', async () => {
+    const out = await handle(withMeasureRefN('gm.revenue.total', { resolveMeasures: true, output: { includeA11y: true } }));
+    const kpi = out.panels.find((p) => p.id === 'kpi-rev') as Extract<typeof out.panels[number], { kind: 'kpi' }>;
+    // gm.revenue.total carries no unit -> kpiA11y appends nothing -> the v0.1 string is unchanged.
+    expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
+  });
+});

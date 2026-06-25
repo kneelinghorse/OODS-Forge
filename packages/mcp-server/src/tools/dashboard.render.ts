@@ -16,12 +16,14 @@ import {
   applyCrossFilter,
   computeKpi,
   finestGranularity,
+  describeMeasureContext,
   parseTemporalValue,
   resolveCrossFilter,
   resolveDashboardLayout,
   resolveDashboardNarrative,
   type DashboardKpiSummary,
   type KpiPanel,
+  type MeasureNarrativeContext,
   type Panel,
   type SelectionState,
   type TemporalGranularity,
@@ -94,6 +96,10 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const placedPanels: Panel[] = [];
   const warnings: Issue[] = [];
   let errorPanelCount = 0;
+  // Governed-measure narrative projection (sprint-129 m02), keyed by KPI panel id. Populated
+  // ONLY when resolveMeasures is on AND a measure resolved — the absent path leaves this empty,
+  // so the measure narrative is byte-identical-absent for the default/flag-off path.
+  const measureProjections = new Map<string, KpiMeasureProjection>();
 
   for (const panel of input.panels as Panel[]) {
     if (panel.kind === 'kpi') {
@@ -198,7 +204,31 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
         // The entry passed the V132/V130/V133 gates — capture its optional declared time-grain
         // for the post-rows V138 check (entry goes OUT of scope when this block closes).
         expectedGrain = entry.expectedGrain;
+        // m02: capture the governed measure-context for the KPI narrative surfaces. The
+        // unit/format/threshold.value come from the registry ENTRY; the comparison-basis
+        // 'vs target N' clause (s130-m02) reads the RESOLVED comparison off kpiPanel AFTER
+        // resolveMeasurePanel (author-override-wins) so it names what computeKpi actually
+        // compared against (s130-m01 fix A; kpi.ts:152-153) — hence read post-assignment, not
+        // off the entry. Read at buildKpiResult (a11yDescription, unit-only) + collectKpiSummaries
+        // (cross-panel a11y.narrative, the 'vs target' surface). entry/kpiPanel go out of scope
+        // when this block closes, so stash it now keyed by panel id.
+        const measureContext: MeasureNarrativeContext = {
+          ...(entry.unit !== undefined ? { unit: entry.unit } : {}),
+          ...(entry.format !== undefined ? { format: entry.format } : {}),
+          ...(entry.defaultThreshold?.value !== undefined ? { thresholdValue: entry.defaultThreshold.value } : {}),
+          // s130-m04: governed threshold DIRECTION — NOT verbalized; carried only for the V142 drift guard.
+          ...(entry.defaultThreshold?.direction !== undefined ? { thresholdDirection: entry.defaultThreshold.direction } : {}),
+        };
         kpiPanel = resolveMeasurePanel(panel, registry);
+        const resolvedComparison = kpiPanel.comparison;
+        measureProjections.set(panel.id, {
+          displayName: entry.displayName,
+          context: {
+            ...measureContext,
+            ...(resolvedComparison?.basis !== undefined ? { comparisonBasis: resolvedComparison.basis } : {}),
+            ...(resolvedComparison?.value !== undefined ? { comparisonValue: resolvedComparison.value } : {}),
+          },
+        });
       }
       // V137 (sprint-122 m01): a KPI panel resolved to NO field — a measureRef-only panel with
       // resolveMeasures OFF (the block above is skipped so field is never filled), or otherwise
@@ -352,7 +382,74 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
           continue;
         }
       }
-      panelResults.push(buildKpiResult(kpiPanel, rows));
+      // V141 (sprint-129 m03): MEASURE-NARRATIVE equivalence. Fires ONLY when the measure narrative
+      // will be surfaced (wantHtml || wantA11y) AND the resolved measure governs a defaultThreshold
+      // that the narrative verbalizes. If the panel's RESOLVED threshold (measure-resolver output —
+      // author-overridable per D4: panel.threshold ?? entry.defaultThreshold) DIVERGES from that
+      // governed value, the verbalized "threshold X breached" would misrepresent the threshold the
+      // breach was computed against. Fail CLOSED through the SAME onPanelError seam rather than emit
+      // a misleading governed narrative. Non-tautological (governed registry default vs resolved
+      // panel — two sources), reachable (author override), chained AFTER V130/V132/V133/V137/V138/V139.
+      if (wantHtml || wantA11y) {
+        const governedThreshold = measureProjections.get(kpiPanel.id)?.context.thresholdValue;
+        const effectiveThreshold = kpiPanel.threshold?.value;
+        if (governedThreshold !== undefined && effectiveThreshold !== undefined && governedThreshold !== effectiveThreshold) {
+          if (onPanelError === 'omit') {
+            warnings.push({
+              code: 'OODS-V141',
+              message: `KPI panel "${panel.id}" omitted: measure-narrative governed threshold ${governedThreshold} disagrees with the resolved threshold ${effectiveThreshold}.`,
+              severity: 'warning',
+            });
+            continue;
+          }
+          errorPanelCount += 1;
+          panelResults.push({
+            id: panel.id,
+            kind: 'error',
+            ...(panel.title ? { title: panel.title } : {}),
+            error: {
+              code: 'OODS-V141',
+              message: `KPI panel "${panel.id}" measure-narrative is inconsistent: the governed measure threshold ${governedThreshold} disagrees with the panel's resolved threshold ${effectiveThreshold}.`,
+              severity: 'error',
+            },
+            a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: measure-narrative governed threshold ${governedThreshold} disagrees with the resolved threshold ${effectiveThreshold}.`,
+          });
+          placedPanels.push(panel);
+          continue;
+        }
+        // V142 (sprint-130 m04): the DIRECTION sibling of the V141 value check. resolveMeasurePanel
+        // replaces the WHOLE threshold object, so an author override can keep the value (V141 silent)
+        // yet flip the direction — the breach computes against the flipped direction while the narrative
+        // names the governed one. Same registry-vs-rendered drift, same seam. Chained AFTER V141 (value
+        // first short-circuits via the continue above), so a panel reaching here passed the value check.
+        const governedDirection = measureProjections.get(kpiPanel.id)?.context.thresholdDirection;
+        const effectiveDirection = kpiPanel.threshold?.direction;
+        if (governedDirection !== undefined && effectiveDirection !== undefined && governedDirection !== effectiveDirection) {
+          if (onPanelError === 'omit') {
+            warnings.push({
+              code: 'OODS-V142',
+              message: `KPI panel "${panel.id}" omitted: measure-narrative governed threshold direction "${governedDirection}" disagrees with the resolved direction "${effectiveDirection}".`,
+              severity: 'warning',
+            });
+            continue;
+          }
+          errorPanelCount += 1;
+          panelResults.push({
+            id: panel.id,
+            kind: 'error',
+            ...(panel.title ? { title: panel.title } : {}),
+            error: {
+              code: 'OODS-V142',
+              message: `KPI panel "${panel.id}" measure-narrative is inconsistent: the governed measure threshold direction "${governedDirection}" disagrees with the panel's resolved direction "${effectiveDirection}".`,
+              severity: 'error',
+            },
+            a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: measure-narrative governed threshold direction "${governedDirection}" disagrees with the resolved direction "${effectiveDirection}".`,
+          });
+          placedPanels.push(panel);
+          continue;
+        }
+      }
+      panelResults.push(buildKpiResult(kpiPanel, rows, measureProjections.get(kpiPanel.id)?.context));
       placedPanels.push(kpiPanel);
       continue;
     }
@@ -389,6 +486,86 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       }
     }
 
+    // s130-m03: EXPLICIT chart-panel governed-measure context (NARRATIVE-ONLY). Unlike the KPI
+    // path, resolveMeasurePanel is KpiPanel-typed and rewrites field/aggregate/comparison/threshold
+    // which chart panels lack — so this captures ONLY the narrative context (displayName/unit/format/
+    // threshold + comparison) and runs NO compute. It reuses the SAME V132 (malformed) / V130
+    // (unknown) hard-error gates the KPI branch uses (Derek-ratified governance consistency across
+    // panel kinds); the V133/V137/V138/V139 compute gates are deliberately skipped. The captured
+    // context decorates this chart's PER-PANEL a11y.narrative in buildChartResult (not the rollup).
+    let chartMeasure: { displayName?: string; context: MeasureNarrativeContext } | undefined;
+    if (resolveMeasures && panel.measureRef) {
+      let registry;
+      try {
+        registry = loadMeasureRegistry();
+      } catch (err) {
+        if (!(err instanceof MalformedMeasureRegistryError)) throw err;
+        if (onPanelError === 'omit') {
+          warnings.push({
+            code: 'OODS-V132',
+            message: `Chart panel "${panel.id}" omitted: the governed-measure registry is malformed.`,
+            severity: 'warning',
+          });
+          continue;
+        }
+        errorPanelCount += 1;
+        panelResults.push({
+          id: panel.id,
+          kind: 'error',
+          ...(panel.title ? { title: panel.title } : {}),
+          chartType: panel.chartType,
+          error: {
+            code: 'OODS-V132',
+            message: `Chart panel "${panel.id}" cannot resolve "${panel.measureRef}": the governed-measure registry is malformed.`,
+            severity: 'error',
+          },
+          a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: the governed-measure registry is malformed.`,
+        });
+        placedPanels.push(panel);
+        continue;
+      }
+      const entry = registry.get(panel.measureRef);
+      if (!entry) {
+        // UNKNOWN chart measureRef = HARD-ERROR mirroring V130 (NOT a silent narrative-less render).
+        if (onPanelError === 'omit') {
+          warnings.push({
+            code: 'OODS-V130',
+            message: `Chart panel "${panel.id}" omitted: references unknown governed measure "${panel.measureRef}".`,
+            severity: 'warning',
+          });
+          continue;
+        }
+        errorPanelCount += 1;
+        panelResults.push({
+          id: panel.id,
+          kind: 'error',
+          ...(panel.title ? { title: panel.title } : {}),
+          chartType: panel.chartType,
+          error: {
+            code: 'OODS-V130',
+            message: `Chart panel "${panel.id}" references unknown governed measure "${panel.measureRef}".`,
+            severity: 'error',
+          },
+          a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: unknown governed measure "${panel.measureRef}".`,
+        });
+        placedPanels.push(panel);
+        continue;
+      }
+      // Narrative context ONLY (no resolveMeasurePanel). Charts carry no comparison override, so the
+      // basis/value come straight from the registry entry's defaultComparison (the m02 KPI path reads
+      // the author-overridable kpiPanel.comparison; charts have no such field).
+      chartMeasure = {
+        ...(entry.displayName !== undefined ? { displayName: entry.displayName } : {}),
+        context: {
+          ...(entry.unit !== undefined ? { unit: entry.unit } : {}),
+          ...(entry.format !== undefined ? { format: entry.format } : {}),
+          ...(entry.defaultThreshold?.value !== undefined ? { thresholdValue: entry.defaultThreshold.value } : {}),
+          ...(entry.defaultComparison?.basis !== undefined ? { comparisonBasis: entry.defaultComparison.basis } : {}),
+          ...(entry.defaultComparison?.value !== undefined ? { comparisonValue: entry.defaultComparison.value } : {}),
+        },
+      };
+    }
+
     // chart panel — render in-process via viz.render
     const vizInput = buildPanelVizInput(panel, datasetRows, filterRows, wantEcharts, wantA11y);
     const out = await vizRenderHandle(vizInput);
@@ -413,7 +590,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       continue;
     }
 
-    panelResults.push(buildChartResult(panel, out));
+    panelResults.push(buildChartResult(panel, out, chartMeasure));
     placedPanels.push(panel);
   }
 
@@ -421,14 +598,16 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const layout = resolveDashboardLayout(placedPanels, input.layout);
   const panelOrder = readingOrder(placedPanels, input.a11y?.readingOrder, layout);
 
-  // Narrative (m04): on the EXPORT path, COMPUTE a cross-panel narrative from the KPI
-  // signals (author-supplied narrative still wins, via the reused override). Gated on
-  // wantHtml so the non-export output stays byte-identical to s114 (seam e) — absent
-  // path keeps the author echo exactly. The computed narrative flows into BOTH the
+  // Narrative (m04): COMPUTE a cross-panel narrative from the KPI signals (author-supplied
+  // narrative still wins, via the reused override). The computed narrative flows into BOTH the
   // JSON a11y block AND the HTML export (which reads dashboardA11y).
-  const narrative: NonNullable<DashboardRenderOutput['a11y']>['narrative'] = wantHtml
+  // GATE LIFT (sprint-129 m02, m01 call B): the compute now fires under (wantHtml || wantA11y),
+  // NOT wantHtml alone, so the measure-grounded narrative reaches the JSON a11y.narrative when
+  // includeA11y=true — the #525 agent consumes JSON, not HTML, so HTML-only was invisible to it.
+  // The flag-OFF path (neither set) keeps the author echo exactly → byte-identical to s114 (seam e).
+  const narrative: NonNullable<DashboardRenderOutput['a11y']>['narrative'] = (wantHtml || wantA11y)
     ? toNarrativeOutput(
-        resolveDashboardNarrative(input.a11y.narrative, collectKpiSummaries(panelResults), input.a11y.description),
+        resolveDashboardNarrative(input.a11y.narrative, collectKpiSummaries(panelResults, measureProjections), input.a11y.description),
       )
     : input.a11y.narrative;
 
@@ -524,19 +703,37 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   return result;
 }
 
-// Project the computed KPI panel results into the narrative input (m04). Label falls
-// back to the panel id; semantic flags pass through.
-function collectKpiSummaries(panels: readonly PanelResult[]): DashboardKpiSummary[] {
+// The governed measure-context captured for one KPI panel at resolve time (m02). displayName
+// supplies the narrative label fallback (under the author title); context carries the
+// unit/format/threshold the narrative surfaces. Both optional — the absent path is byte-identical.
+interface KpiMeasureProjection {
+  readonly displayName?: string;
+  readonly context: MeasureNarrativeContext;
+}
+
+// Project the computed KPI panel results into the narrative input (m04). Label falls back to the
+// resolved measure displayName then the panel id (m02 — author title still wins); semantic flags
+// pass through. m02: when a measure resolved, the captured measure-context rides along so the
+// cross-panel narrative can verbalize the governed unit + threshold (absent === byte-identical).
+function collectKpiSummaries(
+  panels: readonly PanelResult[],
+  measureProjections: ReadonlyMap<string, KpiMeasureProjection>,
+): DashboardKpiSummary[] {
   return panels
     .filter((p): p is Extract<PanelResult, { kind: 'kpi' }> => p.kind === 'kpi')
-    .map((k) => ({
-      label: k.title ?? k.id,
-      formatted: k.formatted ?? String(k.value),
-      trendDirection: k.trendDirection,
-      delta: k.delta ?? null,
-      ...(k.thresholdBreached !== undefined ? { thresholdBreached: k.thresholdBreached } : {}),
-      ...(k.anomaly !== undefined ? { anomaly: k.anomaly } : {}),
-    }));
+    .map((k) => {
+      const projection = measureProjections.get(k.id);
+      const hasMeasureContext = projection !== undefined && Object.keys(projection.context).length > 0;
+      return {
+        label: k.title ?? projection?.displayName ?? k.id,
+        formatted: k.formatted ?? String(k.value),
+        trendDirection: k.trendDirection,
+        delta: k.delta ?? null,
+        ...(k.thresholdBreached !== undefined ? { thresholdBreached: k.thresholdBreached } : {}),
+        ...(k.anomaly !== undefined ? { anomaly: k.anomaly } : {}),
+        ...(hasMeasureContext ? { measureContext: projection.context } : {}),
+      };
+    });
 }
 
 function toNarrativeOutput(n: {
@@ -546,7 +743,7 @@ function toNarrativeOutput(n: {
   return { summary: n.summary, keyFindings: [...n.keyFindings] };
 }
 
-function buildKpiResult(panel: KpiPanel, rows: Row[]): PanelResult {
+function buildKpiResult(panel: KpiPanel, rows: Row[], measureContext?: MeasureNarrativeContext): PanelResult {
   const kpi = computeKpi(panel, rows);
   return {
     id: panel.id,
@@ -560,21 +757,27 @@ function buildKpiResult(panel: KpiPanel, rows: Row[]): PanelResult {
     ...(kpi.sparkline ? { sparkline: [...kpi.sparkline] } : {}),
     ...(kpi.thresholdBreached !== undefined ? { thresholdBreached: kpi.thresholdBreached } : {}),
     ...(kpi.anomaly !== undefined ? { anomaly: kpi.anomaly } : {}),
-    a11yDescription: kpiA11y(panel, kpi),
+    a11yDescription: kpiA11y(panel, kpi, measureContext),
   };
 }
 
-function kpiA11y(panel: KpiPanel, kpi: ReturnType<typeof computeKpi>): string {
+function kpiA11y(panel: KpiPanel, kpi: ReturnType<typeof computeKpi>, measureContext?: MeasureNarrativeContext): string {
   const label = panel.title ?? panel.field;
+  // m02: the governed unit annotates the value so the per-panel string reads in the measure's
+  // unit. ONLY the unit lands here (the terser per-panel surface); the governed threshold framing
+  // lives in the richer cross-panel a11y.narrative. Absent unit (or no resolved measure, e.g.
+  // gm.revenue.* which carry none) === byte-identical to the v0.1 string.
+  const unit = measureContext?.unit;
+  const formatted = unit ? `${kpi.formatted} ${unit}` : kpi.formatted;
   if (kpi.delta === null) {
-    return `${label}: ${kpi.formatted}.`;
+    return `${label}: ${formatted}.`;
   }
   // periodField ABSENT keeps the EXACT v0.1 string (byte-identical additivity —
   // the comparison there is by ROW, so it must NOT claim a period basis). With an
   // explicit period axis (v0.2) the basis names the period it was measured against.
   const basis = panel.periodField ? periodBasisLabel(panel.comparison) : '';
   const suffix = basis ? ` ${basis}` : '';
-  return `${label}: ${kpi.formatted} (${kpi.trendDirection}, delta ${kpi.delta}${suffix}).`;
+  return `${label}: ${formatted} (${kpi.trendDirection}, delta ${kpi.delta}${suffix}).`;
 }
 
 // The period-basis phrase for the a11y string, gated to the period-based bases
@@ -596,7 +799,11 @@ function periodBasisLabel(comparison: KpiPanel['comparison']): string {
 
 type ChartPanel = Extract<Panel, { kind: 'chart' }>;
 
-function buildChartResult(panel: ChartPanel, out: Awaited<ReturnType<typeof vizRenderHandle>>): PanelResult {
+function buildChartResult(
+  panel: ChartPanel,
+  out: Awaited<ReturnType<typeof vizRenderHandle>>,
+  measure?: { displayName?: string; context: MeasureNarrativeContext },
+): PanelResult {
   const renderer = out.meta?.renderer ?? 'vega-lite';
   const result = {
     id: panel.id,
@@ -617,7 +824,22 @@ function buildChartResult(panel: ChartPanel, out: Awaited<ReturnType<typeof vizR
   // when includeA11y was threaded into the per-panel input, so this is present
   // exactly when the dashboard output.includeA11y flag is on.
   if (out.a11y) {
-    result.a11y = out.a11y;
+    // s130-m03: when an EXPLICIT chart panel resolved a governed measure, prepend the SAME
+    // describeMeasureContext leading finding the KPI/single-chart paths emit (no fork) to this
+    // panel's per-panel narrative. Gated on out.a11y (includeA11y on) AND a resolved measure, so
+    // an absent measureRef or flag-off is byte-identical. PER-PANEL only — never the cross-panel rollup.
+    const measureFinding = measure ? describeMeasureContext(measure.displayName, measure.context) : undefined;
+    if (measureFinding && out.a11y.narrative) {
+      result.a11y = {
+        ...out.a11y,
+        narrative: {
+          ...out.a11y.narrative,
+          keyFindings: [measureFinding, ...out.a11y.narrative.keyFindings],
+        },
+      };
+    } else {
+      result.a11y = out.a11y;
+    }
   }
   return result as unknown as PanelResult;
 }

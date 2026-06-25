@@ -2,6 +2,7 @@ import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 import type { VizDataAnalysis } from './data-analysis.js';
 import { analyzeVizSpec } from './data-analysis.js';
 import { formatDimension, formatValue } from './format.js';
+import type { MeasureNarrativeContext } from './narrative-generator.js';
 
 export interface AccessibleTableColumn {
   readonly field: string;
@@ -58,6 +59,13 @@ export interface AnalysisTableInput {
   readonly caption?: string;
   /** Row-key prefix; mirrors spec.id. */
   readonly id?: string;
+  /**
+   * Governed-measure context (sprint-129 m01). OPTIONAL — absent === the s128 table
+   * output byte-for-byte. When it carries a `unit`, the resolved caption names it so the
+   * structured table is self-describing. Shares the ONE `MeasureNarrativeContext` shape
+   * with the narrative input (no parallel metadata type).
+   */
+  readonly measureContext?: MeasureNarrativeContext;
 }
 
 interface ResolvedTableInputs {
@@ -82,7 +90,7 @@ function resolveTableInputs(input: NormalizedVizSpec | AnalysisTableInput): Reso
       enabled: input.tableFallbackEnabled !== false,
       columnOrder: input.columnOrder,
       resolveLabel: (field) => input.columnLabels?.[field],
-      caption: input.caption ?? 'Data table for Visualization',
+      caption: withMeasureUnit(input.caption ?? 'Data table for Visualization', input.measureContext),
       idPrefix: input.id ?? 'viz',
     };
   }
@@ -219,6 +227,14 @@ function resolveCaption(spec: NormalizedVizSpec): string {
   }
   const label = spec.name ?? spec.id ?? 'Visualization';
   return `Data table for ${label}`;
+}
+
+/**
+ * Append the governed measure unit to a caption so the structured table is
+ * self-describing (sprint-129 m01). Byte-identical when no measure unit is present.
+ */
+function withMeasureUnit(caption: string, ctx?: MeasureNarrativeContext): string {
+  return ctx?.unit ? `${caption} (${ctx.unit})` : caption;
 }
 
 export function summarizeRow(row: Record<string, unknown>, dimensionField?: string, measureField?: string): string {

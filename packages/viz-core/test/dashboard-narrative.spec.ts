@@ -78,3 +78,72 @@ describe('resolveDashboardNarrative (author override)', () => {
     expect(result.keyFindings).toEqual(['Total Revenue: 390 (increasing, delta 90) — threshold breached']);
   });
 });
+
+describe('deriveDashboardNarrative — measure context (sprint-129 m02)', () => {
+  it('annotates the value with the governed unit and the breach flag with the governed threshold value', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Total Revenue', formatted: '390', trendDirection: 'increasing', delta: 90,
+      thresholdBreached: true, measureContext: { unit: 'USD', thresholdValue: 350 },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual([
+      'Total Revenue: 390 USD (increasing, delta 90) — threshold 350 breached',
+    ]);
+  });
+
+  it('appends the unit even when the threshold is not breached (the governed value is not surfaced)', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Exports', formatted: '300', trendDirection: 'flat', delta: null,
+      measureContext: { unit: '1000 USD', thresholdValue: 999 },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual(['Exports: 300 1000 USD (flat)']);
+  });
+
+  it('a breach with a unit but no threshold value keeps the plain breach flag (unit still on the value)', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Exports', formatted: '300', trendDirection: 'increasing', delta: 5,
+      thresholdBreached: true, measureContext: { unit: '1000 USD' },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual([
+      'Exports: 300 1000 USD (increasing, delta 5) — threshold breached',
+    ]);
+  });
+
+  it('an absent measureContext is byte-identical to s116 (plain breach flag, no unit)', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Total Revenue', formatted: '390', trendDirection: 'increasing', delta: 90, thresholdBreached: true,
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual([
+      'Total Revenue: 390 (increasing, delta 90) — threshold breached',
+    ]);
+  });
+});
+
+describe('deriveDashboardNarrative — comparison-basis "vs target" (sprint-130 m02)', () => {
+  it('appends "vs target N" after the delta when the resolved basis is target (the IDENTICAL single-chart literal)', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Total Revenue', formatted: '390', trendDirection: 'increasing', delta: 90,
+      thresholdBreached: true, measureContext: { thresholdValue: 350, comparisonBasis: 'target', comparisonValue: 300 },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual([
+      'Total Revenue: 390 (increasing, delta 90 vs target 300) — threshold 350 breached',
+    ]);
+  });
+
+  it('does NOT append a clause for a non-target basis (prior_period is series-derived, no static value)', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Total Revenue', formatted: '390', trendDirection: 'increasing', delta: 90,
+      measureContext: { comparisonBasis: 'prior_period' },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual(['Total Revenue: 390 (increasing, delta 90)']);
+  });
+
+  it('a measureContext WITHOUT comparison fields is byte-identical (no clause) — the s129 fixtures are unaffected', () => {
+    const kpi: DashboardKpiSummary = {
+      label: 'Total Revenue', formatted: '390', trendDirection: 'increasing', delta: 90,
+      thresholdBreached: true, measureContext: { unit: 'USD', thresholdValue: 350 },
+    };
+    expect(deriveDashboardNarrative([kpi]).keyFindings).toEqual([
+      'Total Revenue: 390 USD (increasing, delta 90) — threshold 350 breached',
+    ]);
+  });
+});
