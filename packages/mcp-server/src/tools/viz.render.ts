@@ -22,7 +22,9 @@ import {
   analyzeNetwork,
   analyzeSankey,
   analyzeSpatial,
+  buildFromIntent,
   buildVizSpecFromRows,
+  describeMeasureContext,
   generateAccessibleTable,
   generateNarrativeSummary,
   registerGeoJson,
@@ -31,17 +33,20 @@ import {
   type AccessibleTableResult,
   type BuildVizSpecInput,
   type HierarchyInput,
+  type MeasureNarrativeContext,
   type NarrativeResult,
   type NetworkInput,
   type NormalizedVizSpec,
   type SankeyInput,
   type SpatialFeatureRow,
   type SpatialSpec,
+  type StructuredIntent,
   type VizDataAnalysis,
 } from '@oods/viz-core';
 import type { VizRenderInput, VizRenderOutput } from '../schemas/generated.js';
 import { createValueRef, describeSchemaRef, resolveValueRef } from './schema-ref.js';
 import { absentFields, referencedEncodingFields } from './field-presence.js';
+import { loadMeasureRegistry, MalformedMeasureRegistryError } from './measure-registry.js';
 
 type Issue = VizRenderOutput['warnings'][number];
 
@@ -50,6 +55,19 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   const wantEcharts = input.output?.echarts ?? false;
   const includeNormalized = input.output?.includeNormalizedSpec ?? false;
   const includeA11y = input.output?.includeA11y ?? false;
+
+  // intent ⊕ chartType (sprint-131 m03): a structured intent carries its own
+  // `chartFamily`, not the explicit-render `chartType`; the two are mutually
+  // exclusive dispatch modes. Fail loud (Rule 12) rather than silently letting the
+  // explicit-render branch below swallow the intent.
+  if (input.intent && input.chartType) {
+    return errorOut(
+      'OODS-V123',
+      'viz.render: `intent` and `chartType` are mutually exclusive — `intent` carries `chartFamily`, not the explicit-render `chartType`.',
+      compact,
+      wantEcharts,
+    );
+  }
 
   // ---- hierarchy/network branch (sprint-111): treemap/sunburst/sankey (force
   // lands in m04) are EXPLICIT-ONLY and DECOUPLED — each carries a dedicated data
@@ -100,23 +118,79 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
       }))
     : [];
 
+  // ---- governed-measure overlay (sprint-131 m03): resolve intent.measureRef ----
+  // measureRef is NARRATIVE-ONLY (it does NOT drive encoding — buildFromIntent is
+  // measure-agnostic). Resolution + the unknown-ref hard-error fire whenever a
+  // measureRef is present (a bad ref is a caller error regardless of includeA11y —
+  // Rule 12, fail loud); only the VERBALIZATION below is includeA11y-gated. Mirrors
+  // the dashboard.render CHART path (governance consistency across the two tools):
+  // V132 (malformed registry, fail-closed) and V130 (unknown measure) are the same
+  // hard-error seam KPI/chart panels use — never a silent narrative-less render.
+  let measureProjection: { displayName?: string; context: MeasureNarrativeContext } | undefined;
+  if (input.intent?.measureRef) {
+    let registry: ReturnType<typeof loadMeasureRegistry>;
+    try {
+      registry = loadMeasureRegistry();
+    } catch (err) {
+      if (err instanceof MalformedMeasureRegistryError) {
+        return errorOut('OODS-V132', err.message, compact, wantEcharts);
+      }
+      throw err;
+    }
+    const entry = registry.get(input.intent.measureRef);
+    if (!entry) {
+      return errorOut(
+        'OODS-V130',
+        `Unknown governed measure "${input.intent.measureRef}" (no such entry in the measure registry).`,
+        compact,
+        wantEcharts,
+      );
+    }
+    measureProjection = {
+      ...(entry.displayName !== undefined ? { displayName: entry.displayName } : {}),
+      context: {
+        ...(entry.unit !== undefined ? { unit: entry.unit } : {}),
+        ...(entry.format !== undefined ? { format: entry.format } : {}),
+        ...(entry.defaultThreshold?.value !== undefined ? { thresholdValue: entry.defaultThreshold.value } : {}),
+        ...(entry.defaultComparison?.basis !== undefined ? { comparisonBasis: entry.defaultComparison.basis } : {}),
+        ...(entry.defaultComparison?.value !== undefined ? { comparisonValue: entry.defaultComparison.value } : {}),
+      },
+    };
+  }
+
   // ---- build the NormalizedVizSpec + compile to the renderer payload ----
   try {
-    const built = buildVizSpecFromRows({
-      rows,
-      chartType: input.chartType,
-      encodings: input.encodings as BuildVizSpecInput['encodings'],
-      id: input.id,
-      name: input.name,
-      description: input.description,
-    });
+    // intent dispatch (sprint-131 m03): a structured intent routes through the
+    // deterministic buildFromIntent (recommender pick under the named fields + goal);
+    // intent-absent is the byte-identical pre-s131 buildVizSpecFromRows path.
+    const built = input.intent
+      ? buildFromIntent({
+          intent: input.intent as StructuredIntent,
+          rows,
+          id: input.id,
+          name: input.name,
+          description: input.description,
+        })
+      : buildVizSpecFromRows({
+          rows,
+          chartType: input.chartType,
+          encodings: input.encodings as BuildVizSpecInput['encodings'],
+          id: input.id,
+          name: input.name,
+          description: input.description,
+        });
 
     const spec = toVegaLiteSpec(built.spec) as unknown as VizRenderOutput['spec'];
 
     const out: VizRenderOutput = {
       status: 'ok',
       chartType: built.chartType,
-      mode: built.mode,
+      // The intent path is recommender-driven, so it reports the existing 'suggest' wire
+      // mode (the chart was SUGGESTED under the named-field constraints) — keeping the
+      // output schema's mode enum unchanged (#564 / the memo's zero-output-schema-change
+      // commitment). The agent's full visibility into the pick rides the suggestion +
+      // lowConfidence channel below; the internal builder mode ('intent') is a viz-core detail.
+      mode: built.mode === 'intent' ? 'suggest' : built.mode,
       spec,
       a11yDescription: built.spec.a11y.description,
       warnings: fieldWarnings,
@@ -172,6 +246,22 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
       // Structured a11y from the SAME spec the chart renders from (cartesian path
       // unchanged: the generators run analyzeVizSpec on built.spec, byte-identical).
       out.a11y = toWireA11y(generateAccessibleTable(built.spec), generateNarrativeSummary(built.spec));
+      // Governed-measure overlay (sprint-131 m03): when the intent named a governed
+      // measureRef, PREPEND the s130 measure-context clause ('unit …', 'vs target …') as the
+      // leading keyFinding — mirroring the dashboard.render chart path (dashboard.render.ts
+      // measure prepend). measureRef-absent leaves this call byte-identical to today (#564).
+      if (measureProjection && out.a11y.narrative) {
+        const measureFinding = describeMeasureContext(measureProjection.displayName, measureProjection.context);
+        if (measureFinding) {
+          out.a11y = {
+            ...out.a11y,
+            narrative: {
+              ...out.a11y.narrative,
+              keyFindings: [measureFinding, ...out.a11y.narrative.keyFindings],
+            },
+          };
+        }
+      }
     }
 
     // specRef for downstream pipeline reuse (mirrors viz.compose schemaRef).
