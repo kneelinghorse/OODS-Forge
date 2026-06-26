@@ -16,10 +16,12 @@ import {
   type NormalizedVizSpec,
   type TraitBinding,
 } from '../spec/normalized-viz-spec.js';
+import { chartPatterns } from '../patterns/index.js';
 import type { ChartType, FieldType, IntentGoal } from '../patterns/index.js';
 import {
   suggestPatterns,
   type SchemaIntent,
+  type PatternSuggestion,
   CORRELATION_RELATIONSHIP_GATE,
   DENSITY_DENSE_ROW_COUNT,
   DENSITY_SPARSE_ROW_COUNT,
@@ -115,30 +117,80 @@ type MutableFieldProfile = { -readonly [K in keyof FieldProfile]: FieldProfile[K
 export interface BuildVizSpecResult {
   readonly spec: NormalizedVizSpec;
   readonly chartType: ChartType;
-  readonly mode: 'explicit' | 'suggest';
+  readonly mode: 'explicit' | 'suggest' | 'intent';
   /**
-   * Present in suggest mode only: the recommender pick that drove the chartType,
-   * including the scorer's `signals` (the human-readable rationale).
+   * Present in suggest/intent mode only: the recommender pick that drove the
+   * chartType, including the scorer's `signals` (the human-readable rationale).
    */
   readonly suggestion?: {
     readonly patternId: string;
     readonly score: number;
     readonly signals: ReadonlyArray<string>;
   };
-  /** Present in suggest mode only: the inferred field profiles. */
+  /**
+   * Present in suggest/intent mode only: the inferred field profiles (the full
+   * inferred set in suggest mode; the caller-named selected subset in intent mode).
+   */
   readonly inferredFields?: ReadonlyArray<FieldProfile>;
   /**
-   * Present in suggest mode only: true when no pattern matched confidently — the
-   * chartType is then a low-confidence fallback rather than a positive pick. Makes
-   * the previously-silent `bar` default detectable to callers.
+   * Present in suggest/intent mode only: true when no pattern matched confidently
+   * (suggest) or the requested chart family had no positive recommender match
+   * (intent) — the chartType is then a low-confidence fallback rather than a
+   * positive pick. Makes the previously-silent `bar` default detectable to callers.
    */
   readonly lowConfidence?: boolean;
-  /** Present in suggest mode only: the runner-up recommendations (next best picks). */
+  /** Present in suggest/intent mode only: the runner-up recommendations (next best picks). */
   readonly alternatives?: ReadonlyArray<{
     readonly patternId: string;
     readonly score: number;
     readonly chartType: ChartType;
   }>;
+}
+
+/** A caller-named intent field. `type` is RESERVED in v0.1 (types infer from data). */
+export interface IntentField {
+  readonly name: string;
+  readonly type?: FieldType;
+}
+
+/**
+ * The chart families the recommender can rank — the 5 TABULAR marks. The 8
+ * explicit-only types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/
+ * flow_map/chord) have NO entry in the recommender pool, so an `intent.chartFamily`
+ * is constrained to these (schema-enforced in mcp-server; defensively re-asserted
+ * in buildFromIntent).
+ */
+export type IntentChartFamily = 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+
+/**
+ * A STRUCTURED (typed, NOT free-text) visualization intent — sprint-131 m02, the
+ * deterministic half of the NL→viz hand-off. An agent (or, in s132, an LLM that
+ * emits this shape — never a raw spec) supplies the analytical goal + the named
+ * measures/dimensions that drive ENCODING; the optional `chartFamily` post-filters
+ * the recommender's ranking, and the optional governed `measureRef` (read by the
+ * viz.render handler, NOT by this builder) lights the s129/s130 narrative overlay.
+ */
+export interface StructuredIntent {
+  /** The analytical goal — the LIVE 7-value IntentGoal union. */
+  readonly goal: IntentGoal;
+  /** Named measure fields (the metrics to plot); MUST exist among the rows' fields. */
+  readonly measures: ReadonlyArray<IntentField>;
+  /** Named dimension fields (the breakdowns/axes); MUST exist among the rows' fields. */
+  readonly dimensions: ReadonlyArray<IntentField>;
+  /** Optional preferred chart family — post-filters the ranking (NOT a scorer term). */
+  readonly chartFamily?: IntentChartFamily;
+  /** Optional governed-measure reference (`gm.*`); narrative-only, read by viz.render. */
+  readonly measureRef?: string;
+}
+
+export interface BuildFromIntentInput {
+  readonly intent: StructuredIntent;
+  /** REQUIRED for v0.1 — the spec embeds data.values from these rows. */
+  readonly rows: ReadonlyArray<Record<string, unknown>>;
+  readonly id?: string;
+  readonly name?: string;
+  /** Override the synthesized a11y description. */
+  readonly description?: string;
 }
 
 export class VizSpecBuilderError extends Error {
@@ -212,6 +264,16 @@ const YEAR_MAX = 2100;
 // normalized confidence; this is the in-engine "is the bar a real pick?" gate.
 const LOW_CONFIDENCE_SCORE = 8;
 
+// The recommender pool ranks ONLY these 5 tabular marks; an intent.chartFamily is
+// constrained to this set (the 8 explicit-only types have zero recommender entries).
+const TABULAR_FAMILIES: ReadonlySet<ChartType> = new Set<ChartType>([
+  'bar',
+  'line',
+  'area',
+  'scatter',
+  'heatmap',
+]);
+
 // --- public API -------------------------------------------------------------
 
 export function buildVizSpecFromRows(input: BuildVizSpecInput): BuildVizSpecResult {
@@ -224,6 +286,140 @@ export function buildVizSpecFromRows(input: BuildVizSpecInput): BuildVizSpecResu
     return buildExplicit(input, input.chartType);
   }
   return buildSuggested(input);
+}
+
+/**
+ * Deterministic STRUCTURED-INTENT → spec builder (sprint-131 m02) — the deterministic
+ * half of the NL→viz hand-off. Pure reuse of the existing recommender + encoder +
+ * assembler; NO LLM, NO scorer-term change. Sibling to the suggest-mode buildSuggested.
+ *
+ * The flow (Amendments A–E of the s131 keystone memo):
+ *   1. rows are REQUIRED — assembleSpec embeds data.values from them (a rows-less
+ *      intent would emit an empty-data chart). (Amendment B)
+ *   2. an explicit-only chartFamily is rejected (defense-in-depth; the schema also
+ *      rejects it). (Amendment E)
+ *   3. every caller-named measure/dimension MUST exist among the profiled rows — else
+ *      fail loud (Rule 12).
+ *   4. THE INVARIANT (Amendment C): the SchemaIntent is derived from the SELECTED named
+ *      profiles via toSchemaIntent, with ONLY the caller's goal spread-overridden — so
+ *      the scorer's counts (bucketed by INFERRED type) stay consistent with what
+ *      autoAssignEncodings can encode from the same profiles, and the data-aware
+ *      carriers (correlation/density/cardinality) survive the merge.
+ *   5. the recommender ranks UNCHANGED; an optional chartFamily POST-FILTERS the full
+ *      ranking (NOT a scorer term — protects the s110 goldens).
+ *
+ * measureRef is intentionally NOT read here — it is a narrative overlay the viz.render
+ * handler resolves (m03); this builder stays measure-agnostic.
+ */
+export function buildFromIntent(input: BuildFromIntentInput): BuildVizSpecResult {
+  const { intent } = input;
+  const rows = input.rows;
+
+  // (Amendment B) rows REQUIRED for v0.1.
+  if (!Array.isArray(rows) || rows.length === 0) {
+    throw new VizSpecBuilderError(
+      'buildFromIntent requires a non-empty rows array (v0.1 intent renders over real rows).',
+    );
+  }
+
+  // (Amendment E) GEO / explicit-only guard — never route a non-tabular family through
+  // the recommender, which ranks none of the 8 explicit-only types.
+  if (intent.chartFamily !== undefined && !TABULAR_FAMILIES.has(intent.chartFamily)) {
+    throw new VizSpecBuilderError(
+      `buildFromIntent chartFamily "${intent.chartFamily}" is not a tabular mark; the recommender ranks only bar/line/area/scatter/heatmap.`,
+    );
+  }
+
+  // Profile the rows, then SELECT the caller-named subset. Every named field MUST be present.
+  const profiles = inferFieldProfile(rows);
+  const byName = new Map(profiles.map((p) => [p.name, p]));
+  const namedFields = [...intent.measures, ...intent.dimensions];
+  const missing = namedFields.map((f) => f.name).filter((name) => !byName.has(name));
+  if (missing.length > 0) {
+    throw new VizSpecBuilderError(
+      `buildFromIntent: named intent field(s) not present in rows: ${missing.join(', ')}.`,
+    );
+  }
+  const selectedProfiles = namedFields.map((f) => byName.get(f.name) as FieldProfile);
+
+  // (Amendment C — the count/named-field consistency INVARIANT) Derive the SchemaIntent
+  // from the SELECTED named profiles so its counts are bucketed by the same inferred types
+  // autoAssignEncodings will encode from; spread preserves the data-aware carriers and only
+  // the caller's analytical goal wins.
+  const base = toSchemaIntent(selectedProfiles, rows);
+  const schemaIntent: SchemaIntent = { ...base, goal: intent.goal };
+
+  // Rank with the recommender UNCHANGED (no scorer term). Pull the FULL ranking so a
+  // chartFamily post-filter can find its family even when it ranks below the default top-3.
+  const ranked = suggestPatterns(schemaIntent, { limit: chartPatterns.length });
+
+  // FAMILY PREFERENCE = POST-FILTER ranked[] by pattern.chartType.
+  let chosen: PatternSuggestion | undefined;
+  let familyFallback = false;
+  if (intent.chartFamily !== undefined) {
+    chosen = ranked.find((s) => s.pattern.chartType === intent.chartFamily);
+    familyFallback = chosen === undefined;
+  } else {
+    chosen = ranked[0];
+  }
+
+  const chartType: ChartType = chosen?.pattern.chartType ?? intent.chartFamily ?? 'bar';
+
+  const encoding = autoAssignEncodings(selectedProfiles, chartType);
+  if (!encoding.x || !encoding.y) {
+    // Fail loud (Rule 12): the goal/family the caller asked for resolved to a chartType
+    // that needs more fields than were named (a relationship/scatter needs ≥2 measures; a
+    // heatmap needs ≥2 dimensions). This is the "deterministic tool validates the intent"
+    // half of the NL→viz split — an incoherent intent is rejected, never silently degraded.
+    const measureNames = intent.measures.map((m) => m.name);
+    const dimensionNames = intent.dimensions.map((d) => d.name);
+    throw new VizSpecBuilderError(
+      `Intent mode could not assign x and y for a "${chartType}" chart from the named fields ` +
+        `(measures: [${measureNames.join(', ')}], dimensions: [${dimensionNames.join(', ')}]). ` +
+        `Goal "${intent.goal}"${intent.chartFamily ? ` / family "${intent.chartFamily}"` : ''} resolved to "${chartType}", ` +
+        `which needs more fields than were named (a relationship/scatter needs ≥2 measures; a heatmap needs ≥2 dimensions).`,
+    );
+  }
+
+  // A requested family with no positive recommender match (unreachable for the 5 tabular
+  // families — each has ≥1 registry pattern — but kept honest if the registry changes) is a
+  // low-confidence fallback, mirroring the suggest-mode geo-honesty signal.
+  const familySignal =
+    `requested chart family "${intent.chartFamily}" had no positive recommender match — rendered as a low-confidence fallback`;
+  const lowConfidence = familyFallback || !chosen || chosen.score < LOW_CONFIDENCE_SCORE;
+
+  const alternatives = ranked
+    .filter((s) => s !== chosen)
+    .slice(0, 2)
+    .map((s) => ({
+      patternId: s.pattern.id,
+      score: s.score,
+      chartType: s.pattern.chartType,
+    }));
+
+  const buildInput: BuildVizSpecInput = {
+    rows,
+    ...(input.id !== undefined ? { id: input.id } : {}),
+    ...(input.name !== undefined ? { name: input.name } : {}),
+    ...(input.description !== undefined ? { description: input.description } : {}),
+  };
+  const spec = assembleSpec(buildInput, chartType, encoding);
+
+  return {
+    spec,
+    chartType,
+    mode: 'intent',
+    suggestion: chosen
+      ? {
+          patternId: chosen.pattern.id,
+          score: chosen.score,
+          signals: familyFallback ? [...chosen.signals, familySignal] : chosen.signals,
+        }
+      : undefined,
+    inferredFields: selectedProfiles,
+    lowConfidence,
+    ...(alternatives.length > 0 ? { alternatives } : {}),
+  };
 }
 
 /**

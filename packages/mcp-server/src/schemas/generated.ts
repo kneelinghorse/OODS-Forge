@@ -6828,6 +6828,45 @@ export namespace VizRenderInputSchema {
        */
       includeA11y?: boolean;
     };
+    /**
+     * STRUCTURED (typed, NOT free-text) visualization intent — the deterministic half of the NL→viz hand-off (sprint-131). Supply it INSTEAD of chartType/encodings (mutually exclusive with chartType): the named measures/dimensions drive ENCODING, `goal` + the data drive the recommender's chartType pick, an optional `chartFamily` post-filters that pick, and an optional governed `measureRef` lights the governed-measure narrative overlay (only when output.includeA11y=true). Requires `rows` (or a `datasetRef`).
+     */
+    intent?: {
+      /**
+       * The analytical goal that steers the recommender (the live 7-value goal vocabulary).
+       */
+      goal: 'comparison' | 'trend' | 'composition' | 'part-to-whole' | 'relationship' | 'intensity' | 'distribution';
+      /**
+       * Named measure fields (the metrics to plot). Each name MUST exist among the data rows' fields. `type` is RESERVED in v0.1 (field types infer from the data).
+       *
+       * @minItems 1
+       */
+      measures: [
+        {
+          name: string;
+          type?: 'quantitative' | 'temporal' | 'nominal' | 'ordinal';
+        },
+        ...{
+          name: string;
+          type?: 'quantitative' | 'temporal' | 'nominal' | 'ordinal';
+        }[]
+      ];
+      /**
+       * Named dimension fields (the breakdowns/axes); may be empty (e.g. a two-measure scatter). Each name MUST exist among the data rows' fields. `type` is RESERVED in v0.1 (field types infer from the data).
+       */
+      dimensions: {
+        name: string;
+        type?: 'quantitative' | 'temporal' | 'nominal' | 'ordinal';
+      }[];
+      /**
+       * Optional preferred chart family. Post-filters the recommender ranking (NOT a scorer term) to this family, flagged lowConfidence when it was not the recommender's top pick. Constrained to the 5 TABULAR marks — the 8 explicit-only types are not recommender-rankable.
+       */
+      chartFamily?: 'bar' | 'line' | 'area' | 'scatter' | 'heatmap';
+      /**
+       * Optional governed-measure reference (e.g. 'gm.revenue.total'). NARRATIVE-ONLY: it does NOT drive encoding. When set, its resolved measure context decorates the chart's a11y narrative ('unit …', 'vs target …') — but only when output.includeA11y=true. An unknown reference is a hard error (OODS-V130).
+       */
+      measureRef?: string;
+    };
   }
   /**
    * A nested-hierarchy node: a name, an optional numeric value, and optional children (recursive). Extra fields are preserved for tooltips.

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   analyzeVizSpec,
+  buildFromIntent,
   buildVizSpecFromRows,
   fieldCorrelation,
   inferFieldProfile,
@@ -11,6 +12,7 @@ import {
   validateNormalizedVizSpec,
   VizSpecBuilderError,
   type ChartType,
+  type IntentChartFamily,
   type SchemaIntent,
 } from '@oods/viz-core';
 // detectGeoFields is an internal profiler helper (not in the public barrel);
@@ -693,5 +695,159 @@ describe('recommender + inference honesty (sprint-118 m04)', () => {
       { region: 'West', revenue: 142 },
     ];
     expect(buildVizSpecFromRows({ rows }).lowConfidence).toBe(false);
+  });
+});
+
+describe('buildFromIntent — structured-intent mode (sprint-131 m02)', () => {
+  // SALES fields: region (nominal), quarter (temporal YYYY-MM), revenue (quantitative).
+  // A two-measure fixture for the relationship/scatter case (responseMs + conversion).
+  const CORR = [
+    { responseMs: 120, conversion: 0.4, region: 'North' },
+    { responseMs: 90, conversion: 0.62, region: 'South' },
+    { responseMs: 75, conversion: 0.71, region: 'East' },
+    { responseMs: 60, conversion: 0.85, region: 'West' },
+  ];
+
+  it('builds a recommender-chosen, data-bound spec under a structured intent', () => {
+    const result = buildFromIntent({
+      intent: { goal: 'comparison', measures: [{ name: 'revenue' }], dimensions: [{ name: 'region' }] },
+      rows: SALES,
+    });
+    expect(result.mode).toBe('intent');
+    expect(['bar', 'line', 'area', 'scatter', 'heatmap']).toContain(result.chartType);
+    expect(validateNormalizedVizSpec(result.spec).valid).toBe(true);
+    // The NAMED fields drive encoding — x + y both present (Amendment C: no x/y throw).
+    expect(result.spec.encoding.x?.field).toBeTruthy();
+    expect(result.spec.encoding.y?.field).toBe('revenue');
+    // inferredFields is the SELECTED named subset (2), not all 3 row fields.
+    expect(result.inferredFields).toHaveLength(2);
+    expect(result.spec.data.values).toHaveLength(4);
+    expect(() => toVegaLiteSpec(result.spec)).not.toThrow();
+  });
+
+  it('is deterministic — identical {intent, rows} yield a byte-identical spec', () => {
+    const intent = { goal: 'trend' as const, measures: [{ name: 'revenue' }], dimensions: [{ name: 'quarter' }] };
+    const a = buildFromIntent({ intent, rows: SALES });
+    const b = buildFromIntent({ intent, rows: SALES });
+    expect(JSON.stringify(b.spec)).toEqual(JSON.stringify(a.spec));
+    expect(b.chartType).toBe(a.chartType);
+  });
+
+  // THE INVARIANT (Amendment C): deriving the SchemaIntent counts from the SELECTED named
+  // profiles keeps the recommender pick consistent with what autoAssignEncodings can encode,
+  // so a count-driven goal with 1 measure + 1 dimension never picks a 2-measure scatter that
+  // would throw — it resolves to a real bar/line/area instead.
+  it.each(['comparison', 'trend', 'composition', 'intensity', 'part-to-whole'] as const)(
+    'count-driven goal=%s with 1 measure + 1 dimension stays encodeable (no x/y throw)',
+    (goal) => {
+      const result = buildFromIntent({
+        intent: { goal, measures: [{ name: 'revenue' }], dimensions: [{ name: 'region' }] },
+        rows: SALES,
+      });
+      expect(result.mode).toBe('intent');
+      expect(result.spec.encoding.x?.field).toBeTruthy();
+      expect(result.spec.encoding.y?.field).toBe('revenue');
+      expect(validateNormalizedVizSpec(result.spec).valid).toBe(true);
+    },
+  );
+
+  // FAIL-LOUD (Rule 12 / the "deterministic tool validates the intent" half of NL→viz): a
+  // scatter-home goal (relationship/distribution) with a single measure resolves to a scatter
+  // that genuinely needs two — so it is REJECTED with an actionable message, never silently
+  // degraded to a comparison bar.
+  it.each(['relationship', 'distribution'] as const)(
+    'scatter-home goal=%s with only 1 measure fails loud (an incoherent intent is rejected)',
+    (goal) => {
+      expect(() =>
+        buildFromIntent({
+          intent: { goal, measures: [{ name: 'revenue' }], dimensions: [{ name: 'region' }] },
+          rows: SALES,
+        }),
+      ).toThrow(/needs more fields than were named/);
+    },
+  );
+
+  it('renders a genuine 2-measure relationship as a scatter (the invariant when fields suffice)', () => {
+    const result = buildFromIntent({
+      intent: { goal: 'relationship', measures: [{ name: 'responseMs' }, { name: 'conversion' }], dimensions: [] },
+      rows: CORR,
+    });
+    expect(result.chartType).toBe('scatter');
+    expect(result.spec.encoding.x?.field).toBe('responseMs');
+    expect(result.spec.encoding.y?.field).toBe('conversion');
+    expect(validateNormalizedVizSpec(result.spec).valid).toBe(true);
+  });
+
+  it('POST-FILTERS the ranking by chartFamily — returns the requested tabular family', () => {
+    const base = { goal: 'trend' as const, measures: [{ name: 'revenue' }], dimensions: [{ name: 'quarter' }] };
+    // Two different requested families over the SAME data prove the post-filter selects within
+    // the ranking rather than echoing one recommender pick.
+    expect(buildFromIntent({ intent: { ...base, chartFamily: 'bar' }, rows: SALES }).chartType).toBe('bar');
+    expect(buildFromIntent({ intent: { ...base, chartFamily: 'area' }, rows: SALES }).chartType).toBe('area');
+  });
+
+  it('flags lowConfidence when the requested family is not the recommender top pick', () => {
+    // trend data ranks an area pattern top; a bar is honoured but flagged low-confidence.
+    const bar = buildFromIntent({
+      intent: { goal: 'trend', measures: [{ name: 'revenue' }], dimensions: [{ name: 'quarter' }], chartFamily: 'bar' },
+      rows: SALES,
+    });
+    expect(bar.chartType).toBe('bar');
+    expect(bar.lowConfidence).toBe(true);
+  });
+
+  it('fails loud when a requested family needs more fields than were named (scatter, 1 measure)', () => {
+    expect(() =>
+      buildFromIntent({
+        intent: { goal: 'comparison', measures: [{ name: 'revenue' }], dimensions: [{ name: 'region' }], chartFamily: 'scatter' },
+        rows: SALES,
+      }),
+    ).toThrow(/needs more fields than were named/);
+  });
+
+  it('fails loud when a named field is absent from the rows (names the missing field)', () => {
+    expect(() =>
+      buildFromIntent({
+        intent: { goal: 'comparison', measures: [{ name: 'profit' }], dimensions: [{ name: 'region' }] },
+        rows: SALES,
+      }),
+    ).toThrow(/profit/);
+  });
+
+  it('requires a non-empty rows array (v0.1 — Amendment B)', () => {
+    expect(() =>
+      buildFromIntent({
+        intent: { goal: 'comparison', measures: [{ name: 'revenue' }], dimensions: [{ name: 'region' }] },
+        rows: [],
+      }),
+    ).toThrow(/non-empty rows/);
+  });
+
+  it('rejects an explicit-only chartFamily (defense-in-depth — Amendment E)', () => {
+    expect(() =>
+      buildFromIntent({
+        intent: {
+          goal: 'part-to-whole',
+          measures: [{ name: 'revenue' }],
+          dimensions: [{ name: 'region' }],
+          // simulate an out-of-contract runtime value that the schema would also reject
+          chartFamily: 'treemap' as unknown as IntentChartFamily,
+        },
+        rows: SALES,
+      }),
+    ).toThrow(/not a tabular mark/);
+  });
+
+  it('is measure-agnostic — measureRef does NOT change the spec (viz.render owns the narrative overlay)', () => {
+    const withRef = buildFromIntent({
+      intent: { goal: 'trend', measures: [{ name: 'revenue' }], dimensions: [{ name: 'quarter' }], measureRef: 'gm.revenue.total' },
+      rows: SALES,
+    });
+    const without = buildFromIntent({
+      intent: { goal: 'trend', measures: [{ name: 'revenue' }], dimensions: [{ name: 'quarter' }] },
+      rows: SALES,
+    });
+    expect(JSON.stringify(withRef.spec)).toEqual(JSON.stringify(without.spec));
+    expect(withRef.chartType).toBe(without.chartType);
   });
 });
