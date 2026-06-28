@@ -131,6 +131,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/viz.render.input.json',
     outputSchema: './schemas/viz.render.output.json',
   },
+  'viz.fromText': {
+    modulePath: './tools/viz.fromText.js',
+    inputSchema: './schemas/viz.fromText.input.json',
+    outputSchema: './schemas/viz.fromText.output.json',
+  },
   'dashboard.render': {
     modulePath: './tools/dashboard.render.js',
     inputSchema: './schemas/dashboard.render.input.json',

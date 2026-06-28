@@ -255,7 +255,7 @@ for (const [domain, entries] of Object.entries(statusMap.domains)) {
 export const STATUS_DOMAINS: readonly StatusDomain[] = Object.freeze(Array.from(registry.keys()));
 
 // Legacy inbound-tolerance aliases (sprint-128 m04 — Derek-ratified option C, the
-// named reversal of s127's drop; #939(4)). A retired status string resolves to its
+// named reversal of s127's drop; decision 939 item 4). A retired status string resolves to its
 // canonical successor's PRESENTATION (and thus tone), so the registry AGREES with
 // the withStatusBadge modifier — which keeps its own `delinquent → tone:'critical'`
 // alias — instead of neutral-falling-back. `delinquent` was split into past_due +

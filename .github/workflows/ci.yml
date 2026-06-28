@@ -616,3 +616,42 @@ jobs:
 
       - name: Run mcp-bridge tool-surface test
         run: pnpm --filter @oods/mcp-bridge test
+
+  nlviz-accuracy:
+    name: nlviz-accuracy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # sprint-132 m04: the nvBench-style NL→viz ACCURACY gate — the governance surface for
+    # the LLM half. REPORT-ONLY: the eval computes + LOGS chartType-accuracy + schema-validity
+    # (the DSV-045 >5%-invalid alarm) but does NOT gate the build on the LLM's accuracy. This
+    # job is the seam where the report-only→blocking threshold flip lands (Derek picks N) and
+    # where the opt-in LIVE run (NLVIZ_EVAL_LIVE=1 + ANTHROPIC_API_KEY, a real Claude parse) is
+    # scheduled. DEFAULT is offline fixture-replay (deterministic, no API key). The eval test is
+    # named OUTSIDE the ci-golden-list guard regex /^(viz\.render|dashboard\.render)…/ and is
+    # NOT in the viz-determinism colocated run-string (it is non-deterministic at the tool level).
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Run NL→viz accuracy eval (offline fixture-replay, report-only)
+        run: pnpm --filter @oods/mcp-server exec vitest run test/nlviz/nlviz-accuracy.eval.spec.ts

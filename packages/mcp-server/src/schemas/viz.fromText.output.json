@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/viz.fromText.output.json",
+  "title": "Viz fromText output",
+  "description": "The viz.render result for the parsed intent, PLUS an `intent` echo (advisory): the exact structured intent the parser produced. Rendering is deterministic — re-running viz.render(intent) reproduces the same chart byte-for-byte (modulo the per-call specRef envelope). All other viz.render output fields (chartType, mode, a11y, suggestion, specRef, meta, errors) pass through unchanged.",
+  "type": "object",
+  "required": ["status", "spec", "warnings", "intent"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"],
+      "description": "Whether rendering succeeded (from viz.render)."
+    },
+    "spec": {
+      "type": "object",
+      "description": "The compiled, renderable Vega-Lite spec (from viz.render). An empty object on error.",
+      "additionalProperties": true
+    },
+    "warnings": {
+      "type": "array",
+      "description": "Non-fatal issues encountered during rendering (from viz.render).",
+      "items": { "type": "object", "additionalProperties": true }
+    },
+    "intent": {
+      "type": "object",
+      "description": "ADVISORY echo of the parsed structured intent. Pass this to viz.render to reproduce the chart deterministically. The parse is the only non-deterministic step.",
+      "required": ["goal", "measures", "dimensions"],
+      "properties": {
+        "goal": {
+          "type": "string",
+          "enum": ["comparison", "trend", "composition", "part-to-whole", "relationship", "intensity", "distribution"],
+          "description": "The analytical goal the parser inferred (the live 7-value goal vocabulary)."
+        },
+        "measures": {
+          "type": "array",
+          "description": "Named measure fields the parser chose.",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "type": { "type": "string", "enum": ["quantitative", "temporal", "nominal", "ordinal"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "dimensions": {
+          "type": "array",
+          "description": "Named dimension fields the parser chose (may be empty).",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "type": { "type": "string", "enum": ["quantitative", "temporal", "nominal", "ordinal"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "chartFamily": {
+          "type": "string",
+          "enum": ["bar", "line", "area", "scatter", "heatmap"],
+          "description": "The preferred chart family the parser chose, if any (one of the 5 tabular marks)."
+        },
+        "measureRef": {
+          "type": "string",
+          "pattern": "^gm\\.",
+          "description": "The governed-measure reference the parser chose, if any (always a known gm.* entry)."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

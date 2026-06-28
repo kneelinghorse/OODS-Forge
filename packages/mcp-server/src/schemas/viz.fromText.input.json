@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/viz.fromText.input.json",
+  "title": "Viz fromText input",
+  "description": "Render a governed chart from a FREE-TEXT request (sprint-132). A Claude parser running ABOVE the deterministic tool boundary maps the utterance + the data columns into the frozen s131 structured intent; that intent is routed through viz.render (which validates + renders deterministically) and echoed back (advisory) so the agent can re-run viz.render(intent) deterministically. The non-determinism is contained to the parse and measured by the nvBench-style accuracy gate.",
+  "type": "object",
+  "required": ["text", "rows"],
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The natural-language chart request (e.g. 'show the trend of export value over the years')."
+    },
+    "rows": {
+      "type": "array",
+      "description": "Inline data rows — REQUIRED for v0.1. The parser reads the column names from these rows, and viz.render embeds data.values from them. Each row is a flat object mapping field name to value.",
+      "items": { "type": "object", "additionalProperties": true },
+      "minItems": 1,
+      "maxItems": 5000
+    },
+    "datasetRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "RESERVED (v0.1): rows-less / datasetRef-only requests are deferred — the parser needs inline rows to read the columns. Provide `rows`."
+    },
+    "output": {
+      "type": "object",
+      "description": "Optional render output controls, passed through to viz.render. Omitting this object preserves compact, Vega-Lite-only behavior.",
+      "properties": {
+        "compact": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it)."
+        },
+        "echarts": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec."
+        },
+        "includeNormalizedSpec": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec."
+        },
+        "includeA11y": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, also return a STRUCTURED two-part text alternative (accessible data table + narrative summary), and — when the parsed intent carries a governed measureRef — the governed narrative clause ('vs target …', 'unit …'). DEFAULT false keeps the wire compact."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
