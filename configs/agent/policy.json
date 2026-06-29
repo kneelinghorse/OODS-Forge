@@ -264,19 +264,6 @@
       "ratePerMinute": 20
     },
     {
-      "name": "viz.fromText",
-      "description": "Renders a governed chart from a FREE-TEXT request. A Claude parser (above the deterministic tool boundary) maps the utterance + data columns into a structured intent, routes it through viz.render, and echoes the parsed intent (advisory) so the agent can re-run viz.render(intent) deterministically. The parse is the only non-deterministic step.",
-      "modes": [
-        "dry-run"
-      ],
-      "approval": "optional",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "ratePerMinute": 10
-    },
-    {
       "name": "dashboard.render",
       "description": "Renders a composed metric-overview dashboard (KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec; composes per-panel viz specs in-process with deterministic layout, KPI compute, and cross-filtering. Returns the resolved layout + per-panel specs + a synthesized a11y block and a specRef for pipeline reuse.",
       "modes": [
