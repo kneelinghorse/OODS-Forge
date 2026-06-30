@@ -1,5 +1,7 @@
 # Forge Viz — NL→viz FREE-TEXT half: `viz.fromText` (Claude parser above the deterministic boundary) + nvBench-style accuracy gate Decision Memo
 
+> ⚠️ **REVERTED 2026-06-29 — historical record only.** ALL work this memo authorized was removed or never shipped: `viz.fromText` + the `@anthropic-ai/sdk` Claude parser + the `nlviz/` module + the report-only `nlviz-accuracy` gate were deleted (commit `a0e876e`, 21 files / 1203 deletions, decision #973), and the frozen §9 dimension-registry spec (`^gd.` / `dimensionRef`) was stashed, never committed. WHY: a circular LLM-parsing-English-for-an-LLM-caller dependency with no consuming surface. KEPT & live: the deterministic `viz.render` structured-`intent` mode (s131) + the chart engine.
+
 | | |
 |---|---|
 | **Decision** | s132-m01 keystone (captured at mission close) |

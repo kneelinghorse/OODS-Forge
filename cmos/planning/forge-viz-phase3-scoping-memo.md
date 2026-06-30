@@ -1,5 +1,7 @@
 # Forge Viz — Phase 3 (Semantic Grounding) Scoping & Decision Memo
 
+> ⚠️ **2026-06-29 — partial revert downstream.** The s116/s117 governed-MEASURE substrate this memo authorized in shape was **KEPT & shipped**. The downstream NL→viz arc was **REVERTED** (commit `a0e876e`, decision #973): `viz.fromText` + the Claude parser + the `nlviz-accuracy` gate removed; the s133 dimension registry stashed. Only the deterministic s131 `intent` mode on `viz.render` survives. Flagship goal being revisited (decision #974).
+
 > **⏩ SHIPPED — updated 2026-06-19 at the sprint-120 review.** The two-sprint beachhead this memo authorized *in shape* has landed: the inert `KpiPanel.measureRef` descriptor in **sprint-116** (`263ff07`) and the governed-measure registry + flag-gated mcp-server resolver in **sprint-117** (`d03b08e`). Real code, not stubs: `measure-registry.json` (5 `gm.*` measures), `measure-resolver.ts` (`resolveMeasurePanel` at `dashboard.render.ts:185`), `resolveMeasures` flag (default-off, fail-closed; `V130`/`V132`/`V133`). The "FUTURE sprint" / "SUBSEQUENT, gated resolution sprint" framing below is the original point-in-time recommendation, retained for record. **Still unbuilt — the Phase-3 differentiator: NL→viz + narrative/insight *over measures*** (the a11y narrative shipped in s115 is over *raw data*, not measures). Tracked on [../foundational-docs/roadmap/near.md](../foundational-docs/roadmap/near.md).
 
 | | |

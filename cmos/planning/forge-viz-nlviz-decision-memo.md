@@ -1,5 +1,7 @@
 # Forge Viz — NL→viz hand-off: deterministic structured-intent slice (Phase-3 differentiator, second half) Decision Memo
 
+> ⚠️ **PARTIALLY SUPERSEDED 2026-06-29.** The deterministic `intent` core this memo authorized is **LIVE / KEPT** (the `intent` mode on `viz.render` — verified in `viz.render.input.json` lines 334-383). Only the downstream free-text / LLM hand-off this memo points to (s132: `viz.fromText` + the Claude parser + the `nlviz-accuracy` gate) was **REVERTED** (commit `a0e876e`, decision #973). The s133 dimension registry was stashed, never committed.
+
 | | |
 |---|---|
 | **Decision** | s131-m01 keystone (captured at mission close) |

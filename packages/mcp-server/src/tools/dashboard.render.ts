@@ -28,6 +28,7 @@ import {
   type SelectionState,
   type TemporalGranularity,
 } from '@oods/viz-core';
+import { canonicalize, sha256 } from '@oods/artifacts';
 import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from '../schemas/generated.js';
 import { handle as vizRenderHandle } from './viz.render.js';
 import { createValueRef, describeSchemaRef } from './schema-ref.js';
@@ -61,6 +62,11 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const wantEcharts = input.output?.echarts ?? false;
   const wantA11y = input.output?.includeA11y ?? false;
   const wantHtml = input.output?.html ?? false;
+  // A11y equivalence CERTIFY-AT-EMISSION (sprint-134 m03): top-level flag (NOT under output,
+  // mirroring strictFields/strictDatasets). When on, each cartesian chart panel's viz.render call
+  // runs the equivalence engine; the per-panel OODS-A11Y-* warnings (silently dropped by
+  // buildChartResult) are folded into the dashboard warnings[] prefixed with the panel id. Default-off.
+  const wantA11yEquivalence = input.a11yEquivalence ?? false;
   // A11y completeness (sprint-118 m07) — all default-off so the absent path is byte-identical.
   const wantDataTable = input.output?.dataTable ?? false;
   const wantContrastScan = input.output?.contrastScan ?? false;
@@ -567,7 +573,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     }
 
     // chart panel — render in-process via viz.render
-    const vizInput = buildPanelVizInput(panel, datasetRows, filterRows, wantEcharts, wantA11y);
+    const vizInput = buildPanelVizInput(panel, datasetRows, filterRows, wantEcharts, wantA11y, wantA11yEquivalence);
     const out = await vizRenderHandle(vizInput);
 
     if (out.status !== 'ok') {
@@ -588,6 +594,23 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       });
       placedPanels.push(panel);
       continue;
+    }
+
+    // A11y equivalence fold (sprint-134 m03, critic fix #1): buildChartResult copies
+    // id/spec/echartsSpec/a11y from the per-panel viz.render output but SILENTLY DROPS
+    // out.warnings — there is no existing per-panel warnings propagation to ride. So when the
+    // dashboard a11yEquivalence flag is on, lift each per-panel warning (the OODS-A11Y-<rule.id>
+    // soft-warnings; buildPanelVizInput forwards the flag but never strictFields, so these are
+    // a11y-only by construction) into the dashboard warnings[], prefixed with the panel id.
+    // Strictly gated on the flag — an unconditional fold would re-byte warnings[] and break #564.
+    if (wantA11yEquivalence) {
+      for (const w of out.warnings) {
+        warnings.push({
+          code: w.code,
+          message: `panel "${panel.id}": ${w.message}`,
+          severity: 'warning',
+        });
+      }
     }
 
     panelResults.push(buildChartResult(panel, out, chartMeasure));
@@ -699,6 +722,10 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   result.specRef = ref.ref;
   result.specRefCreatedAt = ref.createdAt;
   result.specRefExpiresAt = ref.expiresAt;
+
+  // contentHash = the deterministic content IDENTITY of the SAME composed payload
+  // specRef caches ({panels, layout}). Default-on; stable across calls (sprint-134 m02).
+  result.contentHash = sha256(canonicalize({ panels: panelResults, layout }));
 
   return result;
 }
@@ -850,6 +877,7 @@ function buildPanelVizInput(
   filterRows: (panelId: string, rows: Row[]) => Row[],
   wantEcharts: boolean,
   wantA11y: boolean,
+  wantA11yEquivalence: boolean,
 ): VizRenderInput {
   const base: Record<string, unknown> = {
     chartType: panel.chartType,
@@ -860,6 +888,9 @@ function buildPanelVizInput(
       ...(wantEcharts ? { echarts: true } : {}),
       ...(wantA11y ? { includeA11y: true } : {}),
     },
+    // sprint-134 m03: thread the equivalence flag down so the per-panel cartesian
+    // viz.render emits OODS-A11Y-* soft-warnings (a no-op on ECharts-primary panels).
+    ...(wantA11yEquivalence ? { a11yEquivalence: true } : {}),
   };
   if (panel.id) base.id = panel.id;
   if (panel.title) base.name = panel.title;
