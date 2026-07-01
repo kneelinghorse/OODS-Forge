@@ -80,8 +80,8 @@
     },
     "a11yEquivalence": {
       "type": "boolean",
-      "default": false,
-      "description": "A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03). When true, each cartesian chart panel's emission is checked against the 16-rule accessible-equivalence engine and every failing rule is folded into the dashboard `warnings` as OODS-A11Y-<rule.id> (severity 'warning'), prefixed with the originating panel id — SOFT-WARN ONLY: never throws, never gates. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded). DEFAULT false keeps `warnings` byte-identical to today."
+      "default": true,
+      "description": "A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. Each cartesian chart panel's emission is checked against the accessible-equivalence engine: an error-severity failure makes an error panel (first per-rule OODS-A11Y-<rule.id> code), warn-severity failures fold into the dashboard `warnings` as OODS-A11Y-<rule.id> prefixed with the originating panel id. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02); set false to opt out for agent-supplied non-conformant panels. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded)."
     },
     "a11y": {
       "$ref": "#/$defs/DashboardA11ySpec"

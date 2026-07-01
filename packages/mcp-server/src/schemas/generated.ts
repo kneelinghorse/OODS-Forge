@@ -1230,7 +1230,7 @@ export namespace DashboardRenderInputSchema {
      */
     strictDatasets?: boolean;
     /**
-     * A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03). When true, each cartesian chart panel's emission is checked against the 16-rule accessible-equivalence engine and every failing rule is folded into the dashboard `warnings` as OODS-A11Y-<rule.id> (severity 'warning'), prefixed with the originating panel id — SOFT-WARN ONLY: never throws, never gates. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded). DEFAULT false keeps `warnings` byte-identical to today.
+     * A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. Each cartesian chart panel's emission is checked against the accessible-equivalence engine: an error-severity failure makes an error panel (first per-rule OODS-A11Y-<rule.id> code), warn-severity failures fold into the dashboard `warnings` as OODS-A11Y-<rule.id> prefixed with the originating panel id. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02); set false to opt out for agent-supplied non-conformant panels. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded).
      */
     a11yEquivalence?: boolean;
     a11y: DashboardA11YSpec;
@@ -6816,7 +6816,7 @@ export namespace VizRenderInputSchema {
      */
     strictFields?: boolean;
     /**
-     * A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03). When true, the cartesian (Vega-Lite) emission is checked against the 16-rule accessible-equivalence engine (validateVizEquivalenceRules) and every failing rule is surfaced in `warnings` as OODS-A11Y-<rule.id> with severity 'warning' — SOFT-WARN ONLY: it never throws and never gates (the gate-flip is a future slice). Scoped to the cartesian path (the ECharts-primary scaffold has empty data and would spuriously fail data-equivalence rules). DEFAULT false keeps `warnings` byte-identical to today (R-05/R-14 fire on valid builder defaults, so default-off is the additive-floor choice).
+     * A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. The cartesian (Vega-Lite) emission is checked against the accessible-equivalence engine (validateVizEquivalenceRules): error-severity rules BLOCK (status:'error' with per-rule OODS-A11Y-<rule.id> codes in `errors`), warn-severity failures surface in `warnings` as OODS-A11Y-<rule.id>. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02), so generated specs pass; set false to opt out for agent-supplied non-conformant specs. Scoped to the cartesian path (the ECharts-primary scaffold has empty data and would spuriously fail data-equivalence rules).
      */
     a11yEquivalence?: boolean;
     /**

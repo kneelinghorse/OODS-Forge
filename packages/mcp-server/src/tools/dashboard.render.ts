@@ -65,8 +65,10 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   // A11y equivalence CERTIFY-AT-EMISSION (sprint-134 m03): top-level flag (NOT under output,
   // mirroring strictFields/strictDatasets). When on, each cartesian chart panel's viz.render call
   // runs the equivalence engine; the per-panel OODS-A11Y-* warnings (silently dropped by
-  // buildChartResult) are folded into the dashboard warnings[] prefixed with the panel id. Default-off.
-  const wantA11yEquivalence = input.a11yEquivalence ?? false;
+  // buildChartResult) are folded into the dashboard warnings[] prefixed with the panel id. Default-on
+  // (sprint-135 m03); the builder is conformant-by-construction (m02), so generated panels surface no
+  // findings. Set a11yEquivalence:false to opt out for agent-supplied non-conformant panels.
+  const wantA11yEquivalence = input.a11yEquivalence ?? true;
   // A11y completeness (sprint-118 m07) — all default-off so the absent path is byte-identical.
   const wantDataTable = input.output?.dataTable ?? false;
   const wantContrastScan = input.output?.contrastScan ?? false;
@@ -596,19 +598,23 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       continue;
     }
 
-    // A11y equivalence fold (sprint-134 m03, critic fix #1): buildChartResult copies
-    // id/spec/echartsSpec/a11y from the per-panel viz.render output but SILENTLY DROPS
-    // out.warnings — there is no existing per-panel warnings propagation to ride. So when the
-    // dashboard a11yEquivalence flag is on, lift each per-panel warning (the OODS-A11Y-<rule.id>
-    // soft-warnings; buildPanelVizInput forwards the flag but never strictFields, so these are
-    // a11y-only by construction) into the dashboard warnings[], prefixed with the panel id.
-    // Strictly gated on the flag — an unconditional fold would re-byte warnings[] and break #564.
+    // A11y equivalence fold (sprint-134 m03 wire; sprint-135 m04 gate): buildChartResult copies
+    // id/spec/echartsSpec/a11y from the per-panel viz.render output but SILENTLY DROPS out.warnings
+    // — there is no other per-panel warnings propagation to ride. So when the dashboard
+    // a11yEquivalence flag is on, lift each per-panel warning into the dashboard warnings[],
+    // prefixed with the panel id. The per-panel gate (m04) already diverted ERROR-severity a11y
+    // failures into an error panel above (the status!=='ok' seam), so the survivors reaching here
+    // are warn-severity — PRESERVE w.severity (do NOT force 'warning'). Fold IN ADDITION TO, not
+    // instead of, any non-a11y per-panel field warning (none today: buildPanelVizInput forwards
+    // the flag but never strictFields, so out.warnings is a11y-only warn-severity by construction —
+    // but the pass-through is kept so a future non-a11y warning is not silently dropped). Strictly
+    // gated on the flag — an unconditional fold would re-byte warnings[] and break #564.
     if (wantA11yEquivalence) {
       for (const w of out.warnings) {
         warnings.push({
           code: w.code,
           message: `panel "${panel.id}": ${w.message}`,
-          severity: 'warning',
+          severity: w.severity,
         });
       }
     }
@@ -888,9 +894,12 @@ function buildPanelVizInput(
       ...(wantEcharts ? { echarts: true } : {}),
       ...(wantA11y ? { includeA11y: true } : {}),
     },
-    // sprint-134 m03: thread the equivalence flag down so the per-panel cartesian
-    // viz.render emits OODS-A11Y-* soft-warnings (a no-op on ECharts-primary panels).
-    ...(wantA11yEquivalence ? { a11yEquivalence: true } : {}),
+    // sprint-134 m03 / sprint-135 m03: thread the equivalence flag down so the per-panel
+    // cartesian viz.render runs the engine (a no-op on ECharts-primary panels). Forward the
+    // EXPLICIT boolean — since viz.render now defaults a11yEquivalence to true (m03), a bare
+    // spread would let a dashboard-level opt-out (a11yEquivalence:false) silently re-enable
+    // the check at the panel level.
+    a11yEquivalence: wantA11yEquivalence,
   };
   if (panel.id) base.id = panel.id;
   if (panel.title) base.name = panel.title;

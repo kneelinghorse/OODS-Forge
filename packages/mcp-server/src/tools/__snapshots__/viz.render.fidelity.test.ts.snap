@@ -50,11 +50,13 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'area': v
       "scale": {
         "type": "time",
       },
+      "title": "Quarter",
       "type": "temporal",
     },
     "y": {
       "aggregate": "sum",
       "field": "revenue",
+      "title": "Revenue",
       "type": "quantitative",
     },
   },
@@ -65,9 +67,18 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'area': v
   "usermeta": {
     "oods": {
       "a11y": {
+        "ariaLabel": "Area chart of Revenue by Quarter",
         "description": "Area chart of sum of revenue by quarter.",
       },
       "name": "Area chart",
+      "portability": {
+        "tableColumnOrder": [
+          "quarter",
+          "revenue",
+          "region",
+          "units",
+        ],
+      },
       "specId": "viz:area",
     },
   },
@@ -124,11 +135,13 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'bar': vi
       "scale": {
         "type": "band",
       },
+      "title": "Region",
       "type": "ordinal",
     },
     "y": {
       "aggregate": "sum",
       "field": "revenue",
+      "title": "Revenue",
       "type": "quantitative",
     },
   },
@@ -139,9 +152,18 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'bar': vi
   "usermeta": {
     "oods": {
       "a11y": {
+        "ariaLabel": "Bar chart of Revenue by Region",
         "description": "Bar chart of sum of revenue by region.",
       },
       "name": "Bar chart",
+      "portability": {
+        "tableColumnOrder": [
+          "region",
+          "revenue",
+          "quarter",
+          "units",
+        ],
+      },
       "specId": "viz:bar",
     },
   },
@@ -198,6 +220,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap'
       "scale": {
         "type": "linear",
       },
+      "title": "Revenue",
       "type": "quantitative",
     },
     "x": {
@@ -205,6 +228,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap'
       "scale": {
         "type": "band",
       },
+      "title": "Region",
       "type": "ordinal",
     },
     "y": {
@@ -212,6 +236,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap'
       "scale": {
         "type": "band",
       },
+      "title": "Quarter",
       "type": "ordinal",
     },
   },
@@ -222,9 +247,18 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap'
   "usermeta": {
     "oods": {
       "a11y": {
+        "ariaLabel": "Heatmap of Quarter by Region",
         "description": "Heatmap of quarter by region, split by revenue.",
       },
       "name": "Heatmap",
+      "portability": {
+        "tableColumnOrder": [
+          "region",
+          "quarter",
+          "revenue",
+          "units",
+        ],
+      },
       "specId": "viz:heatmap",
     },
   },
@@ -278,6 +312,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'line': v
   "encoding": {
     "color": {
       "field": "region",
+      "title": "Region",
       "type": "nominal",
     },
     "x": {
@@ -285,11 +320,13 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'line': v
       "scale": {
         "type": "time",
       },
+      "title": "Quarter",
       "type": "temporal",
     },
     "y": {
       "aggregate": "sum",
       "field": "revenue",
+      "title": "Revenue",
       "type": "quantitative",
     },
   },
@@ -300,9 +337,18 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'line': v
   "usermeta": {
     "oods": {
       "a11y": {
+        "ariaLabel": "Line chart of Revenue by Quarter",
         "description": "Line chart of sum of revenue by quarter, split by region.",
       },
       "name": "Line chart",
+      "portability": {
+        "tableColumnOrder": [
+          "quarter",
+          "revenue",
+          "region",
+          "units",
+        ],
+      },
       "specId": "viz:line",
     },
   },
@@ -356,6 +402,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'scatter'
   "encoding": {
     "color": {
       "field": "region",
+      "title": "Region",
       "type": "nominal",
     },
     "x": {
@@ -363,6 +410,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'scatter'
       "scale": {
         "type": "linear",
       },
+      "title": "Revenue",
       "type": "quantitative",
     },
     "y": {
@@ -370,6 +418,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'scatter'
       "scale": {
         "type": "linear",
       },
+      "title": "Units",
       "type": "quantitative",
     },
   },
@@ -380,9 +429,18 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'scatter'
   "usermeta": {
     "oods": {
       "a11y": {
+        "ariaLabel": "Scatter plot of Units by Revenue",
         "description": "Scatter plot of units by revenue, split by region.",
       },
       "name": "Scatter plot",
+      "portability": {
+        "tableColumnOrder": [
+          "revenue",
+          "units",
+          "region",
+          "quarter",
+        ],
+      },
       "specId": "viz:scatter",
     },
   },
@@ -442,6 +500,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > suggest m
         "scale": {
           "type": "band",
         },
+        "title": "Region",
         "type": "nominal",
       },
       "x": {
@@ -449,6 +508,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > suggest m
         "scale": {
           "type": "time",
         },
+        "title": "Quarter",
         "type": "temporal",
       },
       "y": {
@@ -456,6 +516,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > suggest m
         "scale": {
           "type": "linear",
         },
+        "title": "Revenue",
         "type": "quantitative",
       },
     },
@@ -466,9 +527,18 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > suggest m
     "usermeta": {
       "oods": {
         "a11y": {
+          "ariaLabel": "Line chart of Revenue by Quarter",
           "description": "Line chart of revenue by quarter, split by region.",
         },
         "name": "Line chart",
+        "portability": {
+          "tableColumnOrder": [
+            "quarter",
+            "revenue",
+            "region",
+            "units",
+          ],
+        },
         "specId": "viz:line",
       },
     },
