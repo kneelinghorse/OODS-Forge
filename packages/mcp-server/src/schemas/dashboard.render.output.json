@@ -30,6 +30,7 @@
     "specRef": { "type": "string", "description": "One dashboard-level reference to the composed payload for pipeline reuse." },
     "specRefCreatedAt": { "type": "string" },
     "specRefExpiresAt": { "type": "string" },
+    "contentHash": { "type": "string", "description": "Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. Default-on; omitted only on error outputs (sprint-134 m02)." },
     "output": {
       "type": "object",
       "additionalProperties": false,

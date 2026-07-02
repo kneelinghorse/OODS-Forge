@@ -43,6 +43,7 @@ import {
   summarizeTemporal,
   type TemporalGranularity,
 } from '../analysis/temporal.js';
+import { humanize } from '../a11y/format.js';
 
 // Re-export so the data-aware temporal granularity type is reachable from the
 // package root (e.g. the viz.render handler/schema in mcp-server).
@@ -799,9 +800,37 @@ function assembleSpec(
   chartType: ChartType,
   encoding: Partial<Record<EncodingChannel, TraitBinding>>,
 ): NormalizedVizSpec {
-  const description = input.description?.trim()
+  // sprint-135 m02 — conformant-BY-CONSTRUCTION. Synthesize the a11y features the
+  // equivalence engine (packages/viz-core/src/a11y/equivalence-rules.ts) requires
+  // so DEFAULT emissions PASS every error-severity rule: R-05 (axis titles),
+  // R-08 (description >= 25 chars), R-09 (aria-label), plus the R-14 (warn)
+  // column-order polish. Every synthesized value is a PURE function of chartType +
+  // field names + row keys — no Date/random/UUID — so byte-determinism holds. All
+  // fields are permitted by normalized-viz-spec.schema.json (title/ariaLabel/
+  // portability.tableColumnOrder), so assertNormalizedVizSpec below stays green.
+
+  // R-05: give every present positional/legend binding a non-empty axis title.
+  // Mutating in place is safe — `encoding` is freshly built per call (explicit ->
+  // normalizeEncodings, suggest/intent -> autoAssignEncodings). Titles reuse the
+  // shared `humanize` so axis title == narrative label == table column label.
+  for (const channel of ['x', 'y', 'color'] as const) {
+    const binding = encoding[channel];
+    if (binding && (!binding.title || binding.title.trim() === '')) {
+      binding.title = humanize(binding.field);
+    }
+  }
+
+  // R-08: the resolved a11y.description must be >= 25 chars. A trimmed caller
+  // override wins; else synthesizeDescription, which undershoots on short field
+  // names ('Scatter plot of b by a.' = 23). When either lands short, append a
+  // deterministic, accurate clause (x/y are guaranteed present for every
+  // assembleSpec caller, which all throw without both).
+  let description = input.description?.trim()
     ? input.description.trim()
     : synthesizeDescription(chartType, encoding);
+  if (description.length < 25) {
+    description = `${description}${axisContextClause(encoding)}`;
+  }
 
   const spec: NormalizedVizSpec = {
     $schema: 'https://oods.dev/viz-spec/v1',
@@ -810,7 +839,16 @@ function assembleSpec(
     data: { values: input.rows.map((row) => ({ ...row })) },
     marks: [{ trait: CHART_TYPE_MARK[chartType] }],
     encoding: encoding as NormalizedVizSpec['encoding'],
-    a11y: { description },
+    // R-09: a deterministic aria-label so assistive tech can announce the chart
+    // even when a caller passes name:'' (which would otherwise defeat the R-09
+    // spec.name fallback).
+    a11y: { description, ariaLabel: synthesizeAriaLabel(chartType, encoding) },
+    // R-14 (warn): declare a deterministic table column order for >2-column tables
+    // (spread empty otherwise). Encoding channels first in [x,y,color,size,shape,
+    // detail] order, then remaining first-row keys in encounter order — matching
+    // deriveColumns (a11y/table-generator.ts). Re-orders the accessible table to
+    // encoding order; that is the point of R-14.
+    ...synthesizeTableColumnOrder(encoding, input.rows),
   };
 
   // The builder's contract is a VALID spec; fail loud rather than emit a spec
@@ -836,6 +874,80 @@ function synthesizeDescription(
     return `${label} of ${x}.`;
   }
   return `${label}.`;
+}
+
+/**
+ * Deterministic padding clause appended to a sub-25-char description so R-08
+ * (>=25) passes. Uses humanized axis fields (guaranteed present for every
+ * assembleSpec caller); the table-availability fallback is defensive only.
+ */
+function axisContextClause(encoding: Partial<Record<EncodingChannel, TraitBinding>>): string {
+  const x = encoding.x?.field;
+  const y = encoding.y?.field;
+  if (y && x) {
+    return ` Showing ${humanize(y)} against ${humanize(x)}.`;
+  }
+  if (x) {
+    return ` Showing ${humanize(x)}.`;
+  }
+  return ' Accessible data table available.';
+}
+
+/**
+ * Deterministic aria-label (R-09) — humanized measure/dimension over the chart
+ * type label, e.g. "Bar chart of Revenue by Region". Pure function of chartType +
+ * field names.
+ */
+function synthesizeAriaLabel(
+  chartType: ChartType,
+  encoding: Partial<Record<EncodingChannel, TraitBinding>>,
+): string {
+  const label = CHART_TYPE_LABEL[chartType];
+  const x = encoding.x?.field;
+  const y = encoding.y?.field;
+  if (y && x) {
+    return `${label} of ${humanize(y)} by ${humanize(x)}`;
+  }
+  if (x) {
+    return `${label} of ${humanize(x)}`;
+  }
+  return label;
+}
+
+/**
+ * Deterministic table column order (R-14, warn) for >2-column tables: encoding
+ * channel fields in [x,y,color,size,shape,detail] order (deduped), then the
+ * remaining first-row keys in encounter order. Mirrors deriveColumns
+ * (a11y/table-generator.ts) so the declared order == the rendered order. Returns
+ * an empty object (spread to no-op) when the table has <=2 columns, so 2-column
+ * specs stay free of the field.
+ */
+function synthesizeTableColumnOrder(
+  encoding: Partial<Record<EncodingChannel, TraitBinding>>,
+  rows: ReadonlyArray<Record<string, unknown>>,
+): Partial<Pick<NormalizedVizSpec, 'portability'>> {
+  const firstRow = rows[0];
+  const rowKeys = firstRow ? Object.keys(firstRow) : [];
+  if (rowKeys.length <= 2) {
+    return {};
+  }
+  const channelOrder: EncodingChannel[] = ['x', 'y', 'color', 'size', 'shape', 'detail'];
+  const seen = new Set<string>();
+  const ordered: string[] = [];
+  for (const channel of channelOrder) {
+    const field = encoding[channel]?.field;
+    if (field && !seen.has(field)) {
+      seen.add(field);
+      ordered.push(field);
+    }
+  }
+  for (const key of rowKeys) {
+    if (!seen.has(key)) {
+      seen.add(key);
+      ordered.push(key);
+    }
+  }
+  return { portability: { tableColumnOrder: ordered } };
 }
 
 function normalizeEncodings(

@@ -57,3 +57,21 @@ export function formatDimension(value: unknown): string | undefined {
   }
   return String(value);
 }
+
+/**
+ * Turn a raw field name into a human-readable label: snake_case / kebab-case /
+ * camelCase collapse to spaces and only the FIRST character is capitalized
+ * (sentence case, NOT full Title Case) — e.g. `total_revenue` -> `Total revenue`,
+ * `grossMargin` -> `Gross margin`. Deterministic (pure string transform, no
+ * locale). Shared so the accessible-table column labels, the narrative field
+ * labels, and (sprint-135 m02) the synthesized axis titles / aria-labels all
+ * agree; any drift between them is a screen-reader mismatch.
+ */
+export function humanize(value: string): string {
+  const withSpaces = value
+    .replace(/[_-]/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+}

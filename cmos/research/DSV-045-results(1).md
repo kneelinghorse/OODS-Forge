@@ -1,5 +1,7 @@
 # Research Report: DSV-045 - Generative & Agentic Data Visualization: SOTA for an Agent-Native Viz/BI Engine
 
+> ⚠️ **2026-06-29 — Forge-mapping claims partially obsolete.** The DSV-045 SOTA framework (Draco/LIDA/Cube/Malloy/nvBench/Vega-Lite/ECharts) remains valid, but the Forge-specific mapping claims about `viz.fromText`, the LLM parser, and the `nlviz-accuracy` gate refer to code **REVERTED on 2026-06-29** (commit `a0e876e`, decision #973). The deterministic `viz.render` structured-`intent` mode (s131) survives; treat all NL→viz/parser/eval-gate Forge specifics here as historical.
+
 **Sources collected:** 114
 **Verified references:** 16
 **Agent steps:** 14 / 40

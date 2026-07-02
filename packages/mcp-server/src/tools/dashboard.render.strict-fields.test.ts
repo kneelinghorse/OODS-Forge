@@ -133,11 +133,16 @@ describe('dashboard.render — strictFields field-presence (sprint-118 m05)', ()
   });
 
   it('standalone viz.render: strict + typo encoding -> V131 WARNING (WARN-by-default, spec still produced)', async () => {
+    // a11yEquivalence:false isolates the strictFields WARN contract: since sprint-135 m04 the a11y
+    // gate is default-ON and a typo field (absent from every row) ALSO trips A11Y-R-12 (error), which
+    // would BLOCK. strictFields itself still only warns; opting out of the a11y gate keeps this a
+    // focused strictFields test. (The gate's block-on-missing-field is covered in the a11y parity specs.)
     const out = await vizHandle({
       chartType: 'bar',
       rows: ROWS,
       encodings: { x: 'region', y: 'revenuee' },
       strictFields: true,
+      a11yEquivalence: false,
     } as unknown as VizRenderInput);
     expect(out.status).toBe('ok');
     expect((out.warnings ?? []).some((w) => w.code === 'OODS-V131' && w.message.includes('revenuee'))).toBe(true);

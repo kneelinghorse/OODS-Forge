@@ -5,7 +5,7 @@ import {
   getEncodingBinding,
   type VizDataAnalysis,
 } from './data-analysis.js';
-import { formatNumeric, formatPercent } from './format.js';
+import { formatNumeric, formatPercent, humanize } from './format.js';
 
 export interface NarrativeResult {
   readonly status: 'ready' | 'insufficient-data';
@@ -309,15 +309,6 @@ function resolveFieldLabel(spec: NormalizedVizSpec, channel: keyof NormalizedViz
     return humanize(binding.field);
   }
   return undefined;
-}
-
-function humanize(value: string): string {
-  const withSpaces = value
-    .replace(/[_-]/g, ' ')
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
 }
 
 function describeCorrelation(value: number): string {

@@ -1,5 +1,7 @@
 # OODS Forge — Data Visualization as Flagship
 
+> ⚠️ **2026-06-29 UPDATE — the 'NL→viz' hand-off in Phase 3 below was REVERTED.** `viz.fromText` + the `@anthropic-ai/sdk` Claude parser + the `nlviz/` module + the report-only `nlviz-accuracy` gate were removed (commit `a0e876e`) — a circular LLM-parsing-English-for-an-LLM-caller dependency with no consuming surface (decision #973). KEPT & live: the deterministic `viz.render` structured-`intent` mode (s131), the 13-type chart matrix, governed measures (s116/s117), dashboards (s113), the measure-narrative substrate (s129/s130). The s133 dimension registry was stashed, never committed. The flagship GOAL is being revisited (decision #974); treat the Phase-3 NL→viz framing below as historical.
+
 **Status:** Strategy draft (planning, not building)
 **Date:** 2026-06-15 · session PS-2026-06-15-001
 **Grounded in:** live capability assessment (6-agent workflow + live `viz.compose` run, 2026-06-15) · TraceLab "Data Science & Visualization" corpus (44 missions, 40 docs) · TraceLab **DSV-045 frontier SOTA — landed 2026-06-16** → [`cmos/research/DSV-045-results(1).md`](../research/DSV-045-results(1).md) (verified working draft; citations fixed, Forge-mapping claims reconciled against code in its **§10b**)

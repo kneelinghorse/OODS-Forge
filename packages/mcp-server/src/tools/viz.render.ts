@@ -30,6 +30,7 @@ import {
   registerGeoJson,
   toEChartsOption,
   toVegaLiteSpec,
+  validateVizEquivalenceRules,
   type AccessibleTableResult,
   type BuildVizSpecInput,
   type HierarchyInput,
@@ -43,6 +44,7 @@ import {
   type StructuredIntent,
   type VizDataAnalysis,
 } from '@oods/viz-core';
+import { canonicalize, sha256 } from '@oods/artifacts';
 import type { VizRenderInput, VizRenderOutput } from '../schemas/generated.js';
 import { createValueRef, describeSchemaRef, resolveValueRef } from './schema-ref.js';
 import { absentFields, referencedEncodingFields } from './field-presence.js';
@@ -182,6 +184,51 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
 
     const spec = toVegaLiteSpec(built.spec) as unknown as VizRenderOutput['spec'];
 
+    // A11y equivalence CERTIFY-AT-EMISSION (sprint-134 m03): when a11yEquivalence is on,
+    // run the 16-rule accessible-equivalence engine over the SAME built.spec the chart
+    // renders from and surface every failing rule as a SOFT WARNING — never assertVizEquivalence
+    // (which throws on error-severity), never a gate. severity is FORCED to 'warning' regardless
+    // of the rule's intrinsic 'error'|'warn' (the gate-flip is a future slice; warn-mode is the
+    // instrument that measures how often the engine fires on real emissions). Cartesian-only:
+    // this is the Vega path; the ECharts-primary path (empty-data scaffold) is intentionally excluded.
+    // Default-on (sprint-135 m03) ⇒ the engine runs on every cartesian emission; the
+    // builder is conformant-by-construction (m02) so generated specs surface no findings.
+    // Set a11yEquivalence:false to opt out for agent-supplied non-conformant specs.
+    const wantA11yEquivalence = input.a11yEquivalence ?? true;
+    const a11yRuleFailures = wantA11yEquivalence
+      ? validateVizEquivalenceRules(built.spec).filter((rule) => !rule.passed)
+      : [];
+    // Partition by the rule TABLE severity (NOT the forced-'warning' the s134 wire used, and NOT
+    // assertVizEquivalence which throws → caught below → coerced to OODS-V129, losing per-rule
+    // codes): warn-severity failures surface in warnings[]; error-severity failures BLOCK
+    // (sprint-135 m04). Each issue keeps its own OODS-A11Y-<rule.id> code.
+    const a11yEquivalenceWarnings: VizRenderOutput['warnings'] = a11yRuleFailures
+      .filter((rule) => rule.severity !== 'error')
+      .map((rule) => ({
+        code: `OODS-A11Y-${rule.id}`,
+        message: rule.message ?? rule.summary,
+        severity: 'warning' as const,
+      }));
+    const a11yEquivalenceErrors: Issue[] = a11yRuleFailures
+      .filter((rule) => rule.severity === 'error')
+      .map((rule) => ({
+        code: `OODS-A11Y-${rule.id}`,
+        message: rule.message ?? rule.summary,
+        severity: 'error' as const,
+      }));
+    if (a11yEquivalenceErrors.length > 0) {
+      // BLOCKED: an accessible-equivalence error rule failed. The builder is conformant-by-
+      // construction (m02), so this only fires on agent-supplied data/encoding problems the
+      // builder cannot fix (e.g. R-12 an encoding field absent from the rows). Preserve every
+      // per-rule code + the warn-severity a11y findings + field warnings; omit contentHash.
+      return a11yErrorOut(
+        a11yEquivalenceErrors,
+        [...fieldWarnings, ...a11yEquivalenceWarnings],
+        compact,
+        wantEcharts,
+      );
+    }
+
     const out: VizRenderOutput = {
       status: 'ok',
       chartType: built.chartType,
@@ -193,7 +240,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
       mode: built.mode === 'intent' ? 'suggest' : built.mode,
       spec,
       a11yDescription: built.spec.a11y.description,
-      warnings: fieldWarnings,
+      warnings: [...fieldWarnings, ...a11yEquivalenceWarnings],
       output: {
         compact,
         ...(wantEcharts ? { echarts: true } : {}),
@@ -270,6 +317,11 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
     out.specRef = ref.ref;
     out.specRefCreatedAt = ref.createdAt;
     out.specRefExpiresAt = ref.expiresAt;
+
+    // contentHash = the deterministic content IDENTITY of exactly what specRef
+    // caches (the compiled Vega-Lite spec). Default-on; stable across calls
+    // (sprint-134 m02). specRef is the random/expiring handle; this is the hash.
+    out.contentHash = sha256(canonicalize(spec));
 
     return out;
   } catch (err) {
@@ -482,6 +534,11 @@ function renderEChartsPrimary(
     out.specRef = ref.ref;
     out.specRefCreatedAt = ref.createdAt;
     out.specRefExpiresAt = ref.expiresAt;
+
+    // contentHash over the JSON-PROJECTED ECharts option (post-__joinDiagnostics
+    // strip) — the same payload specRef caches, hashed for stable identity
+    // (sprint-134 m02). NOT the raw adapter option (its formatter closure is dropped).
+    out.contentHash = sha256(canonicalize(echartsOption));
 
     return out;
   } catch (err) {
@@ -775,6 +832,24 @@ function errorOut(code: string, message: string, compact: boolean, wantEcharts: 
     status: 'error',
     spec: {},
     warnings: [],
+    errors,
+    output: { compact, ...(wantEcharts ? { echarts: true } : {}) },
+  };
+}
+
+// Error output for the a11y-equivalence gate (sprint-135 m04). Unlike errorOut (a single code,
+// empty warnings), this preserves EVERY failing error-rule's OODS-A11Y-<rule.id> code and carries
+// the warn-severity a11y findings + field warnings. Omits contentHash (the error path never sets it).
+function a11yErrorOut(
+  errors: Issue[],
+  warnings: VizRenderOutput['warnings'],
+  compact: boolean,
+  wantEcharts: boolean,
+): VizRenderOutput {
+  return {
+    status: 'error',
+    spec: {},
+    warnings,
     errors,
     output: { compact, ...(wantEcharts ? { echarts: true } : {}) },
   };

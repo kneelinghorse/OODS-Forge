@@ -1229,6 +1229,10 @@ export namespace DashboardRenderInputSchema {
      * Unknown-datasetId STRICT switch (sprint-122 m03). When true, a KPI panel whose datasetId is NOT present in datasets[] fails through onPanelError (OODS-V139). A KNOWN dataset that filters/cross-filters to zero rows STILL renders value:0 (unchanged). Does NOT affect chart panels (their missing-datasetId path keeps OODS-V123). Default false = the legacy frozen-D6 silent-empty behavior, byte-identical.
      */
     strictDatasets?: boolean;
+    /**
+     * A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. Each cartesian chart panel's emission is checked against the accessible-equivalence engine: an error-severity failure makes an error panel (first per-rule OODS-A11Y-<rule.id> code), warn-severity failures fold into the dashboard `warnings` as OODS-A11Y-<rule.id> prefixed with the originating panel id. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02); set false to opt out for agent-supplied non-conformant panels. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded).
+     */
+    a11yEquivalence?: boolean;
     a11y: DashboardA11YSpec;
     /**
      * SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). KPI threshold colors are NOT resolved inline.
@@ -1662,6 +1666,10 @@ export namespace DashboardRenderOutputSchema {
     specRef?: string;
     specRefCreatedAt?: string;
     specRefExpiresAt?: string;
+    /**
+     * Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. Default-on; omitted only on error outputs (sprint-134 m02).
+     */
+    contentHash?: string;
     /**
      * Echoes the normalized output controls.
      */
@@ -6808,6 +6816,10 @@ export namespace VizRenderInputSchema {
      */
     strictFields?: boolean;
     /**
+     * A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. The cartesian (Vega-Lite) emission is checked against the accessible-equivalence engine (validateVizEquivalenceRules): error-severity rules BLOCK (status:'error' with per-rule OODS-A11Y-<rule.id> codes in `errors`), warn-severity failures surface in `warnings` as OODS-A11Y-<rule.id>. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02), so generated specs pass; set false to opt out for agent-supplied non-conformant specs. Scoped to the cartesian path (the ECharts-primary scaffold has empty data and would spuriously fail data-equivalence rules).
+     */
+    a11yEquivalence?: boolean;
+    /**
      * Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior.
      */
     output?: {
@@ -6988,6 +7000,10 @@ export namespace VizRenderOutputSchema {
      * ISO timestamp when the specRef expires.
      */
     specRefExpiresAt?: string;
+    /**
+     * Deterministic SHA-256 (hex) over the canonicalized primary payload (the Vega-Lite spec, or the JSON-projected ECharts option for ECharts-primary types) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable across calls: the same input yields the same hash. Default-on; omitted only on error outputs (sprint-134 m02).
+     */
+    contentHash?: string;
     /**
      * Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS.
      */

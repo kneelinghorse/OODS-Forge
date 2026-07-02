@@ -1,7 +1,7 @@
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 import type { VizDataAnalysis } from './data-analysis.js';
 import { analyzeVizSpec } from './data-analysis.js';
-import { formatDimension, formatValue } from './format.js';
+import { formatDimension, formatValue, humanize } from './format.js';
 import type { MeasureNarrativeContext } from './narrative-generator.js';
 
 export interface AccessibleTableColumn {
@@ -210,15 +210,6 @@ function findColumnLabel(spec: NormalizedVizSpec, field: string): string | undef
     }
   }
   return undefined;
-}
-
-function humanize(value: string): string {
-  const withSpaces = value
-    .replace(/[_-]/g, ' ')
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
 }
 
 function resolveCaption(spec: NormalizedVizSpec): string {

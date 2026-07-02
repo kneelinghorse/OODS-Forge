@@ -28,6 +28,7 @@ import {
   type SelectionState,
   type TemporalGranularity,
 } from '@oods/viz-core';
+import { canonicalize, sha256 } from '@oods/artifacts';
 import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from '../schemas/generated.js';
 import { handle as vizRenderHandle } from './viz.render.js';
 import { createValueRef, describeSchemaRef } from './schema-ref.js';
@@ -61,6 +62,13 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const wantEcharts = input.output?.echarts ?? false;
   const wantA11y = input.output?.includeA11y ?? false;
   const wantHtml = input.output?.html ?? false;
+  // A11y equivalence CERTIFY-AT-EMISSION (sprint-134 m03): top-level flag (NOT under output,
+  // mirroring strictFields/strictDatasets). When on, each cartesian chart panel's viz.render call
+  // runs the equivalence engine; the per-panel OODS-A11Y-* warnings (silently dropped by
+  // buildChartResult) are folded into the dashboard warnings[] prefixed with the panel id. Default-on
+  // (sprint-135 m03); the builder is conformant-by-construction (m02), so generated panels surface no
+  // findings. Set a11yEquivalence:false to opt out for agent-supplied non-conformant panels.
+  const wantA11yEquivalence = input.a11yEquivalence ?? true;
   // A11y completeness (sprint-118 m07) — all default-off so the absent path is byte-identical.
   const wantDataTable = input.output?.dataTable ?? false;
   const wantContrastScan = input.output?.contrastScan ?? false;
@@ -567,7 +575,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     }
 
     // chart panel — render in-process via viz.render
-    const vizInput = buildPanelVizInput(panel, datasetRows, filterRows, wantEcharts, wantA11y);
+    const vizInput = buildPanelVizInput(panel, datasetRows, filterRows, wantEcharts, wantA11y, wantA11yEquivalence);
     const out = await vizRenderHandle(vizInput);
 
     if (out.status !== 'ok') {
@@ -588,6 +596,27 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       });
       placedPanels.push(panel);
       continue;
+    }
+
+    // A11y equivalence fold (sprint-134 m03 wire; sprint-135 m04 gate): buildChartResult copies
+    // id/spec/echartsSpec/a11y from the per-panel viz.render output but SILENTLY DROPS out.warnings
+    // — there is no other per-panel warnings propagation to ride. So when the dashboard
+    // a11yEquivalence flag is on, lift each per-panel warning into the dashboard warnings[],
+    // prefixed with the panel id. The per-panel gate (m04) already diverted ERROR-severity a11y
+    // failures into an error panel above (the status!=='ok' seam), so the survivors reaching here
+    // are warn-severity — PRESERVE w.severity (do NOT force 'warning'). Fold IN ADDITION TO, not
+    // instead of, any non-a11y per-panel field warning (none today: buildPanelVizInput forwards
+    // the flag but never strictFields, so out.warnings is a11y-only warn-severity by construction —
+    // but the pass-through is kept so a future non-a11y warning is not silently dropped). Strictly
+    // gated on the flag — an unconditional fold would re-byte warnings[] and break #564.
+    if (wantA11yEquivalence) {
+      for (const w of out.warnings) {
+        warnings.push({
+          code: w.code,
+          message: `panel "${panel.id}": ${w.message}`,
+          severity: w.severity,
+        });
+      }
     }
 
     panelResults.push(buildChartResult(panel, out, chartMeasure));
@@ -699,6 +728,10 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   result.specRef = ref.ref;
   result.specRefCreatedAt = ref.createdAt;
   result.specRefExpiresAt = ref.expiresAt;
+
+  // contentHash = the deterministic content IDENTITY of the SAME composed payload
+  // specRef caches ({panels, layout}). Default-on; stable across calls (sprint-134 m02).
+  result.contentHash = sha256(canonicalize({ panels: panelResults, layout }));
 
   return result;
 }
@@ -850,6 +883,7 @@ function buildPanelVizInput(
   filterRows: (panelId: string, rows: Row[]) => Row[],
   wantEcharts: boolean,
   wantA11y: boolean,
+  wantA11yEquivalence: boolean,
 ): VizRenderInput {
   const base: Record<string, unknown> = {
     chartType: panel.chartType,
@@ -860,6 +894,12 @@ function buildPanelVizInput(
       ...(wantEcharts ? { echarts: true } : {}),
       ...(wantA11y ? { includeA11y: true } : {}),
     },
+    // sprint-134 m03 / sprint-135 m03: thread the equivalence flag down so the per-panel
+    // cartesian viz.render runs the engine (a no-op on ECharts-primary panels). Forward the
+    // EXPLICIT boolean — since viz.render now defaults a11yEquivalence to true (m03), a bare
+    // spread would let a dashboard-level opt-out (a11yEquivalence:false) silently re-enable
+    // the check at the panel level.
+    a11yEquivalence: wantA11yEquivalence,
   };
   if (panel.id) base.id = panel.id;
   if (panel.title) base.name = panel.title;

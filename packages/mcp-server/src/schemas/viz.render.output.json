@@ -151,6 +151,10 @@
       "type": "string",
       "description": "ISO timestamp when the specRef expires."
     },
+    "contentHash": {
+      "type": "string",
+      "description": "Deterministic SHA-256 (hex) over the canonicalized primary payload (the Vega-Lite spec, or the JSON-projected ECharts option for ECharts-primary types) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable across calls: the same input yields the same hash. Default-on; omitted only on error outputs (sprint-134 m02)."
+    },
     "tokenCssRef": {
       "type": "string",
       "description": "Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS."
