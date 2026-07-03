@@ -10,9 +10,11 @@
 // Coverage-honest: a11y-equivalence certification is CARTESIAN-ONLY (the Vega-Lite
 // path). The 8 ECharts-primary types (treemap/sunburst/sankey/... — classified
 // from the IR's first mark trait) return coverage:'uncertified' / conformant:null,
-// a DISTINCT verdict, not a failure. Contrast is a documented OPEN pillar (a
-// NormalizedVizSpec carries no resolved mark colors); certify claims only what an
-// IR can prove. The verdict is a pure function of the input IR — no Date/random/UUID.
+// a DISTINCT verdict, not a failure. Contrast is a graded pillar (s137/s138): certify
+// resolves — via the SAME shared resolver the vega-lite adapter bakes from — the OODS
+// palette Forge renders into the compiled cartesian spec and grades it against the
+// canvas, so contrast reflects rendered reality, not a declared intent. The verdict is
+// a pure function of the input IR — no Date/random/UUID.
 
 import { canonicalize, sha256 } from '@oods/artifacts';
 import {
@@ -45,7 +47,8 @@ export interface CertifyDeterminism {
  * Per-pillar tri-state summary (s137). A reader can never misread conformant:true as
  * "contrast passed" — each governed pillar reports its own verdict alongside it.
  * a11yEquivalence mirrors `conformant`; determinism mirrors `determinism.stable`;
- * contrast is the declared-intent palette verdict ('exempt' for gradient scales).
+ * contrast is the rendered-reality palette verdict — the OODS palette Forge bakes into
+ * the compiled spec (s138) — with 'exempt' for gradient scales.
  */
 export interface CertifyPillars {
   readonly a11yEquivalence: 'pass' | 'fail' | 'unchecked';
@@ -174,9 +177,11 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     const stable = first === second;
     const contentHash = sha256(first);
 
-    // CONTRAST PILLAR (s137) — additive, purely on certify's OWN output (touches no
-    // cartesian bytes; #564 held). Defensive: a contrast-engine fault never turns a
-    // valid conformance verdict into status:error — it degrades to 'unchecked'.
+    // CONTRAST PILLAR (s137/s138) — grades the SAME OODS palette the adapter bakes into
+    // the compiled spec (rendered-reality). It is a read-only addition to certify's OWN
+    // output; the deliberate #564 cartesian-color regen lives in the adapter, not here.
+    // Defensive: a contrast-engine fault never turns a valid conformance verdict into
+    // status:error — it degrades to 'unchecked'.
     let contrast: ContrastVerdict = 'unchecked';
     let contrastNote: string | undefined;
     try {
