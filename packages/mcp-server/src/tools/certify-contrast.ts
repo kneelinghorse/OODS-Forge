@@ -1,32 +1,38 @@
-// certify contrast pillar — the RENDERED-REALITY contrast engine (s137 m02; s138 m03).
+// certify contrast pillar — the RENDERED-REALITY contrast engine (s137 m02; s138 m03;
+// s139 m02).
 //
-// certify grows a contrast pillar that grades the OODS viz-scale palette Forge BAKES
-// into the compiled cartesian spec (s138 m02), against the canvas, per the memo
-// §2/§3/§3a rule set. It is a pure, deterministic reader of the IR: it resolves the
-// palette the chart actually renders via the SHARED resolveCategoricalPalette
-// (@oods/viz-core) — the SAME resolver the vega-lite adapter bakes from, so the graded
-// hexes are byte-identical to the rendered scale.range (certified == baked) and honor
-// any agent config.tokens override — then evaluates three roles:
+// certify grades the OODS viz-scale palette Forge BAKES into the compiled cartesian
+// Vega-Lite spec, against the canvas, per the memo §2/§3/§3a rule set. As of s139 it
+// reads the color hexes off the COMPILED spec's emitted bytes (scale.range for a
+// multi-series color channel, mark.color for a single-series chart) rather than
+// re-classifying the raw IR and re-resolving the palette. There is no second classifier
+// left to disagree with the adapter's bake gate, so `certified == rendered` BY
+// CONSTRUCTION: if the compiled spec baked NO OODS palette for a color-bearing chart,
+// certify cannot return contrast:'pass' (the s138-review classifier-mismatch false-pass
+// is structurally dissolved). It evaluates three roles:
 //
 //   role-C (WCAG 1.4.11 NORMATIVE) — every consumed mark >= 3:1 vs the canvas.
 //   role-A (best-practice)         — min-pairwise CIEDE2000 (min over normal +
 //                                     deuteran/protan/tritan Machado CVD) across the
 //                                     consumed categorical slots. <2 fail; 2-10 pass
 //                                     with a distinguishability warn; >=10 clean pass.
-//   role-B (WCAG-EXEMPT)           — a sequential/diverging color scale is the
-//                                     essential-exception gradient -> 'exempt' + a
-//                                     note pointing at Forge's generated data table.
+//   role-B (WCAG-EXEMPT)           — a color channel that baked NO categorical palette
+//                                     (a sequential/diverging gradient, or a divergence/
+//                                     mistype that renders on a continuous/default scale)
+//                                     is the essential-exception gradient -> 'exempt'.
 //
-// WHY rendered-reality (s138): the compiled cartesian spec now carries the resolved
-// OODS palette by construction — scale.range for a multi-series color channel,
-// mark.color for a single-series chart — so certify grades what Forge RENDERS, not a
-// declared intent (this dissolves the s137-review C1/C2 relocated-hollow). The one
-// remaining caveat is theme: resolveTokenToColor is theme-blind (light-only), so
-// dark-theme contrast is unverified/OOS.
+// WHY read the compiled bytes (s139): the bake gate (vega-lite-adapter.ts convertBinding)
+// and the old grade-side classifier (colorRole) were two INDEPENDENT, disagreeing
+// classifiers — a schema-valid color binding the bake left quantitative (trait
+// 'EncodingDetail', a typo 'EncodingColour', a bare 'Color', +timeUnit/+aggregate,
+// EncodingSize-on-color) compiled to a palette-LESS spec, yet the grader re-resolved the
+// 6-slot palette and returned contrast:'pass'. Grading the emitted ground truth removes
+// the second classifier entirely. The one remaining caveat is theme: resolveTokenToColor
+// is theme-blind (light-only), so dark-theme contrast is unverified/OOS.
 
 import Color from 'colorjs.io';
 import { contrastRatio, normaliseColor } from '@oods/a11y-tools';
-import { resolveCategoricalPalette, resolveTokenToColor, type NormalizedVizSpec } from '@oods/viz-core';
+import { resolveTokenToColor, type NormalizedVizSpec, type VegaLiteAdapterSpec } from '@oods/viz-core';
 import { CVD_TYPES, simulateCvd } from './cvd-machado.js';
 
 export type ContrastVerdict = 'pass' | 'fail' | 'unchecked' | 'exempt';
@@ -42,8 +48,8 @@ export interface ContrastPillarResult {
 // #FCFCFD and reproduces the memo §1 role-C numbers exactly.
 const CANVAS_TOKEN = '--oods-sys-surface-canvas';
 
-// OODS viz-scale categorical palette: 6 slots. certify resolves the slots the chart
-// actually consumes (= categorical cardinality) — the SAME palette the adapter bakes.
+// OODS viz-scale categorical palette: 6 slots. certify grades the slots the chart
+// actually consumes (= categorical cardinality) — read off the baked scale.range.
 const CATEGORICAL_SLOTS = 6;
 const categoricalToken = (slot1: number): string =>
   `--oods-viz-scale-categorical-${String(slot1).padStart(2, '0')}`;
@@ -57,27 +63,15 @@ const RENDERED_CONTRAST_CAVEAT =
   'certify measures the OODS viz-scale palette Forge bakes into the compiled spec, ' +
   'on the light theme; dark-theme contrast is not verified.';
 
-type ColorRole = 'categorical' | 'continuous' | 'none';
-
-/** A viz spec's color encoding lives on the top-level encoding or the first mark. */
-function colorBinding(spec: NormalizedVizSpec) {
-  return spec.encoding?.color ?? spec.marks[0]?.encodings?.color;
-}
-
-/**
- * Classify the palette role deterministically from the IR's color channel — from
- * the encoding's declared type/scale, NEVER from the colors (memo §3).
- */
-function colorRole(spec: NormalizedVizSpec): ColorRole {
-  const color = colorBinding(spec);
-  if (!color) return 'none';
-  if (color.type === 'quantitative' || color.type === 'temporal') return 'continuous';
-  if (color.type === 'nominal' || color.type === 'ordinal') return 'categorical';
-  const scale = color.scale;
-  if (scale === 'linear' || scale === 'log' || scale === 'sqrt' || scale === 'temporal') return 'continuous';
-  // band/point or an unqualified color channel over a field -> categorical (nominal).
-  return 'categorical';
-}
+// A color channel exists but the adapter baked NO OODS categorical palette (no
+// scale.range, no OODS mark.color): the chart renders as a continuous/default color
+// scale — a legit sequential/diverging gradient, OR a divergence/mistype (a color
+// binding the bake gate left quantitative). Either way there is no discrete palette to
+// contrast-check, so WCAG 1.4.11's essential exception applies (memo §3 case 3 / fork A).
+const EXEMPT_NOTE =
+  'No OODS categorical palette was baked into the compiled color scale — the chart renders ' +
+  'as a continuous/default color scale (WCAG 1.4.11 gradient essential exception); ' +
+  "Forge's generated accessible data table is the guarantee. " + RENDERED_CONTRAST_CAVEAT;
 
 function distinctCount(values: Array<Record<string, unknown>> | undefined, field: string): number {
   if (!values || values.length === 0) return 0;
@@ -131,49 +125,45 @@ function minPairwiseDeltaEOverCvd(hexes: readonly string[]): number {
   return min;
 }
 
+interface CompiledUnit {
+  readonly mark?: unknown;
+  readonly encoding?: Record<string, unknown>;
+}
+
 /**
- * Evaluate the contrast pillar for a (cartesian) NormalizedVizSpec IR. Pure +
- * deterministic. Never throws — an unresolvable canvas/palette yields an honest
- * 'unchecked', not a silent pass.
+ * The compiled Vega-Lite spec carries its mark + encoding at the top level
+ * ({mark,encoding}), inside a layer array ({layer:[{mark,encoding},…]}), or — for a
+ * faceted/concat layout — nested under `spec` / a concat container
+ * (vega-lite-layout-mapper.ts). Walk to the first unit node so the grader reads the
+ * color bytes Forge actually baked regardless of layout, never re-deriving from the IR.
  */
-export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarResult {
-  // Role B (sequential/diverging continuous color): WCAG essential-exception exempt.
-  if (colorRole(spec) === 'continuous') {
-    return {
-      contrast: 'exempt',
-      contrastNote:
-        'Sequential/diverging color scale — WCAG 1.4.11 essential exception (gradient); ' +
-        "Forge's generated accessible data table is the guarantee. " + RENDERED_CONTRAST_CAVEAT,
-    };
+function compiledColorUnit(node: unknown): CompiledUnit | undefined {
+  if (!node || typeof node !== 'object') return undefined;
+  const rec = node as Record<string, unknown>;
+  if ('mark' in rec || 'encoding' in rec) {
+    return { mark: rec.mark, encoding: rec.encoding as Record<string, unknown> | undefined };
   }
-
-  const overrides = overrideMap(spec);
-  const canvasHex = resolveSlotHex(CANVAS_TOKEN, overrides);
-
-  // How many categorical slots the chart consumes (= cardinality of the color field);
-  // a single-series chart with no color encoding consumes just slot 01.
-  let slotCount = 1;
-  if (colorRole(spec) === 'categorical') {
-    const field = colorBinding(spec)?.field;
-    const n = field ? distinctCount(spec.data?.values, field) : 0;
-    slotCount = Math.min(Math.max(n, 1), CATEGORICAL_SLOTS);
+  if (Array.isArray(rec.layer) && rec.layer.length > 0) return compiledColorUnit(rec.layer[0]);
+  if (rec.spec) return compiledColorUnit(rec.spec);
+  for (const key of ['hconcat', 'vconcat', 'concat'] as const) {
+    const sections = rec[key];
+    if (Array.isArray(sections) && sections.length > 0) return compiledColorUnit(sections[0]);
   }
+  return undefined;
+}
 
-  // Grade the SAME palette the vega-lite adapter BAKES (s138 m03): the shared
-  // resolveCategoricalPalette returns the full resolved OODS range honoring config.tokens,
-  // and the chart consumes its first `slotCount` slots (Vega maps domain[i]->range[i], so
-  // series beyond the sample cardinality are not rendered). Zipping restores the per-slot
-  // token label for the role-C failure note. certified == baked BY CONSTRUCTION — one resolver.
-  const slots = resolveCategoricalPalette(spec)
-    .slice(0, slotCount)
-    .map((hex, i) => ({ token: categoricalToken(i + 1), hex }));
-
-  // Could not resolve the palette or the canvas -> honest 'unchecked' (no silent pass).
+/** Grade a resolved slot set (role-C vs canvas, then role-A distinguishability). */
+function gradeCategorical(
+  slots: ReadonlyArray<{ readonly token: string; readonly hex: string }>,
+  canvasHex: string | undefined,
+): ContrastPillarResult {
+  // Could not resolve the canvas (or nothing to grade) -> honest 'unchecked', never a
+  // silent pass.
   if (slots.length === 0 || !canvasHex) {
     return {
       contrast: 'unchecked',
       contrastNote:
-        'Could not resolve the viz-scale palette or canvas token for this IR. ' + RENDERED_CONTRAST_CAVEAT,
+        'Could not resolve the canvas token for this IR. ' + RENDERED_CONTRAST_CAVEAT,
     };
   }
 
@@ -188,7 +178,8 @@ export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarR
     };
   }
 
-  // Role A (best-practice): categorical distinguishability, min-over-CVD.
+  // Role A (best-practice): categorical distinguishability, min-over-CVD. A single
+  // consumed slot has no pair to compare -> role-A N/A.
   const roleAMin = slots.length >= 2 ? minPairwiseDeltaEOverCvd(slots.map((s) => s.hex)) : Infinity;
   if (roleAMin < ROLE_A_FAIL_DELTA_E) {
     return {
@@ -209,4 +200,67 @@ export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarR
     };
   }
   return { contrast: 'pass', contrastNote: RENDERED_CONTRAST_CAVEAT };
+}
+
+/**
+ * Evaluate the contrast pillar for a (cartesian) NormalizedVizSpec IR by grading the
+ * color hexes the adapter BAKED into `compiled` (s139 — reads emitted bytes, not a
+ * re-classification of the raw IR). Pure + deterministic. Never returns 'pass' for a
+ * chart whose compiled spec baked no OODS palette (memo §3 governing rule).
+ *
+ * `spec` is retained ONLY for the canvas token (config.tokens override -> role-C
+ * reference; the canvas is not in the compiled spec) and the cardinality slice
+ * (distinctCount over spec.data.values). All color hexes come from `compiled`.
+ */
+export function evaluateContrastPillar(
+  spec: NormalizedVizSpec,
+  compiled: VegaLiteAdapterSpec,
+): ContrastPillarResult {
+  const unit = compiledColorUnit(compiled);
+  const colorEnc = unit?.encoding?.color as Record<string, unknown> | undefined;
+  const markColor =
+    typeof (unit?.mark as Record<string, unknown> | undefined)?.color === 'string'
+      ? ((unit!.mark as Record<string, unknown>).color as string)
+      : undefined;
+
+  const scale = colorEnc?.scale as Record<string, unknown> | undefined;
+  const rangeRaw = scale?.range;
+  const range =
+    Array.isArray(rangeRaw) && rangeRaw.length > 0 && rangeRaw.every((h) => typeof h === 'string')
+      ? (rangeRaw as string[])
+      : undefined;
+
+  const canvasHex = resolveSlotHex(CANVAS_TOKEN, overrideMap(spec));
+
+  // CASE 1 — categorical: the adapter baked a hex range into the compiled color scale.
+  // Grade it sliced to the consumed cardinality (Vega maps domain[i]->range[i], so
+  // series beyond the sample cardinality are not rendered — grading the full 6 would be
+  // LESS rendered-accurate; the slice is load-bearing, memo §5).
+  if (range) {
+    const field = typeof colorEnc?.field === 'string' ? (colorEnc.field as string) : undefined;
+    const n = field ? distinctCount(spec.data?.values, field) : 0;
+    const slotCount = Math.min(Math.max(n, 1), Math.min(range.length, CATEGORICAL_SLOTS));
+    const slots = range.slice(0, slotCount).map((hex, i) => ({ token: categoricalToken(i + 1), hex }));
+    return gradeCategorical(slots, canvasHex);
+  }
+
+  // CASE 2 — single-series: no color channel, so the adapter baked categorical-01 as
+  // mark.color. Role-C that one hex vs the canvas; role-A is N/A (needs >= 2 slots).
+  if (markColor) {
+    return gradeCategorical([{ token: categoricalToken(1), hex: markColor }], canvasHex);
+  }
+
+  // CASE 3 — a color channel exists but NO OODS categorical palette was baked (gradient,
+  // or a divergence/mistype rendering on a continuous/default scale): WCAG-exempt.
+  if (colorEnc) {
+    return { contrast: 'exempt', contrastNote: EXEMPT_NOTE };
+  }
+
+  // CASE 4 — no color to grade at all (or an empty/pathological palette): honest
+  // 'unchecked', never a silent pass.
+  return {
+    contrast: 'unchecked',
+    contrastNote:
+      'No color encoding or mark color in the compiled spec to grade. ' + RENDERED_CONTRAST_CAVEAT,
+  };
 }

@@ -253,7 +253,7 @@ export type ArtifactCertifyInput = ArtifactCertifyInputSchema.ArtifactCertifyInp
 // Source: artifact.certify.output.json
 export namespace ArtifactCertifyOutputSchema {
   /**
-   * The certify verdict for a Forge NormalizedVizSpec IR: a11y-equivalence conformance (cartesian-only), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that includes a RENDERED-REALITY contrast verdict (s137/s138). The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. The contrast pillar grades the OODS viz-scale palette Forge BAKES into the compiled cartesian spec (scale.range for multi-series, mark.color for single-series; honoring config.tokens overrides) against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD); a gradient scale is WCAG-'exempt'. contrastNote carries the rendered-contrast caveat.
+   * The certify verdict for a Forge NormalizedVizSpec IR: a11y-equivalence conformance (cartesian-only), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that includes a RENDERED-REALITY contrast verdict (s137/s138/s139). The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. The contrast pillar READS the color hexes Forge BAKED into the compiled cartesian spec (scale.range for multi-series, mark.color for single-series; honoring config.tokens overrides) and grades them against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD) — so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass'. A color channel with no baked palette (a gradient scale, or a divergent/mistyped binding that renders on a continuous/default scale) is WCAG-'exempt'. contrastNote carries the rendered-contrast caveat.
    */
   export interface ArtifactCertifyOutput {
     /**
@@ -286,7 +286,7 @@ export namespace ArtifactCertifyOutputSchema {
       contentHash: string;
     };
     /**
-     * Per-pillar tri-state summary (s137). Present on both ok paths (absent on error). Prevents misreading conformant:true as 'contrast passed' — each governed pillar reports its own verdict. a11yEquivalence mirrors `conformant`; determinism mirrors `determinism.stable`; contrast is the rendered-reality viz-scale-palette verdict (the palette Forge bakes into the compiled spec).
+     * Per-pillar tri-state summary (s137). Present on both ok paths (absent on error). Prevents misreading conformant:true as 'contrast passed' — each governed pillar reports its own verdict. a11yEquivalence mirrors `conformant`; determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — it grades the color hexes Forge baked into the compiled spec (scale.range / mark.color), so no baked palette can never read as 'pass'.
      */
     pillars?: {
       /**
@@ -298,7 +298,7 @@ export namespace ArtifactCertifyOutputSchema {
        */
       determinism: 'pass' | 'fail' | 'unchecked';
       /**
-       * Declared-intent contrast over the OODS viz-scale palette (light theme): role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'exempt' for a sequential/diverging gradient scale (WCAG essential exception). 'unchecked' when the palette/canvas cannot be resolved or on the uncertified path.
+       * Rendered-reality contrast over the color hexes Forge baked into the compiled spec (light theme): role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'pass' requires a baked OODS palette; 'exempt' when no categorical palette was baked (a sequential/diverging gradient, or a divergent/mistyped binding rendering on a continuous/default scale — WCAG essential exception). 'unchecked' when the canvas cannot be resolved or on the uncertified path.
        */
       contrast: 'pass' | 'fail' | 'unchecked' | 'exempt';
     };

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { canonicalize, sha256 } from '@oods/artifacts';
 import { buildVizSpecFromRows, toVegaLiteSpec, type NormalizedVizSpec } from '@oods/viz-core';
 import { getAjv } from '../../src/lib/ajv.js';
 import { handle } from '../../src/tools/artifact.certify.js';
@@ -267,5 +268,86 @@ describe('artifact.certify — cross-tool contentHash identity with viz.render (
     expect(rendered.status).toBe('ok');
     const certified = await certify(rendered.normalizedSpec);
     expect(certified.determinism?.contentHash).toBe(rendered.contentHash);
+  });
+});
+
+// s139 m02/m03 — GRADE THE RENDERED BYTES (dissolve the classifier-mismatch false-pass).
+// The reborn hollow (s138 review): a schema-valid but color-DIVERGENT binding — one the
+// bake gate (vega-lite-adapter inferFieldType) leaves quantitative, so the compiled spec
+// bakes NO scale.range/mark.color — used to return coverage:'certified' + conformant:true
+// + contrast:'pass', because the OLD grade-side classifier re-classified the raw binding
+// as categorical and re-resolved the 6-slot palette. s139 reads the emitted bytes instead:
+// no baked OODS palette -> NEVER contrast:'pass'. These IRs are all schema-valid (they pass
+// assertNormalizedVizSpec — a status:error here would mean the fixture, not the verdict, broke).
+describe('artifact.certify — contrast grades the rendered bytes (s139)', () => {
+  // A multi-series base (color=region → the bake fires for EncodingColor); swapping the
+  // color binding is the ONLY change between the divergence cases and their twin.
+  const multiBase = buildVizSpecFromRows({
+    rows: ROWS3,
+    chartType: 'bar',
+    encodings: { x: { field: 'quarter' }, y: { field: 'revenue', aggregate: 'sum' }, color: { field: 'region' } } as never,
+  }).spec;
+  const withColor = (color: Record<string, unknown>): unknown => ({
+    ...multiBase,
+    encoding: { ...multiBase.encoding, color },
+  });
+
+  // Every binding the bake gate leaves quantitative → compiled bakes no palette → exempt.
+  const DIVERGENCE_CASES: Array<[string, Record<string, unknown>]> = [
+    ['EncodingDetail', { field: 'region', trait: 'EncodingDetail' }],
+    ['EncodingColour (typo)', { field: 'region', trait: 'EncodingColour' }],
+    ['bare Color', { field: 'region', trait: 'Color' }],
+    ['EncodingDetail + timeUnit', { field: 'region', trait: 'EncodingDetail', timeUnit: 'year' }],
+    ['EncodingDetail + aggregate', { field: 'region', trait: 'EncodingDetail', aggregate: 'count' }],
+    ['EncodingSize on color', { field: 'region', trait: 'EncodingSize' }],
+  ];
+
+  it.each(DIVERGENCE_CASES)(
+    'divergence lock — a %s color binding (compiled quantitative, no baked palette) → contrast:exempt, NEVER pass',
+    async (_label, color) => {
+      const out = await certify(withColor(color));
+      expect(out.status).toBe('ok'); // schema-valid: the fixture certifies, it does not error
+      expect(out.coverage).toBe('certified');
+      // The governing rule: no baked OODS palette → contrast is never 'pass'.
+      expect(out.pillars?.contrast).not.toBe('pass');
+      expect(out.pillars?.contrast).toBe('exempt');
+      expect(validateOutput(out)).toBe(true);
+    },
+  );
+
+  it('legit categorical twin (EncodingColor, palette baked) → contrast:pass — unchanged', async () => {
+    const out = await certify(withColor({ field: 'region', trait: 'EncodingColor' }));
+    expect(out.pillars?.contrast).toBe('pass');
+  });
+
+  // INVARIANCE lock — s139 is contrast-OUTPUT-ONLY. Swapping EncodingColor→EncodingDetail
+  // moves ONLY the contrast verdict (pass→exempt, because the rendered bytes differ). The
+  // a11y-equivalence, determinism, and conformant verdicts read the color ENCODING/data —
+  // never the palette — so they are IDENTICAL between the twin and its divergence sibling.
+  // (contentHash necessarily DIFFERS: the compiled color bytes differ — that difference is
+  // exactly WHY contrast differs; certified == rendered.)
+  it('invariance — a divergence IR shares conformant/a11yEquivalence/determinism with its EncodingColor twin; only contrast moves', async () => {
+    const twin = await certify(withColor({ field: 'region', trait: 'EncodingColor' }));
+    const divergent = await certify(withColor({ field: 'region', trait: 'EncodingDetail' }));
+
+    expect(divergent.conformant).toBe(twin.conformant);
+    expect(divergent.pillars?.a11yEquivalence).toBe(twin.pillars?.a11yEquivalence);
+    expect(divergent.pillars?.determinism).toBe(twin.pillars?.determinism);
+
+    // The one intended difference — the contrast verdict.
+    expect(twin.pillars?.contrast).toBe('pass');
+    expect(divergent.pillars?.contrast).toBe('exempt');
+    expect(divergent.pillars?.contrast).not.toBe(twin.pillars?.contrast);
+  });
+
+  // Contrast-output-only at the HASH level: certify's contentHash is EXACTLY the untouched
+  // toVegaLiteSpec compile hash (the contrast pillar never feeds it). Pins #564-additive —
+  // s139 moved no rendered byte, so the hash a divergence IR certifies to is the pure
+  // compile hash, independent of the contrast verdict.
+  it('contentHash is the untouched compile hash — the contrast pillar does not feed it', async () => {
+    const divergentSpec = withColor({ field: 'region', trait: 'EncodingDetail' }) as NormalizedVizSpec;
+    const out = await certify(divergentSpec);
+    const compileHash = sha256(canonicalize(toVegaLiteSpec(divergentSpec)));
+    expect(out.determinism?.contentHash).toBe(compileHash);
   });
 });
