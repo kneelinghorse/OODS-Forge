@@ -4,7 +4,7 @@ This guide documents the MCP reliability harness delivered in Sprint 13 Missio
 
 ## Scope
 
-- Exercises read-only MCP tools `a11y.scan`, `purity.audit`, `vrt.run`, and `diag.snapshot`.
+- Exercises read-only MCP tools `a11y.scan` and `diag.snapshot`.
 - Includes one gated write cycle for `brand.apply` (24 dry runs + 1 approved apply).
 - Collects duration, exit codes, rate-limit policy codes, retry attempts, and incident IDs for each invocation.
 - Emits `artifacts/current-state/YYYY-MM-DD/soak-report.md` (markdown roll-up) and updates `artifacts/current-state/YYYY-MM-DD/diagnostics.json.reliability` plus `diagnostics.json.telemetry`.
@@ -60,8 +60,6 @@ Both paths are relative to the repository root and stay within the existing evid
 | Tool | Runs | Pass | Fail | Flake % | p95 (ms) | p99 (ms) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | `a11y.scan` | 25 | 25 | 0 | 0.00 | 11 | 19 |
-| `purity.audit` | 25 | 25 | 0 | 0.00 | 8 | 9 |
-| `vrt.run` | 25 | 25 | 0 | 0.00 | 8 | 9 |
 | `diag.snapshot` | 25 | 25 | 0 | 0.00 | 13 | 16 |
 | `brand.apply` *(1 apply)* | 25 | 25 | 0 | 0.00 | 10 | 684† |
 

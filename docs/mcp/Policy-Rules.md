@@ -41,14 +41,6 @@ Bridge policy excerpt (`configs/agent/policy.json`):
       "ratePerMinute": 12
     },
     {
-      "name": "reviewKit.create",
-      "description": "Creates review kit bundle for stories or contexts",
-      "modes": ["dry-run", "apply"],
-      "approval": "required",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
       "name": "brand.apply",
       "description": "Applies brand tokens to repository artifacts",
       "modes": ["dry-run", "apply"],
@@ -72,8 +64,6 @@ Bridge policy excerpt (`configs/agent/policy.json`):
       "allow": ["designer", "maintainer"],
       "ratePerMinute": 20
     },
-    { "name": "purity.audit", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 6 },
-    { "name": "vrt.run", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 6 },
     { "name": "a11y.scan", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 6 },
     { "name": "release.verify", "modes": ["dry-run"], "approval": "optional", "allow": ["maintainer"], "ratePerMinute": 6 },
     { "name": "release.tag", "modes": ["dry-run", "apply"], "approval": "required", "allow": ["maintainer"], "ratePerMinute": 6 },
@@ -85,14 +75,14 @@ Bridge policy excerpt (`configs/agent/policy.json`):
       "provider": "anthropic",
       "role": "designer",
       "defaultMode": "dry-run",
-      "tools": ["diag.snapshot", "reviewKit.create", "brand.apply", "billing.reviewKit", "billing.switchFixtures"]
+      "tools": ["diag.snapshot", "brand.apply", "billing.reviewKit", "billing.switchFixtures"]
     },
     {
       "id": "openai.agents",
       "provider": "openai",
       "role": "designer",
       "defaultMode": "dry-run",
-      "tools": ["diag.snapshot", "brand.apply", "reviewKit.create"]
+      "tools": ["diag.snapshot", "brand.apply"]
     }
   ]
 }

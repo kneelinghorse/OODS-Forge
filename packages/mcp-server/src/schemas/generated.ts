@@ -253,7 +253,7 @@ export type ArtifactCertifyInput = ArtifactCertifyInputSchema.ArtifactCertifyInp
 // Source: artifact.certify.output.json
 export namespace ArtifactCertifyOutputSchema {
   /**
-   * The certify verdict for a Forge NormalizedVizSpec IR: a11y-equivalence conformance (cartesian-only), a re-emit determinism proof, and a contentHash. The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. Contrast is a documented open pillar (an IR carries only a theme identifier + color channel binding, no resolved mark colors).
+   * The certify verdict for a Forge NormalizedVizSpec IR: a11y-equivalence conformance (cartesian-only), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that includes a DECLARED-INTENT contrast verdict (s137). The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. The contrast pillar certifies the declared OODS viz-scale palette against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD); a gradient scale is WCAG-'exempt'. contrastNote carries the declared-intent caveat.
    */
   export interface ArtifactCertifyOutput {
     /**
@@ -285,6 +285,27 @@ export namespace ArtifactCertifyOutputSchema {
        */
       contentHash: string;
     };
+    /**
+     * Per-pillar tri-state summary (s137). Present on both ok paths (absent on error). Prevents misreading conformant:true as 'contrast passed' — each governed pillar reports its own verdict. a11yEquivalence mirrors `conformant`; determinism mirrors `determinism.stable`; contrast is the declared-intent viz-scale-palette verdict.
+     */
+    pillars?: {
+      /**
+       * Cartesian a11y-equivalence: 'pass' iff conformant:true, 'fail' iff conformant:false, 'unchecked' on the uncertified (ECharts-primary) path.
+       */
+      a11yEquivalence: 'pass' | 'fail' | 'unchecked';
+      /**
+       * Re-emit determinism: 'pass' iff the two compiles are byte-stable, 'unchecked' on the uncertified path (no Vega-Lite compile).
+       */
+      determinism: 'pass' | 'fail' | 'unchecked';
+      /**
+       * Declared-intent contrast over the OODS viz-scale palette (light theme): role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'exempt' for a sequential/diverging gradient scale (WCAG essential exception). 'unchecked' when the palette/canvas cannot be resolved or on the uncertified path.
+       */
+      contrast: 'pass' | 'fail' | 'unchecked' | 'exempt';
+    };
+    /**
+     * The declared-intent caveat for the contrast pillar (certify verifies the intended palette on the light theme; final rendered contrast depends on the client applying the token range/theme) plus the role rationale when contrast is pass/fail/exempt (s137).
+     */
+    contrastNote?: string;
     /**
      * Human-readable notes — e.g. the uncertified-coverage rationale for an ECharts-primary type.
      */

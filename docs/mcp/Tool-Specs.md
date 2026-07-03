@@ -6,10 +6,10 @@ For exhaustive per-tool parameter tables across the full live tool surface, also
 
 ## Registration + enablement
 
-Auto tools are registered by default (22 at the time of writing). On-demand tools are only registered when enabled (9 at the time of writing).
+Auto tools are registered by default (19 at the time of writing). On-demand tools are only registered when enabled (6 at the time of writing).
 
 - Enable every on-demand tool: `MCP_TOOLSET=all`
-- Enable a subset: `MCP_EXTRA_TOOLS=a11y.scan,vrt.run`
+- Enable a subset: `MCP_EXTRA_TOOLS=a11y.scan,diag.snapshot`
 
 Registry source of truth: `packages/mcp-server/src/tools/registry.json` (copied to `dist/tools/registry.json` on build).
 
@@ -1113,48 +1113,6 @@ Notes:
 - **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
 - **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 120s | rate 12/min | concurrency 1
 - **Purpose**: Emit a diagnostics JSON artifact bundle for the current repo state.
-
-Example input:
-```json
-{ "apply": true }
-```
-
----
-
-### `reviewKit.create`
-
-- **Input schema**: `packages/mcp-server/src/schemas/generic.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
-- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 90s | rate 30/min | concurrency 1
-- **Purpose**: Create review-kit bundles with summary, diffs, and specimen files for design review.
-
-Example input:
-```json
-{ "apply": true }
-```
-
----
-
-### `purity.audit`
-
-- **Input schema**: `packages/mcp-server/src/schemas/generic.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
-- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 120s | rate 12/min | concurrency 1
-- **Purpose**: Run a purity audit on the design system to detect drift from canonical patterns.
-
-Example input:
-```json
-{ "apply": true }
-```
-
----
-
-### `vrt.run`
-
-- **Input schema**: `packages/mcp-server/src/schemas/generic.input.json`
-- **Output schema**: `packages/mcp-server/src/schemas/generic.output.json`
-- **Policy**: designer, maintainer | writes `${BASE}/${DATE}/**` | timeout 120s | rate 12/min | concurrency 1
-- **Purpose**: Execute visual regression tests and produce comparison artifacts.
 
 Example input:
 ```json

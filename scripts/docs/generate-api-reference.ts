@@ -343,6 +343,18 @@ for (const { name, tier } of allTools) {
 
 outputs.set(path.join(OUT_DIR, 'README.md'), generateIndex(indexEntries));
 
+// ORPHAN DETECTION (feedback-73): a doc for a REMOVED tool is invisible to the
+// content diff above (it is simply never regenerated). Enumerate the .md files that
+// exist on disk but are not in `outputs` — those are orphans from a retired tool and
+// must be pruned (write mode) or fail the gate (--check).
+const expectedBasenames = new Set([...outputs.keys()].map((f) => path.basename(f)));
+const orphans = fs.existsSync(OUT_DIR)
+  ? fs
+      .readdirSync(OUT_DIR)
+      .filter((f) => f.endsWith('.md') && !expectedBasenames.has(f))
+      .map((f) => path.join(OUT_DIR, f))
+  : [];
+
 if (CHECK) {
   const stale: string[] = [];
   for (const [file, content] of outputs) {
@@ -351,17 +363,28 @@ if (CHECK) {
       stale.push(path.relative(ROOT, file));
     }
   }
-  if (stale.length > 0) {
-    console.error(`✗ docs/api is STALE — ${stale.length} file(s) differ from the schemas/descriptions. Re-run \`pnpm run docs:api\` and commit:`);
-    for (const f of stale) console.error(`  - ${f}`);
+  if (stale.length > 0 || orphans.length > 0) {
+    if (stale.length > 0) {
+      console.error(`✗ docs/api is STALE — ${stale.length} file(s) differ from the schemas/descriptions. Re-run \`pnpm run docs:api\` and commit:`);
+      for (const f of stale) console.error(`  - ${f}`);
+    }
+    if (orphans.length > 0) {
+      console.error(`✗ docs/api has ${orphans.length} ORPHANED doc(s) for retired/unregistered tool(s). Re-run \`pnpm run docs:api\` to prune and commit:`);
+      for (const f of orphans) console.error(`  - ${path.relative(ROOT, f)}`);
+    }
     process.exit(1);
   }
-  console.log(`✔ docs/api is fresh (${outputs.size} files checked).`);
+  console.log(`✔ docs/api is fresh (${outputs.size} files checked, no orphans).`);
 } else {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   for (const [file, content] of outputs) {
     fs.writeFileSync(file, content, 'utf-8');
   }
-  console.log(`Generated ${outputs.size} API reference docs in ${OUT_DIR}`);
+  // PRUNE orphaned docs for retired tools so a removed tool never leaks a stale page.
+  for (const orphan of orphans) {
+    fs.rmSync(orphan);
+    console.log(`Pruned orphaned doc: ${path.relative(ROOT, orphan)}`);
+  }
+  console.log(`Generated ${outputs.size} API reference docs in ${OUT_DIR}${orphans.length ? ` (pruned ${orphans.length} orphan(s))` : ''}`);
   console.log(`Index: ${path.join(OUT_DIR, 'README.md')}`);
 }

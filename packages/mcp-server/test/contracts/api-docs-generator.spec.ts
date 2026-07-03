@@ -38,6 +38,29 @@ describe('API reference generator', () => {
     }
   });
 
+  it('every generated doc maps to a registered tool — bidirectional, no orphans [feedback-73]', () => {
+    // The original suite only checked registered→doc (each tool has a page). The
+    // reverse — doc→registered — is what catches a RETIRED tool whose page was never
+    // pruned. Assert the docs/api tool pages are EXACTLY the registered tool set.
+    const registry = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf-8'));
+    const registeredSlugs = [...registry.auto, ...registry.onDemand]
+      .map((t: string) => t.replace(/\./g, '-'))
+      .sort();
+    const docSlugs = fs
+      .readdirSync(DOCS_DIR)
+      .filter((f) => f.endsWith('.md') && f !== 'README.md')
+      .map((f) => f.replace(/\.md$/, ''))
+      .sort();
+
+    for (const slug of docSlugs) {
+      expect(
+        registeredSlugs.includes(slug),
+        `Orphaned doc docs/api/${slug}.md has no registered tool — a retired tool leaked its page`,
+      ).toBe(true);
+    }
+    expect(docSlugs).toEqual(registeredSlugs);
+  });
+
   it('README.md index links to all tool docs', () => {
     const indexContent = fs.readFileSync(path.join(DOCS_DIR, 'README.md'), 'utf-8');
     const files = fs.readdirSync(DOCS_DIR).filter((f) => f !== 'README.md');
