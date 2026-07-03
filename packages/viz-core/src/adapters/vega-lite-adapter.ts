@@ -3,6 +3,7 @@ import type {
   Transform as NormalizedSpecTransform,
 } from '../spec/normalized-viz-spec.types.js';
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
+import { resolveCategoricalPalette } from '../tokens/categorical-palette.js';
 import { buildVegaLiteSpec } from './vega-lite-layout-mapper.js';
 
 const VEGA_LITE_SCHEMA_URL = 'https://vega.github.io/schema/vega-lite/v6.json';
@@ -86,13 +87,29 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
     throw new VegaLiteAdapterError('Normalized viz spec must contain at least one mark.');
   }
 
+  // Brand-fidelity (sprint-138 m02): resolve the OODS categorical palette ONCE here,
+  // at the only level that can see spec.config.tokens, then THREAD the resolved hex[]
+  // down into convertBinding (multi-series scale.range) and createMark (single-series
+  // mark.color). convertBinding's (channel, binding) signature cannot reach the spec,
+  // so the palette must be passed in — never re-resolved per binding (memo §6 blocker-2).
+  const categoricalPalette = resolveCategoricalPalette(spec);
+  // A single-series chart carries NO color channel anywhere; it renders one mark color,
+  // so bake categorical-01 as mark.color so the render matches the slot certify grades
+  // (memo §6 — else the hollow survives silently for the common single-series case).
+  const hasColorEncoding =
+    Boolean(spec.encoding?.color) || spec.marks.some((mark) => Boolean(mark.encodings?.color));
+  const singleSeriesColor =
+    !hasColorEncoding && categoricalPalette.length > 0 ? categoricalPalette[0] : undefined;
+
   const interactions = normalizeInteractions(spec.interactions);
   const data = convertData(spec);
   const transform = mergeTransforms(convertTransforms(spec.transforms), buildInteractionTransforms(interactions));
-  const baseEncoding = convertEncodingMap(spec.encoding);
+  const baseEncoding = convertEncodingMap(spec.encoding, categoricalPalette);
   const interactionParams = convertInteractionParams(interactions);
   const interactionEncoding = convertInteractionBindings(interactions);
-  const convertedLayers = spec.marks.map((mark) => createLayer(mark, baseEncoding, interactionEncoding));
+  const convertedLayers = spec.marks.map((mark) =>
+    createLayer(mark, baseEncoding, interactionEncoding, categoricalPalette, singleSeriesColor),
+  );
   const orderedLayers = applyLayerOrdering(spec.layout, convertedLayers);
   const requiresLayer = orderedLayers.length > 1 || orderedLayers.some((layer) => layer.data !== undefined);
 
@@ -135,9 +152,11 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
 function createLayer(
   mark: NormalizedMark,
   baseEncoding?: Record<string, unknown>,
-  interactionEncoding?: Record<string, unknown>
+  interactionEncoding?: Record<string, unknown>,
+  palette?: readonly string[],
+  singleSeriesColor?: string
 ): ConvertedLayer {
-  const markEncodings = convertEncodingMap(mark.encodings);
+  const markEncodings = convertEncodingMap(mark.encodings, palette);
   const encoding = mergeEncodings(mergeEncodings(baseEncoding, markEncodings), interactionEncoding);
 
   if (Object.keys(encoding).length === 0) {
@@ -146,26 +165,35 @@ function createLayer(
 
   return {
     key: inferLayerKey(mark),
-    mark: createMark(mark),
+    mark: createMark(mark, singleSeriesColor),
     encoding,
     data: mark.from ? { name: mark.from } : undefined,
   };
 }
 
-function createMark(mark: NormalizedMark): Record<string, unknown> {
+function createMark(mark: NormalizedMark, singleSeriesColor?: string): Record<string, unknown> {
   const type = MARK_TRAIT_MAP[mark.trait as keyof typeof MARK_TRAIT_MAP];
 
   if (!type) {
     throw new VegaLiteAdapterError(`Unsupported mark trait: ${mark.trait}`);
   }
 
-  return {
+  const result: Record<string, unknown> = {
     type,
     ...(mark.options ?? {}),
   };
+
+  // Brand-fidelity (sprint-138 m02): single-series bake — a chart with no color encoding
+  // gets categorical-01 as its mark color so it renders exactly the slot certify grades.
+  // An explicit mark.options.color always wins (the spread above already set it).
+  if (singleSeriesColor !== undefined && result.color === undefined) {
+    result.color = singleSeriesColor;
+  }
+
+  return result;
 }
 
-function convertEncodingMap(map?: NormalizedEncoding): Record<string, unknown> {
+function convertEncodingMap(map?: NormalizedEncoding, palette?: readonly string[]): Record<string, unknown> {
   if (!map) {
     return {};
   }
@@ -179,7 +207,7 @@ function convertEncodingMap(map?: NormalizedEncoding): Record<string, unknown> {
       continue;
     }
 
-    encoding[channel] = convertBinding(channel, binding);
+    encoding[channel] = convertBinding(channel, binding, palette);
   }
 
   return encoding;
@@ -210,7 +238,11 @@ function mergeEncodings(
   return merged;
 }
 
-function convertBinding(channel: ChannelName, binding: EncodingBinding): Record<string, unknown> {
+function convertBinding(
+  channel: ChannelName,
+  binding: EncodingBinding,
+  palette?: readonly string[]
+): Record<string, unknown> {
   const normalizedChannel = channel === 'x2' ? 'x' : channel === 'y2' ? 'y' : channel;
   const definition: Record<string, unknown> = {
     field: binding.field,
@@ -234,6 +266,22 @@ function convertBinding(channel: ChannelName, binding: EncodingBinding): Record<
 
   if (scaleType) {
     definition.scale = { type: scaleType };
+  }
+
+  // Brand-fidelity (sprint-138 m02): multi-series bake — a nominal/ordinal color
+  // channel gets the FIXED full 6-slot OODS palette as scale.range, so the compiled
+  // spec renders OODS colors by construction (not Vega's default tableau10). Vega's
+  // ordinal domain[i]->range[i] recycling gives >6-series cycle-6 for free, matching
+  // certify's cap-at-6 as a set (memo §4 F5). A continuous (quantitative/temporal)
+  // color channel is a gradient — role-B exempt — and is intentionally NOT baked.
+  if (
+    channel === 'color' &&
+    (definition.type === 'nominal' || definition.type === 'ordinal') &&
+    palette &&
+    palette.length > 0
+  ) {
+    const existingScale = (definition.scale as Record<string, unknown> | undefined) ?? {};
+    definition.scale = { ...existingScale, range: [...palette] };
   }
 
   if (binding.sort) {

@@ -64,6 +64,9 @@ export * from './a11y/index.js';
 export * from './transforms/stack-transform.js';
 export * from './encoding/color-intensity-mapper.js';
 export * from './tokens/scale-token-mapper.js';
+// Shared categorical-palette resolver (sprint-138 m02) — ONE source for the bake
+// (vega-lite-adapter) AND the grade (certify-contrast), so certified == baked.
+export * from './tokens/categorical-palette.js';
 
 // Temporal analysis runtime (sprint-110) — the finest-granularity scan + the UTC-pinned cell
 // parser, surfaced on the barrel for the mcp-server measure time-grain check (sprint-122 m02).

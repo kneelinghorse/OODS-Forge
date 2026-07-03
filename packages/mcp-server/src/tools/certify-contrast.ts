@@ -1,11 +1,12 @@
-// certify contrast pillar — the DECLARED-INTENT contrast engine (s137 m02).
+// certify contrast pillar — the RENDERED-REALITY contrast engine (s137 m02; s138 m03).
 //
-// certify grows a contrast pillar that certifies the DECLARED OODS viz-scale palette
-// (the colors Forge INTENDS) against the canvas, per the memo §2/§3/§3a rule set.
-// It is a pure, deterministic reader of the IR: it resolves the palette slots the
-// chart consumes via resolveTokenToColor (applying any agent-supplied config.tokens
-// override), converts rgb->hex via @oods/a11y-tools normaliseColor, and evaluates
-// three roles:
+// certify grows a contrast pillar that grades the OODS viz-scale palette Forge BAKES
+// into the compiled cartesian spec (s138 m02), against the canvas, per the memo
+// §2/§3/§3a rule set. It is a pure, deterministic reader of the IR: it resolves the
+// palette the chart actually renders via the SHARED resolveCategoricalPalette
+// (@oods/viz-core) — the SAME resolver the vega-lite adapter bakes from, so the graded
+// hexes are byte-identical to the rendered scale.range (certified == baked) and honor
+// any agent config.tokens override — then evaluates three roles:
 //
 //   role-C (WCAG 1.4.11 NORMATIVE) — every consumed mark >= 3:1 vs the canvas.
 //   role-A (best-practice)         — min-pairwise CIEDE2000 (min over normal +
@@ -16,22 +17,23 @@
 //                                     essential-exception gradient -> 'exempt' + a
 //                                     note pointing at Forge's generated data table.
 //
-// WHY declared-intent: the compiled cartesian Vega-Lite spec is colorless by design
-// (prepareSpecForBrand is an identity no-op — memo §0/§11), so certify verifies the
-// INTENDED palette with an explicit caveat that final rendered contrast depends on
-// the client applying the token range/theme. resolveTokenToColor is theme-blind
-// (light-only); dark-theme contrast is OOS.
+// WHY rendered-reality (s138): the compiled cartesian spec now carries the resolved
+// OODS palette by construction — scale.range for a multi-series color channel,
+// mark.color for a single-series chart — so certify grades what Forge RENDERS, not a
+// declared intent (this dissolves the s137-review C1/C2 relocated-hollow). The one
+// remaining caveat is theme: resolveTokenToColor is theme-blind (light-only), so
+// dark-theme contrast is unverified/OOS.
 
 import Color from 'colorjs.io';
 import { contrastRatio, normaliseColor } from '@oods/a11y-tools';
-import { resolveTokenToColor, type NormalizedVizSpec } from '@oods/viz-core';
+import { resolveCategoricalPalette, resolveTokenToColor, type NormalizedVizSpec } from '@oods/viz-core';
 import { CVD_TYPES, simulateCvd } from './cvd-machado.js';
 
 export type ContrastVerdict = 'pass' | 'fail' | 'unchecked' | 'exempt';
 
 export interface ContrastPillarResult {
   readonly contrast: ContrastVerdict;
-  /** The declared-intent caveat (pass/fail) or the role-specific rationale. */
+  /** The rendered-contrast caveat (pass/fail) or the role-specific rationale. */
   readonly contrastNote?: string;
 }
 
@@ -41,7 +43,7 @@ export interface ContrastPillarResult {
 const CANVAS_TOKEN = '--oods-sys-surface-canvas';
 
 // OODS viz-scale categorical palette: 6 slots. certify resolves the slots the chart
-// actually consumes (= categorical cardinality), the DECLARED palette.
+// actually consumes (= categorical cardinality) — the SAME palette the adapter bakes.
 const CATEGORICAL_SLOTS = 6;
 const categoricalToken = (slot1: number): string =>
   `--oods-viz-scale-categorical-${String(slot1).padStart(2, '0')}`;
@@ -51,9 +53,9 @@ const ROLE_C_MIN_RATIO = 3; // WCAG 1.4.11 non-text contrast (mark vs background
 const ROLE_A_FAIL_DELTA_E = 2; // < 2 -> indistinguishable -> fail
 const ROLE_A_CLEAN_DELTA_E = 10; // >= 10 -> clean pass; 2-10 -> pass + warn note
 
-const DECLARED_INTENT_CAVEAT =
-  'certify verifies the DECLARED OODS viz-scale palette on the light theme; final ' +
-  'rendered contrast depends on the client applying the token range/theme.';
+const RENDERED_CONTRAST_CAVEAT =
+  'certify measures the OODS viz-scale palette Forge bakes into the compiled spec, ' +
+  'on the light theme; dark-theme contrast is not verified.';
 
 type ColorRole = 'categorical' | 'continuous' | 'none';
 
@@ -131,7 +133,7 @@ function minPairwiseDeltaEOverCvd(hexes: readonly string[]): number {
 
 /**
  * Evaluate the contrast pillar for a (cartesian) NormalizedVizSpec IR. Pure +
- * deterministic. Never throws — an unresolvable palette yields an honest
+ * deterministic. Never throws — an unresolvable canvas/palette yields an honest
  * 'unchecked', not a silent pass.
  */
 export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarResult {
@@ -141,7 +143,7 @@ export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarR
       contrast: 'exempt',
       contrastNote:
         'Sequential/diverging color scale — WCAG 1.4.11 essential exception (gradient); ' +
-        "Forge's generated accessible data table is the guarantee. " + DECLARED_INTENT_CAVEAT,
+        "Forge's generated accessible data table is the guarantee. " + RENDERED_CONTRAST_CAVEAT,
     };
   }
 
@@ -157,19 +159,21 @@ export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarR
     slotCount = Math.min(Math.max(n, 1), CATEGORICAL_SLOTS);
   }
 
-  const slots: Array<{ token: string; hex: string }> = [];
-  for (let i = 1; i <= slotCount; i++) {
-    const token = categoricalToken(i);
-    const hex = resolveSlotHex(token, overrides);
-    if (hex) slots.push({ token, hex });
-  }
+  // Grade the SAME palette the vega-lite adapter BAKES (s138 m03): the shared
+  // resolveCategoricalPalette returns the full resolved OODS range honoring config.tokens,
+  // and the chart consumes its first `slotCount` slots (Vega maps domain[i]->range[i], so
+  // series beyond the sample cardinality are not rendered). Zipping restores the per-slot
+  // token label for the role-C failure note. certified == baked BY CONSTRUCTION — one resolver.
+  const slots = resolveCategoricalPalette(spec)
+    .slice(0, slotCount)
+    .map((hex, i) => ({ token: categoricalToken(i + 1), hex }));
 
   // Could not resolve the palette or the canvas -> honest 'unchecked' (no silent pass).
   if (slots.length === 0 || !canvasHex) {
     return {
       contrast: 'unchecked',
       contrastNote:
-        'Could not resolve the declared viz-scale palette or canvas token for this IR. ' + DECLARED_INTENT_CAVEAT,
+        'Could not resolve the viz-scale palette or canvas token for this IR. ' + RENDERED_CONTRAST_CAVEAT,
     };
   }
 
@@ -180,7 +184,7 @@ export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarR
     return {
       contrast: 'fail',
       contrastNote:
-        `Role-C (WCAG 1.4.11) fail: ${which} below ${ROLE_C_MIN_RATIO}:1 vs the canvas. ` + DECLARED_INTENT_CAVEAT,
+        `Role-C (WCAG 1.4.11) fail: ${which} below ${ROLE_C_MIN_RATIO}:1 vs the canvas. ` + RENDERED_CONTRAST_CAVEAT,
     };
   }
 
@@ -192,7 +196,7 @@ export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarR
       contrastNote:
         `Role-A fail: min-pairwise CIEDE2000 (min over normal + deuteran/protan/tritan CVD) = ` +
         `${roleAMin.toFixed(2)} < ${ROLE_A_FAIL_DELTA_E} — categorical series are not distinguishable. ` +
-        DECLARED_INTENT_CAVEAT,
+        RENDERED_CONTRAST_CAVEAT,
     };
   }
   if (roleAMin < ROLE_A_CLEAN_DELTA_E) {
@@ -201,8 +205,8 @@ export function evaluateContrastPillar(spec: NormalizedVizSpec): ContrastPillarR
       contrastNote:
         `Distinguishability caution: min-pairwise CIEDE2000 (min-over-CVD) = ${roleAMin.toFixed(2)} ` +
         `(below the ${ROLE_A_CLEAN_DELTA_E} best-practice target but >= ${ROLE_A_FAIL_DELTA_E}, so not a failure). ` +
-        DECLARED_INTENT_CAVEAT,
+        RENDERED_CONTRAST_CAVEAT,
     };
   }
-  return { contrast: 'pass', contrastNote: DECLARED_INTENT_CAVEAT };
+  return { contrast: 'pass', contrastNote: RENDERED_CONTRAST_CAVEAT };
 }

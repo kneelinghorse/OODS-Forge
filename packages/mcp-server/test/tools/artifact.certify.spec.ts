@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { buildVizSpecFromRows, toVegaLiteSpec, type NormalizedVizSpec } from '@oods/viz-core';
 import { getAjv } from '../../src/lib/ajv.js';
 import { handle } from '../../src/tools/artifact.certify.js';
+import { handle as vizRender } from '../../src/tools/viz.render.js';
 
 // The wired output schema (m03) — every verdict below must AJV-validate against it,
 // so the handler's real output stays contract-clean (mirrors the viz.render specs).
@@ -113,11 +114,13 @@ describe('artifact.certify — invalid input', () => {
   });
 });
 
-// s137 — the per-pillar tri-state summary (pillars) + the declared-intent contrast
-// verdict. The contrast pillar is PURELY additive to certify's OWN output: it never
-// changes conformant and never touches the cartesian compile bytes (the compiled
-// spec is colorless, so a color-token override changes the verdict but NOT the hash).
-describe('artifact.certify — contrast pillar (s137)', () => {
+// s137/s138 — the per-pillar tri-state summary (pillars) + the RENDERED-REALITY contrast
+// verdict. The contrast pillar never changes conformant + a11yEquivalence (they read the
+// color ENCODING field, never scale.range). Under s138 the compiled cartesian spec DOES
+// carry the resolved OODS palette (scale.range for multi-series / mark.color for
+// single-series), so a color-token override changes BOTH the contrast verdict AND the
+// contentHash — certify grades the palette Forge actually renders.
+describe('artifact.certify — contrast pillar (s137/s138)', () => {
   // A multi-series IR: color=region gives 3 distinct categorical slots (cat-01..03).
   const buildMultiSeries = (tokens?: Record<string, string | number>): NormalizedVizSpec => {
     const built = buildVizSpecFromRows({
@@ -128,36 +131,42 @@ describe('artifact.certify — contrast pillar (s137)', () => {
     return tokens ? ({ ...built, config: { ...built.config, tokens } } as NormalizedVizSpec) : built;
   };
 
-  it('a default cartesian IR → pillars all pass + a declared-intent contrastNote', async () => {
+  it('a default cartesian IR → pillars all pass + a rendered-contrast contrastNote', async () => {
     const out = await certify(buildSpec(ROWS3));
     expect(out.pillars).toEqual({ a11yEquivalence: 'pass', determinism: 'pass', contrast: 'pass' });
-    expect(out.contrastNote).toContain('DECLARED');
+    // Rendered-reality caveat (s138), no longer the declared-intent one.
+    expect(out.contrastNote).toContain('bakes into the compiled spec');
     expect(validateOutput(out)).toBe(true);
   });
 
-  it('a low-contrast config.tokens override → contrast:fail, but conformant + a11yEquivalence UNCHANGED', async () => {
-    const out = await certify(
-      buildMultiSeries({
-        '--oods-viz-scale-categorical-01': '#777777',
-        '--oods-viz-scale-categorical-02': '#7A7A7A',
-        '--oods-viz-scale-categorical-03': '#808080',
-      }),
-    );
+  it('a low-contrast config.tokens override → contrast:fail on the RENDERED spec, but conformant + a11yEquivalence UNCHANGED', async () => {
+    const greyTokens = {
+      '--oods-viz-scale-categorical-01': '#777777',
+      '--oods-viz-scale-categorical-02': '#7A7A7A',
+      '--oods-viz-scale-categorical-03': '#808080',
+    };
+    const out = await certify(buildMultiSeries(greyTokens));
     expect(out.conformant).toBe(true); // a11y-equivalence is unaffected by the palette
     expect(out.pillars?.a11yEquivalence).toBe('pass');
     expect(out.pillars?.contrast).toBe('fail');
     expect(validateOutput(out)).toBe(true);
+
+    // Rendered-reality (s138): the grey override is BAKED into the compiled scale.range,
+    // so contrast:fail is a verdict about what Forge RENDERS — not a declared intent.
+    const compiled = JSON.stringify(toVegaLiteSpec(buildMultiSeries(greyTokens)));
+    expect(compiled).toContain('#777777');
   });
 
-  it('certifies DECLARED-intent colors: the compiled cartesian spec bakes NO resolved palette (why contrast is declared, and why #564 holds)', () => {
-    // The whole declared-intent thesis rests on this: the compiled Vega-Lite spec is
-    // colorless — no scale.range, no resolved categorical hex (e.g. #3668D8). The
-    // contrast pillar therefore certifies the palette Forge INTENDS, and the pillar
-    // is safe to add without touching a single compiled byte. (A future change that
-    // baked color into scale.range would fail here — a #564 tripwire.)
+  it('bakes the resolved OODS palette into the compiled cartesian spec (s138 rendered-reality — the inversion of the s137 colorless tripwire, and the planned #564 cartesian-color change)', () => {
+    // s138 rendered-reality: the compiled Vega-Lite spec now CARRIES the resolved OODS
+    // palette — scale.range including categorical-01 (#3668D8) for a multi-series color
+    // channel. The contrast pillar therefore grades what Forge RENDERS, not a declared
+    // intent. This is exactly the deliberate non-additive #564 cartesian-color change
+    // (its golden regen is owned by m04). Hand-inverted from the s137 `not.toContain`.
     const compiled = JSON.stringify(toVegaLiteSpec(buildMultiSeries()));
-    expect(compiled).not.toContain('"range"');
-    expect(compiled).not.toContain('3668D8'); // resolved categorical-01
+    expect(compiled).toContain('"range"');
+    expect(compiled).toContain('3668D8'); // resolved categorical-01, baked into scale.range
+    // Forge bakes an explicit hex range, NOT a Vega named 'scheme' — still absent.
     expect(compiled.toLowerCase()).not.toContain('scheme');
   });
 
@@ -215,5 +224,48 @@ describe('artifact.certify — fall-through routing (review #1004 item 2)', () =
     expect(out.conformant).toBeNull();
     expect(out.errors).toBeUndefined();
     expect(validateOutput(out)).toBe(true);
+  });
+});
+
+// s138 m03 — the render↔certify contentHash IDENTITY, now at the NEW baked value. Both
+// viz.render and certify compile through the SAME toVegaLiteSpec (which now bakes the OODS
+// palette), so feeding certify viz.render's OWN returned normalizedSpec must reproduce
+// viz.render's contentHash byte-for-byte. This is the "generate AND certify" round-trip
+// made concrete at the rendered-reality value — no test pinned it across the two tools before.
+describe('artifact.certify — cross-tool contentHash identity with viz.render (s138 m03)', () => {
+  const MULTI_ENCODINGS = {
+    x: { field: 'quarter' },
+    y: { field: 'revenue', aggregate: 'sum' as const },
+    color: { field: 'region' },
+  };
+
+  it("viz.render.contentHash === certify.contentHash on viz.render's RETURNED normalizedSpec (multi-series, baked scale.range)", async () => {
+    const rendered = await vizRender({
+      rows: ROWS3,
+      chartType: 'bar',
+      encodings: MULTI_ENCODINGS,
+      output: { includeNormalizedSpec: true },
+    } as never);
+    expect(rendered.status).toBe('ok');
+    expect(rendered.contentHash).toBeTypeOf('string');
+    expect(rendered.normalizedSpec).toBeDefined();
+
+    // Feed certify viz.render's OWN returned IR — NOT a re-built one — so both hashes are
+    // over the byte-identical baked toVegaLiteSpec output.
+    const certified = await certify(rendered.normalizedSpec);
+    expect(certified.status).toBe('ok');
+    expect(certified.determinism?.contentHash).toBe(rendered.contentHash);
+  });
+
+  it("single-series: viz.render.contentHash === certify.contentHash on the returned normalizedSpec (baked mark.color)", async () => {
+    const rendered = await vizRender({
+      rows: ROWS3,
+      chartType: 'bar',
+      encodings: { x: { field: 'region' }, y: { field: 'revenue', aggregate: 'sum' } },
+      output: { includeNormalizedSpec: true },
+    } as never);
+    expect(rendered.status).toBe('ok');
+    const certified = await certify(rendered.normalizedSpec);
+    expect(certified.determinism?.contentHash).toBe(rendered.contentHash);
   });
 });

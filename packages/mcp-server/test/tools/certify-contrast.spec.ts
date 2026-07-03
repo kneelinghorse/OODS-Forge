@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import type { NormalizedVizSpec } from '@oods/viz-core';
 import { evaluateContrastPillar } from '../../src/tools/certify-contrast.js';
 
-// certify contrast pillar engine (s137 m02) — the DECLARED-INTENT 3-role contrast
-// verdict over the OODS viz-scale palette. These tests exercise the engine directly
-// (it reads the IR's color channel + data + config.tokens; it never validates the
-// IR — that is the handler's job), pinning the memo §3a tri-state mapping:
+// certify contrast pillar engine (s137 m02; s138 m03 rendered-reality) — the 3-role
+// contrast verdict over the OODS viz-scale palette Forge BAKES into the compiled spec.
+// These tests exercise the engine directly (it reads the IR's color channel + data +
+// config.tokens via the SHARED resolveCategoricalPalette; it never validates the IR —
+// that is the handler's job), pinning the memo §3a tri-state mapping:
 //   role-C mark-vs-canvas WCAG 3:1 fail  -> 'fail'
 //   role-A categorical CIEDE2000 min-over-CVD  <2 fail / 2-10 pass+warn / >=10 pass
 //   role-B sequential/diverging gradient -> 'exempt'
@@ -35,7 +36,8 @@ describe('certify-contrast — role-C (WCAG mark-vs-canvas) + default palette', 
   it('a single-series chart (no color encoding) -> pass on categorical-01 vs the canvas', () => {
     const out = evaluateContrastPillar(mk({}));
     expect(out.contrast).toBe('pass');
-    expect(out.contrastNote).toContain('DECLARED');
+    // The rendered-contrast caveat (s138), no longer the declared-intent one.
+    expect(out.contrastNote).toContain('bakes into the compiled spec');
   });
 
   it('the default OODS categorical palette (6 series) -> pass, in the 2-10 warn band (memo §3a)', () => {
@@ -90,10 +92,20 @@ describe('certify-contrast — role-B (sequential/diverging) is WCAG-exempt', ()
 });
 
 describe('certify-contrast — honesty + determinism', () => {
-  it('an unresolvable palette (non-color config.tokens override on the only slot) -> unchecked, never a silent pass', () => {
-    const out = evaluateContrastPillar(mk({ tokens: { '--oods-viz-scale-categorical-01': 'not-a-color' } }));
+  it('an unresolvable canvas (non-color override on the canvas token) -> unchecked, never a silent pass', () => {
+    // The palette always resolves (the six OODS tokens are always available), so the
+    // honest 'unchecked' path is reached via an unresolvable CANVAS reference.
+    const out = evaluateContrastPillar(mk({ tokens: { '--oods-sys-surface-canvas': 'not-a-color' } }));
     expect(out.contrast).toBe('unchecked');
     expect(out.contrastNote).toContain('Could not resolve');
+  });
+
+  it('a non-color override on a palette slot is IGNORED — the slot renders the OODS default, which certify grades (rendered-reality)', () => {
+    // Under s138 the adapter bakes the OODS default when an override is not a color, so
+    // the chart still renders a real color and certify grades exactly that (categorical-01
+    // vs the canvas -> pass) — never a silent 'unchecked' for a chart that does render.
+    const out = evaluateContrastPillar(mk({ tokens: { '--oods-viz-scale-categorical-01': 'not-a-color' } }));
+    expect(out.contrast).toBe('pass');
   });
 
   it('is a pure function of the IR — identical verdict across repeated calls', () => {
