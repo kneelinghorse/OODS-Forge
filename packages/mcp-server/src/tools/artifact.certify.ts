@@ -10,11 +10,12 @@
 // Coverage-honest: a11y-equivalence certification is CARTESIAN-ONLY (the Vega-Lite
 // path). The 8 ECharts-primary types (treemap/sunburst/sankey/... — classified
 // from the IR's first mark trait) return coverage:'uncertified' / conformant:null,
-// a DISTINCT verdict, not a failure. Contrast is a graded pillar (s137/s138): certify
-// resolves — via the SAME shared resolver the vega-lite adapter bakes from — the OODS
-// palette Forge renders into the compiled cartesian spec and grades it against the
-// canvas, so contrast reflects rendered reality, not a declared intent. The verdict is
-// a pure function of the input IR — no Date/random/UUID.
+// a DISTINCT verdict, not a failure. Contrast is a graded pillar (s137/s138/s139):
+// certify reads the color hexes the vega-lite adapter BAKED into the compiled cartesian
+// spec (scale.range / mark.color) and grades them against the canvas — so contrast
+// reflects the bytes Forge actually renders, and a chart that baked no OODS palette can
+// never certify contrast:'pass'. The verdict is a pure function of the input IR — no
+// Date/random/UUID.
 
 import { canonicalize, sha256 } from '@oods/artifacts';
 import {
@@ -171,21 +172,26 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
 
     // DETERMINISM — compile to Vega-Lite twice, byte-compare the canonical form,
     // hash it. Pure function of the IR (mirrors viz.render.ts's contentHash), so the
-    // same IR always yields the same verdict + hash.
-    const first = canonicalize(toVegaLiteSpec(certifySpec));
+    // same IR always yields the same verdict + hash. Capture the first compiled object
+    // (reused below for both the canonical hash AND the contrast grade); KEEP the second
+    // toVegaLiteSpec call — it IS the determinism proof (first === second), not a
+    // redundant compile to optimize away.
+    const compiled = toVegaLiteSpec(certifySpec);
+    const first = canonicalize(compiled);
     const second = canonicalize(toVegaLiteSpec(certifySpec));
     const stable = first === second;
     const contentHash = sha256(first);
 
-    // CONTRAST PILLAR (s137/s138) — grades the SAME OODS palette the adapter bakes into
-    // the compiled spec (rendered-reality). It is a read-only addition to certify's OWN
-    // output; the deliberate #564 cartesian-color regen lives in the adapter, not here.
+    // CONTRAST PILLAR (s137/s138/s139) — grades the color hexes the adapter BAKED into
+    // the compiled spec (scale.range / mark.color), so certified == rendered by
+    // construction. It is a read-only addition to certify's OWN output; contentHash
+    // derives from an untouched toVegaLiteSpec, so render↔certify hash identity holds.
     // Defensive: a contrast-engine fault never turns a valid conformance verdict into
     // status:error — it degrades to 'unchecked'.
     let contrast: ContrastVerdict = 'unchecked';
     let contrastNote: string | undefined;
     try {
-      const pillar = evaluateContrastPillar(certifySpec);
+      const pillar = evaluateContrastPillar(certifySpec, compiled);
       contrast = pillar.contrast;
       contrastNote = pillar.contrastNote;
     } catch {
