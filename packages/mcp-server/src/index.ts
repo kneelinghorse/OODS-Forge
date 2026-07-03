@@ -51,21 +51,6 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/a11y.scan.input.json',
     outputSchema: './schemas/generic.output.json',
   },
-  'purity.audit': {
-    modulePath: './tools/purity.audit.js',
-    inputSchema: './schemas/generic.input.json',
-    outputSchema: './schemas/generic.output.json',
-  },
-  'vrt.run': {
-    modulePath: './tools/vrt.run.js',
-    inputSchema: './schemas/generic.input.json',
-    outputSchema: './schemas/generic.output.json',
-  },
-  'reviewKit.create': {
-    modulePath: './tools/reviewKit.create.js',
-    inputSchema: './schemas/generic.input.json',
-    outputSchema: './schemas/generic.output.json',
-  },
   'diag.snapshot': {
     modulePath: './tools/diag.snapshot.js',
     inputSchema: './schemas/generic.input.json',
@@ -135,6 +120,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     modulePath: './tools/dashboard.render.js',
     inputSchema: './schemas/dashboard.render.input.json',
     outputSchema: './schemas/dashboard.render.output.json',
+  },
+  'artifact.certify': {
+    modulePath: './tools/artifact.certify.js',
+    inputSchema: './schemas/artifact.certify.input.json',
+    outputSchema: './schemas/artifact.certify.output.json',
   },
   'fidelity.preview': {
     modulePath: './tools/fidelity.preview.js',

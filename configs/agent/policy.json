@@ -40,20 +40,6 @@
       "ratePerMinute": 12
     },
     {
-      "name": "reviewKit.create",
-      "description": "Creates review kit bundle for stories or contexts",
-      "modes": [
-        "dry-run",
-        "apply"
-      ],
-      "approval": "required",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "ratePerMinute": 20
-    },
-    {
       "name": "brand.apply",
       "description": "Applies brand tokens to repository artifacts",
       "modes": [
@@ -94,32 +80,6 @@
         "maintainer"
       ],
       "ratePerMinute": 20
-    },
-    {
-      "name": "purity.audit",
-      "description": "Runs UI purity audit",
-      "modes": [
-        "dry-run"
-      ],
-      "approval": "optional",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "ratePerMinute": 6
-    },
-    {
-      "name": "vrt.run",
-      "description": "Runs Chromatic/VR test harness",
-      "modes": [
-        "dry-run"
-      ],
-      "approval": "optional",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "ratePerMinute": 6
     },
     {
       "name": "a11y.scan",
@@ -264,6 +224,19 @@
       "ratePerMinute": 20
     },
     {
+      "name": "artifact.certify",
+      "description": "Certifies a Forge NormalizedVizSpec IR: returns an a11y-equivalence conformance verdict (cartesian-only), a re-emit determinism proof, and a contentHash. Read-only — reads the IR, never rebuilds or re-recommends. The 8 ECharts-primary types return coverage:'uncertified'/conformant:null (a distinct verdict, not a failure).",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 60
+    },
+    {
       "name": "dashboard.render",
       "description": "Renders a composed metric-overview dashboard (KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec; composes per-panel viz specs in-process with deterministic layout, KPI compute, and cross-filtering. Returns the resolved layout + per-panel specs + a synthesized a11y block and a specRef for pipeline reuse.",
       "modes": [
@@ -380,7 +353,6 @@
       "tools": [
         "health",
         "diag.snapshot",
-        "reviewKit.create",
         "brand.apply",
         "billing.reviewKit",
         "billing.switchFixtures",
@@ -409,7 +381,6 @@
         "health",
         "diag.snapshot",
         "brand.apply",
-        "reviewKit.create",
         "structuredData.fetch",
         "catalog.list",
         "code.generate",

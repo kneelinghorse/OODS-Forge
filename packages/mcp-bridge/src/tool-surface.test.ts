@@ -15,7 +15,8 @@ describe('resolveBridgeToolSurface', () => {
 
     expect(surface.toolsetMode).toBe('default');
     expect(surface.enabled).toContain('design.compose');
-    expect(surface.enabled).not.toContain('reviewKit.create');
+    // diag.snapshot is an on-demand tool, so it must NOT appear on the default surface.
+    expect(surface.enabled).not.toContain('diag.snapshot');
   });
 
   it('exposes viz.render on the default bridge surface (bridge<->direct parity)', () => {
@@ -51,7 +52,7 @@ describe('resolveBridgeToolSurface', () => {
     );
 
     expect(surface.toolsetMode).toBe('all');
-    expect(surface.enabled).toContain('reviewKit.create');
+    expect(surface.enabled).toContain('diag.snapshot');
     expect(surface.enabled).toContain('a11y.scan');
   });
 
@@ -61,11 +62,11 @@ describe('resolveBridgeToolSurface', () => {
       bridgeConfig.tools.allowed,
       {
         MCP_TOOLSET: 'default',
-        MCP_EXTRA_TOOLS: 'reviewKit.create,unknown.tool',
+        MCP_EXTRA_TOOLS: 'diag.snapshot,unknown.tool',
       } as NodeJS.ProcessEnv,
     );
 
-    expect(surface.enabled).toContain('reviewKit.create');
+    expect(surface.enabled).toContain('diag.snapshot');
     expect(surface.unknownExtras).toEqual(['unknown.tool']);
     expect(surface.registrySource).toMatch(/tools\/registry\.json$/);
   });

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/artifact.certify.output.json",
+  "title": "Artifact certify output",
+  "description": "The certify verdict for a Forge NormalizedVizSpec IR: a11y-equivalence conformance (cartesian-only), a re-emit determinism proof, and a contentHash. The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. Contrast is a documented open pillar (an IR carries only a theme identifier + color channel binding, no resolved mark colors).",
+  "type": "object",
+  "required": ["status"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"],
+      "description": "Whether certification ran. 'error' means the input was not a valid NormalizedVizSpec IR."
+    },
+    "coverage": {
+      "type": "string",
+      "enum": ["certified", "uncertified"],
+      "description": "'certified' for the 5 cartesian types (bar/line/area/scatter/heatmap) — carries a real conformance result. 'uncertified' for the 8 ECharts-primary types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/flow_map/chord) — a11y-equivalence certification is cartesian-only (the Vega-Lite path). Absent on the error path."
+    },
+    "conformant": {
+      "type": ["boolean", "null"],
+      "description": "Certified path: true iff zero error-severity equivalence rules fail (warn-severity failures do not affect conformance). null on the uncertified path (no claim is made). Absent on the error path."
+    },
+    "findings": {
+      "type": "array",
+      "description": "One entry per FAILING equivalence rule (empty when fully conformant, and empty on the uncertified path).",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "determinism": {
+      "type": "object",
+      "description": "Re-emit determinism proof (certified path only): the Vega-Lite compile is byte-stable across two independent re-emits and its canonical form hashes to contentHash. Absent on the uncertified + error paths.",
+      "required": ["stable", "contentHash"],
+      "properties": {
+        "stable": {
+          "type": "boolean",
+          "description": "True when two independent compiles of the same IR canonicalize byte-identically."
+        },
+        "contentHash": {
+          "type": "string",
+          "description": "SHA-256 (hex) of the canonicalized Vega-Lite compile — the same contentHash viz.render emits for this IR, so an agent can round-trip render -> certify and match."
+        }
+      },
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Human-readable notes — e.g. the uncertified-coverage rationale for an ECharts-primary type."
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" },
+      "description": "Present and non-empty when status is 'error' (the input was not a valid NormalizedVizSpec IR)."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "A per-rule equivalence code OODS-A11Y-<rule.id> (no pattern constraint, so the intentionally doubled literal OODS-A11Y-A11Y-R-12 validates); or an OODS-V error code on the error path."
+        },
+        "message": { "type": "string" },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warn"],
+          "description": "The rule's intrinsic severity (native VizA11yRuleResult severity — not remapped)."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
