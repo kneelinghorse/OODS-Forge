@@ -22,6 +22,7 @@ import {
   type NormalizedVizSpec,
 } from '@oods/viz-core';
 import { isEChartsPrimaryMarkTrait } from './echarts-primary.js';
+import { evaluateContrastPillar, type ContrastVerdict } from './certify-contrast.js';
 
 export interface ArtifactCertifyInput {
   /** A Forge NormalizedVizSpec IR (validated authoritatively by assertNormalizedVizSpec). */
@@ -40,6 +41,18 @@ export interface CertifyDeterminism {
   readonly contentHash: string;
 }
 
+/**
+ * Per-pillar tri-state summary (s137). A reader can never misread conformant:true as
+ * "contrast passed" — each governed pillar reports its own verdict alongside it.
+ * a11yEquivalence mirrors `conformant`; determinism mirrors `determinism.stable`;
+ * contrast is the declared-intent palette verdict ('exempt' for gradient scales).
+ */
+export interface CertifyPillars {
+  readonly a11yEquivalence: 'pass' | 'fail' | 'unchecked';
+  readonly determinism: 'pass' | 'fail' | 'unchecked';
+  readonly contrast: ContrastVerdict;
+}
+
 export interface ArtifactCertifyOutput {
   readonly status: 'ok' | 'error';
   readonly coverage?: 'certified' | 'uncertified';
@@ -47,6 +60,10 @@ export interface ArtifactCertifyOutput {
   readonly conformant?: boolean | null;
   readonly findings?: CertifyFinding[];
   readonly determinism?: CertifyDeterminism;
+  /** Per-pillar tri-state summary (s137). Present on both ok paths; absent on error. */
+  readonly pillars?: CertifyPillars;
+  /** Declared-intent caveat / role rationale for the contrast pillar (s137). */
+  readonly contrastNote?: string;
   readonly notes?: string[];
   readonly errors?: { readonly code: string; readonly message: string }[];
 }
@@ -54,6 +71,42 @@ export interface ArtifactCertifyOutput {
 function errorVerdict(code: string, err: unknown): ArtifactCertifyOutput {
   const message = err instanceof Error ? err.message : String(err);
   return { status: 'error', errors: [{ code, message }] };
+}
+
+// The cartesian Vega-Lite mark traits certify can compile + equivalence-check — a
+// POSITIVE allowlist (review #1004 item 2). Mirrors the vega-lite-adapter MARK_MAP
+// (the builder emits exactly these five for bar/line/scatter/area/heatmap). A
+// schema-valid IR whose first mark is in NEITHER this set nor the ECharts-primary set
+// is coverage:'uncertified' (honest) — never an opaque status:error V127 from a
+// failed compile of an unmodeled trait.
+const CARTESIAN_VEGA_TRAITS: ReadonlySet<string> = new Set([
+  'MarkBar',
+  'MarkLine',
+  'MarkPoint',
+  'MarkArea',
+  'MarkRect',
+]);
+
+// The builder maps chartType 'heatmap' -> MarkRect, so a Forge heatmap IR already
+// carries trait 'MarkRect'. Accept the intuitive 'MarkHeatmap' alias a caller might
+// hand-author and normalize it to the canonical MarkRect, so the advertised "heatmap
+// certified" claim holds regardless of which name the caller uses (and so it gets the
+// same contentHash a Forge-built heatmap round-trips to).
+const TRAIT_ALIASES: Readonly<Record<string, string>> = { MarkHeatmap: 'MarkRect' };
+
+/** The honest uncertified verdict (ECharts-primary OR an unmodeled cartesian trait). */
+function uncertifiedVerdict(notes: string[]): ArtifactCertifyOutput {
+  return {
+    status: 'ok',
+    coverage: 'uncertified',
+    conformant: null,
+    findings: [],
+    // Every pillar is genuinely unchecked: there is no Vega-Lite compile (so no
+    // a11y-equivalence + no determinism proof), and contrast is not evaluated for a
+    // non-cartesian / unmodeled mark.
+    pillars: { a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'unchecked' },
+    notes,
+  };
 }
 
 export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCertifyOutput> {
@@ -68,28 +121,44 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
   }
 
   // COVERAGE-HONEST ROUTING — a NormalizedVizSpec carries no chartType, so classify
-  // ECharts-primary from the first mark's trait (shared source of truth with
-  // viz.render's dispatch via ./echarts-primary.ts). These types have no Vega-Lite
-  // compile, so there is no equivalence check and no determinism proof to give.
-  const trait = spec.marks[0]?.trait;
+  // from the first mark's trait. Normalize the heatmap alias to its canonical
+  // MarkRect first, then route by a POSITIVE cartesian allowlist so an unmodeled
+  // trait is honestly uncertified rather than falling through to a V127 compile error.
+  const rawTrait = spec.marks[0]?.trait;
+  const trait = rawTrait && TRAIT_ALIASES[rawTrait] ? TRAIT_ALIASES[rawTrait] : rawTrait;
+
+  // ECharts-primary (treemap/sunburst/sankey/...): no Vega-Lite compile, so no
+  // equivalence check + no determinism proof; contrast (role-C') ships with the
+  // ECharts-primary breadth arc. A DISTINCT verdict, not a failure.
   if (trait && isEChartsPrimaryMarkTrait(trait)) {
-    return {
-      status: 'ok',
-      coverage: 'uncertified',
-      conformant: null,
-      findings: [],
-      notes: [
-        `${trait} is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified.`,
-      ],
-    };
+    return uncertifiedVerdict([
+      `${trait} is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified.`,
+      `Contrast is not checked for ECharts-primary types — touching-mark (role-C') contrast ships with the ECharts-primary breadth arc.`,
+    ]);
   }
+
+  // Neither a certifiable cartesian trait nor ECharts-primary → honest uncertified,
+  // NOT an opaque status:error from a failed compile (review #1004 item 2).
+  if (!trait || !CARTESIAN_VEGA_TRAITS.has(trait)) {
+    return uncertifiedVerdict([
+      `${rawTrait ?? '(no mark trait)'} is not a certifiable cartesian-Vega mark (MarkBar/MarkLine/MarkPoint/MarkArea/MarkRect) and is not an ECharts-primary type; a11y-equivalence certification is cartesian-only.`,
+      `Contrast is not checked for uncertified marks.`,
+    ]);
+  }
+
+  // The alias may differ from the authored trait (MarkHeatmap -> MarkRect); certify
+  // against the canonical-trait spec so the compile + rules + contentHash are honest.
+  const certifySpec: NormalizedVizSpec =
+    trait === rawTrait
+      ? spec
+      : { ...spec, marks: [{ ...spec.marks[0], trait }, ...spec.marks.slice(1)] };
 
   try {
     // CONFORMANCE — mirror viz.render.ts's partition exactly: every failing rule
     // becomes a finding keyed OODS-A11Y-<rule.id>; conformant iff zero error-severity
     // failures. NEVER assertVizEquivalence (it throws on error-severity → would lose
     // per-rule codes).
-    const failures = validateVizEquivalenceRules(spec).filter((rule) => !rule.passed);
+    const failures = validateVizEquivalenceRules(certifySpec).filter((rule) => !rule.passed);
     const conformant = failures.every((rule) => rule.severity !== 'error');
     const findings: CertifyFinding[] = failures.map((rule) => ({
       code: `OODS-A11Y-${rule.id}`,
@@ -100,10 +169,23 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // DETERMINISM — compile to Vega-Lite twice, byte-compare the canonical form,
     // hash it. Pure function of the IR (mirrors viz.render.ts's contentHash), so the
     // same IR always yields the same verdict + hash.
-    const first = canonicalize(toVegaLiteSpec(spec));
-    const second = canonicalize(toVegaLiteSpec(spec));
+    const first = canonicalize(toVegaLiteSpec(certifySpec));
+    const second = canonicalize(toVegaLiteSpec(certifySpec));
     const stable = first === second;
     const contentHash = sha256(first);
+
+    // CONTRAST PILLAR (s137) — additive, purely on certify's OWN output (touches no
+    // cartesian bytes; #564 held). Defensive: a contrast-engine fault never turns a
+    // valid conformance verdict into status:error — it degrades to 'unchecked'.
+    let contrast: ContrastVerdict = 'unchecked';
+    let contrastNote: string | undefined;
+    try {
+      const pillar = evaluateContrastPillar(certifySpec);
+      contrast = pillar.contrast;
+      contrastNote = pillar.contrastNote;
+    } catch {
+      contrast = 'unchecked';
+    }
 
     return {
       status: 'ok',
@@ -111,6 +193,12 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
       conformant,
       findings,
       determinism: { stable, contentHash },
+      pillars: {
+        a11yEquivalence: conformant ? 'pass' : 'fail',
+        determinism: stable ? 'pass' : 'fail',
+        contrast,
+      },
+      ...(contrastNote ? { contrastNote } : {}),
     };
   } catch (err) {
     const name = err instanceof Error ? err.name : 'Error';

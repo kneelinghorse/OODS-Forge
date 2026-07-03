@@ -56,29 +56,7 @@ tokens.build { "brand": "A", "theme": "dark", "apply": true }
 
 ---
 
-## 2) VR Baseline Refresh (Curated stories)
-
-**What it does**
-
-* Rebuilds curated story baselines after intentional visual changes
-* Posts a human summary (changed stories, diffs) on the PR
-
-**MCP tools used**: `vrt.run` (on-demand, enable with `MCP_EXTRA_TOOLS=vrt.run`)
-
-```bash
-# Preview VR run
-vrt.run { “apply”: false }
-
-# Apply VR baseline updates
-vrt.run { “apply”: true }
-```
-
-**Labels**: `vr-baseline`
-**Guardrail**: Requires an explanation in PR description (“why this diff is intended”).
-
----
-
-## 3) A11y Fix Pass (axe/ARIA + HC)
+## 2) A11y Fix Pass (axe/ARIA + HC)
 
 **What it does**
 
@@ -101,27 +79,7 @@ repl.validate { "mode": "full", "checkA11y": true, "schema": { ... } }
 
 ---
 
-## 4) Enum→Token Drift Repair (statusables + validation)
-
-**What it does**
-
-* Scans for raw status strings/colors in UI
-* Rewrites to `configs/ui/status-map.json` lookups
-* Adds/updates stories to prove each mapped state
-
-**MCP tools used**: `purity.audit` (on-demand)
-
-```bash
-# Run purity audit to detect drift
-purity.audit { "apply": true }
-```
-
-**Labels**: `enum-token`, `qa-tweak`
-**Guardrail**: CI lint blocks raw status strings after this runs.
-
----
-
-## 5) Brand Overlay Governance (Sprint 15+)
+## 3) Brand Overlay Governance (Sprint 15+)
 
 **What it does**
 
@@ -144,21 +102,18 @@ brand.apply { "brand": "A", "strategy": "alias", "apply": true }
 
 ---
 
-## 6) Story Curation (Add/Update Proof Stories)
+## 4) Story Curation (Add/Update Proof Stories)
 
 **What it does**
 
 * Creates minimal proof stories for components/states missing coverage
 * Ensures matrix coverage (brand × theme × HC × key modifiers)
 
-**MCP tools used**: `diag.snapshot` (on-demand), `reviewKit.create` (on-demand)
+**MCP tools used**: `diag.snapshot` (on-demand)
 
 ```bash
 # Create diagnostics snapshot for coverage analysis
 diag.snapshot { "apply": true }
-
-# Create review kit bundle
-reviewKit.create { "apply": true }
 ```
 
 **Labels**: `stories`
@@ -166,7 +121,7 @@ reviewKit.create { "apply": true }
 
 ---
 
-## 7) Onboarding PR Helper (Docs & Template touch-ups)
+## 5) Onboarding PR Helper (Docs & Template touch-ups)
 
 **What it does**
 

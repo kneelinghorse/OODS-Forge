@@ -63,10 +63,7 @@ Lists tools exposed through the bridge.
 {
   "tools": [
     "a11y.scan",
-    "purity.audit",
-    "vrt.run",
     "diag.snapshot",
-    "reviewKit.create",
     "brand.apply",
     "billing.reviewKit",
     "billing.switchFixtures"
@@ -80,7 +77,7 @@ Executes a tool via the MCP stdio bridge.
 
 - Content-Type must be `application/json`.
 - Body schema: `{ "tool": string, "input"?: Record<string, unknown> }`
-- For write-capable tools (`reviewKit.create`, `brand.apply`, `billing.reviewKit`, `billing.switchFixtures`), `input.apply: true` requires `X-Bridge-Approval`.
+- For write-capable tools (`brand.apply`, `billing.reviewKit`, `billing.switchFixtures`), `input.apply: true` requires `X-Bridge-Approval`.
 - Success response:
 
 ```json
@@ -115,12 +112,12 @@ Static file proxy to `packages/mcp-server/artifacts/`. Only paths containing the
 
 ## Usage Examples
 
-Dry run with `vrt.run`:
+Dry run with `a11y.scan`:
 
 ```bash
 curl -s http://127.0.0.1:4466/run \
   -H 'Content-Type: application/json' \
-  -d '{ "tool": "vrt.run", "input": { "apply": false } }'
+  -d '{ "tool": "a11y.scan", "input": { "apply": false } }'
 ```
 
 Write attempt without approval (fails with 403):
@@ -128,7 +125,7 @@ Write attempt without approval (fails with 403):
 ```bash
 curl -s -o - -w '\nHTTP %{http_code}\n' http://127.0.0.1:4466/run \
   -H 'Content-Type: application/json' \
-  -d '{ "tool": "reviewKit.create", "input": { "apply": true } }'
+  -d '{ "tool": "brand.apply", "input": { "apply": true } }'
 ```
 
 Write attempt with approval (succeeds once the MCP tool supports it):
@@ -138,7 +135,7 @@ curl -s http://127.0.0.1:4466/run \
   -H 'Content-Type: application/json' \
   -H 'X-Bridge-Approval: granted' \
   -H 'X-Bridge-Token: '$BRIDGE_TOKEN \
-  -d '{ "tool": "reviewKit.create", "input": { "apply": true } }'
+  -d '{ "tool": "brand.apply", "input": { "apply": true } }'
 ```
 
 Preflight example (browser-initiated):
