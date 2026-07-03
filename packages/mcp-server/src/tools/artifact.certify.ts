@@ -45,11 +45,12 @@ export interface CertifyDeterminism {
 }
 
 /**
- * Per-pillar tri-state summary (s137). A reader can never misread conformant:true as
- * "contrast passed" — each governed pillar reports its own verdict alongside it.
- * a11yEquivalence mirrors `conformant`; determinism mirrors `determinism.stable`;
- * contrast is the rendered-reality palette verdict — the OODS palette Forge bakes into
- * the compiled spec (s138) — with 'exempt' for gradient scales.
+ * Per-pillar tri-state summary (s137). The pillars DISAGGREGATE which pillar drove the
+ * folded `conformant` gate (s140 [B]): a11yEquivalence mirrors the a11y-equivalence
+ * sub-result (NOT the folded conformant); determinism mirrors `determinism.stable`;
+ * contrast is the rendered-reality verdict — the categorical color bytes Forge baked
+ * into the compiled spec (s138) — with 'exempt' for gradient scales. So a reader can
+ * always see WHY conformant is false (an a11y error vs a contrast fail).
  */
 export interface CertifyPillars {
   readonly a11yEquivalence: 'pass' | 'fail' | 'unchecked';
@@ -60,7 +61,13 @@ export interface CertifyPillars {
 export interface ArtifactCertifyOutput {
   readonly status: 'ok' | 'error';
   readonly coverage?: 'certified' | 'uncertified';
-  /** boolean on the certified path; null on the uncertified path; absent on error. */
+  /**
+   * The folded conformance gate (s140 [B]): true iff a11y-equivalence has zero
+   * error-severity failures AND contrast is not 'fail' AND determinism is stable —
+   * measured on the light theme (dark-theme contrast unverified). null on the
+   * uncertified path (no claim); absent on error. A contrast-driven false is explained
+   * by pillars.contrast + contrastNote (findings[] stays a11y-equivalence-only).
+   */
   readonly conformant?: boolean | null;
   readonly findings?: CertifyFinding[];
   readonly determinism?: CertifyDeterminism;
@@ -163,7 +170,10 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // failures. NEVER assertVizEquivalence (it throws on error-severity → would lose
     // per-rule codes).
     const failures = validateVizEquivalenceRules(certifySpec).filter((rule) => !rule.passed);
-    const conformant = failures.every((rule) => rule.severity !== 'error');
+    // The a11y-equivalence sub-result — zero error-severity failures. Kept DISTINCT from
+    // the folded `conformant` (s140 [B]): pillars.a11yEquivalence mirrors THIS, so an
+    // a11y-passing / contrast-failing chart reports a11yEquivalence:'pass' honestly.
+    const a11yConformant = failures.every((rule) => rule.severity !== 'error');
     const findings: CertifyFinding[] = failures.map((rule) => ({
       code: `OODS-A11Y-${rule.id}`,
       severity: rule.severity,
@@ -198,6 +208,17 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
       contrast = 'unchecked';
     }
 
+    // CONFORMANT ROLLUP (s140 [B]) — the headline gate an agent's `if(conformant)` reads
+    // now folds the graded pillars, so it can no longer silently ship a contrast:'fail'
+    // chart. ONLY contrast==='fail' pulls it false; 'exempt'/'unchecked'/'pass' leave it
+    // a11y-driven (a gradient's 'exempt' and a no-color chart's 'unchecked' must not flip
+    // conformant, so the s139 invariance lock holds). `stable` is inert (a pure compile is
+    // always byte-stable) but folded in for semantic completeness. A scoped, monotonic
+    // TIGHTENING (some inputs move true->false; none move false->true) — the cause of a
+    // contrast-driven false is carried by pillars.contrast + contrastNote (findings[]
+    // stays a11y-equivalence-only). Measured on the light theme (dark-theme contrast OOS).
+    const conformant = a11yConformant && contrast !== 'fail' && stable;
+
     return {
       status: 'ok',
       coverage: 'certified',
@@ -205,7 +226,7 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
       findings,
       determinism: { stable, contentHash },
       pillars: {
-        a11yEquivalence: conformant ? 'pass' : 'fail',
+        a11yEquivalence: a11yConformant ? 'pass' : 'fail',
         determinism: stable ? 'pass' : 'fail',
         contrast,
       },

@@ -52,8 +52,8 @@ describe('certify-contrast — role-C (WCAG mark-vs-canvas) + default palette', 
   it('a single-series chart (no color encoding) -> pass on categorical-01 (baked mark.color) vs the canvas', () => {
     const out = grade(mk({}));
     expect(out.contrast).toBe('pass');
-    // The rendered-contrast caveat (s138), no longer the declared-intent one.
-    expect(out.contrastNote).toContain('bakes into the compiled spec');
+    // The rendered-contrast caveat (s138/s140 C2 reword), no longer the declared-intent one.
+    expect(out.contrastNote).toContain('baked into the compiled spec');
   });
 
   it('the default OODS categorical palette (6 series) -> pass, in the 2-10 warn band (memo §3a)', () => {
@@ -139,5 +139,155 @@ describe('certify-contrast — honesty + determinism', () => {
     const a = grade(spec);
     const b = grade(spec);
     expect(a).toEqual(b);
+  });
+});
+
+// ── s140 [A] multi-mark UNION grading ─────────────────────────────────────────────────
+// The engine now walks EVERY rendered unit (all layers, the facet spec, every concat
+// section) and combines them worst-verdict (fail>unchecked>pass>exempt). This closes the
+// s139-review C1 false-'pass' (a poisoned non-first layer masked by a passing first
+// layer) + the companion color-mark-not-first false-'unchecked'. Author decorative
+// mark.color (a reference/annotation line ≠ the OODS categorical-01 slot) is a NEUTRAL
+// skip, never a contrast fail (the Derek CASE-2 fork "grade OODS series colors only").
+
+type MultiMarkInput = { trait: string; color?: ColorInput; optionColor?: string };
+
+/**
+ * A multi-mark / faceted / concat NormalizedVizSpec-shaped fixture. `optionColor`
+ * becomes mark.options.color (author decoration); `color` becomes that mark's OWN
+ * encodings.color (so only that layer carries it). Enough fields for toVegaLiteSpec to
+ * compile + the engine to grade the emitted bytes.
+ */
+function mkMulti(opts: {
+  marks: MultiMarkInput[];
+  values?: Array<Record<string, unknown>>;
+  tokens?: Record<string, string | number>;
+  layout?: Record<string, unknown>;
+}): NormalizedVizSpec {
+  const spec: Record<string, unknown> = {
+    marks: opts.marks.map((m) => ({
+      trait: m.trait,
+      ...(m.optionColor ? { options: { color: m.optionColor } } : {}),
+      ...(m.color
+        ? { encodings: { color: { field: m.color.field ?? 'region', trait: 'EncodingColor', ...m.color } } }
+        : {}),
+    })),
+    encoding: {
+      x: { field: 'x', trait: 'EncodingX' },
+      y: { field: 'y', trait: 'EncodingY' },
+    },
+    data: { values: opts.values ?? [] },
+    a11y: { description: 'multi-mark contrast fixture' },
+    ...(opts.layout ? { layout: opts.layout } : {}),
+  };
+  if (opts.tokens) spec.config = { tokens: opts.tokens };
+  return spec as unknown as NormalizedVizSpec;
+}
+
+const regionRows = (labels: string[]) => labels.map((r) => ({ x: 'q', y: 1, region: r, value: 1 }));
+
+describe('certify-contrast — s140 multi-mark union grading', () => {
+  it('C1 repro: a passing decorative mark.color on the first layer + a role-C-failing color palette on a later layer -> fail (was a false pass)', () => {
+    // marks[0] = a black reference line (options.color '#000000', passes role-C on its
+    // own); marks[1] = a color-encoded points layer whose baked scale.range is poisoned
+    // near-white by a config.tokens override (< 3:1 vs the canvas). Pre-s140 the engine
+    // read ONLY layer[0] (the line) and returned 'pass', masking the real role-C failure.
+    // Now it grades BOTH units and the point layer's role-C fail wins the union.
+    const out = grade(
+      mkMulti({
+        marks: [
+          { trait: 'MarkLine', optionColor: '#000000' },
+          { trait: 'MarkPoint', color: { field: 'region', type: 'nominal' } },
+        ],
+        values: regionRows(['n', 's', 'e']),
+        tokens: {
+          '--oods-viz-scale-categorical-01': '#F8F8F8',
+          '--oods-viz-scale-categorical-02': '#F6F6F6',
+          '--oods-viz-scale-categorical-03': '#F4F4F4',
+        },
+      }),
+    );
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastNote).toContain('Role-C');
+  });
+
+  it('companion regression: the color-bearing mark is NOT the first layer -> pass (was a false unchecked)', () => {
+    // marks[0] is a colorless line (CASE 4 -> neutral skip, not 'unchecked'); marks[1]
+    // carries the default OODS palette (role-C pass, role-A in the warn band). Pre-s140
+    // the engine read layer[0] (colorless) and returned 'unchecked'; now the colorless
+    // unit is skipped and the color-encoded sibling drives the verdict.
+    const out = grade(
+      mkMulti({
+        marks: [
+          { trait: 'MarkLine' },
+          { trait: 'MarkPoint', color: { field: 'region', type: 'nominal' } },
+        ],
+        values: regionRows(['n', 's', 'e']),
+      }),
+    );
+    expect(out.contrast).toBe('pass');
+  });
+
+  it('a faint author annotation line + a passing color-encoded data layer -> pass (the decoration is skipped, not failed)', () => {
+    // A grey reference line (options.color '#CCCCCC' ≠ the OODS categorical-01 slot) is
+    // chrome, so the CASE-2 fork skips it; only the OODS-palette data layer is graded.
+    const out = grade(
+      mkMulti({
+        marks: [
+          { trait: 'MarkLine', optionColor: '#CCCCCC' },
+          { trait: 'MarkPoint', color: { field: 'region', type: 'nominal' } },
+        ],
+        values: regionRows(['n', 's', 'e']),
+      }),
+    );
+    expect(out.contrast).toBe('pass');
+  });
+
+  it('a gradient (exempt) layer + a categorical (pass) layer -> pass — a graded categorical dominates a gradient', () => {
+    const out = grade(
+      mkMulti({
+        marks: [
+          { trait: 'MarkLine', color: { field: 'value', type: 'quantitative' } },
+          { trait: 'MarkPoint', color: { field: 'region', type: 'nominal' } },
+        ],
+        values: regionRows(['n', 's', 'e']),
+      }),
+    );
+    expect(out.contrast).toBe('pass');
+  });
+
+  it('facet-of-layer: the walker descends facet.spec.layer and grades every unit', () => {
+    // A faceted 2-mark chart compiles to {facet, spec:{layer:[bar(color), line(colorless)]}}.
+    // The colored bar is graded (pass), the colorless line is skipped — proving the walker
+    // reaches units nested under the facet spec's layer array, not just the top level.
+    const out = grade(
+      mkMulti({
+        marks: [
+          { trait: 'MarkBar', color: { field: 'region', type: 'nominal' } },
+          { trait: 'MarkLine' },
+        ],
+        values: regionRows(['n', 's', 'e']),
+        layout: { trait: 'LayoutFacet', columns: { field: 'region' } },
+      }),
+    );
+    expect(out.contrast).toBe('pass');
+  });
+
+  it('concat: the walker grades every section (both hconcat units), not just the first', () => {
+    // A 2-section horizontal concat clones the color-encoded primitive into each section;
+    // both units carry the default OODS palette -> both grade -> union pass (no crash,
+    // every section reached).
+    const out = grade(
+      mkMulti({
+        marks: [{ trait: 'MarkBar', color: { field: 'region', type: 'nominal' } }],
+        values: regionRows(['n', 's', 'e']),
+        layout: {
+          trait: 'LayoutConcat',
+          direction: 'horizontal',
+          sections: [{ id: 'left' }, { id: 'right' }],
+        },
+      }),
+    );
+    expect(out.contrast).toBe('pass');
   });
 });

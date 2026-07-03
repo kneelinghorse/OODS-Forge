@@ -115,13 +115,15 @@ describe('artifact.certify — invalid input', () => {
   });
 });
 
-// s137/s138 — the per-pillar tri-state summary (pillars) + the RENDERED-REALITY contrast
-// verdict. The contrast pillar never changes conformant + a11yEquivalence (they read the
-// color ENCODING field, never scale.range). Under s138 the compiled cartesian spec DOES
-// carry the resolved OODS palette (scale.range for multi-series / mark.color for
-// single-series), so a color-token override changes BOTH the contrast verdict AND the
-// contentHash — certify grades the palette Forge actually renders.
-describe('artifact.certify — contrast pillar (s137/s138)', () => {
+// s137/s138/s140 — the per-pillar tri-state summary (pillars) + the RENDERED-REALITY
+// contrast verdict. As of s140 [B] the folded `conformant` gate rolls up contrast: a
+// contrast:'fail' pulls conformant false, while pillars.a11yEquivalence is DECOUPLED and
+// mirrors ONLY the a11y-equivalence sub-result (so an a11y-passing / contrast-failing
+// chart reports a11yEquivalence:'pass' with conformant:false). Under s138 the compiled
+// cartesian spec carries the resolved OODS palette (scale.range for multi-series /
+// mark.color for single-series), so a color-token override changes BOTH the contrast
+// verdict AND the contentHash — certify grades the palette Forge actually renders.
+describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
   // A multi-series IR: color=region gives 3 distinct categorical slots (cat-01..03).
   const buildMultiSeries = (tokens?: Record<string, string | number>): NormalizedVizSpec => {
     const built = buildVizSpecFromRows({
@@ -135,19 +137,24 @@ describe('artifact.certify — contrast pillar (s137/s138)', () => {
   it('a default cartesian IR → pillars all pass + a rendered-contrast contrastNote', async () => {
     const out = await certify(buildSpec(ROWS3));
     expect(out.pillars).toEqual({ a11yEquivalence: 'pass', determinism: 'pass', contrast: 'pass' });
-    // Rendered-reality caveat (s138), no longer the declared-intent one.
-    expect(out.contrastNote).toContain('bakes into the compiled spec');
+    // Rendered-reality caveat (s138/s140 C2 reword), no longer the declared-intent one.
+    expect(out.contrastNote).toContain('baked into the compiled spec');
     expect(validateOutput(out)).toBe(true);
   });
 
-  it('a low-contrast config.tokens override → contrast:fail on the RENDERED spec, but conformant + a11yEquivalence UNCHANGED', async () => {
+  it('[B] the primary conformant-rollup lock — a low-contrast config.tokens override → contrast:fail PULLS conformant false, while a11yEquivalence stays DECOUPLED at pass', async () => {
     const greyTokens = {
       '--oods-viz-scale-categorical-01': '#777777',
       '--oods-viz-scale-categorical-02': '#7A7A7A',
       '--oods-viz-scale-categorical-03': '#808080',
     };
     const out = await certify(buildMultiSeries(greyTokens));
-    expect(out.conformant).toBe(true); // a11y-equivalence is unaffected by the palette
+    // s140 [B] CONTRACT FLIP (was true pre-s140): contrast:'fail' now folds into the
+    // headline gate an agent's if(conformant) reads, so it can no longer silently ship a
+    // contrast-failing chart. This is the canonical monotonic-tightening flip.
+    expect(out.conformant).toBe(false);
+    // DECOUPLED: a11yEquivalence mirrors ONLY the a11y sub-result — the palette never
+    // affects it — so it stays 'pass' even though conformant flipped to false.
     expect(out.pillars?.a11yEquivalence).toBe('pass');
     expect(out.pillars?.contrast).toBe('fail');
     expect(validateOutput(out)).toBe(true);
@@ -156,6 +163,19 @@ describe('artifact.certify — contrast pillar (s137/s138)', () => {
     // so contrast:fail is a verdict about what Forge RENDERS — not a declared intent.
     const compiled = JSON.stringify(toVegaLiteSpec(buildMultiSeries(greyTokens)));
     expect(compiled).toContain('#777777');
+  });
+
+  it('[B] exempt keeps conformant a11y-driven — a divergence IR (contrast:exempt) stays conformant:true', async () => {
+    // Only contrast==='fail' pulls conformant false; 'exempt' (a gradient / divergent
+    // binding with no baked palette) leaves conformant a11y-driven, so a default-a11y
+    // divergence IR stays conformant:true. Guards the s139 invariance lock below.
+    const divergent = buildMultiSeries();
+    (divergent.encoding as Record<string, unknown>).color = { field: 'region', trait: 'EncodingDetail' };
+    const out = await certify(divergent);
+    expect(out.pillars?.contrast).toBe('exempt');
+    expect(out.pillars?.a11yEquivalence).toBe('pass');
+    expect(out.conformant).toBe(true);
+    expect(validateOutput(out)).toBe(true);
   });
 
   it('bakes the resolved OODS palette into the compiled cartesian spec (s138 rendered-reality — the inversion of the s137 colorless tripwire, and the planned #564 cartesian-color change)', () => {
