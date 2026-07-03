@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { TelemetryLogger, TelemetryRun } from '../../../scripts/logging/instrument.ts';
 
-type ToolName = 'a11y.scan' | 'purity.audit' | 'vrt.run' | 'diag.snapshot' | 'brand.apply';
+type ToolName = 'a11y.scan' | 'diag.snapshot' | 'brand.apply';
 type RunStatus = 'success' | 'failure';
 
 type RunRecord = {
@@ -102,8 +102,6 @@ const REPO_ROOT = path.resolve(fileURLToPath(new URL('../../..', import.meta.url
 
 const TOOL_LIMITS: Record<ToolName, { timeoutMs: number; rateLimitMs: number }> = {
   'a11y.scan': { timeoutMs: 15_000, rateLimitMs: 2_500 },
-  'purity.audit': { timeoutMs: 20_000, rateLimitMs: 2_500 },
-  'vrt.run': { timeoutMs: 60_000, rateLimitMs: 4_000 },
   'diag.snapshot': { timeoutMs: 5_000, rateLimitMs: 5_000 },
   'brand.apply': { timeoutMs: 180_000, rateLimitMs: 5_000 },
 };
@@ -451,18 +449,6 @@ async function main(): Promise<void> {
         runsPerTool,
         TOOL_LIMITS['a11y.scan'].timeoutMs,
         TOOL_LIMITS['a11y.scan'].rateLimitMs
-      ),
-      ...buildReadPlan(
-        'purity.audit',
-        runsPerTool,
-        TOOL_LIMITS['purity.audit'].timeoutMs,
-        TOOL_LIMITS['purity.audit'].rateLimitMs
-      ),
-      ...buildReadPlan(
-        'vrt.run',
-        runsPerTool,
-        TOOL_LIMITS['vrt.run'].timeoutMs,
-        TOOL_LIMITS['vrt.run'].rateLimitMs
       ),
       ...buildReadPlan(
         'diag.snapshot',

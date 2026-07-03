@@ -91,46 +91,7 @@
       "concurrency": 1
     },
     {
-      "tool": "reviewKit.create",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "writes": [
-        "${BASE}/${DATE}/**"
-      ],
-      "timeoutMs": 90000,
-      "ratePerMinute": 30,
-      "concurrency": 1
-    },
-    {
       "tool": "a11y.scan",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "writes": [
-        "${BASE}/${DATE}/**"
-      ],
-      "timeoutMs": 120000,
-      "ratePerMinute": 12,
-      "concurrency": 1
-    },
-    {
-      "tool": "purity.audit",
-      "allow": [
-        "designer",
-        "maintainer"
-      ],
-      "writes": [
-        "${BASE}/${DATE}/**"
-      ],
-      "timeoutMs": 120000,
-      "ratePerMinute": 12,
-      "concurrency": 1
-    },
-    {
-      "tool": "vrt.run",
       "allow": [
         "designer",
         "maintainer"
@@ -238,6 +199,17 @@
     },
     {
       "tool": "viz.render",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "artifact.certify",
       "allow": [
         "designer",
         "maintainer"

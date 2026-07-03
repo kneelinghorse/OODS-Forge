@@ -234,6 +234,80 @@ export namespace ApplySummaryOutputSchema {
 }
 export type ApplySummaryOutput = ApplySummaryOutputSchema.ApplySummaryOutput;
 
+// Source: artifact.certify.input.json
+export namespace ArtifactCertifyInputSchema {
+  /**
+   * Input to artifact.certify: a Forge NormalizedVizSpec IR to certify. The tool boundary is intentionally PERMISSIVE ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR.
+   */
+  export interface ArtifactCertifyInput {
+    /**
+     * A Forge NormalizedVizSpec intermediate representation — the same IR viz.render emits as normalizedSpec. Validated authoritatively by the handler's assertNormalizedVizSpec.
+     */
+    spec: {
+      [k: string]: any;
+    };
+  }
+}
+export type ArtifactCertifyInput = ArtifactCertifyInputSchema.ArtifactCertifyInput;
+
+// Source: artifact.certify.output.json
+export namespace ArtifactCertifyOutputSchema {
+  /**
+   * The certify verdict for a Forge NormalizedVizSpec IR: a11y-equivalence conformance (cartesian-only), a re-emit determinism proof, and a contentHash. The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. Contrast is a documented open pillar (an IR carries only a theme identifier + color channel binding, no resolved mark colors).
+   */
+  export interface ArtifactCertifyOutput {
+    /**
+     * Whether certification ran. 'error' means the input was not a valid NormalizedVizSpec IR.
+     */
+    status: 'ok' | 'error';
+    /**
+     * 'certified' for the 5 cartesian types (bar/line/area/scatter/heatmap) — carries a real conformance result. 'uncertified' for the 8 ECharts-primary types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/flow_map/chord) — a11y-equivalence certification is cartesian-only (the Vega-Lite path). Absent on the error path.
+     */
+    coverage?: 'certified' | 'uncertified';
+    /**
+     * Certified path: true iff zero error-severity equivalence rules fail (warn-severity failures do not affect conformance). null on the uncertified path (no claim is made). Absent on the error path.
+     */
+    conformant?: boolean | null;
+    /**
+     * One entry per FAILING equivalence rule (empty when fully conformant, and empty on the uncertified path).
+     */
+    findings?: Finding[];
+    /**
+     * Re-emit determinism proof (certified path only): the Vega-Lite compile is byte-stable across two independent re-emits and its canonical form hashes to contentHash. Absent on the uncertified + error paths.
+     */
+    determinism?: {
+      /**
+       * True when two independent compiles of the same IR canonicalize byte-identically.
+       */
+      stable: boolean;
+      /**
+       * SHA-256 (hex) of the canonicalized Vega-Lite compile — the same contentHash viz.render emits for this IR, so an agent can round-trip render -> certify and match.
+       */
+      contentHash: string;
+    };
+    /**
+     * Human-readable notes — e.g. the uncertified-coverage rationale for an ECharts-primary type.
+     */
+    notes?: string[];
+    /**
+     * Present and non-empty when status is 'error' (the input was not a valid NormalizedVizSpec IR).
+     */
+    errors?: Finding[];
+  }
+  export interface Finding {
+    /**
+     * A per-rule equivalence code OODS-A11Y-<rule.id> (no pattern constraint, so the intentionally doubled literal OODS-A11Y-A11Y-R-12 validates); or an OODS-V error code on the error path.
+     */
+    code: string;
+    message: string;
+    /**
+     * The rule's intrinsic severity (native VizA11yRuleResult severity — not remapped).
+     */
+    severity?: 'error' | 'warn';
+  }
+}
+export type ArtifactCertifyOutput = ArtifactCertifyOutputSchema.ArtifactCertifyOutput;
+
 // Source: billing.reviewKit.input.json
 export namespace BillingReviewKitInputSchema {
   /**
