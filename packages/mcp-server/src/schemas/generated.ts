@@ -253,7 +253,7 @@ export type ArtifactCertifyInput = ArtifactCertifyInputSchema.ArtifactCertifyInp
 // Source: artifact.certify.output.json
 export namespace ArtifactCertifyOutputSchema {
   /**
-   * The certify verdict for a Forge NormalizedVizSpec IR: a11y-equivalence conformance (cartesian-only), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that includes a RENDERED-REALITY contrast verdict (s137/s138/s139). The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. The contrast pillar READS the color hexes Forge BAKED into the compiled cartesian spec (scale.range for multi-series, mark.color for single-series; honoring config.tokens overrides) and grades them against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD) — so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass'. A color channel with no baked palette (a gradient scale, or a divergent/mistyped binding that renders on a continuous/default scale) is WCAG-'exempt'. contrastNote carries the rendered-contrast caveat.
+   * The certify verdict for a Forge NormalizedVizSpec IR: a folded conformance gate (cartesian-only — conformant now rolls up a11y-equivalence + contrast + determinism, s140), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that disaggregates which pillar drove the verdict, including a RENDERED-REALITY contrast verdict (s137/s138/s139). The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. The contrast pillar READS the color hexes Forge BAKED into the compiled cartesian spec (scale.range for multi-series, mark.color for single-series; honoring config.tokens overrides) and grades them against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD) — so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass'. A color channel with no baked palette (a gradient scale, or a divergent/mistyped binding that renders on a continuous/default scale) is WCAG-'exempt'. contrastNote carries the rendered-contrast caveat.
    */
   export interface ArtifactCertifyOutput {
     /**
@@ -265,7 +265,7 @@ export namespace ArtifactCertifyOutputSchema {
      */
     coverage?: 'certified' | 'uncertified';
     /**
-     * Certified path: true iff zero error-severity equivalence rules fail (warn-severity failures do not affect conformance). null on the uncertified path (no claim is made). Absent on the error path.
+     * The folded conformance gate (s140): true iff a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path (no claim is made). Absent on the error path. A contrast-driven false is explained by pillars.contrast + contrastNote (findings stays a11y-equivalence-only); a warn-severity a11y failure does not affect conformance.
      */
     conformant?: boolean | null;
     /**
@@ -286,11 +286,11 @@ export namespace ArtifactCertifyOutputSchema {
       contentHash: string;
     };
     /**
-     * Per-pillar tri-state summary (s137). Present on both ok paths (absent on error). Prevents misreading conformant:true as 'contrast passed' — each governed pillar reports its own verdict. a11yEquivalence mirrors `conformant`; determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — it grades the color hexes Forge baked into the compiled spec (scale.range / mark.color), so no baked palette can never read as 'pass'.
+     * Per-pillar tri-state summary (s137). Present on both ok paths (absent on error). DISAGGREGATES which pillar drove the folded `conformant` gate (s140): a11yEquivalence mirrors the a11y-equivalence sub-result (NOT the folded conformant); determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — it grades the categorical color bytes Forge baked into the compiled spec (scale.range / mark.color), so no baked palette can never read as 'pass'. A reader can always see WHY conformant is false (an a11y error vs a contrast fail).
      */
     pillars?: {
       /**
-       * Cartesian a11y-equivalence: 'pass' iff conformant:true, 'fail' iff conformant:false, 'unchecked' on the uncertified (ECharts-primary) path.
+       * Cartesian a11y-equivalence — mirrors the a11y-equivalence sub-result (zero error-severity failures), NOT the folded conformant: 'pass'/'fail' on the certified path, 'unchecked' on the uncertified (ECharts-primary) path. An a11y-passing chart that fails contrast still reports a11yEquivalence:'pass' (with conformant:false).
        */
       a11yEquivalence: 'pass' | 'fail' | 'unchecked';
       /**
@@ -303,7 +303,7 @@ export namespace ArtifactCertifyOutputSchema {
       contrast: 'pass' | 'fail' | 'unchecked' | 'exempt';
     };
     /**
-     * The rendered-contrast caveat for the contrast pillar (certify measures the OODS viz-scale palette Forge bakes into the compiled spec, on the light theme; dark-theme contrast is not verified) plus the role rationale when contrast is pass/fail/exempt (s137/s138).
+     * The rendered-contrast caveat for the contrast pillar (certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified) plus the role rationale when contrast is pass/fail/exempt (s137/s138).
      */
     contrastNote?: string;
     /**

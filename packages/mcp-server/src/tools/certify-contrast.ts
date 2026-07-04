@@ -1,11 +1,14 @@
 // certify contrast pillar — the RENDERED-REALITY contrast engine (s137 m02; s138 m03;
 // s139 m02).
 //
-// certify grades the OODS viz-scale palette Forge BAKES into the compiled cartesian
+// certify grades the categorical color bytes Forge baked into the compiled cartesian
 // Vega-Lite spec, against the canvas, per the memo §2/§3/§3a rule set. As of s139 it
 // reads the color hexes off the COMPILED spec's emitted bytes (scale.range for a
 // multi-series color channel, mark.color for a single-series chart) rather than
-// re-classifying the raw IR and re-resolving the palette. There is no second classifier
+// re-classifying the raw IR and re-resolving the palette. As of s140 it grades EVERY
+// rendered unit — walking all layers / the facet spec / every concat section — and
+// combines them worst-verdict, so a color-bearing mark that is not the first layer can
+// no longer be masked by a passing sibling (the s139-review C1 false-'pass'). There is no second classifier
 // left to disagree with the adapter's bake gate, so `certified == rendered` BY
 // CONSTRUCTION: if the compiled spec baked NO OODS palette for a color-bearing chart,
 // certify cannot return contrast:'pass' (the s138-review classifier-mismatch false-pass
@@ -32,7 +35,12 @@
 
 import Color from 'colorjs.io';
 import { contrastRatio, normaliseColor } from '@oods/a11y-tools';
-import { resolveTokenToColor, type NormalizedVizSpec, type VegaLiteAdapterSpec } from '@oods/viz-core';
+import {
+  resolveCategoricalPalette,
+  resolveTokenToColor,
+  type NormalizedVizSpec,
+  type VegaLiteAdapterSpec,
+} from '@oods/viz-core';
 import { CVD_TYPES, simulateCvd } from './cvd-machado.js';
 
 export type ContrastVerdict = 'pass' | 'fail' | 'unchecked' | 'exempt';
@@ -60,7 +68,7 @@ const ROLE_A_FAIL_DELTA_E = 2; // < 2 -> indistinguishable -> fail
 const ROLE_A_CLEAN_DELTA_E = 10; // >= 10 -> clean pass; 2-10 -> pass + warn note
 
 const RENDERED_CONTRAST_CAVEAT =
-  'certify measures the OODS viz-scale palette Forge bakes into the compiled spec, ' +
+  'certify measures the categorical color bytes Forge baked into the compiled spec, ' +
   'on the light theme; dark-theme contrast is not verified.';
 
 // A color channel exists but the adapter baked NO OODS categorical palette (no
@@ -134,22 +142,35 @@ interface CompiledUnit {
  * The compiled Vega-Lite spec carries its mark + encoding at the top level
  * ({mark,encoding}), inside a layer array ({layer:[{mark,encoding},…]}), or — for a
  * faceted/concat layout — nested under `spec` / a concat container
- * (vega-lite-layout-mapper.ts). Walk to the first unit node so the grader reads the
- * color bytes Forge actually baked regardless of layout, never re-deriving from the IR.
+ * (vega-lite-layout-mapper.ts). Walk to EVERY unit node (all layers, the facet spec,
+ * every concat section) so the grader reads the color bytes Forge baked into all of
+ * them, never re-deriving from the IR. Grading only the first unit (pre-s140) let a
+ * color-bearing mark in a non-first layer be masked by a passing sibling — the
+ * s139-review C1 false-'pass'.
+ *
+ * A unit node (mark/encoding present) is terminal: Vega-Lite unit/layer/facet/concat
+ * are mutually exclusive, so this returns without descending further. Nesting is
+ * depth-2 bounded (the primitive threaded into a facet/concat is never itself a
+ * facet/concat — layout is single-trait dispatch), so the recursion terminates.
  */
-function compiledColorUnit(node: unknown): CompiledUnit | undefined {
-  if (!node || typeof node !== 'object') return undefined;
+function compiledColorUnits(node: unknown): CompiledUnit[] {
+  if (!node || typeof node !== 'object') return [];
   const rec = node as Record<string, unknown>;
   if ('mark' in rec || 'encoding' in rec) {
-    return { mark: rec.mark, encoding: rec.encoding as Record<string, unknown> | undefined };
+    return [{ mark: rec.mark, encoding: rec.encoding as Record<string, unknown> | undefined }];
   }
-  if (Array.isArray(rec.layer) && rec.layer.length > 0) return compiledColorUnit(rec.layer[0]);
-  if (rec.spec) return compiledColorUnit(rec.spec);
+  const units: CompiledUnit[] = [];
+  if (Array.isArray(rec.layer)) {
+    for (const child of rec.layer) units.push(...compiledColorUnits(child));
+  }
+  if (rec.spec) units.push(...compiledColorUnits(rec.spec));
   for (const key of ['hconcat', 'vconcat', 'concat'] as const) {
     const sections = rec[key];
-    if (Array.isArray(sections) && sections.length > 0) return compiledColorUnit(sections[0]);
+    if (Array.isArray(sections)) {
+      for (const child of sections) units.push(...compiledColorUnits(child));
+    }
   }
-  return undefined;
+  return units;
 }
 
 /** Grade a resolved slot set (role-C vs canvas, then role-A distinguishability). */
@@ -202,25 +223,36 @@ function gradeCategorical(
   return { contrast: 'pass', contrastNote: RENDERED_CONTRAST_CAVEAT };
 }
 
+// The worst-verdict lattice (memo §3a): higher rank wins when combining the graded
+// units. fail > unchecked > pass > exempt; ties resolve to the first unit in walker
+// document order. A graded unit returns 'unchecked' iff the canvas is unresolvable —
+// which is global (resolved once) — so graded-'unchecked' is all-or-nothing and never
+// mixes with a real pass/fail; this defensive ordering is provably identical to the
+// simpler fail>pass>exempt on every reachable input, and a withheld canvas claim should
+// not read as an affirmative pass.
+const VERDICT_RANK: Record<ContrastVerdict, number> = { fail: 3, unchecked: 2, pass: 1, exempt: 0 };
+
+// The single-series slot the adapter bakes as mark.color (memo §3 CASE 2 fork).
+const SLOT1_TOKEN = categoricalToken(1);
+
 /**
- * Evaluate the contrast pillar for a (cartesian) NormalizedVizSpec IR by grading the
- * color hexes the adapter BAKED into `compiled` (s139 — reads emitted bytes, not a
- * re-classification of the raw IR). Pure + deterministic. Never returns 'pass' for a
- * chart whose compiled spec baked no OODS palette (memo §3 governing rule).
+ * Grade ONE compiled unit's baked color bytes. Returns a verdict for a color-bearing
+ * unit, or `undefined` for a NEUTRAL no-op (no color, or an author decorative mark.color)
+ * so a colorless/decorative sibling never poisons the union verdict.
  *
- * `spec` is retained ONLY for the canvas token (config.tokens override -> role-C
- * reference; the canvas is not in the compiled spec) and the cardinality slice
- * (distinctCount over spec.data.values). All color hexes come from `compiled`.
+ * `slot1Hex` is the resolved categorical-01 the adapter bakes for a single-series chart
+ * (the SHARED resolveCategoricalPalette output, override-aware) — the CASE-2 gate.
  */
-export function evaluateContrastPillar(
+function gradeUnit(
+  unit: CompiledUnit,
   spec: NormalizedVizSpec,
-  compiled: VegaLiteAdapterSpec,
-): ContrastPillarResult {
-  const unit = compiledColorUnit(compiled);
-  const colorEnc = unit?.encoding?.color as Record<string, unknown> | undefined;
+  canvasHex: string | undefined,
+  slot1Hex: string | undefined,
+): ContrastPillarResult | undefined {
+  const colorEnc = unit.encoding?.color as Record<string, unknown> | undefined;
   const markColor =
-    typeof (unit?.mark as Record<string, unknown> | undefined)?.color === 'string'
-      ? ((unit!.mark as Record<string, unknown>).color as string)
+    typeof (unit.mark as Record<string, unknown> | undefined)?.color === 'string'
+      ? ((unit.mark as Record<string, unknown>).color as string)
       : undefined;
 
   const scale = colorEnc?.scale as Record<string, unknown> | undefined;
@@ -230,9 +262,7 @@ export function evaluateContrastPillar(
       ? (rangeRaw as string[])
       : undefined;
 
-  const canvasHex = resolveSlotHex(CANVAS_TOKEN, overrideMap(spec));
-
-  // CASE 1 — categorical: the adapter baked a hex range into the compiled color scale.
+  // CASE 1 — categorical: the adapter baked a hex range into this unit's color scale.
   // Grade it sliced to the consumed cardinality (Vega maps domain[i]->range[i], so
   // series beyond the sample cardinality are not rendered — grading the full 6 would be
   // LESS rendered-accurate; the slice is load-bearing, memo §5).
@@ -245,9 +275,18 @@ export function evaluateContrastPillar(
   }
 
   // CASE 2 — single-series: no color channel, so the adapter baked categorical-01 as
-  // mark.color. Role-C that one hex vs the canvas; role-A is N/A (needs >= 2 slots).
+  // mark.color. Grade that hex vs the canvas ONLY when it IS the OODS series color (it
+  // equals the resolved categorical-01 slot, override-aware, so a config.tokens-poisoned
+  // categorical-01 still matches -> graded -> fails correctly). Compared against the same
+  // SHARED resolver the adapter bakes from, so it matches the emitted bytes exactly —
+  // including the non-color-override fallback to the OODS default. An author's decorative
+  // mark.color (a faint reference/annotation line) is chrome (OOS per s138) -> NEUTRAL
+  // skip, never a contrast fail (Derek CASE-2 fork "grade OODS series colors only").
   if (markColor) {
-    return gradeCategorical([{ token: categoricalToken(1), hex: markColor }], canvasHex);
+    if (slot1Hex && markColor.toLowerCase() === slot1Hex.toLowerCase()) {
+      return gradeCategorical([{ token: SLOT1_TOKEN, hex: markColor }], canvasHex);
+    }
+    return undefined;
   }
 
   // CASE 3 — a color channel exists but NO OODS categorical palette was baked (gradient,
@@ -256,11 +295,54 @@ export function evaluateContrastPillar(
     return { contrast: 'exempt', contrastNote: EXEMPT_NOTE };
   }
 
-  // CASE 4 — no color to grade at all (or an empty/pathological palette): honest
-  // 'unchecked', never a silent pass.
-  return {
-    contrast: 'unchecked',
-    contrastNote:
-      'No color encoding or mark color in the compiled spec to grade. ' + RENDERED_CONTRAST_CAVEAT,
-  };
+  // CASE 4 — no color in THIS unit: a NEUTRAL no-op (undefined), NOT 'unchecked'. A
+  // colorless unit (e.g. a plain line layer beneath a color-encoded layer) must be
+  // skipped, not poison the union verdict — only its color-bearing siblings are graded.
+  return undefined;
+}
+
+/**
+ * Evaluate the contrast pillar for a (cartesian) NormalizedVizSpec IR by grading the
+ * color hexes the adapter BAKED into `compiled` (s139 — reads emitted bytes, not a
+ * re-classification of the raw IR). As of s140 it grades EVERY rendered unit and
+ * combines them worst-verdict (memo §3a), so a color-bearing mark that is not the first
+ * layer can no longer be masked by a passing sibling. Pure + deterministic. Never
+ * returns 'pass' for a chart whose compiled spec baked no OODS palette (memo §3
+ * governing rule).
+ *
+ * `spec` is retained ONLY for the canvas token (config.tokens override -> role-C
+ * reference; the canvas is not in the compiled spec), the cardinality slice
+ * (distinctCount over spec.data.values), and the CASE-2 categorical-01 gate. All color
+ * hexes come from `compiled`.
+ */
+export function evaluateContrastPillar(
+  spec: NormalizedVizSpec,
+  compiled: VegaLiteAdapterSpec,
+): ContrastPillarResult {
+  // Resolve the canvas + the single-series categorical-01 slot ONCE (both are global —
+  // config.tokens is chart-wide), then grade every color-bearing unit.
+  const canvasHex = resolveSlotHex(CANVAS_TOKEN, overrideMap(spec));
+  const slot1Hex = resolveCategoricalPalette(spec)[0];
+
+  const graded = compiledColorUnits(compiled)
+    .map((unit) => gradeUnit(unit, spec, canvasHex, slot1Hex))
+    .filter((r): r is ContrastPillarResult => r !== undefined);
+
+  // No color-bearing unit anywhere (or every unit was a neutral decoration/colorless
+  // layer): honest whole-chart 'unchecked', never a silent pass. Preserves the
+  // single-unit CASE 4 verdict byte-for-byte.
+  if (graded.length === 0) {
+    return {
+      contrast: 'unchecked',
+      contrastNote:
+        'No color encoding or mark color in the compiled spec to grade. ' + RENDERED_CONTRAST_CAVEAT,
+    };
+  }
+
+  // COMBINE — worst-verdict across every graded unit; ties -> first in document order.
+  let worst = graded[0];
+  for (let i = 1; i < graded.length; i++) {
+    if (VERDICT_RANK[graded[i].contrast] > VERDICT_RANK[worst.contrast]) worst = graded[i];
+  }
+  return worst;
 }
