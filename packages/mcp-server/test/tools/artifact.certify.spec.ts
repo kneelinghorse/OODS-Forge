@@ -9,6 +9,7 @@ import {
   adaptSunburstToECharts,
   adaptTreemapToECharts,
   buildVizSpecFromRows,
+  resolveTokenToColor,
   toVegaLiteSpec,
   type HierarchyInput,
   type NetworkInput,
@@ -516,7 +517,17 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
   // ECharts categorical chart to contrast:'fail'. This locks the role-C floor: if it
   // erodes, THIS test fails first — a loud regression, not a silent verdict flip.
   it('pins the role-C floor — every categorical slot clears 3:1 vs the canvas, min at ~3.10:1 (#B6892B, thin headroom)', () => {
-    const CANVAS = '#FCFCFD'; // --oods-sys-surface-canvas (light) — the exact hex the grader resolves
+    // Derive the canvas from the SAME token the grader resolves — resolveSlotHex ->
+    // resolveTokenToColor at certify-contrast.ts:407 (with no override this is exactly
+    // normaliseColor(resolveTokenToColor('--oods-sys-surface-canvas'))). s142-review #2:
+    // the old hardcoded '#FCFCFD' was DECOUPLED from the grader, so a --oods-sys-surface-canvas
+    // retoken would silently re-baseline every ECharts categorical verdict without tripping
+    // this floor guard. Deriving it makes the "a canvas-token tweak trips THIS test first"
+    // claim actually true — a retoken now moves CANVAS here in lockstep with the grader.
+    const canvasRaw = resolveTokenToColor('--oods-sys-surface-canvas');
+    expect(canvasRaw, 'the --oods-sys-surface-canvas token must resolve').toBeTruthy();
+    const CANVAS = normaliseColor(canvasRaw as string, 'canvas');
+    expect(CANVAS).toBe('#FCFCFD'); // resolves here today (memo §1); pinned so a retoken is loud
     const ratios = reconstructEChartsCategoricalPalette().map((s) => ({
       ...s,
       ratio: contrastRatio(s.hex, CANVAS),
@@ -664,6 +675,90 @@ describe('artifact.certify — round-trip honesty floor: certify accepts viz.ren
     expect(validateOutput(certified)).toBe(true);
   });
 
+  // s143 m02 — EXTEND the round-trip proof from 2/8 to 8/8 (s142-review thoroughness-gap #3).
+  // The two tests above pin sankey (categorical) + choropleth (geo); every ECharts-primary
+  // type shares the SAME buildEChartsPrimarySpec that emits encoding:{} (viz.render.ts:534),
+  // so the honesty floor generalizes — but s142 only pinned two, leaving latent silent-rot
+  // if a future per-type emit path populated encoding for one of the other six. These close
+  // the gap: treemap/sunburst/force_graph/chord (categorical → contrast:'pass') and
+  // bubble_map/flow_map (geo → 'exempt'), each fed certify the REAL viz.render-emitted
+  // normalizedSpec (encoding:{}). Fixtures mirror the network- + geo-fidelity golden suites
+  // so the render genuinely succeeds, not a stub.
+  const HIER = {
+    type: 'adjacency_list',
+    data: [
+      { id: 'root', parentId: null, value: 0, name: 'R' },
+      { id: 'a', parentId: 'root', value: 5, name: 'A' },
+      { id: 'b', parentId: 'root', value: 3, name: 'B' },
+    ],
+  };
+  const NET = {
+    nodes: [
+      { id: 'a', group: 'web', value: 9 },
+      { id: 'b', group: 'api', value: 4 },
+    ],
+    links: [{ source: 'a', target: 'b', value: 3 }],
+  };
+  const CHORD = {
+    nodes: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
+    links: [
+      { source: 'A', target: 'B', value: 10 },
+      { source: 'B', target: 'C', value: 6 },
+    ],
+  };
+  const BUBBLE_GEO = {
+    geojson: GEO_FC,
+    rows: [
+      { city: 'W', lng: 1, lat: 1, pop: 100 },
+      { city: 'E', lng: 3, lat: 1, pop: 60 },
+    ],
+    longitudeField: 'lng',
+    latitudeField: 'lat',
+    sizeField: 'pop',
+  };
+  const FLOW_GEO = {
+    geojson: GEO_FC,
+    rows: [{ oLng: 0.5, oLat: 0.5, dLng: 3.5, dLat: 1.5, volume: 12 }],
+    originLongitudeField: 'oLng',
+    originLatitudeField: 'oLat',
+    destinationLongitudeField: 'dLng',
+    destinationLatitudeField: 'dLat',
+    strengthField: 'volume',
+  };
+
+  const ROUND_TRIP_CASES = [
+    { type: 'treemap', input: { chartType: 'treemap', hierarchy: HIER }, trait: 'MarkTreemap', contrast: 'pass' },
+    { type: 'sunburst', input: { chartType: 'sunburst', hierarchy: HIER }, trait: 'MarkSunburst', contrast: 'pass' },
+    { type: 'force_graph', input: { chartType: 'force_graph', network: NET }, trait: 'MarkGraph', contrast: 'pass' },
+    { type: 'chord', input: { chartType: 'chord', chord: CHORD }, trait: 'MarkChord', contrast: 'pass' },
+    { type: 'bubble_map', input: { chartType: 'bubble_map', geo: BUBBLE_GEO }, trait: 'MarkBubble', contrast: 'exempt' },
+    { type: 'flow_map', input: { chartType: 'flow_map', geo: FLOW_GEO }, trait: 'MarkFlow', contrast: 'exempt' },
+  ] as const;
+
+  it.each(ROUND_TRIP_CASES)(
+    'a REAL viz.render $type → emitted normalizedSpec.encoding is {} + trait $trait → certify contrast:$contrast, status:ok (2/8→8/8, s143 m02)',
+    async ({ input, trait, contrast }) => {
+      const rendered = await vizRender({ ...input, output: { includeNormalizedSpec: true } } as never);
+      expect(rendered.status).toBe('ok');
+      expect(rendered.normalizedSpec).toBeDefined();
+      const emitted = rendered.normalizedSpec as unknown as { encoding: unknown; marks: Array<{ trait: string }> };
+      // The load-bearing precondition (same as the sankey/choropleth exemplars): the emitted
+      // encoding is genuinely EMPTY. If a per-type emit path ever populates it, this fires here.
+      expect(emitted.encoding).toEqual({});
+      expect(emitted.marks[0]?.trait).toBe(trait);
+
+      // Feed certify viz.render's OWN emitted IR — the real round-trip. Pre-s142 this was V126.
+      const certified = await certify(rendered.normalizedSpec);
+      expect(certified.status).toBe('ok');
+      expect(certified.errors).toBeUndefined();
+      expect(certified.pillars?.contrast).toBe(contrast);
+      // Design A preserved for the ECharts path — only contrast carries a verdict.
+      expect(certified.coverage).toBe('uncertified');
+      expect(certified.conformant).toBeNull();
+      expect(validateOutput(certified)).toBe(true);
+    },
+  );
+
   // FORK-2 GUARD (Derek: cartesian-SCOPED, not a blanket minProperties drop). The schema
   // relaxation is trait-scoped: an empty encoding is legal ONLY for a non-cartesian mark. A
   // hand-authored CARTESIAN IR with encoding:{} must STILL be rejected with OODS-V126 — the
@@ -671,13 +766,26 @@ describe('artifact.certify — round-trip honesty floor: certify accepts viz.ren
   // boundary (the sole empty-encoding→V126 coverage was the upstream builder, in
   // viz-a11y-equivalence-emission.spec.ts). Same empty encoding as the ECharts specs above,
   // OPPOSITE verdict — keyed purely on the mark trait.
-  it('a hand-authored CARTESIAN IR (MarkBar) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard)', async () => {
-    const cartesianEmpty = { ...buildSpec(ROWS3), encoding: {} };
-    const out = await certify(cartesianEmpty);
-    expect(out.status).toBe('error');
-    expect(out.errors?.[0]?.code).toBe('OODS-V126');
-    // Sanity twin: the SAME cartesian IR WITH its encoding certifies fine — only the empty
-    // encoding is rejected, proving the guard is minProperties, not a blanket MarkBar reject.
+  // s143 m02 — extend the guard from MarkBar to ALL cartesian traits the schema if-enum
+  // gates (MarkBar/MarkLine/MarkPoint/MarkArea/MarkRect) PLUS the MarkHeatmap alias m01
+  // added to that enum. Each empty-encoding cartesian IR must reject with clean V126.
+  // MarkHeatmap+empty is the exact case that used to slip past the schema and die at
+  // toVegaLiteSpec with opaque V127 (s142-review #1) — now it rejects up front like the rest.
+  const CARTESIAN_EMPTY_TRAITS = ['MarkBar', 'MarkLine', 'MarkPoint', 'MarkArea', 'MarkRect', 'MarkHeatmap'];
+  it.each(CARTESIAN_EMPTY_TRAITS)(
+    'a hand-authored CARTESIAN IR (%s) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard)',
+    async (trait) => {
+      const base = buildSpec(ROWS3);
+      const empty = { ...base, marks: [{ ...base.marks[0], trait }], encoding: {} };
+      const out = await certify(empty);
+      expect(out.status).toBe('error');
+      expect(out.errors?.[0]?.code).toBe('OODS-V126');
+    },
+  );
+
+  it('the guard is minProperties (empty-only), not a blanket cartesian reject — the SAME IR WITH its encoding certifies', async () => {
+    // Sanity twin: the SAME cartesian IR WITH its encoding certifies fine, proving the guard
+    // is minProperties on encoding, not a blanket mark-trait reject.
     const withEncoding = await certify(buildSpec(ROWS3));
     expect(withEncoding.status).toBe('ok');
     expect(withEncoding.coverage).toBe('certified');
