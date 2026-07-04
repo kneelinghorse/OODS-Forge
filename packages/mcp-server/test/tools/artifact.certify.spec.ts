@@ -1,9 +1,23 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { canonicalize, sha256 } from '@oods/artifacts';
-import { buildVizSpecFromRows, toVegaLiteSpec, type NormalizedVizSpec } from '@oods/viz-core';
+import { normaliseColor } from '@oods/a11y-tools';
+import {
+  adaptChordToECharts,
+  adaptGraphToECharts,
+  adaptSankeyToECharts,
+  adaptSunburstToECharts,
+  adaptTreemapToECharts,
+  buildVizSpecFromRows,
+  toVegaLiteSpec,
+  type HierarchyInput,
+  type NetworkInput,
+  type NormalizedVizSpec,
+  type SankeyInput,
+} from '@oods/viz-core';
 import { getAjv } from '../../src/lib/ajv.js';
 import { handle } from '../../src/tools/artifact.certify.js';
+import { reconstructEChartsCategoricalPalette } from '../../src/tools/certify-contrast.js';
 import { handle as vizRender } from '../../src/tools/viz.render.js';
 
 // The wired output schema (m03) — every verdict below must AJV-validate against it,
@@ -191,12 +205,17 @@ describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
     expect(compiled.toLowerCase()).not.toContain('scheme');
   });
 
-  it('an ECharts-primary IR (MarkSankey) → pillars all unchecked (no Vega compile, role-C′ deferred)', async () => {
+  // s141 m02 — HAND-INVERTED tripwire (NOT a -u regen; mirrors s138 m03). Routing the 5
+  // ECharts categorical types through the reconstructed-palette grader is exactly what
+  // flips MarkSankey's contrast verdict, so the invert lands in m02 (the code change that
+  // causes it), not m03. Design A: contrast 'unchecked' → 'pass'; a11yEquivalence +
+  // determinism STAY 'unchecked' (still no Vega compile); coverage STAYS 'uncertified'.
+  it('an ECharts-primary categorical IR (MarkSankey) → contrast now GRADED (pass); a11yEquivalence + determinism STAY unchecked, coverage still uncertified', async () => {
     const good = buildSpec(ROWS3);
     const sankey = { ...good, marks: [{ ...good.marks[0], trait: 'MarkSankey' }] } as unknown;
     const out = await certify(sankey);
     expect(out.coverage).toBe('uncertified');
-    expect(out.pillars).toEqual({ a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'unchecked' });
+    expect(out.pillars).toEqual({ a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'pass' });
     expect(validateOutput(out)).toBe(true);
   });
 });
@@ -369,5 +388,177 @@ describe('artifact.certify — contrast grades the rendered bytes (s139)', () =>
     const out = await certify(divergentSpec);
     const compileHash = sha256(canonicalize(toVegaLiteSpec(divergentSpec)));
     expect(out.determinism?.contentHash).toBe(compileHash);
+  });
+});
+
+// s141 m02 — ECharts-primary CATEGORICAL contrast. The 5 categorical types
+// (treemap/sunburst/sankey/force_graph/chord) BAKE the fixed OODS 6-slot categorical
+// palette into itemStyle on the live viz.render path, yet certify was silent about it
+// (contrast:'unchecked' — the s137/s138 coverage-inversion). certify now RECONSTRUCTS that
+// palette from the SAME shared token source the adapters use and grades it (role-C vs
+// #FCFCFD + role-A min-pairwise ΔE00 over Machado CVD). Design A / additive: only
+// pillars.contrast flips — coverage STAYS 'uncertified', conformant STAYS null,
+// a11yEquivalence + determinism STAY 'unchecked', no contentHash. The verdict is a
+// per-palette CONSTANT (data-independent) — a weaker claim than a cartesian 'pass'.
+describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
+  const CATEGORICAL_TRAITS = ['MarkTreemap', 'MarkSunburst', 'MarkSankey', 'MarkGraph', 'MarkChord'];
+  const withTrait = (trait: string): unknown => {
+    const good = buildSpec(ROWS3);
+    return { ...good, marks: [{ ...good.marks[0], trait }] };
+  };
+
+  it.each(CATEGORICAL_TRAITS)(
+    '%s → contrast:pass (role-C all ≥3:1, role-A 7.25 caution); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash',
+    async (trait) => {
+      const out = await certify(withTrait(trait));
+      expect(out.status).toBe('ok');
+      // Design A — coverage + conformant + the non-contrast pillars are unchanged.
+      expect(out.coverage).toBe('uncertified');
+      expect(out.conformant).toBeNull();
+      expect(out.determinism).toBeUndefined(); // no Vega compile → no determinism proof / hash
+      expect(out.pillars?.a11yEquivalence).toBe('unchecked');
+      expect(out.pillars?.determinism).toBe('unchecked');
+      // The graded verdict — the reconstructed default palette passes role-C + role-A.
+      expect(out.pillars?.contrast).toBe('pass');
+      // Mandatory caveats (memo §4): adjacency-ungraded + per-node data-color override.
+      expect(out.contrastNote).toContain(
+        'touching-mark/adjacency contrast not graded; relies on the separating stroke',
+      );
+      expect(out.contrastNote).toContain('Per-node data-color overrides are ungraded');
+      // The role-A distinguishability caution surfaces the exact min-over-CVD ΔE.
+      expect(out.contrastNote).toContain('7.25');
+      // The pre-s141 "contrast not checked" note is dropped; only the a11y note remains.
+      expect(out.notes?.some((n) => n.includes(trait))).toBe(true);
+      expect(out.notes?.some((n) => /contrast is not checked/i.test(n))).toBe(false);
+      expect(validateOutput(out)).toBe(true);
+    },
+  );
+
+  it('the categorical grade is INPUT-INVARIANT — a config.tokens grey override does NOT move the verdict (the ECharts adapters ignore config.tokens; the grade is the fixed default palette, NOT resolveCategoricalPalette)', async () => {
+    const base = buildSpec(ROWS3);
+    const sankey = { ...base, marks: [{ ...base.marks[0], trait: 'MarkSankey' }] } as NormalizedVizSpec;
+    const greyOverride = {
+      ...sankey,
+      config: {
+        ...(sankey.config ?? {}),
+        tokens: {
+          '--oods-viz-scale-categorical-01': '#777777',
+          '--oods-viz-scale-categorical-02': '#7A7A7A',
+          '--oods-viz-scale-categorical-03': '#808080',
+        },
+      },
+    } as NormalizedVizSpec;
+    const a = await certify(sankey);
+    const b = await certify(greyOverride);
+    // Grading the FIXED default palette (memo §3b) means a config.tokens override the
+    // ECharts render ignores must NOT change the verdict — certified == rendered.
+    expect(a.pillars?.contrast).toBe('pass');
+    expect(b.pillars?.contrast).toBe('pass');
+    expect(b.contrastNote).toBe(a.contrastNote);
+  });
+});
+
+// s141 m02 — the consistency-LOCK (memo §3d). The palette certify RECONSTRUCTS + grades
+// must be byte-identical to what each of the 5 categorical adapters actually BAKES into
+// its ECharts option (option.color), after normalizing both to hex (the adapters bake
+// rgb() via convertOklchToRgb; certify's slots are hex). This pins `certified == rendered`
+// against future drift — a non-clamping count, or a token falling to a FALLBACK_PALETTE —
+// WITHOUT refactoring the adapters into a shared resolver (which would move itemStyle bytes
+// → golden regen → violate #110). It invokes the REAL adapter entry points and reads the
+// baked palette off the emitted option, so it locks the actual bake, not a replay of it.
+describe('artifact.certify — ECharts categorical consistency lock (s141 m02)', () => {
+  const CERTIFY_PALETTE = reconstructEChartsCategoricalPalette().map((s) => s.hex);
+
+  const bakedHexes = (option: unknown): string[] => {
+    const colors = (option as { color?: unknown }).color;
+    if (!Array.isArray(colors)) throw new Error('adapter baked no color palette on option.color');
+    return colors.map((c) => normaliseColor(String(c), 'baked'));
+  };
+
+  const SPEC = {
+    id: 'viz:lock',
+    name: 'Lock',
+    data: { values: [] },
+    marks: [],
+    a11y: { description: 'consistency lock' },
+  } as unknown as NormalizedVizSpec;
+  const HIER: HierarchyInput = {
+    type: 'adjacency_list',
+    data: [
+      { id: 'root', parentId: null, value: 0, name: 'R' },
+      { id: 'a', parentId: 'root', value: 5, name: 'A' },
+      { id: 'b', parentId: 'root', value: 3, name: 'B' },
+    ],
+  };
+  const FLOW: SankeyInput = {
+    nodes: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
+    links: [
+      { source: 'A', target: 'B', value: 10 },
+      { source: 'B', target: 'C', value: 6 },
+    ],
+  };
+  const NET: NetworkInput = {
+    nodes: [
+      { id: 'a', group: 'web', value: 9 },
+      { id: 'b', group: 'api', value: 4 },
+    ],
+    links: [{ source: 'a', target: 'b', value: 3 }],
+  };
+
+  it('certify reconstructs the fixed default OODS 6-slot categorical palette', () => {
+    expect(CERTIFY_PALETTE).toEqual(['#3668D8', '#3F45BE', '#279669', '#B6892B', '#D94747', '#606676']);
+  });
+
+  it.each([
+    ['treemap', () => adaptTreemapToECharts(SPEC, HIER)],
+    ['sunburst', () => adaptSunburstToECharts(SPEC, HIER)],
+    ['sankey', () => adaptSankeyToECharts(SPEC, FLOW)],
+    ['force_graph', () => adaptGraphToECharts(SPEC, NET)],
+    ['chord', () => adaptChordToECharts(SPEC, FLOW)],
+  ] as const)('%s bakes exactly certify’s grade palette (rgb→hex normalized)', (_label, build) => {
+    expect(bakedHexes(build())).toEqual(CERTIFY_PALETTE);
+  });
+});
+
+// s141 m03 — geo ECharts types. choropleth/flow_map/bubble_map render color as a
+// SEQUENTIAL/CONTINUOUS scale (choropleth visualMap ramp, flow_map single-hue line,
+// bubble_map default visualMap), so WCAG 1.4.11's gradient essential exception applies →
+// contrast:'exempt' (role-B). Design A: coverage stays 'uncertified', conformant null,
+// a11yEquivalence + determinism 'unchecked'. bubble_map's ORDINAL-categorical color branch
+// is NOT graded — that range lives in the geo DATA branch, outside this metadata IR (Derek:
+// exempt-all-geo, after the m01 claim that the IR exposes scale:'ordinal'/range was VERIFIED
+// FALSE — the color TraitBinding schema forbids both, and a Forge bubble IR carries encoding:{}).
+describe('artifact.certify — ECharts geo contrast (s141 m03)', () => {
+  const GEO_TRAITS = ['MarkChoropleth', 'MarkFlow', 'MarkBubble'];
+  const withTrait = (trait: string): unknown => {
+    const good = buildSpec(ROWS3);
+    return { ...good, marks: [{ ...good.marks[0], trait }] };
+  };
+
+  it.each(GEO_TRAITS)(
+    '%s → contrast:exempt (WCAG role-B gradient exception); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash',
+    async (trait) => {
+      const out = await certify(withTrait(trait));
+      expect(out.status).toBe('ok');
+      expect(out.coverage).toBe('uncertified');
+      expect(out.conformant).toBeNull();
+      expect(out.determinism).toBeUndefined(); // no Vega compile → no determinism proof / hash
+      expect(out.pillars).toEqual({
+        a11yEquivalence: 'unchecked',
+        determinism: 'unchecked',
+        contrast: 'exempt',
+      });
+      expect(out.contrastNote).toContain('WCAG 1.4.11 gradient essential exception');
+      // The a11y note remains; the pre-s141 "contrast not checked" note is dropped.
+      expect(out.notes?.some((n) => n.includes(trait))).toBe(true);
+      expect(out.notes?.some((n) => /contrast is not checked/i.test(n))).toBe(false);
+      expect(validateOutput(out)).toBe(true);
+    },
+  );
+
+  it('bubble_map exempt note HONESTLY states the ordinal-categorical branch is not graded (its range lives in the geo data branch, outside the metadata IR)', async () => {
+    const out = await certify(withTrait('MarkBubble'));
+    expect(out.pillars?.contrast).toBe('exempt');
+    expect(out.contrastNote).toContain('ordinal-categorical bubble_map color lives in the geo data branch');
   });
 });

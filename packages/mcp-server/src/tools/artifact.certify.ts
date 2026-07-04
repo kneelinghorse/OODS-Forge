@@ -25,7 +25,12 @@ import {
   type NormalizedVizSpec,
 } from '@oods/viz-core';
 import { isEChartsPrimaryMarkTrait } from './echarts-primary.js';
-import { evaluateContrastPillar, type ContrastVerdict } from './certify-contrast.js';
+import {
+  ECHARTS_GEO_EXEMPT_NOTE,
+  evaluateContrastPillar,
+  evaluateEChartsCategoricalContrast,
+  type ContrastVerdict,
+} from './certify-contrast.js';
 
 export interface ArtifactCertifyInput {
   /** A Forge NormalizedVizSpec IR (validated authoritatively by assertNormalizedVizSpec). */
@@ -105,6 +110,79 @@ const CARTESIAN_VEGA_TRAITS: ReadonlySet<string> = new Set([
 // same contentHash a Forge-built heatmap round-trips to).
 const TRAIT_ALIASES: Readonly<Record<string, string>> = { MarkHeatmap: 'MarkRect' };
 
+// The 5 ECharts-primary types whose adapters BAKE the OODS categorical palette into
+// itemStyle (treemap-adapter.ts:106 et al.). certify grades that reconstructed palette
+// (role-C vs canvas + role-A) — a real WCAG-1.4.11 + CVD verdict on the color the live
+// viz.render path renders (s141 m02).
+const ECHARTS_CATEGORICAL_TRAITS: ReadonlySet<string> = new Set([
+  'MarkTreemap',
+  'MarkSunburst',
+  'MarkSankey',
+  'MarkGraph',
+  'MarkChord',
+]);
+
+// The 3 geo ECharts-primary types. Their color renders as a sequential/continuous scale
+// (visualMap ramp / single-hue line / bubble visualMap), so WCAG 1.4.11's gradient
+// essential exception applies → contrast:'exempt' (s141 m03, role-B). NOTE: bubble_map's
+// ordinal-categorical color branch is NOT graded — that range lives in the geo DATA branch,
+// outside this metadata IR (the IR cannot express scale:'ordinal'/range), so it is invisible
+// to certify; grading it needs a frozen input-schema sub-arc (Derek: exempt-all-geo).
+const ECHARTS_GEO_EXEMPT_TRAITS: ReadonlySet<string> = new Set([
+  'MarkChoropleth',
+  'MarkFlow',
+  'MarkBubble',
+]);
+
+// The a11y-equivalence note shared by every ECharts-primary verdict — the accessible table
+// + narrative are generated but NOT equivalence-verified (cartesian-only).
+const echartsA11yNote = (trait: string): string =>
+  `${trait} is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified.`;
+
+/**
+ * Shared shape for an ECharts-primary verdict that now carries a REAL contrast pillar
+ * (s141): coverage:'uncertified' + conformant:null (Design A — no Vega compile, so no
+ * a11y-equivalence claim + no determinism proof), the a11y note retained, and
+ * pillars.contrast + contrastNote carrying the graded verdict. The pre-s141 "contrast not
+ * checked" note is DROPPED (contrast IS now graded — the rationale moves to contrastNote).
+ */
+function echartsContrastVerdict(
+  trait: string,
+  contrast: ContrastVerdict,
+  contrastNote: string | undefined,
+): ArtifactCertifyOutput {
+  return {
+    status: 'ok',
+    coverage: 'uncertified',
+    conformant: null,
+    findings: [],
+    pillars: { a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast },
+    notes: [echartsA11yNote(trait)],
+    ...(contrastNote ? { contrastNote } : {}),
+  };
+}
+
+/** s141 m02 — grade the baked OODS categorical palette (role-C + role-A → 'pass'). */
+function echartsCategoricalVerdict(trait: string): ArtifactCertifyOutput {
+  // Defensive: a contrast-engine fault degrades to 'unchecked', never turns the verdict
+  // into status:error (mirrors the cartesian path's try/catch).
+  let contrast: ContrastVerdict = 'unchecked';
+  let contrastNote: string | undefined;
+  try {
+    const pillar = evaluateEChartsCategoricalContrast();
+    contrast = pillar.contrast;
+    contrastNote = pillar.contrastNote;
+  } catch {
+    contrast = 'unchecked';
+  }
+  return echartsContrastVerdict(trait, contrast, contrastNote);
+}
+
+/** s141 m03 — geo color is a sequential/continuous scale → WCAG-exempt (role-B). */
+function echartsGeoExemptVerdict(trait: string): ArtifactCertifyOutput {
+  return echartsContrastVerdict(trait, 'exempt', ECHARTS_GEO_EXEMPT_NOTE);
+}
+
 /** The honest uncertified verdict (ECharts-primary OR an unmodeled cartesian trait). */
 function uncertifiedVerdict(notes: string[]): ArtifactCertifyOutput {
   return {
@@ -139,13 +217,22 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
   const trait = rawTrait && TRAIT_ALIASES[rawTrait] ? TRAIT_ALIASES[rawTrait] : rawTrait;
 
   // ECharts-primary (treemap/sunburst/sankey/...): no Vega-Lite compile, so no
-  // equivalence check + no determinism proof; contrast (role-C') ships with the
-  // ECharts-primary breadth arc. A DISTINCT verdict, not a failure.
+  // equivalence check + no determinism proof — coverage stays 'uncertified'. A DISTINCT
+  // verdict, not a failure.
   if (trait && isEChartsPrimaryMarkTrait(trait)) {
-    return uncertifiedVerdict([
-      `${trait} is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified.`,
-      `Contrast is not checked for ECharts-primary types — touching-mark (role-C') contrast ships with the ECharts-primary breadth arc.`,
-    ]);
+    // The 5 categorical types: grade the reconstructed baked OODS palette (s141 m02).
+    // Design A — only pillars.contrast gains a real verdict; coverage/conformant/
+    // a11yEquivalence/determinism are unchanged.
+    if (ECHARTS_CATEGORICAL_TRAITS.has(trait)) {
+      return echartsCategoricalVerdict(trait);
+    }
+    // The 3 geo types: sequential/continuous color scale → WCAG-'exempt' (s141 m03).
+    if (ECHARTS_GEO_EXEMPT_TRAITS.has(trait)) {
+      return echartsGeoExemptVerdict(trait);
+    }
+    // Defensive default for any future ECharts-primary type not yet routed above — all 8
+    // current types are categorical or geo-exempt, so this is unreachable today.
+    return uncertifiedVerdict([echartsA11yNote(trait), `Contrast is not checked for ${trait}.`]);
   }
 
   // Neither a certifiable cartesian trait nor ECharts-primary → honest uncertified,
