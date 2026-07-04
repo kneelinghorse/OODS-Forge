@@ -59,6 +59,31 @@
   },
   "required": ["data", "marks", "encoding", "a11y"],
   "additionalProperties": false,
+  "$comment": "Cartesian empty-encoding guard (s142 m02). minProperties:1 was removed from the EncodingMap base so an ECharts-primary IR (which viz.render emits with encoding:{}) validates and certify can return its contrast verdict instead of OODS-V126. The if/then below re-imposes it ONLY when marks[0].trait is a cartesian Vega mark — mirroring certify's positive CARTESIAN_VEGA_TRAITS allowlist (artifact.certify.ts) — so a cartesian IR with an empty encoding stays INVALID while an ECharts-primary IR with encoding:{} validates. AJV AND-composition cannot loosen a base constraint via if/then, hence the remove-then-re-impose inversion. Top-level if/then (not allOf) keeps json-schema-to-typescript emitting a clean interface (it ignores if/then; allOf would force an intersection with an open index signature).",
+  "if": {
+    "required": ["marks"],
+    "properties": {
+      "marks": {
+        "type": "array",
+        "items": [
+          {
+            "type": "object",
+            "required": ["trait"],
+            "properties": {
+              "trait": {
+                "enum": ["MarkBar", "MarkLine", "MarkPoint", "MarkArea", "MarkRect"]
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "encoding": { "minProperties": 1 }
+    }
+  },
   "definitions": {
     "DataSource": {
       "type": "object",
@@ -134,6 +159,7 @@
     "EncodingMap": {
       "type": "object",
       "description": "Mapping of encoding channels to trait bindings.",
+      "$comment": "minProperties:1 was lifted to the top-level allOf guard (s142 m02): an ECharts-primary IR is emitted with encoding:{} (color is baked by the adapter / lives in the geo data branch, not an encoding binding), so a non-empty encoding is required ONLY when marks[0].trait is a cartesian Vega mark.",
       "properties": {
         "x": { "$ref": "#/definitions/TraitBinding" },
         "y": { "$ref": "#/definitions/TraitBinding" },
@@ -142,7 +168,6 @@
         "shape": { "$ref": "#/definitions/TraitBinding" },
         "detail": { "$ref": "#/definitions/TraitBinding" }
       },
-      "minProperties": 1,
       "additionalProperties": false
     },
     "TraitBinding": {
