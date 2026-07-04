@@ -4,6 +4,7 @@ import type {
 } from '../spec/normalized-viz-spec.types.js';
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 import { resolveCategoricalPalette } from '../tokens/categorical-palette.js';
+import { resolveOodsVegaConfig } from '../tokens/oods-vega-config.js';
 import { buildVegaLiteSpec } from './vega-lite-layout-mapper.js';
 
 const VEGA_LITE_SCHEMA_URL = 'https://vega.github.io/schema/vega-lite/v6.json';
@@ -101,6 +102,13 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   const singleSeriesColor =
     !hasColorEncoding && categoricalPalette.length > 0 ? categoricalPalette[0] : undefined;
 
+  // Cartesian chrome theme (sprint-144 m02): resolve the OODS-tokened Vega `config`
+  // theme ONCE here — the only level that sees spec.config.tokens — and attach it
+  // top-level below (merged with the caller's config.mark). Unlike the palette it
+  // needs no per-binding threading: config is a top-level Vega-Lite block that
+  // applies to every nested view. Chrome only — series color stays in the bake above.
+  const oodsConfig = resolveOodsVegaConfig(spec);
+
   const interactions = normalizeInteractions(spec.interactions);
   const data = convertData(spec);
   const transform = mergeTransforms(convertTransforms(spec.transforms), buildInteractionTransforms(interactions));
@@ -114,7 +122,14 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   const requiresLayer = orderedLayers.length > 1 || orderedLayers.some((layer) => layer.data !== undefined);
 
   const layout = spec.config?.layout ?? {};
-  const markConfig = spec.config?.mark ? { mark: spec.config.mark } : undefined;
+  // Merge, don't overwrite (backward-compat #84): the OODS chrome config carries no
+  // `mark` key (chrome-only guardrail), and the caller's config.mark is spread LAST
+  // so it wins its own key — zero collision. The baked config is now unconditionally
+  // present (was conditional on a caller mark), which is correct and additive.
+  const config = {
+    ...oodsConfig,
+    ...(spec.config?.mark ? { mark: spec.config.mark } : {}),
+  };
 
   const baseSpec = removeUndefined({
     $schema: VEGA_LITE_SCHEMA_URL,
@@ -126,7 +141,7 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
     width: layout.width,
     height: layout.height,
     padding: layout.padding,
-    config: markConfig,
+    config,
     usermeta: buildUserMeta(spec),
   });
 

@@ -24,7 +24,7 @@ import { getVizScaleTokens } from './scale-token-mapper.js';
  * colors and are ignored. Pure lookup table — never iterated into the palette array,
  * so it introduces no insertion-order nondeterminism.
  */
-function overrideMap(tokens?: Record<string, string | number>): Map<string, string> {
+export function overrideMap(tokens?: Record<string, string | number>): Map<string, string> {
   const out = new Map<string, string>();
   if (!tokens) return out;
   for (const [k, v] of Object.entries(tokens)) {
@@ -52,7 +52,7 @@ function oodsCanonical(token: string): string {
  * normaliseColor for these inputs (uppercase 6-digit), so the graded hex certify
  * computes for the canvas comparison lines up with the baked hex.
  */
-function toHex(color: string): string | undefined {
+export function toHex(color: string): string | undefined {
   const trimmed = color.trim();
 
   const hexMatch = trimmed.match(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
