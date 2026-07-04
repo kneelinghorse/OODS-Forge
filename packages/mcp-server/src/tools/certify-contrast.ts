@@ -36,6 +36,7 @@
 import Color from 'colorjs.io';
 import { contrastRatio, normaliseColor } from '@oods/a11y-tools';
 import {
+  getVizScaleTokens,
   resolveCategoricalPalette,
   resolveTokenToColor,
   type NormalizedVizSpec,
@@ -346,3 +347,90 @@ export function evaluateContrastPillar(
   }
   return worst;
 }
+
+// ─── ECharts-primary categorical contrast (s141 m02) ────────────────────────────────
+//
+// The 5 ECharts-primary categorical types (treemap/sunburst/sankey/force_graph/chord)
+// have NO Vega-Lite compile, so certify cannot read a compiled scale.range. Instead it
+// RECONSTRUCTS the fixed default OODS categorical palette those adapters bake into
+// itemStyle — from the SAME getVizScaleTokens('categorical') call the adapters make
+// (buildPalette, treemap-adapter.ts:106 et al.) — and grades it with the SAME role-C /
+// role-A math the cartesian path uses. This is palette RECONSTRUCTION, not emit-then-read:
+// certify never runs an adapter or reads emitted bytes (memo §3 / decision #1024 pt3).
+
+/**
+ * Reconstruct the FIXED DEFAULT 6-slot OODS categorical palette the ECharts categorical
+ * adapters bake into itemStyle, resolved to hex. Uses the SAME shared token source the
+ * adapters use (`getVizScaleTokens('categorical')` → `--viz-scale-categorical-NN`,
+ * resolved via the same resolveTokenToColor with the `--oods-` prefix fallback), so
+ * `certified == rendered` holds by SHARED SOURCE — not by fragile prefix convergence.
+ *
+ * NON-override by construction (empty overrides): the 5 categorical adapters' buildPalette()
+ * takes no args (config.tokens feeds only usermeta), so the grade MUST use the fixed
+ * default — it deliberately does NOT call resolveCategoricalPalette(spec) (override-aware +
+ * cardinality-sliced), which would grade a color the ECharts render ignores (memo §3b).
+ * The adapters pass count:8|9 but VIZ_CATEGORICAL_SCALE has 6 slots and the getter clamps,
+ * so the count is inert — the no-arg call resolves the identical fixed 6.
+ */
+export function reconstructEChartsCategoricalPalette(): Array<{ token: string; hex: string }> {
+  const noOverrides = new Map<string, string>();
+  const slots: Array<{ token: string; hex: string }> = [];
+  for (const token of getVizScaleTokens('categorical')) {
+    const hex = resolveSlotHex(token, noOverrides);
+    if (hex) slots.push({ token, hex });
+  }
+  return slots;
+}
+
+// The MANDATORY ECharts-categorical caveats (memo §4). The verdict is INVARIANT to the
+// input IR (the palette is a compile-time constant, data-independent), so an ECharts
+// categorical 'pass' is a real WCAG-1.4.11 + CVD claim about the baked palette, but a
+// WEAKER claim than a cartesian 'pass' (which is override-aware + cardinality-sliced).
+// Adjacency (the literal role-C′) is a frozen OOS sub-arc; per-node data-color overrides
+// are ungraded. Both caveats are required on every categorical contrastNote.
+const ECHARTS_CATEGORICAL_CAVEAT =
+  'This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle ' +
+  '(reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a ' +
+  'per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). ' +
+  'touching-mark/adjacency contrast not graded; relies on the separating stroke. ' +
+  'Per-node data-color overrides are ungraded — the grade reflects the default baked palette.';
+
+/**
+ * Grade the fixed default OODS categorical palette the 5 ECharts categorical adapters bake
+ * into itemStyle (s141 m02) — role-C (each of the 6 slots vs the light-theme canvas ≥ 3:1)
+ * + role-A (min-pairwise CIEDE2000 over Machado CVD). Reuses gradeCategorical + the #FCFCFD
+ * canvas the cartesian path uses. NON-override for BOTH palette AND canvas (the categorical
+ * adapters honor neither a config.tokens palette NOR canvas overrides), so `certified ==
+ * rendered`. Pure function of constants → byte-stable across re-runs.
+ */
+export function evaluateEChartsCategoricalContrast(): ContrastPillarResult {
+  const canvasHex = resolveSlotHex(CANVAS_TOKEN, new Map());
+  const slots = reconstructEChartsCategoricalPalette();
+  const graded = gradeCategorical(slots, canvasHex);
+  return {
+    contrast: graded.contrast,
+    contrastNote: `${graded.contrastNote ?? ''} ${ECHARTS_CATEGORICAL_CAVEAT}`.trim(),
+  };
+}
+
+// ─── ECharts-primary GEO contrast (s141 m03) ────────────────────────────────────────
+//
+// The 3 geo ECharts types (choropleth/flow_map/bubble_map) render color as a
+// SEQUENTIAL/CONTINUOUS scale — choropleth's visualMap ramp (or piecewise binned
+// sequential), flow_map's single-hue line, bubble_map's default visualMap gradient — so
+// WCAG 1.4.11's essential exception for gradients applies (memo §4 role-B): there is no
+// discrete categorical palette to contrast-check. certify returns 'exempt', and Forge's
+// generated accessible data table is the guarantee. bubble_map's ORDINAL-categorical color
+// branch (an author-supplied scale:'ordinal' + range) is NOT graded: that range lives in
+// the geo DATA branch / SpatialSpec, outside this metadata-only NormalizedVizSpec IR (the
+// IR's color TraitBinding cannot even express scale:'ordinal' or a range — schema
+// additionalProperties:false), so it is invisible to certify. Grading it needs a
+// data-branch INPUT-schema change (a frozen OOS sub-arc), NOT this additive read path.
+// (s141 m03 — Derek: exempt-all-geo, after the m01 IR-visibility premise was verified false.)
+export const ECHARTS_GEO_EXEMPT_NOTE =
+  'Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, ' +
+  'flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential ' +
+  'exception, so there is no discrete categorical palette to contrast-check; ' +
+  "Forge's generated accessible data table is the guarantee. An author-supplied " +
+  'ordinal-categorical bubble_map color lives in the geo data branch, outside this ' +
+  'metadata IR, so it is not graded here. ' + RENDERED_CONTRAST_CAVEAT;
