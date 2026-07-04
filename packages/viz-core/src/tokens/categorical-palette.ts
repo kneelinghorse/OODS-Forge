@@ -79,7 +79,10 @@ function toHex(color: string): string | undefined {
  * Resolve the OODS categorical viz-scale palette for a spec to a deterministic,
  * HEX-normalised array of the (up to) six fixed slots, honouring any config.tokens
  * override. The array is built by iterating the FIXED getVizScaleTokens order (never
- * a Map/Set), so it is order-stable for a given input — the property test:scale pins.
+ * a Map/Set), so it is order-stable for a given input — pinned by the colocated
+ * adapters/vega-lite-adapter.spec.ts bake assertions and certify's consistency-lock
+ * (mcp-server artifact.certify.spec.ts). (NOT `test:scale` — that is the map.apply
+ * reconciliation-determinism suite, unrelated to this palette; s143 m03 correction.)
  *
  * A slot whose override is a non-color (or which cannot resolve) is skipped rather
  * than baked as junk; in the default (no-override) path all six OODS tokens resolve,

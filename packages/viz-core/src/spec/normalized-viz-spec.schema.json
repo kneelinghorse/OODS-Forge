@@ -59,7 +59,7 @@
   },
   "required": ["data", "marks", "encoding", "a11y"],
   "additionalProperties": false,
-  "$comment": "Cartesian empty-encoding guard (s142 m02). minProperties:1 was removed from the EncodingMap base so an ECharts-primary IR (which viz.render emits with encoding:{}) validates and certify can return its contrast verdict instead of OODS-V126. The if/then below re-imposes it ONLY when marks[0].trait is a cartesian Vega mark — mirroring certify's positive CARTESIAN_VEGA_TRAITS allowlist (artifact.certify.ts) — so a cartesian IR with an empty encoding stays INVALID while an ECharts-primary IR with encoding:{} validates. AJV AND-composition cannot loosen a base constraint via if/then, hence the remove-then-re-impose inversion. Top-level if/then (not allOf) keeps json-schema-to-typescript emitting a clean interface (it ignores if/then; allOf would force an intersection with an open index signature).",
+  "$comment": "Cartesian empty-encoding guard (s142 m02). minProperties:1 was removed from the EncodingMap base so an ECharts-primary IR (which viz.render emits with encoding:{}) validates and certify can return its contrast verdict instead of OODS-V126. The if/then below re-imposes it ONLY when marks[0].trait is a cartesian Vega mark — mirroring certify's positive CARTESIAN_VEGA_TRAITS allowlist (artifact.certify.ts) — so a cartesian IR with an empty encoding stays INVALID while an ECharts-primary IR with encoding:{} validates. MarkHeatmap is included (s143 m01): certify aliases it to MarkRect (TRAIT_ALIASES) and routes it cartesian, so this if-enum must mirror certify's EFFECTIVE cartesian set (the base 5 CARTESIAN_VEGA_TRAITS + the MarkHeatmap alias), not just the base allowlist — without it a hand-authored MarkHeatmap+empty-encoding validated the schema then died at toVegaLiteSpec with an opaque OODS-V127 instead of the intended clean OODS-V126. AJV AND-composition cannot loosen a base constraint via if/then, hence the remove-then-re-impose inversion. Top-level if/then (not allOf) keeps json-schema-to-typescript emitting a clean interface (it ignores if/then; allOf would force an intersection with an open index signature).",
   "if": {
     "required": ["marks"],
     "properties": {
@@ -71,7 +71,7 @@
             "required": ["trait"],
             "properties": {
               "trait": {
-                "enum": ["MarkBar", "MarkLine", "MarkPoint", "MarkArea", "MarkRect"]
+                "enum": ["MarkBar", "MarkLine", "MarkPoint", "MarkArea", "MarkRect", "MarkHeatmap"]
               }
             }
           }
