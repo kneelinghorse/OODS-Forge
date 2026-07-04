@@ -8,6 +8,7 @@ import type { EChartsOption, TreemapSeriesOption } from 'echarts';
 
 import type { HierarchyInput } from '../../spec/network-flow.js';
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
+import { resolveOodsEchartsChrome, type OodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { convertToEChartsTreeData, generateHierarchyTooltip } from './hierarchy-utils.js';
@@ -20,12 +21,11 @@ const FALLBACK_PALETTE = [
   '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4',
 ];
 
-// UI token fallbacks (for borders, labels - these work in SVG but not canvas fill)
-const BORDER_COLOR = '#e0e0e0';
-const EMPHASIS_BORDER_COLOR = '#666666';
-const LABEL_COLOR = '#333333';
-const HEADER_COLOR = '#1a1a1a';
-const SURFACE_COLOR = '#ffffff';
+// Chrome (borders, labels, surfaces, background, title) now comes from the shared OODS
+// resolver — resolveOodsEchartsChrome (sprint-145 m02). The raw-hex UI consts
+// (#e0e0e0/#666666/#333333/#1a1a1a/#ffffff) were replaced by token-resolved values;
+// SERIES colours (FALLBACK_PALETTE / itemStyle.color) are untouched (chrome-only
+// guardrail, memo §3).
 
 interface InteractionFlags {
   readonly drilldown: boolean;
@@ -36,6 +36,7 @@ interface InteractionFlags {
 export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyInput): EChartsOption {
   const data = convertToEChartsTreeData(input);
   const palette = buildPalette();
+  const chrome = resolveOodsEchartsChrome(spec);
   const dimensions = resolveDimensions(spec);
   const interactions = extractInteractionFlags(spec);
 
@@ -50,32 +51,36 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
     nodeClick: interactions.drilldown ? 'zoomToNode' : false,
     breadcrumb: {
       show: interactions.breadcrumb,
+      // Breadcrumb sits ON the canvas: fill + border are chrome surfaces, text is
+      // on-canvas (text-primary, graded).
       itemStyle: {
-        color: SURFACE_COLOR,
-        borderColor: BORDER_COLOR,
+        color: chrome.surfaceFill,
+        borderColor: chrome.tileBorder,
       },
-      textStyle: { color: LABEL_COLOR },
+      textStyle: { color: chrome.labelOnCanvas },
     },
+    // Node + header labels sit ON the coloured tile → the legibility mechanism (§5), not
+    // a fixed colour (the §4 sweep proved none is legible on all 6 hues).
     label: {
       show: true,
       formatter: '{b}',
-      color: LABEL_COLOR,
+      ...chrome.onTileLabelMechanism,
     },
     upperLabel: {
       show: true,
       height: 28,
-      color: HEADER_COLOR,
+      ...chrome.onTileLabelMechanism,
     },
     itemStyle: {
-      borderColor: BORDER_COLOR,
+      borderColor: chrome.tileBorder,
       borderWidth: 1,
       gapWidth: 1,
     },
-    levels: buildTreemapLevels(),
+    levels: buildTreemapLevels(chrome.tileBorder),
     emphasis: {
       focus: 'ancestor',
       itemStyle: {
-        borderColor: EMPHASIS_BORDER_COLOR,
+        borderColor: chrome.emphasisBorder,
         borderWidth: 2,
         shadowBlur: 2,
         shadowColor: 'rgba(0, 0, 0, 0.05)',
@@ -84,11 +89,12 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
   }) as TreemapSeriesOption;
 
   return pruneUndefined({
+    backgroundColor: chrome.background,
     color: palette,
     series: [series],
     tooltip: generateHierarchyTooltip(spec, 'treemap'),
     aria: { enabled: true, description: spec.a11y?.description },
-    title: spec.name ? { text: spec.name } : undefined,
+    title: spec.name ? { text: spec.name, textStyle: { color: chrome.title } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: spec.id,
@@ -169,17 +175,17 @@ function extractInteractionFlags(spec: NormalizedVizSpec): InteractionFlags {
   };
 }
 
-function buildTreemapLevels(): TreemapSeriesOption['levels'] {
+function buildTreemapLevels(borderColor: OodsEchartsChrome['tileBorder']): TreemapSeriesOption['levels'] {
   return [
     {
       itemStyle: { borderWidth: 0, gapWidth: 4 },
       upperLabel: { show: false },
     },
     {
-      itemStyle: { borderWidth: 2, gapWidth: 2, borderColor: BORDER_COLOR },
+      itemStyle: { borderWidth: 2, gapWidth: 2, borderColor },
     },
     {
-      itemStyle: { borderWidth: 1, gapWidth: 1, borderColor: BORDER_COLOR },
+      itemStyle: { borderWidth: 1, gapWidth: 1, borderColor },
     },
   ];
 }

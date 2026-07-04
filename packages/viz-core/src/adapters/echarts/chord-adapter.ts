@@ -26,6 +26,8 @@ import type { SankeyInput, SankeyLink, SankeyNode } from '../../spec/network-flo
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
+import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+
 import { resolveTokenToColor } from './token-resolver.js';
 
 // Fallback colors if tokens aren't available (matches the categorical scale used
@@ -34,9 +36,10 @@ const FALLBACK_PALETTE = [
   '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc',
 ];
 
-// UI token fallbacks (for labels, node borders).
-const LABEL_COLOR = '#333333';
-const BORDER_COLOR = '#e0e0e0';
+// Chrome (arc label, arc border, background, title) now comes from the shared OODS
+// resolver — resolveOodsEchartsChrome (sprint-145 m02). Arc labels sit OUTSIDE the ring
+// on the canvas → on-canvas text-primary. SERIES colours + the source-inherited ribbon
+// colour are untouched (chrome-only guardrail, memo §3).
 
 // Native ECharts chord ring/ribbon defaults (ChordSeries.js defaultOption), pinned
 // here so the emitted option is self-documenting and the golden is explicit.
@@ -85,6 +88,7 @@ interface EChartsChordLink {
 export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput): EChartsOption {
   const chordSpec = spec as ChordStorySpec;
   const palette = buildPalette();
+  const chrome = resolveOodsEchartsChrome(chordSpec);
   const dimensions = resolveDimensions(chordSpec);
 
   const nodes = buildNodes(input.nodes, palette);
@@ -106,11 +110,11 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput)
     padAngle: chordSpec.layout?.padAngle ?? DEFAULT_PAD_ANGLE,
     minAngle: DEFAULT_MIN_ANGLE,
 
-    // Arc labels sit OUTSIDE the ring.
+    // Arc labels sit OUTSIDE the ring, on the canvas.
     label: {
       show: chordSpec.encoding?.label?.show !== false,
       position: 'outside' as const,
-      color: LABEL_COLOR,
+      color: chrome.labelOnCanvas,
     },
 
     // Ribbons inherit the SOURCE arc's colour (native default) + a curved bow.
@@ -123,7 +127,7 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput)
     // Node arc border.
     itemStyle: {
       borderWidth: 1,
-      borderColor: BORDER_COLOR,
+      borderColor: chrome.tileBorder,
     },
 
     // Highlight a node + its ribbons on hover.
@@ -137,6 +141,7 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput)
   }) as ChordSeriesOption;
 
   return pruneUndefined({
+    backgroundColor: chrome.background,
     color: palette,
     series: [series],
     // STRING-template tooltip (NOT a formatter closure): {b} = arc/ribbon name,
@@ -144,7 +149,7 @@ export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput)
     // and is visible to the jsonSafe golden (a function would be dropped by both).
     tooltip: { trigger: 'item', formatter: '{b}: {c}' },
     aria: { enabled: true, description: chordSpec.a11y?.description },
-    title: chordSpec.name ? { text: chordSpec.name } : undefined,
+    title: chordSpec.name ? { text: chordSpec.name, textStyle: { color: chrome.title } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: chordSpec.id,

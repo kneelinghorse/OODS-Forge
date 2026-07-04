@@ -14,6 +14,7 @@ import type { EChartsOption, GraphSeriesOption } from 'echarts';
 
 import type { NetworkInput, NetworkLink, NetworkNode } from '../../spec/network-flow.js';
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
+import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { resolveTokenToColor } from './token-resolver.js';
@@ -23,8 +24,11 @@ const FALLBACK_PALETTE = [
   '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc',
 ];
 
-// UI token fallbacks (for edges, labels)
-const LABEL_COLOR = '#333333';
+// Chrome (node label, legend text, background, title) now comes from the shared OODS
+// resolver — resolveOodsEchartsChrome (sprint-145 m02). Node labels sit beside the node
+// on the canvas → on-canvas text-primary; the category legend text folds into the
+// governed secondary-chrome (text-neutral) set. SERIES colours + the source-inherited
+// edge colour are untouched (chrome-only guardrail, memo §3).
 
 // Default force layout parameters (from R33.0 research)
 // ECharts uses higher repulsion than D3 for better visual spread
@@ -105,6 +109,7 @@ interface EChartsGraphCategory {
 export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput): EChartsOption {
   const graphSpec = spec as GraphStorySpec;
   const palette = buildPalette();
+  const chrome = resolveOodsEchartsChrome(graphSpec);
   const dimensions = resolveDimensions(graphSpec);
 
   // Extract unique categories from nodes
@@ -138,7 +143,7 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
       show: graphSpec.encoding?.label?.show ?? true,
       position: 'right' as const,
       formatter: '{b}',
-      color: LABEL_COLOR,
+      color: chrome.labelOnCanvas,
     },
     labelLayout: {
       hideOverlap: true,
@@ -179,12 +184,13 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
   }) as GraphSeriesOption;
 
   return pruneUndefined({
+    backgroundColor: chrome.background,
     color: palette,
     series: [series],
     tooltip: generateGraphTooltip(),
-    legend: categories.length > 0 ? generateGraphLegend(categories, graphSpec) : undefined,
+    legend: categories.length > 0 ? generateGraphLegend(categories, graphSpec, chrome.visualMapLabel) : undefined,
     aria: { enabled: true, description: graphSpec.a11y?.description },
-    title: graphSpec.name ? { text: graphSpec.name } : undefined,
+    title: graphSpec.name ? { text: graphSpec.name, textStyle: { color: chrome.title } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: graphSpec.id,
@@ -328,11 +334,14 @@ function generateGraphTooltip(): { trigger: string; formatter: (params: unknown)
 
 function generateGraphLegend(
   categories: readonly EChartsGraphCategory[],
-  spec: GraphStorySpec
-): { show: boolean; data: string[] } {
+  spec: GraphStorySpec,
+  textColor: string
+): { show: boolean; data: string[]; textStyle: { color: string } } {
   return {
     show: spec.legend?.show ?? true,
     data: categories.map((c) => c.name),
+    // Legend category text is governed chrome (text-neutral, 8.13:1 on the baked canvas).
+    textStyle: { color: textColor },
   };
 }
 

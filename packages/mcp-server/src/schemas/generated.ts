@@ -7012,7 +7012,7 @@ export namespace VizRenderOutputSchema {
       [k: string]: any;
     };
     /**
-     * The compiled ECharts option. Present only when output.echarts was requested (opt-in full path).
+     * The compiled ECharts option. Present only when output.echarts was requested (opt-in full path). As of sprint-145 the 8 ECharts-primary types (treemap/sunburst/sankey/chord/force_graph + geo choropleth/bubble_map/flow_map) also carry a baked OODS chrome theme (background, tile/node/arc borders, on-canvas + on-tile labels, breadcrumb/ring surfaces, geo visualMap labels, and the chart title) — the mirror of the sprint-144 cartesian chrome — so a generated chart reads as OODS-designed on the light theme; this moved the ECharts render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the cartesian family byte-unchanged. Series colors (categorical/sequential) are untouched — only chrome is themed.
      */
     echartsSpec?: {
       [k: string]: any;

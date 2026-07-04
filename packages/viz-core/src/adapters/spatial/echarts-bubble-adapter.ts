@@ -16,16 +16,19 @@ import { registerGeoJson, type GeoRegistration } from './echarts-geo-registratio
 import { createVisualMapForScale } from './echarts-visualmap-generator.js';
 import { resolveColor } from './geo-token-color.js';
 import type { DataRecord } from './geo-data-joiner.js';
+import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 const DEFAULT_BUBBLE_RANGE: [number, number] = [6, 28];
+// SERIES colour ramp (sequential) — certify-graded, NEVER themed as chrome (guardrail).
 const DEFAULT_COLOR_RANGE = [
   'var(--oods-viz-scale-sequential-03, #a5d8ff)',
   'var(--oods-viz-scale-sequential-05, #5ea3ff)',
   'var(--oods-viz-scale-sequential-07, #1f6feb)',
 ];
-const DEFAULT_AREA_COLOR = 'var(--sys-surface-strong, #f2f2f2)';
-const DEFAULT_BORDER_COLOR = 'var(--sys-border-subtle, #e0e0e0)';
+// Geo region fills/borders re-pointed onto --oods-sys-* (hex-neutral, memo §2).
+const DEFAULT_AREA_COLOR = 'var(--oods-sys-surface-strong, #f2f2f2)';
+const DEFAULT_BORDER_COLOR = 'var(--oods-sys-border-subtle, #e0e0e0)';
 
 interface BubbleBuildResult {
   readonly series: ScatterSeriesOption;
@@ -255,6 +258,7 @@ export function adaptBubbleToECharts(
   }
 
   const result = buildBubbleSeries(spec, symbolLayer, data, geoData);
+  const chrome = resolveOodsEchartsChrome(spec);
   const tooltipFormatter = buildEChartsTooltipFormatter(
     createBubbleTooltipFields({
       longitudeField: symbolLayer.encoding.longitude.field,
@@ -264,8 +268,13 @@ export function adaptBubbleToECharts(
     })
   );
   const option = pruneUndefined({
+    backgroundColor: chrome.background,
     geo: result.geo,
-    visualMap: result.visualMap,
+    // Bake the visualMap tick label onto text-neutral when a value-driven scale is shown
+    // (memo §6); no visualMap → nothing to bake.
+    visualMap: result.visualMap
+      ? { ...result.visualMap, textStyle: { color: chrome.visualMapLabel } }
+      : undefined,
     series: [result.series],
     tooltip: { trigger: 'item', formatter: tooltipFormatter },
     aria: { enabled: true, description: spec.a11y?.description },

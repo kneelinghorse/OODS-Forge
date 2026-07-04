@@ -11,6 +11,8 @@ import type { SankeyInput } from '../../spec/network-flow.js';
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
+import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
+
 import { resolveTokenToColor } from './token-resolver.js';
 import { transformLinks, transformNodes, validateSankeyInput } from './sankey-utils.js';
 
@@ -19,9 +21,10 @@ const FALLBACK_PALETTE = [
   '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc',
 ];
 
-// UI token fallbacks (for labels, borders)
-const LABEL_COLOR = '#333333';
-const BORDER_COLOR = '#e0e0e0';
+// Chrome (node label, node border, background, title) now comes from the shared OODS
+// resolver — resolveOodsEchartsChrome (sprint-145 m02). Node labels sit BESIDE the node
+// on the canvas → on-canvas text-primary. SERIES colours + link gradient are untouched
+// (chrome-only guardrail, memo §3).
 
 // ECharts Sankey defaults (from R33.0 research)
 // ECharts uses 32 layout iterations by default (vs D3's 6) - much cleaner layouts
@@ -70,6 +73,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
   validateSankeyInput(input);
 
   const palette = buildPalette();
+  const chrome = resolveOodsEchartsChrome(sankeySpec);
   const dimensions = resolveDimensions(sankeySpec);
   const orientation = sankeySpec.layout?.orientation ?? 'horizontal';
 
@@ -105,7 +109,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
     label: {
       show: sankeySpec.encoding?.label?.show !== false,
       position: orientation === 'vertical' ? 'top' : 'right',
-      color: LABEL_COLOR,
+      color: chrome.labelOnCanvas,
     },
 
     // Link styling
@@ -118,7 +122,7 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
     // Node styling
     itemStyle: {
       borderWidth: 1,
-      borderColor: BORDER_COLOR,
+      borderColor: chrome.tileBorder,
     },
 
     // Dimensions
@@ -127,11 +131,12 @@ export function adaptSankeyToECharts(spec: NormalizedVizSpec, input: SankeyInput
   }) as SankeySeriesOption;
 
   return pruneUndefined({
+    backgroundColor: chrome.background,
     color: palette,
     series: [series],
     tooltip: generateSankeyTooltip(),
     aria: { enabled: true, description: sankeySpec.a11y?.description },
-    title: sankeySpec.name ? { text: sankeySpec.name } : undefined,
+    title: sankeySpec.name ? { text: sankeySpec.name, textStyle: { color: chrome.title } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: sankeySpec.id,
