@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { canonicalize, sha256 } from '@oods/artifacts';
-import { normaliseColor } from '@oods/a11y-tools';
+import { contrastRatio, normaliseColor } from '@oods/a11y-tools';
 import {
   adaptChordToECharts,
   adaptGraphToECharts,
@@ -509,6 +509,29 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
     expect(CERTIFY_PALETTE).toEqual(['#3668D8', '#3F45BE', '#279669', '#B6892B', '#D94747', '#606676']);
   });
 
+  // s141 review PS-2026-07-04-004 (floor guard). The categorical 'pass' is real but THIN:
+  // the min slot #B6892B sits at ~3.10:1 vs the canvas, only ~3.4% over the WCAG 1.4.11
+  // 3:1 floor. Nothing pinned that headroom (only role-A 7.25 was locked), so a future
+  // palette or canvas-token tweak could push a slot under 3:1 and silently flip every
+  // ECharts categorical chart to contrast:'fail'. This locks the role-C floor: if it
+  // erodes, THIS test fails first — a loud regression, not a silent verdict flip.
+  it('pins the role-C floor — every categorical slot clears 3:1 vs the canvas, min at ~3.10:1 (#B6892B, thin headroom)', () => {
+    const CANVAS = '#FCFCFD'; // --oods-sys-surface-canvas (light) — the exact hex the grader resolves
+    const ratios = reconstructEChartsCategoricalPalette().map((s) => ({
+      ...s,
+      ratio: contrastRatio(s.hex, CANVAS),
+    }));
+    // Hard WCAG floor: every slot >= 3:1 → the constant 'pass' is earned, not incidental.
+    for (const { token, ratio } of ratios) {
+      expect(ratio, `${token} role-C vs canvas`).toBeGreaterThanOrEqual(3);
+    }
+    // Thin-headroom guard: the floor is #B6892B at ~3.10:1. Pinned so any drift toward 3:1
+    // trips here before it can flip a chart's verdict.
+    const min = ratios.reduce((a, b) => (b.ratio < a.ratio ? b : a));
+    expect(min.hex).toBe('#B6892B');
+    expect(min.ratio).toBeCloseTo(3.1, 1); // ~3.10:1 — the load-bearing floor
+  });
+
   it.each([
     ['treemap', () => adaptTreemapToECharts(SPEC, HIER)],
     ['sunburst', () => adaptSunburstToECharts(SPEC, HIER)],
@@ -560,5 +583,103 @@ describe('artifact.certify — ECharts geo contrast (s141 m03)', () => {
     const out = await certify(withTrait('MarkBubble'));
     expect(out.pillars?.contrast).toBe('exempt');
     expect(out.contrastNote).toContain('ordinal-categorical bubble_map color lives in the geo data branch');
+  });
+});
+
+// s142 m02 — THE ROUND-TRIP HONESTY FLOOR (the proof the s141 suite structurally lacks).
+// EVERY s141 ECharts certify test above hand-authors a NON-EMPTY encoding: `withTrait()`
+// starts from buildSpec(ROWS3) (a cartesian bar IR whose encoding has x+y) and only swaps
+// the mark trait. But viz.render EMITS every ECharts-primary normalizedSpec with
+// `encoding: {}` (buildEChartsPrimarySpec, viz.render.ts:534). At HEAD cab623a certify's
+// shared input schema required encoding minProperties:1, so assertNormalizedVizSpec REJECTED
+// that real emitted IR with OODS-V126 BEFORE the ECharts routing that produces the verdict —
+// certify errored on its OWN producer's output while the tool advertised a clean round-trip.
+// s142 removed minProperties:1 from the EncodingMap base and re-imposed it ONLY for cartesian
+// mark traits, so the emitted encoding:{} IR now VALIDATES and routes to its contrast verdict.
+// These tests feed certify the ACTUAL viz.render-emitted normalizedSpec — not a hand-authored
+// stand-in — so they exercise the real round-trip an agent runs (includeNormalizedSpec:true).
+describe('artifact.certify — round-trip honesty floor: certify accepts viz.render-emitted ECharts encoding:{} IR (s142 m02)', () => {
+  // A real geo FeatureCollection (mirrors the dashboard-a11y-equivalence fixture) so the
+  // choropleth render path is genuinely exercised, not stubbed.
+  const GEO_FC = {
+    type: 'FeatureCollection',
+    features: [
+      { type: 'Feature', properties: { name: 'West' }, geometry: { type: 'Polygon', coordinates: [[[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]]] } },
+      { type: 'Feature', properties: { name: 'East' }, geometry: { type: 'Polygon', coordinates: [[[2, 0], [4, 0], [4, 2], [2, 2], [2, 0]]] } },
+    ],
+  };
+
+  it("a REAL viz.render sankey → emitted normalizedSpec.encoding is {} + trait MarkSankey → certify returns contrast:'pass', status:ok (was OODS-V126 at HEAD)", async () => {
+    const rendered = await vizRender({
+      chartType: 'sankey',
+      sankey: {
+        nodes: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
+        links: [{ source: 'A', target: 'B', value: 10 }, { source: 'B', target: 'C', value: 6 }],
+      },
+      output: { includeNormalizedSpec: true },
+    } as never);
+    expect(rendered.status).toBe('ok');
+    expect(rendered.normalizedSpec).toBeDefined();
+    // The LOAD-BEARING precondition: the emitted encoding is genuinely EMPTY — the exact shape
+    // the pre-s142 schema (encoding minProperties:1) rejected. If viz.render ever starts
+    // populating encoding, this assertion fires and the honesty proof must be re-derived.
+    const emitted = rendered.normalizedSpec as unknown as { encoding: unknown; marks: Array<{ trait: string }> };
+    expect(emitted.encoding).toEqual({});
+    expect(emitted.marks[0]?.trait).toBe('MarkSankey');
+
+    // Feed certify viz.render's OWN emitted IR. At HEAD this returned status:'error' V126.
+    const certified = await certify(rendered.normalizedSpec);
+    expect(certified.status).toBe('ok');
+    expect(certified.errors).toBeUndefined();
+    expect(certified.pillars?.contrast).toBe('pass');
+    // Design A is preserved for the ECharts path — only contrast carries a verdict.
+    expect(certified.coverage).toBe('uncertified');
+    expect(certified.conformant).toBeNull();
+    expect(validateOutput(certified)).toBe(true);
+  });
+
+  it("a REAL viz.render choropleth → emitted normalizedSpec.encoding is {} + trait MarkChoropleth → certify returns contrast:'exempt', status:ok (was OODS-V126 at HEAD)", async () => {
+    const rendered = await vizRender({
+      chartType: 'choropleth',
+      geo: {
+        geojson: GEO_FC,
+        valueField: 'revenue',
+        join: { dataKey: 'region', featureProperty: 'name' },
+        rows: [{ region: 'West', revenue: 220 }, { region: 'East', revenue: 170 }],
+      },
+      output: { includeNormalizedSpec: true },
+    } as never);
+    expect(rendered.status).toBe('ok');
+    expect(rendered.normalizedSpec).toBeDefined();
+    const emitted = rendered.normalizedSpec as unknown as { encoding: unknown; marks: Array<{ trait: string }> };
+    expect(emitted.encoding).toEqual({});
+    expect(emitted.marks[0]?.trait).toBe('MarkChoropleth');
+
+    const certified = await certify(rendered.normalizedSpec);
+    expect(certified.status).toBe('ok');
+    expect(certified.errors).toBeUndefined();
+    expect(certified.pillars?.contrast).toBe('exempt');
+    expect(certified.coverage).toBe('uncertified');
+    expect(certified.conformant).toBeNull();
+    expect(validateOutput(certified)).toBe(true);
+  });
+
+  // FORK-2 GUARD (Derek: cartesian-SCOPED, not a blanket minProperties drop). The schema
+  // relaxation is trait-scoped: an empty encoding is legal ONLY for a non-cartesian mark. A
+  // hand-authored CARTESIAN IR with encoding:{} must STILL be rejected with OODS-V126 — the
+  // guard the s142 mechanism re-imposes. This path was previously untested at the certify
+  // boundary (the sole empty-encoding→V126 coverage was the upstream builder, in
+  // viz-a11y-equivalence-emission.spec.ts). Same empty encoding as the ECharts specs above,
+  // OPPOSITE verdict — keyed purely on the mark trait.
+  it('a hand-authored CARTESIAN IR (MarkBar) with encoding:{} is STILL rejected → status:error OODS-V126 (Fork-2 guard)', async () => {
+    const cartesianEmpty = { ...buildSpec(ROWS3), encoding: {} };
+    const out = await certify(cartesianEmpty);
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V126');
+    // Sanity twin: the SAME cartesian IR WITH its encoding certifies fine — only the empty
+    // encoding is rejected, proving the guard is minProperties, not a blanket MarkBar reject.
+    const withEncoding = await certify(buildSpec(ROWS3));
+    expect(withEncoding.status).toBe('ok');
+    expect(withEncoding.coverage).toBe('certified');
   });
 });
