@@ -67,6 +67,9 @@ export * from './tokens/scale-token-mapper.js';
 // Shared categorical-palette resolver (sprint-138 m02) — ONE source for the bake
 // (vega-lite-adapter) AND the grade (certify-contrast), so certified == baked.
 export * from './tokens/categorical-palette.js';
+// OODS chrome-config resolver (sprint-144 m02) — the chrome counterpart to the
+// palette bake; themes the cartesian Vega `config` (background/axes/type/legend/view).
+export * from './tokens/oods-vega-config.js';
 
 // Temporal analysis runtime (sprint-110) — the finest-granularity scan + the UTC-pinned cell
 // parser, surfaced on the barrel for the mcp-server measure time-grain check (sprint-122 m02).

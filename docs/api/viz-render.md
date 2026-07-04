@@ -71,7 +71,7 @@
 | `status` | `ok` \| `error` | Yes | Whether rendering succeeded. |
 | `chartType` | string | No | Resolved chart type (bar, line, area, scatter, heatmap; empty on error). |
 | `mode` | `explicit` \| `suggest` | No | Whether the chart type was supplied explicitly or chosen by the recommender. |
-| `spec` | object | Yes | The compiled, renderable Vega-Lite spec — the primary payload a consumer renders. An empty object on error. |
+| `spec` | object | Yes | The compiled, renderable Vega-Lite spec — the primary payload a consumer renders. An empty object on error. As of sprint-144 the cartesian family also carries a baked OODS `config` chrome theme (background, axes/gridlines, typography, legend, view box) alongside the sprint-138 series-color bake, so a generated chart reads as OODS-designed on the light theme; this moved the cartesian render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the ECharts-primary types byte-unchanged (separate adapter). |
 | `echartsSpec` | object | No | The compiled ECharts option. Present only when output.echarts was requested (opt-in full path). |
 | `normalizedSpec` | object | No | The intermediate NormalizedVizSpec IR. Present only when output.includeNormalizedSpec is true. |
 | `a11yDescription` | string | No | The non-empty accessibility description carried by the spec (always synthesized when not provided). |

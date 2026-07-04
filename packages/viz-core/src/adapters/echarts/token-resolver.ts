@@ -35,6 +35,28 @@ export function resolveTokenToColor(token: string): string | undefined {
   return fallback ? formatColorValue(fallback) : undefined;
 }
 
+/**
+ * Raw token value from the SAME cssVariables source resolveTokenToColor reads
+ * (sprint-144 m02 — cartesian chrome theme). Returns the UNRESOLVED token string
+ * (an oklch color, a `"24px"` size, or a font-family stack) with the same
+ * `--oods-` prefix fallback. The chrome-config resolver uses this for the
+ * non-color type tokens (font family/size/weight) so they come from one source
+ * without a second copy of the bundle; colors keep going through
+ * resolveTokenToColor. Left byte-identical to preserve the ECharts/geo goldens.
+ */
+export function resolveTokenValue(token: string): string | undefined {
+  const normalized = normalizeTokenName(token);
+  const value = lookupTokenValue(normalized);
+  if (value !== undefined) {
+    return value;
+  }
+  const prefixed = normalized.startsWith('--oods-') ? undefined : `--oods-${normalized.slice(2)}`;
+  if (!prefixed) {
+    return undefined;
+  }
+  return lookupTokenValue(prefixed);
+}
+
 function normalizeTokenName(name: string): string {
   return name.startsWith('--') ? name : `--${name}`;
 }
