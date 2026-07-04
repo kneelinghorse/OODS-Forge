@@ -14,15 +14,18 @@ import { buildEChartsTooltipFormatter, createFlowLineTooltipFields } from './spa
 import { registerGeoJson, type GeoRegistration } from './echarts-geo-registration.js';
 import { resolveColor } from './geo-token-color.js';
 import type { DataRecord } from './geo-data-joiner.js';
+import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 const DEFAULT_CURVENESS = 0.3;
 const DEFAULT_LINE_WIDTH = 2;
 const DEFAULT_LINE_WIDTH_RANGE: [number, number] = [1, 6];
 const DEFAULT_LINE_OPACITY = 0.6;
+// SERIES arc colour (sequential) — certify-graded, NEVER themed as chrome (guardrail).
 const DEFAULT_LINE_COLOR = 'var(--oods-viz-scale-sequential-06, #3b82f6)';
-const DEFAULT_AREA_COLOR = 'var(--sys-surface-strong, #f2f2f2)';
-const DEFAULT_BORDER_COLOR = 'var(--sys-border-subtle, #e0e0e0)';
+// Geo region fills/borders re-pointed onto --oods-sys-* (hex-neutral, memo §2).
+const DEFAULT_AREA_COLOR = 'var(--oods-sys-surface-strong, #f2f2f2)';
+const DEFAULT_BORDER_COLOR = 'var(--oods-sys-border-subtle, #e0e0e0)';
 
 interface FlowLineBuildResult {
   readonly series: LinesSeriesOption;
@@ -202,6 +205,7 @@ export function adaptFlowLineToECharts(
   }
 
   const result = buildFlowLineSeries(spec, routeLayer, data, geoData);
+  const chrome = resolveOodsEchartsChrome(spec);
   const tooltipFormatter = buildEChartsTooltipFormatter(
     createFlowLineTooltipFields({
       originLongitudeField: requireEndpoint(routeLayer.encoding.start.longitude, 'start longitude'),
@@ -213,8 +217,13 @@ export function adaptFlowLineToECharts(
   );
 
   const option = pruneUndefined({
+    backgroundColor: chrome.background,
     geo: result.geo,
-    visualMap: result.visualMap,
+    // Bake the visualMap tick label onto text-neutral when a strength-driven scale exists
+    // (memo §6); the flow visualMap is show:false, so this is inert-but-consistent chrome.
+    visualMap: result.visualMap
+      ? { ...result.visualMap, textStyle: { color: chrome.visualMapLabel } }
+      : undefined,
     series: [result.series],
     tooltip: { trigger: 'item', formatter: tooltipFormatter },
     aria: { enabled: true, description: spec.a11y?.description },

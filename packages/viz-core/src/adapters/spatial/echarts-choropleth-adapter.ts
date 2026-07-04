@@ -11,11 +11,17 @@ import { joinGeoWithData, type DataRecord } from './geo-data-joiner.js';
 import { registerGeoJson, type GeoRegistration } from './echarts-geo-registration.js';
 import { createVisualMapForScale } from './echarts-visualmap-generator.js';
 import { resolveColor } from './geo-token-color.js';
+import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
-const DEFAULT_AREA_COLOR = 'var(--sys-surface-strong, #f2f2f2)';
-const DEFAULT_BORDER_COLOR = 'var(--sys-border-subtle, #e0e0e0)';
-const DEFAULT_EMPHASIS_COLOR = 'var(--sys-surface-raised, #dbeafe)';
+// Geo region fills/borders stay via resolveColor on the UNIFIED --oods-sys-* namespace
+// (sprint-145 m02 re-point; hex-neutral — token-resolver already maps --sys-*→--oods-sys-*
+// via the --oods- fallback, so the resolved bytes do not move). These are non-text
+// surfaces certify does not grade; the geo golden churn is from the net-new
+// backgroundColor + baked visualMap label, not this re-point (memo §2).
+const DEFAULT_AREA_COLOR = 'var(--oods-sys-surface-strong, #f2f2f2)';
+const DEFAULT_BORDER_COLOR = 'var(--oods-sys-border-subtle, #e0e0e0)';
+const DEFAULT_EMPHASIS_COLOR = 'var(--oods-sys-surface-raised, #dbeafe)';
 
 /** Geo-join diagnostics (sprint-118 m06): data records / features that did not join. */
 interface GeoJoinDiagnostics {
@@ -183,14 +189,18 @@ export function adaptChoroplethToECharts(
   }
 
   const result = buildChoropleth(spec, regionLayer, geoData, data);
+  const chrome = resolveOodsEchartsChrome(spec);
   const nameField = isGeoJoinData(spec.data) ? spec.data.geoKey : 'name';
   const tooltipFormatter = buildEChartsTooltipFormatter(
     createChoroplethTooltipFields({ regionField: nameField, valueField: regionLayer.encoding.color.field })
   );
 
   const option = pruneUndefined({
+    backgroundColor: chrome.background,
     geo: result.geo,
-    visualMap: result.visualMap,
+    // Bake the visualMap numeric-tick label onto text-neutral (8.13:1 on the baked
+    // canvas) — ECharts-default today, so ungraded chrome; the tripwire covers it (memo §6).
+    visualMap: { ...result.visualMap, textStyle: { color: chrome.visualMapLabel } },
     series: [result.series],
     tooltip: { trigger: 'item', formatter: tooltipFormatter },
     aria: { enabled: true, description: spec.a11y?.description },

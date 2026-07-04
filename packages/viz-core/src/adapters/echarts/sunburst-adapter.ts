@@ -8,6 +8,7 @@ import type { EChartsOption, SunburstSeriesOption } from 'echarts';
 
 import type { HierarchyInput } from '../../spec/network-flow.js';
 import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
+import { resolveOodsEchartsChrome, type OodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { convertToEChartsTreeData, generateHierarchyTooltip } from './hierarchy-utils.js';
@@ -20,15 +21,15 @@ const FALLBACK_PALETTE = [
   '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc',
 ];
 
-// UI token fallbacks (for borders, labels - these work in SVG but not canvas fill)
-const BORDER_COLOR = '#e0e0e0';
-const EMPHASIS_BORDER_COLOR = '#666666';
-const LABEL_COLOR = '#333333';
-const SURFACE_COLOR = '#ffffff';
+// Chrome (borders, arc label, ring-separator, background, title) now comes from the
+// shared OODS resolver — resolveOodsEchartsChrome (sprint-145 m02). The raw-hex UI
+// consts were replaced by token-resolved values; SERIES colours are untouched
+// (chrome-only guardrail, memo §3).
 
 export function adaptSunburstToECharts(spec: NormalizedVizSpec, input: HierarchyInput): EChartsOption {
   const data = convertToEChartsTreeData(input);
   const palette = buildPalette();
+  const chrome = resolveOodsEchartsChrome(spec);
   const dimensions = resolveDimensions(spec);
 
   const series = pruneUndefined({
@@ -41,31 +42,35 @@ export function adaptSunburstToECharts(spec: NormalizedVizSpec, input: Hierarchy
     emphasis: {
       focus: 'ancestor',
       itemStyle: {
-        borderColor: EMPHASIS_BORDER_COLOR,
+        borderColor: chrome.emphasisBorder,
         borderWidth: 3,
         shadowBlur: 10,
       },
     },
+    // Arc labels sit ON the coloured arc → the legibility mechanism (§5).
     label: {
       rotate: 'radial',
-      color: LABEL_COLOR,
+      ...chrome.onTileLabelMechanism,
     },
+    // The series border is the ring SEPARATOR (by-usage → surface-canvas), not a tile
+    // separator — same const name as treemap's fill, different role (memo §2).
     itemStyle: {
       borderRadius: 4,
       borderWidth: 2,
-      borderColor: SURFACE_COLOR,
+      borderColor: chrome.surfaceFill,
     },
-    levels: buildSunburstLevels(),
+    levels: buildSunburstLevels(chrome.tileBorder),
     width: dimensions.width,
     height: dimensions.height,
   }) as SunburstSeriesOption;
 
   return pruneUndefined({
+    backgroundColor: chrome.background,
     color: palette,
     series: [series],
     tooltip: generateHierarchyTooltip(spec, 'sunburst'),
     aria: { enabled: true, description: spec.a11y?.description },
-    title: spec.name ? { text: spec.name } : undefined,
+    title: spec.name ? { text: spec.name, textStyle: { color: chrome.title } } : undefined,
     usermeta: {
       oods: pruneUndefined({
         specId: spec.id,
@@ -132,26 +137,26 @@ function resolveDimensions(spec: NormalizedVizSpec): { width?: number; height?: 
   };
 }
 
-function buildSunburstLevels(): SunburstSeriesOption['levels'] {
+function buildSunburstLevels(borderColor: OodsEchartsChrome['tileBorder']): SunburstSeriesOption['levels'] {
   return [
     {},
     {
       r0: '12%',
       r: '32%',
       label: { rotate: 'tangential' },
-      itemStyle: { borderWidth: 1, borderColor: BORDER_COLOR },
+      itemStyle: { borderWidth: 1, borderColor },
     },
     {
       r0: '32%',
       r: '68%',
       label: { align: 'right' },
-      itemStyle: { borderWidth: 1, borderColor: BORDER_COLOR },
+      itemStyle: { borderWidth: 1, borderColor },
     },
     {
       r0: '68%',
       r: '72%',
       label: { show: false },
-      itemStyle: { borderWidth: 2, borderColor: BORDER_COLOR },
+      itemStyle: { borderWidth: 2, borderColor },
     },
   ];
 }

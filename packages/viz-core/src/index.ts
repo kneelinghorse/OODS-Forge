@@ -70,6 +70,10 @@ export * from './tokens/categorical-palette.js';
 // OODS chrome-config resolver (sprint-144 m02) — the chrome counterpart to the
 // palette bake; themes the cartesian Vega `config` (background/axes/type/legend/view).
 export * from './tokens/oods-vega-config.js';
+// OODS ECharts chrome resolver (sprint-145 m02) — the ECharts mirror of the cartesian
+// chrome; themes the 8 ECharts-primary types' background/borders/labels/title by
+// per-adapter direct assignment (no single config block).
+export * from './tokens/oods-echarts-chrome.js';
 
 // Temporal analysis runtime (sprint-110) — the finest-granularity scan + the UTC-pinned cell
 // parser, surfaced on the barrel for the mcp-server measure time-grain check (sprint-122 m02).
