@@ -292,11 +292,28 @@ function convertBinding(
   if (
     channel === 'color' &&
     (definition.type === 'nominal' || definition.type === 'ordinal') &&
+    !binding.range &&
     palette &&
     palette.length > 0
   ) {
     const existingScale = (definition.scale as Record<string, unknown> | undefined) ?? {};
     definition.scale = { ...existingScale, range: [...palette] };
+  }
+
+  // F5 (sprint-147 m02): an explicit color range overrides the baked OODS palette
+  // on a categorical color channel. Scoped to color + nominal/ordinal so a range on
+  // a continuous color scale is dropped (gradient-ignored; warned by V-code in m03),
+  // and a range never reaches a non-color channel (color-only schema def, memo D-ii).
+  // The bake above steps aside when binding.range is set, so exactly one of these two
+  // writes fires — #564 holds: field absent ⇒ identical [...palette] output.
+  if (
+    channel === 'color' &&
+    (definition.type === 'nominal' || definition.type === 'ordinal') &&
+    binding.range &&
+    binding.range.length > 0
+  ) {
+    const existingScale = (definition.scale as Record<string, unknown> | undefined) ?? {};
+    definition.scale = { ...existingScale, range: [...binding.range] };
   }
 
   if (binding.sort) {

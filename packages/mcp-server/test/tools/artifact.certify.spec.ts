@@ -309,6 +309,33 @@ describe('artifact.certify — cross-tool contentHash identity with viz.render (
     const certified = await certify(rendered.normalizedSpec);
     expect(certified.determinism?.contentHash).toBe(rendered.contentHash);
   });
+
+  it("F5 (s147): an explicit agent color range hashes in lockstep — viz.render.contentHash === certify.contentHash", async () => {
+    // The range is baked into scale.range INSTEAD OF the palette (m02), and both tools
+    // hash the same compiled toVegaLiteSpec bytes — so a ranged spec round-trips at its
+    // OWN value, not the palette value. Pins that certify grades exactly what renders.
+    const rendered = await vizRender({
+      rows: ROWS3,
+      chartType: 'bar',
+      encodings: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue', aggregate: 'sum' as const },
+        color: { field: 'region', range: ['#1F6FEB', '#D1242F'] },
+      },
+      output: { includeNormalizedSpec: true },
+    } as never);
+    expect(rendered.status).toBe('ok');
+    expect(rendered.normalizedSpec).toBeDefined();
+    // The agent range reached the IR (builder allowlist copy) — guards the m02 hollow.
+    expect((rendered.normalizedSpec as Record<string, any>).encoding?.color?.range).toEqual([
+      '#1F6FEB',
+      '#D1242F',
+    ]);
+
+    const certified = await certify(rendered.normalizedSpec);
+    expect(certified.status).toBe('ok');
+    expect(certified.determinism?.contentHash).toBe(rendered.contentHash);
+  });
 });
 
 // s139 m02/m03 — GRADE THE RENDERED BYTES (dissolve the classifier-mismatch false-pass).

@@ -13,7 +13,7 @@ import { evaluateContrastPillar } from '../../src/tools/certify-contrast.js';
 //   role-A categorical CIEDE2000 min-over-CVD  <2 fail / 2-10 pass+warn / >=10 pass
 //   role-B (no baked palette: gradient OR divergence) -> 'exempt'
 
-type ColorInput = { field?: string; type?: string; scale?: string; trait?: string };
+type ColorInput = { field?: string; type?: string; scale?: string; trait?: string; range?: string[] };
 
 /**
  * Minimal NormalizedVizSpec-shaped input carrying only the fields the engine + the
@@ -131,6 +131,68 @@ describe('certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guar
     );
     expect(out.contrast).toBe('pass');
     expect(out.contrastNote).not.toContain('chroma-floor');
+  });
+});
+
+// ── s147 F5: certify grades an EXPLICIT agent color range BY CONSTRUCTION ──────────────
+// The Meridian F5 pull adds encodings.color.range (hex[]) that the m02 adapter bakes into
+// scale.range INSTEAD OF the OODS palette. certify reads scale.range off the compiled bytes
+// exactly as it reads the baked palette — so it grades an agent-supplied range with ZERO
+// certify source edits (#110). This is the Fork B "honest-fail" proof: a gray/low-contrast
+// "absent" slot in a presence scale truthfully fails, guiding the agent to a chromatic one.
+//
+// CRITIC AMENDMENT 4: each pin uses 2 DISTINCT-value rows so slotCount reaches 2 and role-A
+// actually grades BOTH range slots — certify slices graded slots to distinctCount
+// (certify-contrast.ts:301), so a binary range whose sample rows all carry one value would
+// grade only color[0] and could PASS even with a bad second slot.
+describe('certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit)', () => {
+  it('a chromatic 2-color agent range -> PASS (certify grades the supplied range, not the OODS palette)', () => {
+    const out = grade(
+      mk({
+        color: { field: 'series', type: 'nominal', range: ['#1F6FEB', '#D1242F'] },
+        values: seriesRows(['present', 'absent']),
+      }),
+    );
+    expect(out.contrast).toBe('pass');
+  });
+
+  it('a GRAY 2-color agent range -> contrast FAIL on the chroma floor (Fork B: a gray "absent" slot reads as gray)', () => {
+    // The exact Meridian F2 condition: a 2-color presence scale that uses gray for "absent"
+    // truthfully fails — certify catches it with zero presence-exemption built.
+    const out = grade(
+      mk({
+        color: { field: 'series', type: 'nominal', range: ['#1F6FEB', '#808080'] },
+        values: seriesRows(['present', 'absent']),
+      }),
+    );
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastNote).toContain('chroma');
+    expect(out.contrastNote).toContain('reads as gray');
+  });
+
+  it('a low-contrast-vs-canvas 2-color agent range -> role-C FAIL (a near-white "absent" slot is invisible on the panel)', () => {
+    const out = grade(
+      mk({
+        color: { field: 'series', type: 'nominal', range: ['#1F6FEB', '#F6F6F6'] },
+        values: seriesRows(['present', 'absent']),
+      }),
+    );
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastNote).toContain('Role-C');
+  });
+
+  it('under-cardinality caveat (critic amendment 4): 1 distinct value masks the gray-absent fail -> PASS on color[0] only', () => {
+    // Same gray range as the fail case above, but every row carries the SAME value, so the
+    // graded slot count collapses to 1 and only the chromatic color[0] is graded. This is
+    // render-accurate (the chart only draws one series) but documents that real-world
+    // under-cardinality can hide a gray "absent" slot — the honest-fail is not over-claimed.
+    const out = grade(
+      mk({
+        color: { field: 'series', type: 'nominal', range: ['#1F6FEB', '#808080'] },
+        values: seriesRows(['present', 'present']),
+      }),
+    );
+    expect(out.contrast).toBe('pass');
   });
 });
 

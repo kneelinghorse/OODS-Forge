@@ -45,6 +45,7 @@ import {
   type VizDataAnalysis,
 } from '@oods/viz-core';
 import { canonicalize, sha256 } from '@oods/artifacts';
+import { isHexColor } from '@oods/a11y-tools';
 import type { VizRenderInput, VizRenderOutput } from '../schemas/generated.js';
 import {
   ECHARTS_PRIMARY,
@@ -57,6 +58,88 @@ import { absentFields, referencedEncodingFields } from './field-presence.js';
 import { loadMeasureRegistry, MalformedMeasureRegistryError } from './measure-registry.js';
 
 type Issue = VizRenderOutput['warnings'][number];
+
+// ---- F5 explicit color range (sprint-147) validation helpers ----
+// A color binding may be a bare string (shorthand for { field }) or an object; an
+// explicit `range` is valid only on the object variant (colorEncodingBinding, m02).
+
+/** The explicit color `range` (hex[]), if the color encoding carries one. */
+function extractColorRange(encodings: VizRenderInput['encodings']): string[] | undefined {
+  const color = encodings?.color;
+  if (color && typeof color === 'object' && Array.isArray((color as { range?: unknown }).range)) {
+    return (color as { range: string[] }).range;
+  }
+  return undefined;
+}
+
+/** The field name bound to the color channel (bare-string or object binding). */
+function colorFieldName(encodings: VizRenderInput['encodings']): string | undefined {
+  const color = encodings?.color;
+  if (typeof color === 'string') {
+    return color;
+  }
+  if (color && typeof color === 'object') {
+    return (color as { field?: string }).field;
+  }
+  return undefined;
+}
+
+// Cartesian color-range warnings (F5). All WARN — the chart still renders; each is a
+// declared-intent-vs-outcome mismatch the agent should see rather than have silently
+// swallowed. `compiledColorRange` is scale.range read off the compiled Vega-Lite spec,
+// so "applied" is measured from the real output, not re-inferred.
+function cartesianColorRangeWarnings(
+  range: string[],
+  colorField: string | undefined,
+  rows: ReadonlyArray<Record<string, unknown>>,
+  compiledColorRange: unknown,
+): VizRenderOutput['warnings'] {
+  const warnings: VizRenderOutput['warnings'] = [];
+
+  // V144 (belt-and-suspenders to the schema pattern): a non-hex entry. AJV is the
+  // primary gate; this defends the direct-handler path so a non-hex range that would
+  // make certify's hexToRgb throw -> contrast 'unchecked' -> a silent conformant:true
+  // is surfaced instead.
+  const badColors = range.filter((color) => !isHexColor(color));
+  if (badColors.length > 0) {
+    warnings.push({
+      code: 'OODS-V144',
+      message: `Color range contains ${badColors.length} non-hex value(s): ${badColors.join(', ')}. Use #RGB or #RRGGBB hex colors.`,
+      severity: 'warning',
+    });
+  }
+
+  const rangeApplied =
+    Array.isArray(compiledColorRange) &&
+    compiledColorRange.length === range.length &&
+    compiledColorRange.every((color, i) => color === range[i]);
+
+  if (!rangeApplied) {
+    // The color channel resolved to a continuous (quantitative/temporal) scale, so
+    // the categorical range was dropped (gradient shown instead). Never silent — V145
+    // as a warning (the surface can't consume a categorical range; here it degrades
+    // gracefully rather than the fail-loud ECharts-primary variant).
+    warnings.push({
+      code: 'OODS-V145',
+      message:
+        'Color range was ignored: an explicit range applies only to a categorical (nominal/ordinal) color scale, but this color channel resolved to a continuous scale. Set encodings.color.type to "nominal" or "ordinal" to use the range.',
+      severity: 'warning',
+    });
+  } else if (colorField) {
+    // V143: the applied range is shorter than the distinct series count, so Vega
+    // recycles domain[i]->range[i] mod len (two+ series share a color).
+    const distinctCount = new Set(rows.map((row) => row[colorField])).size;
+    if (range.length < distinctCount) {
+      warnings.push({
+        code: 'OODS-V143',
+        message: `Color range has ${range.length} colors but "${colorField}" has ${distinctCount} distinct series; colors will recycle (domain[i]->range[i] mod ${range.length}). Provide at least ${distinctCount} colors for an unambiguous encoding.`,
+        severity: 'warning',
+      });
+    }
+  }
+
+  return warnings;
+}
 
 export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   const compact = input.output?.compact ?? true;
@@ -190,6 +273,19 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
 
     const spec = toVegaLiteSpec(built.spec) as unknown as VizRenderOutput['spec'];
 
+    // F5 explicit color range warnings (sprint-147 m03): all WARN, never blocking.
+    // Measured against the COMPILED scale.range so "applied vs dropped" reflects reality.
+    const colorRange = extractColorRange(input.encodings);
+    const rangeWarnings: VizRenderOutput['warnings'] = colorRange
+      ? cartesianColorRangeWarnings(
+          colorRange,
+          colorFieldName(input.encodings),
+          rows,
+          (spec as Record<string, unknown> as { encoding?: { color?: { scale?: { range?: unknown } } } })
+            .encoding?.color?.scale?.range,
+        )
+      : [];
+
     // A11y equivalence CERTIFY-AT-EMISSION (sprint-134 m03): when a11yEquivalence is on,
     // run the 16-rule accessible-equivalence engine over the SAME built.spec the chart
     // renders from and surface every failing rule as a SOFT WARNING — never assertVizEquivalence
@@ -229,7 +325,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
       // per-rule code + the warn-severity a11y findings + field warnings; omit contentHash.
       return a11yErrorOut(
         a11yEquivalenceErrors,
-        [...fieldWarnings, ...a11yEquivalenceWarnings],
+        [...fieldWarnings, ...a11yEquivalenceWarnings, ...rangeWarnings],
         compact,
         wantEcharts,
       );
@@ -246,7 +342,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
       mode: built.mode === 'intent' ? 'suggest' : built.mode,
       spec,
       a11yDescription: built.spec.a11y.description,
-      warnings: [...fieldWarnings, ...a11yEquivalenceWarnings],
+      warnings: [...fieldWarnings, ...a11yEquivalenceWarnings, ...rangeWarnings],
       output: {
         compact,
         ...(wantEcharts ? { echarts: true } : {}),
@@ -365,6 +461,20 @@ function renderEChartsPrimary(
     return errorOut(
       'OODS-V123',
       `chartType "${chartType}" requires a "${config.dataBranch}" data branch.`,
+      compact,
+      false,
+    );
+  }
+
+  // V145 (sprint-147 m03, Fork D): an explicit color `range` is a CARTESIAN-only
+  // capability. None of the ECharts-primary types consume encodings.color.range —
+  // their adapters build from a dedicated data branch, not the color channel, so the
+  // range would be silently dropped. Fail loud (never silently ignore an agent's
+  // declared range) with the allowed surfaces named (Meridian failure-UX bar).
+  if (extractColorRange(input.encodings)) {
+    return errorOut(
+      'OODS-V145',
+      `Color range is not supported on chartType "${chartType}". An explicit \`encodings.color.range\` overrides the categorical palette on the CARTESIAN color channel only (bar, line, area, scatter, heatmap). Remove the range or use a cartesian chartType.`,
       compact,
       false,
     );

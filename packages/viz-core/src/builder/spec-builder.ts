@@ -64,6 +64,12 @@ export interface EncodingInput {
    * A caller-declared type wins over m01's data-aware profile inference.
    */
   readonly type?: TraitBinding['type'];
+  /**
+   * Explicit hex colors overriding the baked OODS categorical palette on a
+   * nominal/ordinal color scale (sprint-147 F5). Consumed only on the color
+   * channel by the cartesian adapter.
+   */
+  readonly range?: TraitBinding['range'];
 }
 
 export interface BuildVizSpecInput {
@@ -973,6 +979,7 @@ function normalizeEncodings(
       ...(value.sort ? { sort: value.sort } : {}),
       ...(value.title ? { title: value.title } : {}),
       ...(value.type ? { type: value.type } : {}),
+      ...(value.range ? { range: value.range } : {}),
     };
   }
   return out;

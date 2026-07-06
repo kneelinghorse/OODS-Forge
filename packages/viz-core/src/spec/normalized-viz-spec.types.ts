@@ -153,6 +153,10 @@ export interface TraitBinding {
   legend?: {
     [k: string]: unknown;
   };
+  /**
+   * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale. Applied in array order; consumed only on the color channel by the cartesian adapter.
+   */
+  range?: string[];
 }
 /**
  * Declares how a facet dimension is derived.
