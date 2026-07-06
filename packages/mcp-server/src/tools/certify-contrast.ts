@@ -67,6 +67,13 @@ const categoricalToken = (slot1: number): string =>
 const ROLE_C_MIN_RATIO = 3; // WCAG 1.4.11 non-text contrast (mark vs background)
 const ROLE_A_FAIL_DELTA_E = 2; // < 2 -> indistinguishable -> fail
 const ROLE_A_CLEAN_DELTA_E = 10; // >= 10 -> clean pass; 2-10 -> pass + warn note
+// Role-A "reads-as-gray" chroma floor (s146 F2). A slot whose OKLCH chroma is below this
+// is not a real categorical hue — it reads as gray, so the ΔE distance check below would be
+// a misleading pass. The s146 F1 re-space put EVERY default slot at chroma >= 0.045 (the
+// co-designed margin above this floor — memo §2.2), so this fires on NOTHING for the default
+// palette = a permanent zero-flip guardrail; it DOES fire on a low-chroma config.tokens
+// override an agent supplies (a gray "palette" -> honest fail, the real value on agent input).
+const ROLE_A_CHROMA_FLOOR = 0.03;
 
 const RENDERED_CONTRAST_CAVEAT =
   'certify measures the categorical color bytes Forge baked into the compiled spec, ' +
@@ -117,6 +124,11 @@ function resolveSlotHex(token: string, overrides: Map<string, string>): string |
 
 function deltaE2000(aHex: string, bHex: string): number {
   return new Color(aHex).deltaE(new Color(bHex), '2000');
+}
+
+/** OKLCH chroma of a resolved hex — the s146 F2 "reads-as-gray" measure. Pure fn of the hex. */
+function chromaOf(hex: string): number {
+  return new Color(hex).oklch[1];
 }
 
 /** min over all pairs of min-over-CVD CIEDE2000 — the cols4all categorical metric. */
@@ -197,6 +209,22 @@ function gradeCategorical(
       contrast: 'fail',
       contrastNote:
         `Role-C (WCAG 1.4.11) fail: ${which} below ${ROLE_C_MIN_RATIO}:1 vs the canvas. ` + RENDERED_CONTRAST_CAVEAT,
+    };
+  }
+
+  // Role A chroma floor (s146 F2): a slot whose OKLCH chroma is below the floor reads as
+  // gray — not a real categorical hue — so the ΔE distinguishability check below would be a
+  // misleading pass. Placed AFTER the WCAG-normative role-C check and BEFORE the role-A ΔE
+  // distance check (memo §3). Fires on NOTHING for the default palette (F1 re-chromatized
+  // every slot >= 0.045) but catches a gray config.tokens override (reads-as-gray -> fail).
+  const grayFailures = slots.filter((s) => chromaOf(s.hex) < ROLE_A_CHROMA_FLOOR);
+  if (grayFailures.length > 0) {
+    const which = grayFailures.map((s) => s.token).join(', ');
+    return {
+      contrast: 'fail',
+      contrastNote:
+        `Role-A chroma-floor fail: ${which} below ${ROLE_A_CHROMA_FLOOR} OKLCH chroma — ` +
+        `reads as gray, not a distinguishable categorical hue. ` + RENDERED_CONTRAST_CAVEAT,
     };
   }
 

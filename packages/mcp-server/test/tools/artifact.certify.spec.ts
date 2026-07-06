@@ -195,13 +195,13 @@ describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
 
   it('bakes the resolved OODS palette into the compiled cartesian spec (s138 rendered-reality — the inversion of the s137 colorless tripwire, and the planned #564 cartesian-color change)', () => {
     // s138 rendered-reality: the compiled Vega-Lite spec now CARRIES the resolved OODS
-    // palette — scale.range including categorical-01 (#3668D8) for a multi-series color
-    // channel. The contrast pillar therefore grades what Forge RENDERS, not a declared
+    // palette — scale.range including categorical-01 (#416CD9 post-s146 F1) for a multi-series
+    // color channel. The contrast pillar therefore grades what Forge RENDERS, not a declared
     // intent. This is exactly the deliberate non-additive #564 cartesian-color change
     // (its golden regen is owned by m04). Hand-inverted from the s137 `not.toContain`.
     const compiled = JSON.stringify(toVegaLiteSpec(buildMultiSeries()));
     expect(compiled).toContain('"range"');
-    expect(compiled).toContain('3668D8'); // resolved categorical-01, baked into scale.range
+    expect(compiled).toContain('416CD9'); // resolved categorical-01, baked into scale.range
     // Forge bakes an explicit hex range, NOT a Vega named 'scheme' — still absent.
     expect(compiled.toLowerCase()).not.toContain('scheme');
   });
@@ -409,7 +409,7 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
   };
 
   it.each(CATEGORICAL_TRAITS)(
-    '%s → contrast:pass (role-C all ≥3:1, role-A 7.25 caution); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash',
+    '%s → contrast:pass (role-C all ≥3:1, role-A ≥10 clean pass); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash',
     async (trait) => {
       const out = await certify(withTrait(trait));
       expect(out.status).toBe('ok');
@@ -426,8 +426,9 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
         'touching-mark/adjacency contrast not graded; relies on the separating stroke',
       );
       expect(out.contrastNote).toContain('Per-node data-color overrides are ungraded');
-      // The role-A distinguishability caution surfaces the exact min-over-CVD ΔE.
-      expect(out.contrastNote).toContain('7.25');
+      // Role-A is now a CLEAN pass (min-over-CVD ΔE ≥10) after the s146 F1 re-space, so
+      // NO distinguishability caution rides along (the pre-s146 palette sat at ~7.25).
+      expect(out.contrastNote).not.toContain('Distinguishability caution');
       // The pre-s141 "contrast not checked" note is dropped; only the a11y note remains.
       expect(out.notes?.some((n) => n.includes(trait))).toBe(true);
       expect(out.notes?.some((n) => /contrast is not checked/i.test(n))).toBe(false);
@@ -507,16 +508,17 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
   };
 
   it('certify reconstructs the fixed default OODS 6-slot categorical palette', () => {
-    expect(CERTIFY_PALETTE).toEqual(['#3668D8', '#3F45BE', '#279669', '#B6892B', '#D94747', '#606676']);
+    expect(CERTIFY_PALETTE).toEqual(['#416CD9', '#3E44BE', '#279669', '#B78827', '#CA4948', '#993B00']);
   });
 
-  // s141 review PS-2026-07-04-004 (floor guard). The categorical 'pass' is real but THIN:
-  // the min slot #B6892B sits at ~3.10:1 vs the canvas, only ~3.4% over the WCAG 1.4.11
-  // 3:1 floor. Nothing pinned that headroom (only role-A 7.25 was locked), so a future
-  // palette or canvas-token tweak could push a slot under 3:1 and silently flip every
-  // ECharts categorical chart to contrast:'fail'. This locks the role-C floor: if it
-  // erodes, THIS test fails first — a loud regression, not a silent verdict flip.
-  it('pins the role-C floor — every categorical slot clears 3:1 vs the canvas, min at ~3.10:1 (#B6892B, thin headroom)', () => {
+  // s141 review PS-2026-07-04-004 (floor guard); floor slot updated s146 F1 re-space. The
+  // categorical 'pass' is real but THIN: the min slot #B78827 (gold) sits at ~3.12:1 vs the
+  // canvas, only ~4% over the WCAG 1.4.11 3:1 floor. Nothing else pins that headroom (role-A
+  // is now a clean >=10 pass after s146, no longer the ~7.25 warn), so a future palette or
+  // canvas-token tweak could push a slot under 3:1 and silently flip every ECharts
+  // categorical chart to contrast:'fail'. This locks the role-C floor: if it erodes, THIS
+  // test fails first — a loud regression, not a silent verdict flip.
+  it('pins the role-C floor — every categorical slot clears 3:1 vs the canvas, min at ~3.12:1 (#B78827, thin headroom)', () => {
     // Derive the canvas from the SAME token the grader resolves — resolveSlotHex ->
     // resolveTokenToColor at certify-contrast.ts:407 (with no override this is exactly
     // normaliseColor(resolveTokenToColor('--oods-sys-surface-canvas'))). s142-review #2:
@@ -536,11 +538,11 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
     for (const { token, ratio } of ratios) {
       expect(ratio, `${token} role-C vs canvas`).toBeGreaterThanOrEqual(3);
     }
-    // Thin-headroom guard: the floor is #B6892B at ~3.10:1. Pinned so any drift toward 3:1
-    // trips here before it can flip a chart's verdict.
+    // Thin-headroom guard: the floor is #B78827 (gold) at ~3.12:1. Pinned so any drift toward
+    // 3:1 trips here before it can flip a chart's verdict.
     const min = ratios.reduce((a, b) => (b.ratio < a.ratio ? b : a));
-    expect(min.hex).toBe('#B6892B');
-    expect(min.ratio).toBeCloseTo(3.1, 1); // ~3.10:1 — the load-bearing floor
+    expect(min.hex).toBe('#B78827');
+    expect(min.ratio).toBeCloseTo(3.12, 2); // ~3.12:1 — the load-bearing floor (s146 F1)
   });
 
   it.each([
