@@ -56,14 +56,15 @@ describe('certify-contrast — role-C (WCAG mark-vs-canvas) + default palette', 
     expect(out.contrastNote).toContain('baked into the compiled spec');
   });
 
-  it('the default OODS categorical palette (6 series) -> pass, in the 2-10 warn band (memo §3a)', () => {
-    // min-pairwise ΔE00 (min-over-CVD) for the 6-slot palette is ~7.25 — a pass, but
-    // below the >=10 clean-pass target, so a distinguishability caution rides along.
+  it('the re-spaced OODS categorical palette (6 series) -> clean pass, at/above the >=10 target (s146 F1, memo §3a)', () => {
+    // min-pairwise ΔE00 (min-over-CVD) for the s146-respaced 6-slot palette is ~10.60 — a
+    // CLEAN pass at/above the >=10 best-practice target, so NO distinguishability caution
+    // rides along (the pre-s146 palette sat at ~7.25 in the 2-10 warn band).
     const out = grade(
       mk({ color: { field: 'series', type: 'nominal' }, values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']) }),
     );
     expect(out.contrast).toBe('pass');
-    expect(out.contrastNote).toContain('Distinguishability caution');
+    expect(out.contrastNote).not.toContain('Distinguishability caution');
   });
 
   it('a near-white config.tokens override on the consumed slot -> role-C fail (WCAG-normative path)', () => {
@@ -76,10 +77,35 @@ describe('certify-contrast — role-C (WCAG mark-vs-canvas) + default palette', 
 });
 
 describe('certify-contrast — role-A (categorical distinguishability, min-over-CVD)', () => {
-  it('a low-contrast config.tokens override (near-identical greys) -> fail on role-A (<2), even though role-C passes', () => {
-    // The three greys each pass role-C vs the canvas (3.85-4.37:1) — the failure is
-    // purely categorical indistinguishability (min-pairwise ΔE00-over-CVD ~1.19 < 2).
-    // Baked into scale.range and sliced to the 3 consumed slots.
+  it('a chromatic-but-near-identical config.tokens override -> fail on role-A ΔE (<2), even though role-C + the F2 chroma floor pass', () => {
+    // Three near-identical muted blues: each has REAL chroma (~0.10, above the s146 F2 gray
+    // floor) and passes role-C (~4.5:1), so the failure is PURELY categorical
+    // indistinguishability (min-pairwise ΔE00-over-CVD < 2) — the role-A ΔE path, kept
+    // distinct from the F2 chroma-floor path (which greys hit first). Baked into scale.range,
+    // sliced to the 3 consumed slots. (Pre-s146 this used pure greys, but F2 now catches those
+    // on the chroma floor before the ΔE check — see the chroma-floor block below.)
+    const out = grade(
+      mk({
+        color: { field: 'series', type: 'nominal' },
+        values: seriesRows(['a', 'b', 'c']),
+        tokens: {
+          '--oods-viz-scale-categorical-01': '#6A6FB0',
+          '--oods-viz-scale-categorical-02': '#6B70B1',
+          '--oods-viz-scale-categorical-03': '#6C71B2',
+        },
+      }),
+    );
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastNote).toContain('CIEDE2000'); // the ΔE-distance message, NOT the chroma floor
+  });
+});
+
+describe('certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guardrail)', () => {
+  it('a low-chroma (reads-as-gray) config.tokens override -> fail on the chroma floor, before the ΔE check', () => {
+    // Three near-gray overrides (OKLCH chroma ~0, below the 0.03 floor): each passes role-C
+    // vs the canvas, but a gray "palette" is not a real categorical scale, so F2 fails it
+    // BEFORE the ΔE distinguishability check. F2's honest value: silent on the default palette,
+    // teeth on a bad override (same posture as the s137 low-contrast override fail path).
     const out = grade(
       mk({
         color: { field: 'series', type: 'nominal' },
@@ -92,7 +118,19 @@ describe('certify-contrast — role-A (categorical distinguishability, min-over-
       }),
     );
     expect(out.contrast).toBe('fail');
-    expect(out.contrastNote).toContain('Role-A');
+    expect(out.contrastNote).toContain('chroma');
+    expect(out.contrastNote).toContain('reads as gray');
+  });
+
+  it('the re-chromatized default palette is ABOVE the chroma floor -> the guardrail fires on nothing (zero-flip)', () => {
+    // Every s146 F1 slot is chroma >= 0.045 (the co-designed margin above the 0.03 floor), so
+    // F2 never fires on the DEFAULT palette — a permanent zero-flip guardrail. The verdict is
+    // the clean role-A pass, unchanged by F2.
+    const out = grade(
+      mk({ color: { field: 'series', type: 'nominal' }, values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']) }),
+    );
+    expect(out.contrast).toBe('pass');
+    expect(out.contrastNote).not.toContain('chroma-floor');
   });
 });
 
@@ -213,7 +251,7 @@ describe('certify-contrast — s140 multi-mark union grading', () => {
 
   it('companion regression: the color-bearing mark is NOT the first layer -> pass (was a false unchecked)', () => {
     // marks[0] is a colorless line (CASE 4 -> neutral skip, not 'unchecked'); marks[1]
-    // carries the default OODS palette (role-C pass, role-A in the warn band). Pre-s140
+    // carries the default OODS palette (role-C pass, role-A a clean >=10 pass post-s146). Pre-s140
     // the engine read layer[0] (colorless) and returned 'unchecked'; now the colorless
     // unit is skipped and the color-encoded sibling drives the verdict.
     const out = grade(
