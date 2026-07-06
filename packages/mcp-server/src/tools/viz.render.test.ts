@@ -209,6 +209,168 @@ describe('viz.render handler', () => {
   });
 });
 
+// sprint-147 m03 (F5) — explicit color range validation teeth: V143 (range shorter
+// than cardinality, WARN), V144 (non-hex, WARN belt), V145 (range on a surface that
+// cannot consume it — FAIL-LOUD on ECharts-primary types, WARN on a continuous
+// cartesian color scale), plus the schema-level guards (color-only def + hex pattern).
+const THREE_REGIONS = [
+  { region: 'North', value: 10 },
+  { region: 'South', value: 12 },
+  { region: 'East', value: 9 },
+  { region: 'West', value: 7 },
+];
+const HIER = {
+  type: 'nested' as const,
+  data: { name: 'root', value: 3, children: [{ name: 'a', value: 1 }, { name: 'b', value: 2 }] },
+};
+
+describe('viz.render handler — F5 explicit color range validation (sprint-147 m03)', () => {
+  it('a valid range at/above cardinality renders clean — no range warnings, scale.range = the agent range', async () => {
+    const out = await render({
+      chartType: 'bar',
+      rows: THREE_REGIONS,
+      encodings: {
+        x: { field: 'region' },
+        y: { field: 'value', aggregate: 'sum' },
+        color: { field: 'region', type: 'nominal', range: ['#1F6FEB', '#D1242F', '#279669', '#B78827'] },
+      },
+    });
+    expect(out.status).toBe('ok');
+    expect(validateOutput(out)).toBe(true);
+    expect((out.spec as Record<string, any>).encoding?.color?.scale?.range).toEqual([
+      '#1F6FEB',
+      '#D1242F',
+      '#279669',
+      '#B78827',
+    ]);
+    expect(out.warnings.filter((w) => w.code.startsWith('OODS-V14'))).toEqual([]);
+  });
+
+  it('V143: a range shorter than the distinct series count WARNs (colors will recycle) but still renders', async () => {
+    const out = await render({
+      chartType: 'bar',
+      rows: THREE_REGIONS, // 4 distinct regions
+      encodings: {
+        x: { field: 'region' },
+        y: { field: 'value', aggregate: 'sum' },
+        color: { field: 'region', type: 'nominal', range: ['#1F6FEB', '#D1242F'] }, // only 2 colors
+      },
+    });
+    expect(out.status).toBe('ok');
+    const v143 = out.warnings.find((w) => w.code === 'OODS-V143');
+    expect(v143).toBeDefined();
+    expect(v143?.severity).toBe('warning');
+    expect(v143?.message).toContain('4 distinct series');
+    // The range still baked (WARN, not a block).
+    expect((out.spec as Record<string, any>).encoding?.color?.scale?.range).toHaveLength(2);
+    expect(isRetryable('OODS-V143')).toBe(true);
+  });
+
+  it('V144: a non-hex color WARNs on the direct-handler path (schema is the primary gate; this is the belt)', async () => {
+    // handle() bypasses AJV (dispatch validates upstream) — the belt catches a non-hex
+    // color that would otherwise make certify hexToRgb throw -> silent conformant:true.
+    const out = await render({
+      chartType: 'bar',
+      rows: THREE_REGIONS,
+      encodings: {
+        x: { field: 'region' },
+        y: { field: 'value', aggregate: 'sum' },
+        color: { field: 'region', type: 'nominal', range: ['#1F6FEB', 'rebeccapurple'] },
+      },
+    });
+    expect(out.status).toBe('ok');
+    const v144 = out.warnings.find((w) => w.code === 'OODS-V144');
+    expect(v144).toBeDefined();
+    expect(v144?.message).toContain('rebeccapurple');
+  });
+
+  it('V145 (Fork D): a color range on a treemap (ECharts-primary) FAILS LOUD — never silently dropped', async () => {
+    const out = await render({
+      chartType: 'treemap',
+      hierarchy: HIER,
+      encodings: { color: { field: 'name', type: 'nominal', range: ['#1F6FEB', '#D1242F'] } },
+    });
+    expect(out.status).toBe('error');
+    const err = out.errors?.[0];
+    expect(err?.code).toBe('OODS-V145');
+    // Failure-UX bar: the error names the allowed surfaces (Meridian's praised standard).
+    expect(err?.message).toContain('cartesian');
+    expect(err?.message.toLowerCase()).toContain('treemap');
+    expect(isRetryable('OODS-V145')).toBe(false);
+  });
+
+  it('V145 (Fork D): a color range on a sankey also fails loud (all ECharts-primary types)', async () => {
+    const out = await render({
+      chartType: 'sankey',
+      sankey: {
+        nodes: [{ name: 'a' }, { name: 'b' }],
+        links: [{ source: 'a', target: 'b', value: 5 }],
+      },
+      encodings: { color: { field: 'name', type: 'nominal', range: ['#1F6FEB', '#D1242F'] } },
+    });
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V145');
+  });
+
+  it('a treemap with a color encoding but NO range still renders (V145 is range-specific, not a regression)', async () => {
+    const out = await render({
+      chartType: 'treemap',
+      hierarchy: HIER,
+      encodings: { color: { field: 'name', type: 'nominal' } },
+    });
+    expect(out.status).toBe('ok');
+  });
+
+  it('a range on a CONTINUOUS color scale WARNs (gradient-ignored) instead of silently dropping', async () => {
+    const out = await render({
+      chartType: 'bar',
+      rows: THREE_REGIONS,
+      encodings: {
+        x: { field: 'region' },
+        y: { field: 'value', aggregate: 'sum' },
+        color: { field: 'value', type: 'quantitative', range: ['#1F6FEB', '#D1242F'] },
+      },
+    });
+    expect(out.status).toBe('ok');
+    const v145 = out.warnings.find((w) => w.code === 'OODS-V145');
+    expect(v145).toBeDefined();
+    expect(v145?.severity).toBe('warning');
+    expect(v145?.message).toContain('categorical');
+    // The continuous scale did NOT bake the range (gradient behavior preserved).
+    expect((out.spec as Record<string, any>).encoding?.color?.scale?.range).toBeUndefined();
+  });
+
+  it('schema (AJV) rejects a range on a NON-color channel — the color-only def holds (memo D-ii)', () => {
+    const onColor = {
+      chartType: 'bar',
+      rows: THREE_REGIONS,
+      encodings: { x: { field: 'region' }, y: { field: 'value' }, color: { field: 'region', range: ['#111', '#eee'] } },
+    };
+    const onX = {
+      chartType: 'bar',
+      rows: THREE_REGIONS,
+      encodings: { x: { field: 'region', range: ['#111', '#eee'] }, y: { field: 'value' } },
+    };
+    expect(validateInput(onColor)).toBe(true);
+    expect(validateInput(onX)).toBe(false);
+  });
+
+  it('schema (AJV) rejects a non-hex color and a single-item range (the D-iii pattern + minItems)', () => {
+    const nonHex = {
+      chartType: 'bar',
+      rows: THREE_REGIONS,
+      encodings: { x: { field: 'region' }, y: { field: 'value' }, color: { field: 'region', range: ['red', '#eee'] } },
+    };
+    const single = {
+      chartType: 'bar',
+      rows: THREE_REGIONS,
+      encodings: { x: { field: 'region' }, y: { field: 'value' }, color: { field: 'region', range: ['#111'] } },
+    };
+    expect(validateInput(nonHex)).toBe(false);
+    expect(validateInput(single)).toBe(false);
+  });
+});
+
 // sprint-111 m02 — treemap reaches the agent surface. Hierarchy charts are
 // EXPLICIT-ONLY and ECharts-primary (no Vega-Lite equivalent): the data is the
 // SEPARATE `hierarchy` branch and the renderable payload is echartsSpec, which is

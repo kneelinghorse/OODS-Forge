@@ -166,6 +166,25 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // the verbalized "threshold 350 breached" still describes the GOVERNED direction. A real registry-vs-
   // rendered drift (recoverable: align or drop the override, or don't surface the narrative) — retryable:true.
   ['OODS-V142', { code: 'OODS-V142', category: 'validation', message: 'Measure-narrative threshold direction drifts from the resolved governed measure', retryable: true }],
+  // V143 (sprint-147 m03, F5): an explicit color `range` is SHORTER than the distinct
+  // series count on a categorical color channel. Vega recycles domain[i]->range[i] mod
+  // len, so two+ series silently share a color = ambiguous encoding (and a likely
+  // certify role-A distinguishability fail). WARN, don't throw — the chart still renders;
+  // the agent can lengthen the range or reduce the series. Recoverable — retryable:true.
+  ['OODS-V143', { code: 'OODS-V143', category: 'validation', message: 'Color range is shorter than the number of series (colors will recycle)', retryable: true }],
+  // V144 (sprint-147 m03, F5): a `range` entry is not a valid hex color. Belt-and-
+  // suspenders to the schema `pattern` (the primary gate rejects non-hex at AJV); this
+  // WARN defends the direct-handler path (tests/pipelines that bypass AJV) so a non-hex
+  // range that would make certify's hexToRgb throw -> contrast 'unchecked' -> a silent
+  // conformant:true is surfaced loudly instead. Recoverable (use hex) — retryable:true.
+  ['OODS-V144', { code: 'OODS-V144', category: 'validation', message: 'Color range contains a non-hex color', retryable: true }],
+  // V145 (sprint-147 m03, F5, Fork D): an explicit color `range` was supplied on an
+  // ECharts-primary chart type (treemap/sunburst/sankey/force_graph/chord and the geo
+  // types) that cannot consume a cartesian color range — its adapter would silently drop
+  // it. FAIL-LOUD (never silently ignore an agent's declared range): the color range is
+  // a cartesian-only capability (F5). A closed misuse — the type can't grow a color range
+  // on retry (use a cartesian chartType) — so retryable:false.
+  ['OODS-V145', { code: 'OODS-V145', category: 'validation', message: 'Color range is not supported on this chart type (cartesian color channel only)', retryable: false }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

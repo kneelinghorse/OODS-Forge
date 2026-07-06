@@ -132,6 +132,39 @@ describe('viz.render render fidelity (renderable, not just AJV-valid)', () => {
     },
   );
 
+  it('explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable', async () => {
+    // sprint-147 F5: an explicit color `range` overrides the s138 OODS categorical
+    // bake on a nominal/ordinal color channel. This is the ONE net-new with-range
+    // golden — the no-range CASES above stay byte-identical (the bake steps aside).
+    const AGENT_RANGE = ['#264653', '#E76F51'] as const;
+    const out = await render({
+      rows: SALES,
+      chartType: 'line',
+      encodings: {
+        x: { field: 'quarter', scale: 'temporal' },
+        y: { field: 'revenue', aggregate: 'sum' },
+        color: { field: 'region', range: [...AGENT_RANGE] },
+      },
+    });
+    expect(out.status).toBe('ok');
+
+    const spec = out.spec as unknown as vl.TopLevelSpec;
+
+    // The agent range is baked into scale.range verbatim, in supplied order — NOT
+    // the OODS palette. This is the load-bearing #564 tripwire: a forgotten builder
+    // copy or a forgotten !binding.range bake guard would show the palette here.
+    const colorScaleRange = (spec as Record<string, any>).encoding?.color?.scale?.range;
+    expect(colorScaleRange).toEqual([...AGENT_RANGE]);
+
+    // Golden: lock the pristine with-range payload.
+    expect(spec).toMatchSnapshot();
+
+    // Renderable: the overridden scale still compiles, parses, and draws marks.
+    const svg = await renderSvg(spec);
+    expect(svg).toContain('<svg');
+    assertDrewMarks(svg, 'line');
+  });
+
   it('suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary', async () => {
     const out = await render({ rows: SALES });
     expect(out.status).toBe('ok');

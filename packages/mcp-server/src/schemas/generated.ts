@@ -6602,6 +6602,34 @@ export namespace VizRenderInputSchema {
             };
         title?: string;
       };
+  /**
+   * A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale (sprint-147 F5). `range` is only valid on the color channel.
+   */
+  export type ColorEncodingBinding =
+    | string
+    | {
+        field: string;
+        aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+        /**
+         * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
+         */
+        type?: 'quantitative' | 'temporal' | 'ordinal' | 'nominal';
+        timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+        sort?:
+          | ('none' | 'ascending' | 'descending')
+          | {
+              field: string;
+              order: 'ascending' | 'descending';
+            };
+        title?: string;
+        /**
+         * Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.
+         *
+         * @minItems 2
+         */
+        range?: [string, string, ...string[]];
+      };
   export type VizRenderInput3 = {
     [k: string]: any;
   };
@@ -6889,7 +6917,7 @@ export namespace VizRenderInputSchema {
     encodings?: {
       x?: EncodingBinding;
       y?: EncodingBinding;
-      color?: EncodingBinding;
+      color?: ColorEncodingBinding;
       size?: EncodingBinding;
       shape?: EncodingBinding;
       detail?: EncodingBinding;

@@ -249,6 +249,13 @@
         "legend": {
           "type": "object",
           "additionalProperties": true
+        },
+        "range": {
+          "type": "array",
+          "description": "Explicit hex colors for a nominal/ordinal color scale (sprint-147 F5). Overrides the baked OODS categorical palette so an agent can supply its own scale. Applied in array order; consumed only on the color channel by the cartesian adapter.",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": ["field", "trait"],

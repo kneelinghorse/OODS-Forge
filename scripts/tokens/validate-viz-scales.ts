@@ -33,7 +33,10 @@ const DIVERGING_INDEX = new Map<DivergingId, number>(
 const NEGATIVE_IDS: DivergingId[] = ['neg-05', 'neg-04', 'neg-03', 'neg-02', 'neg-01'];
 const POSITIVE_IDS: DivergingId[] = ['pos-05', 'pos-04', 'pos-03', 'pos-02', 'pos-01'];
 const NEUTRAL_ID = 'neutral';
-const CATEGORICAL_ALIAS_PATTERN = /^\{sys\.status\.[^.]+\.(?:icon|text|border|surface)\}$/;
+const CATEGORICAL_LITERAL_PATTERN = /^oklch\([^)]+\)$/;
+// Source-side floor co-designed with certify's runtime ROLE_A_CHROMA_FLOOR (0.03):
+// slots must keep margin above the fail line so the default palette can never read as gray.
+const CATEGORICAL_MIN_CHROMA = 0.045;
 
 interface CliOptions {
   quiet: boolean;
@@ -245,11 +248,33 @@ function validateCategoricalScales(tokens: DtcgToken[]): VizScaleCheck[] {
 
   for (const token of tokens) {
     const raw = typeof token.value === 'string' ? token.value.trim() : '';
-    const ok = CATEGORICAL_ALIAS_PATTERN.test(raw);
+    const scope = `categorical/${token.path[token.path.length - 1] ?? 'unknown'}`;
+
+    if (!CATEGORICAL_LITERAL_PATTERN.test(raw)) {
+      results.push({
+        scope,
+        ok: false,
+        detail: `Value ${raw || '<empty>'} must be a static inline oklch() literal (categorical slots are decoupled from sys.status.*).`,
+      });
+      continue;
+    }
+
+    let oklch: OklchColor;
+    try {
+      oklch = parseOklchValue(token);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      results.push({ scope, ok: false, detail: message });
+      continue;
+    }
+
+    const ok = oklch.c >= CATEGORICAL_MIN_CHROMA;
     results.push({
-      scope: `categorical/${token.path[token.path.length - 1] ?? 'unknown'}`,
+      scope,
       ok,
-      detail: ok ? `Reference ${raw} is tied to sys.status.*.` : `Value ${raw || '<empty>'} must alias sys.status.* tokens.`,
+      detail: ok
+        ? `Inline oklch literal, chroma ${oklch.c.toFixed(3)} ≥ ${CATEGORICAL_MIN_CHROMA}.`
+        : `Chroma ${oklch.c.toFixed(3)} is below the ${CATEGORICAL_MIN_CHROMA} categorical chroma floor — reads as gray.`,
     });
   }
 

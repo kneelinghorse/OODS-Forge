@@ -644,6 +644,137 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'scatter'
 }
 `;
 
+exports[`viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable 1`] = `
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "config": {
+    "axis": {
+      "domainColor": "#D5DAE4",
+      "gridColor": "#E9ECEF",
+      "labelColor": "#494E5A",
+      "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "tickColor": "#D5DAE4",
+      "titleColor": "#2D313A",
+      "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+    },
+    "axisX": {
+      "grid": false,
+    },
+    "axisY": {
+      "grid": true,
+    },
+    "background": "#FCFCFD",
+    "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+    "legend": {
+      "labelColor": "#494E5A",
+      "labelFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "titleColor": "#2D313A",
+      "titleFont": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+    },
+    "title": {
+      "anchor": "start",
+      "color": "#2D313A",
+      "font": "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+      "fontSize": 24,
+      "fontWeight": 600,
+    },
+    "view": {
+      "stroke": null,
+    },
+  },
+  "data": {
+    "values": [
+      {
+        "quarter": "2024-01",
+        "region": "North",
+        "revenue": 120000,
+        "units": 340,
+      },
+      {
+        "quarter": "2024-01",
+        "region": "South",
+        "revenue": 135000,
+        "units": 410,
+      },
+      {
+        "quarter": "2024-02",
+        "region": "North",
+        "revenue": 128000,
+        "units": 360,
+      },
+      {
+        "quarter": "2024-02",
+        "region": "South",
+        "revenue": 142000,
+        "units": 430,
+      },
+      {
+        "quarter": "2024-03",
+        "region": "North",
+        "revenue": 131000,
+        "units": 372,
+      },
+      {
+        "quarter": "2024-03",
+        "region": "South",
+        "revenue": 150000,
+        "units": 455,
+      },
+    ],
+  },
+  "description": "Line chart of sum of revenue by quarter, split by region.",
+  "encoding": {
+    "color": {
+      "field": "region",
+      "scale": {
+        "range": [
+          "#264653",
+          "#E76F51",
+        ],
+      },
+      "title": "Region",
+      "type": "nominal",
+    },
+    "x": {
+      "field": "quarter",
+      "scale": {
+        "type": "time",
+      },
+      "title": "Quarter",
+      "type": "temporal",
+    },
+    "y": {
+      "aggregate": "sum",
+      "field": "revenue",
+      "title": "Revenue",
+      "type": "quantitative",
+    },
+  },
+  "mark": {
+    "type": "line",
+  },
+  "title": "Line chart",
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "ariaLabel": "Line chart of Revenue by Quarter",
+        "description": "Line chart of sum of revenue by quarter, split by region.",
+      },
+      "name": "Line chart",
+      "portability": {
+        "tableColumnOrder": [
+          "quarter",
+          "revenue",
+          "region",
+          "units",
+        ],
+      },
+      "specId": "viz:line",
+    },
+  },
+}
+`;
+
 exports[`viz.render render fidelity (renderable, not just AJV-valid) > suggest mode (no chartType): the data-aware pick is renderable and golden-locked at the render boundary 1`] = `
 {
   "chartType": "line",
