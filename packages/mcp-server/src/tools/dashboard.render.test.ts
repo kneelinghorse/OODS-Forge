@@ -722,3 +722,46 @@ describe('dashboard.render — measure-grounded narrative (sprint-129 m02)', () 
     expect(kpi.a11yDescription).toBe('Total Revenue: 390 (increasing, delta 90).');
   });
 });
+
+// sprint-148 amendment 1: the per-panel warnings fold (dashboard.render.ts:604-619) is a
+// REAL propagation path for the s148 F3 never-cycle WARN. An echarts-primary panel
+// (force_graph here) with MORE distinct color groups than the 6-slot palette surfaces its
+// OODS-V146 in the DASHBOARD warnings[], panel-id-prefixed — but ONLY under a11yEquivalence
+// (default on). Flag off => fold suppressed => the existing suite stays byte-identical.
+describe('dashboard.render — F3 never-cycle WARN folds up per-panel (sprint-148)', () => {
+  const wideNetworkDashboard = (extra: Record<string, unknown> = {}): DashboardRenderInput =>
+    ({
+      schemaVersion: 'v0.1',
+      title: 'Service graph',
+      datasets: [{ id: 'noop', rows: [{ x: 1 }] }],
+      panels: [
+        {
+          id: 'graph',
+          kind: 'chart',
+          chartType: 'force_graph',
+          // 7 DISTINCT groups > the 6-slot palette -> the panel's viz.render emits V146.
+          network: { nodes: Array.from({ length: 7 }, (_, i) => ({ id: `n${i}`, group: `g${i}` })), links: [{ source: 'n0', target: 'n1' }] },
+        },
+      ],
+      a11y: { description: 'Service graph dashboard.', readingOrder: 'declared' },
+      ...extra,
+    }) as DashboardRenderInput;
+
+  it('surfaces a panel-id-prefixed OODS-V146 in the dashboard warnings under default a11yEquivalence', async () => {
+    const spec = wideNetworkDashboard();
+    expect(validateInput(spec)).toBe(true);
+    const out = await handle(spec);
+    expect(out.status).toBe('ok');
+    expect(validateOutput(out)).toBe(true);
+    const v146 = (out.warnings ?? []).filter((w) => w.code === 'OODS-V146');
+    expect(v146).toHaveLength(1);
+    expect(v146[0].message).toContain('panel "graph"'); // the fold prefixes the message, keeps the code raw
+    expect(v146[0].severity).toBe('warning');
+  });
+
+  it('does NOT fold the warning when a11yEquivalence is off (existing byte-identity preserved)', async () => {
+    const out = await handle(wideNetworkDashboard({ a11yEquivalence: false }));
+    expect(out.status).toBe('ok');
+    expect((out.warnings ?? []).some((w) => w.code === 'OODS-V146')).toBe(false);
+  });
+});
