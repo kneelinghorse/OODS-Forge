@@ -6711,7 +6711,7 @@ export namespace VizRenderInputSchema {
         }[]
       ];
       /**
-       * Directed, value-weighted flows between nodes.
+       * Directed, value-weighted flows between nodes. Each (source, target) pair should be unique — a duplicate directed flow double-counts the link width. (Uniqueness is advisory for sankey; it is not warning-enforced.)
        *
        * @minItems 1
        */
@@ -6731,7 +6731,7 @@ export namespace VizRenderInputSchema {
       ];
     };
     /**
-     * Chord data for chartType 'chord' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A native ECharts ribbon diagram: a ring of category arcs connected by weighted ribbons. Sankey-shaped — nodes plus value-weighted links; every link MUST carry a numeric 'value' (the ribbon width IS the flow magnitude) and reference existing node names.
+     * Chord data for chartType 'chord' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A native ECharts ribbon diagram: a ring of category arcs connected by weighted ribbons. Sankey-shaped — nodes plus value-weighted links; every link MUST carry a numeric 'value' (the ribbon width IS the flow magnitude) and reference existing node names — a link naming a node absent from 'nodes' fails loud (OODS-V147).
      */
     chord?: {
       /**
@@ -6752,7 +6752,7 @@ export namespace VizRenderInputSchema {
         }[]
       ];
       /**
-       * Directed, value-weighted ribbons between ring arcs (matched to arcs by name).
+       * Directed, value-weighted ribbons between ring arcs (matched to arcs by name). Directed: source→target and target→source are distinct ribbons (a reciprocal pair is valid data). Each (source, target) pair should be unique — a duplicate directed link double-counts the ribbon and is flagged with a warning (OODS-V148).
        *
        * @minItems 1
        */
@@ -6772,7 +6772,7 @@ export namespace VizRenderInputSchema {
       ];
     };
     /**
-     * Network data for chartType 'force_graph' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes (each with a unique 'id'; an optional 'group' drives category colour) and directed links (optional numeric 'value').
+     * Network data for chartType 'force_graph' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes (each with a unique 'id'; an optional 'group' drives category colour) and directed links (optional numeric 'value'). Every link MUST reference existing node ids — a link naming a node absent from 'nodes' fails loud (OODS-V147).
      */
     network?: {
       /**
@@ -6795,7 +6795,7 @@ export namespace VizRenderInputSchema {
         }[]
       ];
       /**
-       * Directed edges between nodes (an empty array is allowed for an all-isolated-nodes graph).
+       * Directed edges between nodes (an empty array is allowed for an all-isolated-nodes graph). Each 'source'/'target' MUST match a node 'id' (a dangling ref fails loud, OODS-V147). Directed: source→target and target→source are distinct edges. Each (source, target) pair should be unique — a duplicate directed edge double-counts and is flagged with a warning (OODS-V148).
        */
       links: {
         source: string;
