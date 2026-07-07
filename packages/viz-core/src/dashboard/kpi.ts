@@ -199,7 +199,12 @@ export function computeKpi(panel: KpiPanel, rows: readonly DataRecord[]): KpiRes
   let trendDirection: KpiResult['trendDirection'];
   if (baseline !== null) {
     trendDirection = deriveTrend(baseline, value).trend;
-  } else if (values.length >= 2) {
+  } else if (panel.periodField && values.length >= 2) {
+    // s149 F6b: a first-vs-last trend is only meaningful when the series has a real
+    // temporal order. With periodField the values are sorted ascending by period
+    // (buildMetricSeries), so values[0]→values[last] is earliest→latest. WITHOUT it
+    // the values are in arbitrary ROW order, so first-vs-last narrates row order as a
+    // trend on non-temporal data — a phantom. Report 'flat' rather than invent one.
     trendDirection = deriveTrend(values[0], values[values.length - 1]).trend;
   } else {
     trendDirection = 'flat';

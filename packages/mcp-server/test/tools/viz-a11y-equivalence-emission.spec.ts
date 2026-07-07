@@ -43,12 +43,22 @@ const CARTESIAN_ENCODINGS = { x: { field: 'region' }, y: { field: 'revenue', agg
 // synthesizes titles/description/aria-label/column-order, this is the reachable way to trip the
 // gate through viz.render (the builder cannot invent data for a missing field).
 const MISSING_FIELD_ENCODINGS = { x: { field: 'region' }, y: { field: 'nonexistent' } };
-// A heatmap passes every ERROR rule but trips A11Y-R-11 (warn: <2 key findings) — the warn-never-blocks fixture.
+// A heatmap: two dimensions crossed by a quantitative COLOR measure. Since s149 F6d it
+// reads the COLOR channel as the measure (was: the Y-dimension), so it now SURFACES key
+// findings and PASSES A11Y-R-11 — it no longer warns on itself (the F6d regression guard).
 const HEATMAP_ROWS = [
   { row: 'r1', col: 'c1', val: 5 }, { row: 'r2', col: 'c2', val: 8 },
   { row: 'r1', col: 'c2', val: 3 }, { row: 'r2', col: 'c1', val: 6 },
 ];
 const HEATMAP_ENCODINGS = { x: { field: 'row' }, y: { field: 'col' }, color: { field: 'val' } };
+// A bar whose measure field is present in every row but NON-NUMERIC → the analysis finds no
+// numeric insights → A11Y-R-11 (warn, <2 key findings) with every ERROR rule still passing.
+// The warn-never-blocks fixture (a genuine data-quality warn, replacing the s149-F6d-fixed
+// heatmap self-warn).
+const WARN_TRIP_ROWS = [
+  { region: 'North', grade: 'low' }, { region: 'South', grade: 'mid' }, { region: 'East', grade: 'high' },
+];
+const WARN_TRIP_ENCODINGS = { x: { field: 'region' }, y: { field: 'grade' } };
 
 // The error-severity rule ids — the set the gate enforces. Default builder output must pass ALL.
 const ERROR_RULE_IDS = [
@@ -127,13 +137,23 @@ describe('viz.render a11yEquivalence GATE (default-ON, m04)', () => {
     expect(off.warnings).toEqual(on.warnings);
   });
 
-  it('warn-severity rules NEVER block — a heatmap tripping A11Y-R-11 stays status:ok with a warning', async () => {
-    const out = await render({ rows: HEATMAP_ROWS, chartType: 'heatmap', encodings: HEATMAP_ENCODINGS });
+  it('warn-severity rules NEVER block — a spec tripping A11Y-R-11 stays status:ok with a warning', async () => {
+    const out = await render({ rows: WARN_TRIP_ROWS, chartType: 'bar', encodings: WARN_TRIP_ENCODINGS });
     expect(out.status).toBe('ok');
     expect(out.errors).toBeUndefined();
     const a11yWarnings = out.warnings.filter((w) => w.code.startsWith('OODS-A11Y-'));
     expect(a11yWarnings.some((w) => w.code === 'OODS-A11Y-A11Y-R-11')).toBe(true);
     expect(a11yWarnings.every((w) => w.severity === 'warning')).toBe(true);
+  });
+
+  it('s149 F6d: a heatmap PASSES A11Y-R-11 — it reads COLOR as the measure and no longer warns on itself', async () => {
+    // Pre-F6d resolvePrimaryBindings analyzed the Y-dimension as the measure → zero key
+    // findings → the heatmap tripped its OWN A11Y-R-11 warn. Reading the COLOR channel as
+    // the measure surfaces maxima/minima, so the default heatmap is now clean.
+    const out = await render({ rows: HEATMAP_ROWS, chartType: 'heatmap', encodings: HEATMAP_ENCODINGS });
+    expect(out.status).toBe('ok');
+    const a11yWarnings = out.warnings.filter((w) => w.code.startsWith('OODS-A11Y-'));
+    expect(a11yWarnings.some((w) => w.code === 'OODS-A11Y-A11Y-R-11')).toBe(false);
   });
 
   it('ECharts-primary path is NOT gated even with the flag ON (cartesian-only scope)', async () => {

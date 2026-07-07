@@ -87,6 +87,32 @@ describe('@oods/viz-core — computeKpi', () => {
     const panel = kpiPanel({ aggregate: 'average', comparison: { basis: 'window', window: 2 }, threshold: { direction: 'above', value: 100, anomaly: 'stddev_outlier' } });
     expect(JSON.stringify(computeKpi(panel, SERIES))).toBe(JSON.stringify(computeKpi(panel, SERIES)));
   });
+
+  // s149 F6b: a KPI with NO periodField and NO comparison basis has no real temporal
+  // (or comparative) axis — its values are in arbitrary ROW order. Deriving a
+  // first-vs-last "trend" there narrates row order as a trend on non-temporal data
+  // (Meridian F6b). Suppress it: report 'flat' rather than invent a direction. The
+  // baseline branch (comparison present) and the periodField branch are unaffected.
+  describe('F6b — no phantom trend without a temporal or comparison axis', () => {
+    it('no periodField + no comparison => flat, even when row-order first<last', () => {
+      // SERIES row order is 100 -> ... -> 200; pre-F6b this reported 'increasing'.
+      expect(computeKpi(kpiPanel({ aggregate: 'sum' }), SERIES).trendDirection).toBe('flat');
+    });
+
+    it('no periodField + no comparison => flat, even when row-order first>last', () => {
+      expect(computeKpi(kpiPanel({ aggregate: 'sum' }), rows([200, 50])).trendDirection).toBe('flat');
+    });
+
+    it('a comparison basis STILL trends without periodField (baseline branch unchanged)', () => {
+      const r = computeKpi(kpiPanel({ aggregate: 'latest', comparison: { basis: 'target', value: 150 } }), SERIES);
+      expect(r.trendDirection).toBe('increasing');
+    });
+
+    it('periodField STILL trends earliest->latest without a comparison (real temporal axis)', () => {
+      // UNSORTED sorts to [Jan 100, Feb 150, Mar 200] -> genuine increasing trend.
+      expect(computeKpi(periodPanel(), UNSORTED).trendDirection).toBe('increasing');
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------

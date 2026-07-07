@@ -89,13 +89,27 @@ function colorFieldName(encodings: VizRenderInput['encodings']): string | undefi
 // declared-intent-vs-outcome mismatch the agent should see rather than have silently
 // swallowed. `compiledColorRange` is scale.range read off the compiled Vega-Lite spec,
 // so "applied" is measured from the real output, not re-inferred.
-function cartesianColorRangeWarnings(
+// Exported for unit testing (s149 #853b): the empty-range early-return closes the
+// misattribution coupled with #853a, but `range: []` is AJV-unreachable through `handle`
+// (schema minItems:2), so it can only be exercised by calling this pure fn directly.
+export function cartesianColorRangeWarnings(
   range: string[],
   colorField: string | undefined,
   rows: ReadonlyArray<Record<string, unknown>>,
   compiledColorRange: unknown,
 ): VizRenderOutput['warnings'] {
   const warnings: VizRenderOutput['warnings'] = [];
+
+  // s149 #853b (coupled with #853a): an EMPTY range is a no-op override — the bake
+  // step-aside is now length-based, so `range: []` bakes the default OODS palette
+  // normally. Return before the rangeApplied check: with the palette baked,
+  // compiledColorRange (6 slots) !== range.length (0) would make rangeApplied false and
+  // fire V145, FALSELY blaming a "continuous scale" for a categorical one. There is
+  // nothing to warn about when no colors were actually supplied. (AJV minItems:2 makes
+  // range:[] unreachable over MCP; this guards the direct-handler / viz-core path.)
+  if (range.length === 0) {
+    return warnings;
+  }
 
   // V144 (belt-and-suspenders to the schema pattern): a non-hex entry. AJV is the
   // primary gate; this defends the direct-handler path so a non-hex range that would

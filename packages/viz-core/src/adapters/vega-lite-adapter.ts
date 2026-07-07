@@ -292,10 +292,16 @@ function convertBinding(
   if (
     channel === 'color' &&
     (definition.type === 'nominal' || definition.type === 'ordinal') &&
-    !binding.range &&
+    !binding.range?.length &&
     palette &&
     palette.length > 0
   ) {
+    // s149 #853a: length-based, symmetric with the F5 range-write guard below
+    // (`binding.range && binding.range.length > 0`). `!binding.range` alone stepped
+    // aside for an EMPTY `range: []` too, so neither write fired and the OODS palette
+    // was silently dropped (a dead-zone). `?.length` bakes on both no-range and empty-
+    // range, so exactly one of the two writes fires in every case. Do NOT rewrite as
+    // `=== undefined`: that reopens the `[]` dead-zone.
     const existingScale = (definition.scale as Record<string, unknown> | undefined) ?? {};
     definition.scale = { ...existingScale, range: [...palette] };
   }

@@ -37,7 +37,7 @@ describe('vega-lite-adapter — OODS categorical palette bake (s138 m02; mutatio
       chartType: 'bar',
       encodings: { x: { field: 'quarter' }, y: { field: 'revenue', aggregate: 'sum' }, color: { field: 'region' } },
     } as never);
-    const compiled = toVegaLiteSpec(spec) as Record<string, unknown> & {
+    const compiled = toVegaLiteSpec(spec) as unknown as {
       encoding?: { color?: { type?: string; scale?: { range?: unknown } } };
     };
 
@@ -51,13 +51,31 @@ describe('vega-lite-adapter — OODS categorical palette bake (s138 m02; mutatio
     expect(compiled.encoding?.color?.scale?.range).toEqual(resolveCategoricalPalette(spec));
   });
 
+  it('s149 #853a: an EMPTY range:[] on a nominal color channel still bakes the palette (no dead-zone)', () => {
+    // Pre-#853a the bake guard was `!binding.range`, which stepped aside for an empty
+    // `range: []` too, while the F5 range-write guard (length>0) also skipped it — so
+    // NEITHER write fired and the OODS palette was silently dropped. The length-based
+    // `!binding.range?.length` guard bakes on empty-range, so the categorical channel
+    // still gets its colors. Fails here (scale.range undefined) if the guard regresses.
+    const { spec } = buildVizSpecFromRows({
+      rows: ROWS,
+      chartType: 'bar',
+      encodings: { x: { field: 'quarter' }, y: { field: 'revenue', aggregate: 'sum' }, color: { field: 'region', range: [] } },
+    } as never);
+    const compiled = toVegaLiteSpec(spec) as unknown as {
+      encoding?: { color?: { type?: string; scale?: { range?: unknown } } };
+    };
+    expect(compiled.encoding?.color?.type).toBe('nominal');
+    expect(compiled.encoding?.color?.scale?.range).toEqual(OODS_CATEGORICAL_6);
+  });
+
   it('single-series: NO color encoding bakes categorical-01 as mark.color', () => {
     const { spec } = buildVizSpecFromRows({
       rows: ROWS,
       chartType: 'bar',
       encodings: { x: { field: 'region' }, y: { field: 'revenue', aggregate: 'sum' } },
     } as never);
-    const compiled = toVegaLiteSpec(spec) as Record<string, unknown> & {
+    const compiled = toVegaLiteSpec(spec) as unknown as {
       encoding?: { color?: unknown };
       mark?: { color?: unknown };
     };
@@ -82,7 +100,7 @@ describe('vega-lite-adapter — OODS categorical palette bake (s138 m02; mutatio
         color: { field: 'revenue', scale: 'linear' },
       },
     } as never);
-    const compiled = toVegaLiteSpec(spec) as Record<string, unknown> & {
+    const compiled = toVegaLiteSpec(spec) as unknown as {
       encoding?: { color?: { type?: string; scale?: { range?: unknown } } };
     };
     expect(compiled.encoding?.color?.type).toBe('quantitative');

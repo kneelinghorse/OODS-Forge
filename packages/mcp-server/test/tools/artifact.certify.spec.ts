@@ -336,6 +336,44 @@ describe('artifact.certify — cross-tool contentHash identity with viz.render (
     expect(certified.status).toBe('ok');
     expect(certified.determinism?.contentHash).toBe(rendered.contentHash);
   });
+
+  it("#853c (s149): a provably-failing gray agent range → certify HONEST-FAIL (conformant:false, contrast:'fail') on viz.render's own normalizedSpec", async () => {
+    // The end-to-end honest-fail limb (s147 fork B): certify stays a PURE READER, so a
+    // gray range that reads-as-gray on the #FCFCFD canvas truthfully FAILS the contrast
+    // pillar. Pre-#853c the honest-fail was pinned only engine-level (hand-built IR) plus
+    // a hash-only e2e — the vizRender→certify conformant:false limb was UNGUARDED against
+    // a metadata-only-normalizedSpec refactor that could collapse the graded slot count
+    // and silently pass a gray (#1120c). ROWS3 has 3 distinct regions so BOTH range slots
+    // are graded (the fail is not masked by a distinctCount→1 cardinality collapse).
+    // Confirm the graded mechanism: both grays are hardened <3:1 on the canvas (NOT
+    // #888888 ≈3.1:1 which would sit above the role-C floor).
+    expect(contrastRatio('#B8B8B8', '#FCFCFD')).toBeLessThan(3);
+    expect(contrastRatio('#C0C0C0', '#FCFCFD')).toBeLessThan(3);
+
+    const rendered = await vizRender({
+      rows: ROWS3,
+      chartType: 'bar',
+      encodings: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue', aggregate: 'sum' as const },
+        color: { field: 'region', range: ['#B8B8B8', '#C0C0C0'] },
+      },
+      output: { includeNormalizedSpec: true },
+    } as never);
+    expect(rendered.status).toBe('ok');
+    expect(rendered.normalizedSpec).toBeDefined();
+    // The gray range reached the IR — so certify grades the RENDERED bytes, not an intent.
+    expect((rendered.normalizedSpec as Record<string, any>).encoding?.color?.range).toEqual([
+      '#B8B8B8',
+      '#C0C0C0',
+    ]);
+
+    // Positive #110 witness: certify used purely as a READER truthfully fails the gray range.
+    const certified = await certify(rendered.normalizedSpec);
+    expect(certified.status).toBe('ok');
+    expect(certified.pillars?.contrast).toBe('fail');
+    expect(certified.conformant).toBe(false);
+  });
 });
 
 // s139 m02/m03 — GRADE THE RENDERED BYTES (dissolve the classifier-mismatch false-pass).

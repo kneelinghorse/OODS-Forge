@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { validateNormalizedVizSpec } from '@oods/viz-core';
 import { getAjv } from '../lib/ajv.js';
 import type { VizRenderInput } from '../schemas/generated.js';
-import { handle } from './viz.render.js';
+import { handle, cartesianColorRangeWarnings } from './viz.render.js';
 import { createValueRef, resolveValueRef } from './schema-ref.js';
 import { getDefinition, isRetryable } from '../errors/registry.js';
 
@@ -368,6 +368,38 @@ describe('viz.render handler — F5 explicit color range validation (sprint-147 
     };
     expect(validateInput(nonHex)).toBe(false);
     expect(validateInput(single)).toBe(false);
+  });
+});
+
+// s149 #853b (coupled with #853a): the empty-range early-return in the warning fn.
+// `range: []` is AJV-unreachable through `handle` (schema minItems:2), so these call the
+// exported PURE fn directly to pin the invariant — V145 fires ONLY for a genuinely
+// continuous scale, never as a false positive once #853a has baked the palette.
+describe('viz.render — cartesianColorRangeWarnings V145 misattribution (s149 #853b)', () => {
+  const ROWS3 = [{ region: 'N' }, { region: 'S' }, { region: 'E' }];
+  // What #853a bakes for an empty range: the fixed 6-slot OODS palette.
+  const BAKED_6 = ['#416CD9', '#3E44BE', '#279669', '#B78827', '#CA4948', '#993B00'];
+
+  it('empty range => no warnings even when the palette was baked (no false V145)', () => {
+    // Post-#853a, range:[] bakes the 6-slot palette, so compiledColorRange has 6 entries
+    // while range has 0. Without the early-return, rangeApplied would be false and V145
+    // would fire, FALSELY blaming a continuous scale for a baked categorical one.
+    expect(cartesianColorRangeWarnings([], 'region', ROWS3, BAKED_6)).toEqual([]);
+  });
+
+  it('a genuinely continuous scale (range non-empty, NOT applied) still fires V145', () => {
+    // The invariant the memo protects: V145's "continuous scale" claim is made only when
+    // a categorical range truly was not applied (gradient) — compiledColorRange undefined.
+    const w = cartesianColorRangeWarnings(['#1F6FEB', '#D1242F'], 'region', ROWS3, undefined);
+    const v145 = w.find((x) => x.code === 'OODS-V145');
+    expect(v145).toBeDefined();
+    expect(v145?.message).toContain('continuous');
+  });
+
+  it('an APPLIED categorical range fires no V145 (range === compiled scale.range)', () => {
+    const applied = ['#1F6FEB', '#D1242F'];
+    const w = cartesianColorRangeWarnings(applied, 'region', [{ region: 'N' }, { region: 'S' }], applied);
+    expect(w.find((x) => x.code === 'OODS-V145')).toBeUndefined();
   });
 });
 

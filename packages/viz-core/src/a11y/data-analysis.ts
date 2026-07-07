@@ -128,9 +128,20 @@ function resolvePrimaryBindings(spec: NormalizedVizSpec): {
   const uniqueMarks = [...new Set(normalizedMarks.filter((mark) => mark !== 'unknown'))];
   const mark = uniqueMarks.length === 1 ? uniqueMarks[0] : uniqueMarks.length > 1 ? 'mixed' : 'unknown';
 
+  // s149 F6d (fork-C): a MarkRect heatmap encodes its MEASURE on the COLOR channel —
+  // X and Y are BOTH dimensions. The default measure=Y read then analyzes the Y-dimension
+  // (a category) as the measure, so toNumber fails on every row, dataPoints is empty, and
+  // the chart surfaces zero key findings — tripping its OWN A11Y-R-11 warn (≥3 rows must
+  // surface ≥2 findings). Read the measure from COLOR for a heatmap so the analysis runs on
+  // the real quantitative values; every other chart keeps Y as the measure.
+  const isHeatmapRect = spec.marks.length > 0 && spec.marks.every((m) => m.trait === 'MarkRect');
+
   const dimensionBinding = resolveBinding(spec, 'x');
-  const measureBinding = resolveBinding(spec, 'y');
-  const colorBinding = resolveBinding(spec, 'color');
+  const measureBinding = isHeatmapRect ? resolveBinding(spec, 'color') : resolveBinding(spec, 'y');
+  // On a heatmap COLOR IS the measure, not a categorical series — leaving colorField set
+  // would list every measure value as a "color category" finding. Drop it so the narrative
+  // describes maxima/minima/total of the measure instead.
+  const colorBinding = isHeatmapRect ? undefined : resolveBinding(spec, 'color');
   const sizeBinding = resolveBinding(spec, 'size');
 
   return {

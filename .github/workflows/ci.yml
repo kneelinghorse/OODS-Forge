@@ -178,7 +178,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Validate design tokens
-        run: pnpm run tokens:validate
+        # s149 #842: the COMPOSITE `tokens-validate` (hyphen), not `tokens:validate`
+        # (colon = transform --check ONLY). The composite also runs lint-semantic,
+        # guardrails --quiet, and validate-viz-scales — the viz-scale guardrail that
+        # otherwise never ran in this job (it reached CI only via the coverage job's
+        # root-vitest copy, so a red guardrail here would have been invisible).
+        run: pnpm run tokens-validate
 
   diagnostics-schema:
     name: diagnostics-schema
@@ -605,6 +610,13 @@ jobs:
       - name: Build packages
         run: pnpm run build:packages
 
+      # s149 #832 — LOAD-BEARING, DO NOT DROP: this single line is the ONLY CI gate for
+      # viz-core src specs (packages/viz-core/src/**/*.spec.ts). The ROOT vitest 'core'
+      # project (vitest.config.ts) does NOT glob packages/viz-core/src/**, so the colocated
+      # mutation/tripwire guards — oods-vega-config.spec.ts (chrome + F6c rect-only),
+      # oods-echarts-chrome-bake.spec.ts, vega-lite-adapter.spec.ts (palette bake + #853a),
+      # fallback-palette-v146.spec.ts (#864/#869) — fire in CI SOLELY here. Remove this and
+      # they go dark while still "present" in the tree.
       - name: Run @oods/viz-core suite (profiler + recommender + golden profiles)
         run: pnpm --filter @oods/viz-core test
 

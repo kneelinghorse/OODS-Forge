@@ -148,7 +148,7 @@ export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<strin
     if (!panel) {
       continue;
     }
-    cells.push(await renderPanelCell(panel, placementById.get(id), resolvedTokens, tableData?.get(id), dataQualityField));
+    cells.push(await renderPanelCell(panel, placementById.get(id), columns, resolvedTokens, tableData?.get(id), dataQualityField));
   }
 
   const docTitle = title ?? 'Dashboard';
@@ -182,9 +182,18 @@ export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<strin
   return lines.join('\n') + '\n';
 }
 
+// s149 F6a (Approach B): the nominal px budget the abstract grid maps onto when sizing
+// a chart panel's SVG to its span. Width scales with the panel's column fraction
+// (p.w/columns), height with its row span (p.h) — both deterministic, export-only. So a
+// 6/12 × 2-row chart renders wide-and-short (filling its cell) instead of at Vega's
+// intrinsic narrow-tall step width. Applied only on the emitter clone (never panel.spec).
+const NOMINAL_DASHBOARD_WIDTH_PX = 1200;
+const NOMINAL_ROW_HEIGHT_PX = 160;
+
 async function renderPanelCell(
   panel: PanelResult,
   placement: Placement | undefined,
+  columns: number,
   tokens: Readonly<Record<string, string>> | undefined,
   table: ChartTableData | undefined,
   dataQualityField: string | undefined,
@@ -199,7 +208,16 @@ async function renderPanelCell(
   }
   // chart panel: a non-empty `spec` is a Vega-Lite spec we can render to SVG.
   if (panel.spec && Object.keys(panel.spec).length > 0) {
-    const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { tokens });
+    // s149 F6a: size the SVG to the panel's grid span (Approach B). Only when we have a
+    // placement + a positive column count; otherwise fall back to Vega's intrinsic size.
+    const dims =
+      placement && columns > 0
+        ? {
+            width: Math.round((placement.w / columns) * NOMINAL_DASHBOARD_WIDTH_PX),
+            height: placement.h * NOMINAL_ROW_HEIGHT_PX,
+          }
+        : {};
+    const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { tokens, ...dims });
     return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
   }
   // ECharts-primary (geo): empty spec + echartsSpec -> a11y-described placeholder.

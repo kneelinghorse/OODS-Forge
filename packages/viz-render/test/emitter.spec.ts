@@ -41,6 +41,12 @@ const BREAKDOWN_SPEC: VegaLiteSpec = {
   height: 200,
 };
 
+/** The opening `<svg ...>` tag (where the root width/height/viewBox live). */
+const svgTag = (svg: string): string => svg.slice(0, svg.indexOf('>') + 1);
+/** Read a numeric attribute off the root svg tag. */
+const dim = (svg: string, attr: string): number =>
+  Number(svgTag(svg).match(new RegExp(`\\b${attr}="(\\d+)"`))?.[1]);
+
 describe('renderVegaLiteToSvg', () => {
   it('renders a Vega-Lite spec to an SVG string (headless, no DOM)', async () => {
     const svg = await renderVegaLiteToSvg(TREND_SPEC);
@@ -112,6 +118,42 @@ describe('renderVegaLiteToSvg', () => {
     // arithmetic (font-independent) and vega is lockfile-pinned.
     const svg = await renderVegaLiteToSvg(TREND_SPEC);
     expect(svg).toMatchSnapshot();
+  });
+
+  it('s149 F6a: width/height option resizes the SVG to the target box (autosize fit) without mutating the spec', async () => {
+    // The dashboard export passes span-derived dims so a chart fills its grid cell
+    // instead of Vega's intrinsic step size. The option MUST change the rendered
+    // bytes (proving it is applied, not ignored) and MUST NOT mutate the caller's spec.
+    const before = JSON.stringify(TREND_SPEC);
+    const intrinsic = await renderVegaLiteToSvg(TREND_SPEC);
+    const sized = await renderVegaLiteToSvg(TREND_SPEC, { width: 600, height: 320 });
+    expect(JSON.stringify(TREND_SPEC)).toBe(before); // emitter-side clone: spec untouched
+    expect(sized).not.toBe(intrinsic);
+    // autosize:'fit' fits the WHOLE chart into the target box, so the root <svg> is the
+    // requested width/height plus Vega's fixed 5px padding per side (600+10 / 320+10) —
+    // the "fills its span, wide-and-short" outcome vs the intrinsic ~356×256 step size.
+    expect(dim(sized, 'width')).toBe(610);
+    expect(dim(sized, 'height')).toBe(330);
+    // ...and materially wider than the intrinsic render it replaces (span-filling).
+    expect(dim(sized, 'width')).toBeGreaterThan(dim(intrinsic, 'width'));
+  });
+
+  it('s149 F6a: the width/height option is deterministic (byte-stable run-to-run)', async () => {
+    const a = await renderVegaLiteToSvg(BREAKDOWN_SPEC, { width: 600, height: 320 });
+    const b = await renderVegaLiteToSvg(BREAKDOWN_SPEC, { width: 600, height: 320 });
+    expect(a).toBe(b);
+  });
+
+  it('s149 F6a: a single dim override falls back to the spec value for the other axis', async () => {
+    // width/height are independent options: passing one overrides that axis and leaves
+    // the other at the spec's own value (TREND_SPEC ships 300×200). Only the overridden
+    // axis moves off its intrinsic (5px-padded) size.
+    const svgW = svgTag(await renderVegaLiteToSvg(TREND_SPEC, { width: 600 }));
+    expect(svgW).toMatch(/\bwidth="610"/);
+    expect(svgW).toMatch(/\bheight="210"/); // spec height 200 + 10 padding, unchanged
+    const svgH = svgTag(await renderVegaLiteToSvg(TREND_SPEC, { height: 320 }));
+    expect(svgH).toMatch(/\bwidth="310"/); // spec width 300 + 10 padding, unchanged
+    expect(svgH).toMatch(/\bheight="330"/);
   });
 
   it('rejects a spec that cannot be compiled', async () => {
