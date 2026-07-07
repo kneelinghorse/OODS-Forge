@@ -24,6 +24,7 @@ import {
   analyzeSpatial,
   buildFromIntent,
   buildVizSpecFromRows,
+  convertToEChartsTreeData,
   describeMeasureContext,
   generateAccessibleTable,
   generateNarrativeSummary,
@@ -139,6 +140,116 @@ function cartesianColorRangeWarnings(
   }
 
   return warnings;
+}
+
+// F3 never-cycle WARN (sprint-148 m03, OODS-V146). A categorical ECharts-primary
+// chart colors each distinct group by palette[index % palette.length]; when the
+// distinct-group count exceeds the baked palette, two+ groups silently share a color
+// (CIEDE2000 = 0 between two arcs) — invisible to certify's s141 data-independent
+// palette-constant grade. Emit ONE V146 WARN. Mirrors cartesianColorRangeWarnings
+// (F5): all WARN, the chart still renders. READ-ONLY on echartsOption, so contentHash
+// (:609) / specRef (:600) stay byte-unchanged.
+function neverCycleWarnings(
+  chartType: EChartsPrimaryType,
+  branchData: unknown,
+  echartsOption: Record<string, unknown>,
+): VizRenderOutput['warnings'] {
+  // Geo (choropleth/bubble_map/flow_map) has no categorical palette cycling: it colors
+  // via visualMap and carries NO top-level color:palette. Guard by chartType FIRST and
+  // bail BEFORE reading echartsOption.color — an unconditional (echartsOption.color as
+  // string[]).length on geo is undefined.length and would throw (amendment 2).
+  if (chartType === 'choropleth' || chartType === 'bubble_map' || chartType === 'flow_map') {
+    return [];
+  }
+
+  // The distinct-color-slot count is NOT the pre-computed nodeCount (viz.render.ts:488)
+  // for 3 of 5 types — it is the per-type cardinality the ADAPTER actually colors by
+  // (memo §2).
+  let count: number;
+  if (chartType === 'chord' || chartType === 'sankey') {
+    // chord/sankey color every node by index (chord buildNodes / sankey transformNodes).
+    count = (branchData as SankeyInput).nodes.length;
+  } else if (chartType === 'force_graph') {
+    // force_graph colors by distinct GROUP (graph-adapter buildCategories over
+    // extractCategoryNames — a Set of non-empty strings), NOT node count; replicated
+    // inline (memo m01: zero viz-core churn). No groups -> the adapter applies no
+    // per-category palette color, so there is nothing to recycle: skip.
+    const groups = new Set<string>();
+    for (const node of (branchData as NetworkInput).nodes) {
+      const group = node.group;
+      if (typeof group === 'string' && group.length > 0) {
+        groups.add(group);
+      }
+    }
+    if (groups.size === 0) {
+      return [];
+    }
+    count = groups.size;
+  } else {
+    // treemap/sunburst color the FIRST-VISIBLE LEVEL (assignColorsToData): a single root
+    // with children colors the children; otherwise it colors each top-level node. Count
+    // that same level over the exported convertToEChartsTreeData — drift-safe (the count
+    // tracks whatever the adapter builds), NOT the total descendant count.
+    const tree = convertToEChartsTreeData(branchData as HierarchyInput);
+    count =
+      tree.length === 1 && Array.isArray(tree[0].children) && (tree[0].children as unknown[]).length > 0
+        ? (tree[0].children as unknown[]).length
+        : tree.length;
+  }
+
+  // Threshold = the palette the adapter actually baked onto option.color (6 in prod;
+  // the no-token fallback cycles at 8/9). Reading the applied length is robust to both
+  // (NOT a hardcoded 6, NOT getVizScaleTokens('categorical').length — amendment 4).
+  const palette = echartsOption.color;
+  const threshold = Array.isArray(palette) ? palette.length : 0;
+  if (threshold > 0 && count > threshold) {
+    return [
+      {
+        code: 'OODS-V146',
+        message: `Categorical palette recycles: ${count} distinct color groups exceed the ${threshold}-slot OODS palette, so palette[i % ${threshold}] repeats a color (two+ groups become indistinguishable). Reduce the categories to ${threshold} or fewer, or expect colliding colors.`,
+        severity: 'warning',
+      },
+    ];
+  }
+  return [];
+}
+
+// F4 link integrity (sprint-148 m04, chord + force_graph). Pure helpers over the
+// INPUT links. A dangling ref names a node absent from the key set (FAIL-LOUD V147);
+// a duplicate is two links with the same DIRECTED (source,target) pair (WARN V148) —
+// chord is directed, so A->B and B->A are distinct (a reciprocal-trade chord is valid
+// data, not a duplicate). The dedup key is collision-safe via JSON.stringify (NOT
+// ECharts' naive `${source}-${target}` concat, which collides when a name contains '-').
+interface LinkRef {
+  readonly source: string;
+  readonly target: string;
+  readonly [key: string]: unknown;
+}
+
+function findDanglingLinks(nodeKeys: ReadonlySet<string>, links: readonly LinkRef[]): LinkRef[] {
+  return links.filter((link) => !nodeKeys.has(link.source) || !nodeKeys.has(link.target));
+}
+
+function findDuplicateLinks(
+  links: readonly LinkRef[],
+): Array<{ source: string; target: string; count: number }> {
+  const counts = new Map<string, number>();
+  for (const link of links) {
+    const key = JSON.stringify([link.source, link.target]);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  // One entry per duplicated pair, emitted at the pair's FIRST appearance (input order).
+  const emitted = new Set<string>();
+  const duplicates: Array<{ source: string; target: string; count: number }> = [];
+  for (const link of links) {
+    const key = JSON.stringify([link.source, link.target]);
+    const count = counts.get(key) ?? 0;
+    if (count > 1 && !emitted.has(key)) {
+      emitted.add(key);
+      duplicates.push({ source: link.source, target: link.target, count });
+    }
+  }
+  return duplicates;
 }
 
 export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
@@ -480,6 +591,37 @@ function renderEChartsPrimary(
     );
   }
 
+  // F4 link integrity (sprint-148 m04): chord + force_graph ONLY, PRE-DISPATCH. A link
+  // naming a non-existent node FAILS LOUD (V147 — never build an option over a broken
+  // ref); an exact duplicate directed link WARNs (V148, surfaced below on the combined
+  // warnings). chord keys nodes by `name`, force_graph by `id`. sankey is OUT of F4
+  // scope (memo §6): it keeps its adapter throw -> V126 (:617) and emits NO V148.
+  let duplicateLinkWarnings: VizRenderOutput['warnings'] = [];
+  if (chartType === 'chord' || chartType === 'force_graph') {
+    const graph = branchData as { nodes?: unknown; links?: unknown };
+    const nodes = (Array.isArray(graph.nodes) ? graph.nodes : []) as Array<Record<string, unknown>>;
+    const links = (Array.isArray(graph.links) ? graph.links : []) as LinkRef[];
+    const nodeKey = chartType === 'chord' ? 'name' : 'id';
+    const nodeKeys = new Set(nodes.map((node) => String(node[nodeKey])));
+    const dangling = findDanglingLinks(nodeKeys, links);
+    if (dangling.length > 0) {
+      const first = dangling[0];
+      const missing = !nodeKeys.has(first.source) ? first.source : first.target;
+      return errorOut(
+        'OODS-V147',
+        `Link "${first.source}" -> "${first.target}" references a non-existent ${chartType} node "${missing}"${dangling.length > 1 ? ` (${dangling.length} links reference a missing node)` : ''}. Every link source/target must match a node ${nodeKey}. Add the node or fix the link.`,
+        compact,
+        false,
+      );
+    }
+    // Surviving links (no dangling ref reached here): duplicate directed pairs WARN.
+    duplicateLinkWarnings = findDuplicateLinks(links).map((dup) => ({
+      code: 'OODS-V148',
+      message: `Duplicate link "${dup.source}" -> "${dup.target}" appears ${dup.count} times. A directed (source, target) pair must be unique — duplicates double-count the ${chartType === 'chord' ? 'ribbon' : 'edge'}. Merge them into one link.`,
+      severity: 'warning' as const,
+    }));
+  }
+
   try {
     const spec = buildEChartsPrimarySpec(input, chartType, config);
 
@@ -541,6 +683,11 @@ function renderEChartsPrimary(
           }))
         : [];
 
+    // F3 never-cycle WARN (sprint-148 m03): one V146 when the distinct color-group
+    // count exceeds the palette the adapter baked onto echartsOption.color. Read-only
+    // on echartsOption, so contentHash/specRef below stay byte-identical.
+    const cycleWarnings = neverCycleWarnings(chartType, branchData, echartsOption);
+
     const out: VizRenderOutput = {
       status: 'ok',
       chartType,
@@ -551,7 +698,7 @@ function renderEChartsPrimary(
       spec: {},
       echartsSpec: echartsOption as unknown as VizRenderOutput['echartsSpec'],
       a11yDescription: spec.a11y.description,
-      warnings: geoWarnings,
+      warnings: [...geoWarnings, ...cycleWarnings, ...duplicateLinkWarnings],
       output: {
         compact,
         echarts: true,

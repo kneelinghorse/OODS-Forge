@@ -942,3 +942,251 @@ describe('viz.render handler — structured a11y over MCP (output.includeA11y)',
     expect(on.a11yDescription).toEqual(off.a11yDescription);
   });
 });
+
+// sprint-148 (F3 + F4) — Meridian "chord correctness". F3 = a never-cycle WARN
+// (OODS-V146) when a categorical ECharts-primary chart has MORE distinct color groups
+// than the 6-slot OODS palette (the adapter's palette[i % 6] silently repeats a color).
+// F4 = chord + force_graph link integrity: a dangling node ref FAILS LOUD (V147), an
+// exact duplicate DIRECTED link WARNs (V148). All ADDITIVE — the echartsSpec/contentHash
+// are byte-unchanged; only warnings[] grow, and only on the new >6 / broken-ref inputs.
+const asWarn = (out: VizRenderOutput, code: string) => out.warnings.filter((w) => w.code === code);
+// Specific-code membership across either warnings (ok) or errors (error) — amendment 3
+// pins the SPECIFIC code and NEVER the broad `code.startsWith('OODS-V14')` prefix filter.
+const hasCode = (out: VizRenderOutput, code: string) =>
+  (out.status === 'error' ? out.errors ?? [] : out.warnings).some((e) => e.code === code);
+
+describe('viz.render handler — F3 never-cycle WARN (sprint-148)', () => {
+  // 7 first-visible-level siblings under ONE root: treemap/sunburst color THAT level
+  // (assignColorsToData), so this is 7 color slots — not the total node count.
+  const WIDE_TREE = {
+    type: 'adjacency_list',
+    data: [
+      { id: 'root', parentId: null, value: 0, name: 'Root' },
+      ...Array.from({ length: 7 }, (_, i) => ({ id: `c${i}`, parentId: 'root', value: i + 1, name: `C${i}` })),
+    ],
+  };
+  // 7 ring arcs (chord colors every node); directed chain — no dangling, no dupes.
+  const WIDE_CHORD = {
+    nodes: Array.from({ length: 7 }, (_, i) => ({ name: `N${i}` })),
+    links: Array.from({ length: 6 }, (_, i) => ({ source: `N${i}`, target: `N${i + 1}`, value: i + 1 })),
+  };
+  // 7-node sankey DAG (a chain) — sankey colors every node.
+  const WIDE_SANKEY = {
+    nodes: Array.from({ length: 7 }, (_, i) => ({ name: `S${i}` })),
+    links: Array.from({ length: 6 }, (_, i) => ({ source: `S${i}`, target: `S${i + 1}`, value: 10 - i })),
+  };
+  // 7 DISTINCT groups (force_graph colors by group, NOT node count).
+  const WIDE_NETWORK = {
+    nodes: Array.from({ length: 7 }, (_, i) => ({ id: `n${i}`, group: `g${i}` })),
+    links: [{ source: 'n0', target: 'n1' }],
+  };
+
+  it.each<[string, string, unknown]>([
+    ['chord', 'chord', WIDE_CHORD],
+    ['sankey', 'sankey', WIDE_SANKEY],
+    ['force_graph', 'network', WIDE_NETWORK],
+    ['treemap', 'hierarchy', WIDE_TREE],
+    ['sunburst', 'hierarchy', WIDE_TREE],
+  ])('a >6-slot %s WARNs exactly once with OODS-V146 (severity warning) and still renders', async (chartType, branch, data) => {
+    const out = await render({ chartType, [branch]: data });
+    expect(out.status).toBe('ok');
+    expect(validateOutput(out)).toBe(true);
+    const fired = asWarn(out, 'OODS-V146');
+    expect(fired).toHaveLength(1); // ONE V146, not one-per-slot
+    expect(fired[0].severity).toBe('warning');
+    expect(fired[0].message).toContain('recycles');
+    expect(isRetryable('OODS-V146')).toBe(true);
+  });
+
+  it.each<[string, string, unknown]>([
+    ['chord', 'chord', TRADE_CHORD],
+    ['sankey', 'sankey', ENERGY_FLOW],
+    ['force_graph', 'network', SERVICE_MAP],
+    ['treemap', 'hierarchy', ORG_TREE],
+    ['sunburst', 'hierarchy', BUDGET_TREE],
+  ])('a <=6-slot %s does NOT WARN (no OODS-V146) — existing fixtures unaffected', async (chartType, branch, data) => {
+    const out = await render({ chartType, [branch]: data });
+    expect(out.status).toBe('ok');
+    expect(asWarn(out, 'OODS-V146')).toHaveLength(0);
+  });
+
+  // The §2 correctness traps: the pre-computed nodeCount is the WRONG unit for 3/5 types.
+  it('force_graph counts distinct GROUPS, not nodes: 8 nodes across 3 groups does NOT WARN', async () => {
+    const network = {
+      nodes: Array.from({ length: 8 }, (_, i) => ({ id: `n${i}`, group: `g${i % 3}` })),
+      links: [{ source: 'n0', target: 'n1' }],
+    };
+    const out = await render({ chartType: 'force_graph', network });
+    expect(out.status).toBe('ok');
+    expect(asWarn(out, 'OODS-V146')).toHaveLength(0);
+  });
+
+  it('force_graph with NO groups is skipped even with 9 nodes (adapter applies no per-category color)', async () => {
+    const network = {
+      nodes: Array.from({ length: 9 }, (_, i) => ({ id: `n${i}` })),
+      links: [{ source: 'n0', target: 'n1' }],
+    };
+    const out = await render({ chartType: 'force_graph', network });
+    expect(out.status).toBe('ok');
+    expect(asWarn(out, 'OODS-V146')).toHaveLength(0);
+  });
+
+  it('treemap counts first-visible-level siblings, not total descendants: 3 first-level nodes w/ 15 grandchildren does NOT WARN', async () => {
+    const deep = {
+      type: 'adjacency_list',
+      data: [
+        { id: 'root', parentId: null, value: 0, name: 'R' },
+        ...['a', 'b', 'c'].flatMap((p) => [
+          { id: p, parentId: 'root', value: 0, name: p },
+          ...Array.from({ length: 5 }, (_, i) => ({ id: `${p}${i}`, parentId: p, value: 1, name: `${p}${i}` })),
+        ]),
+      ],
+    };
+    const out = await render({ chartType: 'treemap', hierarchy: deep }); // 19 total nodes, 3 first-level
+    expect(out.status).toBe('ok');
+    expect(asWarn(out, 'OODS-V146')).toHaveLength(0);
+  });
+
+  it('geo (choropleth) is guarded by chartType FIRST — no palette read, no V146, no throw (amendment 2)', async () => {
+    const out = await render({
+      chartType: 'choropleth',
+      geo: { geojson: US_STATES, rows: SALES_BY_STATE, join: { dataKey: 'state', featureProperty: 'region' }, valueField: 'sales' },
+    });
+    expect(out.status).toBe('ok');
+    expect(asWarn(out, 'OODS-V146')).toHaveLength(0);
+  });
+
+  // The fire boundary is READ from the baked palette length — NOT hardcoded to 6 and NOT
+  // getVizScaleTokens('categorical').length (amendment 4). Discover the length the adapter
+  // actually bakes, then pin count===len -> no warn (guards a `>` -> `>=` off-by-one, which
+  // no other fixture covers), count===len+1 -> warns, and the message reports that SAME len.
+  it('the V146 boundary equals the BAKED palette length (exactly-at-threshold no-warn; +1 warns; message reports the read length)', async () => {
+    const probe = await render({ chartType: 'chord', chord: TRADE_CHORD });
+    const paletteLen = ((probe.echartsSpec as Record<string, unknown>).color as unknown[]).length;
+    expect(paletteLen).toBeGreaterThan(0);
+    const chordOf = (n: number) => ({
+      nodes: Array.from({ length: n }, (_, i) => ({ name: `N${i}` })),
+      links: [{ source: 'N0', target: 'N1', value: 1 }],
+    });
+    const at = await render({ chartType: 'chord', chord: chordOf(paletteLen) }); // count === threshold
+    expect(asWarn(at, 'OODS-V146')).toHaveLength(0);
+    const over = await render({ chartType: 'chord', chord: chordOf(paletteLen + 1) });
+    const fired = asWarn(over, 'OODS-V146');
+    expect(fired).toHaveLength(1);
+    expect(fired[0].message).toContain(`${paletteLen}-slot`); // threshold derived from the option, not a literal
+    // NOTE: the token-less FALLBACK palette (length 8/9) is a real runtime path amendment 4
+    // guards, but token resolution is environment-global, so it is not exercised in-suite.
+  });
+
+  // F3 is WARN-ONLY (memo §6): fold-into-"Other" is OOS, so the >6 chart still renders EVERY
+  // node with the (recycled) palette — the echartsSpec is unperturbed by the warning (#564).
+  it('the V146 warning is WARN-ONLY: the >6 chart renders ALL arcs on the unchanged palette (no fold, bytes intact)', async () => {
+    const wide = { nodes: Array.from({ length: 7 }, (_, i) => ({ name: `N${i}` })), links: [{ source: 'N0', target: 'N1', value: 1 }] };
+    const out = await render({ chartType: 'chord', chord: wide });
+    const spec = out.echartsSpec as Record<string, any>;
+    expect(spec.series[0].nodes).toHaveLength(7); // all 7 arcs present — NOT folded into "Other"
+    expect(spec.color).toHaveLength(6); // palette recycles, it is not extended
+    expect(asWarn(out, 'OODS-V146')).toHaveLength(1); // and the warning still fired
+  });
+});
+
+describe('viz.render handler — F4 chord + force_graph link integrity (sprint-148)', () => {
+  it('chord: a link to a non-existent node FAILS LOUD with OODS-V147 (retryable), pre-dispatch', async () => {
+    const out = await render({ chartType: 'chord', chord: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'A', target: 'Z', value: 1 }] } });
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V147');
+    expect(out.errors?.[0]?.message).toContain('Z');
+    expect(isRetryable('OODS-V147')).toBe(true);
+    expect(validateOutput(out)).toBe(true);
+  });
+
+  it('force_graph: a link to a non-existent node id FAILS LOUD with OODS-V147', async () => {
+    const out = await render({ chartType: 'force_graph', network: { nodes: [{ id: 'a' }, { id: 'b' }], links: [{ source: 'a', target: 'zzz' }] } });
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V147');
+    expect(validateOutput(out)).toBe(true);
+  });
+
+  // The dangling check ORs source AND target; the SOURCE side + its message branch must
+  // be exercised too (else a regression validating only `target` would pass the suite).
+  it('chord: a SOURCE-side dangling ref FAILS LOUD with OODS-V147 (the message names the missing source)', async () => {
+    const out = await render({ chartType: 'chord', chord: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'ZZ', target: 'A', value: 1 }] } });
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V147');
+    expect(out.errors?.[0]?.message).toContain('ZZ'); // the missing SOURCE, not the valid target
+  });
+
+  it('force_graph: a SOURCE-side dangling ref FAILS LOUD with OODS-V147', async () => {
+    const out = await render({ chartType: 'force_graph', network: { nodes: [{ id: 'a' }, { id: 'b' }], links: [{ source: 'nope', target: 'a' }] } });
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V147');
+    expect(out.errors?.[0]?.message).toContain('nope');
+  });
+
+  it('chord: a duplicate directed link WARNs once with OODS-V148 but still renders', async () => {
+    const out = await render({ chartType: 'chord', chord: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'A', target: 'B', value: 5 }, { source: 'A', target: 'B', value: 3 }] } });
+    expect(out.status).toBe('ok');
+    expect(validateOutput(out)).toBe(true);
+    const v148 = asWarn(out, 'OODS-V148');
+    expect(v148).toHaveLength(1);
+    expect(v148[0].severity).toBe('warning');
+    expect(isRetryable('OODS-V148')).toBe(true);
+  });
+
+  it('chord: a RECIPROCAL pair (A->B and B->A) is DIRECTED-distinct, not a duplicate (no V148)', async () => {
+    const out = await render({ chartType: 'chord', chord: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'A', target: 'B', value: 5 }, { source: 'B', target: 'A', value: 3 }] } });
+    expect(out.status).toBe('ok');
+    expect(hasCode(out, 'OODS-V148')).toBe(false);
+  });
+
+  it('force_graph: a duplicate directed edge WARNs with OODS-V148', async () => {
+    const out = await render({ chartType: 'force_graph', network: { nodes: [{ id: 'a' }, { id: 'b' }], links: [{ source: 'a', target: 'b' }, { source: 'a', target: 'b' }] } });
+    expect(out.status).toBe('ok');
+    expect(asWarn(out, 'OODS-V148')).toHaveLength(1);
+  });
+
+  it('dangling short-circuits duplicate detection: a chord with BOTH a dup and a dangling ref surfaces ONLY V147', async () => {
+    const out = await render({ chartType: 'chord', chord: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'A', target: 'B', value: 1 }, { source: 'A', target: 'B', value: 2 }, { source: 'A', target: 'Z', value: 3 }] } });
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V147');
+    expect(hasCode(out, 'OODS-V148')).toBe(false);
+  });
+
+  it('sankey stays OUT of F4 (§6): a dangling ref keeps its OODS-V126 throw, NOT V147, and emits NO V148', async () => {
+    const out = await render({ chartType: 'sankey', sankey: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'A', target: 'Q', value: 1 }] } });
+    expect(out.status).toBe('error');
+    expect(out.errors?.[0]?.code).toBe('OODS-V126');
+    expect(hasCode(out, 'OODS-V147')).toBe(false);
+    expect(hasCode(out, 'OODS-V148')).toBe(false);
+    expect(validateOutput(out)).toBe(true);
+  });
+
+  it('sankey duplicate links do NOT WARN (§6 — sankey out of the V148 breadth), still renders', async () => {
+    const out = await render({ chartType: 'sankey', sankey: { nodes: [{ name: 'A' }, { name: 'B' }], links: [{ source: 'A', target: 'B', value: 1 }, { source: 'A', target: 'B', value: 2 }] } });
+    expect(out.status).toBe('ok');
+    expect(hasCode(out, 'OODS-V148')).toBe(false);
+  });
+
+  it('collision-safe dedup key: "a-b"->"c" and "a"->"b-c" are DISTINCT pairs (naive `${s}-${t}` concat would collide), no V148', async () => {
+    const out = await render({ chartType: 'force_graph', network: { nodes: [{ id: 'a-b' }, { id: 'c' }, { id: 'a' }, { id: 'b-c' }], links: [{ source: 'a-b', target: 'c' }, { source: 'a', target: 'b-c' }] } });
+    expect(out.status).toBe('ok');
+    expect(hasCode(out, 'OODS-V148')).toBe(false);
+  });
+
+  it('no-new-warning (#564): every existing clean fixture emits zero V146/V147/V148', async () => {
+    const inputs: Array<Record<string, unknown>> = [
+      { chartType: 'chord', chord: TRADE_CHORD },
+      { chartType: 'sankey', sankey: ENERGY_FLOW },
+      { chartType: 'force_graph', network: SERVICE_MAP },
+      { chartType: 'treemap', hierarchy: ORG_TREE },
+      { chartType: 'sunburst', hierarchy: BUDGET_TREE },
+    ];
+    for (const input of inputs) {
+      const out = await render(input);
+      expect(out.status).toBe('ok');
+      for (const code of ['OODS-V146', 'OODS-V147', 'OODS-V148']) {
+        expect(hasCode(out, code)).toBe(false);
+      }
+    }
+  });
+});

@@ -185,6 +185,24 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // a cartesian-only capability (F5). A closed misuse — the type can't grow a color range
   // on retry (use a cartesian chartType) — so retryable:false.
   ['OODS-V145', { code: 'OODS-V145', category: 'validation', message: 'Color range is not supported on this chart type (cartesian color channel only)', retryable: false }],
+  // V146 (sprint-148 m03, F3): a categorical ECharts-primary chart has MORE distinct
+  // color groups than the 6-slot OODS palette, so the adapter's palette[i % 6] silently
+  // repeats a color (CIEDE2000 = 0 between two arcs) — invisible to certify's s141
+  // data-independent palette-constant grade. WARN across all 5 cycling types
+  // (treemap/sunburst/sankey/force_graph/chord); the chart still renders. Recoverable
+  // (reduce the categories, or accept indistinguishable groups) — retryable:true.
+  ['OODS-V146', { code: 'OODS-V146', category: 'validation', message: 'Categorical palette recycles: more distinct color groups than the 6-slot OODS palette', retryable: true }],
+  // V147 (sprint-148 m04, F4): a chord/force_graph link names a node that does not
+  // exist in the node set. FAIL-LOUD (never build an option over a broken ref) —
+  // unlike V145's closed misuse, a dangling ref is a FIXABLE input (add the node or
+  // fix the link), so retryable:true (mirrors the V126/V131 posture, deliberately
+  // unlike V145's retryable:false). sankey keeps its own throw -> V126 (out of F4).
+  ['OODS-V147', { code: 'OODS-V147', category: 'validation', message: 'Link references a non-existent node', retryable: true }],
+  // V148 (sprint-148 m04, F4): a chord/force_graph link duplicates an existing
+  // directed (source,target) pair. ECharts double-counts the arc / corrupts the
+  // stacked ribbon, so WARN (the chart still renders). Recoverable (merge the
+  // duplicates) — retryable:true. chord is DIRECTED, so A->B and B->A are distinct.
+  ['OODS-V148', { code: 'OODS-V148', category: 'validation', message: 'Duplicate link', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
