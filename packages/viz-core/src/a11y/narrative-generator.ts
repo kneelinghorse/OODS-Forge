@@ -3,6 +3,7 @@ import {
   analyzeVizSpec,
   describeDataPoint,
   getEncodingBinding,
+  heatmapColorIsMeasure,
   type VizDataAnalysis,
 } from './data-analysis.js';
 import { formatNumeric, formatPercent, humanize } from './format.js';
@@ -114,13 +115,16 @@ function resolveNarrativeInputs(input: NormalizedVizSpec | AnalysisNarrativeInpu
       measureContext: input.measureContext,
     };
   }
+  const colorIsMeasure = heatmapColorIsMeasure(input);
   return {
     analysis: analyzeVizSpec(input),
     labels: {
       chartLabel: input.name ?? input.a11y.ariaLabel ?? input.id ?? 'This visualization',
-      measureLabel: resolveFieldLabel(input, 'y'),
+      // s150: name the SAME channel the binding read as the measure (color for a real heatmap),
+      // else Y — via the shared predicate so label and values can't diverge (s149 F6d root cause).
+      measureLabel: resolveFieldLabel(input, colorIsMeasure ? 'color' : 'y'),
       dimensionLabel: resolveFieldLabel(input, 'x'),
-      colorLabel: resolveFieldLabel(input, 'color'),
+      colorLabel: colorIsMeasure ? undefined : resolveFieldLabel(input, 'color'),
     },
     narrative: input.a11y.narrative,
     fallbackSummary: input.a11y.description,

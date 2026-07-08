@@ -50,6 +50,9 @@ export interface VizDataAnalysisInput {
   /**
    * Cartesian-only: derive a first→last trend. Non-cartesian rows have no
    * inherent ordering, so the analyzers leave this off (no spurious trend).
+   * s150: analyzeVizSpec ALSO leaves this off for a MarkRect grid (heatmap) — its
+   * row-major melt order is arbitrary and X/Y are both dimensions, so a first→last
+   * read is a phantom trend (the same class F6b suppressed for KPIs).
    */
   readonly computeTrend?: boolean;
   /** Cartesian-only Pearson r; non-cartesian sources leave this undefined. */
@@ -100,6 +103,26 @@ export function buildVizDataAnalysis(input: VizDataAnalysisInput): VizDataAnalys
   } satisfies VizDataAnalysis;
 }
 
+/** s150: a MarkRect grid (heatmap) — X and Y are BOTH dimensions, the melt order is arbitrary. */
+export function isMarkRectGrid(spec: NormalizedVizSpec): boolean {
+  return spec.marks.length > 0 && spec.marks.every((m) => m.trait === 'MarkRect');
+}
+
+/**
+ * s150 (fixes s149 F6d): a heatmap binds its MEASURE to COLOR only when color is a REAL
+ * quantitative measure. Missing/categorical color → false → measure falls back to Y (pre-F6d),
+ * the correct measure for a numeric-Y heatmap, which restores A11Y-R-11. ONE predicate,
+ * evaluated on the SAME spec at BOTH the binding site (resolvePrimaryBindings) and the label
+ * site (narrative-generator.resolveNarrativeInputs), so measure-values and measure-label can
+ * never diverge again (the root cause of the s149 mislabel). Pure: marks + color raw-cell probe.
+ */
+export function heatmapColorIsMeasure(spec: NormalizedVizSpec): boolean {
+  if (!isMarkRectGrid(spec)) return false;
+  const color = getEncodingBinding(spec, 'color');
+  if (!color) return false;
+  return isQuantitativeField(collectRows(spec), color.field);
+}
+
 export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   const bindings = resolvePrimaryBindings(spec);
   const rows = collectRows(spec);
@@ -112,8 +135,12 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     measureField: bindings.measureField,
     colorField: bindings.colorField,
     sizeField: bindings.sizeField,
-    computeTrend: true,
-    correlation: deriveCorrelation(rows, bindings),
+    // s150: a MarkRect grid has NO inherent first→last order (arbitrary row-major melt) and X/Y
+    // are both dimensions, so a first→last trend and an x-vs-measure Pearson r are both spurious
+    // (same phantom class F6b killed for KPIs). Keyed on the RAW grid predicate — order-freeness
+    // is independent of the measure channel, so a numeric-Y fallback heatmap is suppressed too.
+    computeTrend: !isMarkRectGrid(spec),
+    correlation: isMarkRectGrid(spec) ? undefined : deriveCorrelation(rows, bindings),
   });
 }
 
@@ -128,20 +155,21 @@ function resolvePrimaryBindings(spec: NormalizedVizSpec): {
   const uniqueMarks = [...new Set(normalizedMarks.filter((mark) => mark !== 'unknown'))];
   const mark = uniqueMarks.length === 1 ? uniqueMarks[0] : uniqueMarks.length > 1 ? 'mixed' : 'unknown';
 
-  // s149 F6d (fork-C): a MarkRect heatmap encodes its MEASURE on the COLOR channel —
-  // X and Y are BOTH dimensions. The default measure=Y read then analyzes the Y-dimension
-  // (a category) as the measure, so toNumber fails on every row, dataPoints is empty, and
-  // the chart surfaces zero key findings — tripping its OWN A11Y-R-11 warn (≥3 rows must
-  // surface ≥2 findings). Read the measure from COLOR for a heatmap so the analysis runs on
-  // the real quantitative values; every other chart keeps Y as the measure.
-  const isHeatmapRect = spec.marks.length > 0 && spec.marks.every((m) => m.trait === 'MarkRect');
+  // s150 (fixes s149 F6d): a MarkRect heatmap encodes its MEASURE on the COLOR channel — X and
+  // Y are BOTH dimensions — but ONLY when color is a real quantitative measure. s149 gated on
+  // marks alone, so a numeric-Y heatmap with categorical/absent color read the (non-numeric)
+  // color as the measure, emptied the analysis, and NEWLY tripped its OWN A11Y-R-11 warn. P1
+  // heatmapColorIsMeasure adds the color-exists + color-numeric conditions: true → measure=COLOR
+  // (the real quantitative values); false → fall back to Y (pre-F6d), the correct measure for a
+  // numeric-Y heatmap, which restores R-11. The SAME predicate gates the label (narrative-
+  // generator), so measure-values and measure-label can never diverge again (the mislabel root).
+  const useColorMeasure = heatmapColorIsMeasure(spec);
 
   const dimensionBinding = resolveBinding(spec, 'x');
-  const measureBinding = isHeatmapRect ? resolveBinding(spec, 'color') : resolveBinding(spec, 'y');
-  // On a heatmap COLOR IS the measure, not a categorical series — leaving colorField set
-  // would list every measure value as a "color category" finding. Drop it so the narrative
-  // describes maxima/minima/total of the measure instead.
-  const colorBinding = isHeatmapRect ? undefined : resolveBinding(spec, 'color');
+  const measureBinding = useColorMeasure ? resolveBinding(spec, 'color') : resolveBinding(spec, 'y');
+  // COLOR IS the measure on a real heatmap — drop colorField so its values aren't listed as
+  // "color category" findings. When color is categorical/absent we keep it as a normal series.
+  const colorBinding = useColorMeasure ? undefined : resolveBinding(spec, 'color');
   const sizeBinding = resolveBinding(spec, 'size');
 
   return {
@@ -265,6 +293,17 @@ function extractCategories(rows: readonly Record<string, unknown>[], field: stri
     set.add(String(value));
   });
   return [...set];
+}
+
+/**
+ * s150: does `field` carry at least one numeric cell? MODULE-LOCAL — do NOT export (the a11y
+ * barrel is `export * from './data-analysis.js'`, so exporting this would leak it into
+ * @oods/viz-core's public API). `.some()` is load-bearing: `.every()` would flip false on a
+ * single null/missing cell and re-break genuine heatmaps. Uses `toNumber` — what buildDataPoints
+ * actually consumes downstream — NOT the `type` marker (undefined on a pinned color binding).
+ */
+function isQuantitativeField(rows: readonly Record<string, unknown>[], field: string): boolean {
+  return rows.some((row) => toNumber(row[field as keyof typeof row]) !== null);
 }
 
 function findExtreme(points: readonly DataPoint[], kind: 'min' | 'max'): DataPoint | undefined {

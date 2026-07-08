@@ -1538,7 +1538,7 @@ export namespace DashboardRenderInputSchema {
      */
     field?: string;
     /**
-     * Optional (v0.2, sprint-114) name of the time column. When present, the KPI metric series is built along a parsed and sorted period axis (via analysis/temporal.ts) instead of dataset row order: aggregate 'latest' is the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. Absent means row-order, byte-identical to v0.1.
+     * Optional (v0.2, sprint-114) name of the time column. When present, the KPI metric series is built along a parsed and sorted period axis (via analysis/temporal.ts) instead of dataset row order: aggregate 'latest' is the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. Absent keeps the sparkline, aggregate 'latest', and the 'window'/'prior_period' bases on dataset row order (as in v0.1); the KPI trendDirection is reported 'flat' unless a comparison baseline resolves, because a first-vs-last read of arbitrary row order is not a real trend (sprint-149 F6b).
      */
     periodField?: string;
     /**
@@ -6959,7 +6959,7 @@ export namespace VizRenderInputSchema {
        */
       includeNormalizedSpec?: boolean;
       /**
-       * When true, also return a STRUCTURED two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from — for every chart type, cartesian and non-cartesian alike (Forge-Demos FD#10). DEFAULT false keeps the wire byte-identical (only a11yDescription).
+       * When true, also return a STRUCTURED two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from — for every chart type, cartesian and non-cartesian alike (Forge-Demos FD#10). For a heatmap (MarkRect grid, where X and Y are both dimensions) the accessible narrative describes the COLOR-channel measure — its maxima/minima/total — when color is a real quantitative measure; when color is categorical or absent the narrative falls back to the Y measure (sprint-150). DEFAULT false keeps the wire byte-identical (only a11yDescription).
        */
       includeA11y?: boolean;
     };
