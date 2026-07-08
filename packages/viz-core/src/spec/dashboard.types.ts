@@ -318,7 +318,7 @@ export interface KpiPanel {
    */
   field: string;
   /**
-   * Optional (v0.2, sprint-114) name of the time column. When PRESENT, the KPI metric series is built along a PARSED + SORTED period axis (via the UTC-pinned analysis/temporal.ts) instead of dataset row order: aggregate 'latest' = the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. ABSENT => row-order, byte-identical to v0.1. See frozen seam (v) in $comment.
+   * Optional (v0.2, sprint-114) name of the time column. When PRESENT, the KPI metric series is built along a PARSED + SORTED period axis (via the UTC-pinned analysis/temporal.ts) instead of dataset row order: aggregate 'latest' = the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. ABSENT keeps the sparkline, aggregate 'latest', and the 'window'/'prior_period' bases on dataset row order (as in v0.1); the KPI trendDirection is reported 'flat' unless a comparison baseline resolves, because a first-vs-last read of arbitrary row order is not a real trend (sprint-149 F6b). See frozen seam (v) in $comment.
    */
   periodField?: string;
   /**

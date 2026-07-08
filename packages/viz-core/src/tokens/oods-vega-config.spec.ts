@@ -80,3 +80,30 @@ describe('resolveOodsVegaConfig — a11y-of-chrome tripwire (s144 m03, memo §4)
     expect(contrastRatio('#494E5A', bg)).toBeCloseTo(8.13, 1);
   });
 });
+
+// F6c rect-only Y-grid guard (s149, memo §2). The horizontal chrome gridlines
+// (#E9ECEF) stripe through the CELLS of a MarkRect heatmap because its y-scale is a
+// band of dimensions, not a measure. So resolveOodsVegaConfig drops axisY.grid ONLY
+// when every mark is a MarkRect; any non-rect mark (or a mixed spec) keeps the default
+// horizontal grid. Marks-only specs — the resolver reads nothing else — so these
+// minimal IRs exercise the predicate directly at the viz-core unit level.
+describe('resolveOodsVegaConfig — F6c rect-only axisY.grid (s149, memo §2)', () => {
+  const specWithMarks = (traits: readonly string[]): NormalizedVizSpec =>
+    ({ config: {}, marks: traits.map((trait) => ({ trait })) }) as unknown as NormalizedVizSpec;
+
+  it('a rect-only spec (heatmap) suppresses the Y grid so it does not stripe the cells', () => {
+    expect(resolveOodsVegaConfig(specWithMarks(['MarkRect'])).axisY.grid).toBe(false);
+  });
+
+  it('X grid stays off regardless (horizontal-only rule is unchanged by F6c)', () => {
+    expect(resolveOodsVegaConfig(specWithMarks(['MarkRect'])).axisX.grid).toBe(false);
+  });
+
+  it('a bar spec keeps the default horizontal Y grid (rect-only tripwire)', () => {
+    expect(resolveOodsVegaConfig(specWithMarks(['MarkBar'])).axisY.grid).toBe(true);
+  });
+
+  it('a mixed rect+line spec keeps the Y grid (.every, not .some)', () => {
+    expect(resolveOodsVegaConfig(specWithMarks(['MarkRect', 'MarkLine'])).axisY.grid).toBe(true);
+  });
+});

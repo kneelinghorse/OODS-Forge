@@ -32,6 +32,15 @@ export interface RenderVegaLiteToSvgOptions {
    * token APPLICATION into the spec lands in m04 (`prepareSpecForBrand`).
    */
   readonly tokens?: Readonly<Record<string, string>>;
+  /**
+   * s149 F6a (Approach B): override the compiled SVG's width/height so a caller (the
+   * dashboard export) can size a chart panel to its grid span instead of keeping
+   * Vega's intrinsic step-based (narrow, tall) size. Applied with `autosize:'fit'`
+   * on an emitter-side clone — the passed spec is never mutated. BOTH undefined =
+   * identity: every non-dashboard caller renders byte-for-byte as before.
+   */
+  readonly width?: number;
+  readonly height?: number;
 }
 
 /**
@@ -46,7 +55,7 @@ export async function renderVegaLiteToSvg(
 ): Promise<string> {
   pinDeterministicTextMetrics();
 
-  const branded = prepareSpecForBrand(spec, options.tokens);
+  const branded = prepareSpecForBrand(spec, options);
   const compiled = compile(branded);
   const view = new View(parse(compiled.spec), { renderer: 'none' });
   // Silence Vega's logger so warnings never leak to stdout/stderr (and so output
@@ -73,16 +82,29 @@ function pinDeterministicTextMetrics(): void {
 }
 
 /**
- * SEAM for m04 (brand-token inlining). m02 threads the resolved tokens through
- * unchanged so the emitter signature is stable; m04 will apply them to the spec
- * (e.g. category palette, axis/label colors) here. Identity transform for now.
+ * SEAM for m04 (brand-token inlining) + the s149 F6a span-derived sizing. m02 threads
+ * the resolved tokens through unchanged (m04 will apply them to the spec's
+ * config/encodings here). s149 F6a applies caller-supplied width/height so a dashboard
+ * panel fills its grid span. Both operate on a CLONE — the passed spec object (the
+ * dashboard's panelResults[i].spec, which is canonicalized for contentHash/specRef) is
+ * never mutated. With no tokens and no dims this is the identity transform.
  */
 function prepareSpecForBrand(
   spec: VegaLiteSpec,
-  tokens: Readonly<Record<string, string>> | undefined,
+  options: RenderVegaLiteToSvgOptions,
 ): VegaLiteSpec {
-  if (!tokens) {
-    return spec;
+  const { width, height } = options;
+  // s149 F6a: size the SVG to a target box. autosize:'fit' makes the WHOLE chart —
+  // axes + legend included — fit width×height, so a 6/12 panel renders wide-and-short
+  // (filling its span) rather than at Vega's intrinsic narrow-tall step width. The
+  // spread is the emitter-side clone; the caller's spec stays untouched.
+  if (width !== undefined || height !== undefined) {
+    return {
+      ...(spec as unknown as Record<string, unknown>),
+      ...(width !== undefined ? { width } : {}),
+      ...(height !== undefined ? { height } : {}),
+      autosize: 'fit',
+    } as unknown as VegaLiteSpec;
   }
   // m04: map resolved tokens onto the spec's config/encodings. Until then the
   // tokens do not alter the rendered output.

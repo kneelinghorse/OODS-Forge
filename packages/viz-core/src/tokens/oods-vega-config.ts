@@ -62,8 +62,10 @@ export interface OodsVegaConfig {
   };
   // Gridlines are horizontal-only (Derek-lock §9): Y grid draws the horizontal
   // lines, X grid off kills the vertical ones — regardless of chart orientation.
+  // Exception (s149 F6c): a rect-only spec (MarkRect heatmap over a band y-scale)
+  // suppresses the Y grid too, so the subtle rules don't stripe through the cells.
   readonly axisX: { readonly grid: false };
-  readonly axisY: { readonly grid: true };
+  readonly axisY: { readonly grid: boolean };
   readonly legend: {
     readonly titleColor: string;
     readonly titleFont: string;
@@ -136,6 +138,16 @@ function resolveFontFamily(token: string, overrides: Map<string, string>): strin
 export function resolveOodsVegaConfig(spec: NormalizedVizSpec): OodsVegaConfig {
   const overrides = overrideMap(spec.config?.tokens);
 
+  // s149 F6c: horizontal gridlines stripe through the cells of a MarkRect heatmap
+  // (its y-scale is a band, not a measure), so drop them when EVERY mark is a
+  // MarkRect. `.every` (not `.some`) keeps mixed/cartesian specs — and the bar
+  // tripwire — on the default Y grid. resolveOodsVegaConfig already gets the full
+  // spec, so the predicate needs no new plumbing. (Array-guarded so a minimal
+  // marks-less spec — the a11y-of-chrome unit fixture — is trivially not rect-only
+  // and keeps the default grid rather than throwing.)
+  const rectOnly =
+    Array.isArray(spec.marks) && spec.marks.length > 0 && spec.marks.every((m) => m.trait === 'MarkRect');
+
   const background = resolveChromeColor(CHROME_TOKENS.background, overrides);
   const textPrimary = resolveChromeColor(CHROME_TOKENS.textPrimary, overrides);
   const textNeutral = resolveChromeColor(CHROME_TOKENS.textNeutral, overrides);
@@ -165,7 +177,7 @@ export function resolveOodsVegaConfig(spec: NormalizedVizSpec): OodsVegaConfig {
       tickColor: borderNeutral,
     },
     axisX: { grid: false },
-    axisY: { grid: true },
+    axisY: { grid: rectOnly ? false : true },
     legend: {
       titleColor: textPrimary,
       titleFont: font,

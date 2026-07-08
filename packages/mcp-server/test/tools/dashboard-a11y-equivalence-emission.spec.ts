@@ -31,10 +31,12 @@ const SALES = [
   { region: 'West', month: 'Feb', revenue: 120 },
   { region: 'East', month: 'Feb', revenue: 90 },
 ];
-// A heatmap panel passes every ERROR rule but trips A11Y-R-11 (warn: <2 key findings) — the fold fixture.
-const HEAT = [
-  { row: 'r1', col: 'c1', val: 5 }, { row: 'r2', col: 'c2', val: 8 },
-  { row: 'r1', col: 'c2', val: 3 }, { row: 'r2', col: 'c1', val: 6 },
+// A bar panel whose measure field is present in every row but NON-NUMERIC → the analysis
+// finds no numeric insights → A11Y-R-11 (warn, <2 key findings) while every ERROR rule passes.
+// The fold fixture. (Was a heatmap self-tripping R-11 before s149 F6d made heatmaps read
+// their COLOR channel as the measure, so a heatmap now surfaces findings and passes R-11.)
+const WARN_ROWS = [
+  { region: 'North', grade: 'low' }, { region: 'South', grade: 'mid' }, { region: 'East', grade: 'high' },
 ];
 const GEO = {
   type: 'FeatureCollection',
@@ -86,9 +88,9 @@ describe('dashboard.render a11yEquivalence GATE + fold (default-ON, m04)', () =>
 
   it('a11y FOLD: a warn-severity panel finding folds into warnings[] prefixed with the panel id, severity PRESERVED', async () => {
     const out = await render(dash(
-      [{ id: 'hm', kind: 'chart', chartType: 'heatmap', datasetId: 'heat', encodings: { x: 'row', y: 'col', color: { field: 'val' } } }],
+      [{ id: 'hm', kind: 'chart', chartType: 'bar', datasetId: 'warn', encodings: { x: 'region', y: 'grade' } }],
       {},
-      [{ id: 'heat', rows: HEAT }],
+      [{ id: 'warn', rows: WARN_ROWS }],
     ));
     expect(out.status).toBe('ok');
     expect(errorPanels(out)).toEqual([]);
