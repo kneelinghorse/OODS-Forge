@@ -195,3 +195,97 @@ describe('vega-lite-adapter — OODS chrome config bake (s144 m02; mutation guar
     expect(compiled.config?.background).toBe('#FCFCFD');
   });
 });
+
+// Item #16 (sprint-151 m03): a layered mark's `from` resolves against the new top-level
+// `datasets` slot. Before m03 the adapter emitted the layer's `data:{name:mark.from}`
+// (vega-lite-adapter.ts:185) but NEVER the backing top-level `datasets` map — a DANGLING
+// name-reference. m03 threads `spec.datasets` onto baseSpec (Vega-Lite's native top-level
+// `datasets` block) so the layer name resolves. Hand-authored specs so the layered `from`
+// path is exercised directly (buildVizSpecFromRows never emits `from`/`datasets`).
+describe('vega-lite-adapter — item #16 datasets slot resolves Mark.from (s151 m03)', () => {
+  // median rows keyed differently (median before site) than the encoding channels, to
+  // document that Vega-Lite resolves named-dataset fields by NAME natively (not by order).
+  const MEDIAN_ROWS = [
+    { median: 83, site: 'Site A' },
+    { median: 83, site: 'Site B' },
+  ];
+  const LADDER_ROWS = [
+    { site: 'Site A', score: 92 },
+    { site: 'Site B', score: 74 },
+  ];
+
+  function ladderSpec(withDatasets: boolean) {
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'ladder',
+      name: 'Accessibility Ladder',
+      data: { name: 'ladder', values: LADDER_ROWS },
+      marks: [
+        {
+          trait: 'MarkBar',
+          encodings: {
+            x: { field: 'site', trait: 'EncodingX' },
+            y: { field: 'score', trait: 'EncodingY' },
+          },
+        },
+        {
+          trait: 'MarkLine',
+          from: withDatasets ? 'gov_median' : undefined,
+          encodings: {
+            x: { field: 'median', trait: 'EncodingX' },
+            y: { field: 'site', trait: 'EncodingY' },
+          },
+        },
+      ],
+      encoding: {
+        x: { field: 'site', trait: 'EncodingX' },
+        y: { field: 'score', trait: 'EncodingY' },
+      },
+      a11y: { description: 'Accessibility ladder with a government-median rule overlay.' },
+      ...(withDatasets ? { datasets: { gov_median: MEDIAN_ROWS } } : {}),
+    } as never;
+  }
+
+  it('emits the top-level datasets map + the layer data:{name} that resolves against it (fails at HEAD: no top-level datasets)', () => {
+    const compiled = toVegaLiteSpec(ladderSpec(true)) as unknown as {
+      datasets?: Record<string, unknown>;
+      layer?: readonly { data?: { name?: string }; encoding?: { x?: { field?: string } } }[];
+    };
+
+    // The backing datasets map is now present at the top level (Vega-Lite native).
+    expect(compiled.datasets).toEqual({ gov_median: MEDIAN_ROWS });
+
+    // The secondary layer's data:{name} names a REGISTERED dataset (no longer dangling),
+    // and its fields bind by encoding field NAME (Vega-Lite columnar resolution).
+    const secondary = compiled.layer?.find((l) => l.data?.name === 'gov_median');
+    expect(secondary).toBeDefined();
+    expect(secondary?.encoding?.x?.field).toBe('median');
+  });
+
+  it('primary (inline) layer data path is byte-UNCHANGED by the datasets slot (mixed-spec contract)', () => {
+    const withDs = toVegaLiteSpec(ladderSpec(true)) as unknown as {
+      data?: unknown;
+      layer?: readonly { data?: unknown; mark?: { type?: string } }[];
+    };
+    const noDs = toVegaLiteSpec(ladderSpec(false)) as unknown as {
+      data?: unknown;
+      layer?: readonly { data?: unknown; mark?: { type?: string } }[];
+    };
+
+    // Top-level primary data unchanged.
+    expect(withDs.data).toEqual(noDs.data);
+    // The primary bar layer carries NO own `data` (inherits top-level data) in both cases —
+    // only `from`-referenced layers gain a data:{name}.
+    const primaryWith = withDs.layer?.find((l) => l.mark?.type === 'bar');
+    const primaryNo = noDs.layer?.find((l) => l.mark?.type === 'bar');
+    expect(primaryWith?.data).toBeUndefined();
+    expect(primaryWith).toEqual(primaryNo);
+  });
+
+  it('OMITS top-level datasets when spec.datasets is absent → no datasets key (gate-leak guard)', () => {
+    const compiled = toVegaLiteSpec(ladderSpec(false)) as unknown as Record<string, unknown>;
+    // Not `datasets: undefined`, not `datasets: {}` — the key must be entirely absent so a
+    // Forge spec without the slot compiles byte-identically to pre-#16.
+    expect('datasets' in compiled).toBe(false);
+  });
+});

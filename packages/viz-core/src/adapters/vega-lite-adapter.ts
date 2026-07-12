@@ -52,6 +52,9 @@ export interface BaseAdapterSpec {
   readonly title?: string;
   readonly description: string;
   readonly data: Record<string, unknown>;
+  // Item #16 (s151 m03): Vega-Lite native top-level named-datasets map that layer
+  // `data:{name}` references resolve against; omitted when spec.datasets is absent.
+  readonly datasets?: NormalizedVizSpec['datasets'];
   readonly transform?: readonly AdapterTransform[];
   readonly params?: readonly AdapterInteractionParam[];
   readonly width?: number;
@@ -136,6 +139,12 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
     title: spec.name,
     description: spec.a11y.description,
     data,
+    // Item #16 (s151 m03): thread the named-datasets map onto Vega-Lite's NATIVE top-level
+    // `datasets` block so a layer's `data:{name:mark.from}` (createLayer) resolves instead
+    // of dangling. `removeUndefined` strips the key when spec.datasets is absent → a spec
+    // without the slot compiles byte-identically to pre-#16 (the gate). Only `from`-
+    // referenced layers gain a data:{name}; the primary layer stays inline (top-level data).
+    datasets: spec.datasets,
     transform,
     params: interactionParams,
     width: layout.width,

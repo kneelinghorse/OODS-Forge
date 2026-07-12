@@ -108,19 +108,63 @@ export function isMarkRectGrid(spec: NormalizedVizSpec): boolean {
   return spec.marks.length > 0 && spec.marks.every((m) => m.trait === 'MarkRect');
 }
 
+// s151 m05/m05b: the scale types that read as a quantitative measure — for a color channel
+// (heatmap measure detection) AND for a position channel (point/scatter measure-channel
+// detection). A documented local mirror of the cartesian adapter's QUANT_SCALE_TYPES
+// (vega-lite-adapter.ts:12) — kept a local copy, not an import, so the a11y measure-detector
+// carries no dependency on the adapter module.
+const QUANT_SCALE_TYPES = new Set(['linear', 'log', 'sqrt']);
+
+/**
+ * s151 m05/m05b: a binding reads as a quantitative MEASURE per the field profiler's stamped
+ * type/scale, NOT a coercive raw-cell `toNumber` probe (which mis-read numeric-string
+ * categoricals as measures — s150 carry #895). Mirrors the adapter's own color/axis typing
+ * (vega-lite-adapter.ts inferFieldType). Both branches are load-bearing: an UNSCALED
+ * quantitative binding (the explicit-mode data-aware path stamps `type:'quantitative'`;
+ * viz-a11y-equivalence-emission.spec.ts:53 'val') carries only `type`; a pinned binding carries
+ * only `scale`. MODULE-LOCAL: the a11y barrel is `export *`, so a bare fn is not re-exported.
+ */
+function bindingIsQuantitative(binding: TraitBinding | undefined): boolean {
+  if (!binding) return false;
+  return binding.type === 'quantitative' || (binding.scale !== undefined && QUANT_SCALE_TYPES.has(binding.scale));
+}
+
 /**
  * s150 (fixes s149 F6d): a heatmap binds its MEASURE to COLOR only when color is a REAL
  * quantitative measure. Missing/categorical color → false → measure falls back to Y (pre-F6d),
  * the correct measure for a numeric-Y heatmap, which restores A11Y-R-11. ONE predicate,
  * evaluated on the SAME spec at BOTH the binding site (resolvePrimaryBindings) and the label
  * site (narrative-generator.resolveNarrativeInputs), so measure-values and measure-label can
- * never diverge again (the root cause of the s149 mislabel). Pure: marks + color raw-cell probe.
+ * never diverge again (the root cause of the s149 mislabel).
+ *
+ * s151 m05 (closes s150 carry #895): "quantitative" is decided by the field profiler's stamped
+ * TYPE/SCALE (bindingIsQuantitative), NOT a coercive raw-cell probe. A numeric-STRING
+ * categorical color (years / cluster codes / store IDs) profiles as ordinal → falls back to Y
+ * (as the shipped #115 prose promises) instead of SUMMING the codes. Dropping the cell probe
+ * STRENGTHENS null-tolerance (never .some()→.every()): a sparse quantitative-scale heatmap with
+ * null cells stays a measure, decided purely on its scale/type.
  */
 export function heatmapColorIsMeasure(spec: NormalizedVizSpec): boolean {
   if (!isMarkRectGrid(spec)) return false;
-  const color = getEncodingBinding(spec, 'color');
-  if (!color) return false;
-  return isQuantitativeField(collectRows(spec), color.field);
+  return bindingIsQuantitative(getEncodingBinding(spec, 'color'));
+}
+
+/**
+ * s151 m05b: a strip plot — a MarkPoint chart with a NOMINAL dimension axis, i.e. exactly ONE
+ * of x/y is a quantitative measure (one measure + one categorical dimension). Its points have
+ * NO inherent order (row-major ≠ a meaningful sequence) and form no x-vs-y relationship, so a
+ * first→last trend and a Pearson correlation are BOTH phantom (the same class F6b/s150 killed
+ * for KPIs/heatmaps). A TRUE numeric-numeric scatter (BOTH axes quantitative) is NOT a strip
+ * plot → its trend/correlation are preserved. Two nominal axes (no measure) is not a strip plot.
+ * MODULE-LOCAL: the a11y barrel is `export *`, so a bare fn is not re-exported (tested via its
+ * effects on analyzeVizSpec/the narrative, not as a standalone public predicate).
+ */
+function isStripPlot(spec: NormalizedVizSpec): boolean {
+  const marks = spec.marks.map((m) => normalizeMark(m.trait));
+  if (marks.length === 0 || !marks.every((m) => m === 'point')) return false;
+  const xq = bindingIsQuantitative(resolveBinding(spec, 'x'));
+  const yq = bindingIsQuantitative(resolveBinding(spec, 'y'));
+  return xq !== yq; // exactly one quantitative axis = one measure + one nominal dimension
 }
 
 export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
@@ -137,11 +181,48 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     sizeField: bindings.sizeField,
     // s150: a MarkRect grid has NO inherent first→last order (arbitrary row-major melt) and X/Y
     // are both dimensions, so a first→last trend and an x-vs-measure Pearson r are both spurious
-    // (same phantom class F6b killed for KPIs). Keyed on the RAW grid predicate — order-freeness
-    // is independent of the measure channel, so a numeric-Y fallback heatmap is suppressed too.
-    computeTrend: !isMarkRectGrid(spec),
-    correlation: isMarkRectGrid(spec) ? undefined : deriveCorrelation(rows, bindings),
+    // (same phantom class F6b killed for KPIs). s151 m05b extends the SAME guard to a strip plot
+    // (a MarkPoint with a nominal dimension axis) — its points are unordered and form no x-vs-y
+    // relationship, so trend/correlation are equally phantom. A TRUE numeric-numeric scatter
+    // (both axes quantitative) is neither → its trend/correlation are preserved (not over-suppressed).
+    computeTrend: !isMarkRectGrid(spec) && !isStripPlot(spec),
+    correlation: isMarkRectGrid(spec) || isStripPlot(spec) ? undefined : deriveCorrelation(rows, bindings),
   });
+}
+
+function resolveMark(spec: NormalizedVizSpec): ChartShape {
+  const normalizedMarks = spec.marks.map((mark) => normalizeMark(mark.trait));
+  const uniqueMarks = [...new Set(normalizedMarks.filter((mark) => mark !== 'unknown'))];
+  return uniqueMarks.length === 1 ? uniqueMarks[0] : uniqueMarks.length > 1 ? 'mixed' : 'unknown';
+}
+
+/**
+ * s151 m05b: the ONE derivation of which CHANNEL carries the measure vs the dimension — shared
+ * by BOTH the binding site (resolvePrimaryBindings, which reads the VALUES) AND the label site
+ * (narrative-generator.resolveNarrativeInputs, which reads the TITLES). A pure fn on the same
+ * spec at both sites can't diverge, so measure-VALUES and measure-LABEL can never mismatch (the
+ * s149 F6d root cause; the s150 KEY LEARNING — "share the derivation, don't re-derive"). Cases:
+ *  - real heatmap (heatmapColorIsMeasure): measure = COLOR, dimension = X (s150).
+ *  - HORIZONTAL strip plot (MarkPoint, quantitative X + nominal Y): measure = X, dimension = Y.
+ *  - everything else (bar/line/area, vertical strip, numeric-numeric scatter): measure = Y,
+ *    dimension = X (the pre-existing default — behaviour-preserving).
+ */
+export function resolvePrimaryChannels(spec: NormalizedVizSpec): {
+  readonly measureChannel: 'x' | 'y' | 'color';
+  readonly dimensionChannel: 'x' | 'y';
+  readonly colorIsMeasure: boolean;
+} {
+  if (heatmapColorIsMeasure(spec)) {
+    return { measureChannel: 'color', dimensionChannel: 'x', colorIsMeasure: true };
+  }
+  const horizontalStrip =
+    resolveMark(spec) === 'point' &&
+    bindingIsQuantitative(resolveBinding(spec, 'x')) &&
+    !bindingIsQuantitative(resolveBinding(spec, 'y'));
+  if (horizontalStrip) {
+    return { measureChannel: 'x', dimensionChannel: 'y', colorIsMeasure: false };
+  }
+  return { measureChannel: 'y', dimensionChannel: 'x', colorIsMeasure: false };
 }
 
 function resolvePrimaryBindings(spec: NormalizedVizSpec): {
@@ -151,29 +232,17 @@ function resolvePrimaryBindings(spec: NormalizedVizSpec): {
   readonly colorField?: string;
   readonly sizeField?: string;
 } {
-  const normalizedMarks = spec.marks.map((mark) => normalizeMark(mark.trait));
-  const uniqueMarks = [...new Set(normalizedMarks.filter((mark) => mark !== 'unknown'))];
-  const mark = uniqueMarks.length === 1 ? uniqueMarks[0] : uniqueMarks.length > 1 ? 'mixed' : 'unknown';
+  const { measureChannel, dimensionChannel, colorIsMeasure } = resolvePrimaryChannels(spec);
 
-  // s150 (fixes s149 F6d): a MarkRect heatmap encodes its MEASURE on the COLOR channel — X and
-  // Y are BOTH dimensions — but ONLY when color is a real quantitative measure. s149 gated on
-  // marks alone, so a numeric-Y heatmap with categorical/absent color read the (non-numeric)
-  // color as the measure, emptied the analysis, and NEWLY tripped its OWN A11Y-R-11 warn. P1
-  // heatmapColorIsMeasure adds the color-exists + color-numeric conditions: true → measure=COLOR
-  // (the real quantitative values); false → fall back to Y (pre-F6d), the correct measure for a
-  // numeric-Y heatmap, which restores R-11. The SAME predicate gates the label (narrative-
-  // generator), so measure-values and measure-label can never diverge again (the mislabel root).
-  const useColorMeasure = heatmapColorIsMeasure(spec);
-
-  const dimensionBinding = resolveBinding(spec, 'x');
-  const measureBinding = useColorMeasure ? resolveBinding(spec, 'color') : resolveBinding(spec, 'y');
+  const dimensionBinding = resolveBinding(spec, dimensionChannel);
+  const measureBinding = resolveBinding(spec, measureChannel);
   // COLOR IS the measure on a real heatmap — drop colorField so its values aren't listed as
   // "color category" findings. When color is categorical/absent we keep it as a normal series.
-  const colorBinding = useColorMeasure ? undefined : resolveBinding(spec, 'color');
+  const colorBinding = colorIsMeasure ? undefined : resolveBinding(spec, 'color');
   const sizeBinding = resolveBinding(spec, 'size');
 
   return {
-    mark,
+    mark: resolveMark(spec),
     dimensionField: dimensionBinding?.field,
     measureField: measureBinding?.field,
     colorField: colorBinding?.field,
@@ -293,17 +362,6 @@ function extractCategories(rows: readonly Record<string, unknown>[], field: stri
     set.add(String(value));
   });
   return [...set];
-}
-
-/**
- * s150: does `field` carry at least one numeric cell? MODULE-LOCAL — do NOT export (the a11y
- * barrel is `export * from './data-analysis.js'`, so exporting this would leak it into
- * @oods/viz-core's public API). `.some()` is load-bearing: `.every()` would flip false on a
- * single null/missing cell and re-break genuine heatmaps. Uses `toNumber` — what buildDataPoints
- * actually consumes downstream — NOT the `type` marker (undefined on a pinned color binding).
- */
-function isQuantitativeField(rows: readonly Record<string, unknown>[], field: string): boolean {
-  return rows.some((row) => toNumber(row[field as keyof typeof row]) !== null);
 }
 
 function findExtreme(points: readonly DataPoint[], kind: 'min' | 'max'): DataPoint | undefined {

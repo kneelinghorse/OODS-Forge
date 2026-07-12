@@ -851,3 +851,56 @@ describe('buildFromIntent — structured-intent mode (sprint-131 m02)', () => {
     expect(withRef.chartType).toBe(without.chartType);
   });
 });
+
+// Item #15 (sprint-151 m04): the registry had NO plain 1-measure/1-dimension bar, so an
+// all-positive comparison fell to `diverging-bar` — which then carries its own
+// self-contradictory "needs positive AND negative values, but the data is all-positive"
+// signal (evaluateDivergingFit) at score 10.4. Approach A adds a plain `bar` pattern that
+// wins the all-positive case cleanly (13.4) WITHOUT reviving negatives, while the signed
+// case keeps electing diverging-bar (17.4 > 14.4) so the s110 diverging-revival is intact.
+describe('suggestPatterns — plain bar for 1M/1D all-positive comparison (s151 m04)', () => {
+  const ALL_POSITIVE_1M1D = [
+    { department: 'Engineering', headcount: 45 },
+    { department: 'Sales', headcount: 30 },
+    { department: 'Marketing', headcount: 18 },
+    { department: 'Support', headcount: 22 },
+  ];
+
+  it('elects the plain bar (not diverging-bar) with clean signals + confidence (fails at HEAD: returns diverging-bar 10.4)', () => {
+    const result = buildVizSpecFromRows({ rows: ALL_POSITIVE_1M1D });
+
+    expect(result.suggestion?.patternId).toBe('simple-bar');
+    expect(result.chartType).toBe('bar');
+    expect(result.lowConfidence).toBe(false);
+    // The elected pattern must NOT carry the diverging-on-positive contradiction.
+    expect(result.suggestion?.signals.some((s) => /positive AND negative/.test(s))).toBe(false);
+  });
+
+  it('preserves the s110 diverging-revival: a SIGNED 1M/1D still elects diverging-bar (17.4 > 14.4)', () => {
+    const signed = [
+      { region: 'N', delta: -10 },
+      { region: 'S', delta: 15 },
+      { region: 'E', delta: -5 },
+      { region: 'W', delta: 8 },
+    ];
+    const intent = toSchemaIntent(inferFieldProfile(signed), signed);
+    const ranked = suggestPatterns(intent, { limit: 20 });
+    const bar = ranked.find((s) => s.pattern.id === 'simple-bar');
+    const diverging = ranked.find((s) => s.pattern.id === 'diverging-bar');
+    expect(diverging!.score).toBeGreaterThan(bar!.score);
+    expect(ranked[0].pattern.id).toBe('diverging-bar');
+  });
+
+  it('DEFERS to the specialised scatter on a tie: a scatter-home goal with 1 measure still fails loud (not silently a bar)', () => {
+    // Regression guard for the s151 m04 misprediction: `simple-bar` ties `correlation-scatter`
+    // at 5.4 for a relationship/1M-1D intent. Because `simple-bar` sorts AFTER the scatter in
+    // the id tie-break, the scatter stays the chosen chartType, so buildFromIntent fails loud
+    // on the missing 2nd measure — the incoherent intent is NOT degraded to a comparison bar.
+    expect(() =>
+      buildFromIntent({
+        intent: { goal: 'relationship', measures: [{ name: 'revenue' }], dimensions: [{ name: 'region' }] },
+        rows: SALES,
+      }),
+    ).toThrow(/needs more fields than were named/);
+  });
+});

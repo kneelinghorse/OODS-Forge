@@ -115,6 +115,80 @@ export interface ChartPattern {
 
 const registry = [
   {
+    // id is deliberately `simple-bar` (not `bar`): the plain bar is the GENERIC
+    // comparison pattern, so it must DEFER to specialised patterns on a score tie and
+    // win only when it is the unambiguous best. The suggestPatterns tie-break is
+    // `score DESC, id ASC`, and `simple-bar` sorts AFTER the specialised scatter/heatmap
+    // ids (`correlation-scatter`, `bubble-distribution`, …). That is load-bearing: a
+    // scatter-home intent (goal=relationship/distribution) with only 1 measure ties this
+    // pattern at 5.4 — deferring to `correlation-scatter` keeps the chosen chartType a
+    // scatter, so buildFromIntent's autoAssignEncodings fails loud on the missing 2nd
+    // measure instead of silently degrading the incoherent intent to a comparison bar
+    // (Rule 12 / the NL→viz validation invariant, spec-builder.spec.ts). Do NOT rename to
+    // an id that sorts before those patterns without re-checking that guard.
+    id: 'simple-bar',
+    name: 'Simple Bar',
+    chartType: 'bar',
+    summary:
+      'Compares a single quantitative measure across one categorical dimension with plain bars — the canonical answer to a one-measure, one-dimension comparison.',
+    schema: {
+      structure: '1Q + 1N',
+      description: 'A quantitative measure aggregated across a single categorical dimension, no secondary series.',
+      fields: [
+        {
+          role: 'dimension',
+          type: 'nominal',
+          name: 'Category',
+          example: 'Department',
+          description: 'The categorical axis the measure is compared across.',
+        },
+        {
+          role: 'measure',
+          type: 'quantitative',
+          name: 'Metric',
+          example: 'Headcount',
+          description: 'The quantitative value plotted as bar length.',
+        },
+      ],
+      derived: ['Sort the category by the measure (descending) so the ranking reads at a glance.'],
+    },
+    composition: [
+      'MarkBar with EncodingPositionX for the category and EncodingPositionY for the measure.',
+      'A single series — no color channel required (single-series mark color is baked from categorical-01).',
+      'Optional sort on the measure to order bars by magnitude.',
+    ],
+    usage: {
+      bestFor: [
+        'Ranking a metric across a handful of named categories (headcount by department, revenue by product).',
+        'Any all-positive one-measure comparison where directionality (+/−) is not the story.',
+      ],
+      caution: [
+        'Past ~12 categories bars become illegible; switch to an aggregate or a scrollable/horizontal view.',
+        'Use diverging-bar instead when the measure is signed and zero is a meaningful pivot.',
+      ],
+      a11y: [
+        'Always provide a table fallback so exact values are recoverable without reading bar length.',
+        'Order bars consistently (usually by magnitude) so the reading sequence is predictable.',
+      ],
+    },
+    confidence: {
+      level: 'High',
+      score: 0.94,
+      rationale: 'The plain bar is the top-ranked encoding for a single-measure categorical comparison (position/length judgement).',
+      source: 'Cleveland–McGill / DSV perceptual corpus',
+    },
+    specPath: 'examples/viz/patterns-v2/simple-bar.spec.json',
+    heuristics: {
+      measures: { min: 1, max: 1 },
+      dimensions: { min: 1, max: 1 },
+      goal: ['comparison'],
+      density: 'flex',
+      maxSeriesCardinality: 12,
+      perceptualRank: 1,
+    },
+    related: ['diverging-bar', 'grouped-bar'],
+  },
+  {
     id: 'grouped-bar',
     name: 'Grouped Bar',
     chartType: 'bar',

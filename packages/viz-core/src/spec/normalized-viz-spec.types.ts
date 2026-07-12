@@ -76,6 +76,14 @@ export interface NormalizedVizSpecV01 {
   config?: VizConfig;
   a11y: AccessibilitySpec;
   portability?: PortabilitySpec;
+  /**
+   * Named row-arrays that layered marks reference via Mark.from; resolved into Vega-Lite top-level datasets / ECharts dataset entries at adapt time.
+   */
+  datasets?: {
+    [k: string]: {
+      [k: string]: unknown;
+    }[];
+  };
 }
 /**
  * Inline values or reference to an external dataset.

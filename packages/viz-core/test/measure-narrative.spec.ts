@@ -93,6 +93,29 @@ describe('generateNarrativeSummary — measure-context (sprint-129 m01)', () => 
   });
 });
 
+describe('generateNarrativeSummary — no-measureLabel summary omits the stray space (s151 m05)', () => {
+  it('emits "...totaling 28." with NO trailing space when no measureLabel is given (fails at HEAD: "28 .")', () => {
+    const narrative = generateNarrativeSummary({
+      analysis: analyzeSankey(SANKEY),
+      chartLabel: 'Corridor flows',
+    });
+    // The default summary branch previously left a hard space before the period when the
+    // measure label was empty ("...totaling 28 ."); the conditional-space fix drops it.
+    expect(narrative.summary).toBe('Corridor flows covers 3 data points totaling 28.');
+    expect(narrative.summary).not.toMatch(/\d \./);
+  });
+
+  it('with a measureLabel the summary is byte-identical (the space rides WITH the label)', () => {
+    // Guards the ZERO-golden promise: adding the conditional must not move the with-label path.
+    const narrative = generateNarrativeSummary({
+      analysis: analyzeSankey(SANKEY),
+      chartLabel: 'Corridor flows',
+      measureLabel: 'Flow',
+    });
+    expect(narrative.summary).toBe('Corridor flows covers 3 data points totaling 28 Flow.');
+  });
+});
+
 describe('generateNarrativeSummary — comparison-basis "vs target" (sprint-130 m02)', () => {
   it('appends "vs target N" when the RESOLVED comparison basis is target (the IDENTICAL cross-panel literal)', () => {
     const narrative = generateNarrativeSummary({
