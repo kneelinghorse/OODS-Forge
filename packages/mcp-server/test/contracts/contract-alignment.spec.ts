@@ -196,11 +196,31 @@ describe('pipeline — nested options aliases contract', () => {
   });
 
   it('pipeline save accepts { name, tags } object', async () => {
-    const result = await pipelineHandle({
-      object: 'Product',
-      save: { name: 'test-tagged-schema', tags: ['test', 'sprint74'] },
-    });
-    expect(result.saved?.name).toBe('test-tagged-schema');
+    // s152 F7: run against a temp schema store (mirrors the sibling test below) so the save does
+    // NOT write the DEFAULT process.cwd() store. When the suite runs with process.cwd()=repo-root
+    // (the closeout invocation), the unscoped save dirtied the tracked .oods/schemas/_index.json +
+    // test-tagged-schema.json on every run — this was the SOLE test hitting the default store.
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-pipeline-contract-'));
+    process.env.MCP_SCHEMA_STORE_ROOT = tempRoot;
+
+    try {
+      const result = await pipelineHandle({
+        object: 'Product',
+        save: { name: 'test-tagged-schema', tags: ['test', 'sprint74'] },
+      });
+      expect(result.saved?.name).toBe('test-tagged-schema');
+
+      // Regression teeth: the { name, tags } save round-trips through load/list from the SAME
+      // temp root (a shallow result.saved.name check alone never proved the tags persisted).
+      const loaded = await schemaLoadHandle({ name: 'test-tagged-schema' });
+      expect(loaded.tags).toEqual(['test', 'sprint74']);
+      const listed = await schemaListHandle({ tags: ['sprint74'] });
+      expect(listed.map((entry) => entry.name)).toContain('test-tagged-schema');
+    } finally {
+      delete process.env.MCP_SCHEMA_STORE_ROOT;
+      delete process.env.MCP_SCHEMA_STORE_DIR;
+      await fs.rm(tempRoot, { recursive: true, force: true });
+    }
   });
 
   it('pipeline save object persists tags through schema load/list', async () => {

@@ -458,6 +458,14 @@ const registry = [
       allowNegative: true,
       density: 'sparse',
       perceptualRank: 1,
+      // s152 F4: diverging-bar was the ONLY bar pattern without a cardinality cap, so at >12
+      // categories it escaped the CARDINALITY_OVERFLOW_PENALTY every other bar takes and
+      // out-ranked simple-bar as the confident pick — floating the self-contradictory "needs
+      // positive AND negative" signal on all-positive data. Value 12 matches simple-bar +
+      // HIGH_CARDINALITY_DIMENSION. Honest-fail (Option 1): a >12-cat all-positive comparison
+      // now demotes diverging-bar below simple-bar and returns a lowConfidence top instead of a
+      // confidently-wrong diverging pick; a >12-cat SIGNED comparison still elects diverging-bar.
+      maxSeriesCardinality: 12,
     },
     related: ['grouped-bar'],
   },

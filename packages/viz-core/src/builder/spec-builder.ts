@@ -1029,7 +1029,13 @@ function inferFieldType(name: string, present: ReadonlyArray<unknown>): FieldTyp
   const { nums, allNumeric } = numericView(present);
   if (allNumeric) {
     // (3) Numeric-looking categorical codes are dimensions, not measures.
-    if (nameHintsZip(name) || nameHintsCurrencyCode(name)) {
+    // Identifiers (id/code/sku/uuid/guid) join zip/currency here (sprint-152 F2, #895): a
+    // numeric-STRING id (e.g. store_id "1001".."1006", <8 rows so rule-(4) ordinal is unmet)
+    // was falling through to rule-(5) quantitative, which the RENDER (gradient-over-IDs) and
+    // the a11y narrative (SUM the IDs) both read — a three-way disagreement with the table's
+    // isNumeric=false. Classifying it nominal at the profiler ROOT fixes render + narrative +
+    // table together. Name-gated only (never a value probe): a measure-named field is unaffected.
+    if (nameHintsZip(name) || nameHintsCurrencyCode(name) || nameHintsIdentifier(name)) {
       return 'nominal';
     }
     // (3b) A measure-named numeric column is a quantitative measure even when it is a small
@@ -1097,6 +1103,17 @@ function nameHintsMeasure(name: string): boolean {
 function nameHintsCurrencyCode(name: string): boolean {
   const collapsed = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
   return collapsed === 'currency' || collapsed === 'currencycode' || collapsed === 'isocurrency';
+}
+
+// An IDENTIFIER token set (sprint-152 F2, #895). A numeric-string identifier column
+// (store_id, product_code, sku, uuid, guid) is a categorical dimension, never a measure —
+// summing or gradient-shading IDs is meaningless. Token-based (via fieldNameTokens) so
+// 'store_id'→['store','id'], 'product_code'→['product','code'] both match; overlaps with
+// nameHintsZip ('zip_code') / nameHintsCurrencyCode ('currency_code') are harmless (both
+// return 'nominal'). Placed in rule-(3) BEFORE the measure/ordinal/quantitative branches.
+function nameHintsIdentifier(name: string): boolean {
+  const tokens = fieldNameTokens(name);
+  return ['id', 'ids', 'code', 'sku', 'uuid', 'guid'].some((t) => tokens.includes(t));
 }
 
 function isBareYearInRange(value: unknown): boolean {

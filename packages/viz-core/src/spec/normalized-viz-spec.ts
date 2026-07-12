@@ -4,6 +4,15 @@ import schema from './normalized-viz-spec.schema.json' with { type: 'json' };
 import type { NormalizedVizSpecV01 } from './normalized-viz-spec.types.js';
 
 export type {
+  // Core IR shapes — first-class public library-consumer contract (sprint-152 F1,
+  // item #16). `Mark` (incl. `Mark.from`) + the `datasets` map (typed via
+  // NormalizedVizSpec['datasets']) let a build-time importer author a layered spec
+  // by NAME (e.g. Forge-Demos "Demo 03" Hero B, marks[1].from='gov_median') without
+  // reaching into a deep @/ path. See docs/viz/normalized-viz-spec.md.
+  Mark,
+  DataSource,
+  EncodingMap,
+  Transform,
   TraitBinding,
   InteractionTrait,
   InteractionSelection,

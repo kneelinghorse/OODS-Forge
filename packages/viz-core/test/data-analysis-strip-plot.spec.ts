@@ -108,4 +108,15 @@ describe('s151 m05b — a TRUE numeric-numeric scatter is NOT over-suppressed', 
     expect(n.summary).toMatch(/relationship between/);
     expect(n.keyFindings.some((f) => f.startsWith('Correlation coefficient:'))).toBe(true);
   });
+
+  // s152 F3: the true scatter's phantom TREND is dropped too (the s151-review gap — this test
+  // previously asserted correlation-present but NEVER trend-absence). RED at HEAD: the scatter
+  // emitted "Trend increasing: 55%" beside the order-invariant "Correlation coefficient: -0.996".
+  it('s152 F3: emits NO phantom "Trend …" finding while KEEPING correlation (fails at HEAD)', () => {
+    const spec = scatterSpec();
+    expect(analyzeVizSpec(spec).trend).toBeUndefined();
+    const n = generateNarrativeSummary(spec);
+    expect(n.keyFindings.some((f) => f.startsWith('Trend '))).toBe(false);
+    expect(n.keyFindings.some((f) => f.startsWith('Correlation coefficient:'))).toBe(true);
+  });
 });

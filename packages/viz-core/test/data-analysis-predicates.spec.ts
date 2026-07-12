@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { buildVizSpecFromRows, heatmapColorIsMeasure, isMarkRectGrid } from '@oods/viz-core';
+import {
+  buildVizSpecFromRows,
+  generateNarrativeSummary,
+  heatmapColorIsMeasure,
+  inferFieldProfile,
+  isMarkRectGrid,
+  validateVizEquivalenceRules,
+} from '@oods/viz-core';
 
 // s150 m02 — the two pure predicates that structurally fix the s149 F6d mislabel.
 //
@@ -154,5 +161,161 @@ describe('s151 m05 — heatmapColorIsMeasure honors the profiler type/scale (clo
 
   it('#896: a sparse linear-scale color with a NULL cell STAYS a measure (null-tolerance, no .every())', () => {
     expect(heatmapColorIsMeasure(sparseNullLinearHeatmap())).toBe(true);
+  });
+});
+
+// s152 F2 (closes the residual live #895 gap the s151 review confirmed). The s151 m05 tests
+// above hand-declare `scale:'band'` on the color binding — which WINS over the profiler, so
+// they never exercised the BARE-field path where the profiler itself decides. The residual
+// open case is a BARE numeric-string identifier color (store_id "1001".."1006", <8 rows so
+// rule-(4) ordinal is unmet, distinctRatio ≥ 0.5): inferFieldType rule-(5) typed it
+// QUANTITATIVE, and applyDataAwareTypes stamped that onto the binding, feeding a THREE-WAY
+// disagreement — RENDER draws a continuous gradient (color.type='quantitative'), narrative
+// SUMS the ids ("…totaling 6,021 Store id"), a11y table isNumeric=false. The fix is at the
+// profiler ROOT (inferFieldType nameHintsIdentifier → 'nominal'), so render + narrative + table
+// agree. These tests exercise the BARE path (no scale) end-to-end; they are RED at HEAD.
+
+// Two dimensions crossed by a BARE numeric-string id color — the canonical #895 shape.
+const BARE_ID_ROWS = ['North', 'South', 'East'].flatMap((region, r) =>
+  ['Q1', 'Q2'].map((quarter, q) => ({
+    region,
+    quarter,
+    store_id: String(1001 + r * 2 + q), // 1001..1006, all distinct numeric strings
+  })),
+);
+const bareIdHeatmap = () => {
+  const { spec } = buildVizSpecFromRows({
+    rows: BARE_ID_ROWS,
+    chartType: 'heatmap',
+    encodings: {
+      x: { field: 'region', scale: 'band' },
+      y: { field: 'quarter', scale: 'band' },
+      color: { field: 'store_id' }, // BARE — no scale; the profiler decides its type
+    },
+  } as never);
+  return spec;
+};
+
+// Same bare id color, but Y is a genuine MEASURE (revenue): the id color must fall back to the
+// Y measure, NOT be summed itself.
+const BARE_ID_YMEASURE_ROWS = ['North', 'South', 'East'].flatMap((region, r) =>
+  ['Q1', 'Q2'].map((_quarter, q) => ({
+    region,
+    revenue: 40 + r * 30 + q * 11,
+    store_id: String(1001 + r * 2 + q),
+  })),
+);
+const bareIdYMeasureHeatmap = () => {
+  const { spec } = buildVizSpecFromRows({
+    rows: BARE_ID_YMEASURE_ROWS,
+    chartType: 'heatmap',
+    encodings: {
+      x: { field: 'region', scale: 'band' },
+      y: { field: 'revenue', scale: 'linear' },
+      color: { field: 'store_id' },
+    },
+  } as never);
+  return spec;
+};
+
+// Control: a BARE genuine measure color (revenue, no scale) — the profiler types it
+// quantitative, so it STAYS the measure and sums. Proves the identifier guard is narrow.
+const BARE_REVENUE_COLOR_ROWS = ['North', 'South', 'East'].flatMap((region, r) =>
+  ['Q1', 'Q2', 'Q3', 'Q4'].map((quarter, q) => ({
+    region,
+    quarter,
+    revenue: 40 + r * 30 + q * 11,
+  })),
+);
+const bareRevenueColorHeatmap = () => {
+  const { spec } = buildVizSpecFromRows({
+    rows: BARE_REVENUE_COLOR_ROWS,
+    chartType: 'heatmap',
+    encodings: {
+      x: { field: 'region', scale: 'band' },
+      y: { field: 'quarter', scale: 'band' },
+      color: { field: 'revenue' }, // BARE genuine measure — profiler → quantitative
+    },
+  } as never);
+  return spec;
+};
+
+describe('s152 F2 — #895 bare numeric-string-ID heatmap honesty (profiler root)', () => {
+  // (a) END-TO-END, Y is a dimension: no measure remains → the id color must NOT be summed,
+  //     and the heatmap honestly WARNS on R-11 (an a11y ADVANCE over a false "Total 6,021").
+  it('(a) a bare id color is not a measure and is never summed (LABEL-asserting; RED at HEAD)', () => {
+    const spec = bareIdHeatmap();
+    expect(heatmapColorIsMeasure(spec)).toBe(false);
+    const n = generateNarrativeSummary(spec);
+    // Assert the human-readable LABEL string (s149 F6d root cause), not just the predicate.
+    expect(n.summary).not.toMatch(/totaling [\d,]+ Store id/i);
+    expect(n.summary).not.toContain('Total Store id');
+    expect(n.keyFindings.some((f) => /^Total Store id/i.test(f))).toBe(false);
+    expect(n.keyFindings.some((f) => /^High Store id/i.test(f))).toBe(false);
+  });
+
+  it('(a) the measure-less bare-id heatmap trips A11Y-R-11 (warn, non-blocking — the a11y advance)', () => {
+    const r11 = validateVizEquivalenceRules(bareIdHeatmap()).find((r) => r.id === 'A11Y-R-11');
+    expect(r11?.severity).toBe('warn'); // non-blocking
+    expect(r11?.passed).toBe(false); // honestly warns instead of asserting a phantom "Total"
+  });
+
+  // (a2) Y is a genuine measure: the id color falls back to the Y MEASURE (revenue).
+  it('(a2) with a numeric Y, a bare id color falls back to the Y measure — names Revenue, sums Revenue not the ids', () => {
+    const spec = bareIdYMeasureHeatmap();
+    expect(heatmapColorIsMeasure(spec)).toBe(false);
+    const n = generateNarrativeSummary(spec);
+    expect(n.analysis.measureField).toBe('revenue');
+    expect(n.summary).toContain('Revenue');
+    expect(n.summary).not.toMatch(/Store id/); // the id is never the measured quantity
+    expect(n.keyFindings.some((f) => /Total Store id/i.test(f))).toBe(false);
+  });
+
+  // (d) render-layer: the color scale is discrete, not a continuous gradient over the ids.
+  it('(d) the bare id color binding types NOT quantitative (gradient-over-IDs gone; RED at HEAD)', () => {
+    const spec = bareIdHeatmap();
+    const colorType = (spec.encoding as { color?: { type?: string } }).color?.type;
+    expect(colorType).not.toBe('quantitative');
+    expect(colorType).toBe('nominal');
+  });
+
+  // (b) boundary, the OTHER direction: a bare genuine measure color STILL sums (control).
+  it('(b) a bare genuine measure color (revenue) STAYS a measure and sums (guard is narrow)', () => {
+    const spec = bareRevenueColorHeatmap();
+    expect(heatmapColorIsMeasure(spec)).toBe(true);
+    const n = generateNarrativeSummary(spec);
+    expect(n.summary).toMatch(/totaling [\d,]+ Revenue/i);
+  });
+
+  // (b) sparse-null tolerance preserved — the fix is name-gated, no value probe, so a genuine
+  //     sparse quantitative color with null cells is untouched (reds if a .every() probe returns).
+  it('(b) sparse linear-scale quantitative color with a NULL cell STILL a measure (no .some()->.every())', () => {
+    expect(heatmapColorIsMeasure(sparseNullLinearHeatmap())).toBe(true);
+  });
+
+  // (c) profiler fixtures at the ROOT: the identifier guard classifies by NAME, both directions.
+  it('(c) inferFieldProfile: an id-named numeric-string field is nominal/dimension (RED at HEAD)', () => {
+    const prof = inferFieldProfile(BARE_ID_ROWS).find((p) => p.name === 'store_id');
+    expect(prof?.type).toBe('nominal');
+    expect(prof?.role).toBe('dimension');
+  });
+
+  it('(c) inferFieldProfile: a measure-named numeric-string field stays quantitative/measure', () => {
+    const rows = [{ amount: '40' }, { amount: '51' }, { amount: '62' }, { amount: '73' }];
+    const prof = inferFieldProfile(rows).find((p) => p.name === 'amount');
+    expect(prof?.type).toBe('quantitative');
+    expect(prof?.role).toBe('measure');
+  });
+
+  it('(c) inferFieldProfile: identifier tokens code/sku/uuid/guid are all nominal', () => {
+    const rows = [
+      { product_code: '100', sku: '200', uuid: '300', guid: '400' },
+      { product_code: '101', sku: '201', uuid: '301', guid: '401' },
+      { product_code: '102', sku: '202', uuid: '302', guid: '402' },
+    ];
+    const profs = inferFieldProfile(rows);
+    for (const name of ['product_code', 'sku', 'uuid', 'guid']) {
+      expect(profs.find((p) => p.name === name)?.type, name).toBe('nominal');
+    }
   });
 });
