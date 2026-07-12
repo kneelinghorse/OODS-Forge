@@ -173,6 +173,7 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
 
   const datasetId = deriveDatasetId(spec);
   const dataset = convertDataset(spec, datasetId);
+  const linkedDatasets = convertLinkedDatasets(spec);
   const baseEncoding = convertEncodingMap(spec.encoding);
   const axisEncoding = resolveAxisEncoding(baseEncoding, spec.marks);
   const series = spec.marks.map((mark) => createSeries(mark, baseEncoding, datasetId));
@@ -184,7 +185,7 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
   const brush = buildBrushComponent(spec);
 
   const option = removeUndefined({
-    dataset: [dataset],
+    dataset: [dataset, ...linkedDatasets],
     series,
     xAxis: xAxis ?? defaultAxis('x'),
     yAxis: yAxis ?? defaultAxis('y'),
@@ -223,6 +224,23 @@ function convertDataset(spec: NormalizedVizSpec, datasetId: string): EChartsData
     dimensions,
     transform: convertTransforms(spec.transforms),
   });
+}
+
+// Item #16 (s151 m03): resolve layered `Mark.from` references by registering each
+// spec.datasets entry as a named ECharts dataset, so the series `datasetId = mark.from`
+// (createSeries) names a real dataset instead of dangling. The primary dataset stays
+// FIRST; spec.datasets entries follow in object-insertion order (deterministic). When
+// spec.datasets is absent the map is empty → the spread contributes nothing → the option
+// is byte-identical to pre-#16 (the gate). A `from` naming a missing key still dangles
+// (left as a consumer error — the honest-fail WARN is a separate future item, #110).
+function convertLinkedDatasets(spec: NormalizedVizSpec): readonly EChartsDataset[] {
+  return Object.entries(spec.datasets ?? {}).map(([id, rows]) =>
+    removeUndefined({
+      id,
+      source: rows,
+      dimensions: inferDimensions(rows),
+    })
+  );
 }
 
 function inferDimensions(rows: readonly Record<string, unknown>[]): readonly string[] | undefined {

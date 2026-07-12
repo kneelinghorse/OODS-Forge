@@ -53,7 +53,7 @@ const readTokensJson = async () => {
 
 const buildEsmModule = () =>
   [
-    "import tokensJson from './tailwind/tokens.json' assert { type: 'json' };",
+    "import tokensJson from './tailwind/tokens.json' with { type: 'json' };",
     'const source = tokensJson ?? {};',
     'const tokens = source.tokens ?? {};',
     'const flatTokens = source.flat ?? {};',

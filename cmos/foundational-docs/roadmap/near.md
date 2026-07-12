@@ -57,6 +57,8 @@ Concordance production facts from `cmos/planning/info-push-to-oods-foundry-mcp.m
 
 _Frozen out:_ NL→viz + the dimension registry (reverted/stashed — do not inherit); the `purity.audit`/`vrt.run`/`reviewKit.create` stubs (retired in s136); the s144 captured follow-ons (dark-mode/theme-aware resolver, ECharts chrome, palette-hue revision).
 
+_Deferred map roadmap (Roadmap-A, scoped s151 m07):_ geo panels are certified + a11y-described but NOT drawn as SVG in `output.html` (Seam (c) single-renderer freeze since s115 — `dashboard.render.html.ts:6-8`). Full scope, the plug-in seam, honest size (**L**), and the refiled map asks (**FD#13** per-layer spatial `from`; **FD#12** antimeridian split; **Roadmap-D/E** advertised-but-stubbed `heatmap`/`contour`/`tile`; **#17** annotation marks) live in [forge-viz-geo-svg-export-scoping-memo.md](../../planning/forge-viz-geo-svg-export-scoping-memo.md). **Build gate for all of it: a named map puller** (Demo 02 parked, Demo 03 is cartesian — none today).
+
 Data-viz is the Forge flagship (decision #680; [forge-viz-flagship-strategy.md](../../planning/forge-viz-flagship-strategy.md)). The arc since the pivot:
 
 - **s108–s109 — Phase 0 (reconnect):** extracted the headless engine as `@oods/viz-core` and wired `src/viz` → MCP via the new `viz.render` (replacing the field-names-only `viz.compose` placeholder).

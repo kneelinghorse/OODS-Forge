@@ -13,6 +13,7 @@ Use this document as the single source of truth for pattern intents, responsive 
 
 | Pattern | Chart | Layout DNA | Primary Interactions | Spec |
 | --- | --- | --- | --- | --- |
+| Simple Bar | Bar | Single | Tooltip value | `examples/viz/patterns-v2/simple-bar.spec.json` |
 | Grouped Bar | Bar | Single + grouped | Hover highlight | `examples/viz/patterns-v2/grouped-bar.spec.json` |
 | Stacked Bar | Bar | Stack | Tooltip totals | `examples/viz/patterns-v2/stacked-bar.spec.json` |
 | 100% Stacked Bar | Bar | Stack normalize | Tooltip share | `examples/viz/patterns-v2/stacked-100-bar.spec.json` |

@@ -3,7 +3,7 @@ import {
   analyzeVizSpec,
   describeDataPoint,
   getEncodingBinding,
-  heatmapColorIsMeasure,
+  resolvePrimaryChannels,
   type VizDataAnalysis,
 } from './data-analysis.js';
 import { formatNumeric, formatPercent, humanize } from './format.js';
@@ -115,15 +115,17 @@ function resolveNarrativeInputs(input: NormalizedVizSpec | AnalysisNarrativeInpu
       measureContext: input.measureContext,
     };
   }
-  const colorIsMeasure = heatmapColorIsMeasure(input);
+  // s150/s151 m05b: name the SAME channels the binding site read as the measure/dimension — via
+  // the ONE shared derivation resolvePrimaryChannels — so label and values can't diverge (the
+  // s149 F6d root cause). Covers the real-heatmap (color=measure) AND the horizontal strip plot
+  // (x=measure, y=dimension) rebindings; everything else stays measure=Y / dimension=X.
+  const { measureChannel, dimensionChannel, colorIsMeasure } = resolvePrimaryChannels(input);
   return {
     analysis: analyzeVizSpec(input),
     labels: {
       chartLabel: input.name ?? input.a11y.ariaLabel ?? input.id ?? 'This visualization',
-      // s150: name the SAME channel the binding read as the measure (color for a real heatmap),
-      // else Y — via the shared predicate so label and values can't diverge (s149 F6d root cause).
-      measureLabel: resolveFieldLabel(input, colorIsMeasure ? 'color' : 'y'),
-      dimensionLabel: resolveFieldLabel(input, 'x'),
+      measureLabel: resolveFieldLabel(input, measureChannel),
+      dimensionLabel: resolveFieldLabel(input, dimensionChannel),
       colorLabel: colorIsMeasure ? undefined : resolveFieldLabel(input, 'color'),
     },
     narrative: input.a11y.narrative,
@@ -213,13 +215,21 @@ function deriveNarrativeFromData(
         summaryParts.push(
           `${labels.chartLabel} shows a ${describeCorrelation(analysis.correlation)} relationship between ${labels.dimensionLabel ?? 'x'} and ${labels.measureLabel ?? 'y'}.`
         );
+      } else if (analysis.max && analysis.min && analysis.mean !== undefined) {
+        // s151 m05b: a strip plot (one measure across a NOMINAL dimension) has no numeric-numeric
+        // correlation to narrate — describe the DISTRIBUTION/SPREAD of the measure instead of
+        // leaving the summary empty (which silently fell back to the static a11y.description and
+        // gave the analysis no data-derived teeth). Extrema + mean, the honest strip-plot read.
+        summaryParts.push(
+          `${labels.chartLabel} plots ${labels.measureLabel ?? 'values'} from ${formatNumeric(analysis.min.value)} (${analysis.min.label}) to ${formatNumeric(analysis.max.value)} (${analysis.max.label}), averaging ${formatNumeric(analysis.mean)}.`
+        );
       }
       break;
     }
     default: {
       if (analysis.total !== undefined && analysis.rowCount > 0) {
         summaryParts.push(
-          `${labels.chartLabel} covers ${analysis.rowCount} data points totaling ${formatNumeric(analysis.total)} ${labels.measureLabel ?? ''}.`
+          `${labels.chartLabel} covers ${analysis.rowCount} data points totaling ${formatNumeric(analysis.total)}${labels.measureLabel ? ` ${labels.measureLabel}` : ''}.`
         );
       }
     }
@@ -280,7 +290,11 @@ function buildKeyFindings(
       `Trend ${analysis.trend}: ${percent !== undefined ? formatPercent(percent) : formatNumeric(analysis.trendDelta)}`
     );
   }
-  if (analysis.total !== undefined) {
+  // s151 m05b: a `point` mark's measure is a positional/distributional value (strip-plot font
+  // sizes, scatter axes) — summing it is a meaningless aggregate ("Total Font Size Px: 147"), the
+  // same phantom class F6b/s150 guarded for KPIs/heatmaps. A Total is meaningful only where the
+  // measure is aggregated across a dimension (bar/area and the input-shaped default/sankey paths).
+  if (analysis.total !== undefined && analysis.mark !== 'point') {
     findings.push(`Total ${labels.measureLabel ?? 'value'}: ${formatNumeric(analysis.total)}`);
   }
   if (analysis.colorCategories.length > 0 && labels.colorLabel) {

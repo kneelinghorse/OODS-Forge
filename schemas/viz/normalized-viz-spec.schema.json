@@ -55,6 +55,11 @@
     },
     "portability": {
       "$ref": "#/definitions/PortabilitySpec"
+    },
+    "datasets": {
+      "type": "object",
+      "additionalProperties": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+      "description": "Named row-arrays that layered marks reference via Mark.from; resolved into Vega-Lite top-level datasets / ECharts dataset entries at adapt time."
     }
   },
   "required": ["data", "marks", "encoding", "a11y"],
