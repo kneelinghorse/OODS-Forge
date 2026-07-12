@@ -179,13 +179,18 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     measureField: bindings.measureField,
     colorField: bindings.colorField,
     sizeField: bindings.sizeField,
-    // s150: a MarkRect grid has NO inherent first→last order (arbitrary row-major melt) and X/Y
-    // are both dimensions, so a first→last trend and an x-vs-measure Pearson r are both spurious
-    // (same phantom class F6b killed for KPIs). s151 m05b extends the SAME guard to a strip plot
-    // (a MarkPoint with a nominal dimension axis) — its points are unordered and form no x-vs-y
-    // relationship, so trend/correlation are equally phantom. A TRUE numeric-numeric scatter
-    // (both axes quantitative) is neither → its trend/correlation are preserved (not over-suppressed).
-    computeTrend: !isMarkRectGrid(spec) && !isStripPlot(spec),
+    // s152 F3: a first→last trend is only meaningful when the mark IS a sequence — line/area,
+    // whose X is an ordered axis (time/continuum). For every OTHER mark the row order is
+    // arbitrary, so "Trend increasing: N%" FLIPS sign on a mere row reversal: a MarkRect grid
+    // (arbitrary melt, s150/F6d), a strip plot (unordered categories, s151 m05b), a nominal BAR
+    // (category order is not a sequence), and a TRUE numeric-numeric SCATTER (whose honest signal
+    // is the order-invariant correlation, not a first-vs-last delta that contradicts it). This
+    // SEQUENCE-MARK ALLOWLIST subsumes the prior isMarkRectGrid/isStripPlot guards (heatmap→
+    // 'unknown', strip→'point' both fail it) and finishes the phantom-row-order-Trend class
+    // (unifies pre-existing #910). The line/area summary path (narrative-generator.ts:186-201)
+    // depends on analysis.trend, so it is PRESERVED. The correlation gate below is UNCHANGED —
+    // a true scatter keeps its order-invariant Correlation (only its phantom trend is dropped).
+    computeTrend: bindings.mark === 'line' || bindings.mark === 'area',
     correlation: isMarkRectGrid(spec) || isStripPlot(spec) ? undefined : deriveCorrelation(rows, bindings),
   });
 }

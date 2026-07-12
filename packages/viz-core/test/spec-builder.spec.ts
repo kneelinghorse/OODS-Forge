@@ -904,3 +904,62 @@ describe('suggestPatterns — plain bar for 1M/1D all-positive comparison (s151 
     ).toThrow(/needs more fields than were named/);
   });
 });
+
+// s152 F4 — diverging-bar cardinality cap (Option 1: honest-fail lowConfidence). diverging-bar
+// was the ONLY bar pattern without a maxSeriesCardinality, so at >12 categories it escaped the
+// CARDINALITY_OVERFLOW_PENALTY every other bar takes and out-ranked simple-bar as the CONFIDENT
+// pick — carrying the self-contradictory "needs positive AND negative" signal on all-positive
+// data (the slice #15 did not close). The one-line cap (maxSeriesCardinality:12) demotes it.
+describe('s152 F4 — diverging-bar cardinality cap', () => {
+  const CATS = 'ABCDEFGHIJKLMNO'.split(''); // 15 categories (>12)
+  const allPositive = (n: number) => CATS.slice(0, n).map((c, i) => ({ category: c, value: 10 + i * 3 }));
+  const signed = (n: number) => CATS.slice(0, n).map((c, i) => ({ category: c, delta: i % 2 === 0 ? 10 + i : -(5 + i) }));
+  const rank = (rows: Record<string, unknown>[]) => suggestPatterns(toSchemaIntent(inferFieldProfile(rows), rows), { limit: 20 });
+  const scoreOf = (rows: Record<string, unknown>[], id: string) => rank(rows).find((s) => s.pattern.id === id)?.score;
+
+  // (a) CORRECTNESS (honest-fail): a >12-cat all-positive comparison demotes diverging-bar below
+  //     simple-bar and returns a lowConfidence top with NO "positive AND negative" contradiction.
+  //     Do NOT assert patternId==='simple-bar' — under Option 1 the honest top is layered-line-area.
+  it('(a) >12-cat all-positive demotes diverging-bar below simple-bar and flags lowConfidence (RED at HEAD)', () => {
+    const rows = allPositive(15);
+    const diverging = scoreOf(rows, 'diverging-bar');
+    const simpleBar = scoreOf(rows, 'simple-bar');
+    expect(diverging).toBeLessThan(simpleBar as number); // 2.4 < 5.4 (was 10.4 > 5.4 at HEAD)
+
+    const built = buildVizSpecFromRows({ rows } as never);
+    expect(built.lowConfidence).toBe(true); // honestly "no confident pick"
+
+    const top = rank(rows)[0];
+    expect(top.pattern.id).not.toBe('diverging-bar'); // the confidently-wrong pick is gone
+    expect(top.signals.some((s) => /positive AND negative/i.test(s))).toBe(false);
+  });
+
+  // (b) LOAD-BEARING REGRESSION: a >12-cat SIGNED comparison must STILL elect diverging-bar — the
+  //     cap penalizes but does not steal signed cases (teeth via a cap-removal mutation; vacuously
+  //     green at HEAD since signed diverging already wins, catches a future over-correction).
+  it('(b) >12-cat SIGNED comparison STILL elects diverging-bar (load-bearing; diverging > simple-bar)', () => {
+    const rows = signed(15);
+    const ranked = rank(rows);
+    expect(ranked[0].pattern.id).toBe('diverging-bar');
+    expect(scoreOf(rows, 'diverging-bar')).toBeGreaterThan(scoreOf(rows, 'simple-bar') as number); // 9.4 > 6.4
+  });
+
+  // (c) BOUNDARY: the cap engages strictly at 13+ — at exactly 12 categories it does not fire, so
+  //     all-positive→simple-bar and signed→diverging-bar both hold as before the cap.
+  it('(c) at exactly 12 categories the cap does not fire (all-positive→simple-bar, signed→diverging-bar)', () => {
+    expect(rank(allPositive(12))[0].pattern.id).toBe('simple-bar');
+    expect(rank(signed(12))[0].pattern.id).toBe('diverging-bar');
+    // 13 = first cardinality that trips the cap: diverging-bar demoted below simple-bar.
+    expect(scoreOf(allPositive(13), 'diverging-bar')).toBeLessThan(scoreOf(allPositive(13), 'simple-bar') as number);
+  });
+
+  // (d) DETERMINISM: the full ranking is byte-identical across N runs (pure scorer, no cap-induced tie).
+  it('(d) the >12-cat all-positive full ranking is byte-identical across runs', () => {
+    const rows = allPositive(15);
+    const serialize = () => rank(rows).map((s) => `${s.pattern.id}:${s.score}`).join('|');
+    const first = serialize();
+    for (let i = 0; i < 5; i += 1) {
+      expect(serialize()).toBe(first);
+    }
+  });
+});

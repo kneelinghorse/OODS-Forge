@@ -35,6 +35,7 @@ renderViz(spec);
 | `config` | Theme + layout overrides | Includes layout sizing and token overrides |
 | `a11y` | Mandatory RDV.4 contract | Requires `description`, optional narrative + table fallback |
 | `portability` | RDV.5 hints | Preferred fallback type, table order, renderer hint |
+| `datasets` | Named row-arrays for layered marks | Map of `name → row[]`; a layer references one via `Mark.from`. Resolved into Vega-Lite top-level `datasets` / ECharts `dataset[]` entries at adapt time. See [Layered datasets & `Mark.from`](#layered-datasets--markfrom-library-consumer-contract) |
 
 ### TraitBinding
 
@@ -80,6 +81,90 @@ Each layout trait is optional and composes with transforms, interactions, and
 tokens already present in the spec. Renderers can inspect `sharedScales` to keep
 domains aligned or duplicate axes per panel, while `projection` metadata keeps
 future map/radial compositions deterministic.
+
+## Layered datasets & `Mark.from` (library-consumer contract)
+
+A layered spec often needs a **second, independent** row-array — a government-median
+rule drawn over a primary bar layer, a target line over a time series — that is not
+the primary `data`. The top-level `datasets` slot holds those named row-arrays; a
+layer references one by name via `Mark.from`:
+
+- `datasets: { <name>: Row[] }` — named row-arrays, keyed by name.
+- `marks[n].from: '<name>'` — binds layer *n* to `datasets['<name>']`. A mark with no
+  `from` resolves against the primary top-level `data` as before.
+
+At adapt time this resolves natively in **both** renderers: `toVegaLiteSpec` threads the
+map onto the Vega-Lite top-level `datasets` block and gives the layer a `data:{ name }`;
+`toEChartsOption` builds a `dataset[]` array (primary **plus** each named entry) and sets
+the `from`-layer's `datasetId`. Fields bind by **name** (not column order) in both. When
+`datasets` is absent the output is byte-identical to a single-dataset spec — the slot is
+purely additive.
+
+### Public library-consumer contract (item #16)
+
+The IR is a **first-class public API of `@oods/viz-core`** for build-time importers that
+author a `NormalizedVizSpec` in TypeScript and run it through the adapters. As of
+sprint-152 F1 the core IR shapes are re-exported from the package root so a consumer can
+name them without a deep `@/` import:
+
+```ts
+import {
+  toVegaLiteSpec,
+  toEChartsOption,
+  type NormalizedVizSpec,
+  type Mark, // first-class; carries `Mark.from`
+} from '@oods/viz-core';
+
+// A named median-rule layer + the backing dataset, authored by NAME.
+const medianRule: Mark = {
+  trait: 'MarkLine',
+  from: 'gov_median', // resolves against datasets['gov_median']
+  encodings: {
+    x: { field: 'median', trait: 'EncodingX' },
+    y: { field: 'site', trait: 'EncodingY' },
+  },
+};
+
+const govMedian: NormalizedVizSpec['datasets'] = {
+  gov_median: [
+    { site: 'Gov A', median: 80 },
+    { site: 'Gov B', median: 80 },
+  ],
+};
+
+const spec: NormalizedVizSpec = {
+  $schema: 'https://oods.dev/viz-spec/v1',
+  id: 'ladder',
+  name: 'Accessibility Ladder',
+  data: { name: 'ladder', values: [ /* primary bar rows */ ] },
+  marks: [
+    { trait: 'MarkBar', encodings: { /* primary layer, no `from` */ } },
+    medianRule,
+  ],
+  encoding: { /* … */ },
+  a11y: { description: 'Accessibility ladder with a government-median rule overlay.' },
+  datasets: govMedian,
+};
+
+const vega = toVegaLiteSpec(spec); // vega.datasets.gov_median resolves the rule layer
+const echarts = toEChartsOption(spec); // dataset[] carries gov_median; line datasetId set
+```
+
+**Named puller:** Forge-Demos "Demo 03 — The Design DNA of the Web", **Hero B**, which
+sets `marks[1].from='gov_median'` over a 2-row `{site,median}` median-rule layer.
+
+> **#115 non-applicability for #16 (library-only capability).** The top-level `datasets`
+> slot and `Mark.from` layered-dataset resolution are a **build-time library contract of
+> `@oods/viz-core`**, consumed by importers of the typed IR (Forge-Demos "Demo 03", Hero B,
+> `marks[1].from='gov_median'` over a 2-row `{site,median}` median-rule layer). It is
+> advertised through its **public TypeScript types** (`NormalizedVizSpec` incl. `datasets`
+> + a first-class `Mark`), a **hand-authored contract doc** (this section), and a
+> **committed, co-located example test** resolving+rendering in both adapters. It is
+> deliberately **NOT** advertised via MCP tool prose because #16 adds **ZERO
+> agent-reachable MCP surface** (no viz.render/dashboard.render/certify tool accepts or
+> emits the NormalizedVizSpec `datasets` map; the only MCP-visible `datasets` is the
+> separate DashboardSpec `Dataset[]` seam). #115 therefore **intentionally does not gate
+> F1** — there is no agent-facing prose to move, and none should be added.
 
 ## Examples
 
