@@ -130,6 +130,14 @@ jobs:
       - name: Type check workspace
         run: pnpm exec tsc --noEmit
 
+      # s153 F1: the root tsc --noEmit does not reach packages/viz-core/src (tsup strips types,
+      # vitest is runtime-only), so the public barrel re-exports (Mark/DataSource/EncodingMap/
+      # Transform) had no red gate — deleting one left every check green. This per-package tsc
+      # gates them via the src/**/*.example.spec.ts type witnesses. Resolves @oods/viz-core to
+      # src via the root paths alias, so no build step is required.
+      - name: Type check viz-core (re-export surface gate)
+        run: pnpm --filter @oods/viz-core run typecheck
+
   tenancy:
     name: tenancy-matrix
     runs-on: ubuntu-latest

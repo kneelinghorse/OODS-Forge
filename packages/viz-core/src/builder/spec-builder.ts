@@ -1028,14 +1028,10 @@ function inferFieldType(name: string, present: ReadonlyArray<unknown>): FieldTyp
 
   const { nums, allNumeric } = numericView(present);
   if (allNumeric) {
-    // (3) Numeric-looking categorical codes are dimensions, not measures.
-    // Identifiers (id/code/sku/uuid/guid) join zip/currency here (sprint-152 F2, #895): a
-    // numeric-STRING id (e.g. store_id "1001".."1006", <8 rows so rule-(4) ordinal is unmet)
-    // was falling through to rule-(5) quantitative, which the RENDER (gradient-over-IDs) and
-    // the a11y narrative (SUM the IDs) both read — a three-way disagreement with the table's
-    // isNumeric=false. Classifying it nominal at the profiler ROOT fixes render + narrative +
-    // table together. Name-gated only (never a value probe): a measure-named field is unaffected.
-    if (nameHintsZip(name) || nameHintsCurrencyCode(name) || nameHintsIdentifier(name)) {
+    // (3) Numeric semantic codes (zip/postal, currency-code by name) are dimensions, not
+    // measures. Kept FIRST because these tokens are never measure-token'd, so ordering against
+    // the measure rescue is moot.
+    if (nameHintsZip(name) || nameHintsCurrencyCode(name)) {
       return 'nominal';
     }
     // (3b) A measure-named numeric column is a quantitative measure even when it is a small
@@ -1045,6 +1041,18 @@ function inferFieldType(name: string, present: ReadonlyArray<unknown>): FieldTyp
     //      ordinal — high-cardinality measures already fall through to (5) quantitative.
     if (nameHintsMeasure(name)) {
       return 'quantitative';
+    }
+    // (3c) An identifier-named numeric column (id/ids/uuid/guid) is a categorical dimension,
+    //      never a measure (sprint-152 F2, #895): a numeric-STRING id (e.g. store_id
+    //      "1001".."1006", <8 rows so rule-(4) ordinal is unmet) was falling through to
+    //      rule-(5) quantitative, which the RENDER (gradient-over-IDs) and the a11y narrative
+    //      (SUM the IDs) both read — a three-way disagreement with the table's isNumeric=false.
+    //      Classifying it nominal at the profiler ROOT fixes render + narrative + table together.
+    //      Reordered AFTER the rule-(3b) measure rescue (sprint-153 F2) so a measure+id compound
+    //      (e.g. revenue_per_id) types quantitative on its measure name instead of demoting.
+    //      Name-gated only (never a value probe).
+    if (nameHintsIdentifier(name)) {
+      return 'nominal';
     }
     // (4) A small, repeated set of integers is an ordinal scale.
     const distinct = new Set(nums).size;
@@ -1105,15 +1113,17 @@ function nameHintsCurrencyCode(name: string): boolean {
   return collapsed === 'currency' || collapsed === 'currencycode' || collapsed === 'isocurrency';
 }
 
-// An IDENTIFIER token set (sprint-152 F2, #895). A numeric-string identifier column
-// (store_id, product_code, sku, uuid, guid) is a categorical dimension, never a measure —
+// An IDENTIFIER token set (sprint-152 F2, #895; narrowed sprint-153 F2). A numeric-string
+// identifier column (store_id, uuid, guid) is a categorical dimension, never a measure —
 // summing or gradient-shading IDs is meaningless. Token-based (via fieldNameTokens) so
-// 'store_id'→['store','id'], 'product_code'→['product','code'] both match; overlaps with
-// nameHintsZip ('zip_code') / nameHintsCurrencyCode ('currency_code') are harmless (both
-// return 'nominal'). Placed in rule-(3) BEFORE the measure/ordinal/quantitative branches.
+// 'store_id'→['store','id'] matches; overlaps with nameHintsZip ('zip_code') /
+// nameHintsCurrencyCode ('currency_code') are harmless (both return 'nominal'). Placed in
+// rule-(3c) AFTER the measure rescue. 'code'/'sku' were DROPPED (sprint-153 F2): as bare
+// tokens they demoted genuine numeric measures (lines_of_code, code_coverage, sku_price,
+// sku_revenue) to nominal — the exact s152 regression this corrects.
 function nameHintsIdentifier(name: string): boolean {
   const tokens = fieldNameTokens(name);
-  return ['id', 'ids', 'code', 'sku', 'uuid', 'guid'].some((t) => tokens.includes(t));
+  return ['id', 'ids', 'uuid', 'guid'].some((t) => tokens.includes(t));
 }
 
 function isBareYearInRange(value: unknown): boolean {

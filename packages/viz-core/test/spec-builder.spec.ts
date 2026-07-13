@@ -934,14 +934,16 @@ describe('s152 F4 — diverging-bar cardinality cap', () => {
     expect(top.signals.some((s) => /positive AND negative/i.test(s))).toBe(false);
   });
 
-  // (b) LOAD-BEARING REGRESSION: a >12-cat SIGNED comparison must STILL elect diverging-bar — the
-  //     cap penalizes but does not steal signed cases (teeth via a cap-removal mutation; vacuously
-  //     green at HEAD since signed diverging already wins, catches a future over-correction).
+  // (b) LOAD-BEARING REGRESSION: a >12-cat SIGNED comparison must STILL elect diverging-bar. This
+  //     was SPARSE (15 rows), where diverging-bar's density:'sparse' +2 match masked the s152 cap
+  //     so it stayed green vacuously — the s153-F4 dense tests below cover the regime that actually
+  //     regressed. After the s153-F4 signed gate the cap no longer bites signed data at all, so the
+  //     score rises from the s152 9.4 to 17.4 (> 6.4 simple-bar).
   it('(b) >12-cat SIGNED comparison STILL elects diverging-bar (load-bearing; diverging > simple-bar)', () => {
     const rows = signed(15);
     const ranked = rank(rows);
     expect(ranked[0].pattern.id).toBe('diverging-bar');
-    expect(scoreOf(rows, 'diverging-bar')).toBeGreaterThan(scoreOf(rows, 'simple-bar') as number); // 9.4 > 6.4
+    expect(scoreOf(rows, 'diverging-bar')).toBeGreaterThan(scoreOf(rows, 'simple-bar') as number); // 17.4 > 6.4
   });
 
   // (c) BOUNDARY: the cap engages strictly at 13+ — at exactly 12 categories it does not fire, so
@@ -961,5 +963,47 @@ describe('s152 F4 — diverging-bar cardinality cap', () => {
     for (let i = 0; i < 5; i += 1) {
       expect(serialize()).toBe(first);
     }
+  });
+
+  // s153 F4 — the DENSE regime the s152 tests missed. At ≥200 rows the density signal is 'dense',
+  // so diverging-bar loses the sparse +2 that had masked the s152 cap: the -8 CARDINALITY_OVERFLOW
+  // penalty then sank a genuinely SIGNED >12-cat comparison below the CAPLESS layered-line-area,
+  // flipping the confident pick and breaking "signed still elects diverging-bar". The signed gate
+  // in evaluateCardinality (cap bites all-positive only) restores it. ≥200 rows → dense; a signed
+  // delta series → allowNegative:true; a repeated string category → the nominal dimension cardinality.
+  const DENSE = 210; // > DENSITY_DENSE_ROW_COUNT (200)
+  const denseSigned = (cats: number, total = DENSE) =>
+    Array.from({ length: total }, (_, i) => ({
+      category: CATS[i % cats],
+      delta: i % 2 === 0 ? 10 + (i % cats) : -(5 + (i % cats)),
+    }));
+  const denseAllPositive = (cats: number, total = DENSE) =>
+    Array.from({ length: total }, (_, i) => ({ category: CATS[i % cats], value: 10 + (i % cats) * 3 }));
+
+  // (e) THE REGRESSION: a DENSE (≥200-row) SIGNED >12-cat comparison elects diverging-bar again
+  //     (RED at HEAD → the capless layered-line-area stole the confident pick).
+  it('(e) dense >12-cat SIGNED comparison elects diverging-bar (RED at HEAD → layered-line-area)', () => {
+    const intent = toSchemaIntent(inferFieldProfile(denseSigned(13)), denseSigned(13));
+    expect(intent.density).toBe('dense');
+    expect(intent.allowNegative).toBe(true);
+    expect(rank(denseSigned(13))[0].pattern.id).toBe('diverging-bar');
+    expect(rank(denseSigned(15))[0].pattern.id).toBe('diverging-bar');
+  });
+
+  // (f) THE SPECIFIC FLIP: diverging-bar must outscore the CAPLESS layered-line-area that stole the
+  //     pick — the exact rival the s152 cap handed the win to on dense signed data.
+  it('(f) dense >12-cat SIGNED: diverging-bar outscores the capless layered-line-area', () => {
+    const rows = denseSigned(13);
+    expect(scoreOf(rows, 'diverging-bar') as number).toBeGreaterThan(scoreOf(rows, 'layered-line-area') as number);
+  });
+
+  // (g) SCOPE PROOF: the gate is signed-only — a DENSE ALL-POSITIVE >12-cat comparison must STILL
+  //     demote diverging-bar below simple-bar (the honest-fail is preserved in the dense regime too,
+  //     where evaluateDivergingFit still flags the "positive AND negative" contradiction).
+  it('(g) dense >12-cat ALL-POSITIVE still demotes diverging-bar (signed-only gate; honest-fail kept)', () => {
+    const rows = denseAllPositive(13);
+    expect(toSchemaIntent(inferFieldProfile(rows), rows).allowNegative).toBe(false);
+    expect(scoreOf(rows, 'diverging-bar') ?? -Infinity).toBeLessThan(scoreOf(rows, 'simple-bar') as number);
+    expect(rank(rows)[0].pattern.id).not.toBe('diverging-bar');
   });
 });

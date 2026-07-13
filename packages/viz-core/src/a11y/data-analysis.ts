@@ -167,6 +167,27 @@ function isStripPlot(spec: NormalizedVizSpec): boolean {
   return xq !== yq; // exactly one quantitative axis = one measure + one nominal dimension
 }
 
+/**
+ * s153 F3: a first→last trend is meaningful only when EVERY mark is a sequence mark — line or
+ * area, whose X is an ordered axis (time/continuum). The s152 gate keyed on the COLLAPSED mark
+ * (resolveMark), which returns 'mixed' for ≥2 distinct marks, so a legitimate LAYERED line+area
+ * combo (e.g. examples/viz/patterns-v2/layered-line-area.spec.json = [MarkArea,MarkLine,MarkLine])
+ * lost its honest Trend. Gating on ALL marks (not the collapse) restores those combos while any
+ * heterogeneous mark (bar/point/rect) still fails `.every` — no phantom row-order trend returns.
+ * `point` is DELIBERATELY EXCLUDED: a scatter's honest signal is the order-invariant correlation,
+ * not a first-vs-last delta, so a point+line combo stays suppressed. MODULE-LOCAL (the a11y barrel
+ * is `export *`; a bare fn is not re-exported — tested via its effect on analyzeVizSpec/narrative).
+ */
+function isSequenceComposition(spec: NormalizedVizSpec): boolean {
+  return (
+    spec.marks.length > 0 &&
+    spec.marks.every((mark) => {
+      const normalized = normalizeMark(mark.trait);
+      return normalized === 'line' || normalized === 'area';
+    })
+  );
+}
+
 export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   const bindings = resolvePrimaryBindings(spec);
   const rows = collectRows(spec);
@@ -179,18 +200,20 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     measureField: bindings.measureField,
     colorField: bindings.colorField,
     sizeField: bindings.sizeField,
-    // s152 F3: a first→last trend is only meaningful when the mark IS a sequence — line/area,
-    // whose X is an ordered axis (time/continuum). For every OTHER mark the row order is
-    // arbitrary, so "Trend increasing: N%" FLIPS sign on a mere row reversal: a MarkRect grid
+    // s152 F3 / s153 F3: a first→last trend is only meaningful when the mark IS a sequence —
+    // line/area, whose X is an ordered axis (time/continuum). For every OTHER mark the row order
+    // is arbitrary, so "Trend increasing: N%" FLIPS sign on a mere row reversal: a MarkRect grid
     // (arbitrary melt, s150/F6d), a strip plot (unordered categories, s151 m05b), a nominal BAR
     // (category order is not a sequence), and a TRUE numeric-numeric SCATTER (whose honest signal
     // is the order-invariant correlation, not a first-vs-last delta that contradicts it). This
-    // SEQUENCE-MARK ALLOWLIST subsumes the prior isMarkRectGrid/isStripPlot guards (heatmap→
-    // 'unknown', strip→'point' both fail it) and finishes the phantom-row-order-Trend class
-    // (unifies pre-existing #910). The line/area summary path (narrative-generator.ts:186-201)
-    // depends on analysis.trend, so it is PRESERVED. The correlation gate below is UNCHANGED —
-    // a true scatter keeps its order-invariant Correlation (only its phantom trend is dropped).
-    computeTrend: bindings.mark === 'line' || bindings.mark === 'area',
+    // SEQUENCE-MARK ALLOWLIST (isSequenceComposition = EVERY mark line/area) subsumes the prior
+    // isMarkRectGrid/isStripPlot guards (heatmap→'unknown', strip→'point' both fail it) and
+    // finishes the phantom-row-order-Trend class (unifies pre-existing #910). s153 F3 fixes the
+    // s152 regression where this keyed on the COLLAPSED mark (resolveMark→'mixed' for a layered
+    // line+area combo), suppressing a legitimate Trend. The line/area summary path
+    // (narrative-generator.ts:186-201) depends on analysis.trend, so it is PRESERVED. The
+    // correlation gate below is UNCHANGED — a true scatter keeps its order-invariant Correlation.
+    computeTrend: isSequenceComposition(spec),
     correlation: isMarkRectGrid(spec) || isStripPlot(spec) ? undefined : deriveCorrelation(rows, bindings),
   });
 }

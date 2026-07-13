@@ -159,7 +159,10 @@ const flowSpec: SpatialSpec = {
     },
   ],
   a11y: { description: 'Flow chrome-bake fixture.' },
-} as SpatialSpec;
+  // s153 F1 (feedbackId 81): the new viz-core typecheck gate surfaces this pre-existing TS2352 —
+  // the route-layer fixture's start/end omit the `field` RouteEndpointEncoding requires. The
+  // sanctioned #822 double-cast keeps the fixture runtime-identical while satisfying the gate.
+} as unknown as SpatialSpec;
 
 describe('ECharts chrome bake-fires guard (s145 m03, memo §6) — the bake carries the resolver chrome', () => {
   it('treemap: background + title + on-canvas breadcrumb + ON-TILE mechanism + neutral borders + emphasis', () => {

@@ -464,7 +464,11 @@ const registry = [
       // positive AND negative" signal on all-positive data. Value 12 matches simple-bar +
       // HIGH_CARDINALITY_DIMENSION. Honest-fail (Option 1): a >12-cat all-positive comparison
       // now demotes diverging-bar below simple-bar and returns a lowConfidence top instead of a
-      // confidently-wrong diverging pick; a >12-cat SIGNED comparison still elects diverging-bar.
+      // confidently-wrong diverging pick. s153 F4: the cap is now gated in evaluateCardinality to
+      // bite ALL-POSITIVE data only (symmetric with evaluateDivergingFit) — the s152 cap also
+      // penalized genuinely SIGNED >12-cat DENSE comparisons, flipping them to the capless
+      // layered-line-area. So a >12-cat SIGNED comparison ALWAYS elects diverging-bar (was true
+      // only non-dense before the gate).
       maxSeriesCardinality: 12,
     },
     related: ['grouped-bar'],
