@@ -140,6 +140,16 @@ function evaluateCardinality(pattern: ChartPattern, schema: SchemaIntent, signal
   if (cap == null || cardinality == null || cardinality <= cap) {
     return 0;
   }
+  // s153 F4 corrective: the overflow cap on diverging-bar (the ONLY allowNegative pattern) was
+  // meant to demote it on ALL-POSITIVE >12-cat floods only — where evaluateDivergingFit already
+  // flags the "positive AND negative" contradiction. On genuinely SIGNED data the cap must not
+  // bite: a signed >12-cat DENSE comparison would otherwise flip confidently to the capless
+  // layered-line-area, breaking the "signed still elects diverging-bar" guarantee. Symmetric with
+  // evaluateDivergingFit's allowNegative gate; scoped to diverging-bar alone (sole allowNegative
+  // pattern), so zero blast radius beyond it.
+  if (pattern.heuristics.allowNegative && schema.allowNegative === true) {
+    return 0;
+  }
   signals.push(
     `High-cardinality dimension (${cardinality}) exceeds ${pattern.name}'s legible cap (${cap}) — prefer an aggregate/line view`,
   );

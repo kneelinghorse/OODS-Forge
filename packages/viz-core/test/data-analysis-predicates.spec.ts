@@ -307,15 +307,101 @@ describe('s152 F2 — #895 bare numeric-string-ID heatmap honesty (profiler root
     expect(prof?.role).toBe('measure');
   });
 
-  it('(c) inferFieldProfile: identifier tokens code/sku/uuid/guid are all nominal', () => {
+  // s153 F2 REWRITE: the s152 identifier set treated bare 'code'/'sku' as identifier tokens,
+  // which over-reached — a numeric-string 'product_code'/'sku' column is a genuine measure, not
+  // an ID (summing lines_of_code is meaningful; summing a store_id is not). The token set was
+  // narrowed to id/ids/uuid/guid, so product_code/sku now type quantitative (= their pre-s152
+  // typing — a narrower fix, NOT a new regression), while uuid/guid remain nominal identifiers.
+  it('(c) inferFieldProfile: id/uuid/guid are nominal; product_code/sku are NOT identifiers (narrowed s153)', () => {
     const rows = [
       { product_code: '100', sku: '200', uuid: '300', guid: '400' },
       { product_code: '101', sku: '201', uuid: '301', guid: '401' },
       { product_code: '102', sku: '202', uuid: '302', guid: '402' },
     ];
     const profs = inferFieldProfile(rows);
-    for (const name of ['product_code', 'sku', 'uuid', 'guid']) {
+    for (const name of ['uuid', 'guid']) {
       expect(profs.find((p) => p.name === name)?.type, name).toBe('nominal');
     }
+    for (const name of ['product_code', 'sku']) {
+      expect(profs.find((p) => p.name === name)?.type, name).toBe('quantitative');
+    }
+  });
+});
+
+// s153 F2 corrective (closes the s152 F2 HIGH regression, PS-2026-07-12-006). The s152 identifier
+// token set {id,ids,code,sku,uuid,guid} demoted genuine numeric MEASURES that merely contained
+// 'code'/'sku' (lines_of_code, code_coverage, sku_price, sku_revenue) to nominal dimensions, AND
+// the identifier check ran in rule-(3) BEFORE the rule-(3b) measure-name rescue, so measure+id
+// compounds (revenue_per_id, amount_per_uuid) demoted too. The fix NARROWS the tokens to
+// {id,ids,uuid,guid} and REORDERS the identifier check into a new rule-(3c) AFTER the measure
+// rescue, so a measure name wins over an id token. These tests exercise both halves at the
+// profiler root and re-confirm the #895 store_id path still falls back correctly.
+
+// All-distinct numeric-string columns (distinctRatio 1.0, <8 rows) so rule-(4) ordinal never
+// fires — the type is decided purely by the name-hint precedence being corrected.
+const s153NumericStringRows = (names: readonly string[]) =>
+  Array.from({ length: 6 }, (_, i) => {
+    const row: Record<string, string> = {};
+    for (const name of names) row[name] = String(1000 + i * 7 + name.length);
+    return row;
+  });
+
+describe('s153 F2 — numeric measures with code/sku tokens are measures, not dimensions', () => {
+  it('NARROW: the 5 defect measure columns type quantitative/measure (RED at HEAD: all nominal)', () => {
+    const names = ['lines_of_code', 'code_coverage', 'code_complexity', 'sku_price', 'sku_revenue'];
+    const profs = inferFieldProfile(s153NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('quantitative');
+      expect(p?.role, name).toBe('measure');
+    }
+  });
+
+  it('REORDER: measure+id compounds win on the measure name (revenue_per_id/amount_per_uuid/revenue_per_sku → measure)', () => {
+    const names = ['revenue_per_id', 'amount_per_uuid', 'revenue_per_sku'];
+    const profs = inferFieldProfile(s153NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('quantitative');
+      expect(p?.role, name).toBe('measure');
+    }
+  });
+
+  it('preserved: pure identifier columns store_id/uuid/guid stay nominal/dimension (guard still bites)', () => {
+    const names = ['store_id', 'uuid', 'guid'];
+    const profs = inferFieldProfile(s153NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('nominal');
+      expect(p?.role, name).toBe('dimension');
+    }
+  });
+
+  // #895 still fixed after the narrow+reorder: a bare numeric-string store_id color with a
+  // dimension Y has no measure to fall back to → the id is never summed and the table stays
+  // isNumeric:false. Asserts the human-readable LABEL string (the s149 F6d root-cause lesson).
+  it('#895 preserved: a bare store_id heatmap never sums the ids; table isNumeric:false', () => {
+    const rows = ['North', 'South', 'East'].flatMap((region, r) =>
+      ['Q1', 'Q2'].map((quarter, q) => ({
+        region,
+        quarter,
+        store_id: String(1001 + r * 2 + q),
+      })),
+    );
+    const { spec } = buildVizSpecFromRows({
+      rows,
+      chartType: 'heatmap',
+      encodings: {
+        x: { field: 'region', scale: 'band' },
+        y: { field: 'quarter', scale: 'band' },
+        color: { field: 'store_id' },
+      },
+    } as never);
+    expect(heatmapColorIsMeasure(spec)).toBe(false);
+    const n = generateNarrativeSummary(spec);
+    expect(n.summary).not.toMatch(/totaling [\d,]+ Store id/i);
+    expect(n.keyFindings.some((f) => /Total Store id/i.test(f))).toBe(false);
+    const colorType = (spec.encoding as { color?: { type?: string } }).color?.type;
+    expect(colorType).toBe('nominal');
   });
 });
