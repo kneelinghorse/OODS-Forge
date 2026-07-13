@@ -133,8 +133,15 @@ jobs:
       # s153 F1: the root tsc --noEmit does not reach packages/viz-core/src (tsup strips types,
       # vitest is runtime-only), so the public barrel re-exports (Mark/DataSource/EncodingMap/
       # Transform) had no red gate — deleting one left every check green. This per-package tsc
-      # gates them via the src/**/*.example.spec.ts type witnesses. Resolves @oods/viz-core to
-      # src via the root paths alias, so no build step is required.
+      # gates them via the src/**/*.example.spec.ts type witnesses.
+      #
+      # viz-core src imports @oods/tokens, whose types live ONLY in its generated dist
+      # (packages/tokens has no src/index.ts — its src is DTCG JSON), so the root
+      # @oods/* → packages/*/src alias cannot resolve it and it must be built first.
+      # (@oods/a11y-tools DOES resolve via the src alias, so only tokens needs building.)
+      - name: Build tokens (viz-core typecheck dependency)
+        run: pnpm --filter @oods/tokens run build
+
       - name: Type check viz-core (re-export surface gate)
         run: pnpm --filter @oods/viz-core run typecheck
 
