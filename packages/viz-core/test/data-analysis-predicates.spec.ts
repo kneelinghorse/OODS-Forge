@@ -405,3 +405,170 @@ describe('s153 F2 — numeric measures with code/sku tokens are measures, not di
     expect(colorType).toBe('nominal');
   });
 });
+
+// s154 F2 corrective (closes the s153 F2 HIGH+MED regressions, PS-2026-07-17-001). The s153
+// REORDER (identifier check moved AFTER the measure rescue) promoted measure-PREFIXED identifier
+// columns — sales_id/total_id/price_id/... all typed quantitative/measure at 1342ab2 (nominal at
+// s152 a93477f) → live #895 sum-the-IDs narrative ("Total Sales id: 6,021") + gradient over IDs.
+// The review proved NO ordering of an unordered token-bag is correct in both directions
+// (id_count wants measure, id_number wants nominal; both are id-hinted). Head POSITION is the
+// missing axis. The fix keeps the hint helpers matching ANYWHERE (.some, unchanged) and adds a
+// HEAD-NOUN escape: a zip/identifier-hinted numeric column stays nominal UNLESS its HEAD noun
+// (last token after stripping a trailing all-digit suffix) is aggregate-shaped or a measure word,
+// or the name carries a 'per' rate marker. These tests enumerate BOTH head-positions of every
+// hint-class compound (the bidirectional-enumeration lesson) and assert type/role AND the label.
+
+// 6 all-distinct numeric-string rows: distinctRatio 1.0 AND <8 rows so rule-(4) ordinal never
+// fires — the type is decided purely by the head-noun arbitration under test.
+const s154NumericStringRows = (names: readonly string[]) =>
+  Array.from({ length: 6 }, (_, i) => {
+    const row: Record<string, string> = {};
+    for (const name of names) row[name] = String(1000 + i * 7 + name.length);
+    return row;
+  });
+
+describe('s154 F2 — head-noun arbitration (ANYWHERE-hint + head-noun escape)', () => {
+  // (HIGH) measure-word PREFIX + identifier HEAD → nominal dimension. The measure token is not
+  // the head noun, so it must NOT rescue the id. RED at HEAD 1342ab2: all quantitative/measure.
+  it('measure-prefixed id/uuid/guid compounds are nominal, not measures (RED at HEAD)', () => {
+    const names = [
+      'sales_id', 'total_id', 'amount_id', 'price_id', 'cost_id',
+      'value_id', 'qty_id', 'order_total_id', 'sales_uuid', 'revenue_guid',
+    ];
+    const profs = inferFieldProfile(s154NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('nominal');
+      expect(p?.role, name).toBe('dimension');
+    }
+  });
+
+  // (attacker class) identifier HEAD + a non-measure tail token (number/no/num/fk/pk/ref/key/seq)
+  // → nominal. The original head-token design mis-typed these as measures (#895 resurrection).
+  it('identifier-head compounds with non-measure tails stay nominal (id_number/user_id_fk/...)', () => {
+    const names = [
+      'id_number', 'id_no', 'id_num', 'customer_id_number', 'tax_id_number',
+      'user_id_fk', 'order_id_pk', 'parent_id_ref', 'store_id_key', 'record_id_seq',
+    ];
+    const profs = inferFieldProfile(s154NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('nominal');
+      expect(p?.role, name).toBe('dimension');
+    }
+  });
+
+  // (MED) aggregate-HEADED identifier compounds ESCAPE to genuine quantitative measures —
+  // counting/summing IDs is meaningful. RED at HEAD: nominal (the s152 carry only half-fixed).
+  it('aggregate-headed identifier compounds are quantitative measures (RED at HEAD: nominal)', () => {
+    const names = ['id_count', 'uuid_count', 'guid_score', 'ids_sum', 'user_id_count'];
+    const profs = inferFieldProfile(s154NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('quantitative');
+      expect(p?.role, name).toBe('measure');
+    }
+  });
+
+  // The COLLISION the review proved inexpressible in any token-ORDERING model, pinned in ONE
+  // dataset: id_count (aggregate head) is a measure while id_number (non-measure head) is a
+  // dimension — same 'id' hint, opposite outcome, resolved only by head POSITION.
+  it('COLLISION: id_count is quantitative AND id_number is nominal in the same dataset', () => {
+    const profs = inferFieldProfile(s154NumericStringRows(['id_count', 'id_number']));
+    expect(profs.find((p) => p.name === 'id_count')?.type).toBe('quantitative');
+    expect(profs.find((p) => p.name === 'id_count')?.role).toBe('measure');
+    expect(profs.find((p) => p.name === 'id_number')?.type).toBe('nominal');
+    expect(profs.find((p) => p.name === 'id_number')?.role).toBe('dimension');
+  });
+
+  // One cell per AGGREGATE_HEADS member — each rescues an identifier compound to a measure.
+  it('every AGGREGATE_HEADS token escapes an identifier compound to quantitative', () => {
+    const heads = ['count', 'counts', 'sum', 'avg', 'average', 'mean', 'median', 'min', 'max', 'score'];
+    for (const h of heads) {
+      const name = `id_${h}`;
+      const p = inferFieldProfile(s154NumericStringRows([name])).find((f) => f.name === name);
+      expect(p?.type, name).toBe('quantitative');
+      expect(p?.role, name).toBe('measure');
+    }
+  });
+
+  // (MED, zip class) a measure-HEADED zip/postal compound escapes to a measure; a non-measure
+  // zip compound stays nominal. RED at HEAD: postal_revenue mis-typed by the zip-first return.
+  it('postal_revenue is quantitative (measure head escapes); postal_area_code stays nominal', () => {
+    const profs = inferFieldProfile(s154NumericStringRows(['postal_revenue', 'postal_area_code']));
+    expect(profs.find((p) => p.name === 'postal_revenue')?.type).toBe('quantitative');
+    expect(profs.find((p) => p.name === 'postal_revenue')?.role).toBe('measure');
+    expect(profs.find((p) => p.name === 'postal_area_code')?.type).toBe('nominal');
+    expect(profs.find((p) => p.name === 'postal_area_code')?.role).toBe('dimension');
+  });
+
+  // 'per' rate marker escapes in BOTH head-positions (measure_per_id AND ..._per_..._id).
+  it('per-rate identifier compounds are quantitative (revenue_per_id/revenue_per_customer_id/sales_per_store_id)', () => {
+    const names = ['revenue_per_id', 'revenue_per_customer_id', 'sales_per_store_id'];
+    const profs = inferFieldProfile(s154NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('quantitative');
+      expect(p?.role, name).toBe('measure');
+    }
+  });
+
+  // MUST-NOT-MOVE (nominal): bare identifiers and non-escaping id compounds stay dimensions.
+  it('MUST-NOT-MOVE: bare/non-escaping identifiers stay nominal', () => {
+    const names = ['store_id', 'uuid', 'guid', 'ids', 'id', 'user_id_session_id'];
+    const profs = inferFieldProfile(s154NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('nominal');
+      expect(p?.role, name).toBe('dimension');
+    }
+  });
+
+  // MUST-NOT-MOVE (quantitative): code/sku are NOT identifier tokens (narrowed s153) and must not
+  // re-demote; genuine measure names stay measures.
+  it('MUST-NOT-MOVE: code/sku/measure names stay quantitative', () => {
+    const names = ['lines_of_code', 'code_coverage', 'sku_price', 'sku_revenue', 'product_code', 'sku'];
+    const profs = inferFieldProfile(s154NumericStringRows(names));
+    for (const name of names) {
+      const p = profs.find((f) => f.name === name);
+      expect(p?.type, name).toBe('quantitative');
+      expect(p?.role, name).toBe('measure');
+    }
+  });
+
+  // MUST-NOT-MOVE: a trailing all-digit suffix is stripped for the head noun, so store_id_2024
+  // keeps head 'id' (nominal) while sales_2024 has head 'sales' via the measure rescue (quant).
+  it('MUST-NOT-MOVE: digit-suffix — store_id_2024 nominal, sales_2024 quantitative', () => {
+    const profs = inferFieldProfile(s154NumericStringRows(['store_id_2024', 'sales_2024']));
+    expect(profs.find((p) => p.name === 'store_id_2024')?.type).toBe('nominal');
+    expect(profs.find((p) => p.name === 'sales_2024')?.type).toBe('quantitative');
+  });
+
+  // End-to-end LABEL (the s149 F6d lesson: assert the human-readable string). A heatmap with
+  // color=sales_id must route to the categorical branch — nominal color, no "Total Sales id" sum.
+  // Mirror of the live #895 defect "Total Sales id: 6,021". RED at HEAD.
+  it('heatmap color=sales_id: nominal color, never sums the ids (RED at HEAD)', () => {
+    const rows = ['North', 'South', 'East'].flatMap((region, r) =>
+      ['Q1', 'Q2'].map((quarter, q) => ({
+        region,
+        quarter,
+        sales_id: String(1001 + r * 2 + q),
+      })),
+    );
+    const { spec } = buildVizSpecFromRows({
+      rows,
+      chartType: 'heatmap',
+      encodings: {
+        x: { field: 'region', scale: 'band' },
+        y: { field: 'quarter', scale: 'band' },
+        color: { field: 'sales_id' },
+      },
+    } as never);
+    expect(heatmapColorIsMeasure(spec)).toBe(false);
+    const n = generateNarrativeSummary(spec);
+    expect(n.summary).not.toMatch(/totaling [\d,]+ Sales id/i);
+    expect(n.keyFindings.some((f) => /Total Sales id/i.test(f))).toBe(false);
+    const colorType = (spec.encoding as { color?: { type?: string } }).color?.type;
+    expect(colorType).toBe('nominal');
+  });
+});

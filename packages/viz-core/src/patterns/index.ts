@@ -465,10 +465,18 @@ const registry = [
       // HIGH_CARDINALITY_DIMENSION. Honest-fail (Option 1): a >12-cat all-positive comparison
       // now demotes diverging-bar below simple-bar and returns a lowConfidence top instead of a
       // confidently-wrong diverging pick. s153 F4: the cap is now gated in evaluateCardinality to
-      // bite ALL-POSITIVE data only (symmetric with evaluateDivergingFit) — the s152 cap also
-      // penalized genuinely SIGNED >12-cat DENSE comparisons, flipping them to the capless
-      // layered-line-area. So a >12-cat SIGNED comparison ALWAYS elects diverging-bar (was true
-      // only non-dense before the gate).
+      // bite ALL-POSITIVE data only (symmetric with evaluateDivergingFit) — the ungated s152 cap
+      // also penalized genuinely SIGNED >12-cat comparisons, flipping the pick to the capless
+      // layered-line-area wherever the two scored within the -8 penalty's margin. Measured live
+      // (diverging-bar-minus-8 vs layered-line-area at 8.00), that flip regime was NOT "non-dense":
+      // sparse +1.4 (HELD), mid -0.6 (FLIPPED), dense -1.6 (FLIPPED) — the s152 cap held ONLY in
+      // the SPARSE regime. Density boundaries (spec-builder.ts:604-605, DENSITY_SPARSE/DENSE_ROW_
+      // COUNT): sparse = rows ≤ 30, mid = 31–199 (density undefined), dense = rows ≥ 200. With the
+      // s153 gate a signed >12-cat comparison elects diverging-bar at EVERY density — but ONLY
+      // within diverging-bar's own count-shape (measures 1, dimensions 1-2, above). Off-shape
+      // inputs never reach it via a gate-INDEPENDENT count mismatch: ≥3 dimensions route to
+      // facet-small-multiples-line, ≥2 measures to linked-brush-scatter, regardless of sign
+      // (spec-builder.spec.ts "s154 F4 — diverging-bar mid-density + off-shape scope").
       maxSeriesCardinality: 12,
     },
     related: ['grouped-bar'],

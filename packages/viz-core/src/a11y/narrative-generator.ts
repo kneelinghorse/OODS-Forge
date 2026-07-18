@@ -184,7 +184,9 @@ function deriveNarrativeFromData(
   const summaryParts: string[] = [];
   switch (analysis.mark) {
     case 'line': {
-      if (analysis.first && analysis.last) {
+      if (analysis.trend !== undefined && analysis.first && analysis.last) {
+        // Trend is DEFINED (a non-faceted sequence composition): the directional sentence. A
+        // genuine 'flat' trend legitimately reads "remains relatively flat" here.
         const directionLabel =
           analysis.trend === 'increasing'
             ? 'rises'
@@ -198,6 +200,17 @@ function deriveNarrativeFromData(
           const percent = analysis.trendDelta / Math.max(Math.abs(analysis.first.value), 1);
           summaryParts.push(`Overall change of ${formatPercent(percent)} across the period.`);
         }
+      } else if (analysis.min && analysis.max) {
+        // s154 F3: trend is UNDEFINED — the first→last delta was suppressed because this is a
+        // FACETED line spec, where a cross-panel first→last is a phantom that sign-inverts vs every
+        // real series. Emit an ORDER-INVARIANT range sentence instead of the false directional
+        // "remains relatively flat", keeping A11Y-R-10 (non-empty summary for line/area) green
+        // without asserting a direction the data does not support.
+        summaryParts.push(
+          analysis.min.value === analysis.max.value
+            ? `${labels.chartLabel} holds steady at ${formatNumeric(analysis.min.value)} (${analysis.min.label}).`
+            : `${labels.chartLabel} shows ${labels.measureLabel ?? 'values'} ranging from ${formatNumeric(analysis.min.value)} (${analysis.min.label}) to ${formatNumeric(analysis.max.value)} (${analysis.max.label}).`
+        );
       }
       break;
     }

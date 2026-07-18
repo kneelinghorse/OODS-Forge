@@ -168,24 +168,43 @@ function isStripPlot(spec: NormalizedVizSpec): boolean {
 }
 
 /**
- * s153 F3: a first→last trend is meaningful only when EVERY mark is a sequence mark — line or
- * area, whose X is an ordered axis (time/continuum). The s152 gate keyed on the COLLAPSED mark
- * (resolveMark), which returns 'mixed' for ≥2 distinct marks, so a legitimate LAYERED line+area
- * combo (e.g. examples/viz/patterns-v2/layered-line-area.spec.json = [MarkArea,MarkLine,MarkLine])
- * lost its honest Trend. Gating on ALL marks (not the collapse) restores those combos while any
- * heterogeneous mark (bar/point/rect) still fails `.every` — no phantom row-order trend returns.
- * `point` is DELIBERATELY EXCLUDED: a scatter's honest signal is the order-invariant correlation,
- * not a first-vs-last delta, so a point+line combo stays suppressed. MODULE-LOCAL (the a11y barrel
- * is `export *`; a bare fn is not re-exported — tested via its effect on analyzeVizSpec/narrative).
+ * s154 F3: the ONE derivation of the spec's KNOWN normalized marks — every mark trait mapped
+ * through normalizeMark with 'unknown' (MarkRect/MarkRule/…) filtered out. Shared by resolveMark
+ * AND isSequenceComposition so the two can never desync again (the s150 share-the-derivation
+ * recipe). Before this, isSequenceComposition read the RAW marks (an 'unknown' failed its `.every`)
+ * while resolveMark filtered 'unknown', so a line+rect spec collapsed to mark='line' yet had its
+ * trend suppressed → the false "remains relatively flat" on rising data (s153 F3 MED).
+ */
+function knownNormalizedMarks(spec: NormalizedVizSpec): ChartShape[] {
+  return spec.marks.map((mark) => normalizeMark(mark.trait)).filter((mark) => mark !== 'unknown');
+}
+
+/**
+ * s154 F3 (Variant A): a first→last trend is meaningful only when every KNOWN mark is a sequence
+ * mark — line or area, whose X is an ordered axis (time/continuum). Filtering 'unknown' (rather
+ * than failing `.every` on it) RECONCILES with resolveMark: line+rect (rect→'unknown') is a line
+ * composition at BOTH sites, so its honest directional trend is restored (the s153 F3 MED desync).
+ * `point` is a KNOWN mark that is DELIBERATELY not line/area, so a point+line combo still fails the
+ * `.every` and stays suppressed — a scatter's honest signal is the order-invariant correlation, not
+ * a first-vs-last delta. A spec whose marks are ALL unknown (known.length === 0) is not a sequence.
+ * MODULE-LOCAL (the a11y barrel is `export *`; tested via analyzeVizSpec/narrative effects).
  */
 function isSequenceComposition(spec: NormalizedVizSpec): boolean {
-  return (
-    spec.marks.length > 0 &&
-    spec.marks.every((mark) => {
-      const normalized = normalizeMark(mark.trait);
-      return normalized === 'line' || normalized === 'area';
-    })
-  );
+  const known = knownNormalizedMarks(spec);
+  return known.length > 0 && known.every((mark) => mark === 'line' || mark === 'area');
+}
+
+/**
+ * s154 F3: a FACETED layout (small multiples) renders one panel per facet key, but the analyzers
+ * walk the FLAT spec.data.values, concatenating every panel's rows. A first→last delta across that
+ * concatenation is a guaranteed cross-panel phantom — it sign-inverts vs every real per-panel
+ * series (confirmed HIGH: facet-small-multiples-line "Trend decreasing: -33.1%" while all panels
+ * rise). rows / columns / rows+columns (matrix) / wrap are all LayoutFacet sub-shapes, so this one
+ * predicate covers them all. LayoutLayer (shared axis, a real single series) and LayoutConcat
+ * (deliberately out of scope — fork 2) are NOT faceted and keep their trend.
+ */
+function isFacetedLayout(spec: NormalizedVizSpec): boolean {
+  return spec.layout?.trait === 'LayoutFacet';
 }
 
 export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
@@ -206,21 +225,22 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     // (arbitrary melt, s150/F6d), a strip plot (unordered categories, s151 m05b), a nominal BAR
     // (category order is not a sequence), and a TRUE numeric-numeric SCATTER (whose honest signal
     // is the order-invariant correlation, not a first-vs-last delta that contradicts it). This
-    // SEQUENCE-MARK ALLOWLIST (isSequenceComposition = EVERY mark line/area) subsumes the prior
-    // isMarkRectGrid/isStripPlot guards (heatmap→'unknown', strip→'point' both fail it) and
-    // finishes the phantom-row-order-Trend class (unifies pre-existing #910). s153 F3 fixes the
-    // s152 regression where this keyed on the COLLAPSED mark (resolveMark→'mixed' for a layered
-    // line+area combo), suppressing a legitimate Trend. The line/area summary path
-    // (narrative-generator.ts:186-201) depends on analysis.trend, so it is PRESERVED. The
+    // SEQUENCE-MARK ALLOWLIST (isSequenceComposition = every KNOWN mark line/area, s154 Variant A)
+    // subsumes the prior isMarkRectGrid/isStripPlot guards (heatmap→all-'unknown', strip→'point'
+    // both fail it) and finishes the phantom-row-order-Trend class (unifies pre-existing #910). The
+    // s154 isFacetedLayout gate is the OUTER AND: a LayoutFacet spec concatenates every panel's
+    // rows into one flat walk, so its first→last delta is a cross-panel phantom that sign-inverts vs
+    // every real per-panel series (s153 F3 HIGH). The line/area summary path
+    // (narrative-generator.ts:186-201) depends on analysis.trend, so it is PRESERVED; when the gate
+    // suppresses it, that path emits an order-invariant range sentence, not a directional label. The
     // correlation gate below is UNCHANGED — a true scatter keeps its order-invariant Correlation.
-    computeTrend: isSequenceComposition(spec),
+    computeTrend: !isFacetedLayout(spec) && isSequenceComposition(spec),
     correlation: isMarkRectGrid(spec) || isStripPlot(spec) ? undefined : deriveCorrelation(rows, bindings),
   });
 }
 
 function resolveMark(spec: NormalizedVizSpec): ChartShape {
-  const normalizedMarks = spec.marks.map((mark) => normalizeMark(mark.trait));
-  const uniqueMarks = [...new Set(normalizedMarks.filter((mark) => mark !== 'unknown'))];
+  const uniqueMarks = [...new Set(knownNormalizedMarks(spec))];
   return uniqueMarks.length === 1 ? uniqueMarks[0] : uniqueMarks.length > 1 ? 'mixed' : 'unknown';
 }
 

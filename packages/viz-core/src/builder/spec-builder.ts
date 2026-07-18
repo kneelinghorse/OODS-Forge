@@ -1028,11 +1028,32 @@ function inferFieldType(name: string, present: ReadonlyArray<unknown>): FieldTyp
 
   const { nums, allNumeric } = numericView(present);
   if (allNumeric) {
-    // (3) Numeric semantic codes (zip/postal, currency-code by name) are dimensions, not
-    // measures. Kept FIRST because these tokens are never measure-token'd, so ordering against
-    // the measure rescue is moot.
-    if (nameHintsZip(name) || nameHintsCurrencyCode(name)) {
+    // (3) A currency code (by name) is a categorical dimension, not a measure. Exact-match only
+    //     (no compounds), so it never collides with the measure rescue below.
+    if (nameHintsCurrencyCode(name)) {
       return 'nominal';
+    }
+    // (3z) A zip/postal/FIPS code or an identifier column (id/ids/uuid/guid) is a categorical
+    //      DIMENSION — summing or gradient-shading a postal code or an ID is meaningless (#895).
+    //      The hint helpers match a token ANYWHERE (.some), so a measure word appearing as a
+    //      non-head qualifier (sales_id, postal_area) must NOT rescue it — that was the sprint-153
+    //      REORDER regression, where the trailing measure rescue promoted sales_id/total_id/... to
+    //      summable measures. The sprint-153 review proved no ORDERING of an unordered token-bag
+    //      is correct in both directions (id_count wants a measure, id_number a dimension); head
+    //      POSITION is the missing axis. So a zip/id column ESCAPES to a real measure only when its
+    //      HEAD noun (last token after stripping a trailing all-digit suffix) is aggregate-shaped
+    //      (id_count, guid_score) or itself a measure word (postal_revenue), or the name carries a
+    //      'per' rate marker (revenue_per_id). Placed BEFORE the (3b) measure rescue so a
+    //      non-escaping compound cannot be promoted by a stray measure token. Name-gated only.
+    if (nameHintsZip(name) || nameHintsIdentifier(name)) {
+      const head = headToken(name);
+      const escapes =
+        fieldNameTokens(name).includes('per') ||
+        (head !== undefined && (AGGREGATE_HEADS.has(head) || MEASURE_NAME_TOKENS.includes(head)));
+      if (!escapes) {
+        return 'nominal';
+      }
+      // Escaped — fall through to the measure rescue / value rules below.
     }
     // (3b) A measure-named numeric column is a quantitative measure even when it is a small
     //      repeated integer set — the name disambiguates a real metric from a true ordinal
@@ -1041,18 +1062,6 @@ function inferFieldType(name: string, present: ReadonlyArray<unknown>): FieldTyp
     //      ordinal — high-cardinality measures already fall through to (5) quantitative.
     if (nameHintsMeasure(name)) {
       return 'quantitative';
-    }
-    // (3c) An identifier-named numeric column (id/ids/uuid/guid) is a categorical dimension,
-    //      never a measure (sprint-152 F2, #895): a numeric-STRING id (e.g. store_id
-    //      "1001".."1006", <8 rows so rule-(4) ordinal is unmet) was falling through to
-    //      rule-(5) quantitative, which the RENDER (gradient-over-IDs) and the a11y narrative
-    //      (SUM the IDs) both read — a three-way disagreement with the table's isNumeric=false.
-    //      Classifying it nominal at the profiler ROOT fixes render + narrative + table together.
-    //      Reordered AFTER the rule-(3b) measure rescue (sprint-153 F2) so a measure+id compound
-    //      (e.g. revenue_per_id) types quantitative on its measure name instead of demoting.
-    //      Name-gated only (never a value probe).
-    if (nameHintsIdentifier(name)) {
-      return 'nominal';
     }
     // (4) A small, repeated set of integers is an ordinal scale.
     const distinct = new Set(nums).size;
@@ -1088,6 +1097,20 @@ function fieldNameTokens(name: string): string[] {
   return name.trim().toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
 }
 
+// The HEAD noun of a field name = its last token after stripping a trailing all-digit suffix
+// (sprint-154 F2). The digit strip keeps a temporal/version suffix from masking the real head, so
+// store_id_2024 / user_id_2 keep head 'id'. Undefined only for an all-digit name (no head noun).
+// Consumed by the rule-(3z) head-noun escape to split id_count (aggregate head → measure) from
+// sales_id (id head → dimension) — the collision no token-ordering model can express.
+function headToken(name: string): string | undefined {
+  const tokens = fieldNameTokens(name);
+  let end = tokens.length;
+  while (end > 0 && /^\d+$/.test(tokens[end - 1])) {
+    end -= 1;
+  }
+  return end > 0 ? tokens[end - 1] : undefined;
+}
+
 function nameHintsYear(name: string): boolean {
   const tokens = fieldNameTokens(name);
   return tokens.includes('year') || tokens.includes('yr') || tokens.includes('fy');
@@ -1100,12 +1123,25 @@ function nameHintsZip(name: string): boolean {
 
 // A conservative measure-name token set (sprint-118 m04). DELIBERATELY excludes 'count' and
 // 'score' — those are commonly genuine ordinal scales, so keeping them out preserves the
-// rule-(4) ordinal typing for e.g. a 'rating'/'count' column.
+// rule-(4) ordinal typing for e.g. a 'rating'/'count' column. Extracted to a module constant
+// (sprint-154 F2) so the rule-(3z) head-noun escape can test membership against the SAME set
+// nameHintsMeasure uses — one source of truth, no drift.
+const MEASURE_NAME_TOKENS: readonly string[] = [
+  'value', 'val', 'quantity', 'qty', 'amount', 'amt', 'price', 'cost', 'total', 'revenue', 'sales',
+];
+
+// Aggregate-shaped HEAD nouns (sprint-154 F2). When one of these is the head noun of a zip/id
+// column (id_count, guid_score, ids_sum), the column is a genuine numeric aggregate and escapes
+// the rule-(3z) dimension classification. Includes 'count'/'score' (which nameHintsMeasure omits
+// as standalone ordinals) BECAUSE here they qualify an identifier — counting IDs is a measure.
+// 'total' is intentionally absent: it is already a MEASURE_NAME_TOKENS member (no duplication).
+const AGGREGATE_HEADS: ReadonlySet<string> = new Set([
+  'count', 'counts', 'sum', 'avg', 'average', 'mean', 'median', 'min', 'max', 'score',
+]);
+
 function nameHintsMeasure(name: string): boolean {
   const tokens = fieldNameTokens(name);
-  return ['value', 'val', 'quantity', 'qty', 'amount', 'amt', 'price', 'cost', 'total', 'revenue', 'sales'].some((t) =>
-    tokens.includes(t),
-  );
+  return MEASURE_NAME_TOKENS.some((t) => tokens.includes(t));
 }
 
 function nameHintsCurrencyCode(name: string): boolean {
@@ -1116,11 +1152,12 @@ function nameHintsCurrencyCode(name: string): boolean {
 // An IDENTIFIER token set (sprint-152 F2, #895; narrowed sprint-153 F2). A numeric-string
 // identifier column (store_id, uuid, guid) is a categorical dimension, never a measure —
 // summing or gradient-shading IDs is meaningless. Token-based (via fieldNameTokens) so
-// 'store_id'→['store','id'] matches; overlaps with nameHintsZip ('zip_code') /
-// nameHintsCurrencyCode ('currency_code') are harmless (both return 'nominal'). Placed in
-// rule-(3c) AFTER the measure rescue. 'code'/'sku' were DROPPED (sprint-153 F2): as bare
-// tokens they demoted genuine numeric measures (lines_of_code, code_coverage, sku_price,
-// sku_revenue) to nominal — the exact s152 regression this corrects.
+// 'store_id'→['store','id'] matches ANYWHERE (.some); overlaps with nameHintsZip ('zip_code') /
+// nameHintsCurrencyCode ('currency_code') are harmless (all return 'nominal'). Consumed by the
+// rule-(3z) head-noun escape (sprint-154 F2): an id-hinted column stays nominal UNLESS its head
+// noun is aggregate/measure-shaped, so id_count/postal_revenue escape while sales_id/id_number do
+// not. 'code'/'sku' were DROPPED (sprint-153 F2): as bare tokens they demoted genuine numeric
+// measures (lines_of_code, code_coverage, sku_price, sku_revenue) to nominal.
 function nameHintsIdentifier(name: string): boolean {
   const tokens = fieldNameTokens(name);
   return ['id', 'ids', 'uuid', 'guid'].some((t) => tokens.includes(t));

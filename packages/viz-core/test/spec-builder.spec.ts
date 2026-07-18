@@ -1007,3 +1007,58 @@ describe('s152 F4 — diverging-bar cardinality cap', () => {
     expect(rank(rows)[0].pattern.id).not.toBe('diverging-bar');
   });
 });
+
+// s154 F4 — the MID-density cell (31–199 rows, density undefined) that s152 (sparse) and s153
+// (dense) both skipped. The s152 review proved the ungated cap's flip regime was NOT "non-dense":
+// live margins for a signed >12-cat comparison were sparse +1.4 (HELD), mid -0.6 (FLIPPED), dense
+// -1.6 (FLIPPED) — so the cap held ONLY in the sparse regime. With the s153 signed gate the cap no
+// longer bites signed data at any density; this pins the previously-unenumerated mid cell and makes
+// the corrected registry comment executable (Rule 9).
+describe('s154 F4 — diverging-bar mid-density + off-shape scope', () => {
+  const CATS = 'ABCDEFGHIJKLMNO'.split(''); // 15 categories (>12)
+  const rank = (rows: Record<string, unknown>[]) => suggestPatterns(toSchemaIntent(inferFieldProfile(rows), rows), { limit: 20 });
+  const scoreOf = (rows: Record<string, unknown>[], id: string) => rank(rows).find((s) => s.pattern.id === id)?.score;
+  const MID = 100; // 31 ≤ MID ≤ 199 → density undefined (mid)
+
+  // 1 measure + 1 dimension, signed, >12 categories — diverging-bar's own count-shape.
+  const midSigned = (cats = 15, total = MID) =>
+    Array.from({ length: total }, (_, i) => ({
+      category: CATS[i % cats],
+      delta: i % 2 === 0 ? 10 + (i % cats) : -(5 + (i % cats)),
+    }));
+
+  it('(mid) a >12-cat SIGNED comparison elects diverging-bar in the mid regime (density undefined)', () => {
+    const rows = midSigned();
+    const intent = toSchemaIntent(inferFieldProfile(rows), rows);
+    expect(intent.density).toBeUndefined(); // mid — neither sparse (≤30) nor dense (≥200)
+    expect(intent.allowNegative).toBe(true);
+    expect(rank(rows)[0].pattern.id).toBe('diverging-bar');
+    expect(scoreOf(rows, 'diverging-bar') as number).toBeGreaterThan(scoreOf(rows, 'layered-line-area') as number);
+  });
+
+  // Off-shape guards: outside diverging-bar's count-shape (measures 1, dimensions 1-2) a signed
+  // >12-cat comparison never elects it — the count mismatch is gate-INDEPENDENT.
+  const DIMS3 = ['region', 'segment', 'channel'];
+  const REGIONS = CATS; // 15 nominal categories on the primary dimension
+  const SEGMENTS = ['Ent', 'Mid', 'SMB', 'Gov', 'Edu'];
+  const CHANNELS = ['Web', 'App', 'Field', 'Partner'];
+  const midSigned3Dim = (total = MID) =>
+    Array.from({ length: total }, (_, i) => ({
+      region: REGIONS[i % 15],
+      segment: SEGMENTS[i % SEGMENTS.length],
+      channel: CHANNELS[i % CHANNELS.length],
+      delta: i % 2 === 0 ? 10 + (i % 15) : -(5 + (i % 15)),
+    }));
+  const midSigned2Meas = (total = MID) =>
+    Array.from({ length: total }, (_, i) => ({
+      category: CATS[i % 15],
+      delta: i % 2 === 0 ? 10 + (i % 15) : -(5 + (i % 15)),
+      magnitude: 100 + (i % 15) * 7,
+    }));
+
+  it('(off-shape) 1M/3D routes to facet-small-multiples-line, 2M/1D to linked-brush-scatter — NOT diverging-bar', () => {
+    expect(DIMS3).toHaveLength(3); // documents the 1M/3D shape under test
+    expect(rank(midSigned3Dim())[0].pattern.id).toBe('facet-small-multiples-line');
+    expect(rank(midSigned2Meas())[0].pattern.id).toBe('linked-brush-scatter');
+  });
+});
