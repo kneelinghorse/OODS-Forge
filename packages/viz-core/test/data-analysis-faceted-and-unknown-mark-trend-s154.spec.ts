@@ -198,10 +198,28 @@ describe('s154 F3 — must-not-move controls', () => {
     expect(analyzeVizSpec(synth({ marks: ['MarkLine', 'MarkPoint'], rows: MONOTONE })).trend).toBeUndefined();
   });
 
-  // Fork 2 residual: focus-context-line is LayoutConcat, deliberately NOT gated. s154 ships it
-  // UNCHANGED — this pins the boundary of the facet-only fix.
-  it('focus-context-line (LayoutConcat) is UNCHANGED (documented concat residual)', () => {
-    const n = generateNarrativeSummary(fixture('focus-context-line.spec.json'));
-    expect(n.keyFindings).toContain('Trend decreasing: -33.3%');
+  // Fork 2 CLOSED by s155 m03: focus-context-line is LayoutConcat carrying color=region (3 distinct),
+  // so the single-series gate (isMultiSeriesComposition, via the color arm) now suppresses the
+  // cross-series phantom "Trend decreasing: -33.3%" and the line path emits an order-invariant range
+  // sentence instead. The s154 concat residual is no longer a residual — this pins the fixed output.
+  it('focus-context-line (LayoutConcat, color=region ×3): fork-2 phantom Trend CLOSED', () => {
+    const spec = fixture('focus-context-line.spec.json');
+    const a = analyzeVizSpec(spec);
+    const n = generateNarrativeSummary(spec);
+    expect(a.trend).toBeUndefined();
+    expect(noTrendFinding(n.keyFindings)).toBe(true);
+    expect(n.summary).toBe(
+      'Revenue focus + context shows Revenue ranging from 0.7 (2025-W01) to 1.39 (2025-W04).',
+    );
+    // The legitimate order-invariant findings are preserved (only the directional claim is withheld).
+    expect(n.keyFindings).toContain('High Revenue: Revenue 1.39 (2025-W04)');
+    expect(n.keyFindings).toContain('Total Revenue: 12.07');
+  });
+
+  it('focus-context-line stays A11Y-R-10/R-11/R-13/R-15 green with the phantom removed', () => {
+    const results = validateVizEquivalenceRules(fixture('focus-context-line.spec.json'));
+    for (const id of ['A11Y-R-10', 'A11Y-R-11', 'A11Y-R-13', 'A11Y-R-15']) {
+      expect(results.find((r) => r.id === id)?.passed, id).toBe(true);
+    }
   });
 });

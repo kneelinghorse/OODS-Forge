@@ -1,5 +1,6 @@
 import type { NormalizedVizSpec, TraitBinding } from '../spec/normalized-viz-spec.js';
 import { deriveTrend, pearson, toNumber } from '../analysis/stats.js';
+import { isProvablyAdditive } from '../analysis/field-name-hints.js';
 import { formatDimension, formatNumeric } from './format.js';
 
 export type ChartShape = 'bar' | 'line' | 'point' | 'area' | 'mixed' | 'unknown';
@@ -30,6 +31,13 @@ export interface VizDataAnalysis {
   readonly trend?: 'increasing' | 'decreasing' | 'flat';
   readonly trendDelta?: number;
   readonly correlation?: number;
+  /**
+   * s155 m04: whether summing `measureField` across rows is a PROVABLY meaningful aggregate
+   * (isProvablyAdditive). The cartesian analyzeVizSpec sets it (true/false); the input-shaped
+   * analyzers (sankey/hierarchy/network) and the pre-built-analysis path leave it UNDEFINED. The
+   * narrative Total gate suppresses ONLY on an explicit `false`, so those paths stay byte-identical.
+   */
+  readonly measureAdditive?: boolean;
 }
 
 /**
@@ -57,6 +65,12 @@ export interface VizDataAnalysisInput {
   readonly computeTrend?: boolean;
   /** Cartesian-only Pearson r; non-cartesian sources leave this undefined. */
   readonly correlation?: number;
+  /**
+   * s155 m04: cartesian-only additive-measure verdict (isProvablyAdditive of measureField +
+   * the caller's declared aggregate). Non-cartesian sources leave it undefined → the narrative
+   * Total is unchanged for them (gate suppresses only on explicit false).
+   */
+  readonly measureAdditive?: boolean;
 }
 
 /**
@@ -100,6 +114,7 @@ export function buildVizDataAnalysis(input: VizDataAnalysisInput): VizDataAnalys
     trend: trendInfo?.trend,
     trendDelta: trendInfo?.delta,
     correlation: input.correlation,
+    measureAdditive: input.measureAdditive,
   } satisfies VizDataAnalysis;
 }
 
@@ -207,10 +222,126 @@ function isFacetedLayout(spec: NormalizedVizSpec): boolean {
   return spec.layout?.trait === 'LayoutFacet';
 }
 
+/**
+ * s155 m03: the fields that SPLIT the flat data walk into multiple ordered series — the color AND
+ * detail groupings. resolveBinding reads the top-level encoding FIRST, then marks[].encodings, so
+ * both the generated shape (top-level color) and the pattern-fixture shape (per-mark color, e.g.
+ * focus-context-line) are covered. s155 m05 (adversarial-verify closure): BOTH channels are
+ * returned, not `color ?? detail` — a genuine `detail`-grouped multi-series was slipping through
+ * when a constant `color` binding shadowed the detail field. detail is conservative: it only ever
+ * SUPPRESSES a genuine multi-series overlay, never invents a claim.
+ */
+function seriesGroupingFields(spec: NormalizedVizSpec): string[] {
+  return [resolveBinding(spec, 'color')?.field, resolveBinding(spec, 'detail')?.field].filter(
+    (field): field is string => Boolean(field),
+  );
+}
+
+// s155 m05: distinct GROUP count over a field, counting null/undefined as ITS OWN bucket. A color
+// field split into null rows (a reference series) + labelled rows (a forecast series) is two series;
+// dropping the nulls under-counted it to one and let a phantom trend through. A field that is
+// entirely null (or entirely one value) stays a single bucket → not multi-series.
+function distinctGroupCount(rows: readonly Record<string, unknown>[], field: string): number {
+  const buckets = new Set<string>();
+  for (const row of rows) {
+    const value = row[field as keyof typeof row];
+    buckets.add(value === null || value === undefined ? ' null' : String(value));
+  }
+  return buckets.size;
+}
+
+/**
+ * s155 m03 (CLAIM-ON-POSITIVE-EVIDENCE): a first→last trend is a cross-series PHANTOM unless the
+ * spec is provably a SINGLE ordered series. Multi-series ⟺ a FACETED layout (one panel per facet
+ * key) OR a color/detail grouping field resolving to MORE THAN ONE distinct group over the rows.
+ * This POSITIVE, data-grounded precondition (fail-safe to omission) folds the shipped facet fix +
+ * LayoutConcat (fork-2, via its color arm — focus-context-line carries color=region ×3) +
+ * color-grouped (fork-4) under ONE gate, replacing the s154 NEGATIVE `!isFacetedLayout`
+ * enumeration that was false on every un-named series-concatenation surface. NO concat-structural
+ * clause is needed: a real single-series concat has 0/1-distinct color, so it is NOT suppressed
+ * and keeps its honest trend.
+ */
+function isMultiSeriesComposition(spec: NormalizedVizSpec, rows: readonly Record<string, unknown>[]): boolean {
+  if (isFacetedLayout(spec)) {
+    return true;
+  }
+  return seriesGroupingFields(spec).some((field) => distinctGroupCount(rows, field) > 1);
+}
+
+/**
+ * s155 m03 (sort-by-X, memo §5): for a single ordered series, canonicalize the data points by the
+ * X binding so the directional claim is a property of the DATA, not the incidental row order in
+ * `data.values`. This closes the row-permutation phantom (#910) for LEGIT single lines too — a
+ * time series stored newest-first no longer narrates "declines" for rising data. Numeric compare
+ * when both cells parse as finite numbers (years / ordinals); else a stable string compare (ISO
+ * dates, zero-padded period labels). Pure + stable (Array.sort is stable) for determinism.
+ */
+function sortRowsByField(
+  rows: readonly Record<string, unknown>[],
+  field: string,
+): Record<string, unknown>[] {
+  return [...rows].sort((a, b) => compareCells(a[field as keyof typeof a], b[field as keyof typeof b]));
+}
+
+function compareCells(a: unknown, b: unknown): number {
+  const na = toNumber(a);
+  const nb = toNumber(b);
+  if (na !== null && nb !== null) {
+    return na - nb;
+  }
+  const sa = a === null || a === undefined ? '' : String(a);
+  const sb = b === null || b === undefined ? '' : String(b);
+  return naturalCompare(sa, sb);
+}
+
+// s155 m05 (adversarial-verify closure): a NATURAL-ORDER string comparison — split each label into
+// maximal digit / non-digit chunks and compare chunk-wise, digit chunks NUMERICALLY. A plain
+// lexical compare mis-ordered every non-zero-padded sequential label ('2021-9' after '2021-10',
+// 'v10' before 'v9'), so sort-by-X narrated a DECLINE on rising release/monthly data. Natural order
+// fixes it and is a TOTAL ORDER (transitive + deterministic — unlike a naive numeric/lexical mix),
+// so the row-permutation invariant holds. Zero-padded/ISO/numeric labels are unaffected.
+function naturalCompare(a: string, b: string): number {
+  const ax = a.match(/\d+|\D+/g) ?? [];
+  const bx = b.match(/\d+|\D+/g) ?? [];
+  const n = Math.min(ax.length, bx.length);
+  for (let i = 0; i < n; i += 1) {
+    const as = ax[i];
+    const bs = bx[i];
+    if (as === bs) {
+      continue;
+    }
+    if (/^\d/.test(as) && /^\d/.test(bs)) {
+      const delta = Number(as) - Number(bs);
+      if (delta !== 0) {
+        return delta;
+      }
+    } else {
+      return as < bs ? -1 : 1;
+    }
+  }
+  return ax.length - bx.length;
+}
+
 export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   const bindings = resolvePrimaryBindings(spec);
   const rows = collectRows(spec);
-  const dataPoints = buildDataPoints(rows, bindings);
+  // s155 m03: a first→last trend is meaningful only over a SINGLE ordered series. When the marks
+  // ARE a sequence (line/area), canonicalize the points by the X binding (sort-by-X) so first/last
+  // — and thus the directional claim + narrative sentence — reflect the X axis, not the row order.
+  // ORIGINAL `rows` still feed dimensionValues/colorCategories/rowCount (unchanged); only the
+  // dataPoints that drive first/last/trend are reordered (min/max/total/mean are order-invariant).
+  const sequence = isSequenceComposition(spec);
+  const orderedRows = sequence && bindings.dimensionField ? sortRowsByField(rows, bindings.dimensionField) : rows;
+  const dataPoints = buildDataPoints(orderedRows, bindings);
+  // s155 m04 (CLAIM-ON-POSITIVE-EVIDENCE): resolve whether the measure is PROVABLY additive from
+  // its raw field name + the caller's declared aggregate — the SAME token model the profiler types
+  // with (shared field-name-hints). The narrative "Total X" gate reads this so a sum-the-IDs /
+  // sum-the-zips / sum-the-maxes claim (id_max, sales_id, zip) is never emitted; a declared
+  // aggregate:'sum'/'count' or an additive head (revenue, id_count) still gets its honest Total.
+  const measureAdditive = isProvablyAdditive(
+    bindings.measureField,
+    resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate,
+  );
   return buildVizDataAnalysis({
     mark: bindings.mark,
     rows,
@@ -219,22 +350,17 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     measureField: bindings.measureField,
     colorField: bindings.colorField,
     sizeField: bindings.sizeField,
-    // s152 F3 / s153 F3: a first→last trend is only meaningful when the mark IS a sequence —
-    // line/area, whose X is an ordered axis (time/continuum). For every OTHER mark the row order
-    // is arbitrary, so "Trend increasing: N%" FLIPS sign on a mere row reversal: a MarkRect grid
-    // (arbitrary melt, s150/F6d), a strip plot (unordered categories, s151 m05b), a nominal BAR
-    // (category order is not a sequence), and a TRUE numeric-numeric SCATTER (whose honest signal
-    // is the order-invariant correlation, not a first-vs-last delta that contradicts it). This
-    // SEQUENCE-MARK ALLOWLIST (isSequenceComposition = every KNOWN mark line/area, s154 Variant A)
-    // subsumes the prior isMarkRectGrid/isStripPlot guards (heatmap→all-'unknown', strip→'point'
-    // both fail it) and finishes the phantom-row-order-Trend class (unifies pre-existing #910). The
-    // s154 isFacetedLayout gate is the OUTER AND: a LayoutFacet spec concatenates every panel's
-    // rows into one flat walk, so its first→last delta is a cross-panel phantom that sign-inverts vs
-    // every real per-panel series (s153 F3 HIGH). The line/area summary path
-    // (narrative-generator.ts:186-201) depends on analysis.trend, so it is PRESERVED; when the gate
-    // suppresses it, that path emits an order-invariant range sentence, not a directional label. The
-    // correlation gate below is UNCHANGED — a true scatter keeps its order-invariant Correlation.
-    computeTrend: !isFacetedLayout(spec) && isSequenceComposition(spec),
+    measureAdditive,
+    // s155 m03 (CLAIM-ON-POSITIVE-EVIDENCE, replaces the s154 `!isFacetedLayout` negative gate): a
+    // directional trend is emitted only when the spec is PROVABLY a single ordered series
+    // (isMultiSeriesComposition false) AND the marks are a sequence (line/area). Multi-series —
+    // faceted, or a color/detail grouping with >1 distinct value — concatenates every series into
+    // one flat walk, so a first→last delta sign-inverts vs each real series (fork-2 concat, fork-4
+    // color-group). isSequenceComposition still excludes bar / point / rect / true scatter (their
+    // honest signal is extrema or the order-invariant correlation, not a first-vs-last delta;
+    // #910). When suppressed, the line/area path (narrative-generator.ts:203-214) emits an
+    // order-invariant range sentence. The correlation gate below is UNCHANGED.
+    computeTrend: !isMultiSeriesComposition(spec, rows) && sequence,
     correlation: isMarkRectGrid(spec) || isStripPlot(spec) ? undefined : deriveCorrelation(rows, bindings),
   });
 }

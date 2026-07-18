@@ -44,6 +44,17 @@ import {
   type TemporalGranularity,
 } from '../analysis/temporal.js';
 import { humanize } from '../a11y/format.js';
+// s155 m04: the name-hint helpers moved to a shared module so the a11y "Total X" gate derives
+// additivity from the SAME token model this profiler uses (one source of truth, no drift).
+import {
+  AGGREGATE_HEADS,
+  fieldNameTokens,
+  headToken,
+  MEASURE_NAME_TOKENS,
+  nameHintsIdentifier,
+  nameHintsMeasure,
+  nameHintsZip,
+} from '../analysis/field-name-hints.js';
 
 // Re-export so the data-aware temporal granularity type is reachable from the
 // package root (e.g. the viz.render handler/schema in mcp-server).
@@ -1093,74 +1104,19 @@ function numericView(present: ReadonlyArray<unknown>): { nums: number[]; allNume
   return { nums, allNumeric: present.length > 0 };
 }
 
-function fieldNameTokens(name: string): string[] {
-  return name.trim().toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-}
-
-// The HEAD noun of a field name = its last token after stripping a trailing all-digit suffix
-// (sprint-154 F2). The digit strip keeps a temporal/version suffix from masking the real head, so
-// store_id_2024 / user_id_2 keep head 'id'. Undefined only for an all-digit name (no head noun).
-// Consumed by the rule-(3z) head-noun escape to split id_count (aggregate head → measure) from
-// sales_id (id head → dimension) — the collision no token-ordering model can express.
-function headToken(name: string): string | undefined {
-  const tokens = fieldNameTokens(name);
-  let end = tokens.length;
-  while (end > 0 && /^\d+$/.test(tokens[end - 1])) {
-    end -= 1;
-  }
-  return end > 0 ? tokens[end - 1] : undefined;
-}
+// s155 m04: fieldNameTokens, headToken, MEASURE_NAME_TOKENS, AGGREGATE_HEADS, nameHintsMeasure,
+// nameHintsZip, nameHintsIdentifier moved to ../analysis/field-name-hints.js (imported above) so
+// the a11y "Total X" gate shares this exact token model. nameHintsYear / nameHintsCurrencyCode /
+// isBareYearInRange stay here (profiler-only; nameHintsYear consumes the imported fieldNameTokens).
 
 function nameHintsYear(name: string): boolean {
   const tokens = fieldNameTokens(name);
   return tokens.includes('year') || tokens.includes('yr') || tokens.includes('fy');
 }
 
-function nameHintsZip(name: string): boolean {
-  const tokens = fieldNameTokens(name);
-  return ['zip', 'zipcode', 'postal', 'postalcode', 'postcode', 'fips'].some((t) => tokens.includes(t));
-}
-
-// A conservative measure-name token set (sprint-118 m04). DELIBERATELY excludes 'count' and
-// 'score' — those are commonly genuine ordinal scales, so keeping them out preserves the
-// rule-(4) ordinal typing for e.g. a 'rating'/'count' column. Extracted to a module constant
-// (sprint-154 F2) so the rule-(3z) head-noun escape can test membership against the SAME set
-// nameHintsMeasure uses — one source of truth, no drift.
-const MEASURE_NAME_TOKENS: readonly string[] = [
-  'value', 'val', 'quantity', 'qty', 'amount', 'amt', 'price', 'cost', 'total', 'revenue', 'sales',
-];
-
-// Aggregate-shaped HEAD nouns (sprint-154 F2). When one of these is the head noun of a zip/id
-// column (id_count, guid_score, ids_sum), the column is a genuine numeric aggregate and escapes
-// the rule-(3z) dimension classification. Includes 'count'/'score' (which nameHintsMeasure omits
-// as standalone ordinals) BECAUSE here they qualify an identifier — counting IDs is a measure.
-// 'total' is intentionally absent: it is already a MEASURE_NAME_TOKENS member (no duplication).
-const AGGREGATE_HEADS: ReadonlySet<string> = new Set([
-  'count', 'counts', 'sum', 'avg', 'average', 'mean', 'median', 'min', 'max', 'score',
-]);
-
-function nameHintsMeasure(name: string): boolean {
-  const tokens = fieldNameTokens(name);
-  return MEASURE_NAME_TOKENS.some((t) => tokens.includes(t));
-}
-
 function nameHintsCurrencyCode(name: string): boolean {
   const collapsed = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
   return collapsed === 'currency' || collapsed === 'currencycode' || collapsed === 'isocurrency';
-}
-
-// An IDENTIFIER token set (sprint-152 F2, #895; narrowed sprint-153 F2). A numeric-string
-// identifier column (store_id, uuid, guid) is a categorical dimension, never a measure —
-// summing or gradient-shading IDs is meaningless. Token-based (via fieldNameTokens) so
-// 'store_id'→['store','id'] matches ANYWHERE (.some); overlaps with nameHintsZip ('zip_code') /
-// nameHintsCurrencyCode ('currency_code') are harmless (all return 'nominal'). Consumed by the
-// rule-(3z) head-noun escape (sprint-154 F2): an id-hinted column stays nominal UNLESS its head
-// noun is aggregate/measure-shaped, so id_count/postal_revenue escape while sales_id/id_number do
-// not. 'code'/'sku' were DROPPED (sprint-153 F2): as bare tokens they demoted genuine numeric
-// measures (lines_of_code, code_coverage, sku_price, sku_revenue) to nominal.
-function nameHintsIdentifier(name: string): boolean {
-  const tokens = fieldNameTokens(name);
-  return ['id', 'ids', 'uuid', 'guid'].some((t) => tokens.includes(t));
 }
 
 function isBareYearInRange(value: unknown): boolean {

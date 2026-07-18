@@ -57,16 +57,21 @@ const lineSpec = () =>
     encodings: { x: { field: 'month' }, y: { field: 'users', scale: 'linear' } },
   } as never).spec;
 
-describe('s152 F3 — nominal bar: no phantom trend, keeps Total + High/Low', () => {
+describe('s152 F3 — nominal bar: no phantom trend, High/Low preserved', () => {
   it('emits NO "Trend …" finding (fails at HEAD: "Trend decreasing: -95.2%")', () => {
     const spec = barSpec(SHARE);
     expect(analyzeVizSpec(spec).trend).toBeUndefined();
     expect(trendFindings(generateNarrativeSummary(spec))).toEqual([]);
   });
 
-  it('KEEPS "Total <measure>" and High/Low (a sum of categories is legitimate)', () => {
+  it('KEEPS High/Low; s155 m04 withholds "Total Share" (share is a rate, not provably additive)', () => {
     const n = generateNarrativeSummary(barSpec(SHARE));
-    expect(n.keyFindings.some((f) => f === 'Total Share: 91')).toBe(true);
+    // s155 m04 (CLAIM-ON-POSITIVE-EVIDENCE): "share" is a percentage/rate — summing browser shares
+    // is NOT a provably meaningful aggregate, so the "Total Share: 91" claim is withheld (the
+    // documented less-rich cost, never a false sum). The additive-measure Total survival (revenue/
+    // sales on a bar) is proven in a11y-narrative-honesty-properties-s155. High/Low — order-invariant
+    // extrema — are unaffected.
+    expect(n.keyFindings.some((f) => f.startsWith('Total '))).toBe(false);
     expect(n.keyFindings.some((f) => f.startsWith('High Share:'))).toBe(true);
     expect(n.keyFindings.some((f) => f.startsWith('Low Share:'))).toBe(true);
   });
@@ -74,7 +79,7 @@ describe('s152 F3 — nominal bar: no phantom trend, keeps Total + High/Low', ()
   it('is ROW-REVERSAL invariant (the phantom-trend signature is gone)', () => {
     const forward = generateNarrativeSummary(barSpec(SHARE)).keyFindings;
     const reversed = generateNarrativeSummary(barSpec([...SHARE].reverse())).keyFindings;
-    // High/Low/Total are order-free; with the phantom trend gone the finding sets match.
+    // High/Low are order-free; with the phantom trend gone the finding sets match.
     expect([...forward].sort()).toEqual([...reversed].sort());
   });
 });

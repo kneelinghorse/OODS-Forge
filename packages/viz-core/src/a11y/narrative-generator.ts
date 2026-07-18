@@ -168,7 +168,11 @@ export function applyNarrativeOverride(
   const providedSummary = provided?.summary?.trim();
   const providedFindings = provided?.keyFindings?.filter((finding) => finding && finding.trim() !== '') ?? [];
 
-  const summary = (providedSummary || derived.summary || fallbackSummary).trim();
+  // s155 m04: `|| ''` guards a latent NPE the Total-suppression newly exposes — when the derived
+  // summary is empty (a mixed/unknown mark whose only sentence was a now-omitted false Total) AND
+  // the spec carries no a11y.description (fallbackSummary undefined), the chain was `undefined` and
+  // `.trim()` threw. Fail-safe to an empty summary (status 'insufficient-data'), never a crash.
+  const summary = (providedSummary || derived.summary || fallbackSummary || '').trim();
   const keyFindings = providedFindings.length > 0 ? providedFindings : derived.keyFindings;
   return { summary, keyFindings };
 }
@@ -240,7 +244,10 @@ function deriveNarrativeFromData(
       break;
     }
     default: {
-      if (analysis.total !== undefined && analysis.rowCount > 0) {
+      // s155 m04: the default-branch "totaling" summary is a Total claim too — gate it on the same
+      // provably-additive precondition, so a non-additive measure (id/zip/max) on a mixed/unknown
+      // mark does not narrate a false sum. measureAdditive undefined (non-cartesian) → unchanged.
+      if (analysis.total !== undefined && analysis.rowCount > 0 && analysis.measureAdditive !== false) {
         summaryParts.push(
           `${labels.chartLabel} covers ${analysis.rowCount} data points totaling ${formatNumeric(analysis.total)}${labels.measureLabel ? ` ${labels.measureLabel}` : ''}.`
         );
@@ -307,7 +314,11 @@ function buildKeyFindings(
   // sizes, scatter axes) — summing it is a meaningless aggregate ("Total Font Size Px: 147"), the
   // same phantom class F6b/s150 guarded for KPIs/heatmaps. A Total is meaningful only where the
   // measure is aggregated across a dimension (bar/area and the input-shaped default/sankey paths).
-  if (analysis.total !== undefined && analysis.mark !== 'point') {
+  // s155 m04 (CLAIM-ON-POSITIVE-EVIDENCE): additionally omit the Total when the measure name is not
+  // PROVABLY additive (measureAdditive === false) — summing IDs / zips / per-group maxes is a false
+  // aggregate (id_max→"Total Id max", sales_id→"Total Sales id"; #895 class). measureAdditive is
+  // undefined for the input-shaped/pre-built-analysis paths, so `!== false` leaves them unchanged.
+  if (analysis.total !== undefined && analysis.mark !== 'point' && analysis.measureAdditive !== false) {
     findings.push(`Total ${labels.measureLabel ?? 'value'}: ${formatNumeric(analysis.total)}`);
   }
   if (analysis.colorCategories.length > 0 && labels.colorLabel) {
