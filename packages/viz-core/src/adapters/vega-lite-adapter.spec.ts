@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { toVegaLiteSpec } from './vega-lite-adapter.js';
 import { buildVizSpecFromRows } from '../builder/spec-builder.js';
-import { resolveCategoricalPalette } from '../tokens/categorical-palette.js';
+import { resolveCategoricalPalette, toHex } from '../tokens/categorical-palette.js';
 import { resolveOodsVegaConfig } from '../tokens/oods-vega-config.js';
+import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
+import { resolveTokenToColor } from './echarts/token-resolver.js';
+import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 
 // Mutation-guard for the brand-fidelity palette bake (sprint-138 m02), colocated with
 // the adapter it guards (s143 m03; s138-review confirmed gap). The bake — a nominal color
@@ -287,5 +290,70 @@ describe('vega-lite-adapter — item #16 datasets slot resolves Mark.from (s151 
     // Not `datasets: undefined`, not `datasets: {}` — the key must be entirely absent so a
     // Forge spec without the slot compiles byte-identically to pre-#16.
     expect('datasets' in compiled).toBe(false);
+  });
+});
+
+// s156-m04 (NASA #4 + band M2): a diverging color scale is a continuous quantitative
+// gradient centered at zero. The IR carries `scale:'diverging'` on the color channel;
+// the adapter must (i) type the color quantitative (so Vega renders a gradient, not a
+// discrete palette) and (ii) bake the OODS diverging viz-scale as `scale.range` + a
+// `domainMid:0` so the two hues diverge about zero. The range is resolved through the
+// SAME token→hex chain certify/the categorical bake use, so "rendered == certified".
+// At HEAD `scale:'diverging'` was schema-invalid AND typed nominal with no range → RED.
+const OODS_DIVERGING_HEX = getVizScaleTokens('diverging')
+  .map((token) => toHex(resolveTokenToColor(token) ?? ''))
+  .filter((color): color is string => Boolean(color));
+
+function divergingColorSpec(): NormalizedVizSpec {
+  const color = {
+    field: 'delta',
+    trait: 'EncodingColor',
+    scale: 'diverging' as const,
+    title: 'Impact',
+  };
+  return {
+    $schema: 'https://oods.dev/viz-spec/v1',
+    id: 'diverging-bar',
+    name: 'Impact by Driver',
+    data: {
+      name: 'drivers',
+      values: [
+        { driver: 'A', delta: -40 },
+        { driver: 'B', delta: 15 },
+        { driver: 'C', delta: 60 },
+      ],
+    },
+    marks: [
+      {
+        trait: 'MarkBar',
+        encodings: {
+          x: { field: 'driver', trait: 'EncodingX' },
+          y: { field: 'delta', trait: 'EncodingY' },
+          color: { ...color },
+        },
+      },
+    ],
+    encoding: {
+      x: { field: 'driver', trait: 'EncodingX' },
+      y: { field: 'delta', trait: 'EncodingY' },
+      color: { ...color },
+    },
+    a11y: { description: 'Impact delta by driver, diverging about zero.' },
+  } as NormalizedVizSpec;
+}
+
+describe('vega-lite-adapter — diverging color scale (s156 m04)', () => {
+  it('bakes the OODS diverging range + domainMid:0 and types the color quantitative (fails at HEAD: nominal, no range)', () => {
+    const compiled = toVegaLiteSpec(divergingColorSpec()) as unknown as {
+      encoding?: { color?: { type?: string; scale?: { range?: unknown; domainMid?: number } } };
+    };
+
+    // A gradient, not a categorical swatch set — diverging is inherently continuous.
+    expect(compiled.encoding?.color?.type).toBe('quantitative');
+    // The neutral hue lands on zero so positive/negative read as opposite directions.
+    expect(compiled.encoding?.color?.scale?.domainMid).toBe(0);
+    // The baked range is the OODS diverging scale, resolved through the shared chain.
+    expect(OODS_DIVERGING_HEX.length).toBeGreaterThan(2);
+    expect(compiled.encoding?.color?.scale?.range).toEqual(OODS_DIVERGING_HEX);
   });
 });

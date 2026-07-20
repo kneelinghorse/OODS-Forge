@@ -570,8 +570,8 @@ describe('scorePattern — data-aware ranking terms (m03)', () => {
     const intent = toSchemaIntent(inferFieldProfile(STRONG), STRONG);
     const ranked = suggestPatterns(intent, { limit: 20 });
     expect(ranked[0].pattern.id).toBe('correlation-scatter');
-    // it now outranks the count-shape winner (linked-brush-scatter)…
-    const linked = ranked.find((s) => s.pattern.id === 'linked-brush-scatter');
+    // it now outranks the count-shape winner (cohort-scatter)…
+    const linked = ranked.find((s) => s.pattern.id === 'cohort-scatter');
     expect(ranked[0].score).toBeGreaterThan(linked!.score);
     // …and its rationale explains why (the data-aware justification string).
     expect(ranked[0].signals.some((s) => /correlation/i.test(s))).toBe(true);
@@ -581,7 +581,7 @@ describe('scorePattern — data-aware ranking terms (m03)', () => {
     const intent = toSchemaIntent(inferFieldProfile(WEAK), WEAK);
     const top = suggestPatterns(intent, { limit: 1 })[0];
     expect(top.pattern.id).not.toBe('correlation-scatter');
-    expect(top.pattern.id).toBe('linked-brush-scatter');
+    expect(top.pattern.id).toBe('cohort-scatter');
   });
 
   it('demotes bars below a line/aggregate when a categorical dimension is high-cardinality', () => {
@@ -1056,9 +1056,9 @@ describe('s154 F4 — diverging-bar mid-density + off-shape scope', () => {
       magnitude: 100 + (i % 15) * 7,
     }));
 
-  it('(off-shape) 1M/3D routes to facet-small-multiples-line, 2M/1D to linked-brush-scatter — NOT diverging-bar', () => {
+  it('(off-shape) 1M/3D routes to facet-small-multiples-line, 2M/1D to cohort-scatter — NOT diverging-bar', () => {
     expect(DIMS3).toHaveLength(3); // documents the 1M/3D shape under test
     expect(rank(midSigned3Dim())[0].pattern.id).toBe('facet-small-multiples-line');
-    expect(rank(midSigned2Meas())[0].pattern.id).toBe('linked-brush-scatter');
+    expect(rank(midSigned2Meas())[0].pattern.id).toBe('cohort-scatter');
   });
 });

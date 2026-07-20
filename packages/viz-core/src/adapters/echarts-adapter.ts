@@ -9,6 +9,10 @@ import type {
 } from '../spec/normalized-viz-spec.js';
 import { applyEChartsLayout } from './echarts-layout-mapper.js';
 import type { ScaleResolution } from './scale-resolver.js';
+import { isMarkRectGrid, heatmapColorIsMeasure, getEncodingBinding } from '../a11y/data-analysis.js';
+import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
+import { resolveOodsEchartsChrome } from '../tokens/oods-echarts-chrome.js';
+import { createVisualMapForScale } from './spatial/echarts-visualmap-generator.js';
 
 const DEFAULT_DATASET_ID = 'viz-dataset';
 const CATEGORY_SCALES = new Set(['band', 'point']);
@@ -183,6 +187,7 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
   const tooltip = buildTooltip(spec);
   const dataZoom = buildDataZoomComponents(spec);
   const brush = buildBrushComponent(spec);
+  const visualMap = buildHeatmapVisualMap(spec);
 
   const option = removeUndefined({
     dataset: [dataset, ...linkedDatasets],
@@ -194,6 +199,7 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
     grid: convertGrid(spec.config?.layout),
     dataZoom,
     brush,
+    visualMap,
     aria: buildAria(spec),
     title: buildTitle(spec),
     usermeta: buildUserMeta(spec),
@@ -435,6 +441,43 @@ function applyHeatmapEncoding(
   }
 }
 
+// sprint-156 m04 (NASA #4 / FD#18): a cartesian MarkRect heatmap whose color is a
+// continuous measure emits an ECharts `visualMap` so the color legend renders (Vega
+// auto-legends the same channel; ECharts had NO visualMap → the ECharts-only gap).
+// Gate reuses the a11y measure predicates (isMarkRectGrid + heatmapColorIsMeasure) and
+// ALSO fires for a `scale:'diverging'` heatmap (diverging is a continuous scale even when
+// the color binding carries no explicit quantitative type). The continuous domain is the
+// color field's numeric extent; the range is the OODS sequential (or diverging) viz-scale,
+// resolved to canvas colors by the SHARED spatial generator; and the tick label is themed
+// onto chrome exactly like the geo adapters (visualMap.textStyle.color = chrome.visualMapLabel).
+function buildHeatmapVisualMap(spec: NormalizedVizSpec): Record<string, unknown> | undefined {
+  if (!isMarkRectGrid(spec)) {
+    return undefined;
+  }
+
+  const colorBinding = getEncodingBinding(spec, 'color');
+  const isDiverging = colorBinding?.scale === 'diverging';
+  if (!colorBinding || !(heatmapColorIsMeasure(spec) || isDiverging)) {
+    return undefined;
+  }
+
+  const rows = Array.isArray(spec.data.values) ? spec.data.values : [];
+  const values = rows
+    .map((row) => Number((row as Record<string, unknown>)[colorBinding.field]))
+    .filter((value) => Number.isFinite(value));
+
+  const range = isDiverging ? getVizScaleTokens('diverging') : getVizScaleTokens('sequential');
+  const base = createVisualMapForScale({
+    scale: isDiverging ? 'diverging' : 'linear',
+    range,
+    values,
+  });
+
+  // Bake the tick label onto chrome — the same visualMap-label token the geo adapters use.
+  const chrome = resolveOodsEchartsChrome(spec);
+  return { ...base, textStyle: { color: chrome.visualMapLabel } };
+}
+
 function resolveAxisEncoding(
   base: Partial<Record<ChannelName, EncodingBinding>>,
   marks: readonly NormalizedMark[]
@@ -487,7 +530,11 @@ function inferAxisType(channel: 'x' | 'y', binding: EncodingBinding): EChartsAxi
   // silent dual-output trap.
   if (binding.type) {
     if (binding.type === 'temporal') return 'time';
-    if (binding.type === 'quantitative') return 'value';
+    // An explicit `scale:'log'` wins over the quantitative default so a co-declared
+    // type+log spec is not silently rendered linear while Vega honors the log scale
+    // (sprint-156 m02 — the dual-output disagreement trap). Non-log quantitative
+    // still maps to 'value'.
+    if (binding.type === 'quantitative') return binding.scale === 'log' ? 'log' : 'value';
     return 'category'; // ordinal | nominal
   }
 

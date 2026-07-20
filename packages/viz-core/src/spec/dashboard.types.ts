@@ -299,7 +299,7 @@ export interface GeoData {
   latitudeField?: string;
   sizeField?: string;
   colorField?: string;
-  colorScale?: 'linear' | 'quantize' | 'quantile' | 'threshold' | 'ordinal';
+  colorScale?: 'linear' | 'quantize' | 'quantile' | 'threshold' | 'ordinal' | 'diverging';
 }
 /**
  * A KPI tile — the only NEW panel primitive (trend/breakdown/geo already ship as chart types). Reserves value/aggregate/comparison/threshold metadata; the actual compute is deferred to m03 (which reduces the cross-filtered dataset rows to a renderer-agnostic payload).

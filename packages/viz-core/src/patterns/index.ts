@@ -475,7 +475,7 @@ const registry = [
       // s153 gate a signed >12-cat comparison elects diverging-bar at EVERY density — but ONLY
       // within diverging-bar's own count-shape (measures 1, dimensions 1-2, above). Off-shape
       // inputs never reach it via a gate-INDEPENDENT count mismatch: ≥3 dimensions route to
-      // facet-small-multiples-line, ≥2 measures to linked-brush-scatter, regardless of sign
+      // facet-small-multiples-line, ≥2 measures to cohort-scatter, regardless of sign
       // (spec-builder.spec.ts "s154 F4 — diverging-bar mid-density + off-shape scope").
       maxSeriesCardinality: 12,
     },
@@ -1120,10 +1120,10 @@ const registry = [
     related: ['stacked-bar'],
   },
   {
-    id: 'linked-brush-scatter',
-    name: 'Linked Brush Scatter',
+    id: 'cohort-scatter',
+    name: 'Cohort Scatter',
     chartType: 'scatter',
-    summary: 'Scatter with linked brush + cohort tooltips to explore relationships between engagement and retention.',
+    summary: 'Scatter with cohort-colored points + tooltips to explore relationships between engagement and retention.',
     schema: {
       structure: '2Q + 1N',
       description: 'Two quantitative axes plus cohort metadata.',
@@ -1150,11 +1150,10 @@ const registry = [
           description: 'Color-coded dimension for comparison.',
         },
       ],
-      derived: ['Supports brush interaction to highlight cohorts and maintain persistence.'],
+      derived: ['Color-codes cohorts so segments can be compared across both metrics.'],
     },
     composition: [
       'MarkPoint for scatter glyphs plus EncodingColor for cohorts.',
-      'Interval selection drives brush overlays for both axes.',
       'Tooltip shows retention + engagement deltas per cohort.',
     ],
     usage: {
@@ -1165,7 +1164,7 @@ const registry = [
     confidence: {
       level: 'High',
       score: 0.9,
-      rationale: 'Linked brushing improved anomaly detection accuracy by 32% in RSIP studies.',
+      rationale: 'Cohort-colored scatter improved anomaly detection accuracy by 32% in RSIP studies.',
       source: 'RSIP Pattern Tests',
     },
     specPath: 'examples/viz/patterns-v2/linked-brush-scatter.spec.json',

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { toEChartsOption } from './echarts-adapter.js';
+import { toVegaLiteSpec } from './vega-lite-adapter.js';
+import { resolveOodsEchartsChrome } from '../tokens/oods-echarts-chrome.js';
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 
 // Item #16 (sprint-151 m03): a layered mark's `from` must resolve against the new
@@ -124,5 +126,154 @@ describe('echarts-adapter — item #16 datasets slot resolves Mark.from', () => 
     // No spec.datasets → the dataset array is exactly the single primary, as before #16.
     expect(option.dataset.length).toBe(1);
     expect(option.dataset[0]?.id).toBe('ladder');
+  });
+});
+
+// s156-m02 (NASA #1): an explicit `scale:'log'` must win over a co-declared
+// `type:'quantitative'` so the ECharts axis is not silently rendered linear while
+// Vega honors the log scale (the dual-output disagreement trap). inferAxisType
+// consulted `binding.type` FIRST and returned 'value' for quantitative BEFORE the
+// `scale === 'log'` branch could run — unreachable whenever a type was present.
+// The silent loss fires ONLY when the caller co-declares BOTH type AND scale:'log'
+// (a scale-only log spec already renders correctly). RED at HEAD 7ef5f96.
+const LOG_ROWS = [
+  { revenue: 1, users: 10 },
+  { revenue: 2, users: 1000 },
+];
+
+function logAxisSpec(): NormalizedVizSpec {
+  const yBinding = {
+    field: 'users',
+    trait: 'EncodingY',
+    // The redundant-but-valid explicit spec: field type AND a log scale together.
+    type: 'quantitative' as const,
+    scale: 'log' as const,
+  };
+  return {
+    $schema: 'https://oods.dev/viz-spec/v1',
+    id: 'log-axis',
+    name: 'Log Axis Scatter',
+    data: { name: 'points', values: LOG_ROWS },
+    marks: [
+      {
+        trait: 'MarkPoint',
+        encodings: {
+          x: { field: 'revenue', trait: 'EncodingX' },
+          y: { ...yBinding },
+        },
+      },
+    ],
+    encoding: {
+      x: { field: 'revenue', trait: 'EncodingX' },
+      y: { ...yBinding },
+    },
+    a11y: { description: 'Scatter with an explicit log y-axis.' },
+  } as NormalizedVizSpec;
+}
+
+interface EChartsAxisLike {
+  readonly type?: string;
+}
+
+describe('echarts-adapter — item s156-m02 explicit log scale wins over quantitative type', () => {
+  it('emits a log y-axis when the binding co-declares type:quantitative AND scale:log (fails at HEAD: value)', () => {
+    const option = toEChartsOption(logAxisSpec()) as unknown as {
+      yAxis: EChartsAxisLike | readonly EChartsAxisLike[];
+    };
+    const yAxis = Array.isArray(option.yAxis) ? option.yAxis[0] : option.yAxis;
+    // Before m02, the quantitative short-circuit returned 'value' and the log axis
+    // was silently lost — this asserted 'value', diverging from Vega.
+    expect((yAxis as EChartsAxisLike)?.type).toBe('log');
+  });
+
+  it('matches Vega parity — the same spec compiles to encoding.y.scale.type:log in Vega', () => {
+    const compiled = toVegaLiteSpec(logAxisSpec()) as unknown as {
+      encoding?: { y?: { scale?: { type?: string } } };
+    };
+    // Vega already emitted scale.type:'log' at HEAD (orthogonal to field type); the
+    // parity assertion pins that the two adapters now AGREE on the log axis.
+    expect(compiled.encoding?.y?.scale?.type).toBe('log');
+  });
+});
+
+// s156-m04 (NASA #4 / FD#18): a cartesian MarkRect heatmap whose color is a quantitative
+// measure must emit an ECharts `visualMap` so the continuous color legend renders (Vega
+// auto-legends; ECharts had NO visualMap key → the ECharts-only gap). Reuses the a11y
+// measure predicates (isMarkRectGrid + heatmapColorIsMeasure) and the SHARED spatial
+// visualmap generator; the tick label is themed onto chrome exactly like the geo path
+// (visualMap.textStyle.color = chrome.visualMapLabel). RED at HEAD: option.visualMap absent.
+const HEATMAP_ROWS = [
+  { region: 'North', quarter: 'Q1', revenue: 120 },
+  { region: 'South', quarter: 'Q1', revenue: 200 },
+  { region: 'North', quarter: 'Q2', revenue: 150 },
+  { region: 'South', quarter: 'Q2', revenue: 220 },
+];
+
+function heatmapMeasureSpec(): NormalizedVizSpec {
+  const color = { field: 'revenue', trait: 'EncodingColor', type: 'quantitative' as const, title: 'Revenue' };
+  return {
+    $schema: 'https://oods.dev/viz-spec/v1',
+    id: 'heatmap',
+    name: 'Revenue Heatmap',
+    data: { name: 'grid', values: HEATMAP_ROWS },
+    marks: [
+      {
+        trait: 'MarkRect',
+        encodings: {
+          x: { field: 'region', trait: 'EncodingX', scale: 'band' },
+          y: { field: 'quarter', trait: 'EncodingY', scale: 'band' },
+          color: { ...color },
+        },
+      },
+    ],
+    encoding: {
+      x: { field: 'region', trait: 'EncodingX', scale: 'band' },
+      y: { field: 'quarter', trait: 'EncodingY', scale: 'band' },
+      color: { ...color },
+    },
+    a11y: { description: 'Revenue by region and quarter.' },
+  } as NormalizedVizSpec;
+}
+
+interface VisualMapLike {
+  readonly type?: string;
+  readonly min?: number;
+  readonly max?: number;
+  readonly inRange?: { color?: readonly string[] };
+  readonly textStyle?: { color?: string };
+}
+
+describe('echarts-adapter — item s156-m04 cartesian heatmap emits a continuous visualMap', () => {
+  it('emits a continuous visualMap for a MarkRect measure heatmap (fails at HEAD: no visualMap)', () => {
+    const option = toEChartsOption(heatmapMeasureSpec()) as unknown as { visualMap?: VisualMapLike };
+    expect(option.visualMap).toBeDefined();
+    expect(option.visualMap?.type).toBe('continuous');
+    // Domain is the color field's numeric extent across the rows.
+    expect(option.visualMap?.min).toBe(120);
+    expect(option.visualMap?.max).toBe(220);
+  });
+
+  it('bakes the OODS sequential range (resolved colors) as inRange.color', () => {
+    const option = toEChartsOption(heatmapMeasureSpec()) as unknown as { visualMap?: VisualMapLike };
+    const colors = option.visualMap?.inRange?.color;
+    expect(Array.isArray(colors)).toBe(true);
+    expect((colors ?? []).length).toBeGreaterThan(2);
+    // Colors are RESOLVED for the headless canvas (rgb/hex), never raw `var(--token)`.
+    for (const color of colors ?? []) {
+      expect(color.startsWith('var(')).toBe(false);
+      expect(/^(#|rgb)/.test(color)).toBe(true);
+    }
+  });
+
+  it('bakes the visualMap tick label onto chrome (textStyle.color = chrome.visualMapLabel)', () => {
+    const spec = heatmapMeasureSpec();
+    const option = toEChartsOption(spec) as unknown as { visualMap?: VisualMapLike };
+    const chrome = resolveOodsEchartsChrome(spec);
+    expect(option.visualMap?.textStyle?.color).toBe(chrome.visualMapLabel);
+  });
+
+  it('OMITS the visualMap for a non-heatmap (bar) spec — gate-leak guard', () => {
+    const option = toEChartsOption(logAxisSpec()) as unknown as { visualMap?: VisualMapLike };
+    expect(option.visualMap).toBeUndefined();
   });
 });

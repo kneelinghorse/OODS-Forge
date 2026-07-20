@@ -32,7 +32,7 @@
 | `geo.latitudeField` | string | No |  | Bubble map: the row field holding latitude. Required for bubble_map. |
 | `geo.sizeField` | string | No |  | Bubble map: optional row field driving bubble size. |
 | `geo.colorField` | string | No |  | Bubble map: optional row field driving bubble colour. |
-| `geo.colorScale` | `linear` \| `quantize` \| `quantile` \| `threshold` \| `ordinal` | No |  | Optional colour scale (defaults to a continuous linear ramp). 'ordinal' paints discrete per-category colours. |
+| `geo.colorScale` | `linear` \| `quantize` \| `quantile` \| `threshold` \| `ordinal` \| `diverging` | No |  | Optional colour scale (defaults to a continuous linear ramp). 'ordinal' paints discrete per-category colours; 'diverging' ramps two hues about a neutral midpoint (zero). |
 | `geo.originLongitudeField` | string | No |  | Flow map: the row field holding the ORIGIN longitude. Required for flow_map. |
 | `geo.originLatitudeField` | string | No |  | Flow map: the row field holding the ORIGIN latitude. Required for flow_map. |
 | `geo.destinationLongitudeField` | string | No |  | Flow map: the row field holding the DESTINATION longitude. Required for flow_map. |

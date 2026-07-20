@@ -325,23 +325,34 @@ function naturalCompare(a: string, b: string): number {
 export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   const bindings = resolvePrimaryBindings(spec);
   const rows = collectRows(spec);
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  // s156 m06 (CLAIM-ON-POSITIVE-EVIDENCE): when the measure carries a DECLARED aggregate and a
+  // dimension is present, the rendered chart draws ONE reduced value per distinct dimension value
+  // (Vega aggregates on the visual side; dashboard.render forwards the raw cross-filtered rows +
+  // the aggregate encoding). Project the raw rows to that grouped shape so extrema/total/keyFindings
+  // describe the values the chart DRAWS — not the pre-aggregation rows (raw East=60 vs grouped
+  // East=110), and so a count/distinct over a NON-numeric measure yields ≥2 dataPoints instead of 0
+  // (the false A11Y-R-11). POSITIVE precondition + fail-safe: fires ONLY when an aggregate is
+  // declared, so the no-aggregate path is byte-identical (#564 / property P3).
+  const analysisRows =
+    declaredAggregate && bindings.dimensionField && bindings.measureField
+      ? projectAggregatedRows(rows, bindings.dimensionField, bindings.measureField, declaredAggregate)
+      : rows;
   // s155 m03: a first→last trend is meaningful only over a SINGLE ordered series. When the marks
   // ARE a sequence (line/area), canonicalize the points by the X binding (sort-by-X) so first/last
   // — and thus the directional claim + narrative sentence — reflect the X axis, not the row order.
   // ORIGINAL `rows` still feed dimensionValues/colorCategories/rowCount (unchanged); only the
   // dataPoints that drive first/last/trend are reordered (min/max/total/mean are order-invariant).
   const sequence = isSequenceComposition(spec);
-  const orderedRows = sequence && bindings.dimensionField ? sortRowsByField(rows, bindings.dimensionField) : rows;
+  const orderedRows =
+    sequence && bindings.dimensionField ? sortRowsByField(analysisRows, bindings.dimensionField) : analysisRows;
   const dataPoints = buildDataPoints(orderedRows, bindings);
   // s155 m04 (CLAIM-ON-POSITIVE-EVIDENCE): resolve whether the measure is PROVABLY additive from
   // its raw field name + the caller's declared aggregate — the SAME token model the profiler types
   // with (shared field-name-hints). The narrative "Total X" gate reads this so a sum-the-IDs /
   // sum-the-zips / sum-the-maxes claim (id_max, sales_id, zip) is never emitted; a declared
   // aggregate:'sum'/'count' or an additive head (revenue, id_count) still gets its honest Total.
-  const measureAdditive = isProvablyAdditive(
-    bindings.measureField,
-    resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate,
-  );
+  const measureAdditive = isProvablyAdditive(bindings.measureField, declaredAggregate);
   return buildVizDataAnalysis({
     mark: bindings.mark,
     rows,
@@ -480,6 +491,93 @@ function collectRows(spec: NormalizedVizSpec): Record<string, unknown>[] {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+// s156 m06: reduce one group's raw measure values to the declared aggregate — mirrors the Vega
+// adapter's mapAggregate (average→mean). count = record count; distinct = distinct non-null values;
+// sum/average/min/max/median operate on the numeric values and are UNDEFINED for a group with no
+// numeric values (you cannot sum/average strings — it drops rather than reporting a phantom 0).
+function reduceAggregate(
+  values: readonly unknown[],
+  aggregate: NonNullable<TraitBinding['aggregate']>
+): number | undefined {
+  if (aggregate === 'count') {
+    return values.length;
+  }
+  if (aggregate === 'distinct') {
+    const seen = new Set<string>();
+    for (const value of values) {
+      if (value !== null && value !== undefined) {
+        seen.add(String(value));
+      }
+    }
+    return seen.size;
+  }
+  const numeric: number[] = [];
+  for (const value of values) {
+    const n = toNumber(value);
+    if (n !== null) {
+      numeric.push(n);
+    }
+  }
+  if (numeric.length === 0) {
+    return undefined;
+  }
+  if (aggregate === 'sum') {
+    return numeric.reduce((sum, value) => sum + value, 0);
+  }
+  if (aggregate === 'average') {
+    return numeric.reduce((sum, value) => sum + value, 0) / numeric.length;
+  }
+  if (aggregate === 'min') {
+    return Math.min(...numeric);
+  }
+  if (aggregate === 'max') {
+    return Math.max(...numeric);
+  }
+  // median
+  const sorted = [...numeric].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+// s156 m06: group the raw rows by the dimension field (first-appearance order, a null/undefined
+// dimension is its own bucket) and emit ONE row per distinct dimension carrying the declared
+// reduction as the measure field. A group whose reduction is undefined (sum/avg/min/max/median over
+// a non-numeric group) drops out. Deterministic: the group order is the first-appearance order of
+// the dimension values in the raw rows.
+function projectAggregatedRows(
+  rows: readonly Record<string, unknown>[],
+  dimensionField: string,
+  measureField: string,
+  aggregate: NonNullable<TraitBinding['aggregate']>
+): Record<string, unknown>[] {
+  const order: string[] = [];
+  const groups = new Map<string, { dimValue: unknown; values: unknown[] }>();
+  for (const row of rows) {
+    const dimValue = row[dimensionField as keyof typeof row];
+    const key = dimValue === null || dimValue === undefined ? ' null' : String(dimValue);
+    let group = groups.get(key);
+    if (!group) {
+      group = { dimValue, values: [] };
+      groups.set(key, group);
+      order.push(key);
+    }
+    group.values.push(row[measureField as keyof typeof row]);
+  }
+  const projected: Record<string, unknown>[] = [];
+  for (const key of order) {
+    const group = groups.get(key);
+    if (!group) {
+      continue;
+    }
+    const reduced = reduceAggregate(group.values, aggregate);
+    if (reduced === undefined) {
+      continue;
+    }
+    projected.push({ [dimensionField]: group.dimValue, [measureField]: reduced });
+  }
+  return projected;
 }
 
 function buildDataPoints(
