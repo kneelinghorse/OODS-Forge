@@ -20,6 +20,15 @@ const DEFAULT_PIECEWISE_COLORS = [
   'var(--oods-viz-scale-sequential-07, #1f6feb)',
 ];
 
+// sprint-156 m04: the OODS diverging viz-scale — a two-hue gradient about a neutral mid.
+// A `scale:'diverging'` routes to a CONTINUOUS visualMap (not piecewise) with this palette
+// so ECharts renders the same divergence the Vega side bakes (getVizScaleTokens('diverging')).
+const DEFAULT_DIVERGING_COLORS = [
+  'var(--oods-viz-scale-diverging-neg-05, #400031)',
+  'var(--oods-viz-scale-diverging-neutral, #c0c4cb)',
+  'var(--oods-viz-scale-diverging-pos-05, #400000)',
+];
+
 function pruneUndefined<T extends object>(input: T): T {
   return Object.fromEntries(
     Object.entries(input as Record<string, unknown>).filter(([, value]) => value !== undefined)
@@ -100,8 +109,16 @@ export function createVisualMapForScale(params: {
   readonly values: readonly number[];
 }): VisualMapComponentOption {
   const domain = fallbackDomain(params.domain, [...params.values]);
-  const palette = params.range && params.range.length > 0 ? params.range : DEFAULT_CONTINUOUS_COLORS;
+  const hasRange = Boolean(params.range && params.range.length > 0);
+  const palette = hasRange ? (params.range as readonly string[]) : DEFAULT_CONTINUOUS_COLORS;
   const { scale } = params;
+
+  // sprint-156 m04: diverging is a CONTINUOUS scale — a caller-supplied range wins, else
+  // the OODS diverging default. Grouped with linear so a diverging heatmap/geo layer emits
+  // one continuous visualMap (never binned pieces).
+  if (scale === 'diverging') {
+    return createContinuousVisualMap(domain, hasRange ? palette : DEFAULT_DIVERGING_COLORS);
+  }
 
   if (!scale || scale === 'linear') {
     return createContinuousVisualMap(domain, palette);

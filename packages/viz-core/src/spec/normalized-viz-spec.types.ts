@@ -125,6 +125,8 @@ export interface Mark {
 export interface EncodingMap {
   x?: TraitBinding;
   y?: TraitBinding;
+  x2?: TraitBinding;
+  y2?: TraitBinding;
   color?: TraitBinding;
   size?: TraitBinding;
   shape?: TraitBinding;
@@ -142,11 +144,11 @@ export interface TraitBinding {
    * Trait ID (e.g., EncodingColor).
    */
   trait: string;
-  channel?: 'x' | 'y' | 'color' | 'size' | 'shape' | 'detail';
+  channel?: 'x' | 'y' | 'x2' | 'y2' | 'color' | 'size' | 'shape' | 'detail';
   aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
   bin?: boolean;
   timeUnit?: 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
-  scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+  scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
   /**
    * Vega-Lite field type. When set, short-circuits channel-default and scale-derived type inference in the adapters (explicit-mode data-aware typing, sprint-125 m01).
    */

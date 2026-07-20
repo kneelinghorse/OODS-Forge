@@ -6588,7 +6588,7 @@ export namespace VizRenderInputSchema {
     | {
         field: string;
         aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
-        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
         /**
          * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
          */
@@ -6610,7 +6610,7 @@ export namespace VizRenderInputSchema {
     | {
         field: string;
         aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct';
-        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point';
+        scale?: 'linear' | 'temporal' | 'log' | 'sqrt' | 'band' | 'point' | 'diverging';
         /**
          * Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference (sprint-125 m02 manual escape hatch). Wins over the m01 profile-derived type.
          */
@@ -6866,9 +6866,9 @@ export namespace VizRenderInputSchema {
        */
       colorField?: string;
       /**
-       * Optional colour scale (defaults to a continuous linear ramp). 'ordinal' paints discrete per-category colours.
+       * Optional colour scale (defaults to a continuous linear ramp). 'ordinal' paints discrete per-category colours; 'diverging' ramps two hues about a neutral midpoint (zero).
        */
-      colorScale?: 'linear' | 'quantize' | 'quantile' | 'threshold' | 'ordinal';
+      colorScale?: 'linear' | 'quantize' | 'quantile' | 'threshold' | 'ordinal' | 'diverging';
       /**
        * Flow map: the row field holding the ORIGIN longitude. Required for flow_map.
        */

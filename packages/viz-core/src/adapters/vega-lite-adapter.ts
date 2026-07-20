@@ -3,14 +3,24 @@ import type {
   Transform as NormalizedSpecTransform,
 } from '../spec/normalized-viz-spec.types.js';
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
-import { resolveCategoricalPalette } from '../tokens/categorical-palette.js';
+import { resolveCategoricalPalette, toHex } from '../tokens/categorical-palette.js';
 import { resolveOodsVegaConfig } from '../tokens/oods-vega-config.js';
+import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
+import { resolveTokenToColor } from './echarts/token-resolver.js';
 import { buildVegaLiteSpec } from './vega-lite-layout-mapper.js';
 
 const VEGA_LITE_SCHEMA_URL = 'https://vega.github.io/schema/vega-lite/v6.json';
 const CHANNEL_ORDER = ['x', 'x2', 'y', 'y2', 'color', 'size', 'shape', 'detail'] as const;
 const QUANT_SCALE_TYPES = new Set(['linear', 'log', 'sqrt']);
 const ORDINAL_SCALE_TYPES = new Set(['band', 'point']);
+
+// sprint-156 m04: the OODS diverging viz-scale, resolved ONCE to canonical hex through the
+// SAME token→color chain the categorical bake + certify use, so the diverging range that
+// renders is the diverging range that would be graded ("rendered == certified"). A diverging
+// color is a continuous gradient (role-B exempt), so this is a bake, not a graded palette.
+const OODS_DIVERGING_RANGE: readonly string[] = getVizScaleTokens('diverging')
+  .map((token) => toHex(resolveTokenToColor(token) ?? ''))
+  .filter((color): color is string => Boolean(color));
 const MARK_TRAIT_MAP = {
   MarkBar: 'bar',
   MarkLine: 'line',
@@ -331,6 +341,14 @@ function convertBinding(
     definition.scale = { ...existingScale, range: [...binding.range] };
   }
 
+  // sprint-156 m04 (NASA #4 + band M2): a diverging color scale bakes the OODS diverging
+  // range + `domainMid:0` so Vega renders the two hues about zero. Continuous (the type is
+  // forced quantitative above), so it is disjoint from the nominal/ordinal categorical bakes.
+  if (channel === 'color' && binding.scale === 'diverging') {
+    const existingScale = (definition.scale as Record<string, unknown> | undefined) ?? {};
+    definition.scale = { ...existingScale, range: [...OODS_DIVERGING_RANGE], domainMid: 0 };
+  }
+
   if (binding.sort) {
     definition.sort = binding.sort;
   }
@@ -447,6 +465,12 @@ function inferFieldType(channel: ChannelName, binding: EncodingBinding): 'quanti
   }
 
   if (binding.trait === 'EncodingColor') {
+    // sprint-156 m04: a diverging color scale is a continuous quantitative gradient — it
+    // must NOT default to nominal (which would render discrete swatches instead of a ramp).
+    if (binding.scale === 'diverging') {
+      return 'quantitative';
+    }
+
     if (binding.scale && QUANT_SCALE_TYPES.has(binding.scale)) {
       return 'quantitative';
     }

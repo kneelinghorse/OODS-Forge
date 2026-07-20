@@ -34,7 +34,7 @@
 // =============================================================================
 
 /** Color scale types for choropleth encoding. */
-export type ColorScaleType = 'quantize' | 'quantile' | 'threshold' | 'linear' | 'ordinal';
+export type ColorScaleType = 'quantize' | 'quantile' | 'threshold' | 'linear' | 'ordinal' | 'diverging';
 
 /** Size scale types for symbol encoding. */
 export type SizeScaleType = 'linear' | 'sqrt' | 'log';
