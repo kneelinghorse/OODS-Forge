@@ -276,4 +276,46 @@ describe('echarts-adapter — item s156-m04 cartesian heatmap emits a continuous
     const option = toEChartsOption(logAxisSpec()) as unknown as { visualMap?: VisualMapLike };
     expect(option.visualMap).toBeUndefined();
   });
+
+  // s157 m03 (B2): a DIVERGING cartesian heatmap centers its visualMap at data 0 (symmetric
+  // [-M,+M] domain) == Vega's baked color.scale.domainMid:0 — not the asymmetric-midpoint 0.34.
+  it('centers a diverging heatmap visualMap at 0 (symmetric domain == Vega domainMid)', () => {
+    const color = { field: 'corr', trait: 'EncodingColor', type: 'quantitative' as const, scale: 'diverging' as const, title: 'Correlation' };
+    const spec = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'corr',
+      name: 'Correlation matrix',
+      data: {
+        name: 'm',
+        values: [
+          { region: 'A', factor: 'x', corr: -0.32 },
+          { region: 'A', factor: 'y', corr: 0.5 },
+          { region: 'B', factor: 'x', corr: 1 },
+        ],
+      },
+      marks: [
+        {
+          trait: 'MarkRect',
+          encodings: {
+            x: { field: 'region', trait: 'EncodingX', scale: 'band' },
+            y: { field: 'factor', trait: 'EncodingY', scale: 'band' },
+            color: { ...color },
+          },
+        },
+      ],
+      encoding: {
+        x: { field: 'region', trait: 'EncodingX', scale: 'band' },
+        y: { field: 'factor', trait: 'EncodingY', scale: 'band' },
+        color: { ...color },
+      },
+      a11y: { description: 'Correlation matrix with a diverging color scale.' },
+    } as unknown as NormalizedVizSpec;
+
+    const option = toEChartsOption(spec) as unknown as { visualMap?: VisualMapLike };
+    expect(option.visualMap?.type).toBe('continuous');
+    // M = max(|-0.32|, |1|) = 1 → [-1, 1], center 0.
+    expect(option.visualMap?.min).toBe(-1);
+    expect(option.visualMap?.max).toBe(1);
+    expect((option.visualMap!.min! + option.visualMap!.max!) / 2).toBe(0);
+  });
 });

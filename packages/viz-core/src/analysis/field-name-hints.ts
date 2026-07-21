@@ -89,11 +89,18 @@ const ADDITIVE_MEASURE_HEADS: ReadonlySet<string> = new Set([
 // additive regardless of head. Errs toward silence (a missed qualifier is a documented residual, not
 // a crash). None overlap ADDITIVE_MEASURE_HEADS, and neutral domain qualifiers (net/gross/daily/
 // monthly/store) are deliberately ABSENT — net_revenue / daily_sales stay additive.
+// s157 m06 (V2, from the s155 NOT_GENUINE review): distinct/unique CARDINALITY qualifiers. A
+// `distinct_count`/`unique_count` has an additive head ('count') but summing distinct counts across
+// rows is meaningless (a stack of distinct counts ≠ the distinct-over-the-whole — the "Total Distinct
+// count: 6,006" dishonesty). 'distinct'/'unique' were in NON_ADDITIVE_AGGREGATES (blocking a DECLARED
+// aggregate:'distinct') but missing here, so the NAME token slipped. Added so a distinct/unique name
+// suppresses the Total, mirroring the aggregate membership.
 const NON_ADDITIVE_QUALIFIERS: ReadonlySet<string> = new Set([
   'avg', 'average', 'mean', 'median', 'mode',
   'pct', 'percent', 'percentage', 'ratio', 'rate', 'per', 'share',
   'unit', 'running', 'cumulative', 'cumul', 'ytd', 'mtd', 'qtd', 'rolling', 'moving',
   'index', 'weighted', 'normalized', 'stddev', 'stdev', 'variance', 'min', 'max',
+  'distinct', 'unique', 'uniq', 'nunique', 'cardinality', 'distinctcount',
 ]);
 
 // TraitBinding.aggregate values whose result is NOT summable — a caller-declared mean/median/min/
