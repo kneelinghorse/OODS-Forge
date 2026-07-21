@@ -231,16 +231,69 @@ function isFacetedLayout(spec: NormalizedVizSpec): boolean {
  * when a constant `color` binding shadowed the detail field. detail is conservative: it only ever
  * SUPPRESSES a genuine multi-series overlay, never invents a claim.
  */
-// s157 m05 (A1): also SIZE — a size channel on a nominal field facets a line into multiple series
-// (Vega-Lite cross-check), so a size-grouped rising multi-series line must NOT narrate a first→last
-// phantom trend. size (like detail) only ever SUPPRESSES. shape is NOT added — shape draws one path
-// + a symbol overlay (the dup-X residual), so it would over-suppress a legit single line.
+// ── s158 m1: the STRUCTURAL SPINE (replaces the seriesGroupingFields / projectionGroupingFields
+// per-channel allow-lists the s150→s157 meta-pattern indicts). ONE classification of every encoding
+// channel, COMPILE-EXHAUSTIVE over the CLOSED EncodingMap (`keyof NormalizedVizSpec['encoding']`) —
+// adding a 9th channel is a TYPE ERROR here, so a new grouping channel can NEVER silently under-key
+// the projection or the trend gate (the recurrence's actual generator). Roles: 'positional' = x/y
+// (an axis — contributes a grouping field only as a SECOND dimension: a field that is neither the
+// primary dimension nor the measure, e.g. a heatmap y=hour); 'positional-range' = x2/y2 (band
+// endpoints, never a grouping field); 'retinal' = color/size/shape (group marks ONLY when
+// categorical; shape/size only on the marks Vega-Lite splits — point/line/area, NOT bar/rect);
+// 'detail' = a pure series-grouping channel, always categorical.
+type ChannelGroupingRole = 'positional' | 'positional-range' | 'retinal' | 'detail';
+
+const CHANNEL_GROUPING_ROLE: Record<keyof NormalizedVizSpec['encoding'], ChannelGroupingRole> = {
+  x: 'positional',
+  y: 'positional',
+  x2: 'positional-range',
+  y2: 'positional-range',
+  color: 'retinal',
+  size: 'retinal',
+  shape: 'retinal',
+  detail: 'detail',
+};
+
+const POSITIONAL_CHANNELS = (
+  Object.keys(CHANNEL_GROUPING_ROLE) as (keyof NormalizedVizSpec['encoding'])[]
+).filter((channel) => CHANNEL_GROUPING_ROLE[channel] === 'positional');
+
+// color, size, shape, detail — the discrete channels Vega-Lite can split drawn marks by.
+const RETINAL_GROUPING_CHANNELS = (
+  Object.keys(CHANNEL_GROUPING_ROLE) as (keyof NormalizedVizSpec['encoding'])[]
+).filter((channel) => CHANNEL_GROUPING_ROLE[channel] === 'retinal' || CHANNEL_GROUPING_ROLE[channel] === 'detail');
+
+// shape/size split marks into groups only on point/line/area (a symbol / size varies a line into
+// multiple series); on bar/rect they are not drawn as separate marks.
+function markSplitsByRetina(mark: ChartShape): boolean {
+  return mark === 'point' || mark === 'line' || mark === 'area';
+}
+
+/**
+ * s158 m2 (was the s155/s157 seriesGroupingFields allow-list, now DERIVED off the m1 role table):
+ * the discrete channels that SPLIT the flat data walk into multiple ordered/drawn series. color /
+ * detail / size preserve the s155/s157 behaviour; SHAPE is now included — Vega-Lite groups lines and
+ * areas by shape exactly like color (decision #1255's "shape draws one path" premise was FALSE;
+ * verified against the Vega-Lite line docs + equivalence-rules.ts:83, which already treats shape as a
+ * series-distinguishing channel), mark-gated to point/line/area. detail/size/shape only ever SUPPRESS
+ * a phantom, never invent one. A new EncodingMap channel forces a role above, so it cannot be missed.
+ */
 function seriesGroupingFields(spec: NormalizedVizSpec): string[] {
-  return [
-    resolveBinding(spec, 'color')?.field,
-    resolveBinding(spec, 'detail')?.field,
-    resolveBinding(spec, 'size')?.field,
-  ].filter((field): field is string => Boolean(field));
+  const mark = resolveMark(spec);
+  const fields: string[] = [];
+  for (const channel of RETINAL_GROUPING_CHANNELS) {
+    const field = resolveBinding(spec, channel)?.field;
+    if (!field) {
+      continue;
+    }
+    // shape carries series identity only on the marks Vega-Lite draws per-group (point/line/area);
+    // on bar/rect it is not a separate drawn mark. (size preserves its prior unconditional handling.)
+    if (channel === 'shape' && !markSplitsByRetina(mark)) {
+      continue;
+    }
+    fields.push(field);
+  }
+  return fields;
 }
 
 // s155 m05: distinct GROUP count over a field, counting null/undefined as ITS OWN bucket. A color
@@ -298,6 +351,24 @@ function sortRowsByField(
 // keep the exact numeric fast-path.
 function isDottedVersionString(value: unknown): boolean {
   return typeof value === 'string' && value.includes('.');
+}
+
+// s158 m5 (Fork 1, Derek-ratified): the DIMENSION axis is a version/release label (1.9, 1.10, 1.11)
+// when any of its values is a dotted-version STRING. deriveCorrelation coerces the dimension via
+// toNumber (Number('1.10')=1.1), so a rising release series inverts into a phantom "negative
+// relationship" (the s157 dotted-version sibling of V1, in a DIFFERENT function). A version label has
+// no continuous magnitude for Pearson, so SUPPRESS the correlation (same posture as the
+// isMarkRectGrid / isStripPlot gate) rather than fabricate a coefficient. A genuinely continuous axis
+// arrives as a NUMBER (isDottedVersionString(1.5)=false), so it is never suppressed. Reuses V1's
+// discriminator; fail-safe to silence.
+function isDottedVersionDimension(
+  rows: readonly Record<string, unknown>[],
+  dimensionField: string | undefined
+): boolean {
+  if (!dimensionField) {
+    return false;
+  }
+  return rows.some((row) => isDottedVersionString(row[dimensionField as keyof typeof row]));
 }
 
 function compareCells(a: unknown, b: unknown): number {
@@ -358,10 +429,13 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
           bindings.dimensionField,
           bindings.measureField,
           declaredAggregate,
-          // s157 m02 (B1/A2): stacking aggregates (sum/count) draw a per-dimension stack total —
-          // keep them dimension-level; non-stacking (avg/min/max/median/distinct) draw one mark per
-          // secondary-grouping cell — project per drawn cell so extrema/total name a real mark.
-          isStackTotalAggregate(declaredAggregate)
+          // s157 m02 (B1/A2) + s158 m2: a stacking aggregate (sum/count) on a mark that ACTUALLY
+          // stacks (bar/area) draws a per-dimension stack total — keep it dimension-level. Every
+          // other case — non-stacking aggregates (avg/min/max/median/distinct) AND summative
+          // aggregates on a non-stacking mark (a color-is-measure heatmap rect) — draws one mark per
+          // (dimension × second-positional × grouping) cell → project per drawn cell so extrema/total
+          // name a real mark (the s158 heatmap survivor fix).
+          isStackTotalAggregate(declaredAggregate) && markStacks(bindings.mark)
             ? []
             : projectionGroupingFields(spec, bindings.dimensionField, bindings.measureField),
         )
@@ -381,7 +455,7 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   // sum-the-zips / sum-the-maxes claim (id_max, sales_id, zip) is never emitted; a declared
   // aggregate:'sum'/'count' or an additive head (revenue, id_count) still gets its honest Total.
   const measureAdditive = isProvablyAdditive(bindings.measureField, declaredAggregate);
-  return buildVizDataAnalysis({
+  const analysis = buildVizDataAnalysis({
     mark: bindings.mark,
     rows,
     dataPoints,
@@ -400,8 +474,17 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     // #910). When suppressed, the line/area path (narrative-generator.ts:203-214) emits an
     // order-invariant range sentence. The correlation gate below is UNCHANGED.
     computeTrend: !isMultiSeriesComposition(spec, rows) && sequence,
-    correlation: isMarkRectGrid(spec) || isStripPlot(spec) ? undefined : deriveCorrelation(rows, bindings),
+    correlation:
+      isMarkRectGrid(spec) || isStripPlot(spec) || isDottedVersionDimension(rows, bindings.dimensionField)
+        ? undefined
+        : deriveCorrelation(rows, bindings),
   });
+  // s158 m3: the PERMANENT drawn-value fail-safe (Fork 2, ratified). After every derivation, null any
+  // narrated extremum / Total that is NOT a real drawn mark — checked against an INDEPENDENTLY-derived
+  // drawn set (drawnMarkValueSet, on the raw-rows path) so it bites a future under-key even if the
+  // root fix above is one day defeated by a new channel. Inert (byte-identical) when no aggregate is
+  // declared. The root fix keeps it quiet; the guard is what survives the NEXT under-enumeration.
+  return enforceDrawnValueInvariant(analysis, spec, declaredAggregate);
 }
 
 function resolveMark(spec: NormalizedVizSpec): ChartShape {
@@ -583,21 +666,60 @@ function isStackTotalAggregate(aggregate: NonNullable<TraitBinding['aggregate']>
   return aggregate === 'sum' || aggregate === 'count';
 }
 
-// s157 m02 (B1 + A1/A3): the secondary discrete channels the chart splits marks by — the s155
-// seriesGroupingFields (color+detail) — for the per-drawn-cell projection, EXCLUDING (A1) the
-// measure channel (a continuous-color heatmap whose color IS the measure must not shatter its own
-// group key by the measure field — else one group per measure VALUE) and (redundant-recolor) the
-// dimension field itself (color==dimension dedups to the dimension, keeping the s156 m06 fix).
-// Empty ⇒ the projection stays dimension-level (fail-safe / byte-identical to s156). detail folds
-// in for free (A3), so color-AND-detail sub-grouping is machine-covered.
+// s158 m2: stacking (a per-dimension total drawn as ONE bar/area height) is a bar/area concept — a
+// heatmap rect colours each (x,y) cell by its OWN aggregate, so a summative heatmap draws per cell,
+// not a stack total. The stack-total collapse therefore applies only when the mark actually stacks;
+// otherwise a sum/count color-is-measure heatmap would collapse its second positional dimension into
+// a per-x marginal (the sum-heatmap sibling of the s157 survivor).
+function markStacks(mark: ChartShape): boolean {
+  return mark === 'bar' || mark === 'area';
+}
+
+// s158 m2 (B1 root fix — the s157 heatmap survivor): the SECOND positional dimension the chart draws
+// marks over. A heatmap binds x AND y to dimensions with the measure on color, so each (x,y) rect is
+// a distinct drawn cell; the primary dimension (x) heads the projection key, but y must ALSO be in it
+// or the projection collapses y into a per-x MARGINAL mean drawn on NO rect (the s157 "67.8/22.6"
+// survivor). A normal cartesian chart has exactly ONE positional dimension (x=dim, y=measure) → this
+// returns undefined → the projection key is byte-identical. x2/y2 are band endpoints (role
+// 'positional-range'), never a dimension. Derived off the m1 POSITIONAL_CHANNELS role list.
+function secondaryPositionalDimensionField(
+  spec: NormalizedVizSpec,
+  dimensionField: string,
+  measureField: string
+): string | undefined {
+  for (const channel of POSITIONAL_CHANNELS) {
+    const field = resolveBinding(spec, channel)?.field;
+    if (field && field !== dimensionField && field !== measureField) {
+      return field;
+    }
+  }
+  return undefined;
+}
+
+// s158 m2 (was s157 projectionGroupingFields, now role-derived): the discrete fields that distinguish
+// DRAWN marks for the per-cell aggregate projection — the SECOND positional dimension PLUS the
+// series-grouping channels (color/detail/size/shape) — EXCLUDING the measure and the primary
+// dimension (already the key head; color==dimension redundant-recolor keeps the s156 m06 fix). Empty
+// ⇒ the projection stays dimension-level (fail-safe / byte-identical to s156/s157). Because both the
+// second-positional term and the grouping term derive from the m1 role table, a new grouping channel
+// cannot silently drop out of the key — the anti-enumeration structural close of the s157 survivor.
 function projectionGroupingFields(
   spec: NormalizedVizSpec,
   dimensionField: string,
   measureField: string
 ): string[] {
-  return seriesGroupingFields(spec).filter(
-    (field) => field !== measureField && field !== dimensionField
-  );
+  const secondary = secondaryPositionalDimensionField(spec, dimensionField, measureField);
+  const candidates = secondary ? [secondary, ...seriesGroupingFields(spec)] : seriesGroupingFields(spec);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const field of candidates) {
+    if (field === measureField || field === dimensionField || seen.has(field)) {
+      continue;
+    }
+    seen.add(field);
+    out.push(field);
+  }
+  return out;
 }
 
 // s156 m06 / s157 m02: group the raw rows by the dimension field PLUS the secondary discrete
@@ -646,6 +768,117 @@ function projectAggregatedRows(
     projected.push({ [dimensionField]: group.dimValue, [measureField]: reduced });
   }
   return projected;
+}
+
+// ── s158 m3: the ORACLE-INDEPENDENT drawn-mark guard (Fork 2 — the PERMANENT fail-safe of record).
+// The narrative may name only a value the chart actually DRAWS. drawnMarkValueSet recomputes the set
+// of drawn values on the RAW-rows path (collectRows + reduceAggregate), keyed off the m1 role table —
+// calling NONE of projectAggregatedRows / projectionGroupingFields / resolvePrimaryChannels' dimension
+// resolution (the functions that produced the s157 phantom). So its membership check bites a narrated
+// extremum drawn on no mark on a path the projection bug cannot corrupt.
+
+// The single measure channel — the one carrying a declared aggregate. Independent of
+// resolvePrimaryChannels' dimension resolution (which loses the heatmap's y).
+function findAggregatedMeasure(
+  spec: NormalizedVizSpec
+): { field: string; aggregate: NonNullable<TraitBinding['aggregate']> } | undefined {
+  for (const channel of Object.keys(CHANNEL_GROUPING_ROLE) as (keyof NormalizedVizSpec['encoding'])[]) {
+    const binding = resolveBinding(spec, channel);
+    if (binding?.field && binding.aggregate) {
+      return { field: binding.field, aggregate: binding.aggregate };
+    }
+  }
+  return undefined;
+}
+
+// The reduced value the chart draws for EACH mark, WITH multiplicity (so a repeated cell value is
+// summed honestly into Total). Key = every positional dimension (≠ measure) plus, for a non-stacking
+// draw, the categorical grouping channels; a stacking draw (sum/count on bar/area) draws the
+// per-dimension stack total, so only the positional dimensions key it. Multi-row-per-cell is
+// RE-REDUCED (an avg cell reports the cell's average, never a raw row). undefined ⇒ no aggregate.
+function drawnMarkValues(spec: NormalizedVizSpec): number[] | undefined {
+  const measure = findAggregatedMeasure(spec);
+  if (!measure) {
+    return undefined;
+  }
+  const stacking = isStackTotalAggregate(measure.aggregate) && markStacks(resolveMark(spec));
+  const keyFields: string[] = [];
+  const addKey = (field: string | undefined) => {
+    if (field && field !== measure.field && !keyFields.includes(field)) {
+      keyFields.push(field);
+    }
+  };
+  for (const channel of POSITIONAL_CHANNELS) {
+    addKey(resolveBinding(spec, channel)?.field);
+  }
+  if (!stacking) {
+    for (const field of seriesGroupingFields(spec)) {
+      addKey(field);
+    }
+  }
+  const order: string[] = [];
+  const groups = new Map<string, unknown[]>();
+  for (const row of collectRows(spec)) {
+    const key =
+      keyFields.length === 0
+        ? '∅'
+        : keyFields
+            .map((field) => {
+              const value = row[field as keyof typeof row];
+              return value === null || value === undefined ? ' null' : String(value);
+            })
+            .join(' ');
+    let values = groups.get(key);
+    if (!values) {
+      values = [];
+      groups.set(key, values);
+      order.push(key);
+    }
+    values.push(row[measure.field as keyof typeof row]);
+  }
+  const drawn: number[] = [];
+  for (const key of order) {
+    const reduced = reduceAggregate(groups.get(key) ?? [], measure.aggregate);
+    if (reduced !== undefined) {
+      drawn.push(reduced);
+    }
+  }
+  return drawn;
+}
+
+// A relative-epsilon numeric compare (float aggregates such as average must not spuriously miss).
+function approxEqual(a: number, b: number): boolean {
+  return Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
+}
+
+// s158 m3 (the guard): null ONLY the offending extreme (never couple max/min) when its value is not a
+// drawn mark; null Total when it ≠ the sum of the drawn values (relative epsilon). Positive
+// precondition = a declared aggregate (else byte-identical pass-through); on no violation, returns the
+// analysis unchanged (byte-identical). Never re-derives or relabels — honest silence, never a
+// fabricated value; never touches analysis.rows.
+function enforceDrawnValueInvariant(
+  analysis: VizDataAnalysis,
+  spec: NormalizedVizSpec,
+  declaredAggregate: TraitBinding['aggregate'] | undefined
+): VizDataAnalysis {
+  if (!declaredAggregate) {
+    return analysis;
+  }
+  const drawn = drawnMarkValues(spec);
+  if (!drawn || drawn.length === 0) {
+    return analysis;
+  }
+  const isDrawnValue = (value: number | undefined): boolean =>
+    value !== undefined && drawn.some((cell) => approxEqual(cell, value));
+  const nextMax = analysis.max && !isDrawnValue(analysis.max.value) ? undefined : analysis.max;
+  const nextMin = analysis.min && !isDrawnValue(analysis.min.value) ? undefined : analysis.min;
+  const drawnSum = drawn.reduce((sum, value) => sum + value, 0);
+  const nextTotal =
+    analysis.total !== undefined && !approxEqual(analysis.total, drawnSum) ? undefined : analysis.total;
+  if (nextMax === analysis.max && nextMin === analysis.min && nextTotal === analysis.total) {
+    return analysis;
+  }
+  return { ...analysis, max: nextMax, min: nextMin, total: nextTotal };
 }
 
 function buildDataPoints(

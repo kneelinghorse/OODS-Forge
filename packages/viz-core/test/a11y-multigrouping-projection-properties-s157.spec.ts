@@ -305,10 +305,13 @@ describe('s157 m02 — concrete anchors', () => {
     expect(keyFindings.every((f) => !f.includes('105'))).toBe(true);
   });
 
-  // A1 — a continuous-color heatmap whose COLOR is the measure must NOT shatter its
-  // group key by the measure field. If the measure channel were in the key, groups
-  // would be per (region,temp) → max=90/min=10; excluded ⇒ per-region avg → max=70/min=20.
-  it('A1: color-is-measure heatmap does not shatter its own group key (measure channel excluded)', () => {
+  // s158 m4 (DE-MIRROR of the s157 mirror-oracle): a continuous-color heatmap draws one rect per
+  // (x=region, y=hour) cell, so the narrated extrema MUST be a real DRAWN cell — never a per-region
+  // marginal mean over hour, which is drawn on NO rect (the s157 survivor, review PS-2026-07-21-006).
+  // The projection key now carries the SECOND positional dimension (y=hour), so groups are per
+  // (region,hour): drawn max = 90 (South, hour 10), min = 10 (North, hour 9). The prior assertion
+  // (max=70/min=20 = the South/North marginal means) CODIFIED the phantom and is corrected here.
+  it('A1: color-is-measure heatmap names a DRAWN cell, not a per-region marginal mean', () => {
     const color = { field: 'temp', trait: 'EncodingColor', channel: 'color', type: 'quantitative', scale: 'linear', aggregate: 'average' };
     const encoding = {
       x: { field: 'region', trait: 'EncodingX', scale: 'band' },
@@ -334,10 +337,10 @@ describe('s157 m02 — concrete anchors', () => {
     } as unknown as NormalizedVizSpec;
 
     const analysis = analyzeVizSpec(spec);
-    // Per-region averages (measure excluded from the key): North (10+30)/2=20, South (50+90)/2=70.
-    expect(analysis.max?.value).toBe(70);
+    // Drawn (region,hour) cells: North/9=10, North/10=30, South/9=50, South/10=90.
+    expect(analysis.max?.value).toBe(90); // drawn South/hour-10, never the 70 marginal mean
     expect(analysis.max?.label).toBe('South');
-    expect(analysis.min?.value).toBe(20);
+    expect(analysis.min?.value).toBe(10); // drawn North/hour-9, never the 20 marginal mean
     expect(analysis.min?.label).toBe('North');
   });
 
