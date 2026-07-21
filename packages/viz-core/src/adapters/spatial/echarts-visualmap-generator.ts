@@ -48,6 +48,22 @@ function fallbackDomain(domain: [number, number] | undefined, values: number[]):
   return [Math.min(...finiteValues), Math.max(...finiteValues)];
 }
 
+// s157 m03 (B2): symmetrize a finite diverging domain about 0 so the palette's neutral (its exact
+// array-center hue) renders at DATA value 0 — matching Vega's baked color.scale.domainMid:0.
+// ECharts continuous visualMap has no domainMid and distributes the palette EVENLY across
+// [min,max], so an asymmetric domain (e.g. correlation [-0.32, 1]) lands neutral at (min+max)/2
+// (0.34) — contradicting Vega, where 0 is neutral. M = max(|min|,|max|) > 0 ⇒ [-M,+M] centers
+// neutral at 0 while the larger-magnitude extreme still reaches a palette endpoint. A degenerate
+// (min===max) or non-finite domain is returned UNCHANGED (fail-safe: no false centering, no throw).
+function symmetrizeDivergingDomain(domain: [number, number]): [number, number] {
+  const [min, max] = domain;
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min === max) {
+    return domain;
+  }
+  const m = Math.max(Math.abs(min), Math.abs(max));
+  return m > 0 ? [-m, m] : domain;
+}
+
 function interpolatePieces(domain: [number, number], count: number): Array<{ min: number; max: number }> {
   const [min, max] = domain;
   if (count <= 1 || min === max) {
@@ -115,9 +131,10 @@ export function createVisualMapForScale(params: {
 
   // sprint-156 m04: diverging is a CONTINUOUS scale — a caller-supplied range wins, else
   // the OODS diverging default. Grouped with linear so a diverging heatmap/geo layer emits
-  // one continuous visualMap (never binned pieces).
+  // one continuous visualMap (never binned pieces). s157 m03 (B2): center the domain at 0
+  // (symmetrizeDivergingDomain) so the neutral hue renders at data 0 == Vega domainMid:0.
   if (scale === 'diverging') {
-    return createContinuousVisualMap(domain, hasRange ? palette : DEFAULT_DIVERGING_COLORS);
+    return createContinuousVisualMap(symmetrizeDivergingDomain(domain), hasRange ? palette : DEFAULT_DIVERGING_COLORS);
   }
 
   if (!scale || scale === 'linear') {

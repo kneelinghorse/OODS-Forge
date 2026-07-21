@@ -78,7 +78,7 @@ function distinctGroupCount(rows: readonly Record<string, unknown>[], field: str
 // mark's encodings) — the same STRUCTURAL read the fail-safe keys on, implemented independently
 // (spec-structure only, no analyzer call). s155 m05: BOTH color and detail (not one), so a
 // detail-grouped multi-series shadowed by a constant color is caught.
-function resolveGroupingField(spec: NormalizedVizSpec, channel: 'color' | 'detail'): string | undefined {
+function resolveGroupingField(spec: NormalizedVizSpec, channel: 'color' | 'detail' | 'size'): string | undefined {
   const enc = (spec as { encoding?: Record<string, Record<string, { field?: string }>> }).encoding ?? {};
   if (enc[channel]?.field) return enc[channel]?.field;
   const marks = (spec as { marks?: { encodings?: Record<string, { field?: string }> }[] }).marks ?? [];
@@ -89,10 +89,15 @@ function resolveGroupingField(spec: NormalizedVizSpec, channel: 'color' | 'detai
   return undefined;
 }
 
+// s157 m05 (A1): size joins color+detail — a size channel on a nominal field facets a line into
+// multiple series, so it suppresses a first→last phantom trend. shape is NOT consulted (it draws
+// one path + a symbol overlay, the dup-X residual). Mirrors the fixed runtime seriesGroupingFields.
 function seriesGroupingFields(spec: NormalizedVizSpec): string[] {
-  return [resolveGroupingField(spec, 'color'), resolveGroupingField(spec, 'detail')].filter(
-    (f): f is string => Boolean(f),
-  );
+  return [
+    resolveGroupingField(spec, 'color'),
+    resolveGroupingField(spec, 'detail'),
+    resolveGroupingField(spec, 'size'),
+  ].filter((f): f is string => Boolean(f));
 }
 
 // ORACLE 1 — expectedSeriesCount(spec): how many ordered series the spec's DECLARED
@@ -119,56 +124,42 @@ function expectedSeriesCount(spec: NormalizedVizSpec): number {
   return maxGroups > 1 ? maxGroups : 1;
 }
 
-// ORACLE 2 — isProvablyAdditive(fieldName, callerAggregate): whether summing the
-// measure across rows is a PROVABLY meaningful aggregate. Positive HEAD-noun allowlist
-// (the ratified m04 conservative set, memo §5) OR a caller-declared aggregate:'sum'/'count'.
-// HEAD-noun (not any-token) is load-bearing: sales_id's 'sales' token must NOT rescue an
-// identifier (the #895 sum-the-IDs bug), while postal_revenue's 'revenue' head legitimately
-// escapes. This is a COPY of the set m04 uses at the claim site — the property proves the
-// runtime matches this static spec across the whole name bank; if they drift, it goes RED.
-const ADDITIVE_HEAD_TOKENS: ReadonlySet<string> = new Set([
-  'revenue', 'sales', 'cost', 'amount', 'quantity', 'count', 'sum', 'total', 'spend', 'volume', 'units', 'subtotal',
-]);
-
-// s155 m05 (adversarial-verify closure): qualifier tokens that make an additive-headed column
-// non-additive (avg_revenue / unit_cost / running_total / percent_of_total). Independent COPY of
-// the runtime NON_ADDITIVE_QUALIFIERS — the property proves the two stay in sync.
-const NON_ADDITIVE_QUALIFIERS: ReadonlySet<string> = new Set([
-  'avg', 'average', 'mean', 'median', 'mode',
-  'pct', 'percent', 'percentage', 'ratio', 'rate', 'per', 'share',
-  'unit', 'running', 'cumulative', 'cumul', 'ytd', 'mtd', 'qtd', 'rolling', 'moving',
-  'index', 'weighted', 'normalized', 'stddev', 'stdev', 'variance', 'min', 'max',
-]);
-const NON_ADDITIVE_AGGREGATES: ReadonlySet<string> = new Set(['average', 'median', 'min', 'max', 'distinct']);
-
-function nameTokens(name: string): string[] {
-  return name.trim().toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-}
-
-// Last token after stripping a trailing all-digit suffix (store_id_2024 → 'id'), mirroring
-// spec-builder.headToken so the additive verdict keys on the same head the type-inference
-// escape does.
-function headToken(name: string): string | undefined {
-  const t = nameTokens(name);
-  let end = t.length;
-  while (end > 0 && /^\d+$/.test(t[end - 1])) end -= 1;
-  return end > 0 ? t[end - 1] : undefined;
-}
-
-// Independent COPY of the runtime nameHintsIdentifier/nameHintsZip (id/zip guard on the sum-escape).
-function isIdentifierOrZip(name: string): boolean {
-  const t = nameTokens(name);
-  return ['id', 'ids', 'uuid', 'guid'].some((k) => t.includes(k)) ||
-    ['zip', 'zipcode', 'postal', 'postalcode', 'postcode', 'fips'].some((k) => t.includes(k));
-}
-
-function isProvablyAdditive(fieldName: string, callerAggregate?: string): boolean {
-  if (callerAggregate === 'sum' || callerAggregate === 'count') return !isIdentifierOrZip(fieldName);
-  if (callerAggregate !== undefined && NON_ADDITIVE_AGGREGATES.has(callerAggregate)) return false;
-  if (nameTokens(fieldName).some((t) => NON_ADDITIVE_QUALIFIERS.has(t))) return false;
-  const head = headToken(fieldName);
-  return head !== undefined && ADDITIVE_HEAD_TOKENS.has(head);
-}
+// ORACLE 2 — DE-MIRRORED (s157 m06 / V2b, from the s155 NOT_GENUINE review PS-2026-07-21-004).
+// The prior oracle was a BYTE-IDENTICAL COPY of the runtime isProvablyAdditive (an ADDITIVE_HEAD
+// allowlist + a qualifier set + the SAME token algorithm), so property (ii)/(iii) proved
+// runtime == copy (drift detection) — NOT honesty. It was BLIND to any bug shared by both:
+// `distinct_count` has the additive head 'count' and no 'distinct' qualifier existed in EITHER set,
+// so it passed the runtime AND the copy and the harness stayed GREEN on the dishonest "Total
+// Distinct count: 6,006". REPLACED with an INDEPENDENT hand-authored truth: a fixed PRESENT/ABSENT
+// verdict per name, decided by reading the ratified CONTRACT'S INTENT (summing this measure is
+// meaningful ⇔ its HEAD noun is an additive level AND no qualifier makes it a rate / average /
+// share / cumulative / EXTREMUM / DISTINCT-cardinality), NOT by re-running the runtime predicate.
+// A runtime bug now surfaces as a runtime-vs-map DISAGREEMENT — the A5 de-mirror proof a byte copy
+// could never give. Every name in NAME_BANK / NAMES_III MUST appear here (asserted below).
+const EXPECTED_TOTAL_PRESENT: Readonly<Record<string, boolean>> = {
+  // plain measures — additive levels; 'price' is per-unit (summing is meaningless), deliberately
+  // excluded by the ratified floor (documented less-rich: silence, never a false sum).
+  revenue: true, sales: true, amount: true, quantity: true, price: false,
+  // id / zip / compound edges — the HEAD noun decides: an id/zip head is never additive, but a
+  // measure head with an id qualifier (postal_revenue, id_sales) legitimately escapes.
+  sales_id: false, store_id: false, id_count: true, id_max: false, id_median: false,
+  zip: false, postal_revenue: true, sku_price: false, lines_of_code: false,
+  // bidirectional head-position pairs.
+  total_revenue: true, revenue_total: true, count_id: false, id_sales: true, revenue_per_id: false,
+  // aggregate / rate / cumulative QUALIFIERS over an additive head → NOT additive.
+  avg_revenue: false, average_sales: false, mean_cost: false, median_sales: false,
+  unit_cost: false, unit_price: false, running_total: false, cumulative_revenue: false,
+  percent_of_total: false, ytd_total: false, sales_rate: false, revenue_per_unit: false,
+  max_revenue: false, weighted_sales: false, sales_index: false,
+  // neutral domain qualifiers must NOT suppress a genuine additive.
+  net_revenue: true, gross_sales: true, daily_sales: true, monthly_revenue: true,
+  // s157 m06 (V2): distinct/unique CARDINALITY qualifiers over an additive head → NOT additive
+  // (the live "Total Distinct count" bug). Each pairs the token with an additive head so the map
+  // proves the QUALIFIER — not the head — withholds the Total.
+  distinct_count: false, unique_count: false, uniq_sales: false, nunique_total: false,
+  cardinality_count: false, distinctcount_amount: false,
+  // property (iii) NAMES_III coverage (revenue/sales_id already above); id_count/zip above.
+};
 
 // ----------------------------------------------------------------------------
 // Narrative claim detectors (read the RENDERED narrative, assert the LABEL string).
@@ -348,6 +339,35 @@ describe('s155 property (i) — single-series-trend (CLAIM-ON-POSITIVE-EVIDENCE)
     expect(n.summary).not.toMatch(DIRECTIONAL_SUMMARY);
   });
 
+  it('A1 (s157 m05): a SIZE-grouped rising multi-series line emits NO directional Trend (size facets)', () => {
+    // 3 size buckets, each a rising series, offset so the flat cross-series concatenation
+    // first→last SIGN-INVERTS vs each real series (the phantom "declines −21.9%" at HEAD).
+    const rows: Record<string, unknown>[] = [];
+    ['small', 'medium', 'large'].forEach((bucket, gi) => {
+      for (let i = 0; i < 4; i += 1) {
+        rows.push({ week: `W0${i + 1}`, v: (gi + 1) * 1000 + i * 10, bucket });
+      }
+    });
+    const enc = {
+      x: { field: 'week', trait: 'EncodingPositionX', channel: 'x', scale: 'point', title: 'Week' },
+      y: { field: 'v', trait: 'EncodingPositionY', channel: 'y', scale: 'linear', title: 'V' },
+      size: { field: 'bucket', trait: 'EncodingSize', channel: 'size', legend: { title: 'Bucket' } },
+    };
+    const spec = {
+      id: 'size-grouped',
+      name: 'Size grouped line',
+      data: { values: rows },
+      encoding: enc,
+      marks: [{ trait: 'MarkLine', encodings: enc }],
+      a11y: { ariaLabel: 'Size grouped', description: 'size-grouped multi-series line for the s157 A1 anchor' },
+    } as unknown as NormalizedVizSpec;
+    expect(expectedSeriesCount(spec)).toBe(3);
+    const n = generateNarrativeSummary(spec);
+    expect(analyzeVizSpec(spec).trend).toBeUndefined();
+    expect(trendClaimFindings(n)).toEqual([]);
+    expect(n.summary).not.toMatch(DIRECTIONAL_SUMMARY);
+  });
+
   it('must-not-move: a bare single line (no color, no layout) keeps its directional trend, order-invariantly', () => {
     const spec = makeSpec({ mark: 'line', layout: 'none', colorCard: 0, rowsPerGroup: 4, measure: 'value' });
     expect(expectedSeriesCount(spec)).toBe(1);
@@ -387,6 +407,9 @@ const NAME_BANK: readonly string[] = [
   'max_revenue', 'weighted_sales', 'sales_index',
   // s155 m05: neutral domain qualifiers must NOT suppress a genuine additive (net/gross/daily/monthly).
   'net_revenue', 'gross_sales', 'daily_sales', 'monthly_revenue',
+  // s157 m06 (V2): distinct/unique CARDINALITY over an additive head → NOT additive (the live
+  // "Total Distinct count: 6,006" bug). One per new qualifier token, each on an additive head.
+  'distinct_count', 'unique_count', 'uniq_sales', 'nunique_total', 'cardinality_count', 'distinctcount_amount',
 ];
 
 function totalBarSpec(measure: string): NormalizedVizSpec {
@@ -405,8 +428,16 @@ function totalBarSpec(measure: string): NormalizedVizSpec {
 }
 
 describe('s155 property (ii) — no-unproven-sum (Total ⇔ provably additive)', () => {
+  // De-mirror coverage guard: every bank name has a hand-authored verdict (a new name added
+  // without one would read as `undefined` → falsy, silently weakening the test — fail loud here).
+  it('every NAME_BANK / NAMES_III name has a hand-authored expected verdict (no silent undefined)', () => {
+    const missing = [...NAME_BANK, ...NAMES_III].filter((name) => !(name in EXPECTED_TOTAL_PRESENT));
+    expect(missing, `names missing from EXPECTED_TOTAL_PRESENT: ${missing.join(', ')}`).toEqual([]);
+  });
+
   for (const name of NAME_BANK) {
-    const additive = isProvablyAdditive(name);
+    // INDEPENDENT verdict (hand-authored map, NOT a re-run of the runtime predicate).
+    const additive = EXPECTED_TOTAL_PRESENT[name];
     it(`Total for "${name}" ${additive ? 'PRESENT (additive head)' : 'ABSENT (non-additive head)'}`, () => {
       const n = generateNarrativeSummary(totalBarSpec(name));
       const total = totalClaimFinding(n);
@@ -477,9 +508,9 @@ describe('s155 property (iii) — cartesian composite (class closure)', () => {
       if (!SEQUENCE_MARKS.has(cell.mark) && analysis.trend !== undefined) {
         violations.push(`(iii) trend on non-sequence mark: ${label}`);
       }
-      // (ii) a Total claim ⇒ provably additive measure name.
+      // (ii) a Total claim ⇒ provably additive measure name (INDEPENDENT hand-authored verdict).
       const total = totalClaimFinding(n);
-      if (total && !isProvablyAdditive(cell.measure)) {
+      if (total && !EXPECTED_TOTAL_PRESENT[cell.measure]) {
         violations.push(`(ii) unproven Total "${total}": ${label}`);
       }
     }
@@ -515,7 +546,8 @@ function aggBarSpec(measure: string, aggregate: string): NormalizedVizSpec {
 
 describe('s155 property (iv) — declared aggregate is authoritative over the name guess', () => {
   const cases: Array<[string, string, boolean]> = [
-    // [measure, aggregate, expectedAdditive] — oracle via isProvablyAdditive(measure, aggregate).
+    // [measure, aggregate, expectedAdditive] — the expected verdict is HAND-AUTHORED here (an
+    // independent truth), NOT read back from the runtime predicate (de-mirrored, s157 m06).
     ['widget', 'sum', true], // declared sum on a non-additive name ⇒ Total
     ['widget', 'count', true], // declared count ⇒ Total
     ['sales', 'average', false], // mean of an additive column is NOT summable
@@ -524,12 +556,12 @@ describe('s155 property (iv) — declared aggregate is authoritative over the na
     ['revenue', 'min', false],
     ['customer_id', 'sum', false], // never sum an identifier, even declared (#895 guard)
     ['zip', 'sum', false], // never sum a zip, even declared
+    ['users', 'distinct', false], // declared distinct ⇒ never a Total (non-summable cardinality)
   ];
   for (const [measure, aggregate, expectedAdditive] of cases) {
     it(`${measure} @ aggregate=${aggregate} → Total ${expectedAdditive ? 'PRESENT' : 'ABSENT'}`, () => {
-      expect(isProvablyAdditive(measure, aggregate)).toBe(expectedAdditive);
       const has = Boolean(totalClaimFinding(generateNarrativeSummary(aggBarSpec(measure, aggregate))));
-      expect(has, `runtime Total presence must match the declared-aggregate oracle`).toBe(expectedAdditive);
+      expect(has, `runtime Total presence must match the hand-authored declared-aggregate verdict`).toBe(expectedAdditive);
     });
   }
 });
@@ -601,6 +633,11 @@ describe('s155 property (vi) — natural-order sort-by-X (correct direction, ord
     ['bare integers as strings', ['8', '9', '10', '11', '12']],
     ['zero-padded weeks (unchanged baseline)', ['W08', 'W09', 'W10', 'W11', 'W12']],
     ['sprint labels', ['S1', 'S2', 'S9', 'S10', 'S11']],
+    // s157 m05 (V1): dotted-decimal release axes — Number('1.10')=1.1 < 1.11 < Number('1.9')=1.9
+    // took the numeric fast-path and narrated a DECLINE on rising data. The string-with-dot gate
+    // routes them to naturalCompare (1.9 < 1.10 < 1.11).
+    ['dotted-decimal release versions', ['1.9', '1.10', '1.11']],
+    ['dotted-decimal minor versions', ['3.9', '3.10', '3.11', '3.12']],
   ];
   for (const [label, weeks] of banks) {
     it(`rising over ${label} → 'increasing' (NOT lexical 'decreasing'), reversal-invariant`, () => {

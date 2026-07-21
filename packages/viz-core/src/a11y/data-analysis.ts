@@ -231,10 +231,16 @@ function isFacetedLayout(spec: NormalizedVizSpec): boolean {
  * when a constant `color` binding shadowed the detail field. detail is conservative: it only ever
  * SUPPRESSES a genuine multi-series overlay, never invents a claim.
  */
+// s157 m05 (A1): also SIZE — a size channel on a nominal field facets a line into multiple series
+// (Vega-Lite cross-check), so a size-grouped rising multi-series line must NOT narrate a first→last
+// phantom trend. size (like detail) only ever SUPPRESSES. shape is NOT added — shape draws one path
+// + a symbol overlay (the dup-X residual), so it would over-suppress a legit single line.
 function seriesGroupingFields(spec: NormalizedVizSpec): string[] {
-  return [resolveBinding(spec, 'color')?.field, resolveBinding(spec, 'detail')?.field].filter(
-    (field): field is string => Boolean(field),
-  );
+  return [
+    resolveBinding(spec, 'color')?.field,
+    resolveBinding(spec, 'detail')?.field,
+    resolveBinding(spec, 'size')?.field,
+  ].filter((field): field is string => Boolean(field));
 }
 
 // s155 m05: distinct GROUP count over a field, counting null/undefined as ITS OWN bucket. A color
@@ -283,10 +289,21 @@ function sortRowsByField(
   return [...rows].sort((a, b) => compareCells(a[field as keyof typeof a], b[field as keyof typeof b]));
 }
 
+// s157 m05 (V1): a STRING carrying a decimal dot is a version/release axis label
+// (1.9 → 1.10 → 1.11), NOT a continuous number — Number('1.10')=1.1 collapses the trailing zero
+// and sorts 1.10 BEFORE 1.9, narrating a phantom decline on a rising release series. A genuinely
+// continuous value arrives as a NUMBER (1.5), never a dotted string, so gating on string-with-dot
+// routes ONLY version labels to the chunk-wise naturalCompare (which reads each dotted part as an
+// integer: 1.9 < 1.10 < 1.11 — a TOTAL order, so row-permutation-invariance holds); numeric axes
+// keep the exact numeric fast-path.
+function isDottedVersionString(value: unknown): boolean {
+  return typeof value === 'string' && value.includes('.');
+}
+
 function compareCells(a: unknown, b: unknown): number {
   const na = toNumber(a);
   const nb = toNumber(b);
-  if (na !== null && nb !== null) {
+  if (na !== null && nb !== null && !isDottedVersionString(a) && !isDottedVersionString(b)) {
     return na - nb;
   }
   const sa = a === null || a === undefined ? '' : String(a);
@@ -336,7 +353,18 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
   // declared, so the no-aggregate path is byte-identical (#564 / property P3).
   const analysisRows =
     declaredAggregate && bindings.dimensionField && bindings.measureField
-      ? projectAggregatedRows(rows, bindings.dimensionField, bindings.measureField, declaredAggregate)
+      ? projectAggregatedRows(
+          rows,
+          bindings.dimensionField,
+          bindings.measureField,
+          declaredAggregate,
+          // s157 m02 (B1/A2): stacking aggregates (sum/count) draw a per-dimension stack total —
+          // keep them dimension-level; non-stacking (avg/min/max/median/distinct) draw one mark per
+          // secondary-grouping cell — project per drawn cell so extrema/total name a real mark.
+          isStackTotalAggregate(declaredAggregate)
+            ? []
+            : projectionGroupingFields(spec, bindings.dimensionField, bindings.measureField),
+        )
       : rows;
   // s155 m03: a first→last trend is meaningful only over a SINGLE ordered series. When the marks
   // ARE a sequence (line/area), canonicalize the points by the X binding (sort-by-X) so first/last
@@ -541,22 +569,62 @@ function reduceAggregate(
   return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 }
 
-// s156 m06: group the raw rows by the dimension field (first-appearance order, a null/undefined
-// dimension is its own bucket) and emit ONE row per distinct dimension carrying the declared
-// reduction as the measure field. A group whose reduction is undefined (sum/avg/min/max/median over
-// a non-numeric group) drops out. Deterministic: the group order is the first-appearance order of
-// the dimension values in the raw rows.
+// s157 m02 (A2, ratified + adapter-verified): the OODS Vega adapter (vega-lite-adapter.ts) emits
+// NO explicit stack / xOffset — mapAggregate maps average→mean; sum/count/min/max/median/distinct
+// pass through — so stacking is Vega-Lite's DEFAULT: a nominal-color quantitative bar/area STACKS
+// only for the SUMMATIVE aggregates. For sum/count the salient DRAWN quantity is the per-dimension
+// STACK TOTAL, which is exactly the s156 dimension-level reduction (sum-over-colors == the stack
+// height), so keep the projection dimension-level. average/min/max/median draw side-by-side
+// (grouped, non-stacked) cells → reduce PER DRAWN CELL. distinct is summative in Vega, BUT summing
+// distinct counts across a stack is non-additive (the stack total ≠ distinct-over-the-dimension →
+// a value drawn on NO segment), so distinct reduces per cell too — each cell value is a real drawn
+// segment height. (Recorded per the A2 verify-and-match mandate.)
+function isStackTotalAggregate(aggregate: NonNullable<TraitBinding['aggregate']>): boolean {
+  return aggregate === 'sum' || aggregate === 'count';
+}
+
+// s157 m02 (B1 + A1/A3): the secondary discrete channels the chart splits marks by — the s155
+// seriesGroupingFields (color+detail) — for the per-drawn-cell projection, EXCLUDING (A1) the
+// measure channel (a continuous-color heatmap whose color IS the measure must not shatter its own
+// group key by the measure field — else one group per measure VALUE) and (redundant-recolor) the
+// dimension field itself (color==dimension dedups to the dimension, keeping the s156 m06 fix).
+// Empty ⇒ the projection stays dimension-level (fail-safe / byte-identical to s156). detail folds
+// in for free (A3), so color-AND-detail sub-grouping is machine-covered.
+function projectionGroupingFields(
+  spec: NormalizedVizSpec,
+  dimensionField: string,
+  measureField: string
+): string[] {
+  return seriesGroupingFields(spec).filter(
+    (field) => field !== measureField && field !== dimensionField
+  );
+}
+
+// s156 m06 / s157 m02: group the raw rows by the dimension field PLUS the secondary discrete
+// grouping channels (groupingFields — empty for stacking aggregates + the no-secondary-grouping
+// case, so the key collapses to the dimension alone = byte-identical grouping to s156), each group
+// a DRAWN cell, and emit ONE row per group carrying the declared reduction as the measure field.
+// First-appearance order; a null/undefined key part is its own bucket (' null' sentinel — never the
+// literal string "null"). A group whose reduction is undefined (sum/avg/min/max/median over a
+// non-numeric cell) drops out. Deterministic: group order = first-appearance order of the keys.
 function projectAggregatedRows(
   rows: readonly Record<string, unknown>[],
   dimensionField: string,
   measureField: string,
-  aggregate: NonNullable<TraitBinding['aggregate']>
+  aggregate: NonNullable<TraitBinding['aggregate']>,
+  groupingFields: readonly string[]
 ): Record<string, unknown>[] {
+  const keyFields = [dimensionField, ...groupingFields];
   const order: string[] = [];
   const groups = new Map<string, { dimValue: unknown; values: unknown[] }>();
   for (const row of rows) {
     const dimValue = row[dimensionField as keyof typeof row];
-    const key = dimValue === null || dimValue === undefined ? ' null' : String(dimValue);
+    const key = keyFields
+      .map((field) => {
+        const value = row[field as keyof typeof row];
+        return value === null || value === undefined ? ' null' : String(value);
+      })
+      .join(' ');
     let group = groups.get(key);
     if (!group) {
       group = { dimValue, values: [] };
