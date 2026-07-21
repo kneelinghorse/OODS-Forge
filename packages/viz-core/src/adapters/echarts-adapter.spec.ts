@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { toEChartsOption } from './echarts-adapter.js';
 import { toVegaLiteSpec } from './vega-lite-adapter.js';
+import { analyzeVizSpec } from '../a11y/data-analysis.js';
 import { resolveOodsEchartsChrome } from '../tokens/oods-echarts-chrome.js';
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 
@@ -317,5 +318,89 @@ describe('echarts-adapter — item s156-m04 cartesian heatmap emits a continuous
     expect(option.visualMap?.min).toBe(-1);
     expect(option.visualMap?.max).toBe(1);
     expect((option.visualMap!.min! + option.visualMap!.max!) / 2).toBe(0);
+  });
+});
+
+// s159 m5 — ECharts aggregate dual-output honesty (SSOT memo §1.5/§2-m5). A MarkRect heatmap whose
+// color declares an aggregate draws ONE aggregated value per (x,y) cell, but the ECharts dataset used
+// the RAW rows and buildHeatmapVisualMap took the RAW color extent → the visualMap legend (raw min
+// 88/max 500) disagreed with the aggregated a11y narrative (188/912). Fix: aggregate the dataset +
+// visualMap per cell (shared reduceAggregate) so render == narrative == certify.
+describe('echarts-adapter — s159 m5 aggregated heatmap dual-output parity', () => {
+  function aggregateHeatmapSpec(): NormalizedVizSpec {
+    // multi-row-per-cell: N/9 = 88+100 = 188, S/9 = 412+500 = 912. Raw extent 88..500 ≠ cells 188..912.
+    const rows = [
+      { region: 'N', hour: '9', temp: 88 },
+      { region: 'N', hour: '9', temp: 100 },
+      { region: 'S', hour: '9', temp: 412 },
+      { region: 'S', hour: '9', temp: 500 },
+    ];
+    const color = { field: 'temp', trait: 'EncodingColor', scale: 'linear' as const, aggregate: 'sum' as const };
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'agg-heat',
+      name: 'Aggregated heatmap',
+      data: { name: 'g', values: rows },
+      marks: [
+        {
+          trait: 'MarkRect',
+          encodings: {
+            x: { field: 'region', trait: 'EncodingX', scale: 'band' },
+            y: { field: 'hour', trait: 'EncodingY', scale: 'band' },
+            color: { ...color },
+          },
+        },
+      ],
+      encoding: {
+        x: { field: 'region', trait: 'EncodingX', scale: 'band' },
+        y: { field: 'hour', trait: 'EncodingY', scale: 'band' },
+        color: { ...color },
+      },
+      a11y: { description: 'temp by region and hour' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  it('visualMap extent + dataset == AGGREGATED cells == narrative (not the raw color extent)', () => {
+    const spec = aggregateHeatmapSpec();
+    const option = toEChartsOption(spec) as unknown as {
+      visualMap?: VisualMapLike;
+      dataset: readonly { source?: readonly Record<string, unknown>[] }[];
+    };
+    // visualMap extent is the AGGREGATED cell range, not the raw color extent (88..500).
+    expect(option.visualMap?.min).toBe(188);
+    expect(option.visualMap?.max).toBe(912);
+    // the DRAWN dataset is one row per (region,hour) cell carrying the reduced measure.
+    const source = option.dataset[0]?.source ?? [];
+    expect(source).toHaveLength(2);
+    expect(source.map((r) => r.temp).sort((a, b) => Number(a) - Number(b))).toEqual([188, 912]);
+    // cross-renderer parity: the a11y narrative already aggregates to the SAME extent.
+    const analysis = analyzeVizSpec(spec);
+    expect(analysis.max?.value).toBe(912);
+    expect(analysis.min?.value).toBe(188);
+    // ...and the Vega path aggregates VISUALLY (color.aggregate → Vega-Lite reduces per cell at render),
+    // so all three surfaces (ECharts extent, Vega render, narrative) now agree.
+    const vl = toVegaLiteSpec(spec) as unknown as { encoding?: { color?: { aggregate?: string } } };
+    expect(vl.encoding?.color?.aggregate).toBe('sum');
+  });
+
+  it('a single-row-per-cell heatmap (no multi-row) is byte-unchanged (extent == the cell values)', () => {
+    // one row per cell → aggregation is identity; the extent equals the raw == aggregated values.
+    const rows = [
+      { region: 'N', hour: '9', temp: 10 },
+      { region: 'S', hour: '9', temp: 90 },
+    ];
+    const color = { field: 'temp', trait: 'EncodingColor', scale: 'linear' as const, aggregate: 'sum' as const };
+    const spec = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'single',
+      name: 'single-cell heatmap',
+      data: { name: 's', values: rows },
+      marks: [{ trait: 'MarkRect', encodings: { x: { field: 'region', trait: 'EncodingX', scale: 'band' }, y: { field: 'hour', trait: 'EncodingY', scale: 'band' }, color: { ...color } } }],
+      encoding: { x: { field: 'region', trait: 'EncodingX', scale: 'band' }, y: { field: 'hour', trait: 'EncodingY', scale: 'band' }, color: { ...color } },
+      a11y: { description: 'temp' },
+    } as unknown as NormalizedVizSpec;
+    const option = toEChartsOption(spec) as unknown as { visualMap?: VisualMapLike };
+    expect(option.visualMap?.min).toBe(10);
+    expect(option.visualMap?.max).toBe(90);
   });
 });
