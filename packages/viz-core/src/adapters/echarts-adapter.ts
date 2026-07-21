@@ -9,7 +9,7 @@ import type {
 } from '../spec/normalized-viz-spec.js';
 import { applyEChartsLayout } from './echarts-layout-mapper.js';
 import type { ScaleResolution } from './scale-resolver.js';
-import { isMarkRectGrid, heatmapColorIsMeasure, getEncodingBinding } from '../a11y/data-analysis.js';
+import { isMarkRectGrid, heatmapColorIsMeasure, getEncodingBinding, aggregateMarkRectCells } from '../a11y/data-analysis.js';
 import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
 import { resolveOodsEchartsChrome } from '../tokens/oods-echarts-chrome.js';
 import { createVisualMapForScale } from './spatial/echarts-visualmap-generator.js';
@@ -221,7 +221,10 @@ function deriveDatasetId(spec: NormalizedVizSpec): string {
 }
 
 function convertDataset(spec: NormalizedVizSpec, datasetId: string): EChartsDataset {
-  const source = Array.isArray(spec.data.values) ? spec.data.values : undefined;
+  // s159 m5: a MarkRect heatmap with a declared color aggregate DRAWS one aggregated cell per (x,y),
+  // so the dataset source is the aggregated cells (not the raw multi-row source) — render == narrative.
+  // undefined for every other spec → byte-identical.
+  const source = aggregateMarkRectCells(spec) ?? (Array.isArray(spec.data.values) ? spec.data.values : undefined);
   const dimensions = source ? inferDimensions(source) : undefined;
 
   return removeUndefined({
@@ -461,7 +464,9 @@ function buildHeatmapVisualMap(spec: NormalizedVizSpec): Record<string, unknown>
     return undefined;
   }
 
-  const rows = Array.isArray(spec.data.values) ? spec.data.values : [];
+  // s159 m5: extent from the AGGREGATED drawn cells when a color aggregate is declared (so the
+  // visualMap legend == the drawn cells == the a11y narrative), else the raw color extent (unchanged).
+  const rows = aggregateMarkRectCells(spec) ?? (Array.isArray(spec.data.values) ? spec.data.values : []);
   const values = rows
     .map((row) => Number((row as Record<string, unknown>)[colorBinding.field]))
     .filter((value) => Number.isFinite(value));
