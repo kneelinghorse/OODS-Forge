@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 // this is the "no public export; harness imports the module by relative path" resolution of the s158
 // findNonDrawnNarrativeValues deviation.
 import {
+  drawnCellKeyFields,
   enforceDrawnValueInvariant,
   findNonDrawnNarrativeValues,
   type DataPoint,
@@ -19,7 +20,12 @@ import * as VizCorePublic from '@oods/viz-core';
 // A synthetic analysis with only the narrated fields set — lets a test inject a PHANTOM extremum/Total
 // (as a defeated projection would produce) and prove the guard alone catches it. The `rows`/category
 // arrays are inert here (the guard reads the SPEC's raw rows, never analysis.rows).
-function synthAnalysis(fields: { max?: DataPoint; min?: DataPoint; total?: number }): VizDataAnalysis {
+function synthAnalysis(fields: {
+  max?: DataPoint;
+  min?: DataPoint;
+  total?: number;
+  correlation?: number;
+}): VizDataAnalysis {
   return {
     mark: 'bar',
     dimensionField: 'region',
@@ -33,6 +39,7 @@ function synthAnalysis(fields: { max?: DataPoint; min?: DataPoint; total?: numbe
     max: fields.max,
     min: fields.min,
     total: fields.total,
+    correlation: fields.correlation,
   };
 }
 
@@ -164,5 +171,147 @@ describe('s159 m4 (f) — the guard is NOT a public export (no owned API move)',
     // ...while the intended public surface stays present (the allow-list did not drop it).
     expect(typeof VizCorePublic.analyzeVizSpec).toBe('function');
     expect(typeof VizCorePublic.resolvePrimaryChannels).toBe('function');
+  });
+});
+
+// ============================================================================
+// Sprint-160 m3 — the CORRELATION guard arm (correlationPhantom). Its positive precondition is its
+// OWN (analysis.correlation defined) — it must fire on a SCATTER, which carries no declared
+// aggregate and therefore skips the extremum/Total arms entirely (the CRIT phantom's exact class).
+// The recompute (expectedNarratableCorrelation) is DISCLOSED derivation-shared — this arm bites
+// call-site drift; the SUT-independent value evidence is the hand-oracle harness axis.
+// ============================================================================
+describe('s160 m3 — correlationPhantom guard arm', () => {
+  // A perfect descending single-series scatter: true (and only honest) r = −1 exactly.
+  function descendingScatter(): NormalizedVizSpec {
+    const encoding = {
+      x: { field: 'x', trait: 'EncodingX', type: 'quantitative' },
+      y: { field: 'y', trait: 'EncodingY', type: 'quantitative' },
+    };
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'desc',
+      name: 'desc',
+      data: { name: 'd', values: [{ x: 1, y: 3 }, { x: 2, y: 2 }, { x: 3, y: 1 }] },
+      marks: [{ trait: 'MarkPoint', encodings: { ...encoding } }],
+      encoding,
+      a11y: { description: 'y over x' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  // The F-SIMPSON facet twin: expectedNarratableCorrelation(spec) is undefined (sign gate suppresses).
+  function simpsonFacetScatter(): NormalizedVizSpec {
+    const encoding = {
+      x: { field: 'x', trait: 'EncodingX', type: 'quantitative' },
+      y: { field: 'y', trait: 'EncodingY', type: 'quantitative' },
+    };
+    const rows = [
+      { x: 1, y: 10, panel: 'A' }, { x: 2, y: 9, panel: 'A' }, { x: 3, y: 8, panel: 'A' },
+      { x: 11, y: 20, panel: 'B' }, { x: 12, y: 19, panel: 'B' }, { x: 13, y: 18, panel: 'B' },
+      { x: 21, y: 30, panel: 'C' }, { x: 22, y: 29, panel: 'C' }, { x: 23, y: 28, panel: 'C' },
+    ];
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'simpson',
+      name: 'simpson',
+      data: { name: 's', values: rows },
+      marks: [{ trait: 'MarkPoint', encodings: { ...encoding } }],
+      encoding,
+      layout: { trait: 'LayoutFacet', rows: { field: 'panel' } },
+      a11y: { description: 'y over x by panel' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  it('fires WITHOUT a declared aggregate (precondition is its own — scatters are in scope)', () => {
+    const phantom = synthAnalysis({ correlation: 0.9 }); // true r = −1
+    const flagged = findNonDrawnNarrativeValues(phantom, descendingScatter(), undefined);
+    expect(flagged.correlationPhantom).toBe(true);
+  });
+
+  it('a legit narrated r (within the 0.001 rounding grain) passes', () => {
+    const legit = synthAnalysis({ correlation: -1 });
+    expect(findNonDrawnNarrativeValues(legit, descendingScatter(), undefined).correlationPhantom).toBe(false);
+  });
+
+  it('recompute-null-while-narrated FIRES (a narrated r the sign gate says must not exist)', () => {
+    const phantom = synthAnalysis({ correlation: 0.98 });
+    expect(findNonDrawnNarrativeValues(phantom, simpsonFacetScatter(), undefined).correlationPhantom).toBe(true);
+  });
+
+  it('STANDING MUTATION GATE extension: enforceDrawnValueInvariant NULLS a phantom r — neuter it and THIS goes RED', () => {
+    const enforced = enforceDrawnValueInvariant(synthAnalysis({ correlation: 0.9 }), descendingScatter(), undefined);
+    expect(enforced.correlation).toBeUndefined();
+    // ...and a legit r is untouched (no over-nulling).
+    const kept = enforceDrawnValueInvariant(synthAnalysis({ correlation: -1 }), descendingScatter(), undefined);
+    expect(kept.correlation).toBe(-1);
+  });
+});
+
+// ============================================================================
+// Sprint-160 m2 — STANDING SPINE-BLIND PROBES (§5.8: a shared multi-consumer derivation ships its
+// own blind-mutation probe). drawnCellKeyFields is THE key-field derivation for the projection, the
+// guard's drawn set, AND the ECharts cell builder — these probes go RED if any axis (facet, detail,
+// measure-exclusion, stacking-collapse) is stripped from it, across all three consumers at once
+// (the s159 facetFields-blind → 16-RED precedent, now one derivation up).
+// ============================================================================
+describe('s160 m2 — spine-blind probes on drawnCellKeyFields', () => {
+  function facetedDetailHeatmap(): NormalizedVizSpec {
+    const color = { field: 'temp', trait: 'EncodingColor', scale: 'linear', aggregate: 'sum' };
+    const encoding = {
+      x: { field: 'region', trait: 'EncodingX', scale: 'band' },
+      y: { field: 'hour', trait: 'EncodingY', scale: 'band' },
+      color,
+      detail: { field: 'line', trait: 'EncodingDetail' },
+    };
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'probe',
+      name: 'probe',
+      data: { name: 'p', values: [{ site: 'A', region: 'N', hour: '9', line: 'd1', temp: 1 }] },
+      marks: [{ trait: 'MarkRect', encodings: { ...encoding } }],
+      encoding,
+      layout: { trait: 'LayoutFacet', columns: { field: 'site' } },
+      a11y: { description: 'probe' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  it('FACET fields enter the key (strip facetFields from the spine → RED here + adapter + harness)', () => {
+    expect(drawnCellKeyFields(facetedDetailHeatmap(), 'temp', false)).toContain('site');
+  });
+
+  it('DETAIL enters the key on a non-stacking mark', () => {
+    expect(drawnCellKeyFields(facetedDetailHeatmap(), 'temp', false)).toContain('line');
+  });
+
+  it('the MEASURE field NEVER enters the key (color IS the measure on an aggregated heatmap)', () => {
+    expect(drawnCellKeyFields(facetedDetailHeatmap(), 'temp', false)).not.toContain('temp');
+  });
+
+  it('positional → facet → series order, exact field list (a full-shape pin)', () => {
+    expect(drawnCellKeyFields(facetedDetailHeatmap(), 'temp', false)).toEqual(['region', 'hour', 'site', 'line']);
+  });
+
+  it('STACKING collapses the series channels but keeps positional + facet fields', () => {
+    const encoding = {
+      x: { field: 'month', trait: 'EncodingX', scale: 'band' },
+      y: { field: 'value', trait: 'EncodingY', aggregate: 'sum' },
+      color: { field: 'series', trait: 'EncodingColor' },
+    };
+    const spec = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'stack',
+      name: 'stack',
+      data: { name: 's', values: [{ month: 'Jan', series: 'A', value: 1, panel: 'P' }] },
+      marks: [{ trait: 'MarkBar', encodings: { ...encoding } }],
+      encoding,
+      layout: { trait: 'LayoutFacet', rows: { field: 'panel' } },
+      a11y: { description: 'stack' },
+    } as unknown as NormalizedVizSpec;
+    expect(drawnCellKeyFields(spec, 'value', true)).toEqual(['month', 'panel']); // series collapsed, facet kept
+    expect(drawnCellKeyFields(spec, 'value', false)).toEqual(['month', 'panel', 'series']);
+  });
+
+  it('the spine is NOT a public export (same posture as the guard fns)', () => {
+    expect((VizCorePublic as Record<string, unknown>).drawnCellKeyFields).toBeUndefined();
   });
 });

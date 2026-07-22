@@ -10,6 +10,8 @@
  * 2. Flatten nested oneOf/anyOf to their first variant
  * 3. Remove $schema, $id, title meta-keywords (not part of MCP input_schema)
  * 4. Replace $ref with { type: "object" } stub (clients can't resolve local refs)
+ * 5. Infer a primitive `type` when `enum`/`const` is present without one
+ *    (strict providers, e.g. Moonshot, reject typeless enum/const schemas)
  */
 
 const META_KEYWORDS = new Set(['$schema', '$id', 'title']);
@@ -47,6 +49,18 @@ export function sanitizeSchema(schema, isRoot = true) {
     }
 
     out[key] = sanitizeSchema(value, false);
+  }
+
+  // Infer a primitive type for typeless enum/const schemas.
+  if (!('type' in out)) {
+    const jsonType = (v) =>
+      v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v === 'object' ? 'object' : typeof v;
+    if ('const' in out) {
+      out.type = jsonType(out.const);
+    } else if (Array.isArray(out.enum) && out.enum.length > 0) {
+      const types = [...new Set(out.enum.map(jsonType))];
+      out.type = types.length === 1 ? types[0] : types;
+    }
   }
 
   return out;

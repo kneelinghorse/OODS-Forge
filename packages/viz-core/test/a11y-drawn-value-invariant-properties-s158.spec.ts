@@ -571,3 +571,241 @@ describe('s159 m6 — large-magnitude cancellation keeps its honest Total (stabl
     expect(analyzeVizSpec(spec).total).toBe(0); // 0 is drawn-consistent (Σ drawn = 0), not nulled
   });
 });
+
+// ============================================================================
+// Sprint-160 m1 — dimension ∈ {present, absent} axis (SSOT memo §2-m1). The s159 m6 stabilization
+// covered only the PROJECTED path: with no dimension binding the projection is skipped, so the
+// guard's single '∅' cell was reduced by reduceAggregate's ROW-ORDER sum while the analysis Total
+// used stableSum — the same multiset, two summation orders. Under cancellation the two sides land
+// ~1e-7 apart → totalPhantom → the HONEST Total was silently NULLED (fail-safe direction). Fix:
+// reduceAggregate's sum branch routes through stableSum, so analysis (projectAggregatedRows), guard
+// (drawnMarkValues), and ECharts cells (aggregateMarkRectCells) sum in ONE canonical order.
+// The ∅-arm EXTREMA silence is INTENDED and pinned here: the chart draws ONE aggregated mark, so
+// per-row extrema (1e9/−1e9) are drawn on no mark — max/min stay nulled, the Total narrates.
+// ============================================================================
+describe('s160 m1 — no-dimension (∅-cell) aggregate keeps its honest Total', () => {
+  function noDimensionBar(values: number[]): NormalizedVizSpec {
+    const encoding = {
+      y: { field: 'value', trait: 'EncodingY', aggregate: 'sum' },
+    };
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'nodim',
+      name: 'no-dimension sum',
+      data: { name: 'n', values: values.map((value) => ({ value })) },
+      marks: [{ trait: 'MarkBar', encodings: { ...encoding } }],
+      encoding,
+      a11y: { description: 'sum of value' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  it('∅-cell cancellation → Total ≈0.3 SURVIVES and narrates (hand constant, not SUT-derived)', () => {
+    const analysis = analyzeVizSpec(noDimensionBar([1e9, -1e9, 0.1, 0.2]));
+    expect(analysis.total).toBeDefined();
+    expect(analysis.total).toBeCloseTo(0.3, 5);
+    const { keyFindings } = generateNarrativeSummary(noDimensionBar([1e9, -1e9, 0.1, 0.2]));
+    expect(keyFindings.some((f) => f.startsWith('Total '))).toBe(true);
+  });
+
+  it('∅-arm extrema silence is INTENDED (pin): max/min stay nulled — 1e9/−1e9 are drawn on no mark', () => {
+    const analysis = analyzeVizSpec(noDimensionBar([1e9, -1e9, 0.1, 0.2]));
+    expect(analysis.max).toBeUndefined();
+    expect(analysis.min).toBeUndefined();
+  });
+
+  it('∅-cell small-value control keeps its Total (no over-suppression)', () => {
+    const analysis = analyzeVizSpec(noDimensionBar([1, 2, 3]));
+    expect(analysis.total).toBeCloseTo(6, 9);
+  });
+});
+
+// ============================================================================
+// Sprint-160 m2 keep-control — the STACK-TOTAL collapse survives the shared spine (SSOT memo §2-m2
+// lock iv). The projection arm now reads drawnCellKeyFields(spec, measure, stacking); if the
+// stacking parameter ever stops collapsing the series channels, a stacked sum bar splits its
+// per-dimension totals into segments — this pins the s156/s157 stack-total behaviour explicitly.
+// ============================================================================
+describe('s160 m2 — stacked sum-bar + color keep-control (stack totals, not segments)', () => {
+  it('a stacked sum bar narrates per-dimension STACK TOTALS (A=30, B=10, Σ=40)', () => {
+    const rows = [
+      { cat: 'A', series: 's1', value: 10 },
+      { cat: 'A', series: 's2', value: 20 },
+      { cat: 'B', series: 's1', value: 5 },
+      { cat: 'B', series: 's2', value: 5 },
+    ];
+    const encoding = {
+      x: { field: 'cat', trait: 'EncodingX', scale: 'band' },
+      y: { field: 'value', trait: 'EncodingY', aggregate: 'sum' },
+      color: { field: 'series', trait: 'EncodingColor' },
+    };
+    const spec = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'stack-keep',
+      name: 'stacked keep-control',
+      data: { name: 'k', values: rows },
+      marks: [{ trait: 'MarkBar', encodings: { ...encoding } }],
+      encoding,
+      a11y: { description: 'value by cat, stacked by series' },
+    } as unknown as NormalizedVizSpec;
+    const analysis = analyzeVizSpec(spec);
+    expect(analysis.max?.value).toBe(30); // the A stack height — NOT the 20 segment
+    expect(analysis.min?.value).toBe(10); // the B stack height — NOT the 5 segments
+    expect(analysis.total).toBe(40);
+  });
+});
+
+// ============================================================================
+// Sprint-160 m3 — correlation honesty, Shape B (SSOT memo §2-m3, Fork-1 Derek-ratified).
+// deriveCorrelation pooled EVERY raw row with no facet/series awareness: a faceted scatter whose
+// every panel has r = −1 EXACTLY narrated "strong positive" 0.98 (F-SIMPSON, hand-confirmed), and
+// the same phantom fired with facet=none via color-series pooling. The gate: narrate the pooled r
+// ONLY when sign(pooled) == the common sign of every COMPUTABLE per-group r (groups = categorical
+// partitions: facet ∪ categorical retinal channels; computable = pearson non-null, i.e. n≥3 +
+// variance). PINNED policies: zero computable groups → VACUOUS-PASS narrates (keeps the small-group
+// corpus; a DISCLOSED escape); pooled sign 0 → narrates ("weak"). Quantitative retinal bindings
+// (bubble size) are MAGNITUDES, not partitions — they must NOT shred groups to n=1 and vacuate the
+// gate. Hand oracle throughout: every per-panel r below is ±1 by construction (exact arithmetic).
+// ============================================================================
+describe('s160 m3 — Shape B correlation sign-consistency gate', () => {
+  // F-SIMPSON: panels A (1,10)(2,9)(3,8), B (11,20)(12,19)(13,18), C (21,30)(22,29)(23,28).
+  // Per-panel r = −1 EXACTLY (each panel is a perfect descending line); pooled r ≈ +0.98 (panel
+  // means rise). At HEAD the analysis emits 0.98 and the point summary says "strong positive".
+  const F_SIMPSON_ROWS = [
+    { x: 1, y: 10, panel: 'A' },
+    { x: 2, y: 9, panel: 'A' },
+    { x: 3, y: 8, panel: 'A' },
+    { x: 11, y: 20, panel: 'B' },
+    { x: 12, y: 19, panel: 'B' },
+    { x: 13, y: 18, panel: 'B' },
+    { x: 21, y: 30, panel: 'C' },
+    { x: 22, y: 29, panel: 'C' },
+    { x: 23, y: 28, panel: 'C' },
+  ];
+
+  function scatterSpec(opts: {
+    rows: Record<string, unknown>[];
+    mark?: 'MarkPoint' | 'MarkLine';
+    colorField?: string;
+    sizeField?: string;
+    facetRowField?: string;
+  }): NormalizedVizSpec {
+    const encoding: Record<string, unknown> = {
+      x: { field: 'x', trait: 'EncodingX', type: 'quantitative' },
+      y: { field: 'y', trait: 'EncodingY', type: 'quantitative' },
+    };
+    if (opts.colorField) {
+      encoding.color = { field: opts.colorField, trait: 'EncodingColor' };
+    }
+    if (opts.sizeField) {
+      encoding.size = { field: opts.sizeField, trait: 'EncodingSize', scale: 'linear' };
+    }
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'corr',
+      name: 'corr',
+      data: { name: 'c', values: opts.rows },
+      marks: [{ trait: opts.mark ?? 'MarkPoint', encodings: { ...encoding } }],
+      encoding,
+      ...(opts.facetRowField ? { layout: { trait: 'LayoutFacet', rows: { field: opts.facetRowField } } } : {}),
+      a11y: { description: 'y over x' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  it('FACETED Simpson scatter: pooled +0.98 vs every panel r=−1 → SUPPRESSED (was the CRIT phantom)', () => {
+    const spec = scatterSpec({ rows: F_SIMPSON_ROWS, facetRowField: 'panel' });
+    const analysis = analyzeVizSpec(spec);
+    expect(analysis.correlation).toBeUndefined();
+    const { summary, keyFindings } = generateNarrativeSummary(spec);
+    expect(summary).not.toMatch(/positive relationship/);
+    expect(keyFindings.join(' ')).not.toMatch(/Correlation coefficient/);
+  });
+
+  it('facet=none color-series Simpson twin: series pooling suppressed the same way', () => {
+    const spec = scatterSpec({ rows: F_SIMPSON_ROWS, colorField: 'panel' });
+    expect(analyzeVizSpec(spec).correlation).toBeUndefined();
+  });
+
+  it('multi-series LINE keyFindings variant: the mark-independent emission site self-suppresses (trend was ALREADY gated — the :598-vs-:600 asymmetry is now closed)', () => {
+    const spec = scatterSpec({ rows: F_SIMPSON_ROWS, mark: 'MarkLine', colorField: 'panel' });
+    const analysis = analyzeVizSpec(spec);
+    expect(analysis.trend).toBeUndefined(); // already suppressed by the multi-series trend gate
+    expect(analysis.correlation).toBeUndefined(); // NOW suppressed by the same-partition sign gate
+    expect(generateNarrativeSummary(spec).keyFindings.join(' ')).not.toMatch(/Correlation coefficient/);
+  });
+
+  it('SIZED fixture: a quantitative size channel cannot vacuate the partition (segments still computable + contradicting → suppressed)', () => {
+    // segment A rises (r=+1), segment B falls (r=−1) → no common sign → suppress, whatever pooled says.
+    // If quantitative size wrongly entered the partition, every group would be n=1 → vacuous-pass →
+    // the pooled r would narrate and THIS test goes red.
+    const rows = [
+      { x: 1, y: 1, segment: 'A', mag: 1 },
+      { x: 2, y: 2, segment: 'A', mag: 2 },
+      { x: 3, y: 3, segment: 'A', mag: 3 },
+      { x: 1, y: 3, segment: 'B', mag: 4 },
+      { x: 2, y: 2, segment: 'B', mag: 5 },
+      { x: 3, y: 1, segment: 'B', mag: 6 },
+    ];
+    const spec = scatterSpec({ rows, colorField: 'segment', sizeField: 'mag' });
+    expect(analyzeVizSpec(spec).correlation).toBeUndefined();
+  });
+
+  it('KEEP-control (sign-consistent groups): correlation-scatter-shaped fixture keeps its pooled r', () => {
+    // Both segments r = −1 exactly; pooled negative (−0.31 by hand) → sign-consistent → narrates.
+    const rows = [
+      { x: 1, y: 10, segment: 'A' },
+      { x: 2, y: 8, segment: 'A' },
+      { x: 3, y: 6, segment: 'A' },
+      { x: 1, y: 20, segment: 'B' },
+      { x: 2, y: 18, segment: 'B' },
+      { x: 3, y: 16, segment: 'B' },
+    ];
+    const spec = scatterSpec({ rows, colorField: 'segment' });
+    const r = analyzeVizSpec(spec).correlation;
+    expect(r).toBeDefined();
+    expect(r).toBeLessThan(0);
+  });
+
+  it('KEEP-control (VACUOUS-PASS, pinned): all groups n<3 → pooled narrates (the disclosed small-group escape)', () => {
+    // scatter-chart-shaped: 3 segments × 2 points — no computable per-group r anywhere.
+    const rows = [
+      { x: 1, y: 1, segment: 'A' },
+      { x: 2, y: 2, segment: 'A' },
+      { x: 3, y: 3, segment: 'B' },
+      { x: 4, y: 4, segment: 'B' },
+      { x: 5, y: 5, segment: 'C' },
+      { x: 6, y: 6, segment: 'C' },
+    ];
+    const spec = scatterSpec({ rows, colorField: 'segment' });
+    expect(analyzeVizSpec(spec).correlation).toBeDefined();
+  });
+
+  it('declared-aggregate complement: the narrated r describes the DRAWN cells, not the pre-projection raw rows', () => {
+    // Cells (sum per week): (1,60) (2,70) (3,81) → r ≈ +1 (rounds to 1.000). Raw rows fall with x
+    // (60, 35,35, 27,27,27) → raw-pooled r ≈ −0.945. At HEAD the narrative claimed the RAW r on a
+    // chart that DRAWS three rising bars.
+    const rows = [
+      { week: 1, sales: 60 },
+      { week: 2, sales: 35 },
+      { week: 2, sales: 35 },
+      { week: 3, sales: 27 },
+      { week: 3, sales: 27 },
+      { week: 3, sales: 27 },
+    ];
+    const encoding = {
+      x: { field: 'week', trait: 'EncodingX', scale: 'linear' },
+      y: { field: 'sales', trait: 'EncodingY', aggregate: 'sum' },
+    };
+    const spec = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'agg-corr',
+      name: 'agg corr',
+      data: { name: 'a', values: rows },
+      marks: [{ trait: 'MarkBar', encodings: { ...encoding } }],
+      encoding,
+      a11y: { description: 'sales by week' },
+    } as unknown as NormalizedVizSpec;
+    const r = analyzeVizSpec(spec).correlation;
+    expect(r).toBeDefined();
+    expect(r).toBeGreaterThan(0.99); // the drawn-cell r — RED at HEAD (raw-pooled ≈ −0.945)
+  });
+});

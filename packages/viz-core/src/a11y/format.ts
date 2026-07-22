@@ -58,6 +58,111 @@ export function formatDimension(value: unknown): string | undefined {
   return String(value);
 }
 
+// ============================================================================
+// s160 m4 — the narrated-value KIND registry + tagged numeric emission (SSOT memo §2-m4).
+// Every NUMBER the single-chart narrative (generateNarrativeSummary) or the dashboard narrative
+// (deriveDashboardNarrative) interpolates into text is emitted through narrateNumber with a
+// declared kind, and every kind is classified 'guard-checked' (the drawn-value guard independently
+// verifies it) or 'disclosed' (enumerated, NOT verified — the claim ceiling's residual list is
+// GENERATED from this registry). The Record below is COMPILE-EXHAUSTIVE (the s158
+// CHANNEL_GROUPING_ROLE recipe): a new kind without a classification is a TYPE ERROR, and the
+// standing provenance sweep (narrated-value-provenance-sweep-s160.spec.ts) fails on any numeric
+// token in emitted text that no tagged emission (or dimension-label numeral) accounts for — so a
+// raw `${value}` template interpolation cannot ship silently (the pre-s160 correlation coefficient
+// at full 3-decimal precision was exactly that bypass). This module is deliberately OFF the a11y
+// barrel and the package barrel — none of this is public API.
+// ============================================================================
+
+export type NarratedValueKind =
+  // guard-checked: enforceDrawnValueInvariant / findNonDrawnNarrativeValues verifies these against
+  // the independently-derived drawn set (max/min/total) or the recompute oracle (correlation-r).
+  | 'extremum-max'
+  | 'extremum-min'
+  | 'total'
+  | 'correlation-r'
+  // disclosed: enumerated narrated numerics the guard does NOT verify (the honest residual list).
+  | 'first'
+  | 'last'
+  | 'trend-percent'
+  | 'trend-delta'
+  | 'mean'
+  | 'row-count'
+  | 'governed-threshold'
+  | 'governed-target'
+  | 'kpi-count'
+  | 'kpi-breach-count'
+  | 'kpi-anomaly-count'
+  | 'kpi-value'
+  | 'kpi-delta'
+  | 'kpi-threshold'
+  | 'kpi-target';
+
+export const NARRATED_VALUE_CLASSIFICATION: Record<NarratedValueKind, 'guard-checked' | 'disclosed'> = {
+  'extremum-max': 'guard-checked',
+  'extremum-min': 'guard-checked',
+  total: 'guard-checked',
+  'correlation-r': 'guard-checked',
+  first: 'disclosed',
+  last: 'disclosed',
+  'trend-percent': 'disclosed',
+  'trend-delta': 'disclosed',
+  // NOTE (s160 m3 side-effect, disclosed): mean GAINS emission traffic — a suppressed correlation
+  // shifts point summaries to the extrema+mean fallback arm.
+  mean: 'disclosed',
+  // Raw row count — narrated even beside an AGGREGATED Total ("N data points totaling …"), where N
+  // counts raw rows, not drawn marks. Its own registry entry so that mismatch stays visible.
+  'row-count': 'disclosed',
+  'governed-threshold': 'disclosed',
+  'governed-target': 'disclosed',
+  'kpi-count': 'disclosed',
+  'kpi-breach-count': 'disclosed',
+  'kpi-anomaly-count': 'disclosed',
+  'kpi-value': 'disclosed',
+  'kpi-delta': 'disclosed',
+  'kpi-threshold': 'disclosed',
+  'kpi-target': 'disclosed',
+};
+
+export interface NarratedNumberEmission {
+  readonly kind: NarratedValueKind;
+  /** The raw numeric; undefined for a pre-formatted upstream value (kpi-value's formatted string). */
+  readonly value: number | undefined;
+  readonly formatted: string;
+}
+
+// Capture sink for the standing provenance sweep. Null in production — narrateNumber is then a pure
+// format call with zero retained state (determinism preserved).
+let captureSink: NarratedNumberEmission[] | null = null;
+
+/** Emit a narrated numeric: format (shared formatter unless a pre-formatted string is supplied) + tag. */
+export function narrateNumber(value: number, kind: NarratedValueKind, formatted?: string): string {
+  const text = formatted ?? formatNumeric(value);
+  if (captureSink) {
+    captureSink.push({ kind, value, formatted: text });
+  }
+  return text;
+}
+
+/** Tag a numeric that was formatted UPSTREAM (e.g. a KPI's precomputed display string). */
+export function narrateFormatted(kind: NarratedValueKind, formatted: string): string {
+  if (captureSink) {
+    captureSink.push({ kind, value: undefined, formatted });
+  }
+  return formatted;
+}
+
+/** Run `fn` with emission capture on (test hook for the provenance sweep). Re-entrant-safe. */
+export function captureNarratedNumbers<T>(fn: () => T): { result: T; emissions: NarratedNumberEmission[] } {
+  const prev = captureSink;
+  const sink: NarratedNumberEmission[] = [];
+  captureSink = sink;
+  try {
+    return { result: fn(), emissions: sink };
+  } finally {
+    captureSink = prev;
+  }
+}
+
 /**
  * Turn a raw field name into a human-readable label: snake_case / kebab-case /
  * camelCase collapse to spaces and only the FIRST character is capitalized

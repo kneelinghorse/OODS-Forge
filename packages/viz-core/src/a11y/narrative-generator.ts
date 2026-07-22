@@ -6,7 +6,7 @@ import {
   resolvePrimaryChannels,
   type VizDataAnalysis,
 } from './data-analysis.js';
-import { formatNumeric, formatPercent, humanize } from './format.js';
+import { formatPercent, humanize, narrateNumber } from './format.js';
 
 export interface NarrativeResult {
   readonly status: 'ready' | 'insufficient-data';
@@ -198,11 +198,11 @@ function deriveNarrativeFromData(
               ? 'declines'
               : 'remains relatively flat';
         summaryParts.push(
-          `${labels.chartLabel} ${directionLabel} from ${formatNumeric(analysis.first.value)} (${analysis.first.label}) to ${formatNumeric(analysis.last.value)} (${analysis.last.label}).`
+          `${labels.chartLabel} ${directionLabel} from ${narrateNumber(analysis.first.value, 'first')} (${analysis.first.label}) to ${narrateNumber(analysis.last.value, 'last')} (${analysis.last.label}).`
         );
         if (analysis.trendDelta !== undefined && analysis.first.value !== 0) {
           const percent = analysis.trendDelta / Math.max(Math.abs(analysis.first.value), 1);
-          summaryParts.push(`Overall change of ${formatPercent(percent)} across the period.`);
+          summaryParts.push(`Overall change of ${narrateNumber(percent, 'trend-percent', formatPercent(percent))} across the period.`);
         }
       } else if (analysis.min && analysis.max) {
         // s154 F3: trend is UNDEFINED — the first→last delta was suppressed because this is a
@@ -212,8 +212,8 @@ function deriveNarrativeFromData(
         // without asserting a direction the data does not support.
         summaryParts.push(
           analysis.min.value === analysis.max.value
-            ? `${labels.chartLabel} holds steady at ${formatNumeric(analysis.min.value)} (${analysis.min.label}).`
-            : `${labels.chartLabel} shows ${labels.measureLabel ?? 'values'} ranging from ${formatNumeric(analysis.min.value)} (${analysis.min.label}) to ${formatNumeric(analysis.max.value)} (${analysis.max.label}).`
+            ? `${labels.chartLabel} holds steady at ${narrateNumber(analysis.min.value, 'extremum-min')} (${analysis.min.label}).`
+            : `${labels.chartLabel} shows ${labels.measureLabel ?? 'values'} ranging from ${narrateNumber(analysis.min.value, 'extremum-min')} (${analysis.min.label}) to ${narrateNumber(analysis.max.value, 'extremum-max')} (${analysis.max.label}).`
         );
       }
       break;
@@ -222,7 +222,7 @@ function deriveNarrativeFromData(
     case 'area': {
       if (analysis.max && analysis.min) {
         summaryParts.push(
-          `${labels.chartLabel} compares ${labels.dimensionLabel ?? 'categories'}; ${analysis.max.label} leads at ${formatNumeric(analysis.max.value)} while ${analysis.min.label} is lowest at ${formatNumeric(analysis.min.value)}.`
+          `${labels.chartLabel} compares ${labels.dimensionLabel ?? 'categories'}; ${analysis.max.label} leads at ${narrateNumber(analysis.max.value, 'extremum-max')} while ${analysis.min.label} is lowest at ${narrateNumber(analysis.min.value, 'extremum-min')}.`
         );
       }
       break;
@@ -238,7 +238,7 @@ function deriveNarrativeFromData(
         // leaving the summary empty (which silently fell back to the static a11y.description and
         // gave the analysis no data-derived teeth). Extrema + mean, the honest strip-plot read.
         summaryParts.push(
-          `${labels.chartLabel} plots ${labels.measureLabel ?? 'values'} from ${formatNumeric(analysis.min.value)} (${analysis.min.label}) to ${formatNumeric(analysis.max.value)} (${analysis.max.label}), averaging ${formatNumeric(analysis.mean)}.`
+          `${labels.chartLabel} plots ${labels.measureLabel ?? 'values'} from ${narrateNumber(analysis.min.value, 'extremum-min')} (${analysis.min.label}) to ${narrateNumber(analysis.max.value, 'extremum-max')} (${analysis.max.label}), averaging ${narrateNumber(analysis.mean, 'mean')}.`
         );
       }
       break;
@@ -249,7 +249,7 @@ function deriveNarrativeFromData(
       // mark does not narrate a false sum. measureAdditive undefined (non-cartesian) → unchanged.
       if (analysis.total !== undefined && analysis.rowCount > 0 && analysis.measureAdditive !== false) {
         summaryParts.push(
-          `${labels.chartLabel} covers ${analysis.rowCount} data points totaling ${formatNumeric(analysis.total)}${labels.measureLabel ? ` ${labels.measureLabel}` : ''}.`
+          `${labels.chartLabel} covers ${narrateNumber(analysis.rowCount, 'row-count', String(analysis.rowCount))} data points totaling ${narrateNumber(analysis.total, 'total')}${labels.measureLabel ? ` ${labels.measureLabel}` : ''}.`
         );
       }
     }
@@ -280,13 +280,13 @@ export function describeMeasureContext(
     parts.push(`format ${ctx.format}`);
   }
   if (ctx.thresholdValue !== undefined) {
-    parts.push(`threshold ${formatNumeric(ctx.thresholdValue)}`);
+    parts.push(`threshold ${narrateNumber(ctx.thresholdValue, 'governed-threshold')}`);
   }
   // s130-m02: name the RESOLVED comparison baseline the delta was computed against. Only the
   // 'target' basis carries a static value to verbalize (prior_period/window are series-derived);
   // the `vs target N` literal is IDENTICAL to the cross-panel emit site in dashboard-narrative.ts.
   if (ctx.comparisonBasis === 'target' && ctx.comparisonValue !== undefined) {
-    parts.push(`vs target ${formatNumeric(ctx.comparisonValue)}`);
+    parts.push(`vs target ${narrateNumber(ctx.comparisonValue, 'governed-target')}`);
   }
   // Only surface when at least one governed field beyond the label is present.
   return parts.length > 1 ? parts.join('; ') : undefined;
@@ -299,15 +299,15 @@ function buildKeyFindings(
 ): string[] {
   const findings: string[] = [];
   if (analysis.max) {
-    findings.push(`High ${labels.measureLabel ?? 'value'}: ${describeDataPoint(analysis.max, labels.measureLabel)}`);
+    findings.push(`High ${labels.measureLabel ?? 'value'}: ${describeDataPoint(analysis.max, labels.measureLabel, 'extremum-max')}`);
   }
   if (analysis.min && (!analysis.max || analysis.min.label !== analysis.max.label || analysis.min.value !== analysis.max.value)) {
-    findings.push(`Low ${labels.measureLabel ?? 'value'}: ${describeDataPoint(analysis.min, labels.measureLabel)}`);
+    findings.push(`Low ${labels.measureLabel ?? 'value'}: ${describeDataPoint(analysis.min, labels.measureLabel, 'extremum-min')}`);
   }
   if (analysis.trend && analysis.trendDelta !== undefined) {
     const percent = analysis.first && analysis.first.value !== 0 ? analysis.trendDelta / analysis.first.value : undefined;
     findings.push(
-      `Trend ${analysis.trend}: ${percent !== undefined ? formatPercent(percent) : formatNumeric(analysis.trendDelta)}`
+      `Trend ${analysis.trend}: ${percent !== undefined ? narrateNumber(percent, 'trend-percent', formatPercent(percent)) : narrateNumber(analysis.trendDelta, 'trend-delta')}`
     );
   }
   // s151 m05b: a `point` mark's measure is a positional/distributional value (strip-plot font
@@ -319,16 +319,20 @@ function buildKeyFindings(
   // aggregate (id_max→"Total Id max", sales_id→"Total Sales id"; #895 class). measureAdditive is
   // undefined for the input-shaped/pre-built-analysis paths, so `!== false` leaves them unchanged.
   if (analysis.total !== undefined && analysis.mark !== 'point' && analysis.measureAdditive !== false) {
-    findings.push(`Total ${labels.measureLabel ?? 'value'}: ${formatNumeric(analysis.total)}`);
+    findings.push(`Total ${labels.measureLabel ?? 'value'}: ${narrateNumber(analysis.total, 'total')}`);
   }
   if (analysis.colorCategories.length > 0 && labels.colorLabel) {
     findings.push(`${labels.colorLabel}: ${analysis.colorCategories.join(', ')}`);
   }
   if (analysis.correlation !== undefined) {
-    findings.push(`Correlation coefficient: ${analysis.correlation}`);
+    // s160 m4: WAS a raw `${analysis.correlation}` template interpolation — the formatter-contract
+    // bypass class the provenance sweep exists to catch (3-decimal pearson where the shared
+    // formatter emits max-2-fraction). Routed through the tagged emitter; display becomes
+    // formatNumeric's 2-fraction form (chartered, disclosed narrative-byte change).
+    findings.push(`Correlation coefficient: ${narrateNumber(analysis.correlation, 'correlation-r')}`);
   }
   if (analysis.rowCount > 0 && findings.length === 0) {
-    findings.push(`${analysis.rowCount} rows analysed.`);
+    findings.push(`${narrateNumber(analysis.rowCount, 'row-count', String(analysis.rowCount))} rows analysed.`);
   }
   // Measure-context (sprint-129 m01) leads the findings so the governed frame is read
   // first; absent (or governed-content-free) context leaves the s128 output untouched.

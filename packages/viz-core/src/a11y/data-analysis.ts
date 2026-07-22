@@ -1,7 +1,7 @@
 import type { NormalizedVizSpec, TraitBinding } from '../spec/normalized-viz-spec.js';
 import { deriveTrend, pearson, toNumber } from '../analysis/stats.js';
 import { isProvablyAdditive } from '../analysis/field-name-hints.js';
-import { formatDimension, formatNumeric } from './format.js';
+import { formatDimension, formatNumeric, narrateNumber, type NarratedValueKind } from './format.js';
 
 export type ChartShape = 'bar' | 'line' | 'point' | 'area' | 'mixed' | 'unknown';
 
@@ -204,17 +204,22 @@ export function aggregateMarkRectCells(spec: NormalizedVizSpec): Record<string, 
   if (!color?.field || !color.aggregate || !xField || !yField) {
     return undefined;
   }
-  const keyFields = [xField, yField];
+  // s160 m2: the SHARED drawn-cell key spine (was a hand-built [x,y] — the s159 review's HIGH
+  // regression: faceted cells pooled across panels + panel filters matched nothing + detail
+  // collapsed). A heatmap rect never stacks, so stacking is literally false here. The emitted
+  // cells CARRY every key field so downstream panel filters / encode.detail keep resolving.
+  const keyFields = drawnCellKeyFields(spec, color.field, false);
   const order: string[] = [];
   const groups = new Map<string, { keyVals: Record<string, unknown>; values: unknown[] }>();
   for (const row of collectRows(spec)) {
     const key = keyFor(row, keyFields);
     let group = groups.get(key);
     if (!group) {
-      group = {
-        keyVals: { [xField]: row[xField as keyof typeof row], [yField]: row[yField as keyof typeof row] },
-        values: [],
-      };
+      const keyVals: Record<string, unknown> = {};
+      for (const field of keyFields) {
+        keyVals[field] = row[field as keyof typeof row];
+      }
+      group = { keyVals, values: [] };
       groups.set(key, group);
       order.push(key);
     }
@@ -394,6 +399,43 @@ function seriesGroupingFields(spec: NormalizedVizSpec): string[] {
 }
 
 /**
+ * s160 m2 (§5.9 — share the key-FIELD derivation, not just the key builder): THE drawn-cell key
+ * derivation, consumed by all three grouping sites — the analyzeVizSpec projection arm,
+ * drawnMarkValues (the guard's drawn set), and aggregateMarkRectCells (the ECharts dataset +
+ * visualMap cells). s159 shipped the shared keyFor but let aggregateMarkRectCells hand-build its
+ * FIELD list as [x,y], so a faceted aggregated heatmap pooled cells across panels while every
+ * per-panel dataset filtered to empty, and a detail grouping collapsed (the s159 review's HIGH
+ * regression). One derivation means a channel/layout axis can never again be present in the
+ * narrative's key and absent from a renderer's.
+ * CONTRACT: positional fields ∪ facetFields ∪ (stacking ? ∅ : seriesGroupingFields), each field
+ * EXCLUDING the measure (on an aggregated heatmap COLOR IS THE MEASURE and seriesGroupingFields
+ * returns color unconditionally — without this exclusion a plain heatmap shatters into per-raw-row
+ * cells), deduped, first-appearance order (positional → facet → series). Facet fields key even
+ * under stacking (a panel never stacks). Exported from the MODULE for the spine-blind proof probes
+ * (relative-path import), deliberately OFF the a11y allow-list barrel — not public API.
+ */
+export function drawnCellKeyFields(spec: NormalizedVizSpec, measureField: string, stacking: boolean): string[] {
+  const fields: string[] = [];
+  const add = (field: string | undefined) => {
+    if (field && field !== measureField && !fields.includes(field)) {
+      fields.push(field);
+    }
+  };
+  for (const channel of POSITIONAL_CHANNELS) {
+    add(resolveBinding(spec, channel)?.field);
+  }
+  for (const field of facetFields(spec)) {
+    add(field);
+  }
+  if (!stacking) {
+    for (const field of seriesGroupingFields(spec)) {
+      add(field);
+    }
+  }
+  return fields;
+}
+
+/**
  * s159 m2 (the §5.3 no-transcription rule made CODE): the ONE composite group-key builder, CALLED by
  * projectAggregatedRows, drawnMarkValues, and distinctGroupCount. Joins the field values with NUL
  * (`\0`) and maps null/undefined to a NUL-prefixed sentinel — NUL cannot appear in a real cell label,
@@ -552,14 +594,16 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
           // aggregates on a non-stacking mark (a color-is-measure heatmap rect) — draws one mark per
           // (dimension × second-positional × grouping) cell → project per drawn cell so extrema/total
           // name a real mark (the s158 heatmap survivor fix). s159 m1: a FACET panel never stacks (each
-          // panel is a separate sub-chart), so the facet field STILL keys even under the stack collapse
-          // — otherwise a faceted sum/count bar collapses its panels into a per-dimension cross-panel
-          // total drawn on no bar (the sum sibling of the CRIT 62/32 phantom).
-          isStackTotalAggregate(declaredAggregate) && markStacks(bindings.mark)
-            ? facetFields(spec).filter(
-                (field) => field !== bindings.dimensionField && field !== bindings.measureField,
-              )
-            : projectionGroupingFields(spec, bindings.dimensionField, bindings.measureField),
+          // panel is a separate sub-chart), so the facet field STILL keys even under the stack collapse.
+          // s160 m2: both arms now read the ONE shared drawnCellKeyFields spine (stacking folds the
+          // series channels inside it; facet fields always key) — the same derivation the guard's
+          // drawn set and the ECharts cell builder consume, minus the primary dimension (already the
+          // projection's key head).
+          drawnCellKeyFields(
+            spec,
+            bindings.measureField,
+            isStackTotalAggregate(declaredAggregate) && markStacks(bindings.mark),
+          ).filter((field) => field !== bindings.dimensionField),
         )
       : rows;
   // s155 m03: a first→last trend is meaningful only over a SINGLE ordered series. When the marks
@@ -596,10 +640,13 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     // #910). When suppressed, the line/area path (narrative-generator.ts:203-214) emits an
     // order-invariant range sentence. The correlation gate below is UNCHANGED.
     computeTrend: !isMultiSeriesComposition(spec, rows) && sequence,
+    // s160 m3 (Shape B): the correlation VALUE reads analysisRows (the drawn cells under a declared
+    // aggregate — the complement; identical to rows otherwise) while the sign gate inside
+    // deriveCorrelation partitions the RAW rows (they carry the facet/series fields).
     correlation:
       isMarkRectGrid(spec) || isStripPlot(spec) || isDottedVersionDimension(rows, bindings.dimensionField)
         ? undefined
-        : deriveCorrelation(rows, bindings),
+        : deriveCorrelation(spec, analysisRows, rows, bindings),
   });
   // s158 m3: the PERMANENT drawn-value fail-safe (Fork 2, ratified). After every derivation, null any
   // narrated extremum / Total that is NOT a real drawn mark — checked against an INDEPENDENTLY-derived
@@ -757,7 +804,10 @@ function reduceAggregate(
     return undefined;
   }
   if (aggregate === 'sum') {
-    return numeric.reduce((sum, value) => sum + value, 0);
+    // s160 m1: canonical (sorted) order — the analysis Total, the guard's Σdrawn, and the ECharts
+    // cell values all reduce through here, so one summation order keeps the three bit-identical
+    // even on the no-dimension arm where the projection is skipped.
+    return stableSum(numeric);
   }
   if (aggregate === 'average') {
     return numeric.reduce((sum, value) => sum + value, 0) / numeric.length;
@@ -804,51 +854,9 @@ function markStacks(mark: ChartShape): boolean {
 // survivor). A normal cartesian chart has exactly ONE positional dimension (x=dim, y=measure) → this
 // returns undefined → the projection key is byte-identical. x2/y2 are band endpoints (role
 // 'positional-range'), never a dimension. Derived off the m1 POSITIONAL_CHANNELS role list.
-function secondaryPositionalDimensionField(
-  spec: NormalizedVizSpec,
-  dimensionField: string,
-  measureField: string
-): string | undefined {
-  for (const channel of POSITIONAL_CHANNELS) {
-    const field = resolveBinding(spec, channel)?.field;
-    if (field && field !== dimensionField && field !== measureField) {
-      return field;
-    }
-  }
-  return undefined;
-}
-
-// s158 m2 (was s157 projectionGroupingFields, now role-derived): the discrete fields that distinguish
-// DRAWN marks for the per-cell aggregate projection — the SECOND positional dimension PLUS the
-// series-grouping channels (color/detail/size/shape) — EXCLUDING the measure and the primary
-// dimension (already the key head; color==dimension redundant-recolor keeps the s156 m06 fix). Empty
-// ⇒ the projection stays dimension-level (fail-safe / byte-identical to s156/s157). Because both the
-// second-positional term and the grouping term derive from the m1 role table, a new grouping channel
-// cannot silently drop out of the key — the anti-enumeration structural close of the s157 survivor.
-function projectionGroupingFields(
-  spec: NormalizedVizSpec,
-  dimensionField: string,
-  measureField: string
-): string[] {
-  const secondary = secondaryPositionalDimensionField(spec, dimensionField, measureField);
-  // s159 m1: facet fields join the candidates so a faceted non-stacking chart projects per
-  // (dimension × facet-panel × …) cell. facetFields is empty for non-faceted specs → byte-identical.
-  const candidates = [
-    ...(secondary ? [secondary] : []),
-    ...facetFields(spec),
-    ...seriesGroupingFields(spec),
-  ];
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const field of candidates) {
-    if (field === measureField || field === dimensionField || seen.has(field)) {
-      continue;
-    }
-    seen.add(field);
-    out.push(field);
-  }
-  return out;
-}
+// s158 m2 → s160 m2: the former secondaryPositionalDimensionField/projectionGroupingFields pair
+// collapsed into the shared drawnCellKeyFields spine (one derivation, three consumers — projection,
+// guard, ECharts cells); the projection arm passes spine-minus-primary-dimension.
 
 // s156 m06 / s157 m02: group the raw rows by the dimension field PLUS the secondary discrete
 // grouping channels (groupingFields — empty for stacking aggregates + the no-secondary-grouping
@@ -937,27 +945,13 @@ function drawnMarkValues(spec: NormalizedVizSpec): { label: string | undefined; 
   }
   const stacking = isStackTotalAggregate(measure.aggregate) && markStacks(resolveMark(spec));
   const primaryDimField = resolveBinding(spec, resolvePrimaryChannels(spec).dimensionChannel)?.field;
-  const keyFields: string[] = [];
-  const addKey = (field: string | undefined) => {
-    if (field && field !== measure.field && !keyFields.includes(field)) {
-      keyFields.push(field);
-    }
-  };
-  for (const channel of POSITIONAL_CHANNELS) {
-    addKey(resolveBinding(spec, channel)?.field);
-  }
-  // s159 m1: a facet panel is ALWAYS a grouping surface — panels never stack, so the facet field keys
-  // the independent drawn set even for a stacking aggregate (unlike the series channels below). This
-  // is the guard's half of the facet spine: it bites a faceted under-key even if the projection above
-  // is one day defeated.
-  for (const field of facetFields(spec)) {
-    addKey(field);
-  }
-  if (!stacking) {
-    for (const field of seriesGroupingFields(spec)) {
-      addKey(field);
-    }
-  }
+  // s160 m2: the addKey walk below WAS this exact derivation inline — it is now the shared
+  // drawnCellKeyFields spine (byte-identical field list by construction). NOTE the honesty scope:
+  // after m2 the guard shares the KEY-FIELD ENUMERATION with the projection (and the renderer), so
+  // it protects against call-site drift, not against a spine-level under-enumeration — that
+  // evidence lives in the hand-oracle harness (zero product classification imports) plus the
+  // standing spine-blind probes in the guard proof spec.
+  const keyFields = drawnCellKeyFields(spec, measure.field, stacking);
   const order: string[] = [];
   const groups = new Map<string, { label: string | undefined; values: unknown[] }>();
   for (const row of collectRows(spec)) {
@@ -1006,8 +1000,19 @@ export function findNonDrawnNarrativeValues(
   analysis: VizDataAnalysis,
   spec: NormalizedVizSpec,
   declaredAggregate: TraitBinding['aggregate'] | undefined
-): { maxPhantom: boolean; minPhantom: boolean; totalPhantom: boolean } {
-  const none = { maxPhantom: false, minPhantom: false, totalPhantom: false };
+): { maxPhantom: boolean; minPhantom: boolean; totalPhantom: boolean; correlationPhantom: boolean } {
+  // s160 m3 — the correlation arm has its OWN positive precondition (analysis.correlation defined):
+  // it must NOT sit behind the declaredAggregate early-return below, which skips every scatter (the
+  // exact class the CRIT phantom lived in). Fires when the narrated r has no honest recompute
+  // (recompute-null-while-narrated) or drifts from it beyond the 3-decimal rounding grain (|Δ| >
+  // 0.001 — pearson is toFixed(3)-rounded, so a tighter epsilon would false-fire on double-rounding).
+  const correlationPhantom =
+    analysis.correlation !== undefined &&
+    (() => {
+      const expected = expectedNarratableCorrelation(spec);
+      return expected === undefined || Math.abs(expected - analysis.correlation) > 0.001;
+    })();
+  const none = { maxPhantom: false, minPhantom: false, totalPhantom: false, correlationPhantom };
   if (!declaredAggregate) {
     return none;
   }
@@ -1029,6 +1034,7 @@ export function findNonDrawnNarrativeValues(
     maxPhantom: analysis.max !== undefined && !isDrawn(analysis.max),
     minPhantom: analysis.min !== undefined && !isDrawn(analysis.min),
     totalPhantom: analysis.total !== undefined && !approxEqual(analysis.total, drawnSum),
+    correlationPhantom,
   };
 }
 
@@ -1044,7 +1050,7 @@ export function enforceDrawnValueInvariant(
   declaredAggregate: TraitBinding['aggregate'] | undefined
 ): VizDataAnalysis {
   const phantom = findNonDrawnNarrativeValues(analysis, spec, declaredAggregate);
-  if (!phantom.maxPhantom && !phantom.minPhantom && !phantom.totalPhantom) {
+  if (!phantom.maxPhantom && !phantom.minPhantom && !phantom.totalPhantom && !phantom.correlationPhantom) {
     return analysis;
   }
   return {
@@ -1052,6 +1058,9 @@ export function enforceDrawnValueInvariant(
     max: phantom.maxPhantom ? undefined : analysis.max,
     min: phantom.minPhantom ? undefined : analysis.min,
     total: phantom.totalPhantom ? undefined : analysis.total,
+    // s160 m3: a phantom r is nulled the same honest-silence way — both narrative emission sites
+    // (point summary + the mark-independent keyFindings line) gate on undefined.
+    correlation: phantom.correlationPhantom ? undefined : analysis.correlation,
   };
 }
 
@@ -1123,34 +1132,184 @@ function findExtreme(points: readonly DataPoint[], kind: 'min' | 'max'): DataPoi
   }, points[0]);
 }
 
-function deriveCorrelation(
+function pearsonOverRows(
   rows: readonly Record<string, unknown>[],
-  bindings: ReturnType<typeof resolvePrimaryBindings>
-): number | undefined {
-  if (!bindings.dimensionField || !bindings.measureField) {
-    return undefined;
-  }
+  xField: string,
+  yField: string
+): number | null {
   const xs: number[] = [];
   const ys: number[] = [];
   rows.forEach((row) => {
-    const x = toNumber(row[bindings.dimensionField as keyof typeof row]);
-    const y = toNumber(row[bindings.measureField as keyof typeof row]);
+    const x = toNumber(row[xField as keyof typeof row]);
+    const y = toNumber(row[yField as keyof typeof row]);
     if (x === null || y === null) {
       return;
     }
     xs.push(x);
     ys.push(y);
   });
-  // The single Pearson implementation lives in analysis/stats. It returns null
-  // for <3 paired points or zero variance — surfaced here as undefined, the
-  // narrator's unchanged contract.
-  return pearson(xs, ys) ?? undefined;
+  // The single Pearson implementation lives in analysis/stats. Null for <3 paired points or zero
+  // variance — "computable" throughout the Shape-B gate means exactly this contract.
+  return pearson(xs, ys);
 }
 
-export function describeDataPoint(point: DataPoint | undefined, measureLabel?: string): string | undefined {
+/**
+ * s160 m3 (Fork-1 = Shape B, Derek-ratified): the fields that partition a chart's rows into the
+ * (facet-panel × categorical-series) groups a narrated correlation must not contradict. Facet fields
+ * plus the CATEGORICAL retinal channels — the channel ENUMERATION is the m1 role table
+ * (RETINAL_GROUPING_CHANNELS), so a new grouping channel cannot silently skip this gate; the filter
+ * is m3's own semantic: a QUANTITATIVE retinal binding (bubble size, a color ramp) is a per-point
+ * MAGNITUDE, not a partition — letting it key would shred every group to n=1 and vacuate the gate
+ * (critic-caught: size binds THE MEASURE in 2 of the 6 correlation-emitting corpus fixtures). The
+ * primary dimension and the measure never partition (they are the correlation's own axes).
+ */
+function correlationPartitionFields(
+  spec: NormalizedVizSpec,
+  dimensionField: string,
+  measureField: string
+): string[] {
+  const fields: string[] = [];
+  const add = (field: string | undefined) => {
+    if (field && field !== dimensionField && field !== measureField && !fields.includes(field)) {
+      fields.push(field);
+    }
+  };
+  for (const field of facetFields(spec)) {
+    add(field);
+  }
+  const mark = resolveMark(spec);
+  for (const channel of RETINAL_GROUPING_CHANNELS) {
+    const binding = resolveBinding(spec, channel);
+    if (!binding?.field || bindingIsQuantitative(binding)) {
+      continue;
+    }
+    if (channel === 'shape' && !markSplitsByRetina(mark)) {
+      continue;
+    }
+    add(binding.field);
+  }
+  return fields;
+}
+
+const signOf = (r: number): -1 | 0 | 1 => (r > 0 ? 1 : r < 0 ? -1 : 0);
+
+/**
+ * s160 m3 — the SIGN-CONSISTENCY predicate (critic-corrected: the draft's "groups agree with each
+ * other" wording NARRATED the CRIT phantom — all panels at r=−1 agree with each other while pooled
+ * is +0.98; the gate compares the pooled sign against the groups' common sign). PINNED policies:
+ * zero computable groups → VACUOUS-PASS (narrate pooled — keeps the all-small-groups corpus; a
+ * DISCLOSED escape: an all-n<3 Simpson phantom passes); pooled sign 0 → narrate ("weak", harmless);
+ * groups all flat (common sign 0) while pooled is directional → SUPPRESS (a between-group artifact:
+ * every panel shows no relationship). pearson output is 3-decimal-rounded, so signs compare the
+ * ROUNDED statistic the narrative would emit.
+ */
+function pooledSignConsistentWithGroups(pooled: number, groupRs: readonly number[]): boolean {
+  if (groupRs.length === 0) {
+    return true; // vacuous-pass (pinned)
+  }
+  const signs = new Set(groupRs.map(signOf));
+  if (signs.size > 1) {
+    return false; // the groups contradict EACH OTHER — no common sign to agree with
+  }
+  const pooledSign = signOf(pooled);
+  if (pooledSign === 0) {
+    return true; // sign-neutral (pinned): a "weak" narration cannot claim a phantom direction
+  }
+  return pooledSign === [...signs][0];
+}
+
+/**
+ * s160 m3: the narrated correlation. VALUE = pooled Pearson over `valueRows` — the rows whose pairs
+ * the chart DRAWS (under a declared aggregate the call site passes the projected per-cell rows, the
+ * declared-aggregate complement: r no longer describes pre-projection raw rows; without one,
+ * valueRows === rawRows, byte-identical to pre-s160). SCOPE = the Shape-B sign gate over `rawRows`
+ * partitioned by correlationPartitionFields (raw rows carry the facet/series fields the projection
+ * drops). Suppression is fail-safe-to-silence: both narrative emission sites gate on undefined.
+ */
+function deriveCorrelation(
+  spec: NormalizedVizSpec,
+  valueRows: readonly Record<string, unknown>[],
+  rawRows: readonly Record<string, unknown>[],
+  bindings: ReturnType<typeof resolvePrimaryBindings>
+): number | undefined {
+  if (!bindings.dimensionField || !bindings.measureField) {
+    return undefined;
+  }
+  const pooled = pearsonOverRows(valueRows, bindings.dimensionField, bindings.measureField);
+  if (pooled === null) {
+    return undefined;
+  }
+  const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
+  if (partitionFields.length === 0) {
+    return pooled; // one (facet × series) group — the pooled r IS the group r
+  }
+  const groups = new Map<string, Record<string, unknown>[]>();
+  for (const row of rawRows) {
+    const key = keyFor(row, partitionFields);
+    const group = groups.get(key);
+    if (group) {
+      group.push(row);
+    } else {
+      groups.set(key, [row]);
+    }
+  }
+  const groupRs: number[] = [];
+  for (const groupRows of groups.values()) {
+    const r = pearsonOverRows(groupRows, bindings.dimensionField, bindings.measureField);
+    if (r !== null) {
+      groupRs.push(r);
+    }
+  }
+  return pooledSignConsistentWithGroups(pooled, groupRs) ? pooled : undefined;
+}
+
+/**
+ * s160 m3 (the guard arm's oracle): recompute the ENTIRE narratable-correlation decision from the
+ * spec alone — the call-site gates (rect grid / strip plot / dotted version), the declared-aggregate
+ * projection of the value rows, and the Shape-B sign gate. DISCLOSED as derivation-SHARED (it calls
+ * the same pearson / projection / partition helpers): the guard's correlation arm bites CALL-SITE
+ * DRIFT (a future analyzeVizSpec edit that skips a gate or re-feeds raw rows), not an in-helper bug;
+ * the SUT-independent VALUE evidence is the hand-computed constants in the harness axis. Module
+ * export for the proof spec (relative path), OFF the a11y allow-list barrel — not public API.
+ */
+export function expectedNarratableCorrelation(spec: NormalizedVizSpec): number | undefined {
+  const bindings = resolvePrimaryBindings(spec);
+  const rawRows = collectRows(spec);
+  if (isMarkRectGrid(spec) || isStripPlot(spec) || isDottedVersionDimension(rawRows, bindings.dimensionField)) {
+    return undefined;
+  }
+  if (!bindings.dimensionField || !bindings.measureField) {
+    return undefined;
+  }
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  const valueRows = declaredAggregate
+    ? projectAggregatedRows(
+        rawRows,
+        bindings.dimensionField,
+        bindings.measureField,
+        declaredAggregate,
+        drawnCellKeyFields(
+          spec,
+          bindings.measureField,
+          isStackTotalAggregate(declaredAggregate) && markStacks(bindings.mark),
+        ).filter((field) => field !== bindings.dimensionField),
+      )
+    : rawRows;
+  return deriveCorrelation(spec, valueRows, rawRows, bindings);
+}
+
+// s160 m4: the optional `kind` routes the embedded numeric through the tagged emitter so the
+// provenance sweep can account for High/Low finding values; omitted (external callers — the param
+// is ADDITIVE on this public name) it stays the plain shared formatter, byte-identical.
+export function describeDataPoint(
+  point: DataPoint | undefined,
+  measureLabel?: string,
+  kind?: NarratedValueKind
+): string | undefined {
   if (!point) {
     return undefined;
   }
   const label = measureLabel ? `${measureLabel}` : 'Value';
-  return `${label} ${formatNumeric(point.value)} (${point.label})`;
+  const value = kind ? narrateNumber(point.value, kind) : formatNumeric(point.value);
+  return `${label} ${value} (${point.label})`;
 }

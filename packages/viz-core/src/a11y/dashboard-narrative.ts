@@ -11,7 +11,7 @@
 // narrative wins with byte-identical precedence to the single-chart path.
 
 import { applyNarrativeOverride, type MeasureNarrativeContext, type ProvidedNarrative } from './narrative-generator.js';
-import { formatNumeric } from './format.js';
+import { narrateFormatted, narrateNumber } from './format.js';
 
 /** One KPI's computed signal, projected for narration. */
 export interface DashboardKpiSummary {
@@ -53,32 +53,42 @@ export function deriveDashboardNarrative(
   const breaches = kpis.filter((k) => k.thresholdBreached);
   const anomalies = kpis.filter((k) => k.anomaly);
 
-  const summaryParts = [`${kpis.length} key metric${kpis.length === 1 ? '' : 's'} tracked.`];
+  const summaryParts = [
+    `${narrateNumber(kpis.length, 'kpi-count', String(kpis.length))} key metric${kpis.length === 1 ? '' : 's'} tracked.`,
+  ];
   if (breaches.length > 0) {
-    summaryParts.push(`${breaches.length} ${breaches.length === 1 ? 'metric' : 'metrics'} breached threshold.`);
+    summaryParts.push(
+      `${narrateNumber(breaches.length, 'kpi-breach-count', String(breaches.length))} ${breaches.length === 1 ? 'metric' : 'metrics'} breached threshold.`
+    );
   }
   if (anomalies.length > 0) {
-    summaryParts.push(`${anomalies.length} flagged anomalous.`);
+    summaryParts.push(`${narrateNumber(anomalies.length, 'kpi-anomaly-count', String(anomalies.length))} flagged anomalous.`);
   }
 
   const keyFindings = kpis
     .map((k) => {
-      const deltaPhrase = k.delta === null ? '' : `, delta ${k.delta}`;
+      // s160 m4: WAS raw `${k.delta}` — a formatter-contract bypass; now tagged + shared-formatted.
+      const deltaPhrase = k.delta === null ? '' : `, delta ${narrateNumber(k.delta, 'kpi-delta')}`;
       // Measure-context (sprint-129 m02): the governed unit annotates the value and the
       // governed threshold value enriches the breach flag. Absent === byte-identical to s116.
       const unit = k.measureContext?.unit;
-      const formatted = unit ? `${k.formatted} ${unit}` : k.formatted;
+      const formatted = narrateFormatted('kpi-value', unit ? `${k.formatted} ${unit}` : k.formatted);
       const thresholdValue = k.measureContext?.thresholdValue;
       // s130-m02: name the RESOLVED comparison baseline the delta was computed against. Only the
       // 'target' basis carries a static value to verbalize; the `vs target N` literal is IDENTICAL
       // to the single-chart emit site in narrative-generator.ts (describeMeasureContext) — no fork.
       const targetPhrase =
         k.measureContext?.comparisonBasis === 'target' && k.measureContext.comparisonValue !== undefined
-          ? ` vs target ${formatNumeric(k.measureContext.comparisonValue)}`
+          ? ` vs target ${narrateNumber(k.measureContext.comparisonValue, 'kpi-target')}`
           : '';
       const flags: string[] = [];
       if (k.thresholdBreached) {
-        flags.push(thresholdValue !== undefined ? `threshold ${thresholdValue} breached` : 'threshold breached');
+        // s160 m4: WAS raw `${thresholdValue}` — bypass killed; tagged + shared-formatted.
+        flags.push(
+          thresholdValue !== undefined
+            ? `threshold ${narrateNumber(thresholdValue, 'kpi-threshold')} breached`
+            : 'threshold breached'
+        );
       }
       if (k.anomaly) {
         flags.push('anomaly');
