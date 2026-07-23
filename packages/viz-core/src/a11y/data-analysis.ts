@@ -667,7 +667,7 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
     correlation:
       isMarkRectGrid(spec) || isStripPlot(spec) || isDottedVersionDimension(rows, bindings.dimensionField)
         ? undefined
-        : deriveCorrelation(spec, analysisRows, rows, bindings),
+        : deriveCorrelation(spec, analysisRows, rows, bindings, declaredAggregate),
   });
   // s158 m3: the PERMANENT drawn-value fail-safe (Fork 2, ratified). After every derivation, null any
   // narrated extremum / Total that is NOT a real drawn mark — checked against an INDEPENDENTLY-derived
@@ -724,6 +724,27 @@ export function resolvePrimaryChannels(spec: NormalizedVizSpec): {
     resolveBinding(spec, 'x')?.aggregate !== undefined &&
     resolveBinding(spec, 'y')?.aggregate === undefined;
   if (horizontalAggregatedBar) {
+    return { measureChannel: 'x', dimensionChannel: 'y', colorIsMeasure: false };
+  }
+  // s162 m2: a RAW (pre-computed, un-aggregated) horizontal bar/area — mark ∈ {bar,area}, a
+  // STAMPED-quantitative x (the drawn measure = the bar LENGTH) over a band/nominal y (the dimension).
+  // The s161 arm above fires only when a declared aggregate sits on x, so a raw horizontal bar fell to
+  // the default measure=y and narrated the numeric category codes as the measure (High=shortest bar,
+  // Total=Σ category codes). GATE on NEITHER axis carrying a declared aggregate so the s161-warned
+  // vertical-bar misfire (a stamped-quant-x DIMENSION + an UNSTAMPED aggregated y) — which carries its
+  // aggregate on y — is EXCLUDED (falls through to the m3 aggregate arm / the default measure=y). `!x.bin`
+  // excludes a raw binned-x histogram (its x is a binned dimension, not the measure). Keyed on the
+  // field's STAMPED type/scale (bindingIsQuantitative), NOT a coercive raw-cell probe — an UNSTAMPED
+  // numeric x does NOT fire (measure=y, disclosed §4; fixing it would resurrect the #895 probe).
+  const xBinding = resolveBinding(spec, 'x');
+  const rawHorizontalBar =
+    (mark === 'bar' || mark === 'area') &&
+    xBinding?.aggregate === undefined &&
+    resolveBinding(spec, 'y')?.aggregate === undefined &&
+    !xBinding?.bin &&
+    bindingIsQuantitative(xBinding) &&
+    !bindingIsQuantitative(resolveBinding(spec, 'y'));
+  if (rawHorizontalBar) {
     return { measureChannel: 'x', dimensionChannel: 'y', colorIsMeasure: false };
   }
   return { measureChannel: 'y', dimensionChannel: 'x', colorIsMeasure: false };
@@ -1332,15 +1353,19 @@ function narratableCorrelation(pooled: number, classes: readonly GroupDirection[
  * s160 m3: the narrated correlation. VALUE = pooled Pearson over `valueRows` — the rows whose pairs
  * the chart DRAWS (under a declared aggregate the call site passes the projected per-cell rows, the
  * declared-aggregate complement: r no longer describes pre-projection raw rows; without one,
- * valueRows === rawRows, byte-identical to pre-s160). SCOPE = the Shape-B sign gate over `rawRows`
- * partitioned by correlationPartitionFields (raw rows carry the facet/series fields the projection
- * drops). Suppression is fail-safe-to-silence: both narrative emission sites gate on undefined.
+ * valueRows === rawRows, byte-identical to pre-s160). SCOPE = the Shape-B sign gate: partition `rawRows`
+ * by correlationPartitionFields (raw rows carry the facet/series fields the projection drops), then —
+ * s162 m1 — classify each group's DIRECTION over its DRAWN cells (re-projected under `declaredAggregate`
+ * inside classifyCorrelationGroups), NOT the count-weighted raw group rows, so the classifier and the
+ * pooled value read the SAME cells (closes S1). Suppression is fail-safe-to-silence: both narrative
+ * emission sites gate on undefined.
  */
 function deriveCorrelation(
   spec: NormalizedVizSpec,
   valueRows: readonly Record<string, unknown>[],
   rawRows: readonly Record<string, unknown>[],
-  bindings: ReturnType<typeof resolvePrimaryBindings>
+  bindings: ReturnType<typeof resolvePrimaryBindings>,
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined
 ): number | undefined {
   if (!bindings.dimensionField || !bindings.measureField) {
     return undefined;
@@ -1353,6 +1378,42 @@ function deriveCorrelation(
   if (partitionFields.length === 0) {
     return pooled; // one (facet × series) group — the pooled r IS the group r
   }
+  // s162 m1: classify each group's DIRECTION over the DRAWN cells the viewer sees (each raw partition
+  // group re-projected to its per-dimension cells under the declared aggregate) — NOT the count-weighted
+  // raw rows — closing the raw-vs-drawn asymmetry that let a declared-aggregate Simpson sign-phantom
+  // through (S1). The contradiction-first predicate then decides.
+  const classes = classifyCorrelationGroups(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    declaredAggregate
+  );
+  return narratableCorrelation(pooled, classes) ? pooled : undefined;
+}
+
+/**
+ * s162 m1 (the S1 fix — classify over the DRAWN cells; SSOT §2-m1 Fork-1). Partition the RAW rows (they
+ * carry the facet/series fields the projection drops at the `projectAggregatedRows` :938 literal) by
+ * `partitionFields`, then for EACH group classify its within-group DIRECTION over the cells the chart
+ * DRAWS: under a declared aggregate the group is re-projected to one reduced cell per dimension value
+ * (the same reduction `projectAggregatedRows` performs — within a fixed partition group the only surviving
+ * variation is the dimension, so groupingFields = []), so the classifier reads the SAME per-(x,series)
+ * cells the pooled value pools. Under a declared aggregate with uneven per-x counts the raw within-group
+ * direction (count-weighted) inverts vs this drawn-cell direction — the S1 phantom. Without a declared
+ * aggregate the per-group projection is the IDENTITY (byte-identical to pre-s162; the corpus is
+ * unaffected). The REJECTED "partition `valueRows`" primary (§1.1) collapses every projected cell — which
+ * lacks the partition fields — into ONE `\0null` group whose single direction == the pooled sign, so
+ * narratableCorrelation self-agrees and the phantom STILL narrates; keeping the RAW-row partition is what
+ * yields ≥2 real groups (the machine-assert `classes.length > 1`).
+ */
+function classifyCorrelationGroups(
+  rawRows: readonly Record<string, unknown>[],
+  dimensionField: string,
+  measureField: string,
+  partitionFields: readonly string[],
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined
+): GroupDirection[] {
   const groups = new Map<string, Record<string, unknown>[]>();
   for (const row of rawRows) {
     const key = keyFor(row, partitionFields);
@@ -1363,13 +1424,38 @@ function deriveCorrelation(
       groups.set(key, [row]);
     }
   }
-  // s161 m2: classify each group's DIRECTION (UNKNOWN / FLAT / ±1) rather than dropping n<3 and
-  // zero-variance groups before the sign check. The contradiction-first predicate then decides.
   const classes: GroupDirection[] = [];
   for (const groupRows of groups.values()) {
-    classes.push(classifyGroupDirection(groupRows, bindings.dimensionField, bindings.measureField));
+    const cells = declaredAggregate
+      ? projectAggregatedRows(groupRows, dimensionField, measureField, declaredAggregate, [])
+      : groupRows;
+    classes.push(classifyGroupDirection(cells, dimensionField, measureField));
   }
-  return narratableCorrelation(pooled, classes) ? pooled : undefined;
+  return classes;
+}
+
+/**
+ * s162 m1 (the machine-assert surface; SSOT §2-m1): the per-group DIRECTION classes the SUT feeds
+ * narratableCorrelation, recomputed from the spec alone. The S1 proof spec asserts `classes.length > 1`
+ * (2 real groups A,B, both FALLING → [-1,-1]) — a regression to the rejected `valueRows`-partition
+ * primary collapses this to a single group and turns the assert RED. Module export for the proof spec
+ * (relative path), OFF the a11y allow-list barrel — not public API.
+ */
+export function correlationGroupDirections(spec: NormalizedVizSpec): GroupDirection[] {
+  const bindings = resolvePrimaryBindings(spec);
+  if (!bindings.dimensionField || !bindings.measureField) {
+    return [];
+  }
+  const rawRows = collectRows(spec);
+  const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  return classifyCorrelationGroups(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    declaredAggregate
+  );
 }
 
 /**
@@ -1404,7 +1490,7 @@ export function expectedNarratableCorrelation(spec: NormalizedVizSpec): number |
         ).filter((field) => field !== bindings.dimensionField),
       )
     : rawRows;
-  return deriveCorrelation(spec, valueRows, rawRows, bindings);
+  return deriveCorrelation(spec, valueRows, rawRows, bindings, declaredAggregate);
 }
 
 // s160 m4: the optional `kind` routes the embedded numeric through the tagged emitter so the
