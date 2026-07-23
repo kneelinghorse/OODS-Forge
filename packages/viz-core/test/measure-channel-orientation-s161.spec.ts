@@ -123,3 +123,118 @@ describe('s161 m3 — the horizontal aggregated bar narrates the DRAWN sums (end
     expect(a.total).toBe(150); // Σ hours — NOT 6064 (Σ year codes), the pre-m3 inversion
   });
 });
+
+// ============================================================================
+// Sprint-162 m3 — c3.iv: the STANDING SUT-resolved measure-channel COVERAGE MANIFEST (SSOT §2-m3.iv,
+// critic c3-A3). The §4/§7 closure claim names a CLOSED SET of measure-channel orientations. This
+// manifest proves each named orientation has an EXECUTING fixture the SUT (resolvePrimaryChannels)
+// RESOLVES to the CLAIMED channel — keyed on resolvePrimaryChannels(spec).measureChannel, NOT a
+// test-side structural read of the fixture's intent (do NOT copy the correlation manifest's
+// describeTuple). A fixture the author BELIEVES is a "raw horizontal bar" but the code mis-resolves to
+// measure=y registers the WRONG channel → both its own case AND the closed-set assert go RED. So §7
+// cannot name an orientation the code does not actually resolve (the claim-scope-vs-enumeration
+// meta-defect closed at its root for the measure-channel axis).
+// ============================================================================
+
+function rawHorizontalBarFixture(): NormalizedVizSpec {
+  // mark=bar, x={score, linear-quant, NO aggregate} (the drawn bar length), y={team, nominal} (dim).
+  return markSpec(
+    'MarkBar',
+    B('score', 'EncodingX', { scale: 'linear', type: 'quantitative' }),
+    B('team', 'EncodingY', { type: 'nominal' }),
+    [
+      { team: 'Alpha', score: 120 },
+      { team: 'Beta', score: 340 },
+    ]
+  );
+}
+
+function heatmapColorMeasureFixture(): NormalizedVizSpec {
+  const spec = markSpec(
+    'MarkRect',
+    B('region', 'EncodingX', { scale: 'band' }),
+    B('hour', 'EncodingY', { scale: 'band' }),
+    [
+      { region: 'N', hour: '9', temp: 5 },
+      { region: 'S', hour: '9', temp: 8 },
+    ]
+  );
+  (spec.encoding as Record<string, unknown>).color = B('temp', 'EncodingColor', { type: 'quantitative' });
+  (spec.marks[0].encodings as Record<string, unknown>).color = B('temp', 'EncodingColor', { type: 'quantitative' });
+  return spec;
+}
+
+describe('s162 m3 — SUT-resolved measure-channel coverage manifest (closure surface = predicate domain)', () => {
+  // Every measure-channel orientation the §4/§7 claim names, paired with the channel the claim asserts
+  // the SUT resolves it to. The manifest is populated FROM the SUT below (not a structural read).
+  const CLAIMED: { name: string; expected: 'x' | 'y' | 'color'; fixture: () => NormalizedVizSpec }[] = [
+    {
+      name: 'vertical-bar',
+      expected: 'y',
+      fixture: () =>
+        markSpec('MarkBar', B('cat', 'EncodingX', { scale: 'band' }), B('val', 'EncodingY', { aggregate: 'sum' }), [
+          { cat: 'a', val: 10 },
+          { cat: 'b', val: 20 },
+        ]),
+    },
+    {
+      name: 'vertical-line',
+      expected: 'y',
+      fixture: () =>
+        markSpec(
+          'MarkLine',
+          B('t', 'EncodingX', { type: 'quantitative' }),
+          B('v', 'EncodingY', { type: 'quantitative' }),
+          [
+            { t: 1, v: 10 },
+            { t: 2, v: 20 },
+          ]
+        ),
+    },
+    {
+      name: 'vertical-area',
+      expected: 'y',
+      fixture: () =>
+        markSpec('MarkArea', B('m', 'EncodingX', { type: 'nominal' }), B('v', 'EncodingY', { type: 'quantitative' }), [
+          { m: 'a', v: 10 },
+          { m: 'b', v: 20 },
+        ]),
+    },
+    {
+      name: 'horizontal-strip',
+      expected: 'x',
+      fixture: () =>
+        markSpec(
+          'MarkPoint',
+          B('value', 'EncodingX', { type: 'quantitative' }),
+          B('group', 'EncodingY', { scale: 'band' }),
+          [
+            { group: 'a', value: 5 },
+            { group: 'b', value: 9 },
+          ]
+        ),
+    },
+    { name: 'declared-aggregate-horizontal-bar', expected: 'x', fixture: horizontalAggregatedBar },
+    { name: 'raw-horizontal-bar', expected: 'x', fixture: rawHorizontalBarFixture },
+    { name: 'heatmap-color-is-measure', expected: 'color', fixture: heatmapColorMeasureFixture },
+  ];
+
+  const MANIFEST = new Map<string, 'x' | 'y' | 'color'>();
+
+  for (const o of CLAIMED) {
+    it(`${o.name}: the SUT resolves measure = ${o.expected}`, () => {
+      const resolved = resolvePrimaryChannels(o.fixture()).measureChannel;
+      MANIFEST.set(o.name, resolved); // register the SUT-RESOLVED channel (recorded even on mismatch)
+      expect(resolved).toBe(o.expected);
+    });
+  }
+
+  it('the §7 closure clause names EXACTLY the SUT-resolved orientation manifest (generated, not aspirational)', () => {
+    // Every claimed orientation resolved via the SUT to its claimed channel...
+    for (const o of CLAIMED) {
+      expect(MANIFEST.get(o.name), `orientation "${o.name}" has no SUT-resolved fixture`).toBe(o.expected);
+    }
+    // ...and the manifest holds NOTHING the claim omits (the closed set holds both ways).
+    expect([...MANIFEST.keys()].sort()).toEqual(CLAIMED.map((o) => o.name).sort());
+  });
+});
