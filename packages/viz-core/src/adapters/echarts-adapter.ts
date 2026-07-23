@@ -7,7 +7,7 @@ import type {
   LayoutProjection,
   NormalizedVizSpec,
 } from '../spec/normalized-viz-spec.js';
-import { applyEChartsLayout } from './echarts-layout-mapper.js';
+import { applyEChartsLayout, facetRenderedCellFilter } from './echarts-layout-mapper.js';
 import type { ScaleResolution } from './scale-resolver.js';
 import { isMarkRectGrid, heatmapColorIsMeasure, getEncodingBinding, aggregateMarkRectCells } from '../a11y/data-analysis.js';
 import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
@@ -466,7 +466,15 @@ function buildHeatmapVisualMap(spec: NormalizedVizSpec): Record<string, unknown>
 
   // s159 m5: extent from the AGGREGATED drawn cells when a color aggregate is declared (so the
   // visualMap legend == the drawn cells == the a11y narrative), else the raw color extent (unchanged).
-  const rows = aggregateMarkRectCells(spec) ?? (Array.isArray(spec.data.values) ? spec.data.values : []);
+  const allCells = aggregateMarkRectCells(spec) ?? (Array.isArray(spec.data.values) ? spec.data.values : []);
+  // s161 m5 (Fork-4=A): when the facet is TRUNCATED (columns.limit / maxPanels) the ECharts render
+  // draws only the rendered panels, so the visualMap must span only those cells — a cell in a
+  // dropped panel is legended on nothing (the s160 review's facet-limit phantom: visualMap max=94 vs
+  // ECharts-drawn max=30). The shared a11y narrative stays at the full-data extremum, honest for the
+  // Vega-PRIMARY render (Vega draws every panel). Non-faceted / untruncated specs: predicate is
+  // undefined or matches all → byte-identical to HEAD.
+  const rendered = facetRenderedCellFilter(spec);
+  const rows = rendered ? allCells.filter((cell) => rendered(cell as Record<string, unknown>)) : allCells;
   const values = rows
     .map((row) => Number((row as Record<string, unknown>)[colorBinding.field]))
     .filter((value) => Number.isFinite(value));

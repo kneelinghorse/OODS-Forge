@@ -50,16 +50,59 @@ function mapFacetLayout(spec: NormalizedVizSpec, layout: LayoutFacet, option: EC
     return annotateLayoutMetadata(option, layout, undefined, spec);
   }
 
-  const rowValues = collectFacetValues(rows, layout.rows?.field, layout.rows?.limit);
-  const columnValues = collectFacetValues(rows, layout.columns?.field, layout.columns?.limit);
-
-  const panels = buildFacetPanels(layout, baseDataset.id, rowValues, columnValues);
+  const panels = computeFacetPanels(rows, layout, baseDataset.id);
 
   if (panels.length === 0) {
     return option;
   }
 
   return applyPanelMapping(option, panels, layout, spec);
+}
+
+// s161 m5: THE ONE facet-panel derivation — collectFacetValues (limit-aware) × buildFacetPanels
+// (maxPanels-aware), shared by mapFacetLayout (which builds the rendered ECharts datasets) AND
+// facetRenderedCellFilter (which the visualMap uses to span only the RENDERED cells). One function
+// so the two can never disagree on which panels/cells the ECharts render actually draws.
+function computeFacetPanels(
+  rows: readonly Record<string, unknown>[],
+  layout: LayoutFacet,
+  baseDatasetId: string
+): PanelDescriptor[] {
+  const rowValues = collectFacetValues(rows, layout.rows?.field, layout.rows?.limit);
+  const columnValues = collectFacetValues(rows, layout.columns?.field, layout.columns?.limit);
+  return buildFacetPanels(layout, baseDatasetId, rowValues, columnValues);
+}
+
+// s161 m5 (Fork-4=A): a predicate `(cell) => is-this-cell-in-a-RENDERED-panel`. A faceted ECharts
+// heatmap truncates panels (layout.columns.limit / layout.maxPanels), so a cell whose facet value
+// falls outside the rendered panels is drawn on NO panel. The visualMap must not legend its value
+// (the s160 review's facet-limit phantom). Returns undefined for a non-faceted spec (no filtering).
+// The shared a11y narrative stays at the full-data extremum — honest for the Vega-PRIMARY render,
+// which draws every panel (convertFacetField ignores limit). Only ever needs '==' matching:
+// buildFacetPanels emits equality filters exclusively.
+export function facetRenderedCellFilter(
+  spec: NormalizedVizSpec
+): ((cell: Record<string, unknown>) => boolean) | undefined {
+  const layout = spec.layout;
+  if (!layout || layout.trait !== 'LayoutFacet') {
+    return undefined;
+  }
+  const rows = Array.isArray(spec.data.values) ? spec.data.values : [];
+  const panels = computeFacetPanels(rows, layout, '__visualmap__');
+  if (panels.length === 0) {
+    return undefined;
+  }
+  return (cell) => panels.some((panel) => panel.filters.every((filter) => matchesFacetEquality(cell, filter)));
+}
+
+// Facet panels carry only '==' equality filters (buildFacetPanels). Compare via String to match
+// collectFacetValues' key semantics. Any other operator (concat-style) → don't exclude (fail-safe
+// to the full, Vega-honest extent — the pre-s161 behaviour, disclosed by m5's facet scope).
+function matchesFacetEquality(cell: Record<string, unknown>, filter: SectionFilter): boolean {
+  if (filter.operator !== '==') {
+    return true;
+  }
+  return String(cell[filter.field]) === String(filter.value);
 }
 
 function mapConcatLayout(spec: NormalizedVizSpec, layout: LayoutConcat, option: EChartsOption): EChartsOption {

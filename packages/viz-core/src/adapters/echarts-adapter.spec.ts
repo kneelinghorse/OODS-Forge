@@ -404,3 +404,139 @@ describe('echarts-adapter — s159 m5 aggregated heatmap dual-output parity', ()
     expect(option.visualMap?.max).toBe(90);
   });
 });
+
+// ============================================================================
+// Sprint-160 m2 — the drawn-cell key spine (SSOT memo §2-m2, Fork-2 = FULL SPINE). s159-m5's
+// aggregateMarkRectCells hand-built its key as [x,y], so a FACETED aggregated heatmap pooled cells
+// ACROSS panels while every per-panel dataset filtered to EMPTY (the filter names a field the
+// aggregated cells no longer carried), and a detail grouping collapsed (visualMap 40/40 vs narrated
+// 30/10). The cells now key AND CARRY x,y ∪ facetFields ∪ series groupings (measure-excluded) via
+// the ONE shared drawnCellKeyFields derivation the projection and the guard consume.
+// ============================================================================
+describe('echarts-adapter — s160 m2 faceted/detail aggregated heatmap honesty', () => {
+  type DatasetLike = {
+    id?: string;
+    fromDatasetId?: string;
+    source?: readonly Record<string, unknown>[];
+    transform?: readonly { type: string; config: { field: string; operator: string; value: unknown } }[];
+  };
+
+  function bandEnc(field: string, axis: 'X' | 'Y') {
+    return { field, trait: `Encoding${axis}`, scale: 'band' as const };
+  }
+
+  function heatmapSpec(opts: {
+    rows: Record<string, unknown>[];
+    detailField?: string;
+    facetColumnField?: string;
+  }): NormalizedVizSpec {
+    const color = { field: 'temp', trait: 'EncodingColor', scale: 'linear' as const, aggregate: 'sum' as const };
+    const encoding: Record<string, unknown> = {
+      x: bandEnc('region', 'X'),
+      y: bandEnc('hour', 'Y'),
+      color: { ...color },
+    };
+    if (opts.detailField) {
+      encoding.detail = { field: opts.detailField, trait: 'EncodingDetail' };
+    }
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'spine-heat',
+      name: 'spine heatmap',
+      data: { name: 'sh', values: opts.rows },
+      marks: [{ trait: 'MarkRect', encodings: { ...encoding } }],
+      encoding,
+      ...(opts.facetColumnField
+        ? { layout: { trait: 'LayoutFacet', columns: { field: opts.facetColumnField } } }
+        : {}),
+      a11y: { description: 'temp by region and hour' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  it('FACETED aggregated heatmap: cells stay per-panel, carry the facet field, and panel filters match', () => {
+    const spec = heatmapSpec({
+      rows: [
+        { site: 'A', region: 'N', hour: '9', temp: 10 },
+        { site: 'B', region: 'N', hour: '9', temp: 30 },
+        { site: 'A', region: 'S', hour: '9', temp: 54 },
+        { site: 'B', region: 'S', hour: '9', temp: 94 },
+      ],
+      facetColumnField: 'site',
+    });
+    const option = toEChartsOption(spec) as unknown as { visualMap?: VisualMapLike; dataset: DatasetLike[] };
+    const source = option.dataset[0]?.source ?? [];
+    // Per-(panel × x,y) cells — NOT pooled across panels (HEAD pools to [{40},{148}] without `site`).
+    expect(source).toHaveLength(4);
+    expect(source.every((r) => 'site' in r)).toBe(true);
+    expect(source.map((r) => r.temp).sort((a, b) => Number(a) - Number(b))).toEqual([10, 30, 54, 94]);
+    // visualMap extent == per-panel drawn cells == the s159 facet-aware narrative.
+    expect(option.visualMap?.min).toBe(10);
+    expect(option.visualMap?.max).toBe(94);
+    const analysis = analyzeVizSpec(spec);
+    expect(analysis.min?.value).toBe(10);
+    expect(analysis.max?.value).toBe(94);
+    expect(analysis.total).toBe(188);
+    // Every derived panel dataset's filter matches a NON-EMPTY subset of the base source.
+    const derived = option.dataset.filter((d) => d.fromDatasetId !== undefined);
+    expect(derived.length).toBeGreaterThanOrEqual(2);
+    for (const panel of derived) {
+      const filters = panel.transform ?? [];
+      expect(filters.length).toBeGreaterThan(0);
+      const matches = source.filter((row) =>
+        filters.every((t) => row[t.config.field] === t.config.value),
+      );
+      expect(matches.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('DETAIL-grouped aggregated heatmap: per-group cells survive (visualMap == narrative, not 40/40)', () => {
+    const spec = heatmapSpec({
+      rows: [
+        { region: 'N', hour: '9', line: 'd1', temp: 30 },
+        { region: 'N', hour: '9', line: 'd2', temp: 10 },
+      ],
+      detailField: 'line',
+    });
+    const option = toEChartsOption(spec) as unknown as { visualMap?: VisualMapLike; dataset: DatasetLike[] };
+    const source = option.dataset[0]?.source ?? [];
+    expect(source).toHaveLength(2);
+    expect(source.every((r) => 'line' in r)).toBe(true);
+    expect(option.visualMap?.min).toBe(10);
+    expect(option.visualMap?.max).toBe(30);
+    const analysis = analyzeVizSpec(spec);
+    expect(analysis.min?.value).toBe(10);
+    expect(analysis.max?.value).toBe(30);
+  });
+
+  it('multi-row-per-(x,y,detail) discriminator: cells re-reduce PER GROUP (the fail-safe posture stays dishonest here — full spine does not)', () => {
+    const spec = heatmapSpec({
+      rows: [
+        { region: 'N', hour: '9', line: 'd1', temp: 20 },
+        { region: 'N', hour: '9', line: 'd1', temp: 10 },
+        { region: 'N', hour: '9', line: 'd2', temp: 10 },
+      ],
+      detailField: 'line',
+    });
+    const option = toEChartsOption(spec) as unknown as { visualMap?: VisualMapLike; dataset: DatasetLike[] };
+    const source = option.dataset[0]?.source ?? [];
+    expect(source.map((r) => r.temp).sort((a, b) => Number(a) - Number(b))).toEqual([10, 30]);
+    expect(option.visualMap?.min).toBe(10);
+    expect(option.visualMap?.max).toBe(30);
+  });
+
+  it('LOCK: a plain (no facet/detail/size) aggregated heatmap emits cells with EXACTLY the [x,y,measure] shape', () => {
+    const spec = heatmapSpec({
+      rows: [
+        { region: 'N', hour: '9', temp: 88 },
+        { region: 'N', hour: '9', temp: 100 },
+        { region: 'S', hour: '9', temp: 412 },
+      ],
+    });
+    const option = toEChartsOption(spec) as unknown as { dataset: DatasetLike[] };
+    const source = option.dataset[0]?.source ?? [];
+    expect(source.length).toBeGreaterThan(0);
+    for (const row of source) {
+      expect(Object.keys(row).sort()).toEqual(['hour', 'region', 'temp']);
+    }
+  });
+});

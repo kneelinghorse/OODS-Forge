@@ -429,3 +429,41 @@ describe('sanitizeSchema', () => {
     });
   });
 });
+
+// s161 m6 rider r2 (Fork-5=TAKE): the enum/const primitive-type inference (sanitize-schema.js:54-64)
+// was shipped in s160 but UNTESTED (the s160 review's disclosed residual). Strict MCP providers
+// (e.g. Moonshot) reject a typeless enum/const, so this block infers a `type`. These tests pin every
+// arm, INCLUDING the mixed-type-enum → `type` ARRAY arm the residual specifically named.
+describe('sanitizeSchema — typeless enum/const primitive-type inference', () => {
+  it('infers const → the const value’s JSON type (number / string / boolean)', () => {
+    expect(sanitizeSchema({ const: 42 }).type).toBe('number');
+    expect(sanitizeSchema({ const: 'x' }).type).toBe('string');
+    expect(sanitizeSchema({ const: true }).type).toBe('boolean');
+  });
+
+  it('infers const: null → type "null"', () => {
+    expect(sanitizeSchema({ const: null }).type).toBe('null');
+  });
+
+  it('infers a single-type enum → that scalar type', () => {
+    expect(sanitizeSchema({ enum: ['a', 'b', 'c'] }).type).toBe('string');
+    expect(sanitizeSchema({ enum: [1, 2, 3] }).type).toBe('number');
+  });
+
+  it('infers a MIXED-type enum → the `type` ARRAY of distinct JSON types (the untested s160 residual)', () => {
+    expect(sanitizeSchema({ enum: ['a', 1, true] }).type).toEqual(['string', 'number', 'boolean']);
+    expect(sanitizeSchema({ enum: ['a', 1] }).type).toEqual(['string', 'number']);
+  });
+
+  it('does NOT override an explicit type (the !("type" in out) guard)', () => {
+    expect(sanitizeSchema({ type: 'string', enum: ['a', 'b'] })).toEqual({ type: 'string', enum: ['a', 'b'] });
+  });
+
+  it('does NOT infer a type for an empty enum', () => {
+    expect(sanitizeSchema({ enum: [] })).not.toHaveProperty('type');
+  });
+
+  it('const takes precedence over a co-present enum', () => {
+    expect(sanitizeSchema({ const: 7, enum: ['a'] }).type).toBe('number');
+  });
+});
