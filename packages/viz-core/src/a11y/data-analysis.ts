@@ -457,6 +457,28 @@ export function drawnCellKeyFields(spec: NormalizedVizSpec, measureField: string
 }
 
 /**
+ * s163 m1 (§2-m1): THE narrated value's drawn-cell key — the field list the analyzeVizSpec VALUE path
+ * projects `analysisRows` with under a declared aggregate (`drawnCellKeyFields` minus the primary
+ * dimension). The SINGLE SOURCE for the value key: the value site (`analyzeVizSpec` projection arm), the
+ * guard twin (`expectedNarratableCorrelation`), AND the s163 drift assert all read it, so the "classifier
+ * at least as fine as the value" invariant is anchored to the SAME derivation the value uses (no
+ * transcription, §5.9). It calls `drawnCellKeyFields` DIRECTLY (NOT via `correlationGroupingFields`), so
+ * reverting the classifier's grouping does NOT move it — that asymmetry is what makes the drift assert
+ * non-vacuous (the s162 draft's set-equality assert derived both operands from one call → a tautology the
+ * wf_3eb9fe92-cd8 critic caught). Module export for the proof spec (relative path), OFF the a11y allow-list
+ * barrel — not public API.
+ */
+export function narratedValueCellKey(spec: NormalizedVizSpec): string[] {
+  const bindings = resolvePrimaryBindings(spec);
+  if (!bindings.measureField) {
+    return [];
+  }
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  const stacking = declaredAggregate ? isStackTotalAggregate(declaredAggregate) && markStacks(bindings.mark) : false;
+  return drawnCellKeyFields(spec, bindings.measureField, stacking).filter((field) => field !== bindings.dimensionField);
+}
+
+/**
  * s159 m2 (the §5.3 no-transcription rule made CODE): the ONE composite group-key builder, CALLED by
  * projectAggregatedRows, drawnMarkValues, and distinctGroupCount. Joins the field values with NUL
  * (`\0`) and maps null/undefined to a NUL-prefixed sentinel — NUL cannot appear in a real cell label,
@@ -616,15 +638,12 @@ export function analyzeVizSpec(spec: NormalizedVizSpec): VizDataAnalysis {
           // (dimension × second-positional × grouping) cell → project per drawn cell so extrema/total
           // name a real mark (the s158 heatmap survivor fix). s159 m1: a FACET panel never stacks (each
           // panel is a separate sub-chart), so the facet field STILL keys even under the stack collapse.
-          // s160 m2: both arms now read the ONE shared drawnCellKeyFields spine (stacking folds the
-          // series channels inside it; facet fields always key) — the same derivation the guard's
-          // drawn set and the ECharts cell builder consume, minus the primary dimension (already the
-          // projection's key head).
-          drawnCellKeyFields(
-            spec,
-            bindings.measureField,
-            isStackTotalAggregate(declaredAggregate) && markStacks(bindings.mark),
-          ).filter((field) => field !== bindings.dimensionField),
+          // s160 m2: both arms read the ONE shared drawnCellKeyFields spine (stacking folds the series
+          // channels inside it; facet fields always key) — the same derivation the guard's drawn set and
+          // the ECharts cell builder consume, minus the primary dimension (already the projection's key
+          // head). s163 m1: routed through the shared `narratedValueCellKey` so the value key has ONE
+          // source consumed by the value site, the guard twin, AND the correlation drift assert (§5.9).
+          narratedValueCellKey(spec),
         )
       : rows;
   // s155 m03: a first→last trend is meaningful only over a SINGLE ordered series. When the marks
@@ -1251,6 +1270,34 @@ function correlationPartitionFields(
   return fields;
 }
 
+/**
+ * s163 m1 (§2-m1, §8 Fork-1 — design A): the classifier's per-group re-projection key = the narrated
+ * value's drawn-cell key (`drawnCellKeyFields` minus the dimension) MINUS the partition fields. Keying
+ * each partition group's re-projection by these makes the direction classifier read cells AT LEAST AS
+ * FINE as the value pools (`narratedValueCellKey ⊆ partitionFields ∪ correlationGroupingFields`): every
+ * drawn-cell key axis the value keeps but `correlationPartitionFields` skips — a quantitative retinal
+ * `size`/color-ramp — is re-absorbed here, so the classifier can never be COARSER than the value. Coarser-
+ * than-value was the s162 size-collapse survivor's exact mechanism (it re-projected with `[]`). SINGLE
+ * SOURCE: `deriveCorrelation` (runtime), `correlationGroupDirections`, and `correlationClassifierActualKey`
+ * (the drift-assert capture) all call this, so reverting it to `[]` (the s162 bug) moves BOTH the runtime
+ * classifier AND the assert's captured key → the drift assert bites (non-vacuous). Under stacking the value
+ * drops the series so this returns `∅`, but `deriveCorrelation` still partitions by the FULL
+ * `partitionFields` → the s162 per-segment suppression is PRESERVED (design A, NOT the rejected design B
+ * whose intersection collapsed the partition and narrated the stack-total phantom).
+ */
+function correlationGroupingFields(
+  spec: NormalizedVizSpec,
+  dimensionField: string,
+  measureField: string,
+  partitionFields: readonly string[],
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined
+): string[] {
+  const stacking = declaredAggregate ? isStackTotalAggregate(declaredAggregate) && markStacks(resolveMark(spec)) : false;
+  return drawnCellKeyFields(spec, measureField, stacking).filter(
+    (field) => field !== dimensionField && !partitionFields.includes(field)
+  );
+}
+
 const signOf = (r: number): -1 | 0 | 1 => (r > 0 ? 1 : r < 0 ? -1 : 0);
 
 // s161 m2 — a per-group DIRECTION class. A DIRECTIONAL vote is a sign in {−1,0,+1} (0 = FLAT, a
@@ -1379,14 +1426,25 @@ function deriveCorrelation(
     return pooled; // one (facet × series) group — the pooled r IS the group r
   }
   // s162 m1: classify each group's DIRECTION over the DRAWN cells the viewer sees (each raw partition
-  // group re-projected to its per-dimension cells under the declared aggregate) — NOT the count-weighted
-  // raw rows — closing the raw-vs-drawn asymmetry that let a declared-aggregate Simpson sign-phantom
-  // through (S1). The contradiction-first predicate then decides.
+  // group re-projected to its cells under the declared aggregate) — NOT the count-weighted raw rows —
+  // closing the raw-vs-drawn asymmetry that let a declared-aggregate Simpson sign-phantom through (S1).
+  // s163 m1: re-project over the FULL drawn-cell key (`correlationGroupingFields` = value key minus the
+  // dimension and the partition) so the classifier keys AT LEAST AS FINE as the value — a quantitative
+  // retinal `size` the value keeps but `correlationPartitionFields` skips is now re-absorbed as a grouping
+  // field, closing the size-axis reopening (S1-size). The contradiction-first predicate then decides.
+  const groupingFields = correlationGroupingFields(
+    spec,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    declaredAggregate
+  );
   const classes = classifyCorrelationGroups(
     rawRows,
     bindings.dimensionField,
     bindings.measureField,
     partitionFields,
+    groupingFields,
     declaredAggregate
   );
   return narratableCorrelation(pooled, classes) ? pooled : undefined;
@@ -1394,24 +1452,29 @@ function deriveCorrelation(
 
 /**
  * s162 m1 (the S1 fix — classify over the DRAWN cells; SSOT §2-m1 Fork-1). Partition the RAW rows (they
- * carry the facet/series fields the projection drops at the `projectAggregatedRows` :938 literal) by
- * `partitionFields`, then for EACH group classify its within-group DIRECTION over the cells the chart
- * DRAWS: under a declared aggregate the group is re-projected to one reduced cell per dimension value
- * (the same reduction `projectAggregatedRows` performs — within a fixed partition group the only surviving
- * variation is the dimension, so groupingFields = []), so the classifier reads the SAME per-(x,series)
- * cells the pooled value pools. Under a declared aggregate with uneven per-x counts the raw within-group
- * direction (count-weighted) inverts vs this drawn-cell direction — the S1 phantom. Without a declared
- * aggregate the per-group projection is the IDENTITY (byte-identical to pre-s162; the corpus is
- * unaffected). The REJECTED "partition `valueRows`" primary (§1.1) collapses every projected cell — which
- * lacks the partition fields — into ONE `\0null` group whose single direction == the pooled sign, so
- * narratableCorrelation self-agrees and the phantom STILL narrates; keeping the RAW-row partition is what
- * yields ≥2 real groups (the machine-assert `classes.length > 1`).
+ * carry the facet/series fields the projection drops) by `partitionFields`, then for EACH group classify
+ * its within-group DIRECTION over the cells the chart DRAWS: under a declared aggregate the group is
+ * re-projected (the same reduction `projectAggregatedRows` performs) so the classifier reads the cells the
+ * pooled value pools. Under a declared aggregate with uneven per-x counts the raw within-group direction
+ * (count-weighted) inverts vs this drawn-cell direction — the S1 phantom. Without a declared aggregate the
+ * per-group projection is the IDENTITY (byte-identical to pre-s162; the corpus is unaffected).
+ *
+ * s163 m1 (S1-size — SSOT §2-m1 design A): the re-projection keys by `groupingFields` = the value's
+ * drawn-cell key minus the dimension and the partition (`correlationGroupingFields`), NOT `[]`. The s162
+ * `[]` collapsed every non-partition drawn-cell key axis (a quantitative retinal `size` that
+ * `drawnCellKeyFields` keys but `correlationPartitionFields` skips), making the classifier COARSER than the
+ * value → it voted a direction the size-keyed drawn cells do not have (the S1-size phantom). Keying by
+ * `groupingFields` restores `narratedValueCellKey ⊆ partitionFields ∪ groupingFields` (classifier at least
+ * as fine as the value). The caller partitions by the FULL `partitionFields` even under stacking (where the
+ * value drops the series), so the s162 per-segment suppression is preserved — the rejected design B
+ * intersected the partition and narrated the stack-total phantom.
  */
 function classifyCorrelationGroups(
   rawRows: readonly Record<string, unknown>[],
   dimensionField: string,
   measureField: string,
   partitionFields: readonly string[],
+  groupingFields: readonly string[],
   declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined
 ): GroupDirection[] {
   const groups = new Map<string, Record<string, unknown>[]>();
@@ -1426,8 +1489,11 @@ function classifyCorrelationGroups(
   }
   const classes: GroupDirection[] = [];
   for (const groupRows of groups.values()) {
+    // s163 m1: re-project each partition group over `groupingFields` (the value's extra drawn-cell key
+    // axes beyond the partition — e.g. a quantitative `size`), NOT `[]`, so the classifier reads cells
+    // AT LEAST AS FINE as the value. Without a declared aggregate the re-projection is the identity.
     const cells = declaredAggregate
-      ? projectAggregatedRows(groupRows, dimensionField, measureField, declaredAggregate, [])
+      ? projectAggregatedRows(groupRows, dimensionField, measureField, declaredAggregate, groupingFields)
       : groupRows;
     classes.push(classifyGroupDirection(cells, dimensionField, measureField));
   }
@@ -1449,13 +1515,51 @@ export function correlationGroupDirections(spec: NormalizedVizSpec): GroupDirect
   const rawRows = collectRows(spec);
   const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
   const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
-  return classifyCorrelationGroups(
-    rawRows,
+  const groupingFields = correlationGroupingFields(
+    spec,
     bindings.dimensionField,
     bindings.measureField,
     partitionFields,
     declaredAggregate
   );
+  return classifyCorrelationGroups(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    groupingFields,
+    declaredAggregate
+  );
+}
+
+/**
+ * s163 m1 (§2-m1, §5 rule 13a — the drift-assert capture surface): the ACTUAL cell-key fields the
+ * correlation classifier partitions AND groups by, via the SAME `correlationPartitionFields` +
+ * `correlationGroupingFields` the runtime `deriveCorrelation` uses (SINGLE SOURCE — reverting
+ * `correlationGroupingFields` moves this too). The proof spec asserts `narratedValueCellKey(spec) ⊆
+ * partitionFields ∪ groupingFields`; because `narratedValueCellKey` is sourced from `drawnCellKeyFields`
+ * DIRECTLY (a path the classifier revert does NOT touch), that assertion goes RED under a revert-to-`[]`
+ * — it is NOT the by-construction tautology the s162 draft shipped. Module export for the proof spec
+ * (relative path), OFF the a11y allow-list barrel — not public API.
+ */
+export function correlationClassifierActualKey(spec: NormalizedVizSpec): {
+  partitionFields: string[];
+  groupingFields: string[];
+} {
+  const bindings = resolvePrimaryBindings(spec);
+  if (!bindings.dimensionField || !bindings.measureField) {
+    return { partitionFields: [], groupingFields: [] };
+  }
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
+  const groupingFields = correlationGroupingFields(
+    spec,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    declaredAggregate
+  );
+  return { partitionFields, groupingFields };
 }
 
 /**
@@ -1483,11 +1587,8 @@ export function expectedNarratableCorrelation(spec: NormalizedVizSpec): number |
         bindings.dimensionField,
         bindings.measureField,
         declaredAggregate,
-        drawnCellKeyFields(
-          spec,
-          bindings.measureField,
-          isStackTotalAggregate(declaredAggregate) && markStacks(bindings.mark),
-        ).filter((field) => field !== bindings.dimensionField),
+        // s163 m1: the shared value-key source (§5.9) — same list the analyzeVizSpec value site projects.
+        narratedValueCellKey(spec),
       )
     : rawRows;
   return deriveCorrelation(spec, valueRows, rawRows, bindings, declaredAggregate);
