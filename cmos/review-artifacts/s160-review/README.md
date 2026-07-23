@@ -1,0 +1,1 @@
+s160 review repro scripts (PS-2026-07-22-002, wf_ac7df229-7a7). Confirmed-live finding set at HEAD 27bfb36 — see the review decision in CMOS for the finding-to-script map. Scripts assume repo at ~/portfolio/Design-Tools/OODS-Forge with built dist.

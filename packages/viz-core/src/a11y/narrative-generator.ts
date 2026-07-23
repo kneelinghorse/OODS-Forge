@@ -6,7 +6,7 @@ import {
   resolvePrimaryChannels,
   type VizDataAnalysis,
 } from './data-analysis.js';
-import { formatPercent, humanize, narrateNumber } from './format.js';
+import { formatPercent, humanize, narrateFormatted, narrateNumber } from './format.js';
 
 export interface NarrativeResult {
   readonly status: 'ready' | 'insufficient-data';
@@ -274,10 +274,12 @@ export function describeMeasureContext(
 ): string | undefined {
   const parts = [`Measure: ${measureLabel ?? 'value'}`];
   if (ctx.unit) {
-    parts.push(`unit ${ctx.unit}`);
+    // s161 m4 §1.9: the unit descriptor may carry digits ("1000 USD"); tag it as governed context
+    // (disclosed) so the provenance sweep accounts for those digits — they are NOT narrated values.
+    parts.push(`unit ${narrateFormatted('governed-unit', ctx.unit)}`);
   }
   if (ctx.format) {
-    parts.push(`format ${ctx.format}`);
+    parts.push(`format ${narrateFormatted('governed-format', ctx.format)}`);
   }
   if (ctx.thresholdValue !== undefined) {
     parts.push(`threshold ${narrateNumber(ctx.thresholdValue, 'governed-threshold')}`);

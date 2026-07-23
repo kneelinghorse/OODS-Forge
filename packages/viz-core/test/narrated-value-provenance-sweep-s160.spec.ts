@@ -36,33 +36,56 @@ const CANONICAL_GLOBS = ['examples/viz/patterns-v2/**/*.spec.json', 'examples/vi
 const FIXTURES = [...new Set(CANONICAL_GLOBS.flatMap((g) => globSync(path.join(REPO_ROOT, g))))].sort();
 
 // Numeric tokens incl. Intl group separators and percent suffixes ("1,234" / "12.3%" / "0.98").
-const NUM_TOKEN = /\d[\d,]*(?:\.\d+)?%?/g;
+// s161 m4 §1.8: a proper Intl-grouping alternation so a trailing list comma is NOT swallowed into
+// the token — the old `\d[\d,]*` ate the comma in "2021, 2022, 2023" → "2021," ≠ the emitted "2021"
+// (a false positive on a fully-tagged narrative). Grouped-thousands ("1,234,567") match the first
+// alternative; everything else is a bare run of digits (optionally decimal / percent).
+const NUM_TOKEN = /\d{1,3}(?:,\d{3})+(?:\.\d+)?%?|\d+(?:\.\d+)?%?/g;
 function numericTokens(text: string): string[] {
   return text.match(NUM_TOKEN) ?? [];
 }
 
-// The provenance check: every numeric token in `text` must appear among the tokens of the tagged
-// emissions' formatted strings or of the allowed label/author strings. Returns the violations so
-// the sweep's own teeth are testable (see the enforcement-property test below).
+// The provenance check (s161 m4 §1.1 — token MULTISET, not a Set). Every numeric token in `text`
+// must be accounted for by either a TAGGED emission (spend-once) or a label/author numeral (always
+// allowed). Emission tokens form a MULTISET: a value emitted ONCE cannot bless a SECOND untagged
+// restatement of the same token (the B2 collision escape — set-membership let "Peak reading 30"
+// ride on the tagged max "30"). An emission is captured per narrateNumber CALL, so a value genuinely
+// narrated into two text sites is captured twice and BOTH occurrences are covered
+// (format-once-interpolate-twice keep-control). Label numerals stay a Set — a category/axis label
+// may legitimately recur anywhere in the text, so it grants unlimited occurrences (never a
+// spend-once budget). Returns the violations so the sweep's own teeth are testable.
 function unaccountedTokens(
   text: string,
   emissions: readonly NarratedNumberEmission[],
   allowedStrings: readonly (string | undefined)[]
 ): string[] {
-  const allowed = new Set<string>();
+  const emissionBudget = new Map<string, number>();
   for (const emission of emissions) {
     for (const token of numericTokens(emission.formatted)) {
-      allowed.add(token);
+      emissionBudget.set(token, (emissionBudget.get(token) ?? 0) + 1);
     }
   }
+  const labelTokens = new Set<string>();
   for (const source of allowedStrings) {
     if (source) {
       for (const token of numericTokens(source)) {
-        allowed.add(token);
+        labelTokens.add(token);
       }
     }
   }
-  return numericTokens(text).filter((token) => !allowed.has(token));
+  const violations: string[] = [];
+  for (const token of numericTokens(text)) {
+    if (labelTokens.has(token)) {
+      continue; // a label numeral may recur freely
+    }
+    const remaining = emissionBudget.get(token) ?? 0;
+    if (remaining > 0) {
+      emissionBudget.set(token, remaining - 1); // spend one tagged occurrence
+    } else {
+      violations.push(token);
+    }
+  }
+  return violations;
 }
 
 // Label/author strings whose numerals are NOT narrated values: dimension/category labels, point
@@ -127,6 +150,100 @@ describe('s160 m4 — enforcement property (the sweep’s own teeth)', () => {
   });
 });
 
+describe('s161 m4 (i) — token MULTISET closes the B2 collision escape', () => {
+  const em = (formatted: string): NarratedNumberEmission => ({ kind: 'total', value: undefined, formatted });
+
+  it('a SECOND untagged restatement of a once-tagged token IS a violation (set-membership let it ride)', () => {
+    // The B2 seed: tagged max "30" emitted once; a raw "Peak reading 30" restates it untagged. The
+    // old Set allowed the second occurrence; the multiset spends the single 30 on the first use.
+    expect(unaccountedTokens('Total value: 30. Peak reading 30 appeared untagged.', [em('30')], [])).toEqual(['30']);
+  });
+
+  it('KEEP-CONTROL — format-once-interpolate-TWICE does NOT false-positive (two narrateNumber calls = two emissions)', () => {
+    // A value genuinely narrated into two sites is captured per-call → two emissions → both covered.
+    expect(unaccountedTokens('Summary total 30. Detail total 30.', [em('30'), em('30')], [])).toEqual([]);
+  });
+
+  it('KEEP-CONTROL — a label numeral may recur freely (labels stay set-membership, not a budget)', () => {
+    // The category "2021" appears twice in the text but is granted once as a label — still allowed.
+    expect(unaccountedTokens('Year 2021 leads; 2021 also peaks.', [], ['2021'])).toEqual([]);
+  });
+});
+
+describe('s161 m4 (ii) — the extractor no longer swallows a list comma', () => {
+  it('"2021, 2022, 2023" tokenizes to bare years (no trailing-comma token)', () => {
+    expect(numericTokens('Year: 2021, 2022, 2023')).toEqual(['2021', '2022', '2023']);
+  });
+  it('Intl-grouped thousands still parse whole ("1,234,567" and "12,345.67")', () => {
+    expect(numericTokens('Total 1,234,567 at 12,345.67')).toEqual(['1,234,567', '12,345.67']);
+  });
+  it('a fully-tagged narrative with >=2 numeric color categories sweeps CLEAN (was a false positive)', () => {
+    const s = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'yr',
+      name: 'yr',
+      data: { name: 'd', values: [{ cat: 'a', v: 10, yr: 2021 }, { cat: 'b', v: 20, yr: 2022 }, { cat: 'c', v: 30, yr: 2023 }] },
+      marks: [{ trait: 'MarkBar', encodings: { x: { field: 'cat', trait: 'EncodingX', scale: 'band' }, y: { field: 'v', trait: 'EncodingY' }, color: { field: 'yr', trait: 'EncodingColor', type: 'nominal' } } }],
+      encoding: { x: { field: 'cat', trait: 'EncodingX', scale: 'band' }, y: { field: 'v', trait: 'EncodingY' }, color: { field: 'yr', trait: 'EncodingColor', type: 'nominal' } },
+      a11y: { description: 'yr' },
+    } as unknown as NormalizedVizSpec;
+    const { violations } = sweep(s);
+    expect(violations, violations.join(', ')).toEqual([]);
+  });
+});
+
+describe('s161 m4 (i-companion) — STATIC no-raw-formatter check (the 2nd independent CI way)', () => {
+  // A value formatter (formatNumeric/formatPercent/toFixed/toLocaleString) that is NOT wrapped by a
+  // narrateNumber/narrateFormatted call bypasses the emission capture and ships an unaccounted token
+  // structurally — regardless of collision. Assert the narrative-template sources contain no such
+  // raw formatter call. (Comments are stripped; the current legit uses pass formatPercent(...) AS the
+  // `formatted` argument to narrateNumber on the same statement.)
+  const TEMPLATE_SOURCES = ['narrative-generator.ts', 'dashboard-narrative.ts'];
+  const RAW_FORMATTER = /\b(formatNumeric|formatPercent|toFixed|toLocaleString)\s*\(/;
+
+  for (const file of TEMPLATE_SOURCES) {
+    it(`${file}: no value-formatter call outside narrateNumber/narrateFormatted`, () => {
+      const src = readFileSync(path.resolve(HERE, '../src/a11y', file), 'utf8');
+      const offenders: string[] = [];
+      for (const rawLine of src.split('\n')) {
+        const line = rawLine.replace(/\/\/.*$/, ''); // strip line comments
+        if (RAW_FORMATTER.test(line) && !/narrate(Number|Formatted)\s*\(/.test(line)) {
+          offenders.push(rawLine.trim());
+        }
+      }
+      expect(offenders, `raw formatter calls: ${offenders.join(' | ')}`).toEqual([]);
+    });
+  }
+
+  it('the check BITES — a synthetic raw `${formatNumeric(x)}` line is caught', () => {
+    const bad = "  findings.push(`Peak reading ${formatNumeric(analysis.max.value)}`);";
+    const line = bad.replace(/\/\/.*$/, '');
+    expect(RAW_FORMATTER.test(line) && !/narrate(Number|Formatted)\s*\(/.test(line)).toBe(true);
+  });
+});
+
+describe('s161 m4 (iii) — governed unit/format digits are accounted (tagged, not raw)', () => {
+  it('unit "1000 USD" sweeps CLEAN and logs the governed-unit kind', () => {
+    const s = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'gu',
+      name: 'gu',
+      data: { name: 'd', values: [{ cat: 'a', v: 10 }, { cat: 'a', v: 20 }, { cat: 'b', v: 5 }] },
+      marks: [{ trait: 'MarkBar', encodings: { x: { field: 'cat', trait: 'EncodingX', scale: 'band' }, y: { field: 'v', trait: 'EncodingY', aggregate: 'sum' } } }],
+      encoding: { x: { field: 'cat', trait: 'EncodingX', scale: 'band' }, y: { field: 'v', trait: 'EncodingY', aggregate: 'sum' } },
+      a11y: { description: 'gu' },
+    } as unknown as NormalizedVizSpec;
+    const { result, emissions } = captureNarratedNumbers(() =>
+      generateNarrativeSummary({ analysis: analyzeVizSpec(s), measureLabel: 'Revenue', measureContext: { unit: '1000 USD', format: 'v1.2' } })
+    );
+    const text = `${result.summary} ${result.keyFindings.join(' ')}`;
+    expect(unaccountedTokens(text, emissions, allowedLabelStrings(s))).toEqual([]);
+    const kinds = new Set(emissions.map((e) => e.kind));
+    expect(kinds).toContain('governed-unit');
+    expect(kinds).toContain('governed-format');
+  });
+});
+
 describe('s160 m4 — canonical-corpus provenance sweep (single-chart narrative)', () => {
   it('the canonical corpus is non-empty (a corpus move cannot hollow this gate)', () => {
     expect(FIXTURES.length).toBeGreaterThanOrEqual(30);
@@ -138,6 +255,42 @@ describe('s160 m4 — canonical-corpus provenance sweep (single-chart narrative)
       const spec = JSON.parse(readFileSync(file, 'utf8')) as NormalizedVizSpec;
       const { violations } = sweep(spec);
       expect(violations, `unaccounted numeric tokens: ${violations.join(', ')}`).toEqual([]);
+    });
+  }
+});
+
+describe('s161 m4 (iv) — corpus DE-VACUATION: the DERIVED path is swept too (override suppressed)', () => {
+  // A fixture carrying an a11y.narrative override makes the base sweep tautological: the derived text
+  // is REPLACED by the override AND allowedLabelStrings self-allows that same override text. So a
+  // raw-interpolation bug on the DERIVED path is invisible on those fixtures. Here we strip
+  // a11y.narrative (forcing the derived path) and sweep — the override text is no longer in the
+  // allowed set, so an unaccounted derived token now fails. Log the exact count that gains teeth.
+  function stripOverride(spec: NormalizedVizSpec): NormalizedVizSpec {
+    const clone = JSON.parse(JSON.stringify(spec)) as NormalizedVizSpec;
+    const a11y = clone.a11y as { narrative?: unknown } | undefined;
+    if (a11y && 'narrative' in a11y) {
+      delete a11y.narrative;
+    }
+    return clone;
+  }
+
+  const overrideFixtures = FIXTURES.filter((file) => {
+    const spec = JSON.parse(readFileSync(file, 'utf8')) as NormalizedVizSpec;
+    return Boolean((spec.a11y as { narrative?: unknown } | undefined)?.narrative);
+  });
+
+  it(`logs how many corpus fixtures carry an override (their derived path now gains real teeth)`, () => {
+    // eslint-disable-next-line no-console
+    console.log(`s161 m4 (iv): ${overrideFixtures.length}/${FIXTURES.length} corpus fixtures carry an a11y.narrative override — DERIVED-path swept below.`);
+    expect(overrideFixtures.length).toBeGreaterThan(0);
+  });
+
+  for (const file of overrideFixtures) {
+    const name = path.relative(REPO_ROOT, file);
+    it(`${name}: DERIVED narrative (override stripped) names only tagged-or-label numerics`, () => {
+      const spec = stripOverride(JSON.parse(readFileSync(file, 'utf8')) as NormalizedVizSpec);
+      const { violations } = sweep(spec);
+      expect(violations, `unaccounted DERIVED tokens: ${violations.join(', ')}`).toEqual([]);
     });
   }
 });

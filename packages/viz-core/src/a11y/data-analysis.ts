@@ -407,22 +407,43 @@ function seriesGroupingFields(spec: NormalizedVizSpec): string[] {
  * per-panel dataset filtered to empty, and a detail grouping collapsed (the s159 review's HIGH
  * regression). One derivation means a channel/layout axis can never again be present in the
  * narrative's key and absent from a renderer's.
- * CONTRACT: positional fields ∪ facetFields ∪ (stacking ? ∅ : seriesGroupingFields), each field
- * EXCLUDING the measure (on an aggregated heatmap COLOR IS THE MEASURE and seriesGroupingFields
- * returns color unconditionally — without this exclusion a plain heatmap shatters into per-raw-row
- * cells), deduped, first-appearance order (positional → facet → series). Facet fields key even
- * under stacking (a panel never stacks). Exported from the MODULE for the spine-blind proof probes
- * (relative-path import), deliberately OFF the a11y allow-list barrel — not public API.
+ * CONTRACT: positional dimension axes ∪ facetFields ∪ (stacking ? ∅ : seriesGroupingFields). A
+ * positional channel (x/y) is a DRAWN AXIS and always keys — EXCEPT when it IS the measure channel
+ * (a bar/area draws its value on a positional axis; that axis is the measure, not a dimension), in
+ * which case it is skipped. The exclusion on positional channels is therefore by CHANNEL (via the
+ * shared resolvePrimaryChannels measureChannel), NOT by field-NAME. facet/series fields exclude the
+ * measure by NAME (on an aggregated heatmap COLOR IS THE MEASURE and seriesGroupingFields returns
+ * color unconditionally — without this a plain heatmap shatters into per-raw-row cells). Deduped,
+ * first-appearance order (positional → facet → series). Facet fields key even under stacking (a
+ * panel never stacks).
+ * s161 m1 (the ONLY true s160 regression): the positional exclusion USED to be by field-name, so a
+ * `color={field:x.field, aggregate:'count'}` heatmap (measureField===x.field, but the measure lives
+ * on COLOR not x) DROPPED the drawn x axis → cells merged across x (a `count(*) per hour/day` heatmap
+ * collapsed to one cell per day). Keying off the measure CHANNEL keeps the colliding dimension axis
+ * while still dropping a bar/area's genuine measure axis (the stacked-bar keep-control). Exported
+ * from the MODULE for the spine-blind proof probes (relative-path import), deliberately OFF the a11y
+ * allow-list barrel — not public API.
  */
 export function drawnCellKeyFields(spec: NormalizedVizSpec, measureField: string, stacking: boolean): string[] {
   const fields: string[] = [];
+  // The measure CHANNEL (shared derivation) — the positional axis, if any, that draws the value.
+  const measureChannel = resolvePrimaryChannels(spec).measureChannel;
+  // Facet + series grouping fields exclude the measure by NAME (color-is-measure dedup — without it
+  // a plain heatmap shatters into per-raw-row cells).
   const add = (field: string | undefined) => {
     if (field && field !== measureField && !fields.includes(field)) {
       fields.push(field);
     }
   };
   for (const channel of POSITIONAL_CHANNELS) {
-    add(resolveBinding(spec, channel)?.field);
+    // A positional dimension axis always keys; the measure channel (a bar/area value axis) does not.
+    if (channel === measureChannel) {
+      continue;
+    }
+    const field = resolveBinding(spec, channel)?.field;
+    if (field && !fields.includes(field)) {
+      fields.push(field);
+    }
   }
   for (const field of facetFields(spec)) {
     add(field);
@@ -669,7 +690,11 @@ function resolveMark(spec: NormalizedVizSpec): ChartShape {
  * s149 F6d root cause; the s150 KEY LEARNING — "share the derivation, don't re-derive"). Cases:
  *  - real heatmap (heatmapColorIsMeasure): measure = COLOR, dimension = X (s150).
  *  - HORIZONTAL strip plot (MarkPoint, quantitative X + nominal Y): measure = X, dimension = Y.
- *  - everything else (bar/line/area, vertical strip, numeric-numeric scatter): measure = Y,
+ *  - HORIZONTAL AGGREGATED bar/area (s161 m3, Fork-2=A): mark ∈ {bar, area} with a declared
+ *    AGGREGATE on X and none on Y → measure = X, dimension = Y. A horizontal bar draws its value on
+ *    the X axis; the pre-s161 point-only horizontal arm left it on the Y default, so the narrative
+ *    labelled the category axis (year codes) as the measure and inverted High/Low + summed the codes.
+ *  - everything else (vertical bar/line/area, vertical strip, numeric-numeric scatter): measure = Y,
  *    dimension = X (the pre-existing default — behaviour-preserving).
  */
 export function resolvePrimaryChannels(spec: NormalizedVizSpec): {
@@ -680,11 +705,25 @@ export function resolvePrimaryChannels(spec: NormalizedVizSpec): {
   if (heatmapColorIsMeasure(spec)) {
     return { measureChannel: 'color', dimensionChannel: 'x', colorIsMeasure: true };
   }
+  const mark = resolveMark(spec);
   const horizontalStrip =
-    resolveMark(spec) === 'point' &&
+    mark === 'point' &&
     bindingIsQuantitative(resolveBinding(spec, 'x')) &&
     !bindingIsQuantitative(resolveBinding(spec, 'y'));
   if (horizontalStrip) {
+    return { measureChannel: 'x', dimensionChannel: 'y', colorIsMeasure: false };
+  }
+  // s161 m3: a horizontal AGGREGATED bar/area. Keyed on the DECLARED AGGREGATE ("aggregate is
+  // intent", s159), NOT on quantitativeness — bindingIsQuantitative is FALSE for an unstamped
+  // aggregated field (that path recurs the s159 unstamped-color bypass on X), and a quant-x rule
+  // would misfire a legit vertical bar (stamped-quant x dimension + unstamped aggregated y). A
+  // vertical bar carries its aggregate on Y, so the `x-aggregate ∧ ¬y-aggregate` guard never fires
+  // for it.
+  const horizontalAggregatedBar =
+    (mark === 'bar' || mark === 'area') &&
+    resolveBinding(spec, 'x')?.aggregate !== undefined &&
+    resolveBinding(spec, 'y')?.aggregate === undefined;
+  if (horizontalAggregatedBar) {
     return { measureChannel: 'x', dimensionChannel: 'y', colorIsMeasure: false };
   }
   return { measureChannel: 'y', dimensionChannel: 'x', colorIsMeasure: false };
@@ -1193,29 +1232,100 @@ function correlationPartitionFields(
 
 const signOf = (r: number): -1 | 0 | 1 => (r > 0 ? 1 : r < 0 ? -1 : 0);
 
+// s161 m2 — a per-group DIRECTION class. A DIRECTIONAL vote is a sign in {−1,0,+1} (0 = FLAT, a
+// genuine "no relationship"); UNKNOWN is a group that carries NO slope evidence (fewer than 2 finite
+// pairs, or a vertical line — zero x-variance). UNKNOWN groups are DROPPED from the evidence set; a
+// FLAT(0) group VOTES (it is real evidence that within that group nothing rises/falls).
+type GroupDirection = -1 | 0 | 1 | 'unknown';
+
 /**
- * s160 m3 — the SIGN-CONSISTENCY predicate (critic-corrected: the draft's "groups agree with each
- * other" wording NARRATED the CRIT phantom — all panels at r=−1 agree with each other while pooled
- * is +0.98; the gate compares the pooled sign against the groups' common sign). PINNED policies:
- * zero computable groups → VACUOUS-PASS (narrate pooled — keeps the all-small-groups corpus; a
- * DISCLOSED escape: an all-n<3 Simpson phantom passes); pooled sign 0 → narrate ("weak", harmless);
- * groups all flat (common sign 0) while pooled is directional → SUPPRESS (a between-group artifact:
- * every panel shows no relationship). pearson output is 3-decimal-rounded, so signs compare the
- * ROUNDED statistic the narrative would emit.
+ * s161 m2 (c1+c2 — the load-bearing fix; SSOT §2-m2): classify ONE group's within-group DIRECTION.
+ * This is NOT `pearson`: pearson's null contract collapses n<3 AND zero-variance into one "not
+ * computable" answer, so a small (n=2) but real slope carried NO vote (the B1 mixed-computability
+ * phantom) and a zero-variance FLAT group vacated instead of counting as flat (the all-flat phantom).
+ * The classifier splits those apart over the group's FINITE (dim, measure) pairs:
+ *  - the finite-filter + `n < 2` short-circuit run BEFORE any mean/covariance math, so signOf never
+ *    sees NaN (a NaN/Infinity/non-numeric measure cell is dropped → its group can only be UNKNOWN).
+ *  - `n < 2` → UNKNOWN (no slope).
+ *  - zero x-variance (`denomX === 0`, tested DIRECTLY before any covariance — catches a vertical line
+ *    including an n=2 same-x pair) → UNKNOWN (direction undefined).
+ *  - `n === 2` (with x-variance) → sign of the raw covariance == the 2-point SLOPE sign (pearson is
+ *    degenerate at n=2, but a 2-point slope carries the Simpson-relevant direction).
+ *  - `n >= 3` (with x-variance) → sign of the ROUNDED pearson; a group rounding to 0.000 → FLAT(0)
+ *    (magnitude-symmetric with the pooled side, which pearson also rounds). pearson returns null here
+ *    only when the Y axis has zero variance (a horizontal line) → also FLAT(0).
  */
-function pooledSignConsistentWithGroups(pooled: number, groupRs: readonly number[]): boolean {
-  if (groupRs.length === 0) {
-    return true; // vacuous-pass (pinned)
+function classifyGroupDirection(
+  rows: readonly Record<string, unknown>[],
+  xField: string,
+  yField: string
+): GroupDirection {
+  const xs: number[] = [];
+  const ys: number[] = [];
+  for (const row of rows) {
+    const x = toNumber(row[xField as keyof typeof row]);
+    const y = toNumber(row[yField as keyof typeof row]);
+    if (x === null || y === null) {
+      continue;
+    }
+    xs.push(x);
+    ys.push(y);
   }
-  const signs = new Set(groupRs.map(signOf));
-  if (signs.size > 1) {
-    return false; // the groups contradict EACH OTHER — no common sign to agree with
+  const n = xs.length;
+  if (n < 2) {
+    return 'unknown';
   }
+  const meanX = xs.reduce((sum, x) => sum + x, 0) / n;
+  let denomX = 0;
+  for (const x of xs) {
+    denomX += (x - meanX) * (x - meanX);
+  }
+  if (denomX === 0) {
+    return 'unknown'; // vertical line — no direction (incl. a same-x n=2 pair)
+  }
+  if (n === 2) {
+    const meanY = (ys[0] + ys[1]) / 2;
+    let cov = 0;
+    for (let i = 0; i < 2; i += 1) {
+      cov += (xs[i] - meanX) * (ys[i] - meanY);
+    }
+    return signOf(cov); // slope sign (cov sign == slope sign when x-variance ≠ 0)
+  }
+  const r = pearson(xs, ys);
+  return r === null ? 0 : signOf(r); // null with x-variance ≠ 0 ⇒ zero Y-variance ⇒ FLAT
+}
+
+/**
+ * s161 m2 — the CONTRADICTION-FIRST narratability predicate (SSOT §2-m2; the ORDER is load-bearing,
+ * §1a). A narrated pooled correlation must not contradict the per-group DIRECTION evidence.
+ *  (1) evidence = the signs of all non-UNKNOWN groups. EMPTY (every group n<2 or vertical) → NARRATE
+ *      (the pinned vacuous-pass — keeps bubble/no-partition distributions; the disclosed
+ *      all-unknown escape narrows to exactly this).
+ *  (2) evidence spans MORE THAN ONE sign → SUPPRESS. Contradiction FIRST (before any pooled-sign
+ *      branch) so a Simpson sign-cancellation whose pooled rounds to 0/−0 cannot slip through as a
+ *      "weak" narration (the §1a regression the critic caught). Kills B1 {+1,−1}, opposing-pooled-0
+ *      {+1,−1}, and keeps P4 {0,+1} suppressed — one edit, no new disclosure.
+ *  (3) a single common sign `s`:
+ *      - s === 0 (all groups FLAT): a directional pooled r is a pure between-group artifact →
+ *        SUPPRESS unless the pooled also rounds to 0 (kills the all-flat 0.95 CORR-EDGE-2).
+ *      - s ≠ 0: the pooled agrees (or is itself 0) → NARRATE; a pooled of the OPPOSITE sign is a
+ *        Simpson reversal → SUPPRESS (kills F-SIMPSON).
+ * pooled is already the 3-decimal-rounded statistic the narrative emits (pearson rounds it).
+ */
+function narratableCorrelation(pooled: number, classes: readonly GroupDirection[]): boolean {
+  const evidence = classes.filter((c): c is -1 | 0 | 1 => c !== 'unknown');
+  if (evidence.length === 0) {
+    return true; // vacuous-pass (pinned): no directional evidence to contradict
+  }
+  if (new Set(evidence).size > 1) {
+    return false; // groups disagree — SUPPRESS (contradiction-first)
+  }
+  const s = evidence[0];
   const pooledSign = signOf(pooled);
-  if (pooledSign === 0) {
-    return true; // sign-neutral (pinned): a "weak" narration cannot claim a phantom direction
+  if (s === 0) {
+    return pooledSign === 0; // all-flat groups: only a flat pooled may narrate
   }
-  return pooledSign === [...signs][0];
+  return pooledSign === 0 || pooledSign === s; // Simpson-reversal guard
 }
 
 /**
@@ -1253,14 +1363,13 @@ function deriveCorrelation(
       groups.set(key, [row]);
     }
   }
-  const groupRs: number[] = [];
+  // s161 m2: classify each group's DIRECTION (UNKNOWN / FLAT / ±1) rather than dropping n<3 and
+  // zero-variance groups before the sign check. The contradiction-first predicate then decides.
+  const classes: GroupDirection[] = [];
   for (const groupRows of groups.values()) {
-    const r = pearsonOverRows(groupRows, bindings.dimensionField, bindings.measureField);
-    if (r !== null) {
-      groupRs.push(r);
-    }
+    classes.push(classifyGroupDirection(groupRows, bindings.dimensionField, bindings.measureField));
   }
-  return pooledSignConsistentWithGroups(pooled, groupRs) ? pooled : undefined;
+  return narratableCorrelation(pooled, classes) ? pooled : undefined;
 }
 
 /**

@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 // this is the "no public export; harness imports the module by relative path" resolution of the s158
 // findNonDrawnNarrativeValues deviation.
 import {
+  aggregateMarkRectCells,
   drawnCellKeyFields,
   enforceDrawnValueInvariant,
   findNonDrawnNarrativeValues,
@@ -313,5 +314,85 @@ describe('s160 m2 — spine-blind probes on drawnCellKeyFields', () => {
 
   it('the spine is NOT a public export (same posture as the guard fns)', () => {
     expect((VizCorePublic as Record<string, unknown>).drawnCellKeyFields).toBeUndefined();
+  });
+});
+
+// ============================================================================
+// Sprint-161 m1 — c5: the POSITIONAL field is NEVER excluded from the drawn-cell key (§2-m1). The
+// ONLY true s160 regression: drawnCellKeyFields applied `field !== measureField` inside the
+// POSITIONAL loop, so a `color={field:x.field, aggregate:'count'}` heatmap (measureField===x.field,
+// but the measure lives on COLOR not x) dropped the drawn x axis and cells MERGED across x. The fix
+// excludes a positional channel only when it IS the measure channel (bar/area value axis), not by
+// field-name. RED-first repro: cmos/review-artifacts/s160-review/repro_measure_positional_collision.mjs.
+// MUTATION gate (seed site = drawnCellKeyFields positional loop): revert the positional loop to the
+// old field-name exclusion (`if (field === measureField) continue`) and the collision test below
+// goes RED (1 merged cell), while the LOCKS stay GREEN (plain heatmap / stacked bar unchanged — the
+// measure is on COLOR / on the y measure-channel there, so the channel-skip is byte-identical).
+// ============================================================================
+describe('s161 m1 — positional field never excluded from the drawn-cell key (the s160 regression)', () => {
+  // The degenerate collision: count(*) per (hour, day) with color bound to the x field.
+  function countPerHourDay(): NormalizedVizSpec {
+    const encoding = {
+      x: { field: 'hour', trait: 'EncodingX', scale: 'band' },
+      y: { field: 'day', trait: 'EncodingY', scale: 'band' },
+      color: { field: 'hour', trait: 'EncodingColor', aggregate: 'count' },
+    };
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'collision',
+      name: 'count-of-x heatmap',
+      data: {
+        name: 'c',
+        values: [
+          { hour: '9', day: 'Mon' },
+          { hour: '9', day: 'Mon' },
+          { hour: '10', day: 'Mon' },
+        ],
+      },
+      marks: [{ trait: 'MarkRect', encodings: { ...encoding } }],
+      encoding,
+      a11y: { description: 'counts' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  // A plain aggregated heatmap: x/y are dimensions, color IS the measure (distinct from both axes).
+  function plainHeatmap(): NormalizedVizSpec {
+    const encoding = {
+      x: { field: 'region', trait: 'EncodingX', scale: 'band' },
+      y: { field: 'hour', trait: 'EncodingY', scale: 'band' },
+      color: { field: 'temp', trait: 'EncodingColor', aggregate: 'sum' },
+    };
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'plain',
+      name: 'plain heatmap',
+      data: { name: 'p', values: [{ region: 'N', hour: '9', temp: 5 }] },
+      marks: [{ trait: 'MarkRect', encodings: { ...encoding } }],
+      encoding,
+      a11y: { description: 'temp by region/hour' },
+    } as unknown as NormalizedVizSpec;
+  }
+
+  it('the colliding positional field STAYS in the key — measureField===x.field must not drop x (mutation seed site)', () => {
+    // measureField = 'hour' (color is bound to the x field). Positional x='hour' is a DRAWN axis and
+    // must key. Re-adding `field !== measureField` to the positional loop drops it → RED.
+    expect(drawnCellKeyFields(countPerHourDay(), 'hour', false)).toEqual(['hour', 'day']);
+  });
+
+  it('aggregateMarkRectCells emits TWO cells (hand oracle (9,Mon)=2 / (10,Mon)=1), byte-identical to pre-s160 0b2da4d', () => {
+    const cells = aggregateMarkRectCells(countPerHourDay());
+    // Two drawn cells; the count overwrites the colliding `hour` field (color.field==='hour') — the
+    // exact pre-s160 x-overwrite output {2,1}, NOT one pooled cell {3}.
+    expect(cells).toEqual([
+      { hour: 2, day: 'Mon' },
+      { hour: 1, day: 'Mon' },
+    ]);
+  });
+
+  it('LOCK — a plain heatmap (x,y dims, color=measure) still emits [x,y] with the measure ABSENT (unchanged)', () => {
+    // The series-loop exclusion still fires: the measure ('temp') never keys, so the plain heatmap
+    // spine is byte-identical to HEAD (the fix is a no-op unless a positional field IS the measure).
+    expect(drawnCellKeyFields(plainHeatmap(), 'temp', false)).toEqual(['region', 'hour']);
+    expect(aggregateMarkRectCells(plainHeatmap())).toEqual([{ region: 'N', hour: '9', temp: 5 }]);
   });
 });

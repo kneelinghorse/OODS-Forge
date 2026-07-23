@@ -89,6 +89,10 @@ export type NarratedValueKind =
   | 'row-count'
   | 'governed-threshold'
   | 'governed-target'
+  // Author-governed context STRINGS (a unit/format descriptor like "1000 USD") whose digits are not
+  // data-derived narrated values — tagged so the provenance sweep accounts for them (s161 m4 §1.9).
+  | 'governed-unit'
+  | 'governed-format'
   | 'kpi-count'
   | 'kpi-breach-count'
   | 'kpi-anomaly-count'
@@ -114,6 +118,8 @@ export const NARRATED_VALUE_CLASSIFICATION: Record<NarratedValueKind, 'guard-che
   'row-count': 'disclosed',
   'governed-threshold': 'disclosed',
   'governed-target': 'disclosed',
+  'governed-unit': 'disclosed',
+  'governed-format': 'disclosed',
   'kpi-count': 'disclosed',
   'kpi-breach-count': 'disclosed',
   'kpi-anomaly-count': 'disclosed',
