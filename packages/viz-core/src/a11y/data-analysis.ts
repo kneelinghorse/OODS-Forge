@@ -1396,6 +1396,226 @@ function narratableCorrelation(pooled: number, classes: readonly GroupDirection[
   return pooledSign === 0 || pooledSign === s; // Simpson-reversal guard
 }
 
+// s164 m1 (§10, §5 rule 14 — the DIMENSIONLESS opposition floor, LOCKED ρ=0.5). An n>=3 drawn
+// sub-series counts as DIRECTIONAL only when its OWN |pearson| >= ρ — a scale-invariant signal (unlike
+// the v2 magnitude/Δ proxy the between-group separation could inflate without bound). An n=2 sub-series
+// votes its slope UNCONDITIONALLY (|r|=1 is degenerate at two points). ρ is a two-sided separator: a
+// visible cliff/stepped opposing band (|r|~0.65) suppresses; a scattered opposing band (|r|~0.3)
+// narrates (the disclosed bounded n>=3 [0,ρ) gray-zone, §4 residual-1).
+const CORRELATION_OPPOSITION_RHO = 0.5;
+
+// s164 m1 (§10): every subset of the grouping fields, for the full-lattice COLLECT-EVERY scan. |k|<=4
+// in practice (size/shape/detail/second-positional), so 2^k is small.
+function subsetsOf<T>(items: readonly T[]): T[][] {
+  const out: T[][] = [[]];
+  for (const item of items) {
+    const len = out.length;
+    for (let i = 0; i < len; i += 1) {
+      out.push([...out[i], item]);
+    }
+  }
+  return out;
+}
+
+/**
+ * s164 m1 (§10 (G1) — the dimensionless direction vote for ONE drawn sub-series). Same finite-filter +
+ * n<2 / zero-x-variance -> 'unknown' + n=2 covariance-slope contract as `classifyGroupDirection` (which
+ * G0 keeps UNGATED — the byte-identical s163 path), but the n>=3 vote is gated on |pearson| >= ρ so a
+ * scattered opposing band below the floor reads as FLAT(0), not a real opposite. `pearson` is already the
+ * 3-decimal-rounded statistic the narrative emits, so the sign and the magnitude read the SAME r.
+ */
+function classifyDrawnSeriesDirection(xs: readonly number[], ys: readonly number[]): GroupDirection {
+  const n = xs.length;
+  if (n < 2) {
+    return 'unknown';
+  }
+  const meanX = xs.reduce((sum, x) => sum + x, 0) / n;
+  let denomX = 0;
+  for (const x of xs) {
+    denomX += (x - meanX) * (x - meanX);
+  }
+  if (denomX === 0) {
+    return 'unknown'; // vertical line — no direction
+  }
+  if (n === 2) {
+    const meanY = (ys[0] + ys[1]) / 2;
+    let cov = 0;
+    for (let i = 0; i < 2; i += 1) {
+      cov += (xs[i] - meanX) * (ys[i] - meanY);
+    }
+    return signOf(cov); // n=2 votes its slope unconditionally (no ρ gate)
+  }
+  const r = pearson(xs, ys);
+  if (r === null) {
+    return 0; // n>=3 with x-variance ⇒ zero Y-variance ⇒ FLAT
+  }
+  return Math.abs(r) >= CORRELATION_OPPOSITION_RHO ? signOf(r) : 0; // dimensionless ρ gate (n>=3 only)
+}
+
+/**
+ * s164 m1 (§10): the DRAWN sub-series at grouping granularity `keyFields` inside a partition group.
+ * Under a declared aggregate the marks are the per-(dimension ∪ keyFields) reduced cells — but
+ * `projectAggregatedRows` strips the key from its output, so re-derive the sub key here and bucket the
+ * cells by it; without a declared aggregate the marks are the raw rows keyed the same way. Returns one
+ * (xs, ys) series per distinct keyFields value.
+ */
+function drawnSubSeries(
+  rows: readonly Record<string, unknown>[],
+  dimensionField: string,
+  measureField: string,
+  keyFields: readonly string[],
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined
+): { xs: number[]; ys: number[] }[] {
+  const bySub = new Map<string, { xs: number[]; ys: number[] }>();
+  const push = (sub: string, x: number, y: number) => {
+    let series = bySub.get(sub);
+    if (!series) {
+      series = { xs: [], ys: [] };
+      bySub.set(sub, series);
+    }
+    series.xs.push(x);
+    series.ys.push(y);
+  };
+  if (declaredAggregate) {
+    const cells = new Map<string, { sub: string; dim: unknown; values: unknown[] }>();
+    for (const row of rows) {
+      const key = keyFor(row, [dimensionField, ...keyFields]);
+      let cell = cells.get(key);
+      if (!cell) {
+        cell = { sub: keyFor(row, keyFields), dim: row[dimensionField as keyof typeof row], values: [] };
+        cells.set(key, cell);
+      }
+      cell.values.push(row[measureField as keyof typeof row]);
+    }
+    for (const cell of cells.values()) {
+      const reduced = reduceAggregate(cell.values, declaredAggregate);
+      const x = toNumber(cell.dim);
+      if (reduced === undefined || x === null) {
+        continue;
+      }
+      push(cell.sub, x, reduced);
+    }
+  } else {
+    for (const row of rows) {
+      const x = toNumber(row[dimensionField as keyof typeof row]);
+      const y = toNumber(row[measureField as keyof typeof row]);
+      if (x === null || y === null) {
+        continue;
+      }
+      push(keyFor(row, keyFields), x, y);
+    }
+  }
+  return [...bySub.values()];
+}
+
+// s164 m1 (§10 (G1)): the collected evidence — non-flat sub-series votes E, plus the flags the
+// contradiction-first decision reads. Captured off the runtime so the drift assert can inspect it.
+type CorrelationOppositionEvidence = {
+  votes: (-1 | 1)[];
+  anyVotable: boolean;
+  sharesPooled: boolean;
+  pooledSign: -1 | 0 | 1;
+  suppresses: boolean;
+};
+
+/**
+ * s164 m1 (§10 (G1) — DIMENSIONLESS "any real opposite", contradiction-first, full-lattice
+ * COLLECT-EVERY; SSOT §10, §5 rule 14). The s163 gate POOLED each partition group's grouping axis into
+ * ONE direction (`classifyGroupDirection` over the whole re-projected cell set), so a Simpson on a
+ * QUANTITATIVE grouping axis — size / color-ramp / detail — narrated positive over drawn sub-series that
+ * fall (the s163 review's CRIT survivor). This DECOMPOSES it: for every subset S of `groupingFields`, key
+ * each partition group's drawn marks by (P ∪ S) and collect the vote of EVERY (P ∪ S)-keyed sub-series
+ * with n>=2 distinct x — union over ALL P and ALL S, NO coarser-ancestor skip (a coarser falling band
+ * whose finer slices rise is exactly the nested-Simpson the coarsest-S reading misses).
+ *  - Opposition is DIMENSIONLESS (`classifyDrawnSeriesDirection`): n>=3 votes only if |pearson| >= ρ.
+ *  - MANUFACTURED-VOTE GUARD: the S=∅ whole-group over-x aggregate casts a between-band-offset vote ONLY
+ *    when the group has NO votable finer band (|S|>=1) — else its "trend" is a pure between-band artifact,
+ *    not a drawn sub-series (a continuous ramp, whose finer bands all shred to n=1, keeps its S=∅ vote and
+ *    narrates via the no-opposition path; §4 residual-2).
+ *  - Contradiction-first: SUPPRESS if the non-flat votes E span >1 sign, OR any equals −pooledSign, OR
+ *    (pooledSign≠0 AND no admitted band genuinely shares pooledSign — the all-flat-offset / disjoint-x
+ *    artifact, generalized from the dead "Set(E)={0}" clause).
+ * NO-OP (suppresses=false) when `groupingFields=[]` — the no-grouping decision defers to the unchanged G0
+ * (byte-identical to s163). FALLBACK to narrate only when NO sub-series is votable (<2-distinct-x
+ * everywhere). Runs on the RAW rows (they carry the facet/series fields the value projection drops).
+ */
+function correlationOppositionEvidenceOf(
+  rawRows: readonly Record<string, unknown>[],
+  dimensionField: string,
+  measureField: string,
+  partitionFields: readonly string[],
+  groupingFields: readonly string[],
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined,
+  pooled: number
+): CorrelationOppositionEvidence {
+  const pooledSign = signOf(pooled);
+  const votes: (-1 | 1)[] = [];
+  let anyVotable = false;
+  let sharesPooled = false;
+  if (groupingFields.length === 0) {
+    return { votes, anyVotable, sharesPooled, pooledSign, suppresses: false }; // no-op → defer to G0
+  }
+  const record = (dir: GroupDirection) => {
+    if (dir === 'unknown') {
+      return;
+    }
+    anyVotable = true;
+    if (dir !== 0) {
+      votes.push(dir);
+    }
+    if (dir !== 0 && dir === pooledSign) {
+      sharesPooled = true;
+    }
+  };
+  const subsets = subsetsOf(groupingFields);
+  // partition the RAW rows (whole chart is one group when partitionFields=[])
+  const partitionGroups = new Map<string, Record<string, unknown>[]>();
+  for (const row of rawRows) {
+    const key = partitionFields.length === 0 ? '*' : keyFor(row, partitionFields);
+    const group = partitionGroups.get(key);
+    if (group) {
+      group.push(row);
+    } else {
+      partitionGroups.set(key, [row]);
+    }
+  }
+  for (const groupRows of partitionGroups.values()) {
+    let hasVotableFineBand = false;
+    let emptyVote: GroupDirection | null = null;
+    for (const subset of subsets) {
+      for (const series of drawnSubSeries(groupRows, dimensionField, measureField, subset, declaredAggregate)) {
+        if (new Set(series.xs).size < 2) {
+          continue; // n<2 distinct x → not votable
+        }
+        const dir = classifyDrawnSeriesDirection(series.xs, series.ys);
+        if (dir === 'unknown') {
+          continue;
+        }
+        if (subset.length === 0) {
+          emptyVote = dir; // defer S=∅ (manufactured-vote guard)
+          continue;
+        }
+        hasVotableFineBand = true;
+        record(dir);
+      }
+    }
+    if (!hasVotableFineBand && emptyVote !== null) {
+      record(emptyVote);
+    }
+  }
+  let suppresses: boolean;
+  if (!anyVotable) {
+    suppresses = false; // FALLBACK: <2-distinct-x everywhere → narrate (defer to G0)
+  } else if (new Set(votes).size > 1) {
+    suppresses = true; // (a) drawn sub-series disagree
+  } else if (votes.some((v) => v === -pooledSign)) {
+    suppresses = true; // (b) a real opposite
+  } else {
+    suppresses = pooledSign !== 0 && !sharesPooled; // (c) no drawn band shows the pooled trend
+  }
+  return { votes, anyVotable, sharesPooled, pooledSign, suppresses };
+}
+
 /**
  * s160 m3: the narrated correlation. VALUE = pooled Pearson over `valueRows` — the rows whose pairs
  * the chart DRAWS (under a declared aggregate the call site passes the projected per-cell rows, the
@@ -1422,9 +1642,6 @@ function deriveCorrelation(
     return undefined;
   }
   const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
-  if (partitionFields.length === 0) {
-    return pooled; // one (facet × series) group — the pooled r IS the group r
-  }
   // s162 m1: classify each group's DIRECTION over the DRAWN cells the viewer sees (each raw partition
   // group re-projected to its cells under the declared aggregate) — NOT the count-weighted raw rows —
   // closing the raw-vs-drawn asymmetry that let a declared-aggregate Simpson sign-phantom through (S1).
@@ -1439,6 +1656,18 @@ function deriveCorrelation(
     partitionFields,
     declaredAggregate
   );
+  // s164 m1 (§10): pooled narrates ONLY when there is neither a categorical partition NOR a grouping axis
+  // (one facet×series group — the pooled r IS the group r). A grouping axis with NO categorical partition
+  // (size-only Simpson) NO LONGER early-returns — G1 below decomposes it (defect 5).
+  if (partitionFields.length === 0 && groupingFields.length === 0) {
+    return pooled;
+  }
+  // s164 m1 (§10): SUPPRESS iff EITHER gate suppresses (narrate iff BOTH narrate). (G0) the UNCHANGED
+  // s163 per-partition-group direction gate — catches between-partition Simpsons and keeps the s162
+  // stacking + defect-4 continuous-size suppression. (G1) the new DIMENSIONLESS full-lattice decomposition
+  // — catches the within-partition Simpson on a QUANTITATIVE grouping axis the pooled G0 direction masked
+  // (the s163 CRIT survivor). G1 no-ops when groupingFields=[], so the no-grouping decision is byte-
+  // identical to s163.
   const classes = classifyCorrelationGroups(
     rawRows,
     bindings.dimensionField,
@@ -1447,7 +1676,17 @@ function deriveCorrelation(
     groupingFields,
     declaredAggregate
   );
-  return narratableCorrelation(pooled, classes) ? pooled : undefined;
+  const g0Narrates = narratableCorrelation(pooled, classes);
+  const g1Suppresses = correlationOppositionEvidenceOf(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    groupingFields,
+    declaredAggregate,
+    pooled
+  ).suppresses;
+  return g0Narrates && !g1Suppresses ? pooled : undefined;
 }
 
 /**
@@ -1560,6 +1799,64 @@ export function correlationClassifierActualKey(spec: NormalizedVizSpec): {
     declaredAggregate
   );
   return { partitionFields, groupingFields };
+}
+
+/**
+ * s164 m1 (§2-m1, §3 — the G1 drift-assert capture surface): the DIMENSIONLESS opposition evidence the
+ * runtime `deriveCorrelation` feeds its G1 gate, recomputed from the spec alone via the SAME
+ * `correlationOppositionEvidenceOf` (SINGLE SOURCE — reverting the runtime G1, or restricting the scan to
+ * the coarsest votable S, moves this too, so the drift assert is non-vacuous). The proof spec cross-checks
+ * `suppresses` against an INDEPENDENT test-side full-lattice oracle keyed off `narratedValueCellKey`
+ * DIRECTLY — a path this classifier surface does NOT share (§3 charter-diff pin: the oracle imports
+ * neither `classifyCorrelationGroups`, `correlationGroupingFields`, nor `correlationClassifierActualKey`).
+ * Returns the no-op evidence (empty, suppresses=false) when the pooled r is not computable or there is no
+ * grouping axis. Module export for the proof spec (relative path), OFF the a11y allow-list barrel — not
+ * public API.
+ */
+export function correlationOppositionEvidence(spec: NormalizedVizSpec): CorrelationOppositionEvidence {
+  const bindings = resolvePrimaryBindings(spec);
+  const empty: CorrelationOppositionEvidence = {
+    votes: [],
+    anyVotable: false,
+    sharesPooled: false,
+    pooledSign: 0,
+    suppresses: false,
+  };
+  if (!bindings.dimensionField || !bindings.measureField) {
+    return empty;
+  }
+  const rawRows = collectRows(spec);
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  const valueRows = declaredAggregate
+    ? projectAggregatedRows(
+        rawRows,
+        bindings.dimensionField,
+        bindings.measureField,
+        declaredAggregate,
+        narratedValueCellKey(spec),
+      )
+    : rawRows;
+  const pooled = pearsonOverRows(valueRows, bindings.dimensionField, bindings.measureField);
+  if (pooled === null) {
+    return empty;
+  }
+  const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
+  const groupingFields = correlationGroupingFields(
+    spec,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    declaredAggregate
+  );
+  return correlationOppositionEvidenceOf(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    groupingFields,
+    declaredAggregate,
+    pooled
+  );
 }
 
 /**
