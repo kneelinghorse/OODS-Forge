@@ -319,6 +319,13 @@ describe('s164 m1 — the SUT G1 evidence carries the opposing drawn sub-series 
 //     NO classifier-path import. Detects the DIRECT rule-14 property (a real dimensionless opposite among
 //     the value-keyed drawn sub-series) and ties the SUT decision to it. Reverting the runtime G1 leaves
 //     THIS oracle finding the opposite while the SUT stops suppressing → the two operands diverge.
+//
+//     s165 m4 CLAIM RE-SCOPE: this oracle covers the VALUE-KEY AXIS ONLY. `narratedValueCellKey` is derived
+//     from `drawnCellKeyFields`, which mark-gates `shape`, drops the series fields under stacking, and reads
+//     bindings via `resolveBinding` (layer 0 only) — so it is structurally blind to all four s165 survivors.
+//     It never was, and is not, evidence that the sub-series ENUMERATION is complete; that is precisely the
+//     gap the s164 genuine-close review found. The separability axis is carried by a SECOND decision oracle
+//     in correlation-claim-scope-s165.spec.ts, keyed off `separableFields`.
 // ─────────────────────────────────────────────────────────────────────────────
 const RHO = 0.5;
 const signOf = (r: number): -1 | 0 | 1 => (r > 0 ? 1 : r < 0 ? -1 : 0);
