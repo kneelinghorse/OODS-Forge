@@ -1298,6 +1298,120 @@ function correlationGroupingFields(
   );
 }
 
+/**
+ * s165 m1 (§3.1 A5): every DISTINCT binding a channel carries across the WHOLE spec — the top-level
+ * `spec.encoding` PLUS every `spec.marks[i].encodings` — deduped by field, first-appearance order.
+ * This mirrors the cartesian adapter's per-layer merge (`toVegaLiteSpec` compiles ONE LAYER PER MARK
+ * and merges the top-level encoding into each), which `resolveBinding` does NOT: it returns the FIRST
+ * mark carrying the channel and stops. That short-circuit is survivor D's exact mechanism — a
+ * `[MarkLine{color:seg}, MarkPoint{color:grp}]` spec draws BOTH color fields (verified: compiled layer
+ * colors `["seg","grp"]`) while every s164 gate saw only `seg`. MODULE-LOCAL.
+ */
+function bindingsUnion(
+  spec: NormalizedVizSpec,
+  channel: keyof NormalizedVizSpec['encoding']
+): TraitBinding[] {
+  const bindings: TraitBinding[] = [];
+  const seen = new Set<string>();
+  const add = (binding: TraitBinding | undefined) => {
+    if (!binding?.field || seen.has(binding.field)) {
+      return;
+    }
+    seen.add(binding.field);
+    bindings.push(binding);
+  };
+  add(spec.encoding?.[channel]);
+  for (const mark of spec.marks) {
+    add(mark.encodings?.[channel]);
+  }
+  return bindings;
+}
+
+/**
+ * s165 m1 (§3.1, §5 RULE 15 — the fail-safe SUPERSET; the CORRELATION gate only). Every field that
+ * COULD split the drawn marks into a visually separable sub-series. Derived so the enumeration can only
+ * be a SUPERSET of render truth: an over-inclusion silences an honest coefficient (disclosed, §6.1),
+ * an under-inclusion ships a phantom. Every s159→s164 error fell toward NARRATION; this inverts the
+ * direction of error for the FIELD DERIVATION — rule 15's entire scope. (The decision-level direction of
+ * error is NOT asserted here; it is machine-proven by the m2 monotonicity oracle.)
+ *
+ * FOUR deliberate departures from the s164 derivations, one per confirmed survivor of the s164
+ * genuine-close review (PS-2026-07-24-002):
+ *  - PER-LAYER UNION (`bindingsUnion`, NEVER `resolveBinding`) — survivor D, above.
+ *  - `shape` is UNCONDITIONALLY separable, with NO mark gate. `markSplitsByRetina(resolveMark(spec))`
+ *    is FALSE for any 2-distinct-mark spec (`resolveMark` collapses it to `'mixed'`), which dropped
+ *    shape from BOTH s164 gates and narrated 0.79 over two shape bands at pearson −1.0 (survivor A).
+ *    Any mark-shaped predicate here re-opens that class — including the rejected
+ *    `knownNormalizedMarks.some(markSplitsByRetina)` draft, which is false for exactly the 'unknown'
+ *    marks it was meant to admit.
+ *  - `color` keys even when QUANTITATIVE. A color RAMP is visually separable (distinct fills + a
+ *    legend); `correlationPartitionFields`' quantitative skip is a partition-ARITY concern (it would
+ *    shred every group to n=1), which is a different question from separability (survivor B).
+ *  - STACKING DROPS NOTHING. `drawnCellKeyFields` drops the series fields under a stack total because
+ *    the narrated VALUE pools them into the stack height; the segments are still DRAWN, so they can
+ *    still contradict (survivor B).
+ * `size`/`detail` always key — `detail` over-suppresses on the ECharts adapter, which routes it to
+ * tooltip only (an error toward SILENCE, §6.6 renderer divergence). Facet rows/columns always key
+ * (panels). A positional axis keys only as a SECOND dimension: never the measure CHANNEL, and never the
+ * primary dimension or measure FIELD — those are the correlation's own axes. Deterministic
+ * first-appearance order (positional → facet → retinal) so the m3 subset cap is argued, not incidental.
+ * Module export for the proof specs + the §4 compiled-superset oracle (relative path), OFF the a11y
+ * allow-list barrel — not public API.
+ */
+export function separableFields(
+  spec: NormalizedVizSpec,
+  dimensionField: string,
+  measureField: string
+): string[] {
+  const fields: string[] = [];
+  const measureChannel = resolvePrimaryChannels(spec).measureChannel;
+  const add = (field: string | undefined) => {
+    if (field && field !== dimensionField && field !== measureField && !fields.includes(field)) {
+      fields.push(field);
+    }
+  };
+  for (const channel of POSITIONAL_CHANNELS) {
+    // The value axis is not a separator; a SECOND positional dimension (a heatmap y) is.
+    if (channel === measureChannel) {
+      continue;
+    }
+    for (const binding of bindingsUnion(spec, channel)) {
+      add(binding.field);
+    }
+  }
+  for (const field of facetFields(spec)) {
+    add(field);
+  }
+  // color / size / shape / detail — every one, unconditionally: no quantitativeness filter, no mark
+  // gate, no stacking drop. The channel ENUMERATION is still the s158 m1 role table, so a 9th encoding
+  // channel is a compile error there before it can be missed here.
+  for (const channel of RETINAL_GROUPING_CHANNELS) {
+    for (const binding of bindingsUnion(spec, channel)) {
+      add(binding.field);
+    }
+  }
+  return fields;
+}
+
+/**
+ * s165 m1 (§3.5 — Derek-ratified fork F2: stay SILENT on a layered spec whose drawn marks the row walk
+ * structurally cannot model). Two cases, neither reachable by ANY field-list derivation:
+ *  - a mark carrying its own `from` dataset: `collectRows` (:838) reads `spec.data.values` ONLY, so
+ *    that layer's marks are drawn from rows the analysis never sees. The missing rows cannot be
+ *    enumerated, so no separable-field superset can cover them.
+ *  - marks binding MORE THAN ONE distinct measure field: the "pooled r over (dimension, measure)" the
+ *    narrative emits is then not a statistic of any single drawn series — a second layer draws a
+ *    different measure on the same axis.
+ * Both SUPPRESS the correlation. No exception is carved into the §7 closeout claim.
+ * Module export for the proof spec (relative path), OFF the a11y allow-list barrel — not public API.
+ */
+export function layeredCorrelationUnsupported(spec: NormalizedVizSpec): boolean {
+  if (spec.marks.some((mark) => mark.from !== undefined)) {
+    return true;
+  }
+  return bindingsUnion(spec, resolvePrimaryChannels(spec).measureChannel).length > 1;
+}
+
 const signOf = (r: number): -1 | 0 | 1 => (r > 0 ? 1 : r < 0 ? -1 : 0);
 
 // s161 m2 — a per-group DIRECTION class. A DIRECTIONAL vote is a sign in {−1,0,+1} (0 = FLAT, a
@@ -1396,6 +1510,440 @@ function narratableCorrelation(pooled: number, classes: readonly GroupDirection[
   return pooledSign === 0 || pooledSign === s; // Simpson-reversal guard
 }
 
+// s164 m1 (§10, §5 rule 14 — the DIMENSIONLESS opposition floor, LOCKED ρ=0.5). An n>=3 drawn
+// sub-series counts as DIRECTIONAL only when its OWN |pearson| >= ρ — a scale-invariant signal (unlike
+// the v2 magnitude/Δ proxy the between-group separation could inflate without bound). An n=2 sub-series
+// votes its slope UNCONDITIONALLY (|r|=1 is degenerate at two points). ρ is a two-sided separator: a
+// visible cliff/stepped opposing band (|r|~0.65) suppresses; a scattered opposing band (|r|~0.3)
+// narrates (the disclosed bounded n>=3 [0,ρ) gray-zone, §4 residual-1).
+const CORRELATION_OPPOSITION_RHO = 0.5;
+
+// s164 m1 (§10): every subset of the grouping fields, for the full-lattice COLLECT-EVERY scan. |k|<=4
+// in practice (size/shape/detail/second-positional), so 2^k is small.
+function subsetsOf<T>(items: readonly T[]): T[][] {
+  const out: T[][] = [[]];
+  for (const item of items) {
+    const len = out.length;
+    for (let i = 0; i < len; i += 1) {
+      out.push([...out[i], item]);
+    }
+  }
+  return out;
+}
+
+/**
+ * s164 m1 (§10 (G1) — the dimensionless direction vote for ONE drawn sub-series). Same finite-filter +
+ * n<2 / zero-x-variance -> 'unknown' + n=2 covariance-slope contract as `classifyGroupDirection` (which
+ * G0 keeps UNGATED — the byte-identical s163 path), but the n>=3 vote is gated on |pearson| >= ρ so a
+ * scattered opposing band below the floor reads as FLAT(0), not a real opposite. `pearson` is already the
+ * 3-decimal-rounded statistic the narrative emits, so the sign and the magnitude read the SAME r.
+ */
+function classifyDrawnSeriesDirection(xs: readonly number[], ys: readonly number[]): GroupDirection {
+  const n = xs.length;
+  if (n < 2) {
+    return 'unknown';
+  }
+  const meanX = xs.reduce((sum, x) => sum + x, 0) / n;
+  let denomX = 0;
+  for (const x of xs) {
+    denomX += (x - meanX) * (x - meanX);
+  }
+  if (denomX === 0) {
+    return 'unknown'; // vertical line — no direction
+  }
+  if (n === 2) {
+    const meanY = (ys[0] + ys[1]) / 2;
+    let cov = 0;
+    for (let i = 0; i < 2; i += 1) {
+      cov += (xs[i] - meanX) * (ys[i] - meanY);
+    }
+    return signOf(cov); // n=2 votes its slope unconditionally (no ρ gate)
+  }
+  const r = pearson(xs, ys);
+  if (r === null) {
+    return 0; // n>=3 with x-variance ⇒ zero Y-variance ⇒ FLAT
+  }
+  return Math.abs(r) >= CORRELATION_OPPOSITION_RHO ? signOf(r) : 0; // dimensionless ρ gate (n>=3 only)
+}
+
+/**
+ * s164 m1 (§10): the DRAWN sub-series at grouping granularity `keyFields` inside a partition group.
+ * Under a declared aggregate the marks are the per-(dimension ∪ keyFields) reduced cells — but
+ * `projectAggregatedRows` strips the key from its output, so re-derive the sub key here and bucket the
+ * cells by it; without a declared aggregate the marks are the raw rows keyed the same way. Returns one
+ * (xs, ys) series per distinct keyFields value.
+ */
+function drawnSubSeries(
+  rows: readonly Record<string, unknown>[],
+  dimensionField: string,
+  measureField: string,
+  keyFields: readonly string[],
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined
+): { xs: number[]; ys: number[] }[] {
+  const bySub = new Map<string, { xs: number[]; ys: number[] }>();
+  const push = (sub: string, x: number, y: number) => {
+    let series = bySub.get(sub);
+    if (!series) {
+      series = { xs: [], ys: [] };
+      bySub.set(sub, series);
+    }
+    series.xs.push(x);
+    series.ys.push(y);
+  };
+  if (declaredAggregate) {
+    const cells = new Map<string, { sub: string; dim: unknown; values: unknown[] }>();
+    for (const row of rows) {
+      const key = keyFor(row, [dimensionField, ...keyFields]);
+      let cell = cells.get(key);
+      if (!cell) {
+        cell = { sub: keyFor(row, keyFields), dim: row[dimensionField as keyof typeof row], values: [] };
+        cells.set(key, cell);
+      }
+      cell.values.push(row[measureField as keyof typeof row]);
+    }
+    for (const cell of cells.values()) {
+      const reduced = reduceAggregate(cell.values, declaredAggregate);
+      const x = toNumber(cell.dim);
+      if (reduced === undefined || x === null) {
+        continue;
+      }
+      push(cell.sub, x, reduced);
+    }
+  } else {
+    for (const row of rows) {
+      const x = toNumber(row[dimensionField as keyof typeof row]);
+      const y = toNumber(row[measureField as keyof typeof row]);
+      if (x === null || y === null) {
+        continue;
+      }
+      push(keyFor(row, keyFields), x, y);
+    }
+  }
+  return [...bySub.values()];
+}
+
+// s164 m1 (§10 (G1)): the collected evidence — non-flat sub-series votes E, plus the flags the
+// contradiction-first decision reads. Captured off the runtime so the drift assert can inspect it.
+type CorrelationOppositionEvidence = {
+  votes: (-1 | 1)[];
+  anyVotable: boolean;
+  sharesPooled: boolean;
+  pooledSign: -1 | 0 | 1;
+  suppresses: boolean;
+};
+
+/**
+ * s164 m1 (§10 (G1) — DIMENSIONLESS "any real opposite", contradiction-first, full-lattice
+ * COLLECT-EVERY; SSOT §10, §5 rule 14). The s163 gate POOLED each partition group's grouping axis into
+ * ONE direction (`classifyGroupDirection` over the whole re-projected cell set), so a Simpson on a
+ * QUANTITATIVE grouping axis — size / color-ramp / detail — narrated positive over drawn sub-series that
+ * fall (the s163 review's CRIT survivor). This DECOMPOSES it: for every subset S of `groupingFields`, key
+ * each partition group's drawn marks by (P ∪ S) and collect the vote of EVERY (P ∪ S)-keyed sub-series
+ * with n>=2 distinct x — union over ALL P and ALL S, NO coarser-ancestor skip (a coarser falling band
+ * whose finer slices rise is exactly the nested-Simpson the coarsest-S reading misses).
+ *  - Opposition is DIMENSIONLESS (`classifyDrawnSeriesDirection`): n>=3 votes only if |pearson| >= ρ.
+ *  - MANUFACTURED-VOTE GUARD: the S=∅ whole-group over-x aggregate casts a between-band-offset vote ONLY
+ *    when the group has NO votable finer band (|S|>=1) — else its "trend" is a pure between-band artifact,
+ *    not a drawn sub-series (a continuous ramp, whose finer bands all shred to n=1, keeps its S=∅ vote and
+ *    narrates via the no-opposition path; §4 residual-2).
+ *  - Contradiction-first: SUPPRESS if the non-flat votes E span >1 sign, OR any equals −pooledSign, OR
+ *    (pooledSign≠0 AND no admitted band genuinely shares pooledSign — the all-flat-offset / disjoint-x
+ *    artifact, generalized from the dead "Set(E)={0}" clause).
+ * NO-OP (suppresses=false) when `groupingFields=[]` — the no-grouping decision defers to the unchanged G0
+ * (byte-identical to s163). FALLBACK to narrate only when NO sub-series is votable (<2-distinct-x
+ * everywhere). Runs on the RAW rows (they carry the facet/series fields the value projection drops).
+ */
+function correlationOppositionEvidenceOf(
+  rawRows: readonly Record<string, unknown>[],
+  dimensionField: string,
+  measureField: string,
+  partitionFields: readonly string[],
+  groupingFields: readonly string[],
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined,
+  pooled: number
+): CorrelationOppositionEvidence {
+  const pooledSign = signOf(pooled);
+  const votes: (-1 | 1)[] = [];
+  let anyVotable = false;
+  let sharesPooled = false;
+  if (groupingFields.length === 0) {
+    return { votes, anyVotable, sharesPooled, pooledSign, suppresses: false }; // no-op → defer to G0
+  }
+  const record = (dir: GroupDirection) => {
+    if (dir === 'unknown') {
+      return;
+    }
+    anyVotable = true;
+    if (dir !== 0) {
+      votes.push(dir);
+    }
+    if (dir !== 0 && dir === pooledSign) {
+      sharesPooled = true;
+    }
+  };
+  const subsets = subsetsOf(groupingFields);
+  // partition the RAW rows (whole chart is one group when partitionFields=[])
+  const partitionGroups = new Map<string, Record<string, unknown>[]>();
+  for (const row of rawRows) {
+    const key = partitionFields.length === 0 ? '*' : keyFor(row, partitionFields);
+    const group = partitionGroups.get(key);
+    if (group) {
+      group.push(row);
+    } else {
+      partitionGroups.set(key, [row]);
+    }
+  }
+  for (const groupRows of partitionGroups.values()) {
+    let hasVotableFineBand = false;
+    let emptyVote: GroupDirection | null = null;
+    for (const subset of subsets) {
+      for (const series of drawnSubSeries(groupRows, dimensionField, measureField, subset, declaredAggregate)) {
+        if (new Set(series.xs).size < 2) {
+          continue; // n<2 distinct x → not votable
+        }
+        const dir = classifyDrawnSeriesDirection(series.xs, series.ys);
+        if (dir === 'unknown') {
+          continue;
+        }
+        if (subset.length === 0) {
+          emptyVote = dir; // defer S=∅ (manufactured-vote guard)
+          continue;
+        }
+        hasVotableFineBand = true;
+        record(dir);
+      }
+    }
+    if (!hasVotableFineBand && emptyVote !== null) {
+      record(emptyVote);
+    }
+  }
+  let suppresses: boolean;
+  if (!anyVotable) {
+    suppresses = false; // FALLBACK: <2-distinct-x everywhere → narrate (defer to G0)
+  } else if (new Set(votes).size > 1) {
+    suppresses = true; // (a) drawn sub-series disagree
+  } else if (votes.some((v) => v === -pooledSign)) {
+    suppresses = true; // (b) a real opposite
+  } else {
+    suppresses = pooledSign !== 0 && !sharesPooled; // (c) no drawn band shows the pooled trend
+  }
+  return { votes, anyVotable, sharesPooled, pooledSign, suppresses };
+}
+
+// s165 m3 (§3.6): the deterministic cap on |separableFields|. The subset lattice is 2^k, so an unbounded
+// field list is an unbounded scan. `separableFields` emits in an argued order (positional → facet →
+// color/size/shape/detail), and the whole shipped corpus tops out at 3, so 8 (=256 subsets) is far above
+// anything reachable by a real spec while still bounding the cost. ABOVE THE CAP THE GATE SUPPRESSES — see
+// correlationSeparabilityEvidenceOf; dropping fields instead would be fail-safe in the wrong direction.
+const MAX_SEPARABLE_FIELDS = 8;
+
+/**
+ * s165 m3 (§3.6 — bucket ONCE, merge upward): the FINEST drawn-cell buckets, keyed by the full
+ * `separable` tuple, each carrying its per-dimension-value RAW measure values. ONE pass over the rows;
+ * every subset band in `correlationSeparabilityEvidenceOf` is then assembled by MERGING buckets, so the
+ * 2^k lattice never re-walks the row array (the draft measured 4.4× s164 at 20k rows and 2,184 ms at 50k
+ * with a high-cardinality detail).
+ *
+ * Semantics preserved exactly from the m2 row-walk it replaces:
+ *  - under a declared aggregate the drawn marks are the per-(dimension ∪ S) REDUCED cells, so the buckets
+ *    hold RAW values and the reduction happens once per merged cell (an average of averages is not the
+ *    average — merging pre-reduced values would silently change every coarse band's direction);
+ *  - without one, each row is its own drawn mark, so the bucket holds the finite y values per dimension
+ *    value and the band expands them back to one (x,y) point each;
+ *  - a row whose dimension does not coerce to a finite number can only ever land in a cell that the m2
+ *    code skipped (`toNumber(cell.dim) === null`), so filtering those rows here is equivalent; without a
+ *    declared aggregate a non-finite measure was also dropped per-row, which the finite filter keeps.
+ * `sep` is the bucket's tuple of separable values, positionally aligned with `separable`.
+ */
+function finestSeparableBuckets(
+  rows: readonly Record<string, unknown>[],
+  dimensionField: string,
+  measureField: string,
+  separable: readonly string[],
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined
+): Map<string, { sep: string[]; byDim: Map<string, { x: number; values: unknown[] }> }> {
+  const buckets = new Map<string, { sep: string[]; byDim: Map<string, { x: number; values: unknown[] }> }>();
+  for (const row of rows) {
+    const x = toNumber(row[dimensionField as keyof typeof row]);
+    if (x === null) {
+      continue;
+    }
+    const rawMeasure = row[measureField as keyof typeof row];
+    let value: unknown;
+    if (declaredAggregate) {
+      value = rawMeasure; // reduceAggregate handles non-numerics (count/distinct read any cell)
+    } else {
+      const y = toNumber(rawMeasure);
+      if (y === null) {
+        continue;
+      }
+      value = y;
+    }
+    const sepKey = keyFor(row, separable);
+    let bucket = buckets.get(sepKey);
+    if (!bucket) {
+      bucket = {
+        sep: separable.map((field) => {
+          const cell = row[field as keyof typeof row];
+          return cell === null || cell === undefined ? '\0null' : String(cell);
+        }),
+        byDim: new Map(),
+      };
+      buckets.set(sepKey, bucket);
+    }
+    const dimKey = keyFor(row, [dimensionField]);
+    const cell = bucket.byDim.get(dimKey);
+    if (cell) {
+      cell.values.push(value);
+    } else {
+      bucket.byDim.set(dimKey, { x, values: [value] });
+    }
+  }
+  return buckets;
+}
+
+// s165 m2 (§3.2): the G1′ evidence. Deliberately NARROWER than CorrelationOppositionEvidence — there is
+// no `sharesPooled` and no `anyVotable`, because G1′ carries clauses (a) and (b) ONLY.
+type CorrelationSeparabilityEvidence = {
+  votes: (-1 | 1)[];
+  pooledSign: -1 | 0 | 1;
+  suppresses: boolean;
+};
+
+/**
+ * s165 m2 (§3.2 — G1′, the UNPREFIXED union suppressor; the single most important correction in this
+ * sprint). Final composition in `deriveCorrelation`:
+ *
+ *     narrate iff G0 narrates AND NOT G1_s164 AND NOT G1′
+ *
+ * G1_s164 stays EXACTLY as shipped (partition-prefixed, subsets of `groupingFields`, all three clauses,
+ * per-group manufactured-vote guard). G1′ is ADDED, never substituted — and that is what makes the whole
+ * thing MONOTONE BY CONSTRUCTION rather than by argument (a disjunction of suppressors can only suppress
+ * more). The pre-lock critic (wf_381797c9-7a5, 5 lenses, 4 fixtures) falsified the draft's REPLACE design:
+ * clause (c) (`pooledSign!==0 && !sharesPooled`) is NEGATIVE evidence and therefore ANTI-monotone, so an
+ * UNPREFIXED scan carrying it promotes s164's deferred `S=∅` vote to a real vote (|S|>=1 escapes the
+ * manufactured-vote guard, whose `subset.length===0` marker is purely syntactic), sets `sharesPooled`,
+ * DISARMS clause (c) — and the shipped s164 RED-first fixture `rowsDisjointFlat` goes `undefined` →
+ * narrates 0.894, a self-inflicted 11th phantom.
+ *
+ * So G1′ carries:
+ *  - (a) the non-flat votes span MORE THAN ONE sign, or
+ *  - (b) any vote equals −pooledSign (a real opposite).
+ *  - NO clause (c), and G1′ votes NEVER feed `sharesPooled` (there is no such flag here). Clause (c) is an
+ *    artifact detector calibrated to the VALUE's own cell decomposition; it stays in the retained s164 arm.
+ *
+ * INCOHERENT-BAND RULE (A6, G1′ only): a band keyed by `S` whose members disagree on some field in
+ * `separableFields \ S` must have >=3 distinct x AND clear the ρ floor to vote — i.e. the n=2
+ * unconditional-slope rule is DROPPED for such bands. Those manufactured cross-series n=2 votes are what
+ * silenced 52–80% of honest bubble charts in the draft. A/B/C/D all have n>=3 opposing COHERENT bands, so
+ * none of them depends on this. The n=2 rule stays fully intact in the prefixed s164 arm and for coherent
+ * bands here. DISCLOSED COST (§6.2): an n=2 cross-partition opposite is now un-votable in G1′ — an error
+ * toward NARRATION, named not hidden.
+ *
+ * NO-OP (`suppresses=false`) when `separableFields=[]`, so a plain single-series chart is byte-identical.
+ * Runs on the RAW rows (they carry the facet/series fields the value projection drops).
+ */
+function correlationSeparabilityEvidenceOf(
+  rawRows: readonly Record<string, unknown>[],
+  dimensionField: string,
+  measureField: string,
+  separable: readonly string[],
+  declaredAggregate: NonNullable<TraitBinding['aggregate']> | undefined,
+  pooled: number
+): CorrelationSeparabilityEvidence {
+  const pooledSign = signOf(pooled);
+  const votes: (-1 | 1)[] = [];
+  if (separable.length === 0) {
+    return { votes, pooledSign, suppresses: false }; // no-op → defer to G0 + the s164 arm
+  }
+  // s165 m3 (§3.6): above the cap SUPPRESS unconditionally. Dropping fields to shrink the lattice would
+  // be fail-safe in the WRONG direction (a dropped field is an un-scanned separator = a phantom); refusing
+  // to narrate is fail-safe in the right one. The cap bounds the 2^k subset lattice at 256.
+  if (separable.length > MAX_SEPARABLE_FIELDS) {
+    return { votes, pooledSign, suppresses: true };
+  }
+  // s165 m3 (§3.6) — MEMOIZATION DELIBERATELY NOT IMPLEMENTED, and this is the reason. The memo asks for
+  // `deriveCorrelation` to be memoized per (spec, rows) because it runs up to 4× per render
+  // (analyzeVizSpec is called by both the table and the narrative generator, and each call re-runs the
+  // whole decision a second time through `expectedNarratableCorrelation` inside
+  // `enforceDrawnValueInvariant`). Both possible keys fail:
+  //  - keyed on the ROW ARRAYS: every call site rebuilds them (`collectRows` + `projectAggregatedRows`
+  //    return fresh arrays), so identity never matches and the cache is inert.
+  //  - keyed on the SPEC alone: the guard call would be served the analysis call's cached answer, so
+  //    `expected === analysis.correlation` becomes true BY CONSTRUCTION and the drawn-value guard's
+  //    correlation arm goes VACUOUS — it exists precisely to bite a call-site drift that "re-feeds raw
+  //    rows", which a spec-keyed cache would make undetectable. That is the mirrored-oracle failure mode
+  //    the standing rules forbid, traded for a micro-optimization.
+  // The bucket-once merge below is what pays for the widened scan instead: measured 1.27–2.08× s164
+  // (10k–50k rows) against the draft's 4.4× at 20k, and 383 ms at 50k against the draft's 2,184 ms.
+  // s165 m3 (§3.6): BUCKET ONCE at the finest key and MERGE UPWARD — never 2^k walks over the rows. One
+  // pass builds the finest buckets (keyed by the FULL separable tuple, each holding its per-dimension RAW
+  // measure values); each subset then merges buckets, so the per-subset cost is O(#finest buckets), not
+  // O(#rows). Merging RAW value lists (not pre-reduced cell values) is load-bearing: an average of
+  // averages is not the average, so a coarser band must reduce the underlying rows exactly once.
+  const buckets = finestSeparableBuckets(rawRows, dimensionField, measureField, separable, declaredAggregate);
+  for (const subset of subsetsOf(separable)) {
+    const inSubset = separable.map((field) => subset.includes(field));
+    // band key = the bucket's projection onto S; "others" = its projection onto separableFields \ S, which
+    // is what the A6 coherence test reads (a band pooling >1 distinct other-projection is incoherent).
+    const bands = new Map<string, { others: Set<string>; byDim: Map<string, { x: number; values: unknown[] }> }>();
+    for (const bucket of buckets.values()) {
+      const bandKey = bucket.sep.filter((_, index) => inSubset[index]).join('\0');
+      const otherKey = bucket.sep.filter((_, index) => !inSubset[index]).join('\0');
+      let band = bands.get(bandKey);
+      if (!band) {
+        band = { others: new Set<string>(), byDim: new Map() };
+        bands.set(bandKey, band);
+      }
+      band.others.add(otherKey);
+      for (const [dimKey, cell] of bucket.byDim) {
+        const merged = band.byDim.get(dimKey);
+        if (merged) {
+          merged.values.push(...cell.values);
+        } else {
+          band.byDim.set(dimKey, { x: cell.x, values: [...cell.values] });
+        }
+      }
+    }
+    for (const band of bands.values()) {
+      const xs: number[] = [];
+      const ys: number[] = [];
+      for (const cell of band.byDim.values()) {
+        if (declaredAggregate) {
+          const reduced = reduceAggregate(cell.values, declaredAggregate);
+          if (reduced === undefined) {
+            continue;
+          }
+          xs.push(cell.x);
+          ys.push(reduced);
+        } else {
+          // no declared aggregate → each row is its own drawn mark (values are the finite y's)
+          for (const value of cell.values) {
+            xs.push(cell.x);
+            ys.push(value as number);
+          }
+        }
+      }
+      const distinctX = new Set(xs).size;
+      if (distinctX < 2) {
+        continue; // not votable — no slope
+      }
+      if (band.others.size > 1 && distinctX < 3) {
+        continue; // A6: an incoherent band needs >=3 distinct x (the ρ floor then applies below)
+      }
+      const dir = classifyDrawnSeriesDirection(xs, ys);
+      if (dir === 'unknown' || dir === 0) {
+        continue; // no slope evidence, or below the dimensionless ρ floor → not a real opposite
+      }
+      votes.push(dir);
+    }
+  }
+  const suppresses =
+    new Set(votes).size > 1 || // (a) drawn bands disagree
+    votes.some((vote) => vote === -pooledSign); // (b) a real opposite
+  return { votes, pooledSign, suppresses };
+}
+
 /**
  * s160 m3: the narrated correlation. VALUE = pooled Pearson over `valueRows` — the rows whose pairs
  * the chart DRAWS (under a declared aggregate the call site passes the projected per-cell rows, the
@@ -1417,14 +1965,16 @@ function deriveCorrelation(
   if (!bindings.dimensionField || !bindings.measureField) {
     return undefined;
   }
+  // s165 m1 (§3.5, fork F2): a second dataset's rows are never read and a second measure field makes the
+  // pooled r a statistic of no single drawn series — fail-safe SILENCE, before any derivation.
+  if (layeredCorrelationUnsupported(spec)) {
+    return undefined;
+  }
   const pooled = pearsonOverRows(valueRows, bindings.dimensionField, bindings.measureField);
   if (pooled === null) {
     return undefined;
   }
   const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
-  if (partitionFields.length === 0) {
-    return pooled; // one (facet × series) group — the pooled r IS the group r
-  }
   // s162 m1: classify each group's DIRECTION over the DRAWN cells the viewer sees (each raw partition
   // group re-projected to its cells under the declared aggregate) — NOT the count-weighted raw rows —
   // closing the raw-vs-drawn asymmetry that let a declared-aggregate Simpson sign-phantom through (S1).
@@ -1439,6 +1989,29 @@ function deriveCorrelation(
     partitionFields,
     declaredAggregate
   );
+  // s164 m1 (§10): pooled narrates ONLY when there is neither a categorical partition NOR a grouping axis
+  // (one facet×series group — the pooled r IS the group r). A grouping axis with NO categorical partition
+  // (size-only Simpson) NO LONGER early-returns — G1 below decomposes it (defect 5).
+  // s165 m1 (§3.2b — the pre-lock critic's P1 blocker, caught on 3 lenses): this return runs BEFORE BOTH
+  // gates and was TRUE for survivors A and B (shape on a 'mixed' mark → both s164 derivations empty; a
+  // quantitative color ramp under stacking → both empty), so it SHORT-CIRCUITED the new G1′ and the draft
+  // would have shipped A and B unchanged. The third conjunct is what makes G1′ reachable at all.
+  // BEHAVIOUR-PRESERVING for G0: when `partitionFields=∅` then `groupingFields === narratedValueCellKey`,
+  // so both are empty together and the single-group re-projection pools exactly the cells the value pools
+  // → `classes=[sign(pooled)]` → G0 narrates. RULE 13b — the three classes newly falling through are
+  // enumerated and fixture-pinned in correlation-render-truth-separability-s165.spec.ts: (a) shape on a
+  // non-splitting/collapsed mark, (b) a stacking aggregate with no facet and no categorical retinal,
+  // (c) a quantitative-only retinal under stacking.
+  const separable = separableFields(spec, bindings.dimensionField, bindings.measureField);
+  if (partitionFields.length === 0 && groupingFields.length === 0 && separable.length === 0) {
+    return pooled;
+  }
+  // s164 m1 (§10): SUPPRESS iff EITHER gate suppresses (narrate iff BOTH narrate). (G0) the UNCHANGED
+  // s163 per-partition-group direction gate — catches between-partition Simpsons and keeps the s162
+  // stacking + defect-4 continuous-size suppression. (G1) the new DIMENSIONLESS full-lattice decomposition
+  // — catches the within-partition Simpson on a QUANTITATIVE grouping axis the pooled G0 direction masked
+  // (the s163 CRIT survivor). G1 no-ops when groupingFields=[], so the no-grouping decision is byte-
+  // identical to s163.
   const classes = classifyCorrelationGroups(
     rawRows,
     bindings.dimensionField,
@@ -1447,7 +2020,29 @@ function deriveCorrelation(
     groupingFields,
     declaredAggregate
   );
-  return narratableCorrelation(pooled, classes) ? pooled : undefined;
+  const g0Narrates = narratableCorrelation(pooled, classes);
+  const g1Suppresses = correlationOppositionEvidenceOf(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    groupingFields,
+    declaredAggregate,
+    pooled
+  ).suppresses;
+  // s165 m2 (§3.2): G1′ is a THIRD, INDEPENDENT suppression term — a UNION, never a replacement. The s164
+  // arm above is untouched, so `s164_undefined ⇒ s165_undefined` holds BY CONSTRUCTION (a disjunction of
+  // suppressors is monotone); the m2 monotonicity oracle MEASURES that against the recorded HEAD decision
+  // rather than trusting the argument.
+  const g1PrimeSuppresses = correlationSeparabilityEvidenceOf(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    separable,
+    declaredAggregate,
+    pooled
+  ).suppresses;
+  return g0Narrates && !g1Suppresses && !g1PrimeSuppresses ? pooled : undefined;
 }
 
 /**
@@ -1560,6 +2155,140 @@ export function correlationClassifierActualKey(spec: NormalizedVizSpec): {
     declaredAggregate
   );
   return { partitionFields, groupingFields };
+}
+
+/**
+ * s165 m1 (§3.2b capture surface): the THREE field lists the re-gated `deriveCorrelation` early return
+ * reads, via the SAME derivations the runtime uses (single source). The proof spec asserts that for each
+ * rule-13b fall-through class `partitionFields` and `groupingFields` are BOTH empty while
+ * `separableFields` is NOT — i.e. the shipped 2-clause early return would have returned the pooled r
+ * before either gate ran (the critic's P1 blocker) and the 3-clause form does not. Also the m4 call-site
+ * pin surface: `deriveCorrelation` and `correlationOppositionEvidence` consume `separableFields`, while
+ * `correlationGroupDirections` and `correlationClassifierActualKey` keep `correlationGroupingFields` (the
+ * s163 value-key fineness invariant). Module export for the proof spec (relative path), OFF the a11y
+ * allow-list barrel — not public API.
+ */
+export function correlationGateFields(spec: NormalizedVizSpec): {
+  partitionFields: string[];
+  groupingFields: string[];
+  separableFields: string[];
+} {
+  const bindings = resolvePrimaryBindings(spec);
+  if (!bindings.dimensionField || !bindings.measureField) {
+    return { partitionFields: [], groupingFields: [], separableFields: [] };
+  }
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
+  return {
+    partitionFields,
+    groupingFields: correlationGroupingFields(
+      spec,
+      bindings.dimensionField,
+      bindings.measureField,
+      partitionFields,
+      declaredAggregate
+    ),
+    separableFields: separableFields(spec, bindings.dimensionField, bindings.measureField),
+  };
+}
+
+/**
+ * s164 m1 (§2-m1, §3 — the G1 drift-assert capture surface): the DIMENSIONLESS opposition evidence the
+ * runtime `deriveCorrelation` feeds its G1 gate, recomputed from the spec alone via the SAME
+ * `correlationOppositionEvidenceOf` (SINGLE SOURCE — reverting the runtime G1, or restricting the scan to
+ * the coarsest votable S, moves this too, so the drift assert is non-vacuous). The proof spec cross-checks
+ * `suppresses` against an INDEPENDENT test-side full-lattice oracle keyed off `narratedValueCellKey`
+ * DIRECTLY — a path this classifier surface does NOT share (§3 charter-diff pin: the oracle imports
+ * neither `classifyCorrelationGroups`, `correlationGroupingFields`, nor `correlationClassifierActualKey`).
+ * Returns the no-op evidence (empty, suppresses=false) when the pooled r is not computable or there is no
+ * grouping axis. Module export for the proof spec (relative path), OFF the a11y allow-list barrel — not
+ * public API.
+ */
+export function correlationOppositionEvidence(spec: NormalizedVizSpec): CorrelationOppositionEvidence {
+  const bindings = resolvePrimaryBindings(spec);
+  const empty: CorrelationOppositionEvidence = {
+    votes: [],
+    anyVotable: false,
+    sharesPooled: false,
+    pooledSign: 0,
+    suppresses: false,
+  };
+  if (!bindings.dimensionField || !bindings.measureField) {
+    return empty;
+  }
+  const rawRows = collectRows(spec);
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  const valueRows = declaredAggregate
+    ? projectAggregatedRows(
+        rawRows,
+        bindings.dimensionField,
+        bindings.measureField,
+        declaredAggregate,
+        narratedValueCellKey(spec),
+      )
+    : rawRows;
+  const pooled = pearsonOverRows(valueRows, bindings.dimensionField, bindings.measureField);
+  if (pooled === null) {
+    return empty;
+  }
+  const partitionFields = correlationPartitionFields(spec, bindings.dimensionField, bindings.measureField);
+  const groupingFields = correlationGroupingFields(
+    spec,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    declaredAggregate
+  );
+  return correlationOppositionEvidenceOf(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    partitionFields,
+    groupingFields,
+    declaredAggregate,
+    pooled
+  );
+}
+
+/**
+ * s165 m2 (§3.2 — the G1′ capture surface): the separability opposition evidence the runtime
+ * `deriveCorrelation` feeds its G1′ term, recomputed from the spec alone via the SAME
+ * `correlationSeparabilityEvidenceOf` + `separableFields` (SINGLE SOURCE — neutering the runtime G1′, or
+ * re-gating shape, or reverting the per-layer union, moves this too). The proof spec uses it for the
+ * REACHABILITY assert (§5): `votes` must be NON-EMPTY for each RED-first fixture, so a passing
+ * `toBeUndefined()` can never be an `undefined`-vs-`undefined` coincidence hiding behind the early return.
+ * Returns the no-op evidence when the pooled r is not computable or nothing is separable.
+ * Module export for the proof spec (relative path), OFF the a11y allow-list barrel — not public API.
+ */
+export function correlationSeparabilityEvidence(spec: NormalizedVizSpec): CorrelationSeparabilityEvidence {
+  const bindings = resolvePrimaryBindings(spec);
+  const empty: CorrelationSeparabilityEvidence = { votes: [], pooledSign: 0, suppresses: false };
+  if (!bindings.dimensionField || !bindings.measureField) {
+    return empty;
+  }
+  const rawRows = collectRows(spec);
+  const declaredAggregate = resolveBinding(spec, resolvePrimaryChannels(spec).measureChannel)?.aggregate;
+  const valueRows = declaredAggregate
+    ? projectAggregatedRows(
+        rawRows,
+        bindings.dimensionField,
+        bindings.measureField,
+        declaredAggregate,
+        narratedValueCellKey(spec)
+      )
+    : rawRows;
+  const pooled = pearsonOverRows(valueRows, bindings.dimensionField, bindings.measureField);
+  if (pooled === null) {
+    return empty;
+  }
+  return correlationSeparabilityEvidenceOf(
+    rawRows,
+    bindings.dimensionField,
+    bindings.measureField,
+    separableFields(spec, bindings.dimensionField, bindings.measureField),
+    declaredAggregate,
+    pooled
+  );
 }
 
 /**
