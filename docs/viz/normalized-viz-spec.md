@@ -73,7 +73,12 @@ extensions.
   projection hints for deterministic fallbacks.
 - **LayoutLayer** – captures blend mode, interaction syncing, explicit layer
   ordering, and projection metadata so adapters can combine multiple mark
-  definitions without duplicating config.
+  definitions without duplicating config. `order` entries name layers by
+  `mark.options.id` when set (preferred — give repeated same-trait marks
+  distinct ids so each layer is addressable), falling back to the mark trait
+  name; marks omitted from the list keep declaration order and render on top of
+  the listed layers. Duplicate entries are rejected (`uniqueItems`) because a
+  repeated key can never address a distinct layer.
 - **LayoutConcat** – declares dashboard-style sections (horizontal, vertical, or
   grid) with optional filters per section plus shared scale configuration.
 

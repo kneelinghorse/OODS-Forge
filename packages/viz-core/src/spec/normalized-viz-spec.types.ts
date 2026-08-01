@@ -211,6 +211,8 @@ export interface LayoutLayer {
   syncInteractions?: boolean;
   sharedScales?: SharedScaleConfig;
   /**
+   * Explicit bottom→top paint order for layered marks. Each entry names a layer key: the mark's options.id when set (preferred — give repeated same-trait marks distinct ids so each layer is addressable), else the mark's trait name. Matched layers paint first in list order; marks not named keep declaration order and render after (on top of) the listed layers; entries matching no layer are ignored. Duplicates are rejected (uniqueItems) because keys address layers by identity — a repeated key can never address a distinct layer.
+   *
    * @minItems 1
    */
   order?: [string, ...string[]];

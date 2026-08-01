@@ -92,6 +92,8 @@ async function runBuild() {
     log.success('   css:      dist/css/tokens.css');
     log.success('   types:    dist/ts/tokens.ts');
     log.success('   tailwind: dist/tailwind/tokens.json');
+    log.success('   ios:      dist/ios-swift/OodsTokens.swift');
+    log.success('   compose:  dist/compose/OodsTokens.kt');
   } else {
     process.exitCode = 1;
   }

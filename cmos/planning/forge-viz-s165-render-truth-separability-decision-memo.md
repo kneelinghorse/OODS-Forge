@@ -205,7 +205,7 @@ number in §6.1. If it exceeds the ratified threshold, **fall back** to the narr
 s164 prefix but drop from it any partition field whose every group has <2 distinct dimension values; verified
 C 0.262→suppressed, honest bubble chart still 0.056) **and re-scope §7's claim to that predicate's domain**.
 
-**Gate baselines:** viz-core 1082 + owned delta / mcp-server 3978 / root core 4638 / scale 62 / tokens 322 /
+**Gate baselines:** viz-core 1082 + owned delta / mcp-server 3978 / root core 4638 (named: `npx vitest run --project core`) / scale 62 / tokens 322 /
 typecheck + frozen-lockfile clean / **ZERO owned golden (#564)**. Dual-path live (dist + bridge :4466 restart).
 
 ---
@@ -345,9 +345,13 @@ its vitest resolves `@oods/viz-core`→dist) · scale **62 EXACT** · tokens **3
 moved; `golden-echarts-options` + `golden-profiles` 21/21 GREEN).
 
 Two baseline corrections, both measured not assumed:
-* **root core = 4658, not the memo's 4638.** Verified EXACT vs HEAD by reverting `data-analysis.ts` AND
-  removing all four s165 spec files → still 4658/435. The +20 predates this sprint; the memo's baseline was
-  stale.
+* ~~**root core = 4658, not the memo's 4638.**~~ **CORRECTION RETRACTED 2026-08-01 (next-steps #1096/#1108):
+  this bullet was itself the error.** The 4658/435 figure came from the root THREE-PROJECT UNION
+  (`npx vitest run` = core + guardrails + jsdom project), not the named core invocation. Re-verified at
+  HEAD 2ecd3ae: `npx vitest run --project core` = **4638 tests (4618 passed + 20 skipped) / 426 files
+  (424 + 2 skipped)** — the §5 baseline of 4638 was correct all along. The +20/+9 delta is the other two
+  root projects, not pre-existing drift. STANDING RULE: every pinned gate number must name its exact
+  invocation; a bare "root core" count is not comparable across sessions.
 * **viz-core package `tsc -p tsconfig.json` emits 2 errors** (TS18048 in the s164 proof spec) — verified
   PRE-EXISTING at HEAD by cp-swap. Root typecheck (the gate of record) is clean. s165 adds zero.
 
