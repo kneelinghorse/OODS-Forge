@@ -205,6 +205,28 @@ function createLayer(
   };
 }
 
+/**
+ * `mark.options` keys that exist for OODS's own use and must NOT reach the emitted
+ * Vega-Lite mark definition (s167 m03, FF#22 follow-on).
+ *
+ * The emitted spec stamps the Vega-Lite v6 `$schema`, and that schema's `MarkDef` is
+ * `additionalProperties: false`. Spreading `mark.options` wholesale therefore made every
+ * OODS-only key a schema violation — including `id`, which the s166 docs PRESCRIBE as
+ * the way to order repeated same-trait layers, so following the documented pattern
+ * emitted an invalid spec.
+ *
+ * This is a narrow DENYLIST rather than an allowlist on purpose. Enumerated across the
+ * repo's JSON specs, `mark.options` carries seven distinct keys; five of them
+ * (`baseline`, `strokeWidth`, `opacity`, `fillOpacity`, `strokeDash`) are genuine
+ * Vega-Lite MarkDef properties that must keep flowing through. Stripping anything
+ * unrecognised would silently drop real styling.
+ *
+ * Both entries are consumed elsewhere and must stay on the IR:
+ *   - `id`    — `inferLayerKey` prefers it over `mark.trait` for layer ordering.
+ *   - `curve` — the ECharts adapter reads it to decide `smooth` (echarts-adapter.ts:348).
+ */
+const OODS_ONLY_MARK_OPTIONS: ReadonlySet<string> = new Set(['id', 'curve']);
+
 function createMark(mark: NormalizedMark, singleSeriesColor?: string): Record<string, unknown> {
   const type = MARK_TRAIT_MAP[mark.trait as keyof typeof MARK_TRAIT_MAP];
 
@@ -212,9 +234,13 @@ function createMark(mark: NormalizedMark, singleSeriesColor?: string): Record<st
     throw new VegaLiteAdapterError(`Unsupported mark trait: ${mark.trait}`);
   }
 
+  const passthroughOptions = Object.entries(mark.options ?? {}).filter(
+    ([key]) => !OODS_ONLY_MARK_OPTIONS.has(key),
+  );
+
   const result: Record<string, unknown> = {
     type,
-    ...(mark.options ?? {}),
+    ...Object.fromEntries(passthroughOptions),
   };
 
   // Brand-fidelity (sprint-138 m02): single-series bake — a chart with no color encoding

@@ -192,6 +192,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Token collision guard
+        # s167 m01: a PRE-LOAD check that no token path is declared twice with
+        # differing values outside the declared brand overlay chain. Style Dictionary
+        # deep-merges colliding paths at load and the last writer wins silently — that
+        # is how brand A came to ship the forced-colors keyword `Highlight` as its
+        # default colour on all five platforms. `build:tokens` also refuses to build
+        # when this is red; it is pinned separately here so the failure is legible as
+        # a collision rather than as a build error.
+        run: pnpm run tokens:collision-guard
+
       - name: Validate design tokens
         # s149 #842: the COMPOSITE `tokens-validate` (hyphen), not `tokens:validate`
         # (colon = transform --check ONLY). The composite also runs lint-semantic,
