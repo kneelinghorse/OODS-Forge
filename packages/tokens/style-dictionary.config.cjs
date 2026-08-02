@@ -59,5 +59,35 @@ module.exports = {
         },
       ],
     },
+    // s166 m03 mobile-platform spike: SD's NATIVE ios-swift/compose transform groups on
+    // the same tokens-studio-preprocessed sources — proving the preprocessor and native
+    // groups coexist on pinned SD 4.4.0 (the mobile front's one unverified blocker).
+    'ios-swift': {
+      transformGroup: 'ios-swift',
+      buildPath: 'dist/ios-swift/',
+      files: [
+        {
+          destination: 'OodsTokens.swift',
+          format: 'ios-swift/class.swift',
+          options: {
+            className: 'OodsTokens',
+          },
+        },
+      ],
+    },
+    compose: {
+      transformGroup: 'compose',
+      buildPath: 'dist/compose/',
+      files: [
+        {
+          destination: 'OodsTokens.kt',
+          format: 'compose/object',
+          options: {
+            className: 'OodsTokens',
+            packageName: 'com.oods.tokens',
+          },
+        },
+      ],
+    },
   },
 };

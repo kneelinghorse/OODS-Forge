@@ -486,9 +486,21 @@ function buildHeatmapVisualMap(spec: NormalizedVizSpec): Record<string, unknown>
     values,
   });
 
+  // s166 m01 (FF#23): a dimensionless continuous visualMap binds to the LAST dataset
+  // dimension, so a trailing non-measure field (a string) blanked every cell to fill:none.
+  // Pin the mapped dimension to the color field by NAME — not index: a series reading a
+  // spec.datasets-linked dataset (convertLinkedDatasets) can carry dims that diverge from
+  // spec.data.values, and a name resolves per-dataset. Emitted only when drawn cells exist;
+  // the empty-data path has no row to read and keeps the bare fallbackDomain visualMap.
+  const dimension = rows.length > 0 ? colorBinding.field : undefined;
+
   // Bake the tick label onto chrome — the same visualMap-label token the geo adapters use.
   const chrome = resolveOodsEchartsChrome(spec);
-  return { ...base, textStyle: { color: chrome.visualMapLabel } };
+  return {
+    ...base,
+    ...(dimension !== undefined ? { dimension } : {}),
+    textStyle: { color: chrome.visualMapLabel },
+  };
 }
 
 function resolveAxisEncoding(

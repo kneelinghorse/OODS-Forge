@@ -425,6 +425,7 @@ interface HeatmapMatrix {
   readonly xLabel: string;
   readonly yLabel: string;
   readonly valueLabel: string;
+  readonly valueField: string;
   readonly caption: string;
 }
 
@@ -508,6 +509,7 @@ function buildHeatmapMatrix(spec: NormalizedVizSpec): HeatmapMatrix | null {
     xLabel: xInfo.label,
     yLabel: yInfo.label,
     valueLabel: valueInfo.label,
+    valueField: valueInfo.field,
     caption: resolveHeatmapCaption(spec),
   };
 }
@@ -732,6 +734,10 @@ function applyHeatmapVisualMap(
   return {
     ...option,
     visualMap: {
+      // s166 m01 (FF#23): this override REPLACES the adapter's visualMap, so it must
+      // carry its own dimension — a dimensionless visualMap binds to the LAST dataset
+      // dimension, blanking every cell when a non-measure field trails the measure.
+      dimension: matrix.valueField,
       min: mapper.min,
       max: mapper.max,
       calculable: false,
