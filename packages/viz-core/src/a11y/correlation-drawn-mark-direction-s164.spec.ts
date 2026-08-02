@@ -383,7 +383,7 @@ function drawnValueCells(rows: Row[], valueKey: string[], agg: 'average' | 'sum'
 }
 
 describe('s164 m1 — DRIFT ASSERT: SUT suppresses every defect the independent value-keyed oracle flags (§3)', () => {
-  const cases: [string, () => Row[], Parameters<typeof chart>[1]][] = [
+  const cases: [string, () => Row[], NonNullable<Parameters<typeof chart>[1]>][] = [
     ['defect1', rowsDefect1, { colorField: 'seg', sizeField: 'sz', yAggregate: 'average' }],
     ['defect5', rowsDefect5, { sizeField: 'sz', yAggregate: 'average' }],
     ['defect6', rowsDefect6, { sizeField: 'sz', yAggregate: 'average' }],
@@ -404,7 +404,7 @@ describe('s164 m1 — DRIFT ASSERT: SUT suppresses every defect the independent 
   }
 
   it('keep-controls: the oracle finds NO real opposite AND the SUT narrates', () => {
-    const controls: [() => Row[], Parameters<typeof chart>[1]][] = [
+    const controls: [() => Row[], NonNullable<Parameters<typeof chart>[1]>][] = [
       [rowsAllRise, { colorField: 'seg', sizeField: 'sz', yAggregate: 'average' }],
       [rowsContinuousRamp, { colorField: 'seg', sizeField: 'sz', yAggregate: 'average' }],
       [rowsHonestMultiAxis, { colorField: 'seg', sizeField: 'sz', detailField: 'dt', yAggregate: 'average' }],
