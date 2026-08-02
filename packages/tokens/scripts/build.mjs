@@ -9,6 +9,9 @@ import { performance } from 'perf_hooks';
 import StyleDictionary from 'style-dictionary';
 import { register as registerSdTransforms, expandTypesMap } from '@tokens-studio/sd-transforms';
 
+import { auditAllScopes, resolveScopeFiles } from './collision-guard.mjs';
+import { renderBridgeBlock } from './brand-bridge.mjs';
+
 const require = createRequire(import.meta.url);
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,32 +25,48 @@ const STABLE_TIMESTAMP =
   process.env.OODS_PACKAGES_BUILD_STAMP ?? '1970-01-01T00:00:00.000Z';
 
 const rawConfig = require('../style-dictionary.config.cjs');
-const config = {
-  ...rawConfig,
-  expand: {
-    ...(rawConfig.expand || {}),
-    typesMap: expandTypesMap,
-  },
-};
+// `oodsScoping` is our own scoping metadata, not Style Dictionary config — strip it.
+const { oodsScoping, platforms: allPlatforms, ...sharedConfig } = rawConfig;
 
 const args = process.argv.slice(2);
 const checkMode = args.includes('--check');
 const verbose = args.includes('--verbose');
 
-const prefix = config.prefix ?? 'tokens';
+const prefix = sharedConfig.prefix ?? 'tokens';
+
+// memo SS3 D7 — these four have no selector concept, so they emit the DEFAULT_SCOPE only.
+const NON_CSS_PLATFORMS = ['ts', 'tailwind', 'ios-swift', 'compose'];
+const CSS_DESTINATION = resolve(packageRoot, 'dist/css/tokens.css');
 
 registerSdTransforms(StyleDictionary);
 registerCustomFormats(prefix);
 registerCustomTransforms(prefix);
 
-if (verbose) {
-  config.log = {
-    ...(config.log || {}),
-    verbosity: 'verbose',
-  };
+/**
+ * One Style Dictionary instance per brand x theme scope (memo SS3 D1 — a platform
+ * entry cannot carry its own `source` in SD 4.4.0, so scoping happens per dictionary).
+ *
+ * `source` is the file list `resolveScopeFiles()` produced, NOT the raw glob patterns.
+ * That is what makes the collision guard trustworthy: it audits the identical list.
+ */
+async function dictionaryForScope(scope, platforms) {
+  const sd = new StyleDictionary({
+    ...sharedConfig,
+    expand: {
+      ...(sharedConfig.expand || {}),
+      typesMap: expandTypesMap,
+    },
+    log: verbose
+      ? { ...(sharedConfig.log || {}), verbosity: 'verbose' }
+      : sharedConfig.log,
+    source: resolveScopeFiles(scope, packageRoot),
+    platforms,
+  });
+  await sd.hasInitialized;
+  return sd;
 }
 
-const sd = new StyleDictionary(config);
+const cssPlatformWith = (file) => ({ css: { ...allPlatforms.css, files: [file] } });
 
 const log = {
   info: (...messages) => {
@@ -62,7 +81,10 @@ const log = {
 
 async function run() {
   try {
-    await sd.hasInitialized;
+    if (!runCollisionGuard()) {
+      process.exitCode = 1;
+      return;
+    }
 
     if (checkMode) {
       await runCheck();
@@ -76,12 +98,100 @@ async function run() {
   }
 }
 
+/**
+ * The collision guard runs BEFORE any dictionary is loaded, because Style Dictionary
+ * deep-merges colliding paths at load time and nothing downstream can see them again.
+ */
+function runCollisionGuard() {
+  const { violations } = auditAllScopes(packageRoot);
+  if (violations.length === 0) {
+    log.info(`✔︎ collision guard: no non-exempt collisions across ${oodsScoping.BRAND_SCOPES.length} scopes`);
+    return true;
+  }
+
+  log.error(`❌ collision guard: ${violations.length} colliding token path(s) — refusing to build`);
+  for (const { tokenPath, declarations } of violations) {
+    log.error(`   ${tokenPath}`);
+    for (const { file, value } of declarations) {
+      log.error(`       ${file} = ${JSON.stringify(value)}`);
+    }
+  }
+  log.error('   Run `pnpm run tokens:collision-guard` for the full report.');
+  return false;
+}
+
+/**
+ * Assemble dist/css/tokens.css from the six scope runs.
+ *
+ * Block 1 is the DEFAULT_SCOPE's FULL dictionary under `:root` (memo SS3 D2/D3 — one
+ * file, because document.ts:20 inlines exactly one path). Blocks 2..7 carry only the
+ * `color.brand.<X>.*` literals for their cell, under the D9 two-attribute selectors.
+ *
+ * Only the brand literals are re-emitted per scope. The `brand.<X>.*` aliases are
+ * emitted once at `:root` as `var(--oods-color-brand-...)` references, and a `var()`
+ * resolves at computed-value time on the element, so they pick up the scoped override
+ * through the cascade without being restated.
+ */
+async function renderCssBundle() {
+  const rootSd = await dictionaryForScope(
+    oodsScoping.DEFAULT_SCOPE,
+    cssPlatformWith({
+      destination: 'tokens.css',
+      format: 'css/variables',
+      options: { selector: ':root', outputReferences: true },
+    }),
+  );
+  const rootOutput = (await rootSd.formatAllPlatforms({ cache: false })).css[0].output;
+
+  const blocks = [rootOutput.trim()];
+  for (const scope of oodsScoping.BRAND_SCOPES) {
+    const selectors = oodsScoping.selectorsForScope(scope);
+    const scopeSd = await dictionaryForScope(
+      scope,
+      cssPlatformWith({
+        destination: 'tokens.css',
+        format: 'css/variables',
+        filter: (token) => oodsScoping.isBrandToken(token, scope.brand),
+        options: {
+          selector: selectors.join(',\n'),
+          outputReferences: false,
+          showFileHeader: false,
+        },
+      }),
+    );
+    const output = (await scopeSd.formatAllPlatforms({ cache: false })).css[0].output;
+    blocks.push(`/**\n * brand ${scope.brand} · theme ${scope.theme} — brand namespace\n */\n${output.trim()}`);
+
+    // memo SS3 D8 — the bridge. Brand values alone are inert: every --theme-* slot
+    // resolves to the neutral reference palette at :root, and no semantic declaration
+    // in the shipped CSS references a brand var. This block is what makes data-brand
+    // change pixels, by re-assigning the shared consumer slots from this cell's values.
+    const dictionary = await scopeSd.getPlatformTokens('css', { cache: false });
+    const resolvedByPath = new Map(
+      dictionary.allTokens.map((token) => [token.path.join('.'), getTokenValue(token)]),
+    );
+    blocks.push(
+      `/**\n * brand ${scope.brand} · theme ${scope.theme} — semantic bridge\n */\n${renderBridgeBlock(scope, resolvedByPath, selectors)}`,
+    );
+  }
+
+  return `${blocks.join('\n\n')}\n`;
+}
+
 async function runBuild() {
   const start = performance.now();
   log.info('Building design tokens with Style Dictionary…');
 
-  await sd.cleanAllPlatforms({ cache: false });
-  await sd.buildAllPlatforms({ cache: false });
+  const nonCssSd = await dictionaryForScope(
+    oodsScoping.DEFAULT_SCOPE,
+    Object.fromEntries(NON_CSS_PLATFORMS.map((name) => [name, allPlatforms[name]])),
+  );
+  await nonCssSd.cleanAllPlatforms({ cache: false });
+  await nonCssSd.buildAllPlatforms({ cache: false });
+
+  const css = await renderCssBundle();
+  await fs.mkdir(dirname(CSS_DESTINATION), { recursive: true });
+  await fs.writeFile(CSS_DESTINATION, css, 'utf8');
 
   const issues = await collectValidationIssues();
   reportValidationIssues(issues);
@@ -89,7 +199,7 @@ async function runBuild() {
   if (issues.length === 0) {
     const duration = ((performance.now() - start) / 1000).toFixed(2);
     log.success(`✔︎ tokens built successfully in ${duration}s`);
-    log.success('   css:      dist/css/tokens.css');
+    log.success(`   css:      dist/css/tokens.css (${oodsScoping.BRAND_SCOPES.length} brand × theme scopes)`);
     log.success('   types:    dist/ts/tokens.ts');
     log.success('   tailwind: dist/tailwind/tokens.json');
     log.success('   ios:      dist/ios-swift/OodsTokens.swift');
@@ -100,8 +210,13 @@ async function runBuild() {
 }
 
 async function runCheck() {
-  const outputs = await sd.formatAllPlatforms({ cache: false });
+  const nonCssSd = await dictionaryForScope(
+    oodsScoping.DEFAULT_SCOPE,
+    Object.fromEntries(NON_CSS_PLATFORMS.map((name) => [name, allPlatforms[name]])),
+  );
+  const outputs = await nonCssSd.formatAllPlatforms({ cache: false });
   const diffs = await compareWithExistingOutputs(outputs);
+  diffs.push(...(await compareCssBundle()));
   const issues = await collectValidationIssues();
 
   if (diffs.length > 0) {
@@ -122,6 +237,21 @@ async function runCheck() {
     log.success('✔︎ token outputs are up-to-date and pass validation');
   } else {
     process.exitCode = 1;
+  }
+}
+
+/** The CSS bundle is assembled by hand, so --check has to compare it by hand too. */
+async function compareCssBundle() {
+  const expected = await renderCssBundle();
+  const relativePath = relative(process.cwd(), CSS_DESTINATION);
+  try {
+    const existing = await fs.readFile(CSS_DESTINATION, 'utf8');
+    return existing === expected ? [] : [{ file: relativePath, state: 'stale' }];
+  } catch (error) {
+    if (error && typeof error === 'object' && error.code === 'ENOENT') {
+      return [{ file: relativePath, state: 'missing' }];
+    }
+    throw error;
   }
 }
 
@@ -164,9 +294,25 @@ async function compareWithExistingOutputs(outputsByPlatform) {
   return diffs;
 }
 
+/**
+ * Post-load sanity checks on the DEFAULT_SCOPE dictionary. NOTE: this is NOT the
+ * collision guard — `dictionary.allTokens` is the list Style Dictionary produces
+ * AFTER deep-merging the sources, so a source collision has already been resolved
+ * by the time this runs and can never appear here. Source collisions are caught
+ * pre-load by `runCollisionGuard()`. What this still earns its keep for is
+ * undefined resolved values (an unresolvable reference).
+ */
 async function collectValidationIssues() {
   const issues = [];
-  const dictionary = await sd.getPlatformTokens('css', { cache: false });
+  const cssSd = await dictionaryForScope(
+    oodsScoping.DEFAULT_SCOPE,
+    cssPlatformWith({
+      destination: 'tokens.css',
+      format: 'css/variables',
+      options: { selector: ':root', outputReferences: true },
+    }),
+  );
+  const dictionary = await cssSd.getPlatformTokens('css', { cache: false });
   const seenNames = new Map();
   const seenVariables = new Map();
 
