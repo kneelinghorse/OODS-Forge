@@ -223,10 +223,17 @@ function createLayer(
  * Anything else is dropped rather than guessed at.
  *
  * CHANNEL CHOICE, stated because it is a judgement call: `y` if it is quantitative,
- * else `x`. `baseline` names the measure axis, and `orientation` — the only other signal
- * about which axis that is — is itself an OODS-only key with no MarkDef target, so it
- * cannot be relied on here. If neither positional channel is quantitative, nothing is
- * emitted. A caller-declared `scale.zero` always wins.
+ * else `x`. `baseline` names the measure axis; the channel's own TYPE is the signal used
+ * to find it. If neither positional channel is quantitative, nothing is emitted, and a
+ * caller-declared `scale.zero` always wins.
+ *
+ * s169 m05 CORRECTION: this comment used to justify the choice partly by saying
+ * `orientation` "is itself an OODS-only key with no MarkDef target, so it cannot be relied
+ * on here". The first half is no longer true — `orientation` now translates to
+ * `MarkDef.orient`. The channel choice is UNCHANGED and still correct, because
+ * quantitative-ness is the direct signal and `orient` is advisory (Vega-Lite ignores it on
+ * stacked charts). The stale half of the rationale is removed rather than left to be read
+ * as a live constraint.
  */
 function applyBaselineToEncoding(
   mark: NormalizedMark,
@@ -299,9 +306,40 @@ const VEGA_LITE_INTERPOLATE: ReadonlySet<string> = new Set([
 ]);
 
 /**
+ * `MarkDef.orient` (`Orientation`) and `MarkDef.strokeJoin` (`StrokeJoin`), verified
+ * against the INSTALLED vega-lite 6.4.1 schema rather than from memory. Both are EXACT
+ * matches for the OODS trait vocabularies they translate from:
+ *
+ *   `schemas/traits/mark-bar.parameters.schema.json` `orientation` — ["vertical","horizontal"]
+ *   `schemas/traits/mark-line.parameters.schema.json` `join`       — ["miter","round","bevel"]
+ *
+ * Same-set, different name — so these are renames, and the membership guard exists for the
+ * same reason `curve`'s does: `mark.options` is free-form and nothing stops a caller
+ * writing `orientation: 'sideways'`.
+ */
+const VEGA_LITE_ORIENTATION: ReadonlySet<string> = new Set(['horizontal', 'vertical']);
+const VEGA_LITE_STROKE_JOIN: ReadonlySet<string> = new Set(['miter', 'round', 'bevel']);
+
+/**
  * OODS-only option keys with an exact Vega-Lite target, translated rather than dropped.
  *
- *   `curve`    → `interpolate`      (same concept, different name)
+ *   `curve`         → `interpolate`  (same concept, different name)
+ *   `orientation`   → `orient`       (s169 m05 — exact vocabulary match, see above)
+ *   `enableMarkers` → `point`        (s169 m05 — OODS boolean; `MarkDef.point` accepts
+ *                     `boolean | OverlayMarkDef | 'transparent'`, so the boolean branch is
+ *                     an exact fit. Guarded on `typeof === 'boolean'` so an object or the
+ *                     string `'transparent'` arriving under the OODS key is dropped rather
+ *                     than smuggled through a key whose declared type is boolean.)
+ *   `join`          → `strokeJoin`   (s169 m05 — exact vocabulary match, see above)
+ *
+ * ORIENT CAVEAT, stated because the translation is faithful and the RESULT still may not
+ * be what a caller expects: Vega-Lite ignores an explicitly-specified `orient` on STACKED
+ * charts, where orientation is determined by the stack. Translating `orientation` is
+ * therefore value-faithful — the declared value reaches the output — but it is NOT a
+ * layout swap, and on a stacked chart it will have no visible effect. That is Vega-Lite's
+ * documented behaviour, not a defect in this translation, and dropping the key instead
+ * would be strictly worse (silent on both counts).
+ *
  *   `fill`     → `filled` (boolean) ONLY for the OODS point vocabulary `'solid'|'hollow'`.
  *                `fill` IS a real MarkDef property accepting any string as a Color, so
  *                ajv ACCEPTS `fill:'hollow'` — the allowlist cannot catch it and the mark
@@ -323,6 +361,19 @@ function translateMarkOption(key: string, value: unknown): [string, unknown] | u
   if (key === 'curve') {
     return typeof value === 'string' && VEGA_LITE_INTERPOLATE.has(value)
       ? ['interpolate', value]
+      : undefined;
+  }
+  if (key === 'orientation') {
+    return typeof value === 'string' && VEGA_LITE_ORIENTATION.has(value)
+      ? ['orient', value]
+      : undefined;
+  }
+  if (key === 'enableMarkers') {
+    return typeof value === 'boolean' ? ['point', value] : undefined;
+  }
+  if (key === 'join') {
+    return typeof value === 'string' && VEGA_LITE_STROKE_JOIN.has(value)
+      ? ['strokeJoin', value]
       : undefined;
   }
   if (key === 'fill' && (value === 'solid' || value === 'hollow')) {

@@ -94,12 +94,21 @@ function parseCssBlocks(css: string): Map<string, Map<string, string>> {
 const blocks = parseCssBlocks(fs.readFileSync(TOKENS_CSS, 'utf8'));
 const selectorFor = (brand: Brand, theme: Theme) => `[data-brand='${brand}'][data-theme='${theme}']`;
 
-/** A block declares zero variables belonging to any OTHER brand. Key-based. */
-function findContainmentBreaches(): string[] {
+/**
+ * A block declares zero variables belonging to any OTHER brand. Key-based.
+ *
+ * TAKES THE BLOCK MAP AS AN ARGUMENT (s169 m02), and that is the whole point. Both oracles
+ * used to be zero-arg closures over the module-level `blocks`, which meant the seeded
+ * proofs below could not run through them — they re-implemented the check inline against
+ * their own seeded map instead. MEASURED consequence: `return []` at the top of either
+ * oracle left all nine tests GREEN. A control that cannot fail is not a control. Now the
+ * seeds flow through the real function, and gutting it reds exactly its own proof.
+ */
+function findContainmentBreaches(cssBlocks: Map<string, Map<string, string>>): string[] {
   const breaches: string[] = [];
   for (const brand of BRANDS) {
     for (const theme of THEMES) {
-      const declared = blocks.get(selectorFor(brand, theme));
+      const declared = cssBlocks.get(selectorFor(brand, theme));
       if (!declared) continue;
       for (const other of BRANDS) {
         if (other === brand) continue;
@@ -115,14 +124,17 @@ function findContainmentBreaches(): string[] {
   return breaches;
 }
 
-/** Strip the brand segment: A's variable must not carry B's value for the same slot. */
-function findCorrespondingSlotLeaks(): string[] {
+/**
+ * Strip the brand segment: A's variable must not carry B's value for the same slot.
+ * Parameterised for the same reason as `findContainmentBreaches` — see there.
+ */
+function findCorrespondingSlotLeaks(cssBlocks: Map<string, Map<string, string>>): string[] {
   const leaksFound: string[] = [];
   for (const theme of THEMES) {
     const a = cellVars('A', theme);
     const b = cellVars('B', theme);
-    const declaredA = blocks.get(selectorFor('A', theme));
-    const declaredB = blocks.get(selectorFor('B', theme));
+    const declaredA = cssBlocks.get(selectorFor('A', theme));
+    const declaredB = cssBlocks.get(selectorFor('B', theme));
     if (!declaredA || !declaredB) continue;
     const slotOf = (key: string) => key.replace(/^--oods-color-brand-[ab]-/, '');
     const bBySlot = new Map([...b].map(([k, v]) => [slotOf(k), v]));
@@ -193,25 +205,28 @@ describe('s168 m06 — :root value audit + the two discriminating brand-axis ora
   });
 
   it('(b) CONTAINMENT: no brand block declares another brand’s variables', () => {
-    expect(findContainmentBreaches()).toEqual([]);
+    expect(findContainmentBreaches(blocks)).toEqual([]);
   });
 
   it('(b) CORRESPONDING-SLOT: no brand block carries the other brand’s value for a slot', () => {
-    expect(findCorrespondingSlotLeaks()).toEqual([]);
+    expect(findCorrespondingSlotLeaks(blocks)).toEqual([]);
   });
 
+  /**
+   * The seed runs THROUGH the oracle (s169 m02) and the assertion is on the oracle's exact
+   * REPORT STRING, not on a re-implemented predicate. Both halves matter: routing through
+   * the real function is what makes `return []` detectable, and asserting the message is
+   * what makes a silently-reworded or mis-attributed report detectable.
+   */
   it('(b) the containment oracle is discriminating (seeded foreign variable)', () => {
     const seeded = parseCssBlocks(
       `${fs.readFileSync(TOKENS_CSS, 'utf8')}\n${selectorFor('A', 'dark')} { --oods-color-brand-b-surface-canvas: rgb(1,2,3); }\n`,
     );
-    const breaches: string[] = [];
-    const declared = seeded.get(selectorFor('A', 'dark'))!;
-    for (const key of declared.keys()) {
-      if (key.startsWith('--oods-color-brand-b-')) breaches.push(key);
-    }
-    expect(breaches).toContain('--oods-color-brand-b-surface-canvas');
+    expect(findContainmentBreaches(seeded)).toEqual([
+      "[data-brand='A'][data-theme='dark'] declares --oods-color-brand-b-surface-canvas, which belongs to brand B",
+    ]);
     // Control of the control: unseeded is clean, so the seed is what moved it.
-    expect(findContainmentBreaches()).toEqual([]);
+    expect(findContainmentBreaches(blocks)).toEqual([]);
   });
 
   it('(b) the corresponding-slot oracle is discriminating (seeded cross-brand value)', () => {
@@ -225,7 +240,11 @@ describe('s168 m06 — :root value audit + the two discriminating brand-axis ora
     const seeded = parseCssBlocks(
       `${fs.readFileSync(TOKENS_CSS, 'utf8')}\n${selectorFor('A', 'base')} { ${aKey}: ${bValue}; }\n`,
     );
-    expect(seeded.get(selectorFor('A', 'base'))!.get(aKey)).toBe(bValue);
+    expect(findCorrespondingSlotLeaks(seeded)).toEqual([
+      `A/base ${aKey} carries brand B's value for slot ${slot} ("${bValue}")`,
+    ]);
+    // Control of the control: unseeded is clean, so the seed is what moved it.
+    expect(findCorrespondingSlotLeaks(blocks)).toEqual([]);
   });
 
   it('the otherBrand contamination loop would be VACUOUS — measured, not asserted by opinion', () => {

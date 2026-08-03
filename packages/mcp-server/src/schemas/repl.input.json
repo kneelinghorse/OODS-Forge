@@ -65,6 +65,11 @@
             "description": "Optional research bundle from Stage1 discovery to influence rendering.",
             "additionalProperties": true
           },
+          "brand": {
+            "type": "string",
+            "enum": ["A", "B"],
+            "description": "Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand=\"default\". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so a brand supplied alongside fragments is ignored."
+          },
           "options": {
             "type": "object",
             "properties": {

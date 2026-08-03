@@ -206,7 +206,11 @@ describe('dashboard.render a11yContrast output block (sprint-119 m03)', () => {
       expect(finding.severity).toBe('warning');
       expect(v135.some((w) => w.message.includes(`"${finding.pair}"`))).toBe(true);
     }
-    expect(block.summary).toEqual({ failing: block.findings.length });
+    // s169 m04 — `gradedPairs` is the ONE chartered golden movement of this sprint, and it
+    // is asserted as a LITERAL 4, not as `block.summary.gradedPairs`. The whole defect this
+    // field exists to expose was a scan that measured nothing while reporting `failing: 0`;
+    // a self-referential assertion would have been just as green then as now.
+    expect(block.summary).toEqual({ failing: block.findings.length, gradedPairs: 4 });
     expect(block).toMatchSnapshot();
   });
 

@@ -32,7 +32,14 @@ import { canonicalize, sha256 } from '@oods/artifacts';
 import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from '../schemas/generated.js';
 import { handle as vizRenderHandle } from './viz.render.js';
 import { createValueRef, describeSchemaRef } from './schema-ref.js';
-import { composeDashboardHtml, scanBrandContrast, type ChartTableData, type ContrastFinding } from './dashboard.render.html.js';
+import {
+  composeDashboardHtml,
+  resolveBrandTokens,
+  scanBrandContrast,
+  type ChartTableData,
+  type ContrastScanResult,
+  type ExportBrand,
+} from './dashboard.render.html.js';
 import { loadMeasureRegistry, MalformedMeasureRegistryError } from './measure-registry.js';
 import { resolveMeasurePanel } from './measure-resolver.js';
 import { absentFields, referencedEncodingFields } from './field-presence.js';
@@ -44,16 +51,21 @@ type Issue = NonNullable<DashboardRenderOutput['warnings']>[number];
 const TABULAR_TYPES = new Set(['bar', 'line', 'area', 'scatter', 'heatmap']);
 
 /**
- * Project scanBrandContrast's ContrastFinding[] into the opt-in a11yContrast output
- * block (sprint-119 m03). Every finding is a failing pair (ratio < threshold), so
- * each becomes a 'warning'-severity row mirroring its OODS-V135 warning; the summary
- * carries the failing count. Pure + exported so the populated mapping is unit-testable
- * (the default brand passes contrast, so a non-empty block never arises end-to-end).
+ * Project a contrast scan into the opt-in a11yContrast output block (sprint-119 m03).
+ * Every finding is a failing pair (ratio < threshold), so each becomes a 'warning'-severity
+ * row mirroring its OODS-V135 warning. Pure + exported so the populated mapping is
+ * unit-testable (the default brand passes contrast, so a non-empty block never arises
+ * end-to-end).
+ *
+ * s169 m04 adds `summary.gradedPairs` — the ONE chartered golden movement of this sprint.
+ * `failing: 0` alone is ambiguous between "checked four pairs, all passed" and "checked
+ * nothing", and for three sprints it silently meant the second. A consumer reading this
+ * block can now tell those apart without trusting a comment.
  */
-export function toA11yContrastBlock(findings: ContrastFinding[]): NonNullable<DashboardRenderOutput['a11yContrast']> {
+export function toA11yContrastBlock(scan: ContrastScanResult): NonNullable<DashboardRenderOutput['a11yContrast']> {
   return {
-    findings: findings.map((finding) => ({ ...finding, severity: 'warning' as const })),
-    summary: { failing: findings.length },
+    findings: scan.findings.map((finding) => ({ ...finding, severity: 'warning' as const })),
+    summary: { failing: scan.findings.length, gradedPairs: scan.graded },
   };
 }
 
@@ -69,6 +81,14 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   // (sprint-135 m03); the builder is conformant-by-construction (m02), so generated panels surface no
   // findings. Set a11yEquivalence:false to opt out for agent-supplied non-conformant panels.
   const wantA11yEquivalence = input.a11yEquivalence ?? true;
+  // s169 m04 — BRAND. Optional, no default: absent means "as before", which keeps the
+  // whole no-brand path byte-identical (`resolveBrandTokens()` falls back to brand A, the
+  // hard-coded value it used to be). Resolved ONCE here and threaded through the two seams
+  // that already existed — `tokens` on composeDashboardHtml and `tokensOverride` on
+  // scanBrandContrast — so the HTML the export paints and the palette the scan grades can
+  // never be two different brands.
+  const brand = input.brand as ExportBrand | undefined;
+  const exportTokens = resolveBrandTokens(brand);
   // A11y completeness (sprint-118 m07) — all default-off so the absent path is byte-identical.
   const wantDataTable = input.output?.dataTable ?? false;
   const wantContrastScan = input.output?.contrastScan ?? false;
@@ -654,15 +674,18 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   // (no recompute — scanBrandContrast is called once; its s118 non-hex guard already applies).
   let a11yContrast: DashboardRenderOutput['a11yContrast'];
   if (wantContrastScan) {
-    const contrastFindings = scanBrandContrast();
-    for (const finding of contrastFindings) {
+    // s169 m04: scan the SAME palette the export inlines. Before brand threading this was
+    // always the default brand, so passing the resolved map is what makes `brand: 'B'`
+    // grade brand B's colours rather than brand A's while claiming to have graded the export.
+    const contrastScan = scanBrandContrast(exportTokens);
+    for (const finding of contrastScan.findings) {
       warnings.push({
         code: 'OODS-V135',
         message: `Brand token pair "${finding.pair}" fails WCAG contrast: measured ${finding.ratio}:1, need ≥${finding.threshold}:1.`,
         severity: 'warning',
       });
     }
-    a11yContrast = toA11yContrastBlock(contrastFindings);
+    a11yContrast = toA11yContrastBlock(contrastScan);
   }
 
   const result: DashboardRenderOutput = {
@@ -681,6 +704,9 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       ...(wantDataTable ? { dataTable: true } : {}),
       ...(wantContrastScan ? { contrastScan: true } : {}),
       ...(wantA11y ? { includeA11y: true } : {}),
+      // Echoed ONLY when supplied (the additive-spread pattern every other control here
+      // uses), so an absent brand leaves this object byte-identical to s168's.
+      ...(brand ? { brand } : {}),
     },
     meta: {
       panelCount: panelResults.length,
@@ -716,6 +742,8 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       layout,
       a11y: dashboardA11y,
       columns: input.layout?.columns ?? 12,
+      // The same resolved map the scan graded — one brand per render, by construction.
+      tokens: exportTokens,
       ...(tableData ? { tableData } : {}),
       ...(dataQualityField ? { dataQualityField } : {}),
     });

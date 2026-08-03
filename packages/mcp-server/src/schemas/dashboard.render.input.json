@@ -90,6 +90,11 @@
       "type": "string",
       "description": "SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). KPI threshold colors are NOT resolved inline."
     },
+    "brand": {
+      "type": "string",
+      "enum": ["A", "B"],
+      "description": "Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte. Uppercase 'A' or 'B' exactly — these select the --oods-brand-a-* / --oods-brand-b-* token sets @oods/tokens already ships. Threads into the tokens inlined by the output.html export AND the palette output.contrastScan grades, so the colours painted and the colours checked are always the same brand."
+    },
     "selection": {
       "type": "object",
       "description": "Optional accumulated cross-filter SelectionState, keyed by sourceWidgetId (one active selection per source). When present, each panel's rows are cross-filtered (skip-self + AND-across-sources) before render/KPI compute; absent -> the unfiltered dashboard.",

@@ -26,25 +26,39 @@ import type { DashboardRenderOutput } from '../schemas/generated.js';
 
 // Brand-token inlining (m04): map the export's CSS custom-property names to the OODS
 // design-token names, resolved to concrete values via the existing token path so the
-// HTML is on-brand STANDALONE (no dependency on an external token CSS bundle). Uses
-// the default brand (brand-a) semantic tokens; a brand that defines chromatic status
-// colors differentiates the +/- trend, while the a11y text always names the direction
-// (so the export never relies on color alone). The compact JSON path is unchanged —
-// this inlining is export-only.
-const EXPORT_TOKEN_MAP: Readonly<Record<string, string>> = {
-  '--oods-color-fg': '--oods-brand-a-text-primary',
-  '--oods-color-muted': '--oods-brand-a-text-muted',
-  '--oods-color-bg': '--oods-brand-a-surface-canvas',
-  '--oods-color-panel-bg': '--oods-brand-a-surface-raised',
-  '--oods-color-panel-border': '--oods-brand-a-border-subtle',
-  '--oods-color-accent': '--oods-brand-a-text-primary',
-  '--oods-color-positive': '--oods-brand-a-status-success-text',
-  '--oods-color-negative': '--oods-brand-a-status-critical-text',
+// HTML is on-brand STANDALONE (no dependency on an external token CSS bundle). A brand
+// that defines chromatic status colors differentiates the +/- trend, while the a11y text
+// always names the direction (so the export never relies on color alone). The compact
+// JSON path is unchanged — this inlining is export-only.
+//
+// s169 m04: the map is now PARAMETERISED BY BRAND. It was hard-coded to `brand-a`, which
+// is why `dashboard.render` could not honour a brand even though the token package has
+// shipped a complete `--oods-brand-b-*` set (20 names, identical name set to brand A) for
+// two sprints. `DEFAULT_EXPORT_BRAND` keeps the no-brand path byte-identical.
+export type ExportBrand = 'A' | 'B';
+const DEFAULT_EXPORT_BRAND: ExportBrand = 'A';
+
+const EXPORT_TOKEN_SUFFIXES: Readonly<Record<string, string>> = {
+  '--oods-color-fg': 'text-primary',
+  '--oods-color-muted': 'text-muted',
+  '--oods-color-bg': 'surface-canvas',
+  '--oods-color-panel-bg': 'surface-raised',
+  '--oods-color-panel-border': 'border-subtle',
+  '--oods-color-accent': 'text-primary',
+  '--oods-color-positive': 'status-success-text',
+  '--oods-color-negative': 'status-critical-text',
 };
 
-function resolveBrandTokens(): Record<string, string> {
+export function exportTokenMap(brand: ExportBrand = DEFAULT_EXPORT_BRAND): Readonly<Record<string, string>> {
+  const prefix = `--oods-brand-${brand.toLowerCase()}-`;
+  return Object.fromEntries(
+    Object.entries(EXPORT_TOKEN_SUFFIXES).map(([cssVar, suffix]) => [cssVar, `${prefix}${suffix}`]),
+  );
+}
+
+export function resolveBrandTokens(brand: ExportBrand = DEFAULT_EXPORT_BRAND): Record<string, string> {
   const resolved: Record<string, string> = {};
-  for (const [cssVar, tokenName] of Object.entries(EXPORT_TOKEN_MAP)) {
+  for (const [cssVar, tokenName] of Object.entries(exportTokenMap(brand))) {
     const value = resolveTokenToColor(tokenName);
     if (value) {
       resolved[cssVar] = value;
@@ -57,7 +71,7 @@ function resolveBrandTokens(): Record<string, string> {
 // paints, checked at the WCAG AA normal-text threshold (4.5:1). Run over the ALREADY-RESOLVED
 // hexes from resolveBrandTokens() with the pure contrastRatio() — NO filesystem read (the
 // disk-reading validate-contrast loadTokenData path is deliberately NOT wired).
-const CONTRAST_PAIRS: ReadonlyArray<{ id: string; fg: string; bg: string; threshold: number }> = [
+export const CONTRAST_PAIRS: ReadonlyArray<{ id: string; fg: string; bg: string; threshold: number }> = [
   { id: 'fg-on-bg', fg: '--oods-color-fg', bg: '--oods-color-bg', threshold: 4.5 },
   { id: 'positive-on-panel-bg', fg: '--oods-color-positive', bg: '--oods-color-panel-bg', threshold: 4.5 },
   { id: 'negative-on-panel-bg', fg: '--oods-color-negative', bg: '--oods-color-panel-bg', threshold: 4.5 },
@@ -70,32 +84,81 @@ export interface ContrastFinding {
   readonly threshold: number;
 }
 
+export interface ContrastScanResult {
+  readonly findings: ContrastFinding[];
+  /** How many of CONTRAST_PAIRS were actually measured. See the honesty note below. */
+  readonly graded: number;
+}
+
+/**
+ * ── s169 m04: THIS SCAN GRADED ZERO PAIRS IN PRODUCTION, AND SAID NOTHING ──
+ *
+ * `resolveTokenToColor` returns `rgb(r, g, b)` strings. `contrastRatio` accepts ONLY
+ * `#rgb`/`#rrggbb` and THROWS on anything else. The `catch` below was written for CSS
+ * system colours (`CanvasText`), which genuinely cannot be graded — but it swallowed the
+ * rgb() failures too. MEASURED at s168's tip: `scanBrandContrast()` returned `[]` for
+ * every input, on every run, since the feature shipped. `output.contrastScan: true`
+ * reported "no contrast failures" having checked nothing.
+ *
+ * What made it invisible for three sprints: the unit test used a **hex** palette, which
+ * parses fine, fails as designed, and is GREEN at HEAD — so the test proved the pair
+ * logic while the production path was inert. Only an **rgb()-form** failing palette
+ * discriminates, and the tests now use one.
+ *
+ * NORMALISATION LIVES HERE, NEVER IN `resolveBrandTokens`. That function's rgb() output is
+ * also inlined verbatim into the HTML export and pinned by the sprint-115 golden
+ * (`--oods-color-fg:rgb(24, 35, 60)`), so converting at the source would move a golden
+ * that has nothing to do with contrast.
+ *
+ * And the count is REPORTED, not implied: a scan that silently skips everything must no
+ * longer be able to look like a scan that passed. `graded` is asserted against
+ * `CONTRAST_PAIRS.length` on the production path by the test suite.
+ */
+function toGradableHex(value: string): string | null {
+  const trimmed = value.trim();
+  if (/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(trimmed)) {
+    return trimmed;
+  }
+  const rgb = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)$/.exec(trimmed);
+  if (!rgb) {
+    // A CSS system colour (`CanvasText`, `Highlight`, …) is context-dependent — the user
+    // agent supplies the actual colour — so no static ratio exists. Genuinely ungradable.
+    return null;
+  }
+  const channels = [rgb[1], rgb[2], rgb[3]].map((part) => Number(part));
+  if (channels.some((channel) => !Number.isInteger(channel) || channel < 0 || channel > 255)) {
+    return null;
+  }
+  return `#${channels.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+}
+
 /**
  * Scan the export's resolved brand-token colour pairs for WCAG contrast failures (pure, no fs).
- * Pass `tokensOverride` to scan a specific palette (tests); otherwise the default brand resolves.
+ * Pass `tokensOverride` to scan a specific palette (tests, or a non-default brand); otherwise
+ * the default brand resolves.
  */
-export function scanBrandContrast(tokensOverride?: Readonly<Record<string, string>>): ContrastFinding[] {
+export function scanBrandContrast(tokensOverride?: Readonly<Record<string, string>>): ContrastScanResult {
   const tokens = tokensOverride ?? resolveBrandTokens();
   const findings: ContrastFinding[] = [];
+  let graded = 0;
   for (const pair of CONTRAST_PAIRS) {
     const fg = tokens[pair.fg];
     const bg = tokens[pair.bg];
     if (!fg || !bg) {
       continue;
     }
-    // contrastRatio only understands #rgb/#rrggbb. A token that resolves to a CSS system colour
-    // (e.g. 'CanvasText') is context-dependent and cannot be statically contrast-checked — skip it.
-    let ratio: number;
-    try {
-      ratio = Number(contrastRatio(fg, bg).toFixed(2));
-    } catch {
+    const fgHex = toGradableHex(fg);
+    const bgHex = toGradableHex(bg);
+    if (!fgHex || !bgHex) {
       continue;
     }
+    graded += 1;
+    const ratio = Number(contrastRatio(fgHex, bgHex).toFixed(2));
     if (ratio < pair.threshold) {
       findings.push({ pair: pair.id, ratio, threshold: pair.threshold });
     }
   }
-  return findings;
+  return { findings, graded };
 }
 
 type PanelResult = DashboardRenderOutput['panels'][number];

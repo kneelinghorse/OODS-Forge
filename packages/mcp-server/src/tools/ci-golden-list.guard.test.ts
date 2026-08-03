@@ -12,10 +12,17 @@ import { load as parseYaml } from 'js-yaml';
 // convention into an enforced gate: it enumerates the on-disk viz.render.*/dashboard.render.*
 // goldens and asserts each is named in the ci.yml run string.
 //
-// SCOPE: strictly the viz.render.*/dashboard.render.* subset. The other ~13 colocated tools tests
+// SCOPE: the viz.render.*/dashboard.render.*/repl.render.* subset. The other colocated tools tests
 // (coercion, entity-resolver, map.group, review.*, schema*, structuredData.fetch.rollup,
-// fidelity.preview, repl.render.skin-mapping, this guard, ...) are LEGITIMATELY absent from the
-// list — an 'all *.test.ts' guard would falsely red.
+// fidelity.preview, this guard, ...) are LEGITIMATELY absent from the list — an 'all *.test.ts'
+// guard would falsely red.
+//
+// s169 m04 WIDENED THIS TO repl.render.*, after walking straight into the blind spot it left.
+// `repl.render.skin-mapping.test.ts` was in the ci.yml list but OUTSIDE the guard's regex, so the
+// convention it enforces did not actually cover the repl render goldens — and the new
+// `repl.render.brand.test.ts` would have been dropped from CI with every local run green. Both
+// repl.render goldens are named in the list already, so widening goes green immediately; its value
+// is entirely in the NEXT one.
 //
 // SELF-EXCLUSION: this file is named ci-golden-list.guard.test.ts so it is OUT of its own scan
 // regex (no self-reference paradox). It IS itself appended to the ci.yml list by name, because an
@@ -27,7 +34,7 @@ const CI_YAML_PATH = path.resolve(here, '../../../../.github/workflows/ci.yml');
 
 // WIDENED regex (critic C5/A2): the optional '(\..*)?' segment catches the two BASE goldens
 // viz.render.test.ts + dashboard.render.test.ts that the naive /\..*\.test\.ts$/ silently skips.
-const SCOPED_GOLDEN = /^(viz\.render|dashboard\.render)(\..*)?\.test\.ts$/;
+const SCOPED_GOLDEN = /^(viz\.render|dashboard\.render|repl\.render)(\..*)?\.test\.ts$/;
 // The marker that identifies the colocated-goldens run step (fail loud if the command shape moves).
 const COLOCATED_RUN_MARKER = 'exec vitest run src/tools/viz.render';
 

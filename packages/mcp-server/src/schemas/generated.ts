@@ -237,7 +237,7 @@ export type ApplySummaryOutput = ApplySummaryOutputSchema.ApplySummaryOutput;
 // Source: artifact.certify.input.json
 export namespace ArtifactCertifyInputSchema {
   /**
-   * Input to artifact.certify: a Forge NormalizedVizSpec IR to certify. The tool boundary is intentionally PERMISSIVE ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR.
+   * Input to artifact.certify: a Forge NormalizedVizSpec IR to certify. The tool boundary is intentionally PERMISSIVE ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR. BRAND, STATED PLAINLY (s169 m04): this input takes NO brand, deliberately. Every operand certify grades is brand-INVARIANT — the colour hexes baked into the compiled spec, graded against the light-theme :root canvas — so a brand could not change any verdict. Offering the field would be a false affordance. dashboard.render and repl render DO accept brand; certify does not, because for certify it would mean nothing.
    */
   export interface ArtifactCertifyInput {
     /**
@@ -1334,6 +1334,10 @@ export namespace DashboardRenderInputSchema {
      */
     tokenCssRef?: string;
     /**
+     * Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte. Uppercase 'A' or 'B' exactly — these select the --oods-brand-a-* / --oods-brand-b-* token sets @oods/tokens already ships. Threads into the tokens inlined by the output.html export AND the palette output.contrastScan grades, so the colours painted and the colours checked are always the same brand.
+     */
+    brand?: 'A' | 'B';
+    /**
      * Optional accumulated cross-filter SelectionState, keyed by sourceWidgetId (one active selection per source). When present, each panel's rows are cross-filtered (skip-self + AND-across-sources) before render/KPI compute; absent -> the unfiltered dashboard.
      */
     selection?: {
@@ -1775,6 +1779,10 @@ export namespace DashboardRenderOutputSchema {
       dataTable?: boolean;
       contrastScan?: boolean;
       includeA11y?: boolean;
+      /**
+       * Echoes input.brand, and ONLY when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed.
+       */
+      brand?: 'A' | 'B';
     };
     meta?: {
       panelCount?: number;
@@ -1896,6 +1904,10 @@ export namespace DashboardRenderOutputSchema {
        * Number of brand-token pairs below their WCAG threshold.
        */
       failing?: number;
+      /**
+       * How many brand-token pairs were actually MEASURED (s169 m04). `failing: 0` on its own cannot distinguish "checked every pair and all passed" from "checked nothing" — and until s169 it silently meant the second, because the resolved tokens are rgb() strings the ratio function rejected and the rejection was swallowed. A consumer should treat gradedPairs < the expected pair count as an incomplete scan, not a clean one.
+       */
+      gradedPairs?: number;
     };
   }
   export interface ContrastFinding {
@@ -4576,6 +4588,10 @@ export namespace ReplRenderInputSchema {
     researchContext?: {
       [k: string]: any;
     };
+    /**
+     * Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand="default". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so a brand supplied alongside fragments is ignored.
+     */
+    brand?: 'A' | 'B';
     options?: {
       includeTree?: boolean;
     };

@@ -41,7 +41,8 @@
         "html": { "type": "boolean" },
         "dataTable": { "type": "boolean" },
         "contrastScan": { "type": "boolean" },
-        "includeA11y": { "type": "boolean" }
+        "includeA11y": { "type": "boolean" },
+        "brand": { "type": "string", "enum": ["A", "B"], "description": "Echoes input.brand, and ONLY when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed." }
       }
     },
     "meta": {
@@ -239,7 +240,8 @@
           "additionalProperties": false,
           "description": "Roll-up of the contrast scan.",
           "properties": {
-            "failing": { "type": "integer", "minimum": 0, "description": "Number of brand-token pairs below their WCAG threshold." }
+            "failing": { "type": "integer", "minimum": 0, "description": "Number of brand-token pairs below their WCAG threshold." },
+            "gradedPairs": { "type": "integer", "minimum": 0, "description": "How many brand-token pairs were actually MEASURED (s169 m04). `failing: 0` on its own cannot distinguish \"checked every pair and all passed\" from \"checked nothing\" — and until s169 it silently meant the second, because the resolved tokens are rgb() strings the ratio function rejected and the rejection was swallowed. A consumer should treat gradedPairs < the expected pair count as an incomplete scan, not a clean one." }
           }
         }
       }

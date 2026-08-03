@@ -73,20 +73,52 @@ export interface BrandContrastPair {
 /**
  * The semantic pairs, declared ONCE and expanded across every brand × graded theme.
  *
+ * ── THE TEXT × PANEL GRID IS COMPLETE (s169 m01) ──
+ * The first four entry groups are the full cross-product of the four body text roles
+ * (`primary`, `secondary`, `muted`, `accent`) against the three panel surfaces a page
+ * actually stacks (`canvas`, `raised`, `subtle`) — 12 pairs. s168 shipped 7 of those 12,
+ * chosen one at a time; the five that were missing were not deliberate exemptions, they
+ * were simply never written down, and three of them turned out to FAIL. A grid is
+ * declared as a grid so a gap cannot be a silent judgement call.
+ *
  * `text.disabled` on `surface.disabled` is deliberately ABSENT: WCAG 1.4.3 exempts
  * inactive components from any contrast requirement, and the low contrast IS the disabled
  * affordance. Its measured ratio is asserted by `brand-description-truth.spec.ts` instead,
  * so the number is still pinned — it is simply not graded against a threshold it was
  * never required to meet.
+ *
+ * ── STATUS FOREGROUNDS ON PANEL SURFACES ARE DELIBERATELY ABSENT (s169 m01) ──
+ * The grid above pairs the four TEXT roles with the panels. It does NOT pair the ten
+ * status foregrounds (`status.<tone>.text` / `.icon`) with `surface.canvas|raised|subtle`,
+ * and that exclusion is a measured judgement, not an oversight. A full candidate sweep of
+ * status-on-panel through this same evaluator produces 7 real failures (all of them ICONS,
+ * measuring 2.32–2.90 against the 3:1 non-text minimum; all 30 status-TEXT-on-panel
+ * candidates pass). They are excluded because THE PAIRING IS NOT PAINTED: every component
+ * that renders a status foreground binds it to that status's OWN surface, never to a page
+ * panel — see the chip/banner slot bindings at `apps/explorer/src/styles/layers.css:296-307`
+ * and the per-tone arms at `:494-534`, which set `--cmp-chip-background` from
+ * `--sys-status-<tone>-surface` alongside `--cmp-chip-foreground`/`--cmp-chip-icon`. The
+ * single place a status icon colour meets a page panel is a decorative bar inside an
+ * `aria-hidden="true"` container (`apps/explorer/src/components/DeliveryHealthWidget.tsx:81`),
+ * which carries no contrast requirement at all.
+ *
+ * Grading a pairing nothing paints would force seven unratified icon-token moves to satisfy
+ * a threshold no rendered surface is subject to. Those seven ARE recorded — as a deferred
+ * item needing a design pass and a ratification, not as a silent pass.
  */
 export const BRAND_CONTRAST_PAIRS: readonly BrandContrastPair[] = Object.freeze([
   { id: 'text-primary-on-canvas', foreground: 'text.primary', background: 'surface.canvas', threshold: 4.5, summary: 'Primary text on the brand canvas.' },
   { id: 'text-primary-on-raised', foreground: 'text.primary', background: 'surface.raised', threshold: 4.5, summary: 'Primary text on a raised brand surface.' },
   { id: 'text-primary-on-subtle', foreground: 'text.primary', background: 'surface.subtle', threshold: 4.5, summary: 'Primary text on a subtle brand surface.' },
   { id: 'text-secondary-on-canvas', foreground: 'text.secondary', background: 'surface.canvas', threshold: 4.5, summary: 'Secondary text on the brand canvas.' },
+  { id: 'text-secondary-on-raised', foreground: 'text.secondary', background: 'surface.raised', threshold: 4.5, summary: 'Secondary text on a raised brand surface.' },
+  { id: 'text-secondary-on-subtle', foreground: 'text.secondary', background: 'surface.subtle', threshold: 4.5, summary: 'Secondary text on a subtle brand surface.' },
   { id: 'text-muted-on-canvas', foreground: 'text.muted', background: 'surface.canvas', threshold: 4.5, summary: 'Muted text on the brand canvas.' },
+  { id: 'text-muted-on-raised', foreground: 'text.muted', background: 'surface.raised', threshold: 4.5, summary: 'Muted text on a raised brand surface.' },
   { id: 'text-muted-on-subtle', foreground: 'text.muted', background: 'surface.subtle', threshold: 4.5, summary: 'Muted text on a subtle brand surface.' },
   { id: 'text-accent-on-canvas', foreground: 'text.accent', background: 'surface.canvas', threshold: 4.5, summary: 'Accent text on the brand canvas.' },
+  { id: 'text-accent-on-raised', foreground: 'text.accent', background: 'surface.raised', threshold: 4.5, summary: 'Accent text on a raised brand surface.' },
+  { id: 'text-accent-on-subtle', foreground: 'text.accent', background: 'surface.subtle', threshold: 4.5, summary: 'Accent text on a subtle brand surface.' },
   { id: 'text-inverse-on-inverse', foreground: 'text.inverse', background: 'surface.inverse', threshold: 4.5, summary: 'Inverse text on the inverse brand surface.' },
   { id: 'on-interactive-default', foreground: 'text.onInteractive', background: 'surface.interactive.primary.default', threshold: 4.5, summary: 'Foreground on the primary interactive surface.' },
   { id: 'on-interactive-hover', foreground: 'text.onInteractive', background: 'surface.interactive.primary.hover', threshold: 4.5, summary: 'Foreground on the hovered interactive surface.' },

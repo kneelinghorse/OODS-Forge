@@ -17,7 +17,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import {
   BRAND_CONTRAST_PAIRS,
@@ -26,7 +25,7 @@ import {
   brandFlatKey,
   buildBrandContrastRules,
   evaluateContrastRules,
-  resolveFlatToken,
+  resolveColorSample,
   type FlatTokenMap,
 } from '@oods/a11y-tools';
 
@@ -60,20 +59,41 @@ function currentCell(brand: string, theme: string): FlatTokenMap {
   return cellTokenMap(brand, readFileSync(path.resolve(repoRoot, cellPath(brand, theme)), 'utf8'));
 }
 
-/** The same cell as of a given git revision — used for the RED-first proof. */
-function cellAtRevision(brand: string, theme: string, revision: string): FlatTokenMap | null {
-  try {
-    return cellTokenMap(
-      brand,
-      execFileSync('git', ['show', `${revision}:${cellPath(brand, theme)}`], {
-        cwd: repoRoot,
-        encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore'],
-      }),
-    );
-  } catch {
-    return null;
-  }
+/**
+ * A pre-change cell, read from a VENDORED FIXTURE rather than from git history.
+ *
+ * ── WHY THIS IS NOT `git show <sha>:<path>` (s169 m01) ──
+ * It used to be, and MEASURED: it therefore proved nothing in CI. The `coverage` job is
+ * the only CI runner of the `guardrails` project (`pnpm run test:coverage`, ci.yml:560),
+ * and its checkout takes the `actions/checkout` default of `fetch-depth: 1` — so
+ * `git show e5f2172:…` failed there, the old skip branch took over, and the assertion
+ * that a shipped rule set names real historical failures never executed on any machine
+ * except a maintainer's full clone. A green CI run said nothing about the proof.
+ *
+ * `fetch-depth: 0` would fix today's skip but not the durable problem: `e5f2172` and
+ * `00ae5b3` are BRANCH commits, and a squash-merge orphans them — at which point the
+ * "fix" reverts to skipping, silently, exactly as before. This spec was the repo's only
+ * history-reading test; vendoring the eight cells removes the dependency entirely and the
+ * skip path is DELETED, so an unavailable fixture is now a hard failure, not a pass.
+ *
+ * THE TRADE, stated: the fixtures freeze bytes. A history rewrite can orphan the commit
+ * they were taken from, and their `$source` key would then point at nothing — auditability
+ * degrades, but the proof keeps running. That is the direction of failure we want.
+ */
+const FIXTURE_ROOT = path.resolve(moduleDir, '__fixtures__/brand-cells');
+
+function cellAtRevision(brand: string, theme: string, revision: string): FlatTokenMap {
+  const file = path.join(FIXTURE_ROOT, revision, `${brand}-${theme}.json`);
+  const source = readFileSync(file, 'utf8');
+  // Provenance is asserted, not merely present: a hand-edited fixture that drops or
+  // rewrites `$source` stops being evidence about that revision.
+  expect(
+    JSON.parse(source).$source,
+    `${revision}/${brand}-${theme}.json lost its provenance key`,
+  ).toBe(`${revision}:${cellPath(brand, theme)}`);
+  // `cellTokenMap`'s walker only descends objects and only records `$value` leaves, so the
+  // top-level `$source` string is ignored. (JSON admits no comments — hence a key.)
+  return cellTokenMap(brand, source);
 }
 
 describe('brand contrast grading (s168 m04)', () => {
@@ -99,12 +119,17 @@ describe('brand contrast grading (s168 m04)', () => {
    * exist) would have walked into. Every token must RESOLVE before any ratio is asserted.
    */
   it('every rule’s tokens resolve, so a failure can only mean a real ratio', () => {
+    // `resolveColorSample`, not `resolveFlatToken` (s169 m01): the evaluator calls
+    // `resolveColorSample`, which is `resolveFlatToken` PLUS `normaliseColor`. A token can
+    // be present in the map and still blow up on conversion, and the map-lookup-only check
+    // would have declared that healthy. This control now covers the same path the graded
+    // assertion below runs on — the whole point of a control of the control.
     for (const brand of BRANDS) {
       for (const theme of BRAND_GRADED_THEMES) {
         const tokens = currentCell(brand, theme);
         for (const rule of buildBrandContrastRules(brand, theme)) {
-          expect(() => resolveFlatToken(tokens, rule.foreground), `${rule.ruleId} foreground`).not.toThrow();
-          expect(() => resolveFlatToken(tokens, rule.background), `${rule.ruleId} background`).not.toThrow();
+          expect(() => resolveColorSample(tokens, rule.foreground), `${rule.ruleId} foreground`).not.toThrow();
+          expect(() => resolveColorSample(tokens, rule.background), `${rule.ruleId} background`).not.toThrow();
         }
       }
     }
@@ -128,52 +153,86 @@ describe('brand contrast grading (s168 m04)', () => {
     expect(failures, `brand contrast failures:\n  ${failures.join('\n  ')}`).toEqual([]);
   });
 
+  /** Evaluate the CURRENT rule set against one vendored revision of all four graded cells. */
+  function sweepRevision(revision: string): { failed: string[]; passed: number } {
+    const failed: string[] = [];
+    let passed = 0;
+    for (const brand of BRANDS) {
+      for (const theme of BRAND_GRADED_THEMES) {
+        const tokens = cellAtRevision(brand, theme, revision);
+        for (const evaluation of evaluateContrastRules(tokens, { rules: buildBrandContrastRules(brand, theme) })) {
+          if (evaluation.passed) passed += 1;
+          else failed.push(evaluation.rule.ruleId);
+        }
+      }
+    }
+    return { failed: failed.sort(), passed };
+  }
+
   /**
    * RED-FIRST, run every time rather than recorded once. The same rule set evaluated
    * against the PRE-m03 token values must name the failures m03 fixed — and the remaining
    * rules in that same run must PASS, which is what proves the rule set was wired and
    * resolving rather than merely absent or throwing.
    *
-   * Skips (loudly, via a passing assertion on the skip condition) if the base revision is
-   * unavailable — e.g. a shallow checkout — rather than silently proving nothing.
+   * No skip branch (s169 m01): a missing fixture now throws. See `cellAtRevision`.
    */
   it('RED-first: the same rules name the pre-m03 failures, while the rest pass in that run', () => {
-    const BASE_REVISION = 'e5f2172';
-    const before = BRANDS.flatMap((brand) =>
-      BRAND_GRADED_THEMES.map((theme) => ({ brand, theme, tokens: cellAtRevision(brand, theme, BASE_REVISION) })),
-    );
-    if (before.some((cell) => cell.tokens === null)) {
-      expect(before.every((cell) => cell.tokens === null), 'partial history: some cells resolved and others did not').toBe(true);
-      return;
-    }
-
-    const failed: string[] = [];
-    let passed = 0;
-    for (const { brand, theme, tokens } of before) {
-      for (const evaluation of evaluateContrastRules(tokens as FlatTokenMap, { rules: buildBrandContrastRules(brand, theme) })) {
-        if (evaluation.passed) passed += 1;
-        else failed.push(evaluation.rule.ruleId);
-      }
-    }
+    const { failed, passed } = sweepRevision('e5f2172');
 
     // Named, not counted: a count-only assertion cannot tell a contrast failure from a
     // resolution error, and both surface as `passed: false`.
     //
-    // FIVE, not the four the sprint memo named. The fifth — `brand-b-dark-on-interactive-
-    // pressed` — was missed because the memo's sweep covered the BASE cells only (34
-    // pairs = 17 per brand). Grading dark as well is what surfaced it.
-    expect(failed.sort()).toEqual(
+    // EIGHT as of s169 m01, five before it. The first five are the failures m03 fixed —
+    // and the fifth of those, `brand-b-dark-on-interactive-pressed`, was itself missed by
+    // the s168 memo's sweep, which covered the BASE cells only. The last three are the
+    // `text.accent`-on-panel failures that only became visible once s169 m01 completed the
+    // text × panel grid; measured against these same pre-m03 bytes they are 4.2714 (A/base
+    // on subtle), 4.0983 (B/base on raised) and 3.6502 (B/base on subtle). They were
+    // failing all along — nothing was grading them.
+    expect(failed).toEqual(
       [
         'brand-a-base-on-interactive-default',
+        'brand-a-base-text-accent-on-subtle',
         'brand-b-base-on-interactive-default',
         'brand-b-base-status-warning-icon',
         'brand-b-base-text-accent-on-canvas',
+        'brand-b-base-text-accent-on-raised',
+        'brand-b-base-text-accent-on-subtle',
         'brand-b-dark-on-interactive-pressed',
       ].sort(),
     );
-    // ...and the other N−5 passed in the SAME run, proving they resolved.
+    // ...and the other N−8 passed in the SAME run, proving they resolved.
     expect(passed).toBe(BRAND_CONTRAST_PAIRS.length * 4 - failed.length);
     expect(passed).toBeGreaterThan(0);
+  });
+
+  /**
+   * RED-FIRST FOR THIS MISSION'S OWN FIX (s169 m01). The proof above is about s168: it
+   * pins failures a previous sprint repaired, and it would stay green whether or not THIS
+   * sprint's two token moves ever landed. So it cannot be the evidence for them.
+   *
+   * `00ae5b3` is the tip of sprint-168 — the palette as it stood one commit before m01.
+   * The widened grid evaluated against those bytes must name EXACTLY the three ratified
+   * failures (measured 4.2714 / 4.2616 / 3.7956 against a 4.5 threshold) and nothing else,
+   * with all 105 remaining rules passing in the same run. Both halves matter: the three
+   * ids prove the fix had a target, and the 105 prove the widening did not simply break
+   * everything into a red heap that happens to contain them.
+   */
+  it('RED-first: the widened grid names exactly the three pairs this mission fixed', () => {
+    const { failed, passed } = sweepRevision('00ae5b3');
+
+    expect(failed).toEqual(
+      [
+        'brand-a-base-text-accent-on-subtle',
+        'brand-b-base-text-accent-on-raised',
+        'brand-b-base-text-accent-on-subtle',
+      ].sort(),
+    );
+    expect(passed).toBe(BRAND_CONTRAST_PAIRS.length * 4 - failed.length);
+    // The five grid templates s169 m01 added are what made those three visible: before the
+    // widening this same revision graded 88 rules and reported ZERO failures.
+    expect(passed).toBe(105);
   });
 
   /**
@@ -191,6 +250,20 @@ describe('brand contrast grading (s168 m04)', () => {
    * "transcribe brand.css faithfully" pass cannot silently restore the defect.
    */
   it('the ratified brand.css dark ramp fails AA on hover and pressed (why m03 deviates from it)', () => {
+    /**
+     * FROZEN LITERALS, BY DESIGN — a disclosed exception to the no-hard-pinned-oklch rule.
+     *
+     * These five values are the sprint-168-ratified brand.css dark ramp. s169 m05 DELETED
+     * the source they were transcribed from (69 unreferenced `--brandX-*` primitives came
+     * out of brand.css), so there is no longer a live file to derive them from — and that
+     * is exactly why they stay written out here rather than being read from somewhere.
+     * This test's whole subject is a palette that no longer exists; a "derive it from the
+     * source" version of it would be a test with no subject.
+     *
+     * The only other tracked home of these bytes is the historical drift record at
+     * `artifacts/tokens/brand-css-drift-s167.md:102-103`. If a future pass ever needs to
+     * re-establish provenance, that file and this test are the two places to look.
+     */
     const RATIFIED_NEAR_WHITE = 'oklch(0.97 0.01 95)';
     const RATIFIED_RAMP = {
       'surface.interactive.primary.default': 'oklch(0.52 0.2 45)',

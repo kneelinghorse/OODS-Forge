@@ -203,6 +203,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // stacked ribbon, so WARN (the chart still renders). Recoverable (merge the
   // duplicates) — retryable:true. chord is DIRECTED, so A->B and B->A are distinct.
   ['OODS-V148', { code: 'OODS-V148', category: 'validation', message: 'Duplicate link', retryable: true }],
+  ['OODS-V149', { code: 'OODS-V149', category: 'validation', message: 'Delta addresses a different brand than the one being applied', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

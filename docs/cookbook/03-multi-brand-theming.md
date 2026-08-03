@@ -96,7 +96,9 @@ Save the resulting `schemaRef` (e.g., `"ref:user-detail-001"`) for reuse.
 
 The build emits every brand and theme; `brand` and `theme` label the returned payload's
 `meta` block, they do not filter it. Brand B's green palette and Inter typography are in
-that output alongside every other cell, selected at runtime by `data-brand="b"`.
+that output alongside every other cell, selected at runtime by `data-brand="B"`.
+The brand letter is **case-sensitive**: the generated CSS emits `[data-brand='B']`, so a
+lowercase `data-brand="b"` matches no rule and silently falls through to `:root`.
 
 ## Step 5: Render both brands
 
