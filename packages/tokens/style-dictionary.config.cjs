@@ -103,10 +103,21 @@ function sourceForScope(scope) {
  * memo SS3 D9 — the pinned selector table. Specificity is load-bearing.
  *
  * `apps/explorer/src/styles/layers.css:1` imports the generated CSS and then
- * re-declares 183 `--theme-*` custom properties at `:root`. `:root` and a single
+ * re-declares `--theme-*` custom properties at `:root`. `:root` and a single
  * `[data-brand='A']` are both specificity (0,1,0), so on a tie layers.css wins on
  * source order and would mask a single-attribute block. Every emitted scope block
  * therefore carries TWO attribute selectors, i.e. (0,2,0).
+ *
+ * s168 m05 CORRECTION, twice over. The figure here used to read "183", and the
+ * justification compared against a SINGLE-attribute selector this generator never
+ * emits — so the comment argued for the two-attribute decision against a shape that
+ * does not exist. Both are fixed. `grep -c` counts 183 LINES containing the string
+ * `--theme-`, which includes `var()` REFERENCES; actual DECLARATIONS are 57 at
+ * `:root`, 57 at `html[data-theme='dark']` and 2 more inside an
+ * `@supports (color: oklch(from white l c h))` block — 116 in total, not the 115 the
+ * sprint memo carried, which overlooked the `@supports` pair. The number is left out
+ * of the prose above deliberately: it is a moving count with no load-bearing role,
+ * and pinning it in a comment is how it went stale in the first place.
  *
  * THEME VOCABULARY: the token tree spells the default theme `base`, but the MCP
  * boundary spells it `light` and `normalizeTheme` defaults to `light`. The base row

@@ -22,7 +22,7 @@
           "disabled": {
             "$type": "color",
             "$value": "oklch(0.32 0.028 232)",
-            "$description": "Disabled surface maintaining ≥3:1 against disabled text."
+            "$description": "Disabled surface. Measured 2.59:1 against text.disabled (sRGB-clipped) — deliberately below 3:1, because WCAG 1.4.3 exempts inactive components and the low contrast IS the disabled affordance."
           },
           "backdrop": {
             "$type": "color",
@@ -48,8 +48,8 @@
               },
               "pressed": {
                 "$type": "color",
-                "$value": "oklch(0.56 0.22 232)",
-                "$description": "Pressed deepens saturation slightly (+0.03 ΔC) to balance the hue."
+                "$value": "oklch(0.525 0.22 232)",
+                "$description": "Pressed state. ΔL −0.035 so near-white text.onInteractive holds AA (the previous value measured 4.04:1)."
               }
             }
           }
@@ -100,7 +100,7 @@
           "disabled": {
             "$type": "color",
             "$value": "oklch(0.55 0.007 250)",
-            "$description": "Disabled text tuned for 3:1 on disabled surface."
+            "$description": "Disabled text. Measured 2.59:1 on the disabled surface (sRGB-clipped) — see surface.disabled; WCAG 1.4.3 exempts inactive components."
           }
         },
         "accent": {

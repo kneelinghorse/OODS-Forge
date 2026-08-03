@@ -40,7 +40,66 @@ type ChangeRecord = {
 const MCP_SERVER_DIR = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const REPO_ROOT = path.resolve(MCP_SERVER_DIR, '..', '..');
 const TOKENS_DIR = path.join(REPO_ROOT, 'packages', 'tokens', 'src', 'tokens');
-const BRAND_ROOT = path.join(TOKENS_DIR, 'brands');
+export const BRAND_ROOT = path.join(TOKENS_DIR, 'brands');
+
+/**
+ * Supported brands are DERIVED from the filesystem, never hard-coded here, so adding a
+ * third brand is a wire-schema edit plus a directory — no second edit in this file.
+ * Read per call rather than memoised: brand.apply is not on a hot path, and a stale
+ * allowlist is a worse failure than one readdir.
+ */
+function listAllowedBrands(): string[] {
+  return fs
+    .readdirSync(BRAND_ROOT, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+}
+
+/**
+ * Layer 1 of 2. An EXACT-NAME match against the brand directories, and the only layer
+ * that can reject `''`, `'.'` and `'A/'` — path.join() collapses all three to a legal,
+ * readable path inside BRAND_ROOT, so containment cannot see them. Measured against HEAD
+ * before this guard existed: `'A/../B'` and `'A/'` were both ACCEPTED and silently loaded
+ * a brand other than the one named; `'..'`, `''`, `'.'` and `'../../../../../../etc'`
+ * surfaced as a raw ENOENT, and a numeric brand as a raw TypeError.
+ *
+ * Runs at the TOP of handle(), which is what closes the two secondary sinks the read
+ * guard alone does not cover: the output filename at `tokens.${brand}.${theme}.json`
+ * (its ensureAllowed() checks artifactsBase, NOT runDir, so a traversing brand could
+ * relocate a snapshot within the artifact tree) and the raw brand interpolation in
+ * pointerToCssVariable().
+ */
+function assertBrandAllowed(brand: unknown): string {
+  const allowed = listAllowedBrands();
+  const reject = (reason: string): never => {
+    throw new ToolError('OODS-V001', `Unknown brand ${JSON.stringify(brand)}: ${reason}`, {
+      field: 'brand',
+      brand,
+      allowed,
+    });
+  };
+  if (typeof brand !== 'string') return reject('brand must be a string');
+  if (brand === '' || brand === '.' || brand === '..') return reject('brand must name a brand directory');
+  if (!allowed.includes(brand)) return reject(`allowed brands are ${allowed.join(', ')}`);
+  return brand;
+}
+
+/**
+ * Layer 2 of 2 — containment, as defence in depth, matching structuredData.fetch.ts:134-135.
+ * With the allowlist upstream no input can reach this, which is precisely why it carries its
+ * own direct unit test (security.model.spec.ts): a layer no test can turn red is not a layer.
+ *
+ * DISCLOSED GAP: no realpath() — the repo uses realpath nowhere, and inventing the pattern in
+ * one tool would be a lone convention. A symlink INSIDE BRAND_ROOT pointing outward is
+ * therefore not covered by either layer.
+ */
+export function resolveBrandThemeFile(brand: string, theme: Theme): string {
+  const file = path.join(BRAND_ROOT, brand, `${theme}.json`);
+  if (!withinAllowed(BRAND_ROOT, file)) {
+    throw new ToolError('OODS-S015', `Path not allowed: ${file}`, { brand, theme, path: file });
+  }
+  return file;
+}
 
 function cloneJson<T>(value: T): T {
   const sc = (globalThis as any).structuredClone;
@@ -158,8 +217,7 @@ function applyPatchDocument(doc: TokenDocument, operations: PatchOperation[]): v
 }
 
 function loadThemeDocument(brand: string, theme: Theme): TokenDocument {
-  const file = path.join(BRAND_ROOT, brand, `${theme}.json`);
-  const raw = fs.readFileSync(file, 'utf8');
+  const raw = fs.readFileSync(resolveBrandThemeFile(brand, theme), 'utf8');
   return JSON.parse(raw) as TokenDocument;
 }
 
@@ -441,14 +499,13 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
     throw new ToolError('OODS-V003', 'delta is required.', { field: 'delta' });
   }
 
-  const brand = input.brand ?? 'A';
+  // Validate the brand FIRST — before it reaches the token read, the snapshot filename,
+  // or pointerToCssVariable(). Callers that reach this handler by direct import (the whole
+  // in-repo surface, including security.model.spec.ts) never pass through the ajv enum at
+  // index.ts:257, so this is the only enforcement they get.
+  const brand = assertBrandAllowed(input.brand ?? 'A');
   const requestedStrategy: BrandApplyStrategy =
     input.strategy ?? (Array.isArray(input.delta) ? 'patch' : 'alias');
-
-  // Scope to requested themes or default to all
-  const activeThemes: readonly Theme[] = input.themes?.length
-    ? input.themes.filter((t): t is Theme => THEMES.includes(t as Theme))
-    : THEMES;
 
   const originals = loadBrandDocuments(brand);
   const updated: ThemeMap = {
@@ -462,7 +519,7 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
       throw new ToolError('OODS-V001', 'Alias strategy expects an object delta.', { strategy: 'alias' });
     }
     const themeDelta = buildAliasDelta(input.delta as Record<string, unknown>);
-    for (const theme of activeThemes) {
+    for (const theme of THEMES) {
       const deltaForTheme = themeDelta[theme];
       if (!deltaForTheme) continue;
       deepMerge(updated[theme], deltaForTheme);
@@ -472,7 +529,7 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
       throw new ToolError('OODS-V001', 'Patch strategy requires an array of RFC 6902 operations.', { strategy: 'patch' });
     }
     const operations = (input.delta as unknown[]).map((entry) => entry as PatchOperation);
-    for (const theme of activeThemes) {
+    for (const theme of THEMES) {
       applyPatchDocument(updated[theme], operations);
     }
   } else {
@@ -480,7 +537,7 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
   }
 
   const changeRecords: ChangeRecord[] = [];
-  for (const theme of activeThemes) {
+  for (const theme of THEMES) {
     const previous = originals[theme];
     const next = updated[theme];
     const partialChanges = collectChanges(previous, next)

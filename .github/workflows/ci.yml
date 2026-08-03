@@ -431,6 +431,13 @@ jobs:
         # lib now fails fast with a clear error instead of a 24-minute hang.
         run: pnpm exec playwright install chromium
 
+      - name: Brand cascade rendered-surface proof (sprint-168 m06)
+        # Reuses the Chromium this job already installs. Paints every bridged --theme-*
+        # slot in all six brand x theme cells and asserts the computed colour equals the
+        # value the brand token source declares — the only check in the repo that proves
+        # a real engine resolves the brand cascade rather than that a file contains text.
+        run: pnpm run verify:brand-cascade
+
       - name: Run accessibility contract
         run: pnpm run a11y:diff
 

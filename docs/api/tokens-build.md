@@ -1,6 +1,6 @@
 # tokens.build
 
-> Build design tokens for a brand and theme. Returns compiled CSS variables and token artifacts. Use apply=true to write output files (default: dry-run, returns preview only).
+> Run the design-token build and return the compiled CSS variables and token artifacts. The build emits every brand and theme; the brand and theme inputs label the returned payload, they do not filter it. Use apply=true to write output files (default: dry-run, returns preview only).
 
 **Registration:** auto
 
@@ -8,7 +8,7 @@
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `brand` | `A` | No | `"A"` |  |
+| `brand` | `A` \| `B` | No | `"A"` | Brand label stamped into the built token payload's meta block. The token build itself emits every brand; this selects the label, not the palette. |
 | `theme` | `light` \| `dark` \| `hc` | No | `"dark"` |  |
 | `apply` | boolean | No | `false` |  |
 

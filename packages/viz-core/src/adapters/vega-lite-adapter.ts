@@ -200,32 +200,136 @@ function createLayer(
   return {
     key: inferLayerKey(mark),
     mark: createMark(mark, singleSeriesColor),
-    encoding,
+    encoding: applyBaselineToEncoding(mark, encoding),
     data: mark.from ? { name: mark.from } : undefined,
   };
 }
 
 /**
- * `mark.options` keys that exist for OODS's own use and must NOT reach the emitted
- * Vega-Lite mark definition (s167 m03, FF#22 follow-on).
+ * `mark.options.baseline` → `encoding.<quantitative>.scale.zero` (s168 m02).
  *
- * The emitted spec stamps the Vega-Lite v6 `$schema`, and that schema's `MarkDef` is
- * `additionalProperties: false`. Spreading `mark.options` wholesale therefore made every
- * OODS-only key a schema violation — including `id`, which the s166 docs PRESCRIBE as
- * the way to order repeated same-trait layers, so following the documented pattern
- * emitted an invalid spec.
+ * This lives in the ENCODING region and not in `createMark` because its target IS an
+ * encoding: OODS's `baseline` says where the measure axis starts, which Vega-Lite spells
+ * `scale.zero`. Emitting it as a mark property is what made four committed fixtures
+ * schema-invalid — `MarkDef.baseline` is `TextBaseline` (`'alphabetic' | 'top' | ...`),
+ * so `'zero'` failed an enum check and the numeric `0` failed a type check.
  *
- * This is a narrow DENYLIST rather than an allowlist on purpose. Enumerated across the
- * repo's JSON specs, `mark.options` carries seven distinct keys; five of them
- * (`baseline`, `strokeWidth`, `opacity`, `fillOpacity`, `strokeDash`) are genuine
- * Vega-Lite MarkDef properties that must keep flowing through. Stripping anything
- * unrecognised would silently drop real styling.
+ * Three accepted spellings, all of them observed:
+ *   `'zero'` → `zero: true`   (declared by mark-area.parameters.schema.json)
+ *   `'min'`  → `zero: false`  (declared, no committed occurrence)
+ *   `0`      → `zero: true`   (NOT declared anywhere — it comes from the committed
+ *                              MarkBar fixtures, which is why a declared-surface-only
+ *                              derivation would have missed it)
+ * Anything else is dropped rather than guessed at.
  *
- * Both entries are consumed elsewhere and must stay on the IR:
- *   - `id`    — `inferLayerKey` prefers it over `mark.trait` for layer ordering.
- *   - `curve` — the ECharts adapter reads it to decide `smooth` (echarts-adapter.ts:348).
+ * CHANNEL CHOICE, stated because it is a judgement call: `y` if it is quantitative,
+ * else `x`. `baseline` names the measure axis, and `orientation` — the only other signal
+ * about which axis that is — is itself an OODS-only key with no MarkDef target, so it
+ * cannot be relied on here. If neither positional channel is quantitative, nothing is
+ * emitted. A caller-declared `scale.zero` always wins.
  */
-const OODS_ONLY_MARK_OPTIONS: ReadonlySet<string> = new Set(['id', 'curve']);
+function applyBaselineToEncoding(
+  mark: NormalizedMark,
+  encoding: Record<string, unknown>,
+): Record<string, unknown> {
+  const baseline = (mark.options as Record<string, unknown> | undefined)?.baseline;
+  if (baseline === undefined) return encoding;
+
+  const zero =
+    baseline === 'zero' || baseline === 0 ? true : baseline === 'min' ? false : undefined;
+  if (zero === undefined) return encoding;
+
+  for (const channel of ['y', 'x'] as const) {
+    const definition = encoding[channel] as Record<string, unknown> | undefined;
+    if (!definition || definition.type !== 'quantitative') continue;
+    const scale = (definition.scale as Record<string, unknown> | undefined) ?? {};
+    if (scale.zero !== undefined) return encoding;
+    return { ...encoding, [channel]: { ...definition, scale: { ...scale, zero } } };
+  }
+
+  return encoding;
+}
+
+/**
+ * Every property the Vega-Lite v6 `MarkDef` accepts (88 of them), as an ALLOWLIST.
+ *
+ * s167 m03 shipped a two-entry DENYLIST (`id`, `curve`) derived from the fixture CORPUS.
+ * That was the wrong operand. The declared surface is
+ * `schemas/traits/mark-*.parameters.schema.json` — closed per-trait vocabularies that
+ * s167 never consulted — and unioned with the corpus and the keys the ECharts adapter
+ * and the React views read off the IR, **14 distinct keys are not MarkDef properties**:
+ * `areaStyle`, `bandPadding`, `curve`, `enableMarkers`, `id`, `itemStyle`, `join`,
+ * `lineStyle`, `name`, `orientation`, `stack`, `stacking`, `symbolSize`, `title`.
+ * A denylist can only ever cover the keys someone remembered to enumerate; an allowlist
+ * covers the twelve the denylist missed *and* every key a future trait adds.
+ *
+ * STATIC ON PURPOSE (s168 m02). Deriving this from the vega-lite schema at runtime would
+ * let a dependency bump silently change what the adapter emits. The list is pinned here
+ * and `tests/viz/mark-options-schema-validity-s167.test.ts` derives the same set from the
+ * installed schema and asserts the two still match — so a bump fails a test instead of
+ * quietly altering output.
+ */
+const MARK_DEF_PROPERTIES: ReadonlySet<string> = new Set([
+  'align', 'angle', 'aria', 'ariaRole', 'ariaRoleDescription', 'aspect', 'bandSize',
+  'baseline', 'binSpacing', 'blend', 'clip', 'color', 'continuousBandSize', 'cornerRadius',
+  'cornerRadiusBottomLeft', 'cornerRadiusBottomRight', 'cornerRadiusEnd',
+  'cornerRadiusTopLeft', 'cornerRadiusTopRight', 'cursor', 'description', 'dir',
+  'discreteBandSize', 'dx', 'dy', 'ellipsis', 'fill', 'fillOpacity', 'filled', 'font',
+  'fontSize', 'fontStyle', 'fontWeight', 'height', 'href', 'innerRadius', 'interpolate',
+  'invalid', 'limit', 'line', 'lineBreak', 'lineHeight', 'minBandSize', 'opacity', 'order',
+  'orient', 'outerRadius', 'padAngle', 'point', 'radius', 'radius2', 'radius2Offset',
+  'radiusOffset', 'shape', 'size', 'smooth', 'stroke', 'strokeCap', 'strokeDash',
+  'strokeDashOffset', 'strokeJoin', 'strokeMiterLimit', 'strokeOffset', 'strokeOpacity',
+  'strokeWidth', 'style', 'tension', 'text', 'theta', 'theta2', 'theta2Offset',
+  'thetaOffset', 'thickness', 'time', 'timeUnitBandPosition', 'timeUnitBandSize', 'tooltip',
+  'type', 'url', 'width', 'x', 'x2', 'x2Offset', 'xOffset', 'y', 'y2', 'y2Offset',
+  'yOffset',
+]);
+
+/**
+ * `MarkDef.interpolate`'s accepted values. OODS's `curve` vocabulary
+ * (`linear` | `monotone` | `step`) is a literal subset, so the translation below is a
+ * rename, not a mapping — but the guard still checks membership, because `mark.options`
+ * is a free-form object and nothing stops a caller putting `curve: 'wobbly'` in a spec.
+ */
+const VEGA_LITE_INTERPOLATE: ReadonlySet<string> = new Set([
+  'basis', 'basis-open', 'basis-closed', 'bundle', 'cardinal', 'cardinal-open',
+  'cardinal-closed', 'catmull-rom', 'linear', 'linear-closed', 'monotone', 'natural',
+  'step', 'step-before', 'step-after',
+]);
+
+/**
+ * OODS-only option keys with an exact Vega-Lite target, translated rather than dropped.
+ *
+ *   `curve`    → `interpolate`      (same concept, different name)
+ *   `fill`     → `filled` (boolean) ONLY for the OODS point vocabulary `'solid'|'hollow'`.
+ *                `fill` IS a real MarkDef property accepting any string as a Color, so
+ *                ajv ACCEPTS `fill:'hollow'` — the allowlist cannot catch it and the mark
+ *                would paint with a non-colour. Any other `fill` value is a genuine
+ *                colour and passes through untouched.
+ *   `baseline` → handled in the ENCODING region (`applyBaselineToEncoding`), not here.
+ *                It is a real MarkDef property (TextBaseline), so the allowlist passes it
+ *                and ajv then rejects `'zero'`/`'min'`/`0`. OODS has no text mark
+ *                (MARK_TRAIT_MAP is bar/line/point/area/rect), so no legitimate use of
+ *                MarkDef.baseline exists here and removing it from the mark def is safe.
+ *
+ * All three are OUTPUT-only. The IR keeps every key: the ECharts adapter reads `curve`
+ * (echarts-adapter.ts:348) plus `id`/`name`/`stack`/`areaStyle`/`lineStyle`/`itemStyle`/
+ * `symbolSize`, `inferLayerKey` reads `id`, and the React views read `title`/`id`. This
+ * builds a NEW object and never deletes from `mark.options`.
+ */
+function translateMarkOption(key: string, value: unknown): [string, unknown] | undefined {
+  if (key === 'baseline') return undefined;
+  if (key === 'curve') {
+    return typeof value === 'string' && VEGA_LITE_INTERPOLATE.has(value)
+      ? ['interpolate', value]
+      : undefined;
+  }
+  if (key === 'fill' && (value === 'solid' || value === 'hollow')) {
+    return ['filled', value === 'solid'];
+  }
+  return MARK_DEF_PROPERTIES.has(key) ? [key, value] : undefined;
+}
 
 function createMark(mark: NormalizedMark, singleSeriesColor?: string): Record<string, unknown> {
   const type = MARK_TRAIT_MAP[mark.trait as keyof typeof MARK_TRAIT_MAP];
@@ -234,14 +338,13 @@ function createMark(mark: NormalizedMark, singleSeriesColor?: string): Record<st
     throw new VegaLiteAdapterError(`Unsupported mark trait: ${mark.trait}`);
   }
 
-  const passthroughOptions = Object.entries(mark.options ?? {}).filter(
-    ([key]) => !OODS_ONLY_MARK_OPTIONS.has(key),
-  );
-
-  const result: Record<string, unknown> = {
-    type,
-    ...Object.fromEntries(passthroughOptions),
-  };
+  const result: Record<string, unknown> = { type };
+  for (const [key, value] of Object.entries(mark.options ?? {})) {
+    const translated = translateMarkOption(key, value);
+    if (translated) {
+      result[translated[0]] = translated[1];
+    }
+  }
 
   // Brand-fidelity (sprint-138 m02): single-series bake — a chart with no color encoding
   // gets categorical-01 as its mark color so it renders exactly the slot certify grades.

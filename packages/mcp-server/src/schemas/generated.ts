@@ -381,9 +381,9 @@ export namespace BrandApplyInputSchema {
 
   export interface BrandApplyInput2 {
     /**
-     * Target brand identifier.
+     * Target brand identifier. Must name a brand directory under packages/tokens/src/tokens/brands.
      */
-    brand?: 'A';
+    brand?: 'A' | 'B';
     /**
      * Alias changes (object) or RFC 6902 patch array when strategy=patch.
      */
@@ -6375,7 +6375,10 @@ export type StructuredDataFetchOutput = StructuredDataFetchOutputSchema.Structur
 // Source: tokens.build.input.json
 export namespace TokensBuildInputSchema {
   export interface TokensBuildInput {
-    brand?: 'A';
+    /**
+     * Brand label stamped into the built token payload's meta block. The token build itself emits every brand; this selects the label, not the palette.
+     */
+    brand?: 'A' | 'B';
     theme?: 'light' | 'dark' | 'hc';
     apply?: boolean;
   }

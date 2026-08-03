@@ -8,7 +8,7 @@
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `brand` | `A` | No | `"A"` | Target brand identifier. |
+| `brand` | `A` \| `B` | No | `"A"` | Target brand identifier. Must name a brand directory under packages/tokens/src/tokens/brands. |
 | `delta` | any | Yes |  | Alias changes (object) or RFC 6902 patch array when strategy=patch. |
 | `strategy` | `alias` \| `patch` | No | `"alias"` | Alias strategy rewrites token values; patch applies RFC 6902 operations. |
 | `preview` | object | No |  | Preview response controls (apply=false). |

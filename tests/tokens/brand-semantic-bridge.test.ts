@@ -24,7 +24,7 @@ import { SEMANTIC_BRIDGE, UNBRIDGED_SLOTS } from '../../packages/tokens/scripts/
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const BRAND_ROOT = path.join(REPO_ROOT, 'packages', 'tokens', 'src', 'tokens', 'brands');
 const TOKENS_CSS = path.join(REPO_ROOT, 'packages', 'tokens', 'dist', 'css', 'tokens.css');
-const BRAND_CSS = path.join(REPO_ROOT, 'apps', 'explorer', 'src', 'styles', 'brand.css');
+const SLOT_CONTRACT = path.join(__dirname, '__fixtures__', 'brand-css-slot-contract.json');
 
 const BRANDS = ['A', 'B'] as const;
 const THEMES = ['base', 'dark', 'hc'] as const;
@@ -143,14 +143,20 @@ describe('s167 m02 — the brand→semantic bridge in the emitted CSS artifact',
   const blocks = parseCssBlocks(css);
   const table = expectationTable();
 
-  it('the authored map plus the recorded gaps account for every slot brand.css assigns', () => {
-    // brand.css is the hand-authored copy this bridge is meant to replace, so its slot
-    // names are the contract. Sourcing the list from the file (not from a constant)
-    // means a slot added there shows up here as a failure rather than as silence.
-    const brandCss = fs.readFileSync(BRAND_CSS, 'utf8');
-    const declaredSlots = new Set(
-      [...brandCss.matchAll(/(--theme-[a-z0-9-]+)\s*:/g)].map((m) => m[1]),
-    );
+  it('the authored map plus the recorded gaps account for every slot in the frozen contract', () => {
+    // s168 m05 RE-POINTED THIS, and it had to happen before brand.css was touched.
+    // brand.css was the hand-authored copy this bridge replaces, so its slot NAMES were
+    // the contract, and this test read them straight out of the file. m05 stripped the 38
+    // bridged slots from it — leaving only the 3 focus slots it is the sole source of —
+    // so the file can no longer supply that list, and reading it would silently reduce a
+    // 41-slot contract to a 3-slot one while staying green.
+    //
+    // The list is therefore FROZEN in a fixture, captured from brand.css immediately
+    // before the reduction. It is no longer self-updating, which is the trade: adding a
+    // slot to the bridge now requires adding it to the fixture too. That is a deliberate
+    // act rather than silence, and it is the property this test existed to protect.
+    const contract = JSON.parse(fs.readFileSync(SLOT_CONTRACT, 'utf8')) as { slots: string[] };
+    const declaredSlots = new Set(contract.slots);
     expect(declaredSlots.size).toBe(41);
 
     const covered = new Set([
@@ -160,9 +166,9 @@ describe('s167 m02 — the brand→semantic bridge in the emitted CSS artifact',
     const unaccounted = [...declaredSlots].filter((s) => !covered.has(s));
     expect(unaccounted, `slots in brand.css neither bridged nor recorded: ${unaccounted.join(', ')}`).toEqual([]);
 
-    // ...and nothing in the map that brand.css does not actually declare.
+    // ...and nothing in the map that the contract does not actually name.
     const phantom = bridge.map((e) => e.slot).filter((s) => !declaredSlots.has(s));
-    expect(phantom, `mapped slots absent from brand.css: ${phantom.join(', ')}`).toEqual([]);
+    expect(phantom, `mapped slots absent from the frozen contract: ${phantom.join(', ')}`).toEqual([]);
     expect(bridge).toHaveLength(38);
   });
 
@@ -213,8 +219,15 @@ describe('s167 m02 — the brand→semantic bridge in the emitted CSS artifact',
     const slot = '--theme-surface-canvas';
     const aBase = table.get('A/base')!.get(slot);
     const aDark = table.get('A/dark')!.get(slot);
-    expect(aBase).toBe('oklch(0.967 0.03 86)');
-    expect(aDark).toBe('oklch(0.14 0.008 200)');
+    // s168 m03 RE-ANCHORED. These were hard-pinned literals ('oklch(0.967 0.03 86)' and
+    // 'oklch(0.14 0.008 200)'); the palette truth-up moved A/dark to orange and reddened
+    // this control for a reason that had nothing to do with what it tests. A pin that must
+    // be hand-edited whenever a token changes is a maintenance trap — and hand-editing it
+    // is indistinguishable from silencing it. The seed needs exactly one property: the two
+    // cells must resolve and must genuinely disagree. Derive that; assert nothing more.
+    expect(aBase, `${slot} missing from A/base`).toBeDefined();
+    expect(aDark, `${slot} missing from A/dark`).toBeDefined();
+    expect(aBase).not.toBe(aDark);
 
     const seeded = parseCssBlocks(`${css}\n${selectorFor('A', 'base')} { ${slot}: ${aDark}; }\n`);
     const leaks = findCrossCellLeaks(seeded, table);

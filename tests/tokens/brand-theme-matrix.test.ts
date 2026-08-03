@@ -72,8 +72,10 @@ function expectationTable(): Map<string, Map<string, string>> {
       const doc = JSON.parse(fs.readFileSync(file, 'utf8'));
       const scoped = new Map<string, string>();
       for (const [tokenPath, value] of leaves(doc)) {
-        // Brand colour slots only. `ref.typography.*` leaks out of brands/A under D10 and
-        // is asserted separately; alias values are not literals and cannot be compared here.
+        // Brand colour slots only; alias values are not literals and cannot be compared here.
+        // s168 m06 DELETED a stale claim here that `ref.typography.*` leaks out of brands/A.
+        // MEASURED: every brand file has ZERO non-`color.brand.*` leaves, in all six cells.
+        // It was memo-to-memo inheritance of exactly the kind this sprint corrects.
         if (!tokenPath.startsWith('color.brand.')) continue;
         if (value.startsWith('{')) continue;
         scoped.set(cssVarFor(tokenPath), value);
@@ -215,9 +217,15 @@ describe('s167 m01 — brand x theme matrix is scope-correct in the emitted CSS'
     const cssVar = '--oods-color-brand-a-surface-interactive-primary-default';
     const baseValue = table.get('A/base')!.get(cssVar);
     const darkValue = table.get('A/dark')!.get(cssVar);
-    // The seed is only meaningful if the two scopes genuinely disagree here.
-    expect(baseValue).toBe('oklch(0.58 0.19 43)');
-    expect(darkValue).toBe('oklch(0.72 0.16 183)');
+    // The seed is only meaningful if the two scopes genuinely disagree here. s168 m03
+    // RE-ANCHORED this: it used to hard-pin the two literals ('oklch(0.58 0.19 43)' and
+    // 'oklch(0.72 0.16 183)'), both of which that mission changed — the palette moved to
+    // orange and the base value gained contrast margin. A pin that must be hand-edited
+    // whenever a token changes is a maintenance trap, and worse, hand-editing it is
+    // indistinguishable from silencing it. Derive the premise instead: both scopes must
+    // resolve, and they must disagree. That is the ONLY property the seed needs.
+    expect(baseValue, `${cssVar} missing from A/base`).toBeDefined();
+    expect(darkValue, `${cssVar} missing from A/dark`).toBeDefined();
     expect(baseValue).not.toBe(darkValue);
 
     // A later block for the same selector overrides that one property, exactly as a

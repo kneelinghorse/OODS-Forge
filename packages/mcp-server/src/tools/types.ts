@@ -8,7 +8,7 @@ import type {
 export type BaseInput = { apply?: boolean };
 
 export type TokensBuildInput = BaseInput & {
-  brand?: "A";
+  brand?: "A" | "B";
   theme?: "light" | "dark" | "hc";
 };
 
@@ -70,11 +70,9 @@ export type GenericOutput = {
 export type BrandApplyStrategy = "alias" | "patch";
 
 export type BrandApplyInput = BaseInput & {
-  brand?: "A";
+  brand?: "A" | "B";
   delta: Record<string, unknown> | Record<string, unknown>[];
   strategy?: BrandApplyStrategy;
-  /** Scope modifications to specific theme files. Defaults to all themes. */
-  themes?: Array<"base" | "dark" | "hc">;
   preview?: {
     verbosity?: PreviewVerbosity;
   };

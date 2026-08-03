@@ -2,7 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
-    "brand": { "type": "string", "enum": ["A"], "default": "A" },
+    "brand": {
+      "type": "string",
+      "enum": ["A", "B"],
+      "default": "A",
+      "description": "Brand label stamped into the built token payload's meta block. The token build itself emits every brand; this selects the label, not the palette."
+    },
     "theme": { "type": "string", "enum": ["light", "dark", "hc"], "default": "dark" },
     "apply": { "type": "boolean", "default": false }
   },
