@@ -6,7 +6,7 @@ Auto-generated from JSON schemas and tool-descriptions.json.
 
 | Tool | Description |
 |------|-------------|
-| [tokens.build](./tokens-build.md) | Build design tokens for a brand and theme. Returns compiled CSS variables and token artifacts. Use apply=true to write output files (default: dry-run, returns preview only). |
+| [tokens.build](./tokens-build.md) | Run the design-token build and return the compiled CSS variables and token artifacts. The build emits every brand and theme; the brand and theme inputs label the returned payload, they do not filter it. Use apply=true to write output files (default: dry-run, returns preview only). |
 | [structuredData.fetch](./structuredData-fetch.md) | Fetch structured data exports (components, tokens, or manifest) or Stage1 v1.5.0 rollup artifacts (identity_graph, capability_rollup, object_rollup) via kind+runPath. Supports ETag caching, version pinning, and version listing in dataset mode; schema_version validation in rollup mode. |
 | [brand.apply](./brand-apply.md) | Apply brand token overlays using alias or RFC 6902 patch strategy. Requires a delta object. Use apply=true to write changes to disk (default: dry-run, returns preview only). |
 | [catalog.list](./catalog-list.md) | List available OODS components from the design system catalog. Filter by category, trait, or rendering context. Response includes availableCategories array showing all valid category values for filtering. |

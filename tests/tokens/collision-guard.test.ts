@@ -139,4 +139,49 @@ describe('s167 m01 — the token collision guard', () => {
     const overlapping = darkLeaves.filter((p) => baseLeaves.has(p));
     expect(overlapping).toHaveLength(41);
   });
+
+  /**
+   * s168 m06 — the exemption's NARROW clause was untested, and provably so: deleting
+   * `new Set(brands).size === 1` from `isDeclaredOverlayChain` left all five tests above
+   * GREEN. The exemption would then have covered ANY collision between two brand
+   * directories, not just a single brand's declared base -> theme overlay chain.
+   *
+   * WHY IT WAS UNTESTABLE THE OBVIOUS WAY: `sourceForScope` names
+   * `brands/{A,B}/base.json` LITERALLY, with no glob, so a NEW file dropped under
+   * `brands/B/` is never loaded and a test seeded that way is vacuously green. The seed
+   * must therefore EDIT an already-loaded file — and because a scope loads exactly one
+   * brand's directory, the cross-brand list is built explicitly here. That is the only
+   * shape in which the clause can ever fire.
+   */
+  it('the exemption is NARROW: a collision spanning two brand directories is NOT exempt', () => {
+    const aBase = 'src/tokens/brands/A/base.json';
+    const bBase = 'src/tokens/brands/B/base.json';
+    const collidingPath = 'color.brand.A.surface.canvas';
+    const target = path.join(sandbox, bBase);
+    const original = fs.readFileSync(target, 'utf8');
+
+    try {
+      // EDIT an already-loaded file: brand B's base.json now also declares one of brand
+      // A's paths, with a different value. Both files are real members of the list below.
+      const doc = JSON.parse(original);
+      doc.color.brand.A = {
+        surface: { canvas: { $type: 'color', $value: 'oklch(0.5 0.1 200)' } },
+      };
+      fs.writeFileSync(target, `${JSON.stringify(doc, null, 2)}\n`);
+
+      const reported: Array<{ tokenPath: string }> = findCollisions([aBase, bBase], sandbox);
+      expect(
+        reported.map((c) => c.tokenPath),
+        'a collision spanning brands/A and brands/B was exempted — the single-brand clause is gone',
+      ).toContain(collidingPath);
+
+      // CONTROL OF THE CONTROL: the same two files, unedited, collide on nothing. So the
+      // report above is caused by the seed and not by the file pairing itself.
+      fs.writeFileSync(target, original);
+      expect(findCollisions([aBase, bBase], sandbox)).toEqual([]);
+    } finally {
+      // The sandbox is shared via beforeAll — always restore, even on failure.
+      fs.writeFileSync(target, original);
+    }
+  });
 });

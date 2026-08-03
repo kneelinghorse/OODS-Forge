@@ -57,12 +57,19 @@ Use `brand.apply` with the preset as the delta:
 }
 ```
 
-The preset deep-merges into the existing brand A tokens across all themes (base, dark, high-contrast).
+With `brand` omitted (it defaults to `A`), the preset deep-merges into the existing brand A tokens across all themes (base, dark, high-contrast).
+
+> **The shipped presets are brand-A-namespaced.** `brand.apply` accepts `brand: "B"` as of
+> sprint-168, but the preset payloads in `packages/tokens/src/presets/` address
+> `color.brand.A.*` literally. Applying one with `brand: "B"` therefore merges a
+> `color.brand.A` subtree *into brand B's files* rather than restyling B — measured:
+> 6 changes, none of them under `color.brand.B.*`. Re-namespace a preset before
+> applying it to another brand.
 
 ## How It Works
 
 1. Each preset is a DTCG-compliant JSON file targeting `color.brand.A.*` tokens
-2. `brand.apply` deep-merges the preset delta into `packages/tokens/src/tokens/brands/A/{base,dark,hc}.json`
+2. `brand.apply` deep-merges the preset delta into `packages/tokens/src/tokens/brands/<brand>/{base,dark,hc}.json` (`<brand>` defaults to `A`)
 3. Run `tokens.build` after applying to generate compiled CSS variables
 4. The theme is reflected in all rendered components via CSS custom properties
 

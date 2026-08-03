@@ -528,7 +528,7 @@ const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
   'vrt.run': 'Trigger visual regression summary capture.',
   'diag.snapshot': 'Collect project diagnostics snapshot.',
   'reviewKit.create': 'Generate review kit artifacts (write-capable).',
-  'brand.apply': 'Preview and apply Brand A palette updates via alias or patch strategies.',
+  'brand.apply': 'Preview and apply brand palette updates via alias or patch strategies.',
   'billing.reviewKit': 'Generate billing review kit bundles across provider fixtures.',
   'billing.switchFixtures': 'Preview and apply billing fixture switches for Storybook contexts.',
 };

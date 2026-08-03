@@ -47,7 +47,7 @@ Save the resulting `schemaRef` (e.g., `"ref:user-detail-001"`) for reuse.
 ```json
 // brand.apply
 {
-  "brand": "A",
+  "brand": "B",
   "delta": {
     "color.primary.500": { "$value": "#16a34a" },
     "color.primary.600": { "$value": "#15803d" },
@@ -88,13 +88,15 @@ Save the resulting `schemaRef` (e.g., `"ref:user-detail-001"`) for reuse.
 ```json
 // tokens.build
 {
-  "brand": "A",
+  "brand": "B",
   "theme": "light",
   "apply": true
 }
 ```
 
-Now the token output reflects Brand B's green palette and Inter typography.
+The build emits every brand and theme; `brand` and `theme` label the returned payload's
+`meta` block, they do not filter it. Brand B's green palette and Inter typography are in
+that output alongside every other cell, selected at runtime by `data-brand="b"`.
 
 ## Step 5: Render both brands
 

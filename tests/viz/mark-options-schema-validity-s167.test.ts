@@ -1,40 +1,56 @@
 /**
- * s167 m03 (FF#22 follow-on) — OODS-only `mark.options` keys must not reach the emitted
- * Vega-Lite mark definition.
+ * OODS-only `mark.options` keys must not invalidate the emitted Vega-Lite mark definition.
  *
- * THE DEFECT: `createMark` in packages/viz-core/src/adapters/vega-lite-adapter.ts spread
- * `mark.options` wholesale into the mark def. The emitted spec stamps
- * `$schema https://vega.github.io/schema/vega-lite/v6.json`, whose `MarkDef` is
- * `additionalProperties: false`, so every OODS-only key rode out as a schema violation.
+ * s167 m03 opened this file. s168 m02 REPLACED its oracle and widened its coverage; the
+ * filename is kept so the arc reads as one story.
  *
- * That matters because of what s166 prescribed. `inferLayerKey` prefers
- * `mark.options.id` over `mark.trait`, and the s166 docs now tell consumers to use
- * distinct ids to order repeated same-trait layers (the FF#22 answer). Following the
- * prescribed pattern therefore produced a schema-INVALID spec, and dropping the ids to
- * regain validity puts the consumer back at the original FF#22 dead end.
+ * ── WHAT s167 GOT RIGHT ────────────────────────────────────────────────────────────
+ * `createMark` spread `mark.options` wholesale into the mark def. The emitted spec stamps
+ * the Vega-Lite v6 `$schema`, whose `MarkDef` is `additionalProperties: false`, so every
+ * OODS-only key rode out as a schema violation — including `id`, which the s166 docs
+ * PRESCRIBE for ordering repeated same-trait layers. Following the documented pattern
+ * emitted an invalid spec. That defect, and its keep-green constraints, are still pinned
+ * below.
  *
- * TWO keys leak, not one — the second was found by enumerating every `mark.options` key
- * in the repo (7,735 JSON specs) and checking each against the real MarkDef property
- * list, rather than assuming `id` was alone:
+ * ── WHAT s167 GOT WRONG, AND HOW ───────────────────────────────────────────────────
+ * TWO independent errors, each of which alone was enough to let the defect survive a
+ * mission aimed at it:
  *
- *   | key           | occurrences | valid MarkDef prop? | consumed by                       |
- *   |---------------|-------------|---------------------|-----------------------------------|
- *   | `curve`       | 7           | NO                  | echarts-adapter.ts:348 (`smooth`) |
- *   | `baseline`    | 4           | yes                 | Vega-Lite                         |
- *   | `strokeWidth` | 4           | yes                 | Vega-Lite                         |
- *   | `opacity`     | 2           | yes                 | Vega-Lite                         |
- *   | `fillOpacity` | 2           | yes                 | Vega-Lite                         |
- *   | `strokeDash`  | 1           | yes                 | Vega-Lite                         |
- *   | `id`          | 1           | NO                  | inferLayerKey (layer ordering)    |
+ *   1. THE ORACLE WAS SHAPE-BLIND. Errors were filtered with `/^\/layer\/\d+\/mark/`,
+ *      which matches LAYERED specs only. All four still-invalid committed fixtures are
+ *      UNIT specs, anchored at `/mark` — so the oracle could not have caught them at any
+ *      severity. This file now compiles `{...schema, $ref:'#/definitions/MarkDef'}` once
+ *      and validates every emitted mark def as a STANDALONE object, found by walking the
+ *      compiled spec. Unit, layered, or nested: same check.
  *
- * So the filter is a narrow denylist of the two OODS-only keys, NOT a strip of anything
- * unrecognised: five of the seven keys are real Vega-Lite passthrough and a naive strip
- * would silently drop styling that consumers rely on.
+ *   2. THE DENYLIST DERIVED FROM THE CORPUS, NOT THE SURFACE. s167 enumerated the keys
+ *      that happened to appear in committed fixtures and denied the two OODS-only ones.
+ *      The declared surface is `schemas/traits/mark-*.parameters.schema.json` — closed
+ *      per-trait vocabularies that s167 never opened. Unioned with the corpus and the
+ *      keys the ECharts adapter and React views read off the IR, FOURTEEN keys are not
+ *      MarkDef properties. An allowlist covers all fourteen and every key a future trait
+ *      adds; a denylist covers only what someone remembered.
  *
- * CLAIM CEILING: this proves the prescribed pattern now emits a schema-valid spec. It
- * does NOT claim FF#22 is closed.
+ * MEASURED AGAINST THE PRE-FIX ADAPTER, per key, as a standalone MarkDef:
+ *   `orientation` `bandPadding` `stacking` `join` `enableMarkers` → `/` additionalProperties
+ *   `baseline:'zero'`                                            → `/baseline` enum/const
+ *   `baseline:0`                                                 → `/baseline` type
+ *   `fill:'hollow'`                                              → VALID, and wrong: `fill`
+ *       is a real MarkDef property accepting any string as a Color, so ajv accepts it while
+ *       the mark paints with a non-colour. No allowlist can catch this one — it needs a
+ *       value check, which is why `fill` has its own control below.
+ * Corpus, same run: 42 mark-bearing fixtures, 4 invalid mark defs → 0 after the fix.
+ *
+ * ── CLAIM CEILING ──────────────────────────────────────────────────────────────────
+ * No OODS-only key reaches the emitted mark def, every declared trait option is covered
+ * by a probe, and every committed mark-bearing fixture emits a schema-valid mark def.
+ * NOT "FF#22 is closed". NOT "the emitted spec is valid" — measured after this fix, 14 of
+ * the 42 mark-bearing fixtures are still invalid as WHOLE SPECS, for reasons that have
+ * nothing to do with mark options: 3 fail at `/params/0` (additionalProperties) and 11 at
+ * `/` (required). Those are RECORDED, not fixed. The inherited attribution of that bucket
+ * to "facet/repeat" did NOT reproduce and is not repeated here.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Ajv from 'ajv';
@@ -45,29 +61,54 @@ import { toEChartsOption } from '../../packages/viz-core/src/adapters/echarts-ad
 import type { NormalizedVizSpec } from '../../packages/viz-core/src/spec/normalized-viz-spec.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
-const schemaPath = path.resolve(moduleDir, '../../node_modules/vega-lite/build/vega-lite-schema.json');
+const repoRoot = path.resolve(moduleDir, '../..');
+const schemaPath = path.resolve(repoRoot, 'node_modules/vega-lite/build/vega-lite-schema.json');
 const schema = JSON.parse(readFileSync(schemaPath, 'utf8'));
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
 const validate = ajv.compile(schema);
 
-/** Schema errors anchored on a layer's mark definition. */
-function markErrors(spec: unknown): string[] {
-  if (validate(spec)) return [];
-  return (validate.errors ?? [])
-    .filter((error) => /^\/layer\/\d+\/mark/.test(error.instancePath))
-    .map((error) => `${error.instancePath} ${error.message} ${JSON.stringify(error.params)}`);
+/**
+ * THE SHAPE-AGNOSTIC ORACLE. Compiled against the MarkDef definition directly, so a mark
+ * def is checked wherever it sits — `/mark` on a unit spec, `/layer/N/mark` on a layered
+ * one, or nested inside a concat/facet. This is what replaces the s167 path filter.
+ */
+const validateMarkDef = ajv.compile({ ...schema, $ref: '#/definitions/MarkDef' });
+
+/** Every mark definition in a compiled spec, regardless of nesting. */
+function markDefsOf(compiled: unknown): Record<string, unknown>[] {
+  const found: Record<string, unknown>[] = [];
+  const visit = (node: unknown): void => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) {
+      node.forEach(visit);
+      return;
+    }
+    const obj = node as Record<string, unknown>;
+    if (obj.mark && typeof obj.mark === 'object' && !Array.isArray(obj.mark)) {
+      found.push(obj.mark as Record<string, unknown>);
+    }
+    for (const value of Object.values(obj)) visit(value);
+  };
+  visit(compiled);
+  return found;
+}
+
+/** `instancePath|keyword|params` per failure — the STATED REASON, not just a boolean. */
+function markDefErrors(compiled: unknown): string[] {
+  const out: string[] = [];
+  for (const def of markDefsOf(compiled)) {
+    if (validateMarkDef(def)) continue;
+    for (const error of validateMarkDef.errors ?? []) {
+      out.push(`${error.instancePath || '/'}|${error.keyword}|${JSON.stringify(error.params)}`);
+    }
+  }
+  return out;
 }
 
 const x = { field: 'month', trait: 'EncodingPositionX', channel: 'x' };
 
-/**
- * The pattern the s166 docs prescribe: three same-trait layers made orderable by
- * distinct `options.id`. `curve` rides along on one of them because it is the other
- * OODS-only key, and `strokeWidth` because it is genuine Vega-Lite passthrough that
- * must survive the filter.
- */
 function prescribedSpec(layout?: Record<string, unknown>): NormalizedVizSpec {
   return {
     $schema: 'https://oods.dev/viz-spec/v1',
@@ -111,7 +152,7 @@ describe('s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mar
     const compiled = toVegaLiteSpec(
       prescribedSpec({ trait: 'LayoutLayer', order: ['target', 'baseline', 'actual'] }),
     );
-    const errors = markErrors(compiled);
+    const errors = markDefErrors(compiled);
     expect(errors, `mark definitions are schema-invalid:\n  ${errors.join('\n  ')}`).toEqual([]);
     expect(validate(compiled)).toBe(true);
   });
@@ -129,8 +170,6 @@ describe('s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mar
   it('KEEP-GREEN: genuine Vega-Lite passthrough survives the filter', () => {
     const compiled = toVegaLiteSpec(prescribedSpec()) as CompiledSpec;
     const marks = (compiled.layer ?? []).map((layer) => layer.mark ?? {});
-    // Five of the seven observed option keys are real MarkDef properties. A naive
-    // "strip what we do not recognise" would drop these and silently change rendering.
     expect(marks[0]).toMatchObject({ type: 'line', strokeWidth: 3 });
     expect(marks[1]).toMatchObject({ type: 'line', opacity: 0.8 });
     expect(marks[2]).toMatchObject({ type: 'point', fillOpacity: 0.5, strokeDash: [4, 2] });
@@ -149,7 +188,6 @@ describe('s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mar
       'actual',
     ]);
 
-    // ...and without a layout, declaration order is preserved.
     const declared = toVegaLiteSpec(prescribedSpec()) as CompiledSpec;
     expect((declared.layer ?? []).map((l) => l.encoding?.y?.field)).toEqual([
       'baseline',
@@ -158,17 +196,11 @@ describe('s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mar
     ]);
   });
 
-  /**
-   * Discrimination proof. The validator must be what rejects these keys — otherwise the
-   * green above could be a tautology (e.g. a validator that accepts everything, or a
-   * schema that never actually loaded). Re-injecting each key into the ALREADY-COMPILED
-   * output must make the SAME validator red at that mark's path.
-   */
   it('the schema validator is discriminating: re-injecting each OODS-only key turns it RED', () => {
     const compiled = toVegaLiteSpec(prescribedSpec()) as unknown as {
       layer: { mark: Record<string, unknown> }[];
     };
-    expect(markErrors(compiled)).toEqual([]);
+    expect(markDefErrors(compiled)).toEqual([]);
 
     for (const [key, value] of [
       ['id', 'target'],
@@ -176,19 +208,14 @@ describe('s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mar
     ] as const) {
       const mutated = structuredClone(compiled) as typeof compiled;
       mutated.layer[0].mark[key] = value;
-      const errors = markErrors(mutated);
+      const errors = markDefErrors(mutated);
       expect(errors.length, `re-injecting mark.${key} did not fail schema validation`).toBeGreaterThan(0);
-      expect(errors.join(' ')).toContain('/layer/0/mark');
+      expect(errors.join(' ')).toContain(`"additionalProperty":"${key}"`);
     }
   });
 
-  /**
-   * The synthetic spec above proves the mechanism; this proves the fix actually reaches
-   * shipped content. `examples/viz/line-chart.spec.json` is a committed fixture that
-   * carries `curve` — the more common of the two leaking keys (7 occurrences vs 1).
-   */
   it('reaches a REAL committed fixture: examples/viz/line-chart.spec.json', () => {
-    const fixturePath = path.resolve(moduleDir, '../../examples/viz/line-chart.spec.json');
+    const fixturePath = path.resolve(repoRoot, 'examples/viz/line-chart.spec.json');
     const spec = JSON.parse(readFileSync(fixturePath, 'utf8')) as NormalizedVizSpec;
     // Guard the premise — if the fixture stops carrying `curve` this test proves nothing.
     expect((spec.marks[0] as { options?: Record<string, unknown> }).options).toHaveProperty('curve');
@@ -199,16 +226,10 @@ describe('s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mar
     expect(validate(compiled)).toBe(true);
   });
 
-  /**
-   * The filter is OUTPUT-only. `curve` must still reach the ECharts adapter, which reads
-   * it off the IR to decide `smooth`. If the fix had stripped the key from `mark.options`
-   * itself, this would silently flatten every curved line in the ECharts renderer.
-   */
   it('KEEP-GREEN: curve still reaches the ECharts adapter from the IR', () => {
-    const fixturePath = path.resolve(moduleDir, '../../examples/viz/line-chart.spec.json');
+    const fixturePath = path.resolve(repoRoot, 'examples/viz/line-chart.spec.json');
     const spec = JSON.parse(readFileSync(fixturePath, 'utf8')) as NormalizedVizSpec;
     const option = toEChartsOption(spec) as unknown as { series?: readonly { smooth?: boolean }[] };
-    // curve is 'monotone' (non-linear) in this fixture, so smooth must be true.
     expect(option.series?.[0]?.smooth).toBe(true);
   });
 
@@ -218,9 +239,284 @@ describe('s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mar
     expect(markDef.additionalProperties).toBe(false);
     expect(Object.keys(markDef.properties ?? {})).not.toContain('id');
     expect(Object.keys(markDef.properties ?? {})).not.toContain('curve');
-    // ...but does contain the passthrough keys the filter must preserve.
-    for (const key of ['strokeWidth', 'opacity', 'fillOpacity', 'strokeDash', 'baseline']) {
+    // ...and DOES contain the genuine passthrough keys the filter must preserve.
+    // s168 CORRECTION: `baseline` was on this list in s167, as evidence it was safe
+    // passthrough. It is a real MarkDef property BY NAME and a `TextBaseline` by VALUE,
+    // so OODS's `'zero'`/`'min'`/`0` were exactly the four invalid fixtures. Name-validity
+    // is not value-validity, and this list only ever proved the former.
+    for (const key of ['strokeWidth', 'opacity', 'fillOpacity', 'strokeDash', 'tension']) {
       expect(Object.keys(markDef.properties ?? {}), `${key} should be a real MarkDef prop`).toContain(key);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------------------
+// s168 m02 — the corrective: allowlist + translation table, proved over the DECLARED
+// surface (synthetic) and the COMMITTED corpus, not one of the two.
+// ---------------------------------------------------------------------------------------
+
+/** The declared surface itself, read at test time so a new trait option cannot arrive untested. */
+const TRAIT_SCHEMA_DIR = path.resolve(repoRoot, 'schemas/traits');
+const TRAIT_OF_FILE: Record<string, string> = {
+  'mark-area.parameters.schema.json': 'MarkArea',
+  'mark-bar.parameters.schema.json': 'MarkBar',
+  'mark-line.parameters.schema.json': 'MarkLine',
+  'mark-point.parameters.schema.json': 'MarkPoint',
+};
+
+type DeclaredOption = { trait: string; key: string; value: unknown };
+
+function declaredOptions(): DeclaredOption[] {
+  const files = readdirSync(TRAIT_SCHEMA_DIR).filter((f) => /^mark-.*\.parameters\.schema\.json$/.test(f));
+  const out: DeclaredOption[] = [];
+  for (const file of files) {
+    const trait = TRAIT_OF_FILE[file];
+    if (!trait) throw new Error(`Unmapped trait parameter schema ${file} — add it to TRAIT_OF_FILE`);
+    const doc = JSON.parse(readFileSync(path.join(TRAIT_SCHEMA_DIR, file), 'utf8')) as {
+      properties?: Record<string, { type?: string; enum?: unknown[] }>;
+    };
+    for (const [key, prop] of Object.entries(doc.properties ?? {})) {
+      // A representative in-vocabulary value: the first enum member, else a typed sample.
+      const value = prop.enum?.length
+        ? prop.enum[0]
+        : prop.type === 'number'
+          ? 0.5
+          : prop.type === 'boolean'
+            ? true
+            : 'sample';
+      out.push({ trait, key, value });
+    }
+  }
+  return out;
+}
+
+/** Build output, dependencies and workflow scratch — never fixture sources. */
+const SKIP_DIRS = new Set([
+  'node_modules', '.git', '.claude', 'dist', 'build', 'coverage', 'storybook-static',
+  '.next', '.turbo',
+]);
+
+const X = { field: 'cat', trait: 'EncodingPositionX', channel: 'x' };
+const Y = { field: 'val', trait: 'EncodingPositionY', channel: 'y', scale: 'linear' };
+
+function probeSpec(trait: string, options: Record<string, unknown>): NormalizedVizSpec {
+  return {
+    $schema: 'https://oods.dev/viz-spec/v1',
+    id: 'probe',
+    name: 'probe',
+    data: { values: [{ cat: 'a', val: 1 }, { cat: 'b', val: 2 }] },
+    marks: [{ trait, options, encodings: { x: X, y: Y } }],
+    encoding: { x: X, y: Y },
+    a11y: { description: 'probe' },
+  } as unknown as NormalizedVizSpec;
+}
+
+function soleMarkDef(trait: string, options: Record<string, unknown>): Record<string, unknown> {
+  const defs = markDefsOf(toVegaLiteSpec(probeSpec(trait, options)));
+  expect(defs, `expected exactly one mark def for ${trait}`).toHaveLength(1);
+  return defs[0];
+}
+
+describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => {
+  it('the adapter’s STATIC allowlist still matches the installed vega-lite MarkDef', () => {
+    // The split ruling: the adapter carries a static list so a vega-lite bump cannot
+    // silently change runtime behaviour; THIS test derives the set from the schema, so a
+    // bump fails here instead. Read the constant out of the source rather than exporting
+    // it — the allowlist is an implementation detail, not part of the adapter's API.
+    const source = readFileSync(
+      path.resolve(repoRoot, 'packages/viz-core/src/adapters/vega-lite-adapter.ts'),
+      'utf8',
+    );
+    const block = /const MARK_DEF_PROPERTIES: ReadonlySet<string> = new Set\(\[([\s\S]*?)\]\);/.exec(source);
+    expect(block, 'MARK_DEF_PROPERTIES not found in the adapter').not.toBeNull();
+    const staticList = [...(block![1].matchAll(/'([^']+)'/g))].map((m) => m[1]).sort();
+    const schemaList = Object.keys(schema.definitions.MarkDef.properties).sort();
+    expect(staticList).toEqual(schemaList);
+  });
+
+  // ── EVERY declared trait option gets a probe (synthetic coverage) ────────────────
+  // The committed corpus exercises only 7 of these keys, so a fixture sweep alone cannot
+  // reach the rest. Generated from the trait schemas, not hand-listed.
+  const DECLARED = declaredOptions();
+
+  it('covers every declared trait option key', () => {
+    expect(DECLARED.length).toBeGreaterThanOrEqual(17);
+    expect(new Set(DECLARED.map((d) => d.trait))).toEqual(
+      new Set(['MarkArea', 'MarkBar', 'MarkLine', 'MarkPoint']),
+    );
+  });
+
+  for (const { trait, key, value } of DECLARED) {
+    it(`${trait}.${key} emits a schema-valid mark def`, () => {
+      const compiled = toVegaLiteSpec(probeSpec(trait, { [key]: value }));
+      const errors = markDefErrors(compiled);
+      expect(errors, `${trait}.${key}=${JSON.stringify(value)} produced:\n  ${errors.join('\n  ')}`).toEqual([]);
+    });
+  }
+
+  // ── PASSTHROUGH SURVIVAL — the control that stops a degenerate fix ───────────────
+  // Without this, `{type:'line'}` — strip everything but the mark type — satisfies every
+  // other criterion in this file while silently dropping all styling.
+  const PASSTHROUGH: Record<string, Record<string, unknown>> = {
+    MarkArea: { opacity: 0.35, tension: 0.7 },
+    MarkBar: { cornerRadius: 4 },
+    MarkLine: { strokeWidth: 2.5, strokeDash: [4, 2] },
+    MarkPoint: { strokeWidth: 1.5, opacity: 0.9, fillOpacity: 0.4, size: 42, shape: 'square' },
+  };
+
+  for (const [trait, options] of Object.entries(PASSTHROUGH)) {
+    it(`KEEP-GREEN: ${trait} passthrough survives WITH ITS VALUES`, () => {
+      const def = soleMarkDef(trait, options);
+      for (const [key, value] of Object.entries(options)) {
+        expect(def[key], `${trait}.${key} was dropped or altered`).toEqual(value);
+      }
+      expect(markDefErrors(toVegaLiteSpec(probeSpec(trait, options)))).toEqual([]);
+    });
+  }
+
+  // ── TRANSLATIONS ────────────────────────────────────────────────────────────────
+  it('curve → interpolate, for every value in the declared vocabulary', () => {
+    for (const curve of ['linear', 'monotone', 'step']) {
+      const def = soleMarkDef('MarkLine', { curve });
+      expect(def.interpolate).toBe(curve);
+      expect(def).not.toHaveProperty('curve');
+    }
+  });
+
+  it('curve outside MarkDef.interpolate’s vocabulary is dropped, not emitted', () => {
+    const def = soleMarkDef('MarkLine', { curve: 'wobbly' });
+    expect(def).not.toHaveProperty('interpolate');
+    expect(def).not.toHaveProperty('curve');
+  });
+
+  it('fill: solid|hollow → filled, and NO mark def ever carries the OODS vocabulary', () => {
+    // `fill` is a real MarkDef property accepting any string as a Color, so ajv ACCEPTS
+    // `fill:'hollow'`. The allowlist cannot catch it — this is the value control.
+    expect(soleMarkDef('MarkPoint', { fill: 'solid' })).toMatchObject({ filled: true });
+    expect(soleMarkDef('MarkPoint', { fill: 'hollow' })).toMatchObject({ filled: false });
+    for (const value of ['solid', 'hollow']) {
+      const def = soleMarkDef('MarkPoint', { fill: value });
+      expect(def.fill).toBeUndefined();
+    }
+  });
+
+  it('KEEP-GREEN: a genuine colour in fill still passes through', () => {
+    expect(soleMarkDef('MarkPoint', { fill: '#ff0000' })).toMatchObject({ fill: '#ff0000' });
+  });
+
+  it('baseline → encoding scale.zero, in all THREE observed spellings', () => {
+    // 'zero' and 'min' are declared by mark-area.parameters.schema.json; the NUMBER 0 is
+    // declared nowhere and comes from the committed MarkBar fixtures — which is exactly
+    // why a declared-surface-only derivation would have missed it.
+    const cases: [string, unknown, boolean][] = [
+      ['MarkArea', 'zero', true],
+      ['MarkArea', 'min', false],
+      ['MarkBar', 0, true],
+    ];
+    for (const [trait, baseline, expected] of cases) {
+      const compiled = toVegaLiteSpec(probeSpec(trait, { baseline })) as {
+        encoding?: Record<string, { scale?: { zero?: boolean } }>;
+      };
+      expect(compiled.encoding?.y?.scale?.zero, `${trait} baseline=${JSON.stringify(baseline)}`).toBe(expected);
+      expect(markDefsOf(compiled)[0]).not.toHaveProperty('baseline');
+    }
+  });
+
+  it('an unrecognised baseline is dropped rather than guessed at', () => {
+    const compiled = toVegaLiteSpec(probeSpec('MarkArea', { baseline: 'alphabetic' })) as {
+      encoding?: Record<string, { scale?: { zero?: boolean } }>;
+    };
+    expect(compiled.encoding?.y?.scale?.zero).toBeUndefined();
+    expect(markDefsOf(compiled)[0]).not.toHaveProperty('baseline');
+  });
+
+  // ── THE FILTER IS OUTPUT-ONLY ───────────────────────────────────────────────────
+  it('KEEP-GREEN: translation never mutates the IR', () => {
+    // AreaChart.tsx reads options.baseline, the ECharts adapter reads options.curve, and
+    // the layered view reads options.title/id. A translation that deleted from the shared
+    // options object would break all three.
+    const spec = probeSpec('MarkArea', { curve: 'monotone', baseline: 'zero', fill: 'hollow' });
+    const optionsBefore = structuredClone((spec.marks[0] as { options: Record<string, unknown> }).options);
+    toVegaLiteSpec(spec);
+    expect((spec.marks[0] as { options: Record<string, unknown> }).options).toEqual(optionsBefore);
+  });
+
+  // ── DISCRIMINATION: the control of the control ──────────────────────────────────
+  it('re-injecting each of the 14 non-MarkDef keys turns the oracle RED at that key', () => {
+    const compiled = toVegaLiteSpec(probeSpec('MarkLine', { strokeWidth: 2 })) as {
+      mark: Record<string, unknown>;
+    };
+    expect(markDefErrors(compiled)).toEqual([]);
+
+    const NON_MARKDEF_KEYS = [
+      'areaStyle', 'bandPadding', 'curve', 'enableMarkers', 'id', 'itemStyle', 'join',
+      'lineStyle', 'name', 'orientation', 'stack', 'stacking', 'symbolSize', 'title',
+    ];
+    for (const key of NON_MARKDEF_KEYS) {
+      const mutated = structuredClone(compiled);
+      mutated.mark[key] = 'x';
+      const errors = markDefErrors(mutated);
+      expect(errors.join(' '), `re-injecting ${key} did not turn the oracle red`).toContain(
+        `"additionalProperty":"${key}"`,
+      );
+    }
+  });
+
+  // ── THE COMMITTED CORPUS ────────────────────────────────────────────────────────
+  it('every committed mark-bearing fixture emits schema-valid mark defs', () => {
+    // DEFINITION, stated because "42" was contested: a `.json` file under the repo whose
+    // TOP-LEVEL object has a `marks` array containing at least one entry whose `trait`
+    // starts with "Mark". Under that definition there are 42 — but only 31 are distinct
+    // by content: `examples/viz/patterns/` and `examples/viz/patterns-v2/` hold 11
+    // byte-identical twins, which is the duplication that inflates the figure. Twelve of
+    // the 42 carry `mark.options` at all, between them 7 distinct keys — which is why the
+    // synthetic probes above exist.
+    //
+    // Enumerated by walking the tree rather than by `git ls-files`, so the test carries no
+    // external-process dependency. VERIFIED EQUIVALENT: the walk and the git-tracked set
+    // yield the identical 42 files, zero either way. (The two differ hugely at the .json
+    // level — 7,908 walked vs 460 tracked — which is the gap behind the inherited "7,735
+    // specs swept" figure: that sweep counted untracked files too.)
+    const collected: string[] = [];
+    const walk = (dir: string): void => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        if (entry.isDirectory()) {
+          if (SKIP_DIRS.has(entry.name)) continue;
+          walk(path.join(dir, entry.name));
+        } else if (entry.name.endsWith('.json')) {
+          collected.push(path.join(dir, entry.name));
+        }
+      }
+    };
+    walk(repoRoot);
+
+    const failures: string[] = [];
+    let checked = 0;
+    for (const abs of collected) {
+      const rel = path.relative(repoRoot, abs);
+      let doc: { marks?: { trait?: unknown }[] };
+      try {
+        doc = JSON.parse(readFileSync(abs, 'utf8'));
+      } catch {
+        continue;
+      }
+      const isMarkBearing =
+        Array.isArray(doc?.marks) &&
+        doc.marks.some((m) => typeof m?.trait === 'string' && m.trait.startsWith('Mark'));
+      if (!isMarkBearing) continue;
+      checked += 1;
+      let compiled: unknown;
+      try {
+        compiled = toVegaLiteSpec(doc as unknown as NormalizedVizSpec);
+      } catch {
+        // An adapter throw is a different defect class and is not this oracle's subject.
+        continue;
+      }
+      const errors = markDefErrors(compiled);
+      if (errors.length) failures.push(`${rel} :: ${errors.join(' ; ')}`);
+    }
+
+    expect(checked, 'the corpus definition stopped matching — re-derive it').toBe(42);
+    expect(failures, `schema-invalid mark defs:\n  ${failures.join('\n  ')}`).toEqual([]);
   });
 });

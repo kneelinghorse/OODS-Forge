@@ -3,6 +3,7 @@ import { getAjv } from '../../src/lib/ajv.js';
 import { formatValidationErrors } from '../../src/security/errors.js';
 import { formatSchemaInputError } from '../../src/security/schema-errors.js';
 import brandApplyInputSchema from '../../src/schemas/brand.apply.input.json' assert { type: 'json' };
+import tokensBuildInputSchema from '../../src/schemas/tokens.build.input.json' assert { type: 'json' };
 import genericOutputSchema from '../../src/schemas/generic.output.json' assert { type: 'json' };
 import releaseVerifyInputSchema from '../../src/schemas/release.verify.input.json' assert { type: 'json' };
 import releaseVerifyOutputSchema from '../../src/schemas/release.verify.output.json' assert { type: 'json' };
@@ -17,6 +18,7 @@ import type {
 const ajv = getAjv();
 
 const validateBrandApplyInput = ajv.compile<BrandApplyInput>(brandApplyInputSchema);
+const validateTokensBuildInput = ajv.compile(tokensBuildInputSchema);
 const validateGenericOutput = ajv.compile<GenericOutput>(genericOutputSchema);
 const validateReleaseVerifyInput = ajv.compile<ReleaseVerifyInput>(releaseVerifyInputSchema);
 const validateReleaseVerifyOutput = ajv.compile<ReleaseVerifyOutput>(releaseVerifyOutputSchema);
@@ -75,6 +77,32 @@ describe('schema contracts', () => {
 
     expect(validateBrandApplyInput(invalidPayload)).toBe(false);
     expect(validateBrandApplyInput.errors).not.toBeNull();
+  });
+
+  // s168-m01 — the wire enum is the boundary an MCP caller actually hits (index.ts:257
+  // compiles this exact schema before handle() runs). Before this sprint NONE of the six
+  // brand.apply test files asserted it, so deleting the enum outright broke no test.
+  const BRANDS_ON_DISK = ['A', 'B'];
+
+  it('pins the brand.apply brand enum to the brands that exist on disk', () => {
+    expect((brandApplyInputSchema as any).properties.brand.enum).toEqual(BRANDS_ON_DISK);
+  });
+
+  it('accepts every supported brand and rejects everything else at the wire boundary', () => {
+    for (const brand of BRANDS_ON_DISK) {
+      expect(validateBrandApplyInput({ brand, delta: {} })).toBe(true);
+    }
+    for (const brand of ['C', 'a', '', '.', '..', 'A/', 'A/../B', '../../../../../../etc']) {
+      expect(validateBrandApplyInput({ brand, delta: {} })).toBe(false);
+    }
+  });
+
+  it('pins the tokens.build brand enum to the same brand set', () => {
+    expect((tokensBuildInputSchema as any).properties.brand.enum).toEqual(BRANDS_ON_DISK);
+    for (const brand of BRANDS_ON_DISK) {
+      expect(validateTokensBuildInput({ brand })).toBe(true);
+    }
+    expect(validateTokensBuildInput({ brand: 'C' })).toBe(false);
   });
 
   it('accepts canonical generic output payloads', () => {
