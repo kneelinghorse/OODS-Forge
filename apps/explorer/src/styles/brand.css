@@ -14,18 +14,37 @@
  *
  * THREE THINGS REMAIN, and each is the sole source of what it declares:
  *
- *   1. The `--brandA-*` / `--brandB-*` PRIMITIVES (76 of them). The bridge emits
- *      `--oods-color-brand-*` from the token sources; these differently-named primitives
- *      are what the light-cell focus slots below alias, and
- *      `apps/explorer/src/stories/__canary__/BrandBleed.canary.tsx` reads two of them
- *      directly. It is a real story, not a lint fixture.
+ *   1. The `--brandA-*` / `--brandB-*` PRIMITIVES — SEVEN of them as of s169 m05, down
+ *      from 76. The bridge emits `--oods-color-brand-*` from the token sources; these
+ *      differently-named primitives duplicated that palette under a second spelling.
+ *
+ *      MEASURED before deleting: of the 76, exactly 7 were referenced by anything at all —
+ *      3 for brand A and 4 for brand B — and the other 69 were read by NOTHING in the
+ *      tracked tree. Six of the survivors are aliased by the light focus blocks below;
+ *      `--brandB-text-primary` is read only by
+ *      `apps/explorer/src/stories/__canary__/BrandBleed.canary.tsx`, which is a real story,
+ *      not a lint fixture. A duplicated palette that nothing reads is not redundancy, it is
+ *      a second source of truth waiting to drift — and it HAD drifted:
+ *      `--brandB-text-accent` sat at 0.54 against a token value of 0.53.
+ *
+ *      `tests/tokens/brand-css-no-tie.test.ts` now pins the count at 7 AND ties each
+ *      survivor's value to its token source, so the drift that went unnoticed for a sprint
+ *      cannot recur silently.
  *
  *   2. The THREE FOCUS SLOTS — `--theme-focus-ring-outer`, `--theme-focus-ring-inner`,
  *      `--theme-focus-text` — recorded in the bridge's own `UNBRIDGED_SLOTS` with the
  *      reason: no brand token supplies them. `layers.css` DOES define all three, but only
- *      as the shared NEUTRAL ring, so deleting this file would not break focus — it would
- *      silently de-brand it in all six cells. Landing real focus tokens is the way to
- *      retire this block; until then it stays.
+ *      as the shared NEUTRAL ring, so deleting this file would not break focus.
+ *
+ *      s169 m02 CORRECTION, measured in Chromium: this block used to say deleting the file
+ *      would de-brand focus "in all six cells". It would de-brand FOUR. The light blocks
+ *      below are `:where(...)`-wrapped, which contributes ZERO specificity, so `:root`
+ *      (0,1,0) already wins and LIGHT FOCUS IS ALREADY NEUTRAL — identical for brands A
+ *      and B. Only the two dark cells are branded; the two hc cells are keyword-identical
+ *      between brands. Verified two ways: strip the `:where()` and light focus goes
+ *      branded; leave it and A and B paint the same three values.
+ *
+ *      Landing real focus tokens is the way to retire this block; until then it stays.
  *
  *   3. The `@media (forced-colors: active)` block. NOTE, because the sprint memo's draft
  *      claimed otherwise and the claim was checked: `forced-color-adjust` is declared in
@@ -37,52 +56,10 @@
  * brand-css-no-tie.test.ts` fails if you do, naming the slot.
  */
 [data-brand='A'] {
-  /* Base Brand A primitives */
+  /* Brand A primitives — the THREE the light focus block below aliases. See the header. */
   --brandA-surface-canvas: oklch(0.967 0.03 86);
-  --brandA-surface-raised: oklch(0.935 0.037 86);
-  --brandA-surface-subtle: oklch(0.893 0.048 86);
-  --brandA-surface-disabled: oklch(0.886 0.03 86);
-  --brandA-surface-backdrop: oklch(0.368 0.042 86);
-  --brandA-surface-inverse: oklch(0.29 0.052 86);
-  --brandA-surface-interactive-primary-default: oklch(0.56 0.19 45);
-  --brandA-surface-interactive-primary-hover: oklch(0.5 0.2 45);
-  --brandA-surface-interactive-primary-pressed: oklch(0.44 0.21 45);
-
-  --brandA-border-subtle: oklch(0.86 0.032 86);
-  --brandA-border-strong: oklch(0.6 0.052 86);
-
-  --brandA-text-primary: oklch(0.26 0.05 265);
-  --brandA-text-secondary: oklch(0.39 0.04 265);
-  --brandA-text-muted: oklch(0.46 0.03 265);
-  --brandA-text-inverse: oklch(0.92 0.02 86);
-  --brandA-text-accent: oklch(0.52 0.17 45);
+  --brandA-text-accent: oklch(0.495 0.17 45);
   --brandA-text-on-interactive: oklch(0.97 0.01 95);
-  --brandA-text-disabled: oklch(0.72 0.015 265);
-
-  --brandA-status-info-surface: oklch(0.9685 0.0148 260.73);
-  --brandA-status-info-border: oklch(0.8191 0.0763 260.81);
-  --brandA-status-info-text: oklch(0.3847 0.1344 263.74);
-  --brandA-status-info-icon: oklch(0.5466 0.1806 263.48);
-
-  --brandA-status-success-surface: oklch(0.9743 0.0192 167.94);
-  --brandA-status-success-border: oklch(0.8671 0.0772 165.25);
-  --brandA-status-success-text: oklch(0.4315 0.0821 163.04);
-  --brandA-status-success-icon: oklch(0.6005 0.1199 161.34);
-
-  --brandA-status-warning-surface: oklch(0.9795 0.026 90.09);
-  --brandA-status-warning-border: oklch(0.8949 0.1177 87.87);
-  --brandA-status-warning-text: oklch(0.4914 0.1012 82.2);
-  --brandA-status-warning-icon: oklch(0.6573 0.1198 81.65);
-
-  --brandA-status-critical-surface: oklch(0.9672 0.0163 12.78);
-  --brandA-status-critical-border: oklch(0.824 0.0834 19.01);
-  --brandA-status-critical-text: oklch(0.465 0.147 24.94);
-  --brandA-status-critical-icon: oklch(0.6039 0.1827 24.43);
-
-  --brandA-status-neutral-surface: oklch(0.9816 0.0017 247.84);
-  --brandA-status-neutral-border: oklch(0.8875 0.0147 264.49);
-  --brandA-status-neutral-text: oklch(0.4239 0.021 267.53);
-  --brandA-status-neutral-icon: oklch(0.5109 0.0264 269.16);
 }
 
 :where([data-brand='A']:not([data-theme]), [data-brand='A'][data-theme='light']) {
@@ -108,54 +85,13 @@
   --theme-focus-text: HighlightText;
 }
 
-/* Brand B theme overrides generated from app/packages/tokens/src/tokens/brands/B */
 [data-brand='B'] {
-  /* Base Brand B primitives */
+  /* Brand B primitives — three aliased by the light focus block, plus --brandB-text-primary
+     which only the BrandBleed canary story reads. See the header. */
   --brandB-surface-canvas: oklch(0.97 0.015 230);
-  --brandB-surface-raised: oklch(0.94 0.022 230);
-  --brandB-surface-subtle: oklch(0.9 0.032 230);
-  --brandB-surface-disabled: oklch(0.88 0.015 230);
-  --brandB-surface-backdrop: oklch(0.35 0.022 230);
-  --brandB-surface-inverse: oklch(0.28 0.03 230);
-  --brandB-surface-interactive-primary-default: oklch(0.62 0.18 232);
-  --brandB-surface-interactive-primary-hover: oklch(0.52 0.19 232);
-  --brandB-surface-interactive-primary-pressed: oklch(0.47 0.21 232);
-
-  --brandB-border-subtle: oklch(0.85 0.02 230);
-  --brandB-border-strong: oklch(0.6 0.035 232);
-
   --brandB-text-primary: oklch(0.23 0.035 265);
-  --brandB-text-secondary: oklch(0.36 0.025 265);
-  --brandB-text-muted: oklch(0.45 0.02 265);
-  --brandB-text-inverse: oklch(0.94 0.01 232);
-  --brandB-text-accent: oklch(0.54 0.14 238);
+  --brandB-text-accent: oklch(0.48 0.14 238);
   --brandB-text-on-interactive: oklch(0.98 0.003 250);
-  --brandB-text-disabled: oklch(0.7 0.015 265);
-
-  --brandB-status-info-surface: oklch(0.968 0.013 252);
-  --brandB-status-info-border: oklch(0.82 0.07 252);
-  --brandB-status-info-text: oklch(0.39 0.13 254);
-  --brandB-status-info-icon: oklch(0.55 0.18 254);
-
-  --brandB-status-success-surface: oklch(0.973 0.019 172);
-  --brandB-status-success-border: oklch(0.868 0.078 168);
-  --brandB-status-success-text: oklch(0.432 0.082 168);
-  --brandB-status-success-icon: oklch(0.602 0.12 166);
-
-  --brandB-status-warning-surface: oklch(0.978 0.026 82);
-  --brandB-status-warning-border: oklch(0.894 0.118 82);
-  --brandB-status-warning-text: oklch(0.49 0.102 80);
-  --brandB-status-warning-icon: oklch(0.656 0.12 80);
-
-  --brandB-status-critical-surface: oklch(0.966 0.017 20);
-  --brandB-status-critical-border: oklch(0.824 0.083 25);
-  --brandB-status-critical-text: oklch(0.466 0.147 24);
-  --brandB-status-critical-icon: oklch(0.604 0.182 24);
-
-  --brandB-status-neutral-surface: oklch(0.982 0.002 248);
-  --brandB-status-neutral-border: oklch(0.888 0.014 256);
-  --brandB-status-neutral-text: oklch(0.425 0.021 262);
-  --brandB-status-neutral-icon: oklch(0.512 0.026 262);
 }
 
 :where([data-brand='B']:not([data-theme]), [data-brand='B'][data-theme='light']) {

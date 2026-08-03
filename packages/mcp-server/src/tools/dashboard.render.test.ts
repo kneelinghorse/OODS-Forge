@@ -4,7 +4,12 @@ import { getAjv } from '../lib/ajv.js';
 import type { DashboardRenderInput } from '../schemas/generated.js';
 import { handle, toA11yContrastBlock } from './dashboard.render.js';
 import { resetMeasureRegistryCache } from './measure-registry.js';
-import { scanBrandContrast } from './dashboard.render.html.js';
+import {
+  CONTRAST_PAIRS,
+  exportTokenMap,
+  resolveBrandTokens,
+  scanBrandContrast,
+} from './dashboard.render.html.js';
 
 // Reconstruct the server boundary in-test: compile the SAME schema JSONs the
 // dispatch loop uses with the SAME getAjv() instance, call handle() directly.
@@ -527,9 +532,69 @@ describe('dashboard.render — a11y completeness: contrast scan + SR data-table 
   // may pass all pairs; this proves the V135 logic independent of the brand tokens).
   it('(A) scanBrandContrast flags a low-contrast pair and passes a high-contrast one', () => {
     const failing = scanBrandContrast({ '--oods-color-fg': '#999999', '--oods-color-bg': '#aaaaaa' });
-    expect(failing.some((f) => f.pair === 'fg-on-bg' && f.ratio < f.threshold)).toBe(true);
+    expect(failing.findings.some((f) => f.pair === 'fg-on-bg' && f.ratio < f.threshold)).toBe(true);
     const passing = scanBrandContrast({ '--oods-color-fg': '#000000', '--oods-color-bg': '#ffffff' });
-    expect(passing.some((f) => f.pair === 'fg-on-bg')).toBe(false);
+    expect(passing.findings.some((f) => f.pair === 'fg-on-bg')).toBe(false);
+  });
+
+  /**
+   * ── s169 m04: THE TESTS THE DEAD SCAN COULD SURVIVE, AND THE ONES IT CANNOT ──
+   *
+   * The hex test above is GREEN at s168's tip — and was, while `scanBrandContrast()` graded
+   * ZERO pairs in production on every run since the feature shipped. Hex parses; the values
+   * `resolveTokenToColor` actually emits are `rgb(r, g, b)`, which the ratio function throws
+   * on and a `catch` silently swallowed. So the hex palette exercised the pair logic and
+   * proved nothing at all about the production path.
+   *
+   * These two tests are the ones that discriminate: a failing palette in the FORM PRODUCTION
+   * USES, and an assertion on HOW MANY pairs the real resolver's output got measured.
+   */
+  it('(A) RED-FIRST: a failing palette in the rgb() form production emits is actually graded', () => {
+    // Measured at s168's tip: this exact input returned [] with graded implicitly 0.
+    const rgbFailing = {
+      '--oods-color-fg': 'rgb(119, 119, 119)',
+      '--oods-color-bg': 'rgb(136, 136, 136)',
+      '--oods-color-positive': 'rgb(119, 119, 119)',
+      '--oods-color-negative': 'rgb(119, 119, 119)',
+      '--oods-color-muted': 'rgb(119, 119, 119)',
+      '--oods-color-panel-bg': 'rgb(136, 136, 136)',
+    };
+    const scan = scanBrandContrast(rgbFailing);
+    expect(scan.graded).toBe(CONTRAST_PAIRS.length);
+    expect(scan.findings.map((f) => f.pair).sort()).toEqual(
+      CONTRAST_PAIRS.map((p) => p.id).sort(),
+    );
+    for (const finding of scan.findings) expect(finding.ratio).toBeLessThan(finding.threshold);
+
+    // ...and a CSS system colour is still genuinely ungradable — the original `catch` had a
+    // real job, it was just doing three jobs. An ungraded pair must not inflate `graded`.
+    const systemColour = scanBrandContrast({ '--oods-color-fg': 'CanvasText', '--oods-color-bg': 'Canvas' });
+    expect(systemColour.graded).toBe(0);
+    expect(systemColour.findings).toEqual([]);
+  });
+
+  it('(A) PRODUCTION PATH: the real resolver’s output grades every declared pair', () => {
+    // No override — this is `resolveBrandTokens()`, the values the export actually inlines.
+    // The number is asserted, not merely emitted: without it a future format change would
+    // silently return the scan to grading nothing while still reporting `failing: 0`.
+    for (const brand of ['A', 'B'] as const) {
+      const scan = scanBrandContrast(resolveBrandTokens(brand));
+      expect(scan.graded, `brand ${brand} graded pairs`).toBe(CONTRAST_PAIRS.length);
+      // Both shipped brands genuinely pass every declared pair — now measured, not assumed.
+      expect(scan.findings, `brand ${brand} findings`).toEqual([]);
+    }
+    expect(scanBrandContrast().graded).toBe(CONTRAST_PAIRS.length);
+  });
+
+  it('(A) brand A and brand B resolve DIFFERENT palettes over the same token names', () => {
+    // Threading is only meaningful if the two brands differ; assert that rather than trust it.
+    const a = resolveBrandTokens('A');
+    const b = resolveBrandTokens('B');
+    expect(Object.keys(a).sort()).toEqual(Object.keys(b).sort());
+    expect(Object.keys(a).length).toBe(Object.keys(exportTokenMap('A')).length);
+    expect(a).not.toEqual(b);
+    // Absent brand === brand A, which is what "byte-identical when omitted" rests on.
+    expect(resolveBrandTokens()).toEqual(a);
   });
 
   it('(A) output.contrastScan runs the scan and echoes the control; any finding is a well-formed OODS-V135', async () => {
@@ -550,22 +615,88 @@ describe('dashboard.render — a11y completeness: contrast scan + SR data-table 
     expect((out.output as Record<string, unknown>).contrastScan).toBeUndefined();
   });
 
+  /**
+   * ── s169 m04: BRAND THREADING, END TO END ──
+   * The token package has shipped a complete `--oods-brand-b-*` set for two sprints and no
+   * MCP input could reach it. These assert the three things an agent needs to be able to
+   * rely on: 'B' is accepted and actually changes the painted output, an absent brand is
+   * byte-identical to before, and an unknown brand is rejected at the schema boundary
+   * rather than silently falling back to A.
+   */
+  it('(A) brand=B is accepted and paints brand B’s palette into the HTML export', async () => {
+    const withB = await handle(chartDash({ brand: 'B', output: { html: true } }));
+    expect(validateOutput(withB)).toBe(true);
+    expect((withB.output as Record<string, unknown>).brand).toBe('B');
+
+    const withoutBrand = await handle(chartDash({ output: { html: true } }));
+    expect((withoutBrand.output as Record<string, unknown>).brand).toBeUndefined();
+
+    // The inlined :root block must actually differ — otherwise the input is a false
+    // affordance, accepted and ignored, which is worse than not offering it.
+    const bTokens = resolveBrandTokens('B');
+    expect(withB.html as string).toContain(`--oods-color-fg:${bTokens['--oods-color-fg']}`);
+    expect(withB.html).not.toBe(withoutBrand.html);
+  });
+
+  it('(A) an ABSENT brand leaves the whole output byte-identical to brand A', async () => {
+    const absent = await handle(chartDash({ output: { html: true, contrastScan: true } }));
+    const explicitA = await handle(chartDash({ brand: 'A', output: { html: true, contrastScan: true } }));
+    // Everything except the deliberate echo must match byte for byte.
+    const strip = (out: Awaited<ReturnType<typeof handle>>) => {
+      const clone = JSON.parse(JSON.stringify(out));
+      delete clone.output.brand;
+      delete clone.specRef;
+      delete clone.specRefCreatedAt;
+      delete clone.specRefExpiresAt;
+      return JSON.stringify(clone);
+    };
+    expect(strip(absent)).toBe(strip(explicitA));
+  });
+
+  it('(A) the contrast scan grades the SAME brand the export paints', async () => {
+    // The two used to be wired separately: the scan always graded brand A. A brand-B render
+    // that reported "no contrast failures" would have been describing a different palette.
+    const out = await handle(chartDash({ brand: 'B', output: { html: true, contrastScan: true } }));
+    expect(out.a11yContrast?.summary).toEqual({ failing: 0, gradedPairs: CONTRAST_PAIRS.length });
+    const bTokens = resolveBrandTokens('B');
+    expect(out.html as string).toContain(`--oods-color-fg:${bTokens['--oods-color-fg']}`);
+  });
+
+  it('(A) an unknown brand is rejected at the schema boundary, never silently defaulted', () => {
+    expect(validateInput(chartDash({ brand: 'C' }))).toBe(false);
+    expect(validateInput(chartDash({ brand: 'a' }))).toBe(false);
+    expect(validateInput(chartDash({ brand: 'A' }))).toBe(true);
+    expect(validateInput(chartDash({ brand: 'B' }))).toBe(true);
+    expect(validateInput(chartDash())).toBe(true);
+  });
+
   // (A) sprint-119 m03 — toA11yContrastBlock: the POPULATED structured-block mapping.
   // The default brand passes contrast (no failing pairs), so a non-empty a11yContrast
   // never arises end-to-end; this unit-tests the mapping with controlled findings so the
   // severity-injection + failing-count logic can actually fail if it regresses (Rule 9).
   it('(A) toA11yContrastBlock mirrors findings as warning-severity rows + counts failures', () => {
-    const block = toA11yContrastBlock([
-      { pair: 'fg-on-bg', ratio: 3.2, threshold: 4.5 },
-      { pair: 'muted-on-panel-bg', ratio: 4.1, threshold: 4.5 },
-    ]);
+    const block = toA11yContrastBlock({
+      findings: [
+        { pair: 'fg-on-bg', ratio: 3.2, threshold: 4.5 },
+        { pair: 'muted-on-panel-bg', ratio: 4.1, threshold: 4.5 },
+      ],
+      graded: 4,
+    });
     expect(block.findings).toEqual([
       { pair: 'fg-on-bg', ratio: 3.2, threshold: 4.5, severity: 'warning' },
       { pair: 'muted-on-panel-bg', ratio: 4.1, threshold: 4.5, severity: 'warning' },
     ]);
-    expect(block.summary).toEqual({ failing: 2 });
-    // empty findings still yields a well-formed block (scan ran, found nothing).
-    expect(toA11yContrastBlock([])).toEqual({ findings: [], summary: { failing: 0 } });
+    expect(block.summary).toEqual({ failing: 2, gradedPairs: 4 });
+    // No findings AND nothing graded is the shape the dead scan produced for three sprints.
+    // It is now DISTINGUISHABLE from a clean scan, which is the entire point of the field.
+    expect(toA11yContrastBlock({ findings: [], graded: 0 })).toEqual({
+      findings: [],
+      summary: { failing: 0, gradedPairs: 0 },
+    });
+    expect(toA11yContrastBlock({ findings: [], graded: 4 })).toEqual({
+      findings: [],
+      summary: { failing: 0, gradedPairs: 4 },
+    });
   });
 
   // (B) SR data-table.

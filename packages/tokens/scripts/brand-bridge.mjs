@@ -109,12 +109,21 @@ export const SEMANTIC_BRIDGE = Object.freeze([
  *
  * Consequence, stated plainly rather than hidden: under a bridge block the three focus
  * slots keep their `:root` value from theme0, i.e. the neutral palette. Giving them a
- * real brand source is s168 work and needs a token, not a generator heuristic.
+ * real brand source needs a token, not a generator heuristic.
+ *
+ * ── s169 m02 CORRECTION: brand.css's LIGHT aliases NEVER TAKE EFFECT ──
+ * The per-slot reasons below used to read as though brand.css supplied branded focus in
+ * light and hard-coded it in dark. Measured in Chromium: brand.css's light blocks are
+ * `:where(...)`-wrapped, so they are (0,0,0) and LOSE to `:root` (0,1,0). Light focus
+ * resolves to the neutral ring, byte-identically for brands A and B, in every light
+ * attribute state. Only dark is branded; hc is keyword-identical across brands. The light
+ * aliases are written, parsed, and then beaten — real code that changes nothing.
+ * `scripts/quality/brand-cascade-browser-proof.mjs` pins both halves.
  */
 export const UNBRIDGED_SLOTS = Object.freeze([
-  { slot: '--theme-focus-ring-outer', reason: 'no brand token; brand.css derives it via a hand-authored color-mix() ratio that varies per theme' },
-  { slot: '--theme-focus-ring-inner', reason: 'no brand token; brand.css aliases surface.canvas in light but hardcodes a literal in dark' },
-  { slot: '--theme-focus-text', reason: 'no brand token; brand.css aliases text.accent in light but hardcodes a literal in dark and HighlightText in hc' },
+  { slot: '--theme-focus-ring-outer', reason: 'no brand token; brand.css derives it via a hand-authored color-mix() ratio that varies per theme — but only its dark and hc blocks win; the light one is :where()-wrapped and loses to :root' },
+  { slot: '--theme-focus-ring-inner', reason: 'no brand token; brand.css hardcodes a literal in dark and aliases surface.canvas in light, though the light alias loses to :root and the neutral ring is what paints' },
+  { slot: '--theme-focus-text', reason: 'no brand token; brand.css hardcodes a literal in dark and HighlightText in hc, and aliases text.accent in light — the light alias loses to :root, so light focus text is the neutral accent' },
 ]);
 
 /**

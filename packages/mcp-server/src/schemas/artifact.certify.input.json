@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/artifact.certify.input.json",
   "title": "Artifact certify input",
-  "description": "Input to artifact.certify: a Forge NormalizedVizSpec IR to certify. The tool boundary is intentionally PERMISSIVE ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR.",
+  "description": "Input to artifact.certify: a Forge NormalizedVizSpec IR to certify. The tool boundary is intentionally PERMISSIVE ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR. BRAND, STATED PLAINLY (s169 m04): this input takes NO brand, deliberately. Every operand certify grades is brand-INVARIANT — the colour hexes baked into the compiled spec, graded against the light-theme :root canvas — so a brand could not change any verdict. Offering the field would be a false affordance. dashboard.render and repl render DO accept brand; certify does not, because for certify it would mean nothing.",
   "type": "object",
   "required": ["spec"],
   "properties": {

@@ -389,6 +389,68 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
     expect(def).not.toHaveProperty('curve');
   });
 
+  /**
+   * ── s169 m05: THREE MORE OODS KEYS THAT HAD AN EXACT TARGET AND WERE BEING DROPPED ──
+   * `orientation`, `enableMarkers` and `join` are all in the 14-key not-a-MarkDef-property
+   * list above, so the allowlist correctly refused to emit them — but each has an EXACT
+   * Vega-Lite counterpart whose accepted values are the same set, verified against the
+   * installed 6.4.1 schema. Dropping a declared, translatable intent is silent data loss,
+   * so they are now translated on the same value-guarded pattern as `curve`.
+   */
+  it('orientation → orient, for every value in the declared vocabulary', () => {
+    for (const orientation of ['vertical', 'horizontal']) {
+      const def = soleMarkDef('MarkBar', { orientation });
+      expect(def.orient).toBe(orientation);
+      expect(def).not.toHaveProperty('orientation');
+    }
+  });
+
+  it('orientation outside MarkDef.orient’s vocabulary is dropped, not emitted', () => {
+    const def = soleMarkDef('MarkBar', { orientation: 'sideways' });
+    expect(def).not.toHaveProperty('orient');
+    expect(def).not.toHaveProperty('orientation');
+  });
+
+  it('join → strokeJoin, for every value in the declared vocabulary', () => {
+    for (const join of ['miter', 'round', 'bevel']) {
+      const def = soleMarkDef('MarkLine', { join });
+      expect(def.strokeJoin).toBe(join);
+      expect(def).not.toHaveProperty('join');
+    }
+  });
+
+  it('join outside MarkDef.strokeJoin’s vocabulary is dropped, not emitted', () => {
+    const def = soleMarkDef('MarkLine', { join: 'chamfered' });
+    expect(def).not.toHaveProperty('strokeJoin');
+    expect(def).not.toHaveProperty('join');
+  });
+
+  it('enableMarkers → point, for both booleans', () => {
+    for (const enableMarkers of [true, false]) {
+      const def = soleMarkDef('MarkLine', { enableMarkers });
+      expect(def.point).toBe(enableMarkers);
+      expect(def).not.toHaveProperty('enableMarkers');
+    }
+  });
+
+  it('a NON-boolean enableMarkers is dropped, even though MarkDef.point would accept it', () => {
+    // `MarkDef.point` also accepts an OverlayMarkDef object and the string 'transparent'.
+    // The OODS key is declared `boolean`, so anything else arriving under it is a caller
+    // error rather than a richer intent — smuggling it through would let an OODS key mean
+    // something the OODS schema never allowed.
+    for (const value of ['transparent', { size: 40 }, 1]) {
+      const def = soleMarkDef('MarkLine', { enableMarkers: value });
+      expect(def, `enableMarkers: ${JSON.stringify(value)}`).not.toHaveProperty('point');
+      expect(def).not.toHaveProperty('enableMarkers');
+    }
+  });
+
+  it('all three translations produce SCHEMA-VALID mark defs', () => {
+    // The translation is only worth anything if what it emits actually validates.
+    expect(markDefErrors(toVegaLiteSpec(probeSpec('MarkBar', { orientation: 'horizontal' })))).toEqual([]);
+    expect(markDefErrors(toVegaLiteSpec(probeSpec('MarkLine', { join: 'bevel', enableMarkers: true })))).toEqual([]);
+  });
+
   it('fill: solid|hollow → filled, and NO mark def ever carries the OODS vocabulary', () => {
     // `fill` is a real MarkDef property accepting any string as a Color, so ajv ACCEPTS
     // `fill:'hollow'`. The allowlist cannot catch it — this is the value control.
@@ -428,6 +490,56 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
     };
     expect(compiled.encoding?.y?.scale?.zero).toBeUndefined();
     expect(markDefsOf(compiled)[0]).not.toHaveProperty('baseline');
+  });
+
+  /**
+   * ── s169 m05: THE `else x` BRANCH HAD NO CONTROL ──
+   * `applyBaselineToEncoding` walks `['y', 'x']` and takes the first QUANTITATIVE
+   * positional channel — the fallback to `x` is what makes a horizontal chart work. Every
+   * baseline test above uses the default probe, where `y` IS quantitative, so all of them
+   * pass on `['y']` alone: MEASURED, mutating the channel list to `['y']` reds NOTHING.
+   *
+   * This probe flips the channels — quantitative on `x`, nominal on `y` — so it can only
+   * pass if the fallback runs. It also asserts the MERGE rather than just the value: a
+   * pre-existing `scale` property on the same channel must survive, because `{...scale,
+   * zero}` and `{zero}` are indistinguishable when the scale was empty.
+   */
+  it('baseline falls back to x when y is not quantitative, MERGING into any existing scale', () => {
+    const flipped = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'flipped',
+      name: 'flipped',
+      data: { values: [{ cat: 'a', val: 1 }, { cat: 'b', val: 2 }] },
+      marks: [
+        {
+          trait: 'MarkBar',
+          options: { baseline: 'zero' },
+          encodings: {
+            x: { field: 'val', trait: 'EncodingPositionX', channel: 'x', scale: 'linear' },
+            y: { field: 'cat', trait: 'EncodingPositionY', channel: 'y' },
+          },
+        },
+      ],
+      encoding: {
+        x: { field: 'val', trait: 'EncodingPositionX', channel: 'x', scale: 'linear' },
+        y: { field: 'cat', trait: 'EncodingPositionY', channel: 'y' },
+      },
+      a11y: { description: 'flipped' },
+    } as unknown as NormalizedVizSpec;
+
+    const compiled = toVegaLiteSpec(flipped) as {
+      encoding?: Record<string, { type?: string; scale?: { zero?: boolean; type?: string } }>;
+    };
+
+    // The premise: this probe is only meaningful if the channels really are flipped.
+    expect(compiled.encoding?.x?.type, 'probe premise: x must be quantitative').toBe('quantitative');
+    expect(compiled.encoding?.y?.type).not.toBe('quantitative');
+
+    expect(compiled.encoding?.x?.scale?.zero, 'the else-x fallback did not run').toBe(true);
+    // MERGE, not replace — the pre-existing linear scale must still be there.
+    expect(compiled.encoding?.x?.scale?.type, 'the existing scale was replaced, not merged').toBe('linear');
+    // ...and the non-quantitative channel is left entirely alone.
+    expect(compiled.encoding?.y?.scale?.zero).toBeUndefined();
   });
 
   // ── THE FILTER IS OUTPUT-ONLY ───────────────────────────────────────────────────

@@ -53,8 +53,11 @@ const prefix = 'oods';
  * PATTERNS MUST BE POSITIVE (memo SS3 D4). Style Dictionary 4.4.0 calls `globSync`
  * once per pattern and concatenates the results; it does NOT apply cross-pattern
  * negation, so a `'!src/presets/**'` entry silently does nothing. `src/presets/**`
- * is therefore excluded by simply never naming it — the three presets are 15-leaf
- * deltas over `color.brand.A.*` that no production code reads.
+ * is therefore excluded by simply never naming it — the three presets are BRAND-RELATIVE
+ * palette deltas (15, 15 and 21 leaves; the "15-leaf" this comment used to claim was true
+ * of two of the three and wrong about `dark-minimal.json`) that no production code reads.
+ * As of s169 m05 they carry NO `color.brand.<X>` wrapper at all: the caller wraps a preset
+ * for whichever brand it is applying to, which is why one payload now serves any brand.
  *
  * BRAND BASE FILES — why BOTH brands' `base.json` sit in the shared layer:
  * `src/tokens/aliases/brand-B.json` references `{color.brand.B.*}` and is itself a

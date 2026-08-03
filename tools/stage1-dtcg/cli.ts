@@ -7,7 +7,7 @@
 // in place — nothing is written into Stage1's repo.
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { convertFigLocalTokens, type FigLocalTokensFile } from './adapter.js';
 
 function parseArgs(argv: readonly string[]): { input: string; out: string; name: string } {
@@ -43,8 +43,33 @@ mkdirSync(outDir, { recursive: true });
 const SCHEMA = 'https://design-tokens.org/dtcg/schema.json';
 const written: string[] = [];
 
+/**
+ * ── s169 m05: `--name` IS A PATH SINK, AND IT WAS UNGUARDED ──
+ *
+ * `--name` is interpolated straight into the output filenames, so anything path-like in it
+ * escaped `--out`. MEASURED, by running it: `--name '../../escaped'` wrote
+ * `/tmp/escaped.base.json` and `/tmp/escaped.coverage.json` — two directories ABOVE the
+ * `--out` the caller named — and the CLI reported success, listing the escaped paths in its
+ * own output as though they were fine.
+ *
+ * The check lives HERE, at the single `writeFileSync` every output goes through, rather
+ * than on `--name` at parse time. Three files are written by three different call sites
+ * (base, one per Figma mode, coverage), and the mode filenames also interpolate a slug
+ * derived from the input document — so guarding the flag alone would leave a second,
+ * data-driven sink open. One choke point covers all of them, present and future.
+ *
+ * Exit 2 matches the CLI's existing usage-error convention (`parseArgs` above).
+ */
 function writeJson(fileName: string, data: unknown): void {
   const target = join(outDir, fileName);
+  if (dirname(resolve(target)) !== outDir) {
+    console.error(
+      `Refusing to write outside --out: "${fileName}" resolves to ${resolve(target)}, ` +
+        `which is not directly inside ${outDir}. Check --name (and any Figma mode names) ` +
+        'for path separators or ".." segments.',
+    );
+    process.exit(2);
+  }
   writeFileSync(target, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
   written.push(fileName);
 }

@@ -229,8 +229,54 @@ function loadBrandDocuments(brand: string): ThemeMap {
   };
 }
 
-function buildAliasDelta(delta: Record<string, unknown>): Partial<Record<Theme, TokenDocument>> {
+/**
+ * ── s169 m05: A DELTA MAY NOT ADDRESS A BRAND OTHER THAN THE ONE BEING APPLIED ──
+ *
+ * The alias path deep-merges a free-form delta into the target brand's document at the
+ * DOCUMENT ROOT. Nothing constrained the namespace, so a delta shaped
+ * `{ color: { brand: { A: … } } }` applied with `brand: 'B'` did not overwrite brand B —
+ * it GRAFTED an entire brand-A subtree INSIDE brand B's files, in all three themes.
+ *
+ * MEASURED at s168's tip against `packages/tokens/src/presets/dark-minimal.json`, whose
+ * payload was brand-A-namespaced: applying it to brand B produced
+ * `/color/brand/A: {…}` as an ADDITION in `brands/B/base.json`, `dark.json` and `hc.json`.
+ * The tool reported success ("Updated 3 token values for brand B") while brand B's files
+ * grew a foreign brand's palette that nothing would ever read.
+ *
+ * The presets are re-keyed brand-relative in this same mission, which removes the loaded
+ * gun. This guard removes the ability to fire one: it is about the SHAPE of any delta, not
+ * about presets, because the graft vector was always brand.apply's free-form merge and
+ * presets merely happened to be pointed at it.
+ *
+ * Deliberately narrow: only a `color.brand.<X>` addressed at some OTHER known brand is
+ * rejected. Addressing your OWN brand explicitly is legal (redundant, but harmless and
+ * previously valid), and a delta naming no brand at all is the normal case.
+ */
+function assertDeltaTargetsOnlyThisBrand(node: unknown, brand: string, trail: string[] = []): void {
+  if (!isPlainObject(node)) return;
+  for (const [key, value] of Object.entries(node)) {
+    const here = [...trail, key];
+    // The shape we police is `…color.brand.<X>` at any depth (a theme-scoped delta nests it
+    // one level deeper, e.g. `{ dark: { color: { brand: { A: … } } } }`).
+    if (here.length >= 2 && here[here.length - 2] === 'brand' && here[here.length - 3] === 'color') {
+      if (key !== brand && listAllowedBrands().includes(key)) {
+        throw new ToolError(
+          'OODS-V149',
+          `Delta addresses brand "${key}" but brand.apply was called for brand "${brand}". ` +
+            `A cross-brand delta does not overwrite the target — it grafts a foreign brand's ` +
+            `subtree inside it. Re-key the delta relative to the brand (drop the ` +
+            `color.brand.${key} wrapper) or call brand.apply with brand "${key}".`,
+          { field: 'delta', brand, deltaBrand: key, path: here.join('.') },
+        );
+      }
+    }
+    assertDeltaTargetsOnlyThisBrand(value, brand, here);
+  }
+}
+
+function buildAliasDelta(delta: Record<string, unknown>, brand: string): Partial<Record<Theme, TokenDocument>> {
   const normalized = normalizeDelta(delta) as TokenDocument;
+  assertDeltaTargetsOnlyThisBrand(normalized, brand);
   const scoped: Partial<Record<Theme, TokenDocument>> = {};
   const shared: TokenDocument = {};
   for (const [key, value] of Object.entries(normalized)) {
@@ -518,7 +564,7 @@ export async function handle(input: BrandApplyInput): Promise<GenericOutput> {
     if (Array.isArray(input.delta)) {
       throw new ToolError('OODS-V001', 'Alias strategy expects an object delta.', { strategy: 'alias' });
     }
-    const themeDelta = buildAliasDelta(input.delta as Record<string, unknown>);
+    const themeDelta = buildAliasDelta(input.delta as Record<string, unknown>, brand);
     for (const theme of THEMES) {
       const deltaForTheme = themeDelta[theme];
       if (!deltaForTheme) continue;

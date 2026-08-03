@@ -44,6 +44,13 @@ const VALID = {
       patch: [{ op: 'replace', path: '/screens/0/component', value: 'Card' }],
     },
     { schema: UI_SCHEMA, output: { format: 'fragments', strict: true } },
+    // s169 m04 — brand-BEARING payloads. `brand` had to be added to TWO files (the
+    // per-action repl.render.input.json and the duplicated render branch inside
+    // repl.input.json), and the existing parity tests could not have caught a one-sided
+    // edit: every payload above omits `brand`, so both schemas accept them either way.
+    // These do carry it, so a schema that gained the field on only one side goes red.
+    { schema: UI_SCHEMA, brand: 'A' },
+    { mode: 'full', schemaRef: 'ref-123', brand: 'B' },
   ],
   validate: [
     { schema: UI_SCHEMA },
@@ -161,6 +168,19 @@ describe('tools/repl grouped action-parameter consolidation', () => {
     it('full mode with neither schema nor schemaRef is rejected', () => {
       expect(validateValidateIn(clone({ mode: 'full' }))).toBe(false);
       expect(validateGroupedIn({ action: 'validate', mode: 'full' })).toBe(false);
+    });
+
+    it('an unknown brand is rejected by BOTH schemas (s169 m04)', () => {
+      // The enum has to be enforced on both sides too, not just the property's presence.
+      for (const brand of ['C', 'a', '', 1]) {
+        expect(validateRenderIn(clone({ schema: UI_SCHEMA, brand }))).toBe(false);
+        expect(validateGroupedIn({ action: 'render', schema: UI_SCHEMA, brand })).toBe(false);
+      }
+    });
+
+    it('brand is a RENDER-only field — the validate branch still rejects it (s169 m04)', () => {
+      expect(validateValidateIn(clone({ schema: UI_SCHEMA, brand: 'A' }))).toBe(false);
+      expect(validateGroupedIn({ action: 'validate', schema: UI_SCHEMA, brand: 'A' })).toBe(false);
     });
 
     it('wrong-action body shape (validate-only option under render) is rejected', () => {

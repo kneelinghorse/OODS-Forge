@@ -22,8 +22,20 @@
  * because it is the SOLE source of three things the bridge does not emit — the
  * `--brandX-*` primitives, the three focus slots (recorded in the bridge's own
  * `UNBRIDGED_SLOTS`), and a `forced-colors` block. Deleting it would not have broken
- * focus (layers.css defines a neutral fallback) but would silently DE-BRAND it in all six
- * cells, and would break the `BrandBleed` canary story that reads two primitives.
+ * focus (layers.css defines a neutral fallback), and would break the `BrandBleed` canary
+ * story that reads two primitives.
+ *
+ * ── s169 m02 CORRECTION: FOUR CELLS, NOT SIX ──
+ * This comment used to say deleting brand.css would "silently DE-BRAND focus in all six
+ * cells". MEASURED IN CHROMIUM, that is false. brand.css's light blocks are
+ * `:where(...)`-wrapped — (0,0,0) — so they lose to `:root` (0,1,0) and LIGHT FOCUS IS
+ * ALREADY NEUTRAL, byte-identically for brands A and B. Only the two dark cells are
+ * branded; the two hc cells resolve to the same system-colour keywords for both brands.
+ * Deleting the file would change four cells. The same false claim lived in brand.css's own
+ * header and in the bridge's `UNBRIDGED_SLOTS` rationale; all three are corrected together,
+ * and `scripts/quality/brand-cascade-browser-proof.mjs` now pins the measured split so the
+ * three cannot drift back apart. Branding light focus is a behaviour change and was NOT
+ * done here.
  *
  * This test pins the invariant that makes the reduction safe: **no `--theme-*` slot is
  * declared in both places.** Re-add one and this fails, naming it.
@@ -111,11 +123,79 @@ describe('s168 m05 — brand.css no longer ties with the generated bridge', () =
     const primitives = new Set(
       [...brandCss.matchAll(/^\s*(--brand[AB]-[A-Za-z0-9-]+)\s*:/gm)].map((m) => m[1]),
     );
-    expect(primitives.size, 'the --brandX-* primitives vanished; BrandBleed.canary reads two').toBe(76);
+    // SEVEN as of s169 m05, down from 76. MEASURED before the deletion: exactly 7 of the 76
+    // were referenced by anything in the tracked tree; the other 69 were read by NOTHING.
+    // The pin is a floor AND a ceiling on purpose — re-adding an unused primitive rebuilds
+    // the duplicate palette this reduction removed.
+    expect(primitives.size, 'the --brandX-* primitive set changed size').toBe(7);
     expect(brandCss).toContain('forced-colors');
     // The canary is a real story and reads two primitives directly — pin the exact ones.
     for (const primitive of ['--brandB-surface-canvas', '--brandB-text-primary']) {
       expect(primitives.has(primitive), `${primitive} is read by BrandBleed.canary.tsx`).toBe(true);
     }
+    // ...and the six the focus blocks alias must all still be declared, or focus breaks.
+    for (const primitive of [
+      '--brandA-surface-canvas', '--brandA-text-accent', '--brandA-text-on-interactive',
+      '--brandB-surface-canvas', '--brandB-text-accent', '--brandB-text-on-interactive',
+    ]) {
+      expect(primitives.has(primitive), `${primitive} is aliased by a light focus block`).toBe(true);
+    }
+  });
+
+  /**
+   * ── s169 m05: THE SURVIVOR TIE — the test that would have caught the 0.54 drift ──
+   *
+   * Every surviving primitive duplicates a value that the token sources also declare. That
+   * duplication is the whole hazard: nothing connected the two, so they could disagree —
+   * and they DID. `--brandB-text-accent` shipped `oklch(0.54 0.14 238)` against a token
+   * value of `oklch(0.53 0.14 238)`, a silent 0.01 divergence that survived a full sprint
+   * because no test compared them.
+   *
+   * This ties each survivor to its source. Note the NAME mapping is not a plain kebab
+   * split: `--brandA-text-on-interactive` is `text.onInteractive`, and getting that wrong
+   * would make the test look up a path that does not exist — so a missing path FAILS here
+   * rather than being skipped.
+   */
+  it('every surviving primitive equals its token source’s $value (the anti-drift tie)', () => {
+    const readCell = (brand: string): Record<string, any> =>
+      JSON.parse(
+        fs.readFileSync(
+          path.join(REPO_ROOT, 'packages', 'tokens', 'src', 'tokens', 'brands', brand, 'base.json'),
+          'utf8',
+        ),
+      ).color.brand[brand];
+
+    // `--brandA-text-on-interactive` -> ['text', 'onInteractive']: the LAST hyphenated run
+    // of a segment is camel-cased, matching how the token paths are actually spelled.
+    const TOKEN_PATH: Readonly<Record<string, readonly string[]>> = {
+      'surface-canvas': ['surface', 'canvas'],
+      'text-primary': ['text', 'primary'],
+      'text-accent': ['text', 'accent'],
+      'text-on-interactive': ['text', 'onInteractive'],
+    };
+
+    const declarations = [
+      ...brandCss.matchAll(/^\s*--brand([AB])-([A-Za-z0-9-]+)\s*:\s*([^;]+);/gm),
+    ];
+    expect(declarations.length, 'the primitive declarations stopped parsing').toBe(7);
+
+    const mismatches: string[] = [];
+    for (const [, brand, slug, rawValue] of declarations) {
+      const trail = TOKEN_PATH[slug];
+      expect(trail, `--brand${brand}-${slug} has no declared token path — add it here`).toBeDefined();
+      let node: any = readCell(brand);
+      for (const segment of trail!) node = node?.[segment];
+      expect(node?.$value, `brands/${brand}/base.json has no ${trail!.join('.')}`).toBeDefined();
+      if (rawValue.trim() !== String(node.$value).trim()) {
+        mismatches.push(
+          `--brand${brand}-${slug}: brand.css has "${rawValue.trim()}", ` +
+            `brands/${brand}/base.json ${trail!.join('.')} has "${node.$value}"`,
+        );
+      }
+    }
+    expect(
+      mismatches,
+      `brand.css primitives have drifted from their token sources:\n  ${mismatches.join('\n  ')}`,
+    ).toEqual([]);
   });
 });

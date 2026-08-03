@@ -319,6 +319,12 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
         screenHtml,
         schema: workingTree,
         compact,
+        // s169 m04 — brand. `renderDocument` already accepted and escaped `brand`; only
+        // this plumbing was missing. Passed ONLY when supplied, so `normalizeBrand`'s
+        // 'default' fallback (and every byte of the existing document) is untouched
+        // otherwise. Deliberately NOT defaulted to 'A': `data-brand="default"` matches no
+        // generated block, which is the correct meaning of "no brand requested".
+        ...(input.brand ? { brand: input.brand } : {}),
         ...(combined ? { componentCss: combined } : {}),
       });
     }
