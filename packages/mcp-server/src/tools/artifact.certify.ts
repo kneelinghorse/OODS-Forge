@@ -16,10 +16,21 @@
 // reflects the bytes Forge actually renders, and a chart that baked no OODS palette can
 // never certify contrast:'pass'. The verdict is a pure function of the input IR — no
 // Date/random/UUID.
+//
+// Accuracy is a graded pillar too as of s170 (#818 — the fourth #977 pillar): on the
+// certified path certify evaluates FOUR declared structural rules (non-zero bar baseline,
+// dual axis, area-encodes-linear, aggregation-hiding) over the IR and the compiled spec it
+// already produced, and nothing else. No scorer, no corpus, no render step — #110 holds:
+// the rules read, they never rebuild. `accuracy:'pass'` means none of those four
+// distortions was POSITIVELY detected, with accuracySummary.rulesEvaluated reporting how
+// many of the four actually resolved their operand; it is not a claim that the chart is
+// accurate.
 
 import { canonicalize, sha256 } from '@oods/artifacts';
 import {
+  ACCURACY_RULES,
   assertNormalizedVizSpec,
+  evaluateAccuracyRules,
   toVegaLiteSpec,
   validateVizEquivalenceRules,
   type NormalizedVizSpec,
@@ -50,7 +61,7 @@ export interface CertifyDeterminism {
 }
 
 /**
- * Per-pillar tri-state summary (s137). The pillars DISAGGREGATE which pillar drove the
+ * Per-pillar tri-state summary (s137, extended s170). The pillars DISAGGREGATE which pillar drove the
  * folded `conformant` gate (s140 [B]): a11yEquivalence mirrors the a11y-equivalence
  * sub-result (NOT the folded conformant); determinism mirrors `determinism.stable`;
  * contrast is the rendered-reality verdict — the categorical color bytes Forge baked
@@ -61,23 +72,46 @@ export interface CertifyPillars {
   readonly a11yEquivalence: 'pass' | 'fail' | 'unchecked';
   readonly determinism: 'pass' | 'fail' | 'unchecked';
   readonly contrast: ContrastVerdict;
+  /**
+   * The four declared structural accuracy rules (s170, #818 — the fourth #977 pillar).
+   * Its own THREE-state enum; contrast's four-state one (which carries 'exempt') is untouched.
+   */
+  readonly accuracy: 'pass' | 'fail' | 'unchecked';
+}
+
+/**
+ * How the accuracy pillar was reached (s170). `rulesEvaluated` is the examined-count the
+ * contrast pillar never shipped (#1412): a rule whose operand certify could not resolve is
+ * NOT counted and explains itself in notes[], so `accuracy:'pass'` can never be read as
+ * "all four rules ran" when they did not.
+ */
+export interface CertifyAccuracySummary {
+  readonly rulesEvaluated: number;
+  readonly failing: number;
 }
 
 export interface ArtifactCertifyOutput {
   readonly status: 'ok' | 'error';
   readonly coverage?: 'certified' | 'uncertified';
   /**
-   * The folded conformance gate (s140 [B]): true iff a11y-equivalence has zero
-   * error-severity failures AND contrast is not 'fail' AND determinism is stable —
-   * measured on the light theme (dark-theme contrast unverified). null on the
-   * uncertified path (no claim); absent on error. A contrast-driven false is explained
-   * by pillars.contrast + contrastNote (findings[] stays a11y-equivalence-only).
+   * The folded conformance gate (s140 [B], extended s170): true iff a11y-equivalence has
+   * zero error-severity failures AND contrast is not 'fail' AND accuracy is not 'fail' AND
+   * determinism is stable — measured on the light theme (dark-theme contrast unverified).
+   * null on the uncertified path (no claim); absent on error. A contrast- or accuracy-driven
+   * false is explained by pillars + contrastNote + the OODS-V15x findings.
    */
   readonly conformant?: boolean | null;
+  /**
+   * One entry per failing rule. s170: this carries TWO rule families, told apart by code —
+   * a11y-equivalence (OODS-A11Y-<rule.id>) and accuracy (OODS-V150..V153). It is no longer
+   * a11y-equivalence-only, and the descriptions that said so have been updated in step.
+   */
   readonly findings?: CertifyFinding[];
   readonly determinism?: CertifyDeterminism;
-  /** Per-pillar tri-state summary (s137). Present on both ok paths; absent on error. */
+  /** Per-pillar tri-state summary (s137, extended s170). Present on both ok paths; absent on error. */
   readonly pillars?: CertifyPillars;
+  /** How the accuracy pillar was reached (s170). Certified path only, mirroring `determinism`. */
+  readonly accuracySummary?: CertifyAccuracySummary;
   /** Declared-intent caveat / role rationale for the contrast pillar (s137). */
   readonly contrastNote?: string;
   readonly notes?: string[];
@@ -156,7 +190,9 @@ function echartsContrastVerdict(
     coverage: 'uncertified',
     conformant: null,
     findings: [],
-    pillars: { a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast },
+    // accuracy is genuinely unchecked here: the four rules read the compiled Vega-Lite spec,
+    // and an ECharts-primary type has none (s170).
+    pillars: { a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast, accuracy: 'unchecked' },
     notes: [echartsA11yNote(trait)],
     ...(contrastNote ? { contrastNote } : {}),
   };
@@ -191,9 +227,14 @@ function uncertifiedVerdict(notes: string[]): ArtifactCertifyOutput {
     conformant: null,
     findings: [],
     // Every pillar is genuinely unchecked: there is no Vega-Lite compile (so no
-    // a11y-equivalence + no determinism proof), and contrast is not evaluated for a
-    // non-cartesian / unmodeled mark.
-    pillars: { a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'unchecked' },
+    // a11y-equivalence, no determinism proof and no operand for the accuracy rules), and
+    // contrast is not evaluated for a non-cartesian / unmodeled mark.
+    pillars: {
+      a11yEquivalence: 'unchecked',
+      determinism: 'unchecked',
+      contrast: 'unchecked',
+      accuracy: 'unchecked',
+    },
     notes,
   };
 }
@@ -295,6 +336,31 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
       contrast = 'unchecked';
     }
 
+    // ACCURACY PILLAR (s170 m02, #818) — the four declared structural rules over the IR +
+    // the compiled spec. certify stays a PURE READER: the evaluator mutates neither operand,
+    // so `contentHash` above (taken over this same untouched `compiled`) is unmoved by it.
+    // Defensive, mirroring contrast's :288-296 exactly: a rules-engine fault degrades the
+    // pillar to 'unchecked' with a note — it NEVER turns a valid conformance verdict into a
+    // status:error. Every finding maps into the EXISTING closed $defs/finding shape; the
+    // ruleId is carried by the registered code, so the shape needs no new field.
+    let accuracy: 'pass' | 'fail' | 'unchecked' = 'unchecked';
+    let accuracySummary: CertifyAccuracySummary | undefined;
+    const accuracyNotes: string[] = [];
+    try {
+      const result = evaluateAccuracyRules(certifySpec, compiled);
+      accuracy = result.findings.length > 0 ? 'fail' : 'pass';
+      accuracySummary = { rulesEvaluated: result.rulesEvaluated, failing: result.findings.length };
+      accuracyNotes.push(...result.notes);
+      for (const finding of result.findings) {
+        findings.push({ code: finding.code, severity: 'error', message: finding.message });
+      }
+    } catch {
+      accuracy = 'unchecked';
+      accuracyNotes.push(
+        `The accuracy rules could not be evaluated for this spec; the pillar is reported unchecked rather than passed. ${ACCURACY_RULES.length} rules were offered.`,
+      );
+    }
+
     // CONFORMANT ROLLUP (s140 [B]) — the headline gate an agent's `if(conformant)` reads
     // now folds the graded pillars, so it can no longer silently ship a contrast:'fail'
     // chart. ONLY contrast==='fail' pulls it false; 'exempt'/'unchecked'/'pass' leave it
@@ -302,9 +368,14 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // conformant, so the s139 invariance lock holds). `stable` is inert (a pure compile is
     // always byte-stable) but folded in for semantic completeness. A scoped, monotonic
     // TIGHTENING (some inputs move true->false; none move false->true) — the cause of a
-    // contrast-driven false is carried by pillars.contrast + contrastNote (findings[]
-    // stays a11y-equivalence-only). Measured on the light theme (dark-theme contrast OOS).
-    const conformant = a11yConformant && contrast !== 'fail' && stable;
+    // contrast-driven false is carried by pillars.contrast + contrastNote. Measured on the
+    // light theme (dark-theme contrast OOS).
+    //
+    // s170 m02: accuracy folds in on DELIBERATE PARITY with contrast — only 'fail' pulls
+    // conformant false, so 'unchecked' passes. That inherits the #781 hole Derek declined to
+    // fix, which now spans TWO pillars rather than one; it is backlog, recorded here so the
+    // parity is a stated choice and not an oversight.
+    const conformant = a11yConformant && contrast !== 'fail' && accuracy !== 'fail' && stable;
 
     return {
       status: 'ok',
@@ -316,8 +387,11 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
         a11yEquivalence: a11yConformant ? 'pass' : 'fail',
         determinism: stable ? 'pass' : 'fail',
         contrast,
+        accuracy,
       },
+      ...(accuracySummary ? { accuracySummary } : {}),
       ...(contrastNote ? { contrastNote } : {}),
+      ...(accuracyNotes.length > 0 ? { notes: accuracyNotes } : {}),
     };
   } catch (err) {
     const name = err instanceof Error ? err.name : 'Error';

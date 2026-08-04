@@ -17,6 +17,7 @@ import {
   type SankeyInput,
 } from '@oods/viz-core';
 import { getAjv } from '../../src/lib/ajv.js';
+import { getDefinition } from '../../src/errors/registry.js';
 import { handle } from '../../src/tools/artifact.certify.js';
 import { reconstructEChartsCategoricalPalette } from '../../src/tools/certify-contrast.js';
 import { handle as vizRender } from '../../src/tools/viz.render.js';
@@ -151,7 +152,7 @@ describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
 
   it('a default cartesian IR → pillars all pass + a rendered-contrast contrastNote', async () => {
     const out = await certify(buildSpec(ROWS3));
-    expect(out.pillars).toEqual({ a11yEquivalence: 'pass', determinism: 'pass', contrast: 'pass' });
+    expect(out.pillars).toEqual({ a11yEquivalence: 'pass', determinism: 'pass', contrast: 'pass', accuracy: 'pass' });
     // Rendered-reality caveat (s138/s140 C2 reword), no longer the declared-intent one.
     expect(out.contrastNote).toContain('baked into the compiled spec');
     expect(validateOutput(out)).toBe(true);
@@ -216,7 +217,7 @@ describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
     const sankey = { ...good, marks: [{ ...good.marks[0], trait: 'MarkSankey' }] } as unknown;
     const out = await certify(sankey);
     expect(out.coverage).toBe('uncertified');
-    expect(out.pillars).toEqual({ a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'pass' });
+    expect(out.pillars).toEqual({ a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'pass', accuracy: 'unchecked' });
     expect(validateOutput(out)).toBe(true);
   });
 });
@@ -648,6 +649,7 @@ describe('artifact.certify — ECharts geo contrast (s141 m03)', () => {
         a11yEquivalence: 'unchecked',
         determinism: 'unchecked',
         contrast: 'exempt',
+        accuracy: 'unchecked',
       });
       expect(out.contrastNote).toContain('WCAG 1.4.11 gradient essential exception');
       // The a11y note remains; the pre-s141 "contrast not checked" note is dropped.
@@ -856,5 +858,231 @@ describe('artifact.certify — round-trip honesty floor: certify accepts viz.ren
     const withEncoding = await certify(buildSpec(ROWS3));
     expect(withEncoding.status).toBe('ok');
     expect(withEncoding.coverage).toBe('certified');
+  });
+});
+
+// ============================================================================
+// s170 m02 — THE ACCURACY PILLAR (#818, the fourth #977 pillar).
+//
+// The rules themselves are proven RED-first in packages/viz-core (accuracy-rules-s170.spec.ts,
+// with per-rule mutation gates and a 42-fixture false-positive sweep). What is proven HERE is
+// the WIRING: each rule's red, pushed through the REAL handler, must reach pillars.accuracy,
+// findings[], conformant and the output SCHEMA — a rule that fires into a verdict no reader can
+// see, or into an output AJV rejects, is not wired.
+// ============================================================================
+
+describe('artifact.certify — accuracy pillar (s170 m02)', () => {
+  // Two rows per region under a sum → the aggregation genuinely MERGES rows, and the caller
+  // description override erases the builder's synthesized "sum of" disclosure. This red is
+  // reachable through Forge's OWN generation path, not only through hand-authored IR.
+  const COLLAPSING = [
+    { region: 'North', quarter: 'Q1', revenue: 60 },
+    { region: 'North', quarter: 'Q2', revenue: 60 },
+    { region: 'South', quarter: 'Q1', revenue: 70 },
+    { region: 'South', quarter: 'Q2', revenue: 65 },
+  ];
+  const NO_DISCLOSURE = 'Revenue by region across the sales territories for the current fiscal period.';
+
+  /** A schema-valid hand-authored IR — exactly certify's contract (an arbitrary-IR reader). */
+  const handAuthored = (extra: Record<string, unknown>, markTrait = 'MarkBar'): unknown => {
+    const x = { field: 'region', trait: 'EncodingPositionX', channel: 'x', title: 'Region' };
+    const y = {
+      field: 'revenue',
+      trait: 'EncodingPositionY',
+      channel: 'y',
+      type: 'quantitative',
+      title: 'Revenue',
+      ...((extra.yScale ? { scale: extra.yScale } : {}) as Record<string, unknown>),
+    };
+    return {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 's170:certify:accuracy',
+      name: 'Revenue by region',
+      data: { values: ROWS3.map((row) => ({ ...row })) },
+      marks: [
+        { trait: markTrait, encodings: { x, y }, ...(extra.options ? { options: extra.options } : {}) },
+        ...((extra.extraMarks as unknown[]) ?? []),
+      ],
+      encoding: { x, y },
+      ...((extra.layout ? { layout: extra.layout } : {}) as Record<string, unknown>),
+      a11y: { description: 'Revenue by region for the three sales territories in the current period.' },
+    };
+  };
+
+  // One red per rule, each carrying the code the registry now registers.
+  const RULE_REDS: Array<{ name: string; code: string; spec: () => unknown }> = [
+    {
+      name: 'R1 non-zero bar baseline',
+      code: 'OODS-V150',
+      spec: () => handAuthored({ options: { baseline: 'min' } }),
+    },
+    {
+      name: 'R2 dual axis',
+      code: 'OODS-V151',
+      spec: () =>
+        handAuthored({
+          layout: { trait: 'LayoutLayer', sharedScales: { x: 'shared', y: 'independent' } },
+          extraMarks: [
+            {
+              trait: 'MarkLine',
+              encodings: {
+                x: { field: 'region', trait: 'EncodingPositionX', channel: 'x' },
+                y: { field: 'revenue', trait: 'EncodingPositionY', channel: 'y', type: 'quantitative' },
+              },
+            },
+          ],
+        }),
+    },
+    {
+      name: 'R3 area encodes linear',
+      code: 'OODS-V152',
+      spec: () => handAuthored({ yScale: 'log' }, 'MarkArea'),
+    },
+    {
+      name: 'R4 aggregation hiding',
+      code: 'OODS-V153',
+      spec: () =>
+        buildVizSpecFromRows({
+          rows: COLLAPSING,
+          chartType: 'bar',
+          encodings: { x: { field: 'region' }, y: { field: 'revenue', aggregate: 'sum' } } as never,
+          description: NO_DISCLOSURE,
+        }).spec,
+    },
+  ];
+
+  it.each(RULE_REDS)(
+    '$name → pillars.accuracy fail + $code in findings + conformant false + the FAIL path still validates',
+    async ({ code, spec }) => {
+      const out = await certify(spec());
+      expect(out.status).toBe('ok');
+      expect(out.coverage).toBe('certified');
+      expect(out.pillars?.accuracy).toBe('fail');
+      expect(out.findings?.map((f) => f.code)).toContain(code);
+      expect(out.findings?.find((f) => f.code === code)?.severity).toBe('error');
+      expect(out.conformant).toBe(false);
+      expect(out.accuracySummary?.failing).toBeGreaterThanOrEqual(1);
+      // The CLOSED $defs/finding shape must admit the new findings — a fail path that the
+      // output schema rejects would brick every call that trips a rule.
+      expect(validateOutput(out)).toBe(true);
+    },
+  );
+
+  it('each red is keyed to its OWN rule — no red trips a rule it does not name', async () => {
+    for (const { code, spec } of RULE_REDS) {
+      const out = await certify(spec());
+      const accuracyCodes = (out.findings ?? []).map((f) => f.code).filter((c) => /^OODS-V15\d$/.test(c));
+      expect(accuracyCodes, code).toEqual([code]);
+    }
+  });
+
+  it('every accuracy code a red emits is a REGISTERED code', async () => {
+    for (const { code, spec } of RULE_REDS) {
+      const out = await certify(spec());
+      for (const finding of out.findings ?? []) {
+        if (/^OODS-V15\d$/.test(finding.code)) {
+          expect(getDefinition(finding.code), finding.code).toBeDefined();
+        }
+      }
+    }
+    // ...and all four are registered even before any of them fires.
+    for (const code of ['OODS-V150', 'OODS-V151', 'OODS-V152', 'OODS-V153']) {
+      expect(getDefinition(code)?.category).toBe('validation');
+    }
+  });
+
+  it('a clean cartesian IR → accuracy pass with all four rules evaluated, and no accuracy findings', async () => {
+    const out = await certify(buildSpec(ROWS3));
+    expect(out.pillars?.accuracy).toBe('pass');
+    expect(out.accuracySummary).toEqual({ rulesEvaluated: 4, failing: 0 });
+    expect((out.findings ?? []).filter((f) => /^OODS-V15\d$/.test(f.code))).toEqual([]);
+    expect(out.conformant).toBe(true);
+    expect(validateOutput(out)).toBe(true);
+  });
+
+  it('the uncertified (ECharts-primary) path → accuracy unchecked, no accuracySummary, conformant still null', async () => {
+    const good = buildSpec(ROWS3);
+    const sankey = { ...good, marks: [{ ...good.marks[0], trait: 'MarkSankey' }] } as unknown;
+    const out = await certify(sankey);
+    expect(out.coverage).toBe('uncertified');
+    expect(out.pillars?.accuracy).toBe('unchecked');
+    expect(out.accuracySummary).toBeUndefined();
+    expect(out.conformant).toBeNull();
+    expect(validateOutput(out)).toBe(true);
+  });
+
+  it("'unchecked' PASSES the rollup — deliberate contrast parity, and the #781 hole now spans two pillars", async () => {
+    // Stated as a test rather than only as a comment: an unchecked accuracy pillar does NOT
+    // pull conformant false, exactly as an unchecked contrast pillar does not. If that ever
+    // changes it should change on purpose.
+    const good = buildSpec(ROWS3);
+    const sankey = { ...good, marks: [{ ...good.marks[0], trait: 'MarkSankey' }] } as unknown;
+    const uncertified = await certify(sankey);
+    expect(uncertified.pillars?.accuracy).toBe('unchecked');
+    expect(uncertified.conformant).toBeNull(); // uncertified makes no claim at all
+
+    // On the CERTIFIED path, a rule that cannot resolve its operand is not counted and does
+    // not fail the pillar — rulesEvaluated is what tells a reader coverage was incomplete.
+    const urlData = {
+      ...buildVizSpecFromRows({
+        rows: COLLAPSING,
+        chartType: 'bar',
+        encodings: { x: { field: 'region' }, y: { field: 'revenue', aggregate: 'sum' } } as never,
+        description: NO_DISCLOSURE,
+      }).spec,
+      data: { url: 'https://example.test/revenue.json', format: 'json' as const },
+    };
+    const out = await certify(urlData);
+    expect(out.pillars?.accuracy).toBe('pass');
+    expect(out.accuracySummary).toEqual({ rulesEvaluated: 3, failing: 0 });
+    expect(out.notes?.join(' ')).toContain('referenced by url');
+    // The accuracy pillar contributed NOTHING to the verdict here: no OODS-V15x finding, and
+    // R4 stayed silent because its collapse half was unevaluable — which is exactly what
+    // rulesEvaluated:3 is for. (This spec is conformant:false for a PRE-EXISTING a11y reason
+    // — url-referenced data means no inline values, so A11Y-R-03/R-04 error. Asserting
+    // conformant:true here would have been asserting something untrue about a different
+    // pillar; the accuracy claim is the one this test makes.)
+    expect((out.findings ?? []).filter((f) => /^OODS-V15\d$/.test(f.code))).toEqual([]);
+    expect(out.pillars?.a11yEquivalence).toBe('fail');
+    expect(validateOutput(out)).toBe(true);
+  });
+
+  it('accuracy findings sit ALONGSIDE a11y findings, told apart by code — findings[] is no longer a11y-only', async () => {
+    // MISSING_FIELD_ENCODINGS gives an A11Y-R-12 error; the description override + collapse
+    // gives an accuracy error. One verdict, both families.
+    const spec = buildVizSpecFromRows({
+      rows: COLLAPSING,
+      chartType: 'bar',
+      encodings: { x: { field: 'region' }, y: { field: 'revenue', aggregate: 'sum' } } as never,
+      description: NO_DISCLOSURE,
+    }).spec;
+    const both = {
+      ...spec,
+      a11y: { ...spec.a11y, description: 'Short.' },
+    } as NormalizedVizSpec;
+    const out = await certify(both);
+    const codes = (out.findings ?? []).map((f) => f.code);
+    expect(codes.some((c) => c.startsWith('OODS-A11Y-'))).toBe(true);
+    expect(codes).toContain('OODS-V153');
+    expect(out.pillars?.a11yEquivalence).toBe('fail');
+    expect(out.pillars?.accuracy).toBe('fail');
+    expect(validateOutput(out)).toBe(true);
+  });
+
+  it('HASH IDENTITY: evaluating the accuracy pillar does not move contentHash', async () => {
+    // certify is a pure READER (#110). The evaluator receives the SAME compiled object the
+    // hash is taken over, so if it mutated an operand the hash would move. Pinned against
+    // the hash computed independently here, and across a firing and a non-firing spec.
+    for (const built of [buildSpec(ROWS3), RULE_REDS[3].spec() as NormalizedVizSpec]) {
+      const expected = sha256(canonicalize(toVegaLiteSpec(built)));
+      const out = await certify(built);
+      expect(out.determinism?.contentHash).toBe(expected);
+      expect(out.determinism?.stable).toBe(true);
+    }
+  });
+
+  it('is DETERMINISTIC: the same IR certifies to the same verdict twice', async () => {
+    const spec = RULE_REDS[0].spec();
+    expect(await certify(spec)).toEqual(await certify(spec));
   });
 });

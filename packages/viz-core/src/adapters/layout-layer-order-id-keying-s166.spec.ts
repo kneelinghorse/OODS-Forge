@@ -61,13 +61,35 @@ function layerYFields(spec: NormalizedVizSpec): string[] {
 
 describe('vega-lite-adapter — s166 m02 LayoutLayer.order id-keying (FF#22)', () => {
   it('orders repeated same-trait marks via distinct options.id (the documented pattern)', () => {
+    // s170 m04 (#1126): this fixture USED to order ['target','baseline','actual'] over the
+    // declaration [baseline, actual, target] and expect ['target','baseline','actual'] — which
+    // a FIRST-ENTRY-ONLY implementation (honour order[0], then fall back to declaration order)
+    // produces byte-identically. The test was therefore degenerate: it could not tell the real
+    // implementation from a much weaker one.
+    //
+    // ['actual','target','baseline'] discriminates. Declaration is [baseline, actual, target]:
+    //   full ordering        → ['actual','target','baseline']  (every entry honoured, in list order)
+    //   first-entry-only     → ['actual','baseline','target']  ('actual' pulled up, rest declaration order)
     const spec = tripleMarkPointSpec({
       trait: 'LayoutLayer',
-      order: ['target', 'baseline', 'actual'],
+      order: ['actual', 'target', 'baseline'],
     });
     // Paint order follows the id list, bottom first — three same-trait layers ARE
     // orderable today because inferLayerKey prefers options.id over the trait name.
-    expect(layerYFields(spec)).toEqual(['target', 'baseline', 'actual']);
+    expect(layerYFields(spec)).toEqual(['actual', 'target', 'baseline']);
+    // ...and it is NOT what a first-entry-only implementation would emit. Asserted explicitly so
+    // the discrimination is a property of the test, not a fact about it someone has to notice.
+    expect(layerYFields(spec)).not.toEqual(['actual', 'baseline', 'target']);
+  });
+
+  it('every order entry is honoured, not just the first (the #1126 discriminating case)', () => {
+    // The same divergence stated as its own claim: reversing the declaration order end-to-end is
+    // only reachable if EVERY entry is matched. First-entry-only cannot produce this.
+    const spec = tripleMarkPointSpec({
+      trait: 'LayoutLayer',
+      order: ['target', 'actual', 'baseline'],
+    });
+    expect(layerYFields(spec)).toEqual(['target', 'actual', 'baseline']);
   });
 
   it('id-keyed order lists are schema-VALID (the documented pattern passes the boundary)', () => {

@@ -205,6 +205,32 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V148', { code: 'OODS-V148', category: 'validation', message: 'Duplicate link', retryable: true }],
   ['OODS-V149', { code: 'OODS-V149', category: 'validation', message: 'Delta addresses a different brand than the one being applied', retryable: true }],
 
+  // ── Validation: artifact.certify ACCURACY rules (sprint-170, #818) ──────
+  // The four declared structural rules of certify's accuracy pillar — the fourth #977
+  // pillar. Unlike every other V-code here these are never THROWN: they are reported as
+  // certify findings (severity 'error') and pull pillars.accuracy to 'fail'. They are
+  // registered anyway because a code an agent reads must be a registered code, and because
+  // the registry is where the commitment not to rename or reassign them lives.
+  // Every one is retryable:true — each names a specific, fixable authoring choice.
+  // V150: a bar communicates value by LENGTH from a baseline, so a value axis that is not a
+  // linear zero-anchored scale draws lengths whose ratios are not the data's ratios. Three
+  // distinct causes (zero:false, log, sqrt), each reported with its own wording — a sqrt
+  // scale IS zero-anchored, so it is never described as a moved baseline.
+  ['OODS-V150', { code: 'OODS-V150', category: 'validation', message: "A bar's value axis is not a linear zero-anchored scale", retryable: true }],
+  // V151: two layers in ONE plot frame with independently-resolved positional scales — where
+  // the series cross, converge or diverge is then an artifact of the two scales, not of the
+  // data. LAYER scope only; facet- and concat-scope independence are separate panels.
+  ['OODS-V151', { code: 'OODS-V151', category: 'validation', message: 'Layered marks resolve a positional scale independently (dual axis)', retryable: true }],
+  // V152: the V150 predicate over an area mark. Ranged (x2/y2) band areas are excluded —
+  // a band encodes two edge positions, not an extent measured from a baseline.
+  ['OODS-V152', { code: 'OODS-V152', category: 'validation', message: "An area's value axis is not a linear zero-anchored scale", retryable: true }],
+  // V153: an aggregation that actually MERGES rows (some group under the full group key
+  // holds more than one row) while none of the declared text surfaces — the accessible
+  // description, the chart title, the aggregated axis title — says so. The reader sees one
+  // mark per group with no indication it stands for several rows. Identity aggregations
+  // (one row per group) never fire.
+  ['OODS-V153', { code: 'OODS-V153', category: 'validation', message: 'A row-collapsing aggregation is not disclosed on any declared text surface', retryable: true }],
+
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
   ['OODS-V201', { code: 'OODS-V201', category: 'validation', message: 'map.apply input invalid', retryable: true }],

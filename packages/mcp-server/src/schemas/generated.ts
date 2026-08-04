@@ -253,7 +253,7 @@ export type ArtifactCertifyInput = ArtifactCertifyInputSchema.ArtifactCertifyInp
 // Source: artifact.certify.output.json
 export namespace ArtifactCertifyOutputSchema {
   /**
-   * The certify verdict for a Forge NormalizedVizSpec IR: a folded conformance gate (cartesian-only — conformant now rolls up a11y-equivalence + contrast + determinism, s140), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that disaggregates which pillar drove the verdict, including a RENDERED-REALITY contrast verdict (s137/s138/s139). The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. CONTRACT SIGNAL (s141): pillars.contrast now carries a REAL verdict for these 8 types even though coverage STAYS 'uncertified' — 'pass' for the 5 categorical types (treemap/sunburst/sankey/force_graph/chord: certify reconstructs + grades the fixed OODS categorical palette their adapters bake into itemStyle) and 'exempt' for the 3 geo types (choropleth/bubble_map/flow_map: sequential/continuous color, WCAG gradient essential exception). So coverage:'uncertified' NO LONGER implies contrast:'unchecked'; a consumer must NOT key 'is-ECharts/uncertified' off contrast==='unchecked'. The contrast pillar READS the color hexes Forge BAKED into the compiled cartesian spec (scale.range for multi-series, mark.color for single-series; honoring config.tokens overrides) and grades them against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD) — so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass'. A color channel with no baked palette (a gradient scale, or a divergent/mistyped binding that renders on a continuous/default scale) is WCAG-'exempt'. contrastNote carries the rendered-contrast caveat.
+   * The certify verdict for a Forge NormalizedVizSpec IR: a folded conformance gate (cartesian-only — conformant now rolls up a11y-equivalence + contrast + accuracy + determinism, s140/s170), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that disaggregates which pillar drove the verdict, including a RENDERED-REALITY contrast verdict (s137/s138/s139) and an ACCURACY verdict over four declared structural rules (s170). ACCURACY (s170, #818): on the certified path certify evaluates exactly four deterministic, reader-only structural rules over the IR + the compiled Vega-Lite spec — non-zero bar baseline (OODS-V150), dual axis (OODS-V151), area-encodes-linear (OODS-V152) and aggregation-hiding (OODS-V153). accuracy:'pass' means NONE of those four distortions was POSITIVELY detected, with accuracySummary.rulesEvaluated reporting how many of the four actually resolved their operand — it is NOT a claim that the chart is accurate. Accuracy findings appear in findings[] alongside the a11y-equivalence ones, keyed by their OODS-V15x code. The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. CONTRACT SIGNAL (s141): pillars.contrast now carries a REAL verdict for these 8 types even though coverage STAYS 'uncertified' — 'pass' for the 5 categorical types (treemap/sunburst/sankey/force_graph/chord: certify reconstructs + grades the fixed OODS categorical palette their adapters bake into itemStyle) and 'exempt' for the 3 geo types (choropleth/bubble_map/flow_map: sequential/continuous color, WCAG gradient essential exception). So coverage:'uncertified' NO LONGER implies contrast:'unchecked'; a consumer must NOT key 'is-ECharts/uncertified' off contrast==='unchecked'. The contrast pillar READS the color hexes Forge BAKED into the compiled cartesian spec (scale.range for multi-series, mark.color for single-series; honoring config.tokens overrides) and grades them against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD) — so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass'. A color channel with no baked palette (a gradient scale, or a divergent/mistyped binding that renders on a continuous/default scale) is WCAG-'exempt'. contrastNote carries the rendered-contrast caveat.
    */
   export interface ArtifactCertifyOutput {
     /**
@@ -265,13 +265,26 @@ export namespace ArtifactCertifyOutputSchema {
      */
     coverage?: 'certified' | 'uncertified';
     /**
-     * The folded conformance gate (s140): true iff a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path (no claim is made). Absent on the error path. A contrast-driven false is explained by pillars.contrast + contrastNote (findings stays a11y-equivalence-only); a warn-severity a11y failure does not affect conformance.
+     * The folded conformance gate (s140/s170): true iff a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND accuracy is not 'fail' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path (no claim is made). Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. KNOWN HOLE, stated (#781): an 'unchecked' pillar passes the rollup, and as of s170 that hole spans TWO pillars (contrast and accuracy) rather than one.
      */
     conformant?: boolean | null;
     /**
-     * One entry per FAILING equivalence rule (empty when fully conformant, and empty on the uncertified path).
+     * One entry per FAILING rule (empty when fully conformant, and empty on the uncertified path). As of s170 this carries TWO rule families, told apart by their code: a11y-equivalence rules (OODS-A11Y-<rule.id>) and accuracy rules (OODS-V150..V153). It is no longer a11y-equivalence-only.
      */
     findings?: Finding[];
+    /**
+     * How the accuracy pillar was reached (certified path only — absent on the uncertified + error paths, mirroring `determinism`). rulesEvaluated is the honest examined-count the contrast pillar lacks: a rule whose operand it could not resolve (rows behind a data url, an aggregate op outside the IR vocabulary) is NOT counted, and says why in notes[], so silence can never be read as coverage.
+     */
+    accuracySummary?: {
+      /**
+       * How many of the four declared accuracy rules resolved their operand and ran (0-4).
+       */
+      rulesEvaluated: number;
+      /**
+       * How many of the evaluated rules positively detected their distortion. Equals the number of OODS-V15x entries in findings[].
+       */
+      failing: number;
+    };
     /**
      * Re-emit determinism proof (certified path only): the Vega-Lite compile is byte-stable across two independent re-emits and its canonical form hashes to contentHash. Absent on the uncertified + error paths.
      */
@@ -286,7 +299,7 @@ export namespace ArtifactCertifyOutputSchema {
       contentHash: string;
     };
     /**
-     * Per-pillar tri-state summary (s137). Present on both ok paths (absent on error). DISAGGREGATES which pillar drove the folded `conformant` gate (s140): a11yEquivalence mirrors the a11y-equivalence sub-result (NOT the folded conformant); determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — it grades the categorical color bytes Forge baked into the compiled spec (scale.range / mark.color), so no baked palette can never read as 'pass'. A reader can always see WHY conformant is false (an a11y error vs a contrast fail).
+     * Per-pillar tri-state summary (s137, extended s170). Present on both ok paths (absent on error). DISAGGREGATES which pillar drove the folded `conformant` gate (s140): a11yEquivalence mirrors the a11y-equivalence sub-result (NOT the folded conformant); determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — it grades the categorical color bytes Forge baked into the compiled spec (scale.range / mark.color), so no baked palette can never read as 'pass'; accuracy is the four-rule structural verdict (s170). A reader can always see WHY conformant is false (an a11y error vs a contrast fail vs an accuracy fail).
      */
     pillars?: {
       /**
@@ -301,13 +314,17 @@ export namespace ArtifactCertifyOutputSchema {
        * Rendered-reality contrast over the color hexes Forge baked into the compiled spec (light theme): role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'pass' requires a baked OODS palette; 'exempt' when no categorical palette was baked (a sequential/diverging gradient, or a divergent/mistyped binding rendering on a continuous/default scale — WCAG essential exception). On the uncertified (ECharts-primary) path (s141) contrast is a REAL verdict too, reconstructed from the palette the adapter bakes (no Vega compile): 'pass' for the 5 categorical types (fixed OODS categorical palette, role-C + role-A), 'exempt' for the 3 geo types (sequential/continuous color); the bubble_map ordinal-categorical branch is NOT graded (its range lives in the geo data branch, outside the metadata IR). 'unchecked' only when the canvas cannot be resolved (or a contrast-engine fault).
        */
       contrast: 'pass' | 'fail' | 'unchecked' | 'exempt';
+      /**
+       * The four declared structural accuracy rules (s170, #818) over the IR + the compiled Vega-Lite spec: non-zero bar baseline, dual axis, area-encodes-linear, aggregation-hiding. 'pass' means none of the four was POSITIVELY detected — read it with accuracySummary.rulesEvaluated, which says how many actually ran; it is NOT a claim that the chart is accurate. 'fail' means at least one fired, and the reason is in findings[] under its OODS-V15x code. 'unchecked' on the uncertified (ECharts-primary / unmodeled-mark) path, where there is no compiled Vega-Lite spec to read, and if the rules engine itself faults (a fault degrades the pillar, it never turns a valid verdict into status:error).
+       */
+      accuracy: 'pass' | 'fail' | 'unchecked';
     };
     /**
      * The rendered-contrast caveat for the contrast pillar (certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified) plus the role rationale when contrast is pass/fail/exempt (s137/s138).
      */
     contrastNote?: string;
     /**
-     * Human-readable notes — e.g. the uncertified-coverage rationale for an ECharts-primary type.
+     * Human-readable notes — e.g. the uncertified-coverage rationale for an ECharts-primary type, or (s170) why an accuracy rule could not resolve its operand and therefore stayed silent.
      */
     notes?: string[];
     /**
@@ -317,7 +334,7 @@ export namespace ArtifactCertifyOutputSchema {
   }
   export interface Finding {
     /**
-     * A per-rule equivalence code OODS-A11Y-<rule.id> (no pattern constraint, so the intentionally doubled literal OODS-A11Y-A11Y-R-12 validates); or an OODS-V error code on the error path.
+     * A per-rule equivalence code OODS-A11Y-<rule.id> (no pattern constraint, so the intentionally doubled literal OODS-A11Y-A11Y-R-12 validates); a registered accuracy-rule code OODS-V150..V153 (s170); or an OODS-V error code on the error path.
      */
     code: string;
     message: string;
