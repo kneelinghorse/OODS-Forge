@@ -215,7 +215,7 @@ module.exports = {
     // the same tokens-studio-preprocessed sources — proving the preprocessor and native
     // groups coexist on pinned SD 4.4.0 (the mobile front's one unverified blocker).
     'ios-swift': {
-      transformGroup: 'ios-swift',
+      transformGroup: 'oods/ios-swift',
       buildPath: 'dist/ios-swift/',
       files: [
         {
@@ -228,7 +228,7 @@ module.exports = {
       ],
     },
     compose: {
-      transformGroup: 'compose',
+      transformGroup: 'oods/compose',
       buildPath: 'dist/compose/',
       files: [
         {

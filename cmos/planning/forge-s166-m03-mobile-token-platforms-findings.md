@@ -20,7 +20,7 @@ so the artifacts are additive build outputs, zero golden moves (#564).
 The build is mechanically green but the emitted mobile code is NOT compilable as-is. Three concrete
 gaps, all in SD's stock transforms meeting OODS's web-native token values:
 
-1. **oklch colors pass through raw — 259/771 tokens in BOTH files.** SD 4.4.0's
+1. **oklch colors pass through raw — ~~259/771~~ 381/771 tokens in BOTH files.** (Struck 2026-08-04, s171-m01 — see the dated correction block below, item 1.) SD 4.4.0's
    `color/UIColorSwift` and `color/composeColor` transforms convert hex/rgb-family only; the OODS
    palette is oklch-native, so `oklch(0.9417 0.0052 247.88)` lands verbatim as an invalid bare
    identifier. (Control: the 8 shadow colors whose sources are hex DID convert to proper

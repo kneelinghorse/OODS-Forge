@@ -212,3 +212,23 @@ Both serving paths, both directions:
 ### Consumer loop-closure
 
 `info_push` sent to `cmos://derek/forge-demos` AFTER m02 was built — additive change, ECharts path unchecked, the `findings[]`-is-no-longer-a11y-only note, and the advertised-schema caching caveat. Adoption is theirs.
+
+---
+
+## §9 Dated correction — 2026-08-04 (s171-m01.3, totals true-up)
+
+**Three homes carry suite totals that were CHECKPOINT claims recorded as finals — superseded-by-final, not fabricated.** Each number was true when its mission completed and was then moved by later missions in the same sprint (m04.1 added +7 tests/+1 file to mcp-server and root core; m04.5 added +1 test to viz-core). The homes:
+
+- **This memo, line 151** (m01 evidence): `viz-core 1205/61 → 1285/62 … root core 4776+20/438 unchanged … mcp-server 4011+16/196 unchanged` — m01-checkpoint values.
+- **Decision #1425** (s170-m01 complete): same m01-checkpoint totals.
+- **Decision #1427** (s170-m02 complete): `mcp-server 4011→4023 (+12, same 196 files), root core 4776→4788 (+12, same 438 files)` — m02-checkpoint values.
+
+**The finals, as observed at s170 HEAD `e59b9dc` and recorded correctly in this memo's own gate table (lines 175/176/178):**
+
+| suite | final |
+|---|---|
+| viz-core | **1286 / 62** |
+| mcp-server | **4030 + 16 skipped / 197** |
+| root core | **4795 + 20 skipped / 439** |
+
+Decisions #1425/#1427 are NOT edited (append-only record); this block and a new dated CMOS decision are the correction. Lesson, per the s171 memo §1f.3: per-mission totals are reconciliation input; only end-of-sprint observed runs are recordable finals (rule 15).

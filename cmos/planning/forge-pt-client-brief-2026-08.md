@@ -236,9 +236,11 @@ Recorded so nothing in the conversation accidentally contradicts a ratified deci
   overclaims. As of s170, `artifact.certify` does return a four-pillar verdict
   (a11y-equivalence, determinism, contrast, accuracy) — real, and worth showing — but the brand
   caveat above is unchanged by that.
-- **Before anything ships:** `@oods/viz-core` and `@oods/viz-render` declare MIT in
+- **Before anything ships:** ~~`@oods/viz-core` and `@oods/viz-render` declare MIT in
   `package.json` with no LICENSE file. That is on the s170 hygiene list; it must be closed
-  before any package reaches a client.
+  before any package reaches a client.~~ **Corrected 2026-08-04 (s171-m01):** the MIT
+  LICENSE files shipped in s170-m04 (decision #1431) and carry year 2026 as of s171-m01.
+  This ship-blocker is closed.
 
 ---
 

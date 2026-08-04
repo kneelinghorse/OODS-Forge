@@ -224,8 +224,10 @@ function createLayer(
  *
  * CHANNEL CHOICE, stated because it is a judgement call: `y` if it is quantitative,
  * else `x`. `baseline` names the measure axis; the channel's own TYPE is the signal used
- * to find it. If neither positional channel is quantitative, nothing is emitted, and a
- * caller-declared `scale.zero` always wins.
+ * to find it. If neither positional channel is quantitative, nothing is emitted.
+ * (s171 m05a CORRECTION: this used to add "a caller-declared `scale.zero` always wins" —
+ * no caller can declare one: `TraitBinding.scale` is a string enum, and no code path
+ * writes `scale.zero` onto an encoding before this function runs.)
  *
  * s169 m05 CORRECTION: this comment used to justify the choice partly by saying
  * `orientation` "is itself an OODS-only key with no MarkDef target, so it cannot be relied
@@ -250,6 +252,8 @@ function applyBaselineToEncoding(
     const definition = encoding[channel] as Record<string, unknown> | undefined;
     if (!definition || definition.type !== 'quantitative') continue;
     const scale = (definition.scale as Record<string, unknown> | undefined) ?? {};
+    // Defensive, currently unreachable: nothing upstream writes scale.zero (see the
+    // s171 m05a correction above). Kept so a future writer cannot be silently clobbered.
     if (scale.zero !== undefined) return encoding;
     return { ...encoding, [channel]: { ...definition, scale: { ...scale, zero } } };
   }
