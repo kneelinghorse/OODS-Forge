@@ -434,3 +434,59 @@ pnpm run tokens:governance -- diff --brand <A|B> \
 **Scratch NOT part of the deliverable** (`scratchpad/s169-m02/` grounding artifacts predating this session, plus `s169-m04-live-verify.mjs` and `s169-m05-primitive-census.mjs`, which are reproduction scripts for the live-verify and the 69/7 census). Keeping or dropping them at commit time is Derek's call.
 
 **NOT SELF-CERTIFIED.** The genuine-close review is a separate session (standing rule 10).
+
+---
+
+## Dated correction block — 2026-08-03 (s170 m04)
+
+Two numbers in this memo were written while s169 was still uncommitted and have since been
+overtaken by the committed state. The originals stay above; the corrections are here, each with
+the command that reproduces it.
+
+### 1. §"diagnostics.json" — ~~`runs: 4 → 5`, `highRisk: 0 → 118`~~ → **runs 7, cumulative 354**
+
+The claim recorded a single transition observed mid-sprint. `diagnostics.json` is a **cumulative
+run log**: `state-assessment.mjs` appends to it on every run, so the totals advance whenever a
+gate table is executed, and any figure quoted from it must be quoted with its run count.
+
+At the start of the s170 build (2026-08-03) it read:
+
+```
+tokens.governance.totals = { runs: 7, highRisk: 354, purityViolations: 0 }
+tokens.governance.lastRun = { highRisk: 118, brands: { A: 77, B: 41 }, status: RED }
+```
+
+After s170's own gate 22e runs it reads `runs: 9, highRisk: 592`, `lastRun.highRisk: 119`
+(A 78, B 41 — the +1 of correction 2 below).
+
+**The cumulative total is the stronger evidence, and it is arithmetic rather than narrative.**
+It reconciles exactly, and it is the four blind runs that make it reconcile:
+
+```
+7 runs = 4 × 0  +  3 × 118                    = 354   ✓  (start of s170)
+9 runs = 4 × 0  +  3 × 118  +  2 × 119        = 592   ✓  (after s170's gates)
+```
+
+Four runs of ZERO is the blind gate's signature, and it is visible in the total without anyone
+having had to watch the transition happen. Reproduce: read `diagnostics.json` at repo root, or
+re-run `node scripts/state-assessment.mjs --guardrails --tokens` — noting that doing so advances
+the counter again, by design.
+
+### 2. §"Stated precisely, because the number will move" — ~~"only the counts grow"~~ (plural)
+
+That sentence predicted BOTH brands' high-risk counts would grow once s169 was committed. Only
+one did. Measured at committed HEAD `d0b66fd` against `$(git merge-base HEAD OODS-pro)`:
+
+| brand | s169 memo (uncommitted) | committed HEAD | moved? |
+|---|---:|---:|---|
+| A | 77 | **78** | +1 |
+| B | 41 | **41** | **unchanged** |
+
+Reproduce:
+`pnpm run tokens:governance -- diff --brand A --base $(git merge-base HEAD OODS-pro) --head $(git rev-parse HEAD) --labels token-change:breaking`
+(and the same with `--brand B`); both exit 0 with the label.
+
+The memo's reasoning was right — m01's `text.accent` modifications are `'text'`-segment tokens
+and score high under the untouched rules — but only **one** of the two landed in a range that
+moves brand B's count. The label requirement is unchanged either way, exactly as the original
+sentence said; it is the "counts" plural that was wrong.

@@ -225,7 +225,7 @@
     },
     {
       "name": "artifact.certify",
-      "description": "Certifies a Forge NormalizedVizSpec IR: returns a folded conformance verdict (cartesian-only — conformant rolls up a11y-equivalence + contrast + determinism, light theme), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary that disaggregates which pillar drove the verdict. Read-only — reads the IR, never rebuilds or re-recommends. The 8 ECharts-primary types return coverage:'uncertified'/conformant:null (a distinct verdict, not a failure).",
+      "description": "Certifies a Forge NormalizedVizSpec IR: returns a folded conformance verdict (cartesian-only — conformant rolls up a11y-equivalence + contrast + accuracy + determinism, light theme), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary that disaggregates which pillar drove the verdict. Read-only — reads the IR, never rebuilds or re-recommends. The accuracy pillar (s170, #818) evaluates four declared structural rules over the IR + the compiled spec — non-zero bar baseline, dual axis, area-encodes-linear, aggregation-hiding — and 'pass' means none of those four was POSITIVELY detected, not that the chart is accurate; accuracySummary.rulesEvaluated says how many actually ran. The 8 ECharts-primary types return coverage:'uncertified'/conformant:null (a distinct verdict, not a failure) with pillars.accuracy 'unchecked'.",
       "modes": [
         "dry-run"
       ],

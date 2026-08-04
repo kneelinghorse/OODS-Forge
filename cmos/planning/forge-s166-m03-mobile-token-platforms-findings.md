@@ -20,7 +20,7 @@ so the artifacts are additive build outputs, zero golden moves (#564).
 The build is mechanically green but the emitted mobile code is NOT compilable as-is. Three concrete
 gaps, all in SD's stock transforms meeting OODS's web-native token values:
 
-1. **oklch colors pass through raw — 259/771 tokens in BOTH files.** SD 4.4.0's
+1. **oklch colors pass through raw — ~~259/771~~ 381/771 tokens in BOTH files.** (Struck 2026-08-04, s171-m01 — see the dated correction block below, item 1.) SD 4.4.0's
    `color/UIColorSwift` and `color/composeColor` transforms convert hex/rgb-family only; the OODS
    palette is oklch-native, so `oklch(0.9417 0.0052 247.88)` lands verbatim as an invalid bare
    identifier. (Control: the 8 shadow colors whose sources are hex DID convert to proper
@@ -55,3 +55,60 @@ gaps, all in SD's stock transforms meeting OODS's web-native token values:
 - `tokens:validate` 322 EXACT (unchanged, verified post-build).
 - `packages/tokens` build + `--check` green; css/ts/tailwind outputs byte-identical.
 - No golden moves; new outputs are gitignored build artifacts.
+
+---
+
+## Dated correction block — 2026-08-03 (s170 m03)
+
+Two numbers in the body above were carried into later planning without being re-measured. Both
+are re-derived here against HEAD, with the counting method stated, so a reader can reproduce
+them. Where the original text exists it is struck through; where the corrected claim was never
+written down here, it is added plainly rather than presented as a correction to something.
+
+**Re-derivation command:** `pnpm --filter @oods/tokens run build`, then classify the constant
+lines (`public static let ` / `val `) in `packages/tokens/dist/ios-swift/OodsTokens.swift` and
+`packages/tokens/dist/compose/OodsTokens.kt`. `dist/` is gitignored, so this moves no golden.
+
+### 1. Raw oklch passthroughs — ~~259/771~~ **381/771** (#1148)
+
+Section "What broke", item 1 says ~~"oklch colors pass through raw — 259/771 tokens in BOTH
+files"~~. The correct figure is **381/771**, in both files, re-measured at HEAD 2026-08-03. The
+mechanism described in that item is unchanged and still accurate; only the count was wrong.
+Total emitted constants are still **771** in each file.
+
+### 2. Swift compilability — the "32/771" figure, and what it actually counts
+
+This claim was never written in this note; it entered the record through later summaries and was
+then disputed, because no counting method was recorded and a reviewer could not reproduce it.
+**The method is recovered here.** Classifying all 771 emitted Swift constants by the shape of the
+value to the right of `=` (comment stripped):
+
+| emitted value shape | count | valid Swift expression? |
+|---|---:|---|
+| `oklch(...)` passthrough | 381 | no |
+| `CGFloat(...)` dimension | 174 | yes — but ×16-wrong (item 3 of the body) |
+| duration with unit (`180ms`) | 108 | no |
+| comma list (easing curve / font stack) | 68 | no |
+| bare numeric literal | 24 | yes |
+| bare identifier / unquoted keyword (`solid`, `none`) | 8 | no |
+| `UIColor(...)` converted colour | 8 | yes |
+| **total** | **771** | |
+
+So: **206/771** emitted constants are syntactically valid Swift expressions; **174** of those
+carry the ×16 dimension-basis error, so they parse but are wrong; and **32/771** are both
+syntactically valid and free of the ×16 error (8 `UIColor(...)` + 24 bare numerics). **32/771 is
+therefore reproducible and correct — under the metric "parses AND is not ×16-affected."** It is
+NOT the count of "lines that parse" (that is 206), and it is not a claim that those 32 values are
+semantically right in every other respect — only that the two counted defect classes miss them.
+
+None of this is an actual `swiftc`/`kotlinc` compile: it is a lexical classification of emitted
+values. A real compile is a stronger check and is a mobile-walk item, not a claim made here.
+
+### 3. Scope note
+
+The body of this note was written at s166 (2026-08-01), before the s167 token-graph de-collision
+restructured the Style Dictionary build into one dictionary per brand×theme cell. The
+re-derivation above is at s170 HEAD. Total constants (771) and all three defect mechanisms are
+unchanged across that restructure; the "~135 tokens" keyword/string estimate in item 2 of the
+body was NOT re-derived and should be read against the table above (8 bare identifiers + 68 comma
+lists = 76 by the classification used here) rather than carried forward as a measured figure.

@@ -8,9 +8,11 @@ import { performance } from 'perf_hooks';
 
 import StyleDictionary from 'style-dictionary';
 import { register as registerSdTransforms, expandTypesMap } from '@tokens-studio/sd-transforms';
+import ColorJs from 'colorjs.io';
 
 import { auditAllScopes, resolveScopeFiles } from './collision-guard.mjs';
 import { renderBridgeBlock } from './brand-bridge.mjs';
+import { MOBILE_DEFERRED_TYPES, mobileDimensionClass } from './mobile-manifest.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -41,6 +43,7 @@ const CSS_DESTINATION = resolve(packageRoot, 'dist/css/tokens.css');
 registerSdTransforms(StyleDictionary);
 registerCustomFormats(prefix);
 registerCustomTransforms(prefix);
+registerMobileTransformGroups();
 
 /**
  * One Style Dictionary instance per brand x theme scope (memo SS3 D1 — a platform
@@ -67,6 +70,39 @@ async function dictionaryForScope(scope, platforms) {
 }
 
 const cssPlatformWith = (file) => ({ css: { ...allPlatforms.css, files: [file] } });
+
+/**
+ * s171 m03 — the two mobile platforms get (a) the deferral filter (easing quads and
+ * font stacks are DEFERRED from mobile output, not silently dropped — the injected
+ * file header discloses the exact counts) and (b) that disclosure header. Injected
+ * here at runtime so style-dictionary.config.cjs stays untouched beyond the two
+ * transformGroup keys (the m02 fence).
+ */
+const MOBILE_PLATFORM_NAMES = ['ios-swift', 'compose'];
+const isMobileDeferred = (token) =>
+  Object.keys(MOBILE_DEFERRED_TYPES).includes(token.$type ?? token.type);
+
+function nonCssPlatformConfigs() {
+  return Object.fromEntries(
+    NON_CSS_PLATFORMS.map((name) => {
+      const platform = allPlatforms[name];
+      if (!MOBILE_PLATFORM_NAMES.includes(name)) {
+        return [name, platform];
+      }
+      return [
+        name,
+        {
+          ...platform,
+          files: (platform.files ?? []).map((file) => ({
+            ...file,
+            filter: (token) => !isMobileDeferred(token),
+            options: { ...(file.options || {}), fileHeader: 'oods/mobile-disclosure' },
+          })),
+        },
+      ];
+    }),
+  );
+}
 
 const log = {
   info: (...messages) => {
@@ -182,10 +218,7 @@ async function runBuild() {
   const start = performance.now();
   log.info('Building design tokens with Style Dictionary…');
 
-  const nonCssSd = await dictionaryForScope(
-    oodsScoping.DEFAULT_SCOPE,
-    Object.fromEntries(NON_CSS_PLATFORMS.map((name) => [name, allPlatforms[name]])),
-  );
+  const nonCssSd = await dictionaryForScope(oodsScoping.DEFAULT_SCOPE, nonCssPlatformConfigs());
   await nonCssSd.cleanAllPlatforms({ cache: false });
   await nonCssSd.buildAllPlatforms({ cache: false });
 
@@ -210,10 +243,7 @@ async function runBuild() {
 }
 
 async function runCheck() {
-  const nonCssSd = await dictionaryForScope(
-    oodsScoping.DEFAULT_SCOPE,
-    Object.fromEntries(NON_CSS_PLATFORMS.map((name) => [name, allPlatforms[name]])),
-  );
+  const nonCssSd = await dictionaryForScope(oodsScoping.DEFAULT_SCOPE, nonCssPlatformConfigs());
   const outputs = await nonCssSd.formatAllPlatforms({ cache: false });
   const diffs = await compareWithExistingOutputs(outputs);
   diffs.push(...(await compareCssBundle()));
@@ -477,6 +507,206 @@ function registerCustomTransforms(prefixForCss) {
       },
     });
   }
+}
+
+/**
+ * s171 m02 — REPLACEMENT transform groups for the mobile platforms. The stock
+ * `ios-swift`/`compose` groups cannot be extended: their colour transform rejects
+ * oklch (tinycolor gate) and their size transforms assume rem sources, and an
+ * appended transform runs AFTER that damage. So the groups are replaced wholesale,
+ * keeping only the stock members that are correct on these sources.
+ */
+function registerMobileTransformGroups() {
+  const tokenType = (token) => token.$type ?? token.type;
+  const rawValue = (token, options) => (options.usesDtcg ? token.$value : token.value);
+
+  // One shared 8-bit quantisation after CSS-Color-4 gamut mapping, so the Swift
+  // floats, the Compose hex, and the committed gamut table agree at the byte level.
+  const colorBytes = (value) => {
+    const srgb = new ColorJs(value).to('srgb').toGamut({ method: 'css' });
+    const byte = (coord) => Math.min(255, Math.max(0, Math.round(coord * 255)));
+    const [r, g, b] = srgb.coords.map(byte);
+    return { r, g, b, alpha: srgb.alpha ?? 1 };
+  };
+
+  StyleDictionary.registerTransform({
+    name: 'oods/color/uicolor-swift',
+    type: 'value',
+    filter: (token) => tokenType(token) === 'color',
+    transform: (token, _, options) => {
+      const raw = rawValue(token, options);
+      let bytes;
+      try {
+        bytes = colorBytes(raw);
+      } catch {
+        log.warn(`⚠︎ oods/color/uicolor-swift: unparseable colour ${JSON.stringify(raw)} at ${token.path.join('.')} — passed through`);
+        return raw;
+      }
+      const channel = (n) => (n / 255).toFixed(3);
+      return `UIColor(red: ${channel(bytes.r)}, green: ${channel(bytes.g)}, blue: ${channel(bytes.b)}, alpha: ${bytes.alpha})`;
+    },
+  });
+
+  StyleDictionary.registerTransform({
+    name: 'oods/color/compose',
+    type: 'value',
+    filter: (token) => tokenType(token) === 'color',
+    transform: (token, _, options) => {
+      const raw = rawValue(token, options);
+      let bytes;
+      try {
+        bytes = colorBytes(raw);
+      } catch {
+        log.warn(`⚠︎ oods/color/compose: unparseable colour ${JSON.stringify(raw)} at ${token.path.join('.')} — passed through`);
+        return raw;
+      }
+      const hex2 = (n) => n.toString(16).padStart(2, '0').toUpperCase();
+      const alphaByte = Math.min(255, Math.max(0, Math.round(bytes.alpha * 255)));
+      return `Color(0x${hex2(alphaByte)}${hex2(bytes.r)}${hex2(bytes.g)}${hex2(bytes.b)})`;
+    },
+  });
+
+  // The bare-identifier classes (strokeStyle `solid`, textCase `uppercase`/`none`):
+  // valid CSS keywords, invalid bare tokens in Swift/Kotlin — emit as string literals.
+  StyleDictionary.registerTransform({
+    name: 'oods/string-literal',
+    type: 'value',
+    filter: (token) => ['strokeStyle', 'textCase', 'border'].includes(tokenType(token)),
+    transform: (token, _, options) => {
+      const raw = rawValue(token, options);
+      if (typeof raw !== 'string' || raw.startsWith('"')) {
+        return raw;
+      }
+      return JSON.stringify(raw);
+    },
+  });
+
+  // s171 m03 — the ×16 dimension class, bound per the committed path manifest
+  // (never $type: post-preprocess fontSize arrives as $type dimension). px is 1:1
+  // (basePxFontSize is NOT the mechanism); lineHeight % becomes a unitless
+  // multiplier; letterSpacing em becomes an em number. A token missing from the
+  // manifest, or a unit outside its class policy, passes through with a warning —
+  // the compile gates red rather than the build throwing (CI runs build first).
+  const DIMENSION_CANDIDATE_TYPES = ['dimension', 'lineHeight', 'letterSpacing', 'radius'];
+  const NUMBER_RE = /^(-?\d*\.?\d+)(px|%|em|ms)$/;
+  const fmt = (n) => String(n);
+  const parseUnit = (raw, expected) => {
+    if (typeof raw !== 'string') return null;
+    const match = raw.trim().match(NUMBER_RE);
+    if (!match || match[2] !== expected) return null;
+    return Number(match[1]);
+  };
+  const passthrough = (name, token, raw, why) => {
+    log.warn(`⚠︎ ${name}: ${why} at ${token.path.join('.')} (${JSON.stringify(raw)}) — passed through`);
+    return raw;
+  };
+
+  const dimensionTransform = (name, emit) => ({
+    name,
+    type: 'value',
+    filter: (token) => DIMENSION_CANDIDATE_TYPES.includes(tokenType(token)),
+    transform: (token, _, options) => {
+      const raw = rawValue(token, options);
+      const cls = mobileDimensionClass(token.path);
+      if (!cls) {
+        return passthrough(name, token, raw, 'path not in mobile-manifest');
+      }
+      const expectedUnit = cls === 'lineHeight' ? '%' : cls === 'letterSpacing' ? 'em' : 'px';
+      const value = parseUnit(raw, expectedUnit);
+      if (value === null) {
+        return passthrough(name, token, raw, `value outside the ${cls} policy (${expectedUnit})`);
+      }
+      return emit(cls, cls === 'lineHeight' ? value / 100 : value);
+    },
+  });
+
+  StyleDictionary.registerTransform(
+    dimensionTransform('oods/size/ios-swift', (cls, n) => {
+      if (cls === 'lineHeight' || cls === 'letterSpacing') {
+        return fmt(n);
+      }
+      return `CGFloat(${fmt(n)})`;
+    }),
+  );
+
+  StyleDictionary.registerTransform(
+    dimensionTransform('oods/size/compose', (cls, n) => {
+      if (cls === 'lineHeight') {
+        return fmt(n);
+      }
+      const literal = n < 0 ? `(${fmt(n)})` : fmt(n);
+      if (cls === 'letterSpacing') {
+        return `${literal}.em`;
+      }
+      const suffix = cls === 'fontSize' ? 'sp' : 'dp';
+      return `${literal}.${suffix}`;
+    }),
+  );
+
+  // Durations: iOS TimeInterval seconds, Compose Int milliseconds (header-documented).
+  const durationTransform = (name, emit) => ({
+    name,
+    type: 'value',
+    filter: (token) => tokenType(token) === 'duration',
+    transform: (token, _, options) => {
+      const raw = rawValue(token, options);
+      const ms = parseUnit(raw, 'ms');
+      if (ms === null || !Number.isInteger(ms)) {
+        return passthrough(name, token, raw, 'value outside the duration policy (integer ms)');
+      }
+      return emit(ms);
+    },
+  });
+
+  StyleDictionary.registerTransform(
+    durationTransform('oods/duration/ios-swift', (ms) => `TimeInterval(${fmt(ms / 1000)})`),
+  );
+
+  StyleDictionary.registerTransform(durationTransform('oods/duration/compose', (ms) => fmt(ms)));
+
+  StyleDictionary.registerFileHeader({
+    name: 'oods/mobile-disclosure',
+    fileHeader: (defaultMessages = []) => [
+      ...defaultMessages,
+      '',
+      's171 mobile emission policy:',
+      '• durations — iOS TimeInterval seconds (180ms → 0.18) · Compose Int milliseconds (180ms → 180)',
+      '• lineHeight — unitless multiplier on both platforms (160% → 1.6)',
+      '• letterSpacing — em number: Compose .em · iOS Double, kerning(pt) = value × fontSize(pt)',
+      '• px dimensions — 1:1: iOS CGFloat · Compose .dp; the fontSize class emits Compose .sp',
+      'DEFERRED from mobile output (exact counts):',
+      `• ${MOBILE_DEFERRED_TYPES.cubicBezier} easing curves ($type cubicBezier) — mobile-relevant, with typed targets`,
+      '  (Compose CubicBezierEasing, iOS CAMediaTimingFunction); typed emission is a consumer-API',
+      '  commitment deferred to the mobile walk with a consumer in view',
+      `• ${MOBILE_DEFERRED_TYPES.fontFamily} font stacks ($type fontFamily) — CSS font-stack strings do not map to mobile font APIs`,
+    ],
+  });
+
+  StyleDictionary.registerTransformGroup({
+    name: 'oods/ios-swift',
+    transforms: [
+      'attribute/cti',
+      'name/camel',
+      'oods/color/uicolor-swift',
+      'content/swift/literal',
+      'asset/swift/literal',
+      'oods/string-literal',
+      'oods/size/ios-swift',
+      'oods/duration/ios-swift',
+    ],
+  });
+
+  StyleDictionary.registerTransformGroup({
+    name: 'oods/compose',
+    transforms: [
+      'attribute/cti',
+      'name/camel',
+      'oods/color/compose',
+      'oods/string-literal',
+      'oods/size/compose',
+      'oods/duration/compose',
+    ],
+  });
 }
 
 function getTokenValue(token) {

@@ -1,0 +1,223 @@
+/**
+ * s171 m03 — the mobile dimension-binding manifest (memo §1c / §2 m03.1).
+ *
+ * The ×16 dimension class carries FOUR distinct bindings that the emitted mobile
+ * unit must follow, and post-preprocess $type cannot express the split (fontSize
+ * tokens arrive as $type dimension). This manifest is the single source of truth
+ * for that binding, keyed by token PATH — consumed by BOTH the oods/* transforms
+ * in build.mjs AND the oracle in tests/tokens/mobile-output.test.ts, so a token
+ * that changes class changes it in exactly one place. No $type is retyped.
+ *
+ * Policies (memo §1c):
+ *   fontSize      px  → 1:1 — iOS CGFloat pt · Compose .sp
+ *   lineHeight    %   → unitless multiplier both platforms (160% → 1.6)
+ *   letterSpacing em  → Compose .em · iOS Double (kerning pt = value × fontSize pt)
+ *   spacing       px  → 1:1 — iOS CGFloat · Compose .dp
+ */
+
+export const MOBILE_DIMENSION_CLASSES = {
+  fontSize: [
+  'ref.typography.sizes.display-lg',
+  'ref.typography.sizes.display-md',
+  'ref.typography.sizes.display-sm',
+  'ref.typography.sizes.lg',
+  'ref.typography.sizes.md',
+  'ref.typography.sizes.sm',
+  'ref.typography.sizes.xl',
+  'ref.typography.sizes.xs',
+  'ref.typography.sizes.xxl',
+  'size.font.lg',
+  'size.font.md',
+  'size.font.sm',
+  'sys.text.scale.body-md.fontSize',
+  'sys.text.scale.body-sm.fontSize',
+  'sys.text.scale.caption.fontSize',
+  'sys.text.scale.heading-lg.fontSize',
+  'sys.text.scale.heading-xl.fontSize',
+  'sys.text.scale.label-md.fontSize',
+  'sys.text.size.lg',
+  'sys.text.size.md',
+  'sys.text.size.sm',
+  'text.scale.body-md.fontSize',
+  'text.scale.body-sm.fontSize',
+  'text.scale.caption.fontSize',
+  'text.scale.heading-lg.fontSize',
+  'text.scale.heading-xl.fontSize',
+  'text.scale.label-md.fontSize',
+  ],
+  lineHeight: [
+  'ref.typography.line-height.loose',
+  'ref.typography.line-height.relaxed',
+  'ref.typography.line-height.standard',
+  'ref.typography.line-height.tight',
+  'sys.text.line-height.loose',
+  'sys.text.line-height.relaxed',
+  'sys.text.line-height.standard',
+  'sys.text.line-height.tight',
+  'sys.text.scale.body-md.lineHeight',
+  'sys.text.scale.body-sm.lineHeight',
+  'sys.text.scale.caption.lineHeight',
+  'sys.text.scale.heading-lg.lineHeight',
+  'sys.text.scale.heading-xl.lineHeight',
+  'sys.text.scale.label-md.lineHeight',
+  'text.line-height.loose',
+  'text.line-height.relaxed',
+  'text.line-height.standard',
+  'text.line-height.tight',
+  'text.scale.body-md.lineHeight',
+  'text.scale.body-sm.lineHeight',
+  'text.scale.caption.lineHeight',
+  'text.scale.heading-lg.lineHeight',
+  'text.scale.heading-xl.lineHeight',
+  'text.scale.label-md.lineHeight',
+  ],
+  letterSpacing: [
+  'ref.typography.letter-spacing.default',
+  'ref.typography.letter-spacing.tight',
+  'ref.typography.letter-spacing.wide',
+  'sys.text.scale.body-md.letterSpacing',
+  'sys.text.scale.body-sm.letterSpacing',
+  'sys.text.scale.caption.letterSpacing',
+  'sys.text.scale.heading-lg.letterSpacing',
+  'sys.text.scale.heading-xl.letterSpacing',
+  'sys.text.scale.label-md.letterSpacing',
+  'text.letter-spacing.default',
+  'text.letter-spacing.tight',
+  'text.letter-spacing.wide',
+  'text.scale.body-md.letterSpacing',
+  'text.scale.body-sm.letterSpacing',
+  'text.scale.caption.letterSpacing',
+  'text.scale.heading-lg.letterSpacing',
+  'text.scale.heading-xl.letterSpacing',
+  'text.scale.label-md.letterSpacing',
+  ],
+  spacing: [
+  'border.panel.default.radius',
+  'border.panel.default.width',
+  'border.status.critical.radius',
+  'border.status.critical.width',
+  'border.surface.default.radius',
+  'border.surface.default.width',
+  'ref.border.radius.md',
+  'ref.border.radius.pill',
+  'ref.border.radius.sm',
+  'ref.border.width.bold',
+  'ref.border.width.hairline',
+  'ref.space.inline.sm',
+  'ref.space.inline.xs',
+  'ref.space.inset.compact',
+  'ref.space.inset.default',
+  'ref.space.scale.lg',
+  'ref.space.scale.md',
+  'ref.space.scale.sm',
+  'ref.space.stack.compact',
+  'ref.space.stack.default',
+  'shadow.elevation.card.blur',
+  'shadow.elevation.card.offsetX',
+  'shadow.elevation.card.offsetY',
+  'shadow.elevation.card.spread',
+  'shadow.elevation.overlay.blur',
+  'shadow.elevation.overlay.offsetX',
+  'shadow.elevation.overlay.offsetY',
+  'shadow.elevation.overlay.spread',
+  'size.spacing.md',
+  'size.spacing.sm',
+  'spacing.inline.sm',
+  'spacing.inline.xs',
+  'spacing.inset.compact',
+  'spacing.inset.default',
+  'spacing.stack.compact',
+  'spacing.stack.default',
+  'sys.focus.width',
+  'sys.space.inline.sm',
+  'sys.space.inline.xs',
+  'sys.space.inset.compact',
+  'sys.space.inset.default',
+  'sys.space.scale.lg',
+  'sys.space.scale.md',
+  'sys.space.scale.sm',
+  'sys.space.stack.compact',
+  'sys.space.stack.default',
+  'theme-dark.focus.width',
+  'theme-dark.shadow.elevation.card.blur',
+  'theme-dark.shadow.elevation.card.offsetX',
+  'theme-dark.shadow.elevation.card.offsetY',
+  'theme-dark.shadow.elevation.card.spread',
+  'theme-dark.shadow.elevation.overlay.blur',
+  'theme-dark.shadow.elevation.overlay.offsetX',
+  'theme-dark.shadow.elevation.overlay.offsetY',
+  'theme-dark.shadow.elevation.overlay.spread',
+  'theme-dark.space.inline.sm',
+  'theme-dark.space.inline.xs',
+  'theme-dark.space.inset.compact',
+  'theme-dark.space.inset.default',
+  'theme-dark.space.scale.lg',
+  'theme-dark.space.scale.md',
+  'theme-dark.space.scale.sm',
+  'theme-dark.space.stack.compact',
+  'theme-dark.space.stack.default',
+  'theme.focus.width',
+  'theme.shadow.elevation.card.blur',
+  'theme.shadow.elevation.card.offsetX',
+  'theme.shadow.elevation.card.offsetY',
+  'theme.shadow.elevation.card.spread',
+  'theme.shadow.elevation.overlay.blur',
+  'theme.shadow.elevation.overlay.offsetX',
+  'theme.shadow.elevation.overlay.offsetY',
+  'theme.shadow.elevation.overlay.spread',
+  'theme.space.inline.sm',
+  'theme.space.inline.xs',
+  'theme.space.inset.compact',
+  'theme.space.inset.default',
+  'theme.space.scale.lg',
+  'theme.space.scale.md',
+  'theme.space.scale.sm',
+  'theme.space.stack.compact',
+  'theme.space.stack.default',
+  'viz.map.basemap.stroke-width',
+  'viz.map.region.hover-stroke-width',
+  'viz.map.region.stroke-width',
+  'viz.map.route.max-width',
+  'viz.map.route.min-width',
+  'viz.map.symbol.max-radius',
+  'viz.map.symbol.min-radius',
+  'viz.map.symbol.stroke-width',
+  'viz.margin.default',
+  'viz.margin.roomy',
+  'viz.margin.tight',
+  'viz.size.bar.narrow',
+  'viz.size.bar.standard',
+  'viz.size.bar.wide',
+  'viz.size.point.01',
+  'viz.size.point.02',
+  'viz.size.point.03',
+  'viz.size.point.04',
+  'viz.size.point.05',
+  'viz.size.stroke.01',
+  'viz.size.stroke.02',
+  'viz.size.stroke.03',
+  'viz.size.stroke.04',
+  ],
+};
+
+/**
+ * Classes DEFERRED from mobile emission (memo §2 m03.4, Derek-ratified 2026-08-04).
+ * Easings are mobile-relevant (s166 review, decision #1347) with typed targets
+ * (Compose CubicBezierEasing, iOS CAMediaTimingFunction); they are deferred because
+ * typed emission is a consumer-API commitment better made with the mobile walk's
+ * consumer in view. Font stacks genuinely do not map to mobile font APIs.
+ */
+export const MOBILE_DEFERRED_TYPES = {
+  cubicBezier: 54,
+  fontFamily: 14,
+};
+
+const membership = new Map();
+for (const [cls, paths] of Object.entries(MOBILE_DIMENSION_CLASSES)) {
+  for (const path of paths) membership.set(path, cls);
+}
+
+/** Class for a token path, or undefined if the path is not in the manifest. */
+export function mobileDimensionClass(path) {
+  return membership.get(Array.isArray(path) ? path.join('.') : path);
+}

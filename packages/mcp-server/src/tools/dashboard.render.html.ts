@@ -119,10 +119,19 @@ function toGradableHex(value: string): string | null {
   if (/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(trimmed)) {
     return trimmed;
   }
-  const rgb = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*[\d.]+\s*)?\)$/.exec(trimmed);
+  const rgb = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(trimmed);
   if (!rgb) {
     // A CSS system colour (`CanvasText`, `Highlight`, …) is context-dependent — the user
     // agent supplies the actual colour — so no static ratio exists. Genuinely ungradable.
+    return null;
+  }
+  // s170 m04: a TRANSLUCENT colour has no static ratio either. Its rendered appearance is the
+  // composite of itself and whatever is behind it, which this function cannot see — so the
+  // alpha channel was being DROPPED and the colour graded as if it were opaque, which reports
+  // a ratio the user never experiences. That is the same class of defect as the inert scan
+  // this file already documents: a number that looks like a measurement and is not one.
+  // Skipping is the honest answer, and it is visible, because `graded` is reported.
+  if (rgb[4] !== undefined && Number(rgb[4]) !== 1) {
     return null;
   }
   const channels = [rgb[1], rgb[2], rgb[3]].map((part) => Number(part));

@@ -1038,7 +1038,12 @@ describe('s154 F4 — diverging-bar mid-density + off-shape scope', () => {
 
   // Off-shape guards: outside diverging-bar's count-shape (measures 1, dimensions 1-2) a signed
   // >12-cat comparison never elects it — the count mismatch is gate-INDEPENDENT.
-  const DIMS3 = ['region', 'segment', 'channel'];
+  // s170 m04 (#951): a `DIMS3` constant and an `expect(DIMS3).toHaveLength(3)` assertion lived
+  // here to "document the 1M/3D shape under test". The constant was referenced by nothing else
+  // and the assertion could not fail for any change to the code under test — it asserted a
+  // literal against itself. The three dimension fields the test actually exercises are the ones
+  // `midSigned3Dim` builds below (region / segment / channel); that is where the shape is
+  // documented, by being used.
   const REGIONS = CATS; // 15 nominal categories on the primary dimension
   const SEGMENTS = ['Ent', 'Mid', 'SMB', 'Gov', 'Edu'];
   const CHANNELS = ['Web', 'App', 'Field', 'Partner'];
@@ -1057,7 +1062,6 @@ describe('s154 F4 — diverging-bar mid-density + off-shape scope', () => {
     }));
 
   it('(off-shape) 1M/3D routes to facet-small-multiples-line, 2M/1D to cohort-scatter — NOT diverging-bar', () => {
-    expect(DIMS3).toHaveLength(3); // documents the 1M/3D shape under test
     expect(rank(midSigned3Dim())[0].pattern.id).toBe('facet-small-multiples-line');
     expect(rank(midSigned2Meas())[0].pattern.id).toBe('cohort-scatter');
   });

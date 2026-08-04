@@ -488,9 +488,18 @@ export function narratedValueCellKey(spec: NormalizedVizSpec): string[] {
  * series:'b'} both keyed to `North a b` → the guard collapsed two real cells and NULLED a legit
  * extremum/Total. One function means the projection and its checker can never diverge again. The `\0`
  * ESCAPE (not a raw NUL byte) is deliberate — a raw NUL is invisible in a terminal, which is how the
- * transcription bug hid in the first place. MODULE-LOCAL (the a11y barrel is `export *`).
+ * transcription bug hid in the first place.
+ *
+ * s170 m01: EXPORTED FROM THE MODULE (relative-path import only) so the accuracy pillar's
+ * aggregation-collapse rule keys its groups with THIS function rather than re-typing the join
+ * — re-typing it is precisely the s159 defect, and here it would UNDER-count groups and so
+ * invent a collapse that the data does not contain. Deliberately NOT added to the a11y
+ * allow-list barrel below (index.ts is an explicit allow-list since s159 m4, so a module
+ * export is not a public-API move); the same treatment `drawnCellKeyFields` already has.
+ * NOTE: the pre-s170 tail of this comment said "the a11y barrel is `export *`" — that was
+ * true when it was written and stopped being true at s159 m4; corrected rather than left.
  */
-function keyFor(row: Record<string, unknown>, fields: readonly string[]): string {
+export function keyFor(row: Record<string, unknown>, fields: readonly string[]): string {
   return fields
     .map((field) => {
       const value = row[field as keyof typeof row];

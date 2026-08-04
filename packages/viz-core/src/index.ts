@@ -60,6 +60,11 @@ export * from './builder/spec-builder.js';
 // Accessibility synthesis (table / narrative / equivalence / data-analysis)
 export * from './a11y/index.js';
 
+// Accuracy rules (sprint-170 m01) — the four deterministic, reader-only structural rules
+// artifact.certify evaluates as its accuracy pillar (#818, the fourth #977 pillar). Pure
+// readers of the IR + the compiled Vega-Lite spec; they never rebuild or re-render (#110).
+export * from './accuracy/index.js';
+
 // Transforms, encoding, token mapping
 export * from './transforms/stack-transform.js';
 export * from './encoding/color-intensity-mapper.js';
