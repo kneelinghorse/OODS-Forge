@@ -460,5 +460,7 @@ export const ECHARTS_GEO_EXEMPT_NOTE =
   'flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential ' +
   'exception, so there is no discrete categorical palette to contrast-check; ' +
   "Forge's generated accessible data table is the guarantee. An author-supplied " +
-  'ordinal-categorical bubble_map color lives in the geo data branch, outside this ' +
-  'metadata IR, so it is not graded here. ' + RENDERED_CONTRAST_CAVEAT;
+  'ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason ' +
+  'is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the ' +
+  'geo data branch (the optional `data` operand), so the range is reachable — grading it ' +
+  'would be a new scope decision, not a bug fix. ' + RENDERED_CONTRAST_CAVEAT;

@@ -1,7 +1,34 @@
 // Bubble-map (symbol) ECharts adapter (sprint-112 m01 port).
 // Ported from src/viz/adapters/spatial/echarts-bubble-adapter.ts; only the imports
 // are repointed (slim spatial spec + local tooltip config) and echarts is a
-// TYPE-ONLY import. Logic is byte-identical to the source.
+// TYPE-ONLY import.
+//
+// PORT PARITY IS DELIBERATELY BROKEN AS OF SPRINT-172 m06, in exactly one place: how
+// symbolSize is emitted.
+//
+// THE DEFECT this file now fixes. The port emitted `series.symbolSize` as a FUNCTION
+// closure — correct in a browser, where ECharts calls it per datum. But this adapter feeds
+// the HEADLESS path, and viz.render projects every option through
+// JSON.parse(JSON.stringify(option)) before returning it, because functions are neither
+// JSON-transmittable over the MCP wire nor structured-cloneable for the specRef cache. A
+// function key does not survive JSON.stringify at all: it is dropped silently. So the served
+// bubble_map option carried NO size encoding whatsoever — not a wrong size, no size — and a
+// caller's declared `sizeField` was lost with no error, no warning and no trace in the bytes.
+// Reproduced on the served output before the fix: the series' keys were
+// coordinateSystem/data/encode/geoIndex/name/tooltip/type, with symbolSize absent.
+//
+// THE FIX. The same scale maths now runs at BUILD time and writes a plain NUMBER onto each
+// data item (`symbolSize` is a valid per-datum property in ECharts, and a data-item value
+// takes precedence over the series-level one). Identical range [6,28], identical
+// linear/sqrt/log curve, identical degenerate-domain midpoint — the numbers a browser would
+// have computed from the closure, computed here instead. JSON-safe by construction, so the
+// encoding reaches the wire.
+//
+// WHY THE src/viz TWIN IS UNTOUCHED. That copy renders in the browser, where the closure
+// works and is arguably the better shape (it re-evaluates on data updates). The defect is
+// wire-serialization-only, so it exists only here. Its snapshot deliberately still pins
+// "symbolSize": "[function]" and is NOT a mover for this change. This header is the record
+// that the divergence is intentional rather than drift.
 
 import type { FeatureCollection } from 'geojson';
 import type { EChartsOption, GeoComponentOption, ScatterSeriesOption, VisualMapComponentOption } from 'echarts';
@@ -90,7 +117,13 @@ function buildGeoComponent(mapName: string, roam: boolean): GeoComponentOption {
   });
 }
 
-function buildSizeFunction(
+/**
+ * The per-datum size scale. Kept as a factory returning a function because the maths is
+ * per-value; s172 m06 changed only WHERE it is called — at build time, once per datum, so a
+ * NUMBER lands in the option instead of this closure landing on the series (see the header).
+ * Exported so the scale maths can be unit-tested directly against the emitted numbers.
+ */
+export function buildSizeFunction(
   domain: [number, number],
   range: [number, number],
   scale: SizeScaleType | undefined
@@ -161,7 +194,9 @@ export function buildBubbleSeries(
     .filter((value): value is number => value !== null);
 
   const sizeDomain = numericDomain(sizeValues);
-  const symbolSize = buildSizeFunction(sizeDomain, sizeRange, sizeEncoding?.scale);
+  // Evaluated per datum below; NOT attached to the series (s172 m06 — a closure there is
+  // dropped by viz.render's JSON projection, taking the whole size encoding with it).
+  const sizeFor = buildSizeFunction(sizeDomain, sizeRange, sizeEncoding?.scale);
 
   const colorPalette = resolveColorPalette(colorEncoding?.range);
   const colorField = colorEncoding?.field;
@@ -194,6 +229,9 @@ export function buildBubbleSeries(
     return pruneUndefined({
       name,
       value: [longitude, latitude, sizeValue, colorValue],
+      // A plain number, computed from the SAME scale the series closure used to carry.
+      // Survives JSON transport, so the declared size encoding reaches the consumer.
+      symbolSize: sizeFor(sizeValue),
       raw: datum,
       itemStyle: itemColor ? { color: itemColor } : undefined,
     });
@@ -216,7 +254,8 @@ export function buildBubbleSeries(
     geoIndex: 0,
     name: spec.name ?? 'Bubble Map',
     data: seriesData,
-    symbolSize,
+    // No series-level `symbolSize`: it would be a function, and a function is dropped by the
+    // JSON projection. Each data item carries its own numeric size instead (s172 m06).
     encode: {
       lng: 0,
       lat: 1,

@@ -12,11 +12,22 @@
  * the theme0 status layer aliases into it and it is emitted on every platform. Consuming
  * the reference ramp is not the defect; a brand literal that byte-copies a THEME value is.
  *
- * THE B/DARK RATCHET (Derek-ratified 2026-08-04, memo §1f #1158): brand B dark ships
- * with EXACTLY five byte-copies today — `status.critical.icon` plus all four
- * `status.neutral` slots. Re-authoring them is deliberately deferred, so this spec pins
- * the EXACT set: it fails if the set grows, shrinks, or changes membership, either
- * direction. A shrink is progress — celebrate it by tightening the ratchet here.
+ * THE B/DARK RATCHET IS GONE (s172 m05). It pinned exactly five deferred byte-copies —
+ * `status.critical.icon` plus all four `status.neutral` slots — as a hold-the-line measure
+ * while re-authoring was deferred. s172 re-authored them: the four neutrals moved from hue
+ * 260 to 252 (brand B's OWN info hue, an 8° nudge toward its brand hue 232) and
+ * critical.icon from 24 to 23 (family-coherent ±1 — the critical family sits at ~24, and the
+ * formula's 8° nudge would have landed on 16 and broken that coherence; the deviation is
+ * Derek-ratified and recorded in the s172 memo §1e). L and C are BYTE-IDENTICAL in all five;
+ * only hue moved, so the perceptual identity is preserved by construction and then proven:
+ * measured through the enforcing oracle's own sRGB-clipped path, critical.icon vs
+ * critical.surface is 6.7110 (floor 3), neutral.text vs the new surface is 8.2425 (floor
+ * 4.5) and neutral.icon vs it is 5.4759 (floor 3). border carries no role, so no floor
+ * applies to it.
+ *
+ * So B/dark is now in the SAME zero-copies loop as the other three cells, and this file has
+ * no special case left. The test count is UNCHANGED: the ratchet test was replaced 1-for-1
+ * by B/dark's zero-copies case, so what moved is the assertion, not the arithmetic.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -72,15 +83,6 @@ const CASES = [
   { brand: 'B', theme: 'dark', own: 'dark', cross: 'theme0' },
 ] as const;
 
-/** The ratchet: brand B dark's exact five deferred byte-copies — no more, no fewer. */
-const B_DARK_RATCHET = [
-  'color.brand.B.status.critical.icon',
-  'color.brand.B.status.neutral.border',
-  'color.brand.B.status.neutral.icon',
-  'color.brand.B.status.neutral.surface',
-  'color.brand.B.status.neutral.text',
-];
-
 describe('brand status literal provenance (#1158)', () => {
   it('every brand file declares exactly 20 status literals', () => {
     for (const { brand, theme } of CASES) {
@@ -88,17 +90,12 @@ describe('brand status literal provenance (#1158)', () => {
     }
   });
 
-  for (const { brand, theme, own } of CASES.filter(
-    (candidate) => !(candidate.brand === 'B' && candidate.theme === 'dark'),
-  )) {
+  // All FOUR cells now, B/dark included — the s171 filter and its ratchet companion are gone.
+  for (const { brand, theme, own } of CASES) {
     it(`${brand}/${theme} has ZERO byte-copies of the ${own} status layer`, () => {
       expect(byteCopies(brandStatusLeaves(brand, theme), themeStatus[own])).toEqual([]);
     });
   }
-
-  it('B/dark ratchet-pins EXACTLY its five deferred byte-copies of the dark status layer', () => {
-    expect(byteCopies(brandStatusLeaves('B', 'dark'), themeStatus.dark)).toEqual(B_DARK_RATCHET);
-  });
 
   for (const { brand, theme, cross } of CASES) {
     it(`${brand}/${theme} has zero CROSS-SET copies (vs the ${cross} status layer)`, () => {

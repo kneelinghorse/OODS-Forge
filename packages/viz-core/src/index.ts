@@ -38,6 +38,7 @@ export * from './adapters/renderer-selector.js';
 // Network/hierarchy ECharts adapters (sprint-111). Explicit-only types that build
 // their ECharts series from the input data param, not the IR.
 export * from './adapters/echarts/token-resolver.js';
+export * from './adapters/echarts/link-integrity.js';
 export * from './adapters/echarts/hierarchy-utils.js';
 export * from './adapters/echarts/treemap-adapter.js';
 export * from './adapters/echarts/sunburst-adapter.js';

@@ -61,16 +61,28 @@ export function isEChartsPrimaryType(chartType: VizRenderInput['chartType']): ch
   );
 }
 
-// The Mark trait IDs (e.g. 'MarkTreemap') the ECharts-primary types render from,
-// derived from ECHARTS_PRIMARY so it can never drift from the render dispatch.
-const ECHARTS_PRIMARY_MARK_TRAITS: ReadonlySet<string> = new Set(
-  Object.values(ECHARTS_PRIMARY).map((config) => config.mark),
+// The Mark trait -> chartType inverse of ECHARTS_PRIMARY, DERIVED from the table (never
+// hand-mirrored) so it can never drift from the render dispatch. Every `mark` above is
+// distinct, so the inverse is a function.
+const MARK_TRAIT_TO_TYPE: ReadonlyMap<string, EChartsPrimaryType> = new Map(
+  (Object.entries(ECHARTS_PRIMARY) as Array<[EChartsPrimaryType, EChartsPrimaryConfig]>).map(
+    ([chartType, config]) => [config.mark, chartType],
+  ),
 );
 
 // IR-side classifier (sprint-136 m02): a NormalizedVizSpec carries no chartType,
 // so artifact.certify classifies an ECharts-primary spec from its first mark's
-// trait. Certification is cartesian-only (the Vega equivalence path); these types
-// are returned as coverage:'uncertified' rather than conformance-checked.
+// trait. As of s172 certify can also RE-EMIT for these types (given the optional
+// `data` operand); the a11y-equivalence path is still cartesian-only.
 export function isEChartsPrimaryMarkTrait(trait: string): boolean {
-  return ECHARTS_PRIMARY_MARK_TRAITS.has(trait);
+  return MARK_TRAIT_TO_TYPE.has(trait);
+}
+
+/**
+ * The chartType an IR mark trait renders as (s172 m01) — the seam that lets certify
+ * drive the SAME adapters and the SAME `dataBranch` coupling viz.render dispatches on,
+ * from an IR that carries no chartType. Returns undefined for a non-ECharts-primary trait.
+ */
+export function echartsPrimaryTypeForMarkTrait(trait: string): EChartsPrimaryType | undefined {
+  return MARK_TRAIT_TO_TYPE.get(trait);
 }
