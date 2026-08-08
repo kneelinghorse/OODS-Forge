@@ -2,37 +2,53 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/artifact.certify.output.json",
   "title": "Artifact certify output",
-  "description": "The certify verdict for a Forge NormalizedVizSpec IR: a folded conformance gate (cartesian-only — conformant now rolls up a11y-equivalence + contrast + accuracy + determinism, s140/s170), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that disaggregates which pillar drove the verdict, including a RENDERED-REALITY contrast verdict (s137/s138/s139) and an ACCURACY verdict over four declared structural rules (s170). ACCURACY (s170, #818): on the certified path certify evaluates exactly four deterministic, reader-only structural rules over the IR + the compiled Vega-Lite spec — non-zero bar baseline (OODS-V150), dual axis (OODS-V151), area-encodes-linear (OODS-V152) and aggregation-hiding (OODS-V153). accuracy:'pass' means NONE of those four distortions was POSITIVELY detected, with accuracySummary.rulesEvaluated reporting how many of the four actually resolved their operand — it is NOT a claim that the chart is accurate. Accuracy findings appear in findings[] alongside the a11y-equivalence ones, keyed by their OODS-V15x code. The 8 ECharts-primary types return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure. CONTRACT SIGNAL (s141): pillars.contrast now carries a REAL verdict for these 8 types even though coverage STAYS 'uncertified' — 'pass' for the 5 categorical types (treemap/sunburst/sankey/force_graph/chord: certify reconstructs + grades the fixed OODS categorical palette their adapters bake into itemStyle) and 'exempt' for the 3 geo types (choropleth/bubble_map/flow_map: sequential/continuous color, WCAG gradient essential exception). So coverage:'uncertified' NO LONGER implies contrast:'unchecked'; a consumer must NOT key 'is-ECharts/uncertified' off contrast==='unchecked'. The contrast pillar READS the color hexes Forge BAKED into the compiled cartesian spec (scale.range for multi-series, mark.color for single-series; honoring config.tokens overrides) and grades them against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD) — so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass'. A color channel with no baked palette (a gradient scale, or a divergent/mistyped binding that renders on a continuous/default scale) is WCAG-'exempt'. contrastNote carries the rendered-contrast caveat.",
+  "description": "The certify verdict for a Forge NormalizedVizSpec IR: a folded conformance gate (cartesian path only — conformant rolls up a11y-equivalence + contrast + accuracy + determinism, s140/s170), a re-emit determinism proof, a contentHash, and a per-pillar tri-state summary (pillars) that disaggregates which pillar drove the verdict. COVERAGE 5 -> 13 (s172): the 8 ECharts-primary types still return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure — but three of the four pillars now carry real verdicts for them. contrast has since s141; determinism and accuracy do whenever the caller supplies the OPTIONAL `data` operand (the same data branch viz.render takes). Without `data` those two stay 'unchecked' and say so in notes[], naming the missing operand rather than implying a missing capability. DETERMINISM: on the cartesian path it is the Vega-Lite compile, proven byte-stable across two independent re-emits. On the ECharts path (s172) it is the ECharts OPTION, re-emitted twice through the same pure adapters viz.render uses and projected through viz.render's exact JSON projection, so certify's contentHash equals viz.render's FOR THE SAME (spec, data) PAIR SUPPLIED TO BOTH TOOLS. certify claims nothing about what the caller actually rendered. Two scope clauses ride the notes: hash identity across processes assumes ONE installed @oods/tokens bundle version (palette and chrome resolve from it at module load), and for force_graph the option is deterministic while the rendered layout is runtime force physics with no baked seed. ACCURACY (s170 #818, widened s172): the CARTESIAN path evaluates exactly four reader-only structural rules over the IR + the compiled Vega-Lite spec — non-zero bar baseline (OODS-V150), dual axis (V151), area-encodes-linear (V152), aggregation-hiding (V153). The ECHARTS path evaluates a per-type set over the data operand — treemap and sunburst offer V154 (a node value area/angle cannot encode) and V155 (an explicit parent that is not the sum of its children); sankey offers V156 (negative/non-finite link value), V157 (a node height that is not the flow its links carry) and V158 (a duplicate directed flow); chord offers V156; choropleth offers V159 (a region matched to rows with CONFLICTING joined values). force_graph, bubble_map and flow_map offer NOTHING, and that is a stated position rather than a gap — their distortion candidates are adapter constants or are not authorable through the branch at all. READ accuracy:'pass' PRECISELY: it means none of the OFFERED rules positively detected its distortion, with accuracySummary.rulesEvaluated reporting how many actually resolved their operand. It is NOT a claim that the chart is accurate. On the ECharts path 'pass' additionally REQUIRES rulesEvaluated > 0: zero resolved rules is 'unchecked' there, whether the offered set was empty or every precondition was absent. CONTRAST (s137/s138/s139/s141) READS the color hexes Forge BAKED into the compiled cartesian spec (scale.range for multi-series, mark.color for single-series; honoring config.tokens overrides) and grades them against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD) — so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass'. For the 8 ECharts-primary types it is 'pass' for the 5 categorical ones (the fixed OODS categorical palette their adapters bake) and 'exempt' for the 3 geo ones (sequential/continuous color, WCAG gradient essential exception). So coverage:'uncertified' does NOT imply contrast:'unchecked'; a consumer must not key 'is-ECharts/uncertified' off any pillar's value. contrastNote carries the rendered-contrast caveat.",
   "type": "object",
-  "required": ["status"],
+  "required": [
+    "status"
+  ],
   "properties": {
     "status": {
       "type": "string",
-      "enum": ["ok", "error"],
+      "enum": [
+        "ok",
+        "error"
+      ],
       "description": "Whether certification ran. 'error' means the input was not a valid NormalizedVizSpec IR."
     },
     "coverage": {
       "type": "string",
-      "enum": ["certified", "uncertified"],
-      "description": "'certified' for the 5 cartesian types (bar/line/area/scatter/heatmap) — carries a real conformance result. 'uncertified' for the 8 ECharts-primary types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/flow_map/chord) — a11y-equivalence certification is cartesian-only (the Vega-Lite path). NOTE (s141): coverage:'uncertified' now carries a REAL pillars.contrast verdict ('pass' for the 5 categorical ECharts types, 'exempt' for the 3 geo types) — it is no longer contrast:'unchecked'. Absent on the error path."
+      "enum": [
+        "certified",
+        "uncertified"
+      ],
+      "description": "'certified' for the 5 cartesian types (bar/line/area/scatter/heatmap) — carries a real folded conformance result. 'uncertified' for the 8 ECharts-primary types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/flow_map/chord): there is no Vega-Lite compile, so no a11y-equivalence claim and therefore no folded gate. It does NOT mean nothing was checked. As of s141 contrast carries a real verdict on this path, and as of s172 determinism and accuracy do too whenever the `data` operand is supplied. Read the PILLARS, never the coverage value, to learn what ran. Absent on the error path."
     },
     "conformant": {
-      "type": ["boolean", "null"],
-      "description": "The folded conformance gate (s140/s170): true iff a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND accuracy is not 'fail' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path (no claim is made). Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. KNOWN HOLE, stated (#781): an 'unchecked' pillar passes the rollup, and as of s170 that hole spans TWO pillars (contrast and accuracy) rather than one."
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "The folded conformance gate (s140/s170), CARTESIAN PATH ONLY: true iff a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND accuracy is not 'fail' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path, and it STAYS null there even when an ECharts accuracy rule fires (s172): the uncertified path makes no folded claim, so an ECharts accuracy failure is read from pillars.accuracy and findings[], never from conformant. Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. KNOWN HOLE, stated (#781): on the cartesian path an 'unchecked' pillar passes the rollup, and since s170 that hole spans two pillars (contrast and accuracy) rather than one."
     },
     "findings": {
       "type": "array",
-      "description": "One entry per FAILING rule (empty when fully conformant, and empty on the uncertified path). As of s170 this carries TWO rule families, told apart by their code: a11y-equivalence rules (OODS-A11Y-<rule.id>) and accuracy rules (OODS-V150..V153). It is no longer a11y-equivalence-only.",
-      "items": { "$ref": "#/$defs/finding" }
+      "description": "One entry per FAILING rule (empty when nothing fired). As of s172 this carries THREE rule families, told apart by their code: a11y-equivalence rules (OODS-A11Y-<rule.id>), CARTESIAN accuracy rules (OODS-V150..V153) and ECHARTS-PRIMARY accuracy rules (OODS-V154..V159). It is no longer a11y-equivalence-only, and it is no longer empty on the uncertified path.",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
     },
     "accuracySummary": {
       "type": "object",
-      "description": "How the accuracy pillar was reached (certified path only — absent on the uncertified + error paths, mirroring `determinism`). rulesEvaluated is the honest examined-count the contrast pillar lacks: a rule whose operand it could not resolve (rows behind a data url, an aggregate op outside the IR vocabulary) is NOT counted, and says why in notes[], so silence can never be read as coverage.",
-      "required": ["rulesEvaluated", "failing"],
+      "description": "How the accuracy pillar was reached. Present whenever the rules were RUN: on the certified path always, and on the uncertified path whenever the `data` operand was supplied (s172). Absent on the error path, and absent on an ECharts verdict with NO operand — that absence is the device distinguishing 'no operand' from 'operand present, nothing offered or nothing resolved', which reports {rulesEvaluated:0, failing:0} plus a note saying which. rulesEvaluated is the honest examined-count the contrast pillar lacks: a rule whose operand could not be resolved (rows behind a data url, an aggregate op outside the IR vocabulary, a choropleth join with no geometry) is NOT counted and says why in notes[], so silence can never be read as coverage.",
+      "required": [
+        "rulesEvaluated",
+        "failing"
+      ],
       "properties": {
         "rulesEvaluated": {
           "type": "integer",
-          "description": "How many of the four declared accuracy rules resolved their operand and ran (0-4)."
+          "description": "How many of the rules OFFERED FOR THIS CHART TYPE resolved their operand and ran. The cartesian path offers four; the ECharts path offers a per-type set of zero to three (see the top-level description). Always read accuracy:'pass' together with this number."
         },
         "failing": {
           "type": "integer",
@@ -43,44 +59,69 @@
     },
     "determinism": {
       "type": "object",
-      "description": "Re-emit determinism proof (certified path only): the Vega-Lite compile is byte-stable across two independent re-emits and its canonical form hashes to contentHash. Absent on the uncertified + error paths.",
-      "required": ["stable", "contentHash"],
+      "description": "Re-emit determinism proof. On the certified path: the Vega-Lite compile is byte-stable across two independent re-emits and its canonical form hashes to contentHash. On the uncertified (ECharts-primary) path it is present whenever the `data` operand was supplied (s172) and proves the same property of the emitted ECharts OPTION. Absent on the error path, and absent on an ECharts verdict with no operand.",
+      "required": [
+        "stable",
+        "contentHash"
+      ],
       "properties": {
         "stable": {
           "type": "boolean",
-          "description": "True when two independent compiles of the same IR canonicalize byte-identically."
+          "description": "True when two independent emissions of the same input canonicalize byte-identically — two Vega-Lite compiles on the cartesian path, two ECharts adapter emissions on the ECharts path."
         },
         "contentHash": {
           "type": "string",
-          "description": "SHA-256 (hex) of the canonicalized Vega-Lite compile — the same contentHash viz.render emits for this IR, so an agent can round-trip render -> certify and match."
+          "description": "SHA-256 (hex) of the canonicalized emission. Cartesian: the canonicalized Vega-Lite compile — the same contentHash viz.render emits for this IR. ECharts-primary (s172): the canonicalized JSON-projected ECharts option, replaying viz.render's exact projection (the tooltip formatter closure dropped, __joinDiagnostics stripped, __registration KEPT) — so it equals viz.render's contentHash FOR THE SAME (spec, data) PAIR GIVEN TO BOTH TOOLS. That is the whole of the claim: certify asserts nothing about what the caller actually rendered, and hash identity across processes assumes one installed @oods/tokens bundle version."
         }
       },
       "additionalProperties": false
     },
     "pillars": {
       "type": "object",
-      "description": "Per-pillar tri-state summary (s137, extended s170). Present on both ok paths (absent on error). DISAGGREGATES which pillar drove the folded `conformant` gate (s140): a11yEquivalence mirrors the a11y-equivalence sub-result (NOT the folded conformant); determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — it grades the categorical color bytes Forge baked into the compiled spec (scale.range / mark.color), so no baked palette can never read as 'pass'; accuracy is the four-rule structural verdict (s170). A reader can always see WHY conformant is false (an a11y error vs a contrast fail vs an accuracy fail).",
-      "required": ["a11yEquivalence", "determinism", "contrast", "accuracy"],
+      "description": "Per-pillar tri-state summary (s137, extended s170 and s172). Present on both ok paths (absent on error). DISAGGREGATES which pillar drove the verdict, and on the uncertified path it is the ONLY place the real verdicts live (coverage stays 'uncertified' and conformant stays null there). a11yEquivalence mirrors the a11y-equivalence sub-result, NOT the folded conformant; determinism mirrors determinism.stable; contrast is the rendered-reality verdict over the colour bytes Forge baked; accuracy is the structural-rules verdict.",
+      "required": [
+        "a11yEquivalence",
+        "determinism",
+        "contrast",
+        "accuracy"
+      ],
       "properties": {
         "a11yEquivalence": {
           "type": "string",
-          "enum": ["pass", "fail", "unchecked"],
-          "description": "Cartesian a11y-equivalence — mirrors the a11y-equivalence sub-result (zero error-severity failures), NOT the folded conformant: 'pass'/'fail' on the certified path, 'unchecked' on the uncertified (ECharts-primary) path. An a11y-passing chart that fails contrast still reports a11yEquivalence:'pass' (with conformant:false)."
+          "enum": [
+            "pass",
+            "fail",
+            "unchecked"
+          ],
+          "description": "Cartesian a11y-equivalence — mirrors the a11y-equivalence sub-result (zero error-severity failures), NOT the folded conformant: 'pass'/'fail' on the certified path, 'unchecked' on the uncertified (ECharts-primary) path. That 'unchecked' is the ONE pillar s172 did not widen, and the reason is on the record rather than structural: the 16-rule equivalence engine has no per-rule not-applicable state, so a rule whose precondition is absent returns a pass indistinguishable from a meaningful one. Running it over an ECharts operand would flip existing 'unchecked' verdicts to 'fail' — a verdict migration deferred to a warn-first rollout (s173). An a11y-passing chart that fails contrast still reports a11yEquivalence:'pass' (with conformant:false)."
         },
         "determinism": {
           "type": "string",
-          "enum": ["pass", "fail", "unchecked"],
-          "description": "Re-emit determinism: 'pass' iff the two compiles are byte-stable, 'unchecked' on the uncertified path (no Vega-Lite compile)."
+          "enum": [
+            "pass",
+            "fail",
+            "unchecked"
+          ],
+          "description": "Re-emit determinism: 'pass' iff two independent emissions are byte-stable. 'unchecked' only when there was nothing to re-emit — on the ECharts-primary path that means the `data` operand was not supplied, and notes[] says so. The proof is over the emitted artifact (the Vega-Lite spec, or the ECharts option), never over the rendered picture: force_graph's layout in particular is runtime physics and is out of scope, as its note states."
         },
         "contrast": {
           "type": "string",
-          "enum": ["pass", "fail", "unchecked", "exempt"],
-          "description": "Rendered-reality contrast over the color hexes Forge baked into the compiled spec (light theme): role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'pass' requires a baked OODS palette; 'exempt' when no categorical palette was baked (a sequential/diverging gradient, or a divergent/mistyped binding rendering on a continuous/default scale — WCAG essential exception). On the uncertified (ECharts-primary) path (s141) contrast is a REAL verdict too, reconstructed from the palette the adapter bakes (no Vega compile): 'pass' for the 5 categorical types (fixed OODS categorical palette, role-C + role-A), 'exempt' for the 3 geo types (sequential/continuous color); the bubble_map ordinal-categorical branch is NOT graded (its range lives in the geo data branch, outside the metadata IR). 'unchecked' only when the canvas cannot be resolved (or a contrast-engine fault)."
+          "enum": [
+            "pass",
+            "fail",
+            "unchecked",
+            "exempt"
+          ],
+          "description": "Rendered-reality contrast over the color hexes Forge baked into the compiled spec (light theme): role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'pass' requires a baked OODS palette; 'exempt' when no categorical palette was baked (a sequential/diverging gradient, or a divergent/mistyped binding rendering on a continuous/default scale — WCAG essential exception). On the uncertified (ECharts-primary) path (s141) contrast is a REAL verdict too, reconstructed from the palette the adapter bakes (no Vega compile): 'pass' for the 5 categorical types (fixed OODS categorical palette, role-C + role-A), 'exempt' for the 3 geo types (sequential/continuous color); the bubble_map ordinal-categorical branch is still NOT graded, and as of s172 that rests on the s141 exempt-all-geo RULING alone: certify can now see the geo data branch (the optional `data` operand), so the range is reachable and grading it would be a fresh scope decision rather than a bug fix. 'unchecked' only when the canvas cannot be resolved (or a contrast-engine fault)."
         },
         "accuracy": {
           "type": "string",
-          "enum": ["pass", "fail", "unchecked"],
-          "description": "The four declared structural accuracy rules (s170, #818) over the IR + the compiled Vega-Lite spec: non-zero bar baseline, dual axis, area-encodes-linear, aggregation-hiding. 'pass' means none of the four was POSITIVELY detected — read it with accuracySummary.rulesEvaluated, which says how many actually ran; it is NOT a claim that the chart is accurate. 'fail' means at least one fired, and the reason is in findings[] under its OODS-V15x code. 'unchecked' on the uncertified (ECharts-primary / unmodeled-mark) path, where there is no compiled Vega-Lite spec to read, and if the rules engine itself faults (a fault degrades the pillar, it never turns a valid verdict into status:error)."
+          "enum": [
+            "pass",
+            "fail",
+            "unchecked"
+          ],
+          "description": "The structural accuracy verdict. CARTESIAN: the four declared rules over the IR + the compiled Vega-Lite spec (OODS-V150..V153). ECHARTS-PRIMARY (s172): the per-type rule set over the `data` operand (OODS-V154..V159). 'pass' means none of the rules OFFERED for this chart type positively detected its distortion — read it with accuracySummary.rulesEvaluated, which says how many actually ran; it is NOT a claim that the chart is accurate. 'fail' means at least one fired and the reason is in findings[] under its OODS-V15x code. 'unchecked' when there was no operand to read (no compiled spec on an unmodeled mark; no `data` on an ECharts-primary IR) or the rules engine itself faulted (a fault degrades the pillar; it never turns a valid verdict into status:error). NOTE the deliberate asymmetry: on the ECHARTS path 'pass' requires rulesEvaluated > 0, so zero resolved rules reports 'unchecked'; the cartesian path keeps its s170 semantics, where 'pass' with rulesEvaluated:0 is possible and #781 records the hole."
         }
       },
       "additionalProperties": false
@@ -91,12 +132,16 @@
     },
     "notes": {
       "type": "array",
-      "items": { "type": "string" },
-      "description": "Human-readable notes — e.g. the uncertified-coverage rationale for an ECharts-primary type, or (s170) why an accuracy rule could not resolve its operand and therefore stayed silent."
+      "items": {
+        "type": "string"
+      },
+      "description": "Human-readable notes, and on the ECharts-primary path they are load-bearing rather than decorative: they are what tells the two flavours of 'unchecked' apart. Carries the a11y-equivalence deferral reason, the operand-absent determinism and accuracy notes, the determinism scope clauses (same-(spec,data), the @oods/tokens bundle assumption, force_graph's option-vs-physics limit), the empty-offered-set explanation for the three types with no accuracy rule, and (s170) why a rule could not resolve its operand and therefore stayed silent."
     },
     "errors": {
       "type": "array",
-      "items": { "$ref": "#/$defs/finding" },
+      "items": {
+        "$ref": "#/$defs/finding"
+      },
       "description": "Present and non-empty when status is 'error' (the input was not a valid NormalizedVizSpec IR)."
     }
   },
@@ -104,16 +149,24 @@
   "$defs": {
     "finding": {
       "type": "object",
-      "required": ["code", "message"],
+      "required": [
+        "code",
+        "message"
+      ],
       "properties": {
         "code": {
           "type": "string",
-          "description": "A per-rule equivalence code OODS-A11Y-<rule.id> (no pattern constraint, so the intentionally doubled literal OODS-A11Y-A11Y-R-12 validates); a registered accuracy-rule code OODS-V150..V153 (s170); or an OODS-V error code on the error path."
+          "description": "A per-rule equivalence code OODS-A11Y-<rule.id> (no pattern constraint, so the intentionally doubled literal OODS-A11Y-A11Y-R-12 validates); a registered accuracy-rule code — OODS-V150..V153 on the cartesian path (s170) or OODS-V154..V159 on the ECharts-primary path (s172); or an OODS-V error code on the error path."
         },
-        "message": { "type": "string" },
+        "message": {
+          "type": "string"
+        },
         "severity": {
           "type": "string",
-          "enum": ["error", "warn"],
+          "enum": [
+            "error",
+            "warn"
+          ],
           "description": "The rule's intrinsic severity (native VizA11yRuleResult severity — not remapped)."
         }
       },

@@ -7,30 +7,40 @@
 // transform (toVegaLiteSpec -> canonicalize -> sha256) that viz.render runs, so
 // for a Forge-generated IR certify's contentHash equals the hash viz.render emits.
 //
-// Coverage-honest: a11y-equivalence certification is CARTESIAN-ONLY (the Vega-Lite
-// path). The 8 ECharts-primary types (treemap/sunburst/sankey/... — classified
-// from the IR's first mark trait) return coverage:'uncertified' / conformant:null,
-// a DISTINCT verdict, not a failure. Contrast is a graded pillar (s137/s138/s139):
+// Coverage-honest: the 8 ECharts-primary types (treemap/sunburst/sankey/... — classified
+// from the IR's first mark trait) return coverage:'uncertified' / conformant:null, a
+// DISTINCT verdict, not a failure. That is a statement about the FOLDED GATE, not about
+// what was checked. Three of the four pillars carry real verdicts on that path:
+// contrast since s141, and — as of s172, whenever the caller supplies the optional `data`
+// operand — determinism and accuracy too (certify re-emits the ECharts option through the
+// same adapters viz.render uses, and evaluates a per-type accuracy set over the operand).
+// a11y-equivalence is the one that stays 'unchecked', and its note says why: the engine has
+// no per-rule not-applicable state, so the migration is deferred, not impossible.
+// Contrast is a graded pillar (s137/s138/s139):
 // certify reads the color hexes the vega-lite adapter BAKED into the compiled cartesian
 // spec (scale.range / mark.color) and grades them against the canvas — so contrast
 // reflects the bytes Forge actually renders, and a chart that baked no OODS palette can
 // never certify contrast:'pass'. The verdict is a pure function of the input IR — no
 // Date/random/UUID.
 //
-// Accuracy is a graded pillar too as of s170 (#818 — the fourth #977 pillar): on the
-// certified path certify evaluates FOUR declared structural rules (non-zero bar baseline,
-// dual axis, area-encodes-linear, aggregation-hiding) over the IR and the compiled spec it
-// already produced, and nothing else. No scorer, no corpus, no render step — #110 holds:
-// the rules read, they never rebuild. `accuracy:'pass'` means none of those four
-// distortions was POSITIVELY detected, with accuracySummary.rulesEvaluated reporting how
-// many of the four actually resolved their operand; it is not a claim that the chart is
-// accurate.
+// Accuracy is a graded pillar too as of s170 (#818 — the fourth #977 pillar), widened to all
+// 13 types in s172. On the CERTIFIED path certify evaluates FOUR declared structural rules
+// (non-zero bar baseline, dual axis, area-encodes-linear, aggregation-hiding) over the IR
+// and the compiled spec it already produced. On the ECHARTS path it evaluates a per-type set
+// (OODS-V154..V159) over the `data` operand — the only place those charts' data exists. No
+// scorer, no corpus, no render step — #110 holds on both: the rules read, they never rebuild.
+// `accuracy:'pass'` means none of the rules OFFERED FOR THAT CHART TYPE was positively
+// detected, with accuracySummary.rulesEvaluated reporting how many actually resolved their
+// operand; it is not a claim that the chart is accurate. On the ECharts path 'pass'
+// additionally requires rulesEvaluated > 0.
 
 import { canonicalize, sha256 } from '@oods/artifacts';
 import {
   ACCURACY_RULES,
   assertNormalizedVizSpec,
+  echartsAccuracyRulesFor,
   evaluateAccuracyRules,
+  evaluateEChartsAccuracyRules,
   toVegaLiteSpec,
   validateVizEquivalenceRules,
   type NormalizedVizSpec,
@@ -42,10 +52,27 @@ import {
   evaluateEChartsCategoricalContrast,
   type ContrastVerdict,
 } from './certify-contrast.js';
+import {
+  resolveCertifyOperand,
+  type CertifyDataBranch,
+  type CertifyOperandResolved,
+} from './certify-operand.js';
+import {
+  determinismScopeNote,
+  evaluateEChartsDeterminism,
+  operandAbsentDeterminismNote,
+} from './certify-echarts-emit.js';
 
 export interface ArtifactCertifyInput {
   /** A Forge NormalizedVizSpec IR (validated authoritatively by assertNormalizedVizSpec). */
   readonly spec: unknown;
+  /**
+   * OPTIONAL operand for the 8 ECharts-primary types (s172 m01) — the same data branch
+   * viz.render takes. Exactly one branch, matching the branch the IR's mark trait requires.
+   * NOT an affordance: an ECharts-primary IR is metadata-only, so this IS the operand the
+   * determinism + accuracy pillars read. Omitting it is always valid.
+   */
+  readonly data?: CertifyDataBranch;
 }
 
 export interface CertifyFinding {
@@ -61,29 +88,35 @@ export interface CertifyDeterminism {
 }
 
 /**
- * Per-pillar tri-state summary (s137, extended s170). The pillars DISAGGREGATE which pillar drove the
- * folded `conformant` gate (s140 [B]): a11yEquivalence mirrors the a11y-equivalence
- * sub-result (NOT the folded conformant); determinism mirrors `determinism.stable`;
- * contrast is the rendered-reality verdict — the categorical color bytes Forge baked
- * into the compiled spec (s138) — with 'exempt' for gradient scales. So a reader can
- * always see WHY conformant is false (an a11y error vs a contrast fail).
+ * Per-pillar tri-state summary (s137, extended s170 and s172). The pillars DISAGGREGATE which
+ * pillar drove the folded `conformant` gate (s140 [B]) — and on the uncertified path, where
+ * there is no folded gate at all, they are the ONLY place the real verdicts live.
+ * a11yEquivalence mirrors the a11y-equivalence sub-result (NOT the folded conformant);
+ * determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — the
+ * categorical color bytes Forge baked into the compiled spec (s138) — with 'exempt' for
+ * gradient scales; accuracy is the structural-rules verdict. So a reader can always see WHY
+ * conformant is false, and can always see what actually ran when it is null.
  */
 export interface CertifyPillars {
   readonly a11yEquivalence: 'pass' | 'fail' | 'unchecked';
   readonly determinism: 'pass' | 'fail' | 'unchecked';
   readonly contrast: ContrastVerdict;
   /**
-   * The four declared structural accuracy rules (s170, #818 — the fourth #977 pillar).
-   * Its own THREE-state enum; contrast's four-state one (which carries 'exempt') is untouched.
+   * The structural accuracy verdict (s170 #818, widened to all 13 types in s172): the four
+   * cartesian rules over the compiled spec, or the per-type ECharts set over the `data`
+   * operand. Its own THREE-state enum; contrast's four-state one ('exempt') is untouched.
    */
   readonly accuracy: 'pass' | 'fail' | 'unchecked';
 }
 
 /**
- * How the accuracy pillar was reached (s170). `rulesEvaluated` is the examined-count the
- * contrast pillar never shipped (#1412): a rule whose operand certify could not resolve is
- * NOT counted and explains itself in notes[], so `accuracy:'pass'` can never be read as
- * "all four rules ran" when they did not.
+ * How the accuracy pillar was reached (s170; also emitted on the ECharts path from s172
+ * whenever the operand is present). `rulesEvaluated` is the examined-count the contrast
+ * pillar never shipped (#1412): a rule whose operand certify could not resolve is NOT
+ * counted and explains itself in notes[], so `accuracy:'pass'` can never be read as "every
+ * offered rule ran" when it did not. Its ABSENCE is meaningful too — on an ECharts verdict
+ * it is the device that separates "no operand was supplied" from "the operand was supplied
+ * and nothing was offered or resolved" (which reports 0/0 plus a note saying which).
  */
 export interface CertifyAccuracySummary {
   readonly rulesEvaluated: number;
@@ -94,23 +127,29 @@ export interface ArtifactCertifyOutput {
   readonly status: 'ok' | 'error';
   readonly coverage?: 'certified' | 'uncertified';
   /**
-   * The folded conformance gate (s140 [B], extended s170): true iff a11y-equivalence has
-   * zero error-severity failures AND contrast is not 'fail' AND accuracy is not 'fail' AND
-   * determinism is stable — measured on the light theme (dark-theme contrast unverified).
-   * null on the uncertified path (no claim); absent on error. A contrast- or accuracy-driven
-   * false is explained by pillars + contrastNote + the OODS-V15x findings.
+   * The folded conformance gate (s140 [B], extended s170), CARTESIAN PATH ONLY: true iff
+   * a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND accuracy
+   * is not 'fail' AND determinism is stable — measured on the light theme (dark-theme contrast
+   * unverified). null on the uncertified path, and it STAYS null there even when an ECharts
+   * accuracy rule fires (s172): that path makes no folded claim, so the failure is read from
+   * pillars.accuracy and findings[]. Absent on error.
    */
   readonly conformant?: boolean | null;
   /**
-   * One entry per failing rule. s170: this carries TWO rule families, told apart by code —
-   * a11y-equivalence (OODS-A11Y-<rule.id>) and accuracy (OODS-V150..V153). It is no longer
-   * a11y-equivalence-only, and the descriptions that said so have been updated in step.
+   * One entry per failing rule. As of s172 this carries THREE families, told apart by code —
+   * a11y-equivalence (OODS-A11Y-<rule.id>), cartesian accuracy (OODS-V150..V153) and
+   * ECharts-primary accuracy (OODS-V154..V159). It is no longer a11y-equivalence-only, and
+   * no longer empty on the uncertified path.
    */
   readonly findings?: CertifyFinding[];
+  /**
+   * The re-emit proof. Certified path: the Vega-Lite compile. Uncertified path (s172):
+   * the ECharts option, present whenever the `data` operand was supplied.
+   */
   readonly determinism?: CertifyDeterminism;
-  /** Per-pillar tri-state summary (s137, extended s170). Present on both ok paths; absent on error. */
+  /** Per-pillar tri-state summary (s137, extended s170/s172). Present on both ok paths; absent on error. */
   readonly pillars?: CertifyPillars;
-  /** How the accuracy pillar was reached (s170). Certified path only, mirroring `determinism`. */
+  /** How the accuracy pillar was reached. Present wherever the rules RAN — see the type's doc. */
   readonly accuracySummary?: CertifyAccuracySummary;
   /** Declared-intent caveat / role rationale for the contrast pillar (s137). */
   readonly contrastNote?: string;
@@ -158,48 +197,86 @@ const ECHARTS_CATEGORICAL_TRAITS: ReadonlySet<string> = new Set([
 
 // The 3 geo ECharts-primary types. Their color renders as a sequential/continuous scale
 // (visualMap ramp / single-hue line / bubble visualMap), so WCAG 1.4.11's gradient
-// essential exception applies → contrast:'exempt' (s141 m03, role-B). NOTE: bubble_map's
-// ordinal-categorical color branch is NOT graded — that range lives in the geo DATA branch,
-// outside this metadata IR (the IR cannot express scale:'ordinal'/range), so it is invisible
-// to certify; grading it needs a frozen input-schema sub-arc (Derek: exempt-all-geo).
+// essential exception applies → contrast:'exempt' (s141 m03, role-B).
+//
+// bubble_map's ordinal-categorical color branch is still NOT graded, and s172 CHANGED THE
+// REASON. The s141 rationale had two halves: Derek's exempt-all-geo ruling, and the fact
+// that the range was invisible to certify (it lives in the geo DATA branch, outside this
+// metadata IR). s172 m01 removed the second half — certify takes the geo branch now, so the
+// range is reachable. The ruling stands on its own: grading it is a fresh scope decision,
+// not a defect to fix. The exempt note says exactly that.
 const ECHARTS_GEO_EXEMPT_TRAITS: ReadonlySet<string> = new Set([
   'MarkChoropleth',
   'MarkFlow',
   'MarkBubble',
 ]);
 
-// The a11y-equivalence note shared by every ECharts-primary verdict — the accessible table
-// + narrative are generated but NOT equivalence-verified (cartesian-only).
+// The a11y-equivalence note shared by every ECharts-primary verdict.
+//
+// REWORDED in s172 m04, because the old wording ("certification is cartesian-only") read as
+// a STRUCTURAL limit — as if an ECharts chart were inherently unverifiable. s172 disproved
+// that framing for two of the four pillars, so the remaining gap has to state its actual,
+// temporary reason: the 16-rule equivalence engine has NO per-rule not-applicable state.
+// A rule whose precondition is absent returns pass(), indistinguishable from a meaningful
+// pass; run against a metadata-only ECharts IR, R-03 hard-errors on the missing table, ~12
+// rules pass trivially, and R-09 fails any unnamed IR. Running it over the data operand
+// would therefore FLIP existing 'unchecked' verdicts to 'fail' — a verdict migration that
+// needs its own warn-first rollout (the s134→s135 precedent), deferred to s173.
 const echartsA11yNote = (trait: string): string =>
-  `${trait} is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified.`;
+  `${trait} is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the \`data\` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.`;
 
 /**
- * Shared shape for an ECharts-primary verdict that now carries a REAL contrast pillar
- * (s141): coverage:'uncertified' + conformant:null (Design A — no Vega compile, so no
- * a11y-equivalence claim + no determinism proof), the a11y note retained, and
- * pillars.contrast + contrastNote carrying the graded verdict. The pre-s141 "contrast not
- * checked" note is DROPPED (contrast IS now graded — the rationale moves to contrastNote).
+ * What the s172 operand contributed to an ECharts-primary verdict: the determinism pillar
+ * (real when `data` was supplied, 'unchecked' when it was not) and the notes that explain
+ * which of those two it is. The two 'unchecked' flavours are told apart by the NOTE, never
+ * by silence.
+ */
+interface EChartsOperandVerdict {
+  readonly determinismPillar: 'pass' | 'fail' | 'unchecked';
+  readonly determinism?: CertifyDeterminism;
+  /** s172 m03 — the ECharts-side accuracy pillar, real whenever the operand is present. */
+  readonly accuracyPillar: 'pass' | 'fail' | 'unchecked';
+  readonly accuracySummary?: CertifyAccuracySummary;
+  readonly findings: CertifyFinding[];
+  readonly notes: string[];
+}
+
+/**
+ * Shared shape for an ECharts-primary verdict. s141 gave it a REAL contrast pillar; s172
+ * gives it a REAL determinism pillar whenever the `data` operand is supplied. coverage
+ * stays 'uncertified' and conformant stays null (Design A — there is still no Vega-Lite
+ * compile, so no a11y-equivalence claim), and the a11y note is retained.
  */
 function echartsContrastVerdict(
   trait: string,
   contrast: ContrastVerdict,
   contrastNote: string | undefined,
+  operand: EChartsOperandVerdict,
 ): ArtifactCertifyOutput {
   return {
     status: 'ok',
     coverage: 'uncertified',
     conformant: null,
-    findings: [],
-    // accuracy is genuinely unchecked here: the four rules read the compiled Vega-Lite spec,
-    // and an ECharts-primary type has none (s170).
-    pillars: { a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast, accuracy: 'unchecked' },
-    notes: [echartsA11yNote(trait)],
+    // s172 m03: findings[] now carries a THIRD family on this path — the ECharts accuracy
+    // codes OODS-V154..V159. conformant STAYS null: the uncertified path makes no folded
+    // claim (s141 Design A), so an accuracy fail here is read from pillars.accuracy and
+    // findings[], never from conformant. That is stated in the output schema prose.
+    findings: operand.findings,
+    pillars: {
+      a11yEquivalence: 'unchecked',
+      determinism: operand.determinismPillar,
+      contrast,
+      accuracy: operand.accuracyPillar,
+    },
+    ...(operand.determinism ? { determinism: operand.determinism } : {}),
+    ...(operand.accuracySummary ? { accuracySummary: operand.accuracySummary } : {}),
+    notes: [echartsA11yNote(trait), ...operand.notes],
     ...(contrastNote ? { contrastNote } : {}),
   };
 }
 
 /** s141 m02 — grade the baked OODS categorical palette (role-C + role-A → 'pass'). */
-function echartsCategoricalVerdict(trait: string): ArtifactCertifyOutput {
+function echartsCategoricalVerdict(trait: string, operand: EChartsOperandVerdict): ArtifactCertifyOutput {
   // Defensive: a contrast-engine fault degrades to 'unchecked', never turns the verdict
   // into status:error (mirrors the cartesian path's try/catch).
   let contrast: ContrastVerdict = 'unchecked';
@@ -211,12 +288,97 @@ function echartsCategoricalVerdict(trait: string): ArtifactCertifyOutput {
   } catch {
     contrast = 'unchecked';
   }
-  return echartsContrastVerdict(trait, contrast, contrastNote);
+  return echartsContrastVerdict(trait, contrast, contrastNote, operand);
 }
 
 /** s141 m03 — geo color is a sequential/continuous scale → WCAG-exempt (role-B). */
-function echartsGeoExemptVerdict(trait: string): ArtifactCertifyOutput {
-  return echartsContrastVerdict(trait, 'exempt', ECHARTS_GEO_EXEMPT_NOTE);
+function echartsGeoExemptVerdict(trait: string, operand: EChartsOperandVerdict): ArtifactCertifyOutput {
+  return echartsContrastVerdict(trait, 'exempt', ECHARTS_GEO_EXEMPT_NOTE, operand);
+}
+
+/**
+ * s172 m02/m03 — turn the resolved operand (or its absence) into the determinism AND
+ * accuracy pillars.
+ *
+ * Absent: both 'unchecked', each with its OWN operand-absent note — the two 'unchecked'
+ * flavours (no operand vs nothing offered) are told apart by the note, never by silence.
+ * Present: the re-emit determinism proof + the per-type accuracy rules.
+ *
+ * A re-emit THROW is not a degraded pillar — it means the operand is one the render path
+ * also refuses, so it surfaces as the same structured error viz.render returns (rejection
+ * parity). An accuracy ENGINE fault IS a degraded pillar, mirroring the cartesian path's
+ * try/catch exactly: a fault must never turn a valid verdict into status:error.
+ */
+function evaluateEChartsOperand(
+  spec: NormalizedVizSpec,
+  trait: string,
+  operand: CertifyOperandResolved | undefined,
+): EChartsOperandVerdict | { failure: { code: string; message: string } } {
+  if (!operand) {
+    return {
+      determinismPillar: 'unchecked',
+      accuracyPillar: 'unchecked',
+      findings: [],
+      notes: [operandAbsentDeterminismNote(trait), operandAbsentAccuracyNote(trait)],
+    };
+  }
+
+  const outcome = evaluateEChartsDeterminism(spec, operand.chartType, operand.branchData);
+  if (!outcome.ok) {
+    return { failure: { code: outcome.code, message: outcome.message } };
+  }
+
+  let accuracyPillar: 'pass' | 'fail' | 'unchecked' = 'unchecked';
+  let accuracySummary: CertifyAccuracySummary | undefined;
+  const findings: CertifyFinding[] = [];
+  const accuracyNotes: string[] = [];
+  try {
+    const result = evaluateEChartsAccuracyRules({
+      chartType: operand.chartType,
+      branchData: operand.branchData,
+    });
+    // 'pass' REQUIRES that at least one rule actually resolved its operand and ran. Zero
+    // resolved rules is 'unchecked', not 'pass' — whether because the type offers none
+    // (force_graph, bubble_map, flow_map) or because every offered rule's precondition was
+    // absent. This is STRICTER than the cartesian path, which reports 'pass' with
+    // rulesEvaluated:0 (the s170 semantics, deliberately untouched here): on that path the
+    // reader is told to read 'pass' together with rulesEvaluated, and #781 records the
+    // hole. On the new path there was no reason to inherit it.
+    //
+    // The two 'unchecked' flavours are then told apart by devices, never by silence: NO
+    // operand -> no accuracySummary + the operand-absent note; operand present but nothing
+    // resolved -> accuracySummary {rulesEvaluated:0, failing:0} + a note saying why.
+    accuracyPillar =
+      result.findings.length > 0 ? 'fail' : result.rulesEvaluated > 0 ? 'pass' : 'unchecked';
+    accuracySummary = { rulesEvaluated: result.rulesEvaluated, failing: result.findings.length };
+    accuracyNotes.push(...result.notes);
+    for (const finding of result.findings) {
+      findings.push({ code: finding.code, severity: 'error', message: finding.message });
+    }
+  } catch {
+    accuracyPillar = 'unchecked';
+    accuracyNotes.push(
+      `The accuracy rules could not be evaluated for this ${operand.chartType}; the pillar is reported unchecked rather than passed. ${echartsAccuracyRulesFor(operand.chartType).length} rules were offered.`,
+    );
+  }
+
+  return {
+    determinismPillar: outcome.stable ? 'pass' : 'fail',
+    determinism: { stable: outcome.stable, contentHash: outcome.contentHash },
+    accuracyPillar,
+    ...(accuracySummary ? { accuracySummary } : {}),
+    findings,
+    notes: [determinismScopeNote(operand.chartType), ...accuracyNotes],
+  };
+}
+
+/**
+ * The operand-absent ACCURACY note (a DECLARED notes[] movement on the ECharts {spec}-only
+ * path, s172 §1g). Distinct from the determinism one because the remedy is the same but the
+ * pillar is not, and a reader must be able to see which pillar each 'unchecked' belongs to.
+ */
+function operandAbsentAccuracyNote(trait: string): string {
+  return `Accuracy is unchecked for ${trait}: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching \`data\` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated.`;
 }
 
 /** The honest uncertified verdict (ECharts-primary OR an unmodeled cartesian trait). */
@@ -257,19 +419,38 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
   const rawTrait = spec.marks[0]?.trait;
   const trait = rawTrait && TRAIT_ALIASES[rawTrait] ? TRAIT_ALIASES[rawTrait] : rawTrait;
 
-  // ECharts-primary (treemap/sunburst/sankey/...): no Vega-Lite compile, so no
-  // equivalence check + no determinism proof — coverage stays 'uncertified'. A DISTINCT
-  // verdict, not a failure.
+  // OPERAND (s172 m01) — resolve + validate the optional `data` branch against the trait
+  // BEFORE any verdict is produced, so a bad operand is a structured error rather than a
+  // silently-ignored input or a verdict computed over data certify already knows is
+  // broken. Rejections reuse the render path's own validators (see certify-operand.ts).
+  // When `data` is absent this is skipped entirely and the verdict is byte-for-byte the
+  // pre-s172 one.
+  let operand: CertifyOperandResolved | undefined;
+  if (input?.data !== undefined) {
+    const resolved = resolveCertifyOperand(trait, input.data);
+    if (!resolved.ok) {
+      return { status: 'error', errors: [{ code: resolved.code, message: resolved.message }] };
+    }
+    operand = resolved;
+  }
+
+  // ECharts-primary (treemap/sunburst/sankey/...): no Vega-Lite compile, so still no
+  // a11y-equivalence claim — coverage stays 'uncertified'. A DISTINCT verdict, not a
+  // failure. As of s172 the DETERMINISM pillar is real here whenever the operand is
+  // present: certify re-emits the ECharts option twice through the same adapters
+  // viz.render uses and hashes the same JSON projection.
   if (trait && isEChartsPrimaryMarkTrait(trait)) {
+    const operandVerdict = evaluateEChartsOperand(spec, trait, operand);
+    if ('failure' in operandVerdict) {
+      return { status: 'error', errors: [operandVerdict.failure] };
+    }
     // The 5 categorical types: grade the reconstructed baked OODS palette (s141 m02).
-    // Design A — only pillars.contrast gains a real verdict; coverage/conformant/
-    // a11yEquivalence/determinism are unchanged.
     if (ECHARTS_CATEGORICAL_TRAITS.has(trait)) {
-      return echartsCategoricalVerdict(trait);
+      return echartsCategoricalVerdict(trait, operandVerdict);
     }
     // The 3 geo types: sequential/continuous color scale → WCAG-'exempt' (s141 m03).
     if (ECHARTS_GEO_EXEMPT_TRAITS.has(trait)) {
-      return echartsGeoExemptVerdict(trait);
+      return echartsGeoExemptVerdict(trait, operandVerdict);
     }
     // Defensive default for any future ECharts-primary type not yet routed above — all 8
     // current types are categorical or geo-exempt, so this is unreachable today.

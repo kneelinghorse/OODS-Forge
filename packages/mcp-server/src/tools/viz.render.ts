@@ -10,10 +10,7 @@
 // must stay additionalProperties-clean).
 
 import {
-  adaptBubbleToECharts,
   adaptChordToECharts,
-  adaptChoroplethToECharts,
-  adaptFlowLineToECharts,
   adaptGraphToECharts,
   adaptSankeyToECharts,
   adaptSunburstToECharts,
@@ -28,7 +25,6 @@ import {
   describeMeasureContext,
   generateAccessibleTable,
   generateNarrativeSummary,
-  registerGeoJson,
   toEChartsOption,
   toVegaLiteSpec,
   validateVizEquivalenceRules,
@@ -41,7 +37,6 @@ import {
   type NormalizedVizSpec,
   type SankeyInput,
   type SpatialFeatureRow,
-  type SpatialSpec,
   type StructuredIntent,
   type VizDataAnalysis,
 } from '@oods/viz-core';
@@ -54,6 +49,12 @@ import {
   type EChartsPrimaryConfig,
   type EChartsPrimaryType,
 } from './echarts-primary.js';
+// Geo option building + F4 link integrity were lifted to their own modules in
+// sprint-172 m01 so artifact.certify drives the SAME builder and the SAME V147 check
+// (see each file's header). viz.render's behaviour is unchanged by the lift — its geo
+// goldens are the proof.
+import { renderGeoOption, type GeoBranch, type GeoChartType } from './echarts-geo-option.js';
+import { danglingLinkError, findDuplicateLinks, type LinkRef } from './echarts-link-integrity.js';
 import { createValueRef, describeSchemaRef, resolveValueRef } from './schema-ref.js';
 import { absentFields, referencedEncodingFields } from './field-presence.js';
 import { loadMeasureRegistry, MalformedMeasureRegistryError } from './measure-registry.js';
@@ -228,43 +229,8 @@ function neverCycleWarnings(
   return [];
 }
 
-// F4 link integrity (sprint-148 m04, chord + force_graph). Pure helpers over the
-// INPUT links. A dangling ref names a node absent from the key set (FAIL-LOUD V147);
-// a duplicate is two links with the same DIRECTED (source,target) pair (WARN V148) —
-// chord is directed, so A->B and B->A are distinct (a reciprocal-trade chord is valid
-// data, not a duplicate). The dedup key is collision-safe via JSON.stringify (NOT
-// ECharts' naive `${source}-${target}` concat, which collides when a name contains '-').
-interface LinkRef {
-  readonly source: string;
-  readonly target: string;
-  readonly [key: string]: unknown;
-}
-
-function findDanglingLinks(nodeKeys: ReadonlySet<string>, links: readonly LinkRef[]): LinkRef[] {
-  return links.filter((link) => !nodeKeys.has(link.source) || !nodeKeys.has(link.target));
-}
-
-function findDuplicateLinks(
-  links: readonly LinkRef[],
-): Array<{ source: string; target: string; count: number }> {
-  const counts = new Map<string, number>();
-  for (const link of links) {
-    const key = JSON.stringify([link.source, link.target]);
-    counts.set(key, (counts.get(key) ?? 0) + 1);
-  }
-  // One entry per duplicated pair, emitted at the pair's FIRST appearance (input order).
-  const emitted = new Set<string>();
-  const duplicates: Array<{ source: string; target: string; count: number }> = [];
-  for (const link of links) {
-    const key = JSON.stringify([link.source, link.target]);
-    const count = counts.get(key) ?? 0;
-    if (count > 1 && !emitted.has(key)) {
-      emitted.add(key);
-      duplicates.push({ source: link.source, target: link.target, count });
-    }
-  }
-  return duplicates;
-}
+// F4 link integrity (sprint-148 m04, chord + force_graph) now lives in
+// ./echarts-link-integrity.ts (sprint-172 m01) so certify replays the SAME V147 check.
 
 export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
   const compact = input.output?.compact ?? true;
@@ -613,20 +579,10 @@ function renderEChartsPrimary(
   let duplicateLinkWarnings: VizRenderOutput['warnings'] = [];
   if (chartType === 'chord' || chartType === 'force_graph') {
     const graph = branchData as { nodes?: unknown; links?: unknown };
-    const nodes = (Array.isArray(graph.nodes) ? graph.nodes : []) as Array<Record<string, unknown>>;
     const links = (Array.isArray(graph.links) ? graph.links : []) as LinkRef[];
-    const nodeKey = chartType === 'chord' ? 'name' : 'id';
-    const nodeKeys = new Set(nodes.map((node) => String(node[nodeKey])));
-    const dangling = findDanglingLinks(nodeKeys, links);
-    if (dangling.length > 0) {
-      const first = dangling[0];
-      const missing = !nodeKeys.has(first.source) ? first.source : first.target;
-      return errorOut(
-        'OODS-V147',
-        `Link "${first.source}" -> "${first.target}" references a non-existent ${chartType} node "${missing}"${dangling.length > 1 ? ` (${dangling.length} links reference a missing node)` : ''}. Every link source/target must match a node ${nodeKey}. Add the node or fix the link.`,
-        compact,
-        false,
-      );
+    const dangling = danglingLinkError(chartType, branchData);
+    if (dangling) {
+      return errorOut(dangling.code, dangling.message, compact, false);
     }
     // Surviving links (no dangling ref reached here): duplicate directed pairs WARN.
     duplicateLinkWarnings = findDuplicateLinks(links).map((dup) => ({
@@ -664,7 +620,12 @@ function renderEChartsPrimary(
       // ported spatial adapter. The adapter attaches the FeatureCollection on
       // option.__registration (the not-self-contained escape hatch); the JSON
       // projection below preserves it while dropping the tooltip-formatter closure.
-      const result = renderGeoOption(input, chartType, branchData as GeoBranch, spec.a11y.description);
+      const result = renderGeoOption(
+        { ...(input.id ? { id: input.id } : {}), ...(input.name ? { name: input.name } : {}) },
+        chartType,
+        branchData as GeoBranch,
+        spec.a11y.description,
+      );
       option = result.option;
       nodeCount = result.count;
     } else {
@@ -807,156 +768,13 @@ function buildEChartsPrimarySpec(
   } as NormalizedVizSpec;
 }
 
-// ---- geo render path (sprint-112 m02): choropleth + bubble_map -----------------
-// The 'geo' branch carries inline geometry + per-type encoding; here we shape it
-// into a slim SpatialSpec and a parsed FeatureCollection and hand both to the
-// ported spatial adapter. The adapters validate layers/data themselves; we add
-// per-type input guards (typed GeoInputError -> OODS-V126) so a missing
-// valueField / lng-lat / geometry yields a clean bad-input error, not a crash.
-type GeoBranch = NonNullable<VizRenderInput['geo']>;
-type GeoChartType = 'choropleth' | 'bubble_map' | 'flow_map';
-
-class GeoInputError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'GeoInputError';
-  }
-}
-
-// Provenance-only dimensions (carried in usermeta.oods.dimensions; not load-bearing
-// for the headless option — the client sizes the canvas).
-const DEFAULT_GEO_DIMENSIONS = { width: 860, height: 520 } as const;
-
-// Resolve the inline geometry to a GeoJSON FeatureCollection (converting TopoJSON
-// via the ported registration normalizer). Returns undefined when no geometry was
-// supplied (allowed for bubble_map — the client may register a base map).
-function resolveFeatureCollection(geo: GeoBranch) {
-  const source = geo.geojson ?? geo.topojson;
-  if (!source) {
-    return undefined;
-  }
-  return registerGeoJson('geo', source as Parameters<typeof registerGeoJson>[1], {
-    topoObjectName: geo.topoObjectName,
-  }).geoJson;
-}
-
-function renderGeoOption(
-  input: VizRenderInput,
-  chartType: GeoChartType,
-  geo: GeoBranch,
-  description: string,
-): { option: ReturnType<typeof adaptChoroplethToECharts>; count: number } {
-  const rows = (geo.rows ?? []) as Array<Record<string, unknown>>;
-  const id = input.id ?? `viz:${chartType}`;
-  const name = input.name;
-
-  if (chartType === 'choropleth') {
-    const geoData = resolveFeatureCollection(geo);
-    if (!geoData) {
-      throw new GeoInputError("choropleth requires inline geometry ('geo.geojson' or 'geo.topojson').");
-    }
-    if (!geo.valueField) {
-      throw new GeoInputError("choropleth requires 'geo.valueField' (the metric that colours each region).");
-    }
-    const spec: SpatialSpec = {
-      id,
-      ...(name ? { name } : {}),
-      type: 'spatial',
-      data: geo.join
-        ? {
-            type: 'data.geo.join',
-            source: 'inline',
-            geoSource: 'inline',
-            joinKey: geo.join.dataKey,
-            geoKey: geo.join.featureProperty,
-          }
-        : { values: rows },
-      layers: [
-        {
-          type: 'regionFill',
-          encoding: { color: { field: geo.valueField, ...(geo.colorScale ? { scale: geo.colorScale } : {}) } },
-        },
-      ],
-      a11y: { description },
-    };
-    const option = adaptChoroplethToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
-    return { option, count: geoData.features.length };
-  }
-
-  if (chartType === 'flow_map') {
-    // flow_map: origin→destination ARC lines on the geo coordinate system. The geo
-    // coordinateSystem needs a registered base map, so inline geometry is required
-    // (it rides back on echartsSpec.__registration, exactly like choropleth).
-    const geoData = resolveFeatureCollection(geo);
-    if (!geoData) {
-      throw new GeoInputError("flow_map requires inline base geometry ('geo.geojson' or 'geo.topojson') for the geo coordinate system.");
-    }
-    if (
-      !geo.originLongitudeField ||
-      !geo.originLatitudeField ||
-      !geo.destinationLongitudeField ||
-      !geo.destinationLatitudeField
-    ) {
-      throw new GeoInputError(
-        "flow_map requires 'geo.originLongitudeField', 'geo.originLatitudeField', 'geo.destinationLongitudeField', and 'geo.destinationLatitudeField'.",
-      );
-    }
-    if (rows.length === 0) {
-      throw new GeoInputError("flow_map requires 'geo.rows' (the origin→destination flows).");
-    }
-    const spec: SpatialSpec = {
-      id,
-      ...(name ? { name } : {}),
-      type: 'spatial',
-      data: { values: [] },
-      layers: [
-        {
-          type: 'route',
-          encoding: {
-            start: { field: geo.originLongitudeField, longitude: geo.originLongitudeField, latitude: geo.originLatitudeField },
-            end: { field: geo.destinationLongitudeField, longitude: geo.destinationLongitudeField, latitude: geo.destinationLatitudeField },
-            ...(geo.strengthField ? { strokeWidth: { field: geo.strengthField } } : {}),
-            ...(geo.curvature !== undefined ? { curvature: { value: geo.curvature } } : {}),
-          },
-        },
-      ],
-      a11y: { description },
-    };
-    const option = adaptFlowLineToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
-    return { option, count: rows.length };
-  }
-
-  // bubble_map
-  if (!geo.longitudeField || !geo.latitudeField) {
-    throw new GeoInputError("bubble_map requires 'geo.longitudeField' and 'geo.latitudeField'.");
-  }
-  if (rows.length === 0) {
-    throw new GeoInputError("bubble_map requires 'geo.rows' (the points to plot).");
-  }
-  const geoData = resolveFeatureCollection(geo);
-  const spec: SpatialSpec = {
-    id,
-    ...(name ? { name } : {}),
-    type: 'spatial',
-    data: { values: [] },
-    layers: [
-      {
-        type: 'symbol',
-        encoding: {
-          longitude: { field: geo.longitudeField },
-          latitude: { field: geo.latitudeField },
-          ...(geo.sizeField ? { size: { field: geo.sizeField } } : {}),
-          ...(geo.colorField
-            ? { color: { field: geo.colorField, ...(geo.colorScale ? { scale: geo.colorScale } : {}) } }
-            : {}),
-        },
-      },
-    ],
-    a11y: { description },
-  };
-  const option = adaptBubbleToECharts(spec, geoData, rows, DEFAULT_GEO_DIMENSIONS);
-  return { option, count: rows.length };
-}
+// ---- geo render path (sprint-112 m02) -----------------------------------------
+// LIFTED to ./echarts-geo-option.ts in sprint-172 m01 (GeoInputError,
+// DEFAULT_GEO_DIMENSIONS, resolveFeatureCollection, renderGeoOption) so
+// artifact.certify re-emits the geo option through the SAME builder. The only change
+// was renderGeoOption's signature (identity record instead of the whole VizRenderInput);
+// the guards, messages, SpatialSpec shapes and adapter calls are unchanged, and the geo
+// goldens prove it.
 
 // ---- structured a11y projection (sprint-128 m03, FD#10) -----------------------
 // Project the engine's table + narrative results onto the additive wire shape, and

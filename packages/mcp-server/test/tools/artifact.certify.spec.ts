@@ -659,10 +659,21 @@ describe('artifact.certify — ECharts geo contrast (s141 m03)', () => {
     },
   );
 
-  it('bubble_map exempt note HONESTLY states the ordinal-categorical branch is not graded (its range lives in the geo data branch, outside the metadata IR)', async () => {
+  // s172 m04 REWRITE of the s141 assertion, and the change is the POINT rather than a
+  // maintenance edit. s141's note gave two reasons for not grading the ordinal-categorical
+  // bubble_map colour: Derek's exempt-all-geo ruling, and the range being invisible to
+  // certify (it lives in the geo DATA branch, outside the metadata IR). s172 m01 made that
+  // branch an accepted operand, so the second reason is FALSE now. The verdict is unchanged
+  // and correct; the note must rest on the ruling alone, and this test pins that it does —
+  // including that the old invisibility wording is gone rather than merely supplemented.
+  it('bubble_map exempt note rests on the exempt-all-geo RULING, not on invisibility — s172 made the range reachable', async () => {
     const out = await certify(withTrait('MarkBubble'));
     expect(out.pillars?.contrast).toBe('exempt');
-    expect(out.contrastNote).toContain('ordinal-categorical bubble_map color lives in the geo data branch');
+    expect(out.contrastNote).toContain('exempt-all-geo RULING rather than invisibility');
+    expect(out.contrastNote).toContain('would be a new scope decision, not a bug fix');
+    expect(out.contrastNote).not.toContain('outside this metadata IR, so it is not graded here');
+    // The WCAG rationale for the exemption itself is untouched.
+    expect(out.contrastNote).toContain('WCAG 1.4.11 gradient essential exception');
   });
 });
 

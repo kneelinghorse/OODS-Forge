@@ -231,6 +231,52 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // (one row per group) never fire.
   ['OODS-V153', { code: 'OODS-V153', category: 'validation', message: 'A row-collapsing aggregation is not disclosed on any declared text surface', retryable: true }],
 
+  // ── Validation: artifact.certify ACCURACY rules, ECHARTS-PRIMARY (sprint-172) ──
+  // The accuracy pillar widened from the 5 cartesian types to all 13. These six read the
+  // certify `data` OPERAND (the same data branch viz.render takes) rather than a compiled
+  // Vega-Lite spec, because an ECharts-primary IR is metadata-only and carries no data at
+  // all. Like V150-V153 they are never THROWN: they are certify findings that pull
+  // pillars.accuracy to 'fail'. Every one is retryable:true — each names a specific,
+  // fixable authoring choice.
+  //
+  // SEVERITY, stated once for the family: a certify accuracy finding is ERROR-severity by
+  // construction. That is a deliberate escalation over the render path's posture for the
+  // same data — most visibly at V158, where F4 treats a duplicate directed link as a
+  // WARNING for chord/force_graph and says nothing at all for sankey. The two tools answer
+  // different questions: render asks "does this draw", certify asks "does the drawing mean
+  // what the data says".
+  //
+  // V154: a treemap tile's area and a sunburst arc's angle are magnitudes. The adapters
+  // copy the authored value straight into the option, so a negative or non-finite node
+  // value is drawn as something that does not represent the number.
+  ['OODS-V154', { code: 'OODS-V154', category: 'validation', message: 'A treemap/sunburst node value cannot be encoded as area or angle', retryable: true }],
+  // V155: an EXPLICIT parent value that is not the sum of its children — the parent is
+  // sized by the declaration while the children tile the space beneath it, so the
+  // part-of-whole relationship shown is not the one in the data. Compared under a RELATIVE
+  // 1e-9 tolerance: a parent of 0.3 over children 0.1 and 0.2 is correct data that exact
+  // float equality would falsely flag.
+  ['OODS-V155', { code: 'OODS-V155', category: 'validation', message: "An explicit treemap/sunburst parent value is not the sum of its children", retryable: true }],
+  // V156: ribbon width is a magnitude. sankey's upstream validator rejects non-finite link
+  // values (V126) but permits negatives; chord validates values not at all, so both
+  // negative and non-finite chord values reach the option.
+  ['OODS-V156', { code: 'OODS-V156', category: 'validation', message: 'A sankey/chord link value is negative or non-finite', retryable: true }],
+  // V157: a sankey node's drawn height is not the flow its ribbons carry. Two causes — an
+  // explicit node.value that overrides the computed max(incoming, outgoing), and an
+  // INTERMEDIATE node (incoming>0 AND outgoing>0) whose two sides disagree. Sources and
+  // sinks are endpoints, never leaks, and never fire. The rule reads the data BRANCH
+  // because the option erases the provenance: a declared value and a computed one are the
+  // same {name, value} pair once emitted.
+  ['OODS-V157', { code: 'OODS-V157', category: 'validation', message: "A sankey node's height does not match the flow its links carry", retryable: true }],
+  // V158: duplicate directed (source,target) pairs stack into one visually-merged ribbon,
+  // so the width between those nodes is their SUM while each label describes one part. A
+  // deliberate certify-side REOPEN of the s148 F4 sankey exclusion; viz.render is untouched.
+  ['OODS-V158', { code: 'OODS-V158', category: 'validation', message: 'A sankey directed flow appears more than once', retryable: true }],
+  // V159: a choropleth join that matches several rows to one region merges them
+  // last-record-wins. Where those rows AGREE this is supported one-to-many behaviour and
+  // the rule stays silent; where they CONFLICT on the joined value field the region's shade
+  // is decided by input order rather than by the data.
+  ['OODS-V159', { code: 'OODS-V159', category: 'validation', message: 'A choropleth region matched rows with conflicting joined values', retryable: true }],
+
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
   ['OODS-V201', { code: 'OODS-V201', category: 'validation', message: 'map.apply input invalid', retryable: true }],

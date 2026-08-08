@@ -23,11 +23,23 @@ export type {
   AccuracyRuleOutcome,
 } from './types.js';
 
+// The ECharts-side engine (s172 m03) — a SECOND rule type over a per-type data operand,
+// deliberately not a widening of the cartesian one. See ./echarts-index.ts's header.
+export * from './echarts-index.js';
+
 /**
- * The FOUR rules, in evaluation order. The scope is closed and was ratified verbatim from
- * #818/#1071 through #1112 to the s170 lock: four structural distortions a reader can be
- * misled by, each decidable from the IR + the compiled spec alone. Adding a fifth is a
- * scope decision, not a code change.
+ * The FOUR CARTESIAN rules, in evaluation order. The scope is closed and was ratified
+ * verbatim from #818/#1071 through #1112 to the s170 lock: four structural distortions a
+ * reader can be misled by, each decidable from the IR + the compiled Vega-Lite spec alone.
+ * Adding a fifth to THIS set is a scope decision, not a code change.
+ *
+ * THE SCOPE CHAIN CONTINUES (s172). Derek's ratified s172 pillar fork WAS that scope
+ * decision, and what it changed was the premise rather than the count: the accuracy pillar
+ * now also covers the 8 ECharts-primary types, whose IR is metadata-only and whose data
+ * lives in a per-type operand this interface cannot reach. Those six rules (OODS-V154..V159)
+ * live in ./echarts-index.ts behind their OWN rule type and their own evaluator. This set,
+ * this interface and evaluate(spec, compiled) are UNCHANGED — every s170 pin still holds,
+ * and a cartesian rule still sees exactly the IR and the compiled spec.
  *
  * Each `summary` states what the rule claims INCLUDING what it deliberately excludes — it is
  * the claim a reader of `accuracy:'pass'` is entitled to, and §4's ceiling is written from it.
