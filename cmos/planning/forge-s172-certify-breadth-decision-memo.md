@@ -140,3 +140,34 @@ Reproduce: the SPLIT byte-compat control (cartesian {spec}-only byte-identical; 
 ## §6 Critic dispositions (wf_7ae1a20f-5d5: 3 blockers / 14 majors / 20 minors — v1 REJECTED 3-of-5)
 
 **B1 (shared across 3 lenses)** byte-compat vs chartered notes[] movement unsatisfiable → SPLIT control (§1g): cartesian byte-identical; ECharts {spec}-only moves in notes[] only, enumerated + declared; m01's full-byte replay retires at m02; §5 asserts the exact diff. Majors: geo validators private at m01 time → extraction MOVED into m01 (step 2), anchor corrected :819-959, signature reshaped off VizRenderInput; engine interface cannot reach the branch operand → `evaluateEChartsAccuracyRules(spec, data)` chartered + ratification-comment rewrite (m03.1); m02 mutation RED unsatisfiable for 2/3 geo types → two mutations, per-type honest (m02.5); V159 fires on benign multiplicity → conflict-only firing chartered; V155/V157 float false-positives → 1e-9 relative epsilon + tolerance-boundary RED/GREEN; same-(spec,data) scoping absent from shipped wording → m04 line item; tokens-bundle caveat floated not chartered → m02 note + m04 prose; TWO bubble adapters + undeclared root-core snap → target named, twin dispositioned untouched, snap declared non-mover, port-parity header rewrite chartered; guardrails count-delta arithmetic false → corrected to unchanged 24/5 (1-for-1 replacement); root core not a mover for m01-m03 → dropped; registry.ts missing from §3 → added; ECHARTS_GEO_EXEMPT_NOTE rationale falsified by m01 → m04 sweep + §4 ruling-rests-on-ratification clause. Minors: chord validates nothing (V156 wording); choropleth-ramp declined reason re-anchored to the SpatialSpec builder; both m06 snap files named + non-mover suites stated; V159 __joinedRecords clause; m04 dependency 'm02 + m03-if-not-descoped' + NON-descopable + determinism-only degradation; V147 divergence resolved by extracting the check (m01.2) with V148-class warns stated non-replayed; branch-$defs mirrored copy declared with keep-in-step comment; #781 wording corrected (no rollup on the 8's path); operand-absent note wording + empty-set accuracySummary both specified; V158 severity escalation stated; partition FOUR places (schema file ×2 physical copies); s168 oracle-path rule cited by name; certify.native deferral reason added.
+
+## §7 — Post-review corrections (2026-08-10, written in s173 m01; review session PS-2026-08-08-004)
+
+The genuine-close review of s172 (verdict: **PARTIAL GENUINE CLOSE**, decision #1462) confirmed
+six defects. Two of them are corrections to the RECORD this memo and its closeout shipped, and
+the s168 §8 precedent applies: **the text above is left exactly as written; the corrections of
+record are here.** Each was re-verified in s173 m01 before this block was written (rule 14).
+
+| claim, as shipped | measured |
+|---|---|
+| Gate row **G21** (s172 closeout): tokens-governance `highRisk` **119, UNCHANGED, not moved by s172** | **121 at final HEAD** (78 brand A + 43 brand B). The row is not wrong about the tool — it is wrong about the TREE: `tokens:governance` resolves `--head` through a git ref, so a row run before the sprint commit existed measured the parent commit. m05's own decision **#1457** already recorded the **+2/+3**, so the closeout contradicted a decision from inside the same sprint. |
+| m01: the lift of `renderGeoOption` into `echarts-geo-option.ts` is "**behaviour byte-identical; its goldens prove it**" | **False, and the goldens could not have proven it.** The lift changed the signature from a whole `VizRenderInput` to a `{id, name}` record, and viz.render's new call site guarded that record with a truthiness spread where the pre-lift code used `??`. For `id: ''` — admissible on both schemas, neither has `minLength` — viz.render therefore stopped passing the id at all and emitted `map-viz:<type>` where the pre-lift code emitted the deriveMapName fallback. No geo golden supplies an `id`, so the golden set was silent on the one input that moved. This is the same defect as review finding 1 (the cross-tool parity break) seen from the render side. |
+
+Both are fixed in **s173 m01**, not merely recorded:
+
+- The G21 lesson is now **standing rule A** — *a gate whose operand is a git REF cannot run
+  before the commit exists; "at final HEAD" means after the commit, or the row names the tree
+  it actually measured.* s173 m05 runs the governance row post-commit and records
+  `git rev-parse main` beside the paste, from the corrected baseline of **121**.
+- The lift lesson is now **standing rule B** — *when a private function is LIFTED to a shared
+  module, compare the CALLERS' argument guarding, not just the function body.* The one-line fix
+  (viz.render passes `id` unconditionally) ships with
+  `packages/mcp-server/test/tools/artifact.certify.geo-id-parity.spec.ts`, which enumerates the
+  three values an optional identity can take — absent, `''`, truthy — across all three geo
+  types on both handlers, and carries the pre-fix guard as a live mutant.
+
+The other four defects were product/prose rather than record, and are fixed in the same mission:
+V159's sparse-row false positive (presence-filter + a GREEN/RED pair), the self-contradicting
+`echartsA11yNote`, the `emptyOfferedSetNote` impossibility claim, the "range is reachable"
+contrastNote, and the missing two-layer reconnect note (now in `tool-descriptions.json`,
+`configs/agent/policy.json` and the regenerated `docs/api`).

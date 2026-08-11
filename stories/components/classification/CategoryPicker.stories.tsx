@@ -97,7 +97,10 @@ const meta: Meta<typeof CategoryPicker> = {
   },
   parameters: {
     layout: 'centered',
-    viewport: { defaultViewport: 'responsive' },
+    // s173 m04: `viewport: { defaultViewport: … }` is the Storybook 8 shape. SB9 reads the
+    // viewport from GLOBALS, so this parameter selected nothing — and 'responsive' is the
+    // default anyway. Removing a parameter that was never read renders nothing differently;
+    // this file is vrt-critical, and its captures are expected to be byte-identical.
   },
   tags: ['vrt', 'vrt-critical'],
 };

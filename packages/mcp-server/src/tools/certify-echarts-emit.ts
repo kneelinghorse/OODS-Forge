@@ -67,9 +67,15 @@ export function emitRawEChartsOption(
     case 'force_graph':
       return adaptGraphToECharts(spec, branchData as NetworkInput);
     default:
-      // choropleth / bubble_map / flow_map, through the m01-extracted shared builder —
+      // choropleth / bubble_map / flow_map, through the s172 m01-extracted shared builder —
       // the SAME identity resolution viz.render uses (spec.id already carries
       // `input.id ?? 'viz:<chartType>'`, so the two paths land on the same id).
+      //
+      // That last clause was FALSE from s172 until s173 m01: it described the builder's
+      // contract, while viz.render's own call site dropped a falsy id before the builder
+      // ever saw it (defects 1+2 of the s172 review). Both call sites now pass `id`
+      // unconditionally; artifact.certify.geo-id-parity.spec.ts enumerates the three values
+      // an optional identity can take and compares the two paths' emitted bytes on each.
       return renderGeoOption(
         { id: spec.id, ...(spec.name ? { name: spec.name } : {}) },
         chartType as GeoChartType,

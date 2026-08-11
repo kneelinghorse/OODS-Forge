@@ -192,20 +192,18 @@ export const ResponsiveNarrowViewport: Story = {
   parameters: {
     layout: 'centered',
   },
+  /*
+   * s173 m04 — a REAL narrow canvas replaces the 360px box.
+   *
+   * THIS STORY'S CAPTURE MOVES, and it is the only capture movement m04 makes: this file
+   * carries `tags: ['vrt', 'vrt-critical']` at META level, so every one of its stories is in
+   * the 1280 light/dark corpus, and removing the framing div changes both of its images
+   * (light + dark). Declared here, diff-reviewed at closeout, and it is exactly two images —
+   * no other wrapper-fake story is captured.
+   */
+  globals: { viewport: { value: 'oods-mobile', isRotated: false } },
   render: (args) => (
-    <div
-      style={{
-        width: 'min(360px, 100%)',
-        padding: 'var(--cmp-spacing-inset-default, 1rem)',
-        border: '1px solid var(--cmp-border-default, var(--sys-border-subtle))',
-        borderRadius: 'var(--cmp-spacing-inline-xs, 0.5rem)',
-        background: 'var(--cmp-surface-panel, var(--sys-surface-raised))',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--cmp-spacing-stack-compact, 0.5rem)',
-      }}
-    >
-      <span style={MUTED_TEXT_STYLE}>360px viewport preview</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cmp-spacing-stack-compact, 0.5rem)' }}>
       <Breadcrumbs {...args} />
       <span style={MUTED_TEXT_STYLE}>
         Overflow menu preserves first/last items on narrow screens.

@@ -11,6 +11,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { findDuplicateLinks } from '../adapters/echarts/link-integrity.js';
+import { joinGeoWithData } from '../adapters/spatial/geo-data-joiner.js';
 import {
   ACCURACY_RELATIVE_EPSILON,
   differsBeyondTolerance,
@@ -407,6 +408,48 @@ describe('OODS-V159 — choropleth join conflict (s172 m03)', () => {
     expect(codesFrom('choropleth', branch(rows))).not.toContain('OODS-V159');
   });
 
+  // ---- s173 m01, defect 3: the sparse row ----------------------------------------------
+  //
+  // A partial-coverage dataset (one row per region per quarter, and a region that reported
+  // in only one quarter) is the SHAPE real data has, and V159 fired on it: it read the
+  // missing key as `undefined` and compared that against the real value. The premise the
+  // rule needs is that an absent key cannot change what the reader sees — so these two
+  // tests prove it against the REAL joiner, not against a restatement of it, and they are
+  // the pair that tells presence apart from nullity.
+
+  const mergedValue = (rows: Array<Record<string, unknown>>): unknown => {
+    const joined = joinGeoWithData(GEOJSON.features as never, rows as never, {
+      geoKey: 'region',
+      dataKey: 'state',
+    });
+    return (joined.features[0]?.properties as Record<string, unknown>).sales;
+  };
+
+  it('SPARSE ROW: a matched row that OMITS the value field does NOT fire — the merge cannot see it', () => {
+    const rows = [
+      { state: 'CA', sales: 100, quarter: 'Q1' },
+      { state: 'CA', quarter: 'Q2' },
+    ];
+    // The premise, measured through the joiner the adapter actually uses: the drawn value
+    // is 100 either way, so there is no arbitrary pick to warn about.
+    expect(mergedValue(rows)).toBe(100);
+    expect(codesFrom('choropleth', branch(rows))).not.toContain('OODS-V159');
+    // And it is a genuine PASS, not an unevaluated silence.
+    const result = evaluateEChartsAccuracyRules(operand('choropleth', branch(rows)));
+    expect(result.rulesEvaluated).toBe(1);
+    expect(result.notes).toHaveLength(0);
+  });
+
+  it('EXPLICIT NULL is not an omission: a row carrying sales:null DOES fire — it wins the merge when last', () => {
+    const rows = [
+      { state: 'CA', sales: 100, quarter: 'Q1' },
+      { state: 'CA', sales: null, quarter: 'Q2' },
+    ];
+    // Same measurement, opposite outcome: the null IS spread, so row order decides the shade.
+    expect(mergedValue(rows)).toBeNull();
+    expect(codesFrom('choropleth', branch(rows))).toContain('OODS-V159');
+  });
+
   it('a branch with NO join is a genuine pass (no multi-match is possible), not an unevaluated silence', () => {
     const result = evaluateEChartsAccuracyRules(
       operand('choropleth', { geojson: GEOJSON, rows: [{ state: 'CA', sales: 1 }], valueField: 'sales' }),
@@ -469,9 +512,23 @@ describe('the ECharts accuracy engine (s172 m03)', () => {
     },
   );
 
-  it('force_graph names its OWN reason (adapter constants), not the geo one', () => {
+  it('force_graph names adapter constants; the geo types name a SCOPE DECISION, never an impossibility', () => {
     expect(emptyOfferedSetNote('force_graph')).toContain('adapter constants');
-    expect(emptyOfferedSetNote('bubble_map')).toContain('field names rather than scales');
+
+    // s173 m01 (s172 review, defect 5). The geo note used to say the branch "expresses field
+    // names rather than scales", so the distortions "are not authorable through it". Both
+    // halves are false: bubble_map's branch carries `colorScale` (ordinal palettes cycle) and
+    // flow_map's carries `strengthField` (arc width). A false IMPOSSIBILITY claim is worse
+    // than an admitted gap — it tells the reading agent there is nothing to look for. The
+    // note must now say a rule has not been WRITTEN, and must name what IS authorable, so
+    // the claim stays falsifiable by anyone reading the input schema.
+    for (const note of [emptyOfferedSetNote('bubble_map'), emptyOfferedSetNote('flow_map')]) {
+      expect(note).toContain('scope decision');
+      expect(note).toContain('colorScale');
+      expect(note).toContain('strengthField');
+      expect(note).not.toContain('field names rather than scales');
+      expect(note).not.toContain('not authorable');
+    }
   });
 
   it('rulesEvaluated counts RESOLVED rules, not offered ones', () => {

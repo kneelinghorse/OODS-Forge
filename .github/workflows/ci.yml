@@ -270,11 +270,17 @@ jobs:
       - name: Build tokens
         run: pnpm run build:tokens
 
+      # Query labels live: the event payload is frozen at trigger time, so a label
+      # applied after the push (and any re-run) would never be seen through it.
       - name: Collect PR labels
         id: labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          labels=$(jq -r '[.pull_request.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")
-          if [ "$labels" = "null" ]; then
+          if [ -n "$PR_NUMBER" ]; then
+            labels=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" --jq '[.[].name] | join(",")')
+          else
             labels=""
           fi
           echo "value=$labels" >> "$GITHUB_OUTPUT"
@@ -440,6 +446,28 @@ jobs:
 
       - name: Run accessibility contract
         run: pnpm run a11y:diff
+
+      # s173 m04 — the mobile behavioural leg rides HERE rather than in a new job, and the
+      # reason is measured rather than assumed: this job already does the two expensive things
+      # the specs need. It builds `storybook-static` (step above) and installs Chromium (step
+      # above), which is also why the a11y contract can serve the static build on an ephemeral
+      # port. A separate job would repeat a ~16s build and a browser install for three spec
+      # files. 15 jobs stay 15.
+      #
+      # The specs are behavioural only — computed layout, focus, Esc, axe with the drawer OPEN
+      # — so there are no screenshots to store and no baselines to drift.
+      - name: Mobile behavioural guardrails (375 + 768)
+        run: |
+          # python3 + curl rather than `npx http-server`/`npx wait-on`: neither is a
+          # dependency here, so npx would fetch them from the network on every run. Both of
+          # these ship on the runner. Same mechanism the local run uses.
+          python3 -m http.server 6006 --bind 127.0.0.1 --directory storybook-static &
+          for _ in $(seq 1 60); do
+            curl -sf http://127.0.0.1:6006/index.json > /dev/null && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:6006/index.json > /dev/null
+          STORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6006 pnpm run vrt:mobile
 
       - name: Upload accessibility report
         if: always()

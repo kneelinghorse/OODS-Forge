@@ -449,11 +449,13 @@ export function evaluateEChartsCategoricalContrast(): ContrastPillarResult {
 // WCAG 1.4.11's essential exception for gradients applies (memo §4 role-B): there is no
 // discrete categorical palette to contrast-check. certify returns 'exempt', and Forge's
 // generated accessible data table is the guarantee. bubble_map's ORDINAL-categorical color
-// branch (an author-supplied scale:'ordinal' + range) is NOT graded: that range lives in
-// the geo DATA branch / SpatialSpec, outside this metadata-only NormalizedVizSpec IR (the
-// IR's color TraitBinding cannot even express scale:'ordinal' or a range — schema
-// additionalProperties:false), so it is invisible to certify. Grading it needs a
-// data-branch INPUT-schema change (a frozen OOS sub-arc), NOT this additive read path.
+// branch (an author-supplied scale:'ordinal') is NOT graded. s141's rationale had two
+// halves — Derek's exempt-all-geo ruling, and the fact that the encoding was invisible to
+// certify. s172 removed the second half: certify takes the geo branch now, so `colorField`
+// and `colorScale` are readable. The RULING stands on its own; grading is a fresh scope
+// decision. (s173 m01 corrects the s172 wording, which said "the range is reachable": the
+// branch has no range field at all — the ordinal palette is Forge's DEFAULT_COLOR_RANGE,
+// cycled by index in the bubble adapter, never an author range.)
 // (s141 m03 — Derek: exempt-all-geo, after the m01 IR-visibility premise was verified false.)
 export const ECHARTS_GEO_EXEMPT_NOTE =
   'Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, ' +
@@ -462,5 +464,8 @@ export const ECHARTS_GEO_EXEMPT_NOTE =
   "Forge's generated accessible data table is the guarantee. An author-supplied " +
   'ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason ' +
   'is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the ' +
-  'geo data branch (the optional `data` operand), so the range is reachable — grading it ' +
-  'would be a new scope decision, not a bug fix. ' + RENDERED_CONTRAST_CAVEAT;
+  'geo data branch (the optional `data` operand), so that colorField and the colorScale ' +
+  'it renders on are reachable — grading them would be a new scope decision, not a bug ' +
+  'fix. The palette itself stays out of reach either way: the branch has no range field, ' +
+  "so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the " +
+  'categories outnumber it. ' + RENDERED_CONTRAST_CAVEAT;

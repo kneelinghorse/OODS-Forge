@@ -620,8 +620,18 @@ function renderEChartsPrimary(
       // ported spatial adapter. The adapter attaches the FeatureCollection on
       // option.__registration (the not-self-contained escape hatch); the JSON
       // projection below preserves it while dropping the tooltip-formatter closure.
+      //
+      // `id` is passed UNCONDITIONALLY — not through a truthiness spread. renderGeoOption
+      // defaults with `identity.id ?? \`viz:${chartType}\``, which is exactly the pre-lift
+      // code's `input.id ?? …`; a truthiness spread instead DROPPED an empty-string id and
+      // silently changed the derived mapName (`custom-geo` → `map-viz:choropleth`). That
+      // was the s172 lift's one behaviour change (s173 m01, defects 1+2): it broke the
+      // render↔certify byte parity the lift existed to guarantee, since
+      // certify-echarts-emit.ts has always passed `id` unconditionally. Standing rule B:
+      // when a private function is lifted to a shared module, compare the CALLERS'
+      // argument guarding, not just the function body.
       const result = renderGeoOption(
-        { ...(input.id ? { id: input.id } : {}), ...(input.name ? { name: input.name } : {}) },
+        { id: input.id, ...(input.name ? { name: input.name } : {}) },
         chartType,
         branchData as GeoBranch,
         spec.a11y.description,
