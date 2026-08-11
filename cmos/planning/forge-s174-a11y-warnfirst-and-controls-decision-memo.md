@@ -110,3 +110,89 @@ Re-run every gate by literal invocation at the review's own HEAD, **rebuilding v
 **Majors, disposed:** four v1 "movers" were non-movers (→ §1a.8) · emission-spec preconditions absent on its fixture, decision-6 justification false (→ §1a.4/7 corrected) · severity-remap-vs-shipped-sentence (→ §1a.2) · bite magnitude 83A/48B not +5, and PR #72 merged so the bite is counterfactual (→ §1b.6, measured) · step-order dependency (→ §1b.5) · state:token-breaking dead env var (→ §1b.5) · forced-colors zero-holder gap (→ §1c.4, §4) · vrt:layouts stranded carriers (→ §1c.3 sweep) · ratchet headroom/swap-masking (→ §1d.1 exact-pin + stated acceptance) · index-resolution rationale false + no automated runner post-m03 (→ §1c.1/2) · descope rung vs unachievable gate (→ §1c.5) · m05 dropped three s173 closeout items (→ §2 m05 restored verbatim).
 
 **Minors adopted where load-bearing:** rule-table span :73–328 · warn families enumerated (§1a.9) · loose grep patterns (§1a.11) · enforce <2 reports (§1b.3) · runbook `--base main` sweep (§1b.4) · merge-base caveat (§1b.1) · resolver path corrected to testkits/vrt/stories/utils/storybook.ts (§1c.1) · "all 15 rules" stale comment into m01's sweep (§1a) · rule B by name + fidelity snaps as named control (§1a.6) · addon-removal set made explicit + parity control (§1d.3) · §5 viz-core-rebuild note + matrix pin placed in viz-core (§1a.5, §5) · note wording chartered incl. the "still generated" correction (§1a.10) · e2e/overlays.accessibility.spec.ts recorded in the §1c.4/§4 gap note. **Critic verifications banked**: 287/13 true at ci.yml:687 (reproduced, rebuild-dependent) · 13 jobs stay 13 · coverage job needs no edit for the removal · setup-file orphaning inert · vrt:fallback/vrt:mobile/state-assessment --vr-fallback untouched by the retirements · rule candidate C consistent with all shipped prose.
+
+---
+
+## §7 Closeout (m05, 2026-08-11)
+
+**5/5 missions built. Nothing descoped — the m04.2 JSX sweep, first rung of the descope order, landed too.** Every row below is a LITERAL invocation with its env vars, run at **final HEAD `0e251e5`, post-commit** (rule 16). `git status --porcelain` was empty at every row except where a row's own run writes a tracked artifact, which is named in that row.
+
+### Reference SHAs
+
+| what | sha |
+| --- | --- |
+| final HEAD (this sprint's commit) | `0e251e5c810ea062cd9e2f2273a36559aebc6b9c` |
+| base — `git merge-base origin/OODS-pro HEAD` | `1a425155597d0a8833a19acdfccd25a9c8d6387e` |
+| `origin/OODS-pro` at closeout | `09be34f11a2bfa4f04c16fca49bfff4f131079db` |
+
+### Gate table
+
+| # | gate | literal invocation | result |
+| --- | --- | --- | --- |
+| 1 | lockfile | `pnpm install --frozen-lockfile` | exit 0 |
+| 2 | root types | `pnpm run typecheck` | exit 0 |
+| 3 | lint | `pnpm run lint` | exit 0 |
+| 4 | viz-core build | `pnpm --filter @oods/viz-core run build` | exit 0 |
+| 5 | viz-core suite | `pnpm --filter @oods/viz-core exec vitest run` | **65 files / 1361 tests**, exit 0 |
+| 6 | viz-core re-export gate | `pnpm --filter @oods/viz-core run typecheck` | exit 0 |
+| 7 | mcp-server suite | `pnpm --filter @oods/mcp-server exec vitest run` | **206 files (1 skipped) / 4273 tests — 4257 passed, 16 skipped**, exit 0 |
+| 8 | root core | `pnpm exec vitest run --project core` | 452 files (1 skipped) / 5105 — 5088 passed, 16 skipped, **1 FAILED (pre-existing, §7.4)** |
+| 9 | root a11y | `pnpm exec vitest run --project a11y` | 7 files / 17 tests, exit 0 |
+| 10 | root guardrails | `pnpm exec vitest run --project guardrails` | 5 files / 24 tests, exit 0 |
+| 11 | build:stories ratchet | `node scripts/quality/build-stories-ratchet.mjs` | "holds at the pin: 138 type errors", exit 0 |
+| 12 | tokens | `pnpm run tokens-validate` | exit 0 |
+| 13 | diagnostics schema | `pnpm run validate:diagnostics` | exit 0 |
+| 14 | colocated goldens (ci.yml step "Run colocated viz.render + dashboard.render goldens") | the step's 13-file vitest invocation, verbatim | **13 files / 287 tests**, exit 0 |
+| 15 | package compat | `pnpm run build:tokens && pnpm run pkg:compat` | "pkg:compat checks passed", exit 0 |
+| 16 | storybook + capture parity | `pnpm run build-storybook`, then sha256 of `storybook-static/index.json` | `19e6c52f60aed2f67840e6ba12a3cb9faa736893ef226dd23ef5dc8b19f1120f`, 454 entries — **byte-identical to the pre-m04 capture** |
+| 17 | VRT mobile | `STORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6099 pnpm run vrt:mobile` | 18 passed, exit 0 |
+| 18 | VRT desktop (m03's chartered gate, unrestated) | `STORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6099 pnpm run vrt:desktop` | 2 passed, exit 0 |
+| 19 | a11y contract | `pnpm run a11y:diff` | "No new accessibility guardrail, contrast, or contract violations detected", exit 0 |
+| 20 | governance, refs supplied, NO label | `env -u PR_LABELS TOKEN_GOV_BASE_REF=1a42515… node scripts/state-assessment.mjs --tokens` | **GREEN, highRisk 0, no skip**, exit 0 — writes `diagnostics.json` |
+| 21 | enforcement over those reports | `env -u PR_LABELS node scripts/gov/enforce.mjs` | "Token governance enforcement passed", exit 0 |
+
+Gate 20/21 together are the s174 PR prediction, confirmed: **highRisk 0 on both brands, `token-change:breaking` NOT required, and no skip** — nothing in this sprint touches `packages/tokens/src`. `diagnostics.json` is quoted WITH its run count: `governance.totals.runs = 20`, `lastRun` GREEN / highRisk 0 / requiresBreakingLabel false, brands A and B both 0/0/0.
+
+`tools/a11y/reports/a11y-report.json` moved during gate 19 and was **REVERTED**: a `-U0` diff filtered for `generatedAt`, the ephemeral `127.0.0.1:<port>` URLs and `durationMs` left ZERO remaining lines, so only nondeterministic metadata had changed.
+
+### §7.1 Live proof on the served path
+
+`pnpm --filter @oods/mcp-server run build` + `pnpm --filter @oods/mcp-bridge run build`, then `pm2 restart oods-forge-bridge` (mine, not Derek's) — `/health` returns `{"status":"ok","bridge":"ready","toolset":{"mode":"default","enabledCount":19}}`. Warn-first proven LIVE through `POST :4466/run`, both directions:
+
+- **data-backed** MarkSankey certify → `pillars {a11yEquivalence:'unchecked', determinism:'pass', contrast:'pass', accuracy:'pass'}`, findings `OODS-A11Y-A11Y-R-08 (error)`, `OODS-A11Y-A11Y-R-09 (error)`, `OODS-A11Y-A11Y-R-14 (warn)`, `conformant: null`, `coverage: 'uncertified'`. Native severities, pillar unmoved, nothing blocked.
+- **{spec}-only** same IR → zero `OODS-A11Y-*` findings and the reworded note present, opening `MarkSankey is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the \`data\` operand is supplied…`.
+
+**ACTION FOR AQUEX CONSUMERS: RECONNECT.** m01 moved the advertised schema prose in both policy layers (`configs/agent/policy.json` and `packages/mcp-adapter/tool-descriptions.json`) plus `artifact.certify.output.json`. Tool EXECUTION is fresh per call, so the new findings arrive immediately; the DESCRIPTION and input schema are what your connector cached at connect time.
+
+### §7.2 Declared movement, reconciled per file
+
+| file | declared as | outcome |
+| --- | --- | --- |
+| `echarts-determinism.spec.ts:92` | MOVER | replaced with the exact matrix-derived set per type |
+| `echarts-accuracy.spec.ts:50` | MOVER | split into accuracy-only `[]` + exact a11y set + total length |
+| `artifact.certify.spec.ts:220 / :486 / :649` | must-NOT-move | UNMOVED, green |
+| `echarts-determinism.spec.ts:94` (`a11yEquivalence:'unchecked'`) | must-NOT-move | UNMOVED, green |
+| `viz-a11y-equivalence-emission.spec.ts:96–98`, `tests/viz/a11y-equivalence.test.ts:46/:62`, viz-core data-analysis specs | `.passed` non-movers | UNMOVED — `passed` stays a boolean by design |
+| `__fixtures__/s172-certify-spec-only-baseline.json` | EXEMPT | not rewritten, not rebased; its note movement is a DECLARED REWORD |
+| all `*.snap` | zero movement | **14 files / 61 entries, `git status` shows 0 snapshot changes** |
+| `storybook-static/index.json` | zero movement | byte-identical (gate 16) |
+
+Clause (i) cartesian byte-identity held end-to-sprint (`artifact.certify.spec-only-bytes.spec.ts` green inside gate 7). `DECLARED_NOTE_ADDITIONS` stayed empty; the single `DECLARED_NOTE_REWORDS` entry keys the unchanged e5bf2f6 baseline text and now points at `A11y-equivalence runs WARN-FIRST here`.
+
+### §7.3 Charter diff, per mission
+
+- **m01** — built as chartered, all 12 decisions. ONE correction to the charter, measured: §1a.9 said "R-14 fires on all 8 types"; true for the pinned fixtures, but the property is FIXTURE-dependent (it needs >2 table columns), so viz-core's own matrix fixture has force_graph at not-applicable. Recorded in the matrix comments and the mission decision.
+- **m02** — built as chartered, all 8 decisions, plus ONE addition the charter's enumeration missed: `scripts/gov/triage.mjs` was a third `main`-defaulting caller (both a `?? 'main'` and an `origin/main` last-resort candidate) and was fixed in the same change. One chartered message had to be re-derived from measurement: decision 4's own fallback means "no ref supplied" no longer implies "nothing was diffed", so the named skip distinguishes the two cases instead of asserting the stronger one.
+- **m03** — built as chartered, all 5 decisions, in the gate's CHARTERED form (no descope restatement needed: after the retirements the chromium project IS the two fixed specs). Two carriers found by the sweep and deliberately LEFT with reasons recorded (`examples/viz/.../notes.md` past-tense evidence; `scripts/diag/collect-sprint09.ts` try/catch, unwired).
+- **m04** — built as chartered, all 3 decisions, and the DESCOPABLE sub-item was NOT descoped: the JSX sweep landed and the pin moved 268 → 138 in the same change.
+- **m05** — this record. The three restored s173 items are all present: `diagnostics.json` quoted with its run count, `a11y-report.json` reverted after confirming only nondeterministic metadata moved, `git status --porcelain` empty at every gate row.
+
+**decisionCount ≥1 per mission, VERIFIED: 3 / 3 / 3 / 3 (m01–m04) plus m05's, 13+ sprint decisions recorded.**
+
+### §7.4 Pre-existing red, carried NOT fixed
+
+`tests/contracts/public-api.contract.test.ts > do not expose explicit \`any\` types` fails in the root `core` project. It greps every `.d.ts` under `dist/` and hits exactly three lines in `dist/pkg/index.d.ts` — the Communicable trait helper signatures emitted by `src/generators/templates/object-interface.ts:181`. That template is untouched by s174, and every file under `dist/` is dated 2026-08-10 20:58, before this build session opened, so **no s174 edit is an input to that assertion**. Fixing it is a generator-template change with its own blast radius; recorded as a carry rather than absorbed into a land-and-pause sprint.
+
+### §7.5 Not self-certified
+
+Per rule 10 this record is the BUILD's account of itself. The review charter in §5 stands unmodified and is owed a separate session; the one addition worth making there is that §5's live-warn-first item was ALSO run here (§7.1) and should be re-run independently rather than read from this record.
