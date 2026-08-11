@@ -1,7 +1,39 @@
+import tokensBundle from '@oods/tokens';
 import { getPatternV2ById, type ChartPatternV2, type LayoutStrategy } from './chart-patterns-v2.js';
 import type { SchemaIntent } from './suggest-chart.js';
 
 export type ResponsiveBreakpoint = 'mobile' | 'tablet' | 'desktop';
+
+function breakpointPx(key: 'sm' | 'md' | 'lg' | 'xl' | '2xl'): number {
+  const flat = (tokensBundle?.flatTokens ?? {}) as Record<string, { value?: unknown }>;
+  const value = flat[`sys-breakpoint-${key}`]?.value;
+  if (typeof value !== 'number') {
+    throw new Error(
+      `sys.breakpoint.${key} is missing from the @oods/tokens bundle — run \`pnpm build:tokens\`.`,
+    );
+  }
+  return value;
+}
+
+/**
+ * s173 m02 — what the three labels MEAN in pixels, taken from `sys.breakpoint.*`.
+ *
+ * The scorer is a pure trichotomy: until now 'mobile' / 'tablet' / 'desktop' were words with
+ * no width behind them anywhere in the repo, so a recipe could not be checked against the
+ * layout that would actually be rendered at that size. These are the band LOWER BOUNDS, read
+ * from the tokens rather than typed here, so the scorer's vocabulary and the CSS/Tailwind
+ * breakpoints cannot drift apart silently.
+ *
+ * TWO THINGS THIS IS NOT, stated so no one infers them later: `mobile: 0` is not a token —
+ * there is no breakpoint below `sm` and 0 is not pretending to be one; and NOTHING consumes
+ * this at runtime today. The scorer's consumers are one test and one story. It is a binding,
+ * not a behaviour change, and the recipes are byte-identical with or without it.
+ */
+export const RESPONSIVE_BREAKPOINT_MIN_PX: Record<ResponsiveBreakpoint, number> = {
+  mobile: 0,
+  tablet: breakpointPx('md'),
+  desktop: breakpointPx('xl'),
+};
 
 export type ResponsiveAction =
   | 'collapseLegend'

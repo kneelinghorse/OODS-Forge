@@ -4,6 +4,7 @@ import '../apps/explorer/src/styles/overlays.css';
 import '../apps/explorer/src/styles/index.css';
 import '../src/styles/globals.css';
 import type { Decorator, Preview } from '@storybook/react';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import React, { useEffect } from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -159,6 +160,41 @@ const preview: Preview = {
         'brand-b-dark': { globals: { theme: 'dark', brand: 'brand-b' } },
       },
     },
+    /**
+     * s173 m04 — REAL viewport presets, replacing hand-drawn boxes.
+     *
+     * Several stories used to "show a narrow viewport" by wrapping their content in a div of
+     * a fixed width. That is a picture of a narrow screen, not a narrow screen: the story
+     * still renders at the canvas width, `100vw` still means the canvas, and — the reason it
+     * matters for this sprint — a CONTAINER QUERY sees whatever the wrapper happens to be
+     * rather than the device. Storybook 9 resizes the canvas itself, so a preset changes the
+     * thing under test instead of drawing a frame around it.
+     *
+     * The set is deliberately small and named after this design system's own scale rather
+     * than after phones: `oods-mobile` and `oods-tablet` are sys.breakpoint-derived widths,
+     * so a story pinned to one of them is pinned to the same number the CSS collapses at.
+     * INITIAL_VIEWPORTS stays available for anyone who genuinely wants an iPhone.
+     */
+    viewport: {
+      options: {
+        ...INITIAL_VIEWPORTS,
+        'oods-mobile': {
+          name: 'OODS mobile (375)',
+          styles: { width: '375px', height: '812px' },
+          type: 'mobile',
+        },
+        'oods-tablet': {
+          name: 'OODS tablet (768 = sys.breakpoint.md)',
+          styles: { width: '768px', height: '1024px' },
+          type: 'tablet',
+        },
+        'oods-desktop': {
+          name: 'OODS desktop (1280 = sys.breakpoint.xl)',
+          styles: { width: '1280px', height: '800px' },
+          type: 'desktop',
+        },
+      },
+    },
   },
   globalTypes: {
     theme: {
@@ -201,6 +237,10 @@ const preview: Preview = {
   globals: {
     brand: initialBrand,
     theme: initialTheme,
+    // 'responsive' = the canvas follows its own size, which is Storybook's default and what
+    // every existing story (and every 1280 capture) already renders at. Stated explicitly so
+    // adding the presets above changes nothing for stories that do not opt in.
+    viewport: { value: 'responsive', isRotated: false },
   },
 };
 

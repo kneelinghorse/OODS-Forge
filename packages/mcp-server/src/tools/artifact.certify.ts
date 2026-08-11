@@ -201,10 +201,15 @@ const ECHARTS_CATEGORICAL_TRAITS: ReadonlySet<string> = new Set([
 //
 // bubble_map's ordinal-categorical color branch is still NOT graded, and s172 CHANGED THE
 // REASON. The s141 rationale had two halves: Derek's exempt-all-geo ruling, and the fact
-// that the range was invisible to certify (it lives in the geo DATA branch, outside this
-// metadata IR). s172 m01 removed the second half — certify takes the geo branch now, so the
-// range is reachable. The ruling stands on its own: grading it is a fresh scope decision,
-// not a defect to fix. The exempt note says exactly that.
+// that the encoding was invisible to certify (it lives in the geo DATA branch, outside this
+// metadata IR). s172 m01 removed the second half — certify takes the geo branch now, so
+// `colorField` and `colorScale` are readable. The ruling stands on its own: grading them is
+// a fresh scope decision, not a defect to fix. The exempt note says exactly that.
+//
+// s173 m01 corrects s172's word for it: the RANGE is not reachable on any path. The branch
+// carries no range field, so an ordinal bubble_map paints from the adapter's own
+// DEFAULT_COLOR_RANGE, cycled by index. What became visible is which field colours the
+// bubbles and which scale it renders on.
 const ECHARTS_GEO_EXEMPT_TRAITS: ReadonlySet<string> = new Set([
   'MarkChoropleth',
   'MarkFlow',
@@ -221,9 +226,16 @@ const ECHARTS_GEO_EXEMPT_TRAITS: ReadonlySet<string> = new Set([
 // pass; run against a metadata-only ECharts IR, R-03 hard-errors on the missing table, ~12
 // rules pass trivially, and R-09 fails any unnamed IR. Running it over the data operand
 // would therefore FLIP existing 'unchecked' verdicts to 'fail' — a verdict migration that
-// needs its own warn-first rollout (the s134→s135 precedent), deferred to s173.
+// needs its own warn-first rollout (the s134→s135 precedent), deferred to s174.
+//
+// RE-WORDED AGAIN in s173 m01 (defect 5 of the s172 review). The s172 text bought its
+// framing with a claim that was false in two directions: "determinism and accuracy ARE
+// checked for these types" is untrue with no operand at all, and untrue for accuracy even
+// WITH one — force_graph/bubble_map/flow_map offer no rule, and an offered rule whose
+// precondition is absent reports itself unevaluated. The conditions are now stated instead
+// of asserted away. The s173 date moved to s174 because the rollout did not land in s173.
 const echartsA11yNote = (trait: string): string =>
-  `${trait} is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the \`data\` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.`;
+  `${trait} is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism is checked whenever the \`data\` operand is supplied, and accuracy is evaluated only when the operand is supplied AND a rule offered for this chart type resolves it (three of the eight types offer none, and an offered rule whose precondition is absent reports itself unevaluated) — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s174). The accessible table + narrative are still generated; they are not equivalence-verified.`;
 
 /**
  * What the s172 operand contributed to an ECharts-primary verdict: the determinism pillar

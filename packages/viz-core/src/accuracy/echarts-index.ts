@@ -19,8 +19,13 @@
 //   - force_graph: its distortion candidates (node sizing, edge curvature, layout
 //     repulsion) are ADAPTER CONSTANTS, not authoring choices. There is nothing in the
 //     branch a caller could get wrong that the option would then misdraw.
-//   - bubble_map / flow_map: the branch expresses field NAMES, not scales — the distortion
-//     a size or width encoding could carry is not authorable through it.
+//   - bubble_map / flow_map: a SCOPE DECISION, corrected in s173 m01. The original wording
+//     here claimed the branch "expresses field names, not scales" so the distortions were
+//     not authorable — that is FALSE on both types: bubble_map's branch carries `colorScale`
+//     (including 'ordinal', whose palette CYCLES once the categories outnumber it, so two
+//     categories can be drawn the same hue), and flow_map's `strengthField` drives arc width
+//     through a continuous visualMap. Both distortions ARE authorable. No rule is offered
+//     for them YET — a recorded scope decision in the s141 pattern, not an impossibility.
 // For those three, `rulesEvaluated` is 0 and a note names the empty set, so an agent can
 // tell "we looked and offered nothing" apart from "we did not look".
 
@@ -95,7 +100,7 @@ const V159: EChartsAccuracyRule = {
   id: 'choropleth-join-conflict',
   code: 'OODS-V159',
   summary:
-    'Where a choropleth join matches several rows to one region, those rows agree on the joined value. Benign multiplicity (agreeing or duplicate rows) NEVER fires — one-to-many is supported; only CONFLICTING values fire, because then the shade is last-record-wins arbitrary.',
+    'Where a choropleth join matches several rows to one region, the rows that CARRY the value field agree on it. Benign multiplicity (agreeing rows, duplicate rows, or sparse rows that omit the field entirely — the merge spreads records, so an absent key cannot change the shade) NEVER fires — one-to-many is supported; only CONFLICTING carried values fire, because then the shade is last-record-wins arbitrary.',
   evaluate: evaluateChoroplethJoinConflict,
 };
 
@@ -129,7 +134,7 @@ export function emptyOfferedSetNote(chartType: EChartsAccuracyChartType): string
   const reason =
     chartType === 'force_graph'
       ? 'its distortion candidates (node sizing, edge curvature, layout repulsion) are adapter constants rather than authoring choices, so there is nothing in the data branch a caller could get wrong'
-      : 'the geo data branch expresses field names rather than scales, so the distortions a size or width encoding could carry are not authorable through it';
+      : 'no rule has been WRITTEN for its authorable distortions yet — a recorded scope decision, not a limit of the branch. bubble_map takes a colorScale (an ordinal palette CYCLES once the categories outnumber it, drawing two categories the same hue) and flow_map takes a strengthField that drives arc width, so both distortions are expressible here and a future rule could read them';
   return `No accuracy rule is offered for ${chartType}: ${reason}. rulesEvaluated is 0 because the offered set is empty, not because a rule failed to resolve its operand.`;
 }
 

@@ -87,8 +87,21 @@ export function evaluateChoroplethJoinConflict(operand: EChartsAccuracyOperand):
     if (!Array.isArray(matched) || matched.length < 2) {
       continue;
     }
-    const values = (matched as DataRecord[]).map((record) => record[valueField]);
-    if (!valuesConflict(values)) {
+    // Only records that actually CARRY the value field can decide the shade. The joiner
+    // merges matches by SPREADING each record over the accumulator
+    // (geo-data-joiner.ts: `(acc, record) => ({ ...acc, ...record })`), so a record that
+    // OMITS the key contributes nothing to the merged value — reading it as `undefined`
+    // and comparing it against a real value manufactured a conflict that the drawn map
+    // cannot have (s173 m01, defect 3: sparse rows, the shape a partial-coverage dataset
+    // has by construction).
+    //
+    // `in`, deliberately, NOT `!= null`: an explicit `valueField: null` IS spread, DOES
+    // overwrite the accumulator when it is last, and therefore still makes the shade
+    // order-dependent — it stays a conflict.
+    const values = (matched as DataRecord[])
+      .filter((record) => valueField in record)
+      .map((record) => record[valueField]);
+    if (values.length < 2 || !valuesConflict(values)) {
       continue;
     }
     const label = String(properties[join.featureProperty] ?? feature.id ?? 'unknown');

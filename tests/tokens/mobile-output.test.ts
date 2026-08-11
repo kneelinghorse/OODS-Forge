@@ -104,10 +104,15 @@ const bytesToHex = (bytes: number[]) =>
 const swiftChannels = (bytes: number[]) => bytes.map((byte) => (byte / 255).toFixed(3));
 
 describe('mobile output — census and shape', () => {
-  it('emits exactly 703 constants per file (771 − 54 easing − 14 font stacks), identical name sets', () => {
-    expect(flatEntries.length).toBe(771);
-    expect(swiftConstants.size).toBe(703);
-    expect(kotlinConstants.size).toBe(703);
+  // s173 m02: +5 exactly, on both the source census and both emitted files — the five
+  // sys.breakpoint tokens. They are $type number, so they are NOT dimensions and the
+  // per-class manifest counts below (27/24/18/105/174) are UNMOVED; a number emits a bare
+  // literal on every platform, which is why the deferral subtraction (54 easings + 14 font
+  // stacks) is also unmoved. If either of those moved, this file's other assertions red.
+  it('emits exactly 708 constants per file (776 − 54 easing − 14 font stacks), identical name sets', () => {
+    expect(flatEntries.length).toBe(776);
+    expect(swiftConstants.size).toBe(708);
+    expect(kotlinConstants.size).toBe(708);
     expect([...swiftConstants.keys()].sort()).toEqual([...kotlinConstants.keys()].sort());
   });
 

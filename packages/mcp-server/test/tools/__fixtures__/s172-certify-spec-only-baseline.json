@@ -116,7 +116,9 @@
       "accuracy": "unchecked"
     },
     "notes": [
-      "MarkTreemap is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified."
+      "MarkTreemap is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the `data` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.",
+      "Determinism is unchecked for MarkTreemap: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkTreemap: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
     ],
     "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
   },
@@ -132,7 +134,9 @@
       "accuracy": "unchecked"
     },
     "notes": [
-      "MarkSunburst is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified."
+      "MarkSunburst is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the `data` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.",
+      "Determinism is unchecked for MarkSunburst: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkSunburst: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
     ],
     "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
   },
@@ -148,7 +152,9 @@
       "accuracy": "unchecked"
     },
     "notes": [
-      "MarkSankey is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified."
+      "MarkSankey is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the `data` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.",
+      "Determinism is unchecked for MarkSankey: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkSankey: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
     ],
     "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
   },
@@ -164,7 +170,9 @@
       "accuracy": "unchecked"
     },
     "notes": [
-      "MarkGraph is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified."
+      "MarkGraph is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the `data` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.",
+      "Determinism is unchecked for MarkGraph: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkGraph: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
     ],
     "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
   },
@@ -180,7 +188,9 @@
       "accuracy": "unchecked"
     },
     "notes": [
-      "MarkChord is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified."
+      "MarkChord is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the `data` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.",
+      "Determinism is unchecked for MarkChord: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkChord: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
     ],
     "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
   },
@@ -196,9 +206,11 @@
       "accuracy": "unchecked"
     },
     "notes": [
-      "MarkChoropleth is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified."
+      "MarkChoropleth is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the `data` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.",
+      "Determinism is unchecked for MarkChoropleth: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkChoropleth: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
     ],
-    "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color lives in the geo data branch, outside this metadata IR, so it is not graded here. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
+    "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so the range is reachable — grading it would be a new scope decision, not a bug fix. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
   },
   "MarkBubble": {
     "status": "ok",
@@ -212,9 +224,11 @@
       "accuracy": "unchecked"
     },
     "notes": [
-      "MarkBubble is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified."
+      "MarkBubble is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the `data` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.",
+      "Determinism is unchecked for MarkBubble: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkBubble: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
     ],
-    "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color lives in the geo data branch, outside this metadata IR, so it is not graded here. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
+    "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so the range is reachable — grading it would be a new scope decision, not a bug fix. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
   },
   "MarkFlow": {
     "status": "ok",
@@ -228,8 +242,10 @@
       "accuracy": "unchecked"
     },
     "notes": [
-      "MarkFlow is an ECharts-primary mark; a11y-equivalence certification is cartesian-only (the Vega-Lite path). The accessible table + narrative are still generated but not equivalence-verified."
+      "MarkFlow is an ECharts-primary mark; a11y-equivalence stays unchecked here. Not because the chart cannot be checked — determinism and accuracy ARE checked for these types when the `data` operand is supplied — but because the equivalence engine has no per-rule not-applicable state, so running it over this input would turn absent preconditions into failures. That verdict migration is deferred to a warn-first rollout (s173). The accessible table + narrative are still generated; they are not equivalence-verified.",
+      "Determinism is unchecked for MarkFlow: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching `data` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.",
+      "Accuracy is unchecked for MarkFlow: the ECharts accuracy rules read the chart's own data, which an ECharts-primary IR does not carry. Supply the matching `data` branch and certify evaluates the rules offered for this chart type and reports rulesEvaluated."
     ],
-    "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color lives in the geo data branch, outside this metadata IR, so it is not graded here. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
+    "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so the range is reachable — grading it would be a new scope decision, not a bug fix. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
   }
 }
