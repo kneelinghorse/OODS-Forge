@@ -270,11 +270,17 @@ jobs:
       - name: Build tokens
         run: pnpm run build:tokens
 
+      # Query labels live: the event payload is frozen at trigger time, so a label
+      # applied after the push (and any re-run) would never be seen through it.
       - name: Collect PR labels
         id: labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          labels=$(jq -r '[.pull_request.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")
-          if [ "$labels" = "null" ]; then
+          if [ -n "$PR_NUMBER" ]; then
+            labels=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" --jq '[.[].name] | join(",")')
+          else
             labels=""
           fi
           echo "value=$labels" >> "$GITHUB_OUTPUT"
