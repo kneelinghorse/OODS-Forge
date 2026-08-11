@@ -55,7 +55,10 @@ async function main() {
   classification.tokensSummary = tokensSummary;
 
   if (options.apply) {
-    const resolvedBaseRef = await resolveBaseRef(classification.baseRef ?? 'main');
+    // s174 m02 — `main` is frozen (sprint-95) and PRs target OODS-pro. The reports carry
+    // their own baseRef now that the diff is always given one, so this fallback should never
+    // fire; when it does, it must name a branch that exists.
+    const resolvedBaseRef = await resolveBaseRef(classification.baseRef ?? 'origin/OODS-pro');
     const changedFiles = await gatherChangedFiles(resolvedBaseRef);
     const revertPlan = planReverts(classification.reverted, changedFiles);
     classification.revertPlan = revertPlan;
@@ -378,7 +381,10 @@ async function resolveBaseRef(ref) {
   if (ref && !ref.startsWith('origin/')) {
     candidates.push(`origin/${ref}`);
   }
-  candidates.push('origin/main');
+  // s174 m02 — the last-resort candidate was origin/main, which is frozen and would resolve
+  // to a tree nobody has merged into since sprint-95; a "successful" resolution to it is a
+  // wrong answer, not a safe one.
+  candidates.push('origin/OODS-pro');
 
   for (const candidate of dedupe(candidates)) {
     const result = await runGit(['rev-parse', '--verify', `${candidate}^{commit}`], {

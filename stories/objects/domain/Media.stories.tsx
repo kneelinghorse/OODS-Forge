@@ -14,6 +14,8 @@
  * 4. Upload Flow - File upload and processing demonstration
  */
 
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 

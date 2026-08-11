@@ -1,0 +1,14 @@
+{
+  "$comment": "s174 m04 — the EXACT-PIN ratchet for `pnpm build:stories` (tsc -p tsconfig.stories.json). This is the only type lens over stories/** and apps/explorer/**, and it had zero automated consumers, so its error count drifted unobserved. The ratchet reds when the count EXCEEDS this pin AND when it DROPS below it (with a 'lower the pin' message), so headroom cannot accumulate and every improvement is a commit. Re-measure with `node scripts/quality/build-stories-ratchet.mjs --print`; never copy a number from a memo.",
+  "errors": 138,
+  "measuredAt": "s174 m04 build HEAD, after the JSX-namespace sweep",
+  "history": [
+    "268 — the count s174 m04 first measured, before any fix",
+    "138 — after the mechanical JSX-namespace sweep (130 x TS2503, @types/react 19 stopped declaring a global JSX namespace; the 28 affected files now `import type { JSX } from 'react'`). Capture-safe by construction — a type-only import erases at compile — and proven so by a build-storybook index.json parity check, byte-identical pre and post."
+  ],
+  "remainingComposition": {
+    "mechanical": "42 TS6133 + 5 TS6196 unused symbols",
+    "semantic": "91 real drift errors in stories/** and apps/explorer/** (TS2322/TS2741/TS2352/TS2339/TS2739/TS7016/TS4104), including the explorer TimelinePage errors. PARKED behind this ratchet rather than fixed blind: several need fixture edits, and a fixture edit can move a Chromatic capture."
+  },
+  "acceptedLimitation": "A count ratchet cannot see an EQUAL-COUNT swap: fixing one error while introducing another leaves the count unchanged and passes. Stated rather than papered over — the ratchet's job is to stop drift in aggregate, not to identify individual errors."
+}

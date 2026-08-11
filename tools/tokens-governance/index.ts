@@ -155,7 +155,14 @@ interface GovernanceReport {
 
 interface CliOptions {
   command: Command;
-  baseRef: string;
+  /**
+   * s174 m02 — NO DEFAULT. This used to default to 'main', a branch frozen since sprint-95
+   * that does not exist in a PR checkout, so the diff resolved nothing, the subprocess died,
+   * and the caller reported green over zero reports. An unresolvable default is worse than
+   * no default: it makes a broken gate look like a passing one. Resolution now runs in
+   * runDiff — explicit --base, else origin/OODS-pro, else a throw that names the flag.
+   */
+  baseRef?: string;
   headRef: string;
   brand: string;
   jsonPath?: string;
@@ -249,7 +256,6 @@ function parseArgs(argv: string[]): CliOptions {
 
   const options: CliOptions = {
     command,
-    baseRef: 'main',
     headRef: 'HEAD',
     brand: '',
     labels: [],
@@ -321,8 +327,35 @@ function ensureValue(flag: string, value: string | undefined): asserts value {
   }
 }
 
+/**
+ * s174 m02 — resolve the base ref, fail-closed.
+ *
+ * Order: an explicit --base wins; otherwise the repo's real default branch, origin/OODS-pro;
+ * otherwise THROW naming the flag. There is deliberately no fallback that "works" without
+ * resolving — the whole vacuity this replaces came from a default ref that silently could not
+ * be resolved.
+ */
+const FALLBACK_BASE_REF = 'origin/OODS-pro';
+
+async function resolveBaseRef(explicit: string | undefined): Promise<string> {
+  if (explicit) {
+    return explicit;
+  }
+  try {
+    await execFile('git', ['rev-parse', '--verify', '--quiet', `${FALLBACK_BASE_REF}^{commit}`], {
+      cwd: PROJECT_ROOT,
+    });
+    return FALLBACK_BASE_REF;
+  } catch {
+    throw new Error(
+      `No --base given and ${FALLBACK_BASE_REF} does not resolve in this checkout. Pass --base <ref> explicitly (in CI, the merge-base of the PR base branch and HEAD).`,
+    );
+  }
+}
+
 async function runDiff(options: CliOptions): Promise<void> {
-  const { baseRef, headRef, brand } = options;
+  const { headRef, brand } = options;
+  const baseRef = await resolveBaseRef(options.baseRef);
 
   const [baseTokens, headTokens] = await Promise.all([
     loadFlatTokens(baseRef),

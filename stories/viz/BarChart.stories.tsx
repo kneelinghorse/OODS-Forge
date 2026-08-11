@@ -1,3 +1,5 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import { useMemo } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';

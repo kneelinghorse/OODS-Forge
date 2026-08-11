@@ -12,14 +12,37 @@ export interface VizA11yRuleResult {
   readonly severity: 'error' | 'warn';
   readonly passed: boolean;
   readonly message?: string;
+  /**
+   * s174 m01 — the TRI-STATE carrier. `passed` deliberately SURVIVES as a boolean (every
+   * existing `.passed` pin is a chartered non-mover); a rule whose declared positive
+   * precondition is absent reports `passed: true` PLUS `notApplicable: true`, so a reader
+   * that wants the third state has it and a reader that only knows `passed` is unmoved.
+   *
+   * A rule is not-applicable ONLY when a DECLARED precondition is absent — never on
+   * judgement. The declared preconditions are exactly the guard clauses that already
+   * short-circuited to a trivial pass before s174, which is why no boolean moves.
+   */
+  readonly notApplicable?: true;
+  /** Names the absent precondition, so "not-applicable" is never a bare assertion. */
+  readonly preconditionAbsent?: string;
 }
 
-interface RuleContext {
+/**
+ * The operand-derived evaluation context (s174 m01).
+ *
+ * The spec-shaped entry point below builds this from a NormalizedVizSpec, which is all a
+ * CARTESIAN chart needs — its data lives in the IR. An ECharts-primary IR is metadata-only
+ * by design, so its table/narrative/analysis can only be built from the `data` operand;
+ * that caller builds this context itself and hands it here.
+ */
+export interface VizEquivalenceContext {
   readonly spec: NormalizedVizSpec;
   readonly table: AccessibleTableResult;
   readonly narrative: NarrativeResult;
   readonly analysis: VizDataAnalysis;
 }
+
+type RuleContext = VizEquivalenceContext;
 
 interface RuleDefinition {
   readonly id: string;
@@ -31,14 +54,18 @@ interface RuleDefinition {
 interface RuleCheckResult {
   readonly passed: boolean;
   readonly message?: string;
+  readonly notApplicable?: true;
+  readonly preconditionAbsent?: string;
 }
 
-export function validateVizEquivalenceRules(spec: NormalizedVizSpec): VizA11yRuleResult[] {
-  const table = generateAccessibleTable(spec);
-  const narrative = generateNarrativeSummary(spec);
-  const analysis = table.analysis;
-  const context: RuleContext = { spec, table, narrative, analysis };
-
+/**
+ * Evaluate the 16 rules over an ALREADY-BUILT context (s174 m01).
+ *
+ * Extracted so the certify path can evaluate over an operand-built table + narrative
+ * without a NormalizedVizSpec that carries the data. The spec-shaped entry below is a thin
+ * wrapper over this, so the cartesian path runs the identical code it always did.
+ */
+export function validateVizEquivalenceRulesForContext(context: VizEquivalenceContext): VizA11yRuleResult[] {
   return RULES.map((rule) => {
     try {
       const result = rule.check(context);
@@ -48,6 +75,9 @@ export function validateVizEquivalenceRules(spec: NormalizedVizSpec): VizA11yRul
         severity: rule.severity,
         passed: result.passed,
         message: result.message,
+        ...(result.notApplicable
+          ? { notApplicable: true as const, preconditionAbsent: result.preconditionAbsent }
+          : {}),
       } satisfies VizA11yRuleResult;
     } catch (error) {
       return {
@@ -59,6 +89,13 @@ export function validateVizEquivalenceRules(spec: NormalizedVizSpec): VizA11yRul
       } satisfies VizA11yRuleResult;
     }
   });
+}
+
+export function validateVizEquivalenceRules(spec: NormalizedVizSpec): VizA11yRuleResult[] {
+  const table = generateAccessibleTable(spec);
+  const narrative = generateNarrativeSummary(spec);
+  const analysis = table.analysis;
+  return validateVizEquivalenceRulesForContext({ spec, table, narrative, analysis });
 }
 
 export function assertVizEquivalence(spec: NormalizedVizSpec): void {
@@ -78,7 +115,7 @@ const RULES: readonly RuleDefinition[] = [
     check: (context) => {
       const colorBinding = getEncodingBinding(context.spec, 'color');
       if (!colorBinding?.field) {
-        return pass();
+        return notApplicable('a color encoding bound to a field');
       }
       const redundantChannel = Boolean(getEncodingBinding(context.spec, 'shape') || getEncodingBinding(context.spec, 'detail'));
       const tableHasColor =
@@ -96,7 +133,7 @@ const RULES: readonly RuleDefinition[] = [
     check: (context) => {
       const sizeBinding = getEncodingBinding(context.spec, 'size');
       if (!sizeBinding) {
-        return pass();
+        return notApplicable('a size encoding binding');
       }
       const values = context.analysis.sizeValues;
       if (values.length < 2) {
@@ -131,7 +168,7 @@ const RULES: readonly RuleDefinition[] = [
     severity: 'error',
     check: (context) => {
       if (context.analysis.mark !== 'bar') {
-        return pass();
+        return notApplicable('a bar mark');
       }
       if (context.narrative.summary.length === 0) {
         return fail('Bar/column charts must include a narrative summary describing winners/laggards.');
@@ -149,6 +186,9 @@ const RULES: readonly RuleDefinition[] = [
     check: (context) => {
       const x = getEncodingBinding(context.spec, 'x');
       const y = getEncodingBinding(context.spec, 'y');
+      if (!x && !y) {
+        return notApplicable('an x or y positional encoding binding');
+      }
       const xLabeled = !x || Boolean(x.title && x.title.trim() !== '');
       const yLabeled = !y || Boolean(y.title && y.title.trim() !== '');
       if (xLabeled && yLabeled) {
@@ -163,7 +203,7 @@ const RULES: readonly RuleDefinition[] = [
     severity: 'error',
     check: (context) => {
       if (context.analysis.mark !== 'area') {
-        return pass();
+        return notApplicable('an area mark');
       }
       if (context.table.status !== 'ready') {
         return fail('Area/stacked charts must ship a table fallback covering the baseline range.');
@@ -218,7 +258,7 @@ const RULES: readonly RuleDefinition[] = [
     severity: 'error',
     check: (context) => {
       if (context.analysis.mark !== 'line' && context.analysis.mark !== 'area') {
-        return pass();
+        return notApplicable('a line or area mark');
       }
       if (context.narrative.summary.length === 0) {
         return fail('Provide a narrative summary for trend charts (line/area).');
@@ -232,7 +272,7 @@ const RULES: readonly RuleDefinition[] = [
     severity: 'warn',
     check: (context) => {
       if (context.analysis.rowCount < 3) {
-        return pass();
+        return notApplicable('at least 3 data rows');
       }
       if (context.narrative.keyFindings.length >= 2) {
         return pass();
@@ -246,15 +286,20 @@ const RULES: readonly RuleDefinition[] = [
     severity: 'error',
     check: (context) => {
       const bindings = ['x', 'y', 'color'] as const;
+      let boundFields = 0;
       for (const channel of bindings) {
         const binding = getEncodingBinding(context.spec, channel);
         if (!binding?.field) {
           continue;
         }
+        boundFields += 1;
         const missing = context.analysis.rows.some((row) => row[binding.field as keyof typeof row] === undefined);
         if (missing) {
           return fail(`Field "${binding.field}" used by ${channel} encoding is missing from one or more rows.`);
         }
+      }
+      if (boundFields === 0) {
+        return notApplicable('an x, y or color encoding bound to a field');
       }
       return pass();
     },
@@ -265,7 +310,7 @@ const RULES: readonly RuleDefinition[] = [
     severity: 'warn',
     check: (context) => {
       if (context.analysis.rowCount <= 12) {
-        return pass();
+        return notApplicable('more than 12 data rows');
       }
       if (context.narrative.keyFindings.length > 0) {
         return pass();
@@ -282,7 +327,7 @@ const RULES: readonly RuleDefinition[] = [
         return fail('Table fallback missing; cannot verify deterministic ordering.');
       }
       if (context.table.columns.length <= 2) {
-        return pass();
+        return notApplicable('a table with more than 2 columns');
       }
       const order = context.spec.portability?.tableColumnOrder ?? [];
       if (order.length > 0) {
@@ -314,7 +359,7 @@ const RULES: readonly RuleDefinition[] = [
       );
 
       if (!requiresNarrative) {
-        return pass();
+        return notApplicable('a filter or zoom interaction');
       }
 
       const summary = context.spec.a11y.narrative?.summary ?? '';
@@ -333,4 +378,15 @@ function pass(): RuleCheckResult {
 
 function fail(message: string): RuleCheckResult {
   return { passed: false, message };
+}
+
+/**
+ * s174 m01 — the rule's DECLARED positive precondition is absent, so it has nothing to
+ * judge. `passed` stays `true` (this is exactly the branch that returned `pass()` before
+ * s174, so no existing boolean moves); the two new fields carry the third state and NAME
+ * the missing precondition, which is what "not-applicable" has to mean if it is to be
+ * distinguishable from a meaningful pass.
+ */
+function notApplicable(precondition: string): RuleCheckResult {
+  return { passed: true, notApplicable: true, preconditionAbsent: precondition };
 }

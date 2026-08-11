@@ -22,7 +22,7 @@ This checklist codifies the renderer and layout performance lessons from Sprints
 | Interaction latency > 65 ms | Vega-Lite tooltip/highlight signals on large datasets | Switch to ECharts or reduce mark count via sampling. Configure `interactionPropagation` only when hover sync is required. | Benchmark scenario with `--renderers both --interactions highlight,tooltip`. |
 | Memory/payload bloat | Inline datasets inside layout sections without filters | Apply filters before layout mapping, or move to dataset references + transforms. Avoid spreading entire data arrays across each facet. | Inspect adapter output size in artifacts; target <200 KB per dashboard. |
 | Bundle impact warnings | Loading both Vega-Lite and ECharts unnecessarily | Run the renderer selector (`selectVizRenderer`) so components lazy-load only the winning adapter. Document why both are required if you override it. | CI budgets catch >25% regressions; attach diff to PR. |
-| Jank when resizing | Layout recalculations happening during React render | Use `useLayoutEffect` + `ResizeObserver` inside `<VizContainer>` (already implemented) and keep expensive calculations (binning, aggregation) outside render. | `pnpm vrt:layouts` for responsive coverage + browser profiling when needed. |
+| Jank when resizing | Layout recalculations happening during React render | Use `useLayoutEffect` + `ResizeObserver` inside `<VizContainer>` (already implemented) and keep expensive calculations (binning, aggregation) outside render. | Browser profiling. (`pnpm vrt:layouts` used to be named here for responsive coverage; it was retired in s174 — zero committed baselines, so it never compared anything.) |
 
 ## Renderer Threshold Reference
 

@@ -60,12 +60,15 @@ const DECLARED_NOTE_ADDITIONS: readonly string[] = [];
  * replacement must contain.
  */
 const DECLARED_NOTE_REWORDS: ReadonlyArray<{ baselineContains: string; nowContains: string }> = [
-  // s173 m01, defect 5(a) — the echartsA11yNote's blanket "determinism and accuracy ARE
-  // checked" claim was false on two paths (no operand at all; an offered rule whose
-  // precondition is absent). The reword states the real conditions.
+  // The echartsA11yNote slot, reworded a SECOND time — s173 m01 fixed the baseline's false
+  // "determinism and accuracy ARE checked" claim; s174 m01 replaces the whole note because
+  // the thing it described (a deferral) is over. The key still names the e5bf2f6 BASELINE
+  // fragment (the baseline fixture is exempt from the sprint's prose sweep and is not
+  // rebased), and the value now names the warn-first wording. Same slot, same count: this is
+  // still a reword, not an addition.
   {
     baselineContains: 'determinism and accuracy ARE checked for these types when the `data` operand is supplied',
-    nowContains: 'accuracy is evaluated only when the operand is supplied AND a rule offered for this chart type resolves it',
+    nowContains: 'A11y-equivalence runs WARN-FIRST here',
   },
 ];
 

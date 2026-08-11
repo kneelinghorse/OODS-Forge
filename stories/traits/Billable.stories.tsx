@@ -15,6 +15,8 @@
  * 4. How It Works - Schema fields and currency handling
  */
 
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 

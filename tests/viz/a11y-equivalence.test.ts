@@ -41,8 +41,13 @@ describe('Viz accessibility suite', () => {
     expect(narrative.keyFindings.length).toBeGreaterThan(0);
   });
 
-  it('passes all 15 equivalence rules for the reference spec', () => {
+  // s174 m01: the count was stale — the engine has had 16 rules since s149. The assertion
+  // itself is unchanged (and is a chartered NON-mover: `passed` stays a boolean, and a rule
+  // whose declared precondition is absent still reports passed:true, now alongside
+  // notApplicable:true).
+  it('passes all 16 equivalence rules for the reference spec', () => {
     const results = validateVizEquivalenceRules(createBarChartSpec());
+    expect(results).toHaveLength(16);
     expect(results.every((result) => result.passed)).toBe(true);
   });
 
