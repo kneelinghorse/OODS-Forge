@@ -44,17 +44,44 @@ jobs:
       - name: Build tokens package
         run: pnpm run build:tokens
 
-      - name: Run token assessment
-        run: node scripts/state-assessment.mjs --tokens
-
+      # Query labels LIVE (s173 review; ci.yml got this first). The event payload is frozen
+      # at trigger time, so a label applied after the push — and any re-run of this job — would
+      # never see it through $GITHUB_EVENT_PATH.
+      #
+      # s174 m02 moved this ABOVE the assessment step. It has to run first now: the assessment
+      # threads PR_LABELS into the governance diff, so the subprocess's own exit code and
+      # enforce.mjs's verdict are computed over the SAME label list instead of disagreeing.
       - name: Collect PR labels
         id: labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          labels=$(jq -r '[.pull_request.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")
-          if [ "$labels" = "null" ]; then
+          if [ -n "$PR_NUMBER" ]; then
+            labels=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" --jq '[.[].name] | join(",")')
+          else
             labels=""
           fi
           echo "value=$labels" >> "$GITHUB_OUTPUT"
+
+      # s174 m02 — the refs the gate was missing. With none, tokens-governance fell back to a
+      # 'main' branch frozen since sprint-95 that does not exist in this checkout: the diff
+      # died, wrote no report, and enforcement passed over nothing. merge-base (not the base
+      # tip) so the comparison stays correct when the base branch advances mid-PR.
+      - name: Resolve token-governance base ref
+        run: |
+          if [ -n "$GITHUB_BASE_REF" ]; then
+            base=$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)
+            echo "TOKEN_GOV_BASE_REF=$base" >> "$GITHUB_ENV"
+            echo "Token governance diffs against $base (merge-base of origin/$GITHUB_BASE_REF and HEAD)."
+          else
+            echo "No GITHUB_BASE_REF on this event — the tokens leg will report a NAMED SKIP."
+          fi
+
+      - name: Run token assessment
+        env:
+          PR_LABELS: ${{ steps.labels.outputs.value }}
+        run: node scripts/state-assessment.mjs --tokens
 
       - name: Generate triage snapshot
         run: node scripts/gov/triage.mjs --report artifacts/gov/ci-triage.md --reverts artifacts/gov/reverts.diff

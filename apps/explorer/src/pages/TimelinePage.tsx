@@ -1,3 +1,5 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import '../styles/index.css';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { DateTime } from 'luxon';

@@ -15,10 +15,6 @@ import {
   adaptSankeyToECharts,
   adaptSunburstToECharts,
   adaptTreemapToECharts,
-  analyzeHierarchy,
-  analyzeNetwork,
-  analyzeSankey,
-  analyzeSpatial,
   buildFromIntent,
   buildVizSpecFromRows,
   convertToEChartsTreeData,
@@ -36,9 +32,7 @@ import {
   type NetworkInput,
   type NormalizedVizSpec,
   type SankeyInput,
-  type SpatialFeatureRow,
   type StructuredIntent,
-  type VizDataAnalysis,
 } from '@oods/viz-core';
 import { canonicalize, sha256 } from '@oods/artifacts';
 import { isHexColor } from '@oods/a11y-tools';
@@ -53,7 +47,8 @@ import {
 // sprint-172 m01 so artifact.certify drives the SAME builder and the SAME V147 check
 // (see each file's header). viz.render's behaviour is unchanged by the lift — its geo
 // goldens are the proof.
-import { renderGeoOption, type GeoBranch, type GeoChartType } from './echarts-geo-option.js';
+import { renderGeoOption, type GeoBranch } from './echarts-geo-option.js';
+import { buildEChartsA11yContext } from './echarts-a11y-analysis.js';
 import { danglingLinkError, findDuplicateLinks, type LinkRef } from './echarts-link-integrity.js';
 import { createValueRef, describeSchemaRef, resolveValueRef } from './schema-ref.js';
 import { absentFields, referencedEncodingFields } from './field-presence.js';
@@ -703,20 +698,12 @@ function renderEChartsPrimary(
       // (FD#10): treemap/sunburst via analyzeHierarchy, sankey/chord via
       // analyzeSankey, force_graph via analyzeNetwork, geo via analyzeSpatial —
       // routed through the SAME generators every type uses.
-      const { analysis, measureLabel } = analyzeEChartsPrimary(chartType, branchData);
-      out.a11y = toWireA11y(
-        generateAccessibleTable({
-          analysis,
-          ...(spec.name ? { caption: `Data table for ${spec.name}` } : {}),
-          id: spec.id,
-        }),
-        generateNarrativeSummary({
-          analysis,
-          chartLabel: spec.name ?? config.label,
-          ...(measureLabel ? { measureLabel } : {}),
-          fallbackSummary: spec.a11y.description,
-        }),
-      );
+      //
+      // LIFTED to ./echarts-a11y-analysis.ts in s174 m01 so artifact.certify evaluates the
+      // 16-rule engine over the SAME operand-built table + narrative. viz.render's output is
+      // unchanged by the lift — its fidelity snapshots are the proof.
+      const { table, narrative } = buildEChartsA11yContext(spec, chartType, branchData);
+      out.a11y = toWireA11y(table, narrative);
     }
 
     if (includeNormalized) {
@@ -810,49 +797,6 @@ function toWireA11y(table: AccessibleTableResult, narrative: NarrativeResult): W
     };
   }
   return wire;
-}
-
-function analyzeEChartsPrimary(
-  chartType: EChartsPrimaryType,
-  branchData: unknown,
-): { analysis: VizDataAnalysis; measureLabel?: string } {
-  switch (chartType) {
-    case 'treemap':
-    case 'sunburst':
-      return { analysis: analyzeHierarchy(branchData as HierarchyInput), measureLabel: 'Value' };
-    case 'sankey':
-    case 'chord':
-      return { analysis: analyzeSankey(branchData as SankeyInput), measureLabel: 'Flow' };
-    case 'force_graph':
-      return { analysis: analyzeNetwork(branchData as NetworkInput), measureLabel: 'Connections' };
-    default:
-      return analyzeGeoForA11y(chartType, branchData as GeoBranch);
-  }
-}
-
-// Geo a11y: the bound `rows` ARE the per-feature data (one row per region / point /
-// flow); map them to the SpatialFeatureRow shape analyzeSpatial consumes, using the
-// per-type metric as the measure and the join key (or a `name` field) as the label.
-function analyzeGeoForA11y(
-  chartType: GeoChartType,
-  geo: GeoBranch,
-): { analysis: VizDataAnalysis; measureLabel?: string } {
-  const rows = (geo.rows ?? []) as Array<Record<string, unknown>>;
-  const valueField =
-    chartType === 'choropleth'
-      ? geo.valueField
-      : chartType === 'bubble_map'
-        ? geo.sizeField ?? geo.colorField
-        : geo.strengthField;
-  const labelField = geo.join?.dataKey;
-  const features: SpatialFeatureRow[] = rows.map((row, index) => {
-    const label = (labelField ? row[labelField] : undefined) ?? row.name ?? `Feature ${index + 1}`;
-    return { id: String(label), featureLabel: String(label), values: row };
-  });
-  return {
-    analysis: analyzeSpatial({ features, ...(valueField ? { valueField } : {}) }),
-    ...(valueField ? { measureLabel: valueField } : {}),
-  };
 }
 
 // Count of hierarchy nodes bound into the chart (surfaced as meta.rowCount — the

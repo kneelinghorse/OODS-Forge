@@ -145,6 +145,14 @@ jobs:
       - name: Type check viz-core (re-export surface gate)
         run: pnpm --filter @oods/viz-core run typecheck
 
+      # s174 m04 — build:stories is the ONLY type lens over stories/** and apps/explorer/**,
+      # and until now nothing ran it: 268 errors had accumulated unobserved, including real
+      # explorer drift that was invisible-to-green. It is wired as a STEP on this existing job
+      # rather than a new one (13 jobs stay 13). The pin is exact in both directions — a drop
+      # below it reds with "lower the pin", so headroom cannot silently accumulate.
+      - name: build:stories type ratchet
+        run: node scripts/quality/build-stories-ratchet.mjs
+
   tenancy:
     name: tenancy-matrix
     runs-on: ubuntu-latest
@@ -356,6 +364,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # s174 m02 — this job is state-assessment's SECOND caller (`--guardrails --tokens`),
+          # and it ran under the default depth-1 checkout where no base ref could ever resolve.
+          # Un-vacuating the tokens leg without this would have made the job permanently red.
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -374,7 +387,36 @@ jobs:
       - name: Build tokens
         run: pnpm run build:tokens
 
+      # s174 m02 — the same two inputs the tokens-governance job threads, for the same reason:
+      # this job's `--tokens` leg runs the identical governance diff, and without a base ref it
+      # was diffing nothing while reporting green. Labels are queried live so a label applied
+      # after the push (or a re-run) is seen.
+      - name: Collect PR labels
+        id: labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            labels=$(gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" --jq '[.[].name] | join(",")')
+          else
+            labels=""
+          fi
+          echo "value=$labels" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve token-governance base ref
+        run: |
+          if [ -n "$GITHUB_BASE_REF" ]; then
+            base=$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)
+            echo "TOKEN_GOV_BASE_REF=$base" >> "$GITHUB_ENV"
+            echo "Token governance diffs against $base (merge-base of origin/$GITHUB_BASE_REF and HEAD)."
+          else
+            echo "No GITHUB_BASE_REF on this event — the tokens leg will report a NAMED SKIP."
+          fi
+
       - name: Run guardrail snapshots
+        env:
+          PR_LABELS: ${{ steps.labels.outputs.value }}
         run: node scripts/state-assessment.mjs --guardrails --tokens
 
       - name: Upload guardrail artifacts
@@ -452,11 +494,18 @@ jobs:
       # the specs need. It builds `storybook-static` (step above) and installs Chromium (step
       # above), which is also why the a11y contract can serve the static build on an ephemeral
       # port. A separate job would repeat a ~16s build and a browser install for three spec
-      # files. 15 jobs stay 15.
+      # files. (s174 m03 corrects the count this comment carried: the workflow has 13 jobs,
+      # not 15, and s174 adds none.)
       #
-      # The specs are behavioural only — computed layout, focus, Esc, axe with the drawer OPEN
-      # — so there are no screenshots to store and no baselines to drift.
-      - name: Mobile behavioural guardrails (375 + 768)
+      # s174 m03 adds the DESKTOP project to the same leg. The two surviving desktop specs
+      # (form.accessibility, toast) had been red since the 2025-12-03 title reorg and nobody
+      # noticed, because no CI job ran that project at all. A fix with no runner would just
+      # rot again on the next rename.
+      #
+      # Both legs are behavioural only — computed layout, focus, Esc, axe with the drawer OPEN,
+      # aria-describedby wiring, toast focus restoration — so there are no screenshots to store
+      # and no baselines to drift.
+      - name: Mobile + desktop behavioural guardrails (375 + 768 + 1280)
         run: |
           # python3 + curl rather than `npx http-server`/`npx wait-on`: neither is a
           # dependency here, so npx would fetch them from the network on every run. Both of
@@ -468,6 +517,7 @@ jobs:
           done
           curl -sf http://127.0.0.1:6006/index.json > /dev/null
           STORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6006 pnpm run vrt:mobile
+          STORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6006 pnpm run vrt:desktop
 
       - name: Upload accessibility report
         if: always()

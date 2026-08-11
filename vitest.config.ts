@@ -2,7 +2,6 @@
 import { defineConfig } from 'vitest/config';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 const complianceOnly = process.argv.some(arg => /tests\/compliance/.test(arg));
@@ -13,7 +12,6 @@ const complianceCoverageInclude = [
   'scripts/compliance/**/*.{ts,tsx}',
 ];
 
-// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const srcDir = path.join(dirname, 'src');
 
 export default defineConfig({
@@ -61,27 +59,22 @@ export default defineConfig({
         statements: 70
       }
     },
+    // s174 m04 — the `storybook` project was REMOVED here, together with the storybookTest
+    // plugin import, the '@storybook/addon-vitest' entry in storybook.config.ts, the
+    // devDependency, and .storybook/vitest.setup.ts.
+    //
+    // It matched ZERO files: its globs were absolute paths the `./`-remap never fired on, so
+    // `vitest list --project=storybook` returned no tests — while ci.yml's coverage job ran it
+    // and reported green, and never installed the browsers it declares. Vacuous CI coverage is
+    // worse than none; it reads as "the stories render" to anyone scanning the job list.
+    //
+    // What is NOT lost: there are zero play functions across the 118-story-file / 402-export
+    // corpus, so the project could not have exercised an interaction even had its globs
+    // matched. Render coverage lives in build-storybook (which fails on a story that throws),
+    // Chromatic, and the a11y contract. Fixing the globs and burning the project in was
+    // DECLINED for s174 and routed to Derek as a deliberate interaction-testing decision;
+    // re-adding it later re-pays the CI browser wiring, which is the honest cost of that call.
     projects: [{
-      extends: true,
-      plugins: [
-      // The plugin will run tests for the stories defined in your Storybook config
-      // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
-      storybookTest({
-        configDir: path.join(dirname, '.storybook')
-      })],
-      test: {
-        name: 'storybook',
-        browser: {
-          enabled: true,
-          headless: true,
-          provider: 'playwright',
-          instances: [{
-            browser: 'chromium'
-          }]
-        },
-        setupFiles: ['.storybook/vitest.setup.ts']
-      }
-    }, {
       // A11y/JSdom tests (non-storybook)
       extends: true,
       test: {

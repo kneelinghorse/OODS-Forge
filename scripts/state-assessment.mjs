@@ -170,6 +170,18 @@ async function main() {
   );
 
   printConsoleSummary(assessment);
+
+  // s174 m02 — the ONE nonzero-exit path other than a thrown error. A check that failed
+  // CLOSED (it was given refs and could not produce the artifact it exists to produce) must
+  // red the job; before s174 the sole nonzero exit was main().catch, which is why a
+  // governance leg that produced no reports at all still left CI green.
+  const failedClosed = checkResults.filter((check) => check.failClosed);
+  if (failedClosed.length > 0) {
+    console.error(
+      `\nFAIL-CLOSED: ${failedClosed.map((check) => check.id).join(', ')} could not complete a check it was given the inputs for.`,
+    );
+    process.exitCode = 1;
+  }
 }
 
 /**
@@ -1316,9 +1328,32 @@ async function runTokenGovernanceCheck(context) {
   await fs.mkdir(governanceDir, { recursive: true });
   const brandReports = {};
 
+  // s174 m02 — THE REFS, and the fail-closed rule scoped to them.
+  //
+  // Before s174 this invoked the diff with NO refs at all, so the tool fell back to its
+  // 'main' default — a branch frozen since sprint-95 that does not exist in a PR checkout.
+  // The subprocess exited 1 with no report written, and this leg went on reporting GREEN
+  // because nothing here read the exit code and enforce.mjs then passed over zero reports.
+  // Every layer was individually "fine" and the gate was mechanically vacuous.
+  //
+  // TOKEN_GOV_BASE_REF is supplied by BOTH CI callers (token-governance.yml and ci.yml's
+  // guardrails job) as the merge-base of the PR base branch and HEAD. PR_LABELS is threaded
+  // in the same breath so the subprocess's own exit code agrees with enforce.mjs's verdict
+  // instead of being computed over an empty label list.
+  const baseRef = (process.env.TOKEN_GOV_BASE_REF ?? '').trim();
+  const headRef = (process.env.TOKEN_GOV_HEAD_REF ?? '').trim() || 'HEAD';
+  const prLabels = (process.env.PR_LABELS ?? '').trim();
+  let failClosed = false;
+
   for (const brand of ['A', 'B']) {
     const outputPath = path.join(governanceDir, `brand-${brand}.json`);
     const args = ['run', 'tokens:governance', '--', 'diff', '--brand', brand, '--json', outputPath];
+    if (baseRef) {
+      args.push('--base', baseRef, '--head', headRef);
+      if (prLabels) {
+        args.push('--labels', prLabels);
+      }
+    }
     const result = await runProcess(context.pnpmCmd, args, { cwd: context.repoRoot });
     const report = await readJsonIfExists(outputPath);
     if (report) {
@@ -1329,6 +1364,29 @@ async function runTokenGovernanceCheck(context) {
     if (result.exitCode !== 0) {
       rationale.push(`tokens:governance diff for brand ${brand} failed — see console output.`);
     }
+    // FAIL-CLOSED, scoped to provided refs: once a base ref exists, a nonzero exit or a
+    // missing report is a RED with a nonzero process exit, never a rationale line nobody
+    // reads. Without refs the skip above already says the diff did not happen.
+    if (baseRef && (result.exitCode !== 0 || !report)) {
+      failClosed = true;
+      rationale.push(
+        `Token governance FAILED CLOSED for brand ${brand}: diff exited ${result.exitCode}${report ? '' : ' and wrote no report'} against base ${baseRef}.`,
+      );
+    }
+  }
+
+  // NAMING WHAT ACTUALLY HAPPENED when the caller supplied no ref. tokens-governance has its
+  // own fallback (origin/OODS-pro) as of s174 m02, so "no TOKEN_GOV_BASE_REF" does not always
+  // mean "nothing was diffed" — it means nothing measured a PR DELTA. Both cases are named
+  // out loud, because a green here must never read as "diffed the change and found nothing".
+  const effectiveBaseRefs = [...new Set(Object.values(brandReports).map((report) => report?.baseRef).filter(Boolean))];
+  if (!baseRef) {
+    const skipNote =
+      effectiveBaseRefs.length > 0
+        ? `Token governance measured NO PR DELTA: no TOKEN_GOV_BASE_REF was supplied, so tokens-governance fell back to its own default base (${effectiveBaseRefs.join(', ')}). Supply the ref to diff an actual change set.`
+        : 'Token governance diff SKIPPED: no TOKEN_GOV_BASE_REF was supplied and no brand report was produced — nothing was diffed. This is a SKIP, not a clean result.';
+    rationale.push(skipNote);
+    console.warn(`[tokens] ${skipNote}`);
   }
 
   const purityResult = await runProcess(context.nodeCmd, [path.join(context.repoRoot, 'scripts', 'purity', 'audit.js')], {
@@ -1359,14 +1417,18 @@ async function runTokenGovernanceCheck(context) {
   }
 
   let status = 'GREEN';
-  if (purityViolations.length > 0 || highRisk > 0 || requiresBreaking) {
+  if (failClosed || purityViolations.length > 0 || highRisk > 0 || requiresBreaking) {
     status = 'RED';
   } else if (leaks > 0 || orphans > 0) {
     status = 'YELLOW';
   }
 
   if (status === 'GREEN') {
-    rationale.push('No high-risk token changes, leaks, or CSS literals detected.');
+    rationale.push(
+      `No high-risk token changes, leaks, or CSS literals detected against base ${
+        baseRef || effectiveBaseRefs.join(', ') || '(none — nothing was diffed)'
+      }.`,
+    );
   }
 
   const keyMetric = `High-risk token deltas: ${highRisk} | CSS literals: ${purityViolations.length}`;
@@ -1428,8 +1490,15 @@ async function runTokenGovernanceCheck(context) {
       highRisk,
       leaks,
       orphans,
-      purityViolations
+      purityViolations,
+      baseRef: baseRef || effectiveBaseRefs.join(',') || null,
+      baseRefSuppliedByCaller: Boolean(baseRef),
+      measuredPrDelta: Boolean(baseRef)
     },
+    // s174 m02 — the one flag main() turns into a nonzero process exit. Only a fail-closed
+    // condition sets it; a RED from real findings still reports through the normal channel,
+    // because those are the gate WORKING and CI reads them from enforce.mjs.
+    failClosed,
     rationale,
     evidence
   };

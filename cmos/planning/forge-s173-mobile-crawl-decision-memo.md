@@ -111,3 +111,33 @@ Reproduce: both compile gates + red-fixture by FULL literal · the five-SHA conf
 ## §6 Critic dispositions (wf_e6c3a4bf-e47: REJECTED v1 on 5/5 lenses)
 
 **B1 (×3 lenses)** Breadcrumbs wrapper-fake is vrt-critical → the desktop byte-identity control was violated by m04's own charter (s172-B1 archetype) → capture comparison re-scoped with the two images DECLARED + diff-reviewed; control mechanism additionally validated in m03 (injection fix + twice-run experiment) after the lens-3 finding that addStyleTag never survives page.goto. **B2** root screens wiring: explorer "precedent" is dead code and a config calling import.meta.resolve cannot load under jiti (rule-19 re-measured: the failure requires the CALL — v1's grounding repro was too weak) → explicit createRequire mechanism + throw-on-missing + ascending order + loadConfig test; explorer config dispositioned dead. **B3/B4** both v1 replacement prose texts were themselves false (no-operand path; ordinal-cycling authorability) → chartered wording rewritten to the conditional/scope-decision forms in §1d. **B5** the schema source (output.json :96/:115 → generated.ts → docs/api) was the unnamed ROOT mover for the s173-date and range-reachable prose → added to §1d/§3. Majors: swiftc literal needs `-target` (verified: flagless exits 1 on any input — cannot discriminate) → full literals quoted · m04 had zero §5 items → added incl. the scratch-tree discrimination probe · standing rules A/B had no chartered home → m05 append + §5 count check · echarts-rules.spec.ts:473-474 was the missing guaranteed pin → enumerated · policy.json mistargeted for defect 5 (grep 0) → carrier sets corrected · defect 2 was never named → folded into the option-(a) fix + §7 · explorer DetailPage has no contextPanel (hand-rolled, outside the view system) → dropped from m03, §4 entry · testMatch scoping was one-directional → symmetric testIgnore chartered · recapture would RED the unrebased spec → recapture-first sequence + spec rebase chartered · keep-in-step was vacuous at m02 (operand exists only after m03) → two-stage test (fixture discrimination in m02; real-literal leg + re-proof in m03) · governance base ref not re-derivable after main moves → base SHA recorded. Minors: 382 lines · tokens.css :294-296 + guidance template named · tailwind 3.4.18 · TWO no-op viewport params (both removed) · auto-layout :36/:50 · ~37/~23 census · axe drawer-OPEN · §5 coverage holes (reconnect/scorer/containment/census-disambiguation) added.
+
+---
+
+## §7 Dated correction (appended 2026-08-11 by s174 m03)
+
+**The s173 disclosure of the desktop VRT state was an understatement, and this is the corrected measurement.**
+
+s173 recorded ONE red desktop VRT spec among the pre-existing reds it carried forward. The number came from running the one spec that had been looked at (the form spec), not from running the project. Measured at s173's own final HEAD `1a42515`, in a detached worktree, against the committed `storybook-static`, by literal invocation:
+
+```
+STORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6099 \
+  pnpm exec playwright test --config <worktree>/testkits/vrt/playwright.config.ts --project=chromium
+→ Running 19 tests using 4 workers
+  15 failed
+  4 did not run
+  exit 1
+```
+
+**All four desktop spec files were red**, not one:
+
+| spec | why |
+| --- | --- |
+| `forms/form.accessibility.spec.ts` | hard-coded story id `forms-text-field--form-example`, extinct since the 2025-12-03 title reorg |
+| `statusables/toast.spec.ts` | hard-coded story id `statusables-toast--default`, same reorg |
+| `hc/brand-a.spec.ts` | eight `BrandA/*` titles, **zero** of which exist in the story index; also a screenshot spec with no committed baseline |
+| `viz/layout.visual.spec.ts` | screenshot spec, no committed baseline has ever existed — every run is missing-snapshot |
+
+The root cause of the understatement is the same thing s174 m03 fixes: **no CI job ran any desktop VRT project**, so the state was only ever sampled by hand. s174 m03 fixes the two resolvable specs through the story index, retires the two that compare nothing, and rides the surviving desktop project on the a11y-contract job's existing static-server leg so the project is measured on every PR rather than sampled.
+
+Retained for the record: this correction changes s173's *disclosure*, not its verdict. Nothing s173 shipped depended on the desktop VRT project, which is precisely why an unrun project could sit red across sprints without anyone tripping over it.

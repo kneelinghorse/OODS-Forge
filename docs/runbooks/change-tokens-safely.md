@@ -16,8 +16,12 @@
 ```bash
 pnpm build:tokens
 pnpm tokens-validate
-# Optional for PR guardrails or protected namespaces
-pnpm tokens:governance diff --brand A --base main --head HEAD \
+# Optional for PR guardrails or protected namespaces.
+# --base takes a REF, not a branch name you hope exists: `main` is frozen (sprint-95) and
+# PRs target OODS-pro. Omit --base and the tool resolves origin/OODS-pro, or throws naming
+# the flag — it will not silently diff against nothing. In CI both callers pass the
+# merge-base of the PR base branch and HEAD.
+pnpm tokens:governance diff --brand A --base origin/OODS-pro --head HEAD \
   --json artifacts/tokens/brand-a-report.json \
   --comment artifacts/tokens/brand-a-comment.md
 ```

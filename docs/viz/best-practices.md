@@ -41,7 +41,7 @@ The Sprint 21-23 visualization missions produced 24 deliverables spanning traits
 2. Choose the smallest layout that tells the story-facet before concat.
 3. Declare `sharedScales` per channel, even when defaulting to shared, so adapters enforce intent.
 4. Capture interaction requirements (`syncHover`, `filter`, `brush`) in the layout trait so the adapter can wire propagation plans.
-5. Run the responsive VRT pass (`pnpm vrt:layouts`) when a layout uses more than four panels.
+5. Check a layout with more than four panels by eye in Storybook. The responsive VRT pass this step used to name (`pnpm vrt:layouts`) was retired in s174 — it had never had a committed baseline, so every run was nine missing-snapshot failures and it compared nothing.
 
 ## Performance & Renderer Strategy
 

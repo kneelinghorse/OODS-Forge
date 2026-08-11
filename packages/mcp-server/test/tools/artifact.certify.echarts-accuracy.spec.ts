@@ -14,6 +14,8 @@ import { handle as certify } from '../../src/tools/artifact.certify.js';
 import { handle as vizRender } from '../../src/tools/viz.render.js';
 import { ECHARTS_OPERAND_CASES, renderInputFor, US_STATES } from './s172-echarts-operands.js';
 import { echartsPrimaryIr } from './s172-spec-only-cases.js';
+import { a11yFindingsOf, RENDERED_IR_A11Y_FINDINGS } from './s174-a11y-warnfirst-expectations.js';
+import type { EChartsPrimaryType } from '../../src/tools/echarts-primary.js';
 
 const outputSchema = JSON.parse(
   readFileSync(new URL('../../src/schemas/artifact.certify.output.json', import.meta.url), 'utf8'),
@@ -47,7 +49,16 @@ describe('artifact.certify — the ECharts accuracy pillar is wired (s172 m03)',
       expect(out.accuracySummary?.rulesEvaluated).toBe(expected);
       expect(out.accuracySummary?.failing).toBe(0);
       expect(out.pillars?.accuracy).toBe(expected > 0 ? 'pass' : 'unchecked');
-      expect(out.findings).toEqual([]);
+      // DECLARED MOVER (s174 m01). The clean-operand verdict carries ZERO accuracy findings
+      // — the claim this line was making — but findings[] is no longer accuracy-only: the
+      // warn-first a11y engine now writes into it. Both halves are pinned exactly.
+      expect((out.findings ?? []).filter((f) => /^OODS-V15\d$/.test(f.code))).toEqual([]);
+      expect(a11yFindingsOf(out.findings)).toEqual(
+        RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType],
+      );
+      expect((out.findings ?? []).length).toBe(
+        RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType].length,
+      );
       expect(validateOutput(out)).toBe(true);
     },
   );

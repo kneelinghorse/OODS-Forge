@@ -20,6 +20,8 @@
  * Research: R20.1 Canonical Notification Model, R20.6 Message Systems Analysis
  */
 
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 

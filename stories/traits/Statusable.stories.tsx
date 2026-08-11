@@ -10,6 +10,8 @@
  * 3. How It Works - How does the system produce this?
  */
 
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge } from '../../src/components/base/Badge.js';

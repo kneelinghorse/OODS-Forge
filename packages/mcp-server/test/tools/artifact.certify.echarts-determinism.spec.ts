@@ -25,6 +25,8 @@ import {
   renderInputFor,
   type EChartsOperandCase,
 } from './s172-echarts-operands.js';
+import { RENDERED_IR_A11Y_FINDINGS } from './s174-a11y-warnfirst-expectations.js';
+import type { EChartsPrimaryType } from '../../src/tools/echarts-primary.js';
 
 const outputSchema = JSON.parse(
   readFileSync(new URL('../../src/schemas/artifact.certify.output.json', import.meta.url), 'utf8'),
@@ -89,16 +91,24 @@ describe('artifact.certify — the ECharts determinism verdict SHAPE (s172 m02)'
       // determinism, it does not turn these into certified charts.
       expect(certified.coverage).toBe('uncertified');
       expect(certified.conformant).toBeNull();
-      expect(certified.findings).toEqual([]);
+      // DECLARED MOVER (s174 m01). This pinned `[]`, which was only ever true because the
+      // a11y-equivalence engine did not run on this path. Warn-first runs it, so the lock is
+      // TIGHTENED to the exact matrix-derived set rather than loosened: findings[] is still
+      // fully pinned, it just now says which rules fire and at what severity.
+      expect(certified.findings?.map((f) => ({ code: f.code, severity: f.severity }))).toEqual(
+        RENDERED_IR_A11Y_FINDINGS[operand.chartType as EChartsPrimaryType],
+      );
       expect(certified.pillars).toEqual({
         a11yEquivalence: 'unchecked',
         determinism: 'pass',
         contrast: operand.branch === 'geo' ? 'exempt' : 'pass',
         // m03 lit this pillar on the same operand. Updated DELIBERATELY here rather than
         // loosened: the lock still pins every one of the four values exactly, and
-        // a11yEquivalence — the pillar s172 does NOT touch (deferred to s173) — is still
-        // asserted 'unchecked'. The three types that offer NO accuracy rule stay
-        // 'unchecked': zero resolved rules is never a pass.
+        // a11yEquivalence is still asserted 'unchecked' — s174's warn-first rollout puts
+        // a11y findings in findings[] and deliberately does NOT move this pillar, so this
+        // line is a MUST-NOT-MOVE guard for that decision, not a stale leftover. The three
+        // types that offer NO accuracy rule stay 'unchecked': zero resolved rules is never
+        // a pass.
         accuracy: ['force_graph', 'bubble_map', 'flow_map'].includes(operand.chartType)
           ? 'unchecked'
           : 'pass',

@@ -34,6 +34,19 @@ async function main() {
 
   const labels = resolveLabels(options.labels);
 
+  // s174 m02 — the label check lives INSIDE the per-report loop, so zero reports (or one)
+  // means the loop simply does not run and enforcement "passes" having examined nothing.
+  // That is exactly how the gate was vacuous: the upstream diff wrote no reports and this
+  // reported success. Both brands must be present or there is nothing to enforce over.
+  const EXPECTED_BRAND_REPORTS = 2;
+  if (reports.length < EXPECTED_BRAND_REPORTS) {
+    errors.push(
+      `Expected ${EXPECTED_BRAND_REPORTS} brand governance reports (A and B) in ${options.governanceDir}; found ${reports.length}${
+        reports.length > 0 ? ` (${reports.map((report) => report.brand).join(', ')})` : ''
+      }. Enforcement over a missing report is a silent pass, so this is an error, not a warning.`
+    );
+  }
+
   for (const report of reports) {
     const brand = report.brand ?? report.data?.brand ?? report.file;
     const summary = report.data?.summary ?? {};
