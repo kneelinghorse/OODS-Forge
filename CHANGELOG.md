@@ -2,6 +2,13 @@
 
 All notable changes to OODS Foundry MCP are documented here. This project uses sprint-based development. Each entry summarizes the sprint's key deliverables.
 
+## Sprint 175 — artifact.certify: 'ungradeable' (a scoped contract change, signalled)
+
+- **`pillars.contrast` and `pillars.accuracy` gain the value `'ungradeable'`** — "grading was ATTEMPTED on a unit or rule set it was given and failed for a reason outside the spec" (an unresolvable canvas token, or an evaluator fault). `'unchecked'` now means ONLY "nothing was attempted or nothing was gradeable" (no colour-bearing unit, no `data` operand, or every offered rule's precondition absent). Two closed enums widen: contrast is `pass|fail|ungradeable|unchecked|exempt`, accuracy is `pass|fail|ungradeable|unchecked`. An exhaustive consumer switch must handle the new value.
+- **The folded `conformant` gate tightens (cartesian path):** `conformant = a11yConformant && contrast ∉ {fail, ungradeable} && accuracy ∉ {fail, ungradeable} && stable`. A monotonic tightening — some inputs move true→false (an agent-poisoned canvas token, a faulted grader or rules engine), none move false→true. `'unchecked'` and `'exempt'` still leave conformant a11y-driven (the s139 lock). ECharts-primary `conformant` stays `null` on every path. Closes next-step #781 (graded-'unchecked' vs nothing-to-grade).
+- The contrast-engine catches now write a `contrastNote` naming the fault (closes decision #1446 (4)); the accuracy catches keep their "…N rules were offered." note with the pillar word updated. `contentHash` is unmoved by any pillar.
+- Aquex consumers must RECONNECT after this ships: the advertised `artifact.certify` output schema changed (execution is fresh per call; only the advertised schema is connect-time cached).
+
 ## Sprint 52 — Mapping, Onboarding & Versioned Data
 
 - **map.create / map.list / map.resolve** — Three MCP tools for mapping external components to OODS traits. JSON Schema (Draft 2020-12) with 4 coercion strategies. Seed file with Material UI mappings.

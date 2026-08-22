@@ -11,14 +11,14 @@ Design tokens power multi-brand delivery and require protections that surface ri
 ## tokens-governance CLI
 
 ```
-tokens-governance diff --brand A --base main --head HEAD \
+tokens-governance diff --brand A --base "$(git merge-base origin/OODS-pro HEAD)" --head HEAD \
   --json artifacts/tokens/brand-a-report.json \
   --comment artifacts/tokens/brand-a-comment.md
 ```
 
 Key behaviours:
 
-- Loads flattened token outputs from `packages/tokens/dist/tailwind/tokens.json` for both refs (workspace-aware for `HEAD`).
+- Loads the DTCG token sources at both refs, and every ref — `HEAD` included — is read through git (`git show <ref>:<file>`). The built `packages/tokens/dist/tailwind/tokens.json` is never an input, so a built and an unbuilt working tree diff identically and nothing needs to delete it. `--base` has no default: pass it explicitly (the merge-base form above), otherwise the tool falls back to `origin/OODS-pro` — never `main`, which is frozen.
 - Emits change summaries (added / removed / modified) and risk levels. Foreground/background and focus edits are high-risk.
 - Computes contrast deltas for matching `text`/`surface` or `foreground`/`background` pairs when both colours can be normalised.
 - Scans `packages/**` and `src/stories/**` (excluding fixtures) to detect **orphans** (new tokens with no usage) and **leaks** (removed tokens still referenced).

@@ -44,7 +44,11 @@ import {
 } from '@oods/viz-core';
 import { CVD_TYPES, simulateCvd } from './cvd-machado.js';
 
-export type ContrastVerdict = 'pass' | 'fail' | 'unchecked' | 'exempt';
+// 'ungradeable' (s175 m04, #781): grading was ATTEMPTED on a colour-bearing unit and failed
+// for a reason outside the spec — an unresolvable canvas token, or an evaluator fault.
+// 'unchecked' is the OTHER flavour: nothing was attempted or nothing was gradeable (no
+// colour-bearing unit). The fold treats 'ungradeable' like 'fail'; 'unchecked' stays inert.
+export type ContrastVerdict = 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
 
 export interface ContrastPillarResult {
   readonly contrast: ContrastVerdict;
@@ -191,11 +195,13 @@ function gradeCategorical(
   slots: ReadonlyArray<{ readonly token: string; readonly hex: string }>,
   canvasHex: string | undefined,
 ): ContrastPillarResult {
-  // Could not resolve the canvas (or nothing to grade) -> honest 'unchecked', never a
-  // silent pass.
+  // Could not resolve the canvas -> 'ungradeable' (s175 m04, #781): a colour-bearing unit
+  // WAS identified and grading was attempted, so this is "tried and failed", never the
+  // nothing-to-grade 'unchecked' and never a silent pass. (The slots.length === 0 arm is
+  // unreachable — gradeUnit always passes >= 1 slot — and is kept only as a guard.)
   if (slots.length === 0 || !canvasHex) {
     return {
-      contrast: 'unchecked',
+      contrast: 'ungradeable',
       contrastNote:
         'Could not resolve the canvas token for this IR. ' + RENDERED_CONTRAST_CAVEAT,
     };
@@ -253,13 +259,20 @@ function gradeCategorical(
 }
 
 // The worst-verdict lattice (memo §3a): higher rank wins when combining the graded
-// units. fail > unchecked > pass > exempt; ties resolve to the first unit in walker
-// document order. A graded unit returns 'unchecked' iff the canvas is unresolvable —
-// which is global (resolved once) — so graded-'unchecked' is all-or-nothing and never
-// mixes with a real pass/fail; this defensive ordering is provably identical to the
-// simpler fail>pass>exempt on every reachable input, and a withheld canvas claim should
-// not read as an affirmative pass.
-const VERDICT_RANK: Record<ContrastVerdict, number> = { fail: 3, unchecked: 2, pass: 1, exempt: 0 };
+// units. fail > ungradeable > unchecked > pass > exempt; ties resolve to the first unit in
+// walker document order. A graded unit returns 'ungradeable' iff the canvas is
+// unresolvable — which is global (resolved once) — so graded-'ungradeable' is
+// all-or-nothing and never mixes with a real pass/fail; 'unchecked' never leaves
+// gradeUnit at all (the whole-chart graded.length===0 branch below is its only source).
+// This defensive ordering is provably identical to the simpler fail>pass>exempt on every
+// reachable input, and a withheld canvas claim should not read as an affirmative pass.
+const VERDICT_RANK: Record<ContrastVerdict, number> = {
+  fail: 4,
+  ungradeable: 3,
+  unchecked: 2,
+  pass: 1,
+  exempt: 0,
+};
 
 // The single-series slot the adapter bakes as mark.color (memo §3 CASE 2 fork).
 const SLOT1_TOKEN = categoricalToken(1);

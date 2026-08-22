@@ -52,7 +52,8 @@ const CONFORMANT_PANELS = [
 ];
 // A y encoding whose field is ABSENT from every row → A11Y-R-12 (error) → error PANEL.
 const BAD_PANEL = { id: 'bad', kind: 'chart', chartType: 'bar', datasetId: 'sales', encodings: { x: 'region', y: { field: 'nonexistent' } } };
-// ECharts-primary (choropleth) — cartesian-only scope means it is never gated.
+// ECharts-primary (choropleth) — the RENDER-SIDE GATE is cartesian-only, so it is never gated here
+// (certify evaluates the rules warn-first for it when the `data` operand is supplied).
 const GEO_PANEL = { id: 'geo', kind: 'chart', chartType: 'choropleth', geo: { geojson: GEO, valueField: 'revenue', join: { dataKey: 'region', featureProperty: 'name' }, rows: [{ region: 'West', revenue: 220 }, { region: 'East', revenue: 170 }] } };
 
 const dash = (
@@ -108,7 +109,7 @@ describe('dashboard.render a11yEquivalence GATE + fold (default-ON, m04)', () =>
     expect(validateOutput(out)).toBe(true);
   });
 
-  it('an ECharts-primary (choropleth) panel is NOT gated even with the flag ON (cartesian-only scope)', async () => {
+  it('an ECharts-primary (choropleth) panel is NOT gated even with the flag ON (the RENDER-SIDE GATE is cartesian-only)', async () => {
     const out = await render(dash([GEO_PANEL], {}, [{ id: 'sales', rows: SALES }]));
     expect(out.status).toBe('ok');
     expect(errorPanels(out)).toEqual([]);

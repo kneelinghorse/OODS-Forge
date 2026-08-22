@@ -80,3 +80,38 @@ export function a11yFindingsOf(
     .filter((finding) => finding.code.startsWith('OODS-A11Y-'))
     .map((finding) => ({ code: finding.code, severity: finding.severity as 'error' | 'warn' }));
 }
+
+/**
+ * s175 m03 — the NOT-APPLICABLE set certify emits per type on the `a11yNotApplicable[]` channel
+ * (rule order), DERIVED FROM THE CERTIFY FIXTURE rather than copied from viz-core's 16×8
+ * matrix: force_graph's R-14 FIRES on the mcp-server operand fixture (its operand-built table
+ * has more than 2 columns here) while it is n/a on viz-core's own fixture, so a matrix copy
+ * would pin the wrong set. The spec additionally cross-checks each set against the engine run
+ * over the same operand-built context, so this table cannot drift from the fixture silently.
+ *
+ * The same set holds for the rendered IR and the hand-authored terse IR: every precondition
+ * below is about encodings, marks, row counts or interactions, none of which the name and
+ * description differences between the two shapes touch.
+ *
+ *   R-01 (a color encoding bound to a field) · R-02 (a size encoding binding) · R-04 (a bar
+ *   mark) · R-05 (an x or y positional encoding binding) · R-06 (an area mark) · R-10 (a line
+ *   or area mark) · R-12 (an x, y or color encoding bound to a field) · R-13 (more than 12 data
+ *   rows) · R-16 (a filter or zoom interaction) — n/a on all eight.
+ *   R-11 (at least 3 data rows) — n/a on the four fixtures whose operand-built table has fewer
+ *   than 3 rows (sankey, choropleth, bubble_map, flow_map).
+ */
+const NA_ALL_EIGHT = ['A11Y-R-01', 'A11Y-R-02', 'A11Y-R-04', 'A11Y-R-05', 'A11Y-R-06', 'A11Y-R-10'] as const;
+const NA_TAIL = ['A11Y-R-12', 'A11Y-R-13', 'A11Y-R-16'] as const;
+const NA_9: readonly string[] = [...NA_ALL_EIGHT, ...NA_TAIL];
+const NA_10: readonly string[] = [...NA_ALL_EIGHT, 'A11Y-R-11', ...NA_TAIL];
+
+export const CERTIFY_FIXTURE_A11Y_NOT_APPLICABLE: Readonly<Record<EChartsPrimaryType, readonly string[]>> = {
+  treemap: NA_9,
+  sunburst: NA_9,
+  sankey: NA_10,
+  chord: NA_9,
+  force_graph: NA_9,
+  choropleth: NA_10,
+  bubble_map: NA_10,
+  flow_map: NA_10,
+};

@@ -1022,10 +1022,12 @@ describe('artifact.certify — accuracy pillar (s170 m02)', () => {
     expect(validateOutput(out)).toBe(true);
   });
 
-  it("'unchecked' PASSES the rollup — deliberate contrast parity, and the #781 hole now spans two pillars", async () => {
-    // Stated as a test rather than only as a comment: an unchecked accuracy pillar does NOT
-    // pull conformant false, exactly as an unchecked contrast pillar does not. If that ever
-    // changes it should change on purpose.
+  it("'unchecked' (nothing to grade) does NOT pull the rollup — only 'fail' and 'ungradeable' do (s175 m04 closed #781)", async () => {
+    // Stated as a test rather than only as a comment: a nothing-to-grade 'unchecked' accuracy
+    // pillar does NOT pull conformant false, exactly as a nothing-to-grade 'unchecked' contrast
+    // pillar does not. Since s175 m04 the tried-and-failed flavour is a DIFFERENT value,
+    // 'ungradeable', and that one does pull (artifact.certify.unchecked-tristate.spec.ts,
+    // the two fault specs). If this ever changes it should change on purpose.
     const good = buildSpec(ROWS3);
     const sankey = { ...good, marks: [{ ...good.marks[0], trait: 'MarkSankey' }] } as unknown;
     const uncertified = await certify(sankey);

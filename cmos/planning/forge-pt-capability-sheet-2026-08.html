@@ -1,0 +1,476 @@
+<title>Forge for Parts Town</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&amp;family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+  :root {
+    --paper: #fbfaf8;
+    --panel: #f1f0ec;
+    --ink: #1b1d22;
+    --ink-2: #4a4f59;
+    --ink-3: #646a77;
+    --line: #d8d9dc;
+    --line-strong: #b9bcc3;
+    --accent: #c8102e;
+    --accent-ink: #9c0c23;
+    --accent-soft: #fbe7ea;
+    --ok: #1e6b45;      --ok-bg: #e4f2ea;
+    --work: #8a4b00;    --work-bg: #fbecd6;
+    --input: #2f4f6d;   --input-bg: #e3ecf4;
+    --later: #4a4f59;   --later-bg: #e9e8e4;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --slab: "Zilla Slab", "Roboto Slab", Rockwell, Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #16171a;
+      --panel: #202227;
+      --ink: #ecebe7;
+      --ink-2: #bdbfc6;
+      --ink-3: #8f939d;
+      --line: #33363d;
+      --line-strong: #4a4e58;
+      --accent: #f0566a;
+      --accent-ink: #ff7a8a;
+      --accent-soft: #3a1a20;
+      --ok: #7fd0a3;   --ok-bg: #16301f;
+      --work: #f0b469; --work-bg: #3a2a12;
+      --input: #9cc0e0; --input-bg: #1c2a38;
+      --later: #bdbfc6; --later-bg: #2a2c32;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #16171a;
+    --panel: #202227;
+    --ink: #ecebe7;
+    --ink-2: #bdbfc6;
+    --ink-3: #8f939d;
+    --line: #33363d;
+    --line-strong: #4a4e58;
+    --accent: #f0566a;
+    --accent-ink: #ff7a8a;
+    --accent-soft: #3a1a20;
+    --ok: #7fd0a3;   --ok-bg: #16301f;
+    --work: #f0b469; --work-bg: #3a2a12;
+    --input: #9cc0e0; --input-bg: #1c2a38;
+    --later: #bdbfc6; --later-bg: #2a2c32;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    font-feature-settings: "kern", "liga";
+  }
+  a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .sheet { max-width: 56rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  /* ---------- masthead ---------- */
+  .mast {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.4rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 3px solid var(--ink);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 0.6rem;
+  }
+  .eyebrow b { color: var(--accent); font-weight: 500; }
+  h1 {
+    font-family: var(--slab);
+    font-weight: 700;
+    font-size: clamp(2.1rem, 4.6vw, 3.1rem);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.7rem;
+    text-wrap: balance;
+  }
+  .dek {
+    font-size: 1.08rem;
+    line-height: 1.45;
+    color: var(--ink-2);
+    max-width: 41rem;
+    margin: 0 0 0.7rem;
+    text-wrap: pretty;
+  }
+  .why {
+    font-size: 0.95rem;
+    max-width: 41rem;
+    margin: 0;
+    padding-left: 0.8rem;
+    border-left: 3px solid var(--accent);
+    color: var(--ink);
+  }
+  .why b { font-family: var(--mono); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-right: 0.35rem; }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.6rem 1.2rem;
+    font-variant-numeric: tabular-nums;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .glance div { display: flex; flex-direction: column; }
+  .glance .n { font-family: var(--slab); font-weight: 600; font-size: 1.45rem; line-height: 1; color: var(--ink); }
+  .glance .l {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 0.2rem;
+  }
+
+  /* ---------- sections ---------- */
+  section { margin-top: 2.1rem; }
+  .sec-head {
+    display: flex; align-items: baseline; gap: 0.9rem;
+    border-top: 1px solid var(--line-strong);
+    padding-top: 0.8rem; margin-bottom: 0.9rem;
+  }
+  .sec-head h2 { font-family: var(--slab); font-weight: 600; font-size: 1.42rem; line-height: 1.15; margin: 0; }
+  .sec-head .tag { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+  p { margin: 0 0 0.8rem; max-width: 44rem; text-wrap: pretty; }
+  p:last-child { margin-bottom: 0; }
+  .lead { font-size: 1.02rem; }
+  .two-col { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1.5rem 2.2rem; align-items: start; }
+  .asides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 1.2rem; margin-top: 1rem; }
+  .asides .aside + .aside { margin-top: 0; }
+  .aside { background: var(--panel); padding: 0.95rem 1.05rem; border-top: 2px solid var(--accent); font-size: 0.9rem; }
+  .aside + .aside { margin-top: 0.9rem; border-top-color: var(--line-strong); }
+  .aside h3 { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; color: var(--ink-3); margin: 0 0 0.5rem; }
+  .aside p { font-size: 0.9rem; }
+  .aside ul { margin: 0; padding-left: 1.1rem; font-size: 0.88rem; }
+  .aside li { margin-bottom: 0.25rem; }
+
+  /* ---------- vocabulary grid ---------- */
+  .vocab { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; }
+  .term { border-top: 1px solid var(--line); padding: 0.8rem 0 0.95rem; }
+  .term h3 { font-family: var(--slab); font-weight: 700; font-size: 1.12rem; margin: 0 0 0.25rem; line-height: 1.2; }
+  .term h3 small { font-family: var(--sans); font-weight: 400; font-size: 0.82rem; color: var(--ink-3); margin-left: 0.35rem; }
+  .term p { font-size: 0.92rem; margin-bottom: 0.5rem; }
+  .ex { font-size: 0.85rem; line-height: 1.45; color: var(--ink-2); background: var(--panel); padding: 0.55rem 0.7rem; margin: 0; }
+  .ex b { color: var(--ink); font-weight: 600; }
+  .k { font-family: var(--mono); font-size: 0.78rem; color: var(--accent-ink); }
+  .pt { font-size: 0.85rem; color: var(--ink-2); margin: 0.45rem 0 0; }
+  .pt::before {
+    content: "Parts Town ";
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent); margin-right: 0.3rem;
+  }
+
+  /* ---------- flow ---------- */
+  .flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid var(--line-strong); margin: 0.4rem 0 1rem; }
+  .step { padding: 0.75rem 0.8rem 0.85rem; border-right: 1px solid var(--line); position: relative; min-width: 0; }
+  .step:last-child { border-right: 0; }
+  .step .num { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.05em; }
+  .step h4 { font-family: var(--slab); font-weight: 700; font-size: 1.02rem; margin: 0.1rem 0 0.3rem; line-height: 1.15; }
+  .step p { font-size: 0.8rem; line-height: 1.4; color: var(--ink-2); margin: 0; }
+  .step::after {
+    content: ""; position: absolute; right: -6px; top: 1.05rem; width: 10px; height: 10px;
+    background: var(--paper); border-top: 1px solid var(--line-strong); border-right: 1px solid var(--line-strong);
+    transform: rotate(45deg); z-index: 1;
+  }
+  .step:last-child::after { display: none; }
+
+  /* ---------- differentiators ---------- */
+  .diffs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem 1.6rem; }
+  .diff { padding-left: 0.9rem; border-left: 3px solid var(--accent); }
+  .diff h3 { font-family: var(--slab); font-weight: 700; font-size: 1.08rem; margin: 0 0 0.25rem; line-height: 1.2; }
+  .diff p { font-size: 0.9rem; }
+  .coda { margin-top: 1rem; font-size: 0.92rem; color: var(--ink-2); }
+
+  /* ---------- table ---------- */
+  .legend { font-size: 0.8rem; color: var(--ink-2); margin: -0.3rem 0 0.6rem; display: flex; flex-wrap: wrap; gap: 0.3rem 1.1rem; }
+  .tablewrap { overflow-x: auto; margin: 0.3rem 0 0.9rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 44rem; }
+  th, td { text-align: left; vertical-align: top; padding: 0.6rem 0.7rem 0.65rem 0; border-bottom: 1px solid var(--line); }
+  th {
+    font-family: var(--mono); font-weight: 500; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); border-bottom: 1px solid var(--line-strong); padding-top: 0;
+  }
+  td:first-child { font-weight: 600; width: 19%; padding-right: 1rem; }
+  td:nth-child(2) { color: var(--ink-2); }
+  td:last-child { width: 27%; }
+  .chip {
+    display: inline-block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 0.12rem 0.45rem 0.14rem; border-radius: 2px; white-space: nowrap; margin: 0 0.15rem 0.25rem 0;
+  }
+  .chip.ok { color: var(--ok); background: var(--ok-bg); }
+  .chip.work { color: var(--work); background: var(--work-bg); }
+  .chip.input { color: var(--input); background: var(--input-bg); }
+  .chip.later { color: var(--later); background: var(--later-bg); }
+  td .note { display: block; font-size: 0.8rem; color: var(--ink-2); line-height: 1.4; }
+
+  /* ---------- delivery ---------- */
+  .deliver { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 1.2rem 2.2rem; align-items: start; }
+  .pipe { display: grid; grid-template-columns: auto 1fr auto; gap: 0.6rem 0.9rem; align-items: stretch; font-size: 0.84rem; margin-top: 0.3rem; }
+  .pipe .box { border: 1px solid var(--line-strong); padding: 0.6rem 0.75rem; display: flex; flex-direction: column; justify-content: center; }
+  .pipe .box.factory { border-color: var(--ink); }
+  .pipe .box.owned { border-color: var(--accent); background: var(--accent-soft); }
+  .pipe .box h4 { font-family: var(--slab); font-weight: 700; font-size: 0.98rem; margin: 0 0 0.2rem; }
+  .pipe .box p { font-size: 0.8rem; color: var(--ink-2); margin: 0; line-height: 1.4; }
+  .pipe .mid { display: flex; flex-direction: column; justify-content: center; gap: 0.25rem; font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); padding: 0 0.2rem; }
+  .pipe .mid span::before { content: "→ "; color: var(--accent); }
+  .pipe .consumers { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; font-family: var(--mono); font-size: 0.74rem; color: var(--ink-3); padding-top: 0.2rem; }
+  .pipe .consumers span::before { content: "↳ "; color: var(--accent); }
+  ol.slice { margin: 0.4rem 0 0; padding-left: 1.2rem; font-size: 0.9rem; }
+  ol.slice li { margin-bottom: 0.3rem; }
+  ol.slice li::marker { font-family: var(--mono); color: var(--accent); font-size: 0.8rem; }
+
+  /* ---------- questions ---------- */
+  ol.qs { margin: 0; padding-left: 1.2rem; columns: 2; column-gap: 2.2rem; font-size: 0.9rem; }
+  ol.qs li { break-inside: avoid; margin-bottom: 0.45rem; padding-left: 0.2rem; }
+  ol.qs li::marker { font-family: var(--mono); color: var(--accent); font-size: 0.8rem; }
+
+  /* ---------- footer ---------- */
+  .foot {
+    margin-top: 2.4rem; padding-top: 0.8rem; border-top: 1px solid var(--line-strong);
+    font-size: 0.78rem; color: var(--ink-3);
+    display: flex; flex-wrap: wrap; gap: 0.4rem 2rem; justify-content: space-between;
+  }
+  .foot p { margin: 0; max-width: none; }
+
+  @media screen and (max-width: 760px) {
+    .mast > div { min-width: 0; }
+    .glance { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .two-col, .vocab, .diffs, .deliver, .asides { grid-template-columns: 1fr; }
+    .flow { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .step::after { display: none; }
+    .step:nth-child(odd) { border-right: 1px solid var(--line); }
+    .step:nth-child(even) { border-right: 0; }
+    .step:not(:nth-last-child(-n+2)) { border-bottom: 1px solid var(--line); }
+    ol.qs { columns: 1; }
+  }
+  @media print {
+    @page { margin: 11mm 12mm 12mm; }
+    body { font-size: 9.5pt; line-height: 1.4; background: #fff; color: #111; }
+    .sheet { max-width: none; padding: 0; }
+    section { margin-top: 1.3rem; }
+    .mast { padding-bottom: 0.8rem; gap: 0.9rem; }
+    .glance { gap: 0.4rem 1rem; padding-top: 0.6rem; }
+    .glance .n { font-size: 1.25rem; }
+    td:first-child { width: 16%; }
+    td:last-child { width: 23%; }
+    table { font-size: 0.86rem; }
+    th, td { padding: 0.42rem 0.55rem 0.45rem 0; }
+    .vocab { gap: 0 1.5rem; }
+    .term { padding: 0.55rem 0 0.65rem; }
+    .diffs { gap: 0.6rem 1.5rem; }
+    .term, .diff, .step, tr, .aside, .pipe, .flow { break-inside: avoid; }
+    .sec-head, h2, h3 { break-after: avoid; }
+    .tablewrap { overflow: visible; }
+    table { min-width: 0; }
+    .step::after { display: none; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="mast">
+    <div>
+      <p class="eyebrow">Capability reference · <b>August 2026</b> · prepared for Parts Town</p>
+      <h1>Forge for Parts Town</h1>
+      <p class="dek">Forge is a design-system engine. It keeps the design system as data — what a Part <em>is</em>, what it can do (be priced, superseded, fit-checked), which screens it appears on, and the tokens that style it — and from that one source generates screens, charts, themes and code, then machine-checks what it made. It holds the <em>definition</em> of your catalog, not the catalog.</p>
+      <p class="why"><b>Why it matters here</b>One definition of a Part can serve the JSP storefront today, Angular later, and iOS / Android — and your brand, expressed as tokens, outlives the re-platform.</p>
+    </div>
+    <div class="glance" aria-label="At a glance">
+      <div><span class="n">5</span><span class="l">parts-catalog objects modeled</span></div>
+      <div><span class="n">587</span><span class="l">of your Figma tokens in scope</span></div>
+      <div><span class="n">5</span><span class="l">platforms from one token source</span></div>
+      <div><span class="n">8</span><span class="l">screen contexts</span></div>
+      <div><span class="n">13</span><span class="l">chart types</span></div>
+      <div><span class="n">4</span><span class="l">certification checks</span></div>
+    </div>
+  </header>
+
+  <!-- 1 ------------------------------------------------------------ -->
+  <section id="what">
+    <div class="sec-head"><h2>What Forge is</h2><span class="tag">and what it is not</span></div>
+    <p class="lead">Most design systems are a library of components plus a document on how to use them. Forge keeps the system as <em>data</em> — objects, their traits, the contexts they appear in, the tokens that style it all — and generates from it: screens, charts and dashboards, theme CSS, native token files for iOS and Android, HTML or framework code. Generated charts carry a content fingerprint and come back with a machine-checked verdict on accessibility, determinism, contrast and accuracy: output you can <em>prove</em> things about, not just produce faster.</p>
+    <div class="asides">
+      <aside class="aside">
+        <h3>How it is operated</h3>
+        <p>By software agents, not a point-and-click app: an AI assistant under our direction calls 25 typed tools to describe, compose, validate, render, certify and export. Forge runs with us; you would receive its outputs in a repository you own. Nobody at Parts Town installs Forge.</p>
+      </aside>
+      <aside class="aside">
+        <h3>What Forge is not</h3>
+        <ul>
+          <li>Not a hosted app or a login for your team (a hosted endpoint is a later option).</li>
+          <li>Not a replacement for Figma — it reads from it. Not a CMS or PIM — definitions, not catalog data.</li>
+          <li>Not an Angular generator today (HTML, React, Vue): for your storefront the near-term deliverable is tokens, theme CSS and HTML references; an Angular output is scoped work if the re-platform is real and near.</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 2 ------------------------------------------------------------ -->
+  <section id="vocab">
+    <div class="sec-head"><h2>The vocabulary</h2><span class="tag">six terms that carry the whole system</span></div>
+    <div class="vocab">
+
+      <div class="term">
+        <h3>Trait <small>a capability an object can have</small></h3>
+        <p>"Can be priced", "can be superseded", "has a lifecycle" — packaged with everything it needs: data fields, settings, the UI pieces it adds to each kind of screen, the tokens that style them, accessibility notes. Traits, not widgets, are the unit of reuse.</p>
+        <p class="ex"><b>Example.</b> <span class="k">Stateful</span> adds a status and a lifecycle, and contributes a status badge to lists, a status timeline to detail pages and a status selector to forms — on every object that uses it.</p>
+        <p class="pt">Already modeled: <span class="k">Identifiable</span> (house SKU vs. manufacturer part number vs. OEM / UPC / GTIN), <span class="k">Supersedable</span> (replacement chains that resolve to something orderable), <span class="k">Fitmentable</span> ("does this part fit this unit?"), <span class="k">AttributeBearing</span> (typed spec facets for filtering).</p>
+      </div>
+
+      <div class="term">
+        <h3>Object <small>a thing your business talks about</small></h3>
+        <p>A Part, a Manufacturer — declared as the list of traits it has, each with its settings, plus the few fields truly its own. Forge merges the traits (warning on any field two traits both claim) and uses that one record to build screens, charts and TypeScript types — e.g. <span class="k">Product</span> is eight traits plus its own SKU and inventory status.</p>
+        <p class="pt">Already modeled: <span class="k">Part</span>, <span class="k">Equipment Model</span>, <span class="k">Manufacturer</span>, <span class="k">Fitment</span> (the qualified part↔equipment edge: position, quantity, serial range, verification source) and <span class="k">Cross-Reference</span> (cross-brand interchange with grade, direction and confidence).</p>
+      </div>
+
+      <div class="term">
+        <h3>Context <small>the kind of screen</small></h3>
+        <p>List, detail, form, timeline, card, inline, chart, dashboard. Traits declare what they contribute to each context and where; Forge assembles the screen in a fixed, deterministic order — "a Part in a results list" and "a Part on its detail page" come from one definition, not two hand-built pages. In Forge's component library every context shares one six-region contract, rendered as the landmarks screen readers navigate by and collapsing to one column below tablet width.</p>
+      </div>
+
+      <div class="term">
+        <h3>Token &amp; Brand <small>every visual value, once</small></h3>
+        <p>Colours, type, spacing, motion and breakpoints are tokens in the W3C Design Tokens standard (DTCG). One build compiles them to CSS variables, a Tailwind token map, TypeScript, Swift and Kotlin (per-brand native sets in progress). Tokens are layered from raw values up to named roles — "primary", "surface", "text on accent" — and a brand is a set of values for those roles, so swapping Parts Town in touches no component. Brand and theme (light / dark / high-contrast) are two attributes on the page; the build refuses to run if two sources silently disagree on a token.</p>
+      </div>
+
+      <div class="term">
+        <h3>Generate <small>from intent to artifact</small></h3>
+        <p>Name an object and a context, or give a short intent phrase the composer matches to a layout ("an order-history list with filters"). Forge composes a validated screen description from its catalog of about a hundred components, renders it to self-contained HTML, and can emit React or Vue source against its own component library. Hand it data and it returns a chart spec (13 types) with, on request, an accessible data table and narrative from the same data.</p>
+      </div>
+
+      <div class="term">
+        <h3>Certify <small>prove it, don't assume it</small></h3>
+        <p>Generated charts come back with a verdict across four checks: <b>accessibility equivalence</b> (does the text alternative say what the chart shows — 16 rules), <b>determinism</b> (rebuild twice, compare bytes, hash), <b>contrast</b> (WCAG 3:1 plus colour-vision-deficiency distinguishability, on the light theme) and <b>accuracy</b> (structural distortions such as a truncated bar baseline — 10 rules). The full certificate covers the five core chart types today; the other eight report each check separately. Screens can be checked against 18 token-contrast pairs on request; Forge's component library is axe-audited in CI.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 3 ------------------------------------------------------------ -->
+  <section id="how">
+    <div class="sec-head"><h2>How it works</h2><span class="tag">model the domain, seed the brand, then one pass per request</span></div>
+    <div class="flow" role="list">
+      <div class="step" role="listitem"><span class="num">01</span><h4>Describe</h4><p>Our operator (an AI assistant under our direction) names an object and a context, or a short intent.</p></div>
+      <div class="step" role="listitem"><span class="num">02</span><h4>Compose</h4><p>Forge picks a layout, fills it from the catalog via the object's traits, flags any slot it was unsure about.</p></div>
+      <div class="step" role="listitem"><span class="num">03</span><h4>Validate</h4><p>Structural check; the 18 token-contrast rules can run here too.</p></div>
+      <div class="step" role="listitem"><span class="num">04</span><h4>Render</h4><p>Self-contained HTML; with a brand applied, light / dark / high-contrast are page attributes.</p></div>
+      <div class="step" role="listitem"><span class="num">05</span><h4>Certify</h4><p>Five core chart types get the four-check certificate and a content hash; the other eight, per-check verdicts.</p></div>
+      <div class="step" role="listitem"><span class="num">06</span><h4>Export</h4><p>HTML, plus React / Vue source; theme CSS; token files for web, iOS, Android; one-file dashboards.</p></div>
+    </div>
+    <p>Under the hood: a local server speaking the Model Context Protocol (the standard AI assistants use to call tools), with roles, rate limits and an explicit opt-in before anything is written. Intent phrases are matched by rules and synonyms, not a language model — same input, same bytes, same hash; the assistant sits outside Forge and calls it.</p>
+  </section>
+
+  <!-- 4 ------------------------------------------------------------ -->
+  <section id="different">
+    <div class="sec-head"><h2>What makes it different</h2><span class="tag">vs. a component library or a Figma-to-code tool</span></div>
+    <div class="diffs">
+      <div class="diff">
+        <h3>It composes from meaning, not pixels</h3>
+        <p>The unit of reuse is a capability — priceable, stateful, supersedable, fit-checkable — carrying data contract, UI pieces, tokens and accessibility notes together. Adding the lifecycle trait to a new object is one line that lights up its status badge, timeline and selector in every context.</p>
+      </div>
+      <div class="diff">
+        <h3>One definition, every context</h3>
+        <p>Every view of an object is assembled from one declaration, each UI piece traceable to the trait that contributed it. That traceability is what makes the output checkable rather than merely plausible.</p>
+      </div>
+      <div class="diff">
+        <h3>It certifies what it generates</h3>
+        <p>Generated charts come back with a machine-checked verdict rather than a promise; among the design-system tools and hosted endpoints we have surveyed, none returns one. Today the certificate covers charts; screens get contrast rules and automated audits. The same bar applies to Forge's own build: the token build fails on a silent collision, 108 generated brand-contrast rules run in CI, and the Swift and Kotlin files are compiled with the real toolchains before each release.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 ------------------------------------------------------------ -->
+  <section id="parts-town">
+    <div class="sec-head"><h2>What Forge could do for Parts Town</h2><span class="tag">status as of August 2026</span></div>
+    <p class="legend"><span><span class="chip ok">ready</span> exists today; needs only your brand</span><span><span class="chip work">engine work</span> we build it; scoped</span><span><span class="chip input">your input</span> needs a decision from you</span></p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Capability</th><th>What you would get</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Your brand as tokens</td>
+            <td>Your colours, type, spacing and breakpoints as DTCG tokens → CSS variables, a Tailwind token map, TypeScript, Swift and Kotlin, in light / dark / high-contrast; the same CSS variables serve JSP today and Angular later. A first pass over a late-July export of your Figma file is already converted (713 entries; 587 in scope; 225 base tokens plus 84 mode values) with a coverage report itemising every collision, missing value and rename. It surfaced questions to settle together: two "Parts Town Red" values, Museo Slab and Effra under the same style names, four empty tokens, some third-party kit tokens mixed in.</td>
+            <td><span class="chip work">engine work</span><span class="chip input">your input</span><span class="note">Seed the brand, add web-font loading; you pick canonical values and supply licensed web-font files. Works from Figma exports; a live Figma connection is new work and depends on your plan tier.</span></td>
+          </tr>
+          <tr>
+            <td>Parts-catalog screens from a domain model</td>
+            <td>The five objects and four traits above, composed into list, detail, form and timeline screens from one model — replacement banner, supersession timeline, compatibility panel, fit verifier, specification table, attribute facets, identifier panel. Also a shared spec across web and native apps.</td>
+            <td><span class="chip work">model drafted</span><span class="chip work">engine work</span><span class="note">Definitions exist; not yet loaded into the engine, and its 15 parts-specific components are still to be built.</span></td>
+          </tr>
+          <tr>
+            <td>Accessibility guardrails built in</td>
+            <td>In Forge's component library: landmarked layouts, toolbar roles and labels, an opt-in focus-trapped side-panel drawer, light / dark / high-contrast themes, phone and tablet test runs. For any generated screen: a token-contrast check (18 WCAG pairs) you can switch on. Plus axe checks on library screens in our CI, and certified charts. Relevant to ADA / WCAG 2.1 AA exposure on a US storefront.</td>
+            <td><span class="chip ok">ready</span><span class="note">Automated guardrails on what Forge makes — not a WCAG audit of your storefront. Chart certificates exist; page certificates do not.</span></td>
+          </tr>
+          <tr>
+            <td>Certified analytics &amp; dashboards</td>
+            <td>For reporting (merchandising, fulfilment, supersession coverage) or customer-facing order analytics: 13 chart types, each with an accessible data table and narrative. Bar, line, area, scatter and heatmap get the full four-check certificate; the other eight (treemap, sunburst, sankey, network, chord, three map types) get each check separately and are labelled "uncertified" on purpose until their accessibility check is enforced. Dashboards export as one self-contained HTML file — the five core types as inline SVG identical on every rerun, the others as described placeholders today.</td>
+            <td><span class="chip ok">ready</span> (five core types) <span class="chip work">engine work</span> (the eight)<span class="note">Certificates are brand-independent — they grade the colours baked into the chart; dashboard chrome takes your brand once seeded.</span></td>
+          </tr>
+          <tr>
+            <td>Native iOS / Android tokens</td>
+            <td>Swift and Kotlin token files from the same source as the web, compiled with the real toolchains before each release.</td>
+            <td><span class="chip work">engine work</span><span class="note">One brand and theme today (colour, size, spacing, duration); font families and motion curves not yet; per-brand native sets still to build.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6 ------------------------------------------------------------ -->
+  <section id="deliver">
+    <div class="sec-head"><h2>How we would deliver it</h2><span class="tag">Forge is the factory; Parts Town owns the shelf</span></div>
+    <div class="deliver">
+      <div>
+        <p>Parts Town would be developed as a brand <em>inside</em> Forge, so every generator, check and export applies to it. You would receive a repository you own: DTCG tokens, built theme CSS and Tailwind mapping, documentation and a static component-reference site you can host anywhere, generated source where you want it, and certified charts with a fingerprint you can recompute. We do not fork Forge for you, and you never run it — the engine stays with us and the products travel. That keeps your exit cheap: if the system is ever developed elsewhere, the tokens and docs are already yours.</p>
+        <p><b>A first slice</b></p>
+        <ol class="slice">
+          <li>Seed your brand from a fresh Figma export; settle the two reds and two typefaces with you.</li>
+          <li>Emit CSS variables, the Tailwind map, Swift and Kotlin files into your repository.</li>
+          <li>Render the Part list and detail pages in your brand as a reference.</li>
+          <li>Hand over with the component-reference site and governance notes.</li>
+        </ol>
+      </div>
+      <div class="pipe" aria-label="Delivery shape">
+        <div class="box factory"><h4>Forge</h4><p>Traits, objects, contexts, tokens, generators and certifiers. Runs with us.</p></div>
+        <div class="mid"><span>tokens</span><span>theme CSS</span><span>docs</span><span>generated source (HTML / React / Vue)</span><span>certified charts</span></div>
+        <div class="box owned"><h4>Parts Town repository</h4><p>Owned by you — from day one, or via a short escrow with a transfer clause. Versioned. Consumed like any dependency.</p></div>
+        <div class="consumers"><span>Web storefront (JSP today, Angular later)</span><span>iOS</span><span>Android</span><span>Design (Figma)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 ------------------------------------------------------------ -->
+  <section id="questions">
+    <div class="sec-head"><h2>What we would want to settle with you</h2><span class="tag">each answer changes the plan</span></div>
+    <ol class="qs">
+      <li>Scope: tokens, theme and documentation only, or generated components too? The largest sizing variable.</li>
+      <li>Which Parts Town Red and which type family are canonical (your file carries both), and is dark mode real or light-only? A fresh export re-bases everything.</li>
+      <li>Your Figma plan tier — it decides which ingestion path we build: a live connection or a repeatable export.</li>
+      <li>GitHub and package-registry policy — npm package, tarball, or a source drop.</li>
+      <li>Is the Angular storefront migration real and near? It decides tokens-only versus components now.</li>
+      <li>Who owns the repository and package scope on day one — you, or escrow with a transfer clause — and who owns the system on your side day to day?</li>
+      <li>iOS, Android or mobile web first — and do your apps consume design tokens today?</li>
+      <li>Accessibility-compliance exposure or appetite — it decides whether certified output is a line item or a quality bar.</li>
+    </ol>
+  </section>
+
+  <footer class="foot">
+    <p>Figures reflect the Forge repository in August 2026: 41 traits · 11 object definitions (+ 5 parts-catalog objects modeled for you) · ~100 catalogued components · 8 screen contexts · 13 chart types · 5 token platforms · 25 agent tools.</p>
+    <p>Prepared for Parts Town by [name · studio · email]</p>
+  </footer>
+
+</div>

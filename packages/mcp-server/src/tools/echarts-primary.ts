@@ -73,7 +73,10 @@ const MARK_TRAIT_TO_TYPE: ReadonlyMap<string, EChartsPrimaryType> = new Map(
 // IR-side classifier (sprint-136 m02): a NormalizedVizSpec carries no chartType,
 // so artifact.certify classifies an ECharts-primary spec from its first mark's
 // trait. As of s172 certify can also RE-EMIT for these types (given the optional
-// `data` operand); the a11y-equivalence path is still cartesian-only.
+// `data` operand), and since then it evaluates the 16 a11y-equivalence rules WARN-FIRST
+// on ECharts-primary with the operand (failures → findings[], not-applicable →
+// a11yNotApplicable[]). Only the render-side a11y-equivalence GATE and the certified
+// verdict (coverage/conformant/pillars.a11yEquivalence pass-fail) remain cartesian.
 export function isEChartsPrimaryMarkTrait(trait: string): boolean {
   return MARK_TRAIT_TO_TYPE.has(trait);
 }

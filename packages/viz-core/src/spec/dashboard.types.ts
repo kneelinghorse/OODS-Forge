@@ -4,11 +4,11 @@
 // re-run `pnpm generate:schema-types`; CI runs it with --check to catch drift.
 
 /**
- * A dashboard panel: a chart panel (one of the 11 viz.render chartTypes + its data branch) or a kpi tile. Discriminated on `kind`.
+ * A dashboard panel: a chart panel (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881 — plus its data branch) or a kpi tile. Discriminated on `kind`.
  */
 export type Panel = ChartPanel | KpiPanel;
 /**
- * A chart panel — a viz.render-shaped descriptor: chartType (the authoritative 11-value enum) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.
+ * A chart panel — a viz.render-shaped descriptor: chartType (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.
  */
 export type ChartPanel = ChartPanel1 & {
   id: string;
@@ -19,7 +19,7 @@ export type ChartPanel = ChartPanel1 & {
    */
   description?: string;
   /**
-   * The authoritative viz.render chartType enum (11 values).
+   * 11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only (decision #881).
    */
   chartType:
     | 'bar'
@@ -132,7 +132,7 @@ export interface DashboardSpecV01 {
    */
   datasets: [Dataset, ...Dataset[]];
   /**
-   * Heterogeneous panels: chart (any of the 11 viz.render chartTypes + its data branch) or kpi tiles.
+   * Heterogeneous panels: chart (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881 — plus its data branch) or kpi tiles.
    *
    * @minItems 1
    */
@@ -314,7 +314,7 @@ export interface KpiPanel {
    */
   datasetId: string;
   /**
-   * The metric field aggregated into the KPI value.
+   * The metric field aggregated into the KPI value. CELL TYPES (sprint-175, FD#1): `count` and `distinct` are defined over every NON-NULL cell of this field regardless of type — COUNT(field), never rows.length — while the numeric aggregates (sum/average/median/min/max/latest) read only cells that parse as numbers, in BOTH the row-order and `periodField` series builders. A field that HAS values but none numeric fails LOUD for a numeric aggregate (OODS-V160 at dashboard.render, routed through onPanelError) instead of returning a plausible 0; a field absent from every row has zero non-null cells and keeps the ratified value:0.
    */
   field: string;
   /**
@@ -326,7 +326,7 @@ export interface KpiPanel {
    */
   measureRef?: string;
   /**
-   * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs.
+   * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs. CELL TYPES (sprint-175, FD#1): `count`/`distinct` accept any non-null cell; the other six read numeric cells only and raise OODS-V160 when the field has values but none of them numeric (pre-s175 they returned a silent 0).
    */
   aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct' | 'latest';
   comparison?: KpiComparison;
