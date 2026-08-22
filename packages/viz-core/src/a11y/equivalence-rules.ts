@@ -19,8 +19,12 @@ export interface VizA11yRuleResult {
    * that wants the third state has it and a reader that only knows `passed` is unmoved.
    *
    * A rule is not-applicable ONLY when a DECLARED precondition is absent — never on
-   * judgement. The declared preconditions are exactly the guard clauses that already
-   * short-circuited to a trivial pass before s174, which is why no boolean moves.
+   * judgement. Nine of the eleven declared preconditions are guard clauses that already
+   * short-circuited to a trivial pass before s174 (one-line pass()→notApplicable() swaps);
+   * two were ADDED by s174 m01 as pure hunks in 0e251e5 — R-05's `if (!x && !y)` and R-12's
+   * `boundFields === 0` — where the implicit pass had previously fallen through. No boolean
+   * moved either way (both implicit passes already returned passed:true); the provenance is
+   * corrected on the record by the s175 m03 decision amending #1476.
    */
   readonly notApplicable?: true;
   /** Names the absent precondition, so "not-applicable" is never a bare assertion. */

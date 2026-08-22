@@ -12,7 +12,7 @@
 | `id` | string | No |  | Stable identifier for the dashboard instance. |
 | `title` | string | No |  | Human-friendly dashboard title surfaced in UI + narration. |
 | `datasets` | _ref_[] | Yes |  | SEAM (a) cross-panel DATA-SHARING. Shared, named tabular datasets. Tabular chart panels and KPI panels reference one by `datasetId`; sharing a dataset is what makes cross-filter possible (panels filter the same dimensional space). |
-| `panels` | _ref_[] | Yes |  | Heterogeneous panels: chart (any of the 11 viz.render chartTypes + its data branch) or kpi tiles. |
+| `panels` | _ref_[] | Yes |  | Heterogeneous panels: chart (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881 — plus its data branch) or kpi tiles. |
 | `layout` | _ref_ | No |  |  |
 | `links` | _ref_[] | No |  | Cross-filter wiring: a selection on a source panel filters a target panel. Declared in v1 (schema-frozen) so m04 adds only a reducer, not a schema change. |
 | `crossFilter` | _ref_ | No |  |  |

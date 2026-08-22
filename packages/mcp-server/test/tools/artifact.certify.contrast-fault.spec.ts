@@ -3,10 +3,13 @@
 // spec; vi.mock is file-wide, so each fault family gets its own file).
 //
 // Two catches are exercised through the REAL handler:
-//   • the cartesian certified-path catch around evaluateContrastPillar — which
-//     deliberately writes NO note (observed here as a fact, not fixed: the catch
-//     degrades to 'unchecked' silently, unlike the accuracy catch);
-//   • the ECharts categorical-verdict catch around evaluateEChartsCategoricalContrast.
+//   • the cartesian certified-path catch around evaluateContrastPillar — since s175 m04
+//     (#781, closing decision #1446 (4)) it degrades to 'ungradeable' WITH a note naming
+//     the fault, and 'ungradeable' pulls conformant false;
+//   • the ECharts categorical-verdict catch around evaluateEChartsCategoricalContrast —
+//     the same 'ungradeable' + note, with conformant staying null on the uncertified path.
+// Deliberate seam flip (s175 m04): the pre-s175 assertions pinned 'unchecked' / no note /
+// conformant:true as an observed fact; these pin the intended behaviour instead.
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -58,31 +61,34 @@ const buildSankeySpec = () => {
 };
 
 describe('artifact.certify — contrast engine fault degrades, never errors', () => {
-  it("cartesian certified path: the catch degrades contrast to 'unchecked' and — observed fact, not fixed — writes NO note; verdict stays ok/certified/conformant and AJV-valid", async () => {
+  it("cartesian certified path: the catch degrades contrast to 'ungradeable' WITH a note naming the fault, and 'ungradeable' pulls conformant false; verdict stays ok/certified and AJV-valid", async () => {
     contrastFault.armed = true;
     const out = await handle({ spec: buildSpec() });
 
     expect(out.status).toBe('ok');
     expect(out.coverage).toBe('certified');
-    expect(out.pillars?.contrast).toBe('unchecked');
-    // The silent-degradation fact: unlike the accuracy catch, no note is written.
-    expect(out.contrastNote).toBeUndefined();
+    expect(out.pillars?.contrast).toBe('ungradeable');
+    // The catch now writes a note naming the fault (closes decision #1446 (4)).
+    expect(out.contrastNote).toBeDefined();
+    expect(out.contrastNote).toContain('synthetic contrast-engine fault (s171 m05a)');
+    expect(out.contrastNote).toContain('ungradeable');
     expect(out.notes ?? []).toEqual([]);
-    // The other pillars are untouched, and 'unchecked' passes the rollup (#781 parity).
+    // The other pillars are untouched; a tried-and-failed grade pulls the fold (#781).
     expect(out.pillars?.a11yEquivalence).toBe('pass');
     expect(out.pillars?.accuracy).toBe('pass');
-    expect(out.conformant).toBe(true);
+    expect(out.conformant).toBe(false);
     expect(validateOutput(out)).toBe(true);
   });
 
-  it("ECharts categorical path: the catch degrades contrast to 'unchecked' on the uncertified route, AJV-valid", async () => {
+  it("ECharts categorical path: the catch degrades contrast to 'ungradeable' with the fault note on the uncertified route; conformant stays null, AJV-valid", async () => {
     contrastFault.armed = true;
     const out = await handle({ spec: buildSankeySpec() });
 
     expect(out.status).toBe('ok');
     expect(out.coverage).toBe('uncertified');
-    expect(out.pillars?.contrast).toBe('unchecked');
-    expect(out.contrastNote).toBeUndefined();
+    expect(out.pillars?.contrast).toBe('ungradeable');
+    expect(out.contrastNote).toContain('synthetic contrast-engine fault (s171 m05a)');
+    expect(out.conformant).toBeNull();
     expect(validateOutput(out)).toBe(true);
   });
 

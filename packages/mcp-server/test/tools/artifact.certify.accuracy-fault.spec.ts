@@ -51,12 +51,12 @@ const buildSpec = () =>
 
 // Verbatim, including the interpolated real ACCURACY_RULES.length — "4 rules were
 // offered." is a DELIBERATE scope tripwire: a fifth accuracy rule changes this string
-// and must consciously update this test.
+// and must consciously update this test. (s175 m04: the pillar word is 'ungradeable'.)
 const FAULT_NOTE =
-  'The accuracy rules could not be evaluated for this spec; the pillar is reported unchecked rather than passed. 4 rules were offered.';
+  'The accuracy rules could not be evaluated for this spec; the pillar is reported ungradeable rather than passed. 4 rules were offered.';
 
 describe('artifact.certify — certified-path accuracy engine fault (s170 review LOW carry)', () => {
-  it("an accuracy-engine throw degrades the pillar to 'unchecked' with the offered-rules note; the verdict stays ok/certified and conformant is UNMOVED (deliberate parity: unchecked passes)", async () => {
+  it("an accuracy-engine throw degrades the pillar to 'ungradeable' with the offered-rules note; the verdict stays ok/certified and 'ungradeable' pulls conformant false (s175 m04, #781)", async () => {
     accuracyFault.armed = true;
     const out = await handle({ spec: buildSpec() });
 
@@ -64,9 +64,10 @@ describe('artifact.certify — certified-path accuracy engine fault (s170 review
     expect(out.status).toBe('ok');
     expect(out.coverage).toBe('certified');
 
-    // The catch's degradation: pillar unchecked, no accuracySummary (assignment sits
-    // after the throwing call), no OODS-V15x findings.
-    expect(out.pillars?.accuracy).toBe('unchecked');
+    // The catch's degradation: pillar ungradeable ("tried and failed", never the
+    // nothing-to-grade 'unchecked'), no accuracySummary (assignment sits after the
+    // throwing call), no OODS-V15x findings.
+    expect(out.pillars?.accuracy).toBe('ungradeable');
     expect(out.accuracySummary).toBeUndefined();
     expect(out.findings).toEqual([]);
 
@@ -79,9 +80,9 @@ describe('artifact.certify — certified-path accuracy engine fault (s170 review
     expect(out.determinism?.stable).toBe(true);
     expect(out.determinism?.contentHash).toBeTypeOf('string');
 
-    // PARITY (s170 m02, #781 — parity LOCK, not endorsement): 'unchecked' passes the
-    // conformant rollup exactly as contrast's 'unchecked' does.
-    expect(out.conformant).toBe(true);
+    // The fold (s175 m04, #781 closed): 'ungradeable' pulls conformant false exactly as
+    // 'fail' does — deliberate parity with contrast's 'ungradeable'.
+    expect(out.conformant).toBe(false);
 
     // Contract-clean: the degraded verdict still AJV-validates against the wired schema.
     expect(validateOutput(out)).toBe(true);

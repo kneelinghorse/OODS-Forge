@@ -196,3 +196,53 @@ Clause (i) cartesian byte-identity held end-to-sprint (`artifact.certify.spec-on
 ### §7.5 Not self-certified
 
 Per rule 10 this record is the BUILD's account of itself. The review charter in §5 stands unmodified and is owed a separate session; the one addition worth making there is that §5's live-warn-first item was ALSO run here (§7.1) and should be re-run independently rather than read from this record.
+
+## §8 Dated corrections (2026-08-22)
+
+Appended during s175 (memo `cmos/planning/forge-s175-correctives-decision-memo.md` §1a.6, decision 5). The text above is NOT rewritten — each sub-block explains a figure or a claim as it was made, it does not replace it. One block, three owners: **§8.1** (C2) is s175 m01's; **§8.2** (C7) is added by s175 m03; **§8.3** (the §7 omissions) by s175 m06.
+
+### 8.1 C2 — the 83/48 counterfactual is a `main`-based delta, not branch-vs-OODS-pro (s175 m01)
+
+**What this memo says** (the defect is review learning #427, next-step #1228)**.** `:44` (§1b.6) states that the un-vacuated gate "would have found the full branch-vs-OODS-pro delta — highRisk 83 (A) + 48 (B), which INCLUDES s173's +5/brand", and `:110` (§6) banks the critic's "bite magnitude 83A/48B not +5". The figures are real measurements; the base ref the sentence names is not the one that produced them.
+
+**Why.** At memo time the CLI defaulted `baseRef` to `main` (`tools/tokens-governance/index.ts:159-164` — the default s174 m02 then removed; today an explicit `--base` wins, else `origin/OODS-pro`, never `main`). Local `main` = `5ec84cad61d2c7e21f0026ba78e94e8a56cecc2a` (2026-04-18, frozen at sprint-95). So 83/48 is the s174 branch measured against a tree nobody has merged into for ~80 sprints. Against the refs the sentence names, the same tool gives **5/5** (PR #71 merge `f939f5f`, the five `sys.breakpoint.*` adds from s173) and **0/0** (`origin/OODS-pro` tip `4e7e131`, the PR #73 merge). The 83/48, 5/5 and 0/0 figures are all kept — each is correct for its refs — which is exactly the point of standing-rule candidate R-a (s175 memo §3): *a counterfactual or delta magnitude is recorded with its base-ref SHA, its head-ref SHA and the literal command; a figure without its refs is not a measurement.*
+
+**Re-measured 2026-08-22** on the real tool at HEAD `852be47a2d138014b6dec1d4427b259e65fe4add` (working tree; the diff reads every ref, HEAD included, through git, so dist state is irrelevant). Literal command per row, `<out>` a scratch path:
+
+```
+pnpm run tokens:governance -- diff --brand <A|B> --base <base> --head <head> --json <out>
+```
+
+| base (SHA) | head (SHA) | brand | highRisk | added / removed / modified | requiresBreakingLabel | exit |
+|---|---|---|---|---|---|---|
+| `main` (`5ec84cad61d2c7e21f0026ba78e94e8a56cecc2a`) | `1a42515` (`1a425155597d0a8833a19acdfccd25a9c8d6387e`) | A | **83** | 30 / 39 / 70 | true | 1 |
+| `main` (`5ec84cad61d2c7e21f0026ba78e94e8a56cecc2a`) | `1a42515` (`1a425155597d0a8833a19acdfccd25a9c8d6387e`) | B | **48** | 30 / 39 / 16 | true | 1 |
+| `main` (`5ec84cad61d2c7e21f0026ba78e94e8a56cecc2a`) | `852be47` (`852be47a2d138014b6dec1d4427b259e65fe4add`) | A | **83** | 30 / 39 / 70 | true | 1 |
+| `main` (`5ec84cad61d2c7e21f0026ba78e94e8a56cecc2a`) | `852be47` (`852be47a2d138014b6dec1d4427b259e65fe4add`) | B | **48** | 30 / 39 / 16 | true | 1 |
+| `f939f5f` (`f939f5fde3cf47ba54279df776318e589f8ca2e3`) | `1a42515` (`1a425155597d0a8833a19acdfccd25a9c8d6387e`) | A | **5** | 5 / 0 / 0 | true | 1 |
+| `f939f5f` (`f939f5fde3cf47ba54279df776318e589f8ca2e3`) | `1a42515` (`1a425155597d0a8833a19acdfccd25a9c8d6387e`) | B | **5** | 5 / 0 / 0 | true | 1 |
+| `f939f5f` (`f939f5fde3cf47ba54279df776318e589f8ca2e3`) | `852be47` (`852be47a2d138014b6dec1d4427b259e65fe4add`) | A | **5** | 5 / 0 / 0 | true | 1 |
+| `f939f5f` (`f939f5fde3cf47ba54279df776318e589f8ca2e3`) | `852be47` (`852be47a2d138014b6dec1d4427b259e65fe4add`) | B | **5** | 5 / 0 / 0 | true | 1 |
+| `origin/OODS-pro` (`4e7e131784427077b3df9e5b69f374392a1beca2`) | `852be47` (`852be47a2d138014b6dec1d4427b259e65fe4add`) | A | **0** | 0 / 0 / 0 | false | 0 |
+| `origin/OODS-pro` (`4e7e131784427077b3df9e5b69f374392a1beca2`) | `852be47` (`852be47a2d138014b6dec1d4427b259e65fe4add`) | B | **0** | 0 / 0 / 0 | false | 0 |
+
+(exit 1 = the CLI's "high-risk without `token-change:breaking`" posture, as documented in `docs/tokens/governance.md`; the two `1a42515` and `852be47` heads are identical because no `packages/tokens/src` file moved between them.)
+
+**Reading of `:44` after this correction.** "The un-vacuated gate would have found 83/48" is true only for a PR targeting `main`; PR #72 targeted `OODS-pro`, where the un-vacuated gate would have found 5/5 (against the then-tip `f939f5f`) — still high-risk, still label-gated, and the label was present, so the delivery conclusion at `:44` ("delivery would have been correct") is unchanged. The "which INCLUDES s173's +5/brand" clause is the only piece that survives literally: 5/5 IS the whole branch-vs-OODS-pro delta.
+
+**Pipe-clause correction riding here (next-step #1227, learning #426).** The s174 review's second cause — "root `build:tokens` is `node packages/tokens/scripts/build.mjs | pnpm --filter @oods/* run build`, a PIPE" — does not reproduce: `package.json:71` is `"build:tokens": "node packages/tokens/scripts/build.mjs"`, and `git log -G'build:tokens".*\|' -- package.json` and `git log -G'build\.mjs \|' -- package.json` both return **0** commits across the file's 63 — a pipe never existed in the root script (`-S` hits cannot show that; `-G` can). No root script contains a shell pipe (the only `|` is `pipeline:push`'s `||`). The only `rimraf dist` is `packages/tokens/package.json:23`, `&&`-chained. Learning #426 is archived; s175 m01 records a dated learning superseding that clause. No build-sequencing change was made.
+
+
+### 8.2 Certify carries C4 / C5 / C7 — closed by s175 m03 (2026-08-22)
+
+**C5 (the not-applicable promise had no wire channel).** The echartsA11yNote (§1a.10) promised each rule "reporting pass, fail, or not-applicable with its absent precondition named"; the engine produced exactly that (decision 4) and `artifact.certify.ts` dropped it — NA results carry `passed:true` by design and the emission loop's `if (rule.passed) continue` could not tell them from a meaningful pass; the output schema (`additionalProperties:false`) had no field that could carry one. Reproduced at 852be47 for all 8 ECharts-primary types with the s172 operand fixture: 9–10 NA results per type in the engine, zero on the wire. Closed by an additive, schema-declared top-level `a11yNotApplicable: [{rule, preconditionAbsent}]` (memo s175 §1c decision 7) present exactly when the warn-first engine ran (ECharts-primary + `data`), absent on the {spec}-only and cartesian paths and when the engine threw. Cartesian NA exposure is OUT (decision 8 — it would move clause-(i) bytes). Controls: RED 16/88 on a scratch copy with the old loop, GREEN 88/88; schema withheld → data-operand 6 / echarts-accuracy 14 / echarts-determinism 8 / warn-first 33 red, contrast-fault + accuracy-fault green; spec-only-bytes 32/32 with zero note additions and one declared reword; viz-core MATRIX byte-unchanged, 14/14; live on :4466 the MarkSankey operand case returns 10 entries (each precondition named), the no-data call has no key. The expectations are FIXTURE-derived and engine-cross-checked, not matrix-copied: force_graph's R-14 fires on the certify fixture (9 NA) while it is n/a in viz-core's.
+
+**C4 (a cartesian-only claim the promise sweep missed).** `echarts-primary.ts:76` still said "the a11y-equivalence path is still cartesian-only" — false for certify since s172 and falsified by this sprint's own m01. Corrected: certify evaluates the 16 rules warn-first on ECharts-primary with the operand; only the render-side GATE (`viz.render.ts:254` short-circuits before it) and the certified verdict remain cartesian. The three render-gate test titles now name the RENDER-SIDE GATE scope. Residue recorded with reasons in the s175 m03 decision (certify.ts:549 coverage sentence, registry.ts:185, the spec-only-bytes baseline keys, expectations.ts:29, data-analysis.ts:69).
+
+**C7 (R-05 / R-12 provenance).** Decision #1476 and the `equivalence-rules.ts:21-23` comment claimed all eleven declared preconditions were pre-existing guards. `git show 0e251e5` shows R-05's `if (!x && !y)` and R-12's `boundFields === 0` as pure `+` hunks (grep -c = 1 and 1, matching `-` lines = 0): s174 m01 ADDED those two; the other nine were one-line `pass()→notApplicable()` swaps. The non-mover conclusion stands (both implicit passes already returned `passed:true`). Corrected by a dated s175 decision citing #1476 and 0e251e5, and by amending the comment (comment only; hunk `@@ -19,8 +19,12 @@`, nothing in `:115-375` moves).
+
+Next-steps #1230, #1231, #1233 closed with m03. The s174 §7.2 declared-movement census is unchanged by this: the three carries were defects of this sprint's record, not of its byte ledger.
+
+### 8.3 Closeout omissions — test:scale and verify:brand-cascade (m06, 2026-08-22)
+
+The §7 gate table (21 rows) neither ran nor recorded two criteria of `cmos/foundational-docs/quality-bars.md` that are closeout-LOAD-BEARING: `pnpm --filter @oods/mcp-server run test:scale` (the scale-determinism suite, 4 files / 62 tests; decision #678 made it a closeout criterion after the sprint-105/106/107 streak) and `node scripts/quality/brand-cascade-browser-proof.mjs` (= `verify:brand-cascade`, the s168 m06 rendered-surface proof; 246 computed-style assertions across 6 brand×theme cells). Both were absent from the s172, s173 and s174 tables (grep over the three memos: zero hits). The root cause, found at the s174 review: the quality-bars criteria are supposed to live in the closeout mission's successCriteria, and the closeout missions of s172–s174 carried successCriteria = null, so nothing enumerated them. Corrected in s175: the two rows are restored to the gate table (memo §1f.2) and s175-m06 carries literal successCriteria. This block corrects the record; it does not change any s174 verdict (both suites were green at the s174 HEAD when re-run by the s175 grounding on 2026-08-22, and the s174 review had already noted the dropped rows).

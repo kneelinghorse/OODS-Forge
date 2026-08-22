@@ -156,7 +156,7 @@ describe('viz.render a11yEquivalence GATE (default-ON, m04)', () => {
     expect(a11yWarnings.some((w) => w.code === 'OODS-A11Y-A11Y-R-11')).toBe(false);
   });
 
-  it('ECharts-primary path is NOT gated even with the flag ON (cartesian-only scope)', async () => {
+  it('ECharts-primary path is NOT gated even with the flag ON (the RENDER-SIDE GATE is cartesian-only; certify evaluates the rules warn-first with the operand)', async () => {
     const out = await render({
       chartType: 'treemap',
       hierarchy: {

@@ -19,8 +19,12 @@
 //      same (spec, data) pair — the shared-builder property, proven by cross-tool comparison.
 
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
-import { buildVizSpecFromRows, type NormalizedVizSpec } from '@oods/viz-core';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  buildVizSpecFromRows,
+  validateVizEquivalenceRulesForContext,
+  type NormalizedVizSpec,
+} from '@oods/viz-core';
 import { getAjv } from '../../src/lib/ajv.js';
 import { handle as certify } from '../../src/tools/artifact.certify.js';
 import { handle as vizRender } from '../../src/tools/viz.render.js';
@@ -30,6 +34,7 @@ import { ECHARTS_OPERAND_CASES, renderInputFor } from './s172-echarts-operands.j
 import { echartsPrimaryIr } from './s172-spec-only-cases.js';
 import {
   a11yFindingsOf,
+  CERTIFY_FIXTURE_A11Y_NOT_APPLICABLE,
   RENDERED_IR_A11Y_FINDINGS,
   TERSE_IR_A11Y_FINDINGS,
 } from './s174-a11y-warnfirst-expectations.js';
@@ -187,5 +192,157 @@ describe('artifact.certify — warn-first is a READER (s174 m01)', () => {
     expect(out.coverage).toBe('certified');
     expect(out.pillars?.a11yEquivalence).toBe('pass');
     expect(a11yFindingsOf(out.findings)).toEqual([]);
+  });
+});
+
+// s175 m03 — THE THIRD STATE REACHES THE WIRE.
+//
+// The note above promises "each rule reporting pass, fail, or not-applicable with its absent
+// precondition named". Until s175 the engine produced exactly that and certify DROPPED it: a
+// not-applicable result carries passed:true by design (equivalence-rules.ts notApplicable()),
+// and the emission loop's `if (rule.passed) continue` could not tell it from a meaningful
+// pass. The output schema had no field that could carry one. This block pins the additive
+// channel that closes the gap — and pins its ABSENCE everywhere the engine did not run, since
+// "present exactly when the engine ran" is the whole of the contract.
+describe('artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03)', () => {
+  const asNotApplicable = (out: { a11yNotApplicable?: ReadonlyArray<{ rule: string; preconditionAbsent: string }> }) =>
+    out.a11yNotApplicable;
+
+  it.each(CASES)(
+    '%s: WITH the operand, a11yNotApplicable[] is the FIXTURE-derived NA set in rule order, each naming its absent precondition',
+    async (chartType, operand) => {
+      const rendered = await vizRender(renderInputFor(operand) as never);
+      const ir = rendered.normalizedSpec as unknown as NormalizedVizSpec;
+      const out = await certify({ spec: ir, data: { [operand.branch]: operand.branchData } as never });
+      expect(out.status).toBe('ok');
+      const channel = asNotApplicable(out);
+      expect(channel).toBeDefined();
+      expect(channel!.map((entry) => entry.rule)).toEqual(
+        CERTIFY_FIXTURE_A11Y_NOT_APPLICABLE[chartType as EChartsPrimaryType],
+      );
+      for (const entry of channel!) {
+        expect(entry.preconditionAbsent.length).toBeGreaterThan(0);
+      }
+      // Fixture-derived, not matrix-copied: the channel equals what the ENGINE reports as
+      // not-applicable over the very context certify builds (the shared builder).
+      const engine = validateVizEquivalenceRulesForContext(
+        buildEChartsA11yContext(ir, operand.chartType as EChartsPrimaryType, operand.branchData),
+      );
+      expect(channel).toEqual(
+        engine
+          .filter((rule) => rule.notApplicable)
+          .map((rule) => ({ rule: rule.id, preconditionAbsent: rule.preconditionAbsent })),
+      );
+      // The channel has at least 9 entries (memo §1c.1: 9–10 per type on this fixture).
+      expect(channel!.length).toBeGreaterThanOrEqual(9);
+      expect(validateOutput(out)).toBe(true);
+    },
+  );
+
+  it.each(CASES)('%s: NA ids and findings[] a11y ids are DISJOINT — a not-applicable rule is never a failure', async (_c, operand) => {
+    const rendered = await vizRender(renderInputFor(operand) as never);
+    const out = await certify({
+      spec: rendered.normalizedSpec as unknown as NormalizedVizSpec,
+      data: { [operand.branch]: operand.branchData } as never,
+    });
+    const naCodes = new Set((asNotApplicable(out) ?? []).map((entry) => `OODS-A11Y-${entry.rule}`));
+    const failing = a11yFindingsOf(out.findings).map((finding) => finding.code);
+    expect(failing.filter((code) => naCodes.has(code))).toEqual([]);
+    // And the two together never exceed the engine's 16 rules — the remainder passed.
+    expect(naCodes.size + failing.length).toBeLessThanOrEqual(16);
+  });
+
+  it('force_graph: R-14 FIRES on the certify fixture, so it is in findings[] and NOT in the channel (the fixture decides, not the matrix)', async () => {
+    const operand = ECHARTS_OPERAND_CASES.find((c) => c.chartType === 'force_graph')!;
+    const rendered = await vizRender(renderInputFor(operand) as never);
+    const out = await certify({
+      spec: rendered.normalizedSpec as unknown as NormalizedVizSpec,
+      data: { network: operand.branchData } as never,
+    });
+    expect(a11yFindingsOf(out.findings).map((f) => f.code)).toContain('OODS-A11Y-A11Y-R-14');
+    expect((asNotApplicable(out) ?? []).map((entry) => entry.rule)).not.toContain('A11Y-R-14');
+  });
+
+  it.each(CASES)('%s: the terse IR reports the SAME NA set — the preconditions are structural, not prose', async (chartType, operand) => {
+    const out = await certify({
+      spec: echartsPrimaryIr(operand.trait, operand.chartType),
+      data: { [operand.branch]: operand.branchData } as never,
+    });
+    expect((asNotApplicable(out) ?? []).map((entry) => entry.rule)).toEqual(
+      CERTIFY_FIXTURE_A11Y_NOT_APPLICABLE[chartType as EChartsPrimaryType],
+    );
+    expect(validateOutput(out)).toBe(true);
+  });
+
+  it.each(CASES)('%s: WITHOUT the operand the key is ABSENT — not [], absent', async (_c, operand) => {
+    const rendered = await vizRender(renderInputFor(operand) as never);
+    const out = await certify({ spec: rendered.normalizedSpec as unknown as NormalizedVizSpec });
+    expect('a11yNotApplicable' in out).toBe(false);
+    const terse = await certify({ spec: echartsPrimaryIr(operand.trait, operand.chartType) });
+    expect('a11yNotApplicable' in terse).toBe(false);
+  });
+
+  it('the CARTESIAN path has no key either (decision 8: cartesian NA exposure is out of scope)', async () => {
+    const spec = buildVizSpecFromRows({
+      rows: [
+        { region: 'North', revenue: 100 },
+        { region: 'South', revenue: 120 },
+      ],
+      chartType: 'bar',
+      encodings: { x: { field: 'region' }, y: { field: 'revenue', aggregate: 'sum' } } as never,
+    }).spec;
+    const out = await certify({ spec });
+    expect(out.coverage).toBe('certified');
+    expect('a11yNotApplicable' in out).toBe(false);
+  });
+
+  it('when the engine THROWS the key is ABSENT (the partial list is discarded) and the note says so', async () => {
+    const operand = ECHARTS_OPERAND_CASES.find((c) => c.chartType === 'sankey')!;
+    const rendered = await vizRender(renderInputFor(operand) as never);
+    vi.resetModules();
+    vi.doMock('../../src/tools/echarts-a11y-analysis.js', () => ({
+      buildEChartsA11yContext: () => {
+        throw new Error('synthetic a11y-engine fault');
+      },
+    }));
+    try {
+      const { handle: faultyCertify } = await import('../../src/tools/artifact.certify.js');
+      const out = await faultyCertify({
+        spec: rendered.normalizedSpec as unknown as NormalizedVizSpec,
+        data: { sankey: operand.branchData } as never,
+      });
+      expect(out.status).toBe('ok');
+      expect('a11yNotApplicable' in out).toBe(false);
+      expect(a11yFindingsOf(out.findings)).toEqual([]);
+      expect((out.notes ?? []).some((n) => n.includes('The a11y-equivalence rules could not be evaluated'))).toBe(true);
+      expect(validateOutput(out)).toBe(true);
+    } finally {
+      vi.doUnmock('../../src/tools/echarts-a11y-analysis.js');
+      vi.resetModules();
+    }
+  });
+
+  it('the schema CONSTRAINS the channel: an entry with an extra key or an empty precondition is rejected', async () => {
+    const operand = ECHARTS_OPERAND_CASES.find((c) => c.chartType === 'treemap')!;
+    const rendered = await vizRender(renderInputFor(operand) as never);
+    const out = await certify({
+      spec: rendered.normalizedSpec as unknown as NormalizedVizSpec,
+      data: { hierarchy: operand.branchData } as never,
+    });
+    expect(validateOutput(out)).toBe(true);
+    const extraKey = { ...out, a11yNotApplicable: [{ rule: 'A11Y-R-01', preconditionAbsent: 'x', severity: 'warn' }] };
+    expect(validateOutput(extraKey)).toBe(false);
+    const emptyPrecondition = { ...out, a11yNotApplicable: [{ rule: 'A11Y-R-01', preconditionAbsent: '' }] };
+    expect(validateOutput(emptyPrecondition)).toBe(false);
+    const missingPrecondition = { ...out, a11yNotApplicable: [{ rule: 'A11Y-R-01' }] };
+    expect(validateOutput(missingPrecondition)).toBe(false);
+  });
+
+  it('the note names the channel and keeps the s174 substrings (a declared reword, same slot)', async () => {
+    const operand = ECHARTS_OPERAND_CASES.find((c) => c.chartType === 'sankey')!;
+    const out = await certify({ spec: echartsPrimaryIr(operand.trait, operand.chartType) });
+    const note = (out.notes ?? []).find((n) => n.includes('A11y-equivalence runs WARN-FIRST here'));
+    expect(note).toContain('not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed');
+    expect(note).toContain('failures surface in findings[] at their native severity');
   });
 });

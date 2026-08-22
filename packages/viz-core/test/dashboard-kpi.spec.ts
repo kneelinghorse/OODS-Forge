@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeKpi, type KpiPanel } from '@oods/viz-core';
+import { computeKpi, KpiComputeError, type KpiPanel } from '@oods/viz-core';
 
 function kpiPanel(overrides: Partial<KpiPanel> = {}): KpiPanel {
   return { id: 'kpi', kind: 'kpi', datasetId: 'd', field: 'revenue', ...overrides } as KpiPanel;
@@ -225,6 +225,156 @@ describe('@oods/viz-core — computeKpi measureRef is inert (sprint-116)', () =>
     const base = periodPanel({ aggregate: 'sum', comparison: { basis: 'window', window: 2 } });
     const withRef = periodPanel({ ...base, measureRef: 'gm.revenue' });
     expect(JSON.stringify(computeKpi(withRef, UNSORTED))).toBe(JSON.stringify(computeKpi(base, UNSORTED)));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Cell-type semantics (sprint-175 m05, decision 11 — Dashboard-demos FD#1). WHY
+// this matters: HEAD 852be47 built EVERY metric series through a numeric-only
+// filter BEFORE the aggregate switch, so `count` over a string field returned a
+// plausible 0 with no error (the consumer's FD#1), and `sum` over an all-string
+// field did the same. The contract now: count/distinct are COUNT(field) — every
+// non-null cell regardless of type, never rows.length (the absent-field and empty
+// paths stay 0); the six numeric aggregates use numeric cells only and FAIL LOUD
+// (KpiComputeError) when the field has values but none numeric. All-numeric
+// inputs are byte-identical to HEAD on both series builders — the goldens below
+// were captured at 852be47 before kpi.ts changed.
+// ---------------------------------------------------------------------------
+const STRINGS = [{ chartType: 'bar' }, { chartType: 'line' }, { chartType: 'bar' }];
+const typed = (o: Partial<KpiPanel> = {}) => kpiPanel({ field: 'chartType', ...o });
+const ALL_AGGREGATES = ['sum', 'count', 'average', 'median', 'min', 'max', 'distinct', 'latest'] as const;
+const NUMERIC_AGGREGATES = ['sum', 'average', 'median', 'min', 'max', 'latest'] as const;
+// Captured at HEAD 852be47 (pre-change): row-order path over SERIES with prior_period +
+// an above-100 threshold + stddev anomaly, for every aggregate.
+const ROW_GOLDENS: Record<(typeof ALL_AGGREGATES)[number], string> = {
+  sum: '{"value":590,"formatted":"590","delta":200,"deltaPct":0.512821,"trendDirection":"increasing","sparkline":[100,80,120,90,200],"thresholdBreached":true,"anomaly":false}',
+  count: '{"value":5,"formatted":"5","delta":1,"deltaPct":0.25,"trendDirection":"increasing","sparkline":[100,80,120,90,200],"thresholdBreached":false,"anomaly":false}',
+  average: '{"value":118,"formatted":"118","delta":20.5,"deltaPct":0.210256,"trendDirection":"increasing","sparkline":[100,80,120,90,200],"thresholdBreached":true,"anomaly":false}',
+  median: '{"value":100,"formatted":"100","delta":5,"deltaPct":0.052632,"trendDirection":"increasing","sparkline":[100,80,120,90,200],"thresholdBreached":false,"anomaly":false}',
+  min: '{"value":80,"formatted":"80","delta":0,"deltaPct":0,"trendDirection":"flat","sparkline":[100,80,120,90,200],"thresholdBreached":false,"anomaly":false}',
+  max: '{"value":200,"formatted":"200","delta":80,"deltaPct":0.666667,"trendDirection":"increasing","sparkline":[100,80,120,90,200],"thresholdBreached":true,"anomaly":false}',
+  distinct: '{"value":5,"formatted":"5","delta":1,"deltaPct":0.25,"trendDirection":"increasing","sparkline":[100,80,120,90,200],"thresholdBreached":false,"anomaly":false}',
+  latest: '{"value":200,"formatted":"200","delta":110,"deltaPct":1.222222,"trendDirection":"increasing","sparkline":[100,80,120,90,200],"thresholdBreached":true,"anomaly":false}',
+};
+// Same capture on the explicit-period path over UNSORTED.
+const PERIOD_GOLDENS: Record<(typeof ALL_AGGREGATES)[number], string> = {
+  sum: '{"value":450,"formatted":"450","delta":200,"deltaPct":0.8,"trendDirection":"increasing","sparkline":[100,150,200],"thresholdBreached":true,"anomaly":false}',
+  count: '{"value":3,"formatted":"3","delta":1,"deltaPct":0.5,"trendDirection":"increasing","sparkline":[100,150,200],"thresholdBreached":false,"anomaly":false}',
+  average: '{"value":150,"formatted":"150","delta":25,"deltaPct":0.2,"trendDirection":"increasing","sparkline":[100,150,200],"thresholdBreached":true,"anomaly":false}',
+  median: '{"value":150,"formatted":"150","delta":25,"deltaPct":0.2,"trendDirection":"increasing","sparkline":[100,150,200],"thresholdBreached":true,"anomaly":false}',
+  min: '{"value":100,"formatted":"100","delta":0,"deltaPct":0,"trendDirection":"flat","sparkline":[100,150,200],"thresholdBreached":false,"anomaly":false}',
+  max: '{"value":200,"formatted":"200","delta":50,"deltaPct":0.333333,"trendDirection":"increasing","sparkline":[100,150,200],"thresholdBreached":true,"anomaly":false}',
+  distinct: '{"value":3,"formatted":"3","delta":1,"deltaPct":0.5,"trendDirection":"increasing","sparkline":[100,150,200],"thresholdBreached":false,"anomaly":false}',
+  latest: '{"value":200,"formatted":"200","delta":50,"deltaPct":0.333333,"trendDirection":"increasing","sparkline":[100,150,200],"thresholdBreached":true,"anomaly":false}',
+};
+const goldenPanel = (o: Partial<KpiPanel>) =>
+  kpiPanel({ comparison: { basis: 'prior_period' }, threshold: { direction: 'above', value: 100, anomaly: 'stddev_outlier' }, ...o });
+
+describe('@oods/viz-core — computeKpi cell-type semantics (sprint-175 m05, FD#1)', () => {
+  it('count over string cells = the non-null cell count (FD#1 — HEAD returned 0)', () => {
+    const r = computeKpi(typed({ aggregate: 'count' }), STRINGS);
+    expect(r.value).toBe(3);
+    expect(r.formatted).toBe('3');
+  });
+
+  it("distinct over ['bar','line','bar'] = 2", () => {
+    expect(computeKpi(typed({ aggregate: 'distinct' }), STRINGS).value).toBe(2);
+  });
+
+  it('count/distinct skip null and undefined cells — COUNT(field), never rows.length', () => {
+    const sparse = [{ chartType: 'bar' }, { chartType: null }, {}, { chartType: 'line' }];
+    expect(computeKpi(typed({ aggregate: 'count' }), sparse).value).toBe(2);
+    expect(computeKpi(typed({ aggregate: 'distinct' }), sparse).value).toBe(2);
+  });
+
+  it('distinct canonicalises numeric-looking cells (toNumber ?? String) so numeric fields keep their cardinality', () => {
+    expect(computeKpi(kpiPanel({ aggregate: 'distinct' }), rows([1, '1', '1.0', 2])).value).toBe(2);
+    expect(computeKpi(kpiPanel({ aggregate: 'count' }), rows([1, '1', '1.0', 2])).value).toBe(4);
+  });
+
+  it('count over strings WITH periodField = 3 (HEAD: 0); unparseable periods still drop', () => {
+    const periodStrings = [
+      { chartType: 'bar', period: '2024-01' },
+      { chartType: 'line', period: '2024-02' },
+      { chartType: 'bar', period: '2024-03' },
+    ];
+    expect(computeKpi(typed({ aggregate: 'count', periodField: 'period' }), periodStrings).value).toBe(3);
+    expect(computeKpi(typed({ aggregate: 'distinct', periodField: 'period' }), periodStrings).value).toBe(2);
+    const withGarbage = [...periodStrings, { chartType: 'area', period: 'garbage' }];
+    expect(computeKpi(typed({ aggregate: 'count', periodField: 'period' }), withGarbage).value).toBe(3);
+  });
+
+  it('prior_period for count over strings slices by DISTINCT period (prior count 2 -> delta 1)', () => {
+    const periodStrings = [
+      { chartType: 'bar', period: '2024-03' },
+      { chartType: 'line', period: '2024-01' },
+      { chartType: 'bar', period: '2024-02' },
+    ];
+    const r = computeKpi(typed({ aggregate: 'count', periodField: 'period', comparison: { basis: 'prior_period' } }), periodStrings);
+    expect(r.value).toBe(3);
+    expect(r.delta).toBe(1);
+    expect(r.sparkline).toBeUndefined(); // no numeric cells -> no numeric sparkline
+  });
+
+  it('an all-numeric row-order SERIES is byte-identical to HEAD for all 8 aggregates', () => {
+    for (const kind of ALL_AGGREGATES) {
+      expect(JSON.stringify(computeKpi(goldenPanel({ aggregate: kind }), SERIES)), kind).toBe(ROW_GOLDENS[kind]);
+    }
+  });
+
+  it('an all-numeric periodField series is byte-identical to HEAD for all 8 aggregates', () => {
+    for (const kind of ALL_AGGREGATES) {
+      expect(JSON.stringify(computeKpi(goldenPanel({ aggregate: kind, periodField: 'period' }), UNSORTED)), kind).toBe(PERIOD_GOLDENS[kind]);
+    }
+  });
+
+  it('sum over an all-string field throws KpiComputeError (not a silent 0)', () => {
+    expect(() => computeKpi(typed({ aggregate: 'sum' }), STRINGS)).toThrow(KpiComputeError);
+    let caught: unknown;
+    try {
+      computeKpi(typed({ aggregate: 'sum' }), STRINGS);
+    } catch (err) {
+      caught = err;
+    }
+    expect(caught).toBeInstanceOf(Error);
+    const e = caught as KpiComputeError;
+    expect(e.name).toBe('KpiComputeError');
+    expect(e.panelId).toBe('kpi');
+    expect(e.field).toBe('chartType');
+    expect(e.aggregate).toBe('sum');
+    expect(e.reason).toBe('no_numeric_cells');
+  });
+
+  it('every numeric aggregate throws over an all-string field (incl. the sum default); count/distinct do not', () => {
+    for (const kind of NUMERIC_AGGREGATES) {
+      expect(() => computeKpi(typed({ aggregate: kind }), STRINGS), kind).toThrow(KpiComputeError);
+    }
+    expect(() => computeKpi(typed(), STRINGS)).toThrow(KpiComputeError); // aggregate omitted -> sum
+    expect(() => computeKpi(typed({ aggregate: 'count' }), STRINGS)).not.toThrow();
+    expect(() => computeKpi(typed({ aggregate: 'distinct' }), STRINGS)).not.toThrow();
+  });
+
+  it('throws on the periodField path too', () => {
+    const periodStrings = [{ chartType: 'bar', period: '2024-01' }, { chartType: 'line', period: '2024-02' }];
+    expect(() => computeKpi(typed({ aggregate: 'sum', periodField: 'period' }), periodStrings)).toThrow(KpiComputeError);
+  });
+
+  it('does NOT throw when at least one numeric cell exists — mixed cells keep the numeric-only filter (180)', () => {
+    expect(computeKpi(kpiPanel({ aggregate: 'sum' }), rows([100, 'n/a', 80, null])).value).toBe(180);
+  });
+
+  it('absent field: count = 0 and sum = 0 (zero non-null cells — no throw; the ratified silent path)', () => {
+    expect(computeKpi(kpiPanel({ field: 'nope', aggregate: 'count' }), SERIES).value).toBe(0);
+    expect(computeKpi(kpiPanel({ field: 'nope', aggregate: 'sum' }), SERIES).value).toBe(0);
+  });
+
+  it('empty rows: count = 0 and sum = 0 (no throw)', () => {
+    expect(computeKpi(typed({ aggregate: 'count' }), []).value).toBe(0);
+    expect(computeKpi(typed({ aggregate: 'sum' }), []).value).toBe(0);
+  });
+
+  it('a numeric field whose periods all fail to parse still yields 0 (numeric cells exist — no throw)', () => {
+    expect(computeKpi(periodPanel({ aggregate: 'sum' }), periodRows([[10, 'x'], [20, 'y']])).value).toBe(0);
   });
 });
 

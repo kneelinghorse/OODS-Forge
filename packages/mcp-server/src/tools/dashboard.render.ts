@@ -15,6 +15,7 @@
 import {
   applyCrossFilter,
   computeKpi,
+  KpiComputeError,
   finestGranularity,
   describeMeasureContext,
   parseTemporalValue,
@@ -477,7 +478,45 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
           continue;
         }
       }
-      panelResults.push(buildKpiResult(kpiPanel, rows, measureProjections.get(kpiPanel.id)?.context));
+      // V160 (sprint-175 m05, decision 11): computeKpi now THROWS KpiComputeError when a numeric
+      // aggregate (sum/average/median/min/max/latest) meets a field that HAS values but none of
+      // them numeric — the case that returned a plausible, silent value:0 before s175 (FD#1).
+      // buildKpiResult is its only call site here and it sits OUTSIDE the catches above, so an
+      // uncaught throw would escape as a TOOL-level error; route it through the SAME onPanelError
+      // seam as V137/V139/V142 instead. count/distinct never throw (defined over any cell type),
+      // and an absent field has zero non-null cells, so the ratified s118 typo-field value:0
+      // asymmetry is untouched: this is a cell-TYPE gate, not a field-presence gate.
+      let kpiResult: PanelResult;
+      try {
+        kpiResult = buildKpiResult(kpiPanel, rows, measureProjections.get(kpiPanel.id)?.context);
+      } catch (err) {
+        if (!(err instanceof KpiComputeError)) {
+          throw err;
+        }
+        if (onPanelError === 'omit') {
+          warnings.push({
+            code: 'OODS-V160',
+            message: `KPI panel "${panel.id}" omitted: aggregate "${err.aggregate}" over field "${err.field}" found no numeric cells.`,
+            severity: 'warning',
+          });
+          continue;
+        }
+        errorPanelCount += 1;
+        panelResults.push({
+          id: panel.id,
+          kind: 'error',
+          ...(panel.title ? { title: panel.title } : {}),
+          error: {
+            code: 'OODS-V160',
+            message: `KPI panel "${panel.id}" cannot compute aggregate "${err.aggregate}": field "${err.field}" has values but no numeric cells.`,
+            severity: 'error',
+          },
+          a11yDescription: `Panel "${panel.title ?? panel.id}" could not be rendered: aggregate "${err.aggregate}" over field "${err.field}" found no numeric cells.`,
+        });
+        placedPanels.push(panel);
+        continue;
+      }
+      panelResults.push(kpiResult);
       placedPanels.push(kpiPanel);
       continue;
     }

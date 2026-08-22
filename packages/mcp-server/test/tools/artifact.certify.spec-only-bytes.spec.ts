@@ -70,6 +70,15 @@ const DECLARED_NOTE_REWORDS: ReadonlyArray<{ baselineContains: string; nowContai
     baselineContains: 'determinism and accuracy ARE checked for these types when the `data` operand is supplied',
     nowContains: 'A11y-equivalence runs WARN-FIRST here',
   },
+  // s175 m03 — the SAME slot reworded a THIRD time: the s174 wording promised a not-applicable
+  // state "with its absent precondition named" that the response could not carry; the note now
+  // names the a11yNotApplicable[] channel that carries it (data-backed path only — nothing is
+  // ADDED to the {spec}-only notes, so DECLARED_NOTE_ADDITIONS stays []). Same baseline key,
+  // same slot, same count.
+  {
+    baselineContains: 'determinism and accuracy ARE checked for these types when the `data` operand is supplied',
+    nowContains: 'not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed',
+  },
 ];
 
 /**

@@ -91,7 +91,15 @@ export interface CertifyDeterminism {
 }
 
 /**
- * Per-pillar tri-state summary (s137, extended s170 and s172). The pillars DISAGGREGATE which
+ * The accuracy pillar's verdict (s170 #818; 'ungradeable' added s175 m04, #781).
+ * 'ungradeable' = grading was ATTEMPTED on the rule set it was given and failed for a
+ * reason outside the spec (an evaluator fault); 'unchecked' = nothing was attempted or
+ * nothing was gradeable (no operand, or every offered rule's precondition absent).
+ */
+export type AccuracyVerdict = 'pass' | 'fail' | 'ungradeable' | 'unchecked';
+
+/**
+ * Per-pillar summary (s137, extended s170, s172 and s175). The pillars DISAGGREGATE which
  * pillar drove the folded `conformant` gate (s140 [B]) — and on the uncertified path, where
  * there is no folded gate at all, they are the ONLY place the real verdicts live.
  * a11yEquivalence mirrors the a11y-equivalence sub-result (NOT the folded conformant);
@@ -99,6 +107,14 @@ export interface CertifyDeterminism {
  * categorical color bytes Forge baked into the compiled spec (s138) — with 'exempt' for
  * gradient scales; accuracy is the structural-rules verdict. So a reader can always see WHY
  * conformant is false, and can always see what actually ran when it is null.
+ *
+ * contrast and accuracy tell "tried and failed" apart from "nothing to grade" IN THE VALUE
+ * (s175 m04, #781): 'ungradeable' means grading was attempted on a unit or rule set the
+ * pillar was given and failed for a reason outside the spec — an unresolvable canvas
+ * token, or an evaluator fault — and it pulls the folded conformant false exactly as
+ * 'fail' does; 'unchecked' means nothing was attempted or nothing was gradeable — no
+ * colour-bearing unit, no operand, or every offered rule's precondition absent — and it
+ * leaves conformant a11y-driven (the s139 lock, decisions #1040/#1042 [B]).
  */
 export interface CertifyPillars {
   readonly a11yEquivalence: 'pass' | 'fail' | 'unchecked';
@@ -107,9 +123,9 @@ export interface CertifyPillars {
   /**
    * The structural accuracy verdict (s170 #818, widened to all 13 types in s172): the four
    * cartesian rules over the compiled spec, or the per-type ECharts set over the `data`
-   * operand. Its own THREE-state enum; contrast's four-state one ('exempt') is untouched.
+   * operand. Its own enum (no 'exempt'); contrast's five-state one is separate.
    */
-  readonly accuracy: 'pass' | 'fail' | 'unchecked';
+  readonly accuracy: AccuracyVerdict;
 }
 
 /**
@@ -124,6 +140,12 @@ export interface CertifyPillars {
 export interface CertifyAccuracySummary {
   readonly rulesEvaluated: number;
   readonly failing: number;
+}
+
+/** One not-applicable a11y-equivalence result (s175 m03): the rule, and the precondition it lacked. */
+export interface CertifyA11yNotApplicable {
+  readonly rule: string;
+  readonly preconditionAbsent: string;
 }
 
 export interface ArtifactCertifyOutput {
@@ -145,6 +167,14 @@ export interface ArtifactCertifyOutput {
    * no longer empty on the uncertified path.
    */
   readonly findings?: CertifyFinding[];
+  /**
+   * s175 m03 — the not-applicable a11y-equivalence results, in rule order, each naming the
+   * absent precondition. Present (as [] if none) EXACTLY when the warn-first engine ran to
+   * completion — the ECharts-primary path with the `data` operand. Absent on the {spec}-only
+   * path, on the cartesian path (decision 8: cartesian NA exposure is out of scope), on
+   * error, and when the engine faulted (the partial list is discarded; notes[] says so).
+   */
+  readonly a11yNotApplicable?: CertifyA11yNotApplicable[];
   /**
    * The re-emit proof. Certified path: the Vega-Lite compile. Uncertified path (s172):
    * the ECharts option, present whenever the `data` operand was supplied.
@@ -239,7 +269,7 @@ const ECHARTS_GEO_EXEMPT_TRAITS: ReadonlySet<string> = new Set([
 // The verdict flip (pillar → pass/fail) is referenced UNDATED: shipped prose does not carry
 // sprint numbers (the s173→s174 date correction in this very sentence is why).
 const echartsA11yNote = (trait: string): string =>
-  `${trait} is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the \`data\` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable with its absent precondition named; failures surface in findings[] at their native severity and do not move the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.`;
+  `${trait} is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the \`data\` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.`;
 
 /**
  * What the s172 operand contributed to an ECharts-primary verdict: the determinism pillar
@@ -251,7 +281,7 @@ interface EChartsOperandVerdict {
   readonly determinismPillar: 'pass' | 'fail' | 'unchecked';
   readonly determinism?: CertifyDeterminism;
   /** s172 m03 — the ECharts-side accuracy pillar, real whenever the operand is present. */
-  readonly accuracyPillar: 'pass' | 'fail' | 'unchecked';
+  readonly accuracyPillar: AccuracyVerdict;
   readonly accuracySummary?: CertifyAccuracySummary;
   /**
    * Accuracy findings (OODS-V154..V159) followed by the s174 warn-first a11y-equivalence
@@ -259,6 +289,13 @@ interface EChartsOperandVerdict {
    * field here: warn-first surfaces findings without moving any verdict.
    */
   readonly findings: CertifyFinding[];
+  /**
+   * s175 m03 — the third state the note promises. Present (as [] when no rule was
+   * not-applicable) EXACTLY when the warn-first engine ran to completion; undefined when it
+   * did not (no operand, or the engine threw — the catch below discards the partial list and
+   * says so in notes[]). Never folded into findings[]: a not-applicable rule is not a failure.
+   */
+  readonly a11yNotApplicable?: CertifyA11yNotApplicable[];
   readonly notes: string[];
 }
 
@@ -283,6 +320,9 @@ function echartsContrastVerdict(
     // claim (s141 Design A), so an accuracy fail here is read from pillars.accuracy and
     // findings[], never from conformant. That is stated in the output schema prose.
     findings: operand.findings,
+    // s175 m03: the not-applicable channel rides beside findings[] — present exactly when the
+    // warn-first engine ran (data-backed path), absent on the {spec}-only path.
+    ...(operand.a11yNotApplicable ? { a11yNotApplicable: operand.a11yNotApplicable } : {}),
     pillars: {
       a11yEquivalence: 'unchecked',
       determinism: operand.determinismPillar,
@@ -296,18 +336,31 @@ function echartsContrastVerdict(
   };
 }
 
+/**
+ * The note a contrast-engine fault writes beside 'ungradeable' (s175 m04, #781; closes
+ * decision #1446 (4) — the catches used to degrade silently). Names the fault so a reader
+ * can tell an evaluator fault from an unresolvable canvas (the grader's own note).
+ */
+function contrastFaultNote(err: unknown): string {
+  const name = err instanceof Error ? err.name : 'Error';
+  const message = err instanceof Error ? err.message : String(err);
+  return `The contrast engine faulted while grading this spec (${name}: ${message}); the pillar is reported ungradeable rather than passed.`;
+}
+
 /** s141 m02 — grade the baked OODS categorical palette (role-C + role-A → 'pass'). */
 function echartsCategoricalVerdict(trait: string, operand: EChartsOperandVerdict): ArtifactCertifyOutput {
-  // Defensive: a contrast-engine fault degrades to 'unchecked', never turns the verdict
-  // into status:error (mirrors the cartesian path's try/catch).
+  // Defensive: a contrast-engine fault degrades to 'ungradeable' WITH a note naming the
+  // fault (s175 m04, closes decision #1446 (4)) — never status:error. Mirrors the cartesian
+  // path's catch; conformant is null on this path regardless, so no gate moves.
   let contrast: ContrastVerdict = 'unchecked';
   let contrastNote: string | undefined;
   try {
     const pillar = evaluateEChartsCategoricalContrast();
     contrast = pillar.contrast;
     contrastNote = pillar.contrastNote;
-  } catch {
-    contrast = 'unchecked';
+  } catch (err) {
+    contrast = 'ungradeable';
+    contrastNote = contrastFaultNote(err);
   }
   return echartsContrastVerdict(trait, contrast, contrastNote, operand);
 }
@@ -349,7 +402,7 @@ function evaluateEChartsOperand(
     return { failure: { code: outcome.code, message: outcome.message } };
   }
 
-  let accuracyPillar: 'pass' | 'fail' | 'unchecked' = 'unchecked';
+  let accuracyPillar: AccuracyVerdict = 'unchecked';
   let accuracySummary: CertifyAccuracySummary | undefined;
   const findings: CertifyFinding[] = [];
   const accuracyNotes: string[] = [];
@@ -363,8 +416,9 @@ function evaluateEChartsOperand(
     // (force_graph, bubble_map, flow_map) or because every offered rule's precondition was
     // absent. This is STRICTER than the cartesian path, which reports 'pass' with
     // rulesEvaluated:0 (the s170 semantics, deliberately untouched here): on that path the
-    // reader is told to read 'pass' together with rulesEvaluated, and #781 records the
-    // hole. On the new path there was no reason to inherit it.
+    // reader is told to read 'pass' together with rulesEvaluated; aligning the two is a
+    // separate item (decision #1453), not the #781 hole s175 m04 closed. On the new path
+    // there was no reason to inherit it.
     //
     // The two 'unchecked' flavours are then told apart by devices, never by silence: NO
     // operand -> no accuracySummary + the operand-absent note; operand present but nothing
@@ -377,9 +431,11 @@ function evaluateEChartsOperand(
       findings.push({ code: finding.code, severity: 'error', message: finding.message });
     }
   } catch {
-    accuracyPillar = 'unchecked';
+    // An evaluator fault is "tried and failed" → 'ungradeable' (s175 m04), never the
+    // nothing-to-grade 'unchecked'; the offered-rules tail stays a scope tripwire.
+    accuracyPillar = 'ungradeable';
     accuracyNotes.push(
-      `The accuracy rules could not be evaluated for this ${operand.chartType}; the pillar is reported unchecked rather than passed. ${echartsAccuracyRulesFor(operand.chartType).length} rules were offered.`,
+      `The accuracy rules could not be evaluated for this ${operand.chartType}; the pillar is reported ungradeable rather than passed. ${echartsAccuracyRulesFor(operand.chartType).length} rules were offered.`,
     );
   }
 
@@ -398,9 +454,25 @@ function evaluateEChartsOperand(
   // Guarded exactly like the accuracy rules above: an engine fault degrades to zero a11y
   // findings plus a note, never a status:error on an otherwise valid verdict.
   const a11yNotes: string[] = [];
+  // s175 m03 — the NOT-APPLICABLE channel. The engine's tri-state (s174) reports an absent
+  // precondition as `passed:true` + `notApplicable:true` + `preconditionAbsent`, which the
+  // `if (rule.passed) continue` this replaces silently DROPPED — so the note's promise ("with
+  // its absent precondition named") never reached the wire. Route those results here, in rule
+  // order; failures still go to findings[]; a plain pass goes nowhere. The channel is assigned
+  // only AFTER the loop completes, so an engine throw leaves it undefined (absent on the wire)
+  // rather than half-filled.
+  let a11yNotApplicable: CertifyA11yNotApplicable[] | undefined;
   try {
     const context = buildEChartsA11yContext(spec, operand.chartType, operand.branchData);
+    const notApplicable: CertifyA11yNotApplicable[] = [];
     for (const rule of validateVizEquivalenceRulesForContext(context)) {
+      if (rule.notApplicable) {
+        notApplicable.push({
+          rule: rule.id,
+          preconditionAbsent: rule.preconditionAbsent ?? '(the rule did not name its precondition)',
+        });
+        continue;
+      }
       if (rule.passed) {
         continue;
       }
@@ -410,6 +482,7 @@ function evaluateEChartsOperand(
         message: rule.message ?? rule.summary,
       });
     }
+    a11yNotApplicable = notApplicable;
   } catch {
     a11yNotes.push(
       `The a11y-equivalence rules could not be evaluated for this ${operand.chartType}; no a11y findings are reported for it. pillars.a11yEquivalence is 'unchecked' on this path either way.`,
@@ -422,6 +495,7 @@ function evaluateEChartsOperand(
     accuracyPillar,
     ...(accuracySummary ? { accuracySummary } : {}),
     findings,
+    ...(a11yNotApplicable ? { a11yNotApplicable } : {}),
     notes: [determinismScopeNote(operand.chartType), ...accuracyNotes, ...a11yNotes],
   };
 }
@@ -560,25 +634,29 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // construction. It is a read-only addition to certify's OWN output; contentHash
     // derives from an untouched toVegaLiteSpec, so render↔certify hash identity holds.
     // Defensive: a contrast-engine fault never turns a valid conformance verdict into
-    // status:error — it degrades to 'unchecked'.
+    // status:error — it degrades to 'ungradeable' WITH a note naming the fault (s175 m04,
+    // closes decision #1446 (4)), and 'ungradeable' pulls conformant false below.
     let contrast: ContrastVerdict = 'unchecked';
     let contrastNote: string | undefined;
     try {
       const pillar = evaluateContrastPillar(certifySpec, compiled);
       contrast = pillar.contrast;
       contrastNote = pillar.contrastNote;
-    } catch {
-      contrast = 'unchecked';
+    } catch (err) {
+      contrast = 'ungradeable';
+      contrastNote = contrastFaultNote(err);
     }
 
     // ACCURACY PILLAR (s170 m02, #818) — the four declared structural rules over the IR +
     // the compiled spec. certify stays a PURE READER: the evaluator mutates neither operand,
     // so `contentHash` above (taken over this same untouched `compiled`) is unmoved by it.
-    // Defensive, mirroring contrast's :288-296 exactly: a rules-engine fault degrades the
-    // pillar to 'unchecked' with a note — it NEVER turns a valid conformance verdict into a
-    // status:error. Every finding maps into the EXISTING closed $defs/finding shape; the
-    // ruleId is carried by the registered code, so the shape needs no new field.
-    let accuracy: 'pass' | 'fail' | 'unchecked' = 'unchecked';
+    // Defensive, mirroring contrast's catch above exactly: a rules-engine fault degrades the
+    // pillar to 'ungradeable' with a note (s175 m04) — it NEVER turns a valid conformance
+    // verdict into a status:error, and it pulls conformant false below. Every finding maps
+    // into the EXISTING closed $defs/finding shape; the ruleId is carried by the registered
+    // code, so the shape needs no new field. Both branches overwrite the init, so the
+    // cartesian accuracy pillar never reports 'unchecked'.
+    let accuracy: AccuracyVerdict = 'unchecked';
     let accuracySummary: CertifyAccuracySummary | undefined;
     const accuracyNotes: string[] = [];
     try {
@@ -590,27 +668,30 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
         findings.push({ code: finding.code, severity: 'error', message: finding.message });
       }
     } catch {
-      accuracy = 'unchecked';
+      accuracy = 'ungradeable';
       accuracyNotes.push(
-        `The accuracy rules could not be evaluated for this spec; the pillar is reported unchecked rather than passed. ${ACCURACY_RULES.length} rules were offered.`,
+        `The accuracy rules could not be evaluated for this spec; the pillar is reported ungradeable rather than passed. ${ACCURACY_RULES.length} rules were offered.`,
       );
     }
 
-    // CONFORMANT ROLLUP (s140 [B]) — the headline gate an agent's `if(conformant)` reads
-    // now folds the graded pillars, so it can no longer silently ship a contrast:'fail'
-    // chart. ONLY contrast==='fail' pulls it false; 'exempt'/'unchecked'/'pass' leave it
-    // a11y-driven (a gradient's 'exempt' and a no-color chart's 'unchecked' must not flip
-    // conformant, so the s139 invariance lock holds). `stable` is inert (a pure compile is
-    // always byte-stable) but folded in for semantic completeness. A scoped, monotonic
-    // TIGHTENING (some inputs move true->false; none move false->true) — the cause of a
-    // contrast-driven false is carried by pillars.contrast + contrastNote. Measured on the
-    // light theme (dark-theme contrast OOS).
-    //
-    // s170 m02: accuracy folds in on DELIBERATE PARITY with contrast — only 'fail' pulls
-    // conformant false, so 'unchecked' passes. That inherits the #781 hole Derek declined to
-    // fix, which now spans TWO pillars rather than one; it is backlog, recorded here so the
-    // parity is a stated choice and not an oversight.
-    const conformant = a11yConformant && contrast !== 'fail' && accuracy !== 'fail' && stable;
+    // CONFORMANT ROLLUP (s140 [B], tightened s175 m04 #781) — the headline gate an agent's
+    // `if(conformant)` reads folds the graded pillars, so it can no longer silently ship a
+    // contrast:'fail' chart. 'fail' AND 'ungradeable' pull it false on contrast and accuracy
+    // alike: a grade that was attempted and failed for a reason outside the spec (a poisoned
+    // canvas token, an evaluator fault) is not a pass. 'exempt'/'unchecked'/'pass' leave it
+    // a11y-driven (a gradient's 'exempt' and a no-color or decorative-only chart's
+    // 'unchecked' must not flip conformant, so the s139 invariance lock holds). `stable` is
+    // inert (a pure compile is always byte-stable) but folded in for semantic completeness.
+    // A scoped, monotonic TIGHTENING (some inputs move true->false; none move false->true) —
+    // the cause of a contrast- or accuracy-driven false is carried by pillars + contrastNote
+    // + notes[]. Measured on the light theme (dark-theme contrast OOS).
+    const conformant =
+      a11yConformant &&
+      contrast !== 'fail' &&
+      contrast !== 'ungradeable' &&
+      accuracy !== 'fail' &&
+      accuracy !== 'ungradeable' &&
+      stable;
 
     return {
       status: 'ok',

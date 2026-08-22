@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { promises as fs } from 'node:fs';
+import { promises as fs, realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +13,6 @@ const DEFAULT_GOVERNANCE_DIR = 'artifacts/state/governance';
 const DEFAULT_TOKENS_PATH = 'artifacts/state/tokens.json';
 const DEFAULT_POLICY_PATH = 'configs/policies/token-namespaces.json';
 const BREAKING_LABEL = 'token-change:breaking';
-const DIST_TOKEN_PATH = path.join(repoRoot, 'packages', 'tokens', 'dist', 'tailwind', 'tokens.json');
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
@@ -22,8 +21,6 @@ async function main() {
     printHelp();
     return;
   }
-
-  await removeDistTokenPayload();
 
   const policy = await loadPolicy(options.policyPath);
   const tokensSummary = await loadJson(resolvePath(options.tokensPath));
@@ -34,17 +31,9 @@ async function main() {
 
   const labels = resolveLabels(options.labels);
 
-  // s174 m02 — the label check lives INSIDE the per-report loop, so zero reports (or one)
-  // means the loop simply does not run and enforcement "passes" having examined nothing.
-  // That is exactly how the gate was vacuous: the upstream diff wrote no reports and this
-  // reported success. Both brands must be present or there is nothing to enforce over.
-  const EXPECTED_BRAND_REPORTS = 2;
-  if (reports.length < EXPECTED_BRAND_REPORTS) {
-    errors.push(
-      `Expected ${EXPECTED_BRAND_REPORTS} brand governance reports (A and B) in ${options.governanceDir}; found ${reports.length}${
-        reports.length > 0 ? ` (${reports.map((report) => report.brand).join(', ')})` : ''
-      }. Enforcement over a missing report is a silent pass, so this is an error, not a warning.`
-    );
+  const floorError = assertReportFloor(reports, options.governanceDir);
+  if (floorError) {
+    errors.push(floorError);
   }
 
   for (const report of reports) {
@@ -95,6 +84,26 @@ async function main() {
   }
 }
 
+/**
+ * s174 m02 — the label check lives INSIDE the per-report loop, so zero reports (or one)
+ * means the loop simply does not run and enforcement "passes" having examined nothing.
+ * That is exactly how the gate was vacuous: the upstream diff wrote no reports and this
+ * reported success. Both brands must be present or there is nothing to enforce over.
+ *
+ * s175 m02 — extracted so the floor has a unit control (memo §1b U3).
+ *
+ * @returns {string | null} the error to record, or null when the floor is satisfied.
+ */
+export function assertReportFloor(reports, governanceDir) {
+  const EXPECTED_BRAND_REPORTS = 2;
+  if (reports.length < EXPECTED_BRAND_REPORTS) {
+    return `Expected ${EXPECTED_BRAND_REPORTS} brand governance reports (A and B) in ${governanceDir}; found ${reports.length}${
+      reports.length > 0 ? ` (${reports.map((report) => report.brand).join(', ')})` : ''
+    }. Enforcement over a missing report is a silent pass, so this is an error, not a warning.`;
+  }
+  return null;
+}
+
 function parseArgs(argv) {
   const options = {
     governanceDir: DEFAULT_GOVERNANCE_DIR,
@@ -136,7 +145,7 @@ function parseArgs(argv) {
   return options;
 }
 
-function resolveLabels(explicitLabels) {
+export function resolveLabels(explicitLabels) {
   let labels = explicitLabels;
   if (!labels.length && typeof process.env.PR_LABELS === 'string') {
     labels = process.env.PR_LABELS.split(',')
@@ -178,7 +187,7 @@ async function loadPolicy(policyPath) {
   };
 }
 
-async function loadGovernanceReports(directory) {
+export async function loadGovernanceReports(directory) {
   const reports = [];
   let entries;
   try {
@@ -297,20 +306,35 @@ function toLowerCaseArray(values) {
     .filter(Boolean);
 }
 
-async function removeDistTokenPayload() {
+/**
+ * ENTRY GUARD (s175 m02, the s169 m03 shape from tools/tokens-governance/index.ts:1410-1424).
+ * This used to be a bare top-level `await main()`, which meant `import`ing the module RAN
+ * THE CLI — every check, empty argv, writing the tracked diagnostics.json — so none of the
+ * red paths above could be unit-tested. CLI behaviour is byte-identical: invoked as a
+ * script, `process.argv[1]` is this file and `main()` runs exactly as before.
+ *
+ * One deliberate difference from the precedent: both sides are compared as REAL paths. Node
+ * realpath's the main module's `import.meta.url` but leaves `process.argv[1]` as typed, so a
+ * script invoked through a symlinked path (macOS's /var → /private/var tmpdir, where the
+ * m01 subprocess control copies these scripts) would otherwise exit 0 having run nothing —
+ * a silent pass from a governance gate, the exact failure class these controls exist for.
+ */
+function resolveInvocationPath(targetPath) {
   try {
-    await fs.unlink(DIST_TOKEN_PATH);
-    console.warn(
-      `Removed built token artifact at ${path.relative(repoRoot, DIST_TOKEN_PATH)} to ensure governance diff uses source tokens.`
-    );
-  } catch (error) {
-    if (!(error && error.code === 'ENOENT')) {
-      throw error;
-    }
+    return realpathSync(targetPath);
+  } catch {
+    return path.resolve(targetPath);
   }
 }
 
-main().catch((error) => {
-  console.error(`enforce failed: ${(error && error.message) || error}`);
-  process.exitCode = 1;
-});
+const invokedPath = process.argv[1];
+const isDirectInvocation =
+  typeof invokedPath === 'string' &&
+  resolveInvocationPath(fileURLToPath(import.meta.url)) === resolveInvocationPath(invokedPath);
+
+if (isDirectInvocation || pathToFileURL(invokedPath ?? '').href === import.meta.url) {
+  main().catch((error) => {
+    console.error(`enforce failed: ${(error && error.message) || error}`);
+    process.exitCode = 1;
+  });
+}

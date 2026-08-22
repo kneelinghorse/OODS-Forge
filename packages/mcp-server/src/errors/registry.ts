@@ -276,6 +276,13 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // the rule stays silent; where they CONFLICT on the joined value field the region's shade
   // is decided by input order rather than by the data.
   ['OODS-V159', { code: 'OODS-V159', category: 'validation', message: 'A choropleth region matched rows with conflicting joined values', retryable: true }],
+  // V160 (sprint-175 m05, decision 11): a KPI numeric aggregate (sum/average/median/min/max/
+  // latest) over a field that HAS values but none of them numeric. viz-core's computeKpi throws
+  // KpiComputeError{reason:'no_numeric_cells'} instead of the pre-s175 silent value:0;
+  // dashboard.render routes it through the onPanelError seam (placeholder/omit), like V137.
+  // count/distinct never trip it (defined over any cell type); an absent field or an empty
+  // row set keeps value:0.
+  ['OODS-V160', { code: 'OODS-V160', category: 'validation', message: 'KPI numeric aggregate over a field with no numeric cells', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

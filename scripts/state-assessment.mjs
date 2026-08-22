@@ -11,11 +11,11 @@
  */
 
 import { spawn } from 'node:child_process';
-import { promises as fs } from 'node:fs';
+import { promises as fs, realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { performance } from 'node:perf_hooks';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { ESLint } from 'eslint';
 
@@ -53,9 +53,16 @@ const tenancyGuardrailRule = require('../eslint/rules/no-unsafe-tenancy-override
 
 /**
  * Entry point.
+ *
+ * s175 m02 — exported, with an injectable context. `argv` defaults to the process argv and
+ * `overrides` may supply repoRoot / artifactsRoot / screenshotsRoot / pnpmCmd / nodeCmd / env,
+ * each defaulting to the module constants above (artifactsRoot / screenshotsRoot follow an
+ * overridden repoRoot so a scratch root is self-contained). The CLI path is byte-identical;
+ * a test drives this same function against a mkdtemp root with stub executables. No
+ * check-runner body moves — the only seam inside one is runTokenGovernanceCheck's env read.
  */
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
+export async function main(argv = process.argv.slice(2), overrides = {}) {
+  const args = parseArgs(argv);
 
   if (args.help) {
     printHelp();
@@ -65,20 +72,31 @@ async function main() {
   const selectedChecks =
     args.enabled.size > 0 ? [...args.enabled] : [...CHECK_IDS];
 
+  const resolvedRepoRoot = overrides.repoRoot ?? repoRoot;
+  const resolvedArtifactsRoot =
+    overrides.artifactsRoot ??
+    (overrides.repoRoot ? path.join(resolvedRepoRoot, 'artifacts', 'state') : artifactsRoot);
+  const resolvedScreenshotsRoot =
+    overrides.screenshotsRoot ??
+    (overrides.artifactsRoot || overrides.repoRoot
+      ? path.join(resolvedArtifactsRoot, 'screenshots')
+      : screenshotsRoot);
+
   const context = {
-    repoRoot,
-    artifactsRoot,
-    screenshotsRoot,
-    pnpmCmd,
-    nodeCmd,
+    repoRoot: resolvedRepoRoot,
+    artifactsRoot: resolvedArtifactsRoot,
+    screenshotsRoot: resolvedScreenshotsRoot,
+    pnpmCmd: overrides.pnpmCmd ?? pnpmCmd,
+    nodeCmd: overrides.nodeCmd ?? nodeCmd,
+    env: overrides.env ?? process.env,
     options: args.options,
     memo: {
       storybookReady: false
     }
   };
 
-  await fs.mkdir(artifactsRoot, { recursive: true });
-  await fs.mkdir(screenshotsRoot, { recursive: true });
+  await fs.mkdir(context.artifactsRoot, { recursive: true });
+  await fs.mkdir(context.screenshotsRoot, { recursive: true });
 
   const checkResults = [];
 
@@ -131,7 +149,7 @@ async function main() {
   const overallStatus = deriveOverallStatus(statusCounts);
   const nextSteps = deriveNextSteps(checkResults);
   const generatedAt = new Date().toISOString();
-  const commitHash = await resolveGitCommit(repoRoot);
+  const commitHash = await resolveGitCommit(context.repoRoot);
 
   const assessment = {
     missionId: MISSION_ID,
@@ -139,7 +157,7 @@ async function main() {
     scriptVersion: SCRIPT_VERSION,
     generatedAt,
     repository: {
-      root: repoRoot,
+      root: context.repoRoot,
       commit: commitHash
     },
     summary: {
@@ -163,9 +181,9 @@ async function main() {
     }
   };
 
-  await writeJson(path.join(artifactsRoot, 'assessment.json'), assessment);
+  await writeJson(path.join(context.artifactsRoot, 'assessment.json'), assessment);
   await writeMarkdown(
-    path.join(artifactsRoot, 'assessment.md'),
+    path.join(context.artifactsRoot, 'assessment.md'),
     buildMarkdownSummary(assessment)
   );
 
@@ -175,13 +193,30 @@ async function main() {
   // CLOSED (it was given refs and could not produce the artifact it exists to produce) must
   // red the job; before s174 the sole nonzero exit was main().catch, which is why a
   // governance leg that produced no reports at all still left CI green.
-  const failedClosed = checkResults.filter((check) => check.failClosed);
-  if (failedClosed.length > 0) {
-    console.error(
-      `\nFAIL-CLOSED: ${failedClosed.map((check) => check.id).join(', ')} could not complete a check it was given the inputs for.`,
-    );
-    process.exitCode = 1;
+  const verdict = deriveProcessExit(checkResults);
+  if (verdict.message) {
+    console.error(verdict.message);
   }
+  process.exitCode = verdict.code;
+}
+
+/**
+ * s175 m02 — the exit verdict, extracted so it can be unit-tested (decision #1418's contract):
+ * a RED from real findings is the gate WORKING and reports through enforce.mjs, so it maps to
+ * 0; only a check that FAILED CLOSED maps to 1. main() carries `code` into process.exitCode.
+ *
+ * @param {Array<{ id: string, failClosed?: boolean }>} checkResults
+ * @returns {{ code: 0 | 1, message: string | null }}
+ */
+export function deriveProcessExit(checkResults) {
+  const failedClosed = checkResults.filter((check) => check.failClosed);
+  if (failedClosed.length === 0) {
+    return { code: 0, message: null };
+  }
+  return {
+    code: 1,
+    message: `\nFAIL-CLOSED: ${failedClosed.map((check) => check.id).join(', ')} could not complete a check it was given the inputs for.`,
+  };
 }
 
 /**
@@ -1310,20 +1345,11 @@ async function runPerformanceCheck(context) {
   };
 }
 
-async function runTokenGovernanceCheck(context) {
+export async function runTokenGovernanceCheck(context) {
   const rationale = [];
   const evidence = [];
 
   const governanceDir = path.join(context.artifactsRoot, 'governance');
-  const distTokenPath = path.join(context.repoRoot, 'packages', 'tokens', 'dist', 'tailwind', 'tokens.json');
-  try {
-    await fs.unlink(distTokenPath);
-    console.warn(`Removed built token artifact at ${path.relative(context.repoRoot, distTokenPath)} to keep governance diff clean.`);
-  } catch (error) {
-    if (!(error && error.code === 'ENOENT')) {
-      throw error;
-    }
-  }
 
   await fs.mkdir(governanceDir, { recursive: true });
   const brandReports = {};
@@ -1340,9 +1366,12 @@ async function runTokenGovernanceCheck(context) {
   // guardrails job) as the merge-base of the PR base branch and HEAD. PR_LABELS is threaded
   // in the same breath so the subprocess's own exit code agrees with enforce.mjs's verdict
   // instead of being computed over an empty label list.
-  const baseRef = (process.env.TOKEN_GOV_BASE_REF ?? '').trim();
-  const headRef = (process.env.TOKEN_GOV_HEAD_REF ?? '').trim() || 'HEAD';
-  const prLabels = (process.env.PR_LABELS ?? '').trim();
+  // s175 m02 — the env seam: read from the injected context (main threads overrides.env
+  // through), falling back to process.env so the CLI path is unchanged.
+  const env = context.env ?? process.env;
+  const baseRef = (env.TOKEN_GOV_BASE_REF ?? '').trim();
+  const headRef = (env.TOKEN_GOV_HEAD_REF ?? '').trim() || 'HEAD';
+  const prLabels = (env.PR_LABELS ?? '').trim();
   let failClosed = false;
 
   for (const brand of ['A', 'B']) {
@@ -2200,8 +2229,36 @@ function printConsoleSummary(assessment) {
   }
 }
 
-await main().catch((error) => {
-  console.error('State assessment failed.');
-  console.error(error);
-  process.exitCode = 1;
-});
+/**
+ * ENTRY GUARD (s175 m02, the s169 m03 shape from tools/tokens-governance/index.ts:1410-1424).
+ * This used to be a bare top-level `await main()`, which meant `import`ing the module RAN
+ * THE CLI — every check, empty argv, writing the tracked diagnostics.json — so none of the
+ * red paths above could be unit-tested. CLI behaviour is byte-identical: invoked as a
+ * script, `process.argv[1]` is this file and `main()` runs exactly as before.
+ *
+ * One deliberate difference from the precedent: both sides are compared as REAL paths. Node
+ * realpath's the main module's `import.meta.url` but leaves `process.argv[1]` as typed, so a
+ * script invoked through a symlinked path (macOS's /var → /private/var tmpdir, where the
+ * m01 subprocess control copies these scripts) would otherwise exit 0 having run nothing —
+ * a silent pass from a governance gate, the exact failure class these controls exist for.
+ */
+function resolveInvocationPath(targetPath) {
+  try {
+    return realpathSync(targetPath);
+  } catch {
+    return path.resolve(targetPath);
+  }
+}
+
+const invokedPath = process.argv[1];
+const isDirectInvocation =
+  typeof invokedPath === 'string' &&
+  resolveInvocationPath(fileURLToPath(import.meta.url)) === resolveInvocationPath(invokedPath);
+
+if (isDirectInvocation || pathToFileURL(invokedPath ?? '').href === import.meta.url) {
+  await main().catch((error) => {
+    console.error('State assessment failed.');
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

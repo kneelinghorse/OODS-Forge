@@ -1,0 +1,380 @@
+<title>How Forge Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&amp;family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+  :root {
+    --paper: #fbfaf8; --panel: #f1f0ec; --code-bg: #f4f3ef;
+    --ink: #1b1d22; --ink-2: #4a4f59; --ink-3: #646a77;
+    --line: #d8d9dc; --line-strong: #b9bcc3;
+    --accent: #245f8a; --accent-ink: #1b4b6e; --accent-soft: #e4eef6;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --slab: "Zilla Slab", "Roboto Slab", Rockwell, Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #16171a; --panel: #202227; --code-bg: #1d1f24;
+      --ink: #ecebe7; --ink-2: #bdbfc6; --ink-3: #8f939d;
+      --line: #33363d; --line-strong: #4a4e58;
+      --accent: #6fb1e0; --accent-ink: #8fc4ea; --accent-soft: #14283a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #16171a; --panel: #202227; --code-bg: #1d1f24;
+    --ink: #ecebe7; --ink-2: #bdbfc6; --ink-3: #8f939d;
+    --line: #33363d; --line-strong: #4a4e58;
+    --accent: #6fb1e0; --accent-ink: #8fc4ea; --accent-soft: #14283a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15.5px; line-height: 1.55; }
+  a { color: var(--accent-ink); }
+  .doc { max-width: 50rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  .eyebrow { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 0.6rem; }
+  h1 { font-family: var(--slab); font-weight: 700; font-size: clamp(2.1rem, 4.6vw, 3rem); line-height: 1.05; margin: 0 0 0.8rem; letter-spacing: -0.01em; text-wrap: balance; }
+  .dek { font-size: 1.1rem; color: var(--ink-2); margin: 0 0 1.4rem; max-width: 44rem; text-wrap: pretty; }
+  .toc { border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); padding: 0.7rem 0; margin: 0 0 2rem; font-size: 0.86rem; columns: 2; column-gap: 2rem; }
+  .toc ol { margin: 0; padding-left: 1.4rem; }
+  .toc li { margin: 0.15rem 0; break-inside: avoid; }
+  .toc li::marker { font-family: var(--mono); color: var(--accent); font-size: 0.78rem; }
+  .toc a { text-decoration: none; color: var(--ink); }
+  .toc a:hover { text-decoration: underline; }
+
+  h2 { font-family: var(--slab); font-weight: 600; font-size: 1.55rem; line-height: 1.15; margin: 2.4rem 0 0.7rem; padding-top: 0.9rem; border-top: 1px solid var(--line-strong); }
+  h2 .n { font-family: var(--mono); font-weight: 500; font-size: 0.8rem; color: var(--accent); margin-right: 0.6rem; vertical-align: 0.35em; letter-spacing: 0.04em; }
+  h3 { font-family: var(--slab); font-weight: 700; font-size: 1.12rem; margin: 1.4rem 0 0.4rem; }
+  p { margin: 0 0 0.85rem; max-width: 44rem; text-wrap: pretty; }
+  ul, ol { margin: 0 0 0.9rem; padding-left: 1.3rem; max-width: 44rem; }
+  li { margin-bottom: 0.3rem; }
+  li::marker { color: var(--accent); }
+  code, .k { font-family: var(--mono); font-size: 0.86em; background: var(--code-bg); padding: 0.06em 0.3em; border-radius: 2px; overflow-wrap: anywhere; }
+  pre { font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; background: var(--code-bg); border-left: 3px solid var(--accent); padding: 0.8rem 1rem; margin: 0.4rem 0 1rem; overflow-x: auto; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cmt { color: var(--ink-3); }
+  .def { background: var(--panel); border-left: 3px solid var(--accent); padding: 0.7rem 0.95rem; margin: 0.4rem 0 1rem; max-width: 44rem; }
+  .def b { font-family: var(--slab); font-size: 1.02rem; }
+  .def p { margin: 0.25rem 0 0; font-size: 0.95rem; }
+  .note { font-size: 0.9rem; color: var(--ink-2); border-left: 2px solid var(--line-strong); padding-left: 0.8rem; margin: 0.5rem 0 1rem; max-width: 44rem; }
+
+  .tw { overflow-x: auto; margin: 0.4rem 0 1.2rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; min-width: 38rem; }
+  th, td { text-align: left; vertical-align: top; padding: 0.45rem 0.7rem 0.5rem 0; border-bottom: 1px solid var(--line); }
+  th { font-family: var(--mono); font-weight: 500; font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--line-strong); }
+  td:first-child { font-weight: 600; }
+  td .k { white-space: nowrap; }
+  .fam td:first-child { white-space: normal; min-width: 9rem; }
+  .fam tr.famrow td { font-family: var(--mono); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); padding-top: 1rem; border-bottom: 0; }
+  .flow { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); border: 1px solid var(--line-strong); margin: 0.4rem 0 1rem; }
+  .flow div { padding: 0.6rem 0.7rem; border-right: 1px solid var(--line); font-size: 0.82rem; line-height: 1.4; min-width: 0; }
+  .flow div:last-child { border-right: 0; }
+  .flow b { display: block; font-family: var(--slab); font-size: 1rem; margin-bottom: 0.15rem; }
+  .flow i { font-family: var(--mono); font-style: normal; font-size: 0.68rem; color: var(--accent); letter-spacing: 0.05em; }
+  .foot { margin-top: 2.5rem; padding-top: 0.8rem; border-top: 1px solid var(--line-strong); font-size: 0.8rem; color: var(--ink-3); }
+  @media (max-width: 700px) { .toc { columns: 1; } .flow { grid-template-columns: repeat(2, minmax(0,1fr)); } .flow div:nth-child(2n) { border-right: 0; } .flow div { border-bottom: 1px solid var(--line); } }
+  @media print {
+    @page { margin: 14mm; }
+    body { font-size: 10.5pt; background: #fff; color: #111; }
+    .doc { max-width: none; padding: 0; }
+    h2 { break-after: avoid; } tr, pre, .def, .flow { break-inside: avoid; }
+    .tw { overflow: visible; } table { min-width: 0; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  }
+</style>
+
+<div class="doc">
+  <p class="eyebrow">Reference · August 2026</p>
+  <h1>How Forge Works</h1>
+  <p class="dek">Forge is a design system stored as definitions and operated through tools. You describe <em>things</em> (objects) as bundles of <em>capabilities</em> (traits); Forge assembles them into screens per <em>context</em>, styles them with <em>tokens</em> under a <em>brand</em>, and exports screens, code, charts and theme files — checking its own output as it goes. This page explains each piece, what it actually contains, and what you can do with it.</p>
+
+  <nav class="toc" aria-label="Contents">
+    <ol>
+      <li><a href="#overview">The pieces, in one picture</a></li>
+      <li><a href="#traits">Traits — what one is, what it contains</a></li>
+      <li><a href="#trait-inventory">The trait inventory (41)</a></li>
+      <li><a href="#objects">Objects and composition</a></li>
+      <li><a href="#object-inventory">The object inventory (11)</a></li>
+      <li><a href="#contexts">Contexts, regions and components</a></li>
+      <li><a href="#tokens">Tokens, themes and brands</a></li>
+      <li><a href="#generate">Generating screens and code</a></li>
+      <li><a href="#charts">Charts and dashboards</a></li>
+      <li><a href="#certify">Certification and checks</a></li>
+      <li><a href="#operate">Operating it: starting, connecting, tools</a></li>
+      <li><a href="#extend">Extending it — and what it does not do</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <h2 id="overview"><span class="n">01</span>The pieces, in one picture</h2>
+  <div class="flow" role="list">
+    <div role="listitem"><i>define</i><b>Traits</b>Reusable capabilities: fields + settings + UI pieces per screen + tokens.</div>
+    <div role="listitem"><i>define</i><b>Objects</b>Things you model (User, Product, Invoice…) = a list of traits + a few own fields.</div>
+    <div role="listitem"><i>assemble</i><b>Contexts</b>List, detail, form, timeline, card, inline (+ chart, dashboard shells) — built from the traits' contributions.</div>
+    <div role="listitem"><i>style</i><b>Tokens &amp; brands</b>Every colour/size/type value once; compiled to CSS, TS, Tailwind, Swift, Kotlin; switched by brand + theme.</div>
+    <div role="listitem"><i>export + check</i><b>Tools</b>25 tools: compose, validate, render, code, charts, dashboards, certify, tokens, catalog.</div>
+  </div>
+  <p>Everything lives in one repository as plain files: traits and objects are YAML (<span class="k">traits/</span>, <span class="k">objects/</span>, <span class="k">domains/</span>), tokens are JSON (<span class="k">packages/tokens/src/tokens/</span>), components are React (<span class="k">src/components/</span>), and the tools are a local server (<span class="k">packages/mcp-server/</span>). A <b>tool</b> is a typed function — name plus JSON in, JSON out — that you call over the Model Context Protocol from an AI assistant, over HTTP from a panel, or from the command line. Nothing requires a hosted service.</p>
+
+  <!-- 2 -->
+  <h2 id="traits"><span class="n">02</span>Traits — what one is, what it contains</h2>
+  <div class="def"><b>Trait</b><p>A single YAML file describing one capability an object can have — "has a lifecycle", "can be priced", "can be searched". The file carries everything that capability needs so that adding the trait to an object adds its data, its UI and its styling in one step.</p></div>
+  <p>A trait file has a header (<span class="k">trait:</span> name, version, category, description) and seven sections — plus two optional ones, <span class="k">actions</span> and <span class="k">state_machine</span>, that only chart traits use today. Using <span class="k">Stateful</span> (the lifecycle trait) as the example:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Section</th><th>What it declares</th><th>Stateful's actual content</th></tr></thead>
+    <tbody>
+      <tr><td>parameters</td><td>Settings the object sets when it uses the trait (typed, with defaults and validation).</td><td><span class="k">states</span> (ordered list), <span class="k">initialState</span> (must be one of states), <span class="k">transitionRules</span> (allowed from→to map; open when omitted), <span class="k">requireTransitionReason</span></td></tr>
+      <tr><td>schema</td><td>The data fields the trait adds to any object that uses it.</td><td><span class="k">status</span> (one of states), <span class="k">state_history</span> (from, to, timestamp, actor, reason), <span class="k">allowed_transitions</span> (computed next states)</td></tr>
+      <tr><td>semantics</td><td>What each field <em>means</em> (a semantic type), which token group styles it, and the default component for it. The screen composer uses this to pick a component for any field no view extension covers.</td><td>status → <span class="k">status.state</span> → StatusBadge · state_history → <span class="k">timeline.state_transition</span> → StatusTimeline · allowed_transitions → StatusSelector</td></tr>
+      <tr><td>view_extensions</td><td>Which UI piece to show in each context, where, and with what props.</td><td>list: StatusBadge · detail: StatusTimeline (top, priority 40) · form: StatusSelector · timeline: StateTransitionEvent · card: StatusBadge</td></tr>
+      <tr><td>tokens</td><td>The styling hooks those pieces use, pointing at system tokens. Merged into the object and carried into every rendered screen as token overrides.</td><td><span class="k">status.timeline.connector → var(--border-subtle)</span>, <span class="k">status.timeline.node.bg → var(--sys-surface-raised)</span> …</td></tr>
+      <tr><td>dependencies</td><td>Traits that must be present first.</td><td>none — but Archivable, Auditable, Cancellable and Colorized all depend on Stateful</td></tr>
+      <tr><td>metadata</td><td>Maturity, owners, accessibility notes (keyboard, screen reader), who composes it.</td><td>stable · "StatusSelector is keyboard-navigable (arrow keys, Enter)"</td></tr>
+    </tbody>
+  </table></div>
+  <p>The relevant part of the real file:</p>
+<pre><code>trait:
+  name: Stateful
+  version: 2.0.0
+  category: lifecycle
+parameters:
+  - name: states          <span class="cmt"># ordered list of valid states, e.g. draft → active → archived</span>
+    type: string[]
+  - name: initialState
+    validation: { enumFromParameter: states }
+  - name: transitionRules <span class="cmt"># { draft: [active, archived], active: [paused, archived], ... }</span>
+schema:
+  status:            { type: string, validation: { enumFromParameter: states } }
+  state_history:     { type: StateTransition[] }   <span class="cmt"># from, to, timestamp, actor_id, reason</span>
+  allowed_transitions: { type: string[] }
+view_extensions:
+  list:     [{ component: StatusBadge,          props: { field: status } }]
+  detail:   [{ component: StatusTimeline, position: top, priority: 40 }]
+  form:     [{ component: StatusSelector,       props: { optionsParameter: states } }]
+  timeline: [{ component: StateTransitionEvent, props: { historyField: state_history } }]
+tokens:
+  status.timeline.connector: "var(--border-subtle)"</code></pre>
+  <h3>How a trait works once applied</h3>
+  <p>An object names the trait and sets its parameters — Product's file says:</p>
+<pre><code>- name: lifecycle/Stateful
+  parameters: { states: [draft, in_review, active, retired], initialState: draft }</code></pre>
+  <p>From that, Product gains a <span class="k">status</span> field restricted to those four values, a transition history, and a computed list of next states; every Product list shows a status badge, every detail page a status timeline, every form a status selector whose options come from the object's own states. Parameters flow into component props (<span class="k">optionsParameter: states</span>), so the same StatusSelector is correct for Product's four states and Subscription's eight. Parameter values are checked against each trait's JSON Schema (<span class="k">schemas/traits/&lt;name&gt;.parameters.schema.json</span>) when the full engine resolves an object — <span class="k">pnpm object:validate</span>, <span class="k">object:compose</span>, <span class="k">object:generate</span>; the tools' lighter composer merges without validating, so run <span class="k">object:validate</span> after editing an object.</p>
+
+  <!-- 3 -->
+  <h2 id="trait-inventory"><span class="n">03</span>The trait inventory (41)</h2>
+  <p>What each trait adds, in plain terms. "Adds" lists the data fields; "Shows" lists the UI pieces it contributes. Maturity: stable unless marked. (If you only want the concepts, skip to section 04.)</p>
+  <div class="tw"><table class="fam">
+    <thead><tr><th>Trait</th><th>What it does</th><th>Adds</th><th>Shows</th></tr></thead>
+    <tbody>
+      <tr class="famrow"><td colspan="4">Lifecycle</td></tr>
+      <tr><td>Stateful</td><td>Lifecycle states and governed transitions.</td><td>status, state_history, allowed_transitions</td><td>StatusBadge, StatusTimeline, StatusSelector, StateTransitionEvent</td></tr>
+      <tr><td>Timestampable</td><td>Created/updated timestamps plus the last recorded event.</td><td>created_at, updated_at, last_event, last_event_at</td><td>RelativeTimestamp, AuditTimeline, AuditEvent</td></tr>
+      <tr><td>Archivable</td><td>Archive → restore → purge with grace and retention windows (needs Stateful).</td><td>is_archived, archived_at, restored_at, archive_reason, archived_by</td><td>ArchivedRowOverlay, ArchiveSummary, ArchiveEvent, ArchivePill</td></tr>
+      <tr><td>Cancellable</td><td>Cancellation workflow with windows and reason codes (needs Stateful).</td><td>cancel_at_period_end, cancellation_reason(_code), cancellation_requested_at</td><td>CancellationSummary, CancellationEvent, CancellationForm, CancellationBadge</td></tr>
+      <tr><td>Auditable <small>(experimental)</small></td><td>Append-only audit log of state transitions with actor and reason (needs Stateful).</td><td>audit_log</td><td>AuditTimeline, AuditSummaryCard</td></tr>
+      <tr class="famrow"><td colspan="4">Behavioral</td></tr>
+      <tr><td>Searchable</td><td>Full-text search box wired to query state.</td><td>searchQuery, searchActive</td><td>SearchInput</td></tr>
+      <tr><td>Filterable</td><td>Multi-facet filter panel.</td><td>filters, activeFilters, filterCount</td><td>FilterPanel</td></tr>
+      <tr><td>Sortable</td><td>Column sorting (ascending / descending / off).</td><td>sortField, sortDirection, sortActive</td><td>SortIndicator</td></tr>
+      <tr><td>Pageable</td><td>Pagination with page-size options.</td><td>page, pageSize, totalItems, totalPages</td><td>PaginationBar</td></tr>
+      <tr><td>Taggable</td><td>Tags — free-form or from an allowed list, optional moderation and synonyms.</td><td>tags, tag_count, tag_metadata</td><td>TagPills, TagManager, TagInput, TagSummary</td></tr>
+      <tr class="famrow"><td colspan="4">Content &amp; structure</td></tr>
+      <tr><td>Labelled</td><td>Canonical label, description and placeholder text for every context.</td><td>label, description, placeholder</td><td>LabelCell, DetailHeader, FormLabelGroup, CardHeader, TimelineEntryLabel, InlineLabel</td></tr>
+      <tr><td>Ownerable</td><td>Owner link (organization / team / user by default; objects override) with transfer audit.</td><td>owner_id, owner_type, ownership_role, ownership_transferred_at</td><td>OwnerBadge, OwnershipSummary, OwnershipMeta</td></tr>
+      <tr><td>Classifiable <small>(draft)</small></td><td>Category tree, free tags, or both — with a tag policy (open / locked), a tag cap and an optional required primary category.</td><td>categories, primary_category_id/_path, tags, tag_count</td><td>ClassificationBadge, ClassificationPanel, ClassificationEditor</td></tr>
+      <tr class="famrow"><td colspan="4">Financial</td></tr>
+      <tr><td>Priceable</td><td>Price with currency, pricing model, billing interval and tax behaviour.</td><td>unit_amount_cents, currency, pricing_model, billing_interval, tax_behavior</td><td>PriceBadge, PriceSummary, PriceCardMeta</td></tr>
+      <tr><td>Billable <small>(experimental)</small></td><td>Recurring billing cycle: amount, interval, payment status, period progress, proration.</td><td>amount, currency, billing_interval, payment_status, current_period_start/end/progress, next_payment_due_at …</td><td>BillingSummaryBadge, CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingIntervalSelector, BillingAmountInput, BillingCardMeta</td></tr>
+      <tr class="famrow"><td colspan="4">Core (experimental)</td></tr>
+      <tr><td>Addressable</td><td>Addresses by role (billing, shipping, office…) with validation and geocoding hooks.</td><td>addresses, address_roles, default_address_role</td><td>AddressSummaryBadge, AddressCollectionPanel, AddressEditor, AddressValidationTimeline</td></tr>
+      <tr><td>Authable</td><td>Role-based access: roles, permissions, memberships, role hierarchy.</td><td>role_catalog, permission_catalog, membership_records, role_hierarchy_edges …</td><td>RoleBadgeList, MembershipPanel, RoleAssignmentForm, MembershipAuditTimeline</td></tr>
+      <tr><td>Preferenceable</td><td>Preferences by namespace (theme, notifications, display, privacy) with versioning.</td><td>preference_document, preference_version, preference_namespaces …</td><td>PreferenceSummaryBadge, PreferencePanel, PreferenceEditor, PreferenceTimeline</td></tr>
+      <tr><td>Communicable</td><td>Multi-channel messaging: channels, templates, delivery policies, conversations (needs Preferenceable + Authable).</td><td>channel_catalog, template_catalog, delivery_policies, messages, conversations</td><td>MessageStatusBadge, CommunicationDetailPanel, TemplatePicker, MessageEventTimeline</td></tr>
+      <tr class="famrow"><td colspan="4">Visual</td></tr>
+      <tr><td>Colorized</td><td>Maps lifecycle states to colour tokens (needs Stateful).</td><td>color_state, resolved_token_set, accessibility_label</td><td>ColorSwatch, StatusColorLegend, ColorStatePicker, ColorizedBadge</td></tr>
+      <tr><td>Statusable <small>(experimental)</small></td><td>Status registry: raw status strings → a tone (success / warning / danger / neutral) plus badge and banner tokens, per domain.</td><td>status, domain, tone, badge_tokens, banner_tokens</td><td>Badge, StatusBadge, Banner</td></tr>
+      <tr class="famrow"><td colspan="4">Charts (16, alpha/beta)</td></tr>
+      <tr><td>MarkBar · MarkLine · MarkArea · MarkPoint</td><td>The four chart mark types (bars, lines, areas, points) with their visual settings.</td><td>viz_mark_type, orientation / curve / shape …, viz_mark_a11y_label</td><td>Viz&lt;Mark&gt;Preview, Viz&lt;Mark&gt;Controls, VizRoleBadge</td></tr>
+      <tr><td>EncodingPositionX · EncodingPositionY · EncodingColor · EncodingSize</td><td>Bind a data field to an axis, to colour (approved palettes, always paired with a second cue for colour-blind readers), or to size.</td><td>viz_encoding_* field, scale, axis title, scheme, range</td><td>VizAxisSummary, VizAxisControls, VizColorLegendConfig, VizColorControls, VizSizeSummary, VizSizeControls, VizEncodingBadge</td></tr>
+      <tr><td>ScaleLinear · ScaleTemporal</td><td>Shared continuous and time scales (domain, range, zero baseline, timezone).</td><td>viz_scale_* domain / range / clamp / zero_baseline</td><td>VizScaleSummary, VizScaleControls</td></tr>
+      <tr><td>LayoutLayer · LayoutFacet · LayoutConcat</td><td>Layered marks; small-multiple grids; side-by-side panels that share an axis or colour scale.</td><td>viz_layout_type, shared_channels, rows / columns fields …</td><td>—</td></tr>
+      <tr><td>InteractionTooltip · InteractionHighlight</td><td>Hover/tap details; hover or selection emphasis.</td><td>viz_interaction_* fields, trigger</td><td>—</td></tr>
+      <tr><td>Geocodable</td><td>Marks data as mappable; auto-detects latitude/longitude or region identifiers.</td><td>geo_resolution, geo_latitude_field, geo_identifier_field …</td><td>GeocodablePreview, GeoFieldMappingForm, GeoResolutionBadge</td></tr>
+      <tr class="famrow"><td colspan="4">SaaS-billing pack (4, beta; Refundable experimental)</td></tr>
+      <tr><td>SaaSBillingBillable</td><td>Plan price configuration: cadence, currency, trial policy.</td><td>plan_code, amount_minor, billing_interval, trial_period_days, collection_method</td><td>—</td></tr>
+      <tr><td>SaaSBillingMetered</td><td>Usage metering with included/consumed quantity and overage.</td><td>meter_name, included_quantity, consumed_quantity, overage_rate_minor, samples</td><td>—</td></tr>
+      <tr><td>SaaSBillingPayable</td><td>Invoice terms, status, balance, overdue age buckets and payment-retry attempts.</td><td>invoice_number, status, due_at, total_minor, balance_minor, aging_bucket_days</td><td>—</td></tr>
+      <tr><td>SaaSBillingRefundable</td><td>Refund eligibility windows and credit-memo tracking.</td><td>refundable_until, total_refunded_minor, credit_memo_balance_minor</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The four SaaS-billing traits live in a <em>domain pack</em> (<span class="k">domains/saas-billing/</span>) — a folder of traits and objects for one vertical that the engine loads alongside the core set. That is the mechanism for adding a new domain without touching core traits.</p>
+
+  <!-- 4 -->
+  <h2 id="objects"><span class="n">04</span>Objects and composition</h2>
+  <div class="def"><b>Object</b><p>A YAML file naming a thing you model, listing the traits it has (each with its parameter values), and declaring the handful of fields that are genuinely its own. Objects do not hold records — they hold the definition Forge builds screens, charts and types from.</p></div>
+  <p>The Product object (<span class="k">objects/core/Product.object.yaml</span>), in its real shape with most traits elided:</p>
+<pre><code>object: { name: Product, domain: core.catalog }
+traits:
+  - name: content/Labelled
+    alias: ProductLabel
+  - name: lifecycle/Stateful
+    parameters: { states: [draft, in_review, active, retired], initialState: draft }
+  - name: financial/Priceable
+    parameters: { supportedCurrencies: [USD, EUR, GBP, AUD], defaultCurrency: USD,
+                  pricingModels: [one_time, subscription, usage_based] }
+  <span class="cmt"># + Timestampable, Classifiable (taxonomy), Searchable, Filterable, Pageable</span>
+schema:   <span class="cmt"># Product's own fields</span>
+  product_id, sku, inventory_status, release_channel, requires_subscription, support_level, summary_blurb</code></pre>
+  <p>An object may also carry its own <span class="k">semantics</span> and <span class="k">tokens</span> sections, which override the traits'.</p>
+  <h3>What composition does</h3>
+  <p>When Product is composed:</p>
+  <ol>
+    <li><b>Fields are merged</b> — every trait's schema fields plus the object's own: 38 fields for Product. If two traits declare the same field, the full engine applies collision rules (same type → merge, keep the stricter; two enums → union; required beats optional; different types → error unless the object resolves it) and records which trait each field came from.</li>
+    <li><b>Parameters are applied</b> — validated against each trait's schema, and parameter-driven enums become real constraints (Product's generated TypeScript type has <span class="k">status: 'draft' | 'in_review' | 'active' | 'retired'</span>).</li>
+    <li><b>UI contributions are collected per context</b> — all traits' view extensions grouped by context and sorted by priority, giving a ready list of what to show on each kind of screen.</li>
+    <li><b>Tokens, semantics, actions and (at most one) state machine are merged.</b></li>
+  </ol>
+  <p class="note">Two composers exist. The full engine (<span class="k">src/core</span>, <span class="k">src/registry</span>; the <span class="k">object:*</span> commands) does all four steps. The tools' runtime composer (<span class="k">packages/mcp-server</span>; what <span class="k">object show</span> and <span class="k">design.compose</span> use) merges schema, semantics, view extensions and tokens only — last-wins on collisions with a warning, no parameter validation — and orders extensions higher-priority-first (default 0), where the React view engine orders lower-first (default 50).</p>
+  <p>For Product, the collected contributions are concretely:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Context</th><th>Components Product gets, from its traits</th></tr></thead>
+    <tbody>
+      <tr><td>list</td><td>LabelCell, SearchInput, FilterPanel, PaginationBar, StatusBadge, RelativeTimestamp, PriceBadge, ClassificationBadge</td></tr>
+      <tr><td>detail</td><td>DetailHeader, StatusTimeline, PriceSummary, ClassificationPanel, AuditTimeline, SearchInput, FilterPanel</td></tr>
+      <tr><td>form</td><td>FormLabelGroup, StatusSelector, ClassificationEditor</td></tr>
+      <tr><td>card</td><td>CardHeader, StatusBadge, PriceCardMeta</td></tr>
+      <tr><td>timeline</td><td>TimelineEntryLabel, StateTransitionEvent, AuditEvent</td></tr>
+      <tr><td>inline</td><td>InlineLabel</td></tr>
+    </tbody>
+  </table></div>
+  <p>That composed record is what the screen composer, the chart composer, the code generator and <span class="k">pnpm object:generate</span> (TypeScript interfaces, one per object, into <span class="k">generated/objects/</span>) all read. Change Product's trait list and every one of them changes with it. From the terminal: <span class="k">pnpm object:compose Product</span> prints the merged fields with their source trait; <span class="k">pnpm object:create Widget --trait lifecycle/Stateful</span> scaffolds a new object.</p>
+
+  <!-- 5 -->
+  <h2 id="object-inventory"><span class="n">05</span>The object inventory (11)</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Object</th><th>Purpose</th><th>Traits</th><th>Own fields</th></tr></thead>
+    <tbody>
+      <tr><td>User</td><td>Platform identity across its lifecycle.</td><td>Stateful (invited, active, suspended, deactivated), Timestampable, Taggable (admin, beta_tester, vip…), Addressable (home, billing, shipping), Preferenceable, Authable, Communicable</td><td>user_id, name, preferred_name, description, primary_email, role, timezone</td></tr>
+      <tr><td>Organization</td><td>Tenant / workspace account.</td><td>Labelled, Stateful (prospect, onboarding, active, churned), Ownerable, Timestampable, Taggable, Addressable (headquarters, office, warehouse, branch), Preferenceable, Authable, Communicable</td><td>organization_id, domain, plan_tier, billing_status, industry, employee_count, billing_contact_email, data_residency</td></tr>
+      <tr><td>Product</td><td>Catalog entry with pricing, lifecycle and merchandising.</td><td>Labelled, Stateful (draft, in_review, active, retired), Timestampable, Priceable, Classifiable (taxonomy), Searchable, Filterable, Pageable</td><td>product_id, sku, inventory_status, release_channel, requires_subscription, support_level, summary_blurb</td></tr>
+      <tr><td>Transaction</td><td>Monetary movement with lifecycle and audit.</td><td>Stateful (pending, authorized, settled, failed, refunded), Timestampable, Priceable, Cancellable (24-hour window, reason required), Archivable (365-day grace)</td><td>transaction_id, user_id, organization_id, occurred_at, payment_method, channel, payment_reference, risk_score</td></tr>
+      <tr><td>Subscription</td><td>Recurring subscription with billing and cancellation.</td><td>Stateful (future, trialing, active, paused, pending_cancellation, past_due, unpaid, terminated), Cancellable, Timestampable, Billable (monthly / yearly), Archivable</td><td>subscription_id, plan_name, plan_code, customer_name, customer_email, amount, currency, current_period_start/end …</td></tr>
+      <tr><td>Relationship</td><td>Graph edge between two entities.</td><td>Labelled, Stateful (proposed, active, paused, completed, terminated), Timestampable, Ownerable, Taggable</td><td>relationship_id, source_id, target_id, relationship_type, direction, strength, origin_source, is_bidirectional</td></tr>
+      <tr><td>Article</td><td>Editorial content with categories + tags.</td><td>Labelled, Stateful (draft, in_review, scheduled, published, archived), Timestampable, Classifiable (hybrid, moderated tags)</td><td>article_id, slug, author_id, content_type, excerpt, body_markdown, hero_media_id, reading_time_minutes, locale, published_at</td></tr>
+      <tr><td>Media</td><td>Digital asset metadata (media library / CMS).</td><td>Labelled, Stateful (ingested, processing, available, deprecated), Timestampable, Classifiable (open tags, max 32)</td><td>media_id, asset_type, mime_type, storage_bucket, object_key, source_url, checksum, file_size_bytes, width_px, height_px, duration_seconds, transcoding_profiles</td></tr>
+      <tr><td>Invoice <small>(saas-billing)</small></td><td>SaaS invoice: terms, status, refunds.</td><td>SaaSBillingPayable, SaaSBillingRefundable, Timestampable</td><td>invoice_id, subscription_id, provider, tax_minor, discount_minor, subtotal_minor, line_items, dunning_step, payment_source …</td></tr>
+      <tr><td>Plan <small>(saas-billing)</small></td><td>Plan definition: pricing, packaging, entitlements.</td><td>SaaSBillingBillable, SaaSBillingMetered (seats), Ownerable</td><td>plan_id, product_family, status, feature_matrix, add_on_ids, upgrade_targets, downgrade_targets, notes</td></tr>
+      <tr><td>Usage <small>(saas-billing)</small></td><td>Metered usage snapshot for consumption billing.</td><td>SaaSBillingMetered (api_calls), Timestampable</td><td>usage_id, subscription_id, meter_id, provider, status, trend_percent, variance_minor, last_reported_at, anomalies</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The saas-billing pack also defines its own Subscription (Stripe/Chargebee-shaped, with metering); because <span class="k">objects/</span> is scanned before <span class="k">domains/</span>, the tools expose the core Subscription under that name. Adding an object is a new <span class="k">*.object.yaml</span> file (the suffix is required) in <span class="k">objects/</span> or a domain pack; the loaders index once per process, so it appears on the next server start.</p>
+
+  <!-- 6 -->
+  <h2 id="contexts"><span class="n">06</span>Contexts, regions and components</h2>
+  <div class="def"><b>Context</b><p>The kind of screen an object is being shown in. A trait's view extension names the context it targets, so the same object produces a different — but consistent — screen for each. Traits contribute to six: <b>list</b>, <b>detail</b>, <b>form</b>, <b>timeline</b>, <b>card</b>, <b>inline</b>; two more, <b>chart</b> and <b>dashboard</b>, exist as view shells.</p></div>
+  <p>Every context in Forge's component library is laid out on the same six named regions, in this order: <span class="k">globalNavigation</span>, <span class="k">pageHeader</span>, <span class="k">breadcrumbs</span>, <span class="k">viewToolbar</span>, <span class="k">main</span>, <span class="k">contextPanel</span>. Main is always required; page header is required in every context except card and inline; list and timeline also require the toolbar. Regions render as real HTML landmarks (nav, header, main, aside with labels), so structure is visible to screen readers and testable.</p>
+  <p><b>How a screen is assembled.</b> For the requested context, Forge collects every trait's extensions, sorts them by priority (lower first, default 50; ties by declaration order), evaluates any conditions (data, permissions, theme), groups them by region and composes them in a fixed order. Each rendered piece is wrapped in a boundary carrying its id, region and source trait, and a debug mode prints a per-region report. Below tablet width (768px container) the two-column contexts collapse to one column; an opt-in drawer component turns the side panel into a focus-trapped sheet.</p>
+  <p class="note">There are two renderers. The React <b>view engine</b> (the component library, Storybook, the region contract above) and the tools' <b>HTML renderer</b>, which places the same trait contributions into layout templates — dashboard, form, detail, list, card, timeline, landing — with named slots (header, tab-N, metadata, items, filters, hero, cta …). Generated HTML documents carry the tokens and components, not yet the six-region responsive shell.</p>
+  <h3>Components</h3>
+  <p>The catalog holds about 100 registered components, almost all contributed by traits (93 of them declare which trait uses them): status badges and timelines, price summaries, classification panels, address editors, audit timelines, tag managers, chart previews and controls, plus primitives — Button, Card, Checkbox, DatePicker, Badge, Banner. There are 83 React component source files and a Storybook of 400+ stories covering light, dark and high-contrast. <span class="k">catalog.list</span> filters the catalog by category, trait or context; <span class="k">object show</span> returns an object's composed traits and extensions.</p>
+
+  <!-- 7 -->
+  <h2 id="tokens"><span class="n">07</span>Tokens, themes and brands</h2>
+  <div class="def"><b>Token</b><p>One named design value — a colour, size, font, duration, breakpoint — authored once in the W3C Design Tokens format (DTCG JSON, under <span class="k">packages/tokens/src/tokens/</span>) and compiled to every platform. Components never contain raw values; they reference tokens.</p></div>
+  <p>One build (<span class="k">pnpm build:tokens</span>, Style Dictionary) compiles the JSON sources into five outputs: CSS custom properties (776 variables), a TypeScript map, a Tailwind token map, a Swift file and a Kotlin file. Tokens are layered so that a change at the right level propagates:</p>
+<pre><code>--ref-color-neutral-50:       oklch(0.9913 0.0013 286.38)   <span class="cmt">/* reference: a raw value            */</span>
+--theme-surface-canvas:       var(--ref-color-neutral-50)   <span class="cmt">/* theme: a role in this theme       */</span>
+--sys-surface-canvas:         var(--theme-surface-canvas)   <span class="cmt">/* system: what components bind to   */</span>
+--cmp-text-placeholder-color: var(--sys-text-muted)         <span class="cmt">/* component: one slot on one widget */</span>
+--sys-breakpoint-md:          768                           <span class="cmt">/* breakpoints are tokens too        */</span></code></pre>
+  <p><b>Themes</b> are light, dark and high-contrast (the last maps to the operating system's forced colours). <b>Brands</b> are sets of values for the brand colour roles — surfaces, text, interactive, borders, status — one JSON file per brand per theme (41 leaves each, under <span class="k">brands/&lt;X&gt;/{base,dark,hc}.json</span>). The build emits a block per brand × theme that re-assigns 38 shared theme slots to that brand's values:</p>
+<pre><code>[data-brand='B'][data-theme='dark'] { --theme-surface-canvas: …; --theme-text-primary: …; … }</code></pre>
+  <p>So switching brand or theme is two attributes on the document; no component changes. Two brands ship today (A and B); three brand-relative presets (corporate-blue, startup-warm, dark-minimal) can be applied to any brand. <span class="k">brand.apply</span> previews or applies a brand change (an alias swap or a token patch) into a dated review folder under <span class="k">artifacts/</span>; <span class="k">tokens.build</span> runs the build and returns the artifacts.</p>
+  <p><b>Guards around the build.</b> A collision guard refuses to build if two source files declare the same token with different values; 108 brand-contrast rules (27 text/icon pairs per brand per theme) run in CI, and any theme slot a brand newly overrides must be graded; a real-browser check asserts the computed values in all six brand × theme cells; a CI check blocks high-risk token changes (by namespace and segment) unless the PR carries the <span class="k">token-change:breaking</span> label.</p>
+
+  <!-- 8 -->
+  <h2 id="generate"><span class="n">08</span>Generating screens and code</h2>
+  <p>The generate path is four tools that chain, plus one that runs them together. They pass a <b>UiSchema</b> between them:</p>
+  <div class="def"><b>UiSchema</b><p>A JSON tree of components. Every node is <span class="k">{ id, component, layout, style, props, bindings, children, meta }</span>; the root carries <span class="k">version</span>, <span class="k">theme</span>, <span class="k">screens[]</span>, and <span class="k">tokenOverrides</span> (the traits' token map from section 02).</p></div>
+<pre><code>{ "version": "1.0", "theme": "light",
+  "screens": [ { "id": "product-detail", "component": "Page",
+      "layout": { "type": "stack", "gapToken": "space.4" },
+      "children": [
+        { "id": "header", "component": "DetailHeader", "props": { "field": "label" }, "bindings": { "title": "label" } },
+        { "id": "status", "component": "StatusBadge",  "props": { "field": "status" }, "meta": { "confidence": 0.92 } }
+      ] } ] }</code></pre>
+  <div class="tw"><table>
+    <thead><tr><th>Tool</th><th>In</th><th>Out</th></tr></thead>
+    <tbody>
+      <tr><td>design.compose</td><td>A short intent ("order history list with filters") and/or an object + context (detail, list, form, timeline, card, inline), optional layout (dashboard, form, detail, list, card, timeline, landing, auto) and component overrides.</td><td>A UiSchema plus a reference id (30-minute lifetime), per-slot confidence, and a review hint where a slot was uncertain. Object-aware: it fills slots from the object's fields and view extensions and reports which traits it used.</td></tr>
+      <tr><td>repl · validate</td><td>A UiSchema, or a patch to one (JSON Patch or per-node replace).</td><td>Structural validation against the schema grammar and the component catalog; optionally the 18 token-contrast rules.</td></tr>
+      <tr><td>repl · render</td><td>A UiSchema (its <span class="k">theme</span> sets the theme); optional brand (A|B).</td><td>A self-contained HTML document (or per-component fragments) with tokens inlined and <span class="k">data-brand</span>/<span class="k">data-theme</span> set.</td></tr>
+      <tr><td>code.generate</td><td>A validated UiSchema; framework react | vue | html; styling inline | tokens | tailwind; TypeScript on/off.</td><td>One source file as a string (.tsx / .vue / .html) plus its import list. React and Vue import from <span class="k">@oods/components</span> — map that specifier to your build of the component library; HTML is standalone.</td></tr>
+      <tr><td>pipeline</td><td>The same intent/object input.</td><td>compose → validate → render → code in one call; optional accessibility check and save.</td></tr>
+      <tr><td>schema · save/load/list/delete</td><td>A schema reference.</td><td>Persists work past the 30-minute reference lifetime and across sessions.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Intent matching is rule-based (keywords and synonyms choose the layout; a deterministic selector picks components), so the same input always produces the same tree — there is no language model inside Forge. A real run: intent "product detail page" auto-detects the Product object, picks the detail layout, and returns a 31-node tree with 10 filled slots — a header with the detail header, status timeline, search input and price summary; eight tabs expanded from Product's 38 fields; a metadata sidebar with the classification panel and filter panel.</p>
+  <p>Alongside: <span class="k">fidelity.preview</span> renders an object manifest at four fidelities (boxes-and-arrows, wireframe, review, branded mockup); <span class="k">map</span> stores mappings from an external component library (e.g. a Material UI Button) to Forge traits with prop translations, so an outside vocabulary can be resolved to trait terms — the composer and code generator do not yet target external libraries; <span class="k">structuredData.fetch</span> serves the components and tokens datasets and <span class="k">registry.snapshot</span> serves traits, objects and mappings, all versioned with ETags.</p>
+
+  <!-- 9 -->
+  <h2 id="charts"><span class="n">09</span>Charts and dashboards</h2>
+  <p><span class="k">viz.render</span> takes data and returns a chart specification. Thirteen chart types: <b>bar, line, area, scatter, heatmap</b> (from tabular rows; compiled to Vega-Lite, ECharts on request) and <b>treemap, sunburst, sankey, chord, force graph, choropleth, bubble map, flow map</b> (from node/link/geometry inputs; ECharts). Three input modes: explicit (chart type + encodings), suggest (rows only — the recommender picks), or a structured intent (goal, measures, dimensions). Every result carries a content hash of the canonical spec; on request it also returns an accessible data table and a generated narrative derived from the same data. The 16 chart traits (marks, encodings, scales, layouts, interactions) are the vocabulary the spec is normalised into.</p>
+  <p><span class="k">dashboard.render</span> composes a metric overview — KPI tiles, a trend panel, a breakdown panel, optional geo — from shared datasets and panel definitions, with deterministic auto-layout and cross-filter linking, and can export one self-contained HTML file in which the five core chart types are rendered server-side to byte-stable SVG (the others appear as described placeholders in that file).</p>
+
+  <!-- 10 -->
+  <h2 id="certify"><span class="n">10</span>Certification and checks</h2>
+  <div class="def"><b>Certify</b><p><span class="k">artifact.certify</span> takes a chart specification back (and, for the advanced types, its data) and returns a per-check scorecard — pass, fail or unchecked with the reason — rather than an overall "looks fine".</p></div>
+  <div class="tw"><table>
+    <thead><tr><th>Check</th><th>What is actually tested</th></tr></thead>
+    <tbody>
+      <tr><td>Accessibility equivalence</td><td>16 structural rules over the chart and its text alternative: colour encodings carry a second cue and size differences are perceptible; an accessible table exists, captioned to the chart title, with declared column order; axis titles, an accessible name and a description over 25 characters are present; bar/stacked charts narrate extrema, trend charts narrate the trend, area charts describe their baseline/range; datasets with 3+ rows surface at least two findings and dense ones aggregate; every encoded field is present in every row; the narrative generator reports ready; interactions describe their announcements. The chart builder synthesises the table, narrative, axis titles and name itself, so generated charts pass by construction; error-level failures block emission.</td></tr>
+      <tr><td>Determinism</td><td>The spec is compiled twice, canonicalised and byte-compared; the resulting SHA-256 is the same hash <span class="k">viz.render</span> produced.</td></tr>
+      <tr><td>Contrast</td><td>The colour values actually baked into the spec are graded: every mark at least 3:1 against the light-theme canvas (WCAG 1.4.11); categorical palettes checked for distinguishability under normal vision and three colour-vision-deficiency simulations; gradient scales reported as exempt, not passed. Light theme only.</td></tr>
+      <tr><td>Accuracy</td><td>10 structural-distortion rules: bar baseline not at zero (or on log/sqrt); dual y-axes in one frame; area on a non-linear scale; a row-merging aggregation not disclosed in title, description or axis; negative treemap/sunburst values; a parent not equal to the sum of its children; negative sankey/chord links; sankey node height inconsistent with its flows; duplicate sankey links; conflicting values joined to one map region. "Pass" means none of these fired, and the count of rules that actually ran is reported.</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Coverage, stated plainly.</b> The five core types get a rolled-up verdict. The eight advanced types get each check separately — contrast always, determinism and accuracy when data is supplied, accessibility-equivalence reported as findings but not yet enforced — and are labelled "uncertified" on purpose. Certification covers chart specs, not pages or components, and takes no brand input.</p>
+  <h3>Other checks</h3>
+  <ul>
+    <li><b>Token contrast</b> — <span class="k">a11y.scan</span> (and <span class="k">repl validate</span> on request) grades 18 token pairs: primary text on canvas / raised / subtle surfaces, secondary, muted, accent and inverse text, the four status text and four status icon pairs, and three dark-theme primary-text variants — 4.5:1 for text, 3:1 for icons.</li>
+    <li><b>Component library in CI</b> — axe-core (WCAG 2.0 A + 2.1 AA, serious/critical) over a fixed set of Storybook stories in light and dark; Playwright behavioural checks at phone (375), tablet (768) and desktop widths (layout collapse, drawer focus trap, Escape to close, no violations with the drawer open); the brand-contrast and browser checks from section 07; optional Chromatic visual regression.</li>
+    <li><b>Native tokens</b> — the Swift and Kotlin outputs are compiled with the real toolchains before a release (a shape test runs in CI).</li>
+  </ul>
+
+  <!-- 11 -->
+  <h2 id="operate"><span class="n">11</span>Operating it: starting, connecting, tools</h2>
+  <p><b>Start and connect.</b> Build the server once: <span class="k">pnpm --filter @oods/mcp-server run build</span>. Connect an AI assistant with the stdio adapter — copy <span class="k">configs/agents/claude-desktop.stdio-mcp.json</span> into Claude Desktop's MCP config, or <span class="k">cursor.stdio-mcp.json</span> into <span class="k">.cursor/mcp.json</span>. For a browser panel or HTTP-style agents, run the bridge (<span class="k">pnpm bridge:dev</span>; it listens on <span class="k">127.0.0.1:4466</span>). From the terminal, call any tool directly: <span class="k">pnpm exec tsx tools/oods-agent-cli/src/index.ts plan design.compose '{"intent":"product detail page"}'</span>. Nineteen tools register by default; six more switch on with <span class="k">MCP_TOOLSET=all</span>.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Group</th><th>Tools</th></tr></thead>
+    <tbody>
+      <tr><td>Registry</td><td>catalog.list · object (list, show) · structuredData.fetch · registry.snapshot · health</td></tr>
+      <tr><td>Generate</td><td>design.compose · repl (validate, render) · code.generate · pipeline · schema (save, load, list, delete) · fidelity.preview · map (create, list, resolve, update, delete, apply)</td></tr>
+      <tr><td>Charts</td><td>viz.render · dashboard.render · artifact.certify · (viz.compose, deprecated)</td></tr>
+      <tr><td>Tokens &amp; brand</td><td>tokens.build · brand.apply</td></tr>
+      <tr><td>Review / on demand</td><td>review (resolve, chain) · a11y.scan · diag.snapshot · billing.reviewKit · billing.switchFixtures · release.verify · release.tag</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Safety model.</b> Tools that write into the repo or artifacts (tokens.build, brand.apply, a11y.scan, billing.*, map.*, diag.snapshot, release.tag) preview by default and write only with <span class="k">apply: true</span>; schema save persists on call and pipeline writes via its save option. Two roles (designer, maintainer — release tools are maintainer-only); per-tool rate limits, concurrency and timeouts from a policy file; outputs land under <span class="k">artifacts/current-state/&lt;date&gt;/</span> with redacted transcripts and a hashed bundle index. Optional OpenTelemetry tracing per tool call.</p>
+  <p><b>Everyday commands:</b> <span class="k">pnpm build:tokens</span> · <span class="k">pnpm storybook</span> · <span class="k">pnpm refresh:data</span> (regenerate the structured-data exports the registry tools serve) · <span class="k">pnpm object:list | object:compose &lt;Name&gt; | object:validate --compose | object:create &lt;Name&gt; --trait … | object:generate</span> · <span class="k">pnpm validate --path traits</span> · <span class="k">pnpm local:pr-check</span> (lint, typecheck, unit tests, accessibility contract, visual-regression dry run).</p>
+
+  <!-- 12 -->
+  <h2 id="extend"><span class="n">12</span>Extending it — and what it does not do</h2>
+  <ul>
+    <li><b>New trait:</b> <span class="k">traits/&lt;family&gt;/&lt;Name&gt;.trait.yaml</span> (the suffix is required) plus <span class="k">schemas/traits/&lt;name&gt;.parameters.schema.json</span>, and the components its view extensions name; <span class="k">pnpm validate --path traits</span> checks the library. Runbook: <span class="k">docs/authoring-traits.md</span>.</li>
+    <li><b>New object:</b> <span class="k">objects/&lt;group&gt;/&lt;Name&gt;.object.yaml</span> (or a domain pack) naming traits and parameters; <span class="k">pnpm object:create</span> scaffolds it; the server indexes it on its next start. Runbook: <span class="k">docs/authoring-objects.md</span>.</li>
+    <li><b>New domain:</b> a folder under <span class="k">domains/</span> with its own traits and objects (the SaaS-billing pack is the model).</li>
+    <li><b>New brand:</b> <span class="k">packages/tokens/src/tokens/brands/&lt;X&gt;/{base,dark,hc}.json</span> plus <span class="k">aliases/brand-&lt;X&gt;.json</span> and entries in the build config (<span class="k">style-dictionary.config.cjs</span>: brand scopes and shared base list); the tool schemas' brand enum and the CI matrix are widened; <span class="k">pnpm build:tokens</span> then emits the brand's blocks, and the contrast rules and browser check cover it.</li>
+    <li><b>New components:</b> React source + story, a renderer entry in <span class="k">packages/mcp-server/src/render/component-map.ts</span>, and a trait view extension naming it (primitives are listed in the refresh script); <span class="k">pnpm refresh:data</span> republishes the catalog the tools read.</li>
+    <li><b>An outside component library:</b> describe it with <span class="k">map</span> (component → trait, prop translations) so its vocabulary resolves to trait terms via <span class="k">map resolve</span> and <span class="k">registry.snapshot</span>.</li>
+  </ul>
+  <h3>What Forge does not do</h3>
+  <ul>
+    <li>No data storage or backend — objects are definitions, not records; there is no runtime data binding.</li>
+    <li>No language model inside — intent matching is rules and synonyms; the AI assistant sits outside and calls tools.</li>
+    <li>No hosted service — the server reads a full checkout and the bridge binds to localhost.</li>
+    <li>Certification covers chart specs only (light theme, brand-independent); the eight advanced chart types are "uncertified" by design; pages and components get contrast rules and CI audits, not certificates.</li>
+    <li>Generated HTML documents use the tokens and components but not the six-region responsive shell; code generation targets React, Vue and HTML only.</li>
+    <li>Fonts are not yet per-brand (one global stack); the chart palette is one fixed set; the Swift/Kotlin files carry one brand × theme and omit font stacks and easing curves.</li>
+  </ul>
+
+  <footer class="foot">Figures are from the Forge repository in August 2026 (41 traits · 11 objects · ~100 catalogued components · 8 contexts · 13 chart types · 25 tools). Tool roster: <span class="k">packages/mcp-server/src/tools/registry.json</span>; contracts: <span class="k">packages/mcp-server/src/schemas/</span> and <span class="k">docs/api/</span>.</footer>
+</div>

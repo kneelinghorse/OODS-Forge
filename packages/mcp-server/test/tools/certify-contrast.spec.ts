@@ -218,11 +218,13 @@ describe('certify-contrast — role-B (no baked palette) is WCAG-exempt', () => 
 });
 
 describe('certify-contrast — honesty + determinism', () => {
-  it('an unresolvable canvas (non-color override on the canvas token) -> unchecked, never a silent pass', () => {
+  it("an unresolvable canvas (non-color override on the canvas token) -> 'ungradeable' (tried and failed), never 'unchecked' and never a silent pass", () => {
     // The palette always resolves (the six OODS tokens are always available), so the
-    // honest 'unchecked' path is reached via an unresolvable CANVAS reference.
+    // tried-and-failed path is reached via an unresolvable CANVAS reference: a colour-
+    // bearing unit was identified, grading was attempted, the canvas could not be resolved
+    // (s175 m04, #781 — was 'unchecked' before).
     const out = grade(mk({ tokens: { '--oods-sys-surface-canvas': 'not-a-color' } }));
-    expect(out.contrast).toBe('unchecked');
+    expect(out.contrast).toBe('ungradeable');
     expect(out.contrastNote).toContain('Could not resolve');
   });
 

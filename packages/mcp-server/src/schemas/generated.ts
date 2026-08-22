@@ -522,13 +522,26 @@ export namespace ArtifactCertifyOutputSchema {
      */
     coverage?: 'certified' | 'uncertified';
     /**
-     * The folded conformance gate (s140/s170), CARTESIAN PATH ONLY: true iff a11y-equivalence has zero error-severity failures AND contrast is not 'fail' AND accuracy is not 'fail' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path, and it STAYS null there even when an ECharts accuracy rule fires (s172): the uncertified path makes no folded claim, so an ECharts accuracy failure is read from pillars.accuracy and findings[], never from conformant. Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. KNOWN HOLE, stated (#781): on the cartesian path an 'unchecked' pillar passes the rollup, and since s170 that hole spans two pillars (contrast and accuracy) rather than one.
+     * The folded conformance gate (s140/s170), CARTESIAN PATH ONLY: true iff a11y-equivalence has zero error-severity failures AND contrast is neither 'fail' nor 'ungradeable' AND accuracy is neither 'fail' nor 'ungradeable' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path, and it STAYS null there even when an ECharts accuracy rule fires (s172): the uncertified path makes no folded claim, so an ECharts accuracy failure is read from pillars.accuracy and findings[], never from conformant. Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. 'ungradeable' (s175, closes #781) pulls the fold exactly as 'fail' does on both graded pillars: a grade that was ATTEMPTED and failed for a reason outside the spec — a poisoned canvas token, an evaluator fault — is not a pass. 'unchecked' (nothing to grade) and 'exempt' leave conformant a11y-driven (the s139 lock). A scoped, monotonic tightening: some inputs move true->false, none move false->true.
      */
     conformant?: boolean | null;
     /**
      * One entry per FAILING rule (empty when nothing fired). As of s172 this carries THREE rule families, told apart by their code: a11y-equivalence rules (OODS-A11Y-<rule.id>), CARTESIAN accuracy rules (OODS-V150..V153) and ECHARTS-PRIMARY accuracy rules (OODS-V154..V159). It is no longer a11y-equivalence-only, and it is no longer empty on the uncertified path.
      */
     findings?: Finding[];
+    /**
+     * The THIRD STATE of the warn-first a11y-equivalence engine, reaching the wire (s175). One entry per rule whose DECLARED precondition was absent on this chart — in rule order, each naming the precondition — so a not-applicable rule is distinguishable from a meaningful pass, which is what the echartsA11yNote promises. Present EXACTLY when the warn-first engine ran to completion: the ECharts-primary path with the `data` operand supplied. It is [] there if every rule either passed or failed. ABSENT (not []) on the {spec}-only path (no operand, nothing evaluated), on the cartesian path (its a11y-equivalence verdict lives in pillars.a11yEquivalence + findings[]; cartesian not-applicable results are not exposed — a recorded scope decision), on the error path, and when the engine FAULTED mid-evaluation (the partial list is discarded and notes[] says the rules could not be evaluated). A not-applicable rule NEVER enters findings[]: the a11y ids here and the OODS-A11Y-* codes in findings[] are disjoint, and together with the rules that passed they account for all 16.
+     */
+    a11yNotApplicable?: {
+      /**
+       * The engine's rule id (A11Y-R-01 .. A11Y-R-16) — the same id findings[] prefixes with OODS-A11Y-.
+       */
+      rule: string;
+      /**
+       * The DECLARED positive precondition the chart lacked, e.g. 'an x or y positional encoding binding'. Never empty: not-applicable is never a bare assertion.
+       */
+      preconditionAbsent: string;
+    }[];
     /**
      * How the accuracy pillar was reached. Present whenever the rules were RUN: on the certified path always, and on the uncertified path whenever the `data` operand was supplied (s172). Absent on the error path, and absent on an ECharts verdict with NO operand — that absence is the device distinguishing 'no operand' from 'operand present, nothing offered or nothing resolved', which reports {rulesEvaluated:0, failing:0} plus a note saying which. rulesEvaluated is the honest examined-count the contrast pillar lacks: a rule whose operand could not be resolved (rows behind a data url, an aggregate op outside the IR vocabulary, a choropleth join with no geometry) is NOT counted and says why in notes[], so silence can never be read as coverage.
      */
@@ -568,20 +581,20 @@ export namespace ArtifactCertifyOutputSchema {
        */
       determinism: 'pass' | 'fail' | 'unchecked';
       /**
-       * Rendered-reality contrast over the color hexes Forge baked into the compiled spec (light theme): role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'pass' requires a baked OODS palette; 'exempt' when no categorical palette was baked (a sequential/diverging gradient, or a divergent/mistyped binding rendering on a continuous/default scale — WCAG essential exception). On the uncertified (ECharts-primary) path (s141) contrast is a REAL verdict too, reconstructed from the palette the adapter bakes (no Vega compile): 'pass' for the 5 categorical types (fixed OODS categorical palette, role-C + role-A), 'exempt' for the 3 geo types (sequential/continuous color); the bubble_map ordinal-categorical branch is still NOT graded, and as of s172 that rests on the s141 exempt-all-geo RULING alone: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable and grading them would be a fresh scope decision rather than a bug fix (the palette is not reachable on any path — the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list). 'unchecked' only when the canvas cannot be resolved (or a contrast-engine fault).
+       * Rendered-reality contrast over the color hexes Forge baked into the compiled spec (light theme): role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'pass' requires a baked OODS palette; 'exempt' when no categorical palette was baked (a sequential/diverging gradient, or a divergent/mistyped binding rendering on a continuous/default scale — WCAG essential exception). On the uncertified (ECharts-primary) path (s141) contrast is a REAL verdict too, reconstructed from the palette the adapter bakes (no Vega compile): 'pass' for the 5 categorical types (fixed OODS categorical palette, role-C + role-A), 'exempt' for the 3 geo types (sequential/continuous color); the bubble_map ordinal-categorical branch is still NOT graded, and as of s172 that rests on the s141 exempt-all-geo RULING alone: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable and grading them would be a fresh scope decision rather than a bug fix (the palette is not reachable on any path — the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list). 'ungradeable' (s175, #781) when grading was ATTEMPTED on a unit it was given and failed for a reason outside the spec — an unresolvable canvas token, or an evaluator fault; on the cartesian path it pulls conformant false exactly as 'fail' does. 'unchecked' when nothing was attempted or nothing was gradeable — no colour-bearing unit in the compiled spec (a colourless chart, or an author-decorative mark colour the grader skips as chrome); it leaves conformant a11y-driven. The two are told apart in the VALUE, not only in contrastNote.
        */
-      contrast: 'pass' | 'fail' | 'unchecked' | 'exempt';
+      contrast: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
       /**
-       * The structural accuracy verdict. CARTESIAN: the four declared rules over the IR + the compiled Vega-Lite spec (OODS-V150..V153). ECHARTS-PRIMARY (s172): the per-type rule set over the `data` operand (OODS-V154..V159). 'pass' means none of the rules OFFERED for this chart type positively detected its distortion — read it with accuracySummary.rulesEvaluated, which says how many actually ran; it is NOT a claim that the chart is accurate. 'fail' means at least one fired and the reason is in findings[] under its OODS-V15x code. 'unchecked' when there was no operand to read (no compiled spec on an unmodeled mark; no `data` on an ECharts-primary IR) or the rules engine itself faulted (a fault degrades the pillar; it never turns a valid verdict into status:error). NOTE the deliberate asymmetry: on the ECHARTS path 'pass' requires rulesEvaluated > 0, so zero resolved rules reports 'unchecked'; the cartesian path keeps its s170 semantics, where 'pass' with rulesEvaluated:0 is possible and #781 records the hole.
+       * The structural accuracy verdict. CARTESIAN: the four declared rules over the IR + the compiled Vega-Lite spec (OODS-V150..V153). ECHARTS-PRIMARY (s172): the per-type rule set over the `data` operand (OODS-V154..V159). 'pass' means none of the rules OFFERED for this chart type positively detected its distortion — read it with accuracySummary.rulesEvaluated, which says how many actually ran; it is NOT a claim that the chart is accurate. 'fail' means at least one fired and the reason is in findings[] under its OODS-V15x code. 'ungradeable' (s175, #781) when grading was ATTEMPTED on the rule set it was given and failed for a reason outside the spec — the rules engine itself faulted (a fault degrades the pillar and never turns a valid verdict into status:error; on the cartesian path it pulls conformant false exactly as 'fail' does, and notes[] names the fault and how many rules were offered). 'unchecked' when nothing was attempted or nothing was gradeable — no operand to read (no compiled spec on an unmodeled mark; no `data` on an ECharts-primary IR), or every offered rule's precondition absent (rulesEvaluated:0 on the ECharts path, decision #1453). NOTE the deliberate asymmetry: on the ECHARTS path 'pass' requires rulesEvaluated > 0, so zero resolved rules reports 'unchecked'; the cartesian path keeps its s170 semantics, where 'pass' with rulesEvaluated:0 is possible — aligning the two is a separate item (decision #1453), not the #781 hole.
        */
-      accuracy: 'pass' | 'fail' | 'unchecked';
+      accuracy: 'pass' | 'fail' | 'ungradeable' | 'unchecked';
     };
     /**
      * The rendered-contrast caveat for the contrast pillar (certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified) plus the role rationale when contrast is pass/fail/exempt (s137/s138).
      */
     contrastNote?: string;
     /**
-     * Human-readable notes, and on the ECharts-primary path they are load-bearing rather than decorative: they are what tells the two flavours of 'unchecked' apart. Carries the a11y-equivalence deferral reason, the operand-absent determinism and accuracy notes, the determinism scope clauses (same-(spec,data), the @oods/tokens bundle assumption, force_graph's option-vs-physics limit), the empty-offered-set explanation for the three types with no accuracy rule, and (s170) why a rule could not resolve its operand and therefore stayed silent.
+     * Human-readable notes, and on the ECharts-primary path they are load-bearing rather than decorative: they are what tells the two flavours of 'unchecked' apart. Carries the warn-first a11y-equivalence note (it names the operand gate and, on the data-backed path, where failures and not-applicable rules surface: findings[] and a11yNotApplicable[]), the a11y-engine-fault note when the rules could not be evaluated, the operand-absent determinism and accuracy notes, the determinism scope clauses (same-(spec,data), the @oods/tokens bundle assumption, force_graph's option-vs-physics limit), the empty-offered-set explanation for the three types with no accuracy rule, and (s170) why a rule could not resolve its operand and therefore stayed silent.
      */
     notes?: string[];
     /**
@@ -1439,11 +1452,11 @@ export type ConflictDetailOutput = ConflictDetailOutputSchema.ConflictDetailOutp
 // Source: dashboard.render.input.json
 export namespace DashboardRenderInputSchema {
   /**
-   * A dashboard panel: a chart panel (one of the 11 viz.render chartTypes + its data branch) or a kpi tile. Discriminated on `kind`.
+   * A dashboard panel: a chart panel (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881 — plus its data branch) or a kpi tile. Discriminated on `kind`.
    */
   export type Panel = ChartPanel | KpiPanel;
   /**
-   * A chart panel — a viz.render-shaped descriptor: chartType (the authoritative 11-value enum) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.
+   * A chart panel — a viz.render-shaped descriptor: chartType (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.
    */
   export type ChartPanel = ChartPanel1 & {
     id: string;
@@ -1454,7 +1467,7 @@ export namespace DashboardRenderInputSchema {
      */
     description?: string;
     /**
-     * The authoritative viz.render chartType enum (11 values).
+     * 11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only (decision #881).
      */
     chartType:
       | 'bar'
@@ -1549,7 +1562,7 @@ export namespace DashboardRenderInputSchema {
       };
 
   /**
-   * Render a composed, decision-centric DASHBOARD (the fixed metric-overview template: KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec IR. Carries shared datasets, heterogeneous panels (any of the 11 viz.render chart types, or kpi tiles), layout hints, cross-filter links, and a dashboard-level a11y block. The server composes each panel through the in-process viz.render engine, resolves the layout (m02), computes KPIs (m03), and applies any active cross-filter selection (m03/m04). Option C: per-chart specs are unchanged; this IR sits above them.
+   * Render a composed, decision-centric DASHBOARD (the fixed metric-overview template: KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec IR. Carries shared datasets, heterogeneous panels (any of the 11 of the 13 viz.render chartTypes (chord and flow_map are viz.render-only, decision #881), or kpi tiles), layout hints, cross-filter links, and a dashboard-level a11y block. The server composes each panel through the in-process viz.render engine, resolves the layout (m02), computes KPIs (m03), and applies any active cross-filter selection (m03/m04). Option C: per-chart specs are unchanged; this IR sits above them.
    */
   export interface DashboardRenderInput {
     /**
@@ -1571,7 +1584,7 @@ export namespace DashboardRenderInputSchema {
      */
     datasets: [Dataset, ...Dataset[]];
     /**
-     * Heterogeneous panels: chart (any of the 11 viz.render chartTypes + its data branch) or kpi tiles.
+     * Heterogeneous panels: chart (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881 — plus its data branch) or kpi tiles.
      *
      * @minItems 1
      */
@@ -1812,7 +1825,7 @@ export namespace DashboardRenderInputSchema {
      */
     datasetId: string;
     /**
-     * The metric field aggregated into the KPI value.
+     * The metric field aggregated into the KPI value. CELL TYPES (sprint-175, FD#1): `count` and `distinct` are defined over every NON-NULL cell of this field regardless of type — COUNT(field), never rows.length — while the numeric aggregates (sum/average/median/min/max/latest) read only cells that parse as numbers, in BOTH the row-order and `periodField` series builders. A field that HAS values but none numeric fails LOUD for a numeric aggregate (OODS-V160 at dashboard.render, routed through onPanelError) instead of returning a plausible 0; a field absent from every row has zero non-null cells and keeps the ratified value:0.
      */
     field?: string;
     /**
@@ -1824,7 +1837,7 @@ export namespace DashboardRenderInputSchema {
      */
     measureRef?: string;
     /**
-     * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs.
+     * Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs. CELL TYPES (sprint-175, FD#1): `count`/`distinct` accept any non-null cell; the other six read numeric cells only and raise OODS-V160 when the field has values but none of them numeric (pre-s175 they returned a silent 0).
      */
     aggregate?: 'sum' | 'count' | 'average' | 'median' | 'min' | 'max' | 'distinct' | 'latest';
     comparison?: KpiComparison;

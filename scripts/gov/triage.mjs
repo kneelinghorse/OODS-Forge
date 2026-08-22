@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process';
-import { promises as fs } from 'node:fs';
+import { promises as fs, realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +16,6 @@ const DEFAULT_POLICY_PATH = 'configs/policies/token-namespaces.json';
 const DEFAULT_REPORT_PATH = 'artifacts/gov/triage-report.md';
 const DEFAULT_REVERTS_PATH = 'artifacts/gov/reverts.diff';
 const BREAKING_LABEL = 'token-change:breaking';
-const DIST_TOKEN_PATH = path.join(repoRoot, 'packages', 'tokens', 'dist', 'tailwind', 'tokens.json');
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
@@ -25,8 +24,6 @@ async function main() {
     printHelp();
     return;
   }
-
-  await removeDistTokenPayload();
 
   const policy = await loadPolicy(options.policyPath);
   const tokensSummary = await loadJson(resolvePath(options.tokensPath));
@@ -373,7 +370,11 @@ function normaliseValue(value) {
   }
 }
 
-async function resolveBaseRef(ref) {
+/**
+ * s175 m02 — exported with an injectable `cwd` so the throw below has a unit control
+ * (memo §1b U4). Fallback semantics are unchanged and NOT chartered (#1480).
+ */
+export async function resolveBaseRef(ref, { cwd } = {}) {
   const candidates = [];
   if (ref) {
     candidates.push(ref);
@@ -388,7 +389,8 @@ async function resolveBaseRef(ref) {
 
   for (const candidate of dedupe(candidates)) {
     const result = await runGit(['rev-parse', '--verify', `${candidate}^{commit}`], {
-      rejectOnError: false
+      rejectOnError: false,
+      cwd
     });
     if (result.code === 0) {
       return candidate;
@@ -672,19 +674,6 @@ async function writeReport(reportPath, summary) {
   await fs.writeFile(resolvePath(reportPath), report, 'utf8');
 }
 
-async function removeDistTokenPayload() {
-  try {
-    await fs.unlink(DIST_TOKEN_PATH);
-    console.warn(
-      `Removed built token artifact at ${path.relative(repoRoot, DIST_TOKEN_PATH)} to ensure governance diff uses source tokens.`
-    );
-  } catch (error) {
-    if (!(error && error.code === 'ENOENT')) {
-      throw error;
-    }
-  }
-}
-
 async function loadJson(filePath) {
   try {
     const raw = await fs.readFile(filePath, 'utf8');
@@ -711,9 +700,9 @@ function normalisePath(targetPath) {
   return targetPath ? targetPath.replace(/\\/g, '/').replace(/^\.\/+/, '') : '';
 }
 
-async function runGit(args, { rejectOnError = true, trim = true } = {}) {
+async function runGit(args, { rejectOnError = true, trim = true, cwd = repoRoot } = {}) {
   return runCommand('git', args, {
-    cwd: repoRoot,
+    cwd,
     rejectOnError,
     trim
   });
@@ -790,7 +779,35 @@ async function safeStat(targetPath) {
   }
 }
 
-main().catch((error) => {
-  console.error(`triage failed: ${(error && error.message) || error}`);
-  process.exitCode = 1;
-});
+/**
+ * ENTRY GUARD (s175 m02, the s169 m03 shape from tools/tokens-governance/index.ts:1410-1424).
+ * This used to be a bare top-level `await main()`, which meant `import`ing the module RAN
+ * THE CLI — every check, empty argv, writing the tracked diagnostics.json — so none of the
+ * red paths above could be unit-tested. CLI behaviour is byte-identical: invoked as a
+ * script, `process.argv[1]` is this file and `main()` runs exactly as before.
+ *
+ * One deliberate difference from the precedent: both sides are compared as REAL paths. Node
+ * realpath's the main module's `import.meta.url` but leaves `process.argv[1]` as typed, so a
+ * script invoked through a symlinked path (macOS's /var → /private/var tmpdir, where the
+ * m01 subprocess control copies these scripts) would otherwise exit 0 having run nothing —
+ * a silent pass from a governance gate, the exact failure class these controls exist for.
+ */
+function resolveInvocationPath(targetPath) {
+  try {
+    return realpathSync(targetPath);
+  } catch {
+    return path.resolve(targetPath);
+  }
+}
+
+const invokedPath = process.argv[1];
+const isDirectInvocation =
+  typeof invokedPath === 'string' &&
+  resolveInvocationPath(fileURLToPath(import.meta.url)) === resolveInvocationPath(invokedPath);
+
+if (isDirectInvocation || pathToFileURL(invokedPath ?? '').href === import.meta.url) {
+  main().catch((error) => {
+    console.error(`triage failed: ${(error && error.message) || error}`);
+    process.exitCode = 1;
+  });
+}
