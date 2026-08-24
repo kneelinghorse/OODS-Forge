@@ -7,7 +7,11 @@ on:
     paths-ignore:
       - 'cmos/**'
   push:
-    branches: [ main ]
+    # s176 m04: the repo works on Forge-expansion → OODS-pro; with only `main` here a
+    # push with no open PR ran nothing (measured 2026-08-24: PR #74 gated 4f64bcf — the
+    # gap is exactly the no-open-PR window). `main` stays listed while the dead branch
+    # exists (#1225 is Derek's call).
+    branches: [ main, OODS-pro, Forge-expansion ]
     paths-ignore:
       - 'cmos/**'
 
@@ -735,6 +739,19 @@ jobs:
 
       - name: Run colocated viz.render + dashboard.render goldens
         run: pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/viz.render.intent.test.ts src/tools/dashboard.render.test.ts src/tools/dashboard.render.fidelity.test.ts src/tools/dashboard.render.faostat-e2e.test.ts src/tools/dashboard.render.strict-fields.test.ts src/tools/dashboard.render.kpi-types.test.ts src/tools/dashboard.render.measure-depth.test.ts src/tools/repl.render.skin-mapping.test.ts src/tools/repl.render.brand.test.ts src/tools/ci-golden-list.guard.test.ts
+
+      # s176 m04 — the FULL @oods/mcp-server suite. Before this step CI executed only the
+      # 14 colocated files named above plus the root 'core' project's test/** globs: 58
+      # colocated src/**/*.test.ts files were present in the tree but never ran in ANY CI
+      # job. This runs the package's whole vitest surface (src colocated + test/; the
+      # scale-determinism suite is excluded by the package config and keeps its own job).
+      # The named-goldens step above STAYS — its explicit list is guarded by
+      # ci-golden-list.guard.test.ts and keeps the golden set legible — so the 14 run
+      # twice, which is the price of a legible golden roster. Suite measured green at the
+      # s176 build tree (211 files / 4330 tests, ~104s local wall with the s176
+      # render-backed certify suites; it was 20.41s at 4f64bcf before certify rendered).
+      - name: Run FULL @oods/mcp-server suite (previously-dark colocated files)
+        run: pnpm --filter @oods/mcp-server test
 
       - name: Run mcp-bridge tool-surface test
         run: pnpm --filter @oods/mcp-bridge test

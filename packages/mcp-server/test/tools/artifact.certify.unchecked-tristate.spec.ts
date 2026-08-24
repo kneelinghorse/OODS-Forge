@@ -95,7 +95,10 @@ describe("artifact.certify — contrast tri-state: 'ungradeable' (tried and fail
       expect(out.status).toBe('ok');
       expect(out.coverage).toBe('certified');
       expect(out.pillars?.contrast).toBe('unchecked');
-      expect(out.contrastNote).toContain('No color encoding or mark color');
+      // s176 m01 — the ONLY declared tristate movement: the 'unchecked' note text widened
+      // to the render-backed wording (nothing gradeable RENDERED). Every other assertion
+      // in this file is a byte-level non-mover.
+      expect(out.contrastNote).toContain('No gradeable OODS series paint');
       expect(out.conformant).toBe(true);
       expect(out.determinism?.contentHash).toBe(expectedHash(DECORATIVE_SPEC));
       expect(validateOutput(out)).toBe(true);

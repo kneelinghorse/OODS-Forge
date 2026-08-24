@@ -209,9 +209,14 @@ Three further names had to be renamed to avoid a group/leaf clash: `Primary` →
    knowable from here (an explicitly disclosed limitation of the extraction). This is the
    cheapest ask and it re-bases everything else.
 
-2. **The upstream library behind the four `Chrome Gradient` tokens.** They extracted with no
-   value, and the most likely reason is a library that was not attached to the file we got. If
-   it exists, we want it; if the tokens are dead, we want to be told so we can drop them.
+2. **The four `Chrome Gradient` tokens' real definitions.** *(Corrected 2026-08-24, s176 m04,
+   #1242 — the earlier draft blamed "a library that was not attached to the file we got";
+   stage1's own extraction record says otherwise.)* They extracted with no value because
+   stage1 measured them as **unsupported gradient paints** (the extractor does not decode
+   gradient fills), and the effect/grid nulls are a separate decode gap of the same
+   extractor — not evidence of a missing upstream library. The ask stands in amended form:
+   we want the gradient definitions in some usable form (even a screenshot or CSS
+   equivalent); if the tokens are dead, we want to be told so we can drop them.
 
 3. **Confirmation of the Figma plan tier** (Q2). One sentence from PT settles which ingestion
    path is the real one.
@@ -230,12 +235,17 @@ Recorded so nothing in the conversation accidentally contradicts a ratified deci
   2026-08-01 (decision #1337, `forge-pt-design-system-decision-memo.md` Option 3).
 - **PT's team never runs Forge.** They receive tokens + theme CSS + hosted Storybook + docs. The
   local-only machinery (mcp-server, bridge, certify, brand.apply) stays on Derek's machine.
-- **Certification claims must stay honest.** MCP-rendered documents do not yet apply
-  `data-brand`, so a "certified" render today is certified in the default skin, not PT's. Until
-  the brand-aware render gap closes, certification claims about PT-*branded* output would be
-  overclaims. As of s170, `artifact.certify` does return a four-pillar verdict
-  (a11y-equivalence, determinism, contrast, accuracy) — real, and worth showing — but the brand
-  caveat above is unchanged by that.
+- **Certification claims must stay honest.** *(Corrected 2026-08-24, s176 m04, #1242 — the
+  earlier draft said "MCP-rendered documents do not yet apply `data-brand`"; that has been
+  false since s169 m04.)* `dashboard.render` and the repl render paths DO apply brand
+  (`data-brand`) and have since s169 m04. The surface that is brand-blind is
+  `artifact.certify` itself — deliberately: every operand it grades is brand-INVARIANT by
+  design (the s169 no-false-affordance ruling), so a certify verdict is about the default
+  skin's paints, not PT's. Certification claims about PT-*branded* output therefore remain
+  overclaims until certify grows a brand-aware grading story — a scope decision, not a
+  render gap. As of s170, `artifact.certify` returns a four-pillar verdict
+  (a11y-equivalence, determinism, contrast, accuracy) — real, and worth showing — with that
+  caveat stated precisely.
 - **Before anything ships:** ~~`@oods/viz-core` and `@oods/viz-render` declare MIT in
   `package.json` with no LICENSE file. That is on the s170 hygiene list; it must be closed
   before any package reaches a client.~~ **Corrected 2026-08-04 (s171-m01):** the MIT

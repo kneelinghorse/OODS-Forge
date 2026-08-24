@@ -30,6 +30,10 @@ export interface AccuracyFinding {
  * What one rule concluded.
  *  - `evaluated:true`  + no message → the rule ran and positively detected nothing.
  *  - `evaluated:true`  + message    → the rule ran and positively detected its distortion.
+ *  - `evaluated:true`  + note       → the rule ran, detected nothing, AND the note says
+ *    the pass had no subject (s176 m03b: a spec with no declared aggregation passes the
+ *    aggregation-hiding rule vacuously — the note makes the vacuity legible without
+ *    moving the verdict or the rulesEvaluated count).
  *  - `evaluated:false` + note       → the rule could NOT resolve its operand (unreadable
  *    compiled spec, rows absent behind a data url, an aggregate op outside the IR's
  *    vocabulary). Silent by design; the note is surfaced so the silence is legible.

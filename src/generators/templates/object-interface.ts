@@ -170,7 +170,7 @@ function renderCommunicableHelperMethods(): string[] {
   const helperDocs = [
     {
       doc: ['Send a message to multiple recipients.', '', 'Source: Communicable (trait helper)'],
-      signature: 'sendMessage?(recipientIds: string[], template: any, variables?: Record<string, any>): any;',
+      signature: 'sendMessage?(recipientIds: string[], template: unknown, variables?: Record<string, unknown>): unknown;',
     },
     {
       doc: ['Mark all messages as read for the current user.', '', 'Source: Communicable (trait helper)'],
@@ -178,11 +178,11 @@ function renderCommunicableHelperMethods(): string[] {
     },
     {
       doc: ['Broadcast a message to all members.', '', 'Source: Communicable (trait helper)'],
-      signature: 'broadcastMessage?(template: any, variables?: Record<string, any>): any;',
+      signature: 'broadcastMessage?(template: unknown, variables?: Record<string, unknown>): unknown;',
     },
     {
       doc: ['Retrieve delivery policies.', '', 'Source: Communicable (trait helper)'],
-      signature: 'getDeliveryPolicies?(): any[];',
+      signature: 'getDeliveryPolicies?(): unknown[];',
     },
   ];
 

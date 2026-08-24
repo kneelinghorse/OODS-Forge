@@ -283,6 +283,14 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // count/distinct never trip it (defined over any cell type); an absent field or an empty
   // row set keeps value:0.
   ['OODS-V160', { code: 'OODS-V160', category: 'validation', message: 'KPI numeric aggregate over a field with no numeric cells', retryable: true }],
+  // V161 (sprint-176 m03a): the DEFAULT baked cartesian categorical palette is shorter
+  // than the distinct series count, so Vega recycles domain[i]->range[i mod len] — two+
+  // series share a colour (a ΔE00=0 pair certify's render-backed contrast pillar fails).
+  // The default-palette twin of V143, which cannot be reused here: V143's registered and
+  // emitted messages presuppose an AGENT-SUPPLIED range ("Provide at least N colors"),
+  // while V161 fires precisely when the agent supplied none. Threshold is read from the
+  // APPLIED compiled scale.range, never a hardcoded 6. WARN — the chart still renders.
+  ['OODS-V161', { code: 'OODS-V161', category: 'validation', message: 'Baked categorical palette recycles: more distinct series than palette slots', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

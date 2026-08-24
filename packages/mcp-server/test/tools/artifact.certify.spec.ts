@@ -153,8 +153,8 @@ describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
   it('a default cartesian IR → pillars all pass + a rendered-contrast contrastNote', async () => {
     const out = await certify(buildSpec(ROWS3));
     expect(out.pillars).toEqual({ a11yEquivalence: 'pass', determinism: 'pass', contrast: 'pass', accuracy: 'pass' });
-    // Rendered-reality caveat (s138/s140 C2 reword), no longer the declared-intent one.
-    expect(out.contrastNote).toContain('baked into the compiled spec');
+    // Render-backed caveat (s176 m01 reword) — no longer the baked-bytes one.
+    expect(out.contrastNote).toContain('series-to-paint assignment of the rendered chart');
     expect(validateOutput(out)).toBe(true);
   });
 

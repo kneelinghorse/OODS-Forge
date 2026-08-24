@@ -6,6 +6,10 @@
 // exact same equivalence engine (validateVizEquivalenceRules) and determinism
 // transform (toVegaLiteSpec -> canonicalize -> sha256) that viz.render runs, so
 // for a Forge-generated IR certify's contentHash equals the hash viz.render emits.
+// As of s176 m02 the cartesian determinism pillar carries a RENDER half too:
+// double-render byte-equality through @oods/viz-render (renderHash), reusing the
+// contrast grade's render as the first hash — so `stable` is falsifiable, not a
+// compile tautology.
 //
 // Coverage-honest: the 8 ECharts-primary types (treemap/sunburst/sankey/... — classified
 // from the IR's first mark trait) return coverage:'uncertified' / conformant:null, a
@@ -17,12 +21,15 @@
 // a11y-equivalence runs WARN-FIRST on that path as of s174: with the operand the 16 rules
 // evaluate over the operand-built table + narrative and every failure reaches findings[] at
 // its native severity, while the PILLAR stays 'unchecked' — findings first, verdict later.
-// Contrast is a graded pillar (s137/s138/s139):
-// certify reads the color hexes the vega-lite adapter BAKED into the compiled cartesian
-// spec (scale.range / mark.color) and grades them against the canvas — so contrast
-// reflects the bytes Forge actually renders, and a chart that baked no OODS palette can
-// never certify contrast:'pass'. The verdict is a pure function of the input IR — no
-// Date/random/UUID.
+// Contrast is a graded pillar (s137/s138/s139; render-backed since s176):
+// on the cartesian path certify RENDERS the compiled spec through @oods/viz-render and
+// grades the series-to-paint assignment the data marks actually carry (duplicates
+// retained, so a recycled palette is a ΔE00=0 role-A fail), against the canvas — while
+// unit classification (series vs exempt vs chrome) still reads the compiled bytes, so a
+// chart that baked no OODS palette can never certify contrast:'pass'. On the ECharts
+// path contrast is reconstruction-graded from the baked palette constants (no render —
+// the parked rung). The verdict is a pure function of the input IR — the render is
+// deterministic (pinned text metrics, normalized ids); no Date/random/UUID.
 //
 // Accuracy is a graded pillar too as of s170 (#818 — the fourth #977 pillar), widened to all
 // 13 types in s172. On the CERTIFIED path certify evaluates FOUR declared structural rules
@@ -36,6 +43,7 @@
 // additionally requires rulesEvaluated > 0.
 
 import { canonicalize, sha256 } from '@oods/artifacts';
+import { renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
 import {
   ACCURACY_RULES,
   assertNormalizedVizSpec,
@@ -88,6 +96,13 @@ export interface CertifyFinding {
 export interface CertifyDeterminism {
   readonly stable: boolean;
   readonly contentHash: string;
+  /**
+   * s176 m02, OPTIONAL — sha256 of the SVG the cartesian rendered-grading path rendered,
+   * present exactly when that render happened (never on an ECharts response). `stable`
+   * then additionally requires a second, independent render to hash identically — the
+   * double-render proof that makes the pillar falsifiable.
+   */
+  readonly renderHash?: string;
 }
 
 /**
@@ -104,8 +119,9 @@ export type AccuracyVerdict = 'pass' | 'fail' | 'ungradeable' | 'unchecked';
  * there is no folded gate at all, they are the ONLY place the real verdicts live.
  * a11yEquivalence mirrors the a11y-equivalence sub-result (NOT the folded conformant);
  * determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — the
- * categorical color bytes Forge baked into the compiled spec (s138) — with 'exempt' for
- * gradient scales; accuracy is the structural-rules verdict. So a reader can always see WHY
+ * series-to-paint assignment of the rendered cartesian chart (s176; formerly the baked
+ * compiled bytes, s138) — with 'exempt' for gradient scales; accuracy is the
+ * structural-rules verdict. So a reader can always see WHY
  * conformant is false, and can always see what actually ran when it is null.
  *
  * contrast and accuracy tell "tried and failed" apart from "nothing to grade" IN THE VALUE
@@ -617,35 +633,68 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
       message: rule.message ?? rule.summary,
     }));
 
-    // DETERMINISM — compile to Vega-Lite twice, byte-compare the canonical form,
-    // hash it. Pure function of the IR (mirrors viz.render.ts's contentHash), so the
+    // DETERMINISM, compile half — compile to Vega-Lite twice, byte-compare the canonical
+    // form, hash it. Pure function of the IR (mirrors viz.render.ts's contentHash), so the
     // same IR always yields the same verdict + hash. Capture the first compiled object
-    // (reused below for both the canonical hash AND the contrast grade); KEEP the second
-    // toVegaLiteSpec call — it IS the determinism proof (first === second), not a
-    // redundant compile to optimize away.
+    // (reused below for the canonical hash, the contrast grade AND the render proof); KEEP
+    // the second toVegaLiteSpec call — it IS the compile proof (first === second), not a
+    // redundant compile to optimize away. The render half of the pillar (s176 m02) is
+    // computed after the contrast grade below, so it can reuse the grade's own render as
+    // its first hash.
     const compiled = toVegaLiteSpec(certifySpec);
     const first = canonicalize(compiled);
     const second = canonicalize(toVegaLiteSpec(certifySpec));
-    const stable = first === second;
+    const compileStable = first === second;
     const contentHash = sha256(first);
 
-    // CONTRAST PILLAR (s137/s138/s139) — grades the color hexes the adapter BAKED into
-    // the compiled spec (scale.range / mark.color), so certified == rendered by
-    // construction. It is a read-only addition to certify's OWN output; contentHash
-    // derives from an untouched toVegaLiteSpec, so render↔certify hash identity holds.
-    // Defensive: a contrast-engine fault never turns a valid conformance verdict into
-    // status:error — it degrades to 'ungradeable' WITH a note naming the fault (s175 m04,
+    // CONTRAST PILLAR (s137/s138/s139; render-backed as of s176 m01) — grades the
+    // series-to-paint assignment the chart RENDERS: the pillar renders `compiled`
+    // through @oods/viz-render and grades the data-mark paints, duplicates retained, so
+    // a palette-recycling collision (consumed cardinality > baked palette) fails as a
+    // ΔE00=0 role-A pair instead of certifying conformant. (The pre-s176 claim here —
+    // that grading the BAKED hexes made certified == rendered "by construction" — was
+    // measured false at 4f64bcf: a 10-series chart certified conformant:true with four
+    // colliding series pairs at the pixel level.) It is a read-only addition to
+    // certify's OWN output; contentHash derives from an untouched toVegaLiteSpec — the
+    // render feeds grading, never the hash — so render↔certify hash identity holds.
+    // Defensive: a contrast-engine OR render fault never turns a valid conformance
+    // verdict into status:error — the render is awaited INSIDE this try (s176 D6), so
+    // any throw degrades to 'ungradeable' WITH a note naming the fault (s175 m04,
     // closes decision #1446 (4)), and 'ungradeable' pulls conformant false below.
     let contrast: ContrastVerdict = 'unchecked';
     let contrastNote: string | undefined;
+    let gradedSvg: string | undefined;
     try {
-      const pillar = evaluateContrastPillar(certifySpec, compiled);
+      const pillar = await evaluateContrastPillar(certifySpec, compiled);
       contrast = pillar.contrast;
       contrastNote = pillar.contrastNote;
+      gradedSvg = pillar.renderedSvg;
     } catch (err) {
       contrast = 'ungradeable';
       contrastNote = contrastFaultNote(err);
     }
+
+    // DETERMINISM, render half (s176 m02) — double-render byte-equality:
+    // sha256(renderVegaLiteToSvg(compiled)) twice, equal. The FIRST hash is the contrast
+    // grade's own render (reused, never recomputed); the SECOND render call below IS the
+    // proof — the ":623-625 KEEP-the-second discipline", render edition. Runs exactly
+    // when the grade rendered (>= 1 series unit), so `renderHash` presence tracks the
+    // rendered-grading path and NO ECharts response can ever carry it. A second-render
+    // throw is a failed proof (the artifact could not be re-rendered), never a
+    // status:error — the catch keeps the fault inside the pillar.
+    let renderHash: string | undefined;
+    let renderStable = true;
+    if (gradedSvg !== undefined) {
+      renderHash = sha256(gradedSvg);
+      try {
+        renderStable =
+          renderHash === sha256(await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec));
+      } catch {
+        renderStable = false;
+      }
+    }
+    // The folded stable: the compile proof AND (when a render happened) the render proof.
+    const stable = compileStable && renderStable;
 
     // ACCURACY PILLAR (s170 m02, #818) — the four declared structural rules over the IR +
     // the compiled spec. certify stays a PURE READER: the evaluator mutates neither operand,
@@ -681,7 +730,9 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // canvas token, an evaluator fault) is not a pass. 'exempt'/'unchecked'/'pass' leave it
     // a11y-driven (a gradient's 'exempt' and a no-color or decorative-only chart's
     // 'unchecked' must not flip conformant, so the s139 invariance lock holds). `stable` is
-    // inert (a pure compile is always byte-stable) but folded in for semantic completeness.
+    // LOAD-BEARING as of s176 m02: beyond the compile proof (a pure compile is always
+    // byte-stable) it now carries the double-render byte-equality, which CAN red — a
+    // nondeterministic render fails this clause and pulls conformant false.
     // A scoped, monotonic TIGHTENING (some inputs move true->false; none move false->true) —
     // the cause of a contrast- or accuracy-driven false is carried by pillars + contrastNote
     // + notes[]. Measured on the light theme (dark-theme contrast OOS).
@@ -698,7 +749,10 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
       coverage: 'certified',
       conformant,
       findings,
-      determinism: { stable, contentHash },
+      // renderHash (s176 m02, OPTIONAL in the schema): present exactly when the contrast
+      // grade rendered — the cartesian rendered-grading path — proving the double-render
+      // byte-equality `stable` now folds in. Never present on an ECharts response.
+      determinism: { stable, contentHash, ...(renderHash !== undefined ? { renderHash } : {}) },
       pillars: {
         a11yEquivalence: a11yConformant ? 'pass' : 'fail',
         determinism: stable ? 'pass' : 'fail',

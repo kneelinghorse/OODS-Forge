@@ -231,3 +231,30 @@ Per rule 10 the review is a separate session; §5 is its charter. **Sprint-COMPL
 **Rows 16–19 (build-storybook, VRT mobile, VRT desktop, a11y contract) were NOT run.** Justification, verified rather than asserted: no s175 file is a story, a Storybook config, or component CSS — the full 38-file tracked diff is governance scripts, mcp-server tools/schemas/tests, viz-core `a11y`/`dashboard`/`spec`, shared schemas, docs, `ci.yml`, `CHANGELOG.md` and `diagnostics.json`; a grep of the changed set for `.stories.`, `.storybook/` and `.css` returns nothing. `storybook-static/index.json` is unchanged on disk at `19e6c52f…`/454 entries (row 27) — but that is the file as previously built, **not** a fresh `build-storybook` reproducing it. The review runs the pair at the real final HEAD. This is the memo §1f.11 deferral, taken and stated in the s173-memo-§7 form.
 
 **Also not run post-commit:** the whole table, per the Reference-SHAs note — the commit does not exist yet.
+
+## §9 Dated corrections (2026-08-24, s176 m04 — completes next-step #1252)
+
+Three record-hygiene corrections to the §7 build record, in the s174-memo-§8 form: the
+original text stands above, uncorrected in place; this block is the correction of record.
+
+1. **New-test-file count: 10, not 4.** The Reference-SHAs note ("38 modified tracked
+   files and 4 new untracked test files", "The 38 + 4 files ARE the sprint") and §7.2's
+   declared-movers line ("38 tracked source/test/doc files + 4 new untracked test
+   files") undercount the new files: the s175 change set contains **10 new test files**.
+   The 38-modified figure is exact, and the §7.2 census is unaffected (it counted
+   TESTS added per suite against a measured zero, not files, and reconciles as written).
+
+2. **Commit `4f64bcf` is not only the s175 files.** The eventual sprint commit
+   (`4f64bcf`, "Sprint-175 is now built and closed out.") also carries **six non-s175
+   files from the 2026-08-21 session** (the open-arcs-ledger/PT-hold session). The §7
+   gate rows measured the working tree they named and are unaffected; what over-claims
+   is the sentence "The 38 + 4 files ARE the sprint" read as a statement about the
+   commit's contents.
+
+3. **The m05 old-phrase grep is scoped, not repo-wide.** The §1e.5 criterion
+   `grep -rn "11 values\|11-value\|11 viz.render chart" …` → 0 holds on the surfaces it
+   enumerates (schemas, viz-core src, mcp-server src, docs/api) — the SHIPPED surfaces —
+   and must not be read as a repo-wide zero: the open-arcs ledger deliberately quotes
+   the retired phrase as history (`cmos/planning/forge-open-arcs-ledger-2026-08.md:155`
+   region, the FD#1 row). Planning records legitimately retain retired prose; shipped
+   surfaces do not.
