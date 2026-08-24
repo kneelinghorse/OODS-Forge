@@ -1,37 +1,46 @@
 // certify contrast pillar — the RENDERED-REALITY contrast engine (s137 m02; s138 m03;
-// s139 m02).
+// s139 m02; s176 m01 render-backed).
 //
-// certify grades the categorical color bytes Forge baked into the compiled cartesian
-// Vega-Lite spec, against the canvas, per the memo §2/§3/§3a rule set. As of s139 it
-// reads the color hexes off the COMPILED spec's emitted bytes (scale.range for a
-// multi-series color channel, mark.color for a single-series chart) rather than
-// re-classifying the raw IR and re-resolving the palette. As of s140 it grades EVERY
-// rendered unit — walking all layers / the facet spec / every concat section — and
+// certify grades the categorical series paints of the RENDERED cartesian chart, against
+// the canvas, per the memo §2/§3/§3a rule set. As of s139 it read the color hexes off the
+// COMPILED spec's emitted bytes (scale.range for a multi-series color channel, mark.color
+// for a single-series chart) rather than re-classifying the raw IR. As of s140 it grades
+// EVERY rendered unit — walking all layers / the facet spec / every concat section — and
 // combines them worst-verdict, so a color-bearing mark that is not the first layer can
-// no longer be masked by a passing sibling (the s139-review C1 false-'pass'). There is no second classifier
-// left to disagree with the adapter's bake gate, so `certified == rendered` BY
-// CONSTRUCTION: if the compiled spec baked NO OODS palette for a color-bearing chart,
-// certify cannot return contrast:'pass' (the s138-review classifier-mismatch false-pass
-// is structurally dissolved). It evaluates three roles:
+// no longer be masked by a passing sibling (the s139-review C1 false-'pass'). As of s176
+// the graded object is the rendered SERIES-TO-PAINT ASSIGNMENT: the compiled spec is
+// rendered through @oods/viz-render (the same emitter the live dashboard path uses) and
+// the paints the data marks actually carry are graded, with DUPLICATES RETAINED across
+// the consumed series. That closes the palette-recycling hole the compiled-bytes read
+// could not see: a 10-series chart over a six-hex domainless baked range renders series
+// 7–10 in the same paints as series 1–4 (Vega recycles by index), and a recycled pair is
+// ΔE00 = 0 — an automatic role-A fail. Grading the DISTINCT baked hexes (pre-s176,
+// sliced to a 6-slot cap) could never contain that pair: the distinct palette is
+// mutually distinguishable by construction while the rendered assignment is not.
+// It evaluates three roles:
 //
 //   role-C (WCAG 1.4.11 NORMATIVE) — every consumed mark >= 3:1 vs the canvas.
 //   role-A (best-practice)         — min-pairwise CIEDE2000 (min over normal +
 //                                     deuteran/protan/tritan Machado CVD) across the
-//                                     consumed categorical slots. <2 fail; 2-10 pass
+//                                     rendered series-to-paint assignment, duplicates
+//                                     retained. <2 fail (a recycled pair is 0); 2-10 pass
 //                                     with a distinguishability warn; >=10 clean pass.
 //   role-B (WCAG-EXEMPT)           — a color channel that baked NO categorical palette
 //                                     (a sequential/diverging gradient, or a divergence/
 //                                     mistype that renders on a continuous/default scale)
 //                                     is the essential-exception gradient -> 'exempt'.
+//                                     Classified from the COMPILED spec, BEFORE any
+//                                     rendered-paint logic runs (s176 D5).
 //
-// WHY read the compiled bytes (s139): the bake gate (vega-lite-adapter.ts convertBinding)
-// and the old grade-side classifier (colorRole) were two INDEPENDENT, disagreeing
-// classifiers — a schema-valid color binding the bake left quantitative (trait
-// 'EncodingDetail', a typo 'EncodingColour', a bare 'Color', +timeUnit/+aggregate,
-// EncodingSize-on-color) compiled to a palette-LESS spec, yet the grader re-resolved the
-// 6-slot palette and returned contrast:'pass'. Grading the emitted ground truth removes
-// the second classifier entirely. The one remaining caveat is theme: resolveTokenToColor
-// is theme-blind (light-only), so dark-theme contrast is unverified/OOS.
+// WHY grade the render (s176): the compiled scale.range is the palette Forge CHOSE, not
+// the assignment Vega PAINTS. The two diverge exactly when consumed cardinality exceeds
+// the palette — the case the pre-s176 cardinality slice silently capped away. The
+// rendered assignment is read from the emitter's SVG (deterministic: pinned text
+// metrics, normalized auto-ids), and only paints that match what the unit BAKED are
+// graded — an author decoration painted in a palette hex cannot fake a collision, and a
+// non-palette decoration stays chrome (the Derek CASE-2 fork, generalized). The one
+// remaining caveat is theme: resolveTokenToColor is theme-blind (light-only), so
+// dark-theme contrast is unverified/OOS.
 
 import Color from 'colorjs.io';
 import { contrastRatio, normaliseColor } from '@oods/a11y-tools';
@@ -42,18 +51,27 @@ import {
   type NormalizedVizSpec,
   type VegaLiteAdapterSpec,
 } from '@oods/viz-core';
+import { renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
 import { CVD_TYPES, simulateCvd } from './cvd-machado.js';
 
 // 'ungradeable' (s175 m04, #781): grading was ATTEMPTED on a colour-bearing unit and failed
-// for a reason outside the spec — an unresolvable canvas token, or an evaluator fault.
-// 'unchecked' is the OTHER flavour: nothing was attempted or nothing was gradeable (no
-// colour-bearing unit). The fold treats 'ungradeable' like 'fail'; 'unchecked' stays inert.
+// for a reason outside the spec — an unresolvable canvas token, an unreadable render, or an
+// evaluator fault. 'unchecked' is the OTHER flavour: nothing was attempted or nothing was
+// gradeable (no colour-bearing unit, or no gradeable series paint after the chrome fork).
+// The fold treats 'ungradeable' like 'fail'; 'unchecked' stays inert.
 export type ContrastVerdict = 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
 
 export interface ContrastPillarResult {
   readonly contrast: ContrastVerdict;
   /** The rendered-contrast caveat (pass/fail) or the role-specific rationale. */
   readonly contrastNote?: string;
+  /**
+   * The SVG the pillar rendered, present EXACTLY when the render happened (>= 1 series
+   * unit). An internal reuse seam (s176 m02): artifact.certify hashes it as the FIRST
+   * half of the double-render determinism proof — the "KEEP the second call" discipline,
+   * render edition — then drops it. Never serialized to the wire.
+   */
+  readonly renderedSvg?: string;
 }
 
 // The concrete light-theme canvas the role-C mark-vs-background check measures
@@ -61,15 +79,16 @@ export interface ContrastPillarResult {
 // #FCFCFD and reproduces the memo §1 role-C numbers exactly.
 const CANVAS_TOKEN = '--oods-sys-surface-canvas';
 
-// OODS viz-scale categorical palette: 6 slots. certify grades the slots the chart
-// actually consumes (= categorical cardinality) — read off the baked scale.range.
-const CATEGORICAL_SLOTS = 6;
+// OODS viz-scale categorical token names, for the failure-note labels. (The pre-s176
+// CATEGORICAL_SLOTS cap died with the cardinality slice: the graded object is the
+// rendered assignment now, so there is no slot ceiling to clamp to — an agent-supplied
+// range longer than 6 slots is fully graded, a declared s176 coverage expansion.)
 const categoricalToken = (slot1: number): string =>
   `--oods-viz-scale-categorical-${String(slot1).padStart(2, '0')}`;
 
 // Role thresholds (memo §2/§3a).
 const ROLE_C_MIN_RATIO = 3; // WCAG 1.4.11 non-text contrast (mark vs background)
-const ROLE_A_FAIL_DELTA_E = 2; // < 2 -> indistinguishable -> fail
+const ROLE_A_FAIL_DELTA_E = 2; // < 2 -> indistinguishable -> fail (a recycled pair is 0)
 const ROLE_A_CLEAN_DELTA_E = 10; // >= 10 -> clean pass; 2-10 -> pass + warn note
 // Role-A "reads-as-gray" chroma floor (s146 F2). A slot whose OKLCH chroma is below this
 // is not a real categorical hue — it reads as gray, so the ΔE distance check below would be
@@ -79,7 +98,21 @@ const ROLE_A_CLEAN_DELTA_E = 10; // >= 10 -> clean pass; 2-10 -> pass + warn not
 // override an agent supplies (a gray "palette" -> honest fail, the real value on agent input).
 const ROLE_A_CHROMA_FLOOR = 0.03;
 
+// THE CAVEAT FORK (s176 m01, memo §1a D11). Until s176 one constant rode every
+// contrastNote on both paths. The cartesian path is render-backed now, so its caveat says
+// so; the ECharts paths (reconstruction-graded from baked constants — the parked render
+// rung, memo §3) and the cartesian CASE-3 exempt note (a byte-frozen non-mover, D5) keep
+// the pre-fork text VERBATIM below. certify-contrast.echarts-caveat-pin.spec.ts pins the
+// frozen bytes so a partial fork cannot move ECharts output mid-build.
 const RENDERED_CONTRAST_CAVEAT =
+  'certify grades the series-to-paint assignment of the rendered chart (the compiled ' +
+  'spec rendered through @oods/viz-render), on the light theme; dark-theme contrast is not verified.';
+
+// The pre-fork caveat, byte-for-byte. Still TRUE where it is used: the ECharts grade IS
+// a claim about baked constants, and the CASE-3 exempt verdict IS a claim about what the
+// compiled spec baked. Retired from these sites only when the ECharts render-grading
+// rung lands.
+const BAKED_CONTRAST_CAVEAT =
   'certify measures the categorical color bytes Forge baked into the compiled spec, ' +
   'on the light theme; dark-theme contrast is not verified.';
 
@@ -88,10 +121,12 @@ const RENDERED_CONTRAST_CAVEAT =
 // scale — a legit sequential/diverging gradient, OR a divergence/mistype (a color
 // binding the bake gate left quantitative). Either way there is no discrete palette to
 // contrast-check, so WCAG 1.4.11's essential exception applies (memo §3 case 3 / fork A).
+// Classified from the COMPILED spec before any render logic (s176 D5); byte-frozen — a
+// declared s176 NON-mover, hence the pre-fork caveat tail.
 const EXEMPT_NOTE =
   'No OODS categorical palette was baked into the compiled color scale — the chart renders ' +
   'as a continuous/default color scale (WCAG 1.4.11 gradient essential exception); ' +
-  "Forge's generated accessible data table is the guarantee. " + RENDERED_CONTRAST_CAVEAT;
+  "Forge's generated accessible data table is the guarantee. " + BAKED_CONTRAST_CAVEAT;
 
 function distinctCount(values: Array<Record<string, unknown>> | undefined, field: string): number {
   if (!values || values.length === 0) return 0;
@@ -160,7 +195,7 @@ interface CompiledUnit {
  * ({mark,encoding}), inside a layer array ({layer:[{mark,encoding},…]}), or — for a
  * faceted/concat layout — nested under `spec` / a concat container
  * (vega-lite-layout-mapper.ts). Walk to EVERY unit node (all layers, the facet spec,
- * every concat section) so the grader reads the color bytes Forge baked into all of
+ * every concat section) so the grader classifies the color bytes Forge baked into all of
  * them, never re-deriving from the IR. Grading only the first unit (pre-s140) let a
  * color-bearing mark in a non-first layer be masked by a passing sibling — the
  * s139-review C1 false-'pass'.
@@ -190,31 +225,34 @@ function compiledColorUnits(node: unknown): CompiledUnit[] {
   return units;
 }
 
-/** Grade a resolved slot set (role-C vs canvas, then role-A distinguishability). */
+/** Grade a slot set (role-C vs canvas, then role-A distinguishability over the full
+ * list, duplicates included — a recycled assignment pair is ΔE00=0 and fails). The
+ * `caveat` is the path's forked caveat sentence (D11): the render-backed one on the
+ * cartesian path, the frozen pre-fork one on the ECharts paths. */
 function gradeCategorical(
   slots: ReadonlyArray<{ readonly token: string; readonly hex: string }>,
   canvasHex: string | undefined,
+  caveat: string,
 ): ContrastPillarResult {
   // Could not resolve the canvas -> 'ungradeable' (s175 m04, #781): a colour-bearing unit
   // WAS identified and grading was attempted, so this is "tried and failed", never the
   // nothing-to-grade 'unchecked' and never a silent pass. (The slots.length === 0 arm is
-  // unreachable — gradeUnit always passes >= 1 slot — and is kept only as a guard.)
+  // unreachable — every caller passes >= 1 slot — and is kept only as a guard.)
   if (slots.length === 0 || !canvasHex) {
     return {
       contrast: 'ungradeable',
-      contrastNote:
-        'Could not resolve the canvas token for this IR. ' + RENDERED_CONTRAST_CAVEAT,
+      contrastNote: 'Could not resolve the canvas token for this IR. ' + caveat,
     };
   }
 
   // Role C (WCAG-normative): every consumed mark >= 3:1 vs the canvas.
   const roleCFailures = slots.filter((s) => contrastRatio(s.hex, canvasHex) < ROLE_C_MIN_RATIO);
   if (roleCFailures.length > 0) {
-    const which = roleCFailures.map((s) => s.token).join(', ');
+    const which = [...new Set(roleCFailures.map((s) => s.token))].join(', ');
     return {
       contrast: 'fail',
       contrastNote:
-        `Role-C (WCAG 1.4.11) fail: ${which} below ${ROLE_C_MIN_RATIO}:1 vs the canvas. ` + RENDERED_CONTRAST_CAVEAT,
+        `Role-C (WCAG 1.4.11) fail: ${which} below ${ROLE_C_MIN_RATIO}:1 vs the canvas. ` + caveat,
     };
   }
 
@@ -225,17 +263,19 @@ function gradeCategorical(
   // every slot >= 0.045) but catches a gray config.tokens override (reads-as-gray -> fail).
   const grayFailures = slots.filter((s) => chromaOf(s.hex) < ROLE_A_CHROMA_FLOOR);
   if (grayFailures.length > 0) {
-    const which = grayFailures.map((s) => s.token).join(', ');
+    const which = [...new Set(grayFailures.map((s) => s.token))].join(', ');
     return {
       contrast: 'fail',
       contrastNote:
         `Role-A chroma-floor fail: ${which} below ${ROLE_A_CHROMA_FLOOR} OKLCH chroma — ` +
-        `reads as gray, not a distinguishable categorical hue. ` + RENDERED_CONTRAST_CAVEAT,
+        `reads as gray, not a distinguishable categorical hue. ` + caveat,
     };
   }
 
-  // Role A (best-practice): categorical distinguishability, min-over-CVD. A single
-  // consumed slot has no pair to compare -> role-A N/A.
+  // Role A (best-practice): categorical distinguishability, min-over-CVD, over the FULL
+  // slot list — duplicates retained (s176 D2), so a recycled series-to-paint pair
+  // contributes ΔE00 = 0 and hits the fail floor. A single consumed slot has no pair to
+  // compare -> role-A N/A.
   const roleAMin = slots.length >= 2 ? minPairwiseDeltaEOverCvd(slots.map((s) => s.hex)) : Infinity;
   if (roleAMin < ROLE_A_FAIL_DELTA_E) {
     return {
@@ -243,7 +283,7 @@ function gradeCategorical(
       contrastNote:
         `Role-A fail: min-pairwise CIEDE2000 (min over normal + deuteran/protan/tritan CVD) = ` +
         `${roleAMin.toFixed(2)} < ${ROLE_A_FAIL_DELTA_E} — categorical series are not distinguishable. ` +
-        RENDERED_CONTRAST_CAVEAT,
+        caveat,
     };
   }
   if (roleAMin < ROLE_A_CLEAN_DELTA_E) {
@@ -252,10 +292,10 @@ function gradeCategorical(
       contrastNote:
         `Distinguishability caution: min-pairwise CIEDE2000 (min-over-CVD) = ${roleAMin.toFixed(2)} ` +
         `(below the ${ROLE_A_CLEAN_DELTA_E} best-practice target but >= ${ROLE_A_FAIL_DELTA_E}, so not a failure). ` +
-        RENDERED_CONTRAST_CAVEAT,
+        caveat,
     };
   }
-  return { contrast: 'pass', contrastNote: RENDERED_CONTRAST_CAVEAT };
+  return { contrast: 'pass', contrastNote: caveat };
 }
 
 // The worst-verdict lattice (memo §3a): higher rank wins when combining the graded
@@ -263,9 +303,10 @@ function gradeCategorical(
 // walker document order. A graded unit returns 'ungradeable' iff the canvas is
 // unresolvable — which is global (resolved once) — so graded-'ungradeable' is
 // all-or-nothing and never mixes with a real pass/fail; 'unchecked' never leaves
-// gradeUnit at all (the whole-chart graded.length===0 branch below is its only source).
-// This defensive ordering is provably identical to the simpler fail>pass>exempt on every
-// reachable input, and a withheld canvas claim should not read as an affirmative pass.
+// the per-unit grade at all (the whole-chart graded.length===0 branch below is its only
+// source). This defensive ordering is provably identical to the simpler fail>pass>exempt
+// on every reachable input, and a withheld canvas claim should not read as an affirmative
+// pass.
 const VERDICT_RANK: Record<ContrastVerdict, number> = {
   fail: 4,
   ungradeable: 3,
@@ -277,20 +318,29 @@ const VERDICT_RANK: Record<ContrastVerdict, number> = {
 // The single-series slot the adapter bakes as mark.color (memo §3 CASE 2 fork).
 const SLOT1_TOKEN = categoricalToken(1);
 
+// ─── s176 m01: compile-time unit classification + rendered-paint extraction ─────────────
+
 /**
- * Grade ONE compiled unit's baked color bytes. Returns a verdict for a color-bearing
- * unit, or `undefined` for a NEUTRAL no-op (no color, or an author decorative mark.color)
- * so a colorless/decorative sibling never poisons the union verdict.
+ * What a compiled unit IS, decided from the COMPILED SPEC ALONE (s176 D5: CASE-3
+ * exemption and the CASE-2 chrome fork are classified before any rendered-paint logic
+ * runs). Only 'series' units participate in render-backed grading:
  *
- * `slot1Hex` is the resolved categorical-01 the adapter bakes for a single-series chart
- * (the SHARED resolveCategoricalPalette output, override-aware) — the CASE-2 gate.
+ *   CASE 1 (baked categorical range)          -> 'series' with the range as the match set
+ *   CASE 2 (mark.color === the OODS slot-1)   -> 'series' with slot-1 as the match set
+ *   CASE 2 (mark.color, NOT the OODS slot-1)  -> 'chrome' (author decoration — neutral)
+ *   CASE 3 (color channel, no baked palette)  -> 'exempt' (gradient essential exception)
+ *   CASE 4 (no color in this unit)            -> 'chrome' (neutral)
  */
-function gradeUnit(
+type UnitClass =
+  | { readonly kind: 'series'; readonly matchSlots: ReadonlyArray<{ token: string; hex: string }>; readonly n: number }
+  | { readonly kind: 'exempt' }
+  | { readonly kind: 'chrome' };
+
+function classifyUnit(
   unit: CompiledUnit,
   spec: NormalizedVizSpec,
-  canvasHex: string | undefined,
   slot1Hex: string | undefined,
-): ContrastPillarResult | undefined {
+): UnitClass {
   const colorEnc = unit.encoding?.color as Record<string, unknown> | undefined;
   const markColor =
     typeof (unit.mark as Record<string, unknown> | undefined)?.color === 'string'
@@ -305,79 +355,227 @@ function gradeUnit(
       : undefined;
 
   // CASE 1 — categorical: the adapter baked a hex range into this unit's color scale.
-  // Grade it sliced to the consumed cardinality (Vega maps domain[i]->range[i], so
-  // series beyond the sample cardinality are not rendered — grading the full 6 would be
-  // LESS rendered-accurate; the slice is load-bearing, memo §5).
+  // The match set is the WHOLE baked range (positional token labels); the consumed
+  // cardinality n comes from the sample data. The pre-s176 code sliced the range to
+  // min(n, 6) and graded that DISTINCT set — which is exactly why a recycled assignment
+  // (n > range.length) was invisible. No slice survives (D4).
   if (range) {
     const field = typeof colorEnc?.field === 'string' ? (colorEnc.field as string) : undefined;
     const n = field ? distinctCount(spec.data?.values, field) : 0;
-    const slotCount = Math.min(Math.max(n, 1), Math.min(range.length, CATEGORICAL_SLOTS));
-    const slots = range.slice(0, slotCount).map((hex, i) => ({ token: categoricalToken(i + 1), hex }));
-    return gradeCategorical(slots, canvasHex);
+    return {
+      kind: 'series',
+      matchSlots: range.map((hex, i) => ({ token: categoricalToken(i + 1), hex })),
+      n,
+    };
   }
 
   // CASE 2 — single-series: no color channel, so the adapter baked categorical-01 as
-  // mark.color. Grade that hex vs the canvas ONLY when it IS the OODS series color (it
-  // equals the resolved categorical-01 slot, override-aware, so a config.tokens-poisoned
+  // mark.color. A series unit ONLY when it IS the OODS series color (it equals the
+  // resolved categorical-01 slot, override-aware, so a config.tokens-poisoned
   // categorical-01 still matches -> graded -> fails correctly). Compared against the same
   // SHARED resolver the adapter bakes from, so it matches the emitted bytes exactly —
   // including the non-color-override fallback to the OODS default. An author's decorative
   // mark.color (a faint reference/annotation line) is chrome (OOS per s138) -> NEUTRAL
-  // skip, never a contrast fail (Derek CASE-2 fork "grade OODS series colors only").
+  // skip, never a contrast fail (Derek CASE-2 fork "grade OODS series colors only") —
+  // even when its paint coincides with a palette hex, it never enters the assignment.
   if (markColor) {
     if (slot1Hex && markColor.toLowerCase() === slot1Hex.toLowerCase()) {
-      return gradeCategorical([{ token: SLOT1_TOKEN, hex: markColor }], canvasHex);
+      return { kind: 'series', matchSlots: [{ token: SLOT1_TOKEN, hex: markColor }], n: 1 };
     }
-    return undefined;
+    return { kind: 'chrome' };
   }
 
   // CASE 3 — a color channel exists but NO OODS categorical palette was baked (gradient,
-  // or a divergence/mistype rendering on a continuous/default scale): WCAG-exempt.
+  // or a divergence/mistype rendering on a continuous/default scale): WCAG-exempt,
+  // decided here — before any render — so an interpolated ramp's rgb() fills are never
+  // fed to the palette-match fold (which would silently move 'exempt' -> 'unchecked').
   if (colorEnc) {
-    return { contrast: 'exempt', contrastNote: EXEMPT_NOTE };
+    return { kind: 'exempt' };
   }
 
-  // CASE 4 — no color in THIS unit: a NEUTRAL no-op (undefined), NOT 'unchecked'. A
-  // colorless unit (e.g. a plain line layer beneath a color-encoded layer) must be
-  // skipped, not poison the union verdict — only its color-bearing siblings are graded.
-  return undefined;
+  // CASE 4 — no color in THIS unit: neutral chrome. A colorless unit (e.g. a plain line
+  // layer beneath a color-encoded layer) must be skipped, not poison the union verdict.
+  return { kind: 'chrome' };
+}
+
+// SVG structural roles: role-frame and role-scope are STRUCTURAL wrappers (the root
+// frame; line/facet path groups) — treating them as chrome returns ZERO data marks for
+// every chart (reproduced at planning). Chrome is excluded by ANCESTRY on these three
+// roles only: axis, legend (whose swatches repeat every series paint and would
+// double-count), and title.
+const CHROME_ROLE = /\brole-(?:axis|legend|title)/;
+const DATA_MARK_ROLE = /\brole-mark\b/;
+// Drawable elements a Vega data mark renders as. Bars/areas/rects arrive as <path>
+// (Vega emits geometry as paths), line series as one <path> per series, points as
+// symbol <path>s; the rest are defensive coverage. Series colour rides fill (bar/area/
+// rect) or stroke (line/point) — both are collected per mark (D2 fill∪stroke).
+const DRAWABLE_TAG = /^(?:path|rect|circle|ellipse|line|polygon|polyline|text)$/;
+
+interface RenderedPaints {
+  /** Data-mark groups found (role-mark, no chrome ancestor). 0 = unreadable render (D6). */
+  readonly markGroupCount: number;
+  /** Distinct data-mark paints (fill ∪ stroke), lowercased, in first-seen document order. */
+  readonly paints: ReadonlySet<string>;
+}
+
+/**
+ * Extract the data-mark paints from the emitter's SVG: walk every tag with an
+ * open-element stack; a <g> whose class carries role-mark with NO role-axis/role-legend/
+ * role-title ancestor is a data-mark group, and every drawable inside it contributes its
+ * fill and stroke. Pure string scan — no DOM.
+ */
+function extractRenderedPaints(svg: string): RenderedPaints {
+  const paints = new Set<string>();
+  let markGroupCount = 0;
+
+  // Open-element stack entries: is this element (or an ancestor) chrome? is a data-mark
+  // group open? Non-<g> containers (svg, defs) ride the stack too so depth stays honest.
+  const stack: Array<{ tag: string; chrome: boolean; markGroup: boolean }> = [];
+  const top = () => stack[stack.length - 1];
+
+  const tagRe = /<(\/?)([A-Za-z][\w:-]*)((?:\s+[\w:-]+="[^"]*")*)\s*(\/?)>/g;
+  for (const m of svg.matchAll(tagRe)) {
+    const [, closing, rawTag, attrs, selfClosing] = m;
+    const tag = rawTag.toLowerCase();
+
+    if (closing) {
+      // Pop to the matching open tag (tolerates the void elements SVG never nests oddly).
+      for (let i = stack.length - 1; i >= 0; i--) {
+        if (stack[i].tag === tag) {
+          stack.length = i;
+          break;
+        }
+      }
+      continue;
+    }
+
+    const parentChrome = stack.length > 0 ? top().chrome : false;
+    const parentMarkGroup = stack.length > 0 ? top().markGroup : false;
+
+    const classMatch = /\bclass="([^"]*)"/.exec(attrs);
+    const className = classMatch ? classMatch[1] : '';
+    const chrome = parentChrome || CHROME_ROLE.test(className);
+    const isDataMarkGroup = tag === 'g' && !chrome && DATA_MARK_ROLE.test(className);
+    if (isDataMarkGroup) markGroupCount++;
+    const markGroup = (parentMarkGroup && !chrome) || isDataMarkGroup;
+
+    if (!chrome && parentMarkGroup && DRAWABLE_TAG.test(tag)) {
+      for (const channel of ['fill', 'stroke'] as const) {
+        const paint = new RegExp(`\\b${channel}="([^"]*)"`).exec(attrs)?.[1];
+        if (paint && paint !== 'none' && paint !== 'transparent') paints.add(paint.toLowerCase());
+      }
+    }
+
+    if (!selfClosing) stack.push({ tag, chrome, markGroup });
+  }
+
+  return { markGroupCount, paints };
+}
+
+/**
+ * Build a series unit's graded slots from the paints the chart ACTUALLY rendered
+ * (s176 D2): the unit's baked match set is filtered to the paints present in the SVG
+ * (preserving baked order, so token labels stay positional), then the consumed series
+ * are assigned over those paints by index — Vega's own recycling rule — with DUPLICATES
+ * RETAINED. Consumed cardinality above the rendered-paint count therefore produces
+ * repeated slots, whose pairwise ΔE00 is 0: the recycled pair reaches the grader.
+ *
+ * Both naive readings are rejected (D2, in writing): a deduplicated distinct-paint set
+ * can never contain the recycled pair (ten series render only six distinct hexes — the
+ * pre-s176 defect rebuilt); a raw per-mark fill multiset would let an author decoration
+ * painted in a palette hex fake a ΔE00=0 collision and break the s139 lock — here a
+ * duplicate can arise ONLY from consumed cardinality exceeding the rendered paints,
+ * never from extra marks sharing a paint.
+ */
+function renderedAssignment(
+  matchSlots: ReadonlyArray<{ token: string; hex: string }>,
+  n: number,
+  rendered: ReadonlySet<string>,
+): Array<{ token: string; hex: string }> {
+  const renderedSlots = matchSlots.filter((s) => rendered.has(s.hex.toLowerCase()));
+  if (renderedSlots.length === 0) return [];
+  const count = Math.max(n, 1);
+  return Array.from({ length: count }, (_, i) => renderedSlots[i % renderedSlots.length]);
 }
 
 /**
  * Evaluate the contrast pillar for a (cartesian) NormalizedVizSpec IR by grading the
- * color hexes the adapter BAKED into `compiled` (s139 — reads emitted bytes, not a
- * re-classification of the raw IR). As of s140 it grades EVERY rendered unit and
- * combines them worst-verdict (memo §3a), so a color-bearing mark that is not the first
- * layer can no longer be masked by a passing sibling. Pure + deterministic. Never
- * returns 'pass' for a chart whose compiled spec baked no OODS palette (memo §3
- * governing rule).
+ * series-to-paint assignment the chart RENDERS (s176 m01): `compiled` is rendered
+ * through @oods/viz-render and the data-mark paints are read from the SVG. Classification
+ * (which unit is a series unit, which is exempt, which is chrome) comes from the COMPILED
+ * spec alone (D5); the render decides what the series units actually painted. It grades
+ * EVERY rendered unit (s140) and combines them worst-verdict (memo §3a). Deterministic:
+ * the emitter pins text metrics and normalizes auto-ids, so the same IR renders the same
+ * bytes. Never returns 'pass' for a chart whose compiled spec baked no OODS palette
+ * (memo §3 governing rule).
  *
- * `spec` is retained ONLY for the canvas token (config.tokens override -> role-C
- * reference; the canvas is not in the compiled spec), the cardinality slice
- * (distinctCount over spec.data.values), and the CASE-2 categorical-01 gate. All color
- * hexes come from `compiled`.
+ * ASYNC as of s176 (the render); a render throw propagates to the caller's existing
+ * catch, which degrades to 'ungradeable' + a fault note at status:'ok' (D6) — the call
+ * sits inside artifact.certify's contrast try for exactly that reason. A render that
+ * yields no readable data-mark groups is 'ungradeable' here directly. `spec` is retained
+ * ONLY for the canvas token (config.tokens override -> role-C reference), the consumed
+ * cardinality (distinctCount over spec.data.values), and the CASE-2 categorical-01 gate.
+ * All graded paints come from the render; contentHash never touches it (D7).
  */
-export function evaluateContrastPillar(
+export async function evaluateContrastPillar(
   spec: NormalizedVizSpec,
   compiled: VegaLiteAdapterSpec,
-): ContrastPillarResult {
+): Promise<ContrastPillarResult> {
   // Resolve the canvas + the single-series categorical-01 slot ONCE (both are global —
-  // config.tokens is chart-wide), then grade every color-bearing unit.
+  // config.tokens is chart-wide), then classify every unit from the compiled spec.
   const canvasHex = resolveSlotHex(CANVAS_TOKEN, overrideMap(spec));
   const slot1Hex = resolveCategoricalPalette(spec)[0];
 
-  const graded = compiledColorUnits(compiled)
-    .map((unit) => gradeUnit(unit, spec, canvasHex, slot1Hex))
-    .filter((r): r is ContrastPillarResult => r !== undefined);
+  const classified = compiledColorUnits(compiled).map((unit) => classifyUnit(unit, spec, slot1Hex));
+  const seriesUnits = classified.filter(
+    (c): c is Extract<UnitClass, { kind: 'series' }> => c.kind === 'series',
+  );
 
-  // No color-bearing unit anywhere (or every unit was a neutral decoration/colorless
-  // layer): honest whole-chart 'unchecked', never a silent pass. Preserves the
-  // single-unit CASE 4 verdict byte-for-byte.
+  const graded: ContrastPillarResult[] = classified
+    .filter((c) => c.kind === 'exempt')
+    .map(() => ({ contrast: 'exempt', contrastNote: EXEMPT_NOTE }) as ContrastPillarResult);
+
+  // THE RENDER (s176 D1) — only when a series unit exists: an all-exempt/all-chrome
+  // chart never renders (which is what keeps the decorative trio's plain/poisoned
+  // byte-equality provable — the poison cannot reach a render that never happens).
+  let renderedSvg: string | undefined;
+  if (seriesUnits.length > 0) {
+    const svg = await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec);
+    renderedSvg = svg;
+    const { markGroupCount, paints } = extractRenderedPaints(svg);
+    if (markGroupCount === 0) {
+      // Readable-render floor (D6): series units were identified but the SVG carries no
+      // data-mark groups at all — grading was attempted and failed outside the spec.
+      graded.push({
+        contrast: 'ungradeable',
+        contrastNote:
+          'The rendered chart contains no readable data-mark groups to grade; the pillar ' +
+          'is reported ungradeable rather than passed. ' + RENDERED_CONTRAST_CAVEAT,
+      });
+    } else {
+      for (const unit of seriesUnits) {
+        const assignment = renderedAssignment(unit.matchSlots, unit.n, paints);
+        // No gradeable series paint rendered for THIS unit (e.g. an empty sample, or
+        // every paint was chrome-filtered): neutral — the whole-chart 'unchecked' below
+        // is the honest verdict when NO unit renders a gradeable paint (D6).
+        if (assignment.length === 0) continue;
+        graded.push(gradeCategorical(assignment, canvasHex, RENDERED_CONTRAST_CAVEAT));
+      }
+    }
+  }
+
+  // No gradeable series paint anywhere (no color-bearing unit, only author chrome, or
+  // nothing rendered): honest whole-chart 'unchecked', never a silent pass. The
+  // decorative #000000 bars ARE colour-bearing — it is the fork, not colour-presence,
+  // that decides (D6).
   if (graded.length === 0) {
     return {
       contrast: 'unchecked',
       contrastNote:
-        'No color encoding or mark color in the compiled spec to grade. ' + RENDERED_CONTRAST_CAVEAT,
+        'No gradeable OODS series paint: the compiled spec has no color encoding or OODS ' +
+        'mark color, or none of its series paints rendered — author-decorative colors are ' +
+        'skipped as chrome. ' + RENDERED_CONTRAST_CAVEAT,
+      ...(renderedSvg !== undefined ? { renderedSvg } : {}),
     };
   }
 
@@ -386,7 +584,7 @@ export function evaluateContrastPillar(
   for (let i = 1; i < graded.length; i++) {
     if (VERDICT_RANK[graded[i].contrast] > VERDICT_RANK[worst.contrast]) worst = graded[i];
   }
-  return worst;
+  return { ...worst, ...(renderedSvg !== undefined ? { renderedSvg } : {}) };
 }
 
 // ─── ECharts-primary categorical contrast (s141 m02) ────────────────────────────────
@@ -398,6 +596,8 @@ export function evaluateContrastPillar(
 // (buildPalette, treemap-adapter.ts:106 et al.) — and grades it with the SAME role-C /
 // role-A math the cartesian path uses. This is palette RECONSTRUCTION, not emit-then-read:
 // certify never runs an adapter or reads emitted bytes (memo §3 / decision #1024 pt3).
+// s176: the cartesian path graduated to render-backed grading; THIS path did not (the
+// parked ECharts render rung, s176 memo §3), so it keeps the frozen pre-fork caveat.
 
 /**
  * Reconstruct the FIXED DEFAULT 6-slot OODS categorical palette the ECharts categorical
@@ -409,7 +609,7 @@ export function evaluateContrastPillar(
  * NON-override by construction (empty overrides): the 5 categorical adapters' buildPalette()
  * takes no args (config.tokens feeds only usermeta), so the grade MUST use the fixed
  * default — it deliberately does NOT call resolveCategoricalPalette(spec) (override-aware +
- * cardinality-sliced), which would grade a color the ECharts render ignores (memo §3b).
+ * cardinality-aware), which would grade a color the ECharts render ignores (memo §3b).
  * The adapters pass count:8|9 but VIZ_CATEGORICAL_SCALE has 6 slots and the getter clamps,
  * so the count is inert — the no-arg call resolves the identical fixed 6.
  */
@@ -426,9 +626,13 @@ export function reconstructEChartsCategoricalPalette(): Array<{ token: string; h
 // The MANDATORY ECharts-categorical caveats (memo §4). The verdict is INVARIANT to the
 // input IR (the palette is a compile-time constant, data-independent), so an ECharts
 // categorical 'pass' is a real WCAG-1.4.11 + CVD claim about the baked palette, but a
-// WEAKER claim than a cartesian 'pass' (which is override-aware + cardinality-sliced).
+// WEAKER claim than a cartesian 'pass' (which is override-aware + render-backed).
 // Adjacency (the literal role-C′) is a frozen OOS sub-arc; per-node data-color overrides
 // are ungraded. Both caveats are required on every categorical contrastNote.
+// s176 NOTE: the "cardinality-sliced" phrase below describes the pre-s176 cartesian
+// grade. It is INTENTIONALLY retained — this constant is byte-frozen under the D11 fork
+// (certify-contrast.echarts-caveat-pin.spec.ts) until the parked ECharts render-grading
+// rung lands and rewrites the ECharts wording wholesale (s176 memo §3).
 const ECHARTS_CATEGORICAL_CAVEAT =
   'This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle ' +
   '(reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a ' +
@@ -440,14 +644,15 @@ const ECHARTS_CATEGORICAL_CAVEAT =
  * Grade the fixed default OODS categorical palette the 5 ECharts categorical adapters bake
  * into itemStyle (s141 m02) — role-C (each of the 6 slots vs the light-theme canvas ≥ 3:1)
  * + role-A (min-pairwise CIEDE2000 over Machado CVD). Reuses gradeCategorical + the #FCFCFD
- * canvas the cartesian path uses. NON-override for BOTH palette AND canvas (the categorical
+ * canvas the cartesian path uses — with the frozen pre-fork caveat (D11), never the
+ * cartesian render-backed one. NON-override for BOTH palette AND canvas (the categorical
  * adapters honor neither a config.tokens palette NOR canvas overrides), so `certified ==
  * rendered`. Pure function of constants → byte-stable across re-runs.
  */
 export function evaluateEChartsCategoricalContrast(): ContrastPillarResult {
   const canvasHex = resolveSlotHex(CANVAS_TOKEN, new Map());
   const slots = reconstructEChartsCategoricalPalette();
-  const graded = gradeCategorical(slots, canvasHex);
+  const graded = gradeCategorical(slots, canvasHex, BAKED_CONTRAST_CAVEAT);
   return {
     contrast: graded.contrast,
     contrastNote: `${graded.contrastNote ?? ''} ${ECHARTS_CATEGORICAL_CAVEAT}`.trim(),
@@ -470,6 +675,7 @@ export function evaluateEChartsCategoricalContrast(): ContrastPillarResult {
 // branch has no range field at all — the ordinal palette is Forge's DEFAULT_COLOR_RANGE,
 // cycled by index in the bubble adapter, never an author range.)
 // (s141 m03 — Derek: exempt-all-geo, after the m01 IR-visibility premise was verified false.)
+// s176: byte-frozen under the D11 fork (ends with the pre-fork caveat, pinned).
 export const ECHARTS_GEO_EXEMPT_NOTE =
   'Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, ' +
   'flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential ' +
@@ -481,4 +687,4 @@ export const ECHARTS_GEO_EXEMPT_NOTE =
   'it renders on are reachable — grading them would be a new scope decision, not a bug ' +
   'fix. The palette itself stays out of reach either way: the branch has no range field, ' +
   "so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the " +
-  'categories outnumber it. ' + RENDERED_CONTRAST_CAVEAT;
+  'categories outnumber it. ' + BAKED_CONTRAST_CAVEAT;

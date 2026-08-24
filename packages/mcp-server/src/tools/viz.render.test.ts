@@ -1222,3 +1222,110 @@ describe('viz.render handler — F4 chord + force_graph link integrity (sprint-1
     }
   });
 });
+
+// ── s176 m03a: OODS-V161 — the DEFAULT baked cartesian palette warns on recycling ──────
+// The §0 defect's viz.render half: a 10-series cartesian chart with NO agent colorRange
+// compiles with the six-hex baked OODS categorical range and no domain, so Vega recycles
+// (series 7-10 repeat colours 1-4) — and viz.render emitted warnings:[] (measured live at
+// 4f64bcf). V143 cannot cover this: its registered and emitted messages presuppose an
+// AGENT-SUPPLIED range. V161 is the default-palette twin, message mirroring V146's
+// count+threshold shape with the threshold read from the APPLIED compiled scale.range
+// (never a hardcoded 6). Read-only on the spec: contentHash/specRef are byte-unchanged.
+describe('viz.render — s176 m03a OODS-V161 default-palette never-cycle warn (cartesian)', () => {
+  const tenSeriesRows = Array.from({ length: 10 }, (_, i) => ({
+    quarter: 'Q1',
+    revenue: 100 + i,
+    series: `S${String(i + 1).padStart(2, '0')}`,
+  }));
+
+  it('RED-first (§0): ten series over the six-slot default palette WARNs OODS-V161 exactly once and still renders', async () => {
+    const out = await render({
+      chartType: 'bar',
+      rows: tenSeriesRows,
+      encodings: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue', aggregate: 'sum' },
+        color: { field: 'series' },
+      },
+    });
+    expect(out.status).toBe('ok');
+    const v161 = out.warnings.filter((w) => w.code === 'OODS-V161');
+    expect(v161).toHaveLength(1);
+    expect(v161[0]?.severity).toBe('warning');
+    // The count + threshold, mirroring V146's shape; threshold from the applied palette.
+    expect(v161[0]?.message).toContain('10 distinct');
+    expect(v161[0]?.message).toContain('6-slot');
+    // The chart still renders with the baked 6-hex range (WARN, never a block).
+    expect((out.spec as Record<string, any>).encoding?.color?.scale?.range).toHaveLength(6);
+    expect(isRetryable('OODS-V161')).toBe(true);
+  });
+
+  it('six series over the six-slot palette does NOT warn (no recycling)', async () => {
+    const out = await render({
+      chartType: 'bar',
+      rows: tenSeriesRows.slice(0, 6),
+      encodings: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue', aggregate: 'sum' },
+        color: { field: 'series' },
+      },
+    });
+    expect(out.status).toBe('ok');
+    expect(out.warnings.filter((w) => w.code === 'OODS-V161')).toEqual([]);
+  });
+
+  it('an agent-supplied colorRange stays V143 territory — V161 never doubles it', async () => {
+    const out = await render({
+      chartType: 'bar',
+      rows: tenSeriesRows,
+      encodings: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue', aggregate: 'sum' },
+        color: { field: 'series', type: 'nominal', range: ['#1F6FEB', '#D1242F'] },
+      },
+    });
+    expect(out.status).toBe('ok');
+    expect(out.warnings.some((w) => w.code === 'OODS-V143')).toBe(true);
+    expect(out.warnings.filter((w) => w.code === 'OODS-V161')).toEqual([]);
+  });
+
+  it('contentHash and specRef are unmoved by the warning (read-only on the spec)', async () => {
+    const warned = await render({
+      chartType: 'bar',
+      rows: tenSeriesRows,
+      encodings: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue', aggregate: 'sum' },
+        color: { field: 'series' },
+      },
+      output: { compact: false },
+    });
+    const clean = await render({
+      chartType: 'bar',
+      rows: tenSeriesRows.slice(0, 6),
+      encodings: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue', aggregate: 'sum' },
+        color: { field: 'series' },
+      },
+      output: { compact: false },
+    });
+    // Both carry a contentHash; the warned chart's hash is a pure function of ITS spec
+    // (the warning added no spec bytes) — assert by recomputing nothing here but by the
+    // determinism twin: rendering the warned input twice yields identical hash + spec.
+    const again = await render({
+      chartType: 'bar',
+      rows: tenSeriesRows,
+      encodings: {
+        x: { field: 'quarter' },
+        y: { field: 'revenue', aggregate: 'sum' },
+        color: { field: 'series' },
+      },
+      output: { compact: false },
+    });
+    expect(warned.contentHash).toBeDefined();
+    expect(again.contentHash).toBe(warned.contentHash);
+    expect(JSON.stringify(again.spec)).toBe(JSON.stringify(warned.spec));
+    expect(clean.contentHash).toBeDefined();
+  });
+});

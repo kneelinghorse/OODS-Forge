@@ -372,6 +372,42 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
         )
       : [];
 
+    // OODS-V161 (sprint-176 m03a): the DEFAULT baked palette warns on recycling. The F5
+    // family covers only an AGENT-SUPPLIED colorRange (V143's message says "provide at
+    // least N colors"), so the default six-hex baked range could exhaust silently — the
+    // §0 defect's viz.render half: 10 series compile to a domainless 6-hex scale.range
+    // and Vega recycles range[i mod 6] with warnings:[]. Fires only when the agent
+    // supplied NO explicit range; reads the color field + APPLIED range off the COMPILED
+    // spec exactly as F5 does (threshold = the applied palette length, never a hardcoded
+    // 6). Read-only on the spec: contentHash/specRef stay byte-unchanged. Message
+    // mirrors V146's count+threshold shape.
+    const neverCycleWarnings161: VizRenderOutput['warnings'] = [];
+    if (!colorRange) {
+      const compiledColor = (
+        spec as Record<string, unknown> as {
+          encoding?: { color?: { field?: unknown; scale?: { range?: unknown } } };
+        }
+      ).encoding?.color;
+      const appliedRange = compiledColor?.scale?.range;
+      const compiledField = compiledColor?.field;
+      if (
+        typeof compiledField === 'string' &&
+        Array.isArray(appliedRange) &&
+        appliedRange.length > 0 &&
+        appliedRange.every((hex) => typeof hex === 'string')
+      ) {
+        const distinct = new Set(rows.map((row) => row[compiledField])).size;
+        const threshold = appliedRange.length;
+        if (distinct > threshold) {
+          neverCycleWarnings161.push({
+            code: 'OODS-V161',
+            message: `Baked categorical palette recycles: ${distinct} distinct "${compiledField}" series exceed the ${threshold}-slot baked OODS palette, so scale.range[i % ${threshold}] repeats a color (two+ series become indistinguishable, and certify fails the collision). Reduce the series to ${threshold} or fewer, or supply an explicit colorRange with at least ${distinct} colors.`,
+            severity: 'warning',
+          });
+        }
+      }
+    }
+
     // A11y equivalence CERTIFY-AT-EMISSION (sprint-134 m03): when a11yEquivalence is on,
     // run the 16-rule accessible-equivalence engine over the SAME built.spec the chart
     // renders from and surface every failing rule as a SOFT WARNING — never assertVizEquivalence
@@ -428,7 +464,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
       mode: built.mode === 'intent' ? 'suggest' : built.mode,
       spec,
       a11yDescription: built.spec.a11y.description,
-      warnings: [...fieldWarnings, ...a11yEquivalenceWarnings, ...rangeWarnings],
+      warnings: [...fieldWarnings, ...a11yEquivalenceWarnings, ...rangeWarnings, ...neverCycleWarnings161],
       output: {
         compact,
         ...(wantEcharts ? { echarts: true } : {}),

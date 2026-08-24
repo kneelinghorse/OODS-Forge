@@ -26,6 +26,7 @@ import {
   carriedRowSets,
   collapseGroupKeyFields,
   declaredAggregations,
+  NO_DECLARED_AGGREGATION_NOTE,
 } from '../src/accuracy/aggregation-rule.js';
 
 // ============================================================================
@@ -675,14 +676,30 @@ describe('s170 m01 — the engine', () => {
   it('rulesEvaluated counts the rules that RESOLVED their operand, not the rules offered', () => {
     const clean = evaluate(barSpec({}));
     expect(clean.rulesEvaluated).toBe(4);
-    expect(clean.notes).toEqual([]);
+    // s176 m03b (declared movement — was toEqual([])): barSpec({}) declares no
+    // aggregation, so the aggregation-hiding pass now says its subjectlessness out loud.
+    // The verdict channel is untouched: zero findings, rulesEvaluated still 4.
+    expect(clean.findings).toEqual([]);
+    expect(clean.notes).toEqual([NO_DECLARED_AGGREGATION_NOTE]);
 
     // No compiled spec at all: the three compiled-scale rules cannot run and say so; R4 still
-    // resolves (this spec declares no aggregation), so silence here is a real answer.
+    // resolves (this spec declares no aggregation), so silence here is a real answer —
+    // and (s176 m03b, declared movement — was toHaveLength(1)) R4's no-subject pass adds
+    // its own note beside the three unresolved-operand notes' dedupe survivor.
     const unresolvable = evaluateAccuracyRules(barSpec({ options: { baseline: 'min' } }), undefined);
     expect(unresolvable.findings).toEqual([]);
     expect(unresolvable.rulesEvaluated).toBe(1);
-    expect(unresolvable.notes).toHaveLength(1);
+    expect(unresolvable.notes).toHaveLength(2);
+    expect(unresolvable.notes).toContain(NO_DECLARED_AGGREGATION_NOTE);
+  });
+
+  it('s176 m03b invariant: the no-subject note NEVER appears when an aggregation is declared, and verdicts are byte-unmoved', () => {
+    // A declared-aggregation spec (the honest disclosure pass): no no-subject note.
+    const declared = evaluate(builtAggregateBar(COLLAPSING_ROWS));
+    expect(declared.notes).not.toContain(NO_DECLARED_AGGREGATION_NOTE);
+    // The strict invariant's rule-level half: only notes[] moved on zero-declared specs —
+    // findings (the verdict channel) and rulesEvaluated are identical to the pre-s176
+    // values asserted above (0 findings / 4 evaluated).
   });
 
   it('is PURE: it mutates neither the IR nor the compiled spec, and is deterministic', () => {

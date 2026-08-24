@@ -273,11 +273,22 @@ export function outOfVocabularyNote(rawOp: string): string {
   return `a transform declares the aggregate op '${rawOp}', which is outside the IR's aggregate vocabulary, so its disclosure could not be evaluated`;
 }
 
+// s176 m03b — the NO-SUBJECT pass, said out loud. A spec that declares no aggregation
+// passes this rule vacuously: there was no disclosure to examine, which is a different
+// fact from "the disclosure was examined and found honest". The verdict does not move
+// (evaluated stays true — the rule genuinely ran and found nothing aggregated; the
+// strict s176 invariant: accuracy stays 'pass', conformant and every pillar unmoved),
+// but the pass now names its subjectlessness in notes[] so a reader of
+// accuracy:'pass' + rulesEvaluated:4 can tell the vacuous pass from an examined one.
+export const NO_DECLARED_AGGREGATION_NOTE =
+  'no aggregation is declared anywhere in the IR, so there was no disclosure to evaluate — the aggregation-hiding pass has no subject';
+
 export function evaluateAggregationHiding(spec: NormalizedVizSpec, compiled: unknown): AccuracyRuleOutcome {
   const aggregations = declaredAggregations(spec);
   if (aggregations.length === 0) {
-    // Nothing is aggregated: the rule ran and there is no distortion to find.
-    return { evaluated: true };
+    // Nothing is aggregated: the rule ran and there is no distortion to find — and the
+    // note says so (s176 m03b honest no-subject reporting; see the constant above).
+    return { evaluated: true, note: NO_DECLARED_AGGREGATION_NOTE };
   }
 
   const outOfVocabulary = aggregations.find((aggregation) => aggregation.op === undefined);

@@ -37,7 +37,7 @@
  */
 
 import { execFile as execFileCallback } from 'node:child_process';
-import { promises as fs } from 'node:fs';
+import { promises as fs, realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -1415,9 +1415,22 @@ async function writeComment(targetPath: string, report: GovernanceReport): Promi
  * file and `main()` runs exactly as before.
  */
 const invokedPath = process.argv[1];
+// s176 m04 (#1250 — decision #1506's carried edge): compare REAL paths, not lexical ones.
+// The package bin table maps `tokens-governance` to this file, and a bin shim is a
+// SYMLINK — invoked through it, argv[1] carries the symlink path, so the s169 lexical
+// path.resolve comparison misses and the CLI silently no-ops. realpath resolves the
+// symlink; the catch falls back to the lexical resolve (argv[1] may name nothing on
+// disk under embedding), preserving the s169 semantics for every non-symlink case.
+const realOrResolvedPath = (candidate: string): string => {
+  try {
+    return realpathSync(candidate);
+  } catch {
+    return path.resolve(candidate);
+  }
+};
 const isDirectInvocation =
   typeof invokedPath === 'string' &&
-  path.resolve(fileURLToPath(import.meta.url)) === path.resolve(invokedPath);
+  realOrResolvedPath(fileURLToPath(import.meta.url)) === realOrResolvedPath(invokedPath);
 
 if (isDirectInvocation || pathToFileURL(invokedPath ?? '').href === import.meta.url) {
   await main();
