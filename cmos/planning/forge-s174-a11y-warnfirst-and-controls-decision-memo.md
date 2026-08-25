@@ -47,7 +47,7 @@ Vacuous-gate mechanics (all reproduced): state-assessment.mjs:1321 passes no ref
 
 ### 1c. Desktop VRT truth-up (m03)
 
-Measured: the desktop chromium project reds ALL FOUR spec files — 15 failed / 4 did-not-run of 19. The s173 "one desktop VRT spec" disclosure understated (only the form spec had been run); the s173 memo gains a dated correction block + CMOS decision. form.accessibility.spec.ts:3 and toast.spec.ts:3 hard-code story IDs extinct since the 2025-12-03 title reorg — both proven one-line fixes. brand-a.spec.ts targets eight extinct `BrandA/*` titles AND is a screenshot spec with zero baselines. layout.visual.spec.ts: 9 × missing-snapshot, zero baselines ever. No CI job runs any desktop VRT project.
+Measured: the desktop chromium project reds ALL FOUR spec files — 15 failed / 4 did-not-run of 19. The s173 "one desktop VRT spec" disclosure understated (only the form spec had been run); the s173 memo gains a dated correction block + CMOS decision. form.accessibility.spec.ts:3 hard-codes an id that never matched the `Forms/TextField` title committed beside it in `d6f2567`; toast.spec.ts:3 hard-codes an id made extinct by the 2025-10-21 taxonomy normalization (`488191c`) — both proven one-line fixes. brand-a.spec.ts targets eight extinct `BrandA/*` titles AND is a screenshot spec with zero baselines. layout.visual.spec.ts: 9 × missing-snapshot, zero baselines ever. No CI job runs any desktop VRT project.
 
 **Decisions (m03):**
 

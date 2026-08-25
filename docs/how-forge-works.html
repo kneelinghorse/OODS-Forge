@@ -110,7 +110,7 @@
     <div role="listitem"><i>define</i><b>Objects</b>Things you model (User, Product, Invoice…) = a list of traits + a few own fields.</div>
     <div role="listitem"><i>assemble</i><b>Contexts</b>List, detail, form, timeline, card, inline (+ chart, dashboard shells) — built from the traits' contributions.</div>
     <div role="listitem"><i>style</i><b>Tokens &amp; brands</b>Every colour/size/type value once; compiled to CSS, TS, Tailwind, Swift, Kotlin; switched by brand + theme.</div>
-    <div role="listitem"><i>export + check</i><b>Tools</b>25 tools: compose, validate, render, code, charts, dashboards, certify, tokens, catalog.</div>
+    <div role="listitem"><i>export + check</i><b>Tools</b>25 registered tools (19 auto + 6 on demand), as defined by <span class="k">packages/mcp-server/src/tools/registry.json</span>: compose, validate, render, code, charts, dashboards, certify, tokens, catalog.</div>
   </div>
   <p>Everything lives in one repository as plain files: traits and objects are YAML (<span class="k">traits/</span>, <span class="k">objects/</span>, <span class="k">domains/</span>), tokens are JSON (<span class="k">packages/tokens/src/tokens/</span>), components are React (<span class="k">src/components/</span>), and the tools are a local server (<span class="k">packages/mcp-server/</span>). A <b>tool</b> is a typed function — name plus JSON in, JSON out — that you call over the Model Context Protocol from an AI assistant, over HTTP from a panel, or from the command line. Nothing requires a hosted service.</p>
 
@@ -322,9 +322,9 @@ schema:   <span class="cmt"># Product's own fields</span>
 
   <!-- 10 -->
   <h2 id="certify"><span class="n">10</span>Certification and checks</h2>
-  <div class="def"><b>Certify</b><p><span class="k">artifact.certify</span> takes a chart specification back (and, for the advanced types, its data) and returns a per-check scorecard — pass, fail or unchecked with the reason — rather than an overall "looks fine".</p></div>
+  <div class="def"><b>Certify</b><p><span class="k">artifact.certify</span> takes a chart specification back (and, for the advanced types, its data) and returns a per-check scorecard — pass, fail or unchecked with the reason — rather than an overall "looks fine". Its four core certification pillars are accessibility equivalence, determinism, contrast and accuracy.</p></div>
   <div class="tw"><table>
-    <thead><tr><th>Check</th><th>What is actually tested</th></tr></thead>
+    <thead><tr><th>Core certification pillar</th><th>What is actually tested</th></tr></thead>
     <tbody>
       <tr><td>Accessibility equivalence</td><td>16 structural rules over the chart and its text alternative: colour encodings carry a second cue and size differences are perceptible; an accessible table exists, captioned to the chart title, with declared column order; axis titles, an accessible name and a description over 25 characters are present; bar/stacked charts narrate extrema, trend charts narrate the trend, area charts describe their baseline/range; datasets with 3+ rows surface at least two findings and dense ones aggregate; every encoded field is present in every row; the narrative generator reports ready; interactions describe their announcements. The chart builder synthesises the table, narrative, axis titles and name itself, so generated charts pass by construction; error-level failures block emission.</td></tr>
       <tr><td>Determinism</td><td>The spec is compiled twice, canonicalised and byte-compared; the resulting SHA-256 is the same hash <span class="k">viz.render</span> produced.</td></tr>
@@ -342,15 +342,15 @@ schema:   <span class="cmt"># Product's own fields</span>
 
   <!-- 11 -->
   <h2 id="operate"><span class="n">11</span>Operating it: starting, connecting, tools</h2>
-  <p><b>Start and connect.</b> Build the server once: <span class="k">pnpm --filter @oods/mcp-server run build</span>. Connect an AI assistant with the stdio adapter — copy <span class="k">configs/agents/claude-desktop.stdio-mcp.json</span> into Claude Desktop's MCP config, or <span class="k">cursor.stdio-mcp.json</span> into <span class="k">.cursor/mcp.json</span>. For a browser panel or HTTP-style agents, run the bridge (<span class="k">pnpm bridge:dev</span>; it listens on <span class="k">127.0.0.1:4466</span>). From the terminal, call any tool directly: <span class="k">pnpm exec tsx tools/oods-agent-cli/src/index.ts plan design.compose '{"intent":"product detail page"}'</span>. Nineteen tools register by default; six more switch on with <span class="k">MCP_TOOLSET=all</span>.</p>
+  <p><b>Start and connect.</b> Build the server once: <span class="k">pnpm --filter @oods/mcp-server run build</span>. Connect an AI assistant with the stdio adapter — copy <span class="k">configs/agents/claude-desktop.stdio-mcp.json</span> into Claude Desktop's MCP config, or <span class="k">cursor.stdio-mcp.json</span> into <span class="k">.cursor/mcp.json</span>. For a browser panel or HTTP-style agents, run the bridge (<span class="k">pnpm bridge:dev</span>; it listens on <span class="k">127.0.0.1:4466</span>). From the terminal, call any tool directly: <span class="k">pnpm exec tsx tools/oods-agent-cli/src/index.ts plan design.compose '{"intent":"product detail page"}'</span>. The authoritative roster is <span class="k">packages/mcp-server/src/tools/registry.json</span>: 19 tools register by default and 6 more switch on with <span class="k">MCP_TOOLSET=all</span>.</p>
   <div class="tw"><table>
     <thead><tr><th>Group</th><th>Tools</th></tr></thead>
     <tbody>
       <tr><td>Registry</td><td>catalog.list · object (list, show) · structuredData.fetch · registry.snapshot · health</td></tr>
-      <tr><td>Generate</td><td>design.compose · repl (validate, render) · code.generate · pipeline · schema (save, load, list, delete) · fidelity.preview · map (create, list, resolve, update, delete, apply)</td></tr>
+      <tr><td>Generate &amp; review</td><td>design.compose · repl (validate, render) · code.generate · pipeline · schema (save, load, list, delete) · fidelity.preview · map (create, list, resolve, update, delete, apply) · review (resolve, chain)</td></tr>
       <tr><td>Charts</td><td>viz.render · dashboard.render · artifact.certify · (viz.compose, deprecated)</td></tr>
       <tr><td>Tokens &amp; brand</td><td>tokens.build · brand.apply</td></tr>
-      <tr><td>Review / on demand</td><td>review (resolve, chain) · a11y.scan · diag.snapshot · billing.reviewKit · billing.switchFixtures · release.verify · release.tag</td></tr>
+      <tr><td>On demand</td><td>a11y.scan · diag.snapshot · billing.reviewKit · billing.switchFixtures · release.verify · release.tag</td></tr>
     </tbody>
   </table></div>
   <p><b>Safety model.</b> Tools that write into the repo or artifacts (tokens.build, brand.apply, a11y.scan, billing.*, map.*, diag.snapshot, release.tag) preview by default and write only with <span class="k">apply: true</span>; schema save persists on call and pipeline writes via its save option. Two roles (designer, maintainer — release tools are maintainer-only); per-tool rate limits, concurrency and timeouts from a policy file; outputs land under <span class="k">artifacts/current-state/&lt;date&gt;/</span> with redacted transcripts and a hashed bundle index. Optional OpenTelemetry tracing per tool call.</p>
@@ -376,5 +376,5 @@ schema:   <span class="cmt"># Product's own fields</span>
     <li>Fonts are not yet per-brand (one global stack); the chart palette is one fixed set; the Swift/Kotlin files carry one brand × theme and omit font stacks and easing curves.</li>
   </ul>
 
-  <footer class="foot">Figures are from the Forge repository in August 2026 (41 traits · 11 objects · ~100 catalogued components · 8 contexts · 13 chart types · 25 tools). Tool roster: <span class="k">packages/mcp-server/src/tools/registry.json</span>; contracts: <span class="k">packages/mcp-server/src/schemas/</span> and <span class="k">docs/api/</span>.</footer>
+  <footer class="foot">Figures are from the Forge repository in August 2026 (41 traits · 11 objects · ~100 catalogued components · 8 contexts · 13 chart types). The 25-tool roster comes from <span class="k">packages/mcp-server/src/tools/registry.json</span>; contracts: <span class="k">packages/mcp-server/src/schemas/</span> and <span class="k">docs/api/</span>.</footer>
 </div>

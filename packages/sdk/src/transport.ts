@@ -30,10 +30,9 @@ export interface HttpTransportOptions {
 export type TransportOptions = StdioTransportOptions | HttpTransportOptions;
 
 /**
- * Stdio transport — calls MCP tools via the stdio protocol.
+ * Stdio transport placeholder.
  *
- * This is a thin shell; the actual stdio MCP client implementation
- * will be wired in s70-m02.
+ * @oods/sdk does not bundle an MCP stdio client implementation.
  */
 export class StdioTransport implements Transport {
   readonly options: StdioTransportOptions;
@@ -43,9 +42,9 @@ export class StdioTransport implements Transport {
   }
 
   async call<T = unknown>(tool: string, _input: Record<string, unknown>): Promise<T> {
-    // Stub — will be implemented in s70-m02 with actual MCP stdio client
+    // Stub — no MCP stdio client is bundled with @oods/sdk.
     throw new Error(
-      `StdioTransport.call not yet implemented (tool: ${tool}). Wire MCP stdio client in s70-m02.`
+      `StdioTransport.call is unavailable (tool: ${tool}); @oods/sdk does not bundle an MCP stdio client.`
     );
   }
 }

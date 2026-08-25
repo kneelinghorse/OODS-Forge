@@ -19,9 +19,15 @@ import { loadTrait } from '../objects/trait-loader.js';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
 const ARTIFACT_DIR = path.join(REPO_ROOT, 'artifacts', 'structured-data');
-const CODE_CONNECT_PATH = path.join(ARTIFACT_DIR, 'code-connect.json');
+const DEFAULT_CODE_CONNECT_PATH = path.join(ARTIFACT_DIR, 'code-connect.json');
 const STORIES_DIR = path.join(REPO_ROOT, 'stories');
 const DEFAULT_PAGE_SIZE = 25;
+
+function getCodeConnectPath(): string {
+  const override = process.env.MCP_CODE_CONNECT_PATH?.trim();
+  if (!override) return DEFAULT_CODE_CONNECT_PATH;
+  return path.isAbsolute(override) ? override : path.resolve(REPO_ROOT, override);
+}
 
 type CodeConnectRef = {
   path?: string;
@@ -427,14 +433,15 @@ function pickBestSnippet(codeReferences: ComponentCodeReference[]): string | und
 
 function loadCodeConnectIndex(): StoryIndex {
   const index: StoryIndex = new Map();
+  const codeConnectPath = getCodeConnectPath();
 
-  if (!fs.existsSync(CODE_CONNECT_PATH)) {
+  if (!fs.existsSync(codeConnectPath)) {
     return index;
   }
 
   let doc: CodeConnectDoc;
   try {
-    doc = JSON.parse(fs.readFileSync(CODE_CONNECT_PATH, 'utf8')) as CodeConnectDoc;
+    doc = JSON.parse(fs.readFileSync(codeConnectPath, 'utf8')) as CodeConnectDoc;
   } catch {
     return index;
   }

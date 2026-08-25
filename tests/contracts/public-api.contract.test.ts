@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 const ROOT = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
-const DIST_DIR = path.join(ROOT, 'dist');
+const PUBLIC_DECLARATIONS_DIR = path.join(ROOT, 'dist', 'pkg');
 
 function collectDeclarationFiles(dir: string): string[] {
   if (!existsSync(dir)) {
@@ -29,8 +29,11 @@ function collectDeclarationFiles(dir: string): string[] {
 
 describe('Public API declarations', () => {
   it('do not expose explicit `any` types', () => {
-    const declarationFiles = collectDeclarationFiles(DIST_DIR);
-    expect(declarationFiles.length, 'Expected generated declaration files in dist/').toBeGreaterThan(0);
+    const declarationFiles = collectDeclarationFiles(PUBLIC_DECLARATIONS_DIR);
+    expect(
+      declarationFiles.length,
+      'Expected generated declaration files in dist/pkg/'
+    ).toBeGreaterThan(0);
 
     const offenders: Array<{ file: string; matches: string[] }> = [];
     const pattern = /(?:[:<]\s*any\b|any\[\])/g;

@@ -1,8 +1,7 @@
-
-````markdown
 # Agent Recipes — Quick Index
 
 These recipes let the Agent Panel (or CLI) do common contributor chores safely.
+Tool names in this index come from `packages/mcp-server/src/tools/registry.json`; grouped tools select their operation with `action`.
 All recipes follow the same flow:
 
 1) **Dry-run**: produce a proposed diff + artifacts  
@@ -64,14 +63,14 @@ tokens.build { "brand": "A", "theme": "dark", "apply": true }
 * Suggests targeted fixes (ARIA roles, labels, focus order, contrast)
 * Can open one PR per logical group (optional)
 
-**MCP tools used**: `a11y.scan` (on-demand), `repl.validate` (with `checkA11y: true`)
+**MCP tools used**: `a11y.scan` (on-demand), `repl` (`action: "validate"` with `checkA11y: true`)
 
 ```bash
 # Run accessibility scan
 a11y.scan { "apply": true }
 
-# Validate with a11y checks enabled
-repl.validate { "mode": "full", "checkA11y": true, "schema": { ... } }
+# Validate with a11y checks enabled through the grouped REPL tool
+repl { "action": "validate", "mode": "full", "checkA11y": true, "schema": { ... } }
 ```
 
 **Labels**: `a11y-fix`
@@ -143,6 +142,31 @@ catalog.list {}
 
 ---
 
+## 6) Render → Certify Visualization Roundtrip
+
+**What it does**
+
+* Renders a data-bound visualization and requests its NormalizedVizSpec IR
+* Passes that exact IR (or an agent-edited copy) to the read-only certification tool
+* Checks the per-pillar verdicts and, for an unchanged roundtrip, hash identity
+
+**MCP tools used**: `viz.render`, `artifact.certify`
+
+```bash
+# Render and request the IR used by artifact.certify
+viz.render { "rows": [{ "region": "North", "revenue": 120000 }, { "region": "South", "revenue": 135000 }], "chartType": "bar", "encodings": { "x": "region", "y": { "field": "revenue", "aggregate": "sum" } }, "output": { "includeNormalizedSpec": true } }
+
+# Copy the returned normalizedSpec object into spec
+artifact.certify { "spec": { ... } }
+```
+
+For an unchanged cartesian roundtrip, verify that `artifact.certify.contentHash` equals `viz.render.contentHash`, then inspect `coverage`, `conformant`, `pillars`, and `findings`. If you hand-edit the IR, certify the edited object and treat its new hash as the artifact identity. Do not pass `data` for cartesian charts. For an ECharts-primary chart, pass the same render input branch under `data` (for example, `data.sankey`) so determinism, accuracy, and warn-first a11y checks can run; its `coverage` remains `uncertified`, so read the individual pillars.
+
+**Labels**: `visualization`, `certification`
+**Notes**: Certification reads the supplied IR; it does not rebuild or re-recommend the chart.
+
+---
+
 ## Telemetry & Approvals
 
 Every recipe writes **JSONL telemetry** with:
@@ -189,7 +213,3 @@ The agent will refuse to execute if any blocking gate fails during dry-run. Fix 
 * `docs/policies/high-contrast.md`, `docs/policies/hc-quickstart.md`
 * `docs/patterns/modifier-purity.md`
 * `docs/mcp/Panel-UX.md`
-
-```
-
-```

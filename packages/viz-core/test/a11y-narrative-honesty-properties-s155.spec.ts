@@ -544,6 +544,23 @@ function aggBarSpec(measure: string, aggregate: string): NormalizedVizSpec {
   } as never).spec;
 }
 
+function countLabelSpec(title?: string): NormalizedVizSpec {
+  const rows = [
+    ...Array.from({ length: 4 }, (_, i) => ({ method: 'Microlensing', planetName: `M${i}` })),
+    ...Array.from({ length: 3 }, (_, i) => ({ method: 'Radial Velocity', planetName: `R${i}` })),
+    ...Array.from({ length: 2 }, (_, i) => ({ method: 'Transit', planetName: `T${i}` })),
+    { method: 'Imaging', planetName: 'I0' },
+  ];
+  return buildVizSpecFromRows({
+    rows,
+    chartType: 'bar',
+    encodings: {
+      x: { field: 'method', scale: 'band' },
+      y: { field: 'planetName', aggregate: 'count', ...(title ? { title } : {}) },
+    },
+  } as never).spec;
+}
+
 describe('s155 property (iv) — declared aggregate is authoritative over the name guess', () => {
   const cases: Array<[string, string, boolean]> = [
     // [measure, aggregate, expectedAdditive] — the expected verdict is HAND-AUTHORED here (an
@@ -564,6 +581,30 @@ describe('s155 property (iv) — declared aggregate is authoritative over the na
       expect(has, `runtime Total presence must match the hand-authored declared-aggregate verdict`).toBe(expectedAdditive);
     });
   }
+
+  it('labels an untitled count by its operation, not by the counted identity field', () => {
+    const spec = countLabelSpec();
+    const result = generateNarrativeSummary(spec);
+    const findings = result.keyFindings;
+    expect(findings).toEqual([
+      'High Count: Count 4 (Microlensing)',
+      'Low Count: Count 1 (Imaging)',
+      'Total Count: 10',
+    ]);
+    expect(findings).toHaveLength(3);
+    expect(result.analysis).toEqual(analyzeVizSpec(spec));
+    expect(result.analysis).not.toHaveProperty('findingMeasureLabel');
+  });
+
+  it('keeps an explicit count title as the grouping-context label', () => {
+    const findings = generateNarrativeSummary(countLabelSpec('Confirmed planets')).keyFindings;
+    expect(findings).toEqual([
+      'High Confirmed planets: Confirmed planets 4 (Microlensing)',
+      'Low Confirmed planets: Confirmed planets 1 (Imaging)',
+      'Total Confirmed planets: 10',
+    ]);
+    expect(findings).toHaveLength(3);
+  });
 });
 
 // ============================================================================

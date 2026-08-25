@@ -1,9 +1,10 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { loadStoryIndex, resolveStoryId } from '../utils/storybook';
 
-// s174 m03 — this spec hard-coded `forms-text-field--form-example`, an id extinct since the
-// 2025-12-03 title reorg moved the story to Components/Primitives/Text Field. It had been
-// silently red ever since, because no CI job ran the desktop project (m03 adds one).
+// s174 m03 — this spec hard-coded `forms-text-field--form-example`, but its title was
+// `Forms/TextField` when both landed in d6f2567; that title generates
+// `forms-textfield--form-example`. The id was invalid from inception, then 488191c moved the
+// story to Components/Primitives/Text Field. No CI job ran the desktop project to expose it.
 //
 // Resolving through the story index does NOT make the spec rot-proof — brand-a.spec.ts used
 // this same resolver and rotted anyway when its titles were deleted. What it buys is a LOUD
@@ -11,7 +12,7 @@ import { loadStoryIndex, resolveStoryId } from '../utils/storybook';
 // Storybook 404 page and then fails on some unrelated missing locator, and it survives
 // changes to the id scheme. The alias list carries the known former title so a checkout
 // mid-reorg resolves either way.
-const STORY_TITLES = ['Components/Primitives/Text Field', 'Forms/Text Field'] as const;
+const STORY_TITLES = ['Components/Primitives/Text Field', 'Forms/TextField'] as const;
 const STORY_NAME = 'Form Example';
 const STORYBOOK_URL = process.env.STORYBOOK_URL ?? 'http://127.0.0.1:6006';
 

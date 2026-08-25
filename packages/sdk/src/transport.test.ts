@@ -14,7 +14,7 @@ describe('Transport', () => {
 
     it('throws on call (stub implementation)', async () => {
       const t = new StdioTransport();
-      await expect(t.call('test', {})).rejects.toThrow('not yet implemented');
+      await expect(t.call('test', {})).rejects.toThrow('does not bundle an MCP stdio client');
     });
   });
 

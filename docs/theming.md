@@ -41,37 +41,52 @@ Sleek dark-mode palette with muted green accents and low-chroma neutrals. Best f
 
 ## Applying a Preset
 
-Use `brand.apply` with the preset as the delta:
+The preset files are brand-relative: their top level contains the target brand's
+`surface`, `text`, `border`, and `accent` groups. `brand.apply` does not load or
+re-key presets, so wrap the preset contents under the brand you are applying:
 
 ```json
-// Dry run — preview changes without writing
+// Dry run for brand A — preview changes without writing
 {
-  "delta": <contents of corporate-blue.json>,
+  "brand": "A",
+  "strategy": "alias",
+  "delta": {
+    "color": {
+      "brand": {
+        "A": <contents of corporate-blue.json>
+      }
+    }
+  },
   "apply": false
 }
 
-// Apply — write changes to disk
+// Apply the same preset to brand B — write changes to disk
 {
-  "delta": <contents of corporate-blue.json>,
+  "brand": "B",
+  "strategy": "alias",
+  "delta": {
+    "color": {
+      "brand": {
+        "B": <contents of corporate-blue.json>
+      }
+    }
+  },
   "apply": true
 }
 ```
 
-With `brand` omitted (it defaults to `A`), the preset deep-merges into the existing brand A tokens across all themes (base, dark, high-contrast).
-
-> **The shipped presets are brand-A-namespaced.** `brand.apply` accepts `brand: "B"` as of
-> sprint-168, but the preset payloads in `packages/tokens/src/presets/` address
-> `color.brand.A.*` literally. Applying one with `brand: "B"` therefore merges a
-> `color.brand.A` subtree *into brand B's files* rather than restyling B — measured:
-> 6 changes, none of them under `color.brand.B.*`. Re-namespace a preset before
-> applying it to another brand.
+With `brand` omitted it defaults to `A`, so the wrapper must still target `A`.
+The same brand-relative preset payload serves every brand; only the caller-owned
+wrapper changes. A wrapper targeting a different brand than the `brand` argument
+is rejected with `OODS-V149` instead of grafting a foreign subtree into the target.
 
 ## How It Works
 
-1. Each preset is a DTCG-compliant JSON file targeting `color.brand.A.*` tokens
-2. `brand.apply` deep-merges the preset delta into `packages/tokens/src/tokens/brands/<brand>/{base,dark,hc}.json` (`<brand>` defaults to `A`)
-3. Run `tokens.build` after applying to generate compiled CSS variables
-4. The theme is reflected in all rendered components via CSS custom properties
+1. Each preset is a DTCG-compliant, brand-relative JSON file with no `color.brand.<X>` wrapper
+2. The caller wraps that payload at `color.brand.<brand>` and passes the same `<brand>` to `brand.apply`
+3. `brand.apply` deep-merges the wrapped delta into `packages/tokens/src/tokens/brands/<brand>/{base,dark,hc}.json` (`<brand>` defaults to `A`)
+4. Run `tokens.build` after applying to generate compiled CSS variables
+5. The theme is reflected in all rendered components via CSS custom properties
 
 ## Creating Custom Presets
 

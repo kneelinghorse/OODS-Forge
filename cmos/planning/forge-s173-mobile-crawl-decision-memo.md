@@ -133,8 +133,8 @@ STORYBOOK_EXTERNAL=1 STORYBOOK_URL=http://127.0.0.1:6099 \
 
 | spec | why |
 | --- | --- |
-| `forms/form.accessibility.spec.ts` | hard-coded story id `forms-text-field--form-example`, extinct since the 2025-12-03 title reorg |
-| `statusables/toast.spec.ts` | hard-coded story id `statusables-toast--default`, same reorg |
+| `forms/form.accessibility.spec.ts` | hard-coded story id `forms-text-field--form-example`, which never matched the `Forms/TextField` title committed beside it in `d6f2567` |
+| `statusables/toast.spec.ts` | hard-coded story id `statusables-toast--default`, extinct since the 2025-10-21 taxonomy normalization (`488191c`) |
 | `hc/brand-a.spec.ts` | eight `BrandA/*` titles, **zero** of which exist in the story index; also a screenshot spec with no committed baseline |
 | `viz/layout.visual.spec.ts` | screenshot spec, no committed baseline has ever existed — every run is missing-snapshot |
 

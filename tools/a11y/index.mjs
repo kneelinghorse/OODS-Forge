@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { createReadStream } from 'node:fs';
+import { createReadStream, realpathSync } from 'node:fs';
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import path from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import Color from 'colorjs.io';
 import { chromium } from 'playwright';
@@ -989,13 +989,19 @@ async function generateReport() {
   };
 }
 
-async function ensureReportDir() {
-  await mkdir(path.dirname(REPORT_PATH), { recursive: true });
-}
+/**
+ * Check commands are read-only gates. Only the explicit baseline command may refresh the
+ * tracked report; otherwise generatedAt, contract durations, and the ephemeral Storybook
+ * port dirty a clean checkout on every invocation.
+ */
+export async function persistReportForCommand(command, report, reportPath = REPORT_PATH) {
+  if (command !== 'baseline') {
+    return false;
+  }
 
-async function writeReport(report) {
-  await ensureReportDir();
-  await writeFile(REPORT_PATH, JSON.stringify(report, null, 2) + '\n', 'utf8');
+  await mkdir(path.dirname(reportPath), { recursive: true });
+  await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n', 'utf8');
+  return true;
 }
 
 function fingerprint(entry) {
@@ -1014,7 +1020,7 @@ async function loadBaseline() {
 
 async function runCheck() {
   const report = await generateReport();
-  await writeReport(report);
+  await persistReportForCommand('check', report);
 
   const contrastResults = Array.isArray(report.sections?.contrast) ? report.sections.contrast : [];
   const guardrailResults = Array.isArray(report.sections?.guardrails) ? report.sections.guardrails : [];
@@ -1038,7 +1044,7 @@ async function runCheck() {
   }
   summaryParts.push(`total ${totalPasses}/${report.results.length}`);
 
-  console.log(`[a11y] Report written to ${path.relative(process.cwd(), REPORT_PATH)} (${summaryParts.join(', ')}).`);
+  console.log(`[a11y] Check completed without modifying ${path.relative(process.cwd(), REPORT_PATH)} (${summaryParts.join(', ')}).`);
 
   if (totalFailures > 0) {
     console.warn('[a11y] Accessibility contrast/guardrail/contract violations detected. Run "pnpm run a11y:diff" to compare against the baseline.');
@@ -1047,7 +1053,7 @@ async function runCheck() {
 
 async function runDiff() {
   const report = await generateReport();
-  await writeReport(report);
+  await persistReportForCommand('diff', report);
 
   let baseline;
   try {
@@ -1100,7 +1106,7 @@ async function runDiff() {
 
 async function runBaselineUpdate() {
   const report = await generateReport();
-  await writeReport(report);
+  await persistReportForCommand('baseline', report);
 
   const violations = report.results.filter((item) => !item.pass);
   const baseline = {
@@ -1142,4 +1148,19 @@ async function main() {
   }
 }
 
-await main();
+function resolveInvocationPath(targetPath) {
+  try {
+    return realpathSync(targetPath);
+  } catch {
+    return path.resolve(targetPath);
+  }
+}
+
+const invokedPath = process.argv[1];
+const isDirectInvocation =
+  typeof invokedPath === 'string' &&
+  resolveInvocationPath(fileURLToPath(import.meta.url)) === resolveInvocationPath(invokedPath);
+
+if (isDirectInvocation || pathToFileURL(invokedPath ?? '').href === import.meta.url) {
+  await main();
+}

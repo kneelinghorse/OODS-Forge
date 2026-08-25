@@ -108,7 +108,8 @@ Storybook surface: https://kneelinghorse.github.io/OODS-Foundry/
 ## What agents can do here
 
 - Explore traits, objects, components, and patterns via structured data exports.
-- Render and validate Design Lab schemas with `repl.render` and `repl.validate`.
+- Render and validate Design Lab schemas with `repl` (`action: render` or `action: validate`).
+- Render chart IR with `viz.render`, then grade it with `artifact.certify`.
 - Apply brand overlays and build token artifacts with MCP tools.
 - Generate diagnostics and transcripts for repeatable workflows.
 - Follow runbooks to add traits, objects, charts, or token updates.
@@ -116,21 +117,26 @@ Storybook surface: https://kneelinghorse.github.io/OODS-Foundry/
 
 ## MCP tool inventory
 
-Auto-registered (default):
-- `tokens.build` - build tokens with MCP artifacts
-- `structuredData.fetch` - read structured data registry
-- `repl.validate` - validate Design Lab schemas
-- `repl.render` - render Design Lab previews
-- `brand.apply` - apply brand overlays (approval gates on apply)
+The counts and tool names below are derived from
+`packages/mcp-server/src/tools/registry.json`; use that file as the generation
+source whenever this hand-authored inventory is refreshed.
 
-On-demand (enable when needed):
-- `diag.snapshot`, `reviewKit.create`, `billing.reviewKit`, `billing.switchFixtures`
-- `a11y.scan`, `purity.audit`, `vrt.run`
-- `release.verify`, `release.tag`
+Auto-registered (19 tools):
+
+- Core design/runtime: `tokens.build`, `structuredData.fetch`, `brand.apply`, `catalog.list`, `health`
+- Composition + generation: `design.compose`, `viz.compose`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview`
+- Certification + inspection: `artifact.certify`, `registry.snapshot`
+- Action families: `map`, `schema`, `object`, `repl`, `review`
+
+On-demand (6 tools):
+
+- `diag.snapshot`, `billing.reviewKit`, `billing.switchFixtures`
+- `a11y.scan`, `release.verify`, `release.tag`
 
 Enable on-demand tools:
+
 - `MCP_TOOLSET=all` to register every tool in the registry.
-- `MCP_EXTRA_TOOLS=a11y.scan,vrt.run` to add a subset.
+- `MCP_EXTRA_TOOLS=a11y.scan,diag.snapshot` to add a subset.
 - Registry source: `packages/mcp-server/src/tools/registry.json`
 
 Full contracts: `docs/mcp/Tool-Specs.md`
@@ -150,7 +156,8 @@ s106-m02: `concordance.validate` lived only in the server layer, never the agent
 layer — a pre-existing single-layer gap, surfaced while removing the tool.)
 
 Usage patterns:
-- Registry → render: `structuredData.fetch` to discover components, then `repl.validate` and `repl.render` to iterate on schemas.
+
+- Registry → render: `structuredData.fetch` to discover components, then `repl` (`action: validate`) and `repl` (`action: render`) to iterate on schemas.
 - Brand work: `tokens.build` for token artifacts, then `brand.apply` when you want overlays applied.
 - QA snapshots: `diag.snapshot` when you need a reproducible artifact bundle.
 
@@ -214,15 +221,12 @@ derivable from span data via the OTel collector's spanmetrics processor.
 
 1. Read `README.md` for repo identity and links.
 2. Connect an MCP client via `docs/mcp/Connections.md`.
-3. Refresh structured data if needed:
-   ```bash
-   pnpm refresh:data
-   ```
-4. Run a small MCP call via the CLI:
-   ```bash
-   pnpm exec tsx tools/oods-agent-cli/src/index.ts plan structuredData.fetch
-   ```
-5. Pick a runbook in `docs/runbooks/` or open a task doc in `docs/`.
+3. Compose a chart scaffold with `viz.compose`. This legacy tool remains available for compatibility; use its resolved chart type and field bindings as planning input, not as a certifiable artifact.
+4. Render the real, data-bound chart with `viz.render`, passing matching rows and encodings and setting `output.includeNormalizedSpec: true`.
+5. Pass the returned `normalizedSpec` to `artifact.certify`. For an ECharts-primary chart, also pass the same data operand used by `viz.render`.
+
+For new work that does not need the compatibility scaffold, start directly with
+`viz.render` in structured-intent or explicit mode, then certify its returned IR.
 
 ## Context Loading Strategy
 

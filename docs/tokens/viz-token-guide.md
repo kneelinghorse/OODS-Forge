@@ -36,11 +36,11 @@ adjust the OKLCH coordinates quickly.
 
 ## Runtime Helpers
 
-`src/viz/tokens/scale-token-mapper.ts` exports ergonomic helpers for trait
-compositors and renderer adapters. Example:
+`@oods/viz-core` exports ergonomic token helpers for trait compositors and
+renderer adapters. Example:
 
 ```ts
-import { getVizScaleTokens, getVizSizeTokens, getVizMarginToken } from '@/viz/tokens/scale-token-mapper.js';
+import { getVizScaleTokens, getVizSizeTokens, getVizMarginToken } from '@oods/viz-core';
 
 const colorRamp = getVizScaleTokens('sequential', { count: 5 });
 const divergingCore = getVizScaleTokens('diverging', { extent: 3 });

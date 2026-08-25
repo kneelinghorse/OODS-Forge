@@ -28,7 +28,6 @@ Applies to the OODS Foundry Storybook (React Vite).
 - `@storybook/addon-docs`
 - `@storybook/addon-a11y`
 - `@storybook/addon-onboarding`
-- `@storybook/addon-vitest`
 - `@chromatic-com/storybook`
 - `./apps/explorer/addons/storybook-addon-agent/register.tsx`
 
