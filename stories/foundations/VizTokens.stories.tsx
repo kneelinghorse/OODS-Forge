@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import '~/apps/explorer/src/styles/index.css';
 import tokensBundle, { prefix as exportedPrefix } from '@oods/tokens';
-import { getVizScaleTokens, getVizSizeTokens, getVizMarginToken } from '@/viz/tokens/scale-token-mapper.js';
+import { getVizScaleTokens, getVizSizeTokens, getVizMarginToken } from '@oods/viz-core';
 
 const sequentialTokens = getVizScaleTokens('sequential');
 const divergingTokens = getVizScaleTokens('diverging');

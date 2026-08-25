@@ -1,10 +1,10 @@
-import { extractFieldBlueprint } from './pattern-field-helpers.js';
-import type { LayoutStrategy } from './chart-patterns-v2.js';
-import type { ChartPattern } from './index.js';
-import type { LayoutRecommendationBundle } from './layout-scorer.js';
-import type { InteractionBundle, InteractionScoreEntry } from './interaction-scorer.js';
-import type { PatternSuggestion, SchemaIntent } from './suggest-chart.js';
-import type { InteractionTrait, LayoutDefinition, NormalizedVizSpec, TraitBinding } from '@/viz/spec/normalized-viz-spec.js';
+import { extractFieldBlueprint } from '@oods/viz-core';
+import type { LayoutStrategy } from '@oods/viz-core';
+import type { ChartPattern } from '@oods/viz-core';
+import type { LayoutRecommendationBundle } from '@oods/viz-core';
+import type { InteractionBundle, InteractionScoreEntry } from '@oods/viz-core';
+import type { PatternSuggestion, SchemaIntent } from '@oods/viz-core';
+import type { InteractionTrait, LayoutDefinition, NormalizedVizSpec, TraitBinding } from '@oods/viz-core';
 
 type EncodingMap = NormalizedVizSpec['encoding'];
 type MarkSpec = NormalizedVizSpec['marks'][number];

@@ -23,7 +23,7 @@ import { SpatialContextProvider, type GeoFeature } from './SpatialContext.js';
 import { mergeLayerDefaults, orderLayers } from './utils/layer-utils.js';
 import { setupKeyboardNav, announceFeatureFocus } from './utils/keyboard-nav-utils.js';
 import { announce as announceToScreenReader } from './utils/screen-reader-utils.js';
-import { analyzeSpatial, generateNarrativeSummary, type SpatialFeatureRow } from '../../../viz/a11y/index.js';
+import { analyzeSpatial, generateNarrativeSummary, type SpatialFeatureRow } from '@oods/viz-core';
 import type {
   ProjectionConfig,
   ProjectionType,

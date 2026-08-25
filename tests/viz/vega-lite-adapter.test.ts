@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { toVegaLiteSpec, VegaLiteAdapterError } from '../../src/viz/adapters/vega-lite-adapter.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import { toVegaLiteSpec, VegaLiteAdapterError } from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 const ROOT = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const EXAMPLES_DIR = path.join(ROOT, 'examples', 'viz');

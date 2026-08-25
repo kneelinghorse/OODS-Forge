@@ -4,14 +4,14 @@ import { statSync } from 'node:fs';
 import path from 'node:path';
 
 import TimeService from '@/services/time/index.js';
-import { bindEChartsInteractions } from '@/viz/adapters/echarts-interactions.js';
-import type { EChartsRuntime } from '@/viz/adapters/echarts-interactions.js';
-import type { VizRendererId } from '@/viz/adapters/renderer-selector.js';
-import { toEChartsOption } from '@/viz/adapters/echarts-adapter.js';
-import type { EChartsOption } from '@/viz/adapters/echarts-adapter.js';
-import { toVegaLiteSpec } from '@/viz/adapters/vega-lite-adapter.js';
-import type { VegaLiteAdapterSpec } from '@/viz/adapters/vega-lite-adapter.js';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import { bindEChartsInteractions } from '@oods/viz-core';
+import type { EChartsRuntime } from '@oods/viz-core';
+import type { VizRendererId } from '@oods/viz-core';
+import { toEChartsOption } from '@oods/viz-core';
+import type { EChartsOption } from '@oods/viz-core';
+import { toVegaLiteSpec } from '@oods/viz-core';
+import type { VegaLiteAdapterSpec } from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 import barExample from '../../../examples/viz/bar-chart.spec.json' assert { type: 'json' };
 import lineExample from '../../../examples/viz/line-chart.spec.json' assert { type: 'json' };

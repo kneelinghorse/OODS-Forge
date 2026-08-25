@@ -14,6 +14,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: ['js'],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'typescript',
@@ -23,6 +24,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: ['ts'],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'python',
@@ -32,6 +34,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: [],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'react',
@@ -41,6 +44,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: [],
     isCanonical: true,
+    metadata: undefined,
   },
 ];
 
@@ -100,6 +104,7 @@ export const CreationFlow: Story = {
         state: 'active',
         synonyms: [],
         isCanonical: true,
+        metadata: undefined,
       },
     }),
   },

@@ -3,17 +3,17 @@ import type { HTMLAttributes, JSX, MutableRefObject } from 'react';
 import { loadVegaEmbed } from '../../viz/runtime/vega-embed-loader.js';
 import type { EmbedOptions, EmbedResult, VisualizationSpec } from '../../viz/runtime/vega-embed-loader.js';
 import type { EChartsType } from 'echarts';
-import type { NormalizedVizSpec, TraitBinding } from '../../viz/spec/normalized-viz-spec.js';
-import { toVegaLiteSpec, type VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
-import { toEChartsOption, type EChartsOption } from '../../viz/adapters/echarts-adapter.js';
-import { bindEChartsInteractions } from '../../viz/adapters/echarts-interactions.js';
-import type { EChartsRuntime } from '../../viz/adapters/echarts-interactions.js';
-import { selectVizRenderer, type VizRendererId } from '../../viz/adapters/renderer-selector.js';
-import { createColorIntensityMapper, type ColorIntensityMapper } from '../../viz/encoding/color-intensity-mapper.js';
+import type { NormalizedVizSpec, TraitBinding } from '@oods/viz-core';
+import { toVegaLiteSpec, type VegaLiteAdapterSpec } from '@oods/viz-core';
+import { toEChartsOption, type EChartsOption } from '@oods/viz-core';
+import { bindEChartsInteractions } from '@oods/viz-core';
+import type { EChartsRuntime } from '@oods/viz-core';
+import { selectVizRenderer, type VizRendererId } from '@oods/viz-core';
+import { createColorIntensityMapper, type ColorIntensityMapper } from '@oods/viz-core';
 import { VizContainer } from './VizContainer.js';
 import { ChartDescription } from './ChartDescription.js';
 import { AccessibleTable } from './AccessibleTable.js';
-import { formatDimension, formatValue } from '../../viz/a11y/format.js';
+import { formatDimension, formatValue } from '@oods/viz-core';
 
 export interface HeatmapProps extends HTMLAttributes<HTMLElement> {
   readonly spec: NormalizedVizSpec;

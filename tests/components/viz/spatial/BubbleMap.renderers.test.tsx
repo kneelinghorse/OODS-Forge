@@ -8,7 +8,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import * as d3Geo from 'd3-geo';
 import { SpatialContextProvider } from '../../../../src/components/viz/spatial/SpatialContext.js';
-import type { NormalizedVizSpec } from '../../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import type { DataRecord } from '../../../../src/viz/adapters/spatial/geo-data-joiner.js';
 import type { FeatureCollection, Point } from 'geojson';
 import { loadVegaEmbed } from '../../../../src/viz/runtime/vega-embed-loader.js';

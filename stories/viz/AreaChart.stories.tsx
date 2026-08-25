@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { AreaChart } from '~/src/components/viz/AreaChart';
 
 const meta: Meta<typeof AreaChart> = {

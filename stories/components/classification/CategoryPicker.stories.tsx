@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { CategoryPicker } from '../../../src/components/classification/CategoryPicker.js';
-import type { CategoryNode } from '../../../src/schemas/classification/category-node.ts';
+import type { CategoryNode } from '../../../src/schemas/classification/category-node.js';
 
 const PICKER_CATEGORIES: CategoryNode[] = [
   {
@@ -30,6 +30,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'android',
@@ -43,6 +44,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'ios',
@@ -56,6 +58,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'audio',
@@ -69,6 +72,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'wireless-audio',
@@ -82,6 +86,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
 ];
 

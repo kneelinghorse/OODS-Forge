@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { generateAccessibleTable } from '../../src/viz/a11y/table-generator.js';
-import { generateNarrativeSummary } from '../../src/viz/a11y/narrative-generator.js';
-import { validateVizEquivalenceRules } from '../../src/viz/a11y/equivalence-rules.js';
+import { generateAccessibleTable } from '@oods/viz-core';
+import { generateNarrativeSummary } from '@oods/viz-core';
+import { validateVizEquivalenceRules } from '@oods/viz-core';
 import {
   analyzeHierarchy,
   analyzeNetwork,
@@ -11,7 +11,7 @@ import {
   type NetworkInput,
   type SankeyInput,
   type SpatialFeatureRow,
-} from '../../src/viz/a11y/index.js';
+} from '@oods/viz-core';
 import { createBarChartSpec } from '../components/viz/__fixtures__/barChartSpec.js';
 import { createLineChartSpec } from '../components/viz/__fixtures__/lineChartSpec.js';
 

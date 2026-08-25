@@ -9,7 +9,7 @@ import type { HTMLAttributes, JSX } from 'react';
 import type { EChartsType } from 'echarts';
 
 import type { HierarchyInput } from '../../types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptSunburstToECharts } from '../../viz/adapters/echarts/sunburst-adapter.js';
 import { SunburstA11yFallback } from './a11y/SunburstA11yFallback.js';
 

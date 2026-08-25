@@ -3,7 +3,7 @@ import { RenderObject } from '../../src/components/RenderObject.js';
 import type { RenderObjectProps } from '../../src/components/RenderObject.js';
 import type { ObjectSpec, TraitAdapter } from '../../src/types/render-context.js';
 import type { SubscriptionRecord } from '../../src/objects/subscription/types.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { AreaChart } from '../../src/components/viz/AreaChart.js';
 import { LineChart } from '../../src/components/viz/LineChart.js';
 import { VizLayeredView } from '../../src/components/viz/VizLayeredView.js';

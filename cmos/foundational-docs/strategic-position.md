@@ -1,8 +1,10 @@
 # Strategic Position
 
-**Status:** Active
-**Date:** 2026-05-10
+**Status:** Historical vision snapshot — superseded for current sequencing on 2026-08-25
+**Snapshot date:** 2026-05-10
 **Companion to:** [overview.md](overview.md)
+
+> **Historical vision snapshot (2026-05).** This document preserves the Position B+C / mission-graph frame as point-in-time context. It is not the current Forge forward plan, CMOS work queue, or the Shopify enterprise proof's execution plan. Current Forge sequencing lives in [roadmap/near.md](roadmap/near.md), and current mission state lives in CMOS. The Shopify proof runs in its sibling repository; Forge serves it by `cmos_message` and does not absorb that project's D1–D6 or sprint sequence.
 
 This document captures the *why* behind the OODS-Forge plan: what we're building, what we explicitly are not, where the design system field is heading, and why the current moment is the right one to plant a flag.
 
@@ -145,4 +147,4 @@ These are tracked but not forced. They resolve as they need to.
 
 ---
 
-*Authored 2026-05-10. Source: long-term roadmap planning conversation 2026-05-09 → 2026-05-10.*
+*Snapshot authored 2026-05-10 from the 2026-05-09 → 2026-05-10 planning conversation; superseded for current sequencing on 2026-08-25.*

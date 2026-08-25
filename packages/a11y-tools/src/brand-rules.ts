@@ -87,26 +87,21 @@ export interface BrandContrastPair {
  * so the number is still pinned — it is simply not graded against a threshold it was
  * never required to meet.
  *
- * ── STATUS FOREGROUNDS ON PANEL SURFACES ARE DELIBERATELY ABSENT (s169 m01) ──
- * The grid above pairs the four TEXT roles with the panels. It does NOT pair the ten
- * status foregrounds (`status.<tone>.text` / `.icon`) with `surface.canvas|raised|subtle`,
- * and that exclusion is a measured judgement, not an oversight. A full candidate sweep of
- * status-on-panel through this same evaluator produces 7 real failures (all of them ICONS,
- * measuring 2.32–2.90 against the 3:1 non-text minimum; all 30 status-TEXT-on-panel
- * candidates pass). They are excluded because THE PAIRING IS NOT PAINTED: every component
- * that renders a status foreground binds it to that status's OWN surface, never to a page
- * panel — see the chip/banner slot bindings at `apps/explorer/src/styles/layers.css:296-307`
- * and the per-tone arms at `:494-534`, which set `--cmp-chip-background` from
- * `--sys-status-<tone>-surface` alongside `--cmp-chip-foreground`/`--cmp-chip-icon`. The
- * single place a status icon colour meets a page panel is a decorative bar inside an
- * `aria-hidden="true"` container (`apps/explorer/src/components/DeliveryHealthWidget.tsx:81`),
- * which carries no contrast requirement at all.
+ * ── STATUS FOREGROUNDS ON PANEL SURFACES ARE THE FIFTH PAIR GROUP (s178 m03) ──
+ * The grid now also pairs every status text/icon role with canvas, raised, and subtle. The
+ * earlier exclusion was based on current components painting those roles only on their own
+ * status surface. F4 (PS-2026-08-25-004) overturns that boundary: brand tokens are an
+ * advertised design-system surface, so a consumer may compose a status foreground directly
+ * on a panel even before this repo does. Grading the composition before a consumer paints it
+ * is the generate-and-certify posture; absence of a current component is not an exemption.
  *
- * Grading a pairing nothing paints would force seven unratified icon-token moves to satisfy
- * a threshold no rendered surface is subject to. Those seven ARE recorded — as a deferred
- * item needing a design pass and a ratification, not as a silent pass.
+ * The pre-change sweep measured 7 failures among 60 icon candidates and none among 60 text
+ * candidates; all dark candidates passed. Four base icon values (A/B success + warning) were
+ * re-authored by lowering lightness only. Distinct status identity and interaction ramps stay
+ * parked: this group changes neither hue/chroma nor any other status token.
  */
 export const BRAND_CONTRAST_PAIRS: readonly BrandContrastPair[] = Object.freeze([
+  // 1. Body text × page panels.
   { id: 'text-primary-on-canvas', foreground: 'text.primary', background: 'surface.canvas', threshold: 4.5, summary: 'Primary text on the brand canvas.' },
   { id: 'text-primary-on-raised', foreground: 'text.primary', background: 'surface.raised', threshold: 4.5, summary: 'Primary text on a raised brand surface.' },
   { id: 'text-primary-on-subtle', foreground: 'text.primary', background: 'surface.subtle', threshold: 4.5, summary: 'Primary text on a subtle brand surface.' },
@@ -119,15 +114,25 @@ export const BRAND_CONTRAST_PAIRS: readonly BrandContrastPair[] = Object.freeze(
   { id: 'text-accent-on-canvas', foreground: 'text.accent', background: 'surface.canvas', threshold: 4.5, summary: 'Accent text on the brand canvas.' },
   { id: 'text-accent-on-raised', foreground: 'text.accent', background: 'surface.raised', threshold: 4.5, summary: 'Accent text on a raised brand surface.' },
   { id: 'text-accent-on-subtle', foreground: 'text.accent', background: 'surface.subtle', threshold: 4.5, summary: 'Accent text on a subtle brand surface.' },
+  // 2. Inverse text on its semantic surface.
   { id: 'text-inverse-on-inverse', foreground: 'text.inverse', background: 'surface.inverse', threshold: 4.5, summary: 'Inverse text on the inverse brand surface.' },
+  // 3. Interactive text across its state ramp.
   { id: 'on-interactive-default', foreground: 'text.onInteractive', background: 'surface.interactive.primary.default', threshold: 4.5, summary: 'Foreground on the primary interactive surface.' },
   { id: 'on-interactive-hover', foreground: 'text.onInteractive', background: 'surface.interactive.primary.hover', threshold: 4.5, summary: 'Foreground on the hovered interactive surface.' },
   { id: 'on-interactive-pressed', foreground: 'text.onInteractive', background: 'surface.interactive.primary.pressed', threshold: 4.5, summary: 'Foreground on the pressed interactive surface.' },
+  // 4. Accent/status foregrounds on their own semantic surfaces.
   { id: 'accent-text-on-accent-bg', foreground: 'accent.text', background: 'accent.background', threshold: 4.5, summary: 'Accent text on the accent background panel.' },
   ...(['info', 'success', 'warning', 'critical', 'neutral'] as const).flatMap((status) => [
     { id: `status-${status}-text`, foreground: `status.${status}.text`, background: `status.${status}.surface`, threshold: 4.5, summary: `${status} status text on its own surface.` },
     { id: `status-${status}-icon`, foreground: `status.${status}.icon`, background: `status.${status}.surface`, threshold: 3, summary: `${status} status icon on its own surface (non-text 3:1).` },
   ]),
+  // 5. Status foregrounds × page panels (F4).
+  ...(['info', 'success', 'warning', 'critical', 'neutral'] as const).flatMap((status) =>
+    (['canvas', 'raised', 'subtle'] as const).flatMap((panel) => [
+      { id: `status-${status}-text-on-${panel}`, foreground: `status.${status}.text`, background: `surface.${panel}`, threshold: 4.5, summary: `${status} status text on the brand ${panel} panel.` },
+      { id: `status-${status}-icon-on-${panel}`, foreground: `status.${status}.icon`, background: `surface.${panel}`, threshold: 3, summary: `${status} status icon on the brand ${panel} panel (non-text 3:1).` },
+    ]),
+  ),
 ]);
 
 /** `text.primary` → `color-brand-a-text-primary`: the flat key the evaluator resolves. */

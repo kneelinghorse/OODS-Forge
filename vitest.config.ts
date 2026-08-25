@@ -17,6 +17,7 @@ const srcDir = path.join(dirname, 'src');
 export default defineConfig({
   resolve: {
     alias: {
+      '@oods/viz-core': path.join(dirname, 'packages/viz-core/src/index.ts'),
       '@': srcDir,
       '~': dirname
     }

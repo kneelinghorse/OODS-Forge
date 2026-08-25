@@ -1,19 +1,30 @@
 // @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
 import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useMemo } from 'react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec.js';
-import { chartPatterns } from '~/src/viz/patterns/index.js';
+import { useMemo } from 'react';
+import type { NormalizedVizSpec } from '@oods/viz-core';
+import { chartPatterns, type PatternHeuristics } from '@oods/viz-core';
 import {
   RESPONSIVE_BREAKPOINT_MIN_PX,
   scoreResponsiveStrategies,
-} from '~/src/viz/patterns/responsive-scorer.js';
+} from '@oods/viz-core';
 import { BarChart } from '~/src/components/viz/BarChart';
 import { LineChart } from '~/src/components/viz/LineChart';
 import { AreaChart } from '~/src/components/viz/AreaChart';
 import { ScatterChart } from '~/src/components/viz/ScatterChart';
 import { BubbleChart } from '~/src/components/viz/BubbleChart';
 import { Heatmap } from '~/src/components/viz/Heatmap';
+
+// Vite is transitive here, not a root-resolvable type package. Keep the augmentation local
+// to the one eager/default glob shape this story executes instead of widening the story lens.
+declare global {
+  interface ImportMeta {
+    glob<T>(
+      pattern: string,
+      options: { readonly eager: true; readonly import: 'default' },
+    ): Record<string, T>;
+  }
+}
 
 type ResponsiveViewport = 'mobile' | 'tablet' | 'desktop';
 
@@ -49,18 +60,25 @@ function resolveSpec(pattern: (typeof chartPatterns)[number]): NormalizedVizSpec
 }
 
 function buildSchemaFromPattern(pattern: (typeof chartPatterns)[number]) {
+  // `chartPatterns` retains its literal registry union, so optional heuristic keys disappear
+  // from members that omit them even though every member satisfies PatternHeuristics.
+  const heuristics = pattern.heuristics as Pick<
+    PatternHeuristics,
+    'measures' | 'dimensions' | 'goal'
+  > & Partial<PatternHeuristics>;
+
   return {
-    measures: pattern.heuristics.measures.min,
-    dimensions: pattern.heuristics.dimensions.min,
-    temporals: pattern.heuristics.temporals?.min,
-    goal: pattern.heuristics.goal,
-    stacking: pattern.heuristics.stacking,
-    matrix: pattern.heuristics.matrix,
-    partToWhole: pattern.heuristics.partToWhole,
-    multiMetrics: pattern.heuristics.multiMetrics,
-    requiresGrouping: pattern.heuristics.requiresGrouping,
-    allowNegative: pattern.heuristics.allowNegative,
-    density: pattern.heuristics.density,
+    measures: heuristics.measures.min,
+    dimensions: heuristics.dimensions.min,
+    temporals: heuristics.temporals?.min,
+    goal: heuristics.goal,
+    stacking: heuristics.stacking,
+    matrix: heuristics.matrix,
+    partToWhole: heuristics.partToWhole,
+    multiMetrics: heuristics.multiMetrics,
+    requiresGrouping: heuristics.requiresGrouping,
+    allowNegative: heuristics.allowNegative,
+    density: heuristics.density,
   };
 }
 

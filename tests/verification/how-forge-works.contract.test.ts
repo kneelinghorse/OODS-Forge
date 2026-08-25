@@ -2,9 +2,20 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { BRAND_CONTRAST_PAIRS, BRAND_CONTRAST_RULES } from "@oods/a11y-tools";
 
 const projectRoot = fileURLToPath(new URL("../../", import.meta.url));
 const read = (path: string) => readFileSync(resolve(projectRoot, path), "utf8");
+
+function countTokenLeaves(node: unknown): number {
+  if (!node || typeof node !== "object") return 0;
+  const object = node as Record<string, unknown>;
+  if ("$value" in object) return 1;
+  return Object.values(object).reduce(
+    (count, child) => count + countTokenLeaves(child),
+    0,
+  );
+}
 
 interface ToolRegistry {
   auto: string[];
@@ -68,6 +79,33 @@ describe("how Forge works narrative truth", () => {
         /<tr><td>(Accessibility equivalence|Determinism|Contrast|Accuracy)<\/td>/g,
       ),
     ).toHaveLength(4);
+  });
+
+  it("derives the published token, bridge, and brand-contrast counts", () => {
+    const generatedCss = read("packages/tokens/dist/css/tokens.css");
+    const uniqueCssVariables = new Set(
+      [...generatedCss.matchAll(/(--[a-zA-Z0-9_-]+):/g)].map(
+        (match) => match[1],
+      ),
+    );
+    const brandBase = JSON.parse(
+      read("packages/tokens/src/tokens/brands/A/base.json"),
+    );
+    const bridge = read("packages/tokens/scripts/brand-bridge.mjs");
+    const bridgedSlots = [...bridge.matchAll(/tokenPath:\s*'([^']+)'/g)];
+
+    expect(uniqueCssVariables.size).toBe(782);
+    expect(countTokenLeaves(brandBase)).toBe(44);
+    expect(bridgedSlots).toHaveLength(41);
+    expect(BRAND_CONTRAST_PAIRS).toHaveLength(57);
+    expect(BRAND_CONTRAST_RULES).toHaveLength(228);
+
+    expect(html).toContain("CSS custom properties (782 variables)");
+    expect(html).toContain("44 leaves each");
+    expect(html).toContain("re-assigns 41 shared theme slots");
+    expect(html).toContain(
+      "228 brand-contrast rules (57 text/icon pairs per brand per theme)",
+    );
   });
 
   it("records that the narrative base has been tracked since 4f64bcf", () => {

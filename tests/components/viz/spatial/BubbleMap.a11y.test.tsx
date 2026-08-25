@@ -13,7 +13,7 @@ import * as d3Geo from 'd3-geo';
 import { BubbleMap } from '../../../../src/components/viz/spatial/BubbleMap.js';
 import { SpatialContextProvider } from '../../../../src/components/viz/spatial/SpatialContext.js';
 import type { DataRecord } from '../../../../src/viz/adapters/spatial/geo-data-joiner.js';
-import type { NormalizedVizSpec } from '../../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 expect.extend({ toHaveNoViolations });
 

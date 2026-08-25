@@ -21,20 +21,21 @@
  * FAILURE rather than a match, so an undefined variable cannot pass by looking transparent.
  *
  * ── CSS IS INJECTED IN THE REAL IMPORT ORDER, AND THE ORDER IS *DERIVED* ──
- * `apps/explorer/src/styles/index.css` is `layers.css` → `brand.css` → `motion.css` →
- * `hc.css`, and `layers.css:1` imports the generated `@oods/tokens/css`. Stylesheet
- * insertion order is the cascade's source order, so injecting in that sequence reproduces
- * the real cascade — including the tie that sprint-168 m05 removed.
+ * `apps/explorer/src/styles/index.css` is `layers.css` → `motion.css` → `hc.css`, and
+ * `layers.css:1` imports the generated `@oods/tokens/css`. Stylesheet insertion order is
+ * the cascade's source order, so injecting in that sequence reproduces the real cascade.
  *
  * s169 m02 closed a gap here. The proof used to inject THREE sheets (generated CSS,
  * layers.css, brand.css) while its order guard checked only indices 0 and 1 — so
  * `motion.css`, `hc.css` and the explorer's own `tokens.css` were all absent, and the
  * guard could not have noticed a fourth import arriving. Now `SHEETS` is **built from the
  * parsed import list itself**, and the guard asserts that list in FULL; the two therefore
- * cannot diverge, because there is only one of them. `apps/explorer/src/styles/tokens.css`
+ * cannot diverge, because there is only one of them. s178 removes `brand.css` from that
+ * order after moving its final responsibilities into the token pipeline and hc.css.
+ * `apps/explorer/src/styles/tokens.css`
  * is injected LAST — it is not an `index.css` import (Storybook loads it separately), and
  * last is the worst case for `:root` masking, so green there covers every real position.
- * MEASURED: all bridged-slot assertions pass in BOTH orders.
+ * MEASURED: all bridged-slot assertions pass in this worst-case order.
  *
  * ── SCOPE, STATED ──
  * This proves the CSS cascade resolves brand tokens in a real engine. It does NOT prove
@@ -51,9 +52,18 @@ const read = (rel) => readFileSync(path.join(REPO_ROOT, rel), 'utf8');
 const BRANDS = ['A', 'B'];
 const THEMES = ['base', 'dark', 'hc'];
 
-const { SEMANTIC_BRIDGE, UNBRIDGED_SLOTS } = await import(
+const { SEMANTIC_BRIDGE } = await import(
   path.join(REPO_ROOT, 'packages/tokens/scripts/brand-bridge.mjs')
 );
+const FOCUS_SLOTS = SEMANTIC_BRIDGE.map((entry) => entry.slot).filter((slot) =>
+  slot.startsWith('--theme-focus-'),
+);
+if (FOCUS_SLOTS.length !== 3) {
+  throw new Error(
+    `semantic bridge exposes ${FOCUS_SLOTS.length} focus slots, expected exactly 3 — ` +
+      'the rendered focus proof cannot be trusted until its contract is reconciled',
+  );
+}
 
 /** The brand token source is the expectation — never the build's own output. */
 function expectedFor(brand, theme) {
@@ -83,7 +93,7 @@ const INDEX_CSS = read('apps/explorer/src/styles/index.css');
 const importOrder = [...INDEX_CSS.matchAll(/@import\s+'\.\/([a-z-]+\.css)'/g)].map((m) => m[1]);
 // The FULL list, not just the first two. A fifth import — or a reorder past index 1 —
 // must stop this proof rather than be silently left out of the injected cascade.
-const EXPECTED_IMPORT_ORDER = ['layers.css', 'brand.css', 'motion.css', 'hc.css'];
+const EXPECTED_IMPORT_ORDER = ['layers.css', 'motion.css', 'hc.css'];
 if (JSON.stringify(importOrder) !== JSON.stringify(EXPECTED_IMPORT_ORDER)) {
   throw new Error(
     `index.css import list changed to [${importOrder.join(', ')}] — this proof pins ` +
@@ -102,41 +112,17 @@ const SHEETS = [
 console.log(`sheet order: ${SHEETS.map(([name]) => name).join(' → ')}`);
 
 /**
- * ── THE THREE FOCUS SLOTS, AND THE CLAIM THIS REPLACES ──
+ * ── THE THREE FOCUS SLOTS, NOW TOKEN-SOURCED ──
  *
- * `--theme-focus-ring-outer|-inner|-text` are the slots the bridge deliberately does NOT
- * emit (`UNBRIDGED_SLOTS`): no brand token supplies them, so `brand.css` hand-authors them.
- * Until s169 m02 the repo asserted, in three places, that deleting `brand.css` "would
- * silently de-brand focus in ALL SIX cells". MEASURED IN CHROMIUM, that is FALSE for the two
- * light cells: light focus already resolves to the shared NEUTRAL ring, identically for
- * brands A and B. Only the dark cells are branded; the hc cells are keyword-identical
- * between brands, so deleting brand.css would change four cells, not six.
- *
- * ── THE REASON, MEASURED PER ATTRIBUTE CONFIGURATION (it is not one reason) ──
- * A "light" cell can be in three attribute states, and brand.css's light block behaves
- * differently in them. Removing the `:where()` wrapper and re-measuring separates the two:
- *
- *   data-brand=A, no data-theme  — block MATCHES; at HEAD its `:where(...)` is (0,0,0) and
- *   data-brand=A, data-theme=light  loses to `:root` (0,1,0), so the neutral wins. Unwrap it
- *                                   and focus goes BRANDED. Specificity is the operative cause.
- *   data-brand=A, data-theme=base — block does NOT MATCH AT ALL (its selector names
- *                                   `:not([data-theme])` and `[data-theme='light']`).
- *                                   Unwrapping changes nothing here.
- *
- * THIS PROOF PROBES THE THIRD STATE, because `THEMES` is the set of cells the bridge
- * generates. So the 6 light-cell focus assertions below are honest but NARROW: they pin
- * that the generated `base` cell resolves focus to the neutral ring, and they could not
- * catch an unwrapped `:where()`. The structural guard further down covers exactly that gap.
- *
- * So the expectation per cell is derived from whichever declaration actually WINS:
- *   base       — `layers.css`'s `:root` neutral ring
- *   dark, hc   — `brand.css`'s own (0,2,0) block for that brand
- *
- * Branding light focus would be a behaviour change and is NOT this proof's business. What
- * IS its business is that the record match the engine.
+ * s178 promotes `--theme-focus-ring-outer|-inner|-text` into the generated semantic bridge
+ * for all six brand × theme cells. Base is deliberately brand-coloured (the visible F1
+ * movement), dark preserves the previously winning values, and hc preserves its system
+ * keywords. The expectation below is extracted from the generated token CSS itself so the
+ * focus-only browser assertions exercise the post-retirement cascade, not a deleted
+ * hand-authored stylesheet. The independent 18-value source contract lives in
+ * `brand-semantic-bridge.test.ts`; this script proves those emitted values actually win.
  */
-const BRAND_CSS = read('apps/explorer/src/styles/brand.css');
-const FOCUS_SLOTS = UNBRIDGED_SLOTS.map((entry) => entry.slot);
+const GENERATED_CSS = read('packages/tokens/dist/css/tokens.css');
 
 /**
  * Declarations of the focus slots from every block whose selector matches, merged in order.
@@ -153,7 +139,8 @@ function focusDeclarations(css, selectorMatches, label) {
   for (const match of stripped.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
     const header = match[1];
     const selector = header.slice(header.lastIndexOf(';') + 1).trim().replace(/"/g, "'");
-    if (!selector || !selectorMatches(selector)) continue;
+    const selectors = selector.split(',').map((part) => part.trim()).filter(Boolean);
+    if (selectors.length === 0 || !selectors.some(selectorMatches)) continue;
     for (const line of match[2].split(';')) {
       const idx = line.indexOf(':');
       if (idx < 0) continue;
@@ -171,21 +158,19 @@ function focusDeclarations(css, selectorMatches, label) {
   return found;
 }
 
-const NEUTRAL_FOCUS = focusDeclarations(LAYERS_CSS, (sel) => sel === ':root', "layers.css ':root'");
 const BRAND_FOCUS = {};
 for (const brand of BRANDS) {
   BRAND_FOCUS[brand] = {};
-  for (const theme of ['dark', 'hc']) {
+  for (const theme of THEMES) {
     const selector = `[data-brand='${brand}'][data-theme='${theme}']`;
     BRAND_FOCUS[brand][theme] = focusDeclarations(
-      BRAND_CSS,
+      GENERATED_CSS,
       (sel) => sel === selector,
-      `brand.css ${selector}`,
+      `generated tokens.css ${selector}`,
     );
   }
 }
-/** base/light is NOT branded — it resolves to the neutral ring. See the block comment. */
-const expectedFocusFor = (brand, theme) => (theme === 'base' ? NEUTRAL_FOCUS : BRAND_FOCUS[brand][theme]);
+const expectedFocusFor = (brand, theme) => BRAND_FOCUS[brand][theme];
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
@@ -279,10 +264,8 @@ for (const brand of BRANDS) {
           `${brand}/${theme} ${slot}: cascade painted ${cascade}, but the winning declaration ` +
             `${expectedFocus[slot]} paints ${literal}` +
             (theme === 'base'
-              ? ' — the generated base cell is expected to resolve focus to the NEUTRAL ring' +
-                " from layers.css :root; brand.css's light block names :not([data-theme]) and" +
-                " [data-theme='light'], so it does not match this cell at all"
-              : ` — expected brand.css's own [data-brand='${brand}'][data-theme='${theme}'] value`),
+              ? ` — expected the branded generated [data-brand='${brand}'][data-theme='base'] value`
+              : ` — expected the generated [data-brand='${brand}'][data-theme='${theme}'] value`),
         );
       }
     }
@@ -297,45 +280,20 @@ for (const brand of BRANDS) {
 await browser.close();
 
 /**
- * STRUCTURAL GUARD FOR THE STATE THE PROBES CANNOT REACH.
- *
- * The painted assertions above visit `data-theme='base'`, where brand.css's light block
- * does not match on selector grounds. In the two states it DOES match — no `data-theme`,
- * and `data-theme='light'` — what keeps focus neutral is the `:where()` wrapper's zero
- * specificity. MEASURED: strip the wrapper and both states go branded (A text becomes
- * `oklch(0.495 0.17 45)`, B's `oklch(0.48 0.14 238)`).
- *
- * Nothing above could catch that, so it is asserted on the source: the light blocks must
- * still be `:where()`-wrapped. If a future change unwraps them, light focus becomes branded
- * in the real app and three documents describing it go stale at once — this reds first.
- */
-for (const brand of BRANDS) {
-  const wrapped = new RegExp(
-    `:where\\(\\[data-brand='${brand}'\\]:not\\(\\[data-theme\\]\\), \\[data-brand='${brand}'\\]\\[data-theme='light'\\]\\)`,
-  );
-  if (!wrapped.test(BRAND_CSS)) {
-    failures.push(
-      `brand.css: brand ${brand}'s light block is no longer :where()-wrapped — light focus ` +
-        'is now BRANDED when data-theme is absent or "light". That is a real behaviour ' +
-        'change; update brand.css\'s header, the bridge\'s UNBRIDGED_SLOTS rationale and ' +
-        'tests/tokens/brand-css-no-tie.test.ts to match before re-greening this.',
-    );
-  }
-}
-
-/**
- * Cross-brand identity, checked over the values already measured above rather than by
- * painting more probes (so it adds no assertions to the count). Light and hc focus must be
- * brand-INVARIANT; dark must NOT be, or "dark is the branded row" is not a real claim.
+ * Cross-brand identity/discrimination, checked over the values already measured above
+ * rather than by painting more probes. Base is now branded and therefore must diverge;
+ * hc remains keyword-identical. Dark remains branded and must also diverge.
  */
 for (const slot of FOCUS_SLOTS) {
   for (const theme of ['base', 'hc']) {
     const a = focusComputed[`A/${theme}`][slot];
     const b = focusComputed[`B/${theme}`][slot];
-    if (a !== b) {
+    const shouldMatch = theme === 'hc';
+    if ((a === b) !== shouldMatch) {
       failures.push(
-        `${theme} ${slot}: A paints ${a} but B paints ${b} — this row is documented as ` +
-          'brand-invariant; if that changed, update the record rather than this check',
+        `${theme} ${slot}: A paints ${a} and B paints ${b} — this row must be ` +
+          `${shouldMatch ? 'brand-invariant' : 'brand-distinct'}; update the ratified contract ` +
+          'rather than weakening this check',
       );
     }
   }
@@ -343,8 +301,8 @@ for (const slot of FOCUS_SLOTS) {
   const bDark = focusComputed['B/dark'][slot];
   if (aDark === bDark) {
     failures.push(
-      `dark ${slot}: A and B both paint ${aDark} — the dark row is the ONLY branded focus ` +
-        'row, so identical values mean the branding was lost',
+      `dark ${slot}: A and B both paint ${aDark} — identical values mean the branded ` +
+        'dark focus identity was lost',
     );
   }
 }
@@ -371,6 +329,6 @@ if (asserted === 0) {
 }
 console.log(
   '✔ every bridged slot resolves in a real browser to the value its token source declares, ' +
-    'and every focus slot resolves to the declaration that actually wins its cell ' +
-    '(neutral in light, brand.css in dark and hc)',
+    'and every focus slot resolves from the generated bridge ' +
+    '(brand-distinct in base and dark, system-keyword-identical in hc)',
 );

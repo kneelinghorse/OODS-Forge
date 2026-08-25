@@ -12,7 +12,7 @@ Sprint 15 introduces a full multi-brand scaffolding layer. Brand selection now f
 
 - Brand sources live under `packages/tokens/src/tokens/brands/{A,B}/(base|dark|hc).json`.
 - High level aliases expose brand primitives via `packages/tokens/src/tokens/aliases/brand-{A,B}.json`.
-- UI-level mapping is GENERATED. The generated brand→semantic bridge in `@oods/tokens` (`packages/tokens/dist/css/tokens.css`, authored by `packages/tokens/scripts/brand-bridge.mjs`) is the sole source of all 38 bridged `--theme-*` slots as of sprint-168. `apps/explorer/src/styles/brand.css` retains only what the bridge does not emit: the `--brandA-*`/`--brandB-*` primitives, the three focus slots, and a forced-colors block. Each brand × theme cell remaps the theme/system layers for light, dark, and forced-colors modes with no component changes.
+- UI-level mapping is GENERATED. The generated brand→semantic bridge in `@oods/tokens` (`packages/tokens/dist/css/tokens.css`, authored by `packages/tokens/scripts/brand-bridge.mjs`) is the sole source of all 41 bridged `--theme-*` slots, including focus. Brand-root forced-colors behavior lives in `apps/explorer/src/styles/hc.css`. Each brand × theme cell remaps the theme/system layers for light, dark, and forced-colors modes with no component changes.
 - Regenerate outputs with:
   ```bash
   pnpm --filter @oods/tokens run build

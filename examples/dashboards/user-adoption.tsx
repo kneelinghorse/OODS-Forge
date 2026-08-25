@@ -3,7 +3,7 @@ import { RenderObject } from '../../src/components/RenderObject.js';
 import type { RenderObjectProps } from '../../src/components/RenderObject.js';
 import type { ObjectSpec, TraitAdapter } from '../../src/types/render-context.js';
 import type { UserRecord } from '../../src/objects/user/types.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { VizFacetGrid } from '../../src/components/viz/VizFacetGrid.js';
 import { LineChart } from '../../src/components/viz/LineChart.js';
 import { BarChart } from '../../src/components/viz/BarChart.js';

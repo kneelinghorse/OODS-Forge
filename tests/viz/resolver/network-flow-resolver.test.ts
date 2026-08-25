@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { ResolverInput } from '../../../src/types/viz/resolver.js';
 import type { HierarchyInput, NetworkInput, SankeyInput } from '../../../src/types/viz/network-flow.js';
-import { RendererSelectionError, selectVizRenderer } from '../../../src/viz/adapters/renderer-selector.js';
+import { RendererSelectionError, selectVizRenderer } from '@oods/viz-core';
 import {
   isNetworkFlowVizType,
   resolveNetworkFlowPath,

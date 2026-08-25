@@ -17,7 +17,6 @@
 
 // @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
 import type { JSX } from 'react';
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -83,16 +82,9 @@ const STYLES = {
  * ───────────────────────────────────────────────────────────────────────────── */
 
 const SAMPLE_ARCHIVED_AT = new Date('2024-12-01T10:30:00Z');
-const SAMPLE_RESTORE_DEADLINE = new Date('2024-12-31T10:30:00Z');
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(date);
-}
-
-function daysUntil(date: Date): number {
-  const now = new Date();
-  const diffMs = date.getTime() - now.getTime();
-  return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

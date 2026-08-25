@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { listPatterns } from '@/viz/patterns/index.js';
-import { scorePattern, suggestPatterns, type SchemaIntent } from '@/viz/patterns/suggest-chart.js';
+import { listPatterns } from '@oods/viz-core';
+import { scorePattern, suggestPatterns, type SchemaIntent } from '@oods/viz-core';
 
 const patterns = listPatterns();
 

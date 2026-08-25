@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import tokensBundle from '@oods/tokens';
-import { chartPatterns } from '@/viz/patterns/index.js';
+import { chartPatterns } from '@oods/viz-core';
 import {
   RESPONSIVE_BREAKPOINT_MIN_PX,
   scoreResponsiveStrategies,
-} from '@/viz/patterns/responsive-scorer.js';
-import type { SchemaIntent } from '@/viz/patterns/suggest-chart.js';
+} from '@oods/viz-core';
+import type { SchemaIntent } from '@oods/viz-core';
 
 const repoRoot = process.cwd();
 

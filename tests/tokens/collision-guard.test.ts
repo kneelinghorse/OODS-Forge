@@ -14,8 +14,9 @@
  *      duplicate that crosses out of one brand's directory is still reported.
  *
  * (3) matters because a guard that exempted too much would be green for the wrong
- * reason: the prescribed layering produces 41 differing duplicates per themed scope by
- * design, so "no collisions reported" is only meaningful if non-chain duplicates fail.
+ * reason: the prescribed layering produces 44 differing source-leaf duplicates per themed
+ * scope by design, so "no collisions reported" is only meaningful if non-chain duplicates
+ * fail. This is a source inventory, distinct from the 41-slot semantic bridge.
  */
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import { spawnSync } from 'node:child_process';
@@ -107,7 +108,7 @@ describe('s167 m01 — the token collision guard', () => {
   });
 
   it('exempts the declared brand overlay chain — which is doing real work, not nothing', () => {
-    // The A/dark scope genuinely contains 41 token paths declared twice with DIFFERENT
+    // The A/dark scope genuinely contains 44 source paths declared twice with DIFFERENT
     // values (brands/A/base.json then brands/A/dark.json). If the exemption were
     // removed, every one of them would be reported. Proving the count is non-trivial is
     // what stops "0 violations" from being a vacuous green.
@@ -120,7 +121,7 @@ describe('s167 m01 — the token collision guard', () => {
     // With the exemption in place: clean.
     expect(findCollisions(files, TOKENS_PKG)).toEqual([]);
 
-    // Without it: the same two files collide on all 41 brand slots. Counted directly
+    // Without it: the same two files collide on all 44 brand source leaves. Counted directly
     // from source so this cannot drift out of step with the guard's own logic.
     const leaves = (node: unknown, trail: string[] = []): string[] => {
       const out: string[] = [];
@@ -137,7 +138,7 @@ describe('s167 m01 — the token collision guard', () => {
     const baseLeaves = new Set(leaves(read('src/tokens/brands/A/base.json')));
     const darkLeaves = leaves(read('src/tokens/brands/A/dark.json'));
     const overlapping = darkLeaves.filter((p) => baseLeaves.has(p));
-    expect(overlapping).toHaveLength(41);
+    expect(overlapping).toHaveLength(44);
   });
 
   /**

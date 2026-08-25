@@ -5,7 +5,7 @@ import {
   chartPatternsV2,
   getPatternV2ById,
   type ChartPatternV2,
-} from '@/viz/patterns/chart-patterns-v2.js';
+} from '@oods/viz-core';
 
 type TokenBindingValue = string | ReadonlyArray<string> | Record<string, string | ReadonlyArray<string>>;
 

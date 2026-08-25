@@ -1,9 +1,11 @@
 # OODS-Forge — Overall Plan
 
-**Status:** Active — canonical planning entry point
-**Date:** 2026-05-10
+**Status:** Historical vision snapshot — superseded for current sequencing on 2026-08-25
+**Snapshot date:** 2026-05-10
 **Repository:** [github.com/kneelinghorse/OODS-Forge](https://github.com/kneelinghorse/OODS-Forge) (private)
 **Public predecessor:** [github.com/kneelinghorse/OODS-Foundry-mcp](https://github.com/kneelinghorse/OODS-Foundry-mcp) (frozen as v1)
+
+> **Historical vision snapshot (2026-05).** This document preserves the Position B+C / mission-graph frame as point-in-time context. It is not the current Forge forward plan, CMOS work queue, or the Shopify enterprise proof's execution plan. Current Forge sequencing lives in [roadmap/near.md](roadmap/near.md), and current mission state lives in CMOS. The Shopify proof runs in its sibling repository; Forge serves it by `cmos_message` and does not absorb that project's D1–D6 or sprint sequence.
 
 ---
 
@@ -187,8 +189,8 @@ Full glossary in [glossary.md](glossary.md). Critical terms named here for orien
 - Not a sprint plan. Sprint-96 missions are derived from this in [roadmap/near.md](roadmap/near.md).
 - Not a marketing positioning document. The public narrative is downstream of this; this is internal canon.
 - Not a commitment to specific calendar dates. Pace is sessions; this doc evolves as sessions land.
-- Not a frozen artifact. Update via direct edit + commit on `OODS-pro`. Decision memo updates land separately under `decisions/`.
+- Not the current forward plan or work queue. It is a retained 2026-05 vision snapshot; use [roadmap/near.md](roadmap/near.md) and CMOS for current sequencing and mission state.
 
 ---
 
-*Last updated: 2026-05-10. Authored from the long-term roadmap planning conversation 2026-05-09 → 2026-05-10. Supersedes all previously archived foundational docs in `_archive/`.*
+*Snapshot authored/last updated 2026-05-10; superseded for current sequencing on 2026-08-25.*

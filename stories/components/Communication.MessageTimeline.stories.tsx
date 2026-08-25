@@ -1,6 +1,6 @@
 // @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
 import type { JSX } from 'react';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { MessageTimeline } from '../../src/components/communication/MessageTimeline.js';
@@ -104,4 +104,3 @@ function buildDemoMessages(): Message[] {
 
   return messages;
 }
-

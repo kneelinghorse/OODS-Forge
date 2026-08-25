@@ -7,7 +7,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Breadcrumbs } from '../../src/components/breadcrumbs/Breadcrumbs.js';
-import type { BreadcrumbsProps, BreadcrumbItem } from '../../src/components/breadcrumbs/types.js';
+import type { BreadcrumbsProps } from '../../src/components/breadcrumbs/types.js';
 
 type Story = StoryObj<BreadcrumbsProps>;
 

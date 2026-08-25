@@ -1,8 +1,10 @@
 # Mission Graph
 
-**Status:** Active
-**Date:** 2026-05-10
+**Status:** Historical vision snapshot — superseded for current sequencing on 2026-08-25
+**Snapshot date:** 2026-05-10
 **Companion to:** [overview.md](overview.md)
+
+> **Historical vision snapshot (2026-05).** This document preserves the Position B+C / mission-graph frame as point-in-time context. It is not the current Forge forward plan, CMOS work queue, or the Shopify enterprise proof's execution plan. Current Forge sequencing lives in [roadmap/near.md](roadmap/near.md), and current mission state lives in CMOS. The Shopify proof runs in its sibling repository; Forge serves it by `cmos_message` and does not absorb that project's D1–D6 or sprint sequence.
 
 The full mission graph for OODS-Forge inside the design intelligence platform. Four tracks. Dependencies named. Sequencing recommendation. The unit of progress is the mission, not the calendar week.
 
@@ -179,4 +181,4 @@ A reasonable sprint-96 shape, based on this graph, lives in [roadmap/near.md](ro
 
 ---
 
-*Authored 2026-05-10. Updates land via direct edit + commit on `OODS-pro`.*
+*Authored 2026-05-10; retained as a historical vision snapshot. Current sequencing lives in [roadmap/near.md](roadmap/near.md), and execution state lives in CMOS.*

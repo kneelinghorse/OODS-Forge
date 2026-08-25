@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import type { JSX, ReactNode } from 'react';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 export interface VizContainerProps extends React.HTMLAttributes<HTMLElement> {
   readonly spec: NormalizedVizSpec;

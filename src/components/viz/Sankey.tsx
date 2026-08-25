@@ -9,7 +9,7 @@ import type { HTMLAttributes, JSX } from 'react';
 import type { EChartsType } from 'echarts';
 
 import type { SankeyInput } from '../../types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptSankeyToECharts, SankeyValidationError } from '../../viz/adapters/echarts/sankey-adapter.js';
 import { SankeyA11yFallback } from './a11y/SankeyA11yFallback.js';
 
