@@ -40,6 +40,9 @@ describe("Sprint 177 closeout carrier", () => {
     resolve(projectRoot, ".github/workflows/ci.yml"),
     "utf8",
   );
+  const packageManifest = JSON.parse(
+    readFileSync(resolve(projectRoot, "package.json"), "utf8"),
+  ) as { scripts?: Record<string, string> };
   const ciRows = block(
     checklist,
     "<!-- closeout-ci-rows:start -->",
@@ -96,6 +99,23 @@ describe("Sprint 177 closeout carrier", () => {
     expect(vrRow).toContain("structurally non-local");
     expect(vrRow).toContain("CHROMATIC_PROJECT_TOKEN");
     expect(ciRows).not.toContain("CI does not run");
+  });
+
+  it("builds public-package declarations before the coverage contract reads them", () => {
+    const pretestCoverage = packageManifest.scripts?.["pretest:coverage"];
+    const coverageRow = ciRows
+      .split("\n")
+      .find((line) => line.startsWith("| CI-11 |"));
+
+    expect(pretestCoverage).toBe(
+      "pnpm run build && pnpm run build:packages && pnpm run pkg:build",
+    );
+    expect(coverageRow).toContain(
+      `\`pretest:coverage\`, which is \`${pretestCoverage}\``,
+    );
+    expect(coverageRow).toContain(
+      "pkg:build` creates the public `dist/pkg` declarations the contract inspects",
+    );
   });
 
   it("carries every closeout-only control and keeps the build-input bite proof last", () => {

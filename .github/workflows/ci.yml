@@ -249,6 +249,10 @@ jobs:
 
   tokens-governance:
     name: tokens-governance
+    # The diff, label lookup, and comment all consume pull_request-only context.
+    # A push run has no github.event.pull_request.base.sha; running this matrix
+    # there would pass an empty --base and create false failing checks.
+    if: ${{ github.event_name == 'pull_request' }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15

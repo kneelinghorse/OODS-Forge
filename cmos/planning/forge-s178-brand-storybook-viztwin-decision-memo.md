@@ -214,3 +214,25 @@ The historical #1259 reconnect is distinct from s178's empty L-06 advertised-sur
 This is the build session's account of the named dirty working tree. Review remains separate under SR-14, project Rule 10, and §5: re-extract and compare the checklist hashes/stable IDs, assert zero unresolved generation placeholders, re-run the instantiated rows at review HEAD, re-check each physical bite, and compare the mission criteria with the source template plus the declared s178 substitutions.
 
 The m07 transition completed at `2026-08-25T19:01:55.297Z` and created decisions #1575–#1577. The post-transition mission queue reports no active, queued, or blocked work. Sprint-COMPLETE and the coherent commit remain Derek's authority.
+
+### §7.8 Post-closeout PR #77 correction (2026-08-25; local only)
+
+PR #77 at `70d60a97dea6044ae1ab414e335619a4435f92bf` exposed three defects after the §7.1–§7.7 closeout operand:
+
+| Signal | Cause | Correction |
+|---|---|---|
+| CI coverage — pull-request job `97946001202` and push job `97945391417` both failed with `Expected generated declaration files in dist/pkg/: expected 0 to be greater than 0`. | `pretest:coverage` ran `build` and `build:packages` but not `pkg:build`; the earlier local green had inherited ignored `dist/pkg` output. | `pretest:coverage` now ends with `pnpm run pkg:build`; canonical `CI-11` mirrors that literal lifecycle, and its carrier contract pins why the public declarations must exist. |
+| Package Compatibility job `97946000057` failed with `ERR_PNPM_WORKSPACE_PKG_NOT_FOUND` because installable `dist/pkg/package.json` shipped `@oods/viz-core@workspace:*`. | The root runtime dependency was copied into the installable manifest even though the clean sample app is outside the monorepo. | viz-core runtime and declarations are bundled; the source workspace link is development-only; installable manifests omit bundled dependencies, preserve the required external `@oods/tokens` peer and its metadata, and reject any remaining `workspace:` range; artifact contracts scan ESM, CJS, DTS, DCTS, and the manifest. The compatibility workflow's push and pull-request filters now watch the actual `tsup.config.mjs`, held by a two-test structural contract. |
+| Push-run token-governance jobs A/B (`97945927566`, `97945927461`) invoked `--base ""` and failed with `Expected a value after --base`. | `github.event.pull_request.base.sha`, PR number, labels, and comment context do not exist on a `push` event. | The `tokens-governance` matrix is guarded with `if: ${{ github.event_name == 'pull_request' }}` while push CI remains enabled; a two-test workflow contract pins both the event boundary and the PR-base operand. |
+
+The #1550 source-block extraction convention remains block content without the HTML-comment marker lines, with the final trailing newline. The CI-row hash changed from `c14628242ee377492ab4219e2ed1e57479153472ab30fb87f06c62503d2ec21a` to `8263ea138212c98393db6a1df89502a1d32e913baf8bd7567265cc6227bbc411`. The local-row block did not change: its old and current hash is `7c4ed5ad1f0c17597de8fdd752f809dae21e80320abb24d2d92b382cdc2369db`. The shorter local-row value printed in §7.2 is a transcription truncation, not the canonical SHA-256.
+
+For the final clean coverage replay, the pre-existing ignored `dist/pkg` directory was moved aside before `pnpm run test:coverage`. The corrected lifecycle recreated it and exited 0: **486 passed + 1 skipped files (487 total), 5283 passed + 16 skipped tests (5299 total), Vitest duration 72.74s; 74.48% statements, 73.52% branches, 84.83% functions, and 74.48% lines.** The public-API contract passed 3/3 inside that clean lifecycle.
+
+`pnpm run pkg:compat` also exited 0. The clean sample application installed 145 packages without a viz-core workspace dependency, `Trait Engine smoke test passed.`, and the command ended with `✅ pkg:compat checks passed (storybook build + sample app install)`.
+
+The remaining ordered local controls are green: `pnpm exec tsc --noEmit`; the build-stories ratchet at pin 0; `pnpm vitest run tests/contracts tests/viz` at 46 files / 393 tests with zero skips; and `pnpm run pkg:build && node scripts/quality/viz-dts-inventory.mjs --check` at the exact 130-symbol root `viz` namespace. A mistakenly parallel ad hoc invocation raced `pkg:build`'s clean step against the package readers and failed on the transiently absent directory; the required sequential rerun is the 46/393 result above.
+
+The §7/L-06 advertised-surface scans remain empty for ref/ref, ref/working-tree, and untracked operands; this correction introduces **no advertised-surface mover**.
+
+At the time of this local verification, these corrections were uncommitted and unpushed against local and PR head `70d60a97dea6044ae1ab414e335619a4435f92bf`; the remote failures therefore still described the old bytes, and no corrected GitHub Actions run existed. The subsequent coherent correction commit, push, and resulting Actions runs are review-time evidence rather than retroactive changes to this local operand.
