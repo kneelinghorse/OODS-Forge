@@ -24,12 +24,12 @@
  * test verify each cell WITHOUT a CSS engine (it loads only tokens.css), and a matrix of
  * six identical `var()` texts makes "no cell carries another cell's value" unfalsifiable.
  *
- * THE SLOT LIST IS SOURCED FROM `apps/explorer/src/styles/brand.css`
- * -----------------------------------------------------------------
- * That file is the hand-authored copy this bridge is meant to eventually replace, so its
- * slot names are the contract. It assigns 41 distinct `--theme-*` slots; 38 of them have
- * a brand token that corresponds by name and are mapped below. The other three are
- * recorded in UNBRIDGED_SLOTS with the reason.
+ * THE SLOT LIST IS A FROZEN CONSUMER CONTRACT
+ * -------------------------------------------
+ * The 41 slot names were captured from the former hand-authored mapping and are now
+ * carried by `tests/tokens/__fixtures__/brand-css-slot-contract.json`. s178 m02 deleted
+ * `apps/explorer/src/styles/brand.css` after the final three focus slots gained tokens;
+ * every frozen slot is mapped below.
  */
 
 /**
@@ -38,7 +38,7 @@
  *
  * Written out in full rather than derived by string transform. The correspondence
  * happens to be regular, but it is a design decision per slot — deriving it would hide
- * which slots are deliberately mapped and make the two gaps below invisible.
+ * which slots are deliberately mapped.
  */
 export const SEMANTIC_BRIDGE = Object.freeze([
   // surfaces
@@ -55,6 +55,11 @@ export const SEMANTIC_BRIDGE = Object.freeze([
   // borders
   { slot: '--theme-border-subtle', tokenPath: 'border.subtle' },
   { slot: '--theme-border-strong', tokenPath: 'border.strong' },
+
+  // focus
+  { slot: '--theme-focus-ring-outer', tokenPath: 'focus.ring.outer' },
+  { slot: '--theme-focus-ring-inner', tokenPath: 'focus.ring.inner' },
+  { slot: '--theme-focus-text', tokenPath: 'focus.text' },
 
   // text
   { slot: '--theme-text-primary', tokenPath: 'text.primary' },
@@ -97,40 +102,18 @@ export const SEMANTIC_BRIDGE = Object.freeze([
 ]);
 
 /**
- * Slots `brand.css` assigns that this bridge deliberately does NOT emit, and why.
- *
- * All three are focus-ring slots with NO brand token behind them. `theme.focus.*` exists
- * in `src/tokens/themes/theme0/focus.json` but resolves to the neutral reference palette,
- * and `brand.css` derives its per-brand focus values by hand — two of them from brand
- * primitives, but `--theme-focus-ring-outer` from a `color-mix()` whose ratio is itself a
- * hand-authored design decision (55% in the light block, 60% in dark, a flat `Highlight`
- * in hc). Generating those would mean the build INVENTING design values that exist in no
- * token file, which is the fourth-writer problem this sprint exists to shrink, not grow.
- *
- * Consequence, stated plainly rather than hidden: under a bridge block the three focus
- * slots keep their `:root` value from theme0, i.e. the neutral palette. Giving them a
- * real brand source needs a token, not a generator heuristic.
- *
- * ── s169 m02 CORRECTION: brand.css's LIGHT aliases NEVER TAKE EFFECT ──
- * The per-slot reasons below used to read as though brand.css supplied branded focus in
- * light and hard-coded it in dark. Measured in Chromium: brand.css's light blocks are
- * `:where(...)`-wrapped, so they are (0,0,0) and LOSE to `:root` (0,1,0). Light focus
- * resolves to the neutral ring, byte-identically for brands A and B, in every light
- * attribute state. Only dark is branded; hc is keyword-identical across brands. The light
- * aliases are written, parsed, and then beaten — real code that changes nothing.
- * `scripts/quality/brand-cascade-browser-proof.mjs` pins both halves.
+ * Every slot in the frozen brand consumer contract is bridged. This export stays as an
+ * explicit empty carrier so callers can keep proving that bridge + gaps account for the
+ * entire contract. s178 m02 closed the last three gaps by authoring focus tokens for all
+ * six brand × theme cells; the generator still never invents a value.
  */
-export const UNBRIDGED_SLOTS = Object.freeze([
-  { slot: '--theme-focus-ring-outer', reason: 'no brand token; brand.css derives it via a hand-authored color-mix() ratio that varies per theme — but only its dark and hc blocks win; the light one is :where()-wrapped and loses to :root' },
-  { slot: '--theme-focus-ring-inner', reason: 'no brand token; brand.css hardcodes a literal in dark and aliases surface.canvas in light, though the light alias loses to :root and the neutral ring is what paints' },
-  { slot: '--theme-focus-text', reason: 'no brand token; brand.css hardcodes a literal in dark and HighlightText in hc, and aliases text.accent in light — the light alias loses to :root, so light focus text is the neutral accent' },
-]);
+export const UNBRIDGED_SLOTS = Object.freeze([]);
 
 /**
  * Brand tokens with no consumer slot on the other side of the bridge. Recorded for the
  * same reason as UNBRIDGED_SLOTS: an unmapped token is a fact worth stating, not a
- * silent omission. `accent.*` is a distinct ramp from `text.accent` and `brand.css`
- * never consumed it.
+ * silent omission. `accent.*` is a distinct ramp from `text.accent` and the retired
+ * hand-authored mapping never consumed it.
  */
 export const UNBRIDGED_TOKENS = Object.freeze([
   'accent.background',

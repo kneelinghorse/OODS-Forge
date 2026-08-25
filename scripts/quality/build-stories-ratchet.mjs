@@ -42,7 +42,7 @@ function measure() {
 
   const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
   const lines = output.split('\n').filter((line) => ERROR_LINE.test(line));
-  return { count: lines.length, output, lines };
+  return { count: lines.length, output, lines, status: result.status, signal: result.signal };
 }
 
 const printOnly = process.argv.includes('--print');
@@ -54,7 +54,22 @@ if (!Number.isInteger(expected) || expected < 0) {
   process.exit(1);
 }
 
-const { count, lines } = measure();
+const { count, lines, output, status, signal } = measure();
+
+// A zero diagnostic count is only evidence of a clean build when tsc itself succeeded.
+// Without this guard a crashed/mis-invoked compiler at pin 0 would be reported as GREEN.
+if (status !== 0 && lines.length === 0) {
+  const termination = status === null ? `signal ${signal ?? 'unknown'}` : `status ${status}`;
+  console.error(
+    `build-stories ratchet: tsc exited with ${termination} but produced no parseable TypeScript diagnostics; ` +
+      'refusing to treat the run as zero errors.',
+  );
+  const detail = output.trim();
+  if (detail) {
+    console.error(detail);
+  }
+  process.exit(1);
+}
 
 if (printOnly) {
   console.log(`build:stories errors = ${count} (pin ${expected})`);

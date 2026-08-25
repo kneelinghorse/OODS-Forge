@@ -16,6 +16,7 @@ const tokensDistDir = path.resolve(workspaceRoot, 'packages', 'tokens', 'dist');
 const tokensTailwindPath = path.resolve(tokensDistDir, 'tailwind', 'tokens.json');
 const tokensCssPath = path.resolve(tokensDistDir, 'css', 'tokens.css');
 const tokensModulePath = path.resolve(tokensDistDir, 'index.js');
+const vizCoreModulePath = path.resolve(workspaceRoot, 'packages', 'viz-core', 'src', 'index.ts');
 const provenanceCandidate = path.resolve(workspaceRoot, 'dist', 'pkg', 'provenance.json');
 const provenanceFallback = path.resolve(workspaceRoot, 'configs', 'provenance.placeholder.json');
 let provenancePayload: Record<string, unknown> = {
@@ -87,6 +88,7 @@ const config: StorybookConfig = {
         '~': workspaceRoot,
         '@': path.join(workspaceRoot, 'src'),
         '@storybook/blocks': '@storybook/addon-docs/blocks',
+        '@oods/viz-core': vizCoreModulePath,
         '@oods/tokens/css': tokensCssPath,
         '@oods/tokens/tailwind': tokensTailwindPath,
         '@oods/tokens': tokensModulePath,

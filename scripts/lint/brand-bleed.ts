@@ -39,9 +39,17 @@ function hasBrandAttribute(content: string, brand: 'A' | 'B'): boolean {
 }
 
 function referencesBrandTokens(content: string, brand: 'A' | 'B'): boolean {
-  const cssVarPattern = new RegExp(`--brand${brand}[\\w-]*`, 'i');
+  const legacyCssVarPattern = new RegExp(`--brand${brand}[\\w-]*`, 'i');
+  const generatedCssVarPattern = new RegExp(
+    `--oods-(?:color-)?brand-${brand.toLowerCase()}-[\\w-]*`,
+    'i',
+  );
   const tokenPattern = new RegExp(`color\\.brand\\.${brand}`, 'i');
-  return cssVarPattern.test(content) || tokenPattern.test(content);
+  return (
+    legacyCssVarPattern.test(content) ||
+    generatedCssVarPattern.test(content) ||
+    tokenPattern.test(content)
+  );
 }
 
 async function main(): Promise<void> {

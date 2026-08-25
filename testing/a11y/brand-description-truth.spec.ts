@@ -78,7 +78,8 @@ const PAIR_FOR_CLAIM: Record<string, { foreground: string; background: string }>
     background: 'surface.interactive.primary.default',
   },
   'status.success.text': { foreground: 'status.success.text', background: 'status.success.surface' },
-  'status.warning.icon': { foreground: 'status.warning.icon', background: 'status.warning.surface' },
+  'status.success.icon': { foreground: 'status.success.icon', background: 'surface.subtle' },
+  'status.warning.icon': { foreground: 'status.warning.icon', background: 'surface.subtle' },
 };
 
 /** Any `N:1` in the prose, with the comparator that governs how it must be read. */

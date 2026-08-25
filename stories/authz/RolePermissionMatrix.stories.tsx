@@ -13,7 +13,6 @@ import { useRolePermissions } from '../../src/hooks/useRolePermissions.js';
 import type {
   PermissionDescriptor,
   RoleDescriptor,
-  RolePermissionCellKey,
   RolePermissionClient,
   RolePermissionMatrixSnapshot,
 } from '../../src/hooks/useRolePermissions.js';

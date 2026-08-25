@@ -193,8 +193,9 @@ describe('s167 m01 — brand x theme matrix is scope-correct in the emitted CSS'
     for (const theme of THEMES) {
       it(`${brand}/${theme}: every brand token carries its OWN scope's source value`, () => {
         const expected = table.get(`${brand}/${theme}`)!;
-        // 41 brand slots per file — a table that silently emptied would pass vacuously.
-        expect(expected.size).toBe(41);
+        // 44 brand-source leaves per file — distinct from the 41 semantic bridge slots.
+        // A table that silently emptied would otherwise pass vacuously.
+        expect(expected.size).toBe(44);
 
         const wrong = findWrongValues(blocks, table, brand, theme);
         expect(wrong, `${brand}/${theme} scope carries wrong values:\n  ${wrong.join('\n  ')}`).toEqual([]);

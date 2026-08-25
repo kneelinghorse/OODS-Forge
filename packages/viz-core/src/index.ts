@@ -55,11 +55,36 @@ export * from './adapters/spatial/index.js';
 export * from './patterns/suggest-chart.js';
 export * from './patterns/index.js';
 
+// Rung-1 retirement surface: these implementations have always lived in
+// viz-core, but the legacy src/viz forwarding modules exposed them only by
+// deep path. Keep the package entry as the single consumer-facing resolution.
+export {
+  chartPatternsV2,
+  getPatternV2ById,
+  type ChartPatternV2,
+  type LayoutStrategy,
+} from './patterns/chart-patterns-v2.js';
+export {
+  recommendInteractions,
+  type InteractionBundle,
+  type InteractionScoreEntry,
+} from './patterns/interaction-scorer.js';
+export {
+  scoreLayoutForPattern,
+  type LayoutRecommendationBundle,
+} from './patterns/layout-scorer.js';
+export { extractFieldBlueprint } from './patterns/pattern-field-helpers.js';
+export {
+  RESPONSIVE_BREAKPOINT_MIN_PX,
+  scoreResponsiveStrategies,
+} from './patterns/responsive-scorer.js';
+
 // Headless rows -> NormalizedVizSpec builder (explicit + suggest modes)
 export * from './builder/spec-builder.js';
 
 // Accessibility synthesis (table / narrative / equivalence / data-analysis)
 export * from './a11y/index.js';
+export { formatDimension, formatValue } from './a11y/format.js';
 
 // Accuracy rules (sprint-170 m01) — the four deterministic, reader-only structural rules
 // artifact.certify evaluates as its accuracy pillar (#818, the fourth #977 pillar). Pure

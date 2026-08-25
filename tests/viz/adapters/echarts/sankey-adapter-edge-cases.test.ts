@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { SankeyInput } from '../../../../src/types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptSankeyToECharts, SankeyValidationError } from '../../../../src/viz/adapters/echarts/sankey-adapter.js';
 
 const baseSpec: NormalizedVizSpec = {

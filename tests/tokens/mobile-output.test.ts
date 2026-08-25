@@ -104,15 +104,14 @@ const bytesToHex = (bytes: number[]) =>
 const swiftChannels = (bytes: number[]) => bytes.map((byte) => (byte / 255).toFixed(3));
 
 describe('mobile output — census and shape', () => {
-  // s173 m02: +5 exactly, on both the source census and both emitted files — the five
-  // sys.breakpoint tokens. They are $type number, so they are NOT dimensions and the
-  // per-class manifest counts below (27/24/18/105/174) are UNMOVED; a number emits a bare
-  // literal on every platform, which is why the deferral subtraction (54 easings + 14 font
-  // stacks) is also unmoved. If either of those moved, this file's other assertions red.
-  it('emits exactly 708 constants per file (776 − 54 easing − 14 font stacks), identical name sets', () => {
-    expect(flatEntries.length).toBe(776);
-    expect(swiftConstants.size).toBe(708);
-    expect(kotlinConstants.size).toBe(708);
+  // s178 m02: +6 exactly — three base focus colours for each brand. The 18 authored cells
+  // collapse to the two base brand namespaces in the flat/mobile artifact; dark and hc stay
+  // scoped web output. The dimension manifest counts (27/24/18/105/174) and the deferral
+  // subtraction (54 easings + 14 font stacks) remain unmoved.
+  it('emits exactly 714 constants per file (782 − 54 easing − 14 font stacks), identical name sets', () => {
+    expect(flatEntries.length).toBe(782);
+    expect(swiftConstants.size).toBe(714);
+    expect(kotlinConstants.size).toBe(714);
     expect([...swiftConstants.keys()].sort()).toEqual([...kotlinConstants.keys()].sort());
   });
 
@@ -251,16 +250,16 @@ describe('mobile output — magnitude pins, one per value class', () => {
 });
 
 describe('mobile output — anti-gaming, value-position anchored', () => {
-  it('emits ≥389 typed colour constants per file (UIColor( / Color(0x at the value position)', () => {
+  it('emits ≥395 typed colour constants per file (UIColor( / Color(0x at the value position)', () => {
     const swiftColours = [...swiftConstants.values()].filter((value) => value.startsWith('UIColor(')).length;
     const kotlinColours = [...kotlinConstants.values()].filter((value) => value.startsWith('Color(0x')).length;
-    expect(swiftColours).toBeGreaterThanOrEqual(389);
-    expect(kotlinColours).toBeGreaterThanOrEqual(389);
+    expect(swiftColours).toBeGreaterThanOrEqual(395);
+    expect(kotlinColours).toBeGreaterThanOrEqual(395);
   });
 
   it('emits zero quoted-string values for colour-class or duration-class tokens', () => {
     const guarded = [...(byClass.get('color') ?? []), ...(byClass.get('duration') ?? [])];
-    expect(guarded.length).toBe(389 + 108);
+    expect(guarded.length).toBe(395 + 108);
     for (const entry of guarded) {
       const name = camelName(entry.path);
       expect(swiftConstants.get(name)?.startsWith('"'), `Swift ${name} is a quoted string`).toBe(false);

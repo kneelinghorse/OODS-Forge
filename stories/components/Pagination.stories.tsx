@@ -17,7 +17,6 @@ type Story = StoryObj<PaginationStoryArgs>;
 
 const meta: Meta<PaginationStoryArgs> = {
   title: 'Components/Navigation/Pagination',
-  component: Pagination,
   parameters: {
     layout: 'centered',
   },
@@ -26,9 +25,6 @@ const meta: Meta<PaginationStoryArgs> = {
     siblingCount: 1,
     showFirstLast: false,
     'aria-label': 'Pagination navigation',
-  },
-  argTypes: {
-    onChange: { control: false },
   },
 };
 

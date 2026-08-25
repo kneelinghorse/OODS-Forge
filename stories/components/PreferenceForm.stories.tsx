@@ -34,7 +34,7 @@ interface PlaygroundProps {
   readonly formOptions?: UsePreferenceFormOptions;
   readonly density?: 'comfortable' | 'compact';
   readonly previewSections?: readonly PreferencePreviewSection[];
-  readonly extras?: React.ReactNode;
+  readonly extras?: ReactNode;
 }
 
 const Playground = ({ heading, description, formOptions, density, previewSections, extras }: PlaygroundProps) => {

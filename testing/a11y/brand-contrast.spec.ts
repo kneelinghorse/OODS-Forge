@@ -20,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   BRAND_CONTRAST_PAIRS,
+  BRAND_CONTRAST_RULES,
   BRAND_GRADED_THEMES,
   BRAND_HC_EXEMPTION_REASON,
   brandFlatKey,
@@ -32,6 +33,11 @@ import {
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(moduleDir, '../..');
 const BRANDS = ['A', 'B'] as const;
+const STATUS_ON_PANEL_ID = /^status-(?:info|success|warning|critical|neutral)-(?:text|icon)-on-(?:canvas|raised|subtle)$/;
+const isStatusOnPanelPairId = (id: string): boolean => STATUS_ON_PANEL_ID.test(id);
+const isStatusOnPanelRuleId = (id: string): boolean =>
+  isStatusOnPanelPairId(id.replace(/^brand-[ab]-(?:base|dark)-/, ''));
+const PRE_F4_PAIR_COUNT = BRAND_CONTRAST_PAIRS.filter((pair) => !isStatusOnPanelPairId(pair.id)).length;
 
 /** Flatten one brand × theme token file into the shape the evaluator resolves against. */
 function cellTokenMap(brand: string, source: string): FlatTokenMap {
@@ -111,6 +117,42 @@ describe('brand contrast grading (s168 m04)', () => {
     }
   });
 
+  it('pins the fifth pair group at 30 templates and the full surface at 57 / 228', () => {
+    const statusOnPanel = BRAND_CONTRAST_PAIRS.filter((pair) => isStatusOnPanelPairId(pair.id));
+    const expectedIds = ['info', 'success', 'warning', 'critical', 'neutral'].flatMap((status) =>
+      ['canvas', 'raised', 'subtle'].flatMap((panel) => [
+        `status-${status}-text-on-${panel}`,
+        `status-${status}-icon-on-${panel}`,
+      ]),
+    );
+    expect(PRE_F4_PAIR_COUNT).toBe(27);
+    expect(statusOnPanel).toHaveLength(30);
+    expect(statusOnPanel.map((pair) => pair.id).sort()).toEqual(expectedIds.sort());
+    expect(statusOnPanel.filter((pair) => pair.id.includes('-text-on-'))).toHaveLength(15);
+    expect(statusOnPanel.filter((pair) => pair.id.includes('-icon-on-'))).toHaveLength(15);
+    expect(BRAND_CONTRAST_PAIRS).toHaveLength(57);
+    expect(BRAND_CONTRAST_RULES).toHaveLength(228);
+  });
+
+  it('the fifth group grades 60 icon and 60 text candidates, all passing', () => {
+    const failures: string[] = [];
+    let iconCandidates = 0;
+    let textCandidates = 0;
+    for (const brand of BRANDS) {
+      for (const theme of BRAND_GRADED_THEMES) {
+        const rules = buildBrandContrastRules(brand, theme).filter((rule) => isStatusOnPanelRuleId(rule.ruleId));
+        for (const evaluation of evaluateContrastRules(currentCell(brand, theme), { rules })) {
+          if (evaluation.rule.ruleId.includes('-icon-on-')) iconCandidates += 1;
+          else textCandidates += 1;
+          if (!evaluation.passed) failures.push(evaluation.rule.ruleId);
+        }
+      }
+    }
+    expect(iconCandidates).toBe(60);
+    expect(textCandidates).toBe(60);
+    expect(failures).toEqual([]);
+  });
+
   /**
    * CONTROL OF THE CONTROL. `evaluate.ts` returns `passed: false` on ANY exception,
    * including "token not found". A rule set with wrong key strings is therefore red while
@@ -153,14 +195,40 @@ describe('brand contrast grading (s168 m04)', () => {
     expect(failures, `brand contrast failures:\n  ${failures.join('\n  ')}`).toEqual([]);
   });
 
-  /** Evaluate the CURRENT rule set against one vendored revision of all four graded cells. */
-  function sweepRevision(revision: string): { failed: string[]; passed: number } {
+  /**
+   * RED-FIRST FOR s178 m03. The existing `00ae5b3` fixture carries the exact four base icon
+   * values F4 re-authored. Evaluating only the fifth group against those bytes must reproduce
+   * the seven measured failures while its other 113 evaluations pass. Reusing the provenance-
+   * checked fixture avoids a second hand-copied home for the old palette.
+   */
+  it('RED-first: the pre-F4 icon values reproduce exactly seven status-on-panel failures', () => {
+    const { failed, passed } = sweepRevision('00ae5b3', isStatusOnPanelRuleId);
+    expect(failed.sort()).toEqual(
+      [
+        'brand-a-base-status-success-icon-on-subtle',
+        'brand-a-base-status-warning-icon-on-canvas',
+        'brand-a-base-status-warning-icon-on-raised',
+        'brand-a-base-status-warning-icon-on-subtle',
+        'brand-b-base-status-success-icon-on-subtle',
+        'brand-b-base-status-warning-icon-on-raised',
+        'brand-b-base-status-warning-icon-on-subtle',
+      ].sort(),
+    );
+    expect(passed).toBe(113);
+  });
+
+  /** Evaluate a selected rule surface against one vendored revision of all four graded cells. */
+  function sweepRevision(
+    revision: string,
+    includeRule: (ruleId: string) => boolean = () => true,
+  ): { failed: string[]; passed: number } {
     const failed: string[] = [];
     let passed = 0;
     for (const brand of BRANDS) {
       for (const theme of BRAND_GRADED_THEMES) {
         const tokens = cellAtRevision(brand, theme, revision);
-        for (const evaluation of evaluateContrastRules(tokens, { rules: buildBrandContrastRules(brand, theme) })) {
+        const rules = buildBrandContrastRules(brand, theme).filter((rule) => includeRule(rule.ruleId));
+        for (const evaluation of evaluateContrastRules(tokens, { rules })) {
           if (evaluation.passed) passed += 1;
           else failed.push(evaluation.rule.ruleId);
         }
@@ -170,15 +238,16 @@ describe('brand contrast grading (s168 m04)', () => {
   }
 
   /**
-   * RED-FIRST, run every time rather than recorded once. The same rule set evaluated
-   * against the PRE-m03 token values must name the failures m03 fixed — and the remaining
-   * rules in that same run must PASS, which is what proves the rule set was wired and
-   * resolving rather than merely absent or throwing.
+   * RED-FIRST, run every time rather than recorded once. The s168/s169 rule surface
+   * evaluated against the PRE-m03 token values must name the failures m03 fixed — and the
+   * remaining rules in that same run must PASS, which proves that historical control was
+   * wired and resolving. s178's fifth group has its own fixture-backed proof above, so a
+   * later group cannot rewrite what this older proof means.
    *
    * No skip branch (s169 m01): a missing fixture now throws. See `cellAtRevision`.
    */
   it('RED-first: the same rules name the pre-m03 failures, while the rest pass in that run', () => {
-    const { failed, passed } = sweepRevision('e5f2172');
+    const { failed, passed } = sweepRevision('e5f2172', (ruleId) => !isStatusOnPanelRuleId(ruleId));
 
     // Named, not counted: a count-only assertion cannot tell a contrast failure from a
     // resolution error, and both surface as `passed: false`.
@@ -203,7 +272,7 @@ describe('brand contrast grading (s168 m04)', () => {
       ].sort(),
     );
     // ...and the other N−8 passed in the SAME run, proving they resolved.
-    expect(passed).toBe(BRAND_CONTRAST_PAIRS.length * 4 - failed.length);
+    expect(passed).toBe(PRE_F4_PAIR_COUNT * 4 - failed.length);
     expect(passed).toBeGreaterThan(0);
   });
 
@@ -220,7 +289,7 @@ describe('brand contrast grading (s168 m04)', () => {
    * everything into a red heap that happens to contain them.
    */
   it('RED-first: the widened grid names exactly the three pairs this mission fixed', () => {
-    const { failed, passed } = sweepRevision('00ae5b3');
+    const { failed, passed } = sweepRevision('00ae5b3', (ruleId) => !isStatusOnPanelRuleId(ruleId));
 
     expect(failed).toEqual(
       [
@@ -229,7 +298,7 @@ describe('brand contrast grading (s168 m04)', () => {
         'brand-b-base-text-accent-on-subtle',
       ].sort(),
     );
-    expect(passed).toBe(BRAND_CONTRAST_PAIRS.length * 4 - failed.length);
+    expect(passed).toBe(PRE_F4_PAIR_COUNT * 4 - failed.length);
     // The five grid templates s169 m01 added are what made those three visible: before the
     // widening this same revision graded 88 rules and reported ZERO failures.
     expect(passed).toBe(105);
@@ -293,8 +362,9 @@ describe('brand contrast grading (s168 m04)', () => {
 
   /**
    * COVERAGE. Hand-listed rules are how s167 ended up with slots in the artifact that no
-   * rule named. Every bridged slot that carries a foreground or background role must be
-   * reachable from the pair templates, so a newly bridged slot arrives graded or reds here.
+   * rule named. Every bridged slot that carries a source-gradeable foreground or background
+   * role must be reachable from the pair templates, so a newly bridged slot arrives graded
+   * or reds here.
    */
   it('every gradeable bridged slot is named by at least one rule', () => {
     const bridge = readFileSync(path.resolve(repoRoot, 'packages/tokens/scripts/brand-bridge.mjs'), 'utf8');
@@ -302,6 +372,14 @@ describe('brand contrast grading (s168 m04)', () => {
     expect(bridged.length, 'the bridge slot map stopped parsing').toBeGreaterThan(30);
 
     const named = new Set(BRAND_CONTRAST_PAIRS.flatMap((pair) => [pair.foreground, pair.background]));
+    // Focus colours are contrast-bearing, but not against one fixed source token: the dual
+    // ring and focus text are painted on component-specific surfaces. Grade them in rendered
+    // context; their six-cell source values and generated output are pinned by the token
+    // contract/browser-proof suites. Listing the exact three here keeps that exception
+    // deliberate without letting an unrelated new bridge slot escape this coverage gate.
+    const CONTEXTUAL_FOCUS_SLOTS = new Set([
+      'focus.ring.outer', 'focus.ring.inner', 'focus.text',
+    ]);
     // Slots with no contrast role of their own: a scrim, decorative borders, and the
     // WCAG-1.4.3-exempt disabled pair (whose ratio is pinned by brand-description-truth).
     const NO_CONTRAST_ROLE = new Set([
@@ -309,7 +387,9 @@ describe('brand contrast grading (s168 m04)', () => {
       'border.subtle', 'border.strong',
       ...['info', 'success', 'warning', 'critical', 'neutral'].map((s) => `status.${s}.border`),
     ]);
-    const ungraded = bridged.filter((slot) => !named.has(slot) && !NO_CONTRAST_ROLE.has(slot));
+    const ungraded = bridged.filter(
+      (slot) => !named.has(slot) && !CONTEXTUAL_FOCUS_SLOTS.has(slot) && !NO_CONTRAST_ROLE.has(slot),
+    );
     expect(
       ungraded,
       `these bridged slots are graded by no rule and are not declared role-free:\n  ${ungraded.join('\n  ')}`,

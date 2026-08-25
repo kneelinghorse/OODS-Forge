@@ -5,7 +5,7 @@
  * `:root` is where the s167 defect actually lived: a flat Style Dictionary run collided
  * every brand × theme file on identical token paths and the alphabetically-last (hc) won,
  * so `:root` shipped brand A's `Highlight` as the default colour. After the fix, exactly
- * ONE of the 82 brand declarations in `:root` was value-checked. This audits all 82.
+ * ONE of the 88 brand declarations in `:root` was value-checked. This audits all 88.
  *
  * ── THE ORACLE THAT WAS *NOT* BUILT, AND WHY ──
  * The obvious addition — loop `findContamination` over the OTHER BRAND as well as the
@@ -24,8 +24,10 @@
  *                       right key.
  *
  * ── HARD LIMIT, STATED IN THE RECORD ──
- * Brands A and B are BYTE-IDENTICAL on all 41 hc slots (both resolve to CSS system
- * colours). No value-keyed brand-axis control can EVER discriminate the hc row — only
+ * Brands A and B are BYTE-IDENTICAL on all 44 hc source leaves (both resolve to CSS system
+ * colours). The semantic bridge remains a distinct 41-slot consumer contract: the three
+ * `accent.*` source leaves are intentionally unbridged. No value-keyed brand-axis control
+ * can EVER discriminate the hc row — only
  * containment covers it. The same blindness already exists in `findCrossCellLeaks`, which
  * skips whenever two cells agree. Asserted below so it stays a known limit, not a surprise.
  */
@@ -166,9 +168,9 @@ describe('s168 m06 — :root value audit + the two discriminating brand-axis ora
     expect(root, ':root block missing').toBeDefined();
 
     const expected = new Map([...cellVars('A', 'base'), ...cellVars('B', 'base')]);
-    // DERIVED, not hard-coded: 41 + 41 with disjoint key sets.
+    // DERIVED, not hard-coded: 44 + 44 source leaves with disjoint brand key sets.
     expect(expected.size).toBe(cellVars('A', 'base').size + cellVars('B', 'base').size);
-    expect(expected.size).toBe(82);
+    expect(expected.size).toBe(88);
 
     const wrong: string[] = [];
     for (const [cssVar, want] of expected) {
@@ -256,8 +258,8 @@ describe('s168 m06 — :root value audit + the two discriminating brand-axis ora
       const bKeys = new Set(cellVars('B', theme).keys());
       const intersection = [...aKeys].filter((k) => bKeys.has(k));
       expect(intersection, `${theme}: brand key sets are no longer disjoint`).toEqual([]);
-      expect(aKeys.size).toBe(41);
-      expect(bKeys.size).toBe(41);
+      expect(aKeys.size).toBe(44);
+      expect(bKeys.size).toBe(44);
     }
   });
 
@@ -287,7 +289,7 @@ describe('s168 m06 — :root value audit + the two discriminating brand-axis ora
         if (theme === 'base') {
           // BOTH base cells agree with `:root`, and that is correct rather than a no-op.
           // The memo describes `:root` as "brand A + base" (D2), but MEASURED it carries
-          // the UNION of both brands' base values — 82 brand declarations, 41 per brand —
+          // the UNION of both brands' base values — 88 brand declarations, 44 per brand —
           // because these variables are brand-NAMESPACED (`--oods-color-brand-a-*` vs
           // `--oods-color-brand-b-*`) and therefore cannot collide. This control's first
           // draft expected only A/base to agree and went red on B/base; the expectation
@@ -316,6 +318,6 @@ describe('s168 m06 — :root value audit + the two discriminating brand-axis ora
       'A and B now DIFFER on some hc slot — the value-keyed brand-axis controls can finally ' +
         'discriminate part of the hc row, and this limit should be re-stated rather than deleted',
     ).toEqual([]);
-    expect(a.size).toBe(41);
+    expect(a.size).toBe(44);
   });
 });

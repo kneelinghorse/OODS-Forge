@@ -1,14 +1,10 @@
 /**
  * s167 m02 — the brand → semantic bridge, verified at the CSS-ARTIFACT level.
  *
- * SCOPE OF THIS CONTROL, STATED UP FRONT: it loads ONLY
- * `packages/tokens/dist/css/tokens.css`. It deliberately does not load the explorer
- * bundle, because `apps/explorer/src/styles/brand.css` and `layers.css` are still
- * present and still WIN at runtime — layers.css re-declares 41 of these same slots at
- * `:root` after importing the generated CSS. A "load the app and see if it changed"
- * check would therefore have no observable outcome and would not be a control at all.
- * What is proven here is that the generated ARTIFACT carries a correct six-cell matrix.
- * Whether the app consumes it is s168 (brand.css retirement).
+ * SCOPE OF THIS CONTROL, STATED UP FRONT: it loads the token sources and ONLY the
+ * generated `packages/tokens/dist/css/tokens.css` artifact. It proves that the artifact
+ * carries the correct six-cell matrix; the browser cascade is proven separately by
+ * `scripts/quality/brand-cascade-browser-proof.mjs`.
  *
  * The expectation table is GENERATED from the six brand source files crossed with the
  * authored slot map — never transcribed from the build's own output.
@@ -33,6 +29,15 @@ type Theme = (typeof THEMES)[number];
 
 type BridgeEntry = { slot: string; tokenPath: string };
 const bridge = SEMANTIC_BRIDGE as readonly BridgeEntry[];
+const focusSlots = bridge
+  .map((entry) => entry.slot)
+  .filter((slot) => slot.startsWith('--theme-focus-'))
+  .sort();
+
+interface SlotContract {
+  readonly slots: string[];
+  readonly focusValues: Readonly<Record<string, Readonly<Record<string, string>>>>;
+}
 
 /** memo SS3 D9 — the value-bearing selector for a cell. */
 function selectorFor(brand: Brand, theme: Theme): string {
@@ -98,6 +103,32 @@ function parseCssBlocks(css: string): Map<string, Map<string, string>> {
 type Blocks = Map<string, Map<string, string>>;
 type Table = Map<string, Map<string, string>>;
 
+function findFocusContractMismatches(table: Table, contract: SlotContract): string[] {
+  const mismatches: string[] = [];
+  for (const brand of BRANDS) {
+    for (const theme of THEMES) {
+      const cell = `${brand}/${theme}`;
+      const pinned = contract.focusValues[cell];
+      if (!pinned) {
+        mismatches.push(`${cell}: missing focusValues cell`);
+        continue;
+      }
+      const pinnedSlots = Object.keys(pinned).sort();
+      if (JSON.stringify(pinnedSlots) !== JSON.stringify(focusSlots)) {
+        mismatches.push(`${cell}: focus slot set is [${pinnedSlots.join(', ')}]`);
+        continue;
+      }
+      for (const slot of focusSlots) {
+        const got = table.get(cell)?.get(slot);
+        if (got !== pinned[slot]) {
+          mismatches.push(`${cell} ${slot}: expected "${pinned[slot]}", got "${got ?? '<absent>'}"`);
+        }
+      }
+    }
+  }
+  return mismatches;
+}
+
 function findWrongSlots(blocks: Blocks, table: Table, brand: Brand, theme: Theme): string[] {
   const expected = table.get(`${brand}/${theme}`)!;
   const declared = blocks.get(selectorFor(brand, theme));
@@ -142,34 +173,60 @@ describe('s167 m02 — the brand→semantic bridge in the emitted CSS artifact',
   const css = fs.readFileSync(TOKENS_CSS, 'utf8');
   const blocks = parseCssBlocks(css);
   const table = expectationTable();
+  const contract = JSON.parse(fs.readFileSync(SLOT_CONTRACT, 'utf8')) as SlotContract;
 
-  it('the authored map plus the recorded gaps account for every slot in the frozen contract', () => {
+  it('the authored map accounts for every slot in the frozen contract with no recorded gaps', () => {
     // s168 m05 RE-POINTED THIS, and it had to happen before brand.css was touched.
     // brand.css was the hand-authored copy this bridge replaces, so its slot NAMES were
     // the contract, and this test read them straight out of the file. m05 stripped the 38
-    // bridged slots from it — leaving only the 3 focus slots it is the sole source of —
-    // so the file can no longer supply that list, and reading it would silently reduce a
-    // 41-slot contract to a 3-slot one while staying green.
+    // bridged slots from it; s178 bridged the final 3 focus slots and retired the file.
+    // It can no longer supply the list, so the 41-slot contract remains frozen here.
     //
     // The list is therefore FROZEN in a fixture, captured from brand.css immediately
     // before the reduction. It is no longer self-updating, which is the trade: adding a
     // slot to the bridge now requires adding it to the fixture too. That is a deliberate
     // act rather than silence, and it is the property this test existed to protect.
-    const contract = JSON.parse(fs.readFileSync(SLOT_CONTRACT, 'utf8')) as { slots: string[] };
     const declaredSlots = new Set(contract.slots);
     expect(declaredSlots.size).toBe(41);
 
-    const covered = new Set([
-      ...bridge.map((e) => e.slot),
-      ...(UNBRIDGED_SLOTS as readonly { slot: string }[]).map((e) => e.slot),
-    ]);
+    expect(UNBRIDGED_SLOTS, 'focus has a real token source; no consumer slot remains unbridged').toEqual([]);
+    const covered = new Set(bridge.map((entry) => entry.slot));
     const unaccounted = [...declaredSlots].filter((s) => !covered.has(s));
-    expect(unaccounted, `slots in brand.css neither bridged nor recorded: ${unaccounted.join(', ')}`).toEqual([]);
+    expect(unaccounted, `contract slots absent from the bridge: ${unaccounted.join(', ')}`).toEqual([]);
 
     // ...and nothing in the map that the contract does not actually name.
     const phantom = bridge.map((e) => e.slot).filter((s) => !declaredSlots.has(s));
     expect(phantom, `mapped slots absent from the frozen contract: ${phantom.join(', ')}`).toEqual([]);
-    expect(bridge).toHaveLength(38);
+    expect(bridge).toHaveLength(41);
+  });
+
+  it('the 18 ratified focus cells equal the independent source contract', () => {
+    expect(Object.keys(contract.focusValues).sort()).toEqual([
+      'A/base',
+      'A/dark',
+      'A/hc',
+      'B/base',
+      'B/dark',
+      'B/hc',
+    ]);
+    expect(focusSlots).toEqual([
+      '--theme-focus-ring-inner',
+      '--theme-focus-ring-outer',
+      '--theme-focus-text',
+    ]);
+    expect(
+      findFocusContractMismatches(table, contract),
+      'the ratified focus token values changed; regenerate CSS only after reconciling the source contract',
+    ).toEqual([]);
+  });
+
+  it('the focus contract is discriminating against a reverted branded-light token', () => {
+    const seeded = new Map([...table].map(([cell, values]) => [cell, new Map(values)]));
+    seeded.get('A/base')!.set('--theme-focus-text', 'var(--ref-color-primary-600)');
+    expect(findFocusContractMismatches(seeded, contract).join('\n')).toContain(
+      'A/base --theme-focus-text',
+    );
+    expect(findFocusContractMismatches(table, contract)).toEqual([]);
   });
 
   it('emits a bridge block for every one of the six cells', () => {
@@ -203,7 +260,7 @@ describe('s167 m02 — the brand→semantic bridge in the emitted CSS artifact',
   for (const brand of BRANDS) {
     for (const theme of THEMES) {
       it(`${brand}/${theme}: every bridged slot carries THIS cell's brand value`, () => {
-        expect(table.get(`${brand}/${theme}`)!.size).toBe(38);
+        expect(table.get(`${brand}/${theme}`)!.size).toBe(41);
         const wrong = findWrongSlots(blocks, table, brand, theme);
         expect(wrong, `${brand}/${theme} bridge is wrong:\n  ${wrong.join('\n  ')}`).toEqual([]);
       });
@@ -258,11 +315,11 @@ describe('s167 m02 — the brand→semantic bridge in the emitted CSS artifact',
           return rootValue !== undefined && declared.get(slot) !== rootValue;
         });
         // Every slot's :root value is a var(--ref-color-*) reference from theme0, while
-        // every bridged value is a brand literal, so all 38 must differ.
+        // every bridged value is a brand literal or forced-colours keyword, so all 41 differ.
         expect(
           differing.length,
-          `${brand}/${theme} only overrides ${differing.length}/38 slots — a bridge that restates :root changes nothing`,
-        ).toBe(38);
+          `${brand}/${theme} only overrides ${differing.length}/41 slots — a bridge that restates :root changes nothing`,
+        ).toBe(41);
       }
     }
 

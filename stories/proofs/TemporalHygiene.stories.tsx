@@ -10,7 +10,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DateTime } from 'luxon';
 import TimeService, { type Tenant } from '../../src/services/time';
-import type { CanonicalInvoice, CanonicalSubscription } from '../../src/domain/billing/core';
+import type { CanonicalInvoice } from '../../src/domain/billing/core';
 
 const meta = {
   title: 'Explorer/Proofs/Temporal Hygiene',

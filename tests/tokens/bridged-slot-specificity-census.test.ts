@@ -5,8 +5,8 @@
  * s167's defect was a specificity TIE: `brand.css` and the generated bridge both declared
  * the same `--theme-*` slots at (0,2,0), so which one won was decided by import order, and
  * reordering two lines in `index.css` flipped four brand × theme cells with ZERO test
- * failures. s168 m05 removed the overlap, and `brand-css-no-tie.test.ts` pins that ONE
- * file's abstinence. But that is a check on a named file. Nothing stopped a THIRD writer —
+ * failures. s168 m05 removed the overlap and s178 retired `brand.css` completely. But
+ * absence of that named file alone cannot stop a THIRD writer —
  * a new stylesheet, a component sheet, a CSS-in-JS template — from declaring a bridged slot
  * at brand-block weight and recreating the tie somewhere nobody was looking.
  *
@@ -15,7 +15,7 @@
  * **(0,2,0)-or-higher belongs exclusively to the generated bridge**.
  *
  * ── THE SOURCES, AND WHY THEY ARE THESE THREE ──
- *   1. every TRACKED `.css` file (`git ls-files '*.css'`) — index-only, so a shallow CI
+ *   1. every PRESENT tracked `.css` file (`git ls-files '*.css'`) — index-only, so a shallow CI
  *      checkout cannot silently shrink the universe the way a history-reading test would;
  *   2. `packages/tokens/dist/css/tokens.css` — the generated artifact, which is gitignored
  *      and therefore invisible to (1), yet is the one writer that legitimately declares at
@@ -111,11 +111,8 @@ function parseBridgedDeclarations(css: string): Declaration[] {
  * `:where(…)` contributes ZERO by definition; `:not(…)`, `:is(…)` and `:has(…)` contribute
  * the specificity of their ARGUMENT. Both are handled by balanced-paren scanning, NOT by a
  * regex — and that distinction is not theoretical. The first version of this used
- * `/:where\([^)]*\)/g`, which stops at the first `)` it meets: on brand.css's real light
- * selector `:where([data-brand='A']:not([data-theme]), …)` it stopped INSIDE the `:not(`,
- * left the tail behind, and scored (0,2,0) — i.e. it would have reported the very block
- * whose zero specificity this sprint's light-focus record depends on. The last assertion in
- * this file is the regression pin for that.
+ * `/:where\([^)]*\)/g`, which stops at the first `)` it meets on a nested `:not(` and can
+ * silently over-count the selector. The last assertion remains the parser regression pin.
  *
  * Approximation stated: for a multi-argument `:is()`/`:not()` CSS takes the MOST specific
  * argument, while inlining the contents counts them all. No selector in this repo's census
@@ -232,7 +229,10 @@ function repoSources(): Array<readonly [string, string]> {
   const tracked = execFileSync('git', ['ls-files', '*.css'], { cwd: REPO_ROOT, encoding: 'utf8' })
     .trim()
     .split('\n')
-    .filter(Boolean);
+    .filter(Boolean)
+    // A guard must run in the same deletion-bearing worktree that CI will commit. `git
+    // ls-files` still lists an index entry deleted from the worktree until that commit.
+    .filter((file) => fs.existsSync(path.join(REPO_ROOT, file)));
   return [
     ...tracked.map((file) => [file, fs.readFileSync(path.join(REPO_ROOT, file), 'utf8')] as const),
     [DIST_CSS, fs.readFileSync(path.join(REPO_ROOT, DIST_CSS), 'utf8')] as const,
@@ -245,25 +245,25 @@ function repoSources(): Array<readonly [string, string]> {
  * surface: a new declarer appears as an extra row, and a parser regression appears as a
  * missing row or a shrunken count. A bare "no offenders" assertion would pass in both.
  *
- * `apps/explorer/src/styles/tokens.css` is 37, not 38, BY DESIGN: its 38th name is
+ * `apps/explorer/src/styles/tokens.css` is 40, not 41, BY DESIGN: its remaining twin is
  * `--theme-text-on_interactive`, an underscore twin of `--theme-text-on-interactive`. It is
  * a different custom property, not a typo to "fix" — changing it is a behaviour change.
  */
 const EXPECTED_CENSUS: ReadonlyArray<[string, string, string, string, number]> = [
-  ['apps/explorer/src/styles/layers.css', ':root', '', '(0,1,0)', 38],
+  ['apps/explorer/src/styles/layers.css', ':root', '', '(0,1,0)', 41],
   ['apps/explorer/src/styles/layers.css', ':root', '@supports (color: oklch(from white l c h))', '(0,1,0)', 2],
-  ['apps/explorer/src/styles/layers.css', "html[data-theme='dark']", '', '(0,1,1)', 38],
-  ['apps/explorer/src/styles/tokens.css', ':root', '', '(0,1,0)', 37],
-  [`${DOCUMENT_TS} (DARK_THEME_OVERRIDES)`, "[data-theme='dark']", '', '(0,1,0)', 38],
-  [DIST_CSS, ':root', '', '(0,1,0)', 38],
-  [DIST_CSS, "[data-brand='A'][data-theme='base']", '', '(0,2,0)', 38],
-  [DIST_CSS, "[data-brand='A'][data-theme='dark']", '', '(0,2,0)', 38],
-  [DIST_CSS, "[data-brand='A'][data-theme='hc']", '', '(0,2,0)', 38],
-  [DIST_CSS, "[data-brand='A'][data-theme='light']", '', '(0,2,0)', 38],
-  [DIST_CSS, "[data-brand='B'][data-theme='base']", '', '(0,2,0)', 38],
-  [DIST_CSS, "[data-brand='B'][data-theme='dark']", '', '(0,2,0)', 38],
-  [DIST_CSS, "[data-brand='B'][data-theme='hc']", '', '(0,2,0)', 38],
-  [DIST_CSS, "[data-brand='B'][data-theme='light']", '', '(0,2,0)', 38],
+  ['apps/explorer/src/styles/layers.css', "html[data-theme='dark']", '', '(0,1,1)', 41],
+  ['apps/explorer/src/styles/tokens.css', ':root', '', '(0,1,0)', 40],
+  [`${DOCUMENT_TS} (DARK_THEME_OVERRIDES)`, "[data-theme='dark']", '', '(0,1,0)', 41],
+  [DIST_CSS, ':root', '', '(0,1,0)', 41],
+  [DIST_CSS, "[data-brand='A'][data-theme='base']", '', '(0,2,0)', 41],
+  [DIST_CSS, "[data-brand='A'][data-theme='dark']", '', '(0,2,0)', 41],
+  [DIST_CSS, "[data-brand='A'][data-theme='hc']", '', '(0,2,0)', 41],
+  [DIST_CSS, "[data-brand='A'][data-theme='light']", '', '(0,2,0)', 41],
+  [DIST_CSS, "[data-brand='B'][data-theme='base']", '', '(0,2,0)', 41],
+  [DIST_CSS, "[data-brand='B'][data-theme='dark']", '', '(0,2,0)', 41],
+  [DIST_CSS, "[data-brand='B'][data-theme='hc']", '', '(0,2,0)', 41],
+  [DIST_CSS, "[data-brand='B'][data-theme='light']", '', '(0,2,0)', 41],
 ];
 
 describe('s169 m02 — repo-wide bridged-slot specificity census', () => {
@@ -312,11 +312,9 @@ describe('s169 m02 — repo-wide bridged-slot specificity census', () => {
     ]);
   });
 
-  it(':where() contributes zero specificity — the mechanism the light-focus record depends on', () => {
-    // If this were ever wrong, brand.css's light block would be scored as a (0,2,0)
-    // offender and the corrected "light focus is neutral" record would be unexplainable.
-    // The nested `:not(` inside the `:where(` is the exact shape that defeated the first,
-    // regex-based version of `specificityOf` — this pins the balanced scan.
+  it(':where() contributes zero specificity even with a nested :not()', () => {
+    // This exact nested shape defeated the first regex-based specificity parser. Keep the
+    // parser bite even though the legacy stylesheet that exposed it is now retired.
     expect(specificityOf(":where([data-brand='A']:not([data-theme]), [data-brand='A'][data-theme='light'])")).toEqual([0, 0, 0]);
     // ...and the same selector WITHOUT the :where() wrapper is what it would become.
     expect(specificityOf("[data-brand='A']:not([data-theme])")).toEqual([0, 2, 0]);

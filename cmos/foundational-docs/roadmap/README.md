@@ -1,12 +1,12 @@
 # Roadmap
 
-Mission graph artifacts at different horizons. The strategic frame and full track breakdown live in [../mission-graph.md](../mission-graph.md); this folder narrates how missions get sequenced into actual sprint plans.
+The historical 2026-05 strategic frame and track breakdown live in [../mission-graph.md](../mission-graph.md); this folder contains the live near-horizon surface and retained point-in-time roadmap records.
 
 ## Planned artifacts
 
 | Doc | Scope |
 |---|---|
-| `near.md` | Next 1–3 sprints. Concrete missions with success criteria, dependencies, and recommended sprint shape. |
+| `near.md` | Next 1–3 Forge planning cycles. Serving posture, verified capability boundaries, dependency gates, and parks. |
 | `mid.md` | Horizon after near; track-level sequencing without sprint-level missions. Updated when near.md commits land. *(not yet created — `near.md` is the only live tier)* |
 | `far.md` | Position B/C destination state. Aspirational shape, not commitments. Updated when strategic context shifts. *(not yet created)* |
 
@@ -26,4 +26,4 @@ Each horizon doc:
 
 ## Active artifact
 
-`near.md` is the live near-horizon planning surface. Its **Viz Flagship Arc** is refreshed through **sprint-120 close (2026-06-19)** and tracks the s108–s120 horizon; the dated s96–s104 sprint shapes below it are retained as historical record (decision #679). Recommended sequencing lives in [../mission-graph.md](../mission-graph.md) under "Sequencing Recommendation"; `near.md` translates that into concrete sprint missions.
+`near.md` is the live Forge near-horizon planning surface, refreshed **2026-08-25** for the Shopify-selected direction. It records Forge's own serving posture and capability sequence; the Shopify enterprise proof's D1–D6 and sprint sequence remain in its sibling repository, and Forge serves that proof by `cmos_message`. Earlier roadmap material is retained or summarized as point-in-time history under decision #679; the 2026-05 vision documents are context, not current sequencing authority.

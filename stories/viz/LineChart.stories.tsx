@@ -2,7 +2,7 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { LineChart } from '~/src/components/viz/LineChart';
 
 const meta: Meta<typeof LineChart> = {

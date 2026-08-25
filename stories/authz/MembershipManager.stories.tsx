@@ -119,8 +119,12 @@ function MembershipPlayground({ validator, readOnly }: StoryContextProps): JSX.E
     roles: ROLE_OPTIONS,
     users: USER_OPTIONS,
     members: result.memberships,
-    onAssignRole: result.assignRole,
-    onRevokeRole: (member) => result.revokeRole(member.userId, member.roleId),
+    onAssignRole: async (userId, roleId) => {
+      await result.assignRole(userId, roleId);
+    },
+    onRevokeRole: async (member) => {
+      await result.revokeRole(member.userId, member.roleId);
+    },
     onValidateAssignment: result.validateAssignment,
     validationState: result.validationState,
     pendingMembers: result.pendingMembers,

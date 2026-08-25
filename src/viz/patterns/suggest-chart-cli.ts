@@ -2,12 +2,12 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { listPatterns } from './index.js';
-import { scoreLayoutForPattern, type LayoutRecommendationBundle } from './layout-scorer.js';
-import { recommendInteractions, type InteractionBundle } from './interaction-scorer.js';
+import { listPatterns } from '@oods/viz-core';
+import { scoreLayoutForPattern, type LayoutRecommendationBundle } from '@oods/viz-core';
+import { recommendInteractions, type InteractionBundle } from '@oods/viz-core';
 import { generateScaffold, type ScaffoldFormat } from './scaffold-generator.js';
-import { suggestPatterns, type PatternSuggestion, type SchemaIntent } from './suggest-chart.js';
-import type { DensityPreference, IntentGoal } from './index.js';
+import { suggestPatterns, type PatternSuggestion, type SchemaIntent } from '@oods/viz-core';
+import type { DensityPreference, IntentGoal } from '@oods/viz-core';
 
 type MutableSchemaIntent = {
   -readonly [Key in keyof SchemaIntent]: SchemaIntent[Key];

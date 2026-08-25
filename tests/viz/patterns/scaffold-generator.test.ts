@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { generateScaffold } from '@/viz/patterns/scaffold-generator.js';
-import { recommendInteractions } from '@/viz/patterns/interaction-scorer.js';
-import { scoreLayoutForPattern } from '@/viz/patterns/layout-scorer.js';
-import { suggestPatterns, type SchemaIntent } from '@/viz/patterns/suggest-chart.js';
+import { recommendInteractions } from '@oods/viz-core';
+import { scoreLayoutForPattern } from '@oods/viz-core';
+import { suggestPatterns, type SchemaIntent } from '@oods/viz-core';
 
 describe('scaffold generator', () => {
   it('produces JSON spec + component shell for chart suggestion', () => {

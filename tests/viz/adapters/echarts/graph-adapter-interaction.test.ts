@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { NetworkInput } from '../../../../src/types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptGraphToECharts } from '../../../../src/viz/adapters/echarts/graph-adapter.js';
 
 const baseSpec: NormalizedVizSpec = {
