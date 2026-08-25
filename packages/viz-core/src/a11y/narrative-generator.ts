@@ -18,6 +18,8 @@ export interface NarrativeResult {
 interface NarrativeLabels {
   readonly chartLabel: string;
   readonly measureLabel?: string;
+  /** High/Low/Total label; count aggregates name the operation, not the counted identity field. */
+  readonly findingMeasureLabel?: string;
   readonly dimensionLabel?: string;
   readonly colorLabel?: string;
 }
@@ -120,11 +122,13 @@ function resolveNarrativeInputs(input: NormalizedVizSpec | AnalysisNarrativeInpu
   // s149 F6d root cause). Covers the real-heatmap (color=measure) AND the horizontal strip plot
   // (x=measure, y=dimension) rebindings; everything else stays measure=Y / dimension=X.
   const { measureChannel, dimensionChannel, colorIsMeasure } = resolvePrimaryChannels(input);
+  const measureLabel = resolveFieldLabel(input, measureChannel);
   return {
     analysis: analyzeVizSpec(input),
     labels: {
       chartLabel: input.name ?? input.a11y.ariaLabel ?? input.id ?? 'This visualization',
-      measureLabel: resolveFieldLabel(input, measureChannel),
+      measureLabel,
+      findingMeasureLabel: resolveFindingMeasureLabel(input, measureChannel, measureLabel),
       dimensionLabel: resolveFieldLabel(input, dimensionChannel),
       colorLabel: colorIsMeasure ? undefined : resolveFieldLabel(input, 'color'),
     },
@@ -300,11 +304,12 @@ function buildKeyFindings(
   measureContext?: MeasureNarrativeContext,
 ): string[] {
   const findings: string[] = [];
+  const measureLabel = labels.findingMeasureLabel ?? labels.measureLabel;
   if (analysis.max) {
-    findings.push(`High ${labels.measureLabel ?? 'value'}: ${describeDataPoint(analysis.max, labels.measureLabel, 'extremum-max')}`);
+    findings.push(`High ${measureLabel ?? 'value'}: ${describeDataPoint(analysis.max, measureLabel, 'extremum-max')}`);
   }
   if (analysis.min && (!analysis.max || analysis.min.label !== analysis.max.label || analysis.min.value !== analysis.max.value)) {
-    findings.push(`Low ${labels.measureLabel ?? 'value'}: ${describeDataPoint(analysis.min, labels.measureLabel, 'extremum-min')}`);
+    findings.push(`Low ${measureLabel ?? 'value'}: ${describeDataPoint(analysis.min, measureLabel, 'extremum-min')}`);
   }
   if (analysis.trend && analysis.trendDelta !== undefined) {
     const percent = analysis.first && analysis.first.value !== 0 ? analysis.trendDelta / analysis.first.value : undefined;
@@ -321,7 +326,7 @@ function buildKeyFindings(
   // aggregate (id_max→"Total Id max", sales_id→"Total Sales id"; #895 class). measureAdditive is
   // undefined for the input-shaped/pre-built-analysis paths, so `!== false` leaves them unchanged.
   if (analysis.total !== undefined && analysis.mark !== 'point' && analysis.measureAdditive !== false) {
-    findings.push(`Total ${labels.measureLabel ?? 'value'}: ${narrateNumber(analysis.total, 'total')}`);
+    findings.push(`Total ${measureLabel ?? 'value'}: ${narrateNumber(analysis.total, 'total')}`);
   }
   if (analysis.colorCategories.length > 0 && labels.colorLabel) {
     findings.push(`${labels.colorLabel}: ${analysis.colorCategories.join(', ')}`);
@@ -357,6 +362,22 @@ function resolveFieldLabel(spec: NormalizedVizSpec, channel: keyof NormalizedViz
     return humanize(binding.field);
   }
   return undefined;
+}
+
+function resolveFindingMeasureLabel(
+  spec: NormalizedVizSpec,
+  channel: keyof NormalizedVizSpec['encoding'],
+  measureLabel: string | undefined,
+): string | undefined {
+  const binding = getEncodingBinding(spec, channel);
+  if (binding?.aggregate !== 'count') {
+    return measureLabel;
+  }
+  // The builder synthesizes humanize(field) when no title was authored; that default still names
+  // the counted identity, so only a non-default title supplies the grouping-context alternative.
+  const authoredTitle = binding.title?.trim();
+  const synthesizedFieldTitle = binding.field ? humanize(binding.field) : undefined;
+  return authoredTitle && authoredTitle !== synthesizedFieldTitle ? authoredTitle : 'Count';
 }
 
 function describeCorrelation(value: number): string {

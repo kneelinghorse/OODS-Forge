@@ -7,6 +7,7 @@ import { renderMappedComponent } from '../../src/render/component-map.js';
 import type { CatalogListInput, CatalogListOutput } from '../../src/tools/types.js';
 import type { UiElement } from '../../src/schemas/generated.js';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,23 +18,28 @@ const validateOutput = ajv.compile(outputSchema);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '../../../../');
-const codeConnectPath = path.join(repoRoot, 'artifacts', 'structured-data', 'code-connect.json');
+const codeConnectPathEnv = 'MCP_CODE_CONNECT_PATH';
 
 describe('catalog.list', () => {
-  let preservedCodeConnect: string | null = null;
+  let originalCodeConnectPathEnv: string | undefined;
+  let codeConnectTmpDir: string;
+  let codeConnectPath: string;
 
   beforeAll(() => {
-    preservedCodeConnect = fs.existsSync(codeConnectPath) ? fs.readFileSync(codeConnectPath, 'utf8') : null;
-    fs.rmSync(codeConnectPath, { force: true });
+    originalCodeConnectPathEnv = process.env[codeConnectPathEnv];
+    codeConnectTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'oods-catalog-code-connect-'));
+    codeConnectPath = path.join(codeConnectTmpDir, 'code-connect.json');
+    process.env[codeConnectPathEnv] = codeConnectPath;
   });
 
   afterAll(() => {
-    if (preservedCodeConnect === null) {
-      fs.rmSync(codeConnectPath, { force: true });
-      return;
+    if (originalCodeConnectPathEnv === undefined) {
+      delete process.env[codeConnectPathEnv];
+    } else {
+      process.env[codeConnectPathEnv] = originalCodeConnectPathEnv;
     }
 
-    fs.writeFileSync(codeConnectPath, preservedCodeConnect);
+    fs.rmSync(codeConnectTmpDir, { recursive: true, force: true });
   });
 
   it('validates schema contracts', async () => {
@@ -358,8 +364,6 @@ describe('catalog.list', () => {
   });
 
   it('should prefer code-connect snippets when available', async () => {
-    const previous = fs.existsSync(codeConnectPath) ? fs.readFileSync(codeConnectPath, 'utf8') : null;
-
     try {
       const payload = {
         generatedAt: new Date().toISOString(),
@@ -383,11 +387,7 @@ describe('catalog.list', () => {
       expect(tagInput?.codeReferences?.some((ref) => ref.kind === 'code-connect')).toBe(true);
       expect(tagInput?.codeSnippet).toBe('// code-connect: TagInput usage example');
     } finally {
-      if (previous === null) {
-        fs.rmSync(codeConnectPath, { force: true });
-      } else {
-        fs.writeFileSync(codeConnectPath, previous);
-      }
+      fs.rmSync(codeConnectPath, { force: true });
     }
   });
 

@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { loadStoryIndex, resolveStoryId } from '../utils/storybook';
 
-// s174 m03 — same defect and same fix as form.accessibility.spec.ts: the hard-coded
-// `statusables-toast--default` died in the 2025-12-03 title reorg (the story is now under
-// Components/Statusables/Toast) and nothing automated ran the desktop project to notice.
+// s174 m03 — this spec's hard-coded `statusables-toast--default` id died in the 2025-10-21
+// taxonomy normalization (488191c); the
+// story is now under Components/Statusables/Toast, and nothing automated ran the desktop
+// project to notice.
 // Index resolution makes a future rename fail by NAME rather than by mystery locator.
 const STORY_TITLES = ['Components/Statusables/Toast', 'Statusables/Toast'] as const;
 const STORY_NAME = 'Default';

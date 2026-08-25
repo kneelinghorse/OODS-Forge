@@ -1,10 +1,9 @@
 import { defineConfig } from 'vitest/config';
 
-// Q1 determinism scale-tier suite. Opt-in via `pnpm --filter @oods/mcp-server
-// run test:scale`. Wired as a separate CI check (.github/workflows/ci.yml
-// scale-determinism job) per the s105-m03 audit (decision #614). The
-// release-gate integration is deferred until s106 + s107 sustain a 3-sprint
-// determinism streak per mission-graph V2 axis #7.
+// Q1 determinism scale-tier suite. Run via `pnpm --filter @oods/mcp-server
+// run test:scale`; the separate scale-determinism CI job provides per-PR signal.
+// Per decision #614, this is also a standing release gate verified at sprint
+// closeout (mission-graph V2 axis #7; see cmos/foundational-docs/quality-bars.md).
 export default defineConfig({
   test: {
     include: ['test/scale/**/*.spec.ts'],

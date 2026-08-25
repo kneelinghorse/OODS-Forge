@@ -86,9 +86,9 @@ Response (error):
 
 ---
 
-## Auto tool contracts (22 tools)
+## Auto tool contracts (19 registry entries)
 
-The expanded narrative sections below cover 11 heavily used auto tools. The remaining 11 default tools are summarized near the end of this section and link to the maintained `docs/api/*` pages.
+The 19 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
 
 ### `tokens.build`
 
@@ -1078,9 +1078,9 @@ These tools are part of the default auto-registered surface and have full parame
 
 ---
 
-## On-demand tool contracts (9 tools)
+## On-demand tool contracts (6 registry entries)
 
-Enable on-demand tools via `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`.
+The 6 on-demand entries come from `packages/mcp-server/src/tools/registry.json`. Enable them via `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`.
 
 ### `a11y.scan`
 

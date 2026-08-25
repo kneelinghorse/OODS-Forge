@@ -308,10 +308,11 @@ function toLowerCaseArray(values) {
 
 /**
  * ENTRY GUARD (s175 m02, the s169 m03 shape from tools/tokens-governance/index.ts:1410-1424).
- * This used to be a bare top-level `await main()`, which meant `import`ing the module RAN
- * THE CLI — every check, empty argv, writing the tracked diagnostics.json — so none of the
- * red paths above could be unit-tested. CLI behaviour is byte-identical: invoked as a
- * script, `process.argv[1]` is this file and `main()` runs exactly as before.
+ * This used to invoke `main()` at import, which meant importing the module ran enforcement
+ * with empty argv. The enforcement script does not write diagnostics.json; the tracked-file
+ * movement described by the shared s175 controls belongs to state-assessment.mjs. CLI
+ * behaviour is byte-identical: invoked as a script, `process.argv[1]` is this file and
+ * `main()` runs exactly as before.
  *
  * One deliberate difference from the precedent: both sides are compared as REAL paths. Node
  * realpath's the main module's `import.meta.url` but leaves `process.argv[1]` as typed, so a

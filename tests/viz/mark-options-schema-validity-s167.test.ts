@@ -44,11 +44,11 @@
  * ── CLAIM CEILING ──────────────────────────────────────────────────────────────────
  * No OODS-only key reaches the emitted mark def, every declared trait option is covered
  * by a probe, and every committed mark-bearing fixture emits a schema-valid mark def.
- * NOT "FF#22 is closed". NOT "the emitted spec is valid" — measured after this fix, 14 of
- * the 42 mark-bearing fixtures are still invalid as WHOLE SPECS, for reasons that have
- * nothing to do with mark options: 3 fail at `/params/0` (additionalProperties) and 11 at
- * `/` (required). Those are RECORDED, not fixed. The inherited attribution of that bucket
- * to "facet/repeat" did NOT reproduce and is not repeated here.
+ * NOT "FF#22 is closed". Whole-spec validity is a separate oracle below: 28 of the 42
+ * mark-bearing fixtures validate directly, while 14 advertised fixture surfaces retain
+ * executable exception records with their exact AJV reasons and sufficient output-level
+ * corrections. Zero whole-spec failure is unannotated. The inherited attribution of that
+ * bucket to "facet/repeat" did NOT reproduce and is not repeated here.
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
@@ -295,6 +295,180 @@ const SKIP_DIRS = new Set([
   'node_modules', '.git', '.claude', 'dist', 'build', 'coverage', 'storybook-static',
   '.next', '.turbo',
 ]);
+
+interface WholeSpecCorrection {
+  readonly kind: 'join-selection-events' | 'hoist-composite-padding' | 'omit-secondary-channel-type';
+  readonly path: string;
+}
+
+interface WholeSpecException {
+  readonly reasons: readonly string[];
+  readonly corrections: readonly WholeSpecCorrection[];
+}
+
+function ajvReason(
+  instancePath: string,
+  keyword: string,
+  params: Record<string, unknown>,
+): string {
+  return instancePath + '|' + keyword + '|' + JSON.stringify(params);
+}
+
+const eventArrayReason = (index: number): string =>
+  ajvReason('/params/' + index + '/select/on', 'type', { type: 'string' });
+const paddingReason = (instancePath: string): string =>
+  ajvReason(instancePath, 'additionalProperties', { additionalProperty: 'padding' });
+const y2TypeReason = (instancePath: string): string =>
+  ajvReason(instancePath, 'additionalProperties', { additionalProperty: 'type' });
+const joinSelectionEvents = (index: number): WholeSpecCorrection => ({
+  kind: 'join-selection-events',
+  path: '/params/' + index + '/select/on',
+});
+const hoistPadding = (path: string): WholeSpecCorrection => ({
+  kind: 'hoist-composite-padding',
+  path,
+});
+const omitY2Type = (path: string): WholeSpecCorrection => ({
+  kind: 'omit-secondary-channel-type',
+  path,
+});
+
+/**
+ * s177 m06: executable reconciliation for the 14 whole-spec failures measured in s168.
+ * These are advertised example/corpus surfaces, so the sprint's zero-advertised-movement
+ * invariant rules out silently rewriting their source bytes. Each entry names exact AJV
+ * reasons and output corrections sufficient to make that compiled fixture valid.
+ */
+const WHOLE_SPEC_EXCEPTIONS: Readonly<Record<string, WholeSpecException>> = {
+  'examples/viz/before-after/accessibility-tighten/after.spec.json': {
+    reasons: [eventArrayReason(0), eventArrayReason(1)],
+    corrections: [joinSelectionEvents(0), joinSelectionEvents(1)],
+  },
+  'examples/viz/before-after/facet-small-multiples/after.spec.json': {
+    reasons: [eventArrayReason(0), paddingReason('/spec')],
+    corrections: [joinSelectionEvents(0), hoistPadding('/spec')],
+  },
+  'examples/viz/before-after/facet-small-multiples/before.spec.json': {
+    reasons: [0, 1, 2].map((index) => paddingReason('/hconcat/' + index)),
+    corrections: [0, 1, 2].map((index) => hoistPadding('/hconcat/' + index)),
+  },
+  'examples/viz/before-after/renderer-density-upgrade/after.spec.json': {
+    reasons: [eventArrayReason(0), eventArrayReason(1)],
+    corrections: [joinSelectionEvents(0), joinSelectionEvents(1)],
+  },
+  'examples/viz/before-after/renderer-density-upgrade/before.spec.json': {
+    reasons: [eventArrayReason(0), eventArrayReason(1)],
+    corrections: [joinSelectionEvents(0), joinSelectionEvents(1)],
+  },
+  'examples/viz/facet-layout.spec.json': {
+    reasons: [paddingReason('/spec')],
+    corrections: [hoistPadding('/spec')],
+  },
+  'examples/viz/patterns-v2/detail-overview-bar.spec.json': {
+    reasons: [0, 1, 2].map((index) => paddingReason('/hconcat/' + index)),
+    corrections: [0, 1, 2].map((index) => hoistPadding('/hconcat/' + index)),
+  },
+  'examples/viz/patterns-v2/drilldown-stacked-bar.spec.json': {
+    reasons: [paddingReason('/spec')],
+    corrections: [hoistPadding('/spec')],
+  },
+  'examples/viz/patterns-v2/facet-small-multiples-line.spec.json': {
+    reasons: [paddingReason('/spec')],
+    corrections: [hoistPadding('/spec')],
+  },
+  'examples/viz/patterns-v2/facet-target-band.spec.json': {
+    reasons: [paddingReason('/spec'), y2TypeReason('/spec/layer/0/encoding/y2')],
+    corrections: [hoistPadding('/spec'), omitY2Type('/spec/layer/0/encoding/y2')],
+  },
+  'examples/viz/patterns-v2/focus-context-line.spec.json': {
+    reasons: [0, 1].map((index) => paddingReason('/vconcat/' + index)),
+    corrections: [0, 1].map((index) => hoistPadding('/vconcat/' + index)),
+  },
+  'examples/viz/patterns-v2/sparkline-grid.spec.json': {
+    reasons: [paddingReason('/spec')],
+    corrections: [hoistPadding('/spec')],
+  },
+  'examples/viz/patterns-v2/target-band-line.spec.json': {
+    reasons: [y2TypeReason('/layer/0/encoding/y2')],
+    corrections: [omitY2Type('/layer/0/encoding/y2')],
+  },
+  'examples/viz/patterns/target-band-line.spec.json': {
+    reasons: [y2TypeReason('/layer/0/encoding/y2')],
+    corrections: [omitY2Type('/layer/0/encoding/y2')],
+  },
+};
+
+function asObject(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : undefined;
+}
+
+function objectAt(root: Record<string, unknown>, pointer: string): Record<string, unknown> | undefined {
+  let value: unknown = root;
+  for (const segment of pointer.split('/').slice(1)) {
+    value = Array.isArray(value)
+      ? value[Number(segment)]
+      : asObject(value)?.[segment];
+  }
+  return asObject(value);
+}
+
+function applyWholeSpecCorrection(compiled: Record<string, unknown>, correction: WholeSpecCorrection): void {
+  if (correction.kind === 'join-selection-events') {
+    const split = correction.path.lastIndexOf('/');
+    const parent = objectAt(compiled, correction.path.slice(0, split));
+    const key = correction.path.slice(split + 1);
+    const events = parent?.[key];
+    if (!Array.isArray(events)) throw new Error('Expected event array at ' + correction.path);
+    parent![key] = events.join(', ');
+    return;
+  }
+
+  const target = objectAt(compiled, correction.path);
+  if (!target) throw new Error('Expected object at ' + correction.path);
+
+  if (correction.kind === 'hoist-composite-padding') {
+    const padding = target.padding;
+    if (typeof padding !== 'number') throw new Error('Expected padding at ' + correction.path);
+    if (compiled.padding !== undefined && compiled.padding !== padding) {
+      throw new Error('Cannot hoist conflicting padding at ' + correction.path);
+    }
+    compiled.padding = padding;
+    delete target.padding;
+    return;
+  }
+
+  if (!Object.hasOwn(target, 'type')) throw new Error('Expected secondary type at ' + correction.path);
+  delete target.type;
+}
+
+interface WholeSpecFixture {
+  readonly rel: string;
+  readonly spec: NormalizedVizSpec;
+}
+
+function wholeSpecFixtures(): WholeSpecFixture[] {
+  const collected: string[] = [];
+  const walk = (dir: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        walk(path.join(dir, entry.name));
+      } else if (entry.name.endsWith('.spec.json')) {
+        collected.push(path.join(dir, entry.name));
+      }
+    }
+  };
+  walk(path.join(repoRoot, 'examples/viz'));
+
+  return collected
+    .map((abs) => ({
+        rel: path.relative(repoRoot, abs),
+        spec: JSON.parse(readFileSync(abs, 'utf8')) as NormalizedVizSpec,
+      }))
+    .filter(({ spec }) => spec.marks.some((mark) => mark.trait.startsWith('Mark')))
+    .sort((left, right) => left.rel.localeCompare(right.rel));
+}
 
 const X = { field: 'cat', trait: 'EncodingPositionX', channel: 'x' };
 const Y = { field: 'val', trait: 'EncodingPositionY', channel: 'y', scale: 'linear' };
@@ -630,5 +804,63 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
 
     expect(checked, 'the corpus definition stopped matching — re-derive it').toBe(42);
     expect(failures, `schema-invalid mark defs:\n  ${failures.join('\n  ')}`).toEqual([]);
+  }, 60_000);
+});
+
+describe('s177 m06 — whole-spec fixture validity reconciliation', () => {
+  it('leaves zero unannotated whole-spec failures across the exact 42-fixture corpus', () => {
+    const fixtures = wholeSpecFixtures();
+    const invalid: string[] = [];
+
+    expect(fixtures, 'the corpus definition stopped matching — re-derive it').toHaveLength(42);
+    expect(Object.keys(WHOLE_SPEC_EXCEPTIONS), 'the reconciled exception count moved').toHaveLength(14);
+
+    for (const { rel, spec } of fixtures) {
+      const compiled = toVegaLiteSpec(spec) as unknown as Record<string, unknown>;
+      if (validate(compiled)) {
+        expect(WHOLE_SPEC_EXCEPTIONS[rel], rel + ' is valid but still annotated').toBeUndefined();
+        continue;
+      }
+
+      invalid.push(rel);
+      const exception = WHOLE_SPEC_EXCEPTIONS[rel];
+      expect(exception, rel + ' is whole-spec invalid with no executable annotation').toBeDefined();
+      if (!exception) continue;
+
+      const observed = new Set(
+        (validate.errors ?? []).map((error) =>
+          ajvReason(error.instancePath || '/', error.keyword, error.params),
+        ),
+      );
+      for (const reason of exception.reasons) {
+        expect(observed, rel + ' no longer emits its exact AJV reason: ' + reason).toContain(reason);
+      }
+
+      for (let omitted = 0; omitted < exception.corrections.length; omitted += 1) {
+        const partial = structuredClone(compiled);
+        exception.corrections.forEach((correction, index) => {
+          if (index !== omitted) applyWholeSpecCorrection(partial, correction);
+        });
+        expect(
+          validate(partial),
+          rel + ' correction was not necessary at ' + exception.corrections[omitted].path,
+        ).toBe(false);
+      }
+
+      const corrected = structuredClone(compiled);
+      for (const correction of exception.corrections) {
+        applyWholeSpecCorrection(corrected, correction);
+      }
+      const correctedValid = validate(corrected);
+      const remaining = (validate.errors ?? []).map((error) =>
+        ajvReason(error.instancePath || '/', error.keyword, error.params),
+      );
+      expect(
+        correctedValid,
+        rel + ' has an undeclared cause after its corrections:\n  ' + remaining.join('\n  '),
+      ).toBe(true);
+    }
+
+    expect(invalid).toEqual(Object.keys(WHOLE_SPEC_EXCEPTIONS).sort());
   });
 });

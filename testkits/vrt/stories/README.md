@@ -20,9 +20,10 @@ Never hard-code a story id. Use `resolveStoryId` from `utils/storybook.ts` with 
 title (a `string[]` if a former title is worth aliasing) and name. This does not make a spec
 rot-proof — a deleted title still fails — but it fails LOUDLY and by name
 (`Story not found for titles: ...`) instead of navigating to a 404 page and then failing on an
-unrelated missing locator. Two specs here carried ids that died in the 2025-12-03 title reorg
-and stayed red for eight months because no CI job ran this project; s174 m03 fixed both and
-added the runner.
+unrelated missing locator. Two specs here carried invalid ids: form.accessibility's id never
+matched its original `Forms/TextField` title (`d6f2567`), while toast's id died in the
+2025-10-21 taxonomy normalization (`488191c`). They stayed red because no CI job ran this
+project; s174 m03 fixed both and added the runner.
 
 ## Retired in s174 m03, and the gap it leaves
 

@@ -7,40 +7,30 @@ This repo turns the OODS design system into an agent-usable surface: a semantic 
 Design system source of truth: https://github.com/kneelinghorse/OODS-Foundry
 Design system Storybook: https://kneelinghorse.github.io/OODS-Foundry/
 
-## Five capability pillars
+## Four capability pillars
 
-### 1) Discover (semantic registry)
+Forge's flagship promise is generation plus governance across four pillars:
+accuracy, fidelity, contract-determinism, and accessibility-by-construction.
 
-- Query structured exports of the design system (components, traits, objects, tokens).
-- Use `structuredData.fetch` for raw datasets and `catalog.list` for an agent-friendly component catalog.
-- Current inventory (`structuredData.fetch`, version `2026-03-06`): **101 components**, **41 traits**, **12 objects**.
+### 1) Accuracy
 
-### 2) Validate (schema checking + accessibility)
+- `artifact.certify` checks chart specifications for structural distortions and reports which accuracy rules were actually evaluated.
+- Read the per-pillar verdict and findings rather than treating an overall status as a claim that every possible accuracy property was proved.
 
-- Validate and normalize Design Lab UiSchema payloads (and patches) deterministically.
-- Use `repl` (`action: validate`) to check trees and `repl` (`action: render`) to render previews + apply patches.
-- Enable `checkA11y: true` to run 18 WCAG contrast rules alongside structural validation.
-- Use `a11y.scan` for a standalone accessibility contrast report against DTCG design tokens.
+### 2) Fidelity
 
-### 3) Theme (governed token overlays)
+- `viz.render` and `dashboard.render` produce OODS-tokened chart and dashboard output; `fidelity.preview` exposes object manifests at progressively richer fidelities.
+- `tokens.build` and `brand.apply` keep generated output tied to governed design-token and brand inputs.
 
-- Preview or apply brand token deltas safely.
-- Use `brand.apply` for governed overlays and `tokens.build` for token artifact generation.
+### 3) Contract-determinism
 
-### 4) Compose (intent-driven UI generation)
+- Rendered chart and dashboard payloads carry canonical content hashes, and `artifact.certify` independently checks deterministic chart compilation.
+- `repl` (`action: validate`) checks UiSchema contracts, while `registry.snapshot` exposes a versioned view of registry state.
 
-- Describe what you want in natural language and get a valid UiSchema back.
-- Use `design.compose` for general UI, `viz.compose` for chart schemas, and `pipeline` when you want compose → validate → render → code generation in one call.
-- `schemaRef` values returned by `design.compose`, `viz.compose`, `pipeline`, and `schema.load` expire after 30 minutes unless you persist them with `schema.save`.
-- Auto-validates generated schemas via `repl` (`action: validate`).
+### 4) Accessibility-by-construction
 
-### 5) Export + interoperate
-
-- Generate framework-specific code from validated schemas.
-- Use `code.generate` for React/TSX, Vue SFC, or standalone HTML output.
-- Use the `map` tool (`action`: `create`, `list`, `resolve`, `update`, `delete`) to map external design system components (Material UI, Ant Design, etc.) to OODS traits with prop translations and coercion strategies.
-- Use `schema` (`action`: `save`, `load`, `list`, `delete`) to persist and reuse schema work across sessions.
-- Use `object` (`action`: `list`, `show`) and `health` to inspect object definitions and live server readiness.
+- `viz.render` synthesizes accessible chart descriptions and can return a data table plus narrative from the same data it renders.
+- `artifact.certify` reports accessibility-equivalence findings for chart IR; `repl` (`action: validate`) and on-demand `a11y.scan` cover UiSchema and token-contrast checks.
 
 ## Two repos, two roles
 
@@ -83,11 +73,13 @@ Full schema and field reference: `docs/mcp/Tool-Specs.md` → "Project-level def
 - Trait names: `catalog.list` and `map` use canonical structured-data trait names such as `Stateful` or `Priceable`. `object.list` accepts full or suffix-matched namespaced object traits such as `lifecycle/Stateful` or `Stateful`. `viz.compose` explicit traits use hyphenated viz IDs such as `mark-bar` and `encoding-position-x`.
 - Override escape hatch: when `design.compose` returns a low-confidence selection or `reviewHint`, pin only that slot with `preferences.componentOverrides`, for example `{"object":"Subscription","context":"detail","preferences":{"componentOverrides":{"tab-0":"Card"}}}`.
 
-## MCP tool surface (27 tools)
+## MCP tool surface (25 tools)
 
-Registry source of truth: `packages/mcp-server/src/tools/registry.json`.
+The counts and tool names below are derived from
+`packages/mcp-server/src/tools/registry.json`; use that file as the generation
+source whenever this hand-authored inventory is refreshed.
 
-**Auto-registered (18 tools)** — available by default. The five CRUD families are exposed as single action-parameter tools (`repl`, `map`, `schema`, `object`, `review`); select the operation via a top-level `action`, e.g. `repl({action:'render'})` or `map({action:'create'})`:
+**Auto-registered (19 tools)** — available by default. The five action families are exposed as single action-parameter tools (`repl`, `map`, `schema`, `object`, `review`); select the operation via a top-level `action`, e.g. `repl({action:'render'})` or `map({action:'create'})`:
 
 | Group | Tools |
 |------|-------|
@@ -95,17 +87,15 @@ Registry source of truth: `packages/mcp-server/src/tools/registry.json`.
 | Composition + generation | `design.compose`, `viz.compose`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview` |
 | Mapping + schema persistence | `map` (`create`/`list`/`resolve`/`update`/`delete`), `schema` (`save`/`load`/`list`/`delete`) |
 | Registry inspection | `object` (`list`/`show`), `registry.snapshot` |
+| Certification | `artifact.certify` |
 | Review | `review` (`resolve`/`chain`) |
 
-**On-demand (9 tools)** — enable with `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`:
+**On-demand (6 tools)** — enable with `MCP_TOOLSET=all` or `MCP_EXTRA_TOOLS=...`:
 
 | Tool | Purpose |
 |------|---------|
 | `a11y.scan` | Standalone WCAG contrast scan against design tokens |
 | `diag.snapshot` | Diagnostics artifact bundle |
-| `reviewKit.create` | Design review kit bundles |
-| `purity.audit` | Token purity audit |
-| `vrt.run` | Visual regression tests |
 | `billing.reviewKit` | Billing provider comparison kit |
 | `billing.switchFixtures` | Switch billing provider fixtures |
 | `release.verify` | Package reproducibility verification (maintainer only) |

@@ -8,6 +8,7 @@ import {
   assertNormalizedVizSpec,
   buildVizSpecFromRows,
   evaluateAccuracyRules,
+  NormalizedVizSpecError,
   toVegaLiteSpec,
   type AccuracyRule,
   type AccuracyRuleId,
@@ -766,43 +767,124 @@ describe('s170 m01 — 42-fixture corpus sweep (zero findings)', () => {
     expect(FIXTURES).toHaveLength(42);
   });
 
-  // The 5 fixtures that are schema-INVALID at HEAD. certify rejects an invalid IR before any
-  // rule runs, so here they take the same unresolvable-operand branch and are silent. They are
-  // NAMED so that a future build fixes them deliberately rather than by accident — fixture
-  // edits are outside this sprint's declared movements.
-  const SCHEMA_INVALID = new Set([
-    'examples/viz/before-after/accessibility-tighten/after.spec.json',
-    'examples/viz/before-after/accessibility-tighten/before.spec.json',
-    'examples/viz/before-after/facet-small-multiples/after.spec.json',
-    'examples/viz/before-after/renderer-density-upgrade/after.spec.json',
-    'examples/viz/before-after/renderer-density-upgrade/before.spec.json',
-  ]);
+  type ValidationEvidence = readonly [path: string, keyword: string, message: string, count?: number];
+  type FailSafeExerciser = {
+    readonly reason: string;
+    readonly errorCount: number;
+    readonly evidence: readonly ValidationEvidence[];
+  };
 
-  it('exactly those 5 named fixtures are schema-invalid at HEAD', () => {
-    const invalid = FIXTURES.filter((file) => {
+  // These five examples are DELIBERATELY retained as artifact.certify fail-safe exercisers.
+  // They are not valid NormalizedVizSpec examples: certify rejects them before accuracy rules
+  // can run, and this sweep then supplies an absent compiled operand to prove fail-safe silence.
+  // Fixing one requires a deliberate fixture-hygiene change to this closed manifest; each entry
+  // pins its authored incompatibilities plus the exact assertNormalizedVizSpec evidence count.
+  const CERTIFY_FAIL_SAFE_EXERCISERS = {
+    'examples/viz/before-after/accessibility-tighten/after.spec.json': {
+      reason:
+        'missing encoding; mark color scheme; array-valued point events; visual rule missing else; narrative interactions; table headings/summary',
+      errorCount: 29,
+      evidence: [
+        ['/', 'required', "must have required property 'encoding'"],
+        ['/marks/0/encodings/color', 'additionalProperties', 'must NOT have additional properties'],
+        ['/interactions/0/select/on', 'type', 'must be string', 2],
+        ['/interactions/0/rule', 'required', "must have required property 'else'"],
+        ['/interactions/1/select/on', 'type', 'must be string', 2],
+        ['/a11y/narrative', 'additionalProperties', 'must NOT have additional properties'],
+        ['/a11y/tableFallback', 'additionalProperties', 'must NOT have additional properties', 2],
+      ],
+    },
+    'examples/viz/before-after/accessibility-tighten/before.spec.json': {
+      reason: 'mark-local color binding uses the unsupported scheme property',
+      errorCount: 1,
+      evidence: [['/marks/0/encodings/color', 'additionalProperties', 'must NOT have additional properties']],
+    },
+    'examples/viz/before-after/facet-small-multiples/after.spec.json': {
+      reason: 'point selection uses array-valued events; tableFallback uses unsupported headings',
+      errorCount: 7,
+      evidence: [
+        ['/interactions/0/select/on', 'type', 'must be string', 2],
+        ['/a11y/tableFallback', 'additionalProperties', 'must NOT have additional properties'],
+      ],
+    },
+    'examples/viz/before-after/renderer-density-upgrade/after.spec.json': {
+      reason:
+        'missing encoding; top-level meta; array-valued point events; config.renderer; portability.rendererJustification',
+      errorCount: 16,
+      evidence: [
+        ['/', 'required', "must have required property 'encoding'"],
+        ['/', 'additionalProperties', 'must NOT have additional properties'],
+        ['/interactions/0/select/on', 'type', 'must be string', 2],
+        ['/interactions/1/select/on', 'type', 'must be string', 2],
+        ['/config', 'additionalProperties', 'must NOT have additional properties'],
+        ['/portability', 'additionalProperties', 'must NOT have additional properties'],
+      ],
+    },
+    'examples/viz/before-after/renderer-density-upgrade/before.spec.json': {
+      reason: 'missing encoding; top-level meta; array-valued point events; filter rule carries unsupported target',
+      errorCount: 26,
+      evidence: [
+        ['/', 'required', "must have required property 'encoding'"],
+        ['/', 'additionalProperties', 'must NOT have additional properties'],
+        ['/interactions/0/select/on', 'type', 'must be string', 2],
+        ['/interactions/1/select/on', 'type', 'must be string', 2],
+        ['/interactions/2/rule', 'additionalProperties', 'must NOT have additional properties', 4],
+      ],
+    },
+  } as const satisfies Record<string, FailSafeExerciser>;
+
+  it('exactly the 5 deliberate certify fail-safe exercisers reject, for their pinned reasons', () => {
+    const rejected = new Map<string, NormalizedVizSpecError>();
+    for (const file of FIXTURES) {
+      const name = path.relative(REPO_ROOT, file);
       try {
         assertNormalizedVizSpec(JSON.parse(readFileSync(file, 'utf8')));
-        return false;
-      } catch {
-        return true;
+      } catch (error) {
+        expect(error, `${name} must reject through NormalizedVizSpec validation`).toBeInstanceOf(
+          NormalizedVizSpecError,
+        );
+        rejected.set(name, error as NormalizedVizSpecError);
       }
-    }).map((file) => path.relative(REPO_ROOT, file));
-    expect(new Set(invalid)).toEqual(SCHEMA_INVALID);
+    }
+
+    const expectedNames = Object.keys(CERTIFY_FAIL_SAFE_EXERCISERS).sort();
+    expect([...rejected.keys()].sort()).toEqual(expectedNames);
+    for (const name of expectedNames) {
+      const expected = CERTIFY_FAIL_SAFE_EXERCISERS[name as keyof typeof CERTIFY_FAIL_SAFE_EXERCISERS];
+      const errors = rejected.get(name)!.errors;
+      expect(errors, `${name}: ${expected.reason}`).toHaveLength(expected.errorCount);
+      for (const [errorPath, keyword, message, count = 1] of expected.evidence) {
+        const matches = errors.filter(
+          (error) => error.path === errorPath && error.keyword === keyword && error.message === message,
+        );
+        expect(matches, `${name}: ${expected.reason}`).toHaveLength(count);
+      }
+    }
   });
 
   for (const file of FIXTURES) {
     const name = path.relative(REPO_ROOT, file);
     it(`${name}: evaluates to zero accuracy findings`, () => {
       const raw = JSON.parse(readFileSync(file, 'utf8')) as NormalizedVizSpec;
+      const isFailSafeExerciser = Object.prototype.hasOwnProperty.call(
+        CERTIFY_FAIL_SAFE_EXERCISERS,
+        name,
+      );
       let compiled: unknown;
-      try {
+      if (isFailSafeExerciser) {
+        const expected =
+          CERTIFY_FAIL_SAFE_EXERCISERS[name as keyof typeof CERTIFY_FAIL_SAFE_EXERCISERS];
+        expect(
+          () => assertNormalizedVizSpec(raw),
+          `${name} remains a deliberate fail-safe exerciser: ${expected.reason}`,
+        ).toThrow(NormalizedVizSpecError);
+        compiled = undefined;
+      } else {
         compiled = toVegaLiteSpec(assertNormalizedVizSpec(raw));
-      } catch {
-        compiled = undefined; // the fail-safe branch the 5 invalid fixtures take
       }
       const result = evaluateAccuracyRules(raw, compiled);
       expect(result.findings).toEqual([]);
-      expect(result.rulesEvaluated).toBe(SCHEMA_INVALID.has(name) ? 1 : 4);
+      expect(result.rulesEvaluated).toBe(isFailSafeExerciser ? 1 : 4);
     });
   }
 });

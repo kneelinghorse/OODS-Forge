@@ -8,7 +8,7 @@ Sprint 28 · Mission B28.4 delivers the policy tooling required to operationalis
 |---------|------------|----------------|-------------|
 | **Static SoD** | Mutually exclusive role pair (e.g., Accountant ≠ Auditor) | `authz.sod_role_conflicts` | DB trigger `enforce_sod_on_membership` (blocking) + validator pre-check |
 | **Dynamic SoD** | Instance-level conflict (e.g., creator cannot approve same PO) | `authz.action_log` | Application detector (audit-only in v1.0) |
-| **Quorum SoD (v2.0)** | N-of-M approvals | *Deferred* | Planned for Sprint 29 |
+| **Quorum SoD (v2.0)** | N-of-M approvals | *Deferred* | Requires a workflow engine |
 
 ## Policy Builder API
 
