@@ -1,21 +1,15 @@
-// s176 m01 — THE ECHARTS CAVEAT BYTE-IDENTITY PIN (memo §1a D11; landed WITH the D9
-// baseline rebase, BEFORE any s176 source edit).
+// D11 path-scoped byte pin for the ECharts SPEC-ONLY fallback.
 //
-// m01 forks the contrast caveat: the cartesian path's caveat sentence becomes
-// render-backed, while the ECharts paths keep their own constant, byte-identical to the
-// pre-fork text, until the parked ECharts render-grading rung (memo §3). The fork is the
-// risky part — the pre-fork RENDERED_CONTRAST_CAVEAT is appended at six-plus sites inside
-// gradeCategorical, which the ECharts path SHARES with the cartesian path (risk register
-// §5a.2: a partial fork moves ECharts bytes mid-build). This pin freezes the two
-// reachable ECharts contrastNote surfaces as LITERALS — deliberately not imports of the
-// source constants, which would make the pin tautological — so any leak of the cartesian
-// reword onto the ECharts path reds here at the unit level, before the handler-level
-// spec-only-bytes control even runs.
+// Operand-backed ECharts calls now replace these notes with render-evidence wording in
+// artifact.certify. Calls without `data` cannot emit or render an option, so they continue
+// through evaluateEChartsCategoricalContrast/ECHARTS_GEO_EXEMPT_NOTE. This pin freezes
+// those two fallback surfaces as LITERALS — deliberately not imports of the source
+// constants, which would make the pin tautological — while the handler-level
+// spec-only-bytes control proves they remain the only path that exposes these bytes.
 //
-// The frozen text intentionally retains pre-s176 wording ("categorical color bytes Forge
-// baked into the compiled spec"; the categorical caveat's "cardinality-sliced" phrase):
-// under the D11 fork that wording stays true FOR THE ECHARTS PATH (reconstruction-graded
-// from baked constants) and is only retired when the ECharts rung itself lands.
+// The frozen text intentionally retains its baked-byte wording because it is still true
+// for the no-operand fallback. The operand-backed integration spec separately forbids
+// these phrases and pins the normalized-SVG evidence note.
 
 import { describe, expect, it } from 'vitest';
 import {
@@ -24,8 +18,7 @@ import {
 } from '../../src/tools/certify-contrast.js';
 
 // The pre-fork shared caveat, byte-for-byte as of pristine 4f64bcf. After the fork this
-// exact text must keep ending every ECharts contrastNote, whatever the cartesian caveat
-// becomes.
+// exact text must keep ending every spec-only fallback contrastNote.
 const FROZEN_ECHARTS_CAVEAT =
   'certify measures the categorical color bytes Forge baked into the compiled spec, ' +
   'on the light theme; dark-theme contrast is not verified.';
@@ -56,14 +49,14 @@ const FROZEN_ECHARTS_GEO_EXEMPT_NOTE =
   'categories outnumber it. ' +
   FROZEN_ECHARTS_CAVEAT;
 
-describe('certify-contrast — the ECharts caveat constants are byte-frozen (s176 D11 fork pin)', () => {
-  it('the ECharts categorical contrastNote is byte-identical to the pre-fork text', () => {
+describe('certify-contrast — D11 keeps the ECharts spec-only fallback byte-frozen', () => {
+  it('the spec-only categorical fallback is byte-identical to the baked-palette text', () => {
     const out = evaluateEChartsCategoricalContrast();
     expect(out.contrast).toBe('pass');
     expect(out.contrastNote).toBe(FROZEN_ECHARTS_CATEGORICAL_NOTE);
   });
 
-  it('ECHARTS_GEO_EXEMPT_NOTE is byte-identical to the pre-fork text', () => {
+  it('the spec-only geo fallback is byte-identical to the baked-palette text', () => {
     expect(ECHARTS_GEO_EXEMPT_NOTE).toBe(FROZEN_ECHARTS_GEO_EXEMPT_NOTE);
   });
 });

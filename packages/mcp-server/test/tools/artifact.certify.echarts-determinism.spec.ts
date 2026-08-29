@@ -133,24 +133,26 @@ describe('artifact.certify — the ECharts determinism verdict SHAPE (s172 m02)'
   );
 });
 
-describe('artifact.certify — the determinism note scopes the claim (s172 m02)', () => {
+describe('artifact.certify — the render-backed determinism note scopes the claim (s179 m05)', () => {
   it.each(ECHARTS_OPERAND_CASES.map((c) => [c.chartType, c] as const))(
-    '%s: the scope note carries the same-(spec,data) clause AND the tokens-bundle clause',
+    '%s: the scope note binds both identities to independent projections and the certified matrix',
     async (_label, operand) => {
       const { certified } = await renderThenCertify(operand);
-      const note = (certified.notes ?? []).find((n) => n.includes('determinism verdict is over the emitted'));
+      const note = (certified.notes ?? []).find((n) => n.includes('determinism verdict covers the emitted'));
       expect(note).toBeDefined();
-      expect(note).toContain('no claim about what the caller actually rendered');
-      expect(note).toContain('@oods/tokens bundle version');
+      expect(note).toContain('two independently emitted projected options');
+      expect(note).toContain('contentHash identifies the first projected option');
+      expect(note).toContain('renderHash identifies the first normalized SVG');
+      expect(note).toContain('packages/viz-render/certified-matrix.json');
     },
   );
 
-  it('force_graph ALSO states the option-vs-physics scope; the other seven do not (it is only true there)', async () => {
+  it('retires the option-only force-physics caveat now that force participates in the rendered proof', async () => {
     const PHYSICS = 'runtime force physics';
     for (const operand of ECHARTS_OPERAND_CASES) {
       const { certified } = await renderThenCertify(operand);
       const mentions = (certified.notes ?? []).some((n) => n.includes(PHYSICS));
-      expect(mentions).toBe(operand.chartType === 'force_graph');
+      expect(mentions).toBe(false);
     }
   });
 });

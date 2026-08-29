@@ -7,8 +7,8 @@
 // contrast grade's own render reused as the first hash and the SECOND render being the
 // proof (the "KEEP the second call" discipline, render edition). The first hash is
 // reported as the OPTIONAL determinism.renderHash, present EXACTLY when the rendered-
-// grading path rendered (>= 1 series-classified unit) — and therefore NEVER on any
-// ECharts response (the ECharts render rung is parked, memo §3).
+// grading path rendered (>= 1 series-classified unit). Operand-backed ECharts calls now
+// carry their sibling normalized-SVG proof; ECharts {spec}-only calls still do not render.
 //
 // What these tests pin: presence conditions on both sides, renderHash stability across
 // calls, contentHash IMMOVABILITY (the render never feeds it — D7), and schema validity
@@ -99,7 +99,7 @@ describe('artifact.certify — render-backed determinism (s176 m02)', () => {
     expect(validateOutput(out)).toBe(true);
   });
 
-  it('no ECharts response carries renderHash — {spec}-only has no determinism at all; data-backed has exactly the compile-half keys', async () => {
+  it('ECharts {spec}-only has no determinism while a renderable operand carries the option and normalized-render hashes', async () => {
     const specOnly = await certify({ spec: echartsPrimaryIr('MarkTreemap', 'treemap') });
     expect(specOnly.status).toBe('ok');
     expect(specOnly.coverage).toBe('uncertified');
@@ -121,7 +121,12 @@ describe('artifact.certify — render-backed determinism (s176 m02)', () => {
     });
     expect(dataBacked.status).toBe('ok');
     expect(dataBacked.coverage).toBe('uncertified');
-    expect(Object.keys(dataBacked.determinism ?? {})).toEqual(['stable', 'contentHash']);
+    expect(Object.keys(dataBacked.determinism ?? {})).toEqual([
+      'stable',
+      'contentHash',
+      'renderHash',
+    ]);
+    expect(dataBacked.determinism?.renderHash).toMatch(/^[0-9a-f]{64}$/);
     expect(validateOutput(dataBacked)).toBe(true);
   });
 });

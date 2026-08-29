@@ -7,8 +7,8 @@
 //
 //   1. the SAME pure adapter call — (spec, branchData), geo via the shared builder;
 //   2. the SAME JSON projection — JSON.parse(JSON.stringify(option)), which drops the
-//      tooltip `formatter` closure (and bubble_map's symbolSize function) because those
-//      are what the MCP wire drops;
+//      tooltip `formatter` closure because it is what the MCP wire drops (bubble_map's
+//      sizes are JSON-safe per-datum numbers);
 //   3. the SAME __joinDiagnostics strip, and __registration DELIBERATELY KEPT — it rides
 //      the served bytes for the geo types, so a hash taken without it would be a hash of
 //      something no consumer receives;
@@ -18,15 +18,10 @@
 // the same (spec, data). That equality is the pillar's whole claim, and it is asserted
 // LIVE cross-tool (no pinned hashes) in artifact.certify.echarts-determinism.spec.ts.
 //
-// SCOPE, stated because the pillar would otherwise overclaim:
-//   - the proof is over the OPTION, not the picture. force_graph's on-screen layout is
-//     runtime physics with no baked seed, so a stable option does not mean a stable
-//     rendering. The note says so on force_graph verdicts.
-//   - palette/chrome resolution reads the INSTALLED @oods/tokens bundle at module load
-//     (viz-core token-resolver.ts), so hash identity across processes assumes one bundle
-//     version. The note says so on every verdict.
-//   - the claim is scoped to the (spec, data) pair SUPPLIED TO BOTH TOOLS. certify says
-//     nothing about what the caller actually rendered.
+// The emitted-option proof remains independently useful after render determinism was
+// added: contentHash identifies the projected option and never incorporates the SVG.
+// artifact.certify owns the combined option+render scope note because only that caller
+// performs the two isolated renders.
 
 import { canonicalize, sha256 } from '@oods/artifacts';
 import {
@@ -102,6 +97,12 @@ export function projectEChartsOption(option: EChartsPrimaryOption): Record<strin
 export interface EChartsDeterminismResult {
   readonly stable: boolean;
   readonly contentHash: string;
+  /** Exact first served-option projection; m05 renders this object, never the raw option. */
+  readonly firstProjected: Record<string, unknown>;
+  /** Independent second served-option projection retained as the determinism proof. */
+  readonly secondProjected: Record<string, unknown>;
+  readonly firstCanonical: string;
+  readonly secondCanonical: string;
 }
 
 export interface EChartsEmitFailure {
@@ -140,15 +141,25 @@ export function evaluateEChartsDeterminism(
   branchData: unknown,
 ): EChartsDeterminismOutcome {
   try {
-    const first = canonicalize(projectEChartsOption(emitRawEChartsOption(spec, chartType, branchData)));
-    const second = canonicalize(projectEChartsOption(emitRawEChartsOption(spec, chartType, branchData)));
-    return { ok: true, stable: first === second, contentHash: sha256(first) };
+    const firstProjected = projectEChartsOption(emitRawEChartsOption(spec, chartType, branchData));
+    const secondProjected = projectEChartsOption(emitRawEChartsOption(spec, chartType, branchData));
+    const firstCanonical = canonicalize(firstProjected);
+    const secondCanonical = canonicalize(secondProjected);
+    return {
+      ok: true,
+      stable: firstCanonical === secondCanonical,
+      contentHash: sha256(firstCanonical),
+      firstProjected,
+      secondProjected,
+      firstCanonical,
+      secondCanonical,
+    };
   } catch (err) {
     return emitFailure(err);
   }
 }
 
-// ---- the notes ---------------------------------------------------------------------
+// ---- the operand-absent note ---------------------------------------------------------
 
 /**
  * The operand-absent note (a DECLARED notes[] movement on the ECharts {spec}-only path,
@@ -157,18 +168,4 @@ export function evaluateEChartsDeterminism(
  */
 export function operandAbsentDeterminismNote(trait: string): string {
   return `Determinism is unchecked for ${trait}: an ECharts-primary IR is metadata-only (data:{values:[]}, encoding:{}), so the chart's own data is not in it. Supply the matching \`data\` branch and certify re-emits the ECharts option twice and reports a real determinism verdict plus a contentHash.`;
-}
-
-/**
- * The scoping note that ships WITH a real ECharts determinism verdict. Three clauses, and
- * each is here because the verdict would otherwise be read as claiming more than it does.
- * The force_graph clause is emitted only for force_graph — it is a statement of fact about
- * that adapter, and printing it on a treemap verdict would be noise, not honesty.
- */
-export function determinismScopeNote(chartType: EChartsPrimaryType): string {
-  const base =
-    'This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load.';
-  return chartType === 'force_graph'
-    ? `${base} force_graph additionally: the option is deterministic, but the rendered layout is runtime force physics with no baked seed, so the picture is not covered by this verdict.`
-    : base;
 }

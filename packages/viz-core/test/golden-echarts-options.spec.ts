@@ -160,8 +160,8 @@ const CASES: ReadonlyArray<readonly [string, () => unknown]> = [
   ['sankey (flow)', () => adaptSankeyToECharts(spec('viz:sankey', 'Energy', 'MarkSankey', 'Sankey of energy flow.'), SANKEY_FLOW)],
   ['force_graph (network)', () => adaptGraphToECharts(spec('viz:graph', 'Service map', 'MarkGraph', 'Force graph of services.'), NETWORK_GRAPH)],
   // sprint-112 m03 geo: the JSON-safe option drops the tooltip-formatter closure
-  // (same known limitation) and the symbolSize FUNCTION; the resolved colours +
-  // __registration FeatureCollection are pinned. Both adapters are pure → goldenable.
+  // (same known limitation); bubble sizes survive as per-datum numbers. The resolved
+  // colours + __registration FeatureCollection are pinned. Both adapters are pure → goldenable.
   ['choropleth (join)', () => adaptChoroplethToECharts(choroplethSpec(), GEO_FC, GEO_SALES, GEO_DIMS)],
   ['bubble_map (points)', () => adaptBubbleToECharts(bubbleSpec(), GEO_FC, GEO_CITIES, GEO_DIMS)],
   // sprint-120 m01: native series.type:'chord'. The JSON-safe option keeps the

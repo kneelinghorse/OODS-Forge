@@ -270,7 +270,7 @@ export namespace ArtifactCertifyInputSchema {
       };
 
   /**
-   * Input to artifact.certify: a Forge NormalizedVizSpec IR to certify, plus (s172) an OPTIONAL `data` operand for the 8 ECharts-primary types. The tool boundary is intentionally PERMISSIVE on `spec` ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR. BRAND, STATED PLAINLY (s169 m04): this input takes NO brand, deliberately. Every operand certify grades is brand-INVARIANT — the colour hexes baked into the compiled spec, graded against the light-theme :root canvas — so a brand could not change any verdict. Offering the field would be a false affordance. dashboard.render and repl render DO accept brand; certify does not, because for certify it would mean nothing. DATA IS THE COUNTERPART CASE, NOT THE SAME CASE (s172 m01): `data` is NOT an affordance — it is the OPERAND. An ECharts-primary NormalizedVizSpec is METADATA-ONLY by ratified design (data:{values:[]}, encoding:{}); the chart's actual nodes/links/rows/geometry live in viz.render's data branch and never enter the IR. Without `data` there is nothing for the determinism and accuracy pillars to read, so they stay 'unchecked'; with it they carry real verdicts that genuinely change with the operand. That is exactly why it is offered and brand is not.
+   * Input to artifact.certify: a Forge NormalizedVizSpec IR to certify, plus (s172) an OPTIONAL `data` operand for the 8 ECharts-primary types. The tool boundary is intentionally PERMISSIVE on `spec` ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR. BRAND, STATED PLAINLY (s169 m04): this input takes NO brand, deliberately. Every operand certify grades is brand-INVARIANT — cartesian paints come from the compiled render, and data-backed ECharts paints come from the rendered projected option. Where categorical contrast is graded, those paints are compared against the light-theme :root canvas; geo render evidence remains exempt with no canvas ratio. A brand therefore could not change any verdict. Offering the field would be a false affordance. dashboard.render and repl render DO accept brand; certify does not, because for certify it would mean nothing. DATA IS THE COUNTERPART CASE, NOT THE SAME CASE (s172 m01): `data` is NOT an affordance — it is the OPERAND. An ECharts-primary NormalizedVizSpec is METADATA-ONLY by ratified design (data:{values:[]}, encoding:{}); the chart's actual nodes/links/rows/geometry live in viz.render's data branch and never enter the IR. Without `data` there is nothing for the determinism and accuracy pillars to read, so they stay 'unchecked'; with it they carry real verdicts that genuinely change with the operand. That is exactly why it is offered and brand is not.
    */
   export interface ArtifactCertifyInput {
     /**
@@ -510,7 +510,7 @@ export type ArtifactCertifyInput = ArtifactCertifyInputSchema.ArtifactCertifyInp
 // Source: artifact.certify.output.json
 export namespace ArtifactCertifyOutputSchema {
   /**
-   * The certify verdict for a Forge NormalizedVizSpec IR: a folded conformance gate (cartesian path only — conformant rolls up a11y-equivalence + contrast + accuracy + determinism, s140/s170), a re-emit determinism proof, a contentHash, and a per-pillar verdict summary (pillars — five-valued on contrast, four-valued on accuracy since s175) that disaggregates which pillar drove the verdict. COVERAGE 5 -> 13 (s172): the 8 ECharts-primary types still return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure — but three of the four pillars now carry real verdicts for them. contrast has since s141; determinism and accuracy do whenever the caller supplies the OPTIONAL `data` operand (the same data branch viz.render takes). Without `data` those two stay 'unchecked' and say so in notes[], naming the missing operand rather than implying a missing capability. DETERMINISM: on the cartesian path it is the Vega-Lite compile, proven byte-stable across two independent re-emits — and since s176, when the rendered-grading path rendered the chart, ALSO the render: two independent @oods/viz-render renders of the compiled spec must hash identically (reported as the OPTIONAL determinism.renderHash; a nondeterministic render fails `stable` and pulls conformant false). On the ECharts path (s172) it is the ECharts OPTION only, re-emitted twice through the same pure adapters viz.render uses and projected through viz.render's exact JSON projection, so certify's contentHash equals viz.render's FOR THE SAME (spec, data) PAIR SUPPLIED TO BOTH TOOLS; no ECharts response carries renderHash. certify claims nothing about what the CALLER rendered — the render leg is certify's own deterministic render. Two scope clauses ride the notes: hash identity across processes assumes ONE installed @oods/tokens bundle version (palette and chrome resolve from it at module load), and for force_graph the option is deterministic while the rendered layout is runtime force physics with no baked seed. ACCURACY (s170 #818, widened s172): the CARTESIAN path evaluates exactly four reader-only structural rules over the IR + the compiled Vega-Lite spec — non-zero bar baseline (OODS-V150), dual axis (V151), area-encodes-linear (V152), aggregation-hiding (V153). The ECHARTS path evaluates a per-type set over the data operand — treemap and sunburst offer V154 (a node value area/angle cannot encode) and V155 (an explicit parent that is not the sum of its children); sankey offers V156 (negative/non-finite link value), V157 (a node height that is not the flow its links carry) and V158 (a duplicate directed flow); chord offers V156; choropleth offers V159 (a region matched to rows with CONFLICTING joined values). force_graph, bubble_map and flow_map offer NOTHING, and that is a stated position rather than a gap — but the two halves of it differ, and s173 m01 corrects s172's blanket wording: force_graph's distortion candidates really are adapter constants, while bubble_map's colorScale and flow_map's strengthField ARE authorable through the branch and simply have no rule written for them yet (a recorded scope decision, never an impossibility claim). READ accuracy:'pass' PRECISELY: it means none of the OFFERED rules positively detected its distortion, with accuracySummary.rulesEvaluated reporting how many actually resolved their operand. It is NOT a claim that the chart is accurate. On the ECharts path 'pass' additionally REQUIRES rulesEvaluated > 0: zero resolved rules is 'unchecked' there, whether the offered set was empty or every precondition was absent. CONTRAST is RENDER-MEASURED for the 5 cartesian-Vega types (s176): certify renders the compiled spec through @oods/viz-render and grades the SERIES-TO-PAINT ASSIGNMENT the data marks actually carry — duplicates retained, so a recycled palette (more consumed series than baked hexes) fails as a ΔE00=0 pair — against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD; config.tokens overrides honored). Unit classification still reads the compiled bytes, so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass', and non-palette paints are author chrome, skipped, never failed. For the 8 ECharts-primary types contrast is RECONSTRUCTION-GRADED from baked constants, not render-measured: 'pass' for the 5 categorical ones (the fixed OODS categorical palette their adapters bake) and 'exempt' for the 3 geo ones (sequential/continuous color, WCAG gradient essential exception). So coverage:'uncertified' does NOT imply contrast:'unchecked'; a consumer must not key 'is-ECharts/uncertified' off any pillar's value. contrastNote carries the rendered-contrast caveat.
+   * The certify verdict for a Forge NormalizedVizSpec IR: a folded conformance gate (cartesian path only — conformant rolls up a11y-equivalence + contrast + accuracy + determinism, s140/s170), a re-emit determinism proof, a contentHash, and a per-pillar verdict summary (pillars — five-valued on contrast, four-valued on accuracy since s175) that disaggregates which pillar drove the verdict. COVERAGE 5 -> 13 (s172): the 8 ECharts-primary types still return coverage:'uncertified' / conformant:null — a DISTINCT verdict, not a failure — but three of the four pillars now carry real verdicts for them. contrast has since s141; determinism and accuracy do whenever the caller supplies the OPTIONAL `data` operand (the same data branch viz.render takes). Without `data` those two stay 'unchecked' and say so in notes[], naming the missing operand rather than implying a missing capability. DETERMINISM: on the cartesian path it is the Vega-Lite compile, proven byte-stable across two independent re-emits — and since s176, when the rendered-grading path rendered the chart, ALSO the render: two independent @oods/viz-render renders of the compiled spec must hash identically (reported as the OPTIONAL determinism.renderHash; a nondeterministic render fails `stable` and pulls conformant false). On the ECharts data-backed path, contentHash identifies the projected ECharts option from the first emission and stays equal to viz.render's contentHash for the same (spec, data) pair; renderHash identifies the first normalized SVG whenever server-side rendering succeeds. A second independent option emission and render must reproduce both identities for stable:true. The locally certified runtime contract and render-hash epoch are recorded at packages/viz-render/certified-matrix.json; a future matrix or epoch change requires an explicit reviewed update. A typed first-render fault leaves renderHash absent and makes stable false; bubble_map without inline geometry keeps its option proof, omits renderHash, and names the no-server-map limitation. certify claims nothing about what the CALLER rendered — the render leg is certify's own deterministic render — and the notes bind the proof to the locally certified runtime axes in that record. ACCURACY (s170 #818, widened s172): the CARTESIAN path evaluates exactly four reader-only structural rules over the IR + the compiled Vega-Lite spec — non-zero bar baseline (OODS-V150), dual axis (V151), area-encodes-linear (V152), aggregation-hiding (V153). The ECHARTS path evaluates a per-type set over the data operand — treemap and sunburst offer V154 (a node value area/angle cannot encode) and V155 (an explicit parent that is not the sum of its children); sankey offers V156 (negative/non-finite link value), V157 (a node height that is not the flow its links carry) and V158 (a duplicate directed flow); chord offers V156; choropleth offers V159 (a region matched to rows with CONFLICTING joined values). force_graph, bubble_map and flow_map offer NOTHING, and that is a stated position rather than a gap — but the two halves of it differ, and s173 m01 corrects s172's blanket wording: force_graph's distortion candidates really are adapter constants, while bubble_map's colorScale and flow_map's strengthField ARE authorable through the branch and simply have no rule written for them yet (a recorded scope decision, never an impossibility claim). READ accuracy:'pass' PRECISELY: it means none of the OFFERED rules positively detected its distortion, with accuracySummary.rulesEvaluated reporting how many actually resolved their operand. It is NOT a claim that the chart is accurate. On the ECharts path 'pass' additionally REQUIRES rulesEvaluated > 0: zero resolved rules is 'unchecked' there, whether the offered set was empty or every precondition was absent. CONTRAST is RENDER-MEASURED for the 5 cartesian-Vega types (s176): certify renders the compiled spec through @oods/viz-render and grades the SERIES-TO-PAINT ASSIGNMENT the data marks actually carry — duplicates retained, so a recycled palette (more consumed series than baked hexes) fails as a ΔE00=0 pair — against the light-theme canvas (role-C WCAG mark-vs-background + role-A categorical CIEDE2000 distinguishability, min-over-CVD; config.tokens overrides honored). Unit classification still reads the compiled bytes, so a chart whose compiled spec baked no OODS palette can never certify contrast:'pass', and non-palette paints are author chrome, skipped, never failed. ECharts contrast is render-measured when `data` is supplied: actual visible chart fills and strokes feed Role C, while the semantic N-long category-to-paint assignment feeds Role A with genuine palette-recycling duplicates retained. The 5 categorical families receive the combined worst verdict; the 3 geo families remain exempt under the sequential/continuous-color ruling while still carrying normalized render evidence. spec-only calls retain the reconstructed baked-palette verdict and its baked-bytes caveat. So coverage:'uncertified' does NOT imply contrast:'unchecked'; a consumer must not key 'is-ECharts/uncertified' off any pillar's value. contrastNote carries the rendered-contrast caveat.
    */
   export interface ArtifactCertifyOutput {
     /**
@@ -556,11 +556,11 @@ export namespace ArtifactCertifyOutputSchema {
       failing: number;
     };
     /**
-     * Re-emit determinism proof. On the certified path: the Vega-Lite compile is byte-stable across two independent re-emits and its canonical form hashes to contentHash — and since s176, when the rendered-grading path rendered the chart, `stable` ADDITIONALLY requires double-render byte-equality (two independent @oods/viz-render renders of the compiled spec hash identically; the first is reported as renderHash). On the uncertified (ECharts-primary) path it is present whenever the `data` operand was supplied (s172) and proves the compile-half property of the emitted ECharts OPTION only — no render, no renderHash, ever. Absent on the error path, and absent on an ECharts verdict with no operand.
+     * Re-emit and render determinism proof. Cartesian results identify the canonical Vega-Lite compile with contentHash and, when rendering occurred, the first normalized SVG with renderHash. ECharts-primary results are present when the `data` operand was supplied: contentHash identifies the retained projected option, and renderHash is present whenever that projected option was rendered successfully. In both families `stable` folds two independent emissions and, when renderHash is present, two independent normalized renders. A typed first-render fault keeps contentHash, omits renderHash, and makes stable false; bubble_map without inline geometry keeps the option proof and names the no-server-map limitation. Absent on the error path and on an ECharts verdict with no operand.
      */
     determinism?: {
       /**
-       * True when two independent emissions of the same input canonicalize byte-identically — two Vega-Lite compiles on the cartesian path, two ECharts adapter emissions on the ECharts path — AND, on the cartesian rendered-grading path (renderHash present, s176), two independent renders of the compiled spec produce byte-identical SVG. A nondeterministic render fails this and pulls conformant false: the clause is falsifiable, not a compile tautology.
+       * True when two independent emissions canonicalize byte-identically and every render that was attempted also normalizes byte-identically across two independent renders. On the cartesian path the emissions are Vega-Lite compiles. On the ECharts data-backed path they are retained projected options, and the two renders use the first and second projections respectively. A failed or nondeterministic render makes this false.
        */
       stable: boolean;
       /**
@@ -568,12 +568,12 @@ export namespace ArtifactCertifyOutputSchema {
        */
       contentHash: string;
       /**
-       * s176, OPTIONAL — SHA-256 (hex) of the SVG certify's own rendered-grading path rendered (@oods/viz-render, deterministic emitter: pinned text metrics, normalized ids). Present EXACTLY when that render happened: the cartesian path with at least one series-classified unit. Never present on any ECharts response (the ECharts render rung is parked), and never present when the cartesian chart had nothing to render-grade (a purely exempt/decorative chart). Distinct from contentHash by design: contentHash identifies the compiled ARTIFACT, renderHash witnesses the rendered PICTURE'S stability — hashing the render into contentHash would break render↔certify hash identity.
+       * OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on render-graded cartesian charts and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry, and cartesian charts with nothing to render-grade. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json.
        */
       renderHash?: string;
     };
     /**
-     * Per-pillar verdict summary (s137, extended s170, s172 and s175 — contrast is five-valued, accuracy four-valued). Present on both ok paths (absent on error). DISAGGREGATES which pillar drove the verdict, and on the uncertified path it is the ONLY place the real verdicts live (coverage stays 'uncertified' and conformant stays null there). a11yEquivalence mirrors the a11y-equivalence sub-result, NOT the folded conformant; determinism mirrors determinism.stable; contrast is the rendered-reality verdict — the series-to-paint assignment of the rendered cartesian chart (s176), or the reconstructed baked palette on the ECharts path; accuracy is the structural-rules verdict.
+     * Per-pillar verdict summary. Present on both ok paths and absent on error. It disaggregates which pillar drove the result; on the uncertified ECharts path it is the only verdict surface because coverage remains 'uncertified' and conformant remains null. a11yEquivalence mirrors its own sub-result, determinism mirrors determinism.stable, contrast is render-measured on cartesian charts and on ECharts calls with `data` (spec-only ECharts calls retain the reconstructed baked-palette verdict), and accuracy is the structural-rules verdict.
      */
     pillars?: {
       /**
@@ -581,11 +581,11 @@ export namespace ArtifactCertifyOutputSchema {
        */
       a11yEquivalence: 'pass' | 'fail' | 'unchecked';
       /**
-       * Re-emit determinism: 'pass' iff two independent emissions are byte-stable — and, on the cartesian rendered-grading path (s176, determinism.renderHash present), two independent renders of the compiled spec are byte-stable too. 'unchecked' only when there was nothing to re-emit — on the ECharts-primary path that means the `data` operand was not supplied, and notes[] says so. On the ECharts path the proof remains over the emitted OPTION only, never a rendered picture: force_graph's layout in particular is runtime physics and is out of scope, as its note states.
+       * Re-emit determinism: 'pass' iff two independent emissions are byte-stable and, whenever a server render occurred, two independent normalized SVG renders are byte-stable too. renderHash identifies the first normalized render. 'unchecked' on the ECharts-primary path means no `data` operand was supplied and notes[] names that absence. A typed render fault is a failed proof, not an unchecked one. force_graph option and render stability are both evaluated inside the isolated deterministic renderer.
        */
       determinism: 'pass' | 'fail' | 'unchecked';
       /**
-       * Rendered-reality contrast (light theme). CARTESIAN (render-measured, s176): certify renders the compiled spec through @oods/viz-render and grades the series-to-paint assignment the data marks actually carry, duplicates retained — a recycled palette is a ΔE00=0 role-A fail — with role-C mark-vs-canvas WCAG 3:1 (normative) + role-A categorical CIEDE2000 min-over-CVD distinguishability. 'pass' requires rendered OODS series paints (unit classification reads the compiled bytes, so a chart that baked no OODS palette can never 'pass'); 'exempt' when no categorical palette was baked (a sequential/diverging gradient, or a divergent/mistyped binding rendering on a continuous/default scale — WCAG essential exception, classified from the compiled spec before any render). On the uncertified (ECharts-primary) path (s141) contrast is a REAL verdict too, RECONSTRUCTED from the palette the adapter bakes (no render, no Vega compile — the parked render rung): 'pass' for the 5 categorical types (fixed OODS categorical palette, role-C + role-A), 'exempt' for the 3 geo types (sequential/continuous color); the bubble_map ordinal-categorical branch is still NOT graded, and as of s172 that rests on the s141 exempt-all-geo RULING alone: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable and grading them would be a fresh scope decision rather than a bug fix (the palette is not reachable on any path — the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list). 'ungradeable' (s175, #781) when grading was ATTEMPTED on a unit it was given and failed for a reason outside the spec — an unresolvable canvas token, an unreadable render, or an evaluator/render fault; on the cartesian path it pulls conformant false exactly as 'fail' does. 'unchecked' when nothing was attempted or nothing was gradeable — no gradeable OODS series paint: a colourless chart, an author-decorative mark colour the fork skips as chrome, or a series unit whose sample rendered no marks; it leaves conformant a11y-driven. The two are told apart in the VALUE, not only in contrastNote.
+       * Rendered-reality contrast on the light theme. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded.
        */
       contrast: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
       /**
@@ -594,11 +594,11 @@ export namespace ArtifactCertifyOutputSchema {
       accuracy: 'pass' | 'fail' | 'ungradeable' | 'unchecked';
     };
     /**
-     * The rendered-contrast caveat for the contrast pillar plus the role rationale when contrast is pass/fail/exempt (s137/s138). Path-scoped since s176: cartesian notes end with the render-backed caveat (certify grades the series-to-paint assignment of the rendered chart, on the light theme; dark-theme contrast is not verified); ECharts notes and the cartesian exempt note keep the baked-bytes caveat (certify measures the categorical color bytes Forge baked into the compiled spec) — still the true claim on those paths.
+     * Contrast rationale and scope. Cartesian and categorical data-backed ECharts notes state that the grade reads actual normalized render evidence on the light theme and that dark-theme contrast is not verified. Data-backed geo notes state that normalized render evidence was read while categorical contrast remains exempt and no canvas ratio is graded. ECharts spec-only notes retain the baked-bytes caveat because those calls have no render operand and still use the reconstructed default palette.
      */
     contrastNote?: string;
     /**
-     * Human-readable notes, and on the ECharts-primary path they are load-bearing rather than decorative: they are what tells the two flavours of 'unchecked' apart. Carries the warn-first a11y-equivalence note (it names the operand gate and, on the data-backed path, where failures and not-applicable rules surface: findings[] and a11yNotApplicable[]), the a11y-engine-fault note when the rules could not be evaluated, the operand-absent determinism and accuracy notes, the determinism scope clauses (same-(spec,data), the @oods/tokens bundle assumption, force_graph's option-vs-physics limit), the empty-offered-set explanation for the three types with no accuracy rule, and (s170) why a rule could not resolve its operand and therefore stayed silent.
+     * Human-readable notes, and on the ECharts-primary path they are load-bearing rather than decorative: they are what tells the two flavours of 'unchecked' apart. Carries the warn-first a11y-equivalence note (it names the operand gate and, on the data-backed path, where failures and not-applicable rules surface: findings[] and a11yNotApplicable[]), the a11y-engine-fault note when the rules could not be evaluated, the operand-absent determinism and accuracy notes, the data-backed option-and-render scope plus certified-runtime-matrix boundary, the empty-offered-set explanation for the three types with no accuracy rule, and (s170) why a rule could not resolve its operand and therefore stayed silent.
      */
     notes?: string[];
     /**
@@ -676,7 +676,7 @@ export namespace BrandApplyInputSchema {
      */
     brand?: 'A' | 'B';
     /**
-     * Alias changes (object) or RFC 6902 patch array when strategy=patch.
+     * Alias changes (object) or an array using the supported add/remove/replace subset of RFC 6902 when strategy=patch.
      */
     delta:
       | {
@@ -688,7 +688,7 @@ export namespace BrandApplyInputSchema {
           value?: any;
         }[];
     /**
-     * Alias strategy rewrites token values; patch applies RFC 6902 operations.
+     * Alias strategy rewrites token values; patch applies the supported add/remove/replace subset of RFC 6902.
      */
     strategy?: 'alias' | 'patch';
     /**
@@ -1621,7 +1621,7 @@ export namespace DashboardRenderInputSchema {
     a11yEquivalence?: boolean;
     a11y: DashboardA11YSpec;
     /**
-     * SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). KPI threshold colors are NOT resolved inline.
+     * SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). When supplied, this exact reference is returned in compact output. KPI threshold colors are NOT resolved inline.
      */
     tokenCssRef?: string;
     /**
@@ -4606,7 +4606,7 @@ export namespace ReplOutputSchema {
    */
   export type ReplOutput = AgenticREPLRenderOutput | AgenticREPLValidateOutput;
   /**
-   * Patch input can be either a JSON Patch array (RFC 6902 subset), a single node patch object, or an array of node patch objects.
+   * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
   export type AgenticREPLPatch = JsonPatchArray | NodePatch | [NodePatch, ...NodePatch[]];
   /**
@@ -4774,7 +4774,7 @@ export namespace ReplOutputSchema {
     semanticType?: string;
   }
   /**
-   * JSON Patch operation (subset of RFC 6902). Must be used inside an array.
+   * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
    */
   export interface JsonPatchOp {
     op: 'add' | 'remove' | 'replace';
@@ -4813,7 +4813,7 @@ export type ReplOutput = ReplOutputSchema.ReplOutput;
 // Source: repl.patch.json
 export namespace ReplPatchSchema {
   /**
-   * Patch input can be either a JSON Patch array (RFC 6902 subset), a single node patch object, or an array of node patch objects.
+   * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
   export type ReplPatch = JsonPatchArray | NodePatch | [NodePatch, ...NodePatch[]];
   /**
@@ -4824,7 +4824,7 @@ export namespace ReplPatchSchema {
   export type JsonPatchArray = [JsonPatchOp, ...JsonPatchOp[]];
 
   /**
-   * JSON Patch operation (subset of RFC 6902). Must be used inside an array.
+   * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
    */
   export interface JsonPatchOp {
     op: 'add' | 'remove' | 'replace';
@@ -4850,7 +4850,7 @@ export namespace ReplRenderInputSchema {
     [k: string]: any;
   };
   /**
-   * Patch input can be either a JSON Patch array (RFC 6902 subset), a single node patch object, or an array of node patch objects.
+   * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
   export type AgenticREPLPatch = JsonPatchArray | NodePatch | [NodePatch, ...NodePatch[]];
   /**
@@ -5010,7 +5010,7 @@ export namespace ReplRenderInputSchema {
     semanticType?: string;
   }
   /**
-   * JSON Patch operation (subset of RFC 6902). Must be used inside an array.
+   * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
    */
   export interface JsonPatchOp {
     op: 'add' | 'remove' | 'replace';
@@ -5032,7 +5032,7 @@ export type ReplRenderInput = ReplRenderInputSchema.ReplRenderInput;
 // Source: repl.render.output.json
 export namespace ReplRenderOutputSchema {
   /**
-   * Patch input can be either a JSON Patch array (RFC 6902 subset), a single node patch object, or an array of node patch objects.
+   * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
   export type AgenticREPLPatch = JsonPatchArray | NodePatch | [NodePatch, ...NodePatch[]];
   /**
@@ -5200,7 +5200,7 @@ export namespace ReplRenderOutputSchema {
     semanticType?: string;
   }
   /**
-   * JSON Patch operation (subset of RFC 6902). Must be used inside an array.
+   * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
    */
   export interface JsonPatchOp {
     op: 'add' | 'remove' | 'replace';
@@ -5434,7 +5434,7 @@ export namespace ReplValidateInputSchema {
     semanticType?: string;
   }
   /**
-   * JSON Patch operation (subset of RFC 6902). Must be used inside an array.
+   * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
    */
   export interface JsonPatchOp {
     op: 'add' | 'remove' | 'replace';
@@ -5481,7 +5481,7 @@ export type ReplValidateInput = ReplValidateInputSchema.ReplValidateInput;
 // Source: repl.validate.output.json
 export namespace ReplValidateOutputSchema {
   /**
-   * Patch input can be either a JSON Patch array (RFC 6902 subset), a single node patch object, or an array of node patch objects.
+   * Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.
    */
   export type AgenticREPLPatch = JsonPatchArray | NodePatch | [NodePatch, ...NodePatch[]];
   /**
@@ -5603,7 +5603,7 @@ export namespace ReplValidateOutputSchema {
     semanticType?: string;
   }
   /**
-   * JSON Patch operation (subset of RFC 6902). Must be used inside an array.
+   * JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.
    */
   export interface JsonPatchOp {
     op: 'add' | 'remove' | 'replace';

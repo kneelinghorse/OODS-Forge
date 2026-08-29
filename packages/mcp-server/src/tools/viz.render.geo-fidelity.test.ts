@@ -6,10 +6,10 @@
 // any drift in the engine -> handler -> ECharts payload is caught, and it asserts
 // determinism (same input -> byte-identical echartsSpec).
 //
-// echartsSpec is JSON-safe (the handler drops the tooltip-formatter closure + the
-// symbolSize function); the snapshot includes __registration (the FeatureCollection
-// the client re-registers — geo specs are NOT self-contained). Colours are RESOLVED
-// (rgb/hex), never var(--token), so the golden is render-faithful for the canvas.
+// echartsSpec is JSON-safe (the handler drops the tooltip-formatter closure; bubble
+// sizes survive as per-datum numbers). The snapshot includes __registration (the
+// FeatureCollection the client re-registers — geo specs are NOT self-contained).
+// Colours are RESOLVED (rgb/hex), never var(--token), so the golden is render-faithful.
 
 import { describe, expect, it } from 'vitest';
 import type { VizRenderInput } from '../schemas/generated.js';

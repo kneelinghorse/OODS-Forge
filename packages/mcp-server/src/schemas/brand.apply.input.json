@@ -9,7 +9,7 @@
       "description": "Target brand identifier. Must name a brand directory under packages/tokens/src/tokens/brands."
     },
     "delta": {
-      "description": "Alias changes (object) or RFC 6902 patch array when strategy=patch.",
+      "description": "Alias changes (object) or an array using the supported add/remove/replace subset of RFC 6902 when strategy=patch.",
       "oneOf": [
         { "type": "object" },
         {
@@ -31,7 +31,7 @@
       "type": "string",
       "enum": ["alias", "patch"],
       "default": "alias",
-      "description": "Alias strategy rewrites token values; patch applies RFC 6902 operations."
+      "description": "Alias strategy rewrites token values; patch applies the supported add/remove/replace subset of RFC 6902."
     },
     "preview": {
       "type": "object",

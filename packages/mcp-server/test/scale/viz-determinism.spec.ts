@@ -144,9 +144,9 @@ describe('viz network/hierarchy scale-tier option determinism', () => {
 
 // sprint-112 m03: the geo adapters' OPTION is deterministic at scale too — same
 // seed -> byte-identical choropleth/bubble ECharts option for 100/500/1000 regions
-// (JSON.stringify drops the tooltip-formatter closure + the symbolSize function, so
-// this compares the transmittable option viz.render returns). The stateless
-// registration + code-point-ordered join are what make this hold across the suite.
+// (JSON.stringify drops the tooltip-formatter closure; bubble sizes survive as
+// per-datum numbers, so this compares the transmittable option viz.render returns).
+// The stateless registration + code-point-ordered join are what make this hold.
 const GEO_DIMS = { width: 860, height: 520 } as const;
 
 function geoChoroSpec(): SpatialSpec {

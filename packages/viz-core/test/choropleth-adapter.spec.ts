@@ -104,6 +104,19 @@ describe('adaptChoroplethToECharts — decoupled spec+geo → renderable map opt
     expect(seriesData.map((d) => d.value)).toEqual([100, 40]);
   });
 
+  it('binds the geo component to the join property, and only when a join is present', () => {
+    const joined = adaptChoroplethToECharts(choroplethSpec(), GEO, SALES, DIMENSIONS);
+    expect((joined.geo as { nameProperty?: string }).nameProperty).toBe('region');
+
+    const withoutJoin = adaptChoroplethToECharts(
+      choroplethSpec({ data: { values: SALES } }),
+      GEO,
+      SALES,
+      DIMENSIONS
+    );
+    expect(Object.hasOwn(withoutJoin.geo as object, 'nameProperty')).toBe(false);
+  });
+
   it('emits a visualMap whose domain spans the joined values', () => {
     const option = adaptChoroplethToECharts(choroplethSpec(), GEO, SALES, DIMENSIONS);
     const visualMap = option.visualMap as { min?: number; max?: number };
@@ -209,6 +222,16 @@ describe('adaptToECharts — multi-layer dispatcher surfaces geo-join diagnostic
   // consumers on the multi-layer overlay path (only the single-layer choropleth adapter
   // attached __joinDiagnostics).
   const ORPHAN = [...SALES, { state: 'XX', sales: 99 }];
+
+  it('keeps geo.nameProperty absent on the declared off-MCP multi-layer surface', () => {
+    const { echartsOption } = adaptToECharts({
+      spec: choroplethSpec(),
+      geoData: GEO,
+      data: SALES,
+      dimensions: DIMENSIONS,
+    });
+    expect(Object.hasOwn(echartsOption.geo as object, 'nameProperty')).toBe(false);
+  });
 
   it('surfaces an unmatched data row on __joinDiagnostics (was silently discarded)', () => {
     const { echartsOption } = adaptToECharts({

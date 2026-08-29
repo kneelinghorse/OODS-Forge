@@ -40,6 +40,14 @@ describe("Sprint 177 closeout carrier", () => {
     resolve(projectRoot, ".github/workflows/ci.yml"),
     "utf8",
   );
+  const rootVitestConfig = readFileSync(
+    resolve(projectRoot, "vitest.config.ts"),
+    "utf8",
+  );
+  const mcpVitestConfig = readFileSync(
+    resolve(projectRoot, "packages/mcp-server/vitest.config.ts"),
+    "utf8",
+  );
   const packageManifest = JSON.parse(
     readFileSync(resolve(projectRoot, "package.json"), "utf8"),
   ) as { scripts?: Record<string, string> };
@@ -54,7 +62,7 @@ describe("Sprint 177 closeout carrier", () => {
     "<!-- closeout-local-rows:end -->",
   );
 
-  it("covers the exact current set of 13 CI job keys once", () => {
+  it("covers the exact current set of 14 CI job keys once", () => {
     const jobsSection = workflow.slice(workflow.indexOf("\njobs:\n") + 7);
     const workflowJobs = [
       ...jobsSection.matchAll(/^  ([a-z][a-z0-9-]+):\s*$/gm),
@@ -63,9 +71,9 @@ describe("Sprint 177 closeout carrier", () => {
       ...ciRows.matchAll(/^\| CI-\d{2} \| `([a-z][a-z0-9-]+)` \|/gm),
     ].map((match) => match[1]);
 
-    expect(workflowJobs).toHaveLength(13);
+    expect(workflowJobs).toHaveLength(14);
     expect(carrierRows).toEqual(workflowJobs);
-    expect(new Set(carrierRows).size).toBe(13);
+    expect(new Set(carrierRows).size).toBe(14);
   });
 
   it("keeps the historically dropped and commonly misstated CI operands visible", () => {
@@ -84,6 +92,16 @@ describe("Sprint 177 closeout carrier", () => {
     const vrRow = ciRows
       .split("\n")
       .find((line) => line.startsWith("| CI-10 |"));
+    const soakRow = ciRows
+      .split("\n")
+      .find((line) => line.startsWith("| CI-14 |"));
+    const soakJob = workflow.slice(
+      workflow.indexOf("\n  echarts-render-soak:"),
+    );
+    const vizJob = workflow.slice(
+      workflow.indexOf("\n  viz-determinism:"),
+      workflow.indexOf("\n  echarts-render-soak:"),
+    );
 
     expect(typecheckRow).toContain("pnpm exec tsc --noEmit");
     expect(typecheckRow).toContain(
@@ -98,6 +116,20 @@ describe("Sprint 177 closeout carrier", () => {
     expect(coverageRow).toContain("pnpm vitest run tests/contracts tests/viz");
     expect(vrRow).toContain("structurally non-local");
     expect(vrRow).toContain("CHROMATIC_PROJECT_TOKEN");
+    expect(soakRow).toContain(
+      "pnpm --filter @oods/mcp-server run test:echarts-soak",
+    );
+    expect(soakJob).toContain("timeout-minutes: 15");
+    expect(soakJob).toContain(
+      "run: pnpm --filter @oods/mcp-server run test:echarts-soak",
+    );
+    const runtimeProbe =
+      "node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'";
+    expect(ciRows.split(runtimeProbe)).toHaveLength(3);
+    expect(vizJob).toContain(`run: ${runtimeProbe}`);
+    expect(soakJob).toContain(`run: ${runtimeProbe}`);
+    expect(rootVitestConfig).toContain("'packages/mcp-server/test/soak/**'");
+    expect(mcpVitestConfig).toContain("'test/soak/**'");
     expect(ciRows).not.toContain("CI does not run");
   });
 

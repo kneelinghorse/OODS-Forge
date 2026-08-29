@@ -119,20 +119,30 @@ describe("Sprint 177 prose truth carriers", () => {
     expect(sprintPlan).not.toContain("**Status:** Planning");
   });
 
-  it("keeps the open-arcs ledger aligned with the Sprint 178 closures and parks", () => {
+  it("keeps the open-arcs ledger aligned with the Sprint 178 closures and s179 arc disposition", () => {
     const ledger = read("cmos/planning/forge-open-arcs-ledger-2026-08.md");
 
     expect(ledger).toContain(
-      "92 — 23 open, 56 done, 7 blocked, 5 superseded, 1 unknown",
+      "94 — 24 open, 57 done, 7 blocked, 5 superseded, 1 unknown",
     );
-    expect(ledger).toContain("2 carry, 26 park, 59 close, 5 drop");
+    expect(ledger).toContain("2 carry, 27 park, 60 close, 5 drop");
     expect(ledger).toContain("next-step #1259 completed");
     expect(ledger).toContain("next-step #1142 completed");
     expect(ledger).toContain("exact pin 138→0");
     expect(ledger).toContain("26 pure shims were deleted");
-    expect(ledger).toContain("render-grading implementation remains parked");
+    expect(ledger).toContain(
+      "ECharts render grading + render determinism — DONE.",
+    );
+    expect(ledger).toContain(
+      "ECharts render-grading follow-ons — PARKED with distinct triggers.",
+    );
+    expect(ledger).not.toContain(
+      "render-grading implementation remains parked",
+    );
     expect(ledger).not.toContain("91 semantic build:stories errors");
-    expect(ledger).not.toContain("3 unbridged focus slots need real brand tokens");
+    expect(ledger).not.toContain(
+      "3 unbridged focus slots need real brand tokens",
+    );
     expect(ledger).not.toContain("src/viz twin ~137-site rewire");
   });
 });

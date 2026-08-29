@@ -50,7 +50,7 @@ Allowed generation tokens are `{BASE_SHA}`, `{HEAD_SHA}`, `{PR_LABELS_CSV}`,
 
 ## CI job coverage — canonical source rows
 
-There are 13 YAML job keys. A matrix expansion is still one job key. “Local
+There are 14 YAML job keys. A matrix expansion is still one job key. “Local
 twin” names a runnable operand; “CI-only orchestration” covers GitHub labels,
 artifact upload, and PR comments rather than a different correctness gate.
 `vr-test` alone is structurally non-local because Chromatic is SaaS-backed,
@@ -71,13 +71,15 @@ secret-gated, and `continue-on-error`.
 | CI-10 | `vr-test` | structurally non-local | Record the Chromatic run URL and whether `CHROMATIC_PROJECT_TOKEN` was present. A local Playwright run is not an exact substitute for `chromaui/action@v1`. |
 | CI-11 | `coverage` | local twin | `pnpm run build:tokens`<br>`pnpm run test:coverage` (the pnpm lifecycle first runs `pretest:coverage`, which is `pnpm run build && pnpm run build:packages && pnpm run pkg:build`; `pkg:build` creates the public `dist/pkg` declarations the contract inspects)<br>`pnpm vitest run tests/contracts tests/viz` (standing narrow closeout scope) |
 | CI-12 | `scale-determinism` | local twin | `pnpm run build:tokens`<br>`pnpm run build:packages`<br>`pnpm --filter @oods/mcp-server run test:scale` |
-| CI-13 | `viz-determinism` | local twin | `pnpm run build:tokens`<br>`pnpm run build:packages`<br>`pnpm --filter @oods/viz-core test`<br>`pnpm --filter @oods/viz-render test`<br>`pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/viz.render.intent.test.ts src/tools/dashboard.render.test.ts src/tools/dashboard.render.fidelity.test.ts src/tools/dashboard.render.faostat-e2e.test.ts src/tools/dashboard.render.strict-fields.test.ts src/tools/dashboard.render.kpi-types.test.ts src/tools/dashboard.render.measure-depth.test.ts src/tools/repl.render.skin-mapping.test.ts src/tools/repl.render.brand.test.ts src/tools/ci-golden-list.guard.test.ts`<br>`pnpm --filter @oods/mcp-server test`<br>`pnpm --filter @oods/mcp-bridge test` |
+| CI-13 | `viz-determinism` | local twin | `pnpm run build:tokens`<br>`pnpm run build:packages`<br>`node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'`<br>`pnpm --filter @oods/viz-core test`<br>`pnpm --filter @oods/viz-render test`<br>`pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/viz.render.intent.test.ts src/tools/dashboard.render.test.ts src/tools/dashboard.render.fidelity.test.ts src/tools/dashboard.render.faostat-e2e.test.ts src/tools/dashboard.render.strict-fields.test.ts src/tools/dashboard.render.kpi-types.test.ts src/tools/dashboard.render.measure-depth.test.ts src/tools/repl.render.skin-mapping.test.ts src/tools/repl.render.brand.test.ts src/tools/ci-golden-list.guard.test.ts`<br>`pnpm --filter @oods/mcp-server test`<br>`pnpm --filter @oods/mcp-bridge test` |
+| CI-14 | `echarts-render-soak` | local twin | `pnpm run build:tokens`<br>`pnpm run build:packages`<br>`node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'`<br>`pnpm --filter @oods/mcp-server run test:echarts-soak` |
 <!-- closeout-ci-rows:end -->
 
-The two rows most often lost from handwritten tables are structural here:
-CI-09 contains `verify:brand-cascade`, and CI-12 contains `test:scale`. CI-03
-also records the root typecheck, viz-core typecheck, and build-stories ratchet
-that the workflow genuinely runs.
+The three rows most often lost from handwritten tables are structural here:
+CI-09 contains `verify:brand-cascade`, CI-12 contains `test:scale`, and CI-14
+contains the opt-in ECharts concurrency/resource soak. CI-03 also records the
+root typecheck, viz-core typecheck, and build-stories ratchet that the workflow
+genuinely runs.
 
 ## Standing closeout-only rows — canonical source rows
 
@@ -96,7 +98,7 @@ claim about `build-stories-ratchet.mjs`.
 | L-04 | `decisionCount >= 1` per non-descoped mission | CI does not run | `sqlite3 -header -column cmos/db/cmos.sqlite "SELECT m.id AS mission_id, COUNT(d.id) AS decision_count FROM missions m LEFT JOIN strategic_decisions d ON d.mission_id = m.id AND d.project_id = m.project_id WHERE m.sprint_id = '{SPRINT_ID}' AND m.project_id = 'forge' GROUP BY m.id ORDER BY m.id;"`<br>Every non-descoped work mission must report at least one decision; the closeout mission's own decision lands with its completion record. |
 | L-05 | Bridge health at session open | CI does not run | `curl --fail --silent --show-error http://127.0.0.1:4466/health`<br>Require `status:ok` and `bridge:ready`; record the advertised tool count rather than assuming it. |
 | L-06 | R-d after **any** advertised schema, description, registry, or policy movement | CI does not run | `git diff --name-only {BASE_SHA} {HEAD_SHA} -- packages/mcp-adapter/tool-descriptions.json packages/mcp-server/src/schemas packages/mcp-server/src/schemas/generated.ts packages/mcp-server/src/tools/registry.json configs/agent/policy.json packages/mcp-server/src/security/policy.json docs/api`<br>If output is non-empty: `pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-bridge run build && pm2 restart oods-forge-bridge && curl --fail --silent --show-error http://127.0.0.1:4466/health`; then send `cmos_message(action="send", targetAddress="{AQUEX_ADDRESS}", type="info_push", summary="Forge advertised surface changed at {HEAD_SHA}; reconnect required", body="Reconnect to Forge and refresh schemas. Advertised movers: {ADVERTISED_MOVERS}.")`. If output is empty, record “NO R-d” with the empty command output. |
-| L-07 | Sequential-only heavy-suite protocol | CI does not run | Run, never concurrently, in this order: `pnpm --filter @oods/viz-core exec vitest run` → `pnpm --filter @oods/mcp-server exec vitest run` → `pnpm exec vitest run --project core` → `pnpm --filter @oods/mcp-server run test:scale`. Re-run a timing-sensitive red in isolation before classification. |
+| L-07 | Sequential-only heavy-suite protocol | CI does not run | Run, never concurrently, in this order: `pnpm --filter @oods/viz-core exec vitest run` → `pnpm --filter @oods/mcp-server exec vitest run` → `pnpm exec vitest run --project core` → `pnpm --filter @oods/mcp-server run test:scale` → `pnpm --filter @oods/mcp-server run test:echarts-soak`. Re-run a timing-sensitive red in isolation before classification. |
 | L-08 | Gitignored build-input survival — run last and again after governance | CI does not run | `for f in packages/tokens/dist/tailwind/tokens.json packages/tokens/dist/index.js packages/tokens/dist/index.cjs packages/viz-core/dist/index.js packages/mcp-server/dist/index.js storybook-static/index.json; do if test -s "$f"; then echo "present $f"; else echo "MISSING $f"; exit 1; fi; done; node -e "import('@oods/tokens').then(m=>console.log('tokens import OK', Object.keys(m).length))"`<br>Tracked-file porcelain cannot substitute for this row. |
 <!-- closeout-local-rows:end -->
 
@@ -147,7 +149,7 @@ Do not edit the copied source rows. Add one result row for every canonical ID:
 |---|---|---|---|---|
 | `CI-01` | `{HEAD_SHA}` plus the named tree state | replace every source token | pending | pending |
 
-Repeat through `CI-13` and `L-01` through `L-08`. For CI-10 record the
+Repeat through `CI-14` and `L-01` through `L-08`. For CI-10 record the
 structurally non-local Chromatic evidence instead of inventing a local command.
 For a conditional or skipped row, paste the condition's observed output and the
 reason; never silently omit the row.

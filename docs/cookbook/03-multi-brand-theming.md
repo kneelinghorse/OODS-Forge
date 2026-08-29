@@ -116,7 +116,7 @@ The same schema renders with different visual treatments depending on which toke
 ## Key Takeaways
 
 - Compose once, theme many times: the UiSchema is brand-agnostic
-- `brand.apply` with `strategy: "patch"` overwrites specific tokens via RFC 6902 semantics
+- `brand.apply` with `strategy: "patch"` overwrites specific tokens using the supported add/remove/replace subset of RFC 6902
 - `brand.apply` with `strategy: "alias"` creates alias references instead of direct overrides
 - `preview.verbosity: "full"` shows before/after diffs for each changed token
 - Token rebuild picks up overlays automatically
