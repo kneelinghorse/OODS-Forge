@@ -98,20 +98,34 @@ const ROLE_A_CLEAN_DELTA_E = 10; // >= 10 -> clean pass; 2-10 -> pass + warn not
 // override an agent supplies (a gray "palette" -> honest fail, the real value on agent input).
 const ROLE_A_CHROMA_FLOOR = 0.03;
 
+/** Internal render-backed grading detail used by the ECharts carrier/semantic split. */
+export interface CategoricalRoleCGrade {
+  readonly verdict: 'pass' | 'fail' | 'ungradeable';
+  readonly minimumRatio?: number;
+  readonly failingPaints: readonly string[];
+}
+
+/** Internal render-backed grading detail used by the ECharts carrier/semantic split. */
+export interface CategoricalRoleAGrade {
+  readonly verdict: 'pass' | 'fail' | 'ungradeable';
+  readonly minimumDeltaE?: number;
+  readonly lowChromaPaints: readonly string[];
+}
+
 // THE CAVEAT FORK (s176 m01, memo §1a D11). Until s176 one constant rode every
 // contrastNote on both paths. The cartesian path is render-backed now, so its caveat says
-// so; the ECharts paths (reconstruction-graded from baked constants — the parked render
-// rung, memo §3) and the cartesian CASE-3 exempt note (a byte-frozen non-mover, D5) keep
-// the pre-fork text VERBATIM below. certify-contrast.echarts-caveat-pin.spec.ts pins the
-// frozen bytes so a partial fork cannot move ECharts output mid-build.
+// so. The ECharts SPEC-ONLY fallback still reconstructs baked constants because it has no
+// operand to emit or render; the cartesian CASE-3 exempt note is also a byte-frozen
+// non-mover (D5). Both keep the pre-fork text VERBATIM below.
+// certify-contrast.echarts-caveat-pin.spec.ts pins that path-scoped fallback truth.
 const RENDERED_CONTRAST_CAVEAT =
   'certify grades the series-to-paint assignment of the rendered chart (the compiled ' +
   'spec rendered through @oods/viz-render), on the light theme; dark-theme contrast is not verified.';
 
-// The pre-fork caveat, byte-for-byte. Still TRUE where it is used: the ECharts grade IS
-// a claim about baked constants, and the CASE-3 exempt verdict IS a claim about what the
-// compiled spec baked. Retired from these sites only when the ECharts render-grading
-// rung lands.
+// The pre-fork caveat, byte-for-byte. Still TRUE where it is used: an ECharts spec-only
+// grade IS a claim about baked constants, and the CASE-3 exempt verdict IS a claim about
+// what the compiled spec baked. Operand-backed ECharts responses use their render-evidence
+// caveat in artifact.certify instead.
 const BAKED_CONTRAST_CAVEAT =
   'certify measures the categorical color bytes Forge baked into the compiled spec, ' +
   'on the light theme; dark-theme contrast is not verified.';
@@ -183,6 +197,66 @@ function minPairwiseDeltaEOverCvd(hexes: readonly string[]): number {
     }
   }
   return min;
+}
+
+/**
+ * Grade the paints carried by actual rendered geometry against the fixed light-theme
+ * ECharts canvas. This is deliberately independent from Role A: hierarchy tints can
+ * fail here without changing the semantic category assignment.
+ */
+export function evaluateCategoricalRoleC(
+  paints: readonly string[],
+): CategoricalRoleCGrade {
+  const canvasHex = resolveSlotHex(CANVAS_TOKEN, new Map());
+  if (paints.length === 0 || !canvasHex) {
+    return { verdict: 'ungradeable', failingPaints: [] };
+  }
+
+  const ratios = paints.map((paint) => ({
+    paint,
+    ratio: contrastRatio(paint, canvasHex),
+  }));
+  const minimumRatio = Math.min(...ratios.map(({ ratio }) => ratio));
+  const failingPaints = ratios
+    .filter(({ ratio }) => ratio < ROLE_C_MIN_RATIO)
+    .map(({ paint }) => paint);
+
+  return {
+    verdict: failingPaints.length > 0 ? 'fail' : 'pass',
+    minimumRatio,
+    failingPaints,
+  };
+}
+
+/**
+ * Grade the N-long semantic category-to-paint assignment. Duplicates are retained so
+ * a genuine palette recycle contributes a zero-distance pair; rendered geometry
+ * multiplicity never enters this function.
+ */
+export function evaluateCategoricalRoleA(
+  assignment: readonly string[],
+): CategoricalRoleAGrade {
+  if (assignment.length === 0) {
+    return { verdict: 'ungradeable', lowChromaPaints: [] };
+  }
+
+  const lowChromaPaints = assignment.filter(
+    (paint) => chromaOf(paint) < ROLE_A_CHROMA_FLOOR,
+  );
+  if (lowChromaPaints.length > 0) {
+    return { verdict: 'fail', lowChromaPaints };
+  }
+
+  if (assignment.length < 2) {
+    return { verdict: 'pass', lowChromaPaints: [] };
+  }
+
+  const minimumDeltaE = minPairwiseDeltaEOverCvd(assignment);
+  return {
+    verdict: minimumDeltaE < ROLE_A_FAIL_DELTA_E ? 'fail' : 'pass',
+    minimumDeltaE,
+    lowChromaPaints: [],
+  };
 }
 
 interface CompiledUnit {
@@ -590,14 +664,12 @@ export async function evaluateContrastPillar(
 // ─── ECharts-primary categorical contrast (s141 m02) ────────────────────────────────
 //
 // The 5 ECharts-primary categorical types (treemap/sunburst/sankey/force_graph/chord)
-// have NO Vega-Lite compile, so certify cannot read a compiled scale.range. Instead it
-// RECONSTRUCTS the fixed default OODS categorical palette those adapters bake into
-// itemStyle — from the SAME getVizScaleTokens('categorical') call the adapters make
-// (buildPalette, treemap-adapter.ts:106 et al.) — and grades it with the SAME role-C /
-// role-A math the cartesian path uses. This is palette RECONSTRUCTION, not emit-then-read:
-// certify never runs an adapter or reads emitted bytes (memo §3 / decision #1024 pt3).
-// s176: the cartesian path graduated to render-backed grading; THIS path did not (the
-// parked ECharts render rung, s176 memo §3), so it keeps the frozen pre-fork caveat.
+// have NO Vega-Lite compile. On a SPEC-ONLY call certify also has no data operand from
+// which to emit an ECharts option, so this fallback reconstructs the fixed default OODS
+// categorical palette those adapters bake into itemStyle — from the SAME
+// getVizScaleTokens('categorical') call the adapters make — and grades it with the shared
+// role-C / role-A math. Operand-backed calls do not use this fallback: artifact.certify
+// renders the retained projected option and grades its carrier and semantic evidence.
 
 /**
  * Reconstruct the FIXED DEFAULT 6-slot OODS categorical palette the ECharts categorical
@@ -629,10 +701,9 @@ export function reconstructEChartsCategoricalPalette(): Array<{ token: string; h
 // WEAKER claim than a cartesian 'pass' (which is override-aware + render-backed).
 // Adjacency (the literal role-C′) is a frozen OOS sub-arc; per-node data-color overrides
 // are ungraded. Both caveats are required on every categorical contrastNote.
-// s176 NOTE: the "cardinality-sliced" phrase below describes the pre-s176 cartesian
-// grade. It is INTENTIONALLY retained — this constant is byte-frozen under the D11 fork
-// (certify-contrast.echarts-caveat-pin.spec.ts) until the parked ECharts render-grading
-// rung lands and rewrites the ECharts wording wholesale (s176 memo §3).
+// The "cardinality-sliced" phrase below describes the pre-s176 cartesian grade. It is
+// intentionally retained on the byte-frozen ECharts spec-only response; the operand-backed
+// response replaces this entire note with render-measured wording.
 const ECHARTS_CATEGORICAL_CAVEAT =
   'This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle ' +
   '(reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a ' +

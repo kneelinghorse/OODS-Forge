@@ -1,7 +1,7 @@
 {
   "name": "@oods/viz-render",
   "version": "0.1.0",
-  "description": "Deterministic Vega-Lite -> SVG rendering runtime for the OODS design system. Turns a compiled Vega-Lite spec into a byte-stable, headless SVG string (no jsdom/canvas) for on-brand, accessible export. The rendering runtime lives HERE; @oods/viz-core stays the zero-runtime spec transformer.",
+  "description": "Deterministic Vega-Lite and ECharts SVG rendering runtime for the OODS design system. Produces byte-stable headless SVG without jsdom or native canvas while @oods/viz-core remains the zero-runtime spec transformer.",
   "type": "module",
   "license": "MIT",
   "author": "Design System Team",
@@ -24,9 +24,10 @@
     "build": "rimraf dist && tsup --config tsup.config.ts",
     "clean": "rimraf dist",
     "prepack": "pnpm run build",
-    "test": "vitest run"
+    "test": "pnpm run build && vitest run"
   },
   "dependencies": {
+    "echarts": "^6.0.0",
     "vega": "^6.2.0",
     "vega-lite": "^6.4.1"
   },

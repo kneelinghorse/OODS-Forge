@@ -79,9 +79,10 @@ function resolveName(properties: Record<string, unknown>, feature: Feature, name
   return candidate !== undefined ? String(candidate) : 'unknown';
 }
 
-function buildGeoComponent(mapName: string, roam: boolean): GeoComponentOption {
+function buildGeoComponent(mapName: string, roam: boolean, nameProperty?: string): GeoComponentOption {
   return pruneUndefined({
     map: mapName,
+    nameProperty,
     roam,
     label: { show: false },
     itemStyle: {
@@ -116,7 +117,8 @@ export function buildChoropleth(
   spec: SpatialSpec,
   layer: RegionFillLayer,
   geoData: FeatureCollection,
-  data: DataRecord[] | undefined
+  data: DataRecord[] | undefined,
+  emitJoinNameProperty = false
 ): ChoroplethBuildResult {
   const mapName = deriveMapName(spec);
   const join = isGeoJoinData(spec.data) ? spec.data : null;
@@ -147,7 +149,11 @@ export function buildChoropleth(
     };
   });
 
-  const geo = buildGeoComponent(mapName, Boolean(spec.interactions?.some((interaction) => interaction.type === 'panZoom')));
+  const geo = buildGeoComponent(
+    mapName,
+    Boolean(spec.interactions?.some((interaction) => interaction.type === 'panZoom')),
+    emitJoinNameProperty && join ? nameField : undefined
+  );
   const registration = registerGeoJson(mapName, { type: 'FeatureCollection', features: mergedFeatures });
 
   const series = pruneUndefined({
@@ -188,7 +194,7 @@ export function adaptChoroplethToECharts(
     throw new Error('Spatial spec is missing a regionFill layer required for choropleth rendering.');
   }
 
-  const result = buildChoropleth(spec, regionLayer, geoData, data);
+  const result = buildChoropleth(spec, regionLayer, geoData, data, true);
   const chrome = resolveOodsEchartsChrome(spec);
   const nameField = isGeoJoinData(spec.data) ? spec.data.geoKey : 'name';
   const tooltipFormatter = buildEChartsTooltipFormatter(

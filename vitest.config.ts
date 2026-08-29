@@ -110,7 +110,7 @@ export default defineConfig({
           'packages/mcp-server/test/**/*.spec.ts',
           'packages/mcp-adapter/**/*.test.js'
         ],
-        exclude: ['tests/a11y/**'],
+        exclude: ['tests/a11y/**', 'packages/mcp-server/test/soak/**'],
         environment: 'node'
       }
     }]

@@ -21,6 +21,7 @@
 import { compile } from 'vega-lite';
 import type { TopLevelSpec } from 'vega-lite';
 import { parse, View, textMetrics } from 'vega';
+import { createFirstAppearanceRemap } from './first-appearance-remap.js';
 
 /** A compiled/authored Vega-Lite top-level spec (what `dashboard.render` carries on a panel's `spec`). */
 export type VegaLiteSpec = TopLevelSpec;
@@ -123,21 +124,15 @@ function prepareSpecForBrand(
  * normalizing all of them is safe (there are no author-meaningful ids to clobber).
  */
 function normalizeAutoIds(svg: string): string {
-  const order: string[] = [];
-  const seen = new Set<string>();
   // Single document-order pass over both definitions (`id="X"`) and references
   // (`url(#X)`), so a reference that precedes its definition still maps stably.
-  for (const match of svg.matchAll(/(?:\bid="|url\(#)([^")]+)/g)) {
-    const id = match[1];
-    if (!seen.has(id)) {
-      seen.add(id);
-      order.push(id);
-    }
-  }
+  const replacements = createFirstAppearanceRemap(
+    [...svg.matchAll(/(?:\bid="|url\(#)([^")]+)/g)].map((match) => match[1]),
+    (index) => `oods-id-${index}`,
+  );
 
   let out = svg;
-  order.forEach((id, index) => {
-    const stable = `oods-id-${index}`;
+  replacements.forEach((stable, id) => {
     const escaped = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     out = out.replace(new RegExp(`id="${escaped}"`, 'g'), `id="${stable}"`);
     out = out.replace(new RegExp(`url\\(#${escaped}\\)`, 'g'), `url(#${stable})`);

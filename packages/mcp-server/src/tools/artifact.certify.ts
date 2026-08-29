@@ -27,9 +27,9 @@
 // retained, so a recycled palette is a ΔE00=0 role-A fail), against the canvas — while
 // unit classification (series vs exempt vs chrome) still reads the compiled bytes, so a
 // chart that baked no OODS palette can never certify contrast:'pass'. On the ECharts
-// path contrast is reconstruction-graded from the baked palette constants (no render —
-// the parked rung). The verdict is a pure function of the input IR — the render is
-// deterministic (pinned text metrics, normalized ids); no Date/random/UUID.
+// path, an operand makes contrast render-measured from the retained projected option;
+// the no-operand path preserves its legacy reconstruction grade because no chart data
+// exists to render. Both render paths are deterministic under their recorded contracts.
 //
 // Accuracy is a graded pillar too as of s170 (#818 — the fourth #977 pillar), widened to all
 // 13 types in s172. On the CERTIFIED path certify evaluates FOUR declared structural rules
@@ -43,7 +43,11 @@
 // additionally requires rulesEvaluated > 0.
 
 import { canonicalize, sha256 } from '@oods/artifacts';
-import { renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
+import {
+  renderEChartsToSvg,
+  renderVegaLiteToSvg,
+  type VegaLiteSpec,
+} from '@oods/viz-render';
 import {
   ACCURACY_RULES,
   assertNormalizedVizSpec,
@@ -69,10 +73,11 @@ import {
   type CertifyOperandResolved,
 } from './certify-operand.js';
 import {
-  determinismScopeNote,
   evaluateEChartsDeterminism,
   operandAbsentDeterminismNote,
+  type EChartsDeterminismResult,
 } from './certify-echarts-emit.js';
+import { evaluateEChartsRenderContrast } from './certify-echarts-render-contrast.js';
 
 export interface ArtifactCertifyInput {
   /** A Forge NormalizedVizSpec IR (validated authoritatively by assertNormalizedVizSpec). */
@@ -97,10 +102,11 @@ export interface CertifyDeterminism {
   readonly stable: boolean;
   readonly contentHash: string;
   /**
-   * s176 m02, OPTIONAL — sha256 of the SVG the cartesian rendered-grading path rendered,
-   * present exactly when that render happened (never on an ECharts response). `stable`
-   * then additionally requires a second, independent render to hash identically — the
-   * double-render proof that makes the pillar falsifiable.
+   * OPTIONAL — sha256 of the first normalized SVG rendered for grading. Present exactly
+   * when that render completed: on the cartesian rendered-grading path and on renderable,
+   * operand-backed ECharts-primary calls; absent from ECharts spec-only calls, option-only
+   * bubble maps, and failed first renders. `stable` additionally requires a second,
+   * independent render to hash identically whenever renderHash is present.
    */
   readonly renderHash?: string;
 }
@@ -119,9 +125,10 @@ export type AccuracyVerdict = 'pass' | 'fail' | 'ungradeable' | 'unchecked';
  * there is no folded gate at all, they are the ONLY place the real verdicts live.
  * a11yEquivalence mirrors the a11y-equivalence sub-result (NOT the folded conformant);
  * determinism mirrors `determinism.stable`; contrast is the rendered-reality verdict — the
- * series-to-paint assignment of the rendered cartesian chart (s176; formerly the baked
- * compiled bytes, s138) — with 'exempt' for gradient scales; accuracy is the
- * structural-rules verdict. So a reader can always see WHY
+ * series-to-paint assignment of a rendered cartesian or operand-backed ECharts chart — with
+ * 'exempt' for gradient scales. A no-operand ECharts call retains the legacy reconstruction
+ * grade because its metadata-only IR has no chart data; accuracy is the structural-rules
+ * verdict. So a reader can always see WHY
  * conformant is false, and can always see what actually ran when it is null.
  *
  * contrast and accuracy tell "tried and failed" apart from "nothing to grade" IN THE VALUE
@@ -232,10 +239,9 @@ const CARTESIAN_VEGA_TRAITS: ReadonlySet<string> = new Set([
 // same contentHash a Forge-built heatmap round-trips to).
 const TRAIT_ALIASES: Readonly<Record<string, string>> = { MarkHeatmap: 'MarkRect' };
 
-// The 5 ECharts-primary types whose adapters BAKE the OODS categorical palette into
-// itemStyle (treemap-adapter.ts:106 et al.). certify grades that reconstructed palette
-// (role-C vs canvas + role-A) — a real WCAG-1.4.11 + CVD verdict on the color the live
-// viz.render path renders (s141 m02).
+// The 5 ECharts-primary categorical types. Operand-backed calls render the retained
+// projection and split actual carrier paints (Role C) from the semantic N-long assignment
+// (Role A). Metadata-only calls keep the legacy reconstruction grade below.
 const ECHARTS_CATEGORICAL_TRAITS: ReadonlySet<string> = new Set([
   'MarkTreemap',
   'MarkSunburst',
@@ -299,6 +305,11 @@ interface EChartsOperandVerdict {
   /** s172 m03 — the ECharts-side accuracy pillar, real whenever the operand is present. */
   readonly accuracyPillar: AccuracyVerdict;
   readonly accuracySummary?: CertifyAccuracySummary;
+  /** Operand-backed render grade. Absent only when no operand was supplied. */
+  readonly renderedContrast?: {
+    readonly contrast: ContrastVerdict;
+    readonly contrastNote: string;
+  };
   /**
    * Accuracy findings (OODS-V154..V159) followed by the s174 warn-first a11y-equivalence
    * findings (OODS-A11Y-<rule.id>, native severity). There is deliberately no a11y PILLAR
@@ -363,7 +374,189 @@ function contrastFaultNote(err: unknown): string {
   return `The contrast engine faulted while grading this spec (${name}: ${message}); the pillar is reported ungradeable rather than passed.`;
 }
 
-/** s141 m02 — grade the baked OODS categorical palette (role-C + role-A → 'pass'). */
+const ECHARTS_RENDER_MATRIX_NOTE =
+  'Cross-process ECharts renderHash equality is certified only within the runtime axes ' +
+  'recorded in packages/viz-render/certified-matrix.json; changing a recorded dependency, ' +
+  'runtime, renderer/normalizer contract, token version, viewport, or snapshot policy ' +
+  'requires requalification.';
+
+const ECHARTS_RENDER_SCOPE_NOTE =
+  'This determinism verdict covers the emitted ECharts option and the normalized SVG ' +
+  'rendered from two independently emitted projected options. contentHash identifies the ' +
+  'first projected option; renderHash identifies the first normalized SVG. ' +
+  ECHARTS_RENDER_MATRIX_NOTE;
+
+const ECHARTS_BUBBLE_NO_MAP_NOTE =
+  'This bubble_map operand has no inline geometry; the server never fetches or resolves a ' +
+  'map, so certification keeps the projected-option proof only and emits no renderHash.';
+
+const ECHARTS_BUBBLE_NO_MAP_CONTRAST_NOTE =
+  'Geo color remains exempt under the standing WCAG 1.4.11 gradient-essential ruling. ' +
+  'This bubble_map operand was not render-graded because it has no inline geometry and the ' +
+  'server never fetches or resolves a map.';
+
+const ECHARTS_RENDERED_GRADED_CAVEAT =
+  'certify grades actual carrier paints extracted from the normalized SVG rendered from ' +
+  'the retained projected ECharts option against the light-theme canvas; dark-theme ' +
+  'contrast is not verified.';
+
+const ECHARTS_RENDERED_EXEMPT_CAVEAT =
+  'certify reads actual carrier paints from the normalized SVG rendered from the retained ' +
+  'projected ECharts option. Geo categorical contrast remains exempt, so no light-theme ' +
+  'canvas ratio is graded; dark-theme contrast is not verified.';
+
+const ECHARTS_RENDERED_UNGRADEABLE_CAVEAT =
+  'certify attempted to read carrier paints from the normalized SVG rendered from the ' +
+  'retained projected ECharts option, but no complete grade was available. No light-theme ' +
+  'canvas grade was completed; dark-theme contrast is not verified.';
+
+const ECHARTS_NO_RENDER_CONTRAST_CAVEAT =
+  'No normalized SVG carrier evidence was available for this call, so no canvas ' +
+  'measurement was made. Render-backed ECharts contrast uses the light-theme canvas; ' +
+  'dark-theme contrast is not verified.';
+
+interface EChartsRenderedOperandVerdict {
+  readonly stable: boolean;
+  readonly renderHash?: string;
+  readonly contrast: ContrastVerdict;
+  readonly contrastNote: string;
+  readonly notes: string[];
+}
+
+function renderFaultDetail(err: unknown): string {
+  const record =
+    err !== null && typeof err === 'object'
+      ? (err as { readonly code?: unknown; readonly message?: unknown })
+      : undefined;
+  const code = typeof record?.code === 'string' ? record.code : undefined;
+  const message =
+    typeof record?.message === 'string'
+      ? record.message
+      : err instanceof Error
+        ? err.message
+        : String(err);
+  return code ? `${code}: ${message}` : message;
+}
+
+type EChartsContrastEvidence = 'graded' | 'exempt' | 'ungradeable' | 'not-rendered';
+
+function withEChartsContrastCaveat(
+  note: string,
+  evidence: EChartsContrastEvidence,
+): string {
+  const caveat =
+    evidence === 'graded'
+      ? ECHARTS_RENDERED_GRADED_CAVEAT
+      : evidence === 'exempt'
+        ? ECHARTS_RENDERED_EXEMPT_CAVEAT
+        : evidence === 'ungradeable'
+          ? ECHARTS_RENDERED_UNGRADEABLE_CAVEAT
+          : ECHARTS_NO_RENDER_CONTRAST_CAVEAT;
+  return `${note} ${caveat}`;
+}
+
+/**
+ * Render and grade the exact two JSON-safe option projections retained by the emit proof.
+ * There is deliberately no raw option parameter and no reconstruction fallback after the
+ * first render is attempted.
+ */
+async function evaluateEChartsRenderedOperand(
+  outcome: EChartsDeterminismResult,
+  chartType: CertifyOperandResolved['chartType'],
+): Promise<EChartsRenderedOperandVerdict> {
+  // A geometry-free bubble is valid for clients that already own a registered base map,
+  // but this server never fetches one. Keep its option proof and do not start the worker.
+  if (
+    chartType === 'bubble_map' &&
+    outcome.firstProjected.__registration === undefined
+  ) {
+    return {
+      stable: outcome.stable,
+      contrast: 'exempt',
+      contrastNote: withEChartsContrastCaveat(
+        ECHARTS_BUBBLE_NO_MAP_CONTRAST_NOTE,
+        'not-rendered',
+      ),
+      notes: [ECHARTS_BUBBLE_NO_MAP_NOTE],
+    };
+  }
+
+  let firstSvg: string;
+  try {
+    firstSvg = await renderEChartsToSvg(outcome.firstProjected);
+  } catch (err) {
+    const detail = renderFaultDetail(err);
+    const note =
+      `The first ECharts render failed (${detail}); renderHash is absent, ` +
+      'render-backed contrast is ungradeable, and stable is false.';
+    return {
+      stable: false,
+      contrast: 'ungradeable',
+      contrastNote: withEChartsContrastCaveat(note, 'not-rendered'),
+      notes: [note],
+    };
+  }
+
+  const renderHash = sha256(firstSvg);
+  let contrast: ContrastVerdict;
+  let contrastNote: string;
+  try {
+    const grade = evaluateEChartsRenderContrast({
+      chartType,
+      normalizedSvg: firstSvg,
+      projectedOption: outcome.firstProjected,
+    });
+    contrast = grade.contrast;
+    contrastNote = withEChartsContrastCaveat(
+      grade.contrastNote,
+      grade.contrast === 'exempt'
+        ? 'exempt'
+        : grade.contrast === 'ungradeable'
+          ? 'ungradeable'
+          : 'graded',
+    );
+  } catch (err) {
+    contrast = 'ungradeable';
+    contrastNote = withEChartsContrastCaveat(
+      contrastFaultNote(err),
+      'ungradeable',
+    );
+  }
+
+  let renderStable = false;
+  const proofNotes: string[] = [];
+  try {
+    const secondSvg = await renderEChartsToSvg(outcome.secondProjected);
+    renderStable = renderHash === sha256(secondSvg);
+    if (!renderStable) {
+      proofNotes.push(
+        'The second independent ECharts render differed from the first normalized SVG; ' +
+          'the first renderHash is retained and stable is false.',
+      );
+    }
+  } catch (err) {
+    proofNotes.push(
+      `The second independent ECharts render failed (${renderFaultDetail(err)}); ` +
+        'the first renderHash is retained and stable is false.',
+    );
+  }
+  if (!outcome.stable) {
+    proofNotes.push(
+      'The two independently emitted projected ECharts options differed; contentHash ' +
+        'identifies the first projection and stable is false.',
+    );
+  }
+
+  return {
+    stable: outcome.stable && renderStable,
+    renderHash,
+    contrast,
+    contrastNote,
+    notes: [ECHARTS_RENDER_SCOPE_NOTE, ...proofNotes],
+  };
+}
+
+/** Legacy no-operand grade: reconstruct the baked palette when no chart data can render. */
 function echartsCategoricalVerdict(trait: string, operand: EChartsOperandVerdict): ArtifactCertifyOutput {
   // Defensive: a contrast-engine fault degrades to 'ungradeable' WITH a note naming the
   // fault (s175 m04, closes decision #1446 (4)) — never status:error. Mirrors the cartesian
@@ -399,11 +592,11 @@ function echartsGeoExemptVerdict(trait: string, operand: EChartsOperandVerdict):
  * parity). An accuracy ENGINE fault IS a degraded pillar, mirroring the cartesian path's
  * try/catch exactly: a fault must never turn a valid verdict into status:error.
  */
-function evaluateEChartsOperand(
+async function evaluateEChartsOperand(
   spec: NormalizedVizSpec,
   trait: string,
   operand: CertifyOperandResolved | undefined,
-): EChartsOperandVerdict | { failure: { code: string; message: string } } {
+): Promise<EChartsOperandVerdict | { failure: { code: string; message: string } }> {
   if (!operand) {
     return {
       determinismPillar: 'unchecked',
@@ -417,6 +610,8 @@ function evaluateEChartsOperand(
   if (!outcome.ok) {
     return { failure: { code: outcome.code, message: outcome.message } };
   }
+
+  const rendered = await evaluateEChartsRenderedOperand(outcome, operand.chartType);
 
   let accuracyPillar: AccuracyVerdict = 'unchecked';
   let accuracySummary: CertifyAccuracySummary | undefined;
@@ -506,13 +701,21 @@ function evaluateEChartsOperand(
   }
 
   return {
-    determinismPillar: outcome.stable ? 'pass' : 'fail',
-    determinism: { stable: outcome.stable, contentHash: outcome.contentHash },
+    determinismPillar: rendered.stable ? 'pass' : 'fail',
+    determinism: {
+      stable: rendered.stable,
+      contentHash: outcome.contentHash,
+      ...(rendered.renderHash !== undefined ? { renderHash: rendered.renderHash } : {}),
+    },
     accuracyPillar,
     ...(accuracySummary ? { accuracySummary } : {}),
+    renderedContrast: {
+      contrast: rendered.contrast,
+      contrastNote: rendered.contrastNote,
+    },
     findings,
     ...(a11yNotApplicable ? { a11yNotApplicable } : {}),
-    notes: [determinismScopeNote(operand.chartType), ...accuracyNotes, ...a11yNotes],
+    notes: [...rendered.notes, ...accuracyNotes, ...a11yNotes],
   };
 }
 
@@ -584,15 +787,26 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
   // present: certify re-emits the ECharts option twice through the same adapters
   // viz.render uses and hashes the same JSON projection.
   if (trait && isEChartsPrimaryMarkTrait(trait)) {
-    const operandVerdict = evaluateEChartsOperand(spec, trait, operand);
+    const operandVerdict = await evaluateEChartsOperand(spec, trait, operand);
     if ('failure' in operandVerdict) {
       return { status: 'error', errors: [operandVerdict.failure] };
     }
-    // The 5 categorical types: grade the reconstructed baked OODS palette (s141 m02).
+    // Once an operand reached the render path, its retained projected option and normalized
+    // SVG are the sole contrast evidence. Never fall back to the reconstruction grader after
+    // a render was attempted (including a typed render fault).
+    if (operandVerdict.renderedContrast) {
+      return echartsContrastVerdict(
+        trait,
+        operandVerdict.renderedContrast.contrast,
+        operandVerdict.renderedContrast.contrastNote,
+        operandVerdict,
+      );
+    }
+    // No operand: preserve the legacy reconstructed categorical-palette bytes.
     if (ECHARTS_CATEGORICAL_TRAITS.has(trait)) {
       return echartsCategoricalVerdict(trait, operandVerdict);
     }
-    // The 3 geo types: sequential/continuous color scale → WCAG-'exempt' (s141 m03).
+    // No operand: preserve the legacy geo-exemption bytes.
     if (ECHARTS_GEO_EXEMPT_TRAITS.has(trait)) {
       return echartsGeoExemptVerdict(trait, operandVerdict);
     }
@@ -678,8 +892,8 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // sha256(renderVegaLiteToSvg(compiled)) twice, equal. The FIRST hash is the contrast
     // grade's own render (reused, never recomputed); the SECOND render call below IS the
     // proof — the ":623-625 KEEP-the-second discipline", render edition. Runs exactly
-    // when the grade rendered (>= 1 series unit), so `renderHash` presence tracks the
-    // rendered-grading path and NO ECharts response can ever carry it. A second-render
+    // when the grade rendered (>= 1 series unit), so `renderHash` presence tracks this
+    // cartesian rendered-grading path. A second-render
     // throw is a failed proof (the artifact could not be re-rendered), never a
     // status:error — the catch keeps the fault inside the pillar.
     let renderHash: string | undefined;
@@ -751,7 +965,8 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
       findings,
       // renderHash (s176 m02, OPTIONAL in the schema): present exactly when the contrast
       // grade rendered — the cartesian rendered-grading path — proving the double-render
-      // byte-equality `stable` now folds in. Never present on an ECharts response.
+      // byte-equality `stable` now folds in. The operand-backed ECharts path above applies
+      // the same presence rule to its own normalized render.
       determinism: { stable, contentHash, ...(renderHash !== undefined ? { renderHash } : {}) },
       pillars: {
         a11yEquivalence: a11yConformant ? 'pass' : 'fail',

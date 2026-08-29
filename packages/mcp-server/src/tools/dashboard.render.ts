@@ -756,7 +756,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   };
 
   if (compact) {
-    result.tokenCssRef = 'tokens.build';
+    result.tokenCssRef = input.tokenCssRef ?? 'tokens.build';
   }
 
   // Opt-in render-to-SVG export (seam (b)/(e)): compose a self-contained HTML doc

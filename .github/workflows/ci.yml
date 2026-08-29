@@ -152,7 +152,7 @@ jobs:
       # s174 m04 — build:stories is the ONLY type lens over stories/** and apps/explorer/**,
       # and until now nothing ran it: 268 errors had accumulated unobserved, including real
       # explorer drift that was invisible-to-green. It is wired as a STEP on this existing job
-      # rather than a new one (13 jobs stay 13). The pin is exact in both directions — a drop
+      # rather than a new one (the then-current 13 jobs stayed 13). The pin is exact in both directions — a drop
       # below it reds with "lower the pin", so headroom cannot silently accumulate.
       - name: build:stories type ratchet
         run: node scripts/quality/build-stories-ratchet.mjs
@@ -502,8 +502,8 @@ jobs:
       # the specs need. It builds `storybook-static` (step above) and installs Chromium (step
       # above), which is also why the a11y contract can serve the static build on an ephemeral
       # port. A separate job would repeat a ~16s build and a browser install for three spec
-      # files. (s174 m03 corrects the count this comment carried: the workflow has 13 jobs,
-      # not 15, and s174 adds none.)
+      # files. (s174 m03 corrects the historical count this comment carried: that workflow
+      # had 13 jobs, not 15, and s174 added none.)
       #
       # s174 m03 adds the DESKTOP project to the same leg. Of the two surviving desktop specs,
       # form.accessibility had an invalid id from its 2025-10-19 introduction (d6f2567), while
@@ -728,6 +728,9 @@ jobs:
       - name: Build packages
         run: pnpm run build:packages
 
+      - name: Record certified runtime axes
+        run: node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'
+
       # s149 #832 — LOAD-BEARING, DO NOT DROP: this single line is the ONLY CI gate for
       # viz-core src specs (packages/viz-core/src/**/*.spec.ts). The ROOT vitest 'core'
       # project (vitest.config.ts) does NOT glob packages/viz-core/src/**, so the colocated
@@ -748,7 +751,8 @@ jobs:
       # 14 colocated files named above plus the root 'core' project's test/** globs: 58
       # colocated src/**/*.test.ts files were present in the tree but never ran in ANY CI
       # job. This runs the package's whole vitest surface (src colocated + test/; the
-      # scale-determinism suite is excluded by the package config and keeps its own job).
+      # scale-determinism and ECharts soak suites are excluded by the package config and
+      # keep their own jobs).
       # The named-goldens step above STAYS — its explicit list is guarded by
       # ci-golden-list.guard.test.ts and keeps the golden set legible — so the 14 run
       # twice, which is the price of a legible golden roster. Suite measured green at the
@@ -759,3 +763,40 @@ jobs:
 
       - name: Run mcp-bridge tool-surface test
         run: pnpm --filter @oods/mcp-bridge test
+
+  echarts-render-soak:
+    name: echarts-render-soak
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # s179 m06: opt-in, sequential worker-isolation/resource gate. The package
+    # command runs Vitest under --expose-gc; build:packages is load-bearing
+    # because worker_threads executes @oods/viz-render's real dist entry.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Build packages for the real ECharts worker entry
+        run: pnpm run build:packages
+
+      - name: Record certified runtime axes
+        run: node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'
+
+      - name: Run ECharts concurrency and resource soak
+        run: pnpm --filter @oods/mcp-server run test:echarts-soak
