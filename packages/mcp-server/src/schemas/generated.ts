@@ -1647,7 +1647,11 @@ export namespace DashboardRenderInputSchema {
        */
       echarts?: boolean;
       /**
-       * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and an a11y-described placeholder for ECharts-primary panels (geo). Absent/false leaves the output byte-identical to the compact/echarts payload.
+       * When true, also return each successfully rendered chart panel's intermediate NormalizedVizSpec IR on panels[].normalizedSpec. This is one call-level opt-in mirroring viz.render; KPI and error panels are unchanged, and the emitted IR sits outside the dashboard contentHash projection.
+       */
+      includeNormalizedSpec?: boolean;
+      /**
+       * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary panels (geo), not a rendered ECharts chart. Absent/false leaves the output byte-identical to the compact/echarts payload.
        */
       html?: boolean;
       /**
@@ -1655,7 +1659,7 @@ export namespace DashboardRenderInputSchema {
        */
       dataTable?: boolean;
       /**
-       * A11y completeness (sprint-118 m07). When true, run a WCAG contrast scan over the export's ALREADY-RESOLVED brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below threshold. DEFAULT false emits nothing.
+       * A11y completeness (sprint-118 m07). When true, run the four-pair token contrast preflight over the export's ALREADY-RESOLVED brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below its WCAG threshold. This is a token preflight, not whole-dashboard WCAG certification. DEFAULT false emits nothing.
        */
       contrastScan?: boolean;
       /**
@@ -2047,7 +2051,7 @@ export namespace DashboardRenderOutputSchema {
      */
     tokenCssRef?: string;
     /**
-     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and an a11y-described placeholder for ECharts-primary (geo) panels. Absent leaves the rest of the payload byte-identical.
+     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary (geo) panels, not rendered ECharts charts. Absent leaves the rest of the payload byte-identical.
      */
     html?: string;
     /**
@@ -2057,15 +2061,23 @@ export namespace DashboardRenderOutputSchema {
     specRefCreatedAt?: string;
     specRefExpiresAt?: string;
     /**
-     * Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. Default-on; omitted only on error outputs (sprint-134 m02).
+     * Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. panels[].contentHash, panels[].normalizedSpec, and outputHtmlHash are attached after this hash is computed and sit OUTSIDE the hashed projection. Default-on; omitted only on error outputs (sprint-134 m02).
      */
     contentHash?: string;
+    /**
+     * Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; ECharts-primary panels remain placeholders. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim.
+     */
+    outputHtmlHash?: string;
     /**
      * Echoes the normalized output controls.
      */
     output?: {
       compact?: boolean;
       echarts?: boolean;
+      /**
+       * Echoes the call-level opt-in that emits panels[].normalizedSpec for successful chart panels.
+       */
+      includeNormalizedSpec?: boolean;
       html?: boolean;
       dataTable?: boolean;
       contrastScan?: boolean;
@@ -2104,6 +2116,16 @@ export namespace DashboardRenderOutputSchema {
      * Compiled ECharts option (ECharts-primary panels + opt-in tabular). Geo panels carry the FeatureCollection on echartsSpec.__registration.
      */
     echartsSpec?: {
+      [k: string]: any;
+    };
+    /**
+     * The successful panel's viz.render contentHash, equal to a standalone viz.render call over the identical resolved spec and data. Attached after the dashboard hash and outside its {panels, layout} projection. This receipt is brand-INVARIANT because brand applies later at dashboard HTML/SVG emission; it proves this-call content determinism, not certified-matrix renderHashEpoch coverage.
+     */
+    contentHash?: string;
+    /**
+     * The panel's intermediate NormalizedVizSpec IR, present only when output.includeNormalizedSpec=true. Attached after the dashboard hash and outside its {panels, layout} projection for direct artifact.certify round-trips.
+     */
+    normalizedSpec?: {
       [k: string]: any;
     };
     a11yDescription?: string;
@@ -2183,7 +2205,7 @@ export namespace DashboardRenderOutputSchema {
     };
   }
   /**
-   * Structured WCAG contrast findings — present ONLY when output.contrastScan=true. Machine-readable mirror of the OODS-V135 warnings (the failing brand-token colour pairs from scanBrandContrast). ABSENT on the default path, so the default render stays byte-identical.
+   * Structured findings from the four-pair token contrast preflight — present ONLY when output.contrastScan=true. Machine-readable mirror of the OODS-V135 warnings (the failing brand-token colour pairs from scanBrandContrast). This is not whole-dashboard WCAG certification. ABSENT on the default path, so the default render stays byte-identical.
    */
   export interface A11YContrast {
     findings: ContrastFinding[];

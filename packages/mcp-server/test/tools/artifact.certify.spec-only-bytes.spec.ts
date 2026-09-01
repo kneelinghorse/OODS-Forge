@@ -1,5 +1,5 @@
 // THE SPLIT BYTE-COMPAT CONTROL. (s172 §1g; rebased e5bf2f6 in s173 m01, 4f64bcf
-// in s176 m01, 86d50ed in s177 m02, and 1be93f8 in s179 m01.)
+// in s176 m01, 86d50ed in s177 m02, 1be93f8 in s179 m01, and c02eb43 in s180 m01.)
 //
 // s172 added an OPTIONAL `data` operand to artifact.certify. Every caller who does NOT
 // send it must be unaffected — but s172 ALSO deliberately added operand-absent notes to
@@ -17,15 +17,15 @@
 //   (ii) ECHARTS-PRIMARY {spec}-only responses move in `notes[]` and `contrastNote` ONLY,
 //        and the movement is exactly the enumerated set below — every other key, including
 //        the closed enums, `conformant`, `pillars` and the absence of `determinism`/
-//        `accuracySummary`, is byte-identical. s179 declares ZERO ECharts movement.
+//        `accuracySummary`, is byte-identical. s180 declares ZERO ECharts movement.
 //
-// s179 REBASE (m01, sequenced FIRST, before any product edit): the baseline fixture was
-// RECAPTURED at pristine `1be93f8e16fee2607682361bbd56e521fda3bcdb` — s178's final
-// commit and s179's starting tree — in a detached worktree whose full HEAD was verified
+// s180 REBASE (m01, sequenced FIRST, before any product edit): the baseline fixture was
+// RECAPTURED at pristine `c02eb4342fa34faacf4fcb6a3467341af8a92e01` — s179's final
+// commit and s180's starting tree — in a detached worktree whose full HEAD was verified
 // before the probe. Its SHA-256 is
 // `da68a40aa71c99a7b2d67b3e3bca9a206297da1b5108c532788f231ff65364a3`, byte-identical
-// to the retired 86d50ed fixture as expected: s177 and s178 declared no movement on this
-// path. All five declaration slots below remain empty/null for the whole sprint.
+// to the 1be93f8 fixture as expected: s179 declared no spec-only movement on this path.
+// All five declaration slots below remain empty/null for the whole sprint.
 //
 // The invariant the sprints share: each half moves only where a mission said, in
 // writing, that it would.
@@ -36,7 +36,7 @@ import { buildVizSpecFromRows } from '@oods/viz-core';
 import { handle } from '../../src/tools/artifact.certify.js';
 import { CARTESIAN_MARK_TRAITS, ECHARTS_MARK_TRAITS, SPEC_ONLY_CASES } from './s172-spec-only-cases.js';
 
-const BASELINE_COMMIT = '1be93f8';
+const BASELINE_COMMIT = 'c02eb43';
 
 const baseline = JSON.parse(
   readFileSync(new URL('./__fixtures__/s172-certify-spec-only-baseline.json', import.meta.url), 'utf8'),
@@ -49,7 +49,7 @@ const cases = SPEC_ONLY_CASES(buildVizSpecFromRows);
  * substring that must appear in exactly one ADDED note, and the added notes must be
  * exactly this many.
  *
- * s179 adds NO ECharts notes. The
+ * s180 adds NO ECharts notes. The
  * empty array is the assertion: any new note on the {spec}-only path fails this control.
  */
 const DECLARED_NOTE_ADDITIONS: readonly string[] = [];
@@ -59,7 +59,7 @@ const DECLARED_NOTE_ADDITIONS: readonly string[] = [];
  * count). Keyed by a stable substring of the baseline note; the value is a substring the
  * replacement must contain.
  *
- * s179 declares NO ECharts note rewords. The s174/s175 entries (both keyed on the
+ * s180 declares NO ECharts note rewords. The s174/s175 entries (both keyed on the
  * e5bf2f6 baseline's "determinism and accuracy ARE checked" fragment) are RETIRED by the
  * 4f64bcf rebase — their movement is now the baseline itself. Retirement here was NOT
  * suite-forced (both entries pass vacuously against the fresh baseline: the old key
@@ -72,7 +72,7 @@ const DECLARED_NOTE_REWORDS: ReadonlyArray<{ baselineContains: string; nowContai
  * THE MOVEMENT THAT IS NOT IN notes[].
  *
  * ECHARTS_GEO_EXEMPT_NOTE is emitted as `contrastNote`, not as a note, so notes[]
- * assertions cannot bound it. s179 declares NO contrastNote movement on ANY ECharts
+ * assertions cannot bound it. s180 declares NO contrastNote movement on ANY ECharts
  * trait: the s173 5(c) geo reword is baseline now (its assertion is retired — unlike the
  * note rewords, the recapture FORCED this one: the old baselineContains key is absent
  * from a 4f64bcf capture), and the m01 caveat fork (memo §1a D11) freezes the ECharts
@@ -91,8 +91,8 @@ const DECLARED_ECHARTS_CONTRAST_NOTE_REWORD: {
  *
  * null = nothing declared = the cartesian half is byte-identical, full-object. A mission
  * that moves cartesian {spec}-only bytes must declare it HERE, in the same edit as the
- * source change — never after the fact. The s179 rebase retains the post-s176 baseline,
- * so s179 starts with no cartesian contrastNote movement.
+ * source change — never after the fact. The s180 rebase retains the post-s176 baseline,
+ * so s180 starts with no cartesian contrastNote movement.
  */
 const DECLARED_CARTESIAN_CONTRAST_NOTE_REWORD: {
   baselineContains: string;
@@ -100,7 +100,7 @@ const DECLARED_CARTESIAN_CONTRAST_NOTE_REWORD: {
 } | null = null;
 
 /**
- * The s179 rebase retains s176 m02's OPTIONAL cartesian renderHash additions in the
+ * The s180 rebase retains s176 m02's OPTIONAL cartesian renderHash additions in the
  * baseline. Empty array =
  * nothing declared = the full determinism object is byte-identical.
  */
@@ -167,7 +167,7 @@ describe(`artifact.certify — {spec}-only byte compatibility, ECharts half (bas
   );
 
   it.each(ECHARTS_MARK_TRAITS)(
-    '%s: contrastNote is byte-identical (s179 declares zero ECharts contrastNote movement)',
+    '%s: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement)',
     async (trait) => {
       const out = (await handle({ spec: cases[trait] })) as { contrastNote?: string };
       const base = baseline[trait].contrastNote as string | undefined;
@@ -249,12 +249,12 @@ describe('artifact.certify — the control can discriminate', () => {
     expect((base.notes as string[]).length).toBeGreaterThan(0);
   });
 
-  // The 1be93f8 recapture is intentionally byte-identical to 86d50ed, so content cannot
-  // distinguish those two commits. The detached-worktree command, verified full SHA and
-  // fixture SHA-256 are recorded in the header and the m01 baseline record. These bytes
-  // still distinguish the post-s176 baseline from retired 4f64bcf in both directions.
-  it('the 1be93f8 recapture retains the post-s176 bytes, not retired 4f64bcf', () => {
-    expect(BASELINE_COMMIT).toBe('1be93f8');
+  // The c02eb43 recapture is intentionally byte-identical to 1be93f8, so content cannot
+  // distinguish those two commits. The detached-worktree command, verified full SHA,
+  // fixture SHA-256 and literal byte compare are recorded in the capture-script header.
+  // These bytes still distinguish the post-s176 baseline from retired 4f64bcf both ways.
+  it('the c02eb43 recapture retains the post-s176 bytes, not retired 4f64bcf', () => {
+    expect(BASELINE_COMMIT).toBe('c02eb43');
     for (const trait of CARTESIAN_MARK_TRAITS) {
       const cartesian = baseline[trait] as {
         contrastNote?: string;

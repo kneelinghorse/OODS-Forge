@@ -17,8 +17,9 @@ export interface EChartsSsrDimensions {
 }
 
 /**
- * Only the force-node ceiling was ratified for s179. A null value is an
- * explicit unresolved contract, not an unlimited-input claim.
+ * Force-directed rendering enforces the ratified node ceiling. Link-count and
+ * payload-byte ceilings remain unresolved until their contracts are ratified;
+ * null is not an unlimited-input claim.
  */
 export const ECHARTS_INPUT_LIMITS = Object.freeze({
   forceNodes: 250,

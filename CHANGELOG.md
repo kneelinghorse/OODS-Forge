@@ -2,6 +2,12 @@
 
 All notable changes to OODS Foundry MCP are documented here. This project uses sprint-based development. Each entry summarizes the sprint's key deliverables.
 
+## Sprint 180 — Dashboard identity reaches the wire (a signalled advertised contract change)
+
+- **`dashboard.render` panels now expose the identity already computed by `viz.render`.** Every rendered panel carries `contentHash`; callers may set the call-level `output.includeNormalizedSpec` flag to receive each panel's `normalizedSpec`. These fields are attached after the dashboard's `{panels, layout}` hash projection, so the dashboard `contentHash` remains stable while a panel hash stays equal to the matching standalone `viz.render` call. The emitted normalized spec round-trips through `artifact.certify` with content-hash parity (cartesian as `{spec}`, ECharts-primary with its required `data` operand).
+- **HTML exports gain `outputHtmlHash`.** When `output.html` is requested, the response hashes the exact composed HTML bytes. Panel `contentHash` is brand-invariant; `outputHtmlHash` is brand-variant because brand styling is applied during SVG emission. ECharts-primary dashboard panels remain placeholders, and the existing compact `tokenCssRef` contract is unchanged.
+- **Consumers must RECONNECT after this ships.** The advertised `dashboard.render` input/output schemas and description changed. Tool execution is fresh per call, but connector-cached contracts remain stale until reconnect; vendored consumers must also re-vendor from the post-commit pin.
+
 ## Sprint 179 — ECharts certification grades the rendered chart (a signalled advertised contract change)
 
 - **Operand-backed ECharts contrast is now RENDER-MEASURED.** `artifact.certify` renders the retained projected ECharts option through a lazy, process-wide serialized SSR worker and grades the visible SVG carriers separately from their semantic category-to-paint assignment. Treemap, sunburst, sankey, force graph, and chord receive the combined worst Role-C/Role-A verdict; palette-recycling duplicates remain in the Role-A assignment. Choropleth, bubble map, and flow map retain their contrast exemption while still carrying render evidence. The current default sunburst descendant tint honestly fails Role C at 2.60:1; no color bytes were changed to hide that result. Calls without the ECharts `data` operand keep the prior reconstructed baked-palette verdict and caveat.

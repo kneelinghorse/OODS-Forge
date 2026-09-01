@@ -119,13 +119,19 @@ describe("Sprint 177 prose truth carriers", () => {
     expect(sprintPlan).not.toContain("**Status:** Planning");
   });
 
-  it("keeps the open-arcs ledger aligned with the Sprint 178 closures and s179 arc disposition", () => {
+  it("keeps the open-arcs ledger aligned with the current closures and s180 dashboard carry", () => {
     const ledger = read("cmos/planning/forge-open-arcs-ledger-2026-08.md");
 
     expect(ledger).toContain(
-      "94 — 24 open, 57 done, 7 blocked, 5 superseded, 1 unknown",
+      "95 — 25 open, 57 done, 7 blocked, 5 superseded, 1 unknown",
     );
-    expect(ledger).toContain("2 carry, 27 park, 60 close, 5 drop");
+    expect(ledger).toContain("3 carry, 27 park, 60 close, 5 drop");
+    expect(ledger).toContain(
+      "[Viz flagship follow-ons](#viz-flagship-follow-ons) — Active",
+    );
+    expect(ledger).toContain(
+      "m07 dashboard-binding re-queued to s180 with the Shopify ingestion cluster. The consumer ask stays ACCEPTED (Derek 2026-08-28); this is a scheduling deferral, not a rejection. The s179 close records the deferral; the s180 charter carries m07 as a committed opening mission with the per-panel-identity + outputHtmlHash shape and its Rule-9 rows already drafted (per-panel hash isolation; outputHtmlHash perturbation; round-trip certify parity).",
+    );
     expect(ledger).toContain("next-step #1259 completed");
     expect(ledger).toContain("next-step #1142 completed");
     expect(ledger).toContain("exact pin 138→0");

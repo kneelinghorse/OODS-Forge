@@ -1,0 +1,363 @@
+{
+  "date": "2026-09-01",
+  "bridge": "http://127.0.0.1:4466",
+  "head": "c02eb43",
+  "health": {
+    "request": "GET /health",
+    "response": {
+      "status": "ok",
+      "bridge": "ready",
+      "toolset": {
+        "mode": "default",
+        "enabledCount": 19,
+        "registrySource": "dist/tools/registry.json"
+      }
+    }
+  },
+  "brand_apply_dryrun": {
+    "request": {
+      "tool": "brand_apply",
+      "input": {
+        "brand": "A",
+        "delta": {
+          "color": {
+            "brand": {
+              "A": {
+                "primary": "{color.blue.500}"
+              }
+            }
+          }
+        },
+        "apply": false,
+        "preview": {
+          "verbosity": "compact"
+        }
+      }
+    },
+    "response_preview_summary": "Updated 3 token values for brand A.",
+    "mode": "dry-run",
+    "notes": [
+      "base: 1 updated token",
+      "dark: 1 updated token",
+      "hc: 1 updated token"
+    ]
+  },
+  "viz_render": {
+    "request_summary": "bar, 3 rows, includeNormalizedSpec:true",
+    "normalizedSpec": {
+      "$schema": "https://oods.dev/viz-spec/v1",
+      "id": "viz:bar",
+      "name": "Bar chart",
+      "data": {
+        "values": [
+          {
+            "region": "North",
+            "revenue": 100
+          },
+          {
+            "region": "South",
+            "revenue": 120
+          },
+          {
+            "region": "East",
+            "revenue": 90
+          }
+        ]
+      },
+      "marks": [
+        {
+          "trait": "MarkBar"
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "region",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "type": "nominal",
+          "title": "Region"
+        },
+        "y": {
+          "field": "revenue",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "aggregate": "sum",
+          "title": "Revenue"
+        }
+      },
+      "a11y": {
+        "description": "Bar chart of sum of revenue by region.",
+        "ariaLabel": "Bar chart of Revenue by Region"
+      }
+    }
+  },
+  "artifact_certify_cartesian": {
+    "request": {
+      "tool": "artifact_certify",
+      "input": {
+        "spec": {
+          "$schema": "https://oods.dev/viz-spec/v1",
+          "id": "viz:bar",
+          "name": "Bar chart",
+          "data": {
+            "values": [
+              {
+                "region": "North",
+                "revenue": 100
+              },
+              {
+                "region": "South",
+                "revenue": 120
+              },
+              {
+                "region": "East",
+                "revenue": 90
+              }
+            ]
+          },
+          "marks": [
+            {
+              "trait": "MarkBar"
+            }
+          ],
+          "encoding": {
+            "x": {
+              "field": "region",
+              "trait": "EncodingPositionX",
+              "channel": "x",
+              "type": "nominal",
+              "title": "Region"
+            },
+            "y": {
+              "field": "revenue",
+              "trait": "EncodingPositionY",
+              "channel": "y",
+              "aggregate": "sum",
+              "title": "Revenue"
+            }
+          },
+          "a11y": {
+            "description": "Bar chart of sum of revenue by region.",
+            "ariaLabel": "Bar chart of Revenue by Region"
+          }
+        }
+      }
+    },
+    "response": {
+      "status": "ok",
+      "conformant": true,
+      "pillars": {
+        "a11yEquivalence": "pass",
+        "determinism": "pass",
+        "contrast": "pass",
+        "accuracy": "pass"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "b5c45dda73e2b49db8bd28671fbf97eeb2a79b5513a784c21d5664763a630f4d",
+        "renderHash": "865982eca195bc3fe8b1797a28c175aca6b67db54024b85a9fbe48063999fdca"
+      },
+      "coverage": "certified"
+    }
+  },
+  "artifact_certify_html_reject": {
+    "request": {
+      "tool": "artifact_certify",
+      "input": {
+        "html": "<html>...</html>"
+      }
+    },
+    "response": {
+      "error": {
+        "code": "OODS-V001",
+        "message": "Input validation failed: missing required field: 'spec'; unknown field 'html' is not allowed"
+      }
+    }
+  },
+  "artifact_certify_panels_reject": {
+    "request": {
+      "tool": "artifact_certify",
+      "input": {
+        "spec": {
+          "panels": [
+            {
+              "spec": {
+                "chartType": "bar"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "response": {
+      "status": "error",
+      "errors": [
+        {
+          "code": "OODS-V126",
+          "message": "Normalized Viz Spec validation failed"
+        }
+      ]
+    }
+  },
+  "dashboard_render_default": {
+    "request": {
+      "tool": "dashboard_render",
+      "input": {
+        "schemaVersion": "v0.1",
+        "title": "Revenue Overview",
+        "datasets": [
+          {
+            "id": "sales",
+            "rows": [
+              {
+                "region": "West",
+                "month": "Jan",
+                "revenue": 100
+              },
+              {
+                "region": "East",
+                "month": "Jan",
+                "revenue": 80
+              },
+              {
+                "region": "West",
+                "month": "Feb",
+                "revenue": 120
+              },
+              {
+                "region": "East",
+                "month": "Feb",
+                "revenue": 90
+              }
+            ]
+          }
+        ],
+        "panels": [
+          {
+            "id": "kpi-rev",
+            "kind": "kpi",
+            "title": "Total Revenue",
+            "datasetId": "sales",
+            "field": "revenue",
+            "aggregate": "sum"
+          },
+          {
+            "id": "breakdown",
+            "kind": "chart",
+            "chartType": "bar",
+            "datasetId": "sales",
+            "encodings": {
+              "x": "region",
+              "y": {
+                "field": "revenue",
+                "aggregate": "sum"
+              }
+            }
+          }
+        ],
+        "a11y": {
+          "description": "Revenue overview dashboard."
+        },
+        "output": {
+          "compact": true
+        }
+      }
+    },
+    "response": {
+      "status": "ok",
+      "tokenCssRef": "tokens.build",
+      "panelKeys": [
+        [
+          "a11yDescription",
+          "delta",
+          "deltaPct",
+          "formatted",
+          "id",
+          "kind",
+          "sparkline",
+          "title",
+          "trendDirection",
+          "value"
+        ],
+        [
+          "a11yDescription",
+          "chartType",
+          "id",
+          "kind",
+          "renderer",
+          "spec"
+        ]
+      ]
+    }
+  },
+  "dashboard_render_consumer_css": {
+    "request": {
+      "tool": "dashboard_render",
+      "input": {
+        "schemaVersion": "v0.1",
+        "title": "Revenue Overview",
+        "datasets": [
+          {
+            "id": "sales",
+            "rows": [
+              {
+                "region": "West",
+                "month": "Jan",
+                "revenue": 100
+              },
+              {
+                "region": "East",
+                "month": "Jan",
+                "revenue": 80
+              },
+              {
+                "region": "West",
+                "month": "Feb",
+                "revenue": 120
+              },
+              {
+                "region": "East",
+                "month": "Feb",
+                "revenue": 90
+              }
+            ]
+          }
+        ],
+        "panels": [
+          {
+            "id": "kpi-rev",
+            "kind": "kpi",
+            "title": "Total Revenue",
+            "datasetId": "sales",
+            "field": "revenue",
+            "aggregate": "sum"
+          },
+          {
+            "id": "breakdown",
+            "kind": "chart",
+            "chartType": "bar",
+            "datasetId": "sales",
+            "encodings": {
+              "x": "region",
+              "y": {
+                "field": "revenue",
+                "aggregate": "sum"
+              }
+            }
+          }
+        ],
+        "a11y": {
+          "description": "Revenue overview dashboard."
+        },
+        "output": {
+          "compact": true
+        },
+        "tokenCssRef": "consumer.css"
+      }
+    },
+    "response": {
+      "status": "ok",
+      "tokenCssRef": "consumer.css"
+    }
+  }
+}

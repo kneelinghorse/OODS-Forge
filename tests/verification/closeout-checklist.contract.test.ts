@@ -119,6 +119,16 @@ describe("Sprint 177 closeout carrier", () => {
     expect(soakRow).toContain(
       "pnpm --filter @oods/mcp-server run test:echarts-soak",
     );
+    expect(soakRow).toContain(
+      "PK2 power floor PARKED until Linux-leg evidence",
+    );
+    expect(soakRow).toContain(
+      "three of four quiet-host runs failed the one-sided 99% Student-t bound at `echarts-render-soak.s179.spec.ts:283`",
+    );
+    expect(soakRow).toContain(
+      "positiveTrendLower99 = +364.93/+1457.88/+4367.02 B/window",
+    );
+    expect(soakRow).toContain("while every hard ceiling passed");
     expect(soakJob).toContain("timeout-minutes: 15");
     expect(soakJob).toContain(
       "run: pnpm --filter @oods/mcp-server run test:echarts-soak",
@@ -150,7 +160,7 @@ describe("Sprint 177 closeout carrier", () => {
     );
   });
 
-  it("carries every closeout-only control and keeps the build-input bite proof last", () => {
+  it("carries every closeout-only control and preserves the build-input run-last semantics", () => {
     const rows = localRows
       .split("\n")
       .filter((line) => /^\| L-\d{2} \|/.test(line));
@@ -165,6 +175,7 @@ describe("Sprint 177 closeout carrier", () => {
       "L-06",
       "L-07",
       "L-08",
+      "L-09",
     ]);
     for (const row of rows) {
       expect(row).toContain("| CI does not run |");
@@ -177,9 +188,14 @@ describe("Sprint 177 closeout carrier", () => {
     expect(localRows).toContain("http://127.0.0.1:4466/health");
     expect(localRows).toContain("after **any** advertised");
     expect(localRows).toContain("Sequential-only heavy-suite protocol");
-    expect(rows.at(-1)).toContain("Gitignored build-input survival");
-    expect(rows.at(-1)).toContain("packages/tokens/dist/tailwind/tokens.json");
-    expect(rows.at(-1)).toContain("import('@oods/tokens')");
+    expect(rows.at(-2)).toContain(
+      "| L-08 | Gitignored build-input survival — run last and again after governance |",
+    );
+    expect(rows.at(-1)).toContain(
+      "Whole-sprint SR-22 scan and per-mission suite attribution",
+    );
+    expect(rows.at(-1)).toContain("git diff --unified=0 {BASE_SHA} -- .");
+    expect(rows.at(-1)).toContain("every untracked sprint file");
     expect(localRows).not.toContain("build-stories-ratchet.mjs");
   });
 

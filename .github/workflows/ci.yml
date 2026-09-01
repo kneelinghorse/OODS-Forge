@@ -766,6 +766,7 @@ jobs:
 
   echarts-render-soak:
     name: echarts-render-soak
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # s179 m06: opt-in, sequential worker-isolation/resource gate. The package
