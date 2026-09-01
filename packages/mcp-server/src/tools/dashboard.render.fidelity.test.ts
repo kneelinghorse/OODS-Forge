@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import type { DashboardRenderInput, DashboardRenderOutput } from '../schemas/generated.js';
 import { handle } from './dashboard.render.js';
@@ -109,6 +110,18 @@ describe('dashboard.render render-fidelity goldens (sprint-113 m06)', () => {
 // baseline (its snapshot must show 0 deletions); these add the export-path goldens.
 const METRIC_OVERVIEW_HTML: DashboardRenderInput = { ...METRIC_OVERVIEW, output: { html: true } } as DashboardRenderInput;
 
+function sha256(value: string): string {
+  return createHash('sha256').update(value, 'utf8').digest('hex');
+}
+
+function chartHashes(out: DashboardRenderOutput): Record<string, string | undefined> {
+  return Object.fromEntries(
+    out.panels
+      .filter((panel) => panel.kind === 'chart')
+      .map((panel) => [panel.id, (panel as typeof panel & { contentHash?: string }).contentHash]),
+  );
+}
+
 describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
   it('the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo placeholder + inlined tokens + narrative)', async () => {
     const out = await handle(METRIC_OVERVIEW_HTML);
@@ -121,6 +134,59 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
     const a = await handle(METRIC_OVERVIEW_HTML);
     const b = await handle(METRIC_OVERVIEW_HTML);
     expect(a.html).toBe(b.html);
+  });
+
+  it('R-B: outputHtmlHash identifies the exact HTML bytes and is stable across a no-op rerender', async () => {
+    const a = await handle(METRIC_OVERVIEW_HTML);
+    const b = await handle(METRIC_OVERVIEW_HTML);
+    const aWithHtmlHash = a as DashboardRenderOutput & { outputHtmlHash?: string };
+    const bWithHtmlHash = b as DashboardRenderOutput & { outputHtmlHash?: string };
+
+    expect(a.html).toBeTypeOf('string');
+    expect(aWithHtmlHash.outputHtmlHash).toBe(sha256(a.html!));
+    expect(bWithHtmlHash.outputHtmlHash).toBe(aWithHtmlHash.outputHtmlHash);
+  });
+
+  it('R-B: outputHtmlHash is absent without HTML output', async () => {
+    const out = await handle(METRIC_OVERVIEW) as DashboardRenderOutput & { outputHtmlHash?: string };
+    expect(out.html).toBeUndefined();
+    expect(out.outputHtmlHash).toBeUndefined();
+  });
+
+  it('R-B: brand changes HTML identity while every chart contentHash remains brand-invariant', async () => {
+    const brandA = await handle({ ...METRIC_OVERVIEW_HTML, brand: 'A' } as DashboardRenderInput);
+    const brandB = await handle({ ...METRIC_OVERVIEW_HTML, brand: 'B' } as DashboardRenderInput);
+    const brandAWithHtmlHash = brandA as DashboardRenderOutput & { outputHtmlHash?: string };
+    const brandBWithHtmlHash = brandB as DashboardRenderOutput & { outputHtmlHash?: string };
+    const brandAPanelHashes = chartHashes(brandA);
+
+    expect(brandAWithHtmlHash.outputHtmlHash).not.toBe(brandBWithHtmlHash.outputHtmlHash);
+    expect(Object.values(brandAPanelHashes)).toHaveLength(3);
+    for (const hash of Object.values(brandAPanelHashes)) {
+      expect(hash).toMatch(/^[a-f0-9]{64}$/);
+    }
+    expect(brandAPanelHashes).toEqual(chartHashes(brandB));
+  });
+
+  it('R-B: a panel-data edit moves HTML identity', async () => {
+    const edited = {
+      ...METRIC_OVERVIEW_HTML,
+      datasets: METRIC_OVERVIEW.datasets.map((dataset) => ({
+        ...dataset,
+        rows: dataset.rows.map((row, index) => index === 0 ? { ...row, revenue: 101 } : row),
+      })),
+    } as DashboardRenderInput;
+    const baseline = await handle(METRIC_OVERVIEW_HTML) as DashboardRenderOutput & { outputHtmlHash?: string };
+    const changed = await handle(edited) as DashboardRenderOutput & { outputHtmlHash?: string };
+
+    expect(changed.outputHtmlHash).not.toBe(baseline.outputHtmlHash);
+  });
+
+  it('R-B: ECharts-primary HTML remains an a11y-described placeholder', async () => {
+    const out = await handle(METRIC_OVERVIEW_HTML);
+    expect(out.html).toContain('class="oods-panel oods-placeholder oods-placeholder-geo"');
+    expect(out.html).toContain('aria-label="Choropleth map of regional values."');
+    expect(out.html).not.toContain('<canvas');
   });
 
   it('additivity parity: output.html ABSENT is byte-identical to the s114 baseline (no leaked export surface)', async () => {

@@ -117,10 +117,15 @@
           "default": false,
           "description": "When true, also include the ECharts option for tabular panels (ECharts-primary panels always include it)."
         },
+        "includeNormalizedSpec": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, also return each successfully rendered chart panel's intermediate NormalizedVizSpec IR on panels[].normalizedSpec. This is one call-level opt-in mirroring viz.render; KPI and error panels are unchanged, and the emitted IR sits outside the dashboard contentHash projection."
+        },
         "html": {
           "type": "boolean",
           "default": false,
-          "description": "Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and an a11y-described placeholder for ECharts-primary panels (geo). Absent/false leaves the output byte-identical to the compact/echarts payload."
+          "description": "Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary panels (geo), not a rendered ECharts chart. Absent/false leaves the output byte-identical to the compact/echarts payload."
         },
         "dataTable": {
           "type": "boolean",
@@ -130,7 +135,7 @@
         "contrastScan": {
           "type": "boolean",
           "default": false,
-          "description": "A11y completeness (sprint-118 m07). When true, run a WCAG contrast scan over the export's ALREADY-RESOLVED brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below threshold. DEFAULT false emits nothing."
+          "description": "A11y completeness (sprint-118 m07). When true, run the four-pair token contrast preflight over the export's ALREADY-RESOLVED brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below its WCAG threshold. This is a token preflight, not whole-dashboard WCAG certification. DEFAULT false emits nothing."
         },
         "dataQualityField": {
           "type": "string",

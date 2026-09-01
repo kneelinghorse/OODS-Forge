@@ -73,6 +73,7 @@ export function toA11yContrastBlock(scan: ContrastScanResult): NonNullable<Dashb
 export async function handle(input: DashboardRenderInput): Promise<DashboardRenderOutput> {
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
+  const wantNormalizedSpec = input.output?.includeNormalizedSpec ?? false;
   const wantA11y = input.output?.includeA11y ?? false;
   const wantHtml = input.output?.html ?? false;
   // A11y equivalence CERTIFY-AT-EMISSION (sprint-134 m03): top-level flag (NOT under output,
@@ -124,6 +125,14 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   const panelResults: PanelResult[] = [];
   const placedPanels: Panel[] = [];
   const warnings: Issue[] = [];
+  // Panel identity receipts are deliberately held beside panelResults. buildChartResult's
+  // returned objects belong to the dashboard's hashed {panels, layout} projection, so adding
+  // either field there would move the existing dashboard contentHash/specRef payload.
+  const panelContentHashes = new Map<string, string>();
+  const panelNormalizedSpecs = new Map<
+    string,
+    NonNullable<Awaited<ReturnType<typeof vizRenderHandle>>['normalizedSpec']>
+  >();
   let errorPanelCount = 0;
   // Governed-measure narrative projection (sprint-129 m02), keyed by KPI panel id. Populated
   // ONLY when resolveMeasures is on AND a measure resolved — the absent path leaves this empty,
@@ -634,7 +643,15 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     }
 
     // chart panel — render in-process via viz.render
-    const vizInput = buildPanelVizInput(panel, datasetRows, filterRows, wantEcharts, wantA11y, wantA11yEquivalence);
+    const vizInput = buildPanelVizInput(
+      panel,
+      datasetRows,
+      filterRows,
+      wantEcharts,
+      wantNormalizedSpec,
+      wantA11y,
+      wantA11yEquivalence,
+    );
     const out = await vizRenderHandle(vizInput);
 
     if (out.status !== 'ok') {
@@ -655,6 +672,13 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       });
       placedPanels.push(panel);
       continue;
+    }
+
+    if (out.contentHash !== undefined) {
+      panelContentHashes.set(panel.id, out.contentHash);
+    }
+    if (wantNormalizedSpec && out.normalizedSpec !== undefined) {
+      panelNormalizedSpecs.set(panel.id, out.normalizedSpec);
     }
 
     // A11y equivalence fold (sprint-134 m03 wire; sprint-135 m04 gate): buildChartResult copies
@@ -739,6 +763,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
     output: {
       compact,
       ...(wantEcharts ? { echarts: true } : {}),
+      ...(wantNormalizedSpec ? { includeNormalizedSpec: true } : {}),
       ...(wantHtml ? { html: true } : {}),
       ...(wantDataTable ? { dataTable: true } : {}),
       ...(wantContrastScan ? { contrastScan: true } : {}),
@@ -799,6 +824,25 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   // contentHash = the deterministic content IDENTITY of the SAME composed payload
   // specRef caches ({panels, layout}). Default-on; stable across calls (sprint-134 m02).
   result.contentHash = sha256(canonicalize({ panels: panelResults, layout }));
+
+  // Attach the per-panel viz.render receipts only AFTER both the cache record and dashboard
+  // contentHash are complete. createValueRef structured-clones its operand, so these wire-only
+  // additions cannot alias back into the cached/hashed {panels, layout} projection.
+  for (const panel of result.panels) {
+    if (panel.kind !== 'chart') continue;
+    const panelContentHash = panelContentHashes.get(panel.id);
+    const normalizedSpec = panelNormalizedSpecs.get(panel.id);
+    Object.assign(panel, {
+      ...(panelContentHash !== undefined ? { contentHash: panelContentHash } : {}),
+      ...(normalizedSpec !== undefined ? { normalizedSpec } : {}),
+    });
+  }
+
+  // Hash the exact returned HTML bytes. Like the panel receipts, this root-level receipt is
+  // attached after the dashboard payload hash and exists only on the opt-in HTML path.
+  if (wantHtml && result.html !== undefined) {
+    Object.assign(result, { outputHtmlHash: sha256(result.html) });
+  }
 
   return result;
 }
@@ -949,6 +993,7 @@ function buildPanelVizInput(
   datasetRows: Map<string, Row[]>,
   filterRows: (panelId: string, rows: Row[]) => Row[],
   wantEcharts: boolean,
+  wantNormalizedSpec: boolean,
   wantA11y: boolean,
   wantA11yEquivalence: boolean,
 ): VizRenderInput {
@@ -959,6 +1004,7 @@ function buildPanelVizInput(
     output: {
       compact: true,
       ...(wantEcharts ? { echarts: true } : {}),
+      ...(wantNormalizedSpec ? { includeNormalizedSpec: true } : {}),
       ...(wantA11y ? { includeA11y: true } : {}),
     },
     // sprint-134 m03 / sprint-135 m03: thread the equivalence flag down so the per-panel

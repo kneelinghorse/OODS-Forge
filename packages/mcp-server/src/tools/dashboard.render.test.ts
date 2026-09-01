@@ -214,12 +214,22 @@ describe('dashboard.render', () => {
   });
 });
 
-// Strip the additive export surface — the html field, the output echo, the per-call
+// Strip the additive export surface — the html field + its exact-byte identity,
+// the output echo, the per-call
 // specRef trio, AND the export-computed a11y.narrative (m04) — leaving the composed
 // payload (panels/layout/links/meta/the rest of a11y) the export MUST NOT perturb.
 // The absent-path-vs-s114 byte-identity (seam e) is proven by the fidelity golden.
 function corePayload(out: Record<string, unknown>): Record<string, unknown> {
-  const { html: _h, output: _o, specRef: _r, specRefCreatedAt: _c, specRefExpiresAt: _e, a11y, ...rest } = out as Record<string, unknown>;
+  const {
+    html: _h,
+    outputHtmlHash: _hh,
+    output: _o,
+    specRef: _r,
+    specRefCreatedAt: _c,
+    specRefExpiresAt: _e,
+    a11y,
+    ...rest
+  } = out as Record<string, unknown>;
   const { narrative: _n, ...a11yRest } = (a11y ?? {}) as Record<string, unknown>;
   return { ...rest, a11y: a11yRest };
 }

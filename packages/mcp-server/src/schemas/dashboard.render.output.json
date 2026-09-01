@@ -26,11 +26,12 @@
     },
     "a11y": { "$ref": "#/$defs/dashboardA11y" },
     "tokenCssRef": { "type": "string", "description": "Deferred token CSS reference when compact mode is on (use tokens.build)." },
-    "html": { "type": "string", "description": "Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and an a11y-described placeholder for ECharts-primary (geo) panels. Absent leaves the rest of the payload byte-identical." },
+    "html": { "type": "string", "description": "Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary (geo) panels, not rendered ECharts charts. Absent leaves the rest of the payload byte-identical." },
     "specRef": { "type": "string", "description": "One dashboard-level reference to the composed payload for pipeline reuse." },
     "specRefCreatedAt": { "type": "string" },
     "specRefExpiresAt": { "type": "string" },
-    "contentHash": { "type": "string", "description": "Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. Default-on; omitted only on error outputs (sprint-134 m02)." },
+    "contentHash": { "type": "string", "description": "Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. panels[].contentHash, panels[].normalizedSpec, and outputHtmlHash are attached after this hash is computed and sit OUTSIDE the hashed projection. Default-on; omitted only on error outputs (sprint-134 m02)." },
+    "outputHtmlHash": { "type": "string", "description": "Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; ECharts-primary panels remain placeholders. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim." },
     "output": {
       "type": "object",
       "additionalProperties": false,
@@ -38,6 +39,7 @@
       "properties": {
         "compact": { "type": "boolean" },
         "echarts": { "type": "boolean" },
+        "includeNormalizedSpec": { "type": "boolean", "description": "Echoes the call-level opt-in that emits panels[].normalizedSpec for successful chart panels." },
         "html": { "type": "boolean" },
         "dataTable": { "type": "boolean" },
         "contrastScan": { "type": "boolean" },
@@ -92,6 +94,8 @@
         "renderer": { "type": "string", "enum": ["vega-lite", "echarts"] },
         "spec": { "type": "object", "additionalProperties": true, "description": "Compiled Vega-Lite spec (tabular), or {} for ECharts-primary panels." },
         "echartsSpec": { "type": "object", "additionalProperties": true, "description": "Compiled ECharts option (ECharts-primary panels + opt-in tabular). Geo panels carry the FeatureCollection on echartsSpec.__registration." },
+        "contentHash": { "type": "string", "description": "The successful panel's viz.render contentHash, equal to a standalone viz.render call over the identical resolved spec and data. Attached after the dashboard hash and outside its {panels, layout} projection. This receipt is brand-INVARIANT because brand applies later at dashboard HTML/SVG emission; it proves this-call content determinism, not certified-matrix renderHashEpoch coverage." },
+        "normalizedSpec": { "type": "object", "additionalProperties": true, "description": "The panel's intermediate NormalizedVizSpec IR, present only when output.includeNormalizedSpec=true. Attached after the dashboard hash and outside its {panels, layout} projection for direct artifact.certify round-trips." },
         "a11yDescription": { "type": "string" },
         "a11y": { "$ref": "#/$defs/structuredA11y" }
       }
@@ -232,7 +236,7 @@
       "type": "object",
       "required": ["findings"],
       "additionalProperties": false,
-      "description": "Structured WCAG contrast findings — present ONLY when output.contrastScan=true. Machine-readable mirror of the OODS-V135 warnings (the failing brand-token colour pairs from scanBrandContrast). ABSENT on the default path, so the default render stays byte-identical.",
+      "description": "Structured findings from the four-pair token contrast preflight — present ONLY when output.contrastScan=true. Machine-readable mirror of the OODS-V135 warnings (the failing brand-token colour pairs from scanBrandContrast). This is not whole-dashboard WCAG certification. ABSENT on the default path, so the default render stays byte-identical.",
       "properties": {
         "findings": { "type": "array", "items": { "$ref": "#/$defs/contrastFinding" } },
         "summary": {
