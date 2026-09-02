@@ -6,7 +6,7 @@ For exhaustive per-tool parameter tables across the full live tool surface, also
 
 ## Registration + enablement
 
-Auto tools are registered by default (19 at the time of writing). On-demand tools are only registered when enabled (6 at the time of writing).
+Auto tools are registered by default (20 at the time of writing). On-demand tools are only registered when enabled (6 at the time of writing).
 
 - Enable every on-demand tool: `MCP_TOOLSET=all`
 - Enable a subset: `MCP_EXTRA_TOOLS=a11y.scan,diag.snapshot`
@@ -86,9 +86,9 @@ Response (error):
 
 ---
 
-## Auto tool contracts (19 registry entries)
+## Auto tool contracts (20 registry entries)
 
-The 19 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
+The 20 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
 
 ### `tokens.build`
 

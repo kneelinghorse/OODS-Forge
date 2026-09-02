@@ -801,3 +801,71 @@ jobs:
 
       - name: Run ECharts concurrency and resource soak
         run: pnpm --filter @oods/mcp-server run test:echarts-soak
+
+  portable-runtime:
+    name: portable-runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm 9.12.2
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.2
+          run_install: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Record source lockfile hash
+        run: sha256sum pnpm-lock.yaml > "$RUNNER_TEMP/pnpm-lock.before.sha256"
+
+      - name: Install repository dependencies without lockfile movement
+        run: pnpm install --frozen-lockfile
+
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Build MCP server runtime
+        run: pnpm --filter @oods/mcp-server run build
+
+      - name: Verify adapter EOF lifecycle
+        run: node --test packages/mcp-adapter/test-s181-lifecycle.js
+
+      - name: Assemble the portable runtime twice
+        run: |
+          node scripts/runtime/assemble.mjs \
+            --out-dir "$RUNNER_TEMP/forge-runtime-out-1" \
+            --work-dir "$RUNNER_TEMP/forge-runtime-work-1" \
+            --final
+          node scripts/runtime/assemble.mjs \
+            --out-dir "$RUNNER_TEMP/forge-runtime-out-2" \
+            --work-dir "$RUNNER_TEMP/forge-runtime-work-2" \
+            --final
+
+      - name: Verify archive digests and compare deterministic hashes
+        run: |
+          (cd "$RUNNER_TEMP/forge-runtime-out-1" && sha256sum --check forge-runtime.tar.gz.sha256)
+          (cd "$RUNNER_TEMP/forge-runtime-out-2" && sha256sum --check forge-runtime.tar.gz.sha256)
+          cmp "$RUNNER_TEMP/forge-runtime-out-1/forge-runtime.tar.gz.sha256" "$RUNNER_TEMP/forge-runtime-out-2/forge-runtime.tar.gz.sha256"
+
+      - name: Extract outside the checkout and run the adapter E2E
+        run: |
+          extract_dir="$RUNNER_TEMP/forge-e2e-$RANDOM"
+          mkdir -p "$extract_dir"
+          tar -xzf "$RUNNER_TEMP/forge-runtime-out-1/forge-runtime.tar.gz" -C "$extract_dir"
+          node scripts/runtime/e2e.mjs \
+            --extract-dir "$extract_dir" \
+            --repo-root "$GITHUB_WORKSPACE"
+
+      - name: Verify source lockfile is unchanged
+        if: always()
+        run: sha256sum --check "$RUNNER_TEMP/pnpm-lock.before.sha256"

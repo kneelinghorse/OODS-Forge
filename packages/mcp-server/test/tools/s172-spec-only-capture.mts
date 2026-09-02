@@ -10,14 +10,14 @@
 // rather than by stashing, so the tree it measured is named by a commit and the capture
 // is reproducible by anyone:
 //
-//   git worktree add --detach /tmp/oods-forge-s180-m01-c02eb43 c02eb4342fa34faacf4fcb6a3467341af8a92e01
-//   git -C /tmp/oods-forge-s180-m01-c02eb43 rev-parse HEAD
-//   # observed c02eb4342fa34faacf4fcb6a3467341af8a92e01 before the probe
-//   pnpm -C /tmp/oods-forge-s180-m01-c02eb43 install --frozen-lockfile
-//   pnpm -C /tmp/oods-forge-s180-m01-c02eb43 run build:packages
-//   pnpm -C /tmp/oods-forge-s180-m01-c02eb43 --filter @oods/mcp-server exec tsx test/tools/s172-spec-only-capture.mts
-//   shasum -a 256 /tmp/oods-forge-s180-m01-c02eb43/packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json
-//   cmp -s /tmp/oods-forge-s180-m01-c02eb43/packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json /Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json
+//   git worktree add --detach "${TMPDIR%/}/oods-forge-s181-m01-85004fe" 85004fe8b43d869d23ab67025e438edadf82deb8
+//   git -C "${TMPDIR%/}/oods-forge-s181-m01-85004fe" rev-parse HEAD
+//   # observed 85004fe8b43d869d23ab67025e438edadf82deb8 before the probe
+//   pnpm -C "${TMPDIR%/}/oods-forge-s181-m01-85004fe" install --frozen-lockfile
+//   pnpm -C "${TMPDIR%/}/oods-forge-s181-m01-85004fe" run build:packages
+//   pnpm -C "${TMPDIR%/}/oods-forge-s181-m01-85004fe" --filter @oods/mcp-server exec tsx test/tools/s172-spec-only-capture.mts
+//   shasum -a 256 "${TMPDIR%/}/oods-forge-s181-m01-85004fe/packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json"
+//   cmp -s "${TMPDIR%/}/oods-forge-s181-m01-85004fe/packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json" packages/mcp-server/test/tools/__fixtures__/s172-certify-spec-only-baseline.json
 //
 // (s172 captured at `95dd57d` with `git stash push -- packages/mcp-server/src`; s173
 // recaptured at `e5bf2f6` and s176 at `4f64bcf` with the worktree protocol above. Those

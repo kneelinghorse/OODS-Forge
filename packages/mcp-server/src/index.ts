@@ -46,6 +46,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/brand.apply.input.json',
     outputSchema: './schemas/brand.apply.output.json',
   },
+  'brand.intake': {
+    modulePath: './tools/brand.intake.js',
+    inputSchema: './schemas/brand.intake.input.json',
+    outputSchema: './schemas/brand.intake.output.json',
+  },
   'a11y.scan': {
     modulePath: './tools/a11y.scan.js',
     inputSchema: './schemas/a11y.scan.input.json',

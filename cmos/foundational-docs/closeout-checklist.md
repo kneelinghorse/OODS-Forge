@@ -50,7 +50,7 @@ Allowed generation tokens are `{BASE_SHA}`, `{HEAD_SHA}`, `{PR_LABELS_CSV}`,
 
 ## CI job coverage — canonical source rows
 
-There are 14 YAML job keys. A matrix expansion is still one job key. “Local
+There are 15 YAML job keys. A matrix expansion is still one job key. “Local
 twin” names a runnable operand; “CI-only orchestration” covers GitHub labels,
 artifact upload, and PR comments rather than a different correctness gate.
 `vr-test` alone is structurally non-local because Chromatic is SaaS-backed,
@@ -73,13 +73,15 @@ secret-gated, and `continue-on-error`.
 | CI-12 | `scale-determinism` | local twin | `pnpm run build:tokens`<br>`pnpm run build:packages`<br>`pnpm --filter @oods/mcp-server run test:scale` |
 | CI-13 | `viz-determinism` | local twin | `pnpm run build:tokens`<br>`pnpm run build:packages`<br>`node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'`<br>`pnpm --filter @oods/viz-core test`<br>`pnpm --filter @oods/viz-render test`<br>`pnpm --filter @oods/mcp-server exec vitest run src/tools/viz.render.test.ts src/tools/viz.render.fidelity.test.ts src/tools/viz.render.network-fidelity.test.ts src/tools/viz.render.geo-fidelity.test.ts src/tools/viz.render.intent.test.ts src/tools/dashboard.render.test.ts src/tools/dashboard.render.fidelity.test.ts src/tools/dashboard.render.faostat-e2e.test.ts src/tools/dashboard.render.strict-fields.test.ts src/tools/dashboard.render.kpi-types.test.ts src/tools/dashboard.render.measure-depth.test.ts src/tools/repl.render.skin-mapping.test.ts src/tools/repl.render.brand.test.ts src/tools/ci-golden-list.guard.test.ts`<br>`pnpm --filter @oods/mcp-server test`<br>`pnpm --filter @oods/mcp-bridge test` |
 | CI-14 | `echarts-render-soak` | local twin; PK2 power floor PARKED until Linux-leg evidence: three of four quiet-host runs failed the one-sided 99% Student-t bound at `echarts-render-soak.s179.spec.ts:283` with `positiveTrendLower99 = +364.93/+1457.88/+4367.02 B/window` while every hard ceiling passed | `pnpm run build:tokens`<br>`pnpm run build:packages`<br>`node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'`<br>`pnpm --filter @oods/mcp-server run test:echarts-soak` |
+| CI-15 | `portable-runtime` | local twin; CI pins Node 24 and pnpm 9.12.2 | `portable_lock_before=$(shasum -a 256 pnpm-lock.yaml)`<br>`pnpm install --frozen-lockfile`<br>`pnpm run build:tokens`<br>`pnpm run build:packages`<br>`pnpm --filter @oods/mcp-server run build`<br>`node --test packages/mcp-adapter/test-s181-lifecycle.js`<br>`portable_runtime_tmp=$(mktemp -d); portable_extract_dir=$(mktemp -d); trap 'rm -rf "$portable_runtime_tmp" "$portable_extract_dir"' EXIT`<br>`node scripts/runtime/assemble.mjs --out-dir "$portable_runtime_tmp/out-1" --work-dir "$portable_runtime_tmp/work-1"`<br>`node scripts/runtime/assemble.mjs --out-dir "$portable_runtime_tmp/out-2" --work-dir "$portable_runtime_tmp/work-2"`<br>`(cd "$portable_runtime_tmp/out-1" && shasum -a 256 -c forge-runtime.tar.gz.sha256)`<br>`(cd "$portable_runtime_tmp/out-2" && shasum -a 256 -c forge-runtime.tar.gz.sha256)`<br>`cmp "$portable_runtime_tmp/out-1/forge-runtime.tar.gz.sha256" "$portable_runtime_tmp/out-2/forge-runtime.tar.gz.sha256"`<br>`tar -xzf "$portable_runtime_tmp/out-1/forge-runtime.tar.gz" -C "$portable_extract_dir"`<br>`node scripts/runtime/e2e.mjs --extract-dir "$portable_extract_dir" --repo-root "$PWD"`<br>`test "$portable_lock_before" = "$(shasum -a 256 pnpm-lock.yaml)"` |
 <!-- closeout-ci-rows:end -->
 
 The three rows most often lost from handwritten tables are structural here:
-CI-09 contains `verify:brand-cascade`, CI-12 contains `test:scale`, and CI-14
-contains the opt-in ECharts concurrency/resource soak. CI-03 also records the
-root typecheck, viz-core typecheck, and build-stories ratchet that the workflow
-genuinely runs.
+CI-09 contains `verify:brand-cascade`, CI-12 contains `test:scale`, CI-14
+contains the opt-in ECharts concurrency/resource soak, and CI-15 builds and
+executes the portable runtime from an operating-system temporary directory.
+CI-03 also records the root typecheck, viz-core typecheck, and build-stories
+ratchet that the workflow genuinely runs.
 
 ## Standing closeout-only rows — canonical source rows
 

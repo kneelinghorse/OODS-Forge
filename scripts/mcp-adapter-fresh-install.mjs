@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
 import fs from 'node:fs';
-import { copyFile, cp, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, rm } from 'node:fs/promises';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,8 +13,6 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const ADAPTER_DIR = path.join(REPO_ROOT, 'packages', 'mcp-adapter');
 const SERVER_DIST = path.join(REPO_ROOT, 'packages', 'mcp-server', 'dist');
 const SERVER_DIST_ENTRY = path.join(SERVER_DIST, 'index.js');
-const COMPONENT_SCHEMA = path.join(REPO_ROOT, 'cmos', 'planning', 'component-schema.json');
-const FALLBACK_COMPONENTS = path.join(REPO_ROOT, 'cmos', 'planning', 'oods-components.json');
 
 const KEEP_TEMP = ['1', 'true', 'yes'].includes(String(process.env.KEEP_FRESH_INSTALL).toLowerCase());
 
@@ -56,11 +54,6 @@ async function main() {
     SERVER_DIST_ENTRY,
     'MCP server dist is missing. Run "pnpm --filter @oods/mcp-server run build" first.'
   );
-  ensureFileExists(
-    COMPONENT_SCHEMA,
-    'Missing cmos/planning/component-schema.json. Run "pnpm refresh:data" to regenerate artifacts.'
-  );
-
   const tempRoot = await mkdtemp(path.join(os.tmpdir(), 'oods-mcp-adapter-'));
   const nodeModulesRoot = path.join(tempRoot, 'node_modules');
 
@@ -85,7 +78,6 @@ async function main() {
       cwd: tempRoot,
     });
 
-    const tempPlanningDir = path.join(nodeModulesRoot, 'cmos', 'planning');
     const tempServerRoots = [
       path.join(nodeModulesRoot, 'packages', 'mcp-server'),
       path.join(nodeModulesRoot, '@oods', 'mcp-server'),
@@ -95,13 +87,6 @@ async function main() {
     for (const tempServerRoot of tempServerRoots) {
       await mkdir(tempServerRoot, { recursive: true });
       await cp(SERVER_DIST, path.join(tempServerRoot, 'dist'), { recursive: true });
-    }
-
-    console.log('> stage required planning files');
-    await mkdir(tempPlanningDir, { recursive: true });
-    await copyFile(COMPONENT_SCHEMA, path.join(tempPlanningDir, 'component-schema.json'));
-    if (fs.existsSync(FALLBACK_COMPONENTS)) {
-      await copyFile(FALLBACK_COMPONENTS, path.join(tempPlanningDir, 'oods-components.json'));
     }
 
     const smokePath = path.join(nodeModulesRoot, '@oods', 'mcp-adapter', 'smoke-test.js');

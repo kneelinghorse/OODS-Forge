@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/brand.intake.output.json",
+  "title": "Brand intake dry-run receipt",
+  "description": "A read-only DTCG validation receipt. The result is preview-only, applies no tokens, creates no brand, and persists no artifact.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mode",
+    "preview_only",
+    "grammar_profile",
+    "requested",
+    "validated",
+    "applied",
+    "brand_created",
+    "request_issues",
+    "theme_documents",
+    "submitted_token_instance_denominator",
+    "accepted_token_instance_denominator",
+    "not_accepted_token_instance_denominator",
+    "submitted_minus_accepted_denominator",
+    "accepted_minus_submitted_denominator",
+    "not_accepted_token_reason_denominator",
+    "build_artifact_denominator",
+    "preview"
+  ],
+  "properties": {
+    "mode": { "const": "PREVIEW-ONLY" },
+    "preview_only": {
+      "const": true,
+      "description": "Always true: brand.intake validates and receipts without persistence."
+    },
+    "grammar_profile": { "const": "FORGE-SCALAR-DTCG-1" },
+    "requested": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apply", "brand_id", "profile"],
+      "properties": {
+        "apply": { "type": ["boolean", "null"] },
+        "brand_id": { "type": ["string", "null"] },
+        "profile": { "type": ["string", "null"] }
+      }
+    },
+    "validated": { "type": "boolean" },
+    "applied": { "const": false },
+    "brand_created": { "const": false },
+    "request_issues": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue" }
+    },
+    "theme_documents": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/themeDocumentReceipt" }
+    },
+    "submitted_token_instance_denominator": {
+      "$ref": "#/$defs/stringDenominator"
+    },
+    "accepted_token_instance_denominator": {
+      "$ref": "#/$defs/stringDenominator"
+    },
+    "not_accepted_token_instance_denominator": {
+      "$ref": "#/$defs/stringDenominator"
+    },
+    "submitted_minus_accepted_denominator": {
+      "$ref": "#/$defs/stringDenominator"
+    },
+    "accepted_minus_submitted_denominator": {
+      "$ref": "#/$defs/stringDenominator"
+    },
+    "not_accepted_token_reason_denominator": {
+      "$ref": "#/$defs/reasonDenominator"
+    },
+    "build_artifact_denominator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "membership"],
+      "properties": {
+        "count": { "const": 0 },
+        "membership": { "type": "array", "maxItems": 0 }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "persisted",
+        "accepted_population",
+        "disclosure"
+      ],
+      "properties": {
+        "classification": { "const": "PREVIEW-ONLY" },
+        "persisted": { "const": false },
+        "accepted_population": { "$ref": "#/$defs/stringDenominator" },
+        "disclosure": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruleId", "location", "reason"],
+      "properties": {
+        "ruleId": { "type": "string", "minLength": 1 },
+        "location": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "reason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["token_instance_id", "ruleId", "location", "reason"],
+      "properties": {
+        "token_instance_id": { "type": "string", "minLength": 1 },
+        "ruleId": { "type": "string", "minLength": 1 },
+        "location": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "stringDenominator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "membership"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0 },
+        "membership": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "reasonDenominator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "membership"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0 },
+        "membership": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/reason" }
+        }
+      }
+    },
+    "themeDocumentReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_theme_id",
+        "mapping_status",
+        "target_theme",
+        "target_brand_document",
+        "operand_kind",
+        "validated",
+        "submitted_token_instance_denominator",
+        "accepted_token_instance_denominator",
+        "not_accepted_token_instance_denominator",
+        "issues"
+      ],
+      "properties": {
+        "source_theme_id": { "type": "string", "minLength": 1 },
+        "mapping_status": {
+          "enum": [
+            "PROPOSED-NOT-EXECUTABLE",
+            "UNMAPPED-REQUIRES-VARIANT-SUPPORT",
+            null
+          ]
+        },
+        "target_theme": { "enum": ["light", "dark", "hc", null] },
+        "target_brand_document": { "enum": ["base", "dark", "hc", null] },
+        "operand_kind": {
+          "enum": [
+            "inline-document",
+            "authorized-content-addressed-reference",
+            null
+          ]
+        },
+        "validated": { "type": "boolean" },
+        "submitted_token_instance_denominator": {
+          "$ref": "#/$defs/stringDenominator"
+        },
+        "accepted_token_instance_denominator": {
+          "$ref": "#/$defs/stringDenominator"
+        },
+        "not_accepted_token_instance_denominator": {
+          "$ref": "#/$defs/stringDenominator"
+        },
+        "issues": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/issue" }
+        }
+      }
+    }
+  }
+}

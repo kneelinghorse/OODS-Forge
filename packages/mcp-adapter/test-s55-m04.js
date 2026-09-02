@@ -19,7 +19,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const INDEX_SRC = readFileSync(path.join(__dirname, 'index.js'), 'utf8');
-const PKG = JSON.parse(readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
 const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
 const POLICY = JSON.parse(readFileSync(
   path.join(PROJECT_ROOT, 'packages', 'mcp-server', 'dist', 'security', 'policy.json'), 'utf8'
@@ -166,10 +165,21 @@ test('Startup log includes adapter version', () => {
   );
 });
 
-test('ADAPTER_VERSION constant matches package.json version', () => {
-  const match = INDEX_SRC.match(/ADAPTER_VERSION\s*=\s*'([^']+)'/);
-  assert.ok(match, 'Expected ADAPTER_VERSION constant');
-  assert.equal(match[1], PKG.version, `ADAPTER_VERSION ${match[1]} != package.json ${PKG.version}`);
+test('ADAPTER_VERSION is derived from the adjacent package.json', () => {
+  assert.ok(
+    INDEX_SRC.includes("new URL('./package.json', import.meta.url)"),
+    'Expected an ESM-safe adjacent package.json URL'
+  );
+  assert.match(
+    INDEX_SRC,
+    /const ADAPTER_VERSION = JSON\.parse\([\s\S]*?readFileSync\([\s\S]*?package\.json[\s\S]*?\)\.version;/,
+    'Expected ADAPTER_VERSION to be read from package.json'
+  );
+  assert.doesNotMatch(
+    INDEX_SRC,
+    /const ADAPTER_VERSION\s*=\s*['"][^'"]+['"];/,
+    'ADAPTER_VERSION must not duplicate the package.json version literal'
+  );
 });
 
 test('Startup log includes server path (NATIVE_DIST)', () => {

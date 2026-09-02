@@ -105,6 +105,7 @@ const FALLBACK_POLICY: AgentPolicyDoc = {
     { name: 'a11y.scan', modes: ['dry-run'], approval: 'optional' },
     { name: 'diag.snapshot', modes: ['dry-run'], approval: 'optional' },
     { name: 'brand.apply', modes: ['dry-run', 'apply'], approval: 'required' },
+    { name: 'brand.intake', modes: ['dry-run'], approval: 'optional', allow: ['designer'] },
     { name: 'billing.reviewKit', modes: ['dry-run', 'apply'], approval: 'required' },
     { name: 'billing.switchFixtures', modes: ['dry-run', 'apply'], approval: 'required' },
     { name: 'release.verify', modes: ['dry-run'], approval: 'optional', allow: ['maintainer'] },

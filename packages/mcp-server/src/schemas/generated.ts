@@ -752,6 +752,130 @@ export namespace BrandApplyOutputSchema {
 }
 export type BrandApplyOutput = BrandApplyOutputSchema.BrandApplyOutput;
 
+// Source: brand.intake.input.json
+export namespace BrandIntakeInputSchema {
+  export type ThemeDocument = ThemeDocument1 & {
+    source_theme_id: string;
+    target_theme: 'light' | 'dark' | 'hc' | null;
+    target_brand_document: 'base' | 'dark' | 'hc' | null;
+    mapping_status: 'PROPOSED-NOT-EXECUTABLE' | 'UNMAPPED-REQUIRES-VARIANT-SUPPORT';
+    source_file_sha256: Sha256;
+    source_file_bytes: NonNegativeBytes;
+    source_order_compact_json_sha256: Sha256;
+    source_order_compact_json_bytes: NonNegativeBytes;
+    document_operand: DocumentOperand;
+  };
+  export type ThemeDocument1 = {
+    [k: string]: any;
+  } & {
+    [k: string]: any;
+  };
+  export type Sha256 = string;
+  export type NonNegativeBytes = number;
+  export type DocumentOperand =
+    | {
+        kind: 'inline-document';
+        document: {
+          [k: string]: any;
+        };
+      }
+    | {
+        kind: 'authorized-content-addressed-reference';
+        uri: string;
+        /**
+         * @minItems 1
+         */
+        token_names: [string, ...string[]];
+      };
+
+  export interface BrandIntakeInput {
+    apply: false;
+    brand_id: string;
+    profile: 'FORGE-SCALAR-DTCG-1';
+    /**
+     * @minItems 1
+     */
+    theme_documents: [ThemeDocument, ...ThemeDocument1[]];
+  }
+}
+export type BrandIntakeInput = BrandIntakeInputSchema.BrandIntakeInput;
+
+// Source: brand.intake.output.json
+export namespace BrandIntakeOutputSchema {
+  /**
+   * A read-only DTCG validation receipt. The result is preview-only, applies no tokens, creates no brand, and persists no artifact.
+   */
+  export interface BrandIntakeOutput {
+    mode: 'PREVIEW-ONLY';
+    /**
+     * Always true: brand.intake validates and receipts without persistence.
+     */
+    preview_only: true;
+    grammar_profile: 'FORGE-SCALAR-DTCG-1';
+    requested: {
+      apply: boolean | null;
+      brand_id: string | null;
+      profile: string | null;
+    };
+    validated: boolean;
+    applied: false;
+    brand_created: false;
+    request_issues: Issue[];
+    theme_documents: ThemeDocumentReceipt[];
+    submitted_token_instance_denominator: StringDenominator;
+    accepted_token_instance_denominator: StringDenominator;
+    not_accepted_token_instance_denominator: StringDenominator;
+    submitted_minus_accepted_denominator: StringDenominator;
+    accepted_minus_submitted_denominator: StringDenominator;
+    not_accepted_token_reason_denominator: ReasonDenominator;
+    build_artifact_denominator: {
+      count: 0;
+      /**
+       * @maxItems 0
+       */
+      membership: [];
+    };
+    preview: {
+      classification: 'PREVIEW-ONLY';
+      persisted: false;
+      accepted_population: StringDenominator;
+      disclosure: string;
+    };
+  }
+  export interface Issue {
+    ruleId: string;
+    location: string;
+    reason: string;
+  }
+  export interface ThemeDocumentReceipt {
+    source_theme_id: string;
+    mapping_status: 'PROPOSED-NOT-EXECUTABLE' | 'UNMAPPED-REQUIRES-VARIANT-SUPPORT' | null;
+    target_theme: 'light' | 'dark' | 'hc' | null;
+    target_brand_document: 'base' | 'dark' | 'hc' | null;
+    operand_kind: 'inline-document' | 'authorized-content-addressed-reference' | null;
+    validated: boolean;
+    submitted_token_instance_denominator: StringDenominator;
+    accepted_token_instance_denominator: StringDenominator;
+    not_accepted_token_instance_denominator: StringDenominator;
+    issues: Issue[];
+  }
+  export interface StringDenominator {
+    count: number;
+    membership: string[];
+  }
+  export interface ReasonDenominator {
+    count: number;
+    membership: Reason[];
+  }
+  export interface Reason {
+    token_instance_id: string;
+    ruleId: string;
+    location: string;
+    reason: string;
+  }
+}
+export type BrandIntakeOutput = BrandIntakeOutputSchema.BrandIntakeOutput;
+
 // Source: catalog.list.input.json
 export namespace CatalogListInputSchema {
   export interface CatalogListInput {
@@ -1463,6 +1587,9 @@ export namespace DashboardRenderInputSchema {
    * A chart panel — a viz.render-shaped descriptor: chartType (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.
    */
   export type ChartPanel = ChartPanel1 & {
+    /**
+     * Unique stable identifier for this chart panel within the dashboard; duplicate panel ids are rejected with OODS-C003.
+     */
     id: string;
     kind: 'chart';
     title?: string;
@@ -1824,6 +1951,9 @@ export namespace DashboardRenderInputSchema {
    * A KPI tile — the only NEW panel primitive (trend/breakdown/geo already ship as chart types). Reserves value/aggregate/comparison/threshold metadata; the actual compute is deferred to m03 (which reduces the cross-filtered dataset rows to a renderer-agnostic payload).
    */
   export interface KpiPanel {
+    /**
+     * Unique stable identifier for this KPI panel within the dashboard; duplicate panel ids are rejected with OODS-C003.
+     */
     id: string;
     kind: 'kpi';
     title?: string;

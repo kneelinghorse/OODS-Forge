@@ -30,6 +30,7 @@ import {
   type TemporalGranularity,
 } from '@oods/viz-core';
 import { canonicalize, sha256 } from '@oods/artifacts';
+import { ToolError } from '../errors/tool-error.js';
 import type { DashboardRenderInput, DashboardRenderOutput, VizRenderInput } from '../schemas/generated.js';
 import { handle as vizRenderHandle } from './viz.render.js';
 import { createValueRef, describeSchemaRef } from './schema-ref.js';
@@ -138,6 +139,19 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   // ONLY when resolveMeasures is on AND a measure resolved — the absent path leaves this empty,
   // so the measure narrative is byte-identical-absent for the default/flag-off path.
   const measureProjections = new Map<string, KpiMeasureProjection>();
+
+  // Panel ids key the per-panel identity receipts below. Reject duplicates before any
+  // panel work so a later panel cannot overwrite an earlier panel's receipt and make
+  // both output rows claim the same content identity.
+  const panelIds = new Set<string>();
+  const duplicatePanelIds = new Set<string>();
+  for (const panel of input.panels) {
+    if (panelIds.has(panel.id)) duplicatePanelIds.add(panel.id);
+    panelIds.add(panel.id);
+  }
+  if (duplicatePanelIds.size > 0) {
+    throw new ToolError('OODS-C003', 'Duplicate panel id', { ids: [...duplicatePanelIds] });
+  }
 
   for (const panel of input.panels as Panel[]) {
     if (panel.kind === 'kpi') {

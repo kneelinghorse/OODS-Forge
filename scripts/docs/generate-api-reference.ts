@@ -27,6 +27,7 @@ type JsonSchema = {
   properties?: Record<string, JsonSchemaProperty>;
   additionalProperties?: boolean | object;
   items?: JsonSchemaProperty;
+  examples?: unknown[];
 };
 
 type JsonSchemaProperty = {
@@ -206,6 +207,15 @@ function buildErrorCodes(toolName: string): string {
 }
 
 function buildExampleBlock(inputSchema: JsonSchema): string {
+  const declaredExample = inputSchema.examples?.[0];
+  if (declaredExample !== undefined) {
+    return [
+      '```json',
+      JSON.stringify(declaredExample, null, 2),
+      '```',
+    ].join('\n') + '\n';
+  }
+
   // Build a minimal example from schema properties
   const example: Record<string, unknown> = {};
 

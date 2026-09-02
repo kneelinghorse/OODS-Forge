@@ -102,7 +102,11 @@ async function readJson(file: string): Promise<Record<string, unknown>> {
 // format is ratified with darryl), so it is skip-listed to keep generated.ts a NO-OP for
 // an unratified format — emitting a type now would lock a shape that is still being
 // co-authored. Same wildcard cp bundles it to dist/.
+// component-schema.json is runtime DATA compiled by
+// structuredData.fetch at module load, not a tool wire contract. It is copied to
+// dist/schemas with the other JSON assets but must not emit a generated type.
 const NON_SCHEMA_DATA_FILES = new Set([
+  'component-schema.json',
   'measure-registry.json',
   'measure-registry.schema.json',
   'style-library-artifact.schema.json',

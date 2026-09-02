@@ -25,7 +25,6 @@ const UI_SCHEMA_PATH = path.join(__dirname, '../schemas/repl.ui.schema.json');
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
 const STRUCTURED_DATA_DIR = path.join(REPO_ROOT, 'artifacts', 'structured-data');
 const COMPONENT_MANIFEST = path.join(STRUCTURED_DATA_DIR, 'manifest.json');
-const FALLBACK_COMPONENTS = path.join(REPO_ROOT, 'cmos', 'planning', 'oods-components.json');
 
 function relativeToRepo(target: string): string {
   const rel = path.relative(REPO_ROOT, target);
@@ -480,29 +479,7 @@ export function loadComponentRegistry(): RegistryInfo {
   }
 
   if (names.size === 0) {
-    const fallback = FALLBACK_COMPONENTS;
-    if (fs.existsSync(fallback)) {
-      try {
-        const data = readJson(fallback);
-        const components = Array.isArray(data?.components) ? data.components : [];
-        for (const entry of components) {
-          if (entry?.id) names.add(String(entry.id));
-        }
-        warnings.push(
-          issue('OODS-N013', 'Used fallback component export from cmos/planning', relativeToRepo(fallback))
-        );
-      } catch {
-        warnings.push(
-          issue(
-            'REGISTRY_FALLBACK_UNREADABLE',
-            'Fallback component export could not be read',
-            relativeToRepo(fallback)
-          )
-        );
-      }
-    } else {
-      warnings.push(issue('OODS-N010', 'No component registry available for validation'));
-    }
+    warnings.push(issue('OODS-N010', 'No component registry available for validation'));
   }
 
   registryCache = { names, version, warnings };

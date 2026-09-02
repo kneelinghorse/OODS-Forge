@@ -36,7 +36,7 @@ import { buildVizSpecFromRows } from '@oods/viz-core';
 import { handle } from '../../src/tools/artifact.certify.js';
 import { CARTESIAN_MARK_TRAITS, ECHARTS_MARK_TRAITS, SPEC_ONLY_CASES } from './s172-spec-only-cases.js';
 
-const BASELINE_COMMIT = 'c02eb43';
+const BASELINE_COMMIT = '85004fe';
 
 const baseline = JSON.parse(
   readFileSync(new URL('./__fixtures__/s172-certify-spec-only-baseline.json', import.meta.url), 'utf8'),
@@ -253,8 +253,8 @@ describe('artifact.certify — the control can discriminate', () => {
   // distinguish those two commits. The detached-worktree command, verified full SHA,
   // fixture SHA-256 and literal byte compare are recorded in the capture-script header.
   // These bytes still distinguish the post-s176 baseline from retired 4f64bcf both ways.
-  it('the c02eb43 recapture retains the post-s176 bytes, not retired 4f64bcf', () => {
-    expect(BASELINE_COMMIT).toBe('c02eb43');
+  it('the 85004fe recapture retains the post-s176 bytes, not retired 4f64bcf', () => {
+    expect(BASELINE_COMMIT).toBe('85004fe');
     for (const trait of CARTESIAN_MARK_TRAITS) {
       const cartesian = baseline[trait] as {
         contrastNote?: string;

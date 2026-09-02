@@ -469,6 +469,8 @@ describe("FORGE-SCALAR-DTCG-1 acceptance grammar", () => {
   it("publishes the named scalar subset without applying the repository lint baseline", () => {
     expect(FORGE_SCALAR_DTCG_1_GRAMMAR).toEqual({
       profile: "FORGE-SCALAR-DTCG-1",
+      description:
+        '$type:"content" string values may contain literal braces without triggering dtcg/alias-is-full-value; syntactically complete full-value aliases still resolve.',
       scope:
         "nested DTCG token leaves with string/number values or full-value aliases",
       allowed_types: FORGE_SCALAR_DTCG_1_TYPES,
@@ -500,6 +502,76 @@ describe("FORGE-SCALAR-DTCG-1 acceptance grammar", () => {
       "forge-scalar/token-name-no-instance-delimiter",
       "forge-scalar/value-must-be-scalar",
     ]);
+  });
+
+  it('grammar description discloses the $type:"content" brace carve-out and its 18-of-1,359 dependence', () => {
+    const serializedGrammar = JSON.parse(
+      JSON.stringify(FORGE_SCALAR_DTCG_1_GRAMMAR),
+    ) as { description?: string };
+    expect(serializedGrammar.description).toBe(
+      '$type:"content" string values may contain literal braces without triggering dtcg/alias-is-full-value; syntactically complete full-value aliases still resolve.',
+    );
+
+    let disabledCarveOuts = 0;
+    const disableContentBraceCarveOut = (value: unknown): unknown => {
+      if (Array.isArray(value)) {
+        return value.map(disableContentBraceCarveOut);
+      }
+      if (!isRecord(value)) return value;
+
+      const isContentToken = value.$type === "content" && "$value" in value;
+      if (isContentToken) disabledCarveOuts += 1;
+      return Object.fromEntries(
+        Object.entries(value).map(([key, child]) => [
+          key,
+          // `color` is allowed and non-content; under this validator it changes only the brace-alias rule.
+          key === "$type" && isContentToken
+            ? "color"
+            : disableContentBraceCarveOut(child),
+        ]),
+      );
+    };
+    const requestWithoutCarveOut: DtcgIntakeRequest = {
+      ...corpusRequest,
+      theme_documents: corpus.map((item) => {
+        const document = disableContentBraceCarveOut(item.document);
+        const compact = JSON.stringify(document);
+        return {
+          ...buildThemeDocument(item),
+          source_order_compact_json_sha256: sha256(compact),
+          source_order_compact_json_bytes: Buffer.byteLength(compact),
+          document_operand: { kind: "inline-document", document },
+        };
+      }),
+    };
+
+    const receiptWithCarveOut = validateDtcgIntake(corpusRequest);
+    const receiptWithoutCarveOut = validateDtcgIntake(requestWithoutCarveOut);
+
+    expect(disabledCarveOuts).toBe(24);
+    expect(receiptWithCarveOut.accepted_token_instance_denominator.count).toBe(
+      1_359,
+    );
+    expect(
+      receiptWithoutCarveOut.accepted_token_instance_denominator.count,
+    ).toBe(1_341);
+    expect(receiptWithoutCarveOut.validated).toBe(true);
+    const acceptedWithoutCarveOut = new Set(
+      receiptWithoutCarveOut.accepted_token_instance_denominator.membership,
+    );
+    const carveOutDependentMembers =
+      receiptWithCarveOut.accepted_token_instance_denominator.membership.filter(
+        (member) => !acceptedWithoutCarveOut.has(member),
+      );
+    expect(
+      carveOutDependentMembers.map(
+        (member) =>
+          receiptWithoutCarveOut.not_accepted_token_reason_denominator.membership.find(
+            ({ token_instance_id: tokenInstanceId }) =>
+              tokenInstanceId === member,
+          )?.ruleId,
+      ),
+    ).toEqual(Array(18).fill("dtcg/alias-is-full-value"));
   });
 
   it("accepts scalar CSS keyframe content with literal braces and preserves leaf identity separately from location", () => {
