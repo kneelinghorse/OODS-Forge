@@ -38,13 +38,13 @@ describe("how Forge works narrative truth", () => {
       read("packages/mcp-server/src/tools/registry.json"),
     ) as ToolRegistry;
 
-    expect(registry.auto).toHaveLength(19);
+    expect(registry.auto).toHaveLength(20);
     expect(registry.onDemand).toHaveLength(6);
     expect(html).toContain(
-      "25 registered tools (19 auto + 6 on demand), as defined by",
+      "26 registered tools (20 auto + 6 on demand), as defined by",
     );
     expect(html).toContain(
-      "packages/mcp-server/src/tools/registry.json</span>: 19 tools register by default and 6 more",
+      "packages/mcp-server/src/tools/registry.json</span>: 20 tools register by default and 6 more",
     );
 
     const onDemandRow = html.match(

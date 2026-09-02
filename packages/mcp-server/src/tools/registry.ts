@@ -22,6 +22,7 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'tokens.build',
     'structuredData.fetch',
     'brand.apply',
+    'brand.intake',
     'catalog.list',
     'code.generate',
     'design.compose',

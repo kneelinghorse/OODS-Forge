@@ -62,7 +62,7 @@ describe("Sprint 177 closeout carrier", () => {
     "<!-- closeout-local-rows:end -->",
   );
 
-  it("covers the exact current set of 14 CI job keys once", () => {
+  it("covers the exact current set of 15 CI job keys once", () => {
     const jobsSection = workflow.slice(workflow.indexOf("\njobs:\n") + 7);
     const workflowJobs = [
       ...jobsSection.matchAll(/^  ([a-z][a-z0-9-]+):\s*$/gm),
@@ -71,9 +71,9 @@ describe("Sprint 177 closeout carrier", () => {
       ...ciRows.matchAll(/^\| CI-\d{2} \| `([a-z][a-z0-9-]+)` \|/gm),
     ].map((match) => match[1]);
 
-    expect(workflowJobs).toHaveLength(14);
     expect(carrierRows).toEqual(workflowJobs);
-    expect(new Set(carrierRows).size).toBe(14);
+    expect(workflowJobs).toHaveLength(15);
+    expect(new Set(carrierRows).size).toBe(15);
   });
 
   it("keeps the historically dropped and commonly misstated CI operands visible", () => {
@@ -95,8 +95,15 @@ describe("Sprint 177 closeout carrier", () => {
     const soakRow = ciRows
       .split("\n")
       .find((line) => line.startsWith("| CI-14 |"));
+    const portableRow = ciRows
+      .split("\n")
+      .find((line) => line.startsWith("| CI-15 |"));
     const soakJob = workflow.slice(
       workflow.indexOf("\n  echarts-render-soak:"),
+      workflow.indexOf("\n  portable-runtime:"),
+    );
+    const portableJob = workflow.slice(
+      workflow.indexOf("\n  portable-runtime:"),
     );
     const vizJob = workflow.slice(
       workflow.indexOf("\n  viz-determinism:"),
@@ -133,6 +140,26 @@ describe("Sprint 177 closeout carrier", () => {
     expect(soakJob).toContain(
       "run: pnpm --filter @oods/mcp-server run test:echarts-soak",
     );
+    expect(portableRow).toContain("pnpm install --frozen-lockfile");
+    expect(portableRow).toContain(
+      "node --test packages/mcp-adapter/test-s181-lifecycle.js",
+    );
+    expect(portableRow).toContain("scripts/runtime/assemble.mjs");
+    expect(portableRow).toContain("forge-runtime.tar.gz.sha256");
+    expect(portableRow).toContain("scripts/runtime/e2e.mjs");
+    expect(portableRow).toContain("mktemp -d");
+    expect(portableJob).toContain("timeout-minutes: 15");
+    expect(portableJob).toContain("version: 9.12.2");
+    expect(portableJob).toContain("node-version: '24'");
+    expect(portableJob).toContain("pnpm install --frozen-lockfile");
+    expect(portableJob).toContain(
+      "node --test packages/mcp-adapter/test-s181-lifecycle.js",
+    );
+    expect(portableJob).toContain("sha256sum --check");
+    expect(portableJob).toContain("if: always()");
+    expect(portableJob).toContain('$RUNNER_TEMP/forge-e2e-$RANDOM');
+    expect(portableJob.split("node scripts/runtime/assemble.mjs")).toHaveLength(3);
+    expect(portableJob).toContain("scripts/runtime/e2e.mjs");
     const runtimeProbe =
       "node -e 'console.log(JSON.stringify({node:process.version,v8:process.versions.v8,platform:process.platform,arch:process.arch}))'";
     expect(ciRows.split(runtimeProbe)).toHaveLength(3);
@@ -191,6 +218,10 @@ describe("Sprint 177 closeout carrier", () => {
     expect(rows.at(-2)).toContain(
       "| L-08 | Gitignored build-input survival — run last and again after governance |",
     );
+    expect(rows.at(-2)).toContain(
+      "packages/tokens/dist/tailwind/tokens.json",
+    );
+    expect(rows.at(-2)).toContain("import('@oods/tokens')");
     expect(rows.at(-1)).toContain(
       "Whole-sprint SR-22 scan and per-mission suite attribution",
     );

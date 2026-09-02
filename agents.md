@@ -121,9 +121,9 @@ The counts and tool names below are derived from
 `packages/mcp-server/src/tools/registry.json`; use that file as the generation
 source whenever this hand-authored inventory is refreshed.
 
-Auto-registered (19 tools):
+Auto-registered (20 tools):
 
-- Core design/runtime: `tokens.build`, `structuredData.fetch`, `brand.apply`, `catalog.list`, `health`
+- Core design/runtime: `tokens.build`, `structuredData.fetch`, `brand.apply`, `brand.intake`, `catalog.list`, `health`
 - Composition + generation: `design.compose`, `viz.compose`, `viz.render`, `dashboard.render`, `pipeline`, `code.generate`, `fidelity.preview`
 - Certification + inspection: `artifact.certify`, `registry.snapshot`
 - Action families: `map`, `schema`, `object`, `repl`, `review`

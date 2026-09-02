@@ -90,3 +90,30 @@ describe('dashboard.render registration audit (sprint-113 m05)', () => {
     expect(read('configs/agent/policy.json')).toContain('"name": "dashboard.render"');
   });
 });
+
+// sprint-181 m02: brand.intake must be wired into the SAME 8 surfaces as the
+// s113 dashboard.render registration guard. Keeping all eight in one audit
+// prevents a new advertised tool from landing on only one policy/adapter layer.
+describe('brand.intake registration audit (s181 m02)', () => {
+  const brandIntakeMentions: Array<{ label: string; file: string; pattern: string }> = [
+    { label: 'server dispatch (index.ts)', file: 'packages/mcp-server/src/index.ts', pattern: "'brand.intake': {" },
+    { label: 'registry.json (enablement)', file: 'packages/mcp-server/src/tools/registry.json', pattern: '"brand.intake"' },
+    { label: 'registry.ts FALLBACK', file: 'packages/mcp-server/src/tools/registry.ts', pattern: "'brand.intake'" },
+    { label: 'server-layer policy.json', file: 'packages/mcp-server/src/security/policy.json', pattern: '"tool": "brand.intake"' },
+    { label: 'agent-layer configs/agent/policy.json', file: 'configs/agent/policy.json', pattern: '"name": "brand.intake"' },
+    { label: 'mcp-bridge FALLBACK config', file: 'packages/mcp-bridge/src/config.ts', pattern: "name: 'brand.intake'" },
+    { label: 'mcp-adapter tool-descriptions.json', file: 'packages/mcp-adapter/tool-descriptions.json', pattern: '"brand.intake"' },
+    { label: 'generated.ts (typed contract)', file: 'packages/mcp-server/src/schemas/generated.ts', pattern: '// Source: brand.intake.input.json' },
+  ];
+
+  for (const entry of brandIntakeMentions) {
+    it(`registers brand.intake in ${entry.label}`, () => {
+      expect(read(entry.file)).toContain(entry.pattern);
+    });
+  }
+
+  it('exposes brand.intake on BOTH policy layers (two-layer convention #622)', () => {
+    expect(read('packages/mcp-server/src/security/policy.json')).toContain('"tool": "brand.intake"');
+    expect(read('configs/agent/policy.json')).toContain('"name": "brand.intake"');
+  });
+});

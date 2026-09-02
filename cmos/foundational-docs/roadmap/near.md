@@ -65,7 +65,7 @@ not promises about what Shopify will build.
 
 | Surface               | Verified capability                                                                                                                                                                                                                                                                                                         | Source of truth                                                                                                                                |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| MCP registry          | 19 auto-registered tools plus 6 on-demand tools                                                                                                                                                                                                                                                                             | `packages/mcp-server/src/tools/registry.json:2-30`                                                                                             |
+| MCP registry          | 20 auto-registered tools plus 6 on-demand tools                                                                                                                                                                                                                                                                             | `packages/mcp-server/src/tools/registry.json:2-30`                                                                                             |
 | Visualization         | 13 `viz.render` types: 5 Cartesian (`bar`, `line`, `area`, `scatter`, `heatmap`) plus 8 explicit ECharts-primary types (`treemap`, `sunburst`, `sankey`, `force_graph`, `choropleth`, `bubble_map`, `flow_map`, `chord`)                                                                                                    | `packages/mcp-server/src/schemas/viz.render.input.json:272-275`                                                                                |
 | Governed measures     | With `resolveMeasures` enabled, `dashboard.render` can resolve a known `measureRef` for KPI compute; chart-panel and structured-intent measure refs add governed narrative context without changing chart compute. Unknown refs fail loud on the enabled path.                                                              | `packages/mcp-server/src/schemas/dashboard.render.input.json:66-70,246-249`; `packages/mcp-server/src/schemas/viz.render.input.json:339-384`   |
 | Dashboards and export | `dashboard.render` supports 11 of the 13 chart types (not `chord` or `flow_map`), deterministic auto-layout, KPI compute, cross-filter linking, optional brand/a11y output, and opt-in deterministic HTML. HTML renders Vega-Lite panels and KPI tiles; ECharts-primary panels remain accessibility-described placeholders. | `packages/mcp-server/src/schemas/dashboard.render.input.json:5-6,36-40,120-123`; `packages/mcp-server/src/tools/dashboard.render.html.ts:1-20` |
@@ -137,6 +137,14 @@ does not, Forge creates no build merely to keep the arc busy.
 
 **Exit:** either a locked Forge memo exists or the no-build disposition is explicit. The Shopify
 sibling's execution sequence remains outside this file in both cases.
+
+### Adoption arc — current gates and next rung
+
+| Gate or rung | Current disposition |
+| ------------ | ------------------- |
+| Gate 1 — pinned private runtime | Chartered in the locked s181 memo: Forge builds a self-contained private bundle, pins it by commit and sha256, and hands it to named consumers to run themselves. Nothing is hosted or publicly published. |
+| Gate 2 — public distribution | Deferred and explicitly Derek's: license choice, public npm/registry publishing, `.mcpb`, and OCI remain unapproved; npm is not assumed to be the adoption UX. |
+| Schema-ingest walker + `schema.ingest` | Deferred together to s182; the grounded walker charter and advertised-tool rung remain in the s181 memo rather than entering s181 implementation. |
 
 ## Named parks that do not silently enter this horizon
 

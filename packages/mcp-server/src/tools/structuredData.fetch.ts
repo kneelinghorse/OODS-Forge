@@ -47,9 +47,8 @@ type ManifestDoc = {
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
-const PLANNING_DIR = path.join(REPO_ROOT, 'cmos', 'planning');
 const ARTIFACT_DIR = path.join(REPO_ROOT, 'artifacts', 'structured-data');
-const COMPONENT_SCHEMA_PATH = path.join(PLANNING_DIR, 'component-schema.json');
+const COMPONENT_SCHEMA_PATH = fileURLToPath(new URL('../schemas/component-schema.json', import.meta.url));
 
 const tokensSchema = {
   $schema: 'https://json-schema.org/draft/2020-12/schema',
@@ -132,7 +131,7 @@ function resolvePath(target: string): string {
 function resolveStructuredDataPath(source: string): string | null {
   const resolved = resolvePath(source);
   if (!withinAllowed(REPO_ROOT, resolved)) return null;
-  if (withinAllowed(ARTIFACT_DIR, resolved) || withinAllowed(PLANNING_DIR, resolved)) {
+  if (withinAllowed(ARTIFACT_DIR, resolved)) {
     return resolved;
   }
   return null;
@@ -158,15 +157,15 @@ function findArtifact(manifest: ManifestDoc | undefined, dataset: StructuredData
   return manifest.artifacts.find((entry) => entry.name === dataset);
 }
 
-function datasetPath(dataset: StructuredDataset, manifest: ManifestDoc | undefined): { path: string; manifestArtifact?: ManifestArtifact } {
+function datasetPath(dataset: StructuredDataset, manifest: ManifestDoc | undefined): { path?: string; manifestArtifact?: ManifestArtifact } {
   if (dataset === 'manifest') {
     return { path: path.join(ARTIFACT_DIR, 'manifest.json') };
   }
   const manifestArtifact = findArtifact(manifest, dataset);
-  const fallback = path.join(PLANNING_DIR, dataset === 'components' ? 'oods-components.json' : 'oods-tokens.json');
-  const source = manifestArtifact?.path ?? manifestArtifact?.file ?? fallback;
-  const resolved = resolveStructuredDataPath(source);
-  return { path: resolved ?? fallback, manifestArtifact };
+  const source = manifestArtifact?.path
+    ?? (manifestArtifact?.file ? path.join(ARTIFACT_DIR, manifestArtifact.file) : undefined);
+  const resolved = source ? resolveStructuredDataPath(source) : null;
+  return { ...(resolved ? { path: resolved } : {}), manifestArtifact };
 }
 
 function datasetFilePrefix(dataset: StructuredDataset): string {
@@ -424,7 +423,7 @@ export async function handle(input: StructuredDataFetchInput): Promise<Structure
   }
 
   // --- Version resolution ---
-  let dataPath: string;
+  let dataPath: string | undefined;
   let manifestArtifact: ManifestArtifact | undefined;
   let requestedVersion: string | null = input.version ?? null;
   let resolvedVersion: string | null = null;
@@ -451,7 +450,7 @@ export async function handle(input: StructuredDataFetchInput): Promise<Structure
     manifestArtifact = resolved.manifestArtifact;
   }
 
-  if (!fs.existsSync(dataPath)) {
+  if (!dataPath || !fs.existsSync(dataPath)) {
     throw new ToolError('OODS-N007', `Dataset not found for "${dataset}".`, { dataset });
   }
 

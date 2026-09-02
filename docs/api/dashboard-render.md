@@ -6,7 +6,7 @@ PANEL IDENTITY. Every successful chart panel returns the contentHash produced by
 
 HTML IDENTITY. When output.html=true, outputHtmlHash is SHA-256 over the exact returned HTML bytes. It is evidence of deterministic output for that call and runtime, not part of the ECharts certified-matrix/renderHash epoch. ECharts-primary panels remain a11y-described placeholders in dashboard HTML; they are not server-rendered charts. output.contrastScan is a four-pair brand-token preflight, not whole-document WCAG certification.
 
-BRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined into output.html and the four-pair contrast preflight; omit it for the previous behavior. Per-panel contentHash and dashboard contentHash are brand-invariant because brand applies at HTML/SVG emission time, while outputHtmlHash is brand-variant. A top-level {html:...} input fails schema validation with OODS-V001; OODS-V126 is reserved for schema-passing malformed visualization IR.
+BRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined into output.html and the four-pair contrast preflight; omit it for the previous behavior. Per-panel contentHash and dashboard contentHash are brand-invariant because brand applies at HTML/SVG emission time, while outputHtmlHash is brand-variant.
 
 **Registration:** auto
 

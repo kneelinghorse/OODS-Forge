@@ -315,6 +315,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // ── Conflict ────────────────────────────────────────────────────────────
   ['OODS-C001', { code: 'OODS-C001', category: 'conflict', message: 'Schema ref missing after compose', retryable: false }],
   ['OODS-C002', { code: 'OODS-C002', category: 'conflict', message: 'Tag already exists', retryable: false }],
+  ['OODS-C003', { code: 'OODS-C003', category: 'conflict', message: 'Duplicate panel id', retryable: false }],
 
   // ── Server Error ────────────────────────────────────────────────────────
   ['OODS-S001', { code: 'OODS-S001', category: 'server_error', message: 'Policy denied', retryable: false }],

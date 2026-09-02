@@ -41,7 +41,9 @@ const SCHEMAS_DIR = path.join(NATIVE_DIST, 'schemas');
 const DEFAULT_ROLE = process.env.MCP_ROLE || 'designer';
 const REGISTRY_PATH = path.join(NATIVE_DIST, 'tools', 'registry.json');
 const POLICY_PATH = path.join(NATIVE_DIST, 'security', 'policy.json');
-const ADAPTER_VERSION = '0.2.0';
+const ADAPTER_VERSION = JSON.parse(
+  fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8')
+).version;
 
 // ── Dynamic tool registry ────────────────────────────────────────────
 // Reads registry.json from the server dist instead of hardcoding tool names.
@@ -179,11 +181,17 @@ class NativeOodsClient {
     });
   }
 
-  close() {
-    if (this.child && !this.child.killed) {
-      this.child.kill();
-    }
+  async close() {
+    const child = this.child;
     this.child = null;
+    if (!child || child.exitCode !== null) return;
+
+    await new Promise((resolve) => {
+      child.once('close', resolve);
+      if (!child.killed && !child.kill('SIGTERM')) {
+        resolve();
+      }
+    });
   }
 }
 
@@ -204,7 +212,7 @@ async function main() {
 
   const client = new NativeOodsClient({ cwd: NATIVE_SERVER_DIR, role: DEFAULT_ROLE });
   const server = new Server(
-    { name: 'oods-foundry-adapter', version: '0.1.0' },
+    { name: 'oods-foundry-adapter', version: ADAPTER_VERSION },
     { capabilities: { tools: {} } }
   );
 
@@ -256,15 +264,22 @@ async function main() {
   console.error(`[oods-mcp-adapter] v${ADAPTER_VERSION} | ${enabled.length} tools (${registry.auto.length} auto, ${registry.onDemand.length} on-demand) | server: ${NATIVE_DIST}`);
 
   const transport = new StdioServerTransport();
-  await server.connect(transport);
-
-  const shutdown = () => {
-    client.close();
-    transport.close?.();
+  let shuttingDown = false;
+  const shutdown = async () => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    await client.close();
+    await transport.close();
     process.exit(0);
   };
-  process.on('SIGINT', shutdown);
-  process.on('SIGTERM', shutdown);
+  const requestShutdown = () => {
+    void shutdown();
+  };
+  process.once('SIGINT', requestShutdown);
+  process.once('SIGTERM', requestShutdown);
+  process.stdin.once('end', requestShutdown);
+
+  await server.connect(transport);
 }
 
 main().catch((err) => {

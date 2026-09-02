@@ -18,7 +18,6 @@ const REPO_ROOT = path.resolve(__dirname, "../../../../");
 const ARTIFACT_DIR = path.join(REPO_ROOT, "artifacts", "structured-data");
 const DEFAULT_MAPPINGS_PATH = path.join(ARTIFACT_DIR, "component-mappings.json");
 const MANIFEST_PATH = path.join(ARTIFACT_DIR, "manifest.json");
-const PLANNING_DIR = path.join(REPO_ROOT, "cmos", "planning");
 export const MAPPINGS_PATH_ENV = "MCP_MAPPINGS_PATH";
 
 export type CoercionEnum = {
@@ -174,7 +173,6 @@ export function generateMappingId(
 export function loadKnownTraits(): Set<string> {
   const traits = new Set<string>();
 
-  // Try artifact first, then planning fallback
   const manifestPath = MANIFEST_PATH;
   let componentsPath: string | undefined;
 
@@ -189,11 +187,6 @@ export function loadKnownTraits(): Set<string> {
     }
   } catch {
     // ignore
-  }
-
-  if (!componentsPath) {
-    const fallback = path.join(PLANNING_DIR, "oods-components.json");
-    if (fs.existsSync(fallback)) componentsPath = fallback;
   }
 
   if (!componentsPath) return traits;

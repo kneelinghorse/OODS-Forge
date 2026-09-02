@@ -83,7 +83,7 @@ describe("Sprint 177 prose truth carriers", () => {
     expect(normalizedNear).toContain(
       'CONSUMER MODEL (Derek, 2026-06-18 — standing constraint, supersedes the s115 "consumer pull" framing): Forge\'s consumer is AGENTS using the Forge tools via MCP. That is who we build for. (1) There is NO external project that PULLs from Forge — do NOT frame any sprint, mission, or value case around "proving a consumer pull" or any other team adopting a Forge output. (2) Forge is NOT a hosted/SaaS service and there are NO current plans to be one; nothing should assume a deployed/reachable Forge endpoint. (3) There are NO plans to use Synthesis-Workbench with the viz/export work — do not assume a Workbench surface. (4) Headless integrations are welcome IN PRINCIPLE but are a SEPARATE initiative that must be discussed explicitly BEFORE any work — as must ANY dependency that would be created for a live production site. Capabilities ship for agent use first; cross-app/production wiring is its own decision, never an implied sprint goal. This is why s115\'s m06 (a cmos-dashboard cutover) was correctly dropped and why the "demand signal / pull" thesis behind it is retracted.',
     );
-    expect(near).toContain("19 auto-registered tools plus 6 on-demand tools");
+    expect(near).toContain("20 auto-registered tools plus 6 on-demand tools");
     expect(near).toContain("13 `viz.render` types");
     expect(near).toContain("supports 11 of the 13 chart types");
     expect(near).toContain("5 Cartesian types are `coverage:'certified'`");
@@ -119,15 +119,16 @@ describe("Sprint 177 prose truth carriers", () => {
     expect(sprintPlan).not.toContain("**Status:** Planning");
   });
 
-  it("keeps the open-arcs ledger aligned with the current closures and s180 dashboard carry", () => {
+  it("keeps the open-arcs ledger aligned with the atomic Viz flagship closure", () => {
     const ledger = read("cmos/planning/forge-open-arcs-ledger-2026-08.md");
 
+    expect(ledger).toContain("17 — 0 active, 1 proposed, 9 parked, 7 closed");
     expect(ledger).toContain(
-      "95 — 25 open, 57 done, 7 blocked, 5 superseded, 1 unknown",
+      "95 — 24 open, 58 done, 7 blocked, 5 superseded, 1 unknown",
     );
-    expect(ledger).toContain("3 carry, 27 park, 60 close, 5 drop");
+    expect(ledger).toContain("2 carry, 27 park, 61 close, 5 drop");
     expect(ledger).toContain(
-      "[Viz flagship follow-ons](#viz-flagship-follow-ons) — Active",
+      "[Viz flagship follow-ons](#viz-flagship-follow-ons) — Parked",
     );
     expect(ledger).toContain(
       "m07 dashboard-binding re-queued to s180 with the Shopify ingestion cluster. The consumer ask stays ACCEPTED (Derek 2026-08-28); this is a scheduling deferral, not a rejection. The s179 close records the deferral; the s180 charter carries m07 as a committed opening mission with the per-panel-identity + outputHtmlHash shape and its Rule-9 rows already drafted (per-panel hash isolation; outputHtmlHash perturbation; round-trip certify parity).",

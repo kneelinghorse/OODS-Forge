@@ -1,7 +1,7 @@
 // FAOSTAT TradeFlow fixture — the durable seed of the Phase-4 eval harness (sprint-118 m01).
 //
-// A HAND-AUTHORED real-FAOSTAT-slice modeled on Demo 01 ("Follow your breakfast",
-// /Users/systemsystems/portfolio/Design-Tools/forge-data-viz-demos). Corridor values
+// A HAND-AUTHORED real-FAOSTAT-slice modeled on Demo 01 ("Follow your breakfast"
+// in the sibling forge-data-viz-demos project). Corridor values
 // reproduce the real 2023 export-value numbers in
 //   demos/01-trade-flows/proof/sample-2023-validation.json
 // (Canada→USA 5,379,734 / Russia→Brazil 3,971,308.5 / Russia→India 2,628,127.1 /

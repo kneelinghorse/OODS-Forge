@@ -6,9 +6,9 @@
 
 | | |
 |---|---|
-| Arcs | 17 — 1 active, 1 proposed, 8 parked, 7 closed |
-| Items | 95 — 25 open, 57 done, 7 blocked, 5 superseded, 1 unknown |
-| Recommendations | 3 carry, 27 park, 60 close, 5 drop |
+| Arcs | 17 — 0 active, 1 proposed, 9 parked, 7 closed |
+| Items | 95 — 24 open, 58 done, 7 blocked, 5 superseded, 1 unknown |
+| Recommendations | 2 carry, 27 park, 61 close, 5 drop |
 | CMOS next-steps verifiably done (completed in this session) | 9 |
 
 **How to read a row.** *State* is what is true today (open / done / superseded / blocked / unknown). *Recommendation* is what to do now that PT is on hold: **carry** into the next sprint, **park** with a named trigger, **close** as finished, **drop** as no longer wanted, or **Derek decides** where the call is direction, not execution.
@@ -43,7 +43,7 @@
 - [Parts Town design system](#parts-town-design-system) — Parked
 - [Stage1 token pipeline](#stage1-token-pipeline) — Parked
 - [Storybook, VRT and build:stories](#storybook--vrt-and-build-stories) — Parked
-- [Viz flagship follow-ons](#viz-flagship-follow-ons) — Active
+- [Viz flagship follow-ons](#viz-flagship-follow-ons) — Parked
 - [Forge-Demos feedback](#forge-demos-feedback) — Closed
 - [Governance gates](#governance-gates) — Closed
 - [Meridian](#meridian) — Closed
@@ -231,14 +231,14 @@
 
 ## Viz flagship follow-ons
 
-**Status: Active.** The viz flagship substrate (13 chart types, governed measures, dashboards, export, narrative) is complete and the NL→viz detour was reverted for circularity. Sprint 178 completed twin-retirement rung 1: 26 pure shims were deleted, 122 external plus 34 dependency imports were rewired, and the published root `viz` namespace stayed pinned at 130 symbols. Dashboard binding is now committed in s180; rung 2's 12 diverged twins plus 30 src-only real modules, tooltip chrome, theme-aware resolution/dark theme, cache posture, and two tiny Phase-3 residuals remain parked.
+**Status: Parked.** The viz flagship substrate (13 chart types, governed measures, dashboards, export, narrative) is complete and the NL→viz detour was reverted for circularity. Sprint 178 completed twin-retirement rung 1: 26 pure shims were deleted, 122 external plus 34 dependency imports were rewired, and the published root `viz` namespace stayed pinned at 130 symbols. Dashboard binding shipped in s180; rung 2's 12 diverged twins plus 30 src-only real modules, tooltip chrome, theme-aware resolution/dark theme, cache posture, and two tiny Phase-3 residuals remain parked.
 
-**Disposition.** Carry the committed dashboard-binding work through s180. Keep rung 2 and craft work parked. Trigger the diverged-twin flip only in a sprint that declares VRT movement on the four live components, or in viz-craft; #831 remains pending for that residual scope.
+**Disposition.** Dashboard binding is done; this arc has no active carry. Keep rung 2 and craft work parked. Trigger the diverged-twin flip only in a sprint that declares VRT movement on the four live components, or in viz-craft; #831 remains pending for that residual scope.
 
 | Item | State | Recommendation | Size | Owner | Sources |
 |---|---|---|---|---|---|
 | **#643 frozen includeA11y dashboard golden + unit-bearing a11yDescription pin — DONE (s130, commit 3103d60)** — Verified; row never marked complete. | done | close | S | forge | `next-step #643; packages/mcp-server/src/tools/dashboard.render.measure-depth.test.ts:490-496; dashboard.render.test.ts:826-833` |
-| *"m07 dashboard-binding re-queued to s180 with the Shopify ingestion cluster. The consumer ask stays ACCEPTED (Derek 2026-08-28); this is a scheduling deferral, not a rejection. The s179 close records the deferral; the s180 charter carries m07 as a committed opening mission with the per-panel-identity + outputHtmlHash shape and its Rule-9 rows already drafted (per-panel hash isolation; outputHtmlHash perturbation; round-trip certify parity)."* | open | carry | L | forge | `forge-s179-echarts-render-grading-decision-memo.md §3:75; forge-s180-dashboard-binding-and-dtcg-intake-decision-memo.md §1b` |
+| *"m07 dashboard-binding re-queued to s180 with the Shopify ingestion cluster. The consumer ask stays ACCEPTED (Derek 2026-08-28); this is a scheduling deferral, not a rejection. The s179 close records the deferral; the s180 charter carries m07 as a committed opening mission with the per-panel-identity + outputHtmlHash shape and its Rule-9 rows already drafted (per-panel hash isolation; outputHtmlHash perturbation; round-trip certify parity)."* **DONE.** | done | close | L | forge | `forge-s179-echarts-render-grading-decision-memo.md §3:75; forge-s180-dashboard-binding-and-dtcg-intake-decision-memo.md §1b` |
 | **Viz-craft deferrals after rung 1:** 12 byte-diverged twins + 30 src-only real modules, tooltip chrome, theme-aware resolver/dark theme (#1046 until a real producer), and #955 measure-registry cache on the long-lived bridge. Rung 1 deleted 26 shims and rewired 156 import statements while holding the published namespace at 130 symbols. _Trigger for twins: a sprint that declares VRT movement on ForceGraph, Sankey, Sunburst, and Treemap, or viz-craft._ | open | park | L | forge | `s178-m04; next-step #831 pending; decisions #1046, #1093, #955; configs/quality/viz-public-surface-4e999de.json; tests/verification/s178-viz-twin-retirement.contract.test.ts` |
 | **NL→viz arc reverted (a0e876e); s133 dimension registry lives only in stash@{0}** — Do not re-inherit; stash disposition is Derek's. | superseded | drop | S | derek | `decisions #973, #974; memory validate-premise-not-execution.md` |
 

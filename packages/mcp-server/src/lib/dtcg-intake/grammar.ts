@@ -10,6 +10,8 @@ export const FORGE_SCALAR_DTCG_1_PROFILE = "FORGE-SCALAR-DTCG-1" as const;
  * The error-level subset lifted from tools/token-lint/dtcg-guardrails.config.yaml.
  * The file-path runner's warn-only array/interpolation rules and its 61-entry
  * repository baseline are intentionally not imported into external intake.
+ * `$type:"content"` string values may contain literal braces without triggering
+ * dtcg/alias-is-full-value; syntactically complete full-value aliases still resolve.
  */
 export const FORGE_SCALAR_DTCG_1_RULE_IDS = [
   "dtcg/token-name-kebab-case",
@@ -40,6 +42,8 @@ export const FORGE_SCALAR_DTCG_1_TYPES = [
 /** Forge-held, serializable description of the acceptance grammar. */
 export const FORGE_SCALAR_DTCG_1_GRAMMAR = Object.freeze({
   profile: FORGE_SCALAR_DTCG_1_PROFILE,
+  description:
+    '$type:"content" string values may contain literal braces without triggering dtcg/alias-is-full-value; syntactically complete full-value aliases still resolve.',
   scope:
     "nested DTCG token leaves with string/number values or full-value aliases",
   allowed_types: FORGE_SCALAR_DTCG_1_TYPES,
