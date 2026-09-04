@@ -44,6 +44,59 @@ const schemaFixture: UiSchema = {
   ],
 };
 
+const buildChecks = [
+  'schema-structure',
+  'component-registry',
+  'target-readiness',
+  'normalization-fidelity',
+  'binding-contract',
+  'props-contract',
+  'slots-contract',
+  'events-contract',
+  'dependency-closure',
+  'fallback-policy',
+] as const;
+
+const releaseChecks = [
+  'rendered-evidence',
+  'interaction-evidence',
+  'accessibility-evidence',
+  'theme-evidence',
+  'determinism-evidence',
+  'performance-evidence',
+  'certification-evidence',
+] as const;
+
+const validationChecks = [...buildChecks, ...releaseChecks] as const;
+
+function expectedDefaultBuildReceipt(
+  framework: 'react' | 'vue' | 'html',
+  checks: readonly (typeof validationChecks)[number][],
+) {
+  const completed = new Set<string>(checks);
+  return {
+    profile: 'build',
+    defaulted: true,
+    rationale: 'Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.',
+    axes: {
+      scope: 'generated-artifact',
+      enforcement: 'blocking',
+      fallback: 'forbidden',
+      target: { requested: framework, resolved: framework, source: 'explicit' },
+    },
+    checks: [...checks],
+    notChecked: validationChecks.filter((check) => !completed.has(check)),
+    evidence: {
+      required: [],
+      provided: [],
+      missing: [],
+      mismatched: [],
+      accepted: [],
+      notApplicable: [],
+    },
+  };
+}
+
 function evidenceDigest(result: Awaited<ReturnType<typeof handle>>): string {
   const evidence = {
     status: result.status,
@@ -114,6 +167,22 @@ describe('code.generate tool', () => {
     });
 
     expect(valid).toBe(true);
+  });
+
+  it('preserves profile omission through input validation so the receipt names the build default', async () => {
+    const input = {
+      framework: 'react' as const,
+      schema: schemaFixture,
+    };
+
+    expect(validateInput(input), JSON.stringify(validateInput.errors ?? [])).toBe(true);
+    expect(input).not.toHaveProperty('profile');
+
+    const result = await handle(input);
+    expect(result.validationReceipt).toMatchObject({
+      profile: 'build',
+      defaulted: true,
+    });
   });
 
   it('emits Tailwind classes for React and Vue when styling=tailwind', async () => {
@@ -234,6 +303,14 @@ describe('code.generate tool', () => {
         fileExtension: '',
         imports: [],
         warnings: [],
+        validationReceipt: expectedDefaultBuildReceipt(framework, [
+          'schema-structure',
+          'component-registry',
+          'target-readiness',
+          'normalization-fidelity',
+          'binding-contract',
+          'events-contract',
+        ]),
         errors: expectedErrors,
         meta: { nodeCount: 2, componentCount: 2 },
       });
@@ -457,6 +534,11 @@ describe('code.generate tool', () => {
       fileExtension: '',
       imports: [],
       warnings: [],
+      validationReceipt: expectedDefaultBuildReceipt('react', [
+        'schema-structure',
+        'component-registry',
+        'target-readiness',
+      ]),
       errors: [{
         code: 'OODS-N015',
         message: 'Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.',
@@ -492,6 +574,11 @@ describe('code.generate tool', () => {
       fileExtension: '',
       imports: [],
       warnings: [],
+      validationReceipt: expectedDefaultBuildReceipt('react', [
+        'schema-structure',
+        'component-registry',
+        'target-readiness',
+      ]),
       errors: [
         {
           code: 'OODS-N015',

@@ -113,7 +113,7 @@ describe('E2E — Stage1 BridgeSummary → pipeline → design.compose', () => {
   it('reconciles synthetic lifecycle action_mappings against composed Subscription', async () => {
     const result = await pipelineHandle({
       object: 'Subscription',
-      context: 'detail',
+      context: 'card',
       framework: 'html',
       actionMappings: syntheticLifecycleMappings,
       options: { skipRender: true },
@@ -138,7 +138,7 @@ describe('E2E — Stage1 BridgeSummary → pipeline → design.compose', () => {
   it('empty action_mappings is a safe no-op through the pipeline', async () => {
     const result = await pipelineHandle({
       object: 'Subscription',
-      context: 'detail',
+      context: 'card',
       framework: 'html',
       actionMappings: [],
       options: { skipRender: true },
@@ -151,7 +151,7 @@ describe('E2E — Stage1 BridgeSummary → pipeline → design.compose', () => {
   it('absent action_mappings preserves pre-Sprint-88 pipeline output shape', async () => {
     const baseline = await pipelineHandle({
       object: 'Subscription',
-      context: 'detail',
+      context: 'card',
       framework: 'html',
       options: { skipRender: true },
     });
@@ -185,7 +185,7 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
   it.runIf(bridge !== null)('accepts Stage1 alias fields (orcaVerb, suggestedAction) without crashing', async () => {
     const result = await pipelineHandle({
       object: 'Subscription',
-      context: 'detail',
+      context: 'card',
       framework: 'html',
       actionMappings: bridge!.action_mappings,
       actionInstances: bridge!.actions,
@@ -253,7 +253,7 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     // pipeline wrapper intentionally omits it from its response shape.
     const result = await composeHandle({
       object: 'Subscription',
-      context: 'detail',
+      context: 'card',
       framework: 'html',
       actionMappings: vocabulary,
       actionInstances: instances,
@@ -286,7 +286,7 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     ];
     const result = await pipelineHandle({
       object: 'Subscription',
-      context: 'detail',
+      context: 'card',
       framework: 'html',
       actionMappings: vocabulary,
       actionInstances: bridge!.actions,
@@ -379,7 +379,8 @@ describe('E2E — real Stage1 stripe.com BridgeSummary (post-S40 run 09145d03)',
     ];
     const result = await pipelineHandle({
       object: 'Subscription',
-      context: 'detail',
+      context: 'card',
+      framework: 'html',
       actionMappings: vocabulary,
       actionInstances: bridge!.actions,
       options: { skipRender: true },

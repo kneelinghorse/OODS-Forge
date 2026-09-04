@@ -15,6 +15,11 @@ import {
   GENERATED_DEPENDENCY_CATALOG,
   validateGeneratedArtifact,
 } from './artifact-envelope.js';
+import {
+  bindReleaseEvidence,
+  createValidationReceipt,
+  recordValidationChecks,
+} from './validation-profile.js';
 
 function readJson(relativeUrl: string): Record<string, unknown> {
   return JSON.parse(readFileSync(new URL(relativeUrl, import.meta.url), 'utf8')) as Record<string, unknown>;
@@ -36,6 +41,7 @@ const reactSource = [
 ].join('\n');
 
 const validateOutput = getAjv().compile(codeGenerateOutputSchema);
+const validatePipelineOutput = getAjv().compile(pipelineOutputSchema);
 
 function rehashArtifact(artifact: GeneratedArtifact): void {
   for (const file of artifact.files) file.contentHash = `sha256:${sha256(file.contents)}`;
@@ -335,9 +341,59 @@ describe('generated artifact envelope', () => {
       fileExtension: '.html',
       imports: [],
       warnings: [],
+      validationReceipt: bindReleaseEvidence(
+        recordValidationChecks(
+          createValidationReceipt('build', 'html'),
+          'schema-structure',
+          'component-registry',
+          'target-readiness',
+          'normalization-fidelity',
+          'binding-contract',
+          'props-contract',
+          'slots-contract',
+          'events-contract',
+          'dependency-closure',
+          'fallback-policy',
+        ),
+        undefined,
+        artifact.contentHash,
+      ).receipt,
     };
 
     expect(validateOutput(output), JSON.stringify(validateOutput.errors ?? [])).toBe(true);
+
+    const vacuousSuccess = structuredClone(output);
+    vacuousSuccess.validationReceipt = createValidationReceipt('build', 'html');
+    expect(validateOutput(vacuousSuccess)).toBe(false);
+    expect(validateOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ keyword: 'contains' }),
+    ]));
+
+    const weakenedPolicy = structuredClone(output);
+    weakenedPolicy.validationReceipt.axes.enforcement = 'advisory';
+    expect(validateOutput(weakenedPolicy)).toBe(false);
+    expect(validateOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ keyword: 'const' }),
+    ]));
+
+    const missingAccepted = structuredClone(output) as typeof output & {
+      validationReceipt: { evidence: { accepted?: unknown[] } };
+    };
+    delete missingAccepted.validationReceipt.evidence.accepted;
+    expect(validateOutput(missingAccepted)).toBe(false);
+    expect(validateOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ keyword: 'required', params: { missingProperty: 'accepted' } }),
+    ]));
+
+    const missingReceipt = structuredClone(output) as Partial<typeof output>;
+    delete missingReceipt.validationReceipt;
+    expect(validateOutput(missingReceipt)).toBe(false);
+    expect(validateOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        keyword: 'required',
+        params: { missingProperty: 'validationReceipt' },
+      }),
+    ]));
 
     const missingActions = structuredClone(output);
     delete (missingActions.artifact as Partial<GeneratedArtifact>).actions;
@@ -382,6 +438,79 @@ describe('generated artifact envelope', () => {
     ] as const) {
       expect(pipelineDefinitions[definition]).toEqual(codeDefinitions[definition]);
     }
+  });
+
+  it('rejects omission of the mandatory receipt from pipeline responses', () => {
+    const receipt = createValidationReceipt('build', 'react');
+    const output = {
+      validationReceipt: receipt,
+      compose: { layout: 'auto', componentCount: 0 },
+      pipeline: { steps: [], duration: 1 },
+    };
+
+    expect(
+      validatePipelineOutput(output),
+      JSON.stringify(validatePipelineOutput.errors ?? []),
+    ).toBe(true);
+
+    const missingReceipt = structuredClone(output) as Partial<typeof output>;
+    delete missingReceipt.validationReceipt;
+    expect(validatePipelineOutput(missingReceipt)).toBe(false);
+    expect(validatePipelineOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        keyword: 'required',
+        params: { missingProperty: 'validationReceipt' },
+      }),
+    ]));
+  });
+
+  it('rejects a vacuous validation receipt on a successful pipeline code payload', () => {
+    const artifact = buildGeneratedArtifact({
+      framework: 'html',
+      code: '<main>Runnable</main>\n',
+      fileExtension: '.html',
+      imports: [],
+    });
+    const receipt = bindReleaseEvidence(
+      recordValidationChecks(
+        createValidationReceipt('build', 'html'),
+        'schema-structure',
+        'component-registry',
+        'target-readiness',
+        'normalization-fidelity',
+        'binding-contract',
+        'props-contract',
+        'slots-contract',
+        'events-contract',
+        'dependency-closure',
+        'fallback-policy',
+      ),
+      undefined,
+      artifact.contentHash,
+    ).receipt;
+    const output = {
+      validationReceipt: receipt,
+      compose: { layout: 'auto', componentCount: 1 },
+      code: {
+        framework: 'html',
+        styling: 'tokens',
+        artifact,
+        output: artifact.files[0]!.contents,
+      },
+      pipeline: { steps: ['compose', 'codegen'], duration: 1 },
+    };
+
+    expect(
+      validatePipelineOutput(output),
+      JSON.stringify(validatePipelineOutput.errors ?? []),
+    ).toBe(true);
+
+    const vacuous = structuredClone(output);
+    vacuous.validationReceipt = createValidationReceipt('build', 'html');
+    expect(validatePipelineOutput(vacuous)).toBe(false);
+    expect(validatePipelineOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ keyword: 'contains' }),
+    ]));
   });
 
   it('rejects versionless, workspace-aliased, unordered, or undeclared dependency mutations', () => {

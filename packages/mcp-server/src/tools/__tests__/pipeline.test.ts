@@ -1,6 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PipelineInput, PipelineOutput } from '../pipeline.js';
 import { buildGeneratedArtifact } from '../../codegen/artifact-envelope.js';
+import {
+  ALL_CHECKS,
+  RELEASE_EVIDENCE_CLASSES,
+  bindReleaseEvidence,
+  createValidationReceipt,
+  recordValidationChecks,
+} from '../../codegen/validation-profile.js';
+import type {
+  CodegenFramework,
+  CodegenReleaseEvidence,
+  CodegenValidationProfile,
+  CodegenValidationReceipt,
+} from '../../codegen/types.js';
 
 // ── Mock dependent tool handlers ────────────────────────────────────
 
@@ -71,26 +84,88 @@ function renderOk() {
   };
 }
 
-function codegenOk() {
-  const code = 'export function Page() { return <div />; }';
+function codegenOk(framework: CodegenFramework = 'react') {
+  const code = framework === 'html'
+    ? '<div></div>'
+    : framework === 'vue'
+      ? '<template><div /></template>'
+      : 'export function Page() { return <div />; }';
+  const fileExtension = framework === 'html' ? '.html' : framework === 'vue' ? '.vue' : '.tsx';
+  const artifact = buildGeneratedArtifact({
+    framework,
+    code,
+    fileExtension,
+    imports: [],
+  });
+  const validationReceipt = bindReleaseEvidence(
+    recordValidationChecks(
+      createValidationReceipt(undefined, framework),
+      'schema-structure',
+      'component-registry',
+      'target-readiness',
+      'normalization-fidelity',
+      'binding-contract',
+      'props-contract',
+      'slots-contract',
+      'events-contract',
+      'dependency-closure',
+      'fallback-policy',
+    ),
+    undefined,
+    artifact.contentHash,
+  ).receipt;
   return {
     status: 'ok',
-    framework: 'react',
-    artifact: buildGeneratedArtifact({
-      framework: 'react',
-      code,
-      fileExtension: '.tsx',
-      imports: [],
-    }),
+    framework,
+    artifact,
     code,
-    fileExtension: '.tsx',
-    imports: ['react'],
+    fileExtension,
+    imports: [],
     warnings: [],
+    validationReceipt,
+  };
+}
+
+const buildChecks = ALL_CHECKS.filter((check) => !check.endsWith('-evidence'));
+
+function completeReceipt(
+  profile: CodegenValidationProfile,
+  target: CodegenFramework,
+  artifactContentHash: string,
+): CodegenValidationReceipt {
+  const receipt = recordValidationChecks(
+    createValidationReceipt(profile, target),
+    ...buildChecks,
+  );
+  const releaseEvidence = profile === 'release'
+    ? Object.fromEntries(RELEASE_EVIDENCE_CLASSES.map((evidenceClass) => [
+      evidenceClass,
+      {
+        status: 'passed' as const,
+        artifactContentHash,
+        reference: `reports/${evidenceClass}.json`,
+      },
+    ])) as CodegenReleaseEvidence
+    : undefined;
+  return bindReleaseEvidence(receipt, releaseEvidence, artifactContentHash).receipt;
+}
+
+function releaseCodegenOk() {
+  const result = codegenOk();
+  return {
+    ...result,
+    validationReceipt: completeReceipt('release', 'react', result.artifact.contentHash),
   };
 }
 
 function saveOk() {
   return { name: 'my-schema', version: 1 };
+}
+
+function expectCodegenIntegrityRejection(result: PipelineOutput): void {
+  expect(result.error).toMatchObject({ step: 'codegen', code: 'OODS-S009' });
+  expect(result.code).toBeUndefined();
+  expect(mockSchemaSaveHandle).not.toHaveBeenCalled();
 }
 
 // ── Tests ───────────────────────────────────────────────────────────
@@ -104,7 +179,9 @@ describe('pipeline orchestration', () => {
     mockComposeHandle.mockResolvedValue(composeOk());
     mockValidateHandle.mockResolvedValue(validateOk());
     mockRenderHandle.mockResolvedValue(renderOk());
-    mockCodeGenerateHandle.mockResolvedValue(codegenOk());
+    mockCodeGenerateHandle.mockImplementation(async (input: { framework: CodegenFramework }) => (
+      codegenOk(input.framework)
+    ));
     mockSchemaSaveHandle.mockResolvedValue(saveOk());
 
     // Dynamic import to get the mocked version
@@ -476,6 +553,7 @@ describe('pipeline orchestration', () => {
         fileExtension: '',
         imports: [],
         warnings: [],
+        validationReceipt: createValidationReceipt(undefined, 'react'),
         errors: [{ code: 'EMITTER_CRASH', message: 'React emitter failed' }],
       });
 
@@ -488,6 +566,194 @@ describe('pipeline orchestration', () => {
       expect(result.error!.code).toBe('EMITTER_CRASH');
     });
 
+    it('rejects a codegen response that omits the mandatory validation receipt', async () => {
+      const { validationReceipt: _validationReceipt, ...withoutReceipt } = codegenOk();
+      mockCodeGenerateHandle.mockResolvedValue(withoutReceipt);
+
+      const result = await handle({
+        object: 'Subscription',
+        framework: 'react',
+        profile: 'release',
+      });
+
+      expect(result.error).toEqual({
+        step: 'codegen',
+        code: 'OODS-S009',
+        message: 'code.generate returned without its mandatory validation receipt.',
+      });
+      expect(result.code).toBeUndefined();
+      expect(result.validationReceipt.profile).toBe('release');
+      expect(mockSchemaSaveHandle).not.toHaveBeenCalled();
+    });
+
+    it('rejects a child receipt that downgrades a requested release profile to draft', async () => {
+      const child = codegenOk();
+      mockCodeGenerateHandle.mockResolvedValue({
+        ...child,
+        validationReceipt: completeReceipt('draft', 'react', child.artifact.contentHash),
+      });
+
+      const result = await handle({
+        object: 'Subscription',
+        framework: 'react',
+        profile: 'release',
+      });
+
+      expectCodegenIntegrityRejection(result);
+      expect(result.error!.message).toMatch(/profile "draft" does not match "release"/i);
+    });
+
+    it.each([
+      {
+        mismatch: 'top-level framework',
+        mutate: () => ({
+          ...codegenOk(),
+          framework: 'vue' as const,
+        }),
+        message: /returned framework "vue".*requested target "react"/i,
+      },
+      {
+        mismatch: 'artifact framework',
+        mutate: () => {
+          const child = codegenOk();
+          return {
+            ...child,
+            artifact: buildGeneratedArtifact({
+              framework: 'vue',
+              code: '<template><div /></template>',
+              fileExtension: '.vue',
+              imports: [],
+            }),
+          };
+        },
+        message: /returned an artifact for "vue" instead of "react"/i,
+      },
+      {
+        mismatch: 'receipt target',
+        mutate: () => {
+          const child = codegenOk();
+          return {
+            ...child,
+            validationReceipt: {
+              ...child.validationReceipt,
+              axes: {
+                ...child.validationReceipt.axes,
+                target: { requested: 'vue', resolved: 'vue', source: 'explicit' as const },
+              },
+            },
+          };
+        },
+        message: /target resolution does not match/i,
+      },
+    ])('rejects a child $mismatch mismatch', async ({ mutate, message }) => {
+      mockCodeGenerateHandle.mockResolvedValue(mutate());
+
+      const result = await handle({ object: 'Subscription', framework: 'react' });
+
+      expectCodegenIntegrityRejection(result);
+      expect(result.error!.message).toMatch(message);
+    });
+
+    it('rejects a successful artifact with a vacuous receipt check partition', async () => {
+      const child = codegenOk();
+      mockCodeGenerateHandle.mockResolvedValue({
+        ...child,
+        validationReceipt: {
+          ...child.validationReceipt,
+          checks: [],
+          notChecked: [],
+        },
+      });
+
+      const result = await handle({ object: 'Subscription', framework: 'react' });
+
+      expectCodegenIntegrityRejection(result);
+      expect(result.error!.message).toMatch(/canonical, complete, disjoint check partition/i);
+    });
+
+    it('rejects a receipt whose governed artifact hash differs from the artifact envelope', async () => {
+      const child = codegenOk();
+      mockCodeGenerateHandle.mockResolvedValue({
+        ...child,
+        validationReceipt: {
+          ...child.validationReceipt,
+          evidence: {
+            ...child.validationReceipt.evidence,
+            artifactContentHash: `sha256:${'0'.repeat(64)}`,
+          },
+        },
+      });
+
+      const result = await handle({ object: 'Subscription', framework: 'react' });
+
+      expectCodegenIntegrityRejection(result);
+      expect(result.error!.message).toMatch(/receipt artifact hash does not match/i);
+    });
+
+    it.each([
+      {
+        defect: 'an accepted item bound to another artifact',
+        mutate: (receipt: CodegenValidationReceipt) => ({
+          ...receipt,
+          evidence: {
+            ...receipt.evidence,
+            accepted: receipt.evidence.accepted.map((item, index) => (
+              index === 0
+                ? { ...item, artifactContentHash: `sha256:${'0'.repeat(64)}` }
+                : item
+            )),
+          },
+        }),
+        message: /accepted release evidence is not bound/i,
+      },
+      {
+        defect: 'an incomplete accepted-evidence set',
+        mutate: (receipt: CodegenValidationReceipt) => ({
+          ...receipt,
+          evidence: {
+            ...receipt.evidence,
+            provided: receipt.evidence.provided.slice(0, -1),
+            missing: ['performance' as const],
+            accepted: receipt.evidence.accepted.slice(0, -1),
+          },
+        }),
+        message: /does not disclose six satisfied evidence classes/i,
+      },
+    ])('rejects successful release with $defect', async ({ mutate, message }) => {
+      const child = releaseCodegenOk();
+      mockCodeGenerateHandle.mockResolvedValue({
+        ...child,
+        validationReceipt: mutate(child.validationReceipt),
+      });
+
+      const result = await handle({
+        object: 'Subscription',
+        framework: 'react',
+        profile: 'release',
+      });
+
+      expectCodegenIntegrityRejection(result);
+      expect(result.error!.message).toMatch(message);
+    });
+
+    it('rejects codegen success that omits the mandatory artifact envelope', async () => {
+      const { artifact: _artifact, ...withoutArtifact } = codegenOk();
+      mockCodeGenerateHandle.mockResolvedValue(withoutArtifact);
+
+      const result = await handle({
+        object: 'Subscription',
+        framework: 'react',
+      });
+
+      expect(result.error).toEqual({
+        step: 'codegen',
+        code: 'OODS-N017',
+        message: 'code.generate returned success without an artifact envelope.',
+      });
+      expect(result.code).toBeUndefined();
+      expect(mockSchemaSaveHandle).not.toHaveBeenCalled();
+    });
+
     it('B-15 propagates OODS-N015 as a codegen-stage error without a successful payload', async () => {
       mockCodeGenerateHandle.mockResolvedValue({
         status: 'error',
@@ -496,6 +762,12 @@ describe('pipeline orchestration', () => {
         fileExtension: '',
         imports: [],
         warnings: [],
+        validationReceipt: recordValidationChecks(
+          createValidationReceipt(undefined, 'react'),
+          'schema-structure',
+          'component-registry',
+          'target-readiness',
+        ),
         errors: [
           {
             code: 'OODS-N015',

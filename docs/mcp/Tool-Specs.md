@@ -556,6 +556,27 @@ Example output:
   "fileExtension": ".tsx",
   "imports": ["react", "@oods/components-react", "@oods/component-styles/css"],
   "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": true,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": { "requested": "react", "resolved": "react", "source": "explicit" }
+    },
+    "checks": ["schema-structure", "component-registry", "target-readiness", "normalization-fidelity", "binding-contract", "props-contract", "slots-contract", "events-contract", "dependency-closure", "fallback-policy"],
+    "notChecked": [
+      "rendered-evidence", "interaction-evidence", "accessibility-evidence",
+      "theme-evidence", "determinism-evidence", "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [], "provided": [], "missing": [], "mismatched": [], "accepted": [], "notApplicable": [],
+      "artifactContentHash": "sha256:<same value as artifact.contentHash>"
+    }
+  },
   "meta": { "nodeCount": 3, "componentCount": 3, "unknownComponents": [] }
 }
 ```
@@ -566,6 +587,8 @@ Input fields:
 | `schema` | UiSchema | Yes (unless `schemaRef` provided) | A validated UiSchema tree |
 | `schemaRef` | string | No | Cached schema reference from `design.compose` |
 | `framework` | `"react"` \| `"vue"` \| `"html"` | Yes | Target framework |
+| `profile` | `"draft"` \| `"build"` \| `"release"` | No (default `"build"`) | Named validation profile |
+| `releaseEvidence` | object | Required by the release gate | Passed rendered, interaction, accessibility, theme, determinism, and performance evidence; every item names the generated artifact contentHash |
 | `options.typescript` | boolean | No (default `true`) | Emit TypeScript types (React/Vue). Ignored for HTML. |
 | `options.styling` | `"inline"` \| `"tokens"` \| `"tailwind"` | No (default `"tokens"`) | Styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes |
 
@@ -579,6 +602,7 @@ Output fields:
 | `fileExtension` | string | Deprecated v0 alias for the primary file extension; retained through artifact schema v1 |
 | `imports` | string[] | Deprecated v0 package-specifier alias; retained through artifact schema v1 |
 | `warnings` | codegenIssue[] | Non-fatal issues |
+| `validationReceipt` | object | Always-present applied profile, independent scope/enforcement/fallback/target axes, attempted checks, not-checked checks, and evidence disposition; after artifact construction it also names that artifact's content hash |
 | `errors` | codegenIssue[] | Fatal issues (code will be empty) |
 | `meta` | object | nodeCount, componentCount, unknownComponents |
 
@@ -589,6 +613,29 @@ workspace aliases, ranges, repository paths, or inferred package names.
 remains the deprecated v0 source alias for compatibility.
 The binding classification and framework-specific injection rules are defined in
 [Typed action protocol](./Typed-Action-Protocol.md).
+
+Validation profiles are deliberately not one overloaded strictness flag:
+
+| Profile | Scope | Enforcement | Fallback policy | Additional claim |
+|---------|-------|-------------|-----------------|------------------|
+| `draft` | structural | advisory for known target/contract gaps | visible | Exploratory output; warnings keep unsupported targets, fallbacks, or lossy normalization visible. Invalid input and unsafe or unemittable code still block. |
+| `build` (default) | generated artifact | blocking | forbidden | Runnable target, canonical props/slots/events, exact dependency closure, and no HTML fallback markers. |
+| `release` | release evidence | blocking | forbidden | All build checks plus six passed, hash-bound evidence classes: rendered, interaction, accessibility, theme, determinism, and performance. |
+
+For current generated UI targets there is no applicable artifact-certification adapter, so the
+server records `certification` in `validationReceipt.evidence.notApplicable` with a stable
+rationale; callers cannot self-declare that exception. `checks` contains only checks actually
+attempted before return, while `notChecked` names every profile check not reached on both success
+and error responses. `normalization-fidelity` reports whether compatibility normalization can retain
+the input tree; findings are visible warnings in draft and block build/release before lossy output can
+claim runnable confidence. After artifact construction,
+`validationReceipt.evidence.artifactContentHash` names that exact artifact; successful responses
+also expose the same value as `artifact.contentHash`. Release receipts retain each caller-supplied
+evidence envelope in canonical class order under `evidence.accepted` (class, status, artifact hash,
+and reference). These are accepted hash bindings for auditability; M03 does not claim to execute or
+resolve the external reports. Pipeline
+forwards `profile` and `releaseEvidence` unchanged, retains the code-generation receipt, and
+adds target-resolution provenance (`explicit`, `options-alias`, `.oodsrc`, or default).
 
 ---
 

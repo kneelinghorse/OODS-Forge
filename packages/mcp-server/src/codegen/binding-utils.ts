@@ -31,6 +31,16 @@ export function mapFieldType(entry: FieldSchemaEntry): string {
   return FIELD_TYPE_MAP[entry.type] ?? 'unknown';
 }
 
+/** Resolve only fields explicitly declared by the schema, never prototype members. */
+export function ownFieldSchemaEntry(
+  objectSchema: Record<string, FieldSchemaEntry> | undefined,
+  fieldName: string,
+): FieldSchemaEntry | undefined {
+  return objectSchema && Object.hasOwn(objectSchema, fieldName)
+    ? objectSchema[fieldName]
+    : undefined;
+}
+
 export function snakeToCamel(name: string): string {
   return name.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
 }
@@ -481,7 +491,7 @@ export function formatPropValue(
     return { formatted: 'undefined', isExpression: true };
   }
 
-  const entry = objectSchema?.[fieldName];
+  const entry = ownFieldSchemaEntry(objectSchema, fieldName);
   const fieldType = entry?.type;
 
   if (typeof value === 'boolean') {
@@ -590,9 +600,8 @@ export function resolveFieldProps(
 ): FieldPropEnrichment | null {
   const fieldProp = node.props?.field;
   if (typeof fieldProp !== 'string' || !fieldProp) return null;
-  if (!objectSchema || !objectSchema[fieldProp]) return null;
-
-  const entry = objectSchema[fieldProp];
+  const entry = ownFieldSchemaEntry(objectSchema, fieldProp);
+  if (!entry) return null;
   const strategy = getContentStrategy(node.component);
   if (strategy === 'none') return null;
 
@@ -604,8 +613,10 @@ export function resolveFieldProps(
     props.label = humanizeFieldName(fieldProp);
   }
 
-  // Enrichments specific to form input components (value-prop strategy)
-  if (strategy === 'value-prop') {
+  // Only canonical Input accepts all three of these native-input props. Other
+  // value-prop components (including Select) must not receive props outside
+  // their public target contract after preflight has run.
+  if (node.component === 'Input') {
     if (!existing.placeholder && entry.description) {
       props.placeholder = entry.description;
     }
@@ -615,6 +626,10 @@ export function resolveFieldProps(
     if (!existing.type) {
       const inputType = SEMANTIC_TYPE_TO_INPUT[entry.type];
       if (inputType) props.type = inputType;
+    }
+  } else if (node.component === 'Select') {
+    if (entry.required && existing.required === undefined) {
+      props.required = true;
     }
   }
 
@@ -655,7 +670,7 @@ export function resolveChildContent(
 ): FieldContentResolution | null {
   const fieldProp = node.props?.field;
   if (typeof fieldProp !== 'string' || !fieldProp) return null;
-  if (!objectSchema || !objectSchema[fieldProp]) return null;
+  if (!ownFieldSchemaEntry(objectSchema, fieldProp)) return null;
 
   const strategy = getContentStrategy(node.component);
   if (strategy === 'none') return null;
@@ -695,7 +710,7 @@ export function resolveFrameworkChildContent(
   const resolution = resolveChildContent(node, objectSchema);
   if (!resolution) {
     const field = node.props?.field;
-    if (typeof field !== 'string' || !objectSchema?.[field]) return null;
+    if (typeof field !== 'string' || !ownFieldSchemaEntry(objectSchema, field)) return null;
 
     const fieldName = snakeToCamel(field);
     const existing = (node.props as Record<string, unknown>) ?? {};

@@ -1113,6 +1113,21 @@ export namespace CodeGenerateInputSchema {
      * Target framework for code generation. HTML delegates to the `repl` tool's `render` action (document mode).
      */
     framework: 'react' | 'vue' | 'html';
+    /**
+     * Validation profile. draft reports non-structural target/contract gaps as warnings; build is the default runnable-artifact gate; release additionally requires hash-bound evidence.
+     */
+    profile?: 'draft' | 'build' | 'release';
+    /**
+     * Evidence for release. All six named classes are required by the release gate and must bind to the generated artifact contentHash.
+     */
+    releaseEvidence?: {
+      rendered?: ReleaseEvidenceItem;
+      interaction?: ReleaseEvidenceItem;
+      accessibility?: ReleaseEvidenceItem;
+      theme?: ReleaseEvidenceItem;
+      determinism?: ReleaseEvidenceItem;
+      performance?: ReleaseEvidenceItem;
+    };
     options?: {
       /**
        * When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML.
@@ -1212,6 +1227,17 @@ export namespace CodeGenerateInputSchema {
      */
     semanticType?: string;
   }
+  export interface ReleaseEvidenceItem {
+    status: 'passed';
+    /**
+     * Exact generated artifact hash inspected by this evidence.
+     */
+    artifactContentHash: string;
+    /**
+     * Stable report, trace, or artifact reference.
+     */
+    reference: string;
+  }
 }
 export type CodeGenerateInput = CodeGenerateInputSchema.CodeGenerateInput;
 
@@ -1225,6 +1251,92 @@ export namespace CodeGenerateOutputSchema {
     [k: string]: any;
   };
   export type ContentHash = string;
+  /**
+   * Mandatory disclosure of the applied profile, independent policy axes, checks performed, and checks not reached. When generation reaches an artifact, the receipt names its content hash; release receipts retain accepted caller-supplied evidence envelopes for auditability.
+   */
+  export type ValidationReceipt = (ValidationReceiptPartition & ValidationProfilePolicy) & {
+    profile: 'draft' | 'build' | 'release';
+    /**
+     * True only when the caller omitted profile and the build default was applied.
+     */
+    defaulted: boolean;
+    /**
+     * Why this profile has the disclosed scope and enforcement policy.
+     */
+    rationale: string;
+    axes: {
+      scope: 'structural' | 'generated-artifact' | 'release-evidence';
+      enforcement: 'advisory' | 'blocking';
+      fallback: 'visible' | 'forbidden';
+      target: TargetResolution;
+    };
+    /**
+     * Checks actually attempted before the response returned.
+     */
+    checks: ValidationCheck[];
+    /**
+     * Profile checks not reached; an empty array means no profile check was silently skipped.
+     */
+    notChecked: ValidationCheck[];
+    evidence: {
+      required: EvidenceClassList;
+      provided: EvidenceClassList;
+      missing: EvidenceClassList;
+      mismatched: EvidenceClassList;
+      /**
+       * Caller-supplied release-evidence envelopes accepted for evaluation in canonical class order; references are retained for auditability, not claimed as independently executed.
+       */
+      accepted: AcceptedReleaseEvidence[];
+      notApplicable: {
+        class: EvidenceClass;
+        rationale: string;
+      }[];
+      artifactContentHash?: ContentHash;
+    };
+  };
+  export type ValidationReceiptPartition =
+    | {
+        checks?: {
+          [k: string]: any;
+        };
+        [k: string]: any;
+      }
+    | {
+        notChecked?: {
+          [k: string]: any;
+        };
+        [k: string]: any;
+      };
+  export type ValidationProfilePolicy = {
+    [k: string]: any;
+  };
+  export type ValidationCheck =
+    | 'schema-structure'
+    | 'component-registry'
+    | 'binding-contract'
+    | 'props-contract'
+    | 'slots-contract'
+    | 'events-contract'
+    | 'target-readiness'
+    | 'normalization-fidelity'
+    | 'dependency-closure'
+    | 'fallback-policy'
+    | 'rendered-evidence'
+    | 'interaction-evidence'
+    | 'accessibility-evidence'
+    | 'theme-evidence'
+    | 'determinism-evidence'
+    | 'performance-evidence'
+    | 'certification-evidence';
+  export type EvidenceClass =
+    | 'rendered'
+    | 'interaction'
+    | 'accessibility'
+    | 'theme'
+    | 'determinism'
+    | 'performance'
+    | 'certification';
+  export type EvidenceClassList = EvidenceClass[];
 
   export interface CodeGenerateOutput2 {
     /**
@@ -1255,6 +1367,7 @@ export namespace CodeGenerateOutputSchema {
      * Non-fatal issues encountered during generation.
      */
     warnings: CodegenIssue[];
+    validationReceipt: ValidationReceipt;
     /**
      * Fatal issues that prevented code generation.
      */
@@ -1316,7 +1429,7 @@ export namespace CodeGenerateOutputSchema {
      */
     parameters: GeneratedArtifactActionParameter[];
     /**
-     * Every schema occurrence that raises this action, in deterministic node-event-component order.
+     * Schema declaration sources; component sources are generated-tree events, while screen-root sources are consumer-owned surfaces. Deterministic node-event-component order.
      *
      * @minItems 1
      */
@@ -1339,6 +1452,17 @@ export namespace CodeGenerateOutputSchema {
     message: string;
     nodeId?: string;
     component?: string;
+  }
+  export interface TargetResolution {
+    requested?: 'react' | 'vue' | 'html';
+    resolved: 'react' | 'vue' | 'html';
+    source: 'explicit' | 'options-alias' | 'oodsrc' | 'default';
+  }
+  export interface AcceptedReleaseEvidence {
+    class: 'rendered' | 'interaction' | 'accessibility' | 'theme' | 'determinism' | 'performance';
+    status: 'passed';
+    artifactContentHash: ContentHash;
+    reference: string;
   }
 }
 export type CodeGenerateOutput = CodeGenerateOutputSchema.CodeGenerateOutput;
@@ -4500,6 +4624,21 @@ export namespace PipelineInputSchema {
      */
     styling?: 'inline' | 'tokens' | 'tailwind';
     /**
+     * Validation profile forwarded unchanged to code.generate. build is the default runnable-artifact gate.
+     */
+    profile?: 'draft' | 'build' | 'release';
+    /**
+     * Hash-bound release evidence forwarded unchanged to code.generate.
+     */
+    releaseEvidence?: {
+      rendered?: ReleaseEvidenceItem;
+      interaction?: ReleaseEvidenceItem;
+      accessibility?: ReleaseEvidenceItem;
+      theme?: ReleaseEvidenceItem;
+      determinism?: ReleaseEvidenceItem;
+      performance?: ReleaseEvidenceItem;
+    };
+    /**
      * Optional schema save config. String for name-only, or { name, tags } for full control.
      */
     save?:
@@ -4549,17 +4688,104 @@ export namespace PipelineInputSchema {
       framework?: 'react' | 'vue' | 'html';
     };
   }
+  export interface ReleaseEvidenceItem {
+    status: 'passed';
+    /**
+     * Exact generated artifact hash inspected by this evidence.
+     */
+    artifactContentHash: string;
+    reference: string;
+  }
 }
 export type PipelineInput = PipelineInputSchema.PipelineInput;
 
 // Source: pipeline.output.json
 export namespace PipelineOutputSchema {
-  export type ContentHash = string;
-
   /**
    * Aggregated pipeline response with partial results and explicit failure step metadata.
    */
-  export interface PipelineOutput {
+  export type PipelineOutput = PipelineOutput1 & PipelineOutput2;
+  export type PipelineOutput1 = {
+    [k: string]: any;
+  };
+  /**
+   * Mandatory generation-profile disclosure. Pipeline preserves code.generate checks and accepted caller-supplied evidence envelopes, verifies the child receipt against the requested profile and artifact, and records target resolution provenance.
+   */
+  export type ValidationReceipt = (ValidationReceiptPartition & ValidationProfilePolicy) & {
+    profile: 'draft' | 'build' | 'release';
+    defaulted: boolean;
+    rationale: string;
+    axes: {
+      scope: 'structural' | 'generated-artifact' | 'release-evidence';
+      enforcement: 'advisory' | 'blocking';
+      fallback: 'visible' | 'forbidden';
+      target: TargetResolution;
+    };
+    checks: ValidationCheck[];
+    notChecked: ValidationCheck[];
+    evidence: {
+      required: EvidenceClassList;
+      provided: EvidenceClassList;
+      missing: EvidenceClassList;
+      mismatched: EvidenceClassList;
+      /**
+       * Caller-supplied release-evidence envelopes accepted for evaluation in canonical class order; references are retained for auditability, not claimed as independently executed.
+       */
+      accepted: AcceptedReleaseEvidence[];
+      notApplicable: {
+        class: EvidenceClass;
+        rationale: string;
+      }[];
+      artifactContentHash?: ContentHash;
+    };
+  };
+  export type ValidationReceiptPartition =
+    | {
+        checks?: {
+          [k: string]: any;
+        };
+        [k: string]: any;
+      }
+    | {
+        notChecked?: {
+          [k: string]: any;
+        };
+        [k: string]: any;
+      };
+  export type ValidationProfilePolicy = {
+    [k: string]: any;
+  };
+  export type ValidationCheck =
+    | 'schema-structure'
+    | 'component-registry'
+    | 'binding-contract'
+    | 'props-contract'
+    | 'slots-contract'
+    | 'events-contract'
+    | 'target-readiness'
+    | 'normalization-fidelity'
+    | 'dependency-closure'
+    | 'fallback-policy'
+    | 'rendered-evidence'
+    | 'interaction-evidence'
+    | 'accessibility-evidence'
+    | 'theme-evidence'
+    | 'determinism-evidence'
+    | 'performance-evidence'
+    | 'certification-evidence';
+  export type EvidenceClass =
+    | 'rendered'
+    | 'interaction'
+    | 'accessibility'
+    | 'theme'
+    | 'determinism'
+    | 'performance'
+    | 'certification';
+  export type EvidenceClassList = EvidenceClass[];
+  export type ContentHash = string;
+
+  export interface PipelineOutput2 {
+    validationReceipt: ValidationReceipt;
     /**
      * Schema reference returned by compose, reusable across tools.
      */
@@ -4670,6 +4896,17 @@ export namespace PipelineOutputSchema {
       message: string;
     };
   }
+  export interface TargetResolution {
+    requested?: 'react' | 'vue' | 'html';
+    resolved: 'react' | 'vue' | 'html';
+    source: 'explicit' | 'options-alias' | 'oodsrc' | 'default';
+  }
+  export interface AcceptedReleaseEvidence {
+    class: 'rendered' | 'interaction' | 'accessibility' | 'theme' | 'determinism' | 'performance';
+    status: 'passed';
+    artifactContentHash: ContentHash;
+    reference: string;
+  }
   export interface Issue {
     code: string;
     message: string;
@@ -4716,7 +4953,7 @@ export namespace PipelineOutputSchema {
      */
     parameters: GeneratedArtifactActionParameter[];
     /**
-     * Every schema occurrence that raises this action, in deterministic node-event-component order.
+     * Schema declaration sources; component sources are generated-tree events, while screen-root sources are consumer-owned surfaces. Deterministic node-event-component order.
      *
      * @minItems 1
      */

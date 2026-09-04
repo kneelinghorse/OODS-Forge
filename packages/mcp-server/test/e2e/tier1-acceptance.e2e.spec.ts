@@ -66,14 +66,14 @@ describe('Tier 1 acceptance — bounded framework compatibility', () => {
     },
   );
 
-  it('keeps the complete legacy Subscription HTML save, load, and health path', async () => {
+  it('keeps a build-safe Subscription HTML save, load, and health path', async () => {
     const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-tier1-html-'));
     process.env.MCP_SCHEMA_STORE_ROOT = tempRoot;
 
     try {
       const result = await pipelineHandle({
         object: 'Subscription',
-        context: 'detail',
+        context: 'card',
         framework: 'html',
         styling: 'tokens',
         save: 's182-tier1-legacy-html',

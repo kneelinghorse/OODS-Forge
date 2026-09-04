@@ -4,6 +4,94 @@ export type CodegenFramework = 'react' | 'vue' | 'html';
 
 export type CodegenStyling = 'inline' | 'tokens' | 'tailwind';
 
+export type CodegenValidationProfile = 'draft' | 'build' | 'release';
+
+export type CodegenValidationScope = 'structural' | 'generated-artifact' | 'release-evidence';
+
+export type CodegenValidationEnforcement = 'advisory' | 'blocking';
+
+export type CodegenFallbackPolicy = 'visible' | 'forbidden';
+
+export type CodegenTargetResolution = {
+  requested?: CodegenFramework;
+  resolved: CodegenFramework;
+  source: 'explicit' | 'options-alias' | 'oodsrc' | 'default';
+};
+
+export type CodegenValidationCheck =
+  | 'schema-structure'
+  | 'component-registry'
+  | 'binding-contract'
+  | 'props-contract'
+  | 'slots-contract'
+  | 'events-contract'
+  | 'target-readiness'
+  | 'normalization-fidelity'
+  | 'dependency-closure'
+  | 'fallback-policy'
+  | 'rendered-evidence'
+  | 'interaction-evidence'
+  | 'accessibility-evidence'
+  | 'theme-evidence'
+  | 'determinism-evidence'
+  | 'performance-evidence'
+  | 'certification-evidence';
+
+export type CodegenReleaseEvidenceClass =
+  | 'rendered'
+  | 'interaction'
+  | 'accessibility'
+  | 'theme'
+  | 'determinism'
+  | 'performance'
+  | 'certification';
+
+export type CodegenReleaseEvidenceItem = {
+  status: 'passed';
+  /** Exact generated artifact hash that the external evidence inspected. */
+  artifactContentHash: string;
+  /** Stable report, trace, or artifact reference that a consumer can resolve. */
+  reference: string;
+};
+
+export type CodegenReleaseEvidence = Partial<
+  Record<Exclude<CodegenReleaseEvidenceClass, 'certification'>, CodegenReleaseEvidenceItem>
+>;
+
+export type CodegenAcceptedReleaseEvidence = CodegenReleaseEvidenceItem & {
+  class: Exclude<CodegenReleaseEvidenceClass, 'certification'>;
+};
+
+export type CodegenValidationReceipt = {
+  profile: CodegenValidationProfile;
+  defaulted: boolean;
+  rationale: string;
+  axes: {
+    scope: CodegenValidationScope;
+    enforcement: CodegenValidationEnforcement;
+    fallback: CodegenFallbackPolicy;
+    target: CodegenTargetResolution;
+  };
+  /** Checks actually attempted before this response was returned. */
+  checks: CodegenValidationCheck[];
+  /** Profile checks that were not reached; never a silent omission. */
+  notChecked: CodegenValidationCheck[];
+  evidence: {
+    required: CodegenReleaseEvidenceClass[];
+    provided: CodegenReleaseEvidenceClass[];
+    missing: CodegenReleaseEvidenceClass[];
+    mismatched: CodegenReleaseEvidenceClass[];
+    /** Caller-supplied evidence envelopes accepted for evaluation, in canonical class order. */
+    accepted: CodegenAcceptedReleaseEvidence[];
+    notApplicable: Array<{
+      class: CodegenReleaseEvidenceClass;
+      rationale: string;
+    }>;
+    /** Artifact governed by this receipt, when generation reached an artifact. */
+    artifactContentHash?: string;
+  };
+};
+
 export type CodegenOptions = {
   typescript: boolean;
   styling: CodegenStyling;

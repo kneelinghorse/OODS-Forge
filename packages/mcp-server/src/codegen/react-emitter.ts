@@ -15,6 +15,7 @@ import {
   mapFieldType,
   snakeToCamel,
   resolveFrameworkChildContent,
+  ownFieldSchemaEntry,
   resolveFieldProps,
 } from './binding-utils.js';
 import { artifactActionsFromBindings, bindingsForNode } from './action-protocol.js';
@@ -659,7 +660,7 @@ function reactLocalInitialExpression(
   }
 
   const field = node.props?.field;
-  if (typeof field === 'string' && objectSchema?.[field]) {
+  if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field)) {
     const fallback = occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
     const source = snakeToCamel(field);
     return occurrence.signature.parameters[0]?.type === 'boolean'

@@ -23,6 +23,24 @@
       "enum": ["react", "vue", "html"],
       "description": "Target framework for code generation. HTML delegates to the `repl` tool's `render` action (document mode)."
     },
+    "profile": {
+      "type": "string",
+      "enum": ["draft", "build", "release"],
+      "description": "Validation profile. draft reports non-structural target/contract gaps as warnings; build is the default runnable-artifact gate; release additionally requires hash-bound evidence."
+    },
+    "releaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Evidence for release. All six named classes are required by the release gate and must bind to the generated artifact contentHash.",
+      "properties": {
+        "rendered": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "interaction": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "accessibility": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "theme": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "determinism": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "performance": { "$ref": "#/$defs/releaseEvidenceItem" }
+      }
+    },
     "options": {
       "type": "object",
       "properties": {
@@ -50,5 +68,25 @@
       ]
     }
   ],
+  "$defs": {
+    "releaseEvidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "artifactContentHash", "reference"],
+      "properties": {
+        "status": { "const": "passed" },
+        "artifactContentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Exact generated artifact hash inspected by this evidence."
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable report, trace, or artifact reference."
+        }
+      }
+    }
+  },
   "additionalProperties": false
 }

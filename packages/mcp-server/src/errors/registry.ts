@@ -291,6 +291,8 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   // while V161 fires precisely when the agent supplied none. Threshold is read from the
   // APPLIED compiled scale.range, never a hardcoded 6. WARN — the chart still renders.
   ['OODS-V161', { code: 'OODS-V161', category: 'validation', message: 'Baked categorical palette recycles: more distinct series than palette slots', retryable: true }],
+  ['OODS-V162', { code: 'OODS-V162', category: 'validation', message: 'Required release evidence is missing', retryable: true }],
+  ['OODS-V163', { code: 'OODS-V163', category: 'validation', message: 'Release evidence artifact hash mismatch', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],
@@ -312,6 +314,8 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-N013', { code: 'OODS-N013', category: 'not_found', message: 'Registry fallback used', retryable: false }],
   ['OODS-N014', { code: 'OODS-N014', category: 'not_found', message: 'Registry snapshot payload missing', retryable: false }],
   ['OODS-N015', { code: 'OODS-N015', category: 'not_found', message: 'Component target unavailable', retryable: false }],
+  ['OODS-N016', { code: 'OODS-N016', category: 'not_found', message: 'Generated artifact dependency closure is invalid', retryable: false }],
+  ['OODS-N017', { code: 'OODS-N017', category: 'not_found', message: 'Generated artifact envelope missing', retryable: false }],
 
   // ── Conflict ────────────────────────────────────────────────────────────
   ['OODS-C001', { code: 'OODS-C001', category: 'conflict', message: 'Schema ref missing after compose', retryable: false }],

@@ -99,6 +99,24 @@
       "enum": ["inline", "tokens", "tailwind"],
       "description": "Styling strategy for code generation."
     },
+    "profile": {
+      "type": "string",
+      "enum": ["draft", "build", "release"],
+      "description": "Validation profile forwarded unchanged to code.generate. build is the default runnable-artifact gate."
+    },
+    "releaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Hash-bound release evidence forwarded unchanged to code.generate.",
+      "properties": {
+        "rendered": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "interaction": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "accessibility": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "theme": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "determinism": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "performance": { "$ref": "#/$defs/releaseEvidenceItem" }
+      }
+    },
     "save": {
       "oneOf": [
         {
@@ -165,6 +183,22 @@
           "enum": ["react", "vue", "html"],
           "description": "Alias: target framework. Overridden by top-level framework if both provided."
         }
+      }
+    }
+  },
+  "$defs": {
+    "releaseEvidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "artifactContentHash", "reference"],
+      "properties": {
+        "status": { "const": "passed" },
+        "artifactContentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Exact generated artifact hash inspected by this evidence."
+        },
+        "reference": { "type": "string", "minLength": 1 }
       }
     }
   }

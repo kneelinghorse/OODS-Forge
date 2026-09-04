@@ -58,6 +58,21 @@ describe('Error Registry', () => {
     expect(getDefinition('OODS-Z999')).toBeUndefined();
   });
 
+  it('registers every generated-artifact closure failure used on the wire', () => {
+    expect(getDefinition('OODS-N016')).toEqual({
+      code: 'OODS-N016',
+      category: 'not_found',
+      message: 'Generated artifact dependency closure is invalid',
+      retryable: false,
+    });
+    expect(getDefinition('OODS-N017')).toEqual({
+      code: 'OODS-N017',
+      category: 'not_found',
+      message: 'Generated artifact envelope missing',
+      retryable: false,
+    });
+  });
+
   // ── isRetryable ────────────────────────────────────────────────────────
   it('returns true for retryable codes', () => {
     expect(isRetryable('OODS-R001')).toBe(true);   // rate limit

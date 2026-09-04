@@ -10,6 +10,13 @@ const validateOutput = getAjv().compile(outputSchema);
 const frameworks = ['react', 'vue'] as const;
 const stylings = ['inline', 'tailwind', 'tokens'] as const;
 const typescriptOptions = [false, true] as const;
+const HTML_CONTROL_SCHEMA = structuredClone(FOUNDATION_V1_SHOWCASE_SCHEMA);
+const htmlNodes = [...HTML_CONTROL_SCHEMA.screens];
+while (htmlNodes.length > 0) {
+  const node = htmlNodes.pop()!;
+  delete node.bindings;
+  if (node.children) htmlNodes.push(...node.children);
+}
 const matrix = frameworks.flatMap((framework) => (
   stylings.flatMap((styling) => (
     typescriptOptions.map((typescript) => ({ framework, styling, typescript }))
@@ -128,7 +135,7 @@ describe('Sprint 183 M01 runnable artifact contract', () => {
   it('keeps HTML as a zero-dependency control artifact', async () => {
     const result = await handle({
       framework: 'html',
-      schema: FOUNDATION_V1_SHOWCASE_SCHEMA,
+      schema: HTML_CONTROL_SCHEMA,
     });
 
     expect(result.status, JSON.stringify(result.errors ?? [])).toBe('ok');

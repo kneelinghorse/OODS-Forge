@@ -4,6 +4,7 @@ import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions, CodegenResult } from './types.js';
 import { resolveChildContent, resolveFieldProps } from './binding-utils.js';
 import { runPreEmit } from './pre-emit.js';
+import { normalizeSchemaForFramework } from './framework-normalization.js';
 
 /**
  * Inject {{fieldName}} placeholder text into leaf nodes with field bindings.
@@ -54,7 +55,8 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   try {
     const ctx = runPreEmit(schema, { options });
-    const processedSchema = injectFieldPlaceholders(ctx.schema);
+    const normalizedSchema = normalizeSchemaForFramework(ctx.schema, 'html');
+    const processedSchema = injectFieldPlaceholders(normalizedSchema);
     const screenHtml = renderTree(processedSchema);
     const html = renderDocument({ screenHtml, schema: processedSchema });
 

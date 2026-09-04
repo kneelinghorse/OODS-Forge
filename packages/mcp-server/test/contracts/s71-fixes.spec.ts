@@ -3,6 +3,7 @@ import { getAjv } from '../../src/lib/ajv.js';
 import catalogOutputSchema from '../../src/schemas/catalog.list.output.json' assert { type: 'json' };
 import pipelineOutputSchema from '../../src/schemas/pipeline.output.json' assert { type: 'json' };
 import { handle as catalogHandle } from '../../src/tools/catalog.list.js';
+import { createValidationReceipt } from '../../src/codegen/validation-profile.js';
 import type { CatalogListOutput } from '../../src/tools/types.js';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -79,6 +80,7 @@ describe('Sprint 71 fixes', () => {
   describe('pipeline output schema TTL fields', () => {
     it('pipeline output schema allows schemaRefCreatedAt', () => {
       const sample = {
+        validationReceipt: createValidationReceipt('build', 'react'),
         compose: { layout: 'auto', componentCount: 1 },
         pipeline: { steps: ['compose'], duration: 100 },
         schemaRef: 'ref:test',
@@ -90,6 +92,7 @@ describe('Sprint 71 fixes', () => {
 
     it('pipeline output schema still valid without TTL fields', () => {
       const sample = {
+        validationReceipt: createValidationReceipt('build', 'react'),
         compose: { layout: 'auto', componentCount: 1 },
         pipeline: { steps: ['compose'], duration: 100 },
         schemaRef: 'ref:test',

@@ -11,6 +11,7 @@ import { handle as composeHandle } from '../../src/tools/design.compose.js';
 import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
+import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
 
 type Framework = 'react' | 'vue';
 type AffectedNode = readonly [nodeId: string, component: string];
@@ -69,6 +70,15 @@ function countComponents(schema: UiSchema): number {
   return ids.size;
 }
 
+function expectedTargetReadinessReceipt(framework: Framework) {
+  return recordValidationChecks(
+    createValidationReceipt(undefined, framework),
+    'schema-structure',
+    'component-registry',
+    'target-readiness',
+  );
+}
+
 async function expectTargetUnavailable(
   schemaRef: string,
   schema: UiSchema,
@@ -88,6 +98,7 @@ async function expectTargetUnavailable(
     fileExtension: '',
     imports: [],
     warnings: [],
+    validationReceipt: expectedTargetReadinessReceipt(framework),
     errors: affectedNodes.map(([nodeId, component]) => ({
       code: 'OODS-N015',
       message: `Component ${component} is not emission-eligible for ${framework}; evidence state: unavailable.`,

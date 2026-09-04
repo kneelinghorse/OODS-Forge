@@ -1,6 +1,6 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 
-type FrameworkTarget = 'react' | 'vue';
+type FrameworkTarget = 'react' | 'vue' | 'html';
 
 const FIELD_COMPONENTS = new Set([
   'Checkbox',
@@ -93,6 +93,15 @@ function normalizeNode(node: UiElement, framework: FrameworkTarget): UiElement {
   }
   delete props.readonly;
 
+  if (
+    (framework === 'html' || node.component !== 'Tabs')
+    && props['aria-label'] === undefined
+    && props.ariaLabel !== undefined
+  ) {
+    props['aria-label'] = props.ariaLabel;
+    delete props.ariaLabel;
+  }
+
   if (node.component === 'Badge' || node.component === 'Button') {
     if (props.content === undefined && props.label !== undefined) props.content = props.label;
     delete props.label;
@@ -158,9 +167,8 @@ function normalizeNode(node: UiElement, framework: FrameworkTarget): UiElement {
     children = undefined;
   }
 
-  // Keep the target parameter explicit: this normalization is intentionally
-  // bounded to the two framework emitters even where the current transforms are
-  // semantically shared.
+  // Keep the target parameter explicit so contract checks and emitters operate
+  // on the same normalized shape for every public generation target.
   void framework;
 
   return {

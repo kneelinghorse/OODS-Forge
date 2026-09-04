@@ -7,6 +7,17 @@ import type {
 import type { GeneratedArtifact } from "../codegen/types.js";
 
 export type {
+  CodegenAcceptedReleaseEvidence,
+  CodegenFallbackPolicy,
+  CodegenReleaseEvidence,
+  CodegenReleaseEvidenceClass,
+  CodegenReleaseEvidenceItem,
+  CodegenTargetResolution,
+  CodegenValidationCheck,
+  CodegenValidationEnforcement,
+  CodegenValidationProfile,
+  CodegenValidationReceipt,
+  CodegenValidationScope,
   GeneratedArtifact,
   GeneratedArtifactAction,
   GeneratedArtifactActionParameter,
@@ -457,6 +468,10 @@ export type CodeGenerateInput = {
   schema?: import("../schemas/generated.js").UiSchema;
   schemaRef?: string;
   framework: CodegenFramework;
+  /** Validation profile. Defaults to build, the minimum runnable-artifact gate. */
+  profile?: import("../codegen/types.js").CodegenValidationProfile;
+  /** Required only for release; every entry must name this generated artifact's content hash. */
+  releaseEvidence?: import("../codegen/types.js").CodegenReleaseEvidence;
   options?: {
     typescript?: boolean;
     styling?: CodegenStyling;
@@ -479,6 +494,8 @@ type CodeGenerateOutputBase = {
   /** @deprecated Use artifact.dependencies instead. Retained for v0 compatibility. */
   imports: string[];
   warnings: CodegenIssue[];
+  /** Mandatory disclosure of applied policy, attempted checks, and skipped checks. */
+  validationReceipt: import("../codegen/types.js").CodegenValidationReceipt;
   errors?: CodegenIssue[];
   meta?: {
     nodeCount?: number;

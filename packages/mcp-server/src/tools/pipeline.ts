@@ -1,5 +1,14 @@
 import type { ReplIssue, UiSchema } from '../schemas/generated.js';
-import type { CodegenFramework, CodegenIssue, CodegenStyling, GeneratedArtifact } from './types.js';
+import type {
+  CodegenFramework,
+  CodegenIssue,
+  CodegenReleaseEvidence,
+  CodegenStyling,
+  CodegenTargetResolution,
+  CodegenValidationProfile,
+  CodegenValidationReceipt,
+  GeneratedArtifact,
+} from './types.js';
 import { handle as composeHandle, type ActionMapping, type ActionInstance, type DesignComposeInput, type ResolvedTraitActions } from './design.compose.js';
 import { handle as validateHandle } from './repl.validate.js';
 import { handle as renderHandle } from './repl.render.js';
@@ -8,6 +17,12 @@ import { handle as schemaSaveHandle } from './schema/save.js';
 import { resolveSchemaRef, computeTtlWarning } from './schema-ref.js';
 import { loadOodsrc } from '../lib/oodsrc.js';
 import type { LayoutInput } from '../compose/layout-types.js';
+import {
+  createValidationReceipt,
+  validationReceiptIntegrityIssues,
+  withTargetResolution,
+} from '../codegen/validation-profile.js';
+import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 
 type PipelineStep = 'compose' | 'validate' | 'render' | 'codegen' | 'save';
 
@@ -24,6 +39,10 @@ export type PipelineInput = {
   actionInstances?: ActionInstance[];
   framework?: CodegenFramework;
   styling?: CodegenStyling;
+  /** Validation profile. Defaults to build. */
+  profile?: CodegenValidationProfile;
+  /** Hash-bound evidence required when profile is release. */
+  releaseEvidence?: CodegenReleaseEvidence;
   save?: string | { name: string; tags?: string[] };
   options?: {
     skipValidation?: boolean;
@@ -45,6 +64,7 @@ export type PipelineInput = {
 };
 
 export type PipelineOutput = {
+  validationReceipt: CodegenValidationReceipt;
   schemaRef?: string;
   schemaRefCreatedAt?: string;
   schemaRefExpiresAt?: string;
@@ -207,15 +227,28 @@ export async function handle(input: PipelineInput): Promise<PipelineOutput> {
   const startedAt = Date.now();
   const steps: PipelineStep[] = [];
   const rc = loadOodsrc();
-  const framework = input.framework ?? input.options?.framework ?? rc.framework ?? 'react';
+  const targetResolution: CodegenTargetResolution = input.framework !== undefined
+    ? { requested: input.framework, resolved: input.framework, source: 'explicit' }
+    : input.options?.framework !== undefined
+      ? {
+          requested: input.options.framework,
+          resolved: input.options.framework,
+          source: 'options-alias',
+        }
+      : rc.framework !== undefined
+        ? { resolved: rc.framework, source: 'oodsrc' }
+        : { resolved: 'react', source: 'default' };
+  const framework = targetResolution.resolved;
   const styling = input.styling ?? input.options?.styling ?? rc.styling ?? 'tokens';
   const skipValidation = input.options?.skipValidation === true;
   const skipRender = input.options?.skipRender === true;
   const checkA11y = input.options?.checkA11y ?? rc.pipeline?.checkA11y ?? false;
   const renderApply = input.options?.renderApply ?? true;
   const renderCompact = input.options?.compact ?? rc.pipeline?.compact ?? true;
+  let validationReceipt = createValidationReceipt(input.profile, framework, targetResolution);
 
   const output: PipelineOutput = {
+    validationReceipt,
     compose: {
       ...(input.object ? { object: input.object } : {}),
       ...(input.context ? { context: input.context } : {}),
@@ -414,6 +447,8 @@ export async function handle(input: PipelineInput): Promise<PipelineOutput> {
     codegenResult = await codeGenerateHandle({
       schemaRef: composeResult.schemaRef,
       framework,
+      ...(input.profile !== undefined ? { profile: input.profile } : {}),
+      ...(input.releaseEvidence !== undefined ? { releaseEvidence: input.releaseEvidence } : {}),
       options: {
         styling,
         ...(typescript !== undefined ? { typescript } : {}),
@@ -424,6 +459,55 @@ export async function handle(input: PipelineInput): Promise<PipelineOutput> {
     stepLatency.codegen = Date.now() - stepStart;
     return fail('codegen', 'OODS-S013', `codegen step threw: ${errorMessage(error)}`);
   }
+
+  if (!codegenResult.validationReceipt) {
+    return fail(
+      'codegen',
+      'OODS-S009',
+      'code.generate returned without its mandatory validation receipt.',
+    );
+  }
+  if (codegenResult.framework !== framework) {
+    return fail(
+      'codegen',
+      'OODS-S009',
+      `code.generate returned framework ${JSON.stringify(codegenResult.framework)} for requested target ${JSON.stringify(framework)}.`,
+    );
+  }
+  if (codegenResult.artifact?.framework !== undefined && codegenResult.artifact.framework !== framework) {
+    return fail(
+      'codegen',
+      'OODS-S009',
+      `code.generate returned an artifact for ${JSON.stringify(codegenResult.artifact.framework)} instead of ${JSON.stringify(framework)}.`,
+    );
+  }
+  if (codegenResult.artifact) {
+    const artifactIssues = validateGeneratedArtifact(codegenResult.artifact);
+    if (artifactIssues.length > 0) {
+      return fail(
+        'codegen',
+        'OODS-S009',
+        `code.generate returned an invalid artifact envelope: ${artifactIssues[0]}`,
+      );
+    }
+  }
+  const receiptIssues = validationReceiptIntegrityIssues(codegenResult.validationReceipt, {
+    profile: input.profile ?? 'build',
+    defaulted: input.profile === undefined,
+    target: { requested: framework, resolved: framework, source: 'explicit' },
+    ...(codegenResult.artifact
+      ? { artifactContentHash: codegenResult.artifact.contentHash }
+      : {}),
+  });
+  if (receiptIssues.length > 0) {
+    return fail(
+      'codegen',
+      'OODS-S009',
+      `code.generate returned an invalid validation receipt: ${receiptIssues[0]}.`,
+    );
+  }
+  validationReceipt = withTargetResolution(codegenResult.validationReceipt, targetResolution);
+  output.validationReceipt = validationReceipt;
 
   if (codegenResult.status !== 'ok') {
     const issue = firstIssueMessage(codegenResult.errors);

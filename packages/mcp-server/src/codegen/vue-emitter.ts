@@ -15,6 +15,7 @@ import {
   mapFieldType,
   snakeToCamel,
   resolveFrameworkChildContent,
+  ownFieldSchemaEntry,
   resolveFieldProps,
 } from './binding-utils.js';
 import { artifactActionsFromBindings, bindingsForNode } from './action-protocol.js';
@@ -318,7 +319,7 @@ function emitTemplateNode(
     ? propsObject?.checked !== undefined || propsObject?.modelValue !== undefined
     : propsObject?.value !== undefined || propsObject?.modelValue !== undefined;
   const boundFieldName = fieldDirective
-    && objectSchema?.[fieldDirective]
+    && ownFieldSchemaEntry(objectSchema, fieldDirective)
     && !hasExplicitControlledValue
     && !controlledProp
     ? snakeToCamel(fieldDirective)
@@ -693,7 +694,7 @@ function vueLocalInitialExpression(
     return javascriptSingleQuotedString(String(explicit));
   }
   const field = node.props?.field;
-  if (typeof field === 'string' && objectSchema?.[field]) {
+  if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field)) {
     const fallback = occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
     const source = formMode ? `${snakeToCamel(field)}.value` : snakeToCamel(field);
     return occurrence.signature.parameters[0]?.type === 'boolean'

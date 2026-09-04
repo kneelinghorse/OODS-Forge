@@ -3,6 +3,16 @@ import { handle as composeHandle } from '../../src/tools/design.compose.js';
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
 import { handle as codegenHandle } from '../../src/tools/code.generate.js';
+import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
+
+function expectedTargetReadinessReceipt() {
+  return recordValidationChecks(
+    createValidationReceipt(undefined, 'react'),
+    'schema-structure',
+    'component-registry',
+    'target-readiness',
+  );
+}
 
 describe('schemaRef workflow', () => {
   it('design.compose returns a bounded Card schemaRef that downstream tools accept', async () => {
@@ -46,6 +56,7 @@ describe('schemaRef workflow', () => {
       fileExtension: '',
       imports: [],
       warnings: [],
+      validationReceipt: expectedTargetReadinessReceipt(),
       errors: [
         {
           code: 'OODS-N015',

@@ -5,8 +5,33 @@
   "description": "Aggregated pipeline response with partial results and explicit failure step metadata.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["compose", "pipeline"],
+  "required": ["compose", "pipeline", "validationReceipt"],
+  "allOf": [
+    {
+      "if": { "required": ["code"] },
+      "then": {
+        "properties": {
+          "validationReceipt": {
+            "allOf": [
+              { "$ref": "#/$defs/buildChecksCompleted" },
+              {
+                "if": {
+                  "properties": { "profile": { "const": "release" } },
+                  "required": ["profile"]
+                },
+                "then": { "$ref": "#/$defs/releaseSuccessReceipt" }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
   "properties": {
+    "validationReceipt": {
+      "$ref": "#/$defs/validationReceipt",
+      "description": "Mandatory generation-profile disclosure. Pipeline preserves code.generate checks and accepted caller-supplied evidence envelopes, verifies the child receipt against the requested profile and artifact, and records target resolution provenance."
+    },
     "schemaRef": {
       "type": "string",
       "description": "Schema reference returned by compose, reusable across tools."
@@ -294,8 +319,302 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/generatedArtifactActionSource" },
-          "description": "Every schema occurrence that raises this action, in deterministic node-event-component order."
+          "description": "Schema declaration sources; component sources are generated-tree events, while screen-root sources are consumer-owned surfaces. Deterministic node-event-component order."
         }
+      }
+    },
+    "validationReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/validationReceiptPartition" },
+        { "$ref": "#/$defs/validationProfilePolicy" }
+      ],
+      "required": ["profile", "defaulted", "rationale", "axes", "checks", "notChecked", "evidence"],
+      "properties": {
+        "profile": { "type": "string", "enum": ["draft", "build", "release"] },
+        "defaulted": { "type": "boolean" },
+        "rationale": { "type": "string", "minLength": 1 },
+        "axes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "enforcement", "fallback", "target"],
+          "properties": {
+            "scope": { "type": "string", "enum": ["structural", "generated-artifact", "release-evidence"] },
+            "enforcement": { "type": "string", "enum": ["advisory", "blocking"] },
+            "fallback": { "type": "string", "enum": ["visible", "forbidden"] },
+            "target": { "$ref": "#/$defs/targetResolution" }
+          }
+        },
+        "checks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/validationCheck" }
+        },
+        "notChecked": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/validationCheck" }
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "provided", "missing", "mismatched", "accepted", "notApplicable"],
+          "properties": {
+            "required": { "$ref": "#/$defs/evidenceClassList" },
+            "provided": { "$ref": "#/$defs/evidenceClassList" },
+            "missing": { "$ref": "#/$defs/evidenceClassList" },
+            "mismatched": { "$ref": "#/$defs/evidenceClassList" },
+            "accepted": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/acceptedReleaseEvidence" },
+              "description": "Caller-supplied release-evidence envelopes accepted for evaluation in canonical class order; references are retained for auditability, not claimed as independently executed."
+            },
+            "notApplicable": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["class", "rationale"],
+                "properties": {
+                  "class": { "$ref": "#/$defs/evidenceClass" },
+                  "rationale": { "type": "string", "minLength": 1 }
+                }
+              }
+            },
+            "artifactContentHash": { "$ref": "#/$defs/contentHash" }
+          }
+        }
+      }
+    },
+    "targetResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resolved", "source"],
+      "properties": {
+        "requested": { "type": "string", "enum": ["react", "vue", "html"] },
+        "resolved": { "type": "string", "enum": ["react", "vue", "html"] },
+        "source": { "type": "string", "enum": ["explicit", "options-alias", "oodsrc", "default"] }
+      }
+    },
+    "validationCheck": {
+      "type": "string",
+      "enum": [
+        "schema-structure", "component-registry", "binding-contract",
+        "props-contract", "slots-contract", "events-contract", "target-readiness", "normalization-fidelity",
+        "dependency-closure", "fallback-policy", "rendered-evidence",
+        "interaction-evidence", "accessibility-evidence", "theme-evidence",
+        "determinism-evidence", "performance-evidence", "certification-evidence"
+      ]
+    },
+    "validationReceiptPartition": {
+      "type": "object",
+      "allOf": [
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "schema-structure" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "schema-structure" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "component-registry" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "component-registry" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "target-readiness" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "target-readiness" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "normalization-fidelity" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "normalization-fidelity" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "binding-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "binding-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "props-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "props-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "slots-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "slots-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "events-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "events-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "dependency-closure" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "dependency-closure" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "fallback-policy" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "fallback-policy" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "rendered-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "rendered-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "interaction-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "interaction-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "accessibility-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "accessibility-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "theme-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "theme-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "determinism-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "determinism-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "performance-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "performance-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "certification-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "certification-evidence" } } } }
+        ] }
+      ]
+    },
+    "validationProfilePolicy": {
+      "type": "object",
+      "allOf": [
+        {
+          "if": { "properties": { "profile": { "const": "draft" } }, "required": ["profile"] },
+          "then": {
+            "properties": {
+              "rationale": { "const": "Draft reports target and fallback gaps without claiming a runnable artifact." },
+              "axes": {
+                "properties": {
+                  "scope": { "const": "structural" },
+                  "enforcement": { "const": "advisory" },
+                  "fallback": { "const": "visible" }
+                }
+              },
+              "evidence": { "properties": { "required": { "const": [] } } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "profile": { "const": "build" } }, "required": ["profile"] },
+          "then": {
+            "properties": {
+              "rationale": { "const": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve." },
+              "axes": {
+                "properties": {
+                  "scope": { "const": "generated-artifact" },
+                  "enforcement": { "const": "blocking" },
+                  "fallback": { "const": "forbidden" }
+                }
+              },
+              "evidence": { "properties": { "required": { "const": [] } } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "profile": { "const": "release" } }, "required": ["profile"] },
+          "then": {
+            "properties": {
+              "rationale": { "const": "Release adds six hash-bound evidence classes to the build gate and records server-owned certification as not applicable for generated UI targets." },
+              "axes": {
+                "properties": {
+                  "scope": { "const": "release-evidence" },
+                  "enforcement": { "const": "blocking" },
+                  "fallback": { "const": "forbidden" }
+                }
+              },
+              "evidence": {
+                "properties": {
+                  "required": { "const": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"] }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "buildChecksCompleted": {
+      "type": "object",
+      "properties": {
+        "checks": {
+          "allOf": [
+            { "contains": { "const": "schema-structure" } },
+            { "contains": { "const": "component-registry" } },
+            { "contains": { "const": "target-readiness" } },
+            { "contains": { "const": "normalization-fidelity" } },
+            { "contains": { "const": "binding-contract" } },
+            { "contains": { "const": "props-contract" } },
+            { "contains": { "const": "slots-contract" } },
+            { "contains": { "const": "events-contract" } },
+            { "contains": { "const": "dependency-closure" } },
+            { "contains": { "const": "fallback-policy" } }
+          ]
+        }
+      }
+    },
+    "releaseSuccessReceipt": {
+      "type": "object",
+      "properties": {
+        "checks": {
+          "allOf": [
+            { "contains": { "const": "rendered-evidence" } },
+            { "contains": { "const": "interaction-evidence" } },
+            { "contains": { "const": "accessibility-evidence" } },
+            { "contains": { "const": "theme-evidence" } },
+            { "contains": { "const": "determinism-evidence" } },
+            { "contains": { "const": "performance-evidence" } },
+            { "contains": { "const": "certification-evidence" } }
+          ]
+        },
+        "evidence": {
+          "properties": {
+            "provided": { "const": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"] },
+            "missing": { "const": [] },
+            "mismatched": { "const": [] },
+            "accepted": {
+              "minItems": 6,
+              "maxItems": 6,
+              "prefixItems": [
+                { "properties": { "class": { "const": "rendered" } } },
+                { "properties": { "class": { "const": "interaction" } } },
+                { "properties": { "class": { "const": "accessibility" } } },
+                { "properties": { "class": { "const": "theme" } } },
+                { "properties": { "class": { "const": "determinism" } } },
+                { "properties": { "class": { "const": "performance" } } }
+              ]
+            },
+            "notApplicable": {
+              "contains": { "properties": { "class": { "const": "certification" } } }
+            }
+          }
+        }
+      }
+    },
+    "evidenceClass": {
+      "type": "string",
+      "enum": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance", "certification"]
+    },
+    "evidenceClassList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/evidenceClass" }
+    },
+    "acceptedReleaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "status", "artifactContentHash", "reference"],
+      "properties": {
+        "class": {
+          "type": "string",
+          "enum": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"]
+        },
+        "status": { "const": "passed" },
+        "artifactContentHash": { "$ref": "#/$defs/contentHash" },
+        "reference": { "type": "string", "minLength": 1 }
       }
     },
     "generatedArtifactActionParameter": {
