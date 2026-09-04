@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE — program decision `#1652`; Sprint-182 lock decision `#1653`
 
-**Updated:** 2026-09-03
+**Updated:** 2026-09-04
 
 **Scope:** The next three independently reviewed increments
 
@@ -23,15 +23,16 @@ Figma, Penpot, or a custom canvas; surface selection follows runnable product fo
 
 | Claim area | Current evidence | Near-horizon obligation |
 |---|---|---|
-| Component catalog | 109 unique IDs; embedded count says 101 | One generated census with per-surface evidence |
-| React | 12 catalog names exactly match the root export surface; taxonomy is split | A real, installable React package |
-| Vue | Emitter fixtures exist; runtime implementations do not | A real, installable Vue package |
-| Generation | Both targets import nonexistent `@oods/components` | Target-aware imports and clean-consumer builds |
+| Component catalog | 109 canonical component claims; the proposed reconciliation partitions them into 98 runtime rows and 11 non-runtime rows, all pending Derek approval | Keep 109 as the controlling obligation denominator until Derek approves the proposal or a named amendment |
+| React | Exactly 14 surface cells are `foundation-v1-candidate`; none is `foundation-v1` | Separate independent review decides whether the 14 candidates may be promoted |
+| Vue | Exactly 14 surface cells are `foundation-v1-candidate`; none is `foundation-v1` | Separate independent review decides whether the 14 candidates may be promoted |
+| Generation | React imports `@oods/components-react`, Vue imports `@oods/components-vue`, and both import `@oods/component-styles/css`; unavailable component/target pairs fail with typed `OODS-N015` | Preserve the real target-aware imports and typed failure through the runnable-generation increment |
 | Saved designs | 16 schemas, all using `Stack` | Make their common primitive nucleus executable |
 | Visualization | 13 admitted types; five complete the folded certified path | Close public render/certification gaps before widening claims |
 
-Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
-is not a runtime package, and an admitted chart name is not rendered output.
+Counts describe the named surface only. The 98/11 partition is a proposal, not an approved denominator
+change; `foundation-v1-candidate` is review input, not `foundation-v1`. HTML evidence is not React or
+Vue evidence, and an admitted chart name is not rendered output.
 
 ## Increment 1 — Sprint 182: Product Reality Foundation
 
@@ -55,6 +56,12 @@ It delivers:
 
 The exact 14-component boundary is finite even if the implementation spans more than one build
 session. Nothing is silently removed to make the sprint appear complete.
+
+Current Sprint-182 evidence supports exactly 14 React and 14 Vue `foundation-v1-candidate` cells for
+that nucleus. Candidate status remains pending a separate independent review; it does not pre-approve
+either framework surface as `foundation-v1`. The 109-row reconciliation likewise remains a proposal:
+98 runtime rows and 11 non-runtime rows, with Derek approval required before the controlling
+denominator changes.
 
 ## Increment 2 — Runnable Generation
 

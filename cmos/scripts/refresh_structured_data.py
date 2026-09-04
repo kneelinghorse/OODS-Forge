@@ -240,8 +240,16 @@ def load_component_intake() -> List[Dict[str, Any]]:
     return rows
 
 
-def load_component_capabilities(canonical_ids: Set[str]) -> Dict[str, Dict[str, Any]]:
-    payload = load_json(COMPONENT_CAPABILITY_PATH)
+def load_component_capabilities(
+    canonical_ids: Set[str],
+    component_capabilities_path: Optional[Path] = None,
+) -> Dict[str, Dict[str, Any]]:
+    capabilities_path = (
+        Path(component_capabilities_path)
+        if component_capabilities_path is not None
+        else COMPONENT_CAPABILITY_PATH
+    )
+    payload = load_json(capabilities_path)
     rows = payload.get("rows")
     if not isinstance(rows, list):
         raise ValueError("component capability rows must be an array")
@@ -817,10 +825,17 @@ def write_json(path: Path, payload: Dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def generate_structured_payloads(*, generated_at: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def generate_structured_payloads(
+    *,
+    generated_at: Optional[str] = None,
+    component_capabilities_path: Optional[Path] = None,
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     intake_rows = load_component_intake()
     canonical_ids = {str(row["id"]) for row in intake_rows}
-    capabilities_by_id = load_component_capabilities(canonical_ids)
+    capabilities_by_id = load_component_capabilities(
+        canonical_ids,
+        component_capabilities_path=component_capabilities_path,
+    )
     traits, components_index, domain_traits, trait_overlays = collect_traits(canonical_ids)
     objects, trait_object_map, domain_objects = collect_objects()
 
@@ -1474,6 +1489,7 @@ def write_versioned_artifacts(
 def refresh_structured_data(
     *,
     output_dir: Path = OUTPUT_DIR,
+    component_capabilities_path: Optional[Path] = None,
     baseline_components_path: Optional[Path] = None,
     baseline_tokens_path: Optional[Path] = None,
     generated_at: Optional[str] = None,
@@ -1486,7 +1502,10 @@ def refresh_structured_data(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    components_payload, tokens_payload = generate_structured_payloads(generated_at=generated_at)
+    components_payload, tokens_payload = generate_structured_payloads(
+        generated_at=generated_at,
+        component_capabilities_path=component_capabilities_path,
+    )
 
     components_path = output_dir / "oods-components.json"
     tokens_path = output_dir / "oods-tokens.json"
@@ -1609,6 +1628,12 @@ def parse_args() -> argparse.Namespace:
         help="Directory for canonical outputs (defaults to cmos/planning).",
     )
     parser.add_argument(
+        "--component-capabilities",
+        type=Path,
+        default=COMPONENT_CAPABILITY_PATH,
+        help="Component capability JSON path (defaults to the Sprint-182 M01 baseline).",
+    )
+    parser.add_argument(
         "--baseline-components",
         type=Path,
         help="Baseline components JSON for delta generation (defaults to planning output, then cmos/research if present).",
@@ -1653,6 +1678,7 @@ def main() -> None:
     args = parse_args()
     result = refresh_structured_data(
         output_dir=args.output_dir,
+        component_capabilities_path=args.component_capabilities,
         baseline_components_path=args.baseline_components,
         baseline_tokens_path=args.baseline_tokens,
         generated_at=args.generated_at,

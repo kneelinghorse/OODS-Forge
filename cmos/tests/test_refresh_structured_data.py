@@ -12,6 +12,7 @@ if str(CMOS_ROOT) not in sys.path:
     sys.path.insert(0, str(CMOS_ROOT))
 
 from scripts.refresh_structured_data import (  # noqa: E402
+    COMPONENT_CAPABILITY_PATH,
     DEFAULT_BASELINE_COMPONENTS_PATH,
     DEFAULT_BASELINE_TOKENS_PATH,
     OUTPUT_DIR,
@@ -23,23 +24,63 @@ from scripts.refresh_structured_data import (  # noqa: E402
     generate_structured_payloads,
     load_component_capabilities,
     load_component_intake,
+    parse_args,
     refresh_structured_data,
 )
 
 EXPECTED_GENERATED_AT = "2026-09-04T00:00:00Z"
+CLOSEOUT_COMPONENT_CAPABILITY_PATH = (
+    CMOS_ROOT.parent
+    / "packages"
+    / "component-contracts"
+    / "registry"
+    / "component-capability-closeout.s182.v1.json"
+)
 
 
 class RefreshStructuredDataTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.components_payload, cls.tokens_payload = generate_structured_payloads(
-            generated_at=EXPECTED_GENERATED_AT
+            generated_at=EXPECTED_GENERATED_AT,
+            component_capabilities_path=CLOSEOUT_COMPONENT_CAPABILITY_PATH,
         )
 
     def test_defaults_target_planning_directory(self) -> None:
         self.assertEqual(OUTPUT_DIR, CMOS_ROOT / "planning")
+        self.assertEqual(
+            COMPONENT_CAPABILITY_PATH,
+            CMOS_ROOT.parent
+            / "packages"
+            / "component-contracts"
+            / "registry"
+            / "component-capability-baseline.v1.json",
+        )
         self.assertEqual(DEFAULT_BASELINE_COMPONENTS_PATH, OUTPUT_DIR / "oods-components.json")
         self.assertEqual(DEFAULT_BASELINE_TOKENS_PATH, OUTPUT_DIR / "oods-tokens.json")
+
+    def test_component_capabilities_cli_defaults_and_accepts_override(self) -> None:
+        with patch.object(sys, "argv", ["refresh_structured_data.py"]):
+            self.assertEqual(parse_args().component_capabilities, COMPONENT_CAPABILITY_PATH)
+
+        override = Path("reviewed-component-capabilities.json")
+        with patch.object(
+            sys,
+            "argv",
+            ["refresh_structured_data.py", "--component-capabilities", str(override)],
+        ):
+            self.assertEqual(parse_args().component_capabilities, override)
+
+    def test_generate_payloads_read_explicit_component_capabilities_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            capabilities_path = Path(temp_dir) / "component-capabilities.json"
+            capabilities_path.write_text(json.dumps({"rows": []}), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "must exactly match canonical intake membership"):
+                generate_structured_payloads(
+                    generated_at=EXPECTED_GENERATED_AT,
+                    component_capabilities_path=capabilities_path,
+                )
 
     def test_component_intake_requires_exact_sorted_109_membership(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -155,7 +196,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
     def test_etags_are_stable(self) -> None:
         self.assertEqual(
             compute_etag(self.components_payload),
-            "7c22be7017072879d58894dd4182ae49445480d878ec84163aea09f818822414",
+            "81357fdf12d4ce47ea63b66ceab2d582427a9cc300f3e96fd0219af21bf1e774",
         )
         self.assertEqual(
             compute_etag(self.tokens_payload),

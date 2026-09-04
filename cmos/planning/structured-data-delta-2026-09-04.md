@@ -1,9 +1,9 @@
 # Structured Data Delta
-- Baseline: 2026-03-06T02:51:49Z
+- Baseline: 2026-09-04T00:00:00Z
 - Current:  2026-09-04T00:00:00Z
 
 ## Catalogue Stats
-- Components: 101 -> 109 (+8)
+- Components: 109 -> 109 (+0)
 - Traits: 41 -> 41 (+0)
 - Objects: 12 -> 12 (+0)
 - Domains: 1 -> 1 (+0)
