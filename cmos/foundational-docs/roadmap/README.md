@@ -30,6 +30,6 @@ when Derek changes product direction or a program exit gate is explicitly amende
 
 ## Active artifact
 
-`product-reality-program.md` is the durable direction and `near.md` is the active sequencing surface,
-both refreshed **2026-09-03**. The earlier Shopify-serving direction, 2026-05 strategy documents, and
-prior sprint memos remain point-in-time history under decision #679.
+`product-reality-program.md` is the durable direction, authorized **2026-09-03**, and `near.md` is the
+active sequencing surface, refreshed **2026-09-04**. The earlier Shopify-serving direction, 2026-05
+strategy documents, and prior sprint memos remain point-in-time history under decision #679.

@@ -125,9 +125,9 @@ The following are parked until their named dependency is met:
 - `schema.ingest` — historically shelved by `#1649`; decision `#1652` retains the shelving result
   while superseding its incorrect surface claim, so it has no place on the active critical path.
 
-## Planning handoff
+## Review handoff
 
-The next fresh session enters a clean isolated Sprint-182 worktree from the locked planning commit,
-reads `agents.md`, runs `cmos_review()`, reads the program and the locked Sprint-182 memo, and begins
-`s182-m01`. It does not re-plan the sprint from the old adoption memo or reuse the dirty planning
-checkout.
+The next fresh session reads the submitted Sprint-182 review head and final closeout evidence, then
+executes the separate independent review required by §9 of the locked Sprint-182 memo. It does not
+promote any `foundation-v1-candidate` cell or begin the next program increment before that review is
+recorded.

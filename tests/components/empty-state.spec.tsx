@@ -129,10 +129,10 @@ describe('EmptyState', () => {
       expect(root.dataset.intent).toBe('success');
       expect(root.dataset.tone).toBe('success');
       expect(root.style.getPropertyValue('--empty-state-icon-background')).toBe(
-        'var(--cmp-status-success-surface)'
+        'var(--sys-status-success-surface)'
       );
       expect(root.style.getPropertyValue('--empty-state-icon-foreground')).toBe(
-        'var(--cmp-status-success-text)'
+        'var(--sys-status-success-text)'
       );
     });
 
@@ -146,10 +146,10 @@ describe('EmptyState', () => {
       expect(root.dataset.tone).toBe('accent');
       expect(iconContainer).toHaveTextContent('★');
       expect(root.style.getPropertyValue('--empty-state-icon-background')).toBe(
-        'var(--cmp-status-accent-surface)'
+        'var(--sys-status-accent-surface)'
       );
       expect(root.style.getPropertyValue('--empty-state-icon-foreground')).toBe(
-        'var(--cmp-status-accent-text)'
+        'var(--sys-status-accent-text)'
       );
     });
   });

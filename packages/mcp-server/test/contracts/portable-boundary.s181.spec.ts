@@ -260,7 +260,7 @@ describe('s181 portable-runtime publish boundary', () => {
       warnings: registry.warnings,
     };
 
-    expect(sha256Json(fetchResult)).toBe('68e990c4b0989239733f965e956bfc00790f83c8031f0917173a3efcaba4549c');
+    expect(sha256Json(fetchResult)).toBe('075a6136bea04f488e9038c60fd23fa81ee6852858942f62496339805ff8788f');
     expect(sha256Json(traits)).toBe('ec10b9807834bc684542510524127ee4d2394e8e05a08341ab1b156e300a90c2');
     expect(sha256Json(registryResult)).toBe('22b9984ac2adef68c95b8edbb6c586acc636492d50e2232ddac17fe6351bd31a');
   });

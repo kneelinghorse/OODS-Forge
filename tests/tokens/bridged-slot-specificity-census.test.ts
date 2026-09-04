@@ -15,8 +15,10 @@
  * **(0,2,0)-or-higher belongs exclusively to the generated bridge**.
  *
  * ── THE SOURCES, AND WHY THEY ARE THESE THREE ──
- *   1. every PRESENT tracked `.css` file (`git ls-files '*.css'`) — index-only, so a shallow CI
- *      checkout cannot silently shrink the universe the way a history-reading test would;
+ *   1. every PRESENT tracked authored `.css` file (`git ls-files '*.css'`) — index-only, so a
+ *      shallow CI checkout cannot silently shrink the universe the way a history-reading test
+ *      would; immutable packed-consumer build evidence is asserted present but excluded because
+ *      it is a derived copy of the generated bridge, not a shipped source/build input;
  *   2. `packages/tokens/dist/css/tokens.css` — the generated artifact, which is gitignored
  *      and therefore invisible to (1), yet is the one writer that legitimately declares at
  *      (0,2,0);
@@ -53,6 +55,10 @@ import { SEMANTIC_BRIDGE } from '../../packages/tokens/scripts/brand-bridge.mjs'
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const DIST_CSS = 'packages/tokens/dist/css/tokens.css';
 const DOCUMENT_TS = 'packages/mcp-server/src/render/document.ts';
+const IMMUTABLE_DERIVED_EVIDENCE_CSS: ReadonlySet<string> = new Set([
+  'artifacts/product-reality/sprint-182/m04/generated-consumers/consumers/react/build/client/assets/index-DhRF-SdH.css',
+  'artifacts/product-reality/sprint-182/m04/generated-consumers/consumers/vue/build/client/assets/index-DhRF-SdH.css',
+]);
 
 const BRIDGED_SLOTS: ReadonlySet<string> = new Set(
   (SEMANTIC_BRIDGE as readonly { slot: string }[]).map((entry) => entry.slot),
@@ -233,8 +239,13 @@ function repoSources(): Array<readonly [string, string]> {
     // A guard must run in the same deletion-bearing worktree that CI will commit. `git
     // ls-files` still lists an index entry deleted from the worktree until that commit.
     .filter((file) => fs.existsSync(path.join(REPO_ROOT, file)));
+  expect(
+    tracked.filter((file) => IMMUTABLE_DERIVED_EVIDENCE_CSS.has(file)).sort(),
+    'the exact committed M04 build-evidence CSS boundary changed',
+  ).toEqual([...IMMUTABLE_DERIVED_EVIDENCE_CSS].sort());
+  const authoredTracked = tracked.filter((file) => !IMMUTABLE_DERIVED_EVIDENCE_CSS.has(file));
   return [
-    ...tracked.map((file) => [file, fs.readFileSync(path.join(REPO_ROOT, file), 'utf8')] as const),
+    ...authoredTracked.map((file) => [file, fs.readFileSync(path.join(REPO_ROOT, file), 'utf8')] as const),
     [DIST_CSS, fs.readFileSync(path.join(REPO_ROOT, DIST_CSS), 'utf8')] as const,
     [`${DOCUMENT_TS} (DARK_THEME_OVERRIDES)`, darkThemeOverridesCss()] as const,
   ];

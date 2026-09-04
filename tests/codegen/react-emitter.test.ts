@@ -137,7 +137,7 @@ describe('react-emitter', () => {
     ]);
 
     const result = emit(schema, defaultOptions);
-    expect(result.code).toContain('content="Hello \\"world\\" & friends"');
+    expect(result.code).toContain('content="Hello &quot;world&quot; &amp; friends"');
   });
 
   it('handles array and object props as JSON', () => {

@@ -48,6 +48,18 @@ const ALL_OUTPUTS = [
 const GENERATED_ARTIFACTS = new Set(
   JSON_OUTPUTS.filter((repoPath) => repoPath.startsWith(M05_ROOT)),
 );
+const CLOSEOUT_CI_HYGIENE_PATHS = new Set([
+  "package.json",
+  "tests/components/__snapshots__/empty-state.spec.tsx.snap",
+  "tests/components/__snapshots__/subscription.render-object.test.tsx.snap",
+  "tests/components/__snapshots__/user.render-object.test.tsx.snap",
+  "tests/components/empty-state.spec.tsx",
+  "tests/components/progress.test.tsx",
+  "tests/components/stepper.test.tsx",
+  "tests/contexts/__snapshots__/context-templates.test.tsx.snap",
+  "tests/tokens/bridged-slot-specificity-census.test.ts",
+  "vitest.config.ts",
+]);
 
 const FROZEN_NUCLEUS = [
   "Badge",
@@ -1016,6 +1028,10 @@ function classifyScope(repoPath) {
         value === "agents.md",
     ],
     [
+      "closeout-ci-hygiene",
+      (value) => CLOSEOUT_CI_HYGIENE_PATHS.has(value),
+    ],
+    [
       "package-graph-and-repository-hygiene",
       (value) =>
         value === "pnpm-lock.yaml" ||
@@ -1122,6 +1138,7 @@ function buildChangedPathInventory(closeout) {
       "M02 React and M03 Vue package foundations plus compatibility carriers",
       "M04 target-aware code generation, callers, tests, package graph, and evidence automation",
       "M05 documentation, refresh integration, closeout automation, and reports",
+      "M05 final-gate expectation refreshes and isolated CI runner hygiene",
     ],
     rows,
   };
