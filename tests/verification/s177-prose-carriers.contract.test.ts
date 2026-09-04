@@ -65,7 +65,7 @@ describe("Sprint 177 prose truth carriers", () => {
     const normalizedIndex = roadmapIndex.replace(/\s+/g, " ");
 
     expect(near).toContain(
-      "**Status:** ACTIVE — program decision `#1652`; Sprint-182 lock decision `#1653`",
+      "**Status:** ACTIVE — program decision `#1652`; Sprint-183 lock decision `#1664`",
     );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
@@ -74,19 +74,25 @@ describe("Sprint 177 prose truth carriers", () => {
       "The prior Shopify-serving roadmap and the schema-ingest version of Sprint 182 are retained in Git and CMOS as history. They no longer control this queue.",
     );
     expect(normalizedNear).toContain(
-      "Current Sprint-182 evidence supports exactly 14 React and 14 Vue `foundation-v1-candidate` cells",
+      "Sprint 182 is complete, 7/7 missions, nothing descoped.",
     );
     expect(normalizedNear).toContain(
-      "Candidate status remains pending a separate independent review; it does not pre-approve either framework surface as `foundation-v1`.",
+      "Derek promoted `foundation-v1` the same day (decision `#1663`): all 28 cells",
     );
     expect(normalizedNear).toContain(
-      "Sprint-181 follow-ups `#1315`–`#1322` remain Forge-owned maintenance debt under decision `#1651`",
+      "Sprint-181 follow-ups remain Forge-owned maintenance debt under decision `#1651`",
     );
     expect(normalizedNear).toContain(
-      "executes the separate independent review required by §9 of the locked Sprint-182 memo",
+      "Sprint 183 resolves consumer-visible defects `#1316` and `#1317`",
     );
     expect(normalizedNear).toContain(
-      "It does not promote any `foundation-v1-candidate` cell or begin the next program increment before that review is recorded.",
+      "Items `#1315` and `#1318`–`#1322` remain explicitly carried and unabsorbed",
+    );
+    expect(normalizedNear).toContain(
+      "Sprint 182's independent review is resolved, so this increment is numbered.",
+    );
+    expect(normalizedNear).toContain(
+      "Number this sprint only after Sprint 183 receives independent review.",
     );
 
     expect(productProgram).toContain(

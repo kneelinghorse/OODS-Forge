@@ -774,7 +774,7 @@ export function validateDtcgIntake(input: unknown): DtcgIntakeReceipt {
       persisted: false,
       accepted_population: denominator(acceptedMembership),
       disclosure:
-        "Accepted members passed dry-run validation only. No token build artifact was emitted or persisted; persisted artifact labeling belongs to the deferred brand.intake tool rung.",
+        "Accepted members passed dry-run validation only. No token build artifact was emitted or persisted; persisted artifact labeling is brand.apply's; brand.intake is preview-only by contract.",
     },
   };
 }

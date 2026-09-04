@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "cmos-mission-contract-export",
+  "capturedAt": "2026-09-04T22:04:32.846Z",
+  "source": {
+    "tool": "cmos_mission",
+    "action": "show",
+    "projectAddress": "cmos://derek/forge",
+    "projectId": "forge"
+  },
+  "sprintId": "sprint-183",
+  "missionCount": 6,
+  "successCriterionCount": 38,
+  "missions": [
+    {
+      "id": "s183-m01",
+      "name": "Versioned file-set artifact and exact dependency manifest",
+      "statusAtCapture": "Completed",
+      "sprintId": "sprint-183",
+      "projectId": "forge",
+      "successCriteria": [
+        "The envelope carries schemaVersion, files[], dependency manifest, and content hash, and the JSON Schema for code.generate output is regenerated to match",
+        "Every dependency entry names an exact version and its kind; a mutation that emits a versionless or workspace-aliased dependency fails a gate",
+        "Re-emitting identical input twice produces byte-identical artifact and per-file hashes; a mutation introducing nondeterministic ordering or a timestamp makes the determinism gate red",
+        "Existing consumers are not silently broken: the compatibility disposition is implemented and stated, and pipeline's output path is updated rather than left flattening a multi-file artifact to one string",
+        "All 12 public option cells (react/vue x typescript on/off x inline/tailwind/tokens) emit a well-formed artifact",
+        "No emitted import resolves to a fictional package, workspace alias, or repository source path"
+      ]
+    },
+    {
+      "id": "s183-m02",
+      "name": "Typed action protocol — end the blank handler stub",
+      "statusAtCapture": "Completed",
+      "sprintId": "sprint-183",
+      "projectId": "forge",
+      "successCriteria": [
+        "No generated output in any of the 12 option cells contains an empty or TODO-only handler body",
+        "Forge-owned bindings produce working behavior provable by interaction in a real consumer, not merely by source inspection",
+        "Every domain action appears in the artifact's typed action contract with parameter types, and a consumer that fails to supply one gets a typed failure rather than a silent no-op",
+        "React and Vue express the same action contract idiomatically without one framework's gate being lowered",
+        "A mutation restoring an empty handler body makes a gate red, and a mutation removing an action from the typed contract while leaving its binding also makes a gate red",
+        "The behavior split is documented so a reviewer can tell why a given binding was generated rather than declared"
+      ]
+    },
+    {
+      "id": "s183-m03",
+      "name": "Draft, build, and release validation profiles",
+      "statusAtCapture": "Completed",
+      "sprintId": "sprint-183",
+      "projectId": "forge",
+      "successCriteria": [
+        "The same input under draft, build, and release produces materially different enforcement, proven by an input that passes draft and is blocked by build",
+        "An unresolved import or silent target fallback cannot pass build or release under any option combination",
+        "Release cannot pass while any required evidence class is missing, and the response names the missing class",
+        "Every response states the profile that ran and what it did not check; a response that omits the disclosure fails a gate",
+        "A mutation weakening one profile's enforcement to another's is caught by a discriminating test rather than passing silently",
+        "The three profiles are described in the artifact contract so a consumer can tell what a given artifact was actually certified for"
+      ]
+    },
+    {
+      "id": "s183-m04",
+      "name": "Generalized saved-schema compiler",
+      "statusAtCapture": "Completed",
+      "sprintId": "sprint-183",
+      "projectId": "forge",
+      "successCriteria": [
+        "The genuine compose-7d860337 record, created 2026-03-05, compiles to a complete artifact in both React and Vue",
+        "The exit-gate schema is demonstrably pre-existing: its recorded schemaRef and creation date predate this sprint, and the s182-authored same-named fixture is not the subject",
+        "All 16 saved schemas are vendored as tracked evidence and reproducible from the repository by a reviewer with no access to the gitignored store",
+        "Each of the 16 has a recorded disposition; the roughly 15 typed-gap outcomes are reported as results and are never averaged with compiled outcomes into a single number",
+        "A schema node outside the foundation-v1 nucleus produces a typed gap rather than a fallback, placeholder, or silent omission",
+        "A mutation that makes an out-of-nucleus node emit a fallback instead of a typed gap turns a gate red",
+        "Compilation is deterministic: the same saved schema re-compiled produces byte-identical artifact hashes"
+      ]
+    },
+    {
+      "id": "s183-m05",
+      "name": "Greenfield consumer proof — the exit gate",
+      "statusAtCapture": "Completed",
+      "sprintId": "sprint-183",
+      "projectId": "forge",
+      "successCriteria": [
+        "The real compose-7d860337 saved schema installs, builds, renders, hydrates, and passes interactions in both a clean React consumer and a clean Vue consumer",
+        "The Tabs interaction is proven to work as generated Forge-owned behavior, and the onEdit/onDelete domain actions are proven to reach consumer-supplied implementations",
+        "The consumers resolve every dependency from the artifact's declared manifest alone; a missing or versionless manifest entry makes the install fail rather than silently resolving from the workspace",
+        "Interaction assertions are shown to be discriminating: removing the generated Tabs behavior, or the injected domain action, makes them red",
+        "Isolation holds — no workspace symlink, repository source import, inherited node_modules, or user npm configuration participates",
+        "React and Vue meet the same gate; neither framework's bar is lowered to let the sprint close",
+        "Any check that could not run is named explicitly rather than omitted from the success statement"
+      ]
+    },
+    {
+      "id": "s183-m06",
+      "name": "Closeout, review handoff, and named hygiene",
+      "statusAtCapture": "In Progress",
+      "sprintId": "sprint-183",
+      "projectId": "forge",
+      "successCriteria": [
+        "Every Sprint-183 claim resolves to evidence that exists and was executed, provable by a mechanical audit of the cited paths",
+        "Every archived mutation patch applies cleanly and has been replayed from the artifact, not merely written down",
+        "The review approval mechanism is reusable and still prevents self-promotion, proven by a discrimination test in both directions",
+        "#1316 and #1317 are fixed and verified; the other six maintenance items are explicitly carried with named status rather than quietly dropped",
+        "The s182 R-02 carry is resolved or has a recorded decision explaining why it stands",
+        "Sprint 183 is left for a separate reviewer to decide genuine close; the build session records evidence and does not self-certify"
+      ]
+    }
+  ]
+}

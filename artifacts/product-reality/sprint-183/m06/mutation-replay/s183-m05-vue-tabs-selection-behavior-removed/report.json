@@ -1,0 +1,80 @@
+{
+  "id": "s183-m05-vue-tabs-selection-behavior-removed",
+  "sourceMission": "s183-m05",
+  "framework": "vue",
+  "kind": "tabs-selection-behavior-removed",
+  "status": "passed",
+  "baseline": {
+    "commit": "4b4c77f0ec06d632e11f910f6124859ac65c7106",
+    "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/source/src/GeneratedUI.vue",
+    "targetFile": "src/GeneratedUI.vue",
+    "sha256": "sha256:c3583b4c58f2ea38f63df0e69eaca217eadad40acc94274f6678cc39d4103c7e"
+  },
+  "patch": {
+    "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/tabs-selection-behavior-removed/mutation.patch",
+    "sha256": "sha256:2dbd14c85c0f118ad646b2d88d5c3b2aba7c3a8c9c08d8f4b749fdc488b30d51",
+    "committedAtBaseline": true,
+    "checkExitCode": 0,
+    "applyExitCode": 0
+  },
+  "mutatedSha256": "sha256:ca89728570968a2645e68e606b4c3ac7ed88f0e1a7cd36008726e6d360dbfc97",
+  "reverse": {
+    "checkExitCode": 0,
+    "applyExitCode": 0,
+    "restoredSha256": "sha256:c3583b4c58f2ea38f63df0e69eaca217eadad40acc94274f6678cc39d4103c7e",
+    "byteIdentical": true
+  },
+  "descriptor": {
+    "schemaVersion": "1.0.0",
+    "mission": "s183-m05",
+    "framework": "vue",
+    "kind": "tabs-selection-behavior-removed",
+    "operation": "replace-exactly-once",
+    "targetFile": "src/GeneratedUI.vue",
+    "needle": "'id':'detail-tab-panel-5','label':'Tab 2','panel':''",
+    "replacement": "'id':'detail-tab-panel-5','label':'Tab 2','panel':'','disabled':true",
+    "expectedGate": "interaction-evidence",
+    "beforeSha256": "sha256:c3583b4c58f2ea38f63df0e69eaca217eadad40acc94274f6678cc39d4103c7e",
+    "afterSha256": "sha256:ca89728570968a2645e68e606b4c3ac7ed88f0e1a7cd36008726e6d360dbfc97",
+    "patchSha256": "sha256:2dbd14c85c0f118ad646b2d88d5c3b2aba7c3a8c9c08d8f4b749fdc488b30d51"
+  },
+  "expectedGate": "interaction-evidence",
+  "redControl": {
+    "executed": true,
+    "verifier": "fresh isolated Sprint-183 M05 packed-consumer harness",
+    "patchByteIdenticalToStoredArtifact": true,
+    "status": "detected",
+    "expected": {
+      "gate": "interaction-evidence",
+      "status": "failed"
+    },
+    "observed": {
+      "gate": "interaction-evidence",
+      "status": "failed"
+    },
+    "reason": "[interaction-evidence] vue Tabs did not select Tab 2: {\"initialSelectedTab\":\"detail-tab-panel-3\",\"selectedTab\":\"detail-tab-panel-3\",\"selectedPanel\":null,\"selectedTabPanelDomId\":\"oods-v-0-panel-detail-tab-panel-3\",\"initialVisiblePanelContentId\":\"slot-tab-0-4\",\"initialFirstTabSelected\":true,\"initialFirstPanelHidden\":false,\"firstTabSelectedAfter\":true,\"firstPanelHiddenAfter\":false,\"secondTabSelectedAfter\":false,\"secondPanelHiddenAfter\":true,\"domainActions\":{\"handleEdit\":1,\"handleDelete\":1}}.",
+    "browser": {
+      "mount": "passed",
+      "hydration": "passed",
+      "hydrationInvariantEqual": true,
+      "runtimeErrors": [],
+      "interactions": {
+        "initialSelectedTab": "detail-tab-panel-3",
+        "selectedTab": "detail-tab-panel-3",
+        "selectedPanel": null,
+        "selectedTabPanelDomId": "oods-v-0-panel-detail-tab-panel-3",
+        "initialVisiblePanelContentId": "slot-tab-0-4",
+        "initialFirstTabSelected": true,
+        "initialFirstPanelHidden": false,
+        "firstTabSelectedAfter": true,
+        "firstPanelHiddenAfter": false,
+        "secondTabSelectedAfter": false,
+        "secondPanelHiddenAfter": true,
+        "domainActions": {
+          "handleEdit": 1,
+          "handleDelete": 1
+        }
+      }
+    }
+  }
+}

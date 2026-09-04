@@ -1,0 +1,412 @@
+$ node <repository-root>/node_modules/vitest/vitest.mjs run test/styles.spec.ts --config vitest.config.ts -t s182-m01b binds the measured Brand B light action foreground to pure white
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-baseline>/packages/component-styles
+
+ ❯ test/styles.spec.ts (6 tests | 1 failed | 5 skipped) 4ms
+   ↓ Sprint 182 shared component style contract > covers the exact 14-component nucleus with token-driven CSS
+   ↓ Sprint 182 shared component style contract > binds the six declared brand/theme cells to real token sources
+   ↓ Sprint 182 shared component style contract > s182-m01a keeps shared high-contrast controls on matching system colors
+   × Sprint 182 shared component style contract > s182-m01b binds the measured Brand B light action foreground to pure white 4ms
+     → expected '@import "@oods/tokens/css";\n\n:where…' to match /\[data-brand='B'\]\[data-theme='light…/
+   ↓ Sprint 182 shared component style contract > encodes the locked visual state vocabulary without consumer utility scanning
+   ↓ Sprint 182 shared component style contract > styles field controls without treating framework wrappers as native controls
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  16:54:44
+   Duration  326ms (transform 26ms, setup 0ms, collect 23ms, tests 4ms, environment 0ms, prepare 62ms)
+
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/styles.spec.ts > Sprint 182 shared component style contract > s182-m01b binds the measured Brand B light action foreground to pure white
+AssertionError: expected '@import "@oods/tokens/css";\n\n:where…' to match /\[data-brand='B'\]\[data-theme='light…/
+
+- Expected: 
+/\[data-brand='B'\]\[data-theme='light'\][\s\S]*?\[data-oods-component='Button'\][\s\S]*?\[data-intent='primary'\]:not\(:disabled\) \{\s*color: var\(--ref-color-neutral-0, white\);/
+
++ Received: 
+"@import \"@oods/tokens/css\";
+
+:where(.oods-badge, [data-oods-component='Badge']) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-badge-gap, 0.25rem);
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 1px solid var(--cmp-badge-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--cmp-badge-background, var(--cmp-surface-subtle, transparent));
+  color: var(--cmp-badge-text, var(--cmp-text-body, currentColor));
+  font-size: var(--cmp-badge-font-size, 0.875rem);
+  font-weight: var(--cmp-badge-font-weight, 600);
+}
+
+/* Solid reverses the already contrast-checked status surface/text pair. */
+:where(.oods-badge, [data-oods-component='Badge'])[data-emphasis='solid'] {
+  border-color: var(--cmp-badge-text, var(--sys-status-neutral-text, CanvasText));
+  background: var(--cmp-badge-text, var(--sys-status-neutral-text, CanvasText));
+  color: var(--cmp-badge-background, var(--sys-status-neutral-surface, Canvas));
+}
+
+:where(.oods-banner, [data-oods-component='Banner'])[data-emphasis='solid'] {
+  border-color: var(--cmp-banner-text, var(--sys-status-neutral-text, CanvasText));
+  background: var(--cmp-banner-text, var(--sys-status-neutral-text, CanvasText));
+  color: var(--cmp-banner-background, var(--sys-status-neutral-surface, Canvas));
+}
+
+:where(.oods-banner, [data-oods-component='Banner']) {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  padding: var(--cmp-spacing-inset-default, 1rem);
+  border: 1px solid var(--cmp-banner-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-input-radius, 0.5rem);
+  background: var(--cmp-banner-background, var(--cmp-surface-subtle, transparent));
+  color: var(--cmp-banner-text, var(--cmp-text-body, currentColor));
+}
+
+:where(.oods-button, [data-oods-component='Button']) {
+  display: inline-flex;
+  min-block-size: var(--oods-button-min-block-size, 2.5rem);
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cmp-button-gap, 0.5rem);
+  padding: var(--oods-button-padding-block, var(--cmp-button-padding-block, 0.625rem))
+    var(--oods-button-padding-inline, var(--cmp-button-padding-inline, 1rem));
+  border: 1px solid var(--oods-button-border, var(--cmp-button-border, transparent));
+  border-radius: var(--cmp-button-radius, 0.5rem);
+  background: var(--oods-button-background, var(--cmp-button-background, var(--cmp-surface-action, CanvasText)));
+  color: var(--oods-button-text, var(--cmp-button-text, var(--cmp-text-on-action, Canvas)));
+  font: inherit;
+  font-size: var(--oods-button-font-size, var(--sys-text-size-md, 1rem));
+  font-weight: var(--cmp-button-font-weight, 600);
+  line-height: 1;
+  cursor: pointer;
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='neutral'] {
+  --oods-button-background: var(--sys-surface-inverse, CanvasText);
+  --oods-button-background-hover: var(--sys-surface-inverse, CanvasText);
+  --oods-button-border: var(--sys-surface-inverse, CanvasText);
+  --oods-button-text: var(--sys-text-inverse, Canvas);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='primary'] {
+  --oods-button-background: var(--sys-surface-interactive-primary-default, CanvasText);
+  --oods-button-background-hover: var(--sys-surface-interactive-primary-hover, CanvasText);
+  --oods-button-border: var(--sys-surface-interactive-primary-default, CanvasText);
+  --oods-button-text: var(--sys-text-on-interactive, Canvas);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='secondary'] {
+  --oods-button-background: var(--sys-surface-subtle, Canvas);
+  --oods-button-background-hover: var(--sys-surface-canvas, Canvas);
+  --oods-button-border: var(--sys-border-strong, CanvasText);
+  --oods-button-text: var(--sys-text-primary, CanvasText);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='success'] {
+  --oods-button-background: var(--sys-status-success-text, CanvasText);
+  --oods-button-background-hover: var(--sys-status-success-text, CanvasText);
+  --oods-button-border: var(--sys-status-success-text, CanvasText);
+  --oods-button-text: var(--sys-status-success-surface, Canvas);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='warning'] {
+  --oods-button-background: var(--sys-status-warning-text, CanvasText);
+  --oods-button-background-hover: var(--sys-status-warning-text, CanvasText);
+  --oods-button-border: var(--sys-status-warning-text, CanvasText);
+  --oods-button-text: var(--sys-status-warning-surface, Canvas);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='danger'] {
+  --oods-button-background: var(--sys-status-critical-text, CanvasText);
+  --oods-button-background-hover: var(--sys-status-critical-text, CanvasText);
+  --oods-button-border: var(--sys-status-critical-text, CanvasText);
+  --oods-button-text: var(--sys-status-critical-surface, Canvas);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-size='sm'] {
+  --oods-button-min-block-size: 2rem;
+  --oods-button-padding-block: 0.375rem;
+  --oods-button-padding-inline: 0.75rem;
+  --oods-button-font-size: var(--sys-text-size-sm, 0.875rem);
+  font-size: var(--oods-button-font-size);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-size='md'] {
+  --oods-button-min-block-size: 2.5rem;
+  --oods-button-padding-block: 0.625rem;
+  --oods-button-padding-inline: 1rem;
+  --oods-button-font-size: var(--sys-text-size-md, 1rem);
+  font-size: var(--oods-button-font-size);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-size='lg'] {
+  --oods-button-min-block-size: 3rem;
+  --oods-button-padding-block: 0.75rem;
+  --oods-button-padding-inline: 1.5rem;
+  --oods-button-font-size: var(--sys-text-size-lg, 1.25rem);
+  font-size: var(--oods-button-font-size);
+}
+
+:where(.oods-button, [data-oods-component='Button']):hover:not(:disabled) {
+  background: var(--oods-button-background-hover, var(--cmp-button-background-hover, var(--cmp-surface-action-hover, CanvasText)));
+}
+
+/*
+ * Chromium's sRGB clipping resolves the Brand B light action pair to 4.41:1,
+ * below the 4.5:1 text threshold. Preserve the semantic action surface and use
+ * the frozen pure-white reference foreground for this one measured cell.
+ */
+
+:where(.oods-button, [data-oods-component='Button']):disabled {
+  border-color: var(--cmp-button-border-disabled, var(--sys-border-subtle, GrayText));
+  background: var(--cmp-button-background-disabled, var(--sys-surface-disabled, Canvas));
+  color: var(--cmp-button-text-disabled, var(--sys-text-disabled, GrayText));
+  cursor: not-allowed;
+}
+
+:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action):focus-visible {
+  outline: var(--cmp-button-focus-width, 2px) solid var(--cmp-button-focus-outer, Highlight);
+  outline-offset: 2px;
+}
+
+:where(.oods-card, [data-oods-component='Card']) {
+  padding: var(--cmp-spacing-inset-default, 1rem);
+  border: 1px solid var(--cmp-border-default, currentColor);
+  border-radius: var(--cmp-input-radius, 0.5rem);
+  background: var(--cmp-surface-panel, Canvas);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where(.oods-card[data-elevated='true'], [data-oods-component='Card'][data-elevated='true']) {
+  box-shadow: var(--cmp-shadow-panel, 0 0.25rem 1rem rgb(0 0 0 / 12%));
+}
+
+.oods-field {
+  display: grid;
+  gap: var(--cmp-input-gap, 0.375rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+.oods-field-label { font-weight: 600; }
+
+.oods-field-control,
+:where(
+  input[data-oods-component='Input'],
+  input[data-oods-component='DatePicker'],
+  select[data-oods-component='Select'],
+  textarea[data-oods-component='Textarea']
+) {
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: var(--cmp-input-padding-block, 0.625rem) var(--cmp-input-padding-inline, 0.75rem);
+  border: 1px solid var(--cmp-input-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-input-radius, 0.375rem);
+  background: var(--cmp-input-background, Canvas);
+  color: var(--cmp-input-text, CanvasText);
+  font: inherit;
+}
+
+.oods-field-control::placeholder { color: var(--cmp-input-placeholder, GrayText); }
+.oods-field-control[aria-invalid='true'] { border-color: var(--cmp-input-message-border, Mark); }
+.oods-field-help { color: var(--cmp-input-support-text, var(--cmp-text-muted, GrayText)); }
+.oods-field-error { color: var(--cmp-input-message-text, MarkText); }
+
+.oods-banner-dismiss {
+  display: inline-flex;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  padding: 0;
+  border: 1px solid currentColor;
+  border-radius: var(--cmp-button-radius, 0.5rem);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+:where(.oods-checkbox, [data-oods-component='Checkbox']) {
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--cmp-checkbox-gap, 0.5rem);
+  color: var(--cmp-checkbox-text, var(--cmp-text-body, CanvasText));
+}
+
+:where(.oods-checkbox input, [data-oods-component='Checkbox']) {
+  accent-color: var(--cmp-checkbox-background-checked, Highlight);
+}
+
+:where(.oods-grid, [data-oods-component='Grid']) {
+  display: grid;
+  grid-template-columns: repeat(var(--oods-grid-columns, auto-fit), minmax(min(100%, var(--oods-grid-min-column, 16rem)), 1fr));
+  gap: var(--oods-layout-gap, var(--cmp-spacing-stack-default, 1rem));
+  align-items: var(--oods-layout-align, stretch);
+  justify-content: var(--oods-layout-justify, normal);
+}
+
+:where(.oods-stack, [data-oods-component='Stack']) {
+  display: flex;
+  flex-direction: var(--oods-stack-direction, column);
+  flex-wrap: var(--oods-stack-wrap, nowrap);
+  gap: var(--oods-layout-gap, var(--cmp-spacing-stack-default, 1rem));
+  align-items: var(--oods-layout-align, stretch);
+  justify-content: var(--oods-layout-justify, flex-start);
+}
+
+:where(.oods-table, [data-oods-component='Table']) {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: var(--cmp-surface-panel, Canvas);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where(.oods-table, [data-oods-component='Table'])[data-density='compact'] {
+  --oods-table-cell-padding-block: var(--sys-space-inset-compact, 0.5rem);
+  --oods-table-cell-padding-inline: var(--sys-space-inline-sm, 0.875rem);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+:where(.oods-table, [data-oods-component='Table'])[data-density='default'],
+:where(.oods-table, [data-oods-component='Table'])[data-density='comfortable'] {
+  --oods-table-cell-padding-block: 0.75rem;
+  --oods-table-cell-padding-inline: var(--sys-space-inset-default, 1.5rem);
+  font-size: var(--sys-text-size-md, 1rem);
+}
+
+:where(.oods-table, [data-oods-component='Table']) :is(th, td) {
+  padding: var(--oods-table-cell-padding-block, var(--cmp-spacing-inset-compact, 0.75rem))
+    var(--oods-table-cell-padding-inline, var(--cmp-spacing-inset-default, 1rem));
+  border-block-end: 1px solid var(--cmp-border-default, currentColor);
+  text-align: start;
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs']) {
+  --oods-tabs-font-size: var(--sys-text-size-md, 1rem);
+  --oods-tabs-padding-block: 0.625rem;
+  --oods-tabs-padding-inline: 0.75rem;
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs'])[data-size='sm'] {
+  --oods-tabs-font-size: var(--sys-text-size-sm, 0.875rem);
+  --oods-tabs-padding-block: 0.5rem;
+  --oods-tabs-padding-inline: 0.625rem;
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs'])[data-size='md'] {
+  --oods-tabs-font-size: var(--sys-text-size-md, 1rem);
+  --oods-tabs-padding-block: 0.625rem;
+  --oods-tabs-padding-inline: 0.75rem;
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs'])[data-size='lg'] {
+  --oods-tabs-font-size: var(--sys-text-size-lg, 1.25rem);
+  --oods-tabs-padding-block: 0.75rem;
+  --oods-tabs-padding-inline: 1rem;
+}
+
+.oods-tab-list { display: flex; gap: var(--cmp-spacing-inline-xs, 0.5rem); overflow-x: auto; border-block-end: 1px solid var(--cmp-border-default, currentColor); }
+.oods-tab { padding: var(--oods-tabs-padding-block) var(--oods-tabs-padding-inline); border: 0; border-block-end: 0.1875rem solid transparent; background: transparent; color: inherit; font: inherit; font-size: var(--oods-tabs-font-size); line-height: var(--sys-text-line-height-standard, 1.4); }
+:where(.oods-tabs-overflow-trigger, .tabs__overflow-trigger) { padding: var(--oods-tabs-padding-block) var(--oods-tabs-padding-inline); font: inherit; font-size: var(--oods-tabs-font-size); line-height: var(--sys-text-line-height-standard, 1.4); }
+.oods-tab[aria-selected='true'] { border-block-end-color: var(--cmp-text-accent, Highlight); font-weight: var(--ref-typography-weights-semibold, 600); }
+.oods-tab-panel { padding-block: var(--cmp-spacing-stack-default, 1rem); }
+
+:where(.oods-text, [data-oods-component='Text']) {
+  color: var(--cmp-text-body, CanvasText);
+  font: inherit;
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-size='sm'] {
+  font-size: var(--sys-text-size-sm, 0.875rem);
+  line-height: var(--sys-text-line-height-relaxed, 1.5);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-size='md'] {
+  font-size: var(--sys-text-size-md, 1rem);
+  line-height: var(--sys-text-line-height-relaxed, 1.5);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-size='lg'] {
+  font-size: var(--sys-text-size-lg, 1.25rem);
+  line-height: var(--sys-text-line-height-standard, 1.4);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-weight='regular'],
+:where(.oods-text, [data-oods-component='Text'])[data-weight='normal'] {
+  font-weight: var(--ref-typography-weights-regular, 400);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-weight='medium'] {
+  font-weight: var(--ref-typography-weights-medium, 500);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-weight='semibold'] {
+  font-weight: var(--ref-typography-weights-semibold, 600);
+}
+
+@media (max-width: 40rem) {
+  :where(.oods-banner, [data-oods-component='Banner']) { grid-template-columns: 1fr; }
+  :where(.oods-table, [data-oods-component='Table']):not([data-density]) { font-size: 0.875rem; }
+}
+
+@media (forced-colors: active) {
+  :where(.oods-badge, .oods-banner, .oods-button, .oods-card, .oods-field-control, .oods-tab, .oods-table) {
+    forced-color-adjust: none;
+  }
+}
+
+/*
+ * High-contrast brand tokens intentionally flatten status surfaces to Canvas.
+ * Keep their foreground on the matching CanvasText system colour rather than
+ * HighlightText (which is only guaranteed against a Highlight background).
+ */
+[data-theme='hc'] :where(
+  .oods-badge,
+  [data-oods-component='Badge'],
+  .oods-banner,
+  [data-oods-component='Banner']
+) {
+  border-color: Highlight;
+  background: Canvas;
+  color: CanvasText;
+}
+
+[data-theme='hc'] .oods-field-error {
+  color: CanvasText;
+}
+
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button']):not(:disabled) {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
+}
+
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button']):disabled {
+  border-color: GrayText;
+  background: Canvas;
+  color: GrayText;
+}
+"
+
+ ❯ test/styles.spec.ts:47:17
+     45| 
+     46|   it('s182-m01b binds the measured Brand B light action foreground to …
+     47|     expect(css).toMatch(
+       |                 ^
+     48|       /\[data-brand='B'\]\[data-theme='light'\][\s\S]*?\[data-oods-com…
+     49|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
