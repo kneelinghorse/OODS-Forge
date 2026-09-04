@@ -258,6 +258,7 @@ export const Select = defineComponent({
     }, props.options.map((option) => h('option', {
       key: option.value,
       value: option.value,
+      selected: option.value === currentValue.value,
       disabled: option.disabled,
     }, slots.option?.({ option }) ?? option.label))));
   },
@@ -314,7 +315,12 @@ export const Checkbox = defineComponent({
             'aria-errormessage': props.validation?.state === 'error' ? metadata.validationId.value : undefined,
             onChange: change,
           }),
-          h('span', {}, [label]),
+          h('span', { class: 'oods-field-label' }, [
+            label,
+            props.required
+              ? h('span', { class: 'oods-field-required', 'aria-hidden': 'true' }, '*')
+              : null,
+          ]),
         ]),
         help ? h('p', { id: metadata.helpId.value, class: 'oods-field-help' }, help) : null,
         validation

@@ -104,6 +104,8 @@ describe('@oods/components-vue shared scenarios', () => {
             expect((checkbox.element as HTMLInputElement).checked).toBe(false);
             expect((checkbox.element as HTMLInputElement).required).toBe(true);
             expect(component.get('label').attributes('for')).toBe('marketing');
+            expect(component.get('.oods-field-required').text()).toBe('*');
+            expect(component.get('.oods-field-required').attributes('aria-hidden')).toBe('true');
             expect(checkbox.attributes('aria-describedby')).toBe('marketing-help');
             expect(component.get('#marketing-help').text()).toBe('Choose whether to subscribe');
             await checkbox.setValue(true);
@@ -188,14 +190,14 @@ describe('@oods/components-vue shared scenarios', () => {
             expect(component.findAll('thead th').map((cell) => cell.text())).toEqual([
               'Name',
               'Status',
-              'Actions',
             ]);
             expect(component.findAll('tbody td').map((cell) => cell.text())).toEqual([
               'Acme',
               'Active',
-              'Open',
             ]);
-            const rowAction = component.get('button[aria-label="Activate row sub-1"]');
+            const rowAction = component.get('tbody td:first-child .oods-table-row-action');
+            expect(rowAction.text()).toBe('Acme');
+            expect(rowAction.attributes('aria-label')).toBeUndefined();
             (rowAction.element as HTMLButtonElement).focus();
             await rowAction.trigger('keydown', { key: 'Enter' });
             // JSDOM does not synthesize a native button's default keyboard click.

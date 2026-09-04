@@ -479,6 +479,40 @@ describe('pipeline orchestration', () => {
       expect(result.error!.code).toBe('EMITTER_CRASH');
     });
 
+    it('B-15 propagates OODS-N015 as a codegen-stage error without a successful payload', async () => {
+      mockCodeGenerateHandle.mockResolvedValue({
+        status: 'error',
+        framework: 'react',
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings: [],
+        errors: [
+          {
+            code: 'OODS-N015',
+            message: 'Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.',
+            nodeId: 'archive-summary',
+            component: 'ArchiveSummary',
+          },
+        ],
+        meta: { nodeCount: 1, componentCount: 1 },
+      });
+
+      const result = await handle({
+        object: 'Subscription',
+        framework: 'react',
+      });
+
+      expect(result.error).toEqual({
+        step: 'codegen',
+        code: 'OODS-N015',
+        message: 'Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.',
+      });
+      expect(result.code).toBeUndefined();
+      expect(result.pipeline.steps).toEqual(['compose', 'validate', 'render', 'codegen']);
+      expect(mockSchemaSaveHandle).not.toHaveBeenCalled();
+    });
+
     it('returns error when codegen throws', async () => {
       mockCodeGenerateHandle.mockRejectedValue(new Error('codegen kaboom'));
 

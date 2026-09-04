@@ -11,11 +11,19 @@ import {
   mapFieldType,
   snakeToCamel,
   generateHandlerStubs,
-  resolveChildContent,
+  resolveFrameworkChildContent,
   resolveFieldProps,
 } from './binding-utils.js';
 import { runPreEmit, type PreEmitContext } from './pre-emit.js';
 import { resolveSpacingLeaf } from '../render/spacing-leaf.js';
+import { normalizeSchemaForFramework, takeEmittedId } from './framework-normalization.js';
+import {
+  escapeCssCustomPropertyValue,
+  escapeDoubleQuotedAttribute,
+  escapeVueScriptComment,
+  javascriptSingleQuotedString,
+  tokenOverrideVariableName,
+} from './emission-safety.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (shared logic with tree-renderer.ts / react-emitter.ts)
@@ -129,13 +137,30 @@ function isReservedProp(key: string, omitClassProps = false): boolean {
   return false;
 }
 
+function serializeVueBinding(value: unknown): string {
+  if (value === null) return 'null';
+  if (typeof value === 'string') return javascriptSingleQuotedString(value);
+  if (typeof value === 'boolean') return String(value);
+  if (typeof value === 'number') return Number.isFinite(value) ? String(value) : 'null';
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => serializeVueBinding(item ?? null)).join(',')}]`;
+  }
+  if (typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([, item]) => item !== undefined)
+      .map(([entryKey, item]) => `${javascriptSingleQuotedString(entryKey)}:${serializeVueBinding(item)}`);
+    return `{${entries.join(',')}}`;
+  }
+  return 'undefined';
+}
+
 function propToVueAttr(key: string, value: unknown): string {
   if (value === undefined) return '';
-  if (typeof value === 'string') return `${key}="${value.replace(/"/g, '&quot;')}"`;
+  if (typeof value === 'string') return `${key}="${escapeDoubleQuotedAttr(value)}"`;
   if (typeof value === 'boolean') return value ? key : `:${key}="false"`;
   if (typeof value === 'number') return `:${key}="${value}"`;
   // Arrays and objects use v-bind with JSON
-  return `:${key}="${JSON.stringify(value).replace(/"/g, "'")}"`;
+  return `:${key}="${serializeVueBinding(value)}"`;
 }
 
 function propsToVueAttrs(props: Record<string, unknown>, omitClassProps = false): string {
@@ -148,22 +173,38 @@ function propsToVueAttrs(props: Record<string, unknown>, omitClassProps = false)
   return parts.join(' ');
 }
 
-function escapeDoubleQuotedAttr(value: string): string {
-  return value.replace(/"/g, '&quot;');
+function childValueToVue(value: unknown): string {
+  if (value === null || value === undefined || typeof value === 'boolean') return '';
+  const text = typeof value === 'object' ? JSON.stringify(value) : String(value);
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\{/g, '&#123;')
+    .replace(/\}/g, '&#125;');
 }
 
-function escapeSingleQuotedExpr(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+function vueEventName(component: string, eventKey: string): string {
+  if (eventKey === 'onUpdate' || eventKey === 'onUpdateModelValue') {
+    return component === 'Tabs' ? 'update:selectedId' : 'update:modelValue';
+  }
+  if (eventKey === 'onUpdateSelectedId') return 'update:selectedId';
+  return eventKey.replace(/^on([A-Z])/, (_, letter: string) => letter.toLowerCase());
+}
+
+function escapeDoubleQuotedAttr(value: string): string {
+  return escapeDoubleQuotedAttribute(value);
 }
 
 function buildVueClassAttr(staticClasses: string, variantExpression: string | null): string | null {
   const hasStatic = staticClasses.trim().length > 0;
 
   if (variantExpression && hasStatic) {
-    return `:class="[${variantExpression}, '${escapeSingleQuotedExpr(staticClasses)}']"`;
+    const expression = `[${variantExpression}, ${javascriptSingleQuotedString(staticClasses)}]`;
+    return `:class="${escapeDoubleQuotedAttr(expression)}"`;
   }
   if (variantExpression) {
-    return `:class="${variantExpression}"`;
+    return `:class="${escapeDoubleQuotedAttr(variantExpression)}"`;
   }
   if (hasStatic) {
     return `class="${escapeDoubleQuotedAttr(staticClasses)}"`;
@@ -198,13 +239,33 @@ function emitTemplateNode(
   if (enriched) {
     if (!propsObject) propsObject = {};
     for (const [key, value] of Object.entries(enriched)) {
+      if (key === 'label' && (tag === 'Badge' || tag === 'Button')) continue;
       if (propsObject[key] === undefined) propsObject[key] = value;
     }
   }
 
+  const emittedId = propsObject ? takeEmittedId(node, propsObject) : node.id;
+  const staticChild = propsObject?.children;
+  const fieldDirective = typeof propsObject?.field === 'string'
+    ? propsObject.field
+    : undefined;
+  const hasExplicitControlledValue = tag === 'Checkbox'
+    ? propsObject?.checked !== undefined || propsObject?.modelValue !== undefined
+    : propsObject?.value !== undefined || propsObject?.modelValue !== undefined;
+  const boundFieldName = fieldDirective
+    && objectSchema?.[fieldDirective]
+    && !hasExplicitControlledValue
+    ? snakeToCamel(fieldDirective)
+    : undefined;
+  if (propsObject) {
+    delete propsObject.children;
+    // `field` drives generated bindings but is not a public component prop.
+    delete propsObject.field;
+  }
+
   // Build attributes
   const attrParts: string[] = [];
-  attrParts.push(`id="${node.id}"`);
+  attrParts.push(`id="${escapeDoubleQuotedAttr(emittedId)}"`);
   attrParts.push(`data-oods-component="${tag}"`);
 
   if (node.layout?.type) {
@@ -217,16 +278,15 @@ function emitTemplateNode(
   }
 
   // v-model for form input components when bound to a field
-  if (FORM_INPUT_COMPONENTS.has(tag) && propsObject?.field && typeof propsObject.field === 'string') {
-    const fieldName = snakeToCamel(propsObject.field as string);
-    attrParts.push(`v-model="${fieldName}"`);
+  if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
+    attrParts.push(`v-model="${boundFieldName}"`);
   }
 
   // Event bindings (e.g., @submit="handleSubmit")
   if (node.bindings && typeof node.bindings === 'object') {
     for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
       // Convert React-style onXxx to Vue @xxx
-      const vueEvent = eventKey.replace(/^on([A-Z])/, (_, c: string) => c.toLowerCase());
+      const vueEvent = vueEventName(tag, eventKey);
       attrParts.push(`@${vueEvent}="${handlerName}"`);
     }
   }
@@ -243,7 +303,7 @@ function emitTemplateNode(
   } else {
     const inlineStyle = declToInlineStyle(computedStyle);
     if (inlineStyle) {
-      attrParts.push(`style="${inlineStyle}"`);
+      attrParts.push(`style="${escapeDoubleQuotedAttr(inlineStyle)}"`);
     }
   }
 
@@ -283,21 +343,37 @@ function emitTemplateNode(
       sectionClassOrStyle = sectionClasses ? ` class="${escapeDoubleQuotedAttr(sectionClasses)}"` : '';
     } else {
       const inlineStyle = declToInlineStyle(computedStyle);
-      sectionClassOrStyle = inlineStyle ? ` style="${inlineStyle}"` : '';
+      sectionClassOrStyle = inlineStyle
+        ? ` style="${escapeDoubleQuotedAttr(inlineStyle)}"`
+        : '';
     }
     const innerChildren = children
       .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, objectSchema))
       .join('\n');
+    const sectionFieldContent = children.length === 0
+      ? resolveFrameworkChildContent(node, objectSchema)
+      : null;
+    const sectionUsesVModel = FORM_INPUT_COMPONENTS.has(tag) && Boolean(boundFieldName);
+    if (
+      sectionFieldContent?.propName
+      && !sectionUsesVModel
+      && propsObject?.[sectionFieldContent.propName] !== undefined
+    ) {
+      delete propsObject[sectionFieldContent.propName];
+    }
 
-    const innerAttrParts: string[] = [`id="${node.id}"`, `data-oods-component="${tag}"`];
+    const innerAttrParts: string[] = [`id="${escapeDoubleQuotedAttr(emittedId)}"`, `data-oods-component="${tag}"`];
     if (propsObject) {
       const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
       if (propsStr) innerAttrParts.push(propsStr);
     }
+    if (sectionUsesVModel) {
+      innerAttrParts.push(`v-model="${boundFieldName}"`);
+    }
     // Event bindings belong on the component, not the section wrapper
     if (node.bindings && typeof node.bindings === 'object') {
       for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
-        const vueEvent = eventKey.replace(/^on([A-Z])/, (_, c: string) => c.toLowerCase());
+        const vueEvent = vueEventName(tag, eventKey);
         innerAttrParts.push(`@${vueEvent}="${handlerName}"`);
       }
     }
@@ -309,14 +385,33 @@ function emitTemplateNode(
       const classAttr = buildVueClassAttr(staticClasses, variantExpression);
       if (classAttr) innerAttrParts.push(classAttr);
     }
+    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren && !sectionUsesVModel) {
+      innerAttrParts.push(`:${sectionFieldContent.propName}="${sectionFieldContent.fieldName}"`);
+    }
     const innerAttrs = ` ${innerAttrParts.join(' ')}`;
 
+    if (children.length === 0 && sectionFieldContent?.isChildren) {
+      return [
+        `<section data-layout="section" data-layout-node-id="${escapeDoubleQuotedAttr(node.id)}"${sectionClassOrStyle}>`,
+        ind(`<${tag}${innerAttrs}>{{ ${sectionFieldContent.fieldName} }}</${tag}>`, depth + 1),
+        `${'  '.repeat(depth)}</section>`,
+      ].join('\n');
+    }
+
+    if (children.length === 0 && staticChild !== undefined) {
+      return [
+        `<section data-layout="section" data-layout-node-id="${escapeDoubleQuotedAttr(node.id)}"${sectionClassOrStyle}>`,
+        ind(`<${tag}${innerAttrs}>${childValueToVue(staticChild)}</${tag}>`, depth + 1),
+        `${'  '.repeat(depth)}</section>`,
+      ].join('\n');
+    }
+
     if (children.length === 0) {
-      return `<section data-layout="section" data-layout-node-id="${node.id}"${sectionClassOrStyle}>\n${ind(`<${tag}${innerAttrs} />`, depth + 1)}\n${'  '.repeat(depth)}</section>`;
+      return `<section data-layout="section" data-layout-node-id="${escapeDoubleQuotedAttr(node.id)}"${sectionClassOrStyle}>\n${ind(`<${tag}${innerAttrs} />`, depth + 1)}\n${'  '.repeat(depth)}</section>`;
     }
 
     return [
-      `<section data-layout="section" data-layout-node-id="${node.id}"${sectionClassOrStyle}>`,
+      `<section data-layout="section" data-layout-node-id="${escapeDoubleQuotedAttr(node.id)}"${sectionClassOrStyle}>`,
       ind(`<${tag}${innerAttrs}>`, depth + 1),
       ind(innerChildren, 0),
       ind(`</${tag}>`, depth + 1),
@@ -326,31 +421,33 @@ function emitTemplateNode(
 
   // Self-closing — but inject field content if bound
   if (children.length === 0) {
-    const fieldContent = resolveChildContent(node, objectSchema);
+    const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
         return `<${tag}${attrs}>{{ ${fieldContent.fieldName} }}</${tag}>`;
       }
       // Rebuild attrs without the conflicting static prop
       // to avoid emitting both prop="static" and :prop="dynamic"
+      if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
+        return `<${tag}${attrs} />`;
+      }
       let cleanAttrs = attrs;
       if (fieldContent.propName && propsObject?.[fieldContent.propName] !== undefined) {
         delete propsObject[fieldContent.propName];
         const rebuiltAttrParts: string[] = [];
-        rebuiltAttrParts.push(`id="${node.id}"`);
+        rebuiltAttrParts.push(`id="${escapeDoubleQuotedAttr(emittedId)}"`);
         rebuiltAttrParts.push(`data-oods-component="${tag}"`);
         if (node.layout?.type) rebuiltAttrParts.push(`data-layout="${node.layout.type}"`);
         if (propsObject) {
           const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
           if (propsStr) rebuiltAttrParts.push(propsStr);
         }
-        if (FORM_INPUT_COMPONENTS.has(tag) && propsObject?.field && typeof propsObject.field === 'string') {
-          const fieldName = snakeToCamel(propsObject.field as string);
-          rebuiltAttrParts.push(`v-model="${fieldName}"`);
+        if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
+          rebuiltAttrParts.push(`v-model="${boundFieldName}"`);
         }
         if (node.bindings && typeof node.bindings === 'object') {
           for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
-            const vueEvent = eventKey.replace(/^on([A-Z])/, (_, c: string) => c.toLowerCase());
+            const vueEvent = vueEventName(tag, eventKey);
             rebuiltAttrParts.push(`@${vueEvent}="${handlerName}"`);
           }
         }
@@ -363,12 +460,17 @@ function emitTemplateNode(
           if (classAttr) rebuiltAttrParts.push(classAttr);
         } else {
           const inlineStyle = declToInlineStyle(computedStyle);
-          if (inlineStyle) rebuiltAttrParts.push(`style="${inlineStyle}"`);
+          if (inlineStyle) {
+            rebuiltAttrParts.push(`style="${escapeDoubleQuotedAttr(inlineStyle)}"`);
+          }
         }
         cleanAttrs = rebuiltAttrParts.length > 0 ? ` ${rebuiltAttrParts.join(' ')}` : '';
       }
       const propAttr = `:${fieldContent.propName}="${fieldContent.fieldName}"`;
       return `<${tag}${cleanAttrs} ${propAttr} />`;
+    }
+    if (staticChild !== undefined) {
+      return `<${tag}${attrs}>${childValueToVue(staticChild)}</${tag}>`;
     }
     return `<${tag}${attrs} />`;
   }
@@ -418,9 +520,16 @@ function isFormSchema(screens: UiElement[]): boolean {
   return false;
 }
 
+function shouldImportVueRuntime(
+  objectSchema: Record<string, FieldSchemaEntry> | undefined,
+  screens: UiElement[],
+): boolean {
+  return Boolean(objectSchema && Object.keys(objectSchema).length > 0 && isFormSchema(screens));
+}
+
 /** Map field type to a sensible ref() default value. */
 function fieldRefDefault(entry: FieldSchemaEntry): string {
-  if (entry.enum && entry.enum.length > 0) return `'${entry.enum[0]}'`;
+  if (entry.enum && entry.enum.length > 0) return javascriptSingleQuotedString(entry.enum[0]);
   switch (entry.type) {
     case 'boolean': return 'false';
     case 'integer': case 'number': return '0';
@@ -492,7 +601,7 @@ function buildScriptSetup(
   const lines: string[] = [];
   const hasObjectSchema = objectSchema && Object.keys(objectSchema).length > 0;
   const includeCva = tailwindVariants.size > 0;
-  const formMode = hasObjectSchema && screens ? isFormSchema(screens) : false;
+  const formMode = shouldImportVueRuntime(objectSchema, screens);
 
   if (options.typescript) {
     lines.push(`<script setup lang="ts">`);
@@ -508,7 +617,8 @@ function buildScriptSetup(
     lines.push(`import { ${vueImports.sort().join(', ')} } from 'vue';`);
   }
 
-  lines.push(`import { ${sorted.join(', ')} } from '@oods/components';`);
+  lines.push(`import { ${sorted.join(', ')} } from '@oods/components-vue';`);
+  lines.push(`import '@oods/component-styles/css';`);
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
   }
@@ -532,7 +642,7 @@ function buildScriptSetup(
       const tsType = options.typescript ? mapFieldType(entry) : null;
 
       if (entry.description) {
-        lines.push(`/** ${entry.description} */`);
+        lines.push(`/** ${escapeVueScriptComment(entry.description)} */`);
       }
       if (tsType) {
         lines.push(`const ${camelName} = ref<${tsType}>(${defaultValue});`);
@@ -558,7 +668,7 @@ function buildScriptSetup(
       const optional = entry.required ? '' : '?';
       const camelName = snakeToCamel(fieldName);
       if (entry.description) {
-        lines.push(`  /** ${entry.description} */`);
+        lines.push(`  /** ${escapeVueScriptComment(entry.description)} */`);
       }
       lines.push(`  ${camelName}${optional}: ${tsType};`);
     }
@@ -592,7 +702,7 @@ function buildScriptSetup(
       for (const [propName, { formatted, isExpression }] of propDefaults) {
         if (declaredNames.has(propName)) continue;
         if (!emittedAny) { lines.push(''); emittedAny = true; }
-        const rhs = isExpression ? formatted : `'${formatted.replace(/'/g, "\\'")}'`;
+        const rhs = isExpression ? formatted : JSON.stringify(formatted);
         lines.push(`const ${propName} = ${rhs};`);
       }
     }
@@ -649,7 +759,8 @@ function buildScopedStyle(screens: UiElement[], options: CodegenOptions): string
  */
 export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const warnings: CodegenIssue[] = [];
-  const ctx = runPreEmit(schema, { options });
+  const normalizedSchema = normalizeSchemaForFramework(schema, 'vue');
+  const ctx = runPreEmit(normalizedSchema, { options });
   const tailwindVariants = ctx.tailwindVariants;
 
   // Build template block
@@ -671,10 +782,12 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   // Inject token overrides as CSS custom properties
   let tokenStyle = '';
-  if (schema.tokenOverrides && Object.keys(schema.tokenOverrides).length > 0) {
-    const declarations = Object.entries(schema.tokenOverrides)
+  if (normalizedSchema.tokenOverrides && Object.keys(normalizedSchema.tokenOverrides).length > 0) {
+    const declarations = Object.entries(normalizedSchema.tokenOverrides)
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([key, value]) => `  --token-${key.replace(/[.\s_]+/g, '-')}: ${value};`)
+      .map(([key, value]) => (
+        `  ${tokenOverrideVariableName(key)}: ${escapeCssCustomPropertyValue(value)};`
+      ))
       .join('\n');
     tokenStyle = `<style>\n:root {\n${declarations}\n}\n</style>`;
   }
@@ -690,15 +803,19 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   blocks.push('');
 
   const code = blocks.join('\n');
+  const imports = [
+    ...(shouldImportVueRuntime(ctx.objectSchema, ctx.tree) ? ['vue'] : []),
+    '@oods/components-vue',
+    '@oods/component-styles/css',
+    ...(tailwindVariants.size > 0 ? ['class-variance-authority'] : []),
+  ];
 
   return {
     status: 'ok',
     framework: 'vue',
     code,
     fileExtension: '.vue',
-    imports: tailwindVariants.size > 0
-      ? ['@oods/components', 'class-variance-authority']
-      : ['@oods/components'],
+    imports,
     warnings,
   };
 }

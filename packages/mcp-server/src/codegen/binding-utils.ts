@@ -8,6 +8,7 @@
  */
 import type { UiElement, FieldSchemaEntry } from '../schemas/generated.js';
 import { getContentStrategy, type ContentStrategy } from './content-strategy.js';
+import { javascriptSingleQuotedString } from './emission-safety.js';
 
 // ---------------------------------------------------------------------------
 // Field type mapping (object schema → TypeScript types)
@@ -29,7 +30,7 @@ const FIELD_TYPE_MAP: Record<string, string> = {
 
 export function mapFieldType(entry: FieldSchemaEntry): string {
   if (entry.enum && entry.enum.length > 0) {
-    return entry.enum.map((v) => `'${v}'`).join(' | ');
+    return entry.enum.map(javascriptSingleQuotedString).join(' | ');
   }
   return FIELD_TYPE_MAP[entry.type] ?? 'unknown';
 }
@@ -320,4 +321,52 @@ export function resolveChildContent(
     default:
       return null;
   }
+}
+
+/**
+ * Resolve field content for the real React/Vue package contracts.
+ * Their Badge and Button APIs expose `content`, while the legacy HTML
+ * strategy continues to use `label`.
+ */
+export function resolveFrameworkChildContent(
+  node: UiElement,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): FieldContentResolution | null {
+  const resolution = resolveChildContent(node, objectSchema);
+  if (!resolution) {
+    const field = node.props?.field;
+    if (typeof field !== 'string' || !objectSchema?.[field]) return null;
+
+    const fieldName = snakeToCamel(field);
+    const existing = (node.props as Record<string, unknown>) ?? {};
+    if (node.component === 'Checkbox') {
+      if (existing.checked !== undefined) return null;
+      return {
+        strategy: 'value-prop',
+        fieldName,
+        propName: 'checked',
+        isChildren: false,
+      };
+    }
+    if (node.component === 'DatePicker' || node.component === 'Textarea') {
+      if (existing.value !== undefined) return null;
+      return {
+        strategy: 'value-prop',
+        fieldName,
+        propName: 'value',
+        isChildren: false,
+      };
+    }
+    return null;
+  }
+  if (
+    resolution.strategy !== 'label-prop'
+    || (node.component !== 'Badge' && node.component !== 'Button')
+  ) {
+    return resolution;
+  }
+
+  const existing = (node.props as Record<string, unknown>) ?? {};
+  if (existing.content !== undefined) return null;
+  return { ...resolution, propName: 'content' };
 }

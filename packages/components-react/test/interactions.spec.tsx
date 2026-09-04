@@ -1,6 +1,8 @@
 /* @vitest-environment jsdom */
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { hydrateRoot, type Root } from 'react-dom/client';
+import { renderToString } from 'react-dom/server';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -20,6 +22,31 @@ import {
 afterEach(cleanup);
 
 describe('@oods/components-react interactions', () => {
+  it('does not steal existing focus while hydrating Tabs', async () => {
+    const items: TabItem[] = [
+      { id: 'overview', label: 'Overview', panel: 'Summary' },
+      { id: 'billing', label: 'Billing', panel: 'Invoices' },
+    ];
+    const tabs = <Tabs items={items} defaultSelectedId="overview" />;
+    const sentinel = document.createElement('button');
+    const container = document.createElement('div');
+    sentinel.textContent = 'Existing focus';
+    container.innerHTML = renderToString(tabs);
+    document.body.append(sentinel, container);
+    sentinel.focus();
+
+    let root: Root | undefined;
+    await act(async () => {
+      root = hydrateRoot(container, tabs);
+    });
+
+    expect(document.activeElement).toBe(sentinel);
+
+    await act(async () => root?.unmount());
+    sentinel.remove();
+    container.remove();
+  });
+
   it('B-07 moves React Tabs selection and focus with ArrowRight', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

@@ -114,6 +114,7 @@ describe('E2E — Stage1 BridgeSummary → pipeline → design.compose', () => {
     const result = await pipelineHandle({
       object: 'Subscription',
       context: 'detail',
+      framework: 'html',
       actionMappings: syntheticLifecycleMappings,
       options: { skipRender: true },
     });
@@ -138,6 +139,7 @@ describe('E2E — Stage1 BridgeSummary → pipeline → design.compose', () => {
     const result = await pipelineHandle({
       object: 'Subscription',
       context: 'detail',
+      framework: 'html',
       actionMappings: [],
       options: { skipRender: true },
     });
@@ -150,6 +152,7 @@ describe('E2E — Stage1 BridgeSummary → pipeline → design.compose', () => {
     const baseline = await pipelineHandle({
       object: 'Subscription',
       context: 'detail',
+      framework: 'html',
       options: { skipRender: true },
     });
     expect(baseline.error).toBeUndefined();
@@ -183,6 +186,7 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     const result = await pipelineHandle({
       object: 'Subscription',
       context: 'detail',
+      framework: 'html',
       actionMappings: bridge!.action_mappings,
       actionInstances: bridge!.actions,
       options: { skipRender: true },
@@ -250,6 +254,7 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     const result = await composeHandle({
       object: 'Subscription',
       context: 'detail',
+      framework: 'html',
       actionMappings: vocabulary,
       actionInstances: instances,
     });
@@ -282,6 +287,7 @@ describe('E2E — real Stage1 linear.app BridgeSummary (post-S40 run 5e3a5dbf)',
     const result = await pipelineHandle({
       object: 'Subscription',
       context: 'detail',
+      framework: 'html',
       actionMappings: vocabulary,
       actionInstances: bridge!.actions,
       options: { skipRender: true },

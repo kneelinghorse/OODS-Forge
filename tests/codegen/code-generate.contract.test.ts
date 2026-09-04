@@ -41,7 +41,7 @@ const NESTED_SCHEMA: UiSchema = {
       children: [
         {
           id: 'header-1',
-          component: 'CardHeader',
+          component: 'Stack',
           children: [
             { id: 'title-1', component: 'Text', props: { as: 'h2', content: 'Dashboard' } },
           ],
@@ -159,7 +159,7 @@ describe('code.generate contracts — React', () => {
     // Basic TSX structure
     expect(result.code).toContain("import React from 'react'");
     expect(result.code).toContain("import {");
-    expect(result.code).toContain("from '@oods/components'");
+    expect(result.code).toContain("from '@oods/components-react'");
     expect(result.code).toContain('export const GeneratedUI');
     expect(result.code).toContain('return (');
 
@@ -178,14 +178,14 @@ describe('code.generate contracts — React', () => {
 
     // All components present
     expect(result.code).toContain('<Card');
-    expect(result.code).toContain('<CardHeader');
+    expect(result.code).toContain('<Stack');
     expect(result.code).toContain('<Text');
     expect(result.code).toContain('<Stack');
     expect(result.code).toContain('<Button');
 
-    // Nesting order: Card > CardHeader > Text
+    // Nesting order: Card > Stack > Text
     const cardIdx = result.code.indexOf('<Card');
-    const headerIdx = result.code.indexOf('<CardHeader');
+    const headerIdx = result.code.indexOf('<Stack');
     const textIdx = result.code.indexOf('<Text');
     expect(cardIdx).toBeLessThan(headerIdx);
     expect(headerIdx).toBeLessThan(textIdx);
@@ -243,8 +243,8 @@ describe('code.generate contracts — React', () => {
     const result = await handle({ schema: NESTED_SCHEMA, framework: 'react' });
 
     expect(result.meta).toBeDefined();
-    expect(result.meta!.nodeCount).toBe(6); // card, header, title, body, text, button
-    expect(result.meta!.componentCount).toBe(5); // Card, CardHeader, Text, Stack, Button
+    expect(result.meta!.nodeCount).toBe(6); // card, header stack, title, body stack, text, button
+    expect(result.meta!.componentCount).toBe(4); // Card, Text, Stack, Button
   });
 });
 
@@ -267,7 +267,7 @@ describe('code.generate contracts — Vue', () => {
     expect(result.code).toContain('</script>');
 
     // Imports
-    expect(result.code).toContain("from '@oods/components'");
+    expect(result.code).toContain("from '@oods/components-vue'");
   });
 
   it('renders nested component trees with correct hierarchy', async () => {
@@ -277,14 +277,14 @@ describe('code.generate contracts — Vue', () => {
 
     // All components present
     expect(result.code).toContain('<Card');
-    expect(result.code).toContain('<CardHeader');
+    expect(result.code).toContain('<Stack');
     expect(result.code).toContain('<Text');
     expect(result.code).toContain('<Stack');
     expect(result.code).toContain('<Button');
 
     // Closing tags present
     expect(result.code).toContain('</Card>');
-    expect(result.code).toContain('</CardHeader>');
+    expect(result.code).toContain('</Stack>');
   });
 
   it('translates all layout types correctly', async () => {

@@ -352,7 +352,7 @@ try {
       `${cell}: section headings are incomplete: ${JSON.stringify(proof.content.sectionHeadings)}.`,
     );
     assert(
-      JSON.stringify(proof.content.fieldLabels) === JSON.stringify(['Email', 'Renewal date', 'Plan', 'Notes', 'Product updates']),
+      JSON.stringify(proof.content.fieldLabels) === JSON.stringify(['Email', 'Renewal date', 'Plan', 'Notes', 'Product updates*']),
       `${cell}: field labels are incomplete: ${JSON.stringify(proof.content.fieldLabels)}.`,
     );
     assert(
@@ -370,11 +370,11 @@ try {
     );
     assert(proof.content.tableCaption === 'Subscriptions', `${cell}: table caption is incomplete.`);
     assert(
-      JSON.stringify(proof.content.tableHeaders) === JSON.stringify(['Name', 'Plan', 'Status', 'Actions']),
+      JSON.stringify(proof.content.tableHeaders) === JSON.stringify(['Name', 'Plan', 'Status']),
       `${cell}: table headers are incomplete: ${JSON.stringify(proof.content.tableHeaders)}.`,
     );
     assert(
-      JSON.stringify(proof.content.tableRows) === JSON.stringify(['Northwind Enterprise Active Open', 'Contoso Pro Past due Open']),
+      JSON.stringify(proof.content.tableRows) === JSON.stringify(['Northwind Enterprise Active', 'Contoso Pro Past due']),
       `${cell}: table rows are incomplete: ${JSON.stringify(proof.content.tableRows)}.`,
     );
     assert(
@@ -581,7 +581,7 @@ try {
       `${viewport.name}: key showcase copy is incomplete.`,
     );
     assert(
-      JSON.stringify(layout.keyContent.fieldLabels) === JSON.stringify(['Email', 'Renewal date', 'Plan', 'Notes', 'Product updates']),
+      JSON.stringify(layout.keyContent.fieldLabels) === JSON.stringify(['Email', 'Renewal date', 'Plan', 'Notes', 'Product updates*']),
       `${viewport.name}: field labels are incomplete: ${JSON.stringify(layout.keyContent.fieldLabels)}.`,
     );
     assert(
@@ -589,8 +589,8 @@ try {
       `${viewport.name}: action labels are incomplete: ${JSON.stringify(layout.keyContent.actionLabels)}.`,
     );
     assert(
-      JSON.stringify(layout.keyContent.tableHeaders) === JSON.stringify(['Name', 'Plan', 'Status', 'Actions'])
-        && JSON.stringify(layout.keyContent.tableRows) === JSON.stringify(['Northwind Enterprise Active Open', 'Contoso Pro Past due Open']),
+      JSON.stringify(layout.keyContent.tableHeaders) === JSON.stringify(['Name', 'Plan', 'Status'])
+        && JSON.stringify(layout.keyContent.tableRows) === JSON.stringify(['Northwind Enterprise Active', 'Contoso Pro Past due']),
       `${viewport.name}: table content is incomplete.`,
     );
     assert(layout.keyGeometry.profileWidth >= 300, `${viewport.name}: profile card collapsed to ${layout.keyGeometry.profileWidth}px.`);

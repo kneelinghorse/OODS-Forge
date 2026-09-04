@@ -146,7 +146,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
           </span>
         ) : null}
         <div className="oods-banner__content statusable-banner__content">
-          {heading ? <p className="oods-banner__title statusable-banner__title">{heading}</p> : null}
+          {heading ? <strong className="oods-banner__title statusable-banner__title">{heading}</strong> : null}
           {body ? <p className="oods-banner__detail statusable-banner__description">{body}</p> : null}
           {actions ? <div className="oods-banner__actions statusable-banner__actions">{actions}</div> : null}
         </div>

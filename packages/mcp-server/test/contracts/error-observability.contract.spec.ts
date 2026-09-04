@@ -62,6 +62,16 @@ describe('ToolError structured contract', () => {
     expect(se.category).toBe('server_error');
     expect(se.retryable).toBe(false);
   });
+
+  it('registers OODS-N015 as non-retryable component target unavailability', () => {
+    expect(getDefinition('OODS-N015')).toEqual({
+      code: 'OODS-N015',
+      category: 'not_found',
+      message: 'Component target unavailable',
+      retryable: false,
+    });
+    expect(isRetryable('OODS-N015')).toBe(false);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -123,7 +133,7 @@ describe('Pipeline step latency tracking', () => {
   it('pipeline output includes stepLatency for all executed steps', async () => {
     const result = await pipelineHandle({
       intent: 'show a dashboard',
-      framework: 'react',
+      framework: 'html',
     });
 
     expect(result.pipeline).toBeDefined();
@@ -142,7 +152,7 @@ describe('Pipeline step latency tracking', () => {
   it('step latencies approximately sum to total duration', async () => {
     const result = await pipelineHandle({
       intent: 'show a simple form',
-      framework: 'react',
+      framework: 'html',
       options: { skipValidation: true, skipRender: true },
     });
 
@@ -158,7 +168,7 @@ describe('Pipeline step latency tracking', () => {
     // Use an invalid schemaRef to trigger a compose result that still measures latency
     const result = await pipelineHandle({
       intent: 'show a form',
-      framework: 'react',
+      framework: 'html',
     });
 
     // Whether success or error, compose latency should be present
@@ -195,7 +205,7 @@ describe('Determinism regression tests', () => {
           layout: { type: 'stack' },
           style: { spacingToken: 'md', radiusToken: 'sm' },
           children: [
-            { id: 'title', component: 'Heading', props: { level: 1, text: 'Hello' }, children: [] },
+            { id: 'title', component: 'Text', props: { as: 'h1', content: 'Hello' }, children: [] },
             { id: 'body', component: 'Text', props: { content: 'World' }, children: [] },
           ],
         },

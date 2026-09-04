@@ -51,8 +51,12 @@ describe('code.generate parity', () => {
     expect(vue.meta?.nodeCount).toBe(nodeCount);
 
     expect(react.code).toContain("import React from 'react';");
+    expect(react.code).toContain("from '@oods/components-react';");
+    expect(react.code).toContain("import '@oods/component-styles/css';");
     expect(vue.code).toContain('<template>');
     expect(vue.code).toContain('<script setup');
+    expect(vue.code).toContain("from '@oods/components-vue';");
+    expect(vue.code).toContain("import '@oods/component-styles/css';");
 
     for (const component of components) {
       expect(react.code).toContain(`<${component}`);
@@ -62,6 +66,18 @@ describe('code.generate parity', () => {
     }
 
     expect(react.code).not.toMatch(/style=\{\{\{/);
+    for (const code of [react.code, vue.code]) {
+      expect(code).toContain('content="Save"');
+      expect(code).toContain('content="New"');
+      expect(code).toContain('content="Updated"');
+      expect(code).toContain('Card body');
+      expect(code).toContain('Hello world');
+      expect(code).toContain('defaultSelectedId="overview"');
+      expect(code).not.toContain('message="Updated"');
+      expect(code).not.toContain('text="Hello world"');
+    }
+    expect(react.code).toContain('"id":"basic-table-row-1"');
+    expect(vue.code).toContain("'id':'basic-table-row-1'");
   });
 
   it('keeps React and Vue style formatting valid for layout + token styles', async () => {

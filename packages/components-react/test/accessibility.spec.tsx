@@ -107,7 +107,11 @@ describe('@oods/components-react accessibility', () => {
       </Stack>
     );
 
-    expect(screen.getByRole('alert').getAttribute('aria-live')).toBe('assertive');
+    const alert = screen.getByRole('alert');
+    expect(alert.getAttribute('aria-live')).toBe('assertive');
+    const bannerTitle = alert.querySelector('.oods-banner__title');
+    expect(bannerTitle?.tagName).toBe('STRONG');
+    expect(bannerTitle?.textContent).toBe('Payment failed');
     const button = screen.getByRole('button', { name: 'Save' });
     expect(button.getAttribute('type')).toBe('button');
     expect(button.style.getPropertyValue('--cmp-button-background')).toBe(

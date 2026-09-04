@@ -71,38 +71,28 @@ export const Table = defineComponent({
       }),
       h(TableHead, {}, {
         default: () => slots.head?.() ?? h(TableRow, {}, {
-          default: () => [
-            ...props.columns.map((column) => h(TableHeaderCell, { key: column.key }, {
-              default: () => slots.headerCell?.({ column }) ?? column.label,
-            })),
-            props.selectable
-              ? h(TableHeaderCell, { key: 'row-action' }, {
-                  default: () => h('span', { class: 'oods-visually-hidden' }, 'Actions'),
-                })
-              : null,
-          ],
+          default: () => props.columns.map((column) => h(TableHeaderCell, { key: column.key }, {
+            default: () => slots.headerCell?.({ column }) ?? column.label,
+          })),
         }),
       }),
       h(TableBody, {}, {
         default: () => slots.body?.() ?? props.rows.map((row, rowIndex) => (
           slots.row?.({ row, rowIndex, activate: () => activate(row) })
           ?? h(TableRow, { key: row.id }, {
-            default: () => [
-              ...props.columns.map((column) => h(TableCell, { key: column.key }, {
-                default: () => slots.cell?.({ row, column, value: row[column.key] })
-                  ?? String(row[column.key] ?? ''),
-              })),
-              props.selectable
-                ? h(TableCell, { key: 'row-action' }, {
-                    default: () => h('button', {
+            default: () => props.columns.map((column, columnIndex) => {
+              const content = slots.cell?.({ row, column, value: row[column.key] })
+                ?? String(row[column.key] ?? '');
+              return h(TableCell, { key: column.key }, {
+                default: () => props.selectable && columnIndex === 0
+                  ? h('button', {
                       type: 'button',
                       class: 'oods-table-row-action',
-                      'aria-label': `Activate row ${row.id}`,
                       onClick: () => activate(row),
-                    }, 'Open'),
-                  })
-                : null,
-            ],
+                    }, content)
+                  : content,
+              });
+            }),
           })
         )),
       }),

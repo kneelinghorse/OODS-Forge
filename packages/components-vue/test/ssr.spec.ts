@@ -35,8 +35,11 @@ const ServerShowcase = defineComponent({
       h(Select, {
         id: 'plan',
         label: 'Plan',
-        value: 'pro',
-        options: [{ value: 'pro', label: 'Pro' }],
+        defaultValue: 'pro',
+        options: [
+          { value: 'basic', label: 'Basic' },
+          { value: 'pro', label: 'Pro' },
+        ],
       }),
       h(Stack, {}, { default: () => 'Stack content' }),
       h(Table, {
@@ -64,5 +67,6 @@ describe('@oods/components-vue server rendering', () => {
     expect(html).toContain('<caption>Subscriptions</caption>');
     expect(html).toContain('role="tablist"');
     expect(html).toContain('type="button"');
+    expect(html).toContain('<option value="pro" selected>Pro</option>');
   });
 });

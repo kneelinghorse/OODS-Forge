@@ -11,11 +11,18 @@ import {
   mapFieldType,
   snakeToCamel,
   generateHandlerStubs,
-  resolveChildContent,
+  resolveFrameworkChildContent,
   resolveFieldProps,
 } from './binding-utils.js';
 import { runPreEmit } from './pre-emit.js';
 import { resolveSpacingLeaf } from '../render/spacing-leaf.js';
+import { normalizeSchemaForFramework, takeEmittedId } from './framework-normalization.js';
+import {
+  escapeBlockComment,
+  escapeDoubleQuotedAttribute,
+  javascriptSingleQuotedString,
+  tokenOverrideVariableName,
+} from './emission-safety.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (mirrors tree-renderer.ts logic in React style format)
@@ -122,7 +129,7 @@ function styleObjToJsx(style: StyleObj): string {
   if (Object.keys(style).length === 0) return '';
   const entries = Object.entries(style)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}: '${value}'`)
+    .map(([key, value]) => `${key}: ${javascriptSingleQuotedString(value)}`)
     .join(', ');
   return `{ ${entries} }`;
 }
@@ -136,10 +143,21 @@ function isReservedProp(key: string, omitClassProps = false): boolean {
 function jsonValueToJsx(value: unknown): string {
   if (value === null) return '{null}';
   if (value === undefined) return '{undefined}';
-  if (typeof value === 'string') return `"${value.replace(/"/g, '\\"')}"`;
+  if (typeof value === 'string') return `"${escapeDoubleQuotedAttr(value)}"`;
   if (typeof value === 'boolean') return value ? '' : `{${String(value)}}`;
   if (typeof value === 'number') return `{${String(value)}}`;
   return `{${JSON.stringify(value)}}`;
+}
+
+function childValueToJsx(value: unknown): string {
+  if (value === null || value === undefined || typeof value === 'boolean') return '';
+  const text = typeof value === 'object' ? JSON.stringify(value) : String(value);
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\{/g, '&#123;')
+    .replace(/\}/g, '&#125;');
 }
 
 function boolAttr(key: string, value: unknown): string {
@@ -162,18 +180,14 @@ function propsToJsxAttrs(props: Record<string, unknown>, omitClassProps = false)
 }
 
 function escapeDoubleQuotedAttr(value: string): string {
-  return value.replace(/"/g, '\\"');
-}
-
-function escapeSingleQuotedExpr(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  return escapeDoubleQuotedAttribute(value);
 }
 
 function buildReactClassAttr(staticClasses: string, variantExpression: string | null): string | null {
   const hasStatic = staticClasses.trim().length > 0;
 
   if (variantExpression && hasStatic) {
-    return `className={[${variantExpression}, '${escapeSingleQuotedExpr(staticClasses)}'].filter(Boolean).join(' ')}`;
+    return `className={[${variantExpression}, ${javascriptSingleQuotedString(staticClasses)}].filter(Boolean).join(' ')}`;
   }
   if (variantExpression) {
     return `className={${variantExpression}}`;
@@ -211,15 +225,24 @@ function emitNode(
   if (enriched) {
     if (!propsObject) propsObject = {};
     for (const [key, value] of Object.entries(enriched)) {
+      if (key === 'label' && (tag === 'Badge' || tag === 'Button')) continue;
       if (propsObject[key] === undefined) propsObject[key] = value;
     }
+  }
+
+  const emittedId = propsObject ? takeEmittedId(node, propsObject) : node.id;
+  const staticChild = propsObject?.children;
+  if (propsObject) {
+    delete propsObject.children;
+    // `field` is a UiSchema binding directive, not a public component prop.
+    delete propsObject.field;
   }
 
   // Build attributes list
   const attrParts: string[] = [];
 
   // id is always passed
-  attrParts.push(`id="${node.id}"`);
+  attrParts.push(`id="${escapeDoubleQuotedAttr(emittedId)}"`);
 
   // data-oods-component for runtime identification
   attrParts.push(`data-oods-component="${tag}"`);
@@ -299,8 +322,17 @@ function emitNode(
     }
 
     // Section wraps the component output
-    const sectionOpen = `<section data-layout="section" data-layout-node-id="${node.id}"${sectionClassOrStyle}>`;
-    const componentOpen = `<${tag} id="${node.id}" data-oods-component="${tag}"`;
+    const sectionOpen = `<section data-layout="section" data-layout-node-id="${escapeDoubleQuotedAttr(node.id)}"${sectionClassOrStyle}>`;
+    const componentOpen = `<${tag} id="${escapeDoubleQuotedAttr(emittedId)}" data-oods-component="${tag}"`;
+    const sectionFieldContent = children.length === 0
+      ? resolveFrameworkChildContent(node, objectSchema)
+      : null;
+    if (
+      sectionFieldContent?.propName
+      && propsObject?.[sectionFieldContent.propName] !== undefined
+    ) {
+      delete propsObject[sectionFieldContent.propName];
+    }
 
     // Props for inner component (without layout style — that's on section)
     const innerAttrParts: string[] = [];
@@ -322,7 +354,28 @@ function emitNode(
       const classAttr = buildReactClassAttr(staticClasses, variantExpression);
       if (classAttr) innerAttrParts.push(classAttr);
     }
+    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren) {
+      innerAttrParts.push(
+        `${sectionFieldContent.propName}={${sectionFieldContent.fieldName}}`,
+      );
+    }
     const innerAttrs = innerAttrParts.length > 0 ? ` ${innerAttrParts.join(' ')}` : '';
+
+    if (children.length === 0 && sectionFieldContent?.isChildren) {
+      return [
+        sectionOpen,
+        indent(`${componentOpen}${innerAttrs}>{${sectionFieldContent.fieldName}}</${tag}>`, 1),
+        `${'  '.repeat(depth)}</section>`,
+      ].join('\n');
+    }
+
+    if (children.length === 0 && staticChild !== undefined) {
+      return [
+        sectionOpen,
+        indent(`${componentOpen}${innerAttrs}>${childValueToJsx(staticChild)}</${tag}>`, 1),
+        `${'  '.repeat(depth)}</section>`,
+      ].join('\n');
+    }
 
     if (children.length === 0) {
       return `${sectionOpen}\n${indent(`${componentOpen}${innerAttrs} />`, 1)}\n${'  '.repeat(depth)}</section>`;
@@ -339,7 +392,7 @@ function emitNode(
 
   // Self-closing if no children — but inject field content if bound
   if (children.length === 0) {
-    const fieldContent = resolveChildContent(node, objectSchema);
+    const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
         return `<${tag}${attrs}>{${fieldContent.fieldName}}</${tag}>`;
@@ -350,7 +403,7 @@ function emitNode(
       if (fieldContent.propName && propsObject?.[fieldContent.propName] !== undefined) {
         delete propsObject[fieldContent.propName];
         const rebuiltAttrParts: string[] = [];
-        rebuiltAttrParts.push(`id="${node.id}"`);
+        rebuiltAttrParts.push(`id="${escapeDoubleQuotedAttr(emittedId)}"`);
         rebuiltAttrParts.push(`data-oods-component="${tag}"`);
         if (node.layout?.type) rebuiltAttrParts.push(`data-layout="${node.layout.type}"`);
         if (propsObject) {
@@ -376,6 +429,9 @@ function emitNode(
       }
       const propAttr = `${fieldContent.propName}={${fieldContent.fieldName}}`;
       return `<${tag}${cleanAttrs} ${propAttr} />`;
+    }
+    if (staticChild !== undefined) {
+      return `<${tag}${attrs}>${childValueToJsx(staticChild)}</${tag}>`;
     }
     return `<${tag}${attrs} />`;
   }
@@ -415,7 +471,7 @@ function generatePagePropsInterface(
     const camelName = snakeToCamel(fieldName);
 
     if (entry.description) {
-      lines.push(`  /** ${entry.description} */`);
+      lines.push(`  /** ${escapeBlockComment(entry.description)} */`);
     }
     lines.push(`  ${camelName}${optional}: ${tsType};`);
   }
@@ -446,7 +502,8 @@ function buildImportBlock(components: Set<string>, includeCva: boolean): string 
   const sorted = Array.from(components).sort();
   const lines: string[] = [
     `import React from 'react';`,
-    `import { ${sorted.join(', ')} } from '@oods/components';`,
+    `import { ${sorted.join(', ')} } from '@oods/components-react';`,
+    `import '@oods/component-styles/css';`,
   ];
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
@@ -456,8 +513,8 @@ function buildImportBlock(components: Set<string>, includeCva: boolean): string 
 
 function buildImportList(_components: Set<string>, includeCva: boolean): string[] {
   return includeCva
-    ? ['react', '@oods/components', 'class-variance-authority']
-    : ['react', '@oods/components'];
+    ? ['react', '@oods/components-react', '@oods/component-styles/css', 'class-variance-authority']
+    : ['react', '@oods/components-react', '@oods/component-styles/css'];
 }
 
 /**
@@ -465,7 +522,8 @@ function buildImportList(_components: Set<string>, includeCva: boolean): string[
  */
 export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const warnings: CodegenIssue[] = [];
-  const ctx = runPreEmit(schema, { options });
+  const normalizedSchema = normalizeSchemaForFramework(schema, 'react');
+  const ctx = runPreEmit(normalizedSchema, { options });
   const components = ctx.components;
   const tailwindVariants = ctx.tailwindVariants;
 
@@ -479,9 +537,9 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const imports = buildImportList(components, tailwindVariants.size > 0);
 
   const typeAnnotations = options.typescript ? generatePropTypes(components) : '';
-  const hasObjectSchema = schema.objectSchema && Object.keys(schema.objectSchema).length > 0;
+  const hasObjectSchema = normalizedSchema.objectSchema && Object.keys(normalizedSchema.objectSchema).length > 0;
   const pagePropsInterface = options.typescript && hasObjectSchema
-    ? generatePagePropsInterface(schema.objectSchema!)
+    ? generatePagePropsInterface(normalizedSchema.objectSchema!)
     : '';
   const returnType = options.typescript
     ? (hasObjectSchema ? ': React.FC<PageProps>' : ': React.FC')
@@ -493,12 +551,12 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   ];
 
   // Emit token overrides as CSS variable declarations comment
-  if (schema.tokenOverrides && Object.keys(schema.tokenOverrides).length > 0) {
+  if (normalizedSchema.tokenOverrides && Object.keys(normalizedSchema.tokenOverrides).length > 0) {
     lines.push('/**');
     lines.push(' * Object-level token overrides (apply via CSS custom properties):');
-    for (const [key, value] of Object.entries(schema.tokenOverrides).sort(([a], [b]) => a.localeCompare(b))) {
-      const varName = `--token-${key.replace(/[.\s_]+/g, '-')}`;
-      lines.push(` *   ${varName}: ${value};`);
+    for (const [key, value] of Object.entries(normalizedSchema.tokenOverrides).sort(([a], [b]) => a.localeCompare(b))) {
+      const varName = tokenOverrideVariableName(key);
+      lines.push(` *   ${varName}: ${escapeBlockComment(value)};`);
     }
     lines.push(' */');
     lines.push('');
@@ -522,7 +580,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   // Destructure object schema fields from props for type-safe JSX references
   if (hasObjectSchema) {
-    const fieldNames = Object.keys(schema.objectSchema!)
+    const fieldNames = Object.keys(normalizedSchema.objectSchema!)
       .map(snakeToCamel)
       .sort();
     const destructure = `{ ${fieldNames.join(', ')} }`;
@@ -540,12 +598,12 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   // from the component params to avoid illegal const redeclarations
   if (propDefaults && propDefaults.size > 0) {
     const destructuredNames = hasObjectSchema
-      ? new Set(Object.keys(schema.objectSchema!).map(snakeToCamel))
+      ? new Set(Object.keys(normalizedSchema.objectSchema!).map(snakeToCamel))
       : new Set<string>();
     let emittedAny = false;
     for (const [propName, { formatted, isExpression }] of propDefaults) {
       if (destructuredNames.has(propName)) continue;
-      const rhs = isExpression ? formatted : `'${formatted.replace(/'/g, "\\'")}'`;
+      const rhs = isExpression ? formatted : JSON.stringify(formatted);
       lines.push(`  const ${propName} = ${rhs};`);
       emittedAny = true;
     }

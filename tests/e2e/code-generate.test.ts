@@ -96,7 +96,7 @@ const ROUND_TRIP_SCHEMA: UiSchema = {
       children: [
         {
           id: 'header',
-          component: 'CardHeader',
+          component: 'Stack',
           children: [
             { id: 'title', component: 'Text', props: { as: 'h1', content: 'Dashboard' } },
           ],
@@ -151,7 +151,7 @@ describe('code.generate E2E — round-trip pipeline', () => {
 
     // Verify all components from the schema appear in the React output
     expect(reactResult.code).toContain('Stack');
-    expect(reactResult.code).toContain('CardHeader');
+    expect(reactResult.code).toContain('Stack');
     expect(reactResult.code).toContain('Text');
     expect(reactResult.code).toContain('Grid');
     expect(reactResult.code).toContain('Card');

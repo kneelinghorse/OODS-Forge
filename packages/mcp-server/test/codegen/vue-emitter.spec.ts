@@ -47,7 +47,7 @@ describe('vue-emitter — basic output', () => {
       children: [{ id: 'btn', component: 'Button' }],
     });
     const result = emit(schema, defaultOpts);
-    expect(result.code).toContain("import { Button, Card } from '@oods/components';");
+    expect(result.code).toContain("import { Button, Card } from '@oods/components-vue';");
   });
 });
 

@@ -228,7 +228,10 @@ describe('@oods/components-vue interactions', () => {
         selectable: true,
       },
     });
-    await wrapper.get('button[aria-label="Activate row sub-1"]').trigger('click');
+    const rowAction = wrapper.get('tbody td:first-child .oods-table-row-action');
+    expect(rowAction.text()).toBe('Acme');
+    expect(rowAction.attributes('aria-label')).toBeUndefined();
+    await rowAction.trigger('click');
     expect(wrapper.emitted('rowActivate')).toEqual([['sub-1']]);
   });
 });

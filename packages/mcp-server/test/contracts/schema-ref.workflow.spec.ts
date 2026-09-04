@@ -5,8 +5,8 @@ import { handle as renderHandle } from '../../src/tools/repl.render.js';
 import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 
 describe('schemaRef workflow', () => {
-  it('design.compose returns schemaRef and downstream tools accept it', async () => {
-    const compose = await composeHandle({ intent: 'user registration form' });
+  it('design.compose returns a bounded Card schemaRef that downstream tools accept', async () => {
+    const compose = await composeHandle({ intent: 'simple card', layout: 'card' });
     expect(compose.status).toBe('ok');
     expect(compose.schemaRef).toBeTruthy();
 
@@ -21,6 +21,7 @@ describe('schemaRef workflow', () => {
     const codegen = await codegenHandle({ schemaRef, framework: 'react' });
     expect(codegen.status).toBe('ok');
     expect(codegen.code.length).toBeGreaterThan(0);
+    expect(codegen.code).toContain("from '@oods/components-react'");
   });
 
   it('componentOverrides materialize in schemaRef for render/codegen', async () => {
@@ -38,8 +39,29 @@ describe('schemaRef workflow', () => {
     expect(render.html).toContain('data-oods-component="Table"');
 
     const codegen = await codegenHandle({ schemaRef, framework: 'react' });
-    expect(codegen.status).toBe('ok');
-    expect(codegen.code).toContain('data-oods-component="Table"');
+    expect(codegen).toEqual({
+      status: 'error',
+      framework: 'react',
+      code: '',
+      fileExtension: '',
+      imports: [],
+      warnings: [],
+      errors: [
+        {
+          code: 'OODS-N015',
+          message: 'Component SearchInput is not emission-eligible for react; evidence state: unavailable.',
+          nodeId: 'slot-search-1',
+          component: 'SearchInput',
+        },
+        {
+          code: 'OODS-N015',
+          message: 'Component PaginationBar is not emission-eligible for react; evidence state: unavailable.',
+          nodeId: 'slot-pagination-8',
+          component: 'PaginationBar',
+        },
+      ],
+      meta: { nodeCount: 9, componentCount: 6 },
+    });
   });
 
   it('supports patch validation with schemaRef and renders the patched tree', async () => {

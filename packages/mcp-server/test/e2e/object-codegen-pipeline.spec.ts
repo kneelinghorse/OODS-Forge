@@ -1,327 +1,183 @@
 /**
- * E2E pipeline tests for object-aware compose → validate → render → codegen (s63-m05).
+ * Object-aware compose → validate → render → target-readiness preflight.
  *
- * Validates the full pipeline produces production-quality output:
- * 1. compose(object, context) → schema with objectUsed, objectSchema, bindings
- * 2. validate(schemaRef) → structural checks pass
- * 3. render(schemaRef, apply=true) → HTML with domain components
- * 4. code_generate(schemaRef, react) → typed Props, handler stubs, domain components
- * 5. code_generate(schemaRef, vue) → typed defineProps, handler stubs
- *
- * Tested across multiple objects (Subscription, User) and contexts (detail, list).
+ * HTML remains usable for the complete object schemas. React and Vue must fail
+ * loudly until every requested target component is emission-eligible; a partial
+ * generated payload would overstate the package surface.
  */
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import type { UiSchema } from '../../src/schemas/generated.js';
 import { handle as composeHandle } from '../../src/tools/design.compose.js';
+import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
-import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 
-/* ------------------------------------------------------------------ */
-/*  Subscription · detail context — full pipeline                      */
-/* ------------------------------------------------------------------ */
+type Framework = 'react' | 'vue';
+type AffectedNode = readonly [nodeId: string, component: string];
 
-describe('E2E pipeline — Subscription detail', () => {
-  it('compose → validate → render → codegen (react + vue)', async () => {
-    // ---- compose ----
-    const compose = await composeHandle({
-      object: 'Subscription',
-      context: 'detail',
-    });
-    expect(compose.status).toBe('ok');
-    expect(compose.schemaRef).toBeTruthy();
-    expect(compose.objectUsed).toBeDefined();
-    expect(compose.objectUsed!.name).toBe('Subscription');
-    expect(compose.objectUsed!.traits.length).toBeGreaterThan(0);
-    expect(compose.objectUsed!.fieldsComposed).toBeGreaterThan(5);
+const SUBSCRIPTION_DETAIL_UNREADY: readonly AffectedNode[] = [
+  ['ve-header-24', 'StatusTimeline'],
+  ['ve-header-25', 'CancellationSummary'],
+  ['ve-header-26', 'ArchiveSummary'],
+  ['slot-tab-3-15', 'StatusBadge'],
+  ['slot-metadata-12', 'AuditTimeline'],
+];
 
-    // objectSchema bridge populated
-    expect(compose.schema.objectSchema).toBeDefined();
-    expect(Object.keys(compose.schema.objectSchema!).length).toBeGreaterThan(5);
+const SUBSCRIPTION_LIST_UNREADY: readonly AffectedNode[] = [
+  ['slot-search-1', 'SearchInput'],
+  ['ve-toolbar-actions-12', 'PriceBadge'],
+  ['ve-items-10', 'StatusBadge'],
+  ['ve-items-11', 'RelativeTimestamp'],
+  ['slot-pagination-8', 'PaginationBar'],
+];
 
-    // detail context bindings populated
-    const rootBindings = compose.schema.screens[0].bindings;
-    expect(rootBindings).toBeDefined();
-    expect(rootBindings!.onEdit).toBe('handleEdit');
-    expect(rootBindings!.onDelete).toBe('handleDelete');
+const USER_DETAIL_UNREADY: readonly AffectedNode[] = [
+  ['ve-header-28', 'StatusTimeline'],
+  ['ve-header-29', 'TagManager'],
+  ['slot-tab-1-6', 'MembershipPanel'],
+  ['slot-tab-2-8', 'AddressCollectionPanel'],
+  ['slot-tab-3-15', 'PreferencePanel'],
+  ['slot-metadata-12', 'AuditTimeline'],
+];
 
-    const schemaRef = compose.schemaRef!;
+const DASHBOARD_UNREADY: readonly AffectedNode[] = [
+  ['slot-header-2', 'DetailHeader'],
+  ['slot-main-content-6', 'VizAreaPreview'],
+];
 
-    // ---- validate ----
-    const validation = await validateHandle({ mode: 'full', schemaRef });
-    expect(validation.status).toBe('ok');
+function countNodes(schema: UiSchema): number {
+  let count = 0;
+  const visit = (nodes: UiSchema['screens']): void => {
+    for (const node of nodes) {
+      count += 1;
+      if (node.children) visit(node.children);
+    }
+  };
+  visit(schema.screens);
+  return count;
+}
 
-    // ---- render ----
-    const render = await renderHandle({ mode: 'full', schemaRef, apply: true });
-    expect(render.status).toBe('ok');
-    expect(render.html).toContain('<!DOCTYPE html>');
-    // Should contain domain components, not just generic placeholders
-    expect(render.html).toContain('data-oods-component=');
+function countComponents(schema: UiSchema): number {
+  const ids = new Set<string>();
+  const visit = (nodes: UiSchema['screens']): void => {
+    for (const node of nodes) {
+      ids.add(node.component);
+      if (node.children) visit(node.children);
+    }
+  };
+  visit(schema.screens);
+  return ids.size;
+}
 
-    // ---- codegen react ----
-    const react = await codegenHandle({
-      schemaRef,
-      framework: 'react',
-      options: { typescript: true, styling: 'tokens' },
-    });
-    expect(react.status).toBe('ok');
-    expect(react.fileExtension).toBe('.tsx');
-
-    // Typed Props interface from objectSchema
-    expect(react.code).toContain('export interface PageProps');
-    // At least some field types present
-    expect(react.code).toMatch(/:\s*(string|number|boolean);/);
-    // React.FC<PageProps> return type
-    expect(react.code).toContain('React.FC<PageProps>');
-
-    // Event handler stubs for detail context
-    expect(react.code).toContain('const handleEdit');
-    expect(react.code).toContain('const handleDelete');
-    // Handler stubs include TODO comments
-    expect(react.code).toContain('/* TODO: implement handleEdit */');
-    expect(react.code).toContain('/* TODO: implement handleDelete */');
-
-    // Binding attributes wired in JSX
-    expect(react.code).toContain('onEdit={handleEdit}');
-    expect(react.code).toContain('onDelete={handleDelete}');
-
-    // ---- codegen vue ----
-    const vue = await codegenHandle({
-      schemaRef,
-      framework: 'vue',
-      options: { typescript: true, styling: 'tokens' },
-    });
-    expect(vue.status).toBe('ok');
-    expect(vue.fileExtension).toBe('.vue');
-
-    // Typed defineProps from objectSchema
-    expect(vue.code).toContain('interface Props');
-    expect(vue.code).toContain('defineProps<Props>()');
-    expect(vue.code).toMatch(/:\s*(string|number|boolean);/);
-
-    // Handler stubs in script setup
-    expect(vue.code).toContain('const handleEdit');
-    expect(vue.code).toContain('const handleDelete');
-
-    // Vue binding attributes
-    expect(vue.code).toContain('@edit="handleEdit"');
-    expect(vue.code).toContain('@delete="handleDelete"');
-
-    // SFC structure
-    expect(vue.code).toContain('<template>');
-    expect(vue.code).toContain('<script setup lang="ts">');
+async function expectTargetUnavailable(
+  schemaRef: string,
+  schema: UiSchema,
+  framework: Framework,
+  affectedNodes: readonly AffectedNode[],
+): Promise<void> {
+  const result = await codegenHandle({
+    schemaRef,
+    framework,
+    options: { typescript: true, styling: 'tokens' },
   });
-});
 
-/* ------------------------------------------------------------------ */
-/*  Subscription · list context — full pipeline                        */
-/* ------------------------------------------------------------------ */
-
-describe('E2E pipeline — Subscription list', () => {
-  it('compose → validate → render → codegen (react + vue)', async () => {
-    // ---- compose ----
-    const compose = await composeHandle({
-      object: 'Subscription',
-      context: 'list',
-    });
-    expect(compose.status).toBe('ok');
-    expect(compose.layout).toBe('list');
-    expect(compose.objectUsed).toBeDefined();
-    expect(compose.schema.objectSchema).toBeDefined();
-
-    // list context bindings
-    const rootBindings = compose.schema.screens[0].bindings;
-    expect(rootBindings!.onRowClick).toBe('handleRowClick');
-    expect(rootBindings!.onSort).toBe('handleSort');
-    expect(rootBindings!.onFilter).toBe('handleFilter');
-
-    const schemaRef = compose.schemaRef!;
-
-    // ---- validate ----
-    const validation = await validateHandle({ mode: 'full', schemaRef });
-    expect(validation.status).toBe('ok');
-
-    // ---- render ----
-    const render = await renderHandle({ mode: 'full', schemaRef, apply: true });
-    expect(render.status).toBe('ok');
-    expect(render.html).toContain('data-oods-component=');
-
-    // ---- codegen react ----
-    const react = await codegenHandle({
-      schemaRef,
-      framework: 'react',
-      options: { typescript: true, styling: 'tokens' },
-    });
-    expect(react.status).toBe('ok');
-    expect(react.code).toContain('export interface PageProps');
-    expect(react.code).toContain('const handleRowClick');
-    expect(react.code).toContain('const handleSort');
-    expect(react.code).toContain('const handleFilter');
-    expect(react.code).toContain('onRowClick={handleRowClick}');
-
-    // ---- codegen vue ----
-    const vue = await codegenHandle({
-      schemaRef,
-      framework: 'vue',
-      options: { typescript: true, styling: 'tokens' },
-    });
-    expect(vue.status).toBe('ok');
-    expect(vue.code).toContain('interface Props');
-    expect(vue.code).toContain('defineProps<Props>()');
-    expect(vue.code).toContain('const handleRowClick');
-    expect(vue.code).toContain('@rowClick="handleRowClick"');
+  expect(result).toEqual({
+    status: 'error',
+    framework,
+    code: '',
+    fileExtension: '',
+    imports: [],
+    warnings: [],
+    errors: affectedNodes.map(([nodeId, component]) => ({
+      code: 'OODS-N015',
+      message: `Component ${component} is not emission-eligible for ${framework}; evidence state: unavailable.`,
+      nodeId,
+      component,
+    })),
+    meta: {
+      nodeCount: countNodes(schema),
+      componentCount: countComponents(schema),
+    },
   });
-});
+}
 
-/* ------------------------------------------------------------------ */
-/*  User · detail context — second object pipeline                     */
-/* ------------------------------------------------------------------ */
+async function composeAndCheck(
+  object: 'Subscription' | 'User',
+  context: 'detail' | 'list',
+  affectedNodes: readonly AffectedNode[],
+): Promise<void> {
+  const compose = await composeHandle({ object, context });
+  expect(compose.status).toBe('ok');
+  expect(compose.schemaRef).toBeTruthy();
+  expect(compose.objectUsed?.name).toBe(object);
+  expect(compose.objectUsed?.traits.length).toBeGreaterThan(0);
+  expect(compose.objectUsed?.fieldsComposed).toBeGreaterThan(0);
+  expect(compose.schema.objectSchema).toBeDefined();
 
-describe('E2E pipeline — User detail', () => {
-  it('compose → validate → render → codegen (react + vue)', async () => {
-    // ---- compose ----
-    const compose = await composeHandle({
-      object: 'User',
-      context: 'detail',
-    });
-    expect(compose.status).toBe('ok');
-    expect(compose.objectUsed).toBeDefined();
-    expect(compose.objectUsed!.name).toBe('User');
-    expect(compose.objectUsed!.traits.length).toBeGreaterThan(0);
-    expect(compose.objectUsed!.fieldsComposed).toBeGreaterThan(0);
+  const rootBindings = compose.schema.screens[0].bindings;
+  if (context === 'detail') {
+    expect(rootBindings?.onEdit).toBe('handleEdit');
+    expect(rootBindings?.onDelete).toBe('handleDelete');
+  } else {
+    expect(rootBindings?.onRowClick).toBe('handleRowClick');
+    expect(rootBindings?.onSort).toBe('handleSort');
+    expect(rootBindings?.onFilter).toBe('handleFilter');
+  }
 
-    // objectSchema populated for User fields
-    expect(compose.schema.objectSchema).toBeDefined();
-    expect(Object.keys(compose.schema.objectSchema!).length).toBeGreaterThan(0);
+  const schemaRef = compose.schemaRef!;
+  const validation = await validateHandle({ mode: 'full', schemaRef });
+  expect(validation.status).toBe('ok');
 
-    // detail bindings
-    const rootBindings = compose.schema.screens[0].bindings;
-    expect(rootBindings!.onEdit).toBe('handleEdit');
-    expect(rootBindings!.onDelete).toBe('handleDelete');
+  const render = await renderHandle({ mode: 'full', schemaRef, apply: true });
+  expect(render.status).toBe('ok');
+  expect(render.html).toContain('<!DOCTYPE html>');
+  expect(render.html).toContain('data-oods-component=');
+  expect(render.html.match(/data-oods-component=/g)?.length ?? 0).toBeGreaterThan(1);
 
-    const schemaRef = compose.schemaRef!;
+  await expectTargetUnavailable(schemaRef, compose.schema, 'react', affectedNodes);
+  await expectTargetUnavailable(schemaRef, compose.schema, 'vue', affectedNodes);
+}
 
-    // ---- validate ----
-    const validation = await validateHandle({ mode: 'full', schemaRef });
-    expect(validation.status).toBe('ok');
-
-    // ---- render ----
-    const render = await renderHandle({ mode: 'full', schemaRef, apply: true });
-    expect(render.status).toBe('ok');
-    expect(render.html).toContain('<!DOCTYPE html>');
-
-    // ---- codegen react ----
-    const react = await codegenHandle({
-      schemaRef,
-      framework: 'react',
-      options: { typescript: true, styling: 'tokens' },
-    });
-    expect(react.status).toBe('ok');
-    expect(react.code).toContain('export interface PageProps');
-    expect(react.code).toContain('React.FC<PageProps>');
-    expect(react.code).toContain('const handleEdit');
-    expect(react.code).toContain('const handleDelete');
-
-    // ---- codegen vue ----
-    const vue = await codegenHandle({
-      schemaRef,
-      framework: 'vue',
-      options: { typescript: true, styling: 'tokens' },
-    });
-    expect(vue.status).toBe('ok');
-    expect(vue.code).toContain('interface Props');
-    expect(vue.code).toContain('defineProps<Props>()');
-    expect(vue.code).toContain('const handleEdit');
+describe('E2E object codegen target readiness', () => {
+  it('keeps Subscription detail composition/rendering and returns exact target unavailability', async () => {
+    await composeAndCheck('Subscription', 'detail', SUBSCRIPTION_DETAIL_UNREADY);
   });
-});
 
-/* ------------------------------------------------------------------ */
-/*  Cross-cutting concerns                                             */
-/* ------------------------------------------------------------------ */
+  it('keeps Subscription list composition/rendering and returns exact target unavailability', async () => {
+    await composeAndCheck('Subscription', 'list', SUBSCRIPTION_LIST_UNREADY);
+  });
 
-describe('E2E pipeline — cross-cutting', () => {
-  it('objectSchema field entries have type and required', async () => {
-    const compose = await composeHandle({
-      object: 'Subscription',
-      context: 'detail',
-    });
-    for (const [, entry] of Object.entries(compose.schema.objectSchema!)) {
+  it('keeps User detail composition/rendering and returns exact target unavailability', async () => {
+    await composeAndCheck('User', 'detail', USER_DETAIL_UNREADY);
+  });
+
+  it('keeps objectSchema field metadata even when framework emission is blocked', async () => {
+    const compose = await composeHandle({ object: 'Subscription', context: 'detail' });
+    expect(compose.status).toBe('ok');
+    expect(Object.keys(compose.schema.objectSchema ?? {}).length).toBeGreaterThan(5);
+    for (const entry of Object.values(compose.schema.objectSchema ?? {})) {
       expect(entry.type).toBeTruthy();
       expect(typeof entry.required).toBe('boolean');
     }
-  });
 
-  it('react codegen field types match objectSchema entries', async () => {
-    const compose = await composeHandle({
-      object: 'Subscription',
-      context: 'detail',
-    });
-    const react = await codegenHandle({
-      schemaRef: compose.schemaRef!,
-      framework: 'react',
-      options: { typescript: true, styling: 'tokens' },
-    });
-
-    // The generated code should have at least one field from objectSchema
-    const fieldNames = Object.keys(compose.schema.objectSchema!);
-    // Convert snake_case to camelCase for matching
-    const camelNames = fieldNames.map((n) =>
-      n.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()),
+    await expectTargetUnavailable(
+      compose.schemaRef!,
+      compose.schema,
+      'react',
+      SUBSCRIPTION_DETAIL_UNREADY,
     );
-    // At least some fields should appear in the generated code
-    const found = camelNames.filter((name) => react.code.includes(name));
-    expect(found.length).toBeGreaterThan(0);
   });
 
-  it('vue codegen field types match objectSchema entries', async () => {
-    const compose = await composeHandle({
-      object: 'Subscription',
-      context: 'detail',
-    });
-    const vue = await codegenHandle({
-      schemaRef: compose.schemaRef!,
-      framework: 'vue',
-      options: { typescript: true, styling: 'tokens' },
-    });
-
-    const fieldNames = Object.keys(compose.schema.objectSchema!);
-    const camelNames = fieldNames.map((n) =>
-      n.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()),
-    );
-    const found = camelNames.filter((name) => vue.code.includes(name));
-    expect(found.length).toBeGreaterThan(0);
-  });
-
-  it('intent-only compose produces codegen without objectSchema', async () => {
+  it('classifies intent-only dashboard framework output instead of treating it as a success', async () => {
     const compose = await composeHandle({ intent: 'dashboard with metrics' });
     expect(compose.status).toBe('ok');
     expect(compose.schema.objectSchema).toBeUndefined();
 
-    const react = await codegenHandle({
-      schemaRef: compose.schemaRef!,
-      framework: 'react',
-      options: { typescript: true, styling: 'tokens' },
-    });
-    expect(react.status).toBe('ok');
-    // No PageProps interface without objectSchema
-    expect(react.code).not.toContain('interface PageProps');
-    // No handler stubs without bindings
-    expect(react.code).not.toContain('const handle');
-  });
-
-  it('render output contains domain components not just placeholders', async () => {
-    const compose = await composeHandle({
-      object: 'Subscription',
-      context: 'detail',
-    });
-    const render = await renderHandle({
-      mode: 'full',
-      schemaRef: compose.schemaRef!,
-      apply: true,
-    });
-    expect(render.status).toBe('ok');
-
-    // Count data-oods-component occurrences — should have multiple domain components
-    const componentMatches = render.html!.match(/data-oods-component="[^"]+"/g) ?? [];
-    expect(componentMatches.length).toBeGreaterThan(1);
+    await expectTargetUnavailable(
+      compose.schemaRef!,
+      compose.schema,
+      'react',
+      DASHBOARD_UNREADY,
+    );
   });
 });

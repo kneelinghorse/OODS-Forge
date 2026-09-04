@@ -56,6 +56,7 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
     const listRef = React.useRef<HTMLDivElement>(null);
     const tabRefs = React.useRef(new Map<string, HTMLButtonElement>());
     const itemWidths = React.useRef(new Map<string, number>());
+    const focusRequestedByUser = React.useRef(false);
 
     React.useEffect(() => setFocusedId(activeId), [activeId]);
 
@@ -64,6 +65,7 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
         const item = items.find(candidate => candidate.id === id);
         if (!item || item.disabled || item.isDisabled) return;
         if (!controlled) setInternalSelectedId(id);
+        focusRequestedByUser.current = true;
         setFocusedId(id);
         onChange?.(id);
         onUpdate?.(id);
@@ -125,11 +127,11 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
       const nextId = items[nextIndex]?.id;
       if (!nextId) return;
       select(nextId);
-      queueMicrotask(() => tabRefs.current.get(nextId)?.focus());
     };
 
     React.useEffect(() => {
-      if (visibleItems.some(item => item.id === focusedId)) {
+      if (focusRequestedByUser.current && visibleItems.some(item => item.id === focusedId)) {
+        focusRequestedByUser.current = false;
         tabRefs.current.get(focusedId)?.focus();
       }
     }, [focusedId, visibleItems]);

@@ -37,6 +37,7 @@ const AccessibilityShowcase = defineComponent({
       h(Checkbox, {
         id: 'marketing',
         label: 'Product updates',
+        required: true,
         help: 'Choose whether to subscribe',
       }),
       h(Select, {
@@ -126,10 +127,19 @@ describe('@oods/components-vue accessibility outcomes', () => {
     expect(wrapper.get('[role="tablist"]').attributes('aria-label')).toBe('Account sections');
     expect(wrapper.findAll('[role="tab"]')).toHaveLength(2);
     expect(wrapper.findAll('[role="tabpanel"]')).toHaveLength(2);
+    const checkbox = wrapper.get('#marketing');
+    expect((checkbox.element as HTMLInputElement).required).toBe(true);
+    expect(wrapper.get('label[for="marketing"] .oods-field-required').text()).toBe('*');
+    expect(
+      wrapper.get('label[for="marketing"] .oods-field-required').attributes('aria-hidden'),
+    ).toBe('true');
     expect(wrapper.get('table caption').text()).toBe('Subscriptions');
-    expect(wrapper.findAll('thead th[scope="col"]')).toHaveLength(3);
-    expect(wrapper.findAll('tbody td')).toHaveLength(3);
-    expect(wrapper.get('button[aria-label="Activate row sub-1"]').attributes('type')).toBe('button');
+    expect(wrapper.findAll('thead th[scope="col"]')).toHaveLength(2);
+    expect(wrapper.findAll('tbody td')).toHaveLength(2);
+    const rowAction = wrapper.get('tbody td:first-child .oods-table-row-action');
+    expect(rowAction.attributes('type')).toBe('button');
+    expect(rowAction.text()).toBe('Acme');
+    expect(rowAction.attributes('aria-label')).toBeUndefined();
   });
 
   it('has no automated axe violations for the nondegenerate showcase', async () => {

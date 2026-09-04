@@ -45,7 +45,46 @@ describe('Sprint 182 shared component style contract', () => {
 
   it('s182-m01b binds the measured Brand B light action foreground to pure white', () => {
     expect(css).toMatch(
-      /\[data-brand='B'\]\[data-theme='light'\][\s\S]*?\[data-oods-component='Button'\][\s\S]*?:not\(:disabled\) \{\s*color: var\(--ref-color-neutral-0, white\);/,
+      /\[data-brand='B'\]\[data-theme='light'\][\s\S]*?\[data-oods-component='Button'\][\s\S]*?\[data-intent='primary'\]:not\(:disabled\) \{\s*color: var\(--ref-color-neutral-0, white\);/,
+    );
+  });
+
+  it('encodes the locked visual state vocabulary without consumer utility scanning', () => {
+    for (const intent of ['neutral', 'primary', 'secondary', 'success', 'warning', 'danger']) {
+      expect(css, `Button intent=${intent}`).toContain(`[data-intent='${intent}']`);
+    }
+    for (const size of ['sm', 'md', 'lg']) {
+      expect(css, `Button size=${size}`).toContain(
+        `[data-oods-component='Button'])[data-size='${size}']`,
+      );
+      expect(css, `Tabs size=${size}`).toContain(
+        `[data-oods-component='Tabs'])[data-size='${size}']`,
+      );
+      expect(css, `Text size=${size}`).toContain(
+        `[data-oods-component='Text'])[data-size='${size}']`,
+      );
+    }
+    for (const weight of ['regular', 'normal', 'medium', 'semibold']) {
+      expect(css, `Text weight=${weight}`).toContain(`[data-weight='${weight}']`);
+    }
+    for (const density of ['compact', 'default', 'comfortable']) {
+      expect(css, `Table density=${density}`).toContain(`[data-density='${density}']`);
+    }
+    expect(css).toMatch(/\[data-oods-component='Badge'\]\)\[data-emphasis='solid'\]/);
+    expect(css).toMatch(/\[data-oods-component='Banner'\]\)\[data-emphasis='solid'\]/);
+  });
+
+  it('styles field controls without treating framework wrappers as native controls', () => {
+    for (const selector of [
+      "input[data-oods-component='Input']",
+      "input[data-oods-component='DatePicker']",
+      "select[data-oods-component='Select']",
+      "textarea[data-oods-component='Textarea']",
+    ]) {
+      expect(css, selector).toContain(selector);
+    }
+    expect(css).not.toContain(
+      ":where([data-oods-component='Input'], [data-oods-component='DatePicker']",
     );
   });
 });

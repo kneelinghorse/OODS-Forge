@@ -127,6 +127,7 @@ const VisualShowcase = defineComponent({
                     id: 'visual-marketing',
                     label: 'Product updates',
                     modelValue: marketing.value,
+                    required: true,
                     help: 'Choose whether to subscribe',
                     'onUpdate:modelValue': (value: boolean) => { marketing.value = value; },
                   }),

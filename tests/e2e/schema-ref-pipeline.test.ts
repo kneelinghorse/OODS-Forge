@@ -22,7 +22,7 @@ function payloadBytes(payload: unknown): number {
 }
 
 describe('schemaRef E2E pipeline', () => {
-  it('compose → validate → render → code.generate accepts schemaRef', async () => {
+  it('compose → validate → render accepts schemaRef and code.generate preserves target readiness', async () => {
     const compose = await composeHandle(COMPOSE_INPUT);
     expect(compose.status).toBe('ok');
     expect(compose.schemaRef).toBeTruthy();
@@ -36,8 +36,32 @@ describe('schemaRef E2E pipeline', () => {
     expect(render.html).toContain('<!DOCTYPE html>');
 
     const codegen = await codegenHandle({ schemaRef, framework: 'react' });
-    expect(codegen.status).toBe('ok');
-    expect(codegen.code.length).toBeGreaterThan(0);
+    expect(codegen.status).toBe('error');
+    expect(codegen.code).toBe('');
+    expect(codegen.fileExtension).toBe('');
+    expect(codegen.imports).toEqual([]);
+    expect(codegen.warnings).toEqual([]);
+    expect(codegen.errors).toEqual([
+      {
+        code: 'OODS-N015',
+        message: 'Component DetailHeader is not emission-eligible for react; evidence state: unavailable.',
+        nodeId: 'slot-header-2',
+        component: 'DetailHeader',
+      },
+      {
+        code: 'OODS-N015',
+        message: 'Component PriceBadge is not emission-eligible for react; evidence state: unavailable.',
+        nodeId: 'slot-tab-1-6',
+        component: 'PriceBadge',
+      },
+      {
+        code: 'OODS-N015',
+        message: 'Component AuditTimeline is not emission-eligible for react; evidence state: unavailable.',
+        nodeId: 'slot-metadata-14',
+        component: 'AuditTimeline',
+      },
+    ]);
+    expect(codegen.meta).toEqual({ nodeCount: 15, componentCount: 6 });
   });
 
   it('schemaRef payloads are substantially smaller than schema passthrough', async () => {
