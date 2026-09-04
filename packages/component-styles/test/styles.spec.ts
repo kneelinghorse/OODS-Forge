@@ -42,4 +42,10 @@ describe('Sprint 182 shared component style contract', () => {
     expect(css).toMatch(/@media \(forced-colors: active\)[\s\S]*?forced-color-adjust: none;/);
     expect(css).toMatch(/\.oods-banner-dismiss \{[\s\S]*?inline-size: 2\.5rem;[\s\S]*?color: inherit;/);
   });
+
+  it('s182-m01b binds the measured Brand B light action foreground to pure white', () => {
+    expect(css).toMatch(
+      /\[data-brand='B'\]\[data-theme='light'\][\s\S]*?\[data-oods-component='Button'\][\s\S]*?:not\(:disabled\) \{\s*color: var\(--ref-color-neutral-0, white\);/,
+    );
+  });
 });

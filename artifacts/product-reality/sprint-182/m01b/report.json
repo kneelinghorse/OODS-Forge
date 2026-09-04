@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m01b",
+  "title": "Brand B light action-contrast correction",
+  "status": "passed",
+  "scope": {
+    "package": "@oods/component-styles",
+    "semanticContractChanged": false,
+    "tokenSourceChanged": false,
+    "denominatorChanged": false,
+    "frameworkLocalOverrideAdded": false
+  },
+  "correction": [
+    "Brand B base/light enabled Button foreground uses the frozen pure-white reference token.",
+    "The semantic primary-action surface remains unchanged.",
+    "The correction is shared by React and Vue through @oods/component-styles/css."
+  ],
+  "verification": {
+    "componentStyleSuite": {
+      "command": "pnpm --filter @oods/component-styles run test",
+      "testFilesPassed": 2,
+      "testsPassed": 11,
+      "testsFailed": 0,
+      "testsSkipped": 0
+    },
+    "mutation": {
+      "selector": "s182-m01b keeps the Brand B light enabled action at or above 4.5:1",
+      "preGreen": { "selected": 1, "failed": 0, "skippedSelected": 0 },
+      "mutated": { "selected": 1, "failed": 1, "skippedSelected": 0 },
+      "restored": { "selected": 1, "failed": 0, "skippedSelected": 0 },
+      "mutatedContrastRatio": 4.405342913752852,
+      "directory": "artifacts/product-reality/sprint-182/m01b/mutation"
+    },
+    "deterministicPack": {
+      "status": "passed",
+      "runs": 2,
+      "sha256": "c9bc6a9659239059b854f25c4b26806223e199937b5ec95ac5971fec02dca26c",
+      "entryCount": 6,
+      "report": "artifacts/product-reality/sprint-182/m01b/package/report.json"
+    },
+    "frameworkVisualEvidence": [
+      {
+        "target": "react",
+        "status": "passed",
+        "selected": 9,
+        "failed": 0,
+        "skipped": 0,
+        "brandBLightContrastRatio": 4.65,
+        "screenshot": "artifacts/product-reality/sprint-182/m02/visual-regression/react-B-light-desktop.png",
+        "screenshotSha256": "9582bb1a8a65c2a014c94b128c5bbd8d2e44a94b637b92931b7bf0d2603d7c5b",
+        "report": "artifacts/product-reality/sprint-182/m02/visual-regression/report.json",
+        "reportSha256": "f1d86c5e316017c418a93306d65d9505b25a7ba59d2803591a68bff212cee610"
+      },
+      {
+        "target": "vue",
+        "status": "passed",
+        "selected": 9,
+        "failed": 0,
+        "skipped": 0,
+        "brandBLightContrastRatio": 4.65,
+        "screenshot": "artifacts/product-reality/sprint-182/m03/visual-regression/vue-B-light-desktop.png",
+        "screenshotSha256": "7577934a1bacd8eda4a6cf5ea17b4e52a50774c5c3a45d3a4506f688b30600e6",
+        "report": "artifacts/product-reality/sprint-182/m03/visual-regression/report.json",
+        "reportSha256": "8c9c04e9d0f7c6b68b261eab34842a951ee4fd20910bbc90a55ef2aefb978377"
+      }
+    ],
+    "visualInspection": {
+      "status": "passed",
+      "method": "Original-file SHA verification, OCR, and fresh section-crop/contact-sheet inspection",
+      "checks": [
+        "enabled and disabled labels",
+        "validation and status contrast",
+        "form controls and labels",
+        "tab selection and overflow",
+        "table headings and rows",
+        "responsive clipping"
+      ],
+      "note": "Large canonical-path image previews were not treated as evidence because that preview path can omit intact raster regions."
+    },
+    "frozenM01aEvidence": {
+      "status": "preserved",
+      "reactHighContrastReportSha256": "7a69ec47aacd5d367c06a4a732bde7af0ecee30bf65fb23346fdafbdcc49e553",
+      "vueHighContrastReportSha256": "bcbb4f0ed1ba1f22cd91163f3b9c28e1b8b6210e1956988326f413ee2210ab2e"
+    }
+  },
+  "sourceDigests": {
+    "packages/component-styles/src/components.css": "63c41511827f7fdb7b93108bf5b4ef824e1aa4dfa3f70b2be7d8cb60caedf9d1",
+    "packages/component-styles/dist/components.css": "63c41511827f7fdb7b93108bf5b4ef824e1aa4dfa3f70b2be7d8cb60caedf9d1",
+    "packages/component-styles/test/high-contrast.browser.spec.ts": "c51c6bd4451f48a90cd3ddb0decd1ea7e81e5064fb84ee533b634665e3f2c953",
+    "packages/component-styles/test/styles.spec.ts": "ad3a1d875e57e8327523fef5575ab59dc8c47bfde2623f1cf7f273d043e759aa"
+  },
+  "decision": 1657,
+  "learnings": [475, 476],
+  "followUp": "M02 and M03 retain ownership of their complete framework evidence and remain below codegenUsable until M04."
+}

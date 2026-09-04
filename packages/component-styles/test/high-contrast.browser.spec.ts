@@ -22,7 +22,62 @@ afterAll(async () => {
   await browser?.close();
 });
 
-describe('s182-m01a shared high-contrast browser correction', () => {
+describe('Sprint 182 shared component-style browser corrections', () => {
+  it('s182-m01b keeps the Brand B light enabled action at or above 4.5:1', async () => {
+    const page = await browser.newPage({
+      colorScheme: 'light',
+      forcedColors: 'none',
+      viewport: { width: 480, height: 240 },
+    });
+    await page.setContent(`<!doctype html>
+      <html data-brand="B" data-theme="light">
+        <head><style>${tokenCss}\n${componentCss}</style></head>
+        <body>
+          <button class="oods-button" data-oods-component="Button" type="button"
+            style="--cmp-button-background:var(--sys-surface-interactive-primary-default);--cmp-button-text:var(--sys-text-on-interactive)">Update card</button>
+        </body>
+      </html>`);
+
+    const proof = await page.locator('.oods-button').evaluate((element) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1;
+      canvas.height = 1;
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      if (!context) throw new Error('Canvas color resolver unavailable.');
+      const rgba = (color: string) => {
+        context.clearRect(0, 0, 1, 1);
+        context.fillStyle = '#010203';
+        context.fillStyle = color;
+        context.fillRect(0, 0, 1, 1);
+        return [...context.getImageData(0, 0, 1, 1).data];
+      };
+      const luminance = ([red, green, blue]: number[]) => {
+        const channels = [red, green, blue].map((value) => {
+          const normalized = value / 255;
+          return normalized <= 0.04045
+            ? normalized / 12.92
+            : ((normalized + 0.055) / 1.055) ** 2.4;
+        });
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+      };
+      const style = getComputedStyle(element);
+      const foreground = luminance(rgba(style.color));
+      const background = luminance(rgba(style.backgroundColor));
+      return {
+        color: style.color,
+        background: style.backgroundColor,
+        contrastRatio: (Math.max(foreground, background) + 0.05)
+          / (Math.min(foreground, background) + 0.05),
+        text: element.textContent?.trim(),
+      };
+    });
+
+    expect(proof.text).toBe('Update card');
+    expect(proof.color).not.toBe(proof.background);
+    expect(proof.contrastRatio).toBeGreaterThanOrEqual(4.5);
+    await page.close();
+  }, 30_000);
+
   for (const brand of ['A', 'B'] as const) {
     it(`${brand} light/dark keeps the default disabled label distinct from its surface`, async () => {
       for (const theme of ['light', 'dark'] as const) {

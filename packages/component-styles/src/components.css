@@ -44,6 +44,16 @@
   background: var(--cmp-button-background-hover, var(--cmp-surface-action-hover, CanvasText));
 }
 
+/*
+ * Chromium's sRGB clipping resolves the Brand B light action pair to 4.41:1,
+ * below the 4.5:1 text threshold. Preserve the semantic action surface and use
+ * the frozen pure-white reference foreground for this one measured cell.
+ */
+:is([data-brand='B'][data-theme='base'], [data-brand='B'][data-theme='light'])
+  :where(.oods-button, [data-oods-component='Button']):not(:disabled) {
+  color: var(--ref-color-neutral-0, white);
+}
+
 :where(.oods-button, [data-oods-component='Button']):disabled {
   border-color: var(--cmp-button-border-disabled, var(--sys-border-subtle, GrayText));
   background: var(--cmp-button-background-disabled, var(--sys-surface-disabled, Canvas));
