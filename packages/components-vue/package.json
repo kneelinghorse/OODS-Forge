@@ -6,12 +6,14 @@
   "type": "module",
   "license": "MIT",
   "engines": { "node": ">=20.11.1" },
-  "files": ["dist"],
+  "files": ["dist", "evidence"],
   "scripts": {
     "build": "rimraf dist && tsup --config tsup.config.ts",
     "clean": "rimraf dist",
-    "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+    "typecheck": "vue-tsc --noEmit --pretty false -p tsconfig.json",
     "test": "vitest run --config vitest.config.ts",
+    "test:pack": "node test/packed-import.mjs",
+    "test:visual": "node test/visual-evidence.mjs",
     "prepack": "pnpm run build"
   },
   "exports": {
@@ -19,6 +21,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./readiness": {
+      "default": "./evidence/vue-readiness.v1.json"
     },
     "./package.json": "./package.json"
   },
@@ -37,9 +42,11 @@
     "@vue/server-renderer": "^3.5.42",
     "@vue/test-utils": "^2.5.0",
     "jsdom": "^24.0.0",
+    "playwright": "^1.56.1",
     "typescript": "^5.9.3",
     "vite": "^6.4.1",
     "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0",
     "vue": "^3.5.42",
     "vue-tsc": "^3.3.11"
   },

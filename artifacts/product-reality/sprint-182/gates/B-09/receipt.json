@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m03",
+  "bite": "B-09",
+  "reviewHead": "38afc8a32f71a7dce4301dff46ac73de7575f088",
+  "carrier": {
+    "path": "packages/components-vue/test/interactions.spec.ts",
+    "sha256": "b2f5335a6e9f587cd03a26cfaffa6332cc5baf9711c4ca7ffea7cdbc8da15fb3",
+    "selector": "B-09 emits Vue update:modelValue and change for controlled fields"
+  },
+  "production": {
+    "path": "packages/components-vue/src/fields.ts",
+    "sha256": "5023b5a1d3038c71a789826251634220e755fe8c6f8c3f36ce0239ba3f15196a"
+  },
+  "command": "pnpm --filter @oods/components-vue exec vitest run test/interactions.spec.ts -t 'B-09 emits Vue update:modelValue and change for controlled fields'",
+  "mutation": "Remove only the Input input-handler update:modelValue emission while retaining its DOM input and change paths.",
+  "mutationPatchSha256": "0fcb6adf57d60c81a260f0a614e0af4c0b43aa38c1d5fba28456f2456c2b4e35",
+  "sequence": {
+    "preMutation": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 6, "exitCode": 0 },
+    "mutation": { "selected": 1, "failed": 1, "selectedSkipped": 0, "runnerFiltered": 6, "exitCode": 1 },
+    "restoration": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 6, "exitCode": 0 }
+  },
+  "restoreCommand": "pnpm --filter @oods/components-vue run build && pnpm --filter @oods/components-vue exec vitest run test/interactions.spec.ts -t 'B-09 emits Vue update:modelValue and change for controlled fields'",
+  "toolchain": { "node": "24.6.0", "pnpm": "9.12.2", "vitest": "3.2.4" },
+  "generatedArtifacts": [
+    { "path": "packages/components-vue/dist/index.d.ts", "sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a" }
+  ],
+  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-09/",
+  "ownedEvidenceDestination": "artifacts/product-reality/sprint-182/m03/gates/B-09/"
+}

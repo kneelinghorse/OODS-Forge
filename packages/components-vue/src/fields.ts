@@ -1,0 +1,330 @@
+import {
+  computed,
+  defineComponent,
+  h,
+  ref,
+  useId,
+  type ComputedRef,
+  type PropType,
+  type Slots,
+  type VNode,
+  type VNodeChild,
+} from 'vue';
+
+import type { SelectOption, ValidationMessage } from './types.js';
+
+type FieldPresentation = {
+  id?: string;
+  label?: string;
+  help?: string;
+  validation?: ValidationMessage;
+};
+
+type FieldMetadata = {
+  controlId: ComputedRef<string>;
+  helpId: ComputedRef<string>;
+  validationId: ComputedRef<string>;
+  describedBy: ComputedRef<string | undefined>;
+};
+
+function validationStyle(validation?: ValidationMessage): Record<string, string> | undefined {
+  if (!validation) return undefined;
+  const tone = validation.state === 'error' ? 'critical' : validation.state;
+  return {
+    '--cmp-input-message-border': `var(--sys-status-${tone}-border)`,
+    '--cmp-input-message-text': `var(--sys-status-${tone}-text)`,
+  };
+}
+
+function useFieldMetadata(
+  componentName: string,
+  props: FieldPresentation,
+  slots: Slots,
+): FieldMetadata {
+  const generatedId = useId();
+  const controlId = computed(() => props.id || `oods-${componentName.toLowerCase()}-${generatedId}`);
+  const helpId = computed(() => `${controlId.value}-help`);
+  const validationId = computed(() => `${controlId.value}-validation`);
+  const describedBy = computed(() => {
+    const ids: string[] = [];
+    if (props.help || slots.help) ids.push(helpId.value);
+    if (props.validation?.message || slots.validation) ids.push(validationId.value);
+    return ids.length > 0 ? ids.join(' ') : undefined;
+  });
+  return { controlId, helpId, validationId, describedBy };
+}
+
+function renderField(
+  componentName: string,
+  props: FieldPresentation,
+  slots: Slots,
+  metadata: FieldMetadata,
+  control: VNode,
+): VNode {
+  const label = slots.label?.() ?? props.label;
+  const help = slots.help?.() ?? props.help;
+  const validation = slots.validation?.() ?? props.validation?.message;
+  return h('div', {
+    class: 'oods-field',
+    'data-oods-component': componentName,
+    style: validationStyle(props.validation),
+  }, [
+    label
+      ? h('label', { class: 'oods-field-label', for: metadata.controlId.value }, label)
+      : null,
+    control,
+    help
+      ? h('p', { id: metadata.helpId.value, class: 'oods-field-help' }, help)
+      : null,
+    validation
+      ? h('p', {
+          id: metadata.validationId.value,
+          class: 'oods-field-error',
+          role: props.validation?.state === 'error' ? 'alert' : undefined,
+        }, validation)
+      : null,
+  ]);
+}
+
+const textFieldProps = {
+  id: String,
+  label: String,
+  modelValue: String,
+  value: String,
+  defaultValue: { type: String, default: '' },
+  placeholder: String,
+  required: Boolean,
+  disabled: Boolean,
+  readOnly: Boolean,
+  help: String,
+  validation: Object as PropType<ValidationMessage>,
+  name: String,
+  min: String,
+  max: String,
+  step: [String, Number] as PropType<string | number>,
+} as const;
+
+function eventValue(event: Event): string {
+  return (event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).value;
+}
+
+export const Input = defineComponent({
+  name: 'OodsInput',
+  props: {
+    ...textFieldProps,
+    type: { type: String, default: 'text' },
+  },
+  emits: {
+    'update:modelValue': (_value: string) => true,
+    input: (_value: string) => true,
+    change: (_value: string) => true,
+  },
+  setup(props, { emit, slots }) {
+    const internalValue = ref(props.defaultValue);
+    const currentValue = computed(() => props.modelValue ?? props.value ?? internalValue.value);
+    const metadata = useFieldMetadata('Input', props, slots);
+    const updateValue = (nextValue: string) => {
+      if (props.modelValue === undefined && props.value === undefined) internalValue.value = nextValue;
+      emit('update:modelValue', nextValue);
+      emit('input', nextValue);
+    };
+
+    return () => renderField('Input', props, slots, metadata, h('input', {
+      id: metadata.controlId.value,
+      class: 'oods-field-control',
+      type: props.type,
+      name: props.name,
+      value: currentValue.value,
+      placeholder: props.placeholder,
+      required: props.required,
+      disabled: props.disabled,
+      readonly: props.readOnly,
+      min: props.min,
+      max: props.max,
+      step: props.step,
+      'aria-invalid': props.validation?.state === 'error' ? 'true' : undefined,
+      'aria-describedby': metadata.describedBy.value,
+      'aria-errormessage': props.validation?.state === 'error' ? metadata.validationId.value : undefined,
+      onInput: (event: Event) => updateValue(eventValue(event)),
+      onChange: (event: Event) => emit('change', eventValue(event)),
+    }));
+  },
+});
+
+export const DatePicker = defineComponent({
+  name: 'OodsDatePicker',
+  inheritAttrs: false,
+  props: textFieldProps,
+  emits: {
+    'update:modelValue': (_value: string) => true,
+    input: (_value: string) => true,
+    change: (_value: string) => true,
+  },
+  setup(props, { attrs, emit, slots }) {
+    return () => h('div', {
+      ...attrs,
+      class: ['oods-date-picker', attrs.class],
+      'data-oods-component': 'DatePicker',
+    }, [h(Input, {
+      ...props,
+      type: 'date',
+      'onUpdate:modelValue': (value: string) => emit('update:modelValue', value),
+      onInput: (value: string) => emit('input', value),
+      onChange: (value: string) => emit('change', value),
+    }, slots)]);
+  },
+});
+
+export const Textarea = defineComponent({
+  name: 'OodsTextarea',
+  props: {
+    ...textFieldProps,
+    rows: { type: Number, default: 3 },
+  },
+  emits: {
+    'update:modelValue': (_value: string) => true,
+    input: (_value: string) => true,
+    change: (_value: string) => true,
+  },
+  setup(props, { emit, slots }) {
+    const internalValue = ref(props.defaultValue);
+    const currentValue = computed(() => props.modelValue ?? props.value ?? internalValue.value);
+    const metadata = useFieldMetadata('Textarea', props, slots);
+    const updateValue = (nextValue: string) => {
+      if (props.modelValue === undefined && props.value === undefined) internalValue.value = nextValue;
+      emit('update:modelValue', nextValue);
+      emit('input', nextValue);
+    };
+
+    return () => renderField('Textarea', props, slots, metadata, h('textarea', {
+      id: metadata.controlId.value,
+      class: 'oods-field-control',
+      name: props.name,
+      value: currentValue.value,
+      rows: props.rows,
+      placeholder: props.placeholder,
+      required: props.required,
+      disabled: props.disabled,
+      readonly: props.readOnly,
+      'aria-invalid': props.validation?.state === 'error' ? 'true' : undefined,
+      'aria-describedby': metadata.describedBy.value,
+      'aria-errormessage': props.validation?.state === 'error' ? metadata.validationId.value : undefined,
+      onInput: (event: Event) => updateValue(eventValue(event)),
+      onChange: (event: Event) => emit('change', eventValue(event)),
+    }));
+  },
+});
+
+export const Select = defineComponent({
+  name: 'OodsSelect',
+  props: {
+    id: String,
+    label: String,
+    modelValue: String,
+    value: String,
+    defaultValue: { type: String, default: '' },
+    required: Boolean,
+    disabled: Boolean,
+    help: String,
+    validation: Object as PropType<ValidationMessage>,
+    name: String,
+    options: { type: Array as PropType<readonly SelectOption[]>, default: () => [] },
+  },
+  emits: {
+    'update:modelValue': (_value: string) => true,
+    change: (_value: string) => true,
+  },
+  setup(props, { emit, slots }) {
+    const internalValue = ref(props.defaultValue);
+    const currentValue = computed(() => props.modelValue ?? props.value ?? internalValue.value);
+    const metadata = useFieldMetadata('Select', props, slots);
+    const selectValue = (nextValue: string) => {
+      if (props.modelValue === undefined && props.value === undefined) internalValue.value = nextValue;
+      emit('update:modelValue', nextValue);
+      emit('change', nextValue);
+    };
+
+    return () => renderField('Select', props, slots, metadata, h('select', {
+      id: metadata.controlId.value,
+      class: 'oods-field-control',
+      name: props.name,
+      value: currentValue.value,
+      required: props.required,
+      disabled: props.disabled,
+      'aria-invalid': props.validation?.state === 'error' ? 'true' : undefined,
+      'aria-describedby': metadata.describedBy.value,
+      'aria-errormessage': props.validation?.state === 'error' ? metadata.validationId.value : undefined,
+      onChange: (event: Event) => selectValue(eventValue(event)),
+    }, props.options.map((option) => h('option', {
+      key: option.value,
+      value: option.value,
+      disabled: option.disabled,
+    }, slots.option?.({ option }) ?? option.label))));
+  },
+});
+
+export const Checkbox = defineComponent({
+  name: 'OodsCheckbox',
+  props: {
+    id: String,
+    label: String,
+    modelValue: { type: Boolean, default: undefined },
+    checked: { type: Boolean, default: undefined },
+    defaultChecked: Boolean,
+    required: Boolean,
+    disabled: Boolean,
+    help: String,
+    validation: Object as PropType<ValidationMessage>,
+    name: String,
+  },
+  emits: {
+    'update:modelValue': (_value: boolean) => true,
+    change: (_value: boolean) => true,
+  },
+  setup(props, { emit, slots }) {
+    const internalChecked = ref(props.defaultChecked);
+    const currentChecked = computed(() => props.modelValue ?? props.checked ?? internalChecked.value);
+    const metadata = useFieldMetadata('Checkbox', props, slots);
+    const change = (event: Event) => {
+      const checked = (event.target as HTMLInputElement).checked;
+      if (props.modelValue === undefined && props.checked === undefined) internalChecked.value = checked;
+      emit('update:modelValue', checked);
+      emit('change', checked);
+    };
+
+    return () => {
+      const label: VNodeChild = slots.label?.() ?? props.label;
+      const help: VNodeChild = slots.help?.() ?? props.help;
+      const validation: VNodeChild = slots.validation?.() ?? props.validation?.message;
+      return h('div', {
+        class: 'oods-field',
+        'data-oods-component': 'Checkbox',
+        style: validationStyle(props.validation),
+      }, [
+        h('label', { class: 'oods-checkbox', for: metadata.controlId.value }, [
+          h('input', {
+            id: metadata.controlId.value,
+            type: 'checkbox',
+            name: props.name,
+            checked: currentChecked.value,
+            required: props.required,
+            disabled: props.disabled,
+            'aria-invalid': props.validation?.state === 'error' ? 'true' : undefined,
+            'aria-describedby': metadata.describedBy.value,
+            'aria-errormessage': props.validation?.state === 'error' ? metadata.validationId.value : undefined,
+            onChange: change,
+          }),
+          h('span', {}, [label]),
+        ]),
+        help ? h('p', { id: metadata.helpId.value, class: 'oods-field-help' }, help) : null,
+        validation
+          ? h('p', {
+              id: metadata.validationId.value,
+              class: 'oods-field-error',
+              role: props.validation?.state === 'error' ? 'alert' : undefined,
+            }, validation)
+          : null,
+      ]);
+    };
+  },
+});

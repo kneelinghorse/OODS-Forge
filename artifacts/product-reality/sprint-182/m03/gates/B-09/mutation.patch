@@ -1,0 +1,9 @@
+diff --git a/packages/components-vue/src/fields.ts b/packages/components-vue/src/fields.ts
+--- a/packages/components-vue/src/fields.ts
++++ b/packages/components-vue/src/fields.ts
+@@
+     const updateValue = (nextValue: string) => {
+       if (props.modelValue === undefined && props.value === undefined) internalValue.value = nextValue;
+-      emit('update:modelValue', nextValue);
+       emit('input', nextValue);
+     };

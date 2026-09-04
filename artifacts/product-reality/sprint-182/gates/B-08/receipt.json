@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m03",
+  "bite": "B-08",
+  "reviewHead": "38afc8a32f71a7dce4301dff46ac73de7575f088",
+  "carrier": {
+    "path": "packages/components-vue/test/package-contract.spec.ts",
+    "sha256": "093d3f6ade21fe300d3b944e7976fc28321645bd48de36b6b78233a0a55998fe",
+    "selector": "B-08 exports the exact Vue nucleus with public declarations"
+  },
+  "production": {
+    "path": "packages/components-vue/src/index.ts",
+    "sha256": "8cc491e4ba8320e68743882b9e10c5565d7d214aa4aeeb7afc512e4b8b278c79"
+  },
+  "command": "pnpm --filter @oods/components-vue exec vitest run test/package-contract.spec.ts -t 'B-08 exports the exact Vue nucleus with public declarations'",
+  "mutation": "Remove only the Text runtime re-export while retaining its implementation and the other 13 canonical exports.",
+  "mutationPatchSha256": "1cb5223a68d3c94731596dc1d0fab7062e5dbfdcec93d552d7c4dfbdcae49a65",
+  "sequence": {
+    "preMutation": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 2, "exitCode": 0 },
+    "mutation": { "selected": 1, "failed": 1, "selectedSkipped": 0, "runnerFiltered": 2, "exitCode": 1 },
+    "restoration": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 2, "exitCode": 0 }
+  },
+  "restoreCommand": "pnpm --filter @oods/components-vue run build && pnpm --filter @oods/components-vue exec vitest run test/package-contract.spec.ts -t 'B-08 exports the exact Vue nucleus with public declarations'",
+  "toolchain": { "node": "24.6.0", "pnpm": "9.12.2", "vitest": "3.2.4" },
+  "generatedArtifacts": [
+    { "path": "packages/components-vue/dist/index.d.ts", "sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a" }
+  ],
+  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-08/",
+  "ownedEvidenceDestination": "artifacts/product-reality/sprint-182/m03/gates/B-08/"
+}
