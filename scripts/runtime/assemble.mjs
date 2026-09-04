@@ -30,6 +30,11 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "..", "..");
 const PNPM_VERSION = "9.12.2";
 const DIST_PACKAGES = RUNTIME_PACKAGES.filter((name) => name !== "mcp-adapter");
+const PACKAGE_RUNTIME_DIRECTORIES = Object.freeze({
+  "component-contracts": ["registry"],
+  "components-react": ["evidence"],
+  "components-vue": ["evidence"],
+});
 const ADAPTER_RUNTIME_FILES = [
   "index.js",
   "sanitize-schema.js",
@@ -42,7 +47,7 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   objects: 8,
   schemas: 52,
   traits: 68,
-  "artifacts/structured-data": 17,
+  "artifacts/structured-data": 19,
 });
 
 const ABSOLUTE_PATH_EXEMPTIONS = new Set([
@@ -250,6 +255,20 @@ async function copyWorkspaceInputs(builderRoot) {
       dereference: false,
       verbatimSymlinks: true,
     });
+    for (const directory of PACKAGE_RUNTIME_DIRECTORIES[packageDirectory] ??
+      []) {
+      const sourceDirectory = path.join(sourceRoot, directory);
+      const sourceStat = await fsp.stat(sourceDirectory).catch(() => null);
+      assert(
+        sourceStat?.isDirectory(),
+        `runtime asset directory is missing: packages/${packageDirectory}/${directory}`,
+      );
+      await fsp.cp(sourceDirectory, path.join(destinationRoot, directory), {
+        recursive: true,
+        dereference: false,
+        verbatimSymlinks: true,
+      });
+    }
   }
 
   const adapterSource = path.join(REPO_ROOT, "packages", "mcp-adapter");
@@ -265,6 +284,10 @@ async function copyWorkspaceInputs(builderRoot) {
   await copyFile(
     path.join(REPO_ROOT, "pnpm-workspace.yaml"),
     path.join(builderRoot, "pnpm-workspace.yaml"),
+  );
+  await copyFile(
+    path.join(REPO_ROOT, ".npmrc"),
+    path.join(builderRoot, ".npmrc"),
   );
   await copyFile(
     path.join(REPO_ROOT, "pnpm-lock.yaml"),
@@ -298,9 +321,11 @@ async function installProductionClosure(builderRoot) {
       "install",
       "--no-frozen-lockfile",
       "--prod",
+      "--no-optional",
       "--ignore-scripts",
       "--prefer-offline",
       "--config.node-linker=isolated",
+      "--config.auto-install-peers=false",
       "--filter",
       "@oods/mcp-server...",
       "--filter",
@@ -316,6 +341,67 @@ async function installedClosureCount(root) {
   return entries.filter(
     (entry) => entry.isDirectory() && entry.name !== "node_modules",
   ).length;
+}
+
+async function installedPackageIdentities(root) {
+  const virtualStore = path.join(root, "node_modules", ".pnpm");
+  const storeEntries = await fsp.readdir(virtualStore, {
+    withFileTypes: true,
+  });
+  const identities = new Set();
+
+  async function recordIdentity(packageRoot) {
+    const packageJsonPath = path.join(packageRoot, "package.json");
+    const bytes = await fsp.readFile(packageJsonPath, "utf8").catch((error) => {
+      if (error?.code === "ENOENT") return null;
+      throw error;
+    });
+    if (bytes === null) return;
+    const packageJson = JSON.parse(bytes);
+    assert.equal(
+      typeof packageJson.name,
+      "string",
+      `installed package name is missing: ${packageJsonPath}`,
+    );
+    assert.equal(
+      typeof packageJson.version,
+      "string",
+      `installed package version is missing: ${packageJsonPath}`,
+    );
+    identities.add(`${packageJson.name}@${packageJson.version}`);
+  }
+
+  for (const storeEntry of storeEntries) {
+    if (!storeEntry.isDirectory() || storeEntry.name === "node_modules")
+      continue;
+    const modulesRoot = path.join(
+      virtualStore,
+      storeEntry.name,
+      "node_modules",
+    );
+    const packageEntries = await fsp
+      .readdir(modulesRoot, { withFileTypes: true })
+      .catch((error) => {
+        if (error?.code === "ENOENT") return [];
+        throw error;
+      });
+    for (const packageEntry of packageEntries) {
+      if (packageEntry.name.startsWith(".")) continue;
+      const packageRoot = path.join(modulesRoot, packageEntry.name);
+      if (!packageEntry.name.startsWith("@")) {
+        await recordIdentity(packageRoot);
+        continue;
+      }
+      const scopedEntries = await fsp.readdir(packageRoot, {
+        withFileTypes: true,
+      });
+      for (const scopedEntry of scopedEntries) {
+        await recordIdentity(path.join(packageRoot, scopedEntry.name));
+      }
+    }
+  }
+
+  return [...identities].sort(bytewiseCompare);
 }
 
 async function gitTrackedBoundaryFiles() {
@@ -449,6 +535,10 @@ async function normalizeModes(payloadRoot) {
 function allowedCmosProvenance(relative) {
   return (
     relative === "artifacts/structured-data/manifest.json" ||
+    relative === "packages/component-contracts/dist/index.cjs" ||
+    relative === "packages/component-contracts/dist/index.js" ||
+    relative ===
+      "packages/component-contracts/registry/component-reconciliation.proposed.v1.json" ||
     /^artifacts\/structured-data\/oods-components-\d{4}-\d{2}-\d{2}\.json$/.test(
       relative,
     ) ||
@@ -732,6 +822,11 @@ async function main() {
     closureCount,
     sbom.summary.packageCount,
     "installed closure and SBOM-lite closure diverged",
+  );
+  assert.deepEqual(
+    await installedPackageIdentities(builderRoot),
+    sbom.packages.map((entry) => entry.id),
+    "installed package identities diverged from the SBOM-lite closure",
   );
 
   await fsp.rename(

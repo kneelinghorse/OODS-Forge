@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
 import { canonicalJson, RUNTIME_PACKAGES, sha256 } from "./manifest.mjs";
 
-export const EXPECTED_THIRD_PARTY_COUNT = 244;
+export const EXPECTED_THIRD_PARTY_COUNT = 245;
 
 function bytewiseCompare(left, right) {
   return left < right ? -1 : left > right ? 1 : 0;
@@ -137,10 +137,17 @@ export function buildSbomLiteFromLock(
       ...(Array.isArray(record.cpu) ? { cpu: [...record.cpu] } : {}),
     });
 
+    const peerDependencyNames = new Set(
+      Object.keys(record.peerDependencies ?? {}),
+    );
     for (const [dependencyName, value] of [
       ...dependencyEntries(snapshot.dependencies),
       ...dependencyEntries(snapshot.optionalDependencies),
     ]) {
+      // pnpm injects peer resolutions into snapshot dependency maps. They are
+      // requirements supplied by a consumer, not packages in this production
+      // bundle, unless a runtime importer reaches them independently.
+      if (peerDependencyNames.has(dependencyName)) continue;
       const dependencyKey = snapshotKeyFor(dependencyName, value);
       if (dependencyKey && !visitedSnapshots.has(dependencyKey))
         queue.push(dependencyKey);

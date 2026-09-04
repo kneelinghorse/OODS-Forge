@@ -1014,6 +1014,10 @@ function classifyScope(repoPath) {
       (value) => value.startsWith("scripts/product-reality/"),
     ],
     [
+      "portable-runtime-repair",
+      (value) => value.startsWith("scripts/runtime/"),
+    ],
+    [
       "closeout-governance",
       (value) =>
         value.startsWith("cmos/foundational-docs/") ||
@@ -1027,10 +1031,7 @@ function classifyScope(repoPath) {
         value === "README.md" ||
         value === "agents.md",
     ],
-    [
-      "closeout-ci-hygiene",
-      (value) => CLOSEOUT_CI_HYGIENE_PATHS.has(value),
-    ],
+    ["closeout-ci-hygiene", (value) => CLOSEOUT_CI_HYGIENE_PATHS.has(value)],
     [
       "package-graph-and-repository-hygiene",
       (value) =>
@@ -1137,7 +1138,7 @@ function buildChangedPathInventory(closeout) {
       "M01 truth plane, structured-data regeneration, contracts, and shared styles",
       "M02 React and M03 Vue package foundations plus compatibility carriers",
       "M04 target-aware code generation, callers, tests, package graph, and evidence automation",
-      "M05 documentation, refresh integration, closeout automation, and reports",
+      "M05 portable-runtime repair, documentation, refresh integration, closeout automation, and reports",
       "M05 final-gate expectation refreshes and isolated CI runner hygiene",
     ],
     rows,
@@ -1188,7 +1189,14 @@ function buildRehashPaths(evidenceIndex) {
     "packages/components-vue/package.json",
     PATHS.vueReadiness,
     "packages/mcp-server/package.json",
+    ".npmrc",
     "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "docs/runtime/portable-runtime.md",
+    "scripts/runtime/assemble.mjs",
+    "scripts/runtime/e2e.mjs",
+    "scripts/runtime/manifest.mjs",
+    "scripts/runtime/sbom-lite.mjs",
     "scripts/product-reality/generate-s182-m05-closeout.mjs",
     "scripts/product-reality/capture-s182-final-gates.mjs",
     "scripts/product-reality/capture-s182-m05-closeout-row.mjs",
