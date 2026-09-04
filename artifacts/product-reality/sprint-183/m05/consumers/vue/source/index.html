@@ -1,0 +1,18 @@
+<!doctype html><html data-brand="A" data-theme="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>S183 Vue saved-schema consumer</title></head><body><div id="app"><!--SSR_MARKUP--></div><script>window.__OODS_CAPTURE_FINGERPRINT__ = () => ({
+  rootIds: ['consumer-shell', 'screen-detail-13', 'detail-tabs-9'].filter((id) => document.getElementById(id)),
+  componentIds: [...document.querySelectorAll('[data-oods-component]')]
+    .map((element) => element.id || element.getAttribute('data-oods-component')),
+  actionControlIds: [...document.querySelectorAll('#domain-actions button')].map((element) => element.id),
+  tabs: [...document.querySelectorAll('[role="tab"]')].map((tab) => {
+    const panelId = tab.getAttribute('aria-controls');
+    const panel = panelId ? document.getElementById(panelId) : null;
+    return {
+      tabId: tab.getAttribute('data-tab-id'),
+      selected: tab.getAttribute('aria-selected'),
+      panelId,
+      panelHidden: panel?.hasAttribute('hidden') ?? null,
+      panelContentIds: panel ? [...panel.querySelectorAll('[id]')].map((element) => element.id) : [],
+    };
+  }),
+});
+window.__OODS_SSR_FINGERPRINT__ = window.__OODS_CAPTURE_FINGERPRINT__();</script><script type="module" src="/src/main.ts"></script></body></html>
