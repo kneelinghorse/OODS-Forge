@@ -118,6 +118,7 @@ export default defineConfig({
           'packages/mcp-server/test/soak/**',
           'packages/mcp-server/test/product-reality/codegen-matrix.s182.spec.ts',
           'packages/mcp-server/test/product-reality/packed-consumers.s182.spec.ts',
+          'packages/mcp-server/test/codegen/cross-framework-parity.spec.ts',
           'packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts',
           'packages/mcp-server/test/product-reality/saved-schema-consumers.s183.spec.ts',
           'packages/mcp-server/test/product-reality/independent-review-approval.s183.spec.ts',

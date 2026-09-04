@@ -191,21 +191,40 @@ describe("Sprint 177 closeout carrier", () => {
     );
   });
 
-  it("serializes product-reality proofs that rebuild shared package output", () => {
+  it("serializes compiler and packaging proofs that can starve parallel readers", () => {
     const coverageCommand = packageManifest.scripts?.["test:coverage"] ?? "";
     const serializedProofs = [
-      "typed-action-protocol.s183.spec.ts",
-      "saved-schema-consumers.s183.spec.ts",
-      "independent-review-approval.s183.spec.ts",
+      {
+        rootPath:
+          "packages/mcp-server/test/codegen/cross-framework-parity.spec.ts",
+        packagePath: "test/codegen/cross-framework-parity.spec.ts",
+      },
+      {
+        rootPath:
+          "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+        packagePath: "test/product-reality/typed-action-protocol.s183.spec.ts",
+      },
+      {
+        rootPath:
+          "packages/mcp-server/test/product-reality/saved-schema-consumers.s183.spec.ts",
+        packagePath:
+          "test/product-reality/saved-schema-consumers.s183.spec.ts",
+      },
+      {
+        rootPath:
+          "packages/mcp-server/test/product-reality/independent-review-approval.s183.spec.ts",
+        packagePath:
+          "test/product-reality/independent-review-approval.s183.spec.ts",
+      },
     ];
 
     for (const proof of serializedProofs) {
-      expect(rootVitestConfig).toContain(
-        `'packages/mcp-server/test/product-reality/${proof}'`,
-      );
-      expect(coverageCommand).toContain(`test/product-reality/${proof}`);
+      expect(rootVitestConfig).toContain(`'${proof.rootPath}'`);
+      expect(coverageCommand).toContain(proof.packagePath);
     }
-    expect(coverageCommand.indexOf(serializedProofs[0])).toBeGreaterThan(
+    expect(
+      coverageCommand.indexOf(serializedProofs[0].packagePath),
+    ).toBeGreaterThan(
       coverageCommand.indexOf("vitest --coverage"),
     );
     expect(mcpVitestConfig).toContain("fileParallelism: false");

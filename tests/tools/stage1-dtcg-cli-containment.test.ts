@@ -26,6 +26,7 @@ import { fileURLToPath } from 'node:url';
 
 const REPO_ROOT = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const CLI = join(REPO_ROOT, 'tools/stage1-dtcg/cli.ts');
+const CLI_TEST_TIMEOUT = 120_000;
 
 /** The smallest input the adapter accepts — this suite is about the writer, not the mapper. */
 const INPUT_DOC = {
@@ -75,7 +76,7 @@ describe('stage1-dtcg CLI --out containment (s169 m05)', () => {
     expect(runCli(outDir, '../../escaped')).toBe(2);
     expect(existsSync(escapeTarget), 'the CLI wrote outside --out').toBe(false);
     expect(readdirSync(outDir)).toEqual([]);
-  });
+  }, CLI_TEST_TIMEOUT);
 
   it('rejects every ESCAPING --name shape, not just the one that was reported', () => {
     const outDir = join(workspace, 'shapes');
@@ -85,7 +86,7 @@ describe('stage1-dtcg CLI --out containment (s169 m05)', () => {
     for (const name of ['../sneak', 'a/b', '../../../etc/passwd']) {
       expect(runCli(outDir, name), `--name ${JSON.stringify(name)}`).toBe(2);
     }
-  });
+  }, CLI_TEST_TIMEOUT);
 
   it('a LEADING SLASH is not an escape, and the guard correctly allows it', () => {
     // Worth pinning because the intuition is wrong: `path.join(outDir, '/absolute.base.json')`
@@ -95,7 +96,7 @@ describe('stage1-dtcg CLI --out containment (s169 m05)', () => {
     const outDir = join(workspace, 'leading-slash');
     expect(runCli(outDir, '/absolute')).toBe(0);
     expect(readdirSync(outDir).sort()).toEqual(['absolute.base.json', 'absolute.coverage.json']);
-  });
+  }, CLI_TEST_TIMEOUT);
 
   it('a legitimate --name still writes all its files, in --out', () => {
     // Control of the control: a guard that rejected everything would pass the tests above
@@ -103,12 +104,12 @@ describe('stage1-dtcg CLI --out containment (s169 m05)', () => {
     const outDir = join(workspace, 'happy');
     expect(runCli(outDir, 'pt-tokens')).toBe(0);
     expect(readdirSync(outDir).sort()).toEqual(['pt-tokens.base.json', 'pt-tokens.coverage.json']);
-  });
+  }, CLI_TEST_TIMEOUT);
 
   it('a --name that traverses but RESOLVES back inside --out is allowed', () => {
     // The rule is about where the bytes land, not about the spelling of the argument.
     const outDir = join(workspace, 'round-trip');
     expect(runCli(outDir, 'sub/../ok')).toBe(0);
     expect(readdirSync(outDir).sort()).toEqual(['ok.base.json', 'ok.coverage.json']);
-  });
+  }, CLI_TEST_TIMEOUT);
 });
