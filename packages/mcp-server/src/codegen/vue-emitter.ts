@@ -286,6 +286,7 @@ function emitTemplateNode(
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): string {
   const tag = node.component;
+  const children = Array.isArray(node.children) ? node.children : [];
   const computedStyle = mergeDecl(
     resolveLayoutStyles(node.layout),
     resolveStyleTokens(node.style),
@@ -378,7 +379,41 @@ function emitTemplateNode(
   }
 
   const attrs = attrParts.length > 0 ? ` ${attrParts.join(' ')}` : '';
-  const children = Array.isArray(node.children) ? node.children : [];
+
+  const richTabItems = tag === 'Tabs'
+    && children.length > 0
+    && Array.isArray(propsObject?.items)
+    && propsObject.items.length === children.length
+    ? propsObject.items as Record<string, unknown>[]
+    : undefined;
+  if (richTabItems) {
+    const panels = richTabItems.map((item, index) => {
+      const itemId = String(item.id);
+      const condition = escapeDoubleQuotedAttr(
+        `item.id === ${javascriptSingleQuotedString(itemId)}`,
+      );
+      const panel = emitTemplateNode(
+        children[index]!,
+        0,
+        warnings,
+        options,
+        tailwindVariants,
+        bindingAnalysis,
+        objectSchema,
+      );
+      return [
+        `<template v-if="${condition}">`,
+        ind(panel, 1),
+        '</template>',
+      ].join('\n');
+    }).join('\n');
+    const panelSlot = [
+      '<template #panel="{ item }">',
+      ind(panels, 1),
+      '</template>',
+    ].join('\n');
+    return `<${tag}${attrs}>\n${ind(panelSlot, depth + 1)}\n${'  '.repeat(depth)}</${tag}>`;
+  }
 
   // Sidebar layout
   if (node.layout?.type === 'sidebar' && children.length > 0) {

@@ -585,7 +585,10 @@ export function preflightTargetContracts(
       }
     }
 
-    if (node.children?.length && !contract.slots.includes('default')) {
+    const childrenUseTabsPanelSlot = node.component === 'Tabs'
+      && (framework === 'react' || framework === 'vue')
+      && contract.slots.includes('panel');
+    if (node.children?.length && !contract.slots.includes('default') && !childrenUseTabsPanelSlot) {
       issues.push(issue(
         `Component ${node.component} has children but its canonical contract has no default slot.`,
         node,

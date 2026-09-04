@@ -10,6 +10,20 @@ const FIELD_COMPONENTS = new Set([
   'Textarea',
 ]);
 
+const SCALAR_TAB_CHILD_PROPS = new Set([
+  'active',
+  'body',
+  'children',
+  'content',
+  'disabled',
+  'isDisabled',
+  'label',
+  'panel',
+  'text',
+  'title',
+  'value',
+]);
+
 function humanize(value: string): string {
   return value
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
@@ -82,6 +96,53 @@ function tabItemFromChild(nodeId: string, child: UiElement, index: number): Reco
   };
 }
 
+function tabPanelFromChild(child: UiElement): UiElement {
+  const props = child.props && typeof child.props === 'object'
+    ? { ...(child.props as Record<string, unknown>) }
+    : undefined;
+
+  if (props) {
+    const labelComesFromProps = child.meta?.label === undefined && props.label !== undefined;
+    const titleComesFromProps = child.meta?.label === undefined
+      && props.label === undefined
+      && props.title !== undefined;
+    if (labelComesFromProps) delete props.label;
+    if (titleComesFromProps) delete props.title;
+    delete props.active;
+    delete props.disabled;
+    delete props.isDisabled;
+  }
+
+  return {
+    ...child,
+    ...(props && Object.keys(props).length > 0 ? { props } : { props: undefined }),
+  };
+}
+
+function recordHasKeys(value: unknown, except: ReadonlySet<string> = new Set()): boolean {
+  return Boolean(
+    value
+    && typeof value === 'object'
+    && !Array.isArray(value)
+    && Object.keys(value as Record<string, unknown>).some((key) => !except.has(key)),
+  );
+}
+
+function tabChildNeedsPanelTree(child: UiElement): boolean {
+  const props = child.props && typeof child.props === 'object'
+    ? child.props as Record<string, unknown>
+    : {};
+  return Boolean(
+    child.children?.length
+    || child.route !== undefined
+    || recordHasKeys(child.layout)
+    || recordHasKeys(child.style)
+    || recordHasKeys(child.meta, new Set(['label']))
+    || Object.keys(props).some((key) => !SCALAR_TAB_CHILD_PROPS.has(key))
+    || recordHasKeys(child.bindings)
+  );
+}
+
 function normalizeNode(node: UiElement, framework: FrameworkTarget): UiElement {
   let children = node.children?.map((child) => normalizeNode(child, framework));
   const props: Record<string, unknown> = node.props && typeof node.props === 'object'
@@ -140,15 +201,22 @@ function normalizeNode(node: UiElement, framework: FrameworkTarget): UiElement {
   if (node.component === 'Tabs') {
     const legacyItems = Array.isArray(props.tabs) ? props.tabs : undefined;
     const suppliedItems = Array.isArray(props.items) ? props.items : legacyItems;
-    const sourceItems = suppliedItems
-      ?? children?.map((child, index) => tabItemFromChild(node.id, child, index));
+    const childItems = children?.map((child, index) => tabItemFromChild(node.id, child, index));
+    const sourceItems = suppliedItems ?? childItems;
+    const preservePanelTrees = !suppliedItems
+      && framework !== 'html'
+      && Boolean(children?.some(tabChildNeedsPanelTree));
 
     if (sourceItems) {
       const activeIndex = sourceItems.findIndex((item) => (
         !!item && typeof item === 'object' && !Array.isArray(item)
         && (item as Record<string, unknown>).active === true
       ));
-      const items = sourceItems.map((item, index) => normalizeTabItem(node.id, item, index));
+      const items = sourceItems.map((item, index) => {
+        const normalized = normalizeTabItem(node.id, item, index);
+        if (preservePanelTrees) normalized.panel = '';
+        return normalized;
+      });
       props.items = items;
 
       if (props.defaultSelectedId === undefined) {
@@ -164,7 +232,9 @@ function normalizeNode(node: UiElement, framework: FrameworkTarget): UiElement {
     delete props.tabs;
     delete props.active;
     delete props.activeTab;
-    children = undefined;
+    children = preservePanelTrees
+      ? children?.map(tabPanelFromChild)
+      : undefined;
   }
 
   // Keep the target parameter explicit so contract checks and emitters operate

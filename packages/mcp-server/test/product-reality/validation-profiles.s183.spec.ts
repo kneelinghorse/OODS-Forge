@@ -548,6 +548,8 @@ describe('Sprint 183 M03 validation profiles', () => {
       nodeId: 'mixed-tabs',
     },
     ])
+  )).filter(({ framework, shape }) => (
+    shape !== 'nested child content' || framework === 'html'
   )))(
     '$profile blocks Tabs $shape before $framework normalization can lose content',
     async ({ framework, profile, schema, message, nodeId }) => {
@@ -578,9 +580,10 @@ describe('Sprint 183 M03 validation profiles', () => {
     },
   );
 
-  it.each(['react', 'vue', 'html'] as const)(
-    'draft exposes lossy Tabs normalization as a visible $framework warning',
-    async (framework) => {
+  it(
+    'draft exposes lossy Tabs normalization as a visible HTML warning',
+    async () => {
+      const framework = 'html' as const;
       const result = await generateCode({
         framework,
         profile: 'draft',
@@ -618,8 +621,8 @@ describe('Sprint 183 M03 validation profiles', () => {
     },
   );
 
-  it.each(['react', 'vue', 'html'] as const)(
-    'blocks a binding-bearing Tabs child before $framework normalization can erase it',
+  it.each(['react', 'vue'] as const)(
+    '$framework build preserves nested and binding-bearing Tabs panel trees',
     async (framework) => {
       const result = await generateCode({
         framework,
@@ -640,35 +643,70 @@ describe('Sprint 183 M03 validation profiles', () => {
         },
       });
 
-      expect(result.status).toBe('error');
-      expect(result.artifact).toBeUndefined();
-      expect(result.code).toBe('');
-      expect(result.errors).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          code: 'OODS-V007',
-          nodeId: 'save-panel',
-          component: 'Button',
-          message: expect.stringMatching(/cannot be preserved.*Tabs/i),
-        }),
-      ]));
-      expect(result.validationReceipt.checks).toEqual([
-        'schema-structure',
-        'component-registry',
-        'target-readiness',
-        'normalization-fidelity',
-      ]);
-      expect(result.validationReceipt.notChecked).toEqual([
-        'binding-contract',
-        'props-contract',
-        'slots-contract',
-        'events-contract',
-        'dependency-closure',
-        'fallback-policy',
-        ...RELEASE_CHECKS,
-      ]);
+      expect(result.status, JSON.stringify(result.errors ?? [])).toBe('ok');
+      expect(result.artifact).toBeDefined();
+      expect(result.code).toContain('save-panel');
+      expect(result.code).toContain('saveChanges');
+      if (framework === 'react') {
+        expect(result.code).toMatch(/panel: \(\s*<Button/);
+      } else {
+        expect(result.code).toContain('<template #panel="{ item }">');
+        expect(result.code).toContain("item.id === 'save-panel'");
+      }
+      expect(result.validationReceipt.checks).toEqual(BUILD_CHECKS);
+      expect(result.validationReceipt.notChecked).toEqual(RELEASE_CHECKS);
       expectDisclosure(result.validationReceipt, 'build', framework, { requested: framework });
     },
   );
+
+  it('blocks a binding-bearing Tabs child before HTML normalization can erase it', async () => {
+    const result = await generateCode({
+      framework: 'html',
+      profile: 'build',
+      schema: {
+        version: '1.0',
+        screens: [{
+          id: 'unsafe-tabs',
+          component: 'Tabs',
+          props: { ariaLabel: 'Unsafe tabs' },
+          children: [{
+            id: 'save-panel',
+            component: 'Button',
+            props: { content: 'Save' },
+            bindings: { onActivate: 'saveChanges' },
+          }],
+        }],
+      },
+    });
+
+    expect(result.status).toBe('error');
+    expect(result.artifact).toBeUndefined();
+    expect(result.code).toBe('');
+    expect(result.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        code: 'OODS-V007',
+        nodeId: 'save-panel',
+        component: 'Button',
+        message: expect.stringMatching(/cannot be preserved.*Tabs/i),
+      }),
+    ]));
+    expect(result.validationReceipt.checks).toEqual([
+      'schema-structure',
+      'component-registry',
+      'target-readiness',
+      'normalization-fidelity',
+    ]);
+    expect(result.validationReceipt.notChecked).toEqual([
+      'binding-contract',
+      'props-contract',
+      'slots-contract',
+      'events-contract',
+      'dependency-closure',
+      'fallback-policy',
+      ...RELEASE_CHECKS,
+    ]);
+    expectDisclosure(result.validationReceipt, 'build', 'html', { requested: 'html' });
+  });
 
   it.each([
     {

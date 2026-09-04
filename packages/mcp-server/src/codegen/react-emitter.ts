@@ -272,6 +272,7 @@ function emitNode(
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): string {
   const tag = node.component;
+  const children = Array.isArray(node.children) ? node.children : [];
   const computedStyle = mergeStyleObjects(
     resolveLayoutStyles(node.layout),
     resolveStyleTokens(node.style),
@@ -317,6 +318,14 @@ function emitNode(
     }
   }
 
+  const richTabItems = tag === 'Tabs'
+    && children.length > 0
+    && Array.isArray(propsObject?.items)
+    && propsObject.items.length === children.length
+    ? propsObject.items as Record<string, unknown>[]
+    : undefined;
+  if (richTabItems && propsObject) delete propsObject.items;
+
   // Build attributes list
   const attrParts: string[] = [];
 
@@ -353,10 +362,37 @@ function emitNode(
     attrParts.push(`style={${styleObjToJsx(computedStyle)}}`);
   }
 
+  if (richTabItems) {
+    const itemEntries = richTabItems.map((item, index) => {
+      const itemProps = { ...item };
+      delete itemProps.panel;
+      const panel = emitNode(
+        children[index]!,
+        0,
+        warnings,
+        options,
+        tailwindVariants,
+        bindingAnalysis,
+        objectSchema,
+      );
+      return [
+        `{ ...${JSON.stringify(itemProps)}, panel: (`,
+        indent(panel, 1),
+        ') }',
+      ].join('\n');
+    });
+    attrParts.push([
+      'items={[',
+      ...itemEntries.map((entry, index) => (
+        `${indent(entry, 1)}${index < itemEntries.length - 1 ? ',' : ''}`
+      )),
+      ']}',
+    ].join('\n'));
+  }
+
   const attrs = attrParts.length > 0 ? ` ${attrParts.join(' ')}` : '';
 
-  // Children
-  const children = Array.isArray(node.children) ? node.children : [];
+  if (richTabItems) return finish(`<${tag}${attrs} />`);
 
   // Sidebar layout needs wrapper elements
   if (node.layout?.type === 'sidebar' && children.length > 0) {

@@ -234,7 +234,7 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
     styling: input.options?.styling ?? rc.styling ?? 'tokens',
   };
 
-  const normalizationErrors = preflightNormalizationSafety(schema.screens);
+  const normalizationErrors = preflightNormalizationSafety(schema.screens, framework);
   validationReceipt = recordValidationChecks(validationReceipt, 'normalization-fidelity');
   if (normalizationErrors.length > 0) {
     const profiled = enforceValidationProfile(validationReceipt, normalizationErrors);

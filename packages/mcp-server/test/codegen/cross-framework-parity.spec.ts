@@ -457,9 +457,9 @@ describe('Sprint 182 bounded framework normalization', () => {
           {
             id: 'child-panel',
             component: 'Stack',
-            props: { label: 'Child panel', content: 'Visible child panel' },
+            props: { label: 'Child panel' },
             children: [
-              { id: 'tabs-panel-copy', component: 'Text', props: { content: 'must not emit as a child' } },
+              { id: 'tabs-panel-copy', component: 'Text', props: { content: 'Visible child panel' } },
             ],
           },
         ],
@@ -681,13 +681,14 @@ describe('Sprint 182 bounded framework normalization', () => {
     }
   });
 
-  it('turns Tabs child panels into items and removes their emitted subtree', () => {
+  it('lowers Tabs child panel subtrees onto each target panel surface', () => {
     expect(react.code).toContain('Visible child panel');
     expect(vue.code).toContain('Visible child panel');
-    expect(react.code).not.toContain('tabs-panel-copy');
-    expect(vue.code).not.toContain('tabs-panel-copy');
-    expect(react.code).not.toContain('must not emit as a child');
-    expect(vue.code).not.toContain('must not emit as a child');
+    expect(react.code).toMatch(/panel: \(\s*<Stack[\s\S]*id="tabs-panel-copy"/);
+    expect(vue.code).toContain('<template #panel="{ item }">');
+    expect(vue.code).toContain("item.id === 'child-panel'");
+    expect(vue.code).toMatch(/item\.id === 'child-panel'[\s\S]*id="tabs-panel-copy"/);
+    expect(reactSemanticErrors(react.code)).toEqual([]);
   });
 
   it('preserves normalized Card body and active state when deriving Tabs items', () => {

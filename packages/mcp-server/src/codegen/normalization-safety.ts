@@ -1,5 +1,5 @@
 import type { UiElement } from '../schemas/generated.js';
-import type { CodegenIssue } from './types.js';
+import type { CodegenFramework, CodegenIssue } from './types.js';
 
 const REPRESENTED_TAB_CHILD_PROPS = new Set([
   'active',
@@ -33,10 +33,13 @@ function bindingBearingDescendants(node: UiElement): UiElement[] {
 
 /**
  * Refuse schema shapes whose compatibility normalization would discard
- * executable semantics. Tabs children become scalar item records, so a child
- * binding cannot be represented without inventing a new public convention.
+ * executable semantics. React and Vue map Tabs children to the component's
+ * panel surface; HTML still relies on the legacy scalar-item normalization.
  */
-export function preflightNormalizationSafety(screens: readonly UiElement[]): CodegenIssue[] {
+export function preflightNormalizationSafety(
+  screens: readonly UiElement[],
+  framework: CodegenFramework = 'html',
+): CodegenIssue[] {
   const issues: CodegenIssue[] = [];
   const stack = [...screens].reverse();
 
@@ -57,7 +60,7 @@ export function preflightNormalizationSafety(screens: readonly UiElement[]): Cod
           nodeId: node.id,
           component: node.component,
         });
-      } else {
+      } else if (framework === 'html') {
         for (const child of node.children) {
           if (child.children?.length) {
             issues.push({
