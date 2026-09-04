@@ -350,6 +350,36 @@ export type ComponentCodeReference = {
   snippet: string;
 };
 
+export type ComponentClassification =
+  | "native"
+  | "recipe"
+  | "alias"
+  | "authoring-only"
+  | "merged"
+  | "retired";
+
+export type ComponentCapabilityEvidence = {
+  state: string;
+  evidence: string[];
+};
+
+export type ComponentProductReality = {
+  schemaVersion: string;
+  proposedClassification: ComponentClassification;
+  reconciliationState: string;
+  surfaces: {
+    contract: ComponentCapabilityEvidence;
+    metadata: ComponentCapabilityEvidence;
+    html: ComponentCapabilityEvidence;
+    react: ComponentCapabilityEvidence;
+    vue: ComponentCapabilityEvidence;
+    generatedConsumer: ComponentCapabilityEvidence;
+    accessibility: ComponentCapabilityEvidence;
+    theme: ComponentCapabilityEvidence;
+    interaction: ComponentCapabilityEvidence;
+  };
+};
+
 export type ComponentStatus = "stable" | "beta" | "planned";
 
 export type ComponentCatalogSummary = {
@@ -360,6 +390,17 @@ export type ComponentCatalogSummary = {
   contexts: string[];
   regions: string[];
   traits: string[];
+  /**
+   * Additive, target-specific capability evidence from the canonical component
+   * ledger. Unlike `status`, this distinguishes HTML, React, Vue, and consumer
+   * evidence instead of collapsing them into one implementation claim.
+   */
+  productReality?: ComponentProductReality;
+  /**
+   * Legacy static-HTML renderer status. `stable` means the component has a
+   * mapped HTML renderer; `planned` means the HTML renderer falls back. This
+   * is not a React, Vue, code-generation, or release-readiness claim.
+   */
   status: ComponentStatus;
   maturity?: string;
   deprecated_since?: string;

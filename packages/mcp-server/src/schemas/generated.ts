@@ -946,8 +946,9 @@ export namespace CatalogListOutputSchema {
        * List of trait capabilities (e.g., ['Editable', 'Searchable'])
        */
       traits: string[];
+      productReality?: ComponentProductReality;
       /**
-       * Component implementation status. 'stable' = has renderer, 'planned' = not yet implemented.
+       * Legacy static-HTML renderer status only. 'stable' = has a mapped HTML renderer; 'planned' = the HTML renderer falls back. This is not a React, Vue, code-generation, or release-readiness claim.
        */
       status: 'stable' | 'beta' | 'planned';
       /**
@@ -1055,6 +1056,35 @@ export namespace CatalogListOutputSchema {
        */
       traits?: string[];
     };
+  }
+  /**
+   * Additive target-specific capability and evidence ledger. Use this instead of legacy status for React, Vue, generated-consumer, accessibility, theme, and interaction claims; reconciliationState records approval state.
+   */
+  export interface ComponentProductReality {
+    schemaVersion: string;
+    proposedClassification: 'native' | 'recipe' | 'alias' | 'authoring-only' | 'merged' | 'retired';
+    reconciliationState: string;
+    surfaces: {
+      contract: CapabilityEvidence;
+      metadata: CapabilityEvidence;
+      html: CapabilityEvidence;
+      react: CapabilityEvidence;
+      vue: CapabilityEvidence;
+      generatedConsumer: CapabilityEvidence;
+      accessibility: CapabilityEvidence;
+      theme: CapabilityEvidence;
+      interaction: CapabilityEvidence;
+    };
+  }
+  export interface CapabilityEvidence {
+    /**
+     * Evidence-derived state for this specific capability surface.
+     */
+    state: string;
+    /**
+     * Repo-relative evidence references supporting the state.
+     */
+    evidence: string[];
   }
 }
 export type CatalogListOutput = CatalogListOutputSchema.CatalogListOutput;

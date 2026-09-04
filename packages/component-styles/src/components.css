@@ -1,0 +1,157 @@
+@import "@oods/tokens/css";
+
+:where(.oods-badge, [data-oods-component='Badge']) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-badge-gap, 0.25rem);
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 1px solid var(--cmp-badge-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--cmp-badge-background, var(--cmp-surface-subtle, transparent));
+  color: var(--cmp-badge-text, var(--cmp-text-body, currentColor));
+  font-size: var(--cmp-badge-font-size, 0.875rem);
+  font-weight: var(--cmp-badge-font-weight, 600);
+}
+
+:where(.oods-banner, [data-oods-component='Banner']) {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  padding: var(--cmp-spacing-inset-default, 1rem);
+  border: 1px solid var(--cmp-banner-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-input-radius, 0.5rem);
+  background: var(--cmp-banner-background, var(--cmp-surface-subtle, transparent));
+  color: var(--cmp-banner-text, var(--cmp-text-body, currentColor));
+}
+
+:where(.oods-button, [data-oods-component='Button']) {
+  display: inline-flex;
+  min-block-size: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cmp-button-gap, 0.5rem);
+  padding: var(--cmp-button-padding-block, 0.625rem) var(--cmp-button-padding-inline, 1rem);
+  border: 1px solid var(--cmp-button-border, transparent);
+  border-radius: var(--cmp-button-radius, 0.5rem);
+  background: var(--cmp-button-background, var(--cmp-surface-action, CanvasText));
+  color: var(--cmp-button-text, var(--cmp-text-on-action, Canvas));
+  font: inherit;
+  font-weight: var(--cmp-button-font-weight, 600);
+  cursor: pointer;
+}
+
+:where(.oods-button, [data-oods-component='Button']):hover:not(:disabled) {
+  background: var(--cmp-button-background-hover, var(--cmp-surface-action-hover, CanvasText));
+}
+
+:where(.oods-button, [data-oods-component='Button']):disabled {
+  background: var(--cmp-button-background-disabled, var(--cmp-surface-subtle, GrayText));
+  color: var(--cmp-button-text-disabled, GrayText);
+  cursor: not-allowed;
+}
+
+:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action):focus-visible {
+  outline: var(--cmp-button-focus-width, 2px) solid var(--cmp-button-focus-outer, Highlight);
+  outline-offset: 2px;
+}
+
+:where(.oods-card, [data-oods-component='Card']) {
+  padding: var(--cmp-spacing-inset-default, 1rem);
+  border: 1px solid var(--cmp-border-default, currentColor);
+  border-radius: var(--cmp-input-radius, 0.5rem);
+  background: var(--cmp-surface-panel, Canvas);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where(.oods-card[data-elevated='true'], [data-oods-component='Card'][data-elevated='true']) {
+  box-shadow: var(--cmp-shadow-panel, 0 0.25rem 1rem rgb(0 0 0 / 12%));
+}
+
+.oods-field {
+  display: grid;
+  gap: var(--cmp-input-gap, 0.375rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+.oods-field-label { font-weight: 600; }
+
+.oods-field-control,
+:where([data-oods-component='Input'], [data-oods-component='DatePicker'], [data-oods-component='Select'], [data-oods-component='Textarea']) {
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: var(--cmp-input-padding-block, 0.625rem) var(--cmp-input-padding-inline, 0.75rem);
+  border: 1px solid var(--cmp-input-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-input-radius, 0.375rem);
+  background: var(--cmp-input-background, Canvas);
+  color: var(--cmp-input-text, CanvasText);
+  font: inherit;
+}
+
+.oods-field-control::placeholder { color: var(--cmp-input-placeholder, GrayText); }
+.oods-field-control[aria-invalid='true'] { border-color: var(--cmp-input-message-border, Mark); }
+.oods-field-help { color: var(--cmp-input-support-text, var(--cmp-text-muted, GrayText)); }
+.oods-field-error { color: var(--cmp-input-message-text, MarkText); }
+
+:where(.oods-checkbox, [data-oods-component='Checkbox']) {
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--cmp-checkbox-gap, 0.5rem);
+  color: var(--cmp-checkbox-text, var(--cmp-text-body, CanvasText));
+}
+
+:where(.oods-checkbox input, [data-oods-component='Checkbox']) {
+  accent-color: var(--cmp-checkbox-background-checked, Highlight);
+}
+
+:where(.oods-grid, [data-oods-component='Grid']) {
+  display: grid;
+  grid-template-columns: repeat(var(--oods-grid-columns, auto-fit), minmax(min(100%, var(--oods-grid-min-column, 16rem)), 1fr));
+  gap: var(--oods-layout-gap, var(--cmp-spacing-stack-default, 1rem));
+  align-items: var(--oods-layout-align, stretch);
+  justify-content: var(--oods-layout-justify, normal);
+}
+
+:where(.oods-stack, [data-oods-component='Stack']) {
+  display: flex;
+  flex-direction: var(--oods-stack-direction, column);
+  flex-wrap: var(--oods-stack-wrap, nowrap);
+  gap: var(--oods-layout-gap, var(--cmp-spacing-stack-default, 1rem));
+  align-items: var(--oods-layout-align, stretch);
+  justify-content: var(--oods-layout-justify, flex-start);
+}
+
+:where(.oods-table, [data-oods-component='Table']) {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: var(--cmp-surface-panel, Canvas);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where(.oods-table, [data-oods-component='Table']) :is(th, td) {
+  padding: var(--cmp-spacing-inset-compact, 0.75rem);
+  border-block-end: 1px solid var(--cmp-border-default, currentColor);
+  text-align: start;
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs']) { color: var(--cmp-text-body, CanvasText); }
+.oods-tab-list { display: flex; gap: var(--cmp-spacing-inline-xs, 0.5rem); overflow-x: auto; border-block-end: 1px solid var(--cmp-border-default, currentColor); }
+.oods-tab { padding: 0.625rem 0.75rem; border: 0; border-block-end: 0.1875rem solid transparent; background: transparent; color: inherit; font: inherit; }
+.oods-tab[aria-selected='true'] { border-block-end-color: var(--cmp-text-accent, Highlight); font-weight: 600; }
+.oods-tab-panel { padding-block: var(--cmp-spacing-stack-default, 1rem); }
+
+:where(.oods-text, [data-oods-component='Text']) {
+  color: var(--cmp-text-body, CanvasText);
+  font: inherit;
+}
+
+@media (max-width: 40rem) {
+  :where(.oods-banner, [data-oods-component='Banner']) { grid-template-columns: 1fr; }
+  :where(.oods-table, [data-oods-component='Table']) { font-size: 0.875rem; }
+}
+
+@media (forced-colors: active) {
+  :where(.oods-badge, .oods-banner, .oods-button, .oods-card, .oods-field-control, .oods-tab, .oods-table) {
+    forced-color-adjust: auto;
+  }
+}

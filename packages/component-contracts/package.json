@@ -1,0 +1,38 @@
+{
+  "name": "@oods/component-contracts",
+  "version": "0.1.0",
+  "description": "Versioned OODS component identities, semantic contracts, shared scenarios, and readiness predicates.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "files": [
+    "dist",
+    "registry"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "prepack": "pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./registry/intake": "./registry/component-intake.v1.json",
+    "./registry/reconciliation": "./registry/component-reconciliation.proposed.v1.json",
+    "./registry/capabilities": "./registry/component-capability-baseline.v1.json",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.12.2"
+}

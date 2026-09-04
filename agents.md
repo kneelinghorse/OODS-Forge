@@ -83,8 +83,14 @@ Don't pad with restatements or closing sentences that repeat what was just said.
 
 ---
 
-Design system source of truth: https://github.com/kneelinghorse/OODS-Foundry
-Storybook surface: https://kneelinghorse.github.io/OODS-Foundry/
+Recovery ownership: this active OODS-Forge repository is the canonical implementation and integration
+source for the design system and MCP toolchain. The historical, push-disabled `upstream`
+OODS-Foundry remote is a reference and possible later public mirror, not a second implementation
+target. Moving canonical source again requires a separately approved migration and reconciliation
+plan.
+
+Historical reference: https://github.com/kneelinghorse/OODS-Foundry
+Published Storybook surface: https://kneelinghorse.github.io/OODS-Foundry/
 
 ## OODS in 8 lines
 

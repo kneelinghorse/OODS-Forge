@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 CMOS_ROOT = Path(__file__).resolve().parents[1]
 if str(CMOS_ROOT) not in sys.path:
@@ -14,13 +15,18 @@ from scripts.refresh_structured_data import (  # noqa: E402
     DEFAULT_BASELINE_COMPONENTS_PATH,
     DEFAULT_BASELINE_TOKENS_PATH,
     OUTPUT_DIR,
+    assert_canonical_component_membership,
+    collect_traits,
     compute_etag,
+    ensure_basic_components,
     generate_code_connect_payload,
     generate_structured_payloads,
+    load_component_capabilities,
+    load_component_intake,
     refresh_structured_data,
 )
 
-EXPECTED_GENERATED_AT = "2026-02-24T05:09:44Z"
+EXPECTED_GENERATED_AT = "2026-09-04T00:00:00Z"
 
 
 class RefreshStructuredDataTest(unittest.TestCase):
@@ -35,6 +41,110 @@ class RefreshStructuredDataTest(unittest.TestCase):
         self.assertEqual(DEFAULT_BASELINE_COMPONENTS_PATH, OUTPUT_DIR / "oods-components.json")
         self.assertEqual(DEFAULT_BASELINE_TOKENS_PATH, OUTPUT_DIR / "oods-tokens.json")
 
+    def test_component_intake_requires_exact_sorted_109_membership(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            intake_path = Path(temp_dir) / "component-intake.v1.json"
+            ids = [f"Component{index:03d}" for index in range(109)]
+
+            def write_intake(row_ids: list[str], denominator: int = 109) -> None:
+                intake_path.write_text(
+                    json.dumps(
+                        {
+                            "controllingObligationDenominator": denominator,
+                            "rows": [{"id": component_id} for component_id in row_ids],
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+
+            with patch("scripts.refresh_structured_data.COMPONENT_INTAKE_PATH", intake_path):
+                write_intake(ids)
+                self.assertEqual([row["id"] for row in load_component_intake()], ids)
+
+                invalid_cases = (
+                    ("missing", ids[:-1], 109, "exactly 109 unique"),
+                    ("duplicate", [*ids[:-1], ids[0]], 109, "exactly 109 unique"),
+                    ("unsorted", [ids[1], ids[0], *ids[2:]], 109, "deterministically sorted"),
+                    ("independent-count", ids, 101, "denominator must be derived"),
+                )
+                for name, row_ids, denominator, message in invalid_cases:
+                    with self.subTest(name=name):
+                        write_intake(row_ids, denominator)
+                        with self.assertRaisesRegex(ValueError, message):
+                            load_component_intake()
+
+    def test_component_capabilities_require_unique_exact_intake_membership(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            capabilities_path = Path(temp_dir) / "component-capability-baseline.v1.json"
+
+            def write_capabilities(ids: list[str]) -> None:
+                capabilities_path.write_text(
+                    json.dumps({"rows": [{"id": component_id} for component_id in ids]}),
+                    encoding="utf-8",
+                )
+
+            with patch("scripts.refresh_structured_data.COMPONENT_CAPABILITY_PATH", capabilities_path):
+                write_capabilities(["Alpha", "Beta"])
+                self.assertEqual(set(load_component_capabilities({"Alpha", "Beta"})), {"Alpha", "Beta"})
+
+                write_capabilities(["Alpha", "Alpha", "Beta"])
+                with self.assertRaisesRegex(ValueError, "must be unique"):
+                    load_component_capabilities({"Alpha", "Beta"})
+
+                write_capabilities(["Alpha", "Gamma"])
+                with self.assertRaisesRegex(ValueError, "must exactly match"):
+                    load_component_capabilities({"Alpha", "Beta"})
+
+    def test_collect_traits_rejects_component_outside_canonical_intake(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            trait_path = repo_root / "traits" / "Rogue.trait.yaml"
+            trait_path.parent.mkdir(parents=True)
+            trait_path.write_text(
+                "\n".join(
+                    [
+                        "trait:",
+                        "  name: Rogue",
+                        "  category: core",
+                        "view_extensions:",
+                        "  detail:",
+                        "    - component: RogueComponent",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            with patch("scripts.refresh_structured_data.REPO_ROOT", repo_root):
+                with self.assertRaisesRegex(ValueError, "RogueComponent"):
+                    collect_traits({"KnownComponent"})
+
+    def test_basic_and_final_components_cannot_escape_canonical_intake(self) -> None:
+        component_index: dict[str, dict[str, object]] = {}
+        definitions = ({"id": "KnownComponent"}, {"id": "RogueComponent"})
+        with patch("scripts.refresh_structured_data.BASIC_COMPONENT_DEFINITIONS", definitions):
+            with self.assertRaisesRegex(ValueError, "RogueComponent"):
+                ensure_basic_components(component_index, {"KnownComponent"})
+        self.assertEqual(component_index, {})
+
+        invalid_outputs = (
+            ("missing", [{"id": "Alpha"}]),
+            ("extra", [{"id": "Alpha"}, {"id": "Beta"}, {"id": "RogueComponent"}]),
+            ("duplicate", [{"id": "Alpha"}, {"id": "Alpha"}, {"id": "Beta"}]),
+            ("unsorted", [{"id": "Beta"}, {"id": "Alpha"}]),
+        )
+        for name, components in invalid_outputs:
+            with self.subTest(name=name):
+                with self.assertRaisesRegex(ValueError, "must exactly match"):
+                    assert_canonical_component_membership(components, {"Alpha", "Beta"})
+
+    def test_emitted_component_ids_equal_canonical_intake(self) -> None:
+        intake_ids = [row["id"] for row in load_component_intake()]
+        emitted_ids = [component["id"] for component in self.components_payload["components"]]
+        self.assertEqual(emitted_ids, intake_ids)
+        self.assertEqual(self.components_payload["stats"]["componentCount"], len(intake_ids))
+        self.assertEqual(len(intake_ids), 109)
+
     def test_structured_payloads_match_snapshot(self) -> None:
         expected_components = json.loads(DEFAULT_BASELINE_COMPONENTS_PATH.read_text())
         expected_tokens = json.loads(DEFAULT_BASELINE_TOKENS_PATH.read_text())
@@ -45,11 +155,11 @@ class RefreshStructuredDataTest(unittest.TestCase):
     def test_etags_are_stable(self) -> None:
         self.assertEqual(
             compute_etag(self.components_payload),
-            "60c44643e57a55566ebb216000b57f3617a3ee6ef2c410b9cc10f1d72185be42",
+            "7c22be7017072879d58894dd4182ae49445480d878ec84163aea09f818822414",
         )
         self.assertEqual(
             compute_etag(self.tokens_payload),
-            "6075b0688222792508151ec4e86051ae6261882a359f9d1c6bef2962e0156d65",
+            "59379746c9db9480858fa6b5abb309442d30addaaa7282452891614bd6b8529e",
         )
 
     def test_refresh_writes_outputs_and_manifest(self) -> None:
@@ -64,6 +174,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
                         "",
                         "export default {",
                         "  title: 'Components/TagInput',",
+                        "  parameters: { oodsComponentId: 'TagInput' },",
                         "};",
                         "",
                         "const yaml = `view_extensions:",
@@ -84,6 +195,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
                         "",
                         "export default {",
                         "  title: 'Components/Button',",
+                        "  parameters: { oodsComponentId: 'Button' },",
                         "};",
                         "",
                         "const yaml = `view_extensions:",
@@ -102,6 +214,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
                     [
                         "export default {",
                         "  title: 'Components/Primitives',",
+                        "  parameters: { oodsComponentIds: ['Card', 'Text', 'Stack'] },",
                         "};",
                         "",
                         "const yaml = `view_extensions:",
@@ -194,6 +307,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
                         "",
                         "export default {",
                         "  title: 'Components/TagInput',",
+                        "  parameters: { oodsComponentId: 'TagInput' },",
                         "};",
                         "",
                         "export function Demo() {",
@@ -216,7 +330,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
             self.assertIn("import { TagInput } from '@oods/foundry';", refs[0]["snippet"])
             self.assertIn("export function Example()", refs[0]["snippet"])
 
-    def test_code_connect_line_context_tier(self) -> None:
+    def test_code_connect_requires_explicit_oods_component_id(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             tmp_path = Path(temp_dir)
             stories_dir = tmp_path / "upstream" / "stories"
@@ -225,9 +339,20 @@ class RefreshStructuredDataTest(unittest.TestCase):
             story_file.write_text(
                 "\n".join(
                     [
-                        "export default { title: 'Components/TagInput' };",
-                        "// TagInput appears in a comment but no import is present.",
-                        "export const Demo = () => null;",
+                        "import { TagInput } from '@oods/foundry';",
+                        "",
+                        "const arbitraryObject = {",
+                        "  parameters: { oodsComponentId: 'TagInput' },",
+                        "};",
+                        "const prose = \"parameters.oodsComponentId is 'TagInput'\";",
+                        "",
+                        "export default {",
+                        "  title: 'Components/TagInput',",
+                        "  parameters: { docs: { description: { component: prose } } },",
+                        "};",
+                        "// parameters: { oodsComponentId: 'TagInput' }",
+                        "// TagInput appears in prose and JSX but has no real default-meta identity field.",
+                        "export const Demo = () => <TagInput />;",
                         "",
                     ]
                 ),
@@ -241,9 +366,35 @@ class RefreshStructuredDataTest(unittest.TestCase):
             )
 
             refs = payload.get("components", {}).get("TagInput", [])
-            self.assertTrue(refs)
-            self.assertIn("TagInput", refs[0]["snippet"])
-            self.assertNotIn("import { TagInput", refs[0]["snippet"])
+            self.assertEqual(refs, [])
+
+            story_file.write_text(
+                "\n".join(
+                    [
+                        "import { TagInput } from '@oods/foundry';",
+                        "",
+                        "const prose = 'TagInput component story';",
+                        "// TagInput remains in prose after the explicit metadata mutation.",
+                        "const meta = {",
+                        "  title: 'Components/TagInput',",
+                        "  parameters: { oodsComponentId: 'TagInput' },",
+                        "};",
+                        "export default meta;",
+                        "export const Demo = () => <TagInput />;",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            explicit_payload = generate_code_connect_payload(
+                component_names=["TagInput"],
+                stories_dir=stories_dir,
+                generated_at=EXPECTED_GENERATED_AT,
+            )
+            explicit_refs = explicit_payload.get("components", {}).get("TagInput", [])
+            self.assertTrue(explicit_refs)
+            self.assertIn("TagInput", explicit_refs[0]["snippet"])
 
 
 if __name__ == "__main__":  # pragma: no cover

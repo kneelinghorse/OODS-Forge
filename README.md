@@ -4,8 +4,13 @@ Production MCP server + toolchain for the OODS Foundry design system.
 
 This repo turns the OODS design system into an agent-usable surface: a semantic catalog you can query, schemas you can validate and compose, governed token theming you can apply, and code you can generate — all through MCP tools.
 
-Design system source of truth: https://github.com/kneelinghorse/OODS-Foundry
-Design system Storybook: https://kneelinghorse.github.io/OODS-Foundry/
+Recovery source of truth: this active OODS-Forge repository is the canonical implementation and
+integration source for the design system and MCP toolchain. The historical, push-disabled
+`upstream` OODS-Foundry remote remains a reference and possible later public mirror; it is not a
+second implementation target. Moving canonical source again requires a separately approved
+migration and reconciliation plan.
+
+Published Storybook: https://kneelinghorse.github.io/OODS-Foundry/
 
 ## Four capability pillars
 
@@ -32,10 +37,12 @@ accuracy, fidelity, contract-determinism, and accessibility-by-construction.
 - `viz.render` synthesizes accessible chart descriptions and can return a data table plus narrative from the same data it renders.
 - `artifact.certify` reports accessibility-equivalence findings for chart IR; `repl` (`action: validate`) and on-demand `a11y.scan` cover UiSchema and token-contrast checks.
 
-## Two repos, two roles
+## Repository ownership
 
-- **OODS Foundry (design system):** canonical traits, objects, components, tokens, release history.
-- **OODS Foundry MCP (this repo):** MCP server + agent tooling built on top of the design system snapshot.
+- **OODS-Forge (this repository):** canonical recovery implementation and integration source for
+  traits, objects, components, tokens, packages, and agent tooling.
+- **Historical upstream OODS-Foundry remote:** push-disabled reference and possible later public
+  mirror. Changes do not land there independently.
 
 ## Quick start
 
@@ -139,9 +146,9 @@ pnpm bridge:dev               # Start MCP bridge in dev mode
 - [Common Patterns and Modifiers](docs/patterns/index.md)
 - [Modifier Purity](docs/patterns/modifier-purity.md)
 
-## Need the design system itself?
+## Historical upstream reference
 
-Use the upstream repo for canonical architecture docs, release notes, and package usage:
+The former upstream remains useful for historical architecture docs and release notes:
 https://github.com/kneelinghorse/OODS-Foundry
 
 ## License
