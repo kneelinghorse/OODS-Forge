@@ -26,4 +26,20 @@ describe('Sprint 182 shared component style contract', () => {
       expect(fs.existsSync(source), `${cell.brand}/${cell.theme}`).toBe(true);
     }
   });
+
+  it('s182-m01a keeps shared high-contrast controls on matching system colors', () => {
+    expect(css).toMatch(
+      /\[data-oods-component='Button'\]\):disabled \{[\s\S]*?background: var\(--cmp-button-background-disabled, var\(--sys-surface-disabled, Canvas\)\);[\s\S]*?color: var\(--cmp-button-text-disabled, var\(--sys-text-disabled, GrayText\)\);/,
+    );
+    expect(css).toMatch(/\[data-theme='hc'\][\s\S]*?background: Canvas;[\s\S]*?color: CanvasText;/);
+    expect(css).toMatch(/\[data-theme='hc'\] \.oods-field-error \{\s*color: CanvasText;/);
+    expect(css).toMatch(
+      /\[data-theme='hc'\][\s\S]*?\[data-oods-component='Button'\][\s\S]*?:not\(:disabled\) \{[\s\S]*?background: Highlight;[\s\S]*?color: HighlightText;/,
+    );
+    expect(css).toMatch(
+      /\[data-theme='hc'\][\s\S]*?\[data-oods-component='Button'\][\s\S]*?:disabled \{[\s\S]*?background: Canvas;[\s\S]*?color: GrayText;/,
+    );
+    expect(css).toMatch(/@media \(forced-colors: active\)[\s\S]*?forced-color-adjust: none;/);
+    expect(css).toMatch(/\.oods-banner-dismiss \{[\s\S]*?inline-size: 2\.5rem;[\s\S]*?color: inherit;/);
+  });
 });

@@ -45,8 +45,9 @@
 }
 
 :where(.oods-button, [data-oods-component='Button']):disabled {
-  background: var(--cmp-button-background-disabled, var(--cmp-surface-subtle, GrayText));
-  color: var(--cmp-button-text-disabled, GrayText);
+  border-color: var(--cmp-button-border-disabled, var(--sys-border-subtle, GrayText));
+  background: var(--cmp-button-background-disabled, var(--sys-surface-disabled, Canvas));
+  color: var(--cmp-button-text-disabled, var(--sys-text-disabled, GrayText));
   cursor: not-allowed;
 }
 
@@ -91,6 +92,22 @@
 .oods-field-control[aria-invalid='true'] { border-color: var(--cmp-input-message-border, Mark); }
 .oods-field-help { color: var(--cmp-input-support-text, var(--cmp-text-muted, GrayText)); }
 .oods-field-error { color: var(--cmp-input-message-text, MarkText); }
+
+.oods-banner-dismiss {
+  display: inline-flex;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  padding: 0;
+  border: 1px solid currentColor;
+  border-radius: var(--cmp-button-radius, 0.5rem);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
 
 :where(.oods-checkbox, [data-oods-component='Checkbox']) {
   display: inline-grid;
@@ -152,6 +169,38 @@
 
 @media (forced-colors: active) {
   :where(.oods-badge, .oods-banner, .oods-button, .oods-card, .oods-field-control, .oods-tab, .oods-table) {
-    forced-color-adjust: auto;
+    forced-color-adjust: none;
   }
+}
+
+/*
+ * High-contrast brand tokens intentionally flatten status surfaces to Canvas.
+ * Keep their foreground on the matching CanvasText system colour rather than
+ * HighlightText (which is only guaranteed against a Highlight background).
+ */
+[data-theme='hc'] :where(
+  .oods-badge,
+  [data-oods-component='Badge'],
+  .oods-banner,
+  [data-oods-component='Banner']
+) {
+  border-color: Highlight;
+  background: Canvas;
+  color: CanvasText;
+}
+
+[data-theme='hc'] .oods-field-error {
+  color: CanvasText;
+}
+
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button']):not(:disabled) {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
+}
+
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button']):disabled {
+  border-color: GrayText;
+  background: Canvas;
+  color: GrayText;
 }

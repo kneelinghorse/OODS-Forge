@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m01a",
+  "title": "High-contrast component-style correction",
+  "status": "passed",
+  "scope": {
+    "package": "@oods/component-styles",
+    "semanticContractChanged": false,
+    "tokenSourceChanged": false,
+    "denominatorChanged": false,
+    "frameworkLocalOverrideAdded": false
+  },
+  "correction": [
+    "High-contrast status badges and banners use Canvas/CanvasText with Highlight borders.",
+    "High-contrast validation messages use CanvasText.",
+    "Enabled actions use Highlight/HighlightText and retain authored system colors with forced-color-adjust:none.",
+    "Disabled actions use Canvas/GrayText.",
+    "Banner dismiss controls have a shared 40px treatment."
+  ],
+  "verification": {
+    "componentStyleSuite": {
+      "command": "pnpm --filter @oods/component-styles run test",
+      "testFilesPassed": 2,
+      "testsPassed": 9,
+      "testsFailed": 0,
+      "testsSkipped": 0
+    },
+    "mutation": {
+      "selector": "B/hc keeps status, validation, disabled, and dismiss controls legible with forcedColors=active",
+      "preGreen": { "selected": 1, "failed": 0, "skippedSelected": 0 },
+      "mutated": { "selected": 1, "failed": 1, "skippedSelected": 0 },
+      "restored": { "selected": 1, "failed": 0, "skippedSelected": 0 },
+      "directory": "artifacts/product-reality/sprint-182/m01a/mutation"
+    },
+    "deterministicPack": {
+      "status": "passed",
+      "runs": 2,
+      "sha256": "e16e558da55b8374aab0f7ed89fb07745622717fbb39e0e58e241310b9608432",
+      "report": "artifacts/product-reality/sprint-182/m01a/package/report.json"
+    },
+    "frameworkHighContrast": [
+      {
+        "target": "react",
+        "status": "passed",
+        "selected": 2,
+        "failed": 0,
+        "skipped": 0,
+        "report": "artifacts/product-reality/sprint-182/m02/visual-regression/hc-report.json",
+        "reportSha256": "7a69ec47aacd5d367c06a4a732bde7af0ecee30bf65fb23346fdafbdcc49e553"
+      },
+      {
+        "target": "vue",
+        "status": "passed",
+        "selected": 2,
+        "failed": 0,
+        "skipped": 0,
+        "report": "artifacts/product-reality/sprint-182/m03/visual-regression/hc-report.json",
+        "reportSha256": "bcbb4f0ed1ba1f22cd91163f3b9c28e1b8b6210e1956988326f413ee2210ab2e"
+      }
+    ],
+    "visualInspection": {
+      "status": "passed",
+      "cells": ["React A/hc", "React B/hc", "Vue A/hc", "Vue B/hc"],
+      "checks": ["enabled labels", "disabled labels", "validation", "status", "dismiss", "form geometry", "table geometry", "clipping"]
+    }
+  },
+  "sourceDigests": {
+    "packages/component-styles/src/components.css": "c8649402863871b1323a48f7f5b7f2ce1094ae5ac026383dfc50b84f81e4fae3",
+    "packages/component-styles/dist/components.css": "c8649402863871b1323a48f7f5b7f2ce1094ae5ac026383dfc50b84f81e4fae3",
+    "packages/component-styles/test/high-contrast.browser.spec.ts": "6becec155c64d1e156042997977e78ec78204bca7d2b50d06c15b0b090a278a2",
+    "packages/component-styles/test/styles.spec.ts": "9f72e04f583b69dc72d28fc3f774c1e5f959e898e75f5cdcc899419fad4f5df3"
+  },
+  "decision": 1656,
+  "followUp": "Brand B light-theme action contrast is tracked separately as s182-m01b; this report makes no claim for that cell."
+}
