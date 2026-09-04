@@ -1,0 +1,55 @@
+$ pnpm --filter @oods/component-contracts exec vitest run test/contracts.spec.ts -t 'B-03 blocks emission eligibility independently for incomplete target evidence'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/component-contracts
+
+ ❯ test/contracts.spec.ts (7 tests | 1 failed | 6 skipped) 6ms
+   ↓ Sprint 182 canonical component truth plane > derives the controlling 109-row denominator from unique sorted membership
+   ↓ Sprint 182 canonical component truth plane > B-01 reds when one intake ID is dropped or duplicated
+   ↓ Sprint 182 canonical component truth plane > B-02 rejects a restored independent 101 count instead of trusting it
+   ↓ Sprint 182 canonical component truth plane > classifies and reports target-specific evidence for every starting row without approving it
+   ↓ Sprint 182 canonical component truth plane > versions exactly the locked 14 contracts and explicit nondegenerate scenarios
+   ↓ Sprint 182 canonical component truth plane > B-03 blocks foundation-v1 independently for each of the nine evidence classes
+   × Sprint 182 canonical component truth plane > B-03 blocks emission eligibility independently for incomplete target evidence 5ms
+     → expected { emissionEligible: true, …(1) } to deeply equal { emissionEligible: false, …(1) }
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  05:05:44
+   Duration  298ms (transform 40ms, setup 0ms, collect 48ms, tests 6ms, environment 0ms, prepare 42ms)
+
+undefined
+/private<disposable-checkout>/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts.spec.ts -t B-03 blocks emission eligibility independently for incomplete target evidence
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts.spec.ts > Sprint 182 canonical component truth plane > B-03 blocks emission eligibility independently for incomplete target evidence
+AssertionError: expected { emissionEligible: true, …(1) } to deeply equal { emissionEligible: false, …(1) }
+
+- Expected
++ Received
+
+  {
+-   "emissionEligible": false,
+-   "incomplete": [
+-     "publicDeclaration",
+-   ],
++   "emissionEligible": true,
++   "incomplete": [],
+  }
+
+ ❯ test/contracts.spec.ts:111:52
+    109|       const mutated = { ...passingEmissionEvidence() };
+    110|       delete mutated[missing];
+    111|       expect(evaluateEmissionEligibility(mutated)).toEqual({
+       |                                                    ^
+    112|         emissionEligible: false,
+    113|         incomplete: [missing],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

@@ -1,140 +1,102 @@
 /**
- * Tier 1 Acceptance Test — Sprint 65
+ * Tier-1 compatibility is intentionally bounded in Sprint 182.
  *
- * Validates the full Tier 1 Production Essentials flow:
- *   1. pipeline(object, context, framework, styling=tailwind, save) → React Tailwind output + saved schema
- *   2. schema_load(name) → schemaRef from persistence
- *   3. code_generate(schemaRef, vue, tailwind) → Vue Tailwind output from loaded schema
- *   4. health() → schemas.savedCount reflects persisted schemas
- *
- * This test exercises the end-to-end path across pipeline orchestration,
- * Tailwind codegen, schema persistence, and health introspection.
+ * The historical composed Subscription flow contains target components outside
+ * the 14-family nucleus and therefore returns OODS-N015 for React/Vue. The
+ * checked-in saved schema proves only Card/Stack/Tabs/Text compatibility.
  */
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { handle as pipelineHandle } from '../../src/tools/pipeline.js';
-import { handle as schemaLoadHandle } from '../../src/tools/schema/load.js';
+import { fileURLToPath } from 'node:url';
+import { describe, expect, it } from 'vitest';
+import { SchemaStore } from '../../src/schema-store/index.js';
 import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 import { handle as healthHandle } from '../../src/tools/health.js';
+import { handle as pipelineHandle } from '../../src/tools/pipeline.js';
+import { handle as schemaLoadHandle } from '../../src/tools/schema/load.js';
 
-describe('Tier 1 acceptance — pipeline + tailwind + save + load + health', () => {
-  let tempRoot: string;
+const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
-  beforeEach(async () => {
-    tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-tier1-'));
+describe('Tier 1 acceptance — bounded framework compatibility', () => {
+  it('uses the saved Card/Stack/Tabs/Text schema successfully for React and Vue', async () => {
+    const store = new SchemaStore({ projectRoot: PACKAGE_ROOT });
+    const saved = await store.load('tier1-acceptance-sub-detail');
+
+    expect(saved.object).toBe('Subscription');
+    expect(saved.context).toBe('detail');
+    expect(saved.tags).toContain('bounded-foundation-v1');
+
+    for (const framework of ['react', 'vue'] as const) {
+      const result = await codegenHandle({
+        schemaRef: saved.schemaRef,
+        framework,
+        options: { styling: 'tokens', typescript: true },
+      });
+
+      expect(result.status).toBe('ok');
+      expect(result.code.length).toBeGreaterThan(0);
+      expect(result.code).toContain(
+        framework === 'react' ? "from '@oods/components-react'" : "from '@oods/components-vue'",
+      );
+      expect(result.code).toContain("import '@oods/component-styles/css'");
+      expect(result.code).toContain('Subscription details');
+      expect(result.code).toContain('Current plan and renewal details');
+      expect(result.code).toContain('Invoices and payment method');
+      expect(result.meta).toEqual({ nodeCount: 6, componentCount: 4 });
+    }
+  });
+
+  it.each(['react', 'vue'] as const)(
+    'returns OODS-N015 with no code for the legacy Subscription detail %s flow',
+    async (framework) => {
+      const result = await pipelineHandle({
+        object: 'Subscription',
+        context: 'detail',
+        framework,
+        styling: 'tailwind',
+        options: { skipValidation: true, skipRender: true },
+      });
+
+      expect(result.error?.step).toBe('codegen');
+      expect(result.error?.code).toBe('OODS-N015');
+      expect(result.error?.message).toContain(`not emission-eligible for ${framework}`);
+      expect(result.code).toBeUndefined();
+      expect(result.pipeline.steps).toEqual(['compose', 'codegen']);
+    },
+  );
+
+  it('keeps the complete legacy Subscription HTML save, load, and health path', async () => {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-tier1-html-'));
     process.env.MCP_SCHEMA_STORE_ROOT = tempRoot;
-  });
 
-  afterEach(async () => {
-    delete process.env.MCP_SCHEMA_STORE_ROOT;
-    delete process.env.MCP_SCHEMA_STORE_DIR;
-    await fs.rm(tempRoot, { recursive: true, force: true });
-  });
+    try {
+      const result = await pipelineHandle({
+        object: 'Subscription',
+        context: 'detail',
+        framework: 'html',
+        styling: 'tokens',
+        save: 's182-tier1-legacy-html',
+      });
 
-  it('full Tier 1 flow: pipeline → save → load → codegen → health', async () => {
-    // ── Step 1: pipeline with Tailwind + save ─────────────────────
-    const pipelineResult = await pipelineHandle({
-      object: 'Subscription',
-      context: 'detail',
-      framework: 'react',
-      styling: 'tailwind',
-      save: 'sub-detail-tw',
-    });
+      expect(result.error).toBeUndefined();
+      expect(result.code?.framework).toBe('html');
+      expect(result.code?.output).toContain('<!DOCTYPE html>');
+      expect(result.pipeline.steps).toEqual(['compose', 'validate', 'render', 'codegen', 'save']);
+      expect(result.saved?.name).toBe('s182-tier1-legacy-html');
 
-    // Pipeline ran without errors
-    expect(pipelineResult.error).toBeUndefined();
-    expect(pipelineResult.compose.object).toBe('Subscription');
-    expect(pipelineResult.compose.componentCount).toBeGreaterThan(0);
+      const loaded = await schemaLoadHandle({ name: 's182-tier1-legacy-html' });
+      expect(loaded.name).toBe('s182-tier1-legacy-html');
+      expect(loaded.schemaRef).toBeTruthy();
+      expect(loaded.version).toBe(1);
 
-    // Pipeline steps include save
-    expect(pipelineResult.pipeline.steps).toContain('compose');
-    expect(pipelineResult.pipeline.steps).toContain('codegen');
-    expect(pipelineResult.pipeline.steps).toContain('save');
-    expect(pipelineResult.pipeline.duration).toBeGreaterThan(0);
-
-    // React code has Tailwind classes
-    expect(pipelineResult.code).toBeDefined();
-    expect(pipelineResult.code!.framework).toBe('react');
-    expect(pipelineResult.code!.styling).toBe('tailwind');
-    expect(pipelineResult.code!.output).toContain('className=');
-    expect(pipelineResult.code!.output).not.toContain('style={{');
-
-    // Interactive state classes present
-    expect(pipelineResult.code!.output).toMatch(/focus:|disabled:|hover:/);
-
-    // Schema was saved
-    expect(pipelineResult.saved).toBeDefined();
-    expect(pipelineResult.saved!.name).toBe('sub-detail-tw');
-    expect(pipelineResult.saved!.version).toBeGreaterThanOrEqual(1);
-
-    // schemaRef returned for downstream use
-    expect(pipelineResult.schemaRef).toBeTruthy();
-
-    // ── Step 2: schema_load from persistence ──────────────────────
-    const loadResult = await schemaLoadHandle({ name: 'sub-detail-tw' });
-
-    expect(loadResult.name).toBe('sub-detail-tw');
-    expect(loadResult.schemaRef).toBeTruthy();
-    expect(loadResult.version).toBeGreaterThanOrEqual(1);
-
-    // ── Step 3: code_generate Vue with Tailwind from loaded schema ─
-    const vueResult = await codegenHandle({
-      schemaRef: loadResult.schemaRef,
-      framework: 'vue',
-      options: { styling: 'tailwind' },
-    });
-
-    expect(vueResult.status).toBe('ok');
-    expect(vueResult.fileExtension).toBe('.vue');
-
-    // Vue code has Tailwind classes
-    expect(vueResult.code).toContain('class=');
-    expect(vueResult.code).not.toContain('style="display:');
-
-    // Interactive state classes in Vue output
-    expect(vueResult.code).toMatch(/focus:|disabled:|hover:/);
-
-    // SFC structure
-    expect(vueResult.code).toContain('<template>');
-    expect(vueResult.code).toContain('<script setup');
-
-    // ── Step 4: health reports saved schema ───────────────────────
-    const healthResult = await healthHandle();
-
-    expect(healthResult.status === 'ok' || healthResult.status === 'degraded').toBe(true);
-    expect(healthResult.schemas.savedCount).toBeGreaterThanOrEqual(1);
-  });
-
-  it('pipeline with skipValidation and skipRender still produces Tailwind output', async () => {
-    const result = await pipelineHandle({
-      object: 'Subscription',
-      context: 'detail',
-      framework: 'react',
-      styling: 'tailwind',
-      options: { skipValidation: true, skipRender: true },
-    });
-
-    expect(result.error).toBeUndefined();
-    expect(result.pipeline.steps).toEqual(['compose', 'codegen']);
-    expect(result.code!.output).toContain('className=');
-    expect(result.code!.output).toMatch(/focus:|disabled:|hover:/);
-  });
-
-  it('pipeline with Vue framework produces Tailwind-styled Vue SFC', async () => {
-    const result = await pipelineHandle({
-      object: 'Subscription',
-      context: 'detail',
-      framework: 'vue',
-      styling: 'tailwind',
-    });
-
-    expect(result.error).toBeUndefined();
-    expect(result.code!.framework).toBe('vue');
-    expect(result.code!.styling).toBe('tailwind');
-    expect(result.code!.output).toContain('class=');
-    expect(result.code!.output).toContain('<template>');
-    expect(result.code!.output).toContain('<script setup');
+      const health = await healthHandle();
+      expect(['ok', 'degraded']).toContain(health.status);
+      expect(health.schemas.savedCount).toBe(1);
+    } finally {
+      delete process.env.MCP_SCHEMA_STORE_ROOT;
+      delete process.env.MCP_SCHEMA_STORE_DIR;
+      await fs.rm(tempRoot, { recursive: true, force: true });
+    }
   });
 });

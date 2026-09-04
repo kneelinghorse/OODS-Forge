@@ -1,0 +1,70 @@
+$ pnpm --filter @oods/mcp-server exec vitest run test/contracts/catalog.list.spec.ts -t 'B-02 derives the catalog count from unique row IDs instead of stale stats'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ❯ test/contracts/catalog.list.spec.ts (28 tests | 1 failed | 27 skipped) 5ms
+   ↓ catalog.list > validates schema contracts
+   ↓ catalog.list > should return component catalog
+   × catalog.list > B-02 derives the catalog count from unique row IDs instead of stale stats 4ms
+     → expected 101 to be 109 // Object.is equality
+   ↓ catalog.list > passes additive target-specific product reality through summary output
+   ↓ catalog.list > should default to summary mode with pagination for unfiltered calls
+   ↓ catalog.list > should allow explicit full detail without default pagination
+   ↓ catalog.list > should paginate when page/pageSize are provided
+   ↓ catalog.list > should include component properties
+   ↓ catalog.list > should filter by category
+   ↓ catalog.list > includes filteredCount in stats when filters are active
+   ↓ catalog.list > should filter by trait
+   ↓ catalog.list > suggests traits when a trait filter returns zero results
+   ↓ catalog.list > should filter by context
+   ↓ catalog.list > should return totalCount matching filtered results
+   ↓ catalog.list > deduplicates trait names per component
+   ↓ catalog.list > should include propSchema for components with traits
+   ↓ catalog.list > should have valid structure for propSchema entries
+   ↓ catalog.list > surfaces real content props in propSchema for primitive components (Workbench signal)
+   ↓ catalog.list > advertised primitive content props actually render (parity guard vs renderer drift)
+   ↓ catalog.list > should have valid structure for slots
+   ↓ catalog.list > indexes only explicit Storybook parameters.oodsComponentId(s)
+   ↓ catalog.list > should prefer code-connect snippets when available
+   ↓ catalog.list > every component has a non-empty status field
+   ↓ catalog.list > documents legacy status as static HTML-renderer-only
+   ↓ catalog.list > filters by status=stable
+   ↓ catalog.list > keeps the legacy status census scoped to the 98 mapped / 11 fallback HTML surface
+   ↓ catalog.list > all 4 Communicable components have stable status
+   ↓ catalog.list > status filter validates in input schema
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 27 skipped (28)
+   Start at  05:04:29
+   Duration  303ms (transform 88ms, setup 11ms, collect 155ms, tests 5ms, environment 0ms, prepare 32ms)
+
+undefined
+/private<disposable-checkout>/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/catalog.list.spec.ts -t B-02 derives the catalog count from unique row IDs instead of stale stats
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/catalog.list.spec.ts > catalog.list > B-02 derives the catalog count from unique row IDs instead of stale stats
+AssertionError: expected 101 to be 109 // Object.is equality
+
+- Expected
++ Received
+
+- 109
++ 101
+
+ ❯ test/contracts/catalog.list.spec.ts:89:83
+     87|   it('B-02 derives the catalog count from unique row IDs instead of st…
+     88|     const components = Array.from({ length: 109 }, (_, index) => ({ id…
+     89|     expect(resolveComponentCount({ stats: { componentCount: 101 }, com…
+       |                                                                                   ^
+     90|     expect(resolveComponentCount({
+     91|       stats: { componentCount: 101 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

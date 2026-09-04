@@ -15,6 +15,10 @@ export default defineConfig({
       'test/soak/**',
     ],
     environment: 'node',
+    // Product-reality packing runs package prepack builds that replace shared
+    // workspace dist trees; keep other compiler-facing specs off those trees
+    // until each pack/build lifecycle completes.
+    fileParallelism: false,
     testTimeout: 20_000,
     hookTimeout: 180_000,
     setupFiles: ['./test/setup-env.ts'],

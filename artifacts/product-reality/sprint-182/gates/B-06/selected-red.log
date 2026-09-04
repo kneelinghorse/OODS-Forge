@@ -1,0 +1,48 @@
+$ pnpm --filter @oods/components-react exec vitest run test/accessibility.spec.tsx -t 'B-06 preserves React field label and error associations'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/components-react
+
+ ❯ test/accessibility.spec.tsx (4 tests | 1 failed | 3 skipped) 19ms
+   × @oods/components-react accessibility > B-06 preserves React field label and error associations 18ms
+     → expected [ 'email-description' ] to deeply equal [ 'email-description', …(1) ]
+   ↓ @oods/components-react accessibility > associates labels and descriptions for every native field family
+   ↓ @oods/components-react accessibility > uses native action, announcement, table, and tab semantics
+   ↓ @oods/components-react accessibility > passes automated axe for a mounted nucleus showcase
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 skipped (4)
+   Start at  05:07:38
+   Duration  661ms (transform 63ms, setup 0ms, collect 268ms, tests 19ms, environment 190ms, prepare 49ms)
+
+undefined
+/private<disposable-checkout>/packages/components-react:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/accessibility.spec.tsx -t B-06 preserves React field label and error associations
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/accessibility.spec.tsx > @oods/components-react accessibility > B-06 preserves React field label and error associations
+AssertionError: expected [ 'email-description' ] to deeply equal [ 'email-description', …(1) ]
+
+- Expected
++ Received
+
+  [
+    "email-description",
+-   "email-validation",
+  ]
+
+ ❯ test/accessibility.spec.tsx:49:28
+     47|     expect(input.getAttribute('aria-invalid')).toBe('true');
+     48|     const descriptionIds = input.getAttribute('aria-describedby')?.spl…
+     49|     expect(descriptionIds).toEqual(['email-description', 'email-valida…
+       |                            ^
+     50|     expect(descriptionIds.map(id => document.getElementById(id)?.textC…
+     51|       'Use a work address',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

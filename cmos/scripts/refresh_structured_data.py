@@ -38,6 +38,10 @@ DEFAULT_BASELINE_TOKENS_PATH = OUTPUT_DIR / "oods-tokens.json"
 LEGACY_BASELINE_COMPONENTS_PATH = CMOS_ROOT / "research" / "oods-components.json"
 LEGACY_BASELINE_TOKENS_PATH = CMOS_ROOT / "research" / "oods-tokens.json"
 ARTIFACT_DIR = REPO_ROOT / "artifacts" / "structured-data"
+COMPONENT_INTAKE_PATH = REPO_ROOT / "packages" / "component-contracts" / "registry" / "component-intake.v1.json"
+COMPONENT_CAPABILITY_PATH = (
+    REPO_ROOT / "packages" / "component-contracts" / "registry" / "component-capability-baseline.v1.json"
+)
 
 
 @dataclass
@@ -212,7 +216,71 @@ def compute_render_complexity(categories: Set[str]) -> Optional[Dict[str, Any]]:
     }
 
 
-def collect_traits() -> tuple[
+def load_component_intake() -> List[Dict[str, Any]]:
+    payload = load_json(COMPONENT_INTAKE_PATH)
+    rows = payload.get("rows")
+    if not isinstance(rows, list):
+        raise ValueError("canonical component intake rows must be an array")
+
+    ids: List[str] = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, Mapping):
+            raise ValueError(f"canonical component intake row {index} must be an object")
+        component_id = row.get("id")
+        if not isinstance(component_id, str) or not component_id:
+            raise ValueError(f"canonical component intake row {index} must have a non-empty string ID")
+        ids.append(component_id)
+
+    if len(ids) != 109 or len(set(ids)) != 109:
+        raise ValueError("canonical component intake must contain exactly 109 unique string IDs")
+    if ids != sorted(ids):
+        raise ValueError("canonical component intake IDs must be deterministically sorted")
+    if payload.get("controllingObligationDenominator") != len(ids):
+        raise ValueError("canonical component denominator must be derived from intake membership")
+    return rows
+
+
+def load_component_capabilities(
+    canonical_ids: Set[str],
+    component_capabilities_path: Optional[Path] = None,
+) -> Dict[str, Dict[str, Any]]:
+    capabilities_path = (
+        Path(component_capabilities_path)
+        if component_capabilities_path is not None
+        else COMPONENT_CAPABILITY_PATH
+    )
+    payload = load_json(capabilities_path)
+    rows = payload.get("rows")
+    if not isinstance(rows, list):
+        raise ValueError("component capability rows must be an array")
+
+    capabilities_by_id: Dict[str, Dict[str, Any]] = {}
+    duplicate_ids: Set[str] = set()
+    for index, row in enumerate(rows):
+        if not isinstance(row, Mapping):
+            raise ValueError(f"component capability row {index} must be an object")
+        component_id = row.get("id")
+        if not isinstance(component_id, str) or not component_id:
+            raise ValueError(f"component capability row {index} must have a non-empty string ID")
+        if component_id in capabilities_by_id:
+            duplicate_ids.add(component_id)
+        capabilities_by_id[component_id] = dict(row)
+
+    if duplicate_ids:
+        raise ValueError(f"component capability IDs must be unique: {sorted(duplicate_ids)}")
+
+    capability_ids = set(capabilities_by_id)
+    if capability_ids != canonical_ids:
+        missing = sorted(canonical_ids - capability_ids)
+        extra = sorted(capability_ids - canonical_ids)
+        raise ValueError(
+            "component capability IDs must exactly match canonical intake membership; "
+            f"missing={missing}, extra={extra}"
+        )
+    return capabilities_by_id
+
+
+def collect_traits(canonical_ids: Set[str]) -> tuple[
     List[Dict[str, Any]],
     Dict[str, Dict[str, Any]],
     Dict[str, Set[str]],
@@ -248,16 +316,26 @@ def collect_traits() -> tuple[
             for entry in entries:
                 if not isinstance(entry, Mapping):
                     continue
+                component_name = entry.get("component")
+                if component_name is not None:
+                    if not isinstance(component_name, str) or not component_name:
+                        raise ValueError(
+                            f"trait view extension in {rel_path} has an invalid component ID: {component_name!r}"
+                        )
+                    if component_name not in canonical_ids:
+                        raise ValueError(
+                            f"trait view extension in {rel_path} references component outside canonical intake: "
+                            f"{component_name}"
+                        )
                 view_extensions.append(
                     {
-                        "component": entry.get("component"),
+                        "component": component_name,
                         "context": context,
                         "position": entry.get("position"),
                         "priority": entry.get("priority"),
                         "props": entry.get("props") or {},
                     }
                 )
-                component_name = entry.get("component")
                 if not component_name:
                     continue
                 comp = components_index.setdefault(
@@ -403,8 +481,22 @@ def finalize_components(index: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]
     return sorted(components, key=lambda item: item["id"])
 
 
-def ensure_basic_components(index: Dict[str, Dict[str, Any]]) -> None:
+def ensure_basic_components(index: Dict[str, Dict[str, Any]], canonical_ids: Set[str]) -> None:
     source_file = "cmos/scripts/refresh_structured_data.py"
+    unknown_existing = sorted(set(index) - canonical_ids)
+    unknown_definitions = sorted(
+        {
+            str(definition["id"])
+            for definition in BASIC_COMPONENT_DEFINITIONS
+            if str(definition["id"]) not in canonical_ids
+        }
+    )
+    if unknown_existing or unknown_definitions:
+        raise ValueError(
+            "basic component enrichment cannot add IDs outside canonical intake; "
+            f"existing={unknown_existing}, definitions={unknown_definitions}"
+        )
+
     for definition in BASIC_COMPONENT_DEFINITIONS:
         component_id = str(definition["id"])
         comp = index.setdefault(
@@ -426,6 +518,48 @@ def ensure_basic_components(index: Dict[str, Dict[str, Any]]) -> None:
         comp["regions"].update(definition.get("regions") or [])
         comp["sourceFiles"].add(source_file)
         comp["sourceFiles"].update(definition.get("sourceFiles") or [])
+
+
+def assert_canonical_component_membership(
+    components: List[Dict[str, Any]],
+    canonical_ids: Set[str],
+) -> None:
+    """Fail before emission unless component IDs equal the canonical intake exactly."""
+    emitted_ids = [component.get("id") for component in components]
+    expected_ids = sorted(canonical_ids)
+    if emitted_ids == expected_ids:
+        return
+
+    string_ids = [component_id for component_id in emitted_ids if isinstance(component_id, str)]
+    duplicate_ids = sorted({component_id for component_id in string_ids if string_ids.count(component_id) > 1})
+    emitted_set = set(string_ids)
+    raise ValueError(
+        "emitted component IDs must exactly match canonical intake membership; "
+        f"missing={sorted(canonical_ids - emitted_set)}, "
+        f"extra={sorted(emitted_set - canonical_ids)}, duplicates={duplicate_ids}"
+    )
+
+
+def ensure_canonical_components(
+    index: Dict[str, Dict[str, Any]],
+    intake_rows: List[Dict[str, Any]],
+) -> None:
+    """Keep identity membership registry-owned even when trait authoring changes."""
+    for row in intake_rows:
+        component_id = str(row["id"])
+        if component_id in index:
+            continue
+        metadata = row.get("baselineMetadata") or {}
+        index[component_id] = {
+            "id": component_id,
+            "displayName": row.get("displayName") or component_id,
+            "categories": set(metadata.get("categories") or []),
+            "tags": set(metadata.get("tags") or []),
+            "contexts": set(metadata.get("contexts") or []),
+            "regions": set(metadata.get("regions") or []),
+            "traitUsages": [],
+            "sourceFiles": {"packages/component-contracts/registry/component-intake.v1.json"},
+        }
 
 
 def summarize_domains(domain_traits: Dict[str, Set[str]], domain_objects: Dict[str, Set[str]]) -> List[Dict[str, Any]]:
@@ -691,16 +825,36 @@ def write_json(path: Path, payload: Dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def generate_structured_payloads(*, generated_at: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    traits, components_index, domain_traits, trait_overlays = collect_traits()
+def generate_structured_payloads(
+    *,
+    generated_at: Optional[str] = None,
+    component_capabilities_path: Optional[Path] = None,
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    intake_rows = load_component_intake()
+    canonical_ids = {str(row["id"]) for row in intake_rows}
+    capabilities_by_id = load_component_capabilities(
+        canonical_ids,
+        component_capabilities_path=component_capabilities_path,
+    )
+    traits, components_index, domain_traits, trait_overlays = collect_traits(canonical_ids)
     objects, trait_object_map, domain_objects = collect_objects()
 
     traits_by_name = {trait["name"]: trait for trait in traits}
     for trait in traits:
         trait["objects"] = sorted(trait_object_map.get(trait["name"]) or [])
 
-    ensure_basic_components(components_index)
+    ensure_canonical_components(components_index, intake_rows)
+    ensure_basic_components(components_index, canonical_ids)
     components = finalize_components(components_index)
+    assert_canonical_component_membership(components, canonical_ids)
+    for component in components:
+        capability = capabilities_by_id[component["id"]]
+        component["productReality"] = {
+            "schemaVersion": "1.0.0",
+            "proposedClassification": capability.get("proposedClassification"),
+            "reconciliationState": capability.get("reconciliationState"),
+            "surfaces": capability.get("surfaces") or {},
+        }
     domains = summarize_domains(domain_traits, domain_objects)
     patterns = extract_patterns()
     sample_queries = build_sample_queries(components, traits_by_name, trait_overlays)
@@ -764,6 +918,229 @@ def list_story_files(stories_dir: Path) -> List[Path]:
 def extract_story_title(source: str) -> Optional[str]:
     match = re.search(r"\btitle:\s*['\"]([^'\"]+)['\"]", source)
     return match.group(1) if match else None
+
+
+def _tokenize_story_source(source: str) -> List[Tuple[str, str]]:
+    """Tokenize enough JavaScript/TypeScript to inspect static Storybook metadata."""
+    tokens: List[Tuple[str, str]] = []
+    index = 0
+    while index < len(source):
+        character = source[index]
+        next_character = source[index + 1] if index + 1 < len(source) else ""
+
+        if character.isspace():
+            index += 1
+            continue
+        if character == "/" and next_character == "/":
+            newline = source.find("\n", index + 2)
+            index = len(source) if newline == -1 else newline + 1
+            continue
+        if character == "/" and next_character == "*":
+            comment_end = source.find("*/", index + 2)
+            index = len(source) if comment_end == -1 else comment_end + 2
+            continue
+        if character in {"'", '"'}:
+            quote = character
+            index += 1
+            value: List[str] = []
+            while index < len(source):
+                character = source[index]
+                if character == "\\" and index + 1 < len(source):
+                    value.append(source[index + 1])
+                    index += 2
+                    continue
+                if character == quote:
+                    index += 1
+                    break
+                value.append(character)
+                index += 1
+            tokens.append(("string", "".join(value)))
+            continue
+        if character == "`":
+            # Template content is prose/code fixture material, never static default-meta evidence.
+            index += 1
+            while index < len(source):
+                if source[index] == "\\" and index + 1 < len(source):
+                    index += 2
+                    continue
+                if source[index] == "`":
+                    index += 1
+                    break
+                index += 1
+            continue
+        if character.isalpha() or character in {"_", "$"}:
+            end = index + 1
+            while end < len(source) and (source[end].isalnum() or source[end] in {"_", "$"}):
+                end += 1
+            tokens.append(("identifier", source[index:end]))
+            index = end
+            continue
+
+        tokens.append(("punctuation", character))
+        index += 1
+
+    return tokens
+
+
+def _find_matching_story_token(
+    tokens: List[Tuple[str, str]],
+    start: int,
+    opening: str,
+    closing: str,
+) -> Optional[int]:
+    if start >= len(tokens) or tokens[start][1] != opening:
+        return None
+    depth = 0
+    for index in range(start, len(tokens)):
+        value = tokens[index][1]
+        if value == opening:
+            depth += 1
+        elif value == closing:
+            depth -= 1
+            if depth == 0:
+                return index
+    return None
+
+
+def _find_declared_story_meta_object(
+    tokens: List[Tuple[str, str]],
+    name: str,
+    before: int,
+) -> Optional[int]:
+    candidate: Optional[int] = None
+    for index in range(before - 1):
+        if tokens[index][1] not in {"const", "let", "var"}:
+            continue
+        if tokens[index + 1] != ("identifier", name):
+            continue
+
+        cursor = index + 2
+        while cursor < before and tokens[cursor][1] != ";":
+            if tokens[cursor][1] == "=":
+                value_index = cursor + 1
+                while value_index < before and tokens[value_index][1] == "(":
+                    value_index += 1
+                if value_index < before and tokens[value_index][1] == "{":
+                    candidate = value_index
+                break
+            cursor += 1
+    return candidate
+
+
+def _find_default_story_meta_object(tokens: List[Tuple[str, str]]) -> Optional[int]:
+    for index in range(len(tokens) - 2):
+        if tokens[index] != ("identifier", "export") or tokens[index + 1] != ("identifier", "default"):
+            continue
+
+        value_index = index + 2
+        while value_index < len(tokens) and tokens[value_index][1] == "(":
+            value_index += 1
+        if value_index >= len(tokens):
+            return None
+        if tokens[value_index][1] == "{":
+            return value_index
+        if tokens[value_index][0] == "identifier":
+            return _find_declared_story_meta_object(tokens, tokens[value_index][1], index)
+        return None
+    return None
+
+
+def _direct_object_property_values(
+    tokens: List[Tuple[str, str]],
+    object_start: int,
+    property_name: str,
+) -> List[int]:
+    object_end = _find_matching_story_token(tokens, object_start, "{", "}")
+    if object_end is None:
+        return []
+
+    values: List[int] = []
+    curly_depth = 1
+    square_depth = 0
+    parenthesis_depth = 0
+    at_property_start = True
+    index = object_start + 1
+    while index < object_end:
+        token_kind, token_value = tokens[index]
+        at_direct_depth = curly_depth == 1 and square_depth == 0 and parenthesis_depth == 0
+        if at_direct_depth and token_value == ",":
+            at_property_start = True
+            index += 1
+            continue
+        if at_direct_depth and at_property_start:
+            if (
+                token_kind in {"identifier", "string"}
+                and index + 2 < object_end
+                and tokens[index + 1][1] == ":"
+            ):
+                if token_value == property_name:
+                    values.append(index + 2)
+            at_property_start = False
+
+        if token_value == "{":
+            curly_depth += 1
+        elif token_value == "}":
+            curly_depth -= 1
+        elif token_value == "[":
+            square_depth += 1
+        elif token_value == "]":
+            square_depth -= 1
+        elif token_value == "(":
+            parenthesis_depth += 1
+        elif token_value == ")":
+            parenthesis_depth -= 1
+        index += 1
+    return values
+
+
+def _static_component_id(value: Tuple[str, str]) -> Optional[str]:
+    token_kind, token_value = value
+    if token_kind == "string" and re.fullmatch(r"[A-Za-z0-9_]+", token_value):
+        return token_value
+    return None
+
+
+def _static_component_id_array(tokens: List[Tuple[str, str]], start: int) -> Set[str]:
+    array_end = _find_matching_story_token(tokens, start, "[", "]")
+    if array_end is None:
+        return set()
+
+    component_ids: Set[str] = set()
+    for token in tokens[start + 1 : array_end]:
+        if token[1] == ",":
+            continue
+        component_id = _static_component_id(token)
+        if component_id is None:
+            return set()
+        component_ids.add(component_id)
+    return component_ids
+
+
+def extract_explicit_component_ids(source: str) -> Set[str]:
+    """Read static IDs only from the exported Storybook meta object's parameters."""
+    tokens = _tokenize_story_source(source)
+    meta_start = _find_default_story_meta_object(tokens)
+    if meta_start is None:
+        return set()
+
+    parameter_values = _direct_object_property_values(tokens, meta_start, "parameters")
+    if not parameter_values:
+        return set()
+    parameters_start = parameter_values[-1]
+    if tokens[parameters_start][1] != "{":
+        return set()
+
+    component_ids: Set[str] = set()
+    single_values = _direct_object_property_values(tokens, parameters_start, "oodsComponentId")
+    if single_values:
+        component_id = _static_component_id(tokens[single_values[-1]])
+        if component_id is not None:
+            component_ids.add(component_id)
+
+    multiple_values = _direct_object_property_values(tokens, parameters_start, "oodsComponentIds")
+    if multiple_values and tokens[multiple_values[-1]][1] == "[":
+        component_ids.update(_static_component_id_array(tokens, multiple_values[-1]))
+    return component_ids
 
 
 def extract_view_extensions_blocks(source: str) -> List[str]:
@@ -972,6 +1349,7 @@ def generate_code_connect_payload(
             continue
 
         story_title = extract_story_title(source)
+        explicit_component_ids = extract_explicit_component_ids(source)
         view_snippets: Dict[str, str] = {}
         for block in extract_view_extensions_blocks(source):
             for component_name, snippet in build_view_extension_snippets(block).items():
@@ -979,6 +1357,8 @@ def generate_code_connect_payload(
                     view_snippets[component_name] = snippet
 
         for component_name in component_names:
+            if component_name not in explicit_component_ids:
+                continue
             if len(index.get(component_name, [])) >= max_refs_per_component:
                 continue
 
@@ -1109,6 +1489,7 @@ def write_versioned_artifacts(
 def refresh_structured_data(
     *,
     output_dir: Path = OUTPUT_DIR,
+    component_capabilities_path: Optional[Path] = None,
     baseline_components_path: Optional[Path] = None,
     baseline_tokens_path: Optional[Path] = None,
     generated_at: Optional[str] = None,
@@ -1121,7 +1502,10 @@ def refresh_structured_data(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    components_payload, tokens_payload = generate_structured_payloads(generated_at=generated_at)
+    components_payload, tokens_payload = generate_structured_payloads(
+        generated_at=generated_at,
+        component_capabilities_path=component_capabilities_path,
+    )
 
     components_path = output_dir / "oods-components.json"
     tokens_path = output_dir / "oods-tokens.json"
@@ -1244,6 +1628,12 @@ def parse_args() -> argparse.Namespace:
         help="Directory for canonical outputs (defaults to cmos/planning).",
     )
     parser.add_argument(
+        "--component-capabilities",
+        type=Path,
+        default=COMPONENT_CAPABILITY_PATH,
+        help="Component capability JSON path (defaults to the Sprint-182 M01 baseline).",
+    )
+    parser.add_argument(
         "--baseline-components",
         type=Path,
         help="Baseline components JSON for delta generation (defaults to planning output, then cmos/research if present).",
@@ -1288,6 +1678,7 @@ def main() -> None:
     args = parse_args()
     result = refresh_structured_data(
         output_dir=args.output_dir,
+        component_capabilities_path=args.component_capabilities,
         baseline_components_path=args.baseline_components,
         baseline_tokens_path=args.baseline_tokens,
         generated_at=args.generated_at,

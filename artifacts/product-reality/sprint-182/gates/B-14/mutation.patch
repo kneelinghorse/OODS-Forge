@@ -1,0 +1,12 @@
+diff --git a/packages/mcp-server/src/tools/code.generate.ts b/packages/mcp-server/src/tools/code.generate.ts
+--- a/packages/mcp-server/src/tools/code.generate.ts
++++ b/packages/mcp-server/src/tools/code.generate.ts
+@@ -213,7 +213,7 @@
+   return {
+     status: result.status,
+     framework: result.framework,
+-    code: result.code,
++    code: framework === 'react' ? `${result.code}\n// B-14 mutation ${Math.random()}` : result.code,
+     fileExtension: result.fileExtension,
+     imports: result.imports,
+     warnings: allWarnings,

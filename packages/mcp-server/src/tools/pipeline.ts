@@ -423,16 +423,16 @@ export async function handle(input: PipelineInput): Promise<PipelineOutput> {
     return fail('codegen', 'OODS-S013', `codegen step threw: ${errorMessage(error)}`);
   }
 
+  if (codegenResult.status !== 'ok') {
+    const issue = firstIssueMessage(codegenResult.errors);
+    return fail('codegen', issue.code, issue.message);
+  }
+
   output.code = {
     framework,
     styling,
     output: codegenResult.code,
   };
-
-  if (codegenResult.status !== 'ok') {
-    const issue = firstIssueMessage(codegenResult.errors);
-    return fail('codegen', issue.code, issue.message);
-  }
 
   const saveConfig = typeof input.save === 'string'
     ? { name: input.save.trim(), tags: undefined }

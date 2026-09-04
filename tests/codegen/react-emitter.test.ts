@@ -26,10 +26,10 @@ describe('react-emitter', () => {
     expect(result.framework).toBe('react');
     expect(result.fileExtension).toBe('.tsx');
     expect(result.code).toContain("import React from 'react'");
-    expect(result.code).toContain("import { Button } from '@oods/components'");
+    expect(result.code).toContain("import { Button } from '@oods/components-react'");
     expect(result.code).toContain('<Button');
     expect(result.code).toContain('id="btn-1"');
-    expect(result.code).toContain('label="Click me"');
+    expect(result.code).toContain('content="Click me"');
   });
 
   it('uses .jsx extension when typescript is false', () => {
@@ -79,7 +79,7 @@ describe('react-emitter', () => {
     expect(result.code).toContain('CardHeader');
     expect(result.code).toContain('Text');
     // Sorted alphabetically in import
-    const importLine = result.code.split('\n').find((l: string) => l.includes('@oods/components'));
+    const importLine = result.code.split('\n').find((l: string) => l.includes('@oods/components-react'));
     expect(importLine).toBeDefined();
     const match = importLine!.match(/\{(.+)\}/);
     expect(match).toBeTruthy();
@@ -94,7 +94,7 @@ describe('react-emitter', () => {
     ]);
 
     const result = emit(schema, defaultOptions);
-    expect(result.imports).toEqual(['react', '@oods/components']);
+    expect(result.imports).toEqual(['react', '@oods/components-react', '@oods/component-styles/css']);
   });
 
   // -------------------------------------------------------------------------
@@ -137,7 +137,7 @@ describe('react-emitter', () => {
     ]);
 
     const result = emit(schema, defaultOptions);
-    expect(result.code).toContain('content="Hello \\"world\\" & friends"');
+    expect(result.code).toContain('content="Hello &quot;world&quot; &amp; friends"');
   });
 
   it('handles array and object props as JSON', () => {
@@ -477,7 +477,7 @@ describe('react-emitter', () => {
 
     const result = emit(schema, defaultOptions);
     // Button should appear only once in import
-    const importLine = result.code.split('\n').find((l: string) => l.includes('@oods/components'))!;
+    const importLine = result.code.split('\n').find((l: string) => l.includes('@oods/components-react'))!;
     const count = (importLine.match(/Button/g) || []).length;
     expect(count).toBe(1);
   });

@@ -1,0 +1,22 @@
+$ node scripts/product-reality/generate-s182-foundation.mjs --check && pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-server exec vitest run test/contracts/catalog.list.spec.ts -t 'B-02 derives the catalog count from unique row IDs instead of stale stats'
+exitCode=0
+signal=
+
+[stdout]
+Validated Sprint 182 foundation registry, proposal, capability ledger, and digests.
+
+> @oods/mcp-server@0.1.0 build /private<disposable-checkout>/packages/mcp-server
+> rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true)
+
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ✓ test/contracts/catalog.list.spec.ts (28 tests | 27 skipped) 33ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 27 skipped (28)
+   Start at  05:04:32
+   Duration  366ms (transform 107ms, setup 15ms, collect 180ms, tests 33ms, environment 0ms, prepare 40ms)
+
+
+[stderr]

@@ -2,9 +2,19 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { getAjv } from '../../src/lib/ajv.js';
 import inputSchema from '../../src/schemas/catalog.list.input.json' assert { type: 'json' };
 import outputSchema from '../../src/schemas/catalog.list.output.json' assert { type: 'json' };
-import { handle, PRIMITIVE_PROP_SCHEMAS } from '../../src/tools/catalog.list.js';
+import {
+  buildStoryIndex,
+  handle,
+  PRIMITIVE_PROP_SCHEMAS,
+  transformComponentsToSummary,
+} from '../../src/tools/catalog.list.js';
+import { resolveComponentCount } from '../../src/tools/catalog.shared.js';
 import { renderMappedComponent } from '../../src/render/component-map.js';
-import type { CatalogListInput, CatalogListOutput } from '../../src/tools/types.js';
+import type {
+  CatalogListInput,
+  CatalogListOutput,
+  ComponentProductReality,
+} from '../../src/tools/types.js';
 import type { UiElement } from '../../src/schemas/generated.js';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -72,6 +82,65 @@ describe('catalog.list', () => {
     expect(output.generatedAt).toBeDefined();
     expect(output.stats).toBeDefined();
     expect(output.stats.componentCount).toBeGreaterThan(0);
+  });
+
+  it('B-02 derives the catalog count from unique row IDs instead of stale stats', async () => {
+    const components = Array.from({ length: 109 }, (_, index) => ({ id: `Component${index}` }));
+    expect(resolveComponentCount({ stats: { componentCount: 101 }, components })).toBe(109);
+    expect(resolveComponentCount({
+      stats: { componentCount: 101 },
+      components: [...components, { id: 'Component0' }],
+    })).toBe(109);
+
+    const output = await handle({});
+    expect(output.totalCount).toBe(109);
+    expect(output.stats.componentCount).toBe(109);
+  });
+
+  it('passes additive target-specific product reality through summary output', async () => {
+    const evidence = (state: string) => ({ state, evidence: [`evidence/${state}.json`] });
+    const productReality: ComponentProductReality = {
+      schemaVersion: '1.0.0',
+      proposedClassification: 'native',
+      reconciliationState: 'proposed-awaiting-derek-approval',
+      surfaces: {
+        contract: evidence('versioned-v1'),
+        metadata: evidence('available'),
+        html: evidence('mapped'),
+        react: evidence('implemented-unverified'),
+        vue: evidence('unavailable'),
+        generatedConsumer: evidence('unavailable'),
+        accessibility: evidence('unverified'),
+        theme: evidence('unverified'),
+        interaction: evidence('unverified'),
+      },
+    };
+    const [summary] = transformComponentsToSummary({
+      components: [{
+        id: 'SyntheticComponent',
+        displayName: 'Synthetic component',
+        categories: [],
+        tags: [],
+        contexts: [],
+        regions: [],
+        traitUsages: [],
+        productReality,
+      }],
+    });
+
+    expect(summary.productReality).toEqual(productReality);
+
+    const output = await handle({});
+    const schemaCandidate = {
+      ...output,
+      components: [summary],
+      totalCount: 1,
+      returnedCount: 1,
+      pageSize: 1,
+      hasMore: false,
+    };
+    expect(validateOutput(schemaCandidate)).toBe(true);
+    expect(validateOutput.errors).toBeNull();
   });
 
   it('should default to summary mode with pagination for unfiltered calls', async () => {
@@ -341,26 +410,37 @@ describe('catalog.list', () => {
     }
   });
 
-  it('should enrich entries with storybook code references when available', async () => {
-    const output: CatalogListOutput = await handle({ detail: 'full' });
-    const byName = new Map(output.components.map((component) => [component.name, component]));
+  it('indexes only explicit Storybook parameters.oodsComponentId(s)', () => {
+    const storiesDir = path.join(codeConnectTmpDir, 'stories');
+    fs.mkdirSync(storiesDir, { recursive: true });
+    fs.writeFileSync(path.join(storiesDir, 'Explicit.stories.tsx'), [
+      "import { TagInput } from '@oods/components-react';",
+      'const meta = {',
+      "  title: 'Components/Explicit',",
+      '  parameters: {',
+      "    oodsComponentId: 'TagInput',",
+      "    oodsComponentIds: ['TagManager'],",
+      '  },',
+      '};',
+      'export default meta;',
+      'export const Demo = () => <TagInput />;',
+    ].join('\n'));
+    fs.writeFileSync(path.join(storiesDir, 'ProseOnly.stories.tsx'), [
+      "import { TemplatePicker } from '@oods/components-react';",
+      "const arbitraryObject = { parameters: { oodsComponentId: 'TemplatePicker' } };",
+      "const meta = { title: 'Components/TemplatePicker' };",
+      '// parameters: { oodsComponentId: \'TemplatePicker\' },',
+      "const prose = \"parameters: { oodsComponentId: 'TemplatePicker' }\";",
+      "const unrelated = { oodsComponentId: 'TemplatePicker' };",
+      'export default meta;',
+      'export const Demo = () => <TemplatePicker />;',
+    ].join('\n'));
 
-    const tagInput = byName.get('TagInput');
-    expect(tagInput).toBeDefined();
-    expect(tagInput?.codeReferences?.length).toBeGreaterThan(0);
-    expect(tagInput?.codeReferences?.every((ref) => ref.kind === 'storybook')).toBe(true);
-    expect(tagInput?.codeReferences?.some((ref) => ref.path.endsWith('stories/components/classification/TagInput.stories.tsx'))).toBe(true);
-    expect(tagInput?.codeSnippet).toContain('import');
-
-    const tagManager = byName.get('TagManager');
-    expect(tagManager).toBeDefined();
-    expect(tagManager?.codeReferences?.length).toBeGreaterThan(0);
-    expect(tagManager?.codeSnippet).toContain('component: TagManager');
-
-    const templatePicker = byName.get('TemplatePicker');
-    expect(templatePicker).toBeDefined();
-    expect(templatePicker?.codeReferences?.length).toBeGreaterThan(0);
-    expect(templatePicker?.codeSnippet).toContain('component: TemplatePicker');
+    const index = buildStoryIndex(['TagInput', 'TagManager', 'TemplatePicker'], storiesDir);
+    expect(index.get('TagInput')).toHaveLength(1);
+    expect(index.get('TagInput')?.[0]?.snippet).toContain("import { TagInput }");
+    expect(index.get('TagManager')).toHaveLength(1);
+    expect(index.has('TemplatePicker')).toBe(false);
   });
 
   it('should prefer code-connect snippets when available', async () => {
@@ -401,12 +481,28 @@ describe('catalog.list', () => {
     }
   });
 
+  it('documents legacy status as static HTML-renderer-only', () => {
+    const componentSchema = outputSchema.properties.components.items;
+    expect(componentSchema.properties.status.description).toMatch(/static-HTML renderer status only/i);
+    expect(componentSchema.properties.status.description).toMatch(/not a React, Vue, code-generation, or release-readiness claim/i);
+  });
+
   it('filters by status=stable', async () => {
     const output: CatalogListOutput = await handle({ status: 'stable' });
     expect(output.totalCount).toBeGreaterThan(0);
     for (const component of output.components) {
       expect(component.status).toBe('stable');
     }
+  });
+
+  it('keeps the legacy status census scoped to the 98 mapped / 11 fallback HTML surface', async () => {
+    const stable = await handle({ status: 'stable' });
+    const planned = await handle({ status: 'planned' });
+    const beta = await handle({ status: 'beta' });
+
+    expect(stable.totalCount).toBe(98);
+    expect(planned.totalCount).toBe(11);
+    expect(beta.totalCount).toBe(0);
   });
 
   it('all 4 Communicable components have stable status', async () => {

@@ -1,5 +1,6 @@
 import type { UiElement, UiLayout } from '../schemas/generated.js';
 import { createVariants, inlineStyleToTailwind, type TailwindVariants } from './tailwind-mapper.js';
+import { javascriptSingleQuotedString } from './emission-safety.js';
 
 type NodeProps = Record<string, unknown>;
 
@@ -316,8 +317,7 @@ function serializeVariantArgs(props: NodeProps | null, variantProps: string[]): 
   for (const key of variantProps) {
     const value = props[key];
     if (typeof value !== 'string' || !value.trim()) continue;
-    const escaped = value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    args.push(`${key}: '${escaped}'`);
+    args.push(`${key}: ${javascriptSingleQuotedString(value)}`);
   }
 
   if (args.length === 0) return null;

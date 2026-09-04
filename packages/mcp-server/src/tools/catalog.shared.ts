@@ -74,12 +74,21 @@ export function readComponentsDataset<T = Record<string, unknown>>(): T {
 }
 
 export function resolveComponentCount(dataset: ComponentsDatasetLike): number {
+  if (Array.isArray(dataset?.components)) {
+    const componentIds = new Set<string>();
+    for (const row of dataset.components) {
+      if (!row || typeof row !== 'object' || Array.isArray(row)) continue;
+      const id = (row as { id?: unknown }).id;
+      if (typeof id === 'string' && id.length > 0) {
+        componentIds.add(id);
+      }
+    }
+    return componentIds.size;
+  }
+
   const count = dataset?.stats?.componentCount;
   if (typeof count === 'number' && Number.isFinite(count)) {
     return count;
-  }
-  if (Array.isArray(dataset?.components)) {
-    return dataset.components.length;
   }
   return 0;
 }

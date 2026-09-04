@@ -1,0 +1,12 @@
+diff --git a/packages/mcp-server/src/tools/pipeline.ts b/packages/mcp-server/src/tools/pipeline.ts
+--- a/packages/mcp-server/src/tools/pipeline.ts
++++ b/packages/mcp-server/src/tools/pipeline.ts
+@@ -423,7 +423,7 @@
+     return fail('codegen', 'OODS-S013', `codegen step threw: ${errorMessage(error)}`);
+   }
+ 
+-  if (codegenResult.status !== 'ok') {
++  if (codegenResult.status !== 'ok' && codegenResult.errors?.[0]?.code !== 'OODS-N015') {
+     const issue = firstIssueMessage(codegenResult.errors);
+     return fail('codegen', issue.code, issue.message);
+   }

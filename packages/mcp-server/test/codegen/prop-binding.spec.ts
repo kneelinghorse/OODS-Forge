@@ -59,7 +59,7 @@ describe('codegen prop binding', () => {
 
     it('keeps self-closing for components without field binding', () => {
       const result = reactEmit(schema, defaultOptions);
-      // Button has label="Save" but no field binding → remains self-closing
+      // Button label normalizes to content but no field binding → remains self-closing
       expect(result.code).toMatch(/<Button[^>]*\/>/);
     });
   });
@@ -77,9 +77,9 @@ describe('codegen prop binding', () => {
       expect(result.code).toContain(':status="status"');
     });
 
-    it('injects field names as :value binding for value-strategy', () => {
+    it('injects field names as idiomatic v-model binding for value-strategy', () => {
       const result = vueEmit(schema, defaultOptions);
-      expect(result.code).toContain(':value="sku"');
+      expect(result.code).toContain('v-model="sku"');
     });
   });
 
@@ -205,7 +205,7 @@ describe('codegen prop binding', () => {
       });
 
       it('does not override existing labels', () => {
-        expect(result.code).toContain('label="Custom Label"');
+        expect(result.code).toContain('content="Custom Label"');
       });
     });
 
@@ -229,7 +229,7 @@ describe('codegen prop binding', () => {
       });
 
       it('does not override existing labels', () => {
-        expect(result.code).toContain('label="Custom Label"');
+        expect(result.code).toContain('content="Custom Label"');
       });
     });
 

@@ -164,7 +164,8 @@ describe('pipeline — nested options aliases contract', () => {
 
   it('handler reads styling from options when not at top level', async () => {
     const result = await pipelineHandle({
-      object: 'Product',
+      intent: 'simple card',
+      layout: 'card',
       options: { styling: 'tailwind' },
     });
     expect(result.code?.styling).toBe('tailwind');
@@ -172,7 +173,8 @@ describe('pipeline — nested options aliases contract', () => {
 
   it('handler reads framework from options when not at top level', async () => {
     const result = await pipelineHandle({
-      object: 'Product',
+      intent: 'simple card',
+      layout: 'card',
       options: { framework: 'vue' },
     });
     expect(result.code?.framework).toBe('vue');
@@ -180,7 +182,8 @@ describe('pipeline — nested options aliases contract', () => {
 
   it('handler accepts nested framework + typescript together', async () => {
     const result = await pipelineHandle({
-      object: 'Product',
+      intent: 'simple card',
+      layout: 'card',
       options: { framework: 'vue', styling: 'tokens', typescript: false },
     });
     expect(result.code?.framework).toBe('vue');
@@ -188,7 +191,8 @@ describe('pipeline — nested options aliases contract', () => {
 
   it('top-level styling overrides options.styling', async () => {
     const result = await pipelineHandle({
-      object: 'Product',
+      intent: 'simple card',
+      layout: 'card',
       styling: 'tokens',
       options: { styling: 'tailwind' },
     });
@@ -206,6 +210,7 @@ describe('pipeline — nested options aliases contract', () => {
     try {
       const result = await pipelineHandle({
         object: 'Product',
+        framework: 'html',
         save: { name: 'test-tagged-schema', tags: ['test', 'sprint74'] },
       });
       expect(result.saved?.name).toBe('test-tagged-schema');
@@ -230,6 +235,7 @@ describe('pipeline — nested options aliases contract', () => {
     try {
       const result = await pipelineHandle({
         object: 'Product',
+        framework: 'html',
         save: { name: 'test-tagged-schema', tags: ['receipt', 'transaction'] },
       });
 

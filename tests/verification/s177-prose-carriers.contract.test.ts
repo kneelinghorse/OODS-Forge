@@ -51,55 +51,59 @@ describe("Sprint 177 prose truth carriers", () => {
 
   it("keeps current roadmap authority separate from frozen history and sibling execution", () => {
     const near = read("cmos/foundational-docs/roadmap/near.md");
+    const productProgram = read(
+      "cmos/foundational-docs/roadmap/product-reality-program.md",
+    );
     const roadmapIndex = read("cmos/foundational-docs/roadmap/README.md");
     const historicalVisionDocs = [
       read("cmos/foundational-docs/mission-graph.md"),
       read("cmos/foundational-docs/overview.md"),
       read("cmos/foundational-docs/strategic-position.md"),
     ];
-    const bannerStart = near.indexOf(
-      "> **⚠️ FROZEN HISTORY / CURRENT RESET — 2026-08-25; NL→viz arc REVERTED 2026-06-29.**",
-    );
-    const bannerEnd = near.indexOf("\n\nThis file now answers", bannerStart);
+    const normalizedNear = near.replace(/\s+/g, " ");
+    const normalizedProgram = productProgram.replace(/\s+/g, " ");
+    const normalizedIndex = roadmapIndex.replace(/\s+/g, " ");
 
     expect(near).toContain(
-      "**Status:** Active — Forge serving horizon for the Shopify-selected direction",
+      "**Status:** ACTIVE — program decision `#1652`; Sprint-182 lock decision `#1653`",
     );
-    expect(near).toContain("[Roadmap index](README.md)");
-    expect(bannerStart).toBeGreaterThanOrEqual(0);
-    expect(bannerEnd).toBeGreaterThan(bannerStart);
-
-    const banner = near.slice(bannerStart, bannerEnd);
-    const outsideBanner = `${near.slice(0, bannerStart)}${near.slice(bannerEnd)}`;
-    expect(banner).toContain("viz.fromText");
-    expect(banner).toContain("typed, structured `viz.render` intent");
-    expect(banner).toContain("dimensionRef");
-    expect(outsideBanner).not.toContain("NL→viz");
-    expect(outsideBanner).not.toContain("viz.fromText");
-    expect(outsideBanner).not.toContain("dimensionRef");
-    expect(outsideBanner).not.toContain("rewrite remains parked");
-
-    const normalizedNear = near.replace(/^>\s?/gm, "").replace(/\s+/g, " ");
+    expect(near).toContain(
+      "[Forge Product Reality Program](product-reality-program.md)",
+    );
     expect(normalizedNear).toContain(
-      'CONSUMER MODEL (Derek, 2026-06-18 — standing constraint, supersedes the s115 "consumer pull" framing): Forge\'s consumer is AGENTS using the Forge tools via MCP. That is who we build for. (1) There is NO external project that PULLs from Forge — do NOT frame any sprint, mission, or value case around "proving a consumer pull" or any other team adopting a Forge output. (2) Forge is NOT a hosted/SaaS service and there are NO current plans to be one; nothing should assume a deployed/reachable Forge endpoint. (3) There are NO plans to use Synthesis-Workbench with the viz/export work — do not assume a Workbench surface. (4) Headless integrations are welcome IN PRINCIPLE but are a SEPARATE initiative that must be discussed explicitly BEFORE any work — as must ANY dependency that would be created for a live production site. Capabilities ship for agent use first; cross-app/production wiring is its own decision, never an implied sprint goal. This is why s115\'s m06 (a cmos-dashboard cutover) was correctly dropped and why the "demand signal / pull" thesis behind it is retracted.',
+      "The prior Shopify-serving roadmap and the schema-ingest version of Sprint 182 are retained in Git and CMOS as history. They no longer control this queue.",
     );
-    expect(near).toContain("20 auto-registered tools plus 6 on-demand tools");
-    expect(near).toContain("13 `viz.render` types");
-    expect(near).toContain("supports 11 of the 13 chart types");
-    expect(near).toContain("5 Cartesian types are `coverage:'certified'`");
-    expect(near).toContain("real contrast verdict");
-    expect(near).toContain("Shopify's D1–D6 and sprint sequence");
-    expect(near).toContain("s96–s107 mission shapes");
-    expect(near).not.toContain("no contrast verdict");
-    expect(near).not.toContain("**s131 —");
-    expect(near).not.toContain("**s132 —");
+    expect(normalizedNear).toContain(
+      "Current Sprint-182 evidence supports exactly 14 React and 14 Vue `foundation-v1-candidate` cells",
+    );
+    expect(normalizedNear).toContain(
+      "Candidate status remains pending a separate independent review; it does not pre-approve either framework surface as `foundation-v1`.",
+    );
+    expect(normalizedNear).toContain(
+      "Sprint-181 follow-ups `#1315`–`#1322` remain Forge-owned maintenance debt under decision `#1651`",
+    );
+    expect(normalizedNear).toContain(
+      "executes the separate independent review required by §9 of the locked Sprint-182 memo",
+    );
+    expect(normalizedNear).toContain(
+      "It does not promote any `foundation-v1-candidate` cell or begin the next program increment before that review is recorded.",
+    );
 
-    expect(roadmapIndex).toContain(
-      "live Forge near-horizon planning surface, refreshed **2026-08-25**",
+    expect(productProgram).toContain(
+      "**Status:** ACTIVE — product direction authorized by CMOS decision `#1652`",
     );
-    expect(roadmapIndex).not.toContain("sprint-120 close");
-    expect(roadmapIndex).not.toContain("tracks the s108–s120 horizon");
-    expect(roadmapIndex).not.toContain("s96–s104 sprint shapes");
+    expect(normalizedProgram).toContain(
+      "React and Vue are equal product commitments.",
+    );
+    expect(normalizedIndex).toContain(
+      "The live roadmap is organized around the Forge Product Reality Recovery program.",
+    );
+    expect(normalizedIndex).toContain(
+      "The program document carries the mid- and far-horizon sequence",
+    );
+    expect(normalizedIndex).toContain(
+      "`product-reality-program.md` is the durable direction, authorized **2026-09-03**, and `near.md` is the active sequencing surface, refreshed **2026-09-04**.",
+    );
 
     for (const historicalVision of historicalVisionDocs) {
       expect(historicalVision).toContain(

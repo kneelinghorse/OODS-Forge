@@ -311,6 +311,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-N012', { code: 'OODS-N012', category: 'not_found', message: 'A11y token data missing', retryable: false }],
   ['OODS-N013', { code: 'OODS-N013', category: 'not_found', message: 'Registry fallback used', retryable: false }],
   ['OODS-N014', { code: 'OODS-N014', category: 'not_found', message: 'Registry snapshot payload missing', retryable: false }],
+  ['OODS-N015', { code: 'OODS-N015', category: 'not_found', message: 'Component target unavailable', retryable: false }],
 
   // ── Conflict ────────────────────────────────────────────────────────────
   ['OODS-C001', { code: 'OODS-C001', category: 'conflict', message: 'Schema ref missing after compose', retryable: false }],

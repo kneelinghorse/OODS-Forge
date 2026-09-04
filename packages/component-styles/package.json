@@ -1,0 +1,41 @@
+{
+  "name": "@oods/component-styles",
+  "version": "0.1.0",
+  "description": "Token-driven shared CSS contract for OODS React and Vue components.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "prepack": "pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./css": {
+      "default": "./dist/components.css"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": ["**/*.css"],
+  "dependencies": {
+    "@oods/tokens": "0.1.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  },
+  "packageManager": "pnpm@9.12.2"
+}

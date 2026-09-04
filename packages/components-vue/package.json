@@ -1,0 +1,54 @@
+{
+  "name": "@oods/components-vue",
+  "version": "0.1.0",
+  "description": "OODS Vue 3 component package.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=20.11.1" },
+  "files": ["dist", "evidence"],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "typecheck": "vue-tsc --noEmit --pretty false -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "test:pack": "node test/packed-import.mjs",
+    "test:visual": "node test/visual-evidence.mjs",
+    "prepack": "pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./readiness": {
+      "default": "./evidence/vue-readiness.v1.json"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": ["**/*.css"],
+  "dependencies": {
+    "@oods/component-contracts": "0.1.0",
+    "@oods/component-styles": "0.1.0"
+  },
+  "peerDependencies": { "vue": "^3.5.0" },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/compiler-sfc": "^3.5.42",
+    "@vue/server-renderer": "^3.5.42",
+    "@vue/test-utils": "^2.5.0",
+    "jsdom": "^24.0.0",
+    "playwright": "^1.56.1",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0",
+    "vue": "^3.5.42",
+    "vue-tsc": "^3.3.11"
+  },
+  "packageManager": "pnpm@9.12.2"
+}

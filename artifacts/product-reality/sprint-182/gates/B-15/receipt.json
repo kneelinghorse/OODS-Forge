@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m05",
+  "bite": "B-15",
+  "reviewHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
+  "carrier": {
+    "path": "packages/mcp-server/src/tools/__tests__/pipeline.test.ts",
+    "sha256": "654b979eca0bbe1a1cbca61e79107d3f2d1cb3cb712cb19f6d1c9756507d9819",
+    "selector": "B-15 propagates OODS-N015 as a codegen-stage error without a successful payload"
+  },
+  "mutationTarget": {
+    "path": "packages/mcp-server/src/tools/pipeline.ts",
+    "originalSha256": "2f4fffd64ae859289230a02e59d8329604324a73af08a8ae11ef78d77b10d9b0",
+    "mutatedSha256": "7c5f859b3318b3455ed3bade563d8b8e568bcf1710c28e68b89b1b293d6cb5c6",
+    "restoredSha256": "2f4fffd64ae859289230a02e59d8329604324a73af08a8ae11ef78d77b10d9b0"
+  },
+  "command": "pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/pipeline.test.ts -t 'B-15 propagates OODS-N015 as a codegen-stage error without a successful payload'",
+  "mutation": "Exclude a first-issue OODS-N015 result from the pipeline error branch so execution continues through the successful code-payload path.",
+  "requiredAndObservedRedFinding": "The selected carrier receives no codegen-stage OODS-N015 failure because the result continues to a code payload.",
+  "mutationPatchSha256": "588f7f131c441dec295807f7116ca6fe84de378bf646059c064ceaf2a37712f7",
+  "sequence": {
+    "preMutation": {
+      "selected": 1,
+      "passed": 1,
+      "failed": 0,
+      "selectedSkipped": 0,
+      "runnerFiltered": 46,
+      "runnerReportedSkipped": 46,
+      "todo": 0,
+      "total": 47,
+      "exitCode": 0
+    },
+    "mutation": {
+      "selected": 1,
+      "passed": 0,
+      "failed": 1,
+      "selectedSkipped": 0,
+      "runnerFiltered": 46,
+      "runnerReportedSkipped": 46,
+      "todo": 0,
+      "total": 47,
+      "exitCode": 1
+    },
+    "restoration": {
+      "selected": 1,
+      "passed": 1,
+      "failed": 0,
+      "selectedSkipped": 0,
+      "runnerFiltered": 46,
+      "runnerReportedSkipped": 46,
+      "todo": 0,
+      "total": 47,
+      "exitCode": 0
+    }
+  },
+  "supportingVerifier": null,
+  "restoreCommand": "pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/pipeline.test.ts -t 'B-15 propagates OODS-N015 as a codegen-stage error without a successful payload'",
+  "restoredVerifier": null,
+  "restoration": {
+    "byteIdentical": true,
+    "mutationTargetSha256": "2f4fffd64ae859289230a02e59d8329604324a73af08a8ae11ef78d77b10d9b0",
+    "carrierByteIdentical": true,
+    "carrierSha256": "654b979eca0bbe1a1cbca61e79107d3f2d1cb3cb712cb19f6d1c9756507d9819",
+    "lockfileUnchanged": true,
+    "lockfileSha256": "1569b33b11cb46bd434aebafa7e4957b5d913466d853809abf92dd11b825da51"
+  },
+  "execution": {
+    "checkoutKind": "fresh detached git worktree",
+    "setupCommand": "pnpm install --frozen-lockfile --ignore-scripts && pnpm --filter @oods/tokens run build && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-styles run build && pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-vue run build && pnpm --filter @oods/a11y-tools run build && pnpm --filter @oods/artifacts run build && pnpm --filter @oods/release-utils run build && pnpm --filter @oods/viz-core run build && pnpm --filter @oods/viz-render run build && pnpm --filter @oods/mcp-server run build",
+    "setupCommandsSequential": true,
+    "concurrentPackageBuilds": false,
+    "setupExitCode": 0,
+    "checkoutHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
+    "detached": true,
+    "freshCheckoutCleanBeforeSetup": true,
+    "postSetupCheckoutClean": true,
+    "trackedMutationStateRestored": true,
+    "trackedCleanAfterEvidenceTreeRestoration": true,
+    "worktreeRemovedBeforePublication": true
+  },
+  "publication": {
+    "mode": "whole B-01 through B-15 tree staged before swap",
+    "priorEvidenceUntouchedUntilAllLegsPassed": true,
+    "allOrNothing": true
+  },
+  "toolchain": {
+    "node": "v24.6.0",
+    "npm": "11.5.1\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.",
+    "pnpm": "9.12.2",
+    "python": "Python 3.11.9",
+    "vitest": "vitest/3.2.4 darwin-arm64 node-v24.6.0"
+  },
+  "generatedArtifacts": [
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-15/mutation.patch",
+      "sha256": "588f7f131c441dec295807f7116ca6fe84de378bf646059c064ceaf2a37712f7"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-15/pre-green.log",
+      "sha256": "72220389ad74fd75cff6a3c8736d414a3ab9907b79146bea5da3c52f09e1d80b"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-15/restored-green.log",
+      "sha256": "e434e0a5e57d39b6a9c141f437126d8c5e9d7b25a8790084c3a19311516698c4"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-15/selected-red.log",
+      "sha256": "a2e3cbcbf3f2069769ea7cdd0956991a79cf497d3256a025283f345be888bdce"
+    },
+    {
+      "path": "packages/mcp-server/dist/tools/pipeline.d.ts",
+      "sha256": "70f4e911b9b2f862858e22876035aa8a2e26ccc110ffc556e535ee68b0fd4354"
+    },
+    {
+      "path": "packages/mcp-server/dist/tools/pipeline.d.ts.map",
+      "sha256": "48b1d3087c057d87714808a5545316c3796977b7fae8d7b8843c65acc1ad6dc0"
+    },
+    {
+      "path": "packages/mcp-server/dist/tools/pipeline.js",
+      "sha256": "a6d698ea1088de86fbdb61d0cfc54b80366422858c5e0503187dec726e72913a"
+    },
+    {
+      "path": "packages/mcp-server/dist/tools/pipeline.js.map",
+      "sha256": "31e25d84f25fce1a2ede5085dd165275a98bfe032735b7dc9c04ea9d418aecbb"
+    }
+  ],
+  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-15/"
+}

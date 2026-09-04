@@ -87,7 +87,7 @@ describe('react-emitter', () => {
       const result = emit(schema, defaultOpts);
       expect(result.code).toContain('<Button');
       expect(result.code).toContain('id="btn-1"');
-      expect(result.code).toContain('label="Click me"');
+      expect(result.code).toContain('content="Click me"');
       expect(result.code).toContain('/>');
     });
   });
@@ -140,7 +140,7 @@ describe('react-emitter', () => {
       });
       const result = emit(schema, defaultOpts);
       expect(result.code).toContain("import React from 'react';");
-      expect(result.code).toContain("import { Button } from '@oods/components';");
+      expect(result.code).toContain("import { Button } from '@oods/components-react';");
     });
 
     it('generates TypeScript annotations when typescript=true', () => {

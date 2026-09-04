@@ -9,6 +9,7 @@ import type {
   ComponentCatalogEntry,
   ComponentCatalogSummary,
   ComponentCodeReference,
+  ComponentProductReality,
   ComponentStatus,
 } from './types.js';
 import { readComponentsDataset, resolveComponentCount } from './catalog.shared.js';
@@ -60,6 +61,7 @@ type ComponentData = {
   regions?: string[];
   traitUsages?: TraitUsage[];
   sourceFiles?: string[];
+  productReality?: ComponentProductReality;
 };
 
 type ComponentsDataset = {
@@ -147,21 +149,264 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function isIdentifierChar(value: string): boolean {
-  return /[A-Za-z0-9_]/.test(value);
+function isIdentifierStart(value: string): boolean {
+  return /[A-Za-z_$]/.test(value);
 }
 
-function findWordIndex(haystack: string, needle: string): number {
-  let index = haystack.indexOf(needle);
-  while (index !== -1) {
-    const before = index > 0 ? haystack[index - 1] : '';
-    const after = index + needle.length < haystack.length ? haystack[index + needle.length] : '';
-    if (!isIdentifierChar(before) && !isIdentifierChar(after)) {
-      return index;
+function isIdentifierPart(value: string): boolean {
+  return /[A-Za-z0-9_$]/.test(value);
+}
+
+function skipQuotedLiteral(source: string, start: number): number {
+  const quote = source[start];
+  let index = start + 1;
+  while (index < source.length) {
+    if (source[index] === '\\') {
+      index += 2;
+      continue;
     }
-    index = haystack.indexOf(needle, index + needle.length);
+    if (source[index] === quote) return index + 1;
+    index += 1;
   }
-  return -1;
+  return source.length;
+}
+
+function skipTrivia(source: string, start: number): number {
+  let index = start;
+  while (index < source.length) {
+    if (/\s/.test(source[index])) {
+      index += 1;
+      continue;
+    }
+    if (source[index] === '/' && source[index + 1] === '/') {
+      const newline = source.indexOf('\n', index + 2);
+      return newline === -1 ? source.length : skipTrivia(source, newline + 1);
+    }
+    if (source[index] === '/' && source[index + 1] === '*') {
+      const close = source.indexOf('*/', index + 2);
+      return close === -1 ? source.length : skipTrivia(source, close + 2);
+    }
+    break;
+  }
+  return index;
+}
+
+function findClosingDelimiter(source: string, start: number, open: string, close: string): number | undefined {
+  let depth = 0;
+  for (let index = start; index < source.length; index += 1) {
+    const char = source[index];
+    if (char === '"' || char === "'" || char === '`') {
+      index = skipQuotedLiteral(source, index) - 1;
+      continue;
+    }
+    if (char === '/' && source[index + 1] === '/') {
+      const newline = source.indexOf('\n', index + 2);
+      if (newline === -1) return undefined;
+      index = newline;
+      continue;
+    }
+    if (char === '/' && source[index + 1] === '*') {
+      const blockClose = source.indexOf('*/', index + 2);
+      if (blockClose === -1) return undefined;
+      index = blockClose + 1;
+      continue;
+    }
+    if (char === open) depth += 1;
+    if (char === close) {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+  return undefined;
+}
+
+function readIdentityLiteral(source: string, start: number): { value: string; end: number } | undefined {
+  const quote = source[start];
+  if (quote !== '"' && quote !== "'") return undefined;
+  const end = skipQuotedLiteral(source, start);
+  if (end > source.length || source[end - 1] !== quote) return undefined;
+  const value = source.slice(start + 1, end - 1);
+  if (!/^[A-Za-z0-9_]+$/.test(value)) return undefined;
+  return { value, end };
+}
+
+function collectParameterIdentityProperties(
+  source: string,
+  objectStart: number,
+  objectEnd: number,
+  ids: Set<string>,
+): void {
+  let braceDepth = 1;
+  for (let index = objectStart + 1; index < objectEnd; index += 1) {
+    index = skipTrivia(source, index);
+    if (index >= objectEnd) break;
+
+    const char = source[index];
+    if (char === '"' || char === "'" || char === '`') {
+      index = skipQuotedLiteral(source, index) - 1;
+      continue;
+    }
+    if (char === '{') {
+      braceDepth += 1;
+      continue;
+    }
+    if (char === '}') {
+      braceDepth -= 1;
+      continue;
+    }
+    if (braceDepth !== 1 || !isIdentifierStart(char)) continue;
+
+    let nameEnd = index + 1;
+    while (nameEnd < objectEnd && isIdentifierPart(source[nameEnd])) nameEnd += 1;
+    const propertyName = source.slice(index, nameEnd);
+    if (propertyName !== 'oodsComponentId' && propertyName !== 'oodsComponentIds') {
+      index = nameEnd - 1;
+      continue;
+    }
+
+    let valueStart = skipTrivia(source, nameEnd);
+    if (source[valueStart] !== ':') {
+      index = nameEnd - 1;
+      continue;
+    }
+    valueStart = skipTrivia(source, valueStart + 1);
+
+    if (propertyName === 'oodsComponentId') {
+      const literal = readIdentityLiteral(source, valueStart);
+      if (literal) {
+        ids.add(literal.value);
+        index = literal.end - 1;
+      }
+      continue;
+    }
+
+    if (source[valueStart] !== '[') continue;
+    const arrayEnd = findClosingDelimiter(source, valueStart, '[', ']');
+    if (arrayEnd === undefined || arrayEnd > objectEnd) continue;
+    let itemStart = valueStart + 1;
+    while (itemStart < arrayEnd) {
+      itemStart = skipTrivia(source, itemStart);
+      if (source[itemStart] === ',') {
+        itemStart += 1;
+        continue;
+      }
+      const literal = readIdentityLiteral(source, itemStart);
+      if (!literal) break;
+      ids.add(literal.value);
+      itemStart = literal.end;
+    }
+    index = arrayEnd;
+  }
+}
+
+/**
+ * Extracts only explicit Storybook `parameters.oodsComponentId(s)` metadata.
+ * Imports, titles, JSX, YAML examples, comments, and prose never establish
+ * component identity.
+ */
+export function extractExplicitStoryComponentIds(source: string): Set<string> {
+  const ids = new Set<string>();
+  const readIdentifier = (start: number): { value: string; end: number } | undefined => {
+    if (!isIdentifierStart(source[start])) return undefined;
+    let end = start + 1;
+    while (end < source.length && isIdentifierPart(source[end])) end += 1;
+    return { value: source.slice(start, end), end };
+  };
+
+  const findDeclaredMeta = (name: string, before: number): number | undefined => {
+    let candidate: number | undefined;
+    for (let index = 0; index < before; index += 1) {
+      index = skipTrivia(source, index);
+      if (index >= before) break;
+      const char = source[index];
+      if (char === '"' || char === "'" || char === '`') {
+        index = skipQuotedLiteral(source, index) - 1;
+        continue;
+      }
+      const declaration = readIdentifier(index);
+      if (!declaration || !['const', 'let', 'var'].includes(declaration.value)) continue;
+      const declaredNameStart = skipTrivia(source, declaration.end);
+      const declaredName = readIdentifier(declaredNameStart);
+      if (!declaredName || declaredName.value !== name) {
+        index = declaration.end - 1;
+        continue;
+      }
+      let valueStart = declaredName.end;
+      while (valueStart < before && source[valueStart] !== ';' && source[valueStart] !== '=') {
+        if (source[valueStart] === '"' || source[valueStart] === "'" || source[valueStart] === '`') {
+          valueStart = skipQuotedLiteral(source, valueStart);
+        } else {
+          valueStart += 1;
+        }
+      }
+      if (source[valueStart] !== '=') continue;
+      valueStart = skipTrivia(source, valueStart + 1);
+      if (source[valueStart] === '{') candidate = valueStart;
+      index = declaredName.end - 1;
+    }
+    return candidate;
+  };
+
+  let metaStart: number | undefined;
+  for (let index = 0; index < source.length; index += 1) {
+    index = skipTrivia(source, index);
+    if (index >= source.length) break;
+
+    const char = source[index];
+    if (char === '"' || char === "'" || char === '`') {
+      index = skipQuotedLiteral(source, index) - 1;
+      continue;
+    }
+    const keyword = readIdentifier(index);
+    if (!keyword || keyword.value !== 'export') continue;
+    const defaultStart = skipTrivia(source, keyword.end);
+    const defaultKeyword = readIdentifier(defaultStart);
+    if (!defaultKeyword || defaultKeyword.value !== 'default') continue;
+    const valueStart = skipTrivia(source, defaultKeyword.end);
+    if (source[valueStart] === '{') {
+      metaStart = valueStart;
+    } else {
+      const metaName = readIdentifier(valueStart);
+      if (metaName) metaStart = findDeclaredMeta(metaName.value, index);
+    }
+    break;
+  }
+
+  if (metaStart === undefined) return ids;
+  const metaEnd = findClosingDelimiter(source, metaStart, '{', '}');
+  if (metaEnd === undefined) return ids;
+
+  let braceDepth = 1;
+  for (let index = metaStart + 1; index < metaEnd; index += 1) {
+    index = skipTrivia(source, index);
+    if (index >= metaEnd) break;
+    const char = source[index];
+    if (char === '"' || char === "'" || char === '`') {
+      index = skipQuotedLiteral(source, index) - 1;
+      continue;
+    }
+    if (char === '{') {
+      braceDepth += 1;
+      continue;
+    }
+    if (char === '}') {
+      braceDepth -= 1;
+      continue;
+    }
+    if (braceDepth !== 1) continue;
+
+    const property = readIdentifier(index);
+    if (!property || property.value !== 'parameters') continue;
+    let parametersStart = skipTrivia(source, property.end);
+    if (source[parametersStart] !== ':') continue;
+    parametersStart = skipTrivia(source, parametersStart + 1);
+    if (source[parametersStart] !== '{') continue;
+    const parametersEnd = findClosingDelimiter(source, parametersStart, '{', '}');
+    if (parametersEnd === undefined || parametersEnd > metaEnd) return ids;
+    collectParameterIdentityProperties(source, parametersStart, parametersEnd, ids);
+    return ids;
+  }
+  return ids;
 }
 
 function listStoryFiles(storiesDir: string): string[] {
@@ -351,9 +596,9 @@ function extractLineSnippet(source: string, needle: string): string {
   return `${snippet.slice(0, limit)}\n…`;
 }
 
-function buildStoryIndex(componentNames: string[]): StoryIndex {
+export function buildStoryIndex(componentNames: string[], storiesDir = STORIES_DIR): StoryIndex {
   const index: StoryIndex = new Map();
-  const storyFiles = listStoryFiles(STORIES_DIR);
+  const storyFiles = listStoryFiles(storiesDir);
 
   for (const storyFile of storyFiles) {
     let source: string;
@@ -364,6 +609,7 @@ function buildStoryIndex(componentNames: string[]): StoryIndex {
     }
 
     const storyTitle = extractStoryTitle(source);
+    const explicitComponentIds = extractExplicitStoryComponentIds(source);
 
     const viewExtensionsSnippets = new Map<string, string>();
     for (const block of extractViewExtensionsBlocks(source)) {
@@ -375,6 +621,8 @@ function buildStoryIndex(componentNames: string[]): StoryIndex {
     }
 
     for (const componentName of componentNames) {
+      if (!explicitComponentIds.has(componentName)) continue;
+
       let snippet: string | undefined = viewExtensionsSnippets.get(componentName);
 
       if (!snippet) {
@@ -385,8 +633,6 @@ function buildStoryIndex(componentNames: string[]): StoryIndex {
       }
 
       if (!snippet) {
-        const wordIndex = findWordIndex(source, componentName);
-        if (wordIndex === -1) continue;
         snippet = extractLineSnippet(source, componentName);
       }
 
@@ -587,6 +833,9 @@ function extractSlotDefinitions(traitUsages: TraitUsage[]): Record<string, { acc
 }
 
 function deriveComponentStatus(componentId: string): ComponentStatus {
+  // Backward-compatible legacy field: this reports only the static HTML
+  // renderer map. Target-specific implementation/readiness lives in
+  // `productReality` and must not be inferred from this value.
   return hasMappedRenderer(componentId) ? 'stable' : 'planned';
 }
 
@@ -605,7 +854,7 @@ function deriveComponentMaturity(traitUsages: TraitUsage[] | undefined): string 
   return undefined;
 }
 
-function transformComponentsToSummary(componentsData: ComponentsDataset): ComponentCatalogSummary[] {
+export function transformComponentsToSummary(componentsData: ComponentsDataset): ComponentCatalogSummary[] {
   if (!componentsData.components) {
     return [];
   }
@@ -622,6 +871,7 @@ function transformComponentsToSummary(componentsData: ComponentsDataset): Compon
       traits: Array.from(
         new Set(component.traitUsages?.map((usage) => usage.trait) || []),
       ),
+      ...(component.productReality ? { productReality: component.productReality } : {}),
       status: deriveComponentStatus(component.id),
       ...(maturity ? { maturity } : {}),
     };

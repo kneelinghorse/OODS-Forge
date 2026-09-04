@@ -1,0 +1,25 @@
+
+> @oods/mcp-server@0.1.0 build /Users/systemsystems/.codex/worktrees/225a/OODS-Forge/packages/mcp-server
+> rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true)
+
+
+> @oods/mcp-bridge@0.1.0 build /Users/systemsystems/.codex/worktrees/225a/OODS-Forge/packages/mcp-bridge
+> rimraf dist && tsc -p tsconfig.json
+
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [oods-forge-bridge](ids: [ 3 ])
+[PM2] [oods-forge-bridge](3) ✓
+┌────┬──────────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name                 │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼──────────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 1  │ mcp-hub              │ default     │ N/A     │ fork    │ N/A      │ 0      │ 0    │ stopped   │ 0%       │ 0b       │ systems… │ disabled │
+│ 2  │ mcp-hub-tunnel       │ default     │ N/A     │ fork    │ N/A      │ 0      │ 0    │ stopped   │ 0%       │ 0b       │ systems… │ disabled │
+│ 3  │ oods-forge-bridge    │ default     │ 0.1.0   │ fork    │ 55183    │ 0s     │ 5    │ online    │ 0%       │ 2.0mb    │ systems… │ disabled │
+└────┴──────────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Module
+┌────┬──────────────────────────────┬───────────────┬──────────┬──────────┬──────┬──────────┬──────────┬──────────┐
+│ id │ module                       │ version       │ pid      │ status   │ ↺    │ cpu      │ mem      │ user     │
+├────┼──────────────────────────────┼───────────────┼──────────┼──────────┼──────┼──────────┼──────────┼──────────┤
+│ 0  │ pm2-logrotate                │ 3.0.0         │ 2695     │ online   │ 0    │ 0%       │ 22.0mb   │ systems… │
+└────┴──────────────────────────────┴───────────────┴──────────┴──────────┴──────┴──────────┴──────────┴──────────┘
+{"status":"ok","bridge":"ready","toolset":{"mode":"default","enabledCount":20,"registrySource":"dist/tools/registry.json"}}

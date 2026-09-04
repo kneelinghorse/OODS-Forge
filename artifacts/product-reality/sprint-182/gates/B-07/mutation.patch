@@ -1,0 +1,11 @@
+diff --git a/packages/components-react/src/tabs.tsx b/packages/components-react/src/tabs.tsx
+--- a/packages/components-react/src/tabs.tsx
++++ b/packages/components-react/src/tabs.tsx
+@@ -121,7 +121,6 @@
+       let nextIndex: number | undefined;
+       if (key === 'Home') nextIndex = enabled[0];
+       if (key === 'End') nextIndex = enabled[enabled.length - 1];
+-      if (key === 'ArrowRight') nextIndex = enabled[(Math.max(0, position) + 1) % enabled.length];
+       if (key === 'ArrowLeft') nextIndex = enabled[(position - 1 + enabled.length) % enabled.length];
+       if (nextIndex === undefined) return;
+       const nextId = items[nextIndex]?.id;

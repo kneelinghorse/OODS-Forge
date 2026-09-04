@@ -1,0 +1,39 @@
+$ node scripts/product-reality/generate-s182-foundation.mjs --write && node scripts/product-reality/generate-s182-foundation.mjs --check && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-contracts exec vitest run test/contracts.spec.ts -t 'derives the controlling 109-row denominator from unique sorted membership'
+exitCode=0
+signal=
+
+[stdout]
+Wrote Sprint 182 m01 foundation registry and evidence (109 rows).
+Validated Sprint 182 foundation registry, proposal, capability ledger, and digests.
+
+> @oods/component-contracts@0.1.0 build /private<disposable-checkout>/packages/component-contracts
+> rimraf dist && tsup --config tsup.config.ts
+
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.0
+CLI Using tsup config: /private<disposable-checkout>/packages/component-contracts/tsup.config.ts
+CLI Target: es2022
+CLI Cleaning output folder
+ESM Build start
+CJS Build start
+ESM dist/index.js 255.61 KB
+ESM ⚡️ Build success in 138ms
+CJS dist/index.cjs 256.14 KB
+CJS ⚡️ Build success in 138ms
+DTS Build start
+DTS ⚡️ Build success in 859ms
+DTS dist/index.d.ts  7.33 KB
+DTS dist/index.d.cts 7.33 KB
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/component-contracts
+
+ ✓ test/contracts.spec.ts (7 tests | 6 skipped) 2ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 6 skipped (7)
+   Start at  05:03:54
+   Duration  239ms (transform 36ms, setup 0ms, collect 42ms, tests 2ms, environment 0ms, prepare 37ms)
+
+
+[stderr]

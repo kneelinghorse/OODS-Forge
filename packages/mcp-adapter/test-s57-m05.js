@@ -202,6 +202,20 @@ async function run() {
     }
   });
 
+  test('React and Vue outputs import real target packages and shared CSS', () => {
+    assert.ok(String(reactObj.code || '').includes("from '@oods/components-react'"));
+    assert.ok(String(vueObj.code || '').includes("from '@oods/components-vue'"));
+    assert.ok(String(reactObj.code || '').includes("import '@oods/component-styles/css'"));
+    assert.ok(String(vueObj.code || '').includes("import '@oods/component-styles/css'"));
+    assert.ok(!String(reactObj.code || '').includes("from '@oods/components'"));
+    assert.ok(!String(vueObj.code || '').includes("from '@oods/components'"));
+  });
+
+  test('legacy content props are normalized before adapter output', () => {
+    assert.ok(String(reactObj.code || '').includes('content="Save"'));
+    assert.ok(String(vueObj.code || '').includes('content="Save"'));
+  });
+
   test('Vue output includes template + script blocks', () => {
     assert.ok(String(vueObj.code || '').includes('<template>'), 'Missing <template> block');
     assert.ok(String(vueObj.code || '').includes('<script setup'), 'Missing <script setup> block');

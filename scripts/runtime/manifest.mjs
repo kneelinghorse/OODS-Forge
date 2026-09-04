@@ -24,6 +24,10 @@ export const RUNTIME_PACKAGES = Object.freeze([
   "a11y-tools",
   "artifacts",
   "release-utils",
+  "component-contracts",
+  "component-styles",
+  "components-react",
+  "components-vue",
 ]);
 
 function bytewiseCompare(left, right) {
@@ -262,13 +266,13 @@ export async function buildRuntimeManifest({
 
   assert.equal(
     sbom?.summary?.packageCount,
-    244,
-    "SBOM-lite package count must be exactly 244",
+    245,
+    "SBOM-lite package count must be exactly 245",
   );
   assert.equal(
     sbom?.summary?.integrityCount,
-    244,
-    "SBOM-lite integrity count must be exactly 244",
+    245,
+    "SBOM-lite integrity count must be exactly 245",
   );
 
   const packageVersions = {};

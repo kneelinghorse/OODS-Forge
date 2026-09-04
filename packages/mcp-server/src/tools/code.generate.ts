@@ -7,6 +7,11 @@ import type { CodeGenerateInput, CodeGenerateOutput } from './types.js';
 import type { Emitter, CodegenOptions, CodegenIssue } from '../codegen/types.js';
 import { resolveSchemaRef } from './schema-ref.js';
 import { loadOodsrc } from '../lib/oodsrc.js';
+import {
+  isKnownComponentForCodegen,
+  preflightTargetCapabilities,
+} from '../codegen/target-readiness.js';
+import { preflightCodegenSyntax } from '../codegen/syntax-preflight.js';
 
 const emitters: Record<string, Emitter> = {
   html: emitHtml,
@@ -109,7 +114,11 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
   const registry = loadComponentRegistry();
   const allComponents = collectComponents(schema.screens);
   const unknownComponents = Array.from(allComponents)
-    .filter((componentName) => registry.names.size > 0 && !registry.names.has(componentName))
+    .filter((componentName) => (
+      registry.names.size > 0
+        ? !registry.names.has(componentName)
+        : framework !== 'html' && !isKnownComponentForCodegen(componentName, registry.names)
+    ))
     .sort();
   const meta: CodeGenerateOutput['meta'] = {
     nodeCount: countNodes(schema.screens),
@@ -150,12 +159,50 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
     };
   }
 
+  if (framework === 'react' || framework === 'vue') {
+    const readinessErrors = preflightTargetCapabilities(schema.screens, framework);
+    if (readinessErrors.length > 0) {
+      return {
+        status: 'error',
+        framework,
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings: [],
+        errors: readinessErrors,
+        meta: {
+          nodeCount: meta.nodeCount,
+          componentCount: meta.componentCount,
+        },
+      };
+    }
+  }
+
   // Build codegen options (.oodsrc fallbacks between explicit and hardcoded defaults)
   const rc = loadOodsrc();
   const options: CodegenOptions = {
     typescript: input.options?.typescript ?? rc.typescript ?? true,
     styling: input.options?.styling ?? rc.styling ?? 'tokens',
   };
+
+  if (framework === 'react' || framework === 'vue') {
+    const syntaxErrors = preflightCodegenSyntax(schema, framework, options.styling);
+    if (syntaxErrors.length > 0) {
+      return {
+        status: 'error',
+        framework,
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings: [],
+        errors: syntaxErrors,
+        meta: {
+          nodeCount: meta.nodeCount,
+          componentCount: meta.componentCount,
+        },
+      };
+    }
+  }
 
   // Dispatch to framework emitter
   const result = emitter(schema, options);

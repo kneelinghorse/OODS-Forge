@@ -1,0 +1,46 @@
+$ pnpm --filter @oods/components-vue exec vitest run test/interactions.spec.ts -t 'B-10 moves Vue Tabs selection and focus with ArrowRight'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/components-vue
+
+ ❯ test/interactions.spec.ts (7 tests | 1 failed | 6 skipped) 22ms
+   ↓ @oods/components-vue interactions > B-09 emits Vue update:modelValue and change for controlled fields
+   × @oods/components-vue interactions > B-10 moves Vue Tabs selection and focus with ArrowRight 21ms
+     → expected 'false' to be 'true' // Object.is equality
+   ↓ @oods/components-vue interactions > supports Tabs ArrowLeft, Home, End, pointer activation, and controlled updates
+   ↓ @oods/components-vue interactions > uses native field controls with idiomatic update and change events
+   ↓ @oods/components-vue interactions > emits activation and dismissal from native buttons
+   ↓ @oods/components-vue interactions > resolves status and domain semantics while preserving explicit tone precedence
+   ↓ @oods/components-vue interactions > activates selectable semantic table rows through a real button
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  05:10:16
+   Duration  588ms (transform 61ms, setup 0ms, collect 114ms, tests 22ms, environment 246ms, prepare 51ms)
+
+undefined
+/private<disposable-checkout>/packages/components-vue:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/interactions.spec.ts -t B-10 moves Vue Tabs selection and focus with ArrowRight
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/interactions.spec.ts > @oods/components-vue interactions > B-10 moves Vue Tabs selection and focus with ArrowRight
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ test/interactions.spec.ts:56:49
+     54| 
+     55|     const billing = wrapper.get('[data-tab-id="billing"]');
+     56|     expect(billing.attributes('aria-selected')).toBe('true');
+       |                                                 ^
+     57|     expect(document.activeElement).toBe(billing.element);
+     58|     expect(wrapper.get('[role="tabpanel"]:not([hidden])').text()).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

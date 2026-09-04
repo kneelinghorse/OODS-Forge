@@ -62,6 +62,7 @@ describe('layout single-source (s107-m02)', () => {
     const piped = await pipelineHandle({
       intent: 'a landing page for our product',
       layout: 'landing',
+      framework: 'html',
       options: { skipValidation: true, skipRender: true },
     });
     expect(piped.error).toBeUndefined();

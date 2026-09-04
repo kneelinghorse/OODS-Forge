@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s182-m05",
+  "rowId": "L-04",
+  "evidenceId": "s182-m05-l-04",
+  "baseSha": "8ce349076e7e3ba3f0b2f3f667d4fbb5c6a4b63b",
+  "reviewHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
+  "measuredHead": "8ce349076e7e3ba3f0b2f3f667d4fbb5c6a4b63b",
+  "headMismatchAllowed": true,
+  "detachedHead": false,
+  "cwd": "/Users/systemsystems/portfolio/Design-Tools/OODS-Forge",
+  "environment": {
+    "PR_LABELS": "",
+    "TOKEN_GOV_BASE_REF": null,
+    "CHROMATIC_PROJECT_TOKEN": null
+  },
+  "literalCommands": [
+    "sqlite3 -header -column cmos/db/cmos.sqlite \"SELECT m.id AS mission_id, COUNT(d.id) AS decision_count FROM missions m LEFT JOIN strategic_decisions d ON d.mission_id = m.id AND d.project_id = m.project_id WHERE m.sprint_id = 'sprint-182' AND m.project_id = 'forge' GROUP BY m.id ORDER BY m.id;\""
+  ],
+  "literalCommand": "sqlite3 -header -column cmos/db/cmos.sqlite \"SELECT m.id AS mission_id, COUNT(d.id) AS decision_count FROM missions m LEFT JOIN strategic_decisions d ON d.mission_id = m.id AND d.project_id = m.project_id WHERE m.sprint_id = 'sprint-182' AND m.project_id = 'forge' GROUP BY m.id ORDER BY m.id;\"",
+  "executionCommands": [
+    "sqlite3 -header -column cmos/db/cmos.sqlite \"SELECT m.id AS mission_id, COUNT(d.id) AS decision_count FROM missions m LEFT JOIN strategic_decisions d ON d.mission_id = m.id AND d.project_id = m.project_id WHERE m.sprint_id = 'sprint-182' AND m.project_id = 'forge' GROUP BY m.id ORDER BY m.id;\""
+  ],
+  "executedCommand": "sqlite3 -header -column cmos/db/cmos.sqlite \"SELECT m.id AS mission_id, COUNT(d.id) AS decision_count FROM missions m LEFT JOIN strategic_decisions d ON d.mission_id = m.id AND d.project_id = m.project_id WHERE m.sprint_id = 'sprint-182' AND m.project_id = 'forge' GROUP BY m.id ORDER BY m.id;\"",
+  "startedAt": "2026-09-04T10:40:19.067Z",
+  "endedAt": "2026-09-04T10:40:19.143Z",
+  "exitCode": 0,
+  "status": "pass",
+  "log": {
+    "path": "artifacts/product-reality/sprint-182/m05/logs/s182-m05-l-04.log",
+    "bytes": 243,
+    "sha256": "53495adfba9294dd05d66f5536b86a3edac83eae7b7a40c7fac0e10a7bbdd549"
+  },
+  "gitStatusBefore": [
+    " D cmos/db/snapshots/snapshot-20260311T152122045Z-a7d0.sqlite",
+    " D cmos/db/snapshots/snapshot-20260316T000657828Z-f06a.sqlite",
+    "?? cmos/db/cmos.db"
+  ],
+  "gitStatusAfter": [
+    " D cmos/db/snapshots/snapshot-20260311T152122045Z-a7d0.sqlite",
+    " D cmos/db/snapshots/snapshot-20260316T000657828Z-f06a.sqlite",
+    "?? cmos/db/cmos.db"
+  ],
+  "sideEffects": []
+}

@@ -1,0 +1,21 @@
+$ pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/code.generate.test.ts -t 'B-14 emits byte-identical governed source and evidence on repeated runs'
+exitCode=0
+signal=
+
+[stdout]
+
+> @oods/mcp-server@0.1.0 build /private<disposable-checkout>/packages/mcp-server
+> rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true)
+
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ✓ src/tools/__tests__/code.generate.test.ts (13 tests | 12 skipped) 20ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 12 skipped (13)
+   Start at  05:21:41
+   Duration  413ms (transform 134ms, setup 11ms, collect 254ms, tests 20ms, environment 0ms, prepare 32ms)
+
+
+[stderr]

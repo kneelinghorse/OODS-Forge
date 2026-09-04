@@ -9,7 +9,7 @@ distribution choices remain Gate 2 work.
 ## Build and verify
 
 CI uses Node 24 and pnpm 9.12.2. The supported runtime floor is Node
-`>=20.11.1`, which is the highest declared floor among the eight bundled
+`>=20.11.1`, which is the highest declared floor among the twelve bundled
 workspaces. Gate 1 does not run a separate Node 20.11.1 CI cell.
 
 Build the repository before assembly:
@@ -69,9 +69,13 @@ cd "$forge_runtime_tmp/out"
 sha256sum --check forge-runtime.tar.gz.sha256
 ```
 
-The assembler creates a synthetic workspace and performs its production-only
-install there with `--no-frozen-lockfile`; the synthetic importer is not the
-repository importer. The repository install remains
+The assembler creates a synthetic workspace, preserves the repository's
+workspace-link policy, and performs its production-only install there with
+`--no-frozen-lockfile --no-optional --config.auto-install-peers=false`; the
+synthetic importer is not the repository importer. Peer requirements are
+supplied by their consumers, so peer-only lockfile resolutions are excluded
+from the bundle SBOM. The resulting lock-derived and installed third-party
+closure is exactly 245 packages. The repository install remains
 `pnpm install --frozen-lockfile`, and CI hashes `pnpm-lock.yaml` before and
 after both assemblies to prove the source lock did not move.
 
@@ -94,9 +98,10 @@ cmp "$forge_runtime_tmp/out-1/forge-runtime.tar.gz.sha256" \
 ```
 
 The deterministic archive step is Linux/GNU-tar certified. When GNU tar is
-unavailable, the assembler uses local macOS bsdtar to produce a usable bundle
-whose manifest sets `archivePacking.determinismCertified` to `false`; that
-bundle can be extracted and exercised locally, but it is not the pack-twice
+unavailable, the assembler uses macOS bsdtar's restricted-pax format so local
+pack-twice checks remain stable without unrestricted-pax `ctime` headers.
+Its manifest still sets `archivePacking.determinismCertified` to `false`; that
+bundle can be extracted and exercised locally, but it is not the CI
 certification artifact.
 
 ## Accepted consumer requirements
@@ -119,11 +124,14 @@ This is the Gate 1 disposition of the eight requirements accepted in request
 
 The Gate 1 archive contains:
 
-- The eight runtime workspaces with their `package.json` and built runtime
+- The twelve runtime workspaces with their `package.json` and built runtime
   output: `mcp-server`, `mcp-adapter`, `tokens`, `viz-core`, `viz-render`,
-  `a11y-tools`, `artifacts`, and `release-utils`. The adapter contributes only
-  `index.js`, `sanitize-schema.js`, `tool-descriptions.json`, and its
-  `package.json`.
+  `a11y-tools`, `artifacts`, `release-utils`, `component-contracts`,
+  `component-styles`, `components-react`, and `components-vue`. The component
+  contracts registry ships as package data; the MCP server directly loads its
+  capability baseline plus the React/Vue readiness evidence through public
+  JSON subpaths. The adapter contributes only `index.js`, `sanitize-schema.js`,
+  `tool-descriptions.json`, and its `package.json`.
 - The production dependency closure installed for the MCP server and adapter.
 - Top-level runtime registry data: `domains/`, `objects/`, `schemas/`, and
   `traits/`.
@@ -151,9 +159,12 @@ independent boundary checks make the distinction enforceable:
    planning read.
 3. `cmos/planning` may survive only as inert provenance text in the explicit
    allowlist: `artifacts/structured-data/manifest.json`, the dated root-level
-   `artifacts/structured-data/oods-components-*.json` snapshots, and both
-   `traits/viz/layout-facet.trait.yaml` and its tracked `.ts` data companion.
-   No executable reads those strings.
+   `artifacts/structured-data/oods-components-*.json` snapshots, both
+   `traits/viz/layout-facet.trait.yaml` and its tracked `.ts` data companion,
+   `packages/component-contracts/registry/component-reconciliation.proposed.v1.json`,
+   and that registry's bundled data in
+   `packages/component-contracts/dist/index.js` and `index.cjs`. No bundled
+   code dereferences those provenance strings as filesystem paths.
 
 The absolute-path gate rejects the exact source-repository and assembly-work
 paths everywhere. It also rejects generic `/Users/`, `/home/runner/work/`, and
@@ -183,6 +194,8 @@ The runtime's root-relative reads and their Gate 1 disposition are:
 | `packages/tokens/dist/tailwind/`                                         | Code-generation token mapping                                        | Included                                 |
 | `packages/mcp-server/dist/schemas/`                                      | Tool wire schemas and relocated component schema                     | Included inside the server dist          |
 | `packages/mcp-server/dist/security/`                                     | Server policy and redaction patterns                                 | Included inside the server dist          |
+| `packages/component-contracts/registry/`                                 | Component capability records used by target-aware code generation    | Included                                 |
+| `packages/components-{react,vue}/evidence/`                              | Target readiness records loaded through public package subpaths      | Included                                 |
 | `stories/`                                                               | Optional catalog stories facet                                       | Not shipped; that facet degrades to `[]` |
 | `packages/tokens/src/`, `packages/tokens/scripts/`, `apps/explorer/src/` | Brand application, token rebuilding, and host diagnostics            | Host repository only                     |
 

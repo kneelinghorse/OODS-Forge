@@ -250,7 +250,7 @@ describe('s181 portable-runtime publish boundary', () => {
       .toContain('cmos/planning');
   });
 
-  it('pins manifest-present structuredData, map, and repl responses as null movers', async () => {
+  it('pins the Sprint-182 manifest-present structuredData, map, and registry products deterministically', async () => {
     const fetchResult = await fetchStructuredData({ dataset: 'components', includePayload: false });
     const traits = [...loadKnownTraits()].sort();
     const registry = loadComponentRegistry();
@@ -260,9 +260,9 @@ describe('s181 portable-runtime publish boundary', () => {
       warnings: registry.warnings,
     };
 
-    expect(sha256Json(fetchResult)).toBe('ed0965d8916cd2b1a2689d630e1c84549287cdbce4733f5072b6928bcd43b19b');
+    expect(sha256Json(fetchResult)).toBe('075a6136bea04f488e9038c60fd23fa81ee6852858942f62496339805ff8788f');
     expect(sha256Json(traits)).toBe('ec10b9807834bc684542510524127ee4d2394e8e05a08341ab1b156e300a90c2');
-    expect(sha256Json(registryResult)).toBe('da13b7b0c3db40d29d25af3c7e139dfe0954dba06da378bcfe8ce23ceb5838e6');
+    expect(sha256Json(registryResult)).toBe('22b9984ac2adef68c95b8edbb6c586acc636492d50e2232ddac17fe6351bd31a');
   });
 
   it('B-19 keeps the runtime data schema out of generated.ts', () => {

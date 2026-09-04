@@ -5,18 +5,22 @@ describe('pipeline compact + metrics', () => {
   it('defaults to compact render (tokenCssRef present, small response)', async () => {
     const result = await pipelineHandle({
       intent: 'A detail view for a product',
+      framework: 'html',
     });
 
     expect(result.error).toBeUndefined();
     expect(result.render?.tokenCssRef).toBe('tokens.build');
 
-    const responseSize = JSON.stringify(result).length;
-    expect(responseSize).toBeLessThan(30000);
+    // The HTML codegen payload remains a complete standalone document; compact
+    // applies to the render section, whose wire payload must stay small.
+    const compactRenderSize = JSON.stringify(result.render).length;
+    expect(compactRenderSize).toBeLessThan(30000);
   });
 
   it('includes output.summary string', async () => {
     const result = await pipelineHandle({
       intent: 'A detail view for a product',
+      framework: 'html',
     });
 
     expect(result.summary).toBeDefined();
@@ -27,6 +31,7 @@ describe('pipeline compact + metrics', () => {
   it('includes output.metrics with node/component/field counts', async () => {
     const result = await pipelineHandle({
       intent: 'A dashboard with metrics',
+      framework: 'html',
     });
 
     expect(result.metrics).toBeDefined();
@@ -39,6 +44,7 @@ describe('pipeline compact + metrics', () => {
   it('compact can be disabled with options.compact=false', async () => {
     const result = await pipelineHandle({
       intent: 'A detail view',
+      framework: 'html',
       options: { compact: false },
     });
 
@@ -53,6 +59,7 @@ describe('pipeline compact + metrics', () => {
   it('pipeline phase outputs have status in meta', async () => {
     const result = await pipelineHandle({
       intent: 'A form for user registration',
+      framework: 'html',
     });
 
     expect(result.compose).toBeDefined();
@@ -75,6 +82,7 @@ describe('pipeline compact + metrics', () => {
     const result = await pipelineHandle({
       object: 'Product',
       context: 'detail',
+      framework: 'html',
     });
 
     expect(result.error).toBeUndefined();

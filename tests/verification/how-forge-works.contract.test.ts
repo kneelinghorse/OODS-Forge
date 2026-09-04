@@ -32,6 +32,7 @@ interface CertifyOutputSchema {
 
 describe("how Forge works narrative truth", () => {
   const html = read("docs/how-forge-works.html");
+  const nearRoadmap = read("cmos/foundational-docs/roadmap/near.md");
 
   it("derives the registered tool counts and roster split from registry.json", () => {
     const registry = JSON.parse(
@@ -118,5 +119,91 @@ describe("how Forge works narrative truth", () => {
     expect(ledger).not.toContain(
       "docs/how-forge-works.html — untracked, Derek review owed",
     );
+  });
+
+  it("keeps Sprint-182 product-reality claims evidence-scoped and review-gated", () => {
+    const capabilityCloseout = JSON.parse(
+      read(
+        "packages/component-contracts/registry/component-capability-closeout.s182.v1.json",
+      ),
+    ) as {
+      controllingObligationDenominator: number;
+      approvedRuntimeCensus: null;
+      independentReviewApproved: boolean;
+      rows: Array<{
+        proposedClassification: string;
+        reconciliationState: string;
+      }>;
+      foundationCells: Array<{
+        target: "react" | "vue";
+        evaluation: { candidate: boolean; foundationV1: boolean };
+      }>;
+    };
+    const nonRuntimeRows = capabilityCloseout.rows.filter(
+      (row) => row.proposedClassification === "authoring-only",
+    );
+    const runtimeRows = capabilityCloseout.rows.filter(
+      (row) => row.proposedClassification !== "authoring-only",
+    );
+    const reactReadiness = JSON.parse(
+      read("packages/components-react/evidence/react-readiness.v1.json"),
+    ) as { rows: unknown[] };
+    const vueReadiness = JSON.parse(
+      read("packages/components-vue/evidence/vue-readiness.v1.json"),
+    ) as { rows: unknown[] };
+
+    expect(capabilityCloseout.controllingObligationDenominator).toBe(109);
+    expect(capabilityCloseout.rows).toHaveLength(109);
+    expect(runtimeRows).toHaveLength(98);
+    expect(nonRuntimeRows).toHaveLength(11);
+    expect(
+      capabilityCloseout.rows.every(
+        (row) => row.reconciliationState === "proposed-awaiting-derek-approval",
+      ),
+    ).toBe(true);
+    expect(capabilityCloseout.approvedRuntimeCensus).toBeNull();
+    expect(capabilityCloseout.independentReviewApproved).toBe(false);
+    expect(capabilityCloseout.foundationCells).toHaveLength(28);
+    expect(
+      capabilityCloseout.foundationCells.filter(
+        (cell) => cell.target === "react" && cell.evaluation.candidate,
+      ),
+    ).toHaveLength(14);
+    expect(
+      capabilityCloseout.foundationCells.filter(
+        (cell) => cell.target === "vue" && cell.evaluation.candidate,
+      ),
+    ).toHaveLength(14);
+    expect(
+      capabilityCloseout.foundationCells.every(
+        (cell) => cell.evaluation.foundationV1 === false,
+      ),
+    ).toBe(true);
+    expect(reactReadiness.rows).toHaveLength(14);
+    expect(vueReadiness.rows).toHaveLength(14);
+
+    expect(html).toContain("109 unique component claims");
+    expect(html).toContain("98 as runtime component rows");
+    expect(html).toContain("11 as non-runtime authoring-only rows");
+    expect(html).toContain("All 109 remain pending Derek approval");
+    expect(html).toContain("exactly 14 React and 14 Vue surface cells");
+    expect(html).toContain("require a separate independent review");
+    expect(html).toContain("@oods/components-react</span> package");
+    expect(html).toContain("@oods/components-vue</span>");
+    expect(html).toContain("@oods/component-styles/css</span>");
+    expect(html).toContain("OODS-N015</span> and no source payload");
+
+    expect(nearRoadmap).toContain("98 runtime rows and 11 non-runtime rows");
+    expect(nearRoadmap).toContain("all pending Derek approval");
+    expect(nearRoadmap).toContain(
+      "exactly 14 React and 14 Vue `foundation-v1-candidate` cells",
+    );
+    expect(nearRoadmap).toContain("pending a separate independent review");
+    expect(nearRoadmap).toContain("React imports `@oods/components-react`");
+    expect(nearRoadmap).toContain("Vue imports `@oods/components-vue`");
+    expect(nearRoadmap).toContain("both import `@oods/component-styles/css`");
+    expect(nearRoadmap).toContain("typed `OODS-N015`");
+
+    expect(html).toContain("The 25-tool roster comes from");
   });
 });

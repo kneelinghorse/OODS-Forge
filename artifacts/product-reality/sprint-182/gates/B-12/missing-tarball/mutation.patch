@@ -1,0 +1,12 @@
+diff --git a/scripts/product-reality/s182-m04-consumer-harness.mjs b/scripts/product-reality/s182-m04-consumer-harness.mjs
+--- a/scripts/product-reality/s182-m04-consumer-harness.mjs
++++ b/scripts/product-reality/s182-m04-consumer-harness.mjs
+@@ -265,7 +265,7 @@
+       type: 'module',
+     }));
+ 
+-    const installOperands = tarballs.map((record) => record.tarballPath);
++    const installOperands = tarballs.filter((record) => record.name !== '@oods/components-react').map((record) => record.tarballPath);
+     const installResult = commandResult(
+       'npm',
+       [

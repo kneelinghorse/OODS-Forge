@@ -43,10 +43,14 @@
             "items": { "type": "string" },
             "description": "List of trait capabilities (e.g., ['Editable', 'Searchable'])"
           },
+          "productReality": {
+            "$ref": "#/$defs/componentProductReality",
+            "description": "Additive target-specific capability and evidence ledger. Use this instead of legacy status for React, Vue, generated-consumer, accessibility, theme, and interaction claims; reconciliationState records approval state."
+          },
           "status": {
             "type": "string",
             "enum": ["stable", "beta", "planned"],
-            "description": "Component implementation status. 'stable' = has renderer, 'planned' = not yet implemented."
+            "description": "Legacy static-HTML renderer status only. 'stable' = has a mapped HTML renderer; 'planned' = the HTML renderer falls back. This is not a React, Vue, code-generation, or release-readiness claim."
           },
           "maturity": {
             "type": "string",
@@ -181,6 +185,55 @@
           "type": "array",
           "items": { "type": "string" },
           "description": "Closest matching trait names."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "capabilityEvidence": {
+      "type": "object",
+      "required": ["state", "evidence"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Evidence-derived state for this specific capability surface."
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "description": "Repo-relative evidence references supporting the state."
+        }
+      },
+      "additionalProperties": false
+    },
+    "componentProductReality": {
+      "type": "object",
+      "required": ["schemaVersion", "proposedClassification", "reconciliationState", "surfaces"],
+      "properties": {
+        "schemaVersion": { "type": "string", "minLength": 1 },
+        "proposedClassification": {
+          "type": "string",
+          "enum": ["native", "recipe", "alias", "authoring-only", "merged", "retired"]
+        },
+        "reconciliationState": { "type": "string", "minLength": 1 },
+        "surfaces": {
+          "type": "object",
+          "required": ["contract", "metadata", "html", "react", "vue", "generatedConsumer", "accessibility", "theme", "interaction"],
+          "properties": {
+            "contract": { "$ref": "#/$defs/capabilityEvidence" },
+            "metadata": { "$ref": "#/$defs/capabilityEvidence" },
+            "html": { "$ref": "#/$defs/capabilityEvidence" },
+            "react": { "$ref": "#/$defs/capabilityEvidence" },
+            "vue": { "$ref": "#/$defs/capabilityEvidence" },
+            "generatedConsumer": { "$ref": "#/$defs/capabilityEvidence" },
+            "accessibility": { "$ref": "#/$defs/capabilityEvidence" },
+            "theme": { "$ref": "#/$defs/capabilityEvidence" },
+            "interaction": { "$ref": "#/$defs/capabilityEvidence" }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

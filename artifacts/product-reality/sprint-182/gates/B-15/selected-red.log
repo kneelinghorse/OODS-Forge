@@ -1,0 +1,93 @@
+$ pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/pipeline.test.ts -t 'B-15 propagates OODS-N015 as a codegen-stage error without a successful payload'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ❯ src/tools/__tests__/pipeline.test.ts (47 tests | 1 failed | 46 skipped) 30ms
+   ↓ pipeline orchestration > full pipeline flow > runs compose → validate → render → codegen and returns all sections
+   ↓ pipeline orchestration > full pipeline flow > includes pipeline metadata with steps and duration
+   ↓ pipeline orchestration > full pipeline flow > defaults framework to react and styling to tokens
+   ↓ pipeline orchestration > full pipeline flow > passes object, intent, context, layout to compose
+   ↓ pipeline orchestration > full pipeline flow > passes componentOverrides through to compose
+   ↓ pipeline orchestration > schemaRef TTL propagation > propagates schemaRefCreatedAt and schemaRefExpiresAt from compose
+   ↓ pipeline orchestration > schemaRef TTL propagation > omits TTL fields when compose does not return them
+   ↓ pipeline orchestration > skip options > skipValidation=true omits validation step
+   ↓ pipeline orchestration > skip options > skipRender=true omits render step
+   ↓ pipeline orchestration > skip options > both skipValidation and skipRender omit both steps
+   ↓ pipeline orchestration > save option > saves schema when save name is provided
+   ↓ pipeline orchestration > save option > passes compose object name to save handler
+   ↓ pipeline orchestration > save option > saves schema with tags when object form is used
+   ↓ pipeline orchestration > save option > saves schema with object form without tags
+   ↓ pipeline orchestration > save option > does not save when save is not provided
+   ↓ pipeline orchestration > save option > trims whitespace-only save names
+   ↓ pipeline orchestration > error handling > returns error with partial results when compose fails
+   ↓ pipeline orchestration > error handling > returns error when compose throws an exception
+   ↓ pipeline orchestration > error handling > returns error when validate fails
+   ↓ pipeline orchestration > error handling > returns error when validate throws
+   ↓ pipeline orchestration > error handling > returns error when render fails
+   ↓ pipeline orchestration > error handling > returns error when render throws
+   ↓ pipeline orchestration > error handling > returns error when codegen fails
+   × pipeline orchestration > error handling > B-15 propagates OODS-N015 as a codegen-stage error without a successful payload 29ms
+     → expected undefined to deeply equal { step: 'codegen', …(2) }
+   ↓ pipeline orchestration > error handling > returns error when codegen throws
+   ↓ pipeline orchestration > error handling > returns error when save throws
+   ↓ pipeline orchestration > error handling > returns SCHEMA_REF_MISSING when compose returns no schemaRef
+   ↓ pipeline orchestration > error handling > always includes pipeline duration even on error
+   ↓ pipeline orchestration > nested options aliases > reads framework from options when not at top level
+   ↓ pipeline orchestration > nested options aliases > reads styling from options when not at top level
+   ↓ pipeline orchestration > nested options aliases > top-level framework overrides options.framework
+   ↓ pipeline orchestration > nested options aliases > passes typescript from options to codegen
+   ↓ pipeline orchestration > nested options aliases > passes nested framework and typescript together to codegen
+   ↓ pipeline orchestration > nested options aliases > top-level framework override keeps nested typescript setting
+   ↓ pipeline orchestration > duration and steps tracking > pipeline.duration is always a positive number
+   ↓ pipeline orchestration > duration and steps tracking > pipeline.steps lists all executed steps in order
+   ↓ pipeline orchestration > duration and steps tracking > pipeline.steps reflects skipped steps
+   ↓ pipeline orchestration > schemaRef propagation > propagates compose schemaRef to output
+   ↓ pipeline orchestration > schemaRef propagation > passes schemaRef to validate
+   ↓ pipeline orchestration > schemaRef propagation > passes schemaRef to render
+   ↓ pipeline orchestration > schemaRef propagation > passes schemaRef to codegen
+   ↓ pipeline orchestration > schemaRef propagation > passes schemaRef to save
+   ↓ pipeline orchestration > component counting > counts unique components from compose result
+   ↓ pipeline orchestration > fieldsOmitted metric > reports omitted fields when objectSchema has unbound fields
+   ↓ pipeline orchestration > fieldsOmitted metric > omits fieldsOmitted when all fields are bound
+   ↓ pipeline orchestration > actionMappings > forwards actionMappings[] to compose and surfaces resolvedActions on output
+   ↓ pipeline orchestration > actionMappings > omits resolvedActions when actionMappings is absent
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 46 skipped (47)
+   Start at  05:22:16
+   Duration  251ms (transform 67ms, setup 14ms, collect 48ms, tests 30ms, environment 0ms, prepare 46ms)
+
+undefined
+/private<disposable-checkout>/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/__tests__/pipeline.test.ts -t B-15 propagates OODS-N015 as a codegen-stage error without a successful payload
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/__tests__/pipeline.test.ts > pipeline orchestration > error handling > B-15 propagates OODS-N015 as a codegen-stage error without a successful payload
+AssertionError: expected undefined to deeply equal { step: 'codegen', …(2) }
+
+- Expected: 
+{
+  "code": "OODS-N015",
+  "message": "Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.",
+  "step": "codegen",
+}
+
++ Received: 
+undefined
+
+ ❯ src/tools/__tests__/pipeline.test.ts:506:28
+    504|       });
+    505| 
+    506|       expect(result.error).toEqual({
+       |                            ^
+    507|         step: 'codegen',
+    508|         code: 'OODS-N015',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

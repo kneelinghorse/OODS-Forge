@@ -1,0 +1,11 @@
+diff --git a/packages/components-vue/src/tabs.ts b/packages/components-vue/src/tabs.ts
+--- a/packages/components-vue/src/tabs.ts
++++ b/packages/components-vue/src/tabs.ts
+@@ -96,7 +96,6 @@
+       if (available.length === 0) return;
+       const currentIndex = Math.max(available.findIndex((item) => item.id === currentId), 0);
+       let nextIndex: number | undefined;
+-      if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % available.length;
+       if (event.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + available.length) % available.length;
+       if (event.key === 'Home') nextIndex = 0;
+       if (event.key === 'End') nextIndex = available.length - 1;

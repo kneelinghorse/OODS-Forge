@@ -75,7 +75,7 @@ describe('vue-emitter', () => {
     ]);
 
     const result = emit(schema, tsOptions);
-    const importLine = result.code.split('\n').find((l: string) => l.includes('@oods/components'));
+    const importLine = result.code.split('\n').find((l: string) => l.includes('@oods/components-vue'));
     expect(importLine).toBeDefined();
     const match = importLine!.match(/\{(.+)\}/);
     expect(match).toBeTruthy();
@@ -87,7 +87,7 @@ describe('vue-emitter', () => {
   it('returns correct import list', () => {
     const schema = makeSchema([{ id: 'b-1', component: 'Button' }]);
     const result = emit(schema, tsOptions);
-    expect(result.imports).toEqual(['@oods/components']);
+    expect(result.imports).toEqual(['@oods/components-vue', '@oods/component-styles/css']);
   });
 
   // -------------------------------------------------------------------------
@@ -430,7 +430,7 @@ describe('vue-emitter', () => {
     ]);
 
     const result = emit(schema, tsOptions);
-    const importLine = result.code.split('\n').find((l: string) => l.includes('@oods/components'))!;
+    const importLine = result.code.split('\n').find((l: string) => l.includes('@oods/components-vue'))!;
     const count = (importLine.match(/Button/g) || []).length;
     expect(count).toBe(1);
   });

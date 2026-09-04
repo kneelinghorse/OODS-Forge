@@ -15,61 +15,61 @@ const FIXTURES = [
   {
     name: 'dashboard-page',
     schemaFile: 'dashboard-page.ui-schema.json',
-    reactFile: 'dashboard-page.react.tsx',
-    vueFile: 'dashboard-page.vue',
+    expectedFile: 'dashboard-page.n015.json',
   },
   {
     name: 'form-page',
     schemaFile: 'form-page.ui-schema.json',
-    reactFile: 'form-page.react.tsx',
-    vueFile: 'form-page.vue',
+    expectedFile: 'form-page.n015.json',
   },
   {
     name: 'detail-page',
     schemaFile: 'detail-page.ui-schema.json',
-    reactFile: 'detail-page.react.tsx',
-    vueFile: 'detail-page.vue',
+    expectedFile: 'detail-page.n015.json',
   },
 ];
 
 const options = { styling: 'tokens', typescript: true } as const;
-
-function normalize(text: string): string {
-  return text.replace(/\r\n/g, '\n').trimEnd();
-}
 
 function loadSchema(fileName: string): UiSchema {
   const schemaPath = path.join(FIXTURE_DIR, fileName);
   return JSON.parse(readFileSync(schemaPath, 'utf8')) as UiSchema;
 }
 
-function loadGolden(fileName: string): string {
+type UnreadyGolden = {
+  meta: { nodeCount: number; componentCount: number };
+  affectedNodes: Array<{ nodeId: string; component: string; state: string }>;
+};
+
+function loadGolden(fileName: string): UnreadyGolden {
   const filePath = path.join(GOLDEN_DIR, fileName);
-  return normalize(readFileSync(filePath, 'utf8'));
+  return JSON.parse(readFileSync(filePath, 'utf8')) as UnreadyGolden;
 }
 
-describe('code.generate golden outputs', () => {
+describe('code.generate golden readiness outcomes', () => {
   for (const fixture of FIXTURES) {
-    it(`matches React golden output for ${fixture.name}`, async () => {
-      const schema = loadSchema(fixture.schemaFile);
-      const result = await codegenHandle({ schema, framework: 'react', options });
+    for (const framework of ['react', 'vue'] as const) {
+      it(`matches ${framework} OODS-N015 golden outcome for ${fixture.name}`, async () => {
+        const schema = loadSchema(fixture.schemaFile);
+        const expected = loadGolden(fixture.expectedFile);
+        const result = await codegenHandle({ schema, framework, options });
 
-      expect(result.status).toBe('ok');
-      expect(result.fileExtension).toBe('.tsx');
-
-      const expected = loadGolden(fixture.reactFile);
-      expect(normalize(result.code)).toBe(expected);
-    });
-
-    it(`matches Vue golden output for ${fixture.name}`, async () => {
-      const schema = loadSchema(fixture.schemaFile);
-      const result = await codegenHandle({ schema, framework: 'vue', options });
-
-      expect(result.status).toBe('ok');
-      expect(result.fileExtension).toBe('.vue');
-
-      const expected = loadGolden(fixture.vueFile);
-      expect(normalize(result.code)).toBe(expected);
-    });
+        expect(result).toEqual({
+          status: 'error',
+          framework,
+          code: '',
+          fileExtension: '',
+          imports: [],
+          warnings: [],
+          errors: expected.affectedNodes.map(({ nodeId, component, state }) => ({
+            code: 'OODS-N015',
+            message: `Component ${component} is not emission-eligible for ${framework}; evidence state: ${state}.`,
+            nodeId,
+            component,
+          })),
+          meta: expected.meta,
+        });
+      });
+    }
   }
 });

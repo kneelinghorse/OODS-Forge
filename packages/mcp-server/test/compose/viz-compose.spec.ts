@@ -295,7 +295,7 @@ describe('viz.compose handler', () => {
       expect(validation.errors).toHaveLength(0);
     });
 
-    it('render and code.generate accept the viz schema without unknown-component warnings', async () => {
+    it('render accepts the viz schema while React codegen reports exact known-unready nodes', async () => {
       const result = await handle({
         chartType: 'bar',
         dataBindings: { x: 'month', y: 'revenue' },
@@ -312,8 +312,29 @@ describe('viz.compose handler', () => {
       });
 
       expect(renderResult.status).toBe('ok');
-      expect(codegen.status).toBe('ok');
-      expect(codegen.warnings.some((warning) => warning.code === 'OODS-V119')).toBe(false);
+      expect(codegen).toEqual({
+        status: 'error',
+        framework: 'react',
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings: [],
+        errors: [
+          ['viz-1', 'VizMarkPreview'],
+          ['viz-2', 'VizMarkControls'],
+          ['viz-3', 'VizAxisControls'],
+          ['viz-4', 'VizAxisSummary'],
+          ['viz-5', 'VizEncodingBadge'],
+          ['viz-6', 'VizEncodingBadge'],
+          ['viz-7', 'VizRoleBadge'],
+        ].map(([nodeId, component]) => ({
+          code: 'OODS-N015',
+          message: `Component ${component} is not emission-eligible for react; evidence state: unavailable.`,
+          nodeId,
+          component,
+        })),
+        meta: { nodeCount: 8, componentCount: 7 },
+      });
     });
   });
 

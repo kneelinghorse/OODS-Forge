@@ -1,0 +1,21 @@
+$ pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/pipeline.test.ts -t 'B-15 propagates OODS-N015 as a codegen-stage error without a successful payload'
+exitCode=0
+signal=
+
+[stdout]
+
+> @oods/mcp-server@0.1.0 build /private<disposable-checkout>/packages/mcp-server
+> rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true)
+
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ✓ src/tools/__tests__/pipeline.test.ts (47 tests | 46 skipped) 22ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 46 skipped (47)
+   Start at  05:22:19
+   Duration  193ms (transform 55ms, setup 12ms, collect 35ms, tests 22ms, environment 0ms, prepare 35ms)
+
+
+[stderr]

@@ -502,10 +502,10 @@ async function main() {
   }
 
   const { manifest, payload } = await verifyEmbeddedManifest(runtimeRoot);
-  assert.equal(manifest.thirdPartyCount, 244);
+  assert.equal(manifest.thirdPartyCount, 245);
   const sbom = await loadJson(path.join(runtimeRoot, RUNTIME_SBOM_FILE));
-  assert.equal(sbom.summary.packageCount, 244);
-  assert.equal(sbom.summary.integrityCount, 244);
+  assert.equal(sbom.summary.packageCount, 245);
+  assert.equal(sbom.summary.integrityCount, 245);
   assert(sbom.packages.every((entry) => entry.integrity.startsWith("sha512-")));
 
   const adapterPackage = await loadJson(
@@ -552,7 +552,7 @@ async function main() {
         traits: health.registry.traits,
         objects: health.registry.objects,
       },
-      { components: 101, traits: 41, objects: 11 },
+      { components: 109, traits: 41, objects: 11 },
     );
     assert.deepEqual(health.warnings ?? [], []);
     assert(

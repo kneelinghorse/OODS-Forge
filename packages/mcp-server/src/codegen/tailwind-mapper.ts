@@ -1,6 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  javascriptSingleQuotedString,
+  serializeJavaScriptJson,
+} from './emission-safety.js';
 
 export type TailwindState = 'hover' | 'focus' | 'focus-visible' | 'disabled' | 'active';
 
@@ -881,10 +885,6 @@ function normalizeVariantValue(value: string | string[]): string {
     : value.trim().replace(/\s+/g, ' ');
 }
 
-function quote(value: string): string {
-  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
-}
-
 export function createVariants(
   component: string,
   variants: TailwindVariants,
@@ -901,6 +901,6 @@ export function createVariants(
     }
   }
 
-  const config = JSON.stringify({ variants: normalizedVariants }, null, 2);
-  return `const ${variableName} = cva(${quote(normalizedBase)}, ${config});`;
+  const config = serializeJavaScriptJson({ variants: normalizedVariants }, 2);
+  return `const ${variableName} = cva(${javascriptSingleQuotedString(normalizedBase)}, ${config});`;
 }
