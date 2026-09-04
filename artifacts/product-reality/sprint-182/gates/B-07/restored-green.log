@@ -1,6 +1,53 @@
 $ pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-react exec vitest run test/interactions.spec.tsx -t 'B-07 moves React Tabs selection and focus with ArrowRight'
 exitCode=0
-Build: ESM, CJS, and declarations succeeded; dist/index.d.ts 2.23 KB.
-Test Files  1 passed (1)
-Tests  1 passed | 3 skipped (4)
-Selected 1 / failed 0 / selected-skipped 0 / runner-filtered 3
+signal=
+
+[stdout]
+
+> @oods/components-react@0.1.0 build /private<disposable-checkout>/packages/components-react
+> rimraf dist && tsup --config tsup.config.ts
+
+CLI Building entry: src/index.ts, src/status.ts, src/table.tsx, src/types.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.0
+CLI Using tsup config: /private<disposable-checkout>/packages/components-react/tsup.config.ts
+CLI Target: es2022
+CLI Cleaning output folder
+ESM Build start
+CJS Build start
+ESM dist/status.js         171.00 B
+ESM dist/chunk-FL4HFW57.js 6.17 KB
+ESM dist/chunk-54KQYKOO.js 10.87 KB
+ESM dist/table.js          149.00 B
+ESM dist/types.js          1.00 B
+ESM dist/index.js          29.69 KB
+ESM ⚡️ Build success in 142ms
+CJS dist/table.cjs  16.84 KB
+CJS dist/status.cjs 11.06 KB
+CJS dist/types.cjs  15.00 B
+CJS dist/index.cjs  47.79 KB
+CJS ⚡️ Build success in 142ms
+DTS Build start
+DTS ⚡️ Build success in 1599ms
+DTS dist/index.d.ts   2.23 KB
+DTS dist/status.d.ts  1.39 KB
+DTS dist/table.d.ts   1.06 KB
+DTS dist/types.d.ts   8.90 KB
+DTS dist/index.d.cts  2.24 KB
+DTS dist/status.d.cts 1.39 KB
+DTS dist/table.d.cts  1.07 KB
+DTS dist/types.d.cts  8.90 KB
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/components-react
+
+ ✓ test/interactions.spec.tsx (5 tests | 4 skipped) 55ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 4 skipped (5)
+   Start at  05:08:21
+   Duration  656ms (transform 58ms, setup 0ms, collect 163ms, tests 55ms, environment 210ms, prepare 41ms)
+
+
+[stderr]
+Generated an empty chunk: "types".
+Generated an empty chunk: "types".

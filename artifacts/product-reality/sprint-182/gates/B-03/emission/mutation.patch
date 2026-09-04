@@ -1,0 +1,12 @@
+diff --git a/packages/component-contracts/src/foundation-v1.ts b/packages/component-contracts/src/foundation-v1.ts
+--- a/packages/component-contracts/src/foundation-v1.ts
++++ b/packages/component-contracts/src/foundation-v1.ts
+@@ -15,7 +15,7 @@
+ 
+ export function evaluateEmissionEligibility(evidence: Partial<EmissionEligibilityEvidence>) {
+   const incomplete = EMISSION_ELIGIBILITY_EVIDENCE_CLASSES.filter(
+-    (name) => evidence[name]?.status !== 'passed',
++    (name) => name !== 'publicDeclaration' && evidence[name]?.status !== 'passed',
+   );
+   return {
+     emissionEligible: incomplete.length === 0,

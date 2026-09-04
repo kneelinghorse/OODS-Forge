@@ -1,0 +1,14 @@
+diff --git a/packages/component-contracts/src/foundation-v1.ts b/packages/component-contracts/src/foundation-v1.ts
+--- a/packages/component-contracts/src/foundation-v1.ts
++++ b/packages/component-contracts/src/foundation-v1.ts
+@@ -42,7 +42,9 @@
+   evidence: Partial<FoundationV1Evidence>,
+   options: { independentReviewApproved?: boolean } = {},
+ ) {
+-  const incomplete = FOUNDATION_V1_EVIDENCE_CLASSES.filter((name) => evidence[name]?.status !== 'passed');
++  const incomplete = FOUNDATION_V1_EVIDENCE_CLASSES.filter(
++    (name) => name !== 'packedImport' && evidence[name]?.status !== 'passed',
++  );
+   const evidenceComplete = incomplete.length === 0;
+   return {
+     evidenceComplete,

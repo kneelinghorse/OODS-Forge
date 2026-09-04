@@ -1,33 +1,116 @@
 {
   "schemaVersion": "1.0.0",
-  "mission": "s182-m02",
+  "mission": "s182-m05",
   "bite": "B-07",
-  "reviewHead": "141be62ac02eb54dcd41284fb7de957a1abeeab1",
+  "reviewHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
   "carrier": {
     "path": "packages/components-react/test/interactions.spec.tsx",
-    "sha256": "121fbf12af6dfe55f54a7842ebdb0f025a6112b5b84170cf7ed56de595b1b056",
+    "sha256": "f44f3e7897d4f801c0bda8b9a14f7099193537a70482b5d85b43b2a5a05fb13d",
     "selector": "B-07 moves React Tabs selection and focus with ArrowRight"
   },
-  "production": {
+  "mutationTarget": {
     "path": "packages/components-react/src/tabs.tsx",
-    "sha256": "363a5709593b4bea8b158506217fe5ef562f33f994eeaf0081fd881644e66e64"
+    "originalSha256": "cb46ad40dc8c790b6738bbb59fed132881d96c27e0706222a9626f4c3b508f52",
+    "mutatedSha256": "e4ef3dce3b5097c5a3b4d3bd32674d639037e6a5b62cef816350d76c53feb644",
+    "restoredSha256": "cb46ad40dc8c790b6738bbb59fed132881d96c27e0706222a9626f4c3b508f52"
   },
   "command": "pnpm --filter @oods/components-react exec vitest run test/interactions.spec.tsx -t 'B-07 moves React Tabs selection and focus with ArrowRight'",
-  "mutation": "Remove only the ArrowRight branch from the private Tabs key handler while retaining initial selection, pointer activation, and every other key branch.",
-  "mutationPatchSha256": "bc33e91d354858253a3b889614c2b8c648493f04d964d33af01b8ff40477bd54",
+  "mutation": "Remove only the ArrowRight branch from the React Tabs key handler.",
+  "requiredAndObservedRedFinding": "Selection and DOM focus remain on the first enabled React tab.",
+  "mutationPatchSha256": "dfdd36a2fe83fd6ec47cda98be924b2d178059c619148f43e76da5a02d034088",
   "sequence": {
-    "preMutation": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 0 },
-    "mutation": { "selected": 1, "failed": 1, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 1 },
-    "restoration": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 0 }
+    "preMutation": {
+      "selected": 1,
+      "passed": 1,
+      "failed": 0,
+      "selectedSkipped": 0,
+      "runnerFiltered": 4,
+      "runnerReportedSkipped": 4,
+      "todo": 0,
+      "total": 5,
+      "exitCode": 0
+    },
+    "mutation": {
+      "selected": 1,
+      "passed": 0,
+      "failed": 1,
+      "selectedSkipped": 0,
+      "runnerFiltered": 4,
+      "runnerReportedSkipped": 4,
+      "todo": 0,
+      "total": 5,
+      "exitCode": 1
+    },
+    "restoration": {
+      "selected": 1,
+      "passed": 1,
+      "failed": 0,
+      "selectedSkipped": 0,
+      "runnerFiltered": 4,
+      "runnerReportedSkipped": 4,
+      "todo": 0,
+      "total": 5,
+      "exitCode": 0
+    }
   },
+  "supportingVerifier": null,
   "restoreCommand": "pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-react exec vitest run test/interactions.spec.tsx -t 'B-07 moves React Tabs selection and focus with ArrowRight'",
-  "toolchain": { "node": "24.6.0", "pnpm": "9.12.2", "vitest": "3.2.4" },
+  "restoredVerifier": null,
+  "restoration": {
+    "byteIdentical": true,
+    "mutationTargetSha256": "cb46ad40dc8c790b6738bbb59fed132881d96c27e0706222a9626f4c3b508f52",
+    "carrierByteIdentical": true,
+    "carrierSha256": "f44f3e7897d4f801c0bda8b9a14f7099193537a70482b5d85b43b2a5a05fb13d",
+    "lockfileUnchanged": true,
+    "lockfileSha256": "1569b33b11cb46bd434aebafa7e4957b5d913466d853809abf92dd11b825da51"
+  },
+  "execution": {
+    "checkoutKind": "fresh detached git worktree",
+    "setupCommand": "pnpm install --frozen-lockfile --ignore-scripts && pnpm --filter @oods/tokens run build && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-styles run build && pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-vue run build && pnpm --filter @oods/a11y-tools run build && pnpm --filter @oods/artifacts run build && pnpm --filter @oods/release-utils run build && pnpm --filter @oods/viz-core run build && pnpm --filter @oods/viz-render run build && pnpm --filter @oods/mcp-server run build",
+    "setupCommandsSequential": true,
+    "concurrentPackageBuilds": false,
+    "setupExitCode": 0,
+    "checkoutHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
+    "detached": true,
+    "freshCheckoutCleanBeforeSetup": true,
+    "postSetupCheckoutClean": true,
+    "trackedMutationStateRestored": true,
+    "trackedCleanAfterEvidenceTreeRestoration": true,
+    "worktreeRemovedBeforePublication": true
+  },
+  "publication": {
+    "mode": "whole B-01 through B-15 tree staged before swap",
+    "priorEvidenceUntouchedUntilAllLegsPassed": true,
+    "allOrNothing": true
+  },
+  "toolchain": {
+    "node": "v24.6.0",
+    "npm": "11.5.1\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.",
+    "pnpm": "9.12.2",
+    "python": "Python 3.11.9",
+    "vitest": "vitest/3.2.4 darwin-arm64 node-v24.6.0"
+  },
   "generatedArtifacts": [
-    { "path": "packages/components-react/dist/index.d.ts", "sha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594" },
-    { "path": "artifacts/product-reality/sprint-182/gates/B-07/mutation.patch", "sha256": "bc33e91d354858253a3b889614c2b8c648493f04d964d33af01b8ff40477bd54" },
-    { "path": "artifacts/product-reality/sprint-182/gates/B-07/pre-green.log", "sha256": "26c69ee33ceac1cc105772487604f846fece4c67fdba01d8d14f88a355063508" },
-    { "path": "artifacts/product-reality/sprint-182/gates/B-07/selected-red.log", "sha256": "20dd3e5c41e644155112172abede2960c5ac4692feb83119c0f6bd421ac6e422" },
-    { "path": "artifacts/product-reality/sprint-182/gates/B-07/restored-green.log", "sha256": "9965c213a3f662293c1b5be3c9974d48183b6f44b1b923077a1716e52fbff8cf" }
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-07/mutation.patch",
+      "sha256": "dfdd36a2fe83fd6ec47cda98be924b2d178059c619148f43e76da5a02d034088"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-07/pre-green.log",
+      "sha256": "24e03db35b210ce6703996369410f792316ef2e0f2612b5579d4705c5274eaf4"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-07/restored-green.log",
+      "sha256": "0ec86e84b8dfe9ee05ac8d12c3c476e1e85dbe80f0b0776955eef85a2023689b"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-07/selected-red.log",
+      "sha256": "d615bbe483a69eea2ea771df97d43ad0cc543bf00e92aeb929a67ee7a790552f"
+    },
+    {
+      "path": "packages/components-react/dist/index.d.ts",
+      "sha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594"
+    }
   ],
   "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-07/"
 }

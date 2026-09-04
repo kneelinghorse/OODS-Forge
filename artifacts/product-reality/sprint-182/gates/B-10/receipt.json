@@ -1,30 +1,116 @@
 {
   "schemaVersion": "1.0.0",
-  "mission": "s182-m03",
+  "mission": "s182-m05",
   "bite": "B-10",
-  "reviewHead": "38afc8a32f71a7dce4301dff46ac73de7575f088",
+  "reviewHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
   "carrier": {
     "path": "packages/components-vue/test/interactions.spec.ts",
-    "sha256": "b2f5335a6e9f587cd03a26cfaffa6332cc5baf9711c4ca7ffea7cdbc8da15fb3",
+    "sha256": "9779b1833eb2cad5b8386651afed568ea0405765506e4e781b65a27c35c6a7a3",
     "selector": "B-10 moves Vue Tabs selection and focus with ArrowRight"
   },
-  "production": {
+  "mutationTarget": {
     "path": "packages/components-vue/src/tabs.ts",
-    "sha256": "d7b4fc4eea4fe9868ac8f96944cc91a1875d26843f875fdf87e6cff762ffe8a7"
+    "originalSha256": "d7b4fc4eea4fe9868ac8f96944cc91a1875d26843f875fdf87e6cff762ffe8a7",
+    "mutatedSha256": "d1273f5e615b524fcd5599156561c4b47a70cfb4dd17787b83d99e885317dd68",
+    "restoredSha256": "d7b4fc4eea4fe9868ac8f96944cc91a1875d26843f875fdf87e6cff762ffe8a7"
   },
   "command": "pnpm --filter @oods/components-vue exec vitest run test/interactions.spec.ts -t 'B-10 moves Vue Tabs selection and focus with ArrowRight'",
-  "mutation": "Remove only the ArrowRight branch while retaining pointer activation, initial selection, and the other keyboard branches.",
-  "mutationPatchSha256": "418f1442bae5356838d9d2eaacfe0ed625c3aee1bb418e3441853e3daaff5812",
+  "mutation": "Remove only the ArrowRight branch from the Vue Tabs key handler.",
+  "requiredAndObservedRedFinding": "Selection and DOM focus remain on the first enabled Vue tab.",
+  "mutationPatchSha256": "f93463411f47e802e86b8d81b2a7fbcc0890269d8001f4fff0abf7aabc903494",
   "sequence": {
-    "preMutation": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 6, "exitCode": 0 },
-    "mutation": { "selected": 1, "failed": 1, "selectedSkipped": 0, "runnerFiltered": 6, "exitCode": 1 },
-    "restoration": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 6, "exitCode": 0 }
+    "preMutation": {
+      "selected": 1,
+      "passed": 1,
+      "failed": 0,
+      "selectedSkipped": 0,
+      "runnerFiltered": 6,
+      "runnerReportedSkipped": 6,
+      "todo": 0,
+      "total": 7,
+      "exitCode": 0
+    },
+    "mutation": {
+      "selected": 1,
+      "passed": 0,
+      "failed": 1,
+      "selectedSkipped": 0,
+      "runnerFiltered": 6,
+      "runnerReportedSkipped": 6,
+      "todo": 0,
+      "total": 7,
+      "exitCode": 1
+    },
+    "restoration": {
+      "selected": 1,
+      "passed": 1,
+      "failed": 0,
+      "selectedSkipped": 0,
+      "runnerFiltered": 6,
+      "runnerReportedSkipped": 6,
+      "todo": 0,
+      "total": 7,
+      "exitCode": 0
+    }
   },
+  "supportingVerifier": null,
   "restoreCommand": "pnpm --filter @oods/components-vue run build && pnpm --filter @oods/components-vue exec vitest run test/interactions.spec.ts -t 'B-10 moves Vue Tabs selection and focus with ArrowRight'",
-  "toolchain": { "node": "24.6.0", "pnpm": "9.12.2", "vitest": "3.2.4" },
+  "restoredVerifier": null,
+  "restoration": {
+    "byteIdentical": true,
+    "mutationTargetSha256": "d7b4fc4eea4fe9868ac8f96944cc91a1875d26843f875fdf87e6cff762ffe8a7",
+    "carrierByteIdentical": true,
+    "carrierSha256": "9779b1833eb2cad5b8386651afed568ea0405765506e4e781b65a27c35c6a7a3",
+    "lockfileUnchanged": true,
+    "lockfileSha256": "1569b33b11cb46bd434aebafa7e4957b5d913466d853809abf92dd11b825da51"
+  },
+  "execution": {
+    "checkoutKind": "fresh detached git worktree",
+    "setupCommand": "pnpm install --frozen-lockfile --ignore-scripts && pnpm --filter @oods/tokens run build && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-styles run build && pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-vue run build && pnpm --filter @oods/a11y-tools run build && pnpm --filter @oods/artifacts run build && pnpm --filter @oods/release-utils run build && pnpm --filter @oods/viz-core run build && pnpm --filter @oods/viz-render run build && pnpm --filter @oods/mcp-server run build",
+    "setupCommandsSequential": true,
+    "concurrentPackageBuilds": false,
+    "setupExitCode": 0,
+    "checkoutHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
+    "detached": true,
+    "freshCheckoutCleanBeforeSetup": true,
+    "postSetupCheckoutClean": true,
+    "trackedMutationStateRestored": true,
+    "trackedCleanAfterEvidenceTreeRestoration": true,
+    "worktreeRemovedBeforePublication": true
+  },
+  "publication": {
+    "mode": "whole B-01 through B-15 tree staged before swap",
+    "priorEvidenceUntouchedUntilAllLegsPassed": true,
+    "allOrNothing": true
+  },
+  "toolchain": {
+    "node": "v24.6.0",
+    "npm": "11.5.1\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.",
+    "pnpm": "9.12.2",
+    "python": "Python 3.11.9",
+    "vitest": "vitest/3.2.4 darwin-arm64 node-v24.6.0"
+  },
   "generatedArtifacts": [
-    { "path": "packages/components-vue/dist/index.d.ts", "sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a" }
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-10/mutation.patch",
+      "sha256": "f93463411f47e802e86b8d81b2a7fbcc0890269d8001f4fff0abf7aabc903494"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-10/pre-green.log",
+      "sha256": "73545fb71aec811171ccc36384856355b551c131e409cc506585638fab697e47"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-10/restored-green.log",
+      "sha256": "a0e5aafd085877cd57bf14c16a2452179ab34e6ff56494d82158d37067a45112"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-10/selected-red.log",
+      "sha256": "ffbfe298da8bf244a744bee13958094012db38fd9a8acfa335934ffd1846b391"
+    },
+    {
+      "path": "packages/components-vue/dist/index.d.ts",
+      "sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a"
+    }
   ],
-  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-10/",
-  "ownedEvidenceDestination": "artifacts/product-reality/sprint-182/m03/gates/B-10/"
+  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-10/"
 }

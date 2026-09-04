@@ -1,0 +1,26 @@
+diff --git a/packages/mcp-server/src/tools/catalog.shared.ts b/packages/mcp-server/src/tools/catalog.shared.ts
+--- a/packages/mcp-server/src/tools/catalog.shared.ts
++++ b/packages/mcp-server/src/tools/catalog.shared.ts
+@@ -74,6 +74,11 @@
+ }
+ 
+ export function resolveComponentCount(dataset: ComponentsDatasetLike): number {
++  const count = dataset?.stats?.componentCount;
++  if (typeof count === 'number' && Number.isFinite(count)) {
++    return count;
++  }
++
+   if (Array.isArray(dataset?.components)) {
+     const componentIds = new Set<string>();
+     for (const row of dataset.components) {
+@@ -85,10 +90,5 @@
+     }
+     return componentIds.size;
+   }
+-
+-  const count = dataset?.stats?.componentCount;
+-  if (typeof count === 'number' && Number.isFinite(count)) {
+-    return count;
+-  }
+   return 0;
+ }

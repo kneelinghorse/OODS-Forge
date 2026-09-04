@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0.0",
-  "mission": "s182-m04",
+  "mission": "s182-m05",
   "bite": "B-14",
-  "reviewHead": "e9915292c108b686d57623bc9bcfb84621a0ce23",
+  "reviewHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
   "carrier": {
     "path": "packages/mcp-server/src/tools/__tests__/code.generate.test.ts",
     "sha256": "ada34c7b81bfe9e616b8ffbb07a557397cfe7d163674e34ca07c540382eda54d",
@@ -66,22 +66,29 @@
   },
   "execution": {
     "checkoutKind": "fresh detached git worktree",
-    "setupCommand": "pnpm install --frozen-lockfile --ignore-scripts && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-styles run build && pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-vue run build && pnpm --filter @oods/mcp-server run build",
+    "setupCommand": "pnpm install --frozen-lockfile --ignore-scripts && pnpm --filter @oods/tokens run build && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-styles run build && pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-vue run build && pnpm --filter @oods/a11y-tools run build && pnpm --filter @oods/artifacts run build && pnpm --filter @oods/release-utils run build && pnpm --filter @oods/viz-core run build && pnpm --filter @oods/viz-render run build && pnpm --filter @oods/mcp-server run build",
+    "setupCommandsSequential": true,
+    "concurrentPackageBuilds": false,
     "setupExitCode": 0,
-    "checkoutHead": "e9915292c108b686d57623bc9bcfb84621a0ce23",
+    "checkoutHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
     "detached": true,
     "freshCheckoutCleanBeforeSetup": true,
     "postSetupCheckoutClean": true,
-    "trackedCleanBeforeMutation": true,
-    "trackedCleanAfterRestoration": true,
-    "expectedVerifierArtifactsExcludedFromFinalCleanlinessCheck": false,
+    "trackedMutationStateRestored": true,
+    "trackedCleanAfterEvidenceTreeRestoration": true,
     "worktreeRemovedBeforePublication": true
+  },
+  "publication": {
+    "mode": "whole B-01 through B-15 tree staged before swap",
+    "priorEvidenceUntouchedUntilAllLegsPassed": true,
+    "allOrNothing": true
   },
   "toolchain": {
     "node": "v24.6.0",
-    "npm": "11.5.1",
+    "npm": "11.5.1\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.",
     "pnpm": "9.12.2",
-    "vitest": "3.2.4"
+    "python": "Python 3.11.9",
+    "vitest": "vitest/3.2.4 darwin-arm64 node-v24.6.0"
   },
   "generatedArtifacts": [
     {
@@ -90,15 +97,15 @@
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-14/pre-green.log",
-      "sha256": "8ec896e1a40e9c6811c2f9034525f76dc6210ba28a24368a873ed23de901e80e"
+      "sha256": "54243e9b84cc91d30d7b4c17f074940948a423b0a5931d188071dc4531caf2ae"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-14/restored-green.log",
-      "sha256": "eb2285989ecf01d0150f6ced44a880f07367365e6f0591bb1eb4716ae0b6f6a3"
+      "sha256": "011aafdc649171a06037556e964b8824791bd35665724004500459e11f891807"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-14/selected-red.log",
-      "sha256": "22d1fe151471d90457fd3907da75896793ac903af8a68a28963c8effa331624b"
+      "sha256": "ecdb36e0b85c899d211ee187d9d6927bfab996faa365e83219bd9c9ff9bfe634"
     },
     {
       "path": "packages/mcp-server/dist/tools/code.generate.d.ts",

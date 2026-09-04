@@ -1,6 +1,44 @@
 $ pnpm --filter @oods/components-react exec vitest run test/interactions.spec.tsx -t 'B-07 moves React Tabs selection and focus with ArrowRight'
 exitCode=1
-Test Files  1 failed (1)
-Tests  1 failed | 3 skipped (4)
-Selected 1 / failed 1 / selected-skipped 0 / runner-filtered 3
-Failure: Billing retained aria-selected=false after ArrowRight instead of becoming selected and focused.
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/components-react
+
+ ❯ test/interactions.spec.tsx (5 tests | 1 failed | 4 skipped) 60ms
+   ↓ @oods/components-react interactions > does not steal existing focus while hydrating Tabs
+   × @oods/components-react interactions > B-07 moves React Tabs selection and focus with ArrowRight 60ms
+     → expected 'false' to be 'true' // Object.is equality
+   ↓ @oods/components-react interactions > supports Tabs ArrowLeft, Home, End, pointer activation, and controlled selection
+   ↓ @oods/components-react interactions > emits idiomatic controlled field changes and preserves native state props
+   ↓ @oods/components-react interactions > dispatches dismissal, activation, and semantic row activation once
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  05:08:17
+   Duration  635ms (transform 63ms, setup 0ms, collect 182ms, tests 60ms, environment 199ms, prepare 38ms)
+
+undefined
+/private<disposable-checkout>/packages/components-react:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/interactions.spec.tsx -t B-07 moves React Tabs selection and focus with ArrowRight
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/interactions.spec.tsx > @oods/components-react interactions > B-07 moves React Tabs selection and focus with ArrowRight
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ test/interactions.spec.tsx:72:51
+     70| 
+     71|     const billing = screen.getByRole('tab', { name: 'Billing' });
+     72|     expect(billing.getAttribute('aria-selected')).toBe('true');
+       |                                                   ^
+     73|     expect(document.activeElement).toBe(billing);
+     74|     expect(screen.getByRole('tabpanel').textContent).toBe('Invoices');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

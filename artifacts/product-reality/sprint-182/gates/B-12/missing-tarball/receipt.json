@@ -1,9 +1,9 @@
 {
   "schemaVersion": "1.0.0",
-  "mission": "s182-m04",
+  "mission": "s182-m05",
   "bite": "B-12",
   "leg": "missing-tarball",
-  "reviewHead": "e9915292c108b686d57623bc9bcfb84621a0ce23",
+  "reviewHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
   "carrier": {
     "path": "packages/mcp-server/test/product-reality/packed-consumers.s182.spec.ts",
     "sha256": "b959512d6ee018a5f029eb391e887f8b2f200f74299606eb02c5f1d93c0e085a",
@@ -58,7 +58,7 @@
   "restoreCommand": "node scripts/product-reality/verify-package-foundations.mjs --artifact-root artifacts/product-reality/sprint-182/gates/B-12/verifier-green && pnpm --filter @oods/mcp-server exec vitest run test/product-reality/packed-consumers.s182.spec.ts -t 'B-12 installs and imports every required tarball and root export in isolation'",
   "restoredVerifier": {
     "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/report.json",
-    "sha256": "7bdf90c996d565f177e947f36a64a2eeb498c8b5cea9ac725f6ba2bb469cc4cb",
+    "sha256": "06306bcd4dee1e3fece5dd7460c36612cb6233fa60a41d1e09e3a5757d0aeb40",
     "summary": {
       "selected": 4,
       "passed": 4,
@@ -68,8 +68,8 @@
     },
     "canonicalVerifierGreen": {
       "selectedAfterCrossLegComparison": true,
-      "completeTreeSha256": "7fb49ffa529d42ba62b4b2602c160b7f093a1fa2fcd5484eeb38e3347f9401ba",
-      "deterministicTreeSha256": "279b53e5b4e50d2f74829333b3bcf9d92b35792e8fc9fa62b158f1784507a72c",
+      "completeTreeSha256": "fd813c86a425a177c6f8f1be7bb2bfbe6b005248e7414e311199f385afe40254",
+      "deterministicTreeSha256": "00db62e8a740f14ea5e0a954b016ec5f83b55ce3494c566e6ba7363a38d2607c",
       "files": 29
     }
   },
@@ -83,22 +83,29 @@
   },
   "execution": {
     "checkoutKind": "fresh detached git worktree",
-    "setupCommand": "pnpm install --frozen-lockfile --ignore-scripts && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-styles run build && pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-vue run build && pnpm --filter @oods/mcp-server run build",
+    "setupCommand": "pnpm install --frozen-lockfile --ignore-scripts && pnpm --filter @oods/tokens run build && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-styles run build && pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-vue run build && pnpm --filter @oods/a11y-tools run build && pnpm --filter @oods/artifacts run build && pnpm --filter @oods/release-utils run build && pnpm --filter @oods/viz-core run build && pnpm --filter @oods/viz-render run build && pnpm --filter @oods/mcp-server run build",
+    "setupCommandsSequential": true,
+    "concurrentPackageBuilds": false,
     "setupExitCode": 0,
-    "checkoutHead": "e9915292c108b686d57623bc9bcfb84621a0ce23",
+    "checkoutHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
     "detached": true,
     "freshCheckoutCleanBeforeSetup": true,
     "postSetupCheckoutClean": true,
-    "trackedCleanBeforeMutation": true,
-    "trackedCleanAfterRestoration": true,
-    "expectedVerifierArtifactsExcludedFromFinalCleanlinessCheck": true,
+    "trackedMutationStateRestored": true,
+    "trackedCleanAfterEvidenceTreeRestoration": true,
     "worktreeRemovedBeforePublication": true
+  },
+  "publication": {
+    "mode": "whole B-01 through B-15 tree staged before swap",
+    "priorEvidenceUntouchedUntilAllLegsPassed": true,
+    "allOrNothing": true
   },
   "toolchain": {
     "node": "v24.6.0",
-    "npm": "11.5.1",
+    "npm": "11.5.1\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.",
     "pnpm": "9.12.2",
-    "vitest": "3.2.4"
+    "python": "Python 3.11.9",
+    "vitest": "vitest/3.2.4 darwin-arm64 node-v24.6.0"
   },
   "generatedArtifacts": [
     {
@@ -107,23 +114,23 @@
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/missing-tarball/pre-green.log",
-      "sha256": "7bc326b6475ec58b56406acd1d79294a40ba71015552050f615e892660c8bbed"
+      "sha256": "b90b37d54b840fd0f82a059af4e279b1b04424f4d1271e8682a29ba902802867"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/missing-tarball/restored-green.log",
-      "sha256": "b585061bd5b4c140a51af8939bb6f56bf6ce2bb9971f50825ce77328729f69a1"
+      "sha256": "a5c9d473dd70d0c79d1acc03a89f2c4ad2f28448f5786c5ef9f202806fba98d8"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/missing-tarball/selected-red.log",
-      "sha256": "09c925d5ea8ba0c8d2c91437184a11691f70eabb0f839f9a6d11b01991092db5"
+      "sha256": "fb13576bb1f568f3b4742ab196a5dee32791304a33d80a20e2c9c61dcabbc128"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/inventories/oods-component-contracts-run-1.json",
-      "sha256": "0ed0681a761ca473ea61c4efbbff031ace373a70949d98a1cf96d79503ac3d32"
+      "sha256": "c3fa81a95634d9884d41df9099f36caab61f499285a0f6975e93cbb4967417c0"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/inventories/oods-component-contracts-run-2.json",
-      "sha256": "0ed0681a761ca473ea61c4efbbff031ace373a70949d98a1cf96d79503ac3d32"
+      "sha256": "c3fa81a95634d9884d41df9099f36caab61f499285a0f6975e93cbb4967417c0"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/inventories/oods-component-styles-run-1.json",
@@ -151,59 +158,59 @@
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-component-contracts-build.log",
-      "sha256": "9bf82d083ee160ad7ba194ff31ae9cc994b40065960ab55d410972d67491638f"
+      "sha256": "1076faf0d718ab8574e448f67e5a152906f8e64cbffdc8d999cb1833427b4c60"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-component-contracts-pack-run-1.log",
-      "sha256": "b16c4a8aa3dd678c40bca84c1176b4dc87989516bb0ce681101defa5b6fa64fc"
+      "sha256": "0e5d99bf39a3ec6f6c210022b6f5accfb5a58f91d4d1e6a24afdf862628fcbd1"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-component-contracts-pack-run-2.log",
-      "sha256": "3e9f713d94c9d7756cf510d8ce9722ea15d84a6dd9d023fa3f26808f10f93f52"
+      "sha256": "9c55498f8a7a0441e3a6e3aed6f38bb8ef946828397bf436e95555910ac3f57d"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-component-styles-build.log",
-      "sha256": "3093e1d3c5dc672474d3d0ea03a3f4ce95330cbeb6bfc322db9a1cf491c4c62a"
+      "sha256": "fa057473ea1d21cfcce0687c377eedc5aee9778cfd994a107ede4b28ae870984"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-component-styles-pack-run-1.log",
-      "sha256": "8e69fab4e2ba9e7ee6c3fcd1452c9fcb59d208392a412c0dea8ae69ed1d50a54"
+      "sha256": "5d77924b594d8b7a3271c084b893c9b89ebd5a0546424e5fef2696c80a606def"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-component-styles-pack-run-2.log",
-      "sha256": "6a5f7ac3fa7286cc3e5a6044a33676f2cf9e34264a5c00a899637a73a4f86a19"
+      "sha256": "c971c0919cdf8bccc7c40122b4e16fc8b3b4ed1e42356f3762aec30f798de549"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-components-react-build.log",
-      "sha256": "ab1e78b3c8b5f0db339b8444e05d0751184576a4e1657278709620da94713597"
+      "sha256": "78887f8e3bd9a88d6781baa13f96c0990c149036815c69b31d891eb8feb9d13f"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-components-react-pack-run-1.log",
-      "sha256": "2bf99b1199ae6c1012e2617d1275d82aef3017b806c361ebd592df42cba86f6a"
+      "sha256": "c50fa5b4395e807285a5c3d7c99c66ca1e4f9c4f0caa92397a1fac9f2781551d"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-components-react-pack-run-2.log",
-      "sha256": "8a171fa7d4df89b7f0bcd9682ac7900c31d40804526d89c9c5e8e7b1ea73bb5b"
+      "sha256": "2b6675eb3ae27b15aebd3b5f65ad5bc036152582a48d495429c3eed9ad6a2cd4"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-components-vue-build.log",
-      "sha256": "aa69df78adbf082bafe0ba53b325aee6a5d0a3df0ef90367230d2c64a28de1be"
+      "sha256": "3e1a191e303f7bd573f91acc44195b28b5056bf4dfc9b8a57da81f3c1e719b4c"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-components-vue-pack-run-1.log",
-      "sha256": "88746113353c0217a482ffbded84343916e6a7f180c9e5c810c582ebb243d8d3"
+      "sha256": "d44a058b4dfd23ff89b139cc8f504921f6dcbc288b7a7ce342174c32b4e50280"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/logs/oods-components-vue-pack-run-2.log",
-      "sha256": "9ac6c54397d5ec7c4e5627155b5c77890adb8ff37317210b512f75a04337dba0"
+      "sha256": "791ca73a06992aa44bd2743a51072f4b868c7ce4808eaeb75181cfd102ef4193"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/report.json",
-      "sha256": "7bdf90c996d565f177e947f36a64a2eeb498c8b5cea9ac725f6ba2bb469cc4cb"
+      "sha256": "06306bcd4dee1e3fece5dd7460c36612cb6233fa60a41d1e09e3a5757d0aeb40"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/tarballs/run-1/oods-component-contracts/oods-component-contracts-0.1.0.tgz",
-      "sha256": "e0acbdffced05a4d6def5eb0266edbbf67af761bba99e03ed7868d316cc8335b"
+      "sha256": "4e6e611193732fffe5d05117d9f17f0daf0f49f2e623b6475ba98074ff14430b"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/tarballs/run-1/oods-component-styles/oods-component-styles-0.1.0.tgz",
@@ -219,7 +226,7 @@
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/tarballs/run-2/oods-component-contracts/oods-component-contracts-0.1.0.tgz",
-      "sha256": "e0acbdffced05a4d6def5eb0266edbbf67af761bba99e03ed7868d316cc8335b"
+      "sha256": "4e6e611193732fffe5d05117d9f17f0daf0f49f2e623b6475ba98074ff14430b"
     },
     {
       "path": "artifacts/product-reality/sprint-182/gates/B-12/verifier-green/package-foundations/tarballs/run-2/oods-component-styles/oods-component-styles-0.1.0.tgz",

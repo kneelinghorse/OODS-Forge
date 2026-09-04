@@ -1,0 +1,49 @@
+$ pnpm --filter @oods/component-contracts exec vitest run test/contracts.spec.ts -t 'derives the controlling 109-row denominator from unique sorted membership'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/component-contracts
+
+ ❯ test/contracts.spec.ts (7 tests | 1 failed | 6 skipped) 5ms
+   × Sprint 182 canonical component truth plane > derives the controlling 109-row denominator from unique sorted membership 5ms
+     → expected [ 'AddressEditor', …(107) ] to have a length of 109 but got 108
+   ↓ Sprint 182 canonical component truth plane > B-01 reds when one intake ID is dropped or duplicated
+   ↓ Sprint 182 canonical component truth plane > B-02 rejects a restored independent 101 count instead of trusting it
+   ↓ Sprint 182 canonical component truth plane > classifies and reports target-specific evidence for every starting row without approving it
+   ↓ Sprint 182 canonical component truth plane > versions exactly the locked 14 contracts and explicit nondegenerate scenarios
+   ↓ Sprint 182 canonical component truth plane > B-03 blocks foundation-v1 independently for each of the nine evidence classes
+   ↓ Sprint 182 canonical component truth plane > B-03 blocks emission eligibility independently for incomplete target evidence
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  05:03:07
+   Duration  229ms (transform 41ms, setup 0ms, collect 42ms, tests 5ms, environment 0ms, prepare 44ms)
+
+undefined
+/private<disposable-checkout>/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts.spec.ts -t derives the controlling 109-row denominator from unique sorted membership
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts.spec.ts > Sprint 182 canonical component truth plane > derives the controlling 109-row denominator from unique sorted membership
+AssertionError: expected [ 'AddressEditor', …(107) ] to have a length of 109 but got 108
+
+- Expected
++ Received
+
+- 109
++ 108
+
+ ❯ test/contracts.spec.ts:34:17
+     32|   it('derives the controlling 109-row denominator from unique sorted m…
+     33|     const ids = componentIntake.rows.map((row) => row.id);
+     34|     expect(ids).toHaveLength(109);
+       |                 ^
+     35|     expect(deriveStartingComponentCount()).toBe(109);
+     36|     expect(ids).toEqual([...ids].sort((a, b) => (a < b ? -1 : a > b ? …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

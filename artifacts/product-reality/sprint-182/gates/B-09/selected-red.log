@@ -1,6 +1,53 @@
 $ pnpm --filter @oods/components-vue exec vitest run test/interactions.spec.ts -t 'B-09 emits Vue update:modelValue and change for controlled fields'
 exitCode=1
-Test Files  1 failed (1)
-Tests  1 failed | 6 skipped (7)
-Selected 1 / failed 1 / selected-skipped 0 / runner-filtered 6
-Failure: wrapper.emitted('update:modelValue') was undefined instead of [['user@example.com']]; input/change behavior remained present.
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/components-vue
+
+ ❯ test/interactions.spec.ts (7 tests | 1 failed | 6 skipped) 18ms
+   × @oods/components-vue interactions > B-09 emits Vue update:modelValue and change for controlled fields 18ms
+     → expected undefined to deeply equal [ [ 'user@example.com' ] ]
+   ↓ @oods/components-vue interactions > B-10 moves Vue Tabs selection and focus with ArrowRight
+   ↓ @oods/components-vue interactions > supports Tabs ArrowLeft, Home, End, pointer activation, and controlled updates
+   ↓ @oods/components-vue interactions > uses native field controls with idiomatic update and change events
+   ↓ @oods/components-vue interactions > emits activation and dismissal from native buttons
+   ↓ @oods/components-vue interactions > resolves status and domain semantics while preserving explicit tone precedence
+   ↓ @oods/components-vue interactions > activates selectable semantic table rows through a real button
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  05:09:37
+   Duration  556ms (transform 53ms, setup 0ms, collect 125ms, tests 18ms, environment 217ms, prepare 39ms)
+
+undefined
+/private<disposable-checkout>/packages/components-vue:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/interactions.spec.ts -t B-09 emits Vue update:modelValue and change for controlled fields
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/interactions.spec.ts > @oods/components-vue interactions > B-09 emits Vue update:modelValue and change for controlled fields
+AssertionError: expected undefined to deeply equal [ [ 'user@example.com' ] ]
+
+- Expected: 
+[
+  [
+    "user@example.com",
+  ],
+]
+
++ Received: 
+undefined
+
+ ❯ test/interactions.spec.ts:34:50
+     32|     await input.setValue('user@example.com');
+     33| 
+     34|     expect(wrapper.emitted('update:modelValue')).toEqual([['user@examp…
+       |                                                  ^
+     35|     expect(wrapper.emitted('input')).toEqual([['user@example.com']]);
+     36|     expect(wrapper.emitted('change')).toEqual([['user@example.com']]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

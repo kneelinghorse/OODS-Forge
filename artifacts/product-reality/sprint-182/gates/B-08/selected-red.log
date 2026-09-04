@@ -1,6 +1,52 @@
 $ pnpm --filter @oods/components-vue exec vitest run test/package-contract.spec.ts -t 'B-08 exports the exact Vue nucleus with public declarations'
 exitCode=1
-Test Files  1 failed (1)
-Tests  1 failed | 2 skipped (3)
-Selected 1 / failed 1 / selected-skipped 0 / runner-filtered 2
-Failure: runtime canonical exports omitted Text; the received 13-ID set did not equal the canonical 14-ID set.
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/components-vue
+
+ ❯ test/package-contract.spec.ts (3 tests | 1 failed | 2 skipped) 6ms
+   × @oods/components-vue package contract > B-08 exports the exact Vue nucleus with public declarations 5ms
+     → expected [ 'Badge', 'Banner', 'Button', …(10) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(11) ]
+   ↓ @oods/components-vue package contract > declares only Vue and the two frozen package dependencies at runtime
+   ↓ @oods/components-vue package contract > publishes 14 independently derived Vue emission-eligibility rows
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 skipped (3)
+   Start at  05:08:58
+   Duration  805ms (transform 87ms, setup 0ms, collect 408ms, tests 6ms, environment 190ms, prepare 35ms)
+
+undefined
+/private<disposable-checkout>/packages/components-vue:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/package-contract.spec.ts -t B-08 exports the exact Vue nucleus with public declarations
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-vue package contract > B-08 exports the exact Vue nucleus with public declarations
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(10) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(11) ]
+
+- Expected
++ Received
+
+@@ -9,8 +9,7 @@
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+    "Tabs",
+-   "Text",
+    "Textarea",
+  ]
+
+ ❯ test/package-contract.spec.ts:60:30
+     58|   it('B-08 exports the exact Vue nucleus with public declarations', ()…
+     59|     const runtimeCanonical = canonicalIds.filter((name) => name in vue…
+     60|     expect(runtimeCanonical).toEqual(canonicalIds);
+       |                              ^
+     61| 
+     62|     const declarations = declarationValueExports(readFileSync(`${packa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
