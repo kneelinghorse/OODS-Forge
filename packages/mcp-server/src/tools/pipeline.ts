@@ -1,5 +1,5 @@
 import type { ReplIssue, UiSchema } from '../schemas/generated.js';
-import type { CodegenFramework, CodegenIssue, CodegenStyling } from './types.js';
+import type { CodegenFramework, CodegenIssue, CodegenStyling, GeneratedArtifact } from './types.js';
 import { handle as composeHandle, type ActionMapping, type ActionInstance, type DesignComposeInput, type ResolvedTraitActions } from './design.compose.js';
 import { handle as validateHandle } from './repl.validate.js';
 import { handle as renderHandle } from './repl.render.js';
@@ -74,6 +74,8 @@ export type PipelineOutput = {
   code?: {
     framework: CodegenFramework;
     styling: CodegenStyling;
+    artifact: GeneratedArtifact;
+    /** @deprecated Use artifact.files instead. */
     output: string;
   };
   saved?: {
@@ -427,10 +429,14 @@ export async function handle(input: PipelineInput): Promise<PipelineOutput> {
     const issue = firstIssueMessage(codegenResult.errors);
     return fail('codegen', issue.code, issue.message);
   }
+  if (!codegenResult.artifact) {
+    return fail('codegen', 'OODS-N017', 'code.generate returned success without an artifact envelope.');
+  }
 
   output.code = {
     framework,
     styling,
+    artifact: codegenResult.artifact,
     output: codegenResult.code,
   };
 

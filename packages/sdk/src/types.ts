@@ -31,6 +31,9 @@ export type {
   CodegenFramework,
   CodegenStyling,
   CodegenIssue,
+  GeneratedArtifact,
+  GeneratedArtifactFile,
+  GeneratedDependency,
 
   // catalog
   CatalogListInput,

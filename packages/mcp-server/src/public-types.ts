@@ -33,6 +33,9 @@ export type {
   CodegenFramework,
   CodegenStyling,
   CodegenIssue,
+  GeneratedArtifact,
+  GeneratedArtifactFile,
+  GeneratedDependency,
 } from "./tools/types.js";
 
 // -- catalog --

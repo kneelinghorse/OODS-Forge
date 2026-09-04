@@ -16,6 +16,26 @@ export type CodegenIssue = {
   component?: string;
 };
 
+export type GeneratedArtifactFile = {
+  path: string;
+  contents: string;
+  contentHash: string;
+};
+
+export type GeneratedDependency = {
+  name: string;
+  version: string;
+  kind: 'dependency' | 'peerDependency';
+};
+
+export type GeneratedArtifact = {
+  schemaVersion: '1.0.0';
+  framework: CodegenFramework;
+  files: GeneratedArtifactFile[];
+  dependencies: GeneratedDependency[];
+  contentHash: string;
+};
+
 export type CodegenResult = {
   status: 'ok' | 'error';
   framework: CodegenFramework;

@@ -4,6 +4,13 @@ import type {
   Stage1PreferredTermEntity as GeneratedStage1PreferredTermEntity,
   Stage1ProjectionVariant as GeneratedStage1ProjectionVariant,
 } from "../schemas/generated.js";
+import type { GeneratedArtifact } from "../codegen/types.js";
+
+export type {
+  GeneratedArtifact,
+  GeneratedArtifactFile,
+  GeneratedDependency,
+} from "../codegen/types.js";
 
 export type BaseInput = { apply?: boolean };
 
@@ -460,11 +467,13 @@ export type CodegenIssue = {
   component?: string;
 };
 
-export type CodeGenerateOutput = {
-  status: "ok" | "error";
+type CodeGenerateOutputBase = {
   framework: CodegenFramework;
+  /** @deprecated Use artifact.files instead. Retained for v0 compatibility. */
   code: string;
+  /** @deprecated Use artifact.files[].path instead. Retained for v0 compatibility. */
   fileExtension: string;
+  /** @deprecated Use artifact.dependencies instead. Retained for v0 compatibility. */
   imports: string[];
   warnings: CodegenIssue[];
   errors?: CodegenIssue[];
@@ -474,6 +483,19 @@ export type CodeGenerateOutput = {
     unknownComponents?: string[];
   };
 };
+
+export type CodeGenerateOutput = CodeGenerateOutputBase & (
+  | {
+      status: "ok";
+      artifact: GeneratedArtifact;
+      errors?: CodegenIssue[];
+    }
+  | {
+      status: "error";
+      artifact?: never;
+      errors?: CodegenIssue[];
+    }
+);
 
 // -- Mapping tools --
 

@@ -12,6 +12,7 @@ import {
   preflightTargetCapabilities,
 } from '../codegen/target-readiness.js';
 import { preflightCodegenSyntax } from '../codegen/syntax-preflight.js';
+import { buildGeneratedArtifact } from '../codegen/artifact-envelope.js';
 
 const emitters: Record<string, Emitter> = {
   html: emitHtml,
@@ -210,9 +211,42 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
   // Merge warnings
   const allWarnings = [...warnings, ...result.warnings];
 
+  if (result.status !== 'ok') {
+    return {
+      status: result.status,
+      framework: result.framework,
+      code: result.code,
+      fileExtension: result.fileExtension,
+      imports: result.imports,
+      warnings: allWarnings,
+      ...(result.errors?.length ? { errors: result.errors } : {}),
+      meta,
+    };
+  }
+
+  let artifact: NonNullable<CodeGenerateOutput['artifact']>;
+  try {
+    artifact = buildGeneratedArtifact(result);
+  } catch (error) {
+    return {
+      status: 'error',
+      framework: result.framework,
+      code: '',
+      fileExtension: '',
+      imports: [],
+      warnings: allWarnings,
+      errors: [{
+        code: 'OODS-N016',
+        message: error instanceof Error ? error.message : String(error),
+      }],
+      meta,
+    };
+  }
+
   return {
     status: result.status,
     framework: result.framework,
+    artifact,
     code: result.code,
     fileExtension: result.fileExtension,
     imports: result.imports,

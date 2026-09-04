@@ -1218,9 +1218,15 @@ export type CodeGenerateInput = CodeGenerateInputSchema.CodeGenerateInput;
 // Source: code.generate.output.json
 export namespace CodeGenerateOutputSchema {
   /**
-   * Generated framework-specific code from a UiSchema.
+   * Versioned generated artifact from a UiSchema. Legacy single-source fields remain as deprecated compatibility aliases.
    */
-  export interface CodeGenerateOutput {
+  export type CodeGenerateOutput = CodeGenerateOutput1 & CodeGenerateOutput2;
+  export type CodeGenerateOutput1 = {
+    [k: string]: any;
+  };
+  export type ContentHash = string;
+
+  export interface CodeGenerateOutput2 {
     /**
      * Whether code generation succeeded.
      */
@@ -1229,16 +1235,20 @@ export namespace CodeGenerateOutputSchema {
      * The target framework that was used.
      */
     framework: 'react' | 'vue' | 'html';
+    artifact?: GeneratedArtifact;
     /**
-     * The generated source code. Empty string on error.
+     * @deprecated
+     * Deprecated v0 compatibility alias for artifact.files[0].contents. Empty string on error.
      */
     code: string;
     /**
-     * Suggested file extension including the dot (e.g., '.tsx', '.vue', '.html').
+     * @deprecated
+     * Deprecated v0 compatibility alias for the primary generated file extension.
      */
     fileExtension: string;
     /**
-     * Import statements or package names required by the generated code.
+     * @deprecated
+     * Deprecated v0 compatibility alias. Use artifact.dependencies for exact versions and dependency kinds.
      */
     imports: string[];
     /**
@@ -1254,6 +1264,43 @@ export namespace CodeGenerateOutputSchema {
       componentCount?: number;
       unknownComponents?: string[];
     };
+  }
+  /**
+   * Primary versioned, content-addressed file-set payload. Required when status is ok.
+   */
+  export interface GeneratedArtifact {
+    /**
+     * Version of the generated artifact envelope contract.
+     */
+    schemaVersion: '1.0.0';
+    framework: 'react' | 'vue' | 'html';
+    /**
+     * Generated files in deterministic relative-path order.
+     *
+     * @minItems 1
+     */
+    files: [GeneratedArtifactFile, ...GeneratedArtifactFile[]];
+    /**
+     * Exact install manifest in deterministic kind-and-name order.
+     */
+    dependencies: GeneratedDependency[];
+    contentHash: ContentHash;
+  }
+  export interface GeneratedArtifactFile {
+    /**
+     * Safe relative POSIX path within the generated artifact.
+     */
+    path: string;
+    contents: string;
+    contentHash: ContentHash;
+  }
+  export interface GeneratedDependency {
+    name: string;
+    /**
+     * Exact semantic version; ranges, workspace aliases, and repository paths are forbidden.
+     */
+    version: string;
+    kind: 'dependency' | 'peerDependency';
   }
   export interface CodegenIssue {
     code: string;
@@ -4475,6 +4522,8 @@ export type PipelineInput = PipelineInputSchema.PipelineInput;
 
 // Source: pipeline.output.json
 export namespace PipelineOutputSchema {
+  export type ContentHash = string;
+
   /**
    * Aggregated pipeline response with partial results and explicit failure step metadata.
    */
@@ -4545,6 +4594,11 @@ export namespace PipelineOutputSchema {
     code?: {
       framework: 'react' | 'vue' | 'html';
       styling: 'inline' | 'tokens' | 'tailwind';
+      artifact: GeneratedArtifact;
+      /**
+       * @deprecated
+       * Deprecated v0 compatibility alias for artifact.files[0].contents.
+       */
       output: string;
     };
     saved?: {
@@ -4592,6 +4646,29 @@ export namespace PipelineOutputSchema {
     severity?: string;
     nodeId?: string;
     component?: string;
+  }
+  /**
+   * Primary code-generation payload carried without flattening.
+   */
+  export interface GeneratedArtifact {
+    schemaVersion: '1.0.0';
+    framework: 'react' | 'vue' | 'html';
+    /**
+     * @minItems 1
+     */
+    files: [GeneratedArtifactFile, ...GeneratedArtifactFile[]];
+    dependencies: GeneratedDependency[];
+    contentHash: ContentHash;
+  }
+  export interface GeneratedArtifactFile {
+    path: string;
+    contents: string;
+    contentHash: ContentHash;
+  }
+  export interface GeneratedDependency {
+    name: string;
+    version: string;
+    kind: 'dependency' | 'peerDependency';
   }
 }
 export type PipelineOutput = PipelineOutputSchema.PipelineOutput;

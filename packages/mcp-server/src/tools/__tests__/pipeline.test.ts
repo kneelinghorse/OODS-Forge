@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PipelineInput, PipelineOutput } from '../pipeline.js';
+import { buildGeneratedArtifact } from '../../codegen/artifact-envelope.js';
 
 // ── Mock dependent tool handlers ────────────────────────────────────
 
@@ -71,10 +72,17 @@ function renderOk() {
 }
 
 function codegenOk() {
+  const code = 'export function Page() { return <div />; }';
   return {
     status: 'ok',
     framework: 'react',
-    code: 'export function Page() { return <div />; }',
+    artifact: buildGeneratedArtifact({
+      framework: 'react',
+      code,
+      fileExtension: '.tsx',
+      imports: [],
+    }),
+    code,
     fileExtension: '.tsx',
     imports: ['react'],
     warnings: [],
@@ -130,6 +138,7 @@ describe('pipeline orchestration', () => {
       expect(result.code!.framework).toBe('react');
       expect(result.code!.styling).toBe('tailwind');
       expect(result.code!.output).toBeTruthy();
+      expect(result.code!.artifact.files[0]!.contents).toBe(result.code!.output);
     });
 
     it('includes pipeline metadata with steps and duration', async () => {

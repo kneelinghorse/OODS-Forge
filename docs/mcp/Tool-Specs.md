@@ -490,7 +490,7 @@ Example input (explicit full detail):
 - **Input schema**: `packages/mcp-server/src/schemas/code.generate.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/code.generate.output.json`
 - **Policy**: designer, maintainer | read-only | timeout 30s | rate 60/min | concurrency 4
-- **Purpose**: Generate framework-specific code from a validated UiSchema. Supports React/TSX, Vue SFC, and HTML output.
+- **Purpose**: Generate a versioned, content-addressed file-set artifact from a validated UiSchema. Supports React/TSX, Vue SFC, and HTML output.
 
 Example input:
 ```json
@@ -527,9 +527,27 @@ Example output:
 {
   "status": "ok",
   "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\n...",
+        "contentHash": "sha256:<64 lowercase hexadecimal characters>"
+      }
+    ],
+    "dependencies": [
+      { "name": "@oods/component-styles", "version": "0.1.0", "kind": "dependency" },
+      { "name": "@oods/components-react", "version": "0.1.0", "kind": "dependency" },
+      { "name": "react", "version": "19.2.0", "kind": "peerDependency" },
+      { "name": "react-dom", "version": "19.2.0", "kind": "peerDependency" }
+    ],
+    "contentHash": "sha256:<64 lowercase hexadecimal characters>"
+  },
   "code": "import React from 'react';\n...",
   "fileExtension": ".tsx",
-  "imports": ["react"],
+  "imports": ["react", "@oods/components-react", "@oods/component-styles/css"],
   "warnings": [],
   "meta": { "nodeCount": 3, "componentCount": 3, "unknownComponents": [] }
 }
@@ -542,19 +560,25 @@ Input fields:
 | `schemaRef` | string | No | Cached schema reference from `design.compose` |
 | `framework` | `"react"` \| `"vue"` \| `"html"` | Yes | Target framework |
 | `options.typescript` | boolean | No (default `true`) | Emit TypeScript types (React/Vue). Ignored for HTML. |
-| `options.styling` | `"inline"` \| `"tokens"` | No (default `"tokens"`) | Styling strategy: inline style objects or design-token CSS variables |
+| `options.styling` | `"inline"` \| `"tokens"` \| `"tailwind"` | No (default `"tokens"`) | Styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes |
 
 Output fields:
 | Field | Type | Description |
 |-------|------|-------------|
 | `status` | `"ok"` \| `"error"` | Generation result |
 | `framework` | string | The framework used |
-| `code` | string | Generated source code |
-| `fileExtension` | string | Suggested extension (`.tsx`, `.vue`, `.html`) |
-| `imports` | string[] | Required import statements |
+| `artifact` | object | Primary success payload: schemaVersion, deterministically ordered files with hashes, exact dependencies with kinds, and artifact contentHash |
+| `code` | string | Deprecated v0 alias for `artifact.files[0].contents`; retained through artifact schema v1 |
+| `fileExtension` | string | Deprecated v0 alias for the primary file extension; retained through artifact schema v1 |
+| `imports` | string[] | Deprecated v0 package-specifier alias; retained through artifact schema v1 |
 | `warnings` | codegenIssue[] | Non-fatal issues |
 | `errors` | codegenIssue[] | Fatal issues (code will be empty) |
 | `meta` | object | nodeCount, componentCount, unknownComponents |
+
+`artifact` is required on successful responses and absent on errors. Dependency entries use exact
+semantic versions—never workspace aliases, ranges, repository paths, or inferred package names.
+`pipeline.code.artifact` carries the same envelope without flattening it; `pipeline.code.output`
+remains the deprecated v0 source alias for compatibility.
 
 ---
 

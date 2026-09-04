@@ -110,7 +110,7 @@
     "code": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["framework", "styling", "output"],
+      "required": ["framework", "styling", "artifact", "output"],
       "properties": {
         "framework": {
           "type": "string",
@@ -120,8 +120,14 @@
           "type": "string",
           "enum": ["inline", "tokens", "tailwind"]
         },
+        "artifact": {
+          "$ref": "#/$defs/generatedArtifact",
+          "description": "Primary code-generation payload carried without flattening."
+        },
         "output": {
-          "type": "string"
+          "type": "string",
+          "deprecated": true,
+          "description": "Deprecated v0 compatibility alias for artifact.files[0].contents."
         }
       }
     },
@@ -211,6 +217,62 @@
     }
   },
   "$defs": {
+    "generatedArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "framework", "files", "dependencies", "contentHash"],
+      "properties": {
+        "schemaVersion": { "const": "1.0.0" },
+        "framework": {
+          "type": "string",
+          "enum": ["react", "vue", "html"]
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/generatedArtifactFile" }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/generatedDependency" }
+        },
+        "contentHash": { "$ref": "#/$defs/contentHash" }
+      }
+    },
+    "generatedArtifactFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "contents", "contentHash"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(?:/|$))[^/]+(?:/[^/]+)*$"
+        },
+        "contents": { "type": "string" },
+        "contentHash": { "$ref": "#/$defs/contentHash" }
+      }
+    },
+    "generatedDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "kind"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": {
+          "type": "string",
+          "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["dependency", "peerDependency"]
+        }
+      }
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "issue": {
       "type": "object",
       "required": ["code", "message"],

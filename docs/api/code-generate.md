@@ -1,6 +1,6 @@
 # code.generate
 
-> Generate framework-specific code (React, Vue, or HTML) from a validated UiSchema tree. Accepts schemaRef from design.compose. Supports TypeScript and token-based styling. Note: schemaRef expires after 30 minutes — use schema.save to persist.
+> Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. The success payload includes exact dependency versions and kinds; legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires.
 
 **Registration:** auto
 
@@ -22,9 +22,10 @@
 |-------|------|----------------|-------------|
 | `status` | `ok` \| `error` | Yes | Whether code generation succeeded. |
 | `framework` | `react` \| `vue` \| `html` | Yes | The target framework that was used. |
-| `code` | string | Yes | The generated source code. Empty string on error. |
-| `fileExtension` | string | Yes | Suggested file extension including the dot (e.g., '.tsx', '.vue', '.html'). |
-| `imports` | string[] | Yes | Import statements or package names required by the generated code. |
+| `artifact` | _ref_ | No | Primary versioned, content-addressed file-set payload. Required when status is ok. |
+| `code` | string | Yes | Deprecated v0 compatibility alias for artifact.files[0].contents. Empty string on error. |
+| `fileExtension` | string | Yes | Deprecated v0 compatibility alias for the primary generated file extension. |
+| `imports` | string[] | Yes | Deprecated v0 compatibility alias. Use artifact.dependencies for exact versions and dependency kinds. |
 | `warnings` | _ref_[] | Yes | Non-fatal issues encountered during generation. |
 | `errors` | _ref_[] | No | Fatal issues that prevented code generation. |
 | `meta` | object | No |  |
