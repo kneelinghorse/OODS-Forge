@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m02",
+  "bite": "B-06",
+  "reviewHead": "141be62ac02eb54dcd41284fb7de957a1abeeab1",
+  "carrier": {
+    "path": "packages/components-react/test/accessibility.spec.tsx",
+    "sha256": "a033f6df202438be79cccbba98037cf2ec407cb2c79d91ec88964fbe911a993c",
+    "selector": "B-06 preserves React field label and error associations"
+  },
+  "production": {
+    "path": "packages/components-react/src/fields.tsx",
+    "sha256": "2e02f2d9866f4fd5b7dcdbaab66f1c1671890b42f6155fdf4b2ad3ec83ed60a3"
+  },
+  "command": "pnpm --filter @oods/components-react exec vitest run test/accessibility.spec.tsx -t 'B-06 preserves React field label and error associations'",
+  "mutation": "Remove only the invalid Input control's validation-message ID from aria-describedby while retaining the visible label, visible error, and aria-invalid.",
+  "mutationPatchSha256": "cf7cb25b6767a617a074b1efeb0837c05b4093952818021191343ea7891a1121",
+  "sequence": {
+    "preMutation": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 0 },
+    "mutation": { "selected": 1, "failed": 1, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 1 },
+    "restoration": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 0 }
+  },
+  "restoreCommand": "pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-react exec vitest run test/accessibility.spec.tsx -t 'B-06 preserves React field label and error associations'",
+  "toolchain": { "node": "24.6.0", "pnpm": "9.12.2", "vitest": "3.2.4" },
+  "generatedArtifacts": [
+    { "path": "packages/components-react/dist/index.d.ts", "sha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-06/mutation.patch", "sha256": "cf7cb25b6767a617a074b1efeb0837c05b4093952818021191343ea7891a1121" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-06/pre-green.log", "sha256": "d97eb3778592fc43bf96bcc9df93663694affe57e976785b7f7f84231e0cd798" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-06/selected-red.log", "sha256": "93ded65fd7b612f31094401af3038b05bb8503b37542de488df62ebf5d0a2a93" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-06/restored-green.log", "sha256": "35bfbbc3a6f068217b910f958359161d281b36dd148e9c4e71f3f6cdb73d288b" }
+  ],
+  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-06/"
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m02",
+  "bite": "B-07",
+  "reviewHead": "141be62ac02eb54dcd41284fb7de957a1abeeab1",
+  "carrier": {
+    "path": "packages/components-react/test/interactions.spec.tsx",
+    "sha256": "121fbf12af6dfe55f54a7842ebdb0f025a6112b5b84170cf7ed56de595b1b056",
+    "selector": "B-07 moves React Tabs selection and focus with ArrowRight"
+  },
+  "production": {
+    "path": "packages/components-react/src/tabs.tsx",
+    "sha256": "363a5709593b4bea8b158506217fe5ef562f33f994eeaf0081fd881644e66e64"
+  },
+  "command": "pnpm --filter @oods/components-react exec vitest run test/interactions.spec.tsx -t 'B-07 moves React Tabs selection and focus with ArrowRight'",
+  "mutation": "Remove only the ArrowRight branch from the private Tabs key handler while retaining initial selection, pointer activation, and every other key branch.",
+  "mutationPatchSha256": "bc33e91d354858253a3b889614c2b8c648493f04d964d33af01b8ff40477bd54",
+  "sequence": {
+    "preMutation": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 0 },
+    "mutation": { "selected": 1, "failed": 1, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 1 },
+    "restoration": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 3, "exitCode": 0 }
+  },
+  "restoreCommand": "pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-react exec vitest run test/interactions.spec.tsx -t 'B-07 moves React Tabs selection and focus with ArrowRight'",
+  "toolchain": { "node": "24.6.0", "pnpm": "9.12.2", "vitest": "3.2.4" },
+  "generatedArtifacts": [
+    { "path": "packages/components-react/dist/index.d.ts", "sha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-07/mutation.patch", "sha256": "bc33e91d354858253a3b889614c2b8c648493f04d964d33af01b8ff40477bd54" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-07/pre-green.log", "sha256": "26c69ee33ceac1cc105772487604f846fece4c67fdba01d8d14f88a355063508" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-07/selected-red.log", "sha256": "20dd3e5c41e644155112172abede2960c5ac4692feb83119c0f6bd421ac6e422" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-07/restored-green.log", "sha256": "9965c213a3f662293c1b5be3c9974d48183b6f44b1b923077a1716e52fbff8cf" }
+  ],
+  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-07/"
+}

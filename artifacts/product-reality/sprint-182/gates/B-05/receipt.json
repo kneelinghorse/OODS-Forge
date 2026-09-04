@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m02",
+  "bite": "B-05",
+  "reviewHead": "141be62ac02eb54dcd41284fb7de957a1abeeab1",
+  "carrier": {
+    "path": "packages/components-react/test/package-contract.spec.ts",
+    "sha256": "d81fd69b4b54a22e4cafd2f18433d2bf8afb1de9086e1e794534657cec9a99a2",
+    "selector": "B-05 exports the exact React nucleus with public declarations"
+  },
+  "production": {
+    "path": "packages/components-react/src/index.ts",
+    "sha256": "39722a50e63692d9b4567f4d46c8074c22cfa8299d05e91d91e9fd2184369251"
+  },
+  "command": "pnpm --filter @oods/components-react exec vitest run test/package-contract.spec.ts -t 'B-05 exports the exact React nucleus with public declarations'",
+  "mutation": "Remove only the Text runtime re-export while retaining its implementation and the other 13 canonical exports.",
+  "mutationPatchSha256": "b2fac1c72e581dbff992bf89922dcb32322089bf7296db65dd9aa6da7d1e8107",
+  "sequence": {
+    "preMutation": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 2, "exitCode": 0 },
+    "mutation": { "selected": 1, "failed": 1, "selectedSkipped": 0, "runnerFiltered": 2, "exitCode": 1 },
+    "restoration": { "selected": 1, "failed": 0, "selectedSkipped": 0, "runnerFiltered": 2, "exitCode": 0 }
+  },
+  "restoreCommand": "pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-react exec vitest run test/package-contract.spec.ts -t 'B-05 exports the exact React nucleus with public declarations'",
+  "toolchain": { "node": "24.6.0", "pnpm": "9.12.2", "vitest": "3.2.4" },
+  "generatedArtifacts": [
+    { "path": "packages/components-react/dist/index.d.ts", "sha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-05/mutation.patch", "sha256": "b2fac1c72e581dbff992bf89922dcb32322089bf7296db65dd9aa6da7d1e8107" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-05/pre-green.log", "sha256": "6c7dac36001b1e8cd65778b352f3b0829b3f3935d782f7b9ebd22eb1f012ed90" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-05/selected-red.log", "sha256": "62f0b19048c3a4df2bde95c98445872941a6967a277f63df691739cf91a4891c" },
+    { "path": "artifacts/product-reality/sprint-182/gates/B-05/restored-green.log", "sha256": "bea659cd319422613a84c19d2f7b04ab94e165d519e4146c097a18d7aef69a5f" }
+  ],
+  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-05/"
+}
