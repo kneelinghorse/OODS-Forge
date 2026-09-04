@@ -74,7 +74,7 @@
     "generatedArtifact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["schemaVersion", "framework", "files", "dependencies", "contentHash"],
+      "required": ["schemaVersion", "framework", "files", "dependencies", "actions", "contentHash"],
       "properties": {
         "schemaVersion": {
           "const": "1.0.0",
@@ -94,6 +94,11 @@
           "type": "array",
           "items": { "$ref": "#/$defs/generatedDependency" },
           "description": "Exact install manifest in deterministic kind-and-name order."
+        },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/generatedArtifactAction" },
+          "description": "Required consumer-supplied domain actions in deterministic name order. An empty array means the generated UI needs no domain-action injection."
         },
         "contentHash": { "$ref": "#/$defs/contentHash" }
       }
@@ -128,6 +133,53 @@
           "type": "string",
           "enum": ["dependency", "peerDependency"]
         }
+      }
+    },
+    "generatedArtifactAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "parameters", "sources"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[$_\\p{ID_Start}][$_\\u200c\\u200d\\p{ID_Continue}]*$",
+          "description": "Consumer injection name shared by all compatible occurrences."
+        },
+        "parameters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/generatedArtifactActionParameter" },
+          "description": "Cross-framework parameter contract in canonical semantic call order."
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/generatedArtifactActionSource" },
+          "description": "Every schema occurrence that raises this action, in deterministic node-event-component order."
+        }
+      }
+    },
+    "generatedArtifactActionParameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Portable TypeScript-style parameter type shared across framework targets."
+        }
+      }
+    },
+    "generatedArtifactActionSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeId", "component", "event"],
+      "properties": {
+        "nodeId": { "type": "string", "minLength": 1 },
+        "component": { "type": "string", "minLength": 1 },
+        "event": { "type": "string", "minLength": 1 }
       }
     },
     "contentHash": {

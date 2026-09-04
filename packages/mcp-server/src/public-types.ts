@@ -34,6 +34,9 @@ export type {
   CodegenStyling,
   CodegenIssue,
   GeneratedArtifact,
+  GeneratedArtifactAction,
+  GeneratedArtifactActionParameter,
+  GeneratedArtifactActionSource,
   GeneratedArtifactFile,
   GeneratedDependency,
 } from "./tools/types.js";

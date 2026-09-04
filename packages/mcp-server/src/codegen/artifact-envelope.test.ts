@@ -1,11 +1,17 @@
 import { readFileSync } from 'node:fs';
 
 import { load } from 'js-yaml';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
+import { canonicalize, sha256 } from '@oods/artifacts';
 
-import type { GeneratedArtifact } from './types.js';
+import { getAjv } from '../lib/ajv.js';
+import codeGenerateOutputSchema from '../schemas/code.generate.output.json' assert { type: 'json' };
+import pipelineOutputSchema from '../schemas/pipeline.output.json' assert { type: 'json' };
+import type { GeneratedArtifact, GeneratedArtifactAction } from './types.js';
 import {
   buildGeneratedArtifact,
+  generatedActionContractDigest,
+  generatedActionSourceDigest,
   GENERATED_DEPENDENCY_CATALOG,
   validateGeneratedArtifact,
 } from './artifact-envelope.js';
@@ -29,7 +35,36 @@ const reactSource = [
   '',
 ].join('\n');
 
+const validateOutput = getAjv().compile(codeGenerateOutputSchema);
+
+function rehashArtifact(artifact: GeneratedArtifact): void {
+  for (const file of artifact.files) file.contentHash = `sha256:${sha256(file.contents)}`;
+  const { contentHash: _oldHash, ...payload } = artifact;
+  artifact.contentHash = `sha256:${sha256(canonicalize(payload))}`;
+}
+
+function sourceWithActionContract(action: GeneratedArtifactAction): string {
+  return [
+    "import React from 'react';",
+    'export interface GeneratedUIActions {',
+    `  /* @oods-domain-action ${action.name} ${generatedActionContractDigest(action)} */`,
+    ...action.sources.map((source) => (
+      `  /* @oods-domain-source ${generatedActionSourceDigest(action.name, source)} */`
+    )),
+    `  ${action.name}: (${action.parameters.map(({ name, type }) => `${name}: ${type}`).join(', ')}) => void;`,
+    '}',
+    'export const GeneratedUI = () => null;',
+    '',
+  ].join('\n');
+}
+
 describe('generated artifact envelope', () => {
+  it('exposes action sources as a nonempty public tuple', () => {
+    expectTypeOf<[]>().not.toExtend<GeneratedArtifactAction['sources']>();
+    expectTypeOf<[{ nodeId: string; component: string; event: string }]>()
+      .toExtend<GeneratedArtifactAction['sources']>();
+  });
+
   it('emits a versioned file set with an exact install manifest', () => {
     const artifact = buildGeneratedArtifact({
       framework: 'react',
@@ -48,6 +83,7 @@ describe('generated artifact envelope', () => {
         { name: 'react', version: '19.2.0', kind: 'peerDependency' },
         { name: 'react-dom', version: '19.2.0', kind: 'peerDependency' },
       ],
+      actions: [],
     });
     expect(artifact.files[0]!.contentHash).toMatch(/^sha256:[a-f0-9]{64}$/);
     expect(artifact.contentHash).toMatch(/^sha256:[a-f0-9]{64}$/);
@@ -102,6 +138,250 @@ describe('generated artifact envelope', () => {
     expect(first.files.map((file) => file.contentHash)).toEqual(second.files.map((file) => file.contentHash));
     expect(first.contentHash).toBe(second.contentHash);
     expect(first).not.toHaveProperty('generatedAt');
+  });
+
+  it('sorts and hashes required domain actions while retaining every compatible source', () => {
+    const editAction: GeneratedArtifactAction = {
+      name: 'handleEdit',
+      parameters: [
+        { name: 'payload', type: 'Record<string, unknown>' },
+        { name: 'event', type: 'Event' },
+      ],
+      sources: [
+        { nodeId: 'header', component: 'Stack', event: 'onEdit' },
+        { nodeId: 'card', component: 'Card', event: 'onEdit' },
+      ],
+    };
+    const deleteAction: GeneratedArtifactAction = {
+      name: 'handleDelete',
+      parameters: [{ name: 'id', type: 'string' }],
+      sources: [{ nodeId: 'card', component: 'Card', event: 'onDelete' }],
+    };
+
+    const first = buildGeneratedArtifact({
+      framework: 'html',
+      code: '<main>Actions</main>\n',
+      fileExtension: '.html',
+      imports: [],
+      actions: [editAction, deleteAction],
+    });
+    const second = buildGeneratedArtifact({
+      framework: 'html',
+      code: '<main>Actions</main>\n',
+      fileExtension: '.html',
+      imports: [],
+      actions: [deleteAction, {
+        ...editAction,
+        sources: [editAction.sources[1]!, editAction.sources[0]],
+      }],
+    });
+
+    expect(first.actions).toEqual([
+      deleteAction,
+      {
+        ...editAction,
+        sources: [
+          { nodeId: 'card', component: 'Card', event: 'onEdit' },
+          { nodeId: 'header', component: 'Stack', event: 'onEdit' },
+        ],
+      },
+    ]);
+    expect(first.actions[1]!.parameters.map(({ name }) => name)).toEqual(['payload', 'event']);
+    expect(first.actions[1]!.sources).toHaveLength(2);
+    expect(first.contentHash).toBe(second.contentHash);
+    expect(Buffer.from(JSON.stringify(first))).toEqual(Buffer.from(JSON.stringify(second)));
+    expect(validateGeneratedArtifact(first)).toEqual([]);
+
+    const deleteOnly = buildGeneratedArtifact({
+      framework: 'html',
+      code: '<main>Actions</main>\n',
+      fileExtension: '.html',
+      imports: [],
+      actions: [deleteAction],
+    });
+    const changedSource = buildGeneratedArtifact({
+      framework: 'html',
+      code: '<main>Actions</main>\n',
+      fileExtension: '.html',
+      imports: [],
+      actions: [{
+        ...deleteAction,
+        sources: [{ ...deleteAction.sources[0]!, nodeId: 'other-card' }],
+      }],
+    });
+    expect(changedSource.contentHash).not.toBe(deleteOnly.contentHash);
+  });
+
+  it('rejects malformed, duplicate, unordered, or hash-tampered domain actions', () => {
+    const artifact = buildGeneratedArtifact({
+      framework: 'html',
+      code: '<main>Actions</main>\n',
+      fileExtension: '.html',
+      imports: [],
+      actions: [
+        {
+          name: 'handleDelete',
+          parameters: [{ name: 'id', type: 'string' }],
+          sources: [{ nodeId: 'card', component: 'Card', event: 'onDelete' }],
+        },
+        {
+          name: 'handleEdit',
+          parameters: [{ name: 'payload', type: 'Record<string, unknown>' }],
+          sources: [{ nodeId: 'card', component: 'Card', event: 'onEdit' }],
+        },
+      ],
+    });
+
+    const unordered = structuredClone(artifact);
+    unordered.actions.reverse();
+    expect(validateGeneratedArtifact(unordered)).toContain(
+      'Generated actions are not ordered by name.',
+    );
+
+    const duplicate = structuredClone(artifact);
+    duplicate.actions.push(structuredClone(duplicate.actions[0]!));
+    expect(validateGeneratedArtifact(duplicate)).toContain(
+      "Generated action 'handleDelete' has more than one contract entry.",
+    );
+
+    const missingType = structuredClone(artifact);
+    missingType.actions[0]!.parameters[0]!.type = '';
+    expect(validateGeneratedArtifact(missingType)).toContain(
+      "Generated action 'handleDelete' parameter 'id' must declare a type.",
+    );
+
+    const duplicateParameter = structuredClone(artifact);
+    duplicateParameter.actions[0]!.parameters.push({ name: 'id', type: 'string' });
+    expect(validateGeneratedArtifact(duplicateParameter)).toContain(
+      "Generated action 'handleDelete' duplicates parameter 'id'.",
+    );
+
+    const tamperedSource = structuredClone(artifact);
+    tamperedSource.actions[0]!.sources[0]!.nodeId = 'mutated-card';
+    expect(validateGeneratedArtifact(tamperedSource)).toContain(
+      'Generated artifact has an invalid contentHash.',
+    );
+  });
+
+  it('rejects hash-consistent deletion or drift in typed action declarations and provenance', () => {
+    const action: GeneratedArtifactAction = {
+      name: 'handleEdit',
+      parameters: [{ name: 'id', type: 'string' }],
+      sources: [
+        { nodeId: 'card-a', component: 'Button', event: 'onActivate' },
+        { nodeId: 'card-b', component: 'Button', event: 'onActivate' },
+      ],
+    };
+    const artifact = buildGeneratedArtifact({
+      framework: 'react',
+      code: sourceWithActionContract(action),
+      fileExtension: '.tsx',
+      imports: ['react'],
+      actions: [action],
+    });
+    expect(validateGeneratedArtifact(artifact)).toEqual([]);
+
+    const deletedDeclaration = structuredClone(artifact);
+    deletedDeclaration.files[0]!.contents = deletedDeclaration.files[0]!.contents
+      .replace(/^\s*\/\* @oods-domain-(?:action|source).*\n/gm, '')
+      .replace(/^\s*handleEdit:.*\n/m, '');
+    rehashArtifact(deletedDeclaration);
+    expect(validateGeneratedArtifact(deletedDeclaration)).toContain(
+      "Artifact action 'handleEdit' is missing its generated typed declaration.",
+    );
+
+    const deletedMember = structuredClone(artifact);
+    deletedMember.files[0]!.contents = deletedMember.files[0]!.contents
+      .replace(/^\s*handleEdit:.*\n/m, '');
+    rehashArtifact(deletedMember);
+    expect(validateGeneratedArtifact(deletedMember)).toContain(
+      "Generated action 'handleEdit' is missing its exact typed member signature.",
+    );
+
+    const changedSource = structuredClone(artifact);
+    changedSource.actions[0]!.sources[0]!.nodeId = 'wrong-node';
+    rehashArtifact(changedSource);
+    expect(validateGeneratedArtifact(changedSource)).toEqual(expect.arrayContaining([
+      "Generated action marker 'handleEdit' does not match its artifact contract.",
+      expect.stringContaining('missing from generated declarations'),
+    ]));
+
+    const droppedSource = structuredClone(artifact);
+    droppedSource.actions[0]!.sources.pop();
+    rehashArtifact(droppedSource);
+    expect(validateGeneratedArtifact(droppedSource)).toEqual(expect.arrayContaining([
+      "Generated action marker 'handleEdit' does not match its artifact contract.",
+      expect.stringContaining('absent from artifact metadata'),
+    ]));
+  });
+
+  it('requires the closed domain-action contract on the code.generate wire', () => {
+    const artifact = buildGeneratedArtifact({
+      framework: 'html',
+      code: '<main>Actions</main>\n',
+      fileExtension: '.html',
+      imports: [],
+      actions: [{
+        name: 'handleDelete',
+        parameters: [{ name: 'id', type: 'string' }],
+        sources: [{ nodeId: 'card', component: 'Card', event: 'onDelete' }],
+      }],
+    });
+    const output = {
+      status: 'ok',
+      framework: 'html',
+      artifact,
+      code: artifact.files[0]!.contents,
+      fileExtension: '.html',
+      imports: [],
+      warnings: [],
+    };
+
+    expect(validateOutput(output), JSON.stringify(validateOutput.errors ?? [])).toBe(true);
+
+    const missingActions = structuredClone(output);
+    delete (missingActions.artifact as Partial<GeneratedArtifact>).actions;
+    expect(validateGeneratedArtifact(missingActions.artifact as GeneratedArtifact)).toContain(
+      'Generated artifact must declare its required domain actions.',
+    );
+    expect(validateOutput(missingActions)).toBe(false);
+    expect(validateOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ keyword: 'required', params: { missingProperty: 'actions' } }),
+    ]));
+
+    const openSource = structuredClone(output) as typeof output & {
+      artifact: GeneratedArtifact & { actions: Array<GeneratedArtifactAction & { invented?: boolean }> };
+    };
+    openSource.artifact.actions[0]!.invented = true;
+    expect(validateOutput(openSource)).toBe(false);
+    expect(validateOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ keyword: 'additionalProperties' }),
+    ]));
+
+    const invalidActionIdentifier = structuredClone(output);
+    invalidActionIdentifier.artifact.actions[0]!.name = 'not-an-identifier';
+    expect(validateOutput(invalidActionIdentifier)).toBe(false);
+    expect(validateOutput.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ keyword: 'pattern' }),
+    ]));
+  });
+
+  it('keeps code.generate and pipeline on the same required action schema', () => {
+    const codeDefinitions = codeGenerateOutputSchema.$defs;
+    const pipelineDefinitions = pipelineOutputSchema.$defs;
+
+    expect(codeDefinitions.generatedArtifact.required).toContain('actions');
+    expect(pipelineDefinitions.generatedArtifact.required).toContain('actions');
+    expect(pipelineDefinitions.generatedArtifact.properties.actions).toEqual(
+      codeDefinitions.generatedArtifact.properties.actions,
+    );
+    for (const definition of [
+      'generatedArtifactAction',
+      'generatedArtifactActionParameter',
+      'generatedArtifactActionSource',
+    ] as const) {
+      expect(pipelineDefinitions[definition]).toEqual(codeDefinitions[definition]);
+    }
   });
 
   it('rejects versionless, workspace-aliased, unordered, or undeclared dependency mutations', () => {

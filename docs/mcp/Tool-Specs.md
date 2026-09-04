@@ -490,7 +490,7 @@ Example input (explicit full detail):
 - **Input schema**: `packages/mcp-server/src/schemas/code.generate.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/code.generate.output.json`
 - **Policy**: designer, maintainer | read-only | timeout 30s | rate 60/min | concurrency 4
-- **Purpose**: Generate a versioned, content-addressed file-set artifact from a validated UiSchema. Supports React/TSX, Vue SFC, and HTML output.
+- **Purpose**: Generate a versioned, content-addressed file-set artifact from a validated UiSchema. Supports React/TSX, Vue SFC, and HTML output. `artifact.actions` declares every required consumer-supplied domain action; compatible occurrences share one action entry and retain all raising schema sources.
 
 Example input:
 ```json
@@ -543,6 +543,13 @@ Example output:
       { "name": "react", "version": "19.2.0", "kind": "peerDependency" },
       { "name": "react-dom", "version": "19.2.0", "kind": "peerDependency" }
     ],
+    "actions": [
+      {
+        "name": "handleRowActivate",
+        "parameters": [{ "name": "rowId", "type": "string" }],
+        "sources": [{ "nodeId": "subscriptions", "component": "Table", "event": "onRowActivate" }]
+      }
+    ],
     "contentHash": "sha256:<64 lowercase hexadecimal characters>"
   },
   "code": "import React from 'react';\n...",
@@ -567,7 +574,7 @@ Output fields:
 |-------|------|-------------|
 | `status` | `"ok"` \| `"error"` | Generation result |
 | `framework` | string | The framework used |
-| `artifact` | object | Primary success payload: schemaVersion, deterministically ordered files with hashes, exact dependencies with kinds, and artifact contentHash |
+| `artifact` | object | Primary success payload: schemaVersion, deterministically ordered files with hashes, exact dependencies with kinds, required domain actions with raising sources, and artifact contentHash |
 | `code` | string | Deprecated v0 alias for `artifact.files[0].contents`; retained through artifact schema v1 |
 | `fileExtension` | string | Deprecated v0 alias for the primary file extension; retained through artifact schema v1 |
 | `imports` | string[] | Deprecated v0 package-specifier alias; retained through artifact schema v1 |
@@ -575,10 +582,13 @@ Output fields:
 | `errors` | codegenIssue[] | Fatal issues (code will be empty) |
 | `meta` | object | nodeCount, componentCount, unknownComponents |
 
-`artifact` is required on successful responses and absent on errors. Dependency entries use exact
-semantic versions—never workspace aliases, ranges, repository paths, or inferred package names.
+`artifact` is required on successful responses and absent on errors. Its content hash covers the
+files, dependencies, and action contract. Dependency entries use exact semantic versions—never
+workspace aliases, ranges, repository paths, or inferred package names.
 `pipeline.code.artifact` carries the same envelope without flattening it; `pipeline.code.output`
 remains the deprecated v0 source alias for compatibility.
+The binding classification and framework-specific injection rules are defined in
+[Typed action protocol](./Typed-Action-Protocol.md).
 
 ---
 

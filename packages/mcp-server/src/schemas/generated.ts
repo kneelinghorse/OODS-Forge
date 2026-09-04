@@ -1284,6 +1284,10 @@ export namespace CodeGenerateOutputSchema {
      * Exact install manifest in deterministic kind-and-name order.
      */
     dependencies: GeneratedDependency[];
+    /**
+     * Required consumer-supplied domain actions in deterministic name order. An empty array means the generated UI needs no domain-action injection.
+     */
+    actions: GeneratedArtifactAction[];
     contentHash: ContentHash;
   }
   export interface GeneratedArtifactFile {
@@ -1301,6 +1305,34 @@ export namespace CodeGenerateOutputSchema {
      */
     version: string;
     kind: 'dependency' | 'peerDependency';
+  }
+  export interface GeneratedArtifactAction {
+    /**
+     * Consumer injection name shared by all compatible occurrences.
+     */
+    name: string;
+    /**
+     * Cross-framework parameter contract in canonical semantic call order.
+     */
+    parameters: GeneratedArtifactActionParameter[];
+    /**
+     * Every schema occurrence that raises this action, in deterministic node-event-component order.
+     *
+     * @minItems 1
+     */
+    sources: [GeneratedArtifactActionSource, ...GeneratedArtifactActionSource[]];
+  }
+  export interface GeneratedArtifactActionParameter {
+    name: string;
+    /**
+     * Portable TypeScript-style parameter type shared across framework targets.
+     */
+    type: string;
+  }
+  export interface GeneratedArtifactActionSource {
+    nodeId: string;
+    component: string;
+    event: string;
   }
   export interface CodegenIssue {
     code: string;
@@ -4658,6 +4690,10 @@ export namespace PipelineOutputSchema {
      */
     files: [GeneratedArtifactFile, ...GeneratedArtifactFile[]];
     dependencies: GeneratedDependency[];
+    /**
+     * Required consumer-supplied domain actions in deterministic name order. An empty array means the generated UI needs no domain-action injection.
+     */
+    actions: GeneratedArtifactAction[];
     contentHash: ContentHash;
   }
   export interface GeneratedArtifactFile {
@@ -4669,6 +4705,34 @@ export namespace PipelineOutputSchema {
     name: string;
     version: string;
     kind: 'dependency' | 'peerDependency';
+  }
+  export interface GeneratedArtifactAction {
+    /**
+     * Consumer injection name shared by all compatible occurrences.
+     */
+    name: string;
+    /**
+     * Cross-framework parameter contract in canonical semantic call order.
+     */
+    parameters: GeneratedArtifactActionParameter[];
+    /**
+     * Every schema occurrence that raises this action, in deterministic node-event-component order.
+     *
+     * @minItems 1
+     */
+    sources: [GeneratedArtifactActionSource, ...GeneratedArtifactActionSource[]];
+  }
+  export interface GeneratedArtifactActionParameter {
+    name: string;
+    /**
+     * Portable TypeScript-style parameter type shared across framework targets.
+     */
+    type: string;
+  }
+  export interface GeneratedArtifactActionSource {
+    nodeId: string;
+    component: string;
+    event: string;
   }
 }
 export type PipelineOutput = PipelineOutputSchema.PipelineOutput;

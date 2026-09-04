@@ -3,6 +3,7 @@ import { canonicalize, sha256 } from '@oods/artifacts';
 import type {
   CodegenFramework,
   GeneratedArtifact,
+  GeneratedArtifactAction,
   GeneratedArtifactFile,
   GeneratedDependency,
 } from './types.js';
@@ -51,6 +52,7 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
 const EXACT_VERSION = /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const PACKAGE_NAME = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
 const CONTENT_HASH = /^sha256:[a-f0-9]{64}$/;
+const JAVASCRIPT_IDENTIFIER = /^[$_\p{ID_Start}][$_\u200c\u200d\p{ID_Continue}]*$/u;
 
 function compareCodePoint(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0;
@@ -97,6 +99,48 @@ function collectBareImportSpecifiers(files: readonly GeneratedArtifactFile[]): s
 
 function canonicalPayload(artifact: Omit<GeneratedArtifact, 'contentHash'>): string {
   return canonicalize(artifact);
+}
+
+function actionKey(action: GeneratedArtifactAction): string {
+  return action.name;
+}
+
+function actionSourceKey(source: GeneratedArtifactAction['sources'][number]): string {
+  return [source.nodeId, source.event, source.component].join('\u0000');
+}
+
+function normalizedAction(action: GeneratedArtifactAction): {
+  name: string;
+  parameters: GeneratedArtifactAction['parameters'];
+  sources: GeneratedArtifactAction['sources'][number][];
+} {
+  return {
+    name: action.name,
+    parameters: action.parameters.map((parameter) => ({ ...parameter })),
+    sources: action.sources
+      .map((source) => ({ ...source }))
+      .sort((left, right) => compareCodePoint(actionSourceKey(left), actionSourceKey(right))),
+  };
+}
+
+/** Hash-bound source marker used to couple emitted declarations to artifact metadata. */
+export function generatedActionContractDigest(action: GeneratedArtifactAction): string {
+  return contentHash(canonicalize(normalizedAction(action)));
+}
+
+/** Hash-bound provenance marker for one schema declaration of a domain action. */
+export function generatedActionSourceDigest(
+  actionName: string,
+  source: GeneratedArtifactAction['sources'][number],
+): string {
+  return contentHash(canonicalize({ actionName, source }));
+}
+
+export function generatedActionTypeSignature(action: GeneratedArtifactAction): string {
+  const parameters = action.parameters
+    .map((parameter) => `${parameter.name}: ${parameter.type}`)
+    .join(', ');
+  return `${action.name}: (${parameters}) => void`;
 }
 
 function artifactPath(framework: CodegenFramework, fileExtension: string): string {
@@ -223,6 +267,168 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
     }
   }
 
+  const actionNames = new Set<string>();
+  let previousActionKey = '';
+  if (!Array.isArray(artifact.actions)) {
+    issues.push('Generated artifact must declare its required domain actions.');
+  }
+  for (const action of artifact.actions ?? []) {
+    const key = actionKey(action);
+    if (action.name.length === 0) {
+      issues.push('Generated action name must not be empty.');
+    } else if (!JAVASCRIPT_IDENTIFIER.test(action.name)) {
+      issues.push(`Generated action '${action.name}' is not a safe JavaScript identifier.`);
+    }
+    if (actionNames.has(action.name)) {
+      issues.push(`Generated action '${action.name}' has more than one contract entry.`);
+    }
+    actionNames.add(action.name);
+    if (previousActionKey && compareCodePoint(previousActionKey, key) > 0) {
+      issues.push('Generated actions are not ordered by name.');
+    }
+    previousActionKey = key;
+
+    const parameterNames = new Set<string>();
+    for (const parameter of action.parameters) {
+      if (parameter.name.length === 0) {
+        issues.push(`Generated action '${action.name}' has an unnamed parameter.`);
+      }
+      if (parameter.type.length === 0) {
+        issues.push(
+          `Generated action '${action.name}' parameter '${parameter.name}' must declare a type.`,
+        );
+      }
+      if (parameterNames.has(parameter.name)) {
+        issues.push(
+          `Generated action '${action.name}' duplicates parameter '${parameter.name}'.`,
+        );
+      }
+      parameterNames.add(parameter.name);
+    }
+
+    if (action.sources.length === 0) {
+      issues.push(`Generated action '${action.name}' must name at least one schema declaration source.`);
+    }
+    const sourceKeys = new Set<string>();
+    let previousSourceKey = '';
+    for (const source of action.sources) {
+      const sourceKey = actionSourceKey(source);
+      if (source.nodeId.length === 0) {
+        issues.push(`Generated action '${action.name}' must name each declaring node.`);
+      }
+      if (source.component.length === 0) {
+        issues.push(`Generated action '${action.name}' must name each declaring component.`);
+      }
+      if (source.event.length === 0) {
+        issues.push(`Generated action '${action.name}' must name each declared event.`);
+      }
+      if (sourceKeys.has(sourceKey)) {
+        issues.push(
+          `Generated action '${action.name}' duplicates the ${source.nodeId}/${source.event} source.`,
+        );
+      }
+      sourceKeys.add(sourceKey);
+      if (previousSourceKey && compareCodePoint(previousSourceKey, sourceKey) > 0) {
+        issues.push(
+          `Generated action '${action.name}' sources are not ordered by node, event, and component.`,
+        );
+      }
+      previousSourceKey = sourceKey;
+    }
+  }
+
+  // Emitters place hash-bound markers beside generated action declarations and
+  // behavior handlers. They make two otherwise source-only regressions
+  // mechanically visible: deleting an action from metadata while its binding
+  // remains, and restoring the former empty/TODO handler path.
+  const declaredActionMarkers = new Map<string, { digest: string; contents: string }>();
+  const declaredSourceMarkers = new Set<string>();
+  const domainBindingMarkers = new Set<string>();
+  for (const file of artifact.files) {
+    const actionMarkerPattern = /\/\* @oods-domain-action ([$_\p{ID_Start}][$_\u200c\u200d\p{ID_Continue}]*) (sha256:[a-f0-9]{64}) \*\//gu;
+    for (const match of file.contents.matchAll(actionMarkerPattern)) {
+      const name = match[1]!;
+      const digest = match[2]!;
+      if (declaredActionMarkers.has(name)) {
+        issues.push(`Generated action marker '${name}' is duplicated.`);
+      }
+      declaredActionMarkers.set(name, { digest, contents: file.contents });
+    }
+
+    const sourceMarkerPattern = /\/\* @oods-domain-source (sha256:[a-f0-9]{64}) \*\//g;
+    for (const match of file.contents.matchAll(sourceMarkerPattern)) {
+      const digest = match[1]!;
+      if (declaredSourceMarkers.has(digest)) {
+        issues.push(`Generated domain-source marker '${digest}' is duplicated.`);
+      }
+      declaredSourceMarkers.add(digest);
+    }
+
+    const bindingMarkerPattern = /\/\* @oods-(local|domain)-binding ([$_\p{ID_Start}][$_\u200c\u200d\p{ID_Continue}]*) \*\//gu;
+    for (const match of file.contents.matchAll(bindingMarkerPattern)) {
+      const kind = match[1]!;
+      const name = match[2]!;
+      if (kind === 'domain') domainBindingMarkers.add(name);
+      const remainder = file.contents.slice((match.index ?? 0) + match[0].length);
+      const line = remainder.split('\n', 1)[0] ?? '';
+      const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const handler = line.match(new RegExp(
+        `^\\s*const\\s+${escapedName}\\s*=.*?=>\\s*\\{(.*?)\\};\\s*$`,
+      ));
+      if (!handler) {
+        issues.push(`Generated binding handler '${name}' is not a canonical executable arrow function.`);
+        continue;
+      }
+      const body = handler[1]?.trim() ?? '';
+      if (!body || /\bTODO\b/i.test(body)) {
+        issues.push(`Generated binding handler '${name}' must contain executable behavior.`);
+      }
+    }
+  }
+  // HTML has no runnable binding surface. React and Vue must bind their
+  // metadata to generated typed declarations and schema-source provenance.
+  if (artifact.framework !== 'html') {
+    for (const [name] of declaredActionMarkers) {
+      if (!actionNames.has(name)) {
+        issues.push(`Generated action marker '${name}' is missing from artifact actions.`);
+      }
+    }
+    for (const action of artifact.actions ?? []) {
+      const marker = declaredActionMarkers.get(action.name);
+      if (!marker) {
+        issues.push(`Artifact action '${action.name}' is missing its generated typed declaration.`);
+        continue;
+      }
+      if (marker.digest !== generatedActionContractDigest(action)) {
+        issues.push(`Generated action marker '${action.name}' does not match its artifact contract.`);
+      }
+      if (!marker.contents.includes(generatedActionTypeSignature(action))) {
+        issues.push(`Generated action '${action.name}' is missing its exact typed member signature.`);
+      }
+    }
+    for (const name of domainBindingMarkers) {
+      if (!actionNames.has(name)) {
+        issues.push(`Generated domain binding '${name}' is missing from artifact actions.`);
+      }
+    }
+
+    const expectedSourceMarkers = new Set(
+      (artifact.actions ?? []).flatMap((action) => action.sources.map(
+        (source) => generatedActionSourceDigest(action.name, source),
+      )),
+    );
+    for (const digest of declaredSourceMarkers) {
+      if (!expectedSourceMarkers.has(digest)) {
+        issues.push(`Generated domain-source marker '${digest}' is absent from artifact metadata.`);
+      }
+    }
+    for (const digest of expectedSourceMarkers) {
+      if (!declaredSourceMarkers.has(digest)) {
+        issues.push(`Artifact domain source '${digest}' is missing from generated declarations.`);
+      }
+    }
+  }
+
   const { contentHash: _contentHash, ...payload } = artifact;
   const expectedArtifactHash = contentHash(canonicalPayload(payload));
   if (!CONTENT_HASH.test(artifact.contentHash) || artifact.contentHash !== expectedArtifactHash) {
@@ -235,6 +441,7 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
 type BuildGeneratedArtifactInput = {
   framework: CodegenFramework;
   imports: readonly string[];
+  actions?: readonly GeneratedArtifactAction[];
 } & (
   | { code: string; fileExtension: string; files?: never }
   | { files: ReadonlyArray<{ path: string; contents: string }>; code?: never; fileExtension?: never }
@@ -252,11 +459,24 @@ export function buildGeneratedArtifact(input: BuildGeneratedArtifactInput): Gene
     }))
     .sort((left, right) => compareCodePoint(left.path, right.path));
   const dependencies = resolveDependencies(input.framework, input.imports);
+  const actions: GeneratedArtifactAction[] = (input.actions ?? [])
+    .map((action): GeneratedArtifactAction => {
+      const sources = action.sources
+        .map((source) => ({ ...source }))
+        .sort((left, right) => compareCodePoint(actionSourceKey(left), actionSourceKey(right)));
+      return {
+        name: action.name,
+        parameters: action.parameters.map((parameter) => ({ ...parameter })),
+        sources: [sources[0]!, ...sources.slice(1)],
+      };
+    })
+    .sort((left, right) => compareCodePoint(actionKey(left), actionKey(right)));
   const payload: Omit<GeneratedArtifact, 'contentHash'> = {
     schemaVersion: GENERATED_ARTIFACT_SCHEMA_VERSION,
     framework: input.framework,
     files,
     dependencies,
+    actions,
   };
   const artifact: GeneratedArtifact = {
     ...payload,

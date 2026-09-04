@@ -472,6 +472,13 @@ function semanticCompileVue(code, typescript) {
   try {
     const sourcePath = path.join(compileRoot, 'GeneratedUI.vue');
     const configPath = path.join(compileRoot, 'tsconfig.json');
+    const localNodeModules = path.join(compileRoot, 'node_modules');
+    fs.mkdirSync(localNodeModules);
+    fs.symlinkSync(
+      path.dirname(createRequire(path.join(vueToolRoot, 'package.json')).resolve('vue/package.json')),
+      path.join(localNodeModules, 'vue'),
+      'junction',
+    );
     fs.writeFileSync(sourcePath, code);
     fs.writeFileSync(configPath, canonicalJson({
       compilerOptions: {
@@ -734,8 +741,18 @@ const root = document.getElementById('app');
 if (!root) throw new Error('Missing #app hydration root.');
 function HydrationProbe() {
   React.useEffect(() => { window.__OODS_HYDRATED__ = true; }, []);
-  return <GeneratedUI />;
+  const primaryAction = () => { window.__OODS_DOMAIN_ACTIONS__.primary += 1; };
+  const secondaryAction = () => { window.__OODS_DOMAIN_ACTIONS__.secondary += 1; };
+  const rowAction = (rowId: string) => {
+    window.__OODS_DOMAIN_ACTIONS__.rowIds.push(rowId);
+  };
+  return <GeneratedUI actions={{
+    handleActivate: primaryAction,
+    handleSecondaryActivate: secondaryAction,
+    handleRowActivate: rowAction,
+  }} />;
 }
+window.__OODS_DOMAIN_ACTIONS__ = { primary: 0, secondary: 0, rowIds: [] };
 hydrateRoot(root, <HydrationProbe />);
 `.trimStart(),
     'src/ssr.tsx': `
@@ -743,11 +760,15 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { GeneratedUI } from './GeneratedUI.js';
 
-const html = renderToString(<GeneratedUI />);
+const html = renderToString(<GeneratedUI actions={{
+  handleActivate: () => undefined,
+  handleSecondaryActivate: () => undefined,
+  handleRowActivate: () => undefined,
+}} />);
 process.stdout.write(JSON.stringify({ html }));
 `.trimStart(),
     'src/showcase.css': SHOWCASE_CSS,
-    'src/window.d.ts': `interface Window { __OODS_HYDRATED__?: boolean; }\n`,
+    'src/window.d.ts': `interface Window {\n  __OODS_HYDRATED__?: boolean;\n  __OODS_DOMAIN_ACTIONS__: { primary: number; secondary: number; rowIds: string[] };\n}\n`,
     'index.html': `<!doctype html><html data-brand="A" data-theme="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>React foundation-v1 showcase</title></head><body><div id="app"><!--SSR_MARKUP--></div><script type="module" src="/src/main.tsx"></script></body></html>\n`,
     'tsconfig.json': canonicalJson({
       compilerOptions: {
@@ -786,7 +807,15 @@ import GeneratedUI from './GeneratedUI.vue';
 
 document.documentElement.dataset.brand = 'A';
 document.documentElement.dataset.theme = 'light';
-createSSRApp(GeneratedUI).mount('#app');
+window.__OODS_DOMAIN_ACTIONS__ = { primary: 0, secondary: 0, rowIds: [] };
+const primaryAction = () => { window.__OODS_DOMAIN_ACTIONS__.primary += 1; };
+const secondaryAction = () => { window.__OODS_DOMAIN_ACTIONS__.secondary += 1; };
+const rowAction = (rowId: string) => { window.__OODS_DOMAIN_ACTIONS__.rowIds.push(rowId); };
+createSSRApp(GeneratedUI, { actions: {
+  handleActivate: primaryAction,
+  handleSecondaryActivate: secondaryAction,
+  handleRowActivate: rowAction,
+} }).mount('#app');
 queueMicrotask(() => { window.__OODS_HYDRATED__ = true; });
 `.trimStart(),
     'src/ssr.ts': `
@@ -795,13 +824,17 @@ import { createSSRApp } from 'vue';
 import GeneratedUI from './GeneratedUI.vue';
 
 async function main() {
-  const html = await renderToString(createSSRApp(GeneratedUI));
+  const html = await renderToString(createSSRApp(GeneratedUI, { actions: {
+    handleActivate: () => undefined,
+    handleSecondaryActivate: () => undefined,
+    handleRowActivate: () => undefined,
+  } }));
   process.stdout.write(JSON.stringify({ html }));
 }
 void main();
 `.trimStart(),
     'src/showcase.css': SHOWCASE_CSS,
-    'src/window.d.ts': `interface Window { __OODS_HYDRATED__?: boolean; }\ndeclare module '*.vue';\n`,
+    'src/window.d.ts': `interface Window {\n  __OODS_HYDRATED__?: boolean;\n  __OODS_DOMAIN_ACTIONS__: { primary: number; secondary: number; rowIds: string[] };\n}\ndeclare module '*.vue';\n`,
     'index.html': `<!doctype html><html data-brand="A" data-theme="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vue foundation-v1 showcase</title></head><body><div id="app"><!--SSR_MARKUP--></div><script type="module" src="/src/main.ts"></script></body></html>\n`,
     'tsconfig.json': canonicalJson({
       compilerOptions: {
@@ -1453,7 +1486,9 @@ async function browserProof({ framework, distRoot, screenshotRoot, generatedSour
       const secondaryButton = interactionPage.getByRole('button', { name: 'Cancel' });
       await secondaryButton.click();
       const email = interactionPage.getByLabel('Email');
+      const emailValidBeforeInput = await email.evaluate((element) => element.checkValidity());
       await email.fill('user@example.com');
+      const emailValidAfterInput = await email.evaluate((element) => element.checkValidity());
       const plan = interactionPage.getByLabel('Plan');
       const planInitialValue = await plan.inputValue();
       const planInitialLabel = await plan.locator('option:checked').textContent();
@@ -1488,8 +1523,12 @@ async function browserProof({ framework, distRoot, screenshotRoot, generatedSour
       await rowAction.click();
       const dismiss = interactionPage.getByRole('button', { name: 'Dismiss payment warning' });
       await dismiss.click();
+      const banner = interactionPage.locator('#showcase-banner');
+      await banner.waitFor({ state: 'detached' });
+      const bannerVisibleAfterDismiss = await banner.isVisible();
       const observed = await interactionPage.evaluate(() => ({
         counters: window.__OODS_INTERACTIONS__,
+        domainActions: window.__OODS_DOMAIN_ACTIONS__,
         emailValue: document.querySelector('#email')?.value ?? null,
         planValue: document.querySelector('#plan')?.value ?? null,
         renewalValue: document.querySelector('#renewal')?.value ?? null,
@@ -1501,11 +1540,25 @@ async function browserProof({ framework, distRoot, screenshotRoot, generatedSour
         || observed.counters.bannerDismiss !== 1) {
         throw new Error(`${framework} native interaction counters differ: ${JSON.stringify(observed.counters)}`);
       }
+      if (observed.domainActions.primary !== 1
+        || observed.domainActions.secondary !== 1
+        || JSON.stringify(observed.domainActions.rowIds) !== JSON.stringify(['sub-1'])) {
+        throw new Error(`${framework} injected domain actions differ: ${JSON.stringify(observed.domainActions)}`);
+      }
       if (observed.emailValue !== 'user@example.com'
         || observed.planValue !== 'basic'
         || observed.renewalValue !== '2026-10-15'
         || observed.notesValue !== 'Follow up tomorrow.') {
         throw new Error(`${framework} form interaction state did not persist: ${JSON.stringify(observed)}`);
+      }
+      if (emailValidBeforeInput || !emailValidAfterInput) {
+        throw new Error(
+          `${framework} native email validity did not transition invalid-to-valid: `
+          + `${JSON.stringify({ emailValidBeforeInput, emailValidAfterInput })}`,
+        );
+      }
+      if (bannerVisibleAfterDismiss) {
+        throw new Error(`${framework} Banner remained visible after its local dismiss action.`);
       }
       if (marketingBefore === marketingAfter || selectedTab !== 'true' || !securityTabDisabled) {
         throw new Error(`${framework} controlled interaction state did not change.`);
@@ -1636,6 +1689,8 @@ async function browserProof({ framework, distRoot, screenshotRoot, generatedSour
           buttonActivationCount: observed.counters.button,
           secondaryButtonActivationCount: observed.counters.secondaryButton,
           emailValue: observed.emailValue,
+          emailValidBeforeInput,
+          emailValidAfterInput,
           planInitialValue,
           planInitialLabel,
           planValue: observed.planValue,
@@ -1647,6 +1702,8 @@ async function browserProof({ framework, distRoot, screenshotRoot, generatedSour
           securityTabDisabled,
           tableRowActivationCount: observed.counters.tableRow,
           bannerDismissActivationCount: observed.counters.bannerDismiss,
+          bannerVisibleAfterDismiss,
+          domainActions: observed.domainActions,
         },
         browserRuntimeErrors: runtimeErrors,
         screenshots,

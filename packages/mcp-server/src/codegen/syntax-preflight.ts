@@ -1,6 +1,11 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenIssue } from './types.js';
-import { snakeToCamel } from './binding-utils.js';
+import {
+  analyzeBindings,
+  snakeToCamel,
+  type BindingAnalysis,
+  type BindingAnalysisIssue,
+} from './binding-utils.js';
 import { normalizeSchemaForFramework } from './framework-normalization.js';
 import { collectTailwindVariantDefinitions } from './tailwind-codegen-utils.js';
 
@@ -68,26 +73,36 @@ function generatedBindings(
   schema: UiSchema,
   framework: FrameworkTarget,
   styling: StylingTarget,
+  bindingAnalysis: BindingAnalysis,
 ): Set<string> {
-  const emittedSchema = normalizeSchemaForFramework(schema, framework);
-  const emittedNodes = nodesInDocumentOrder(emittedSchema.screens);
+  const emittedNodes = nodesInDocumentOrder(schema.screens);
   const names = new Set(emittedNodes.map((node) => node.component));
+  names.add('actions');
+  names.add('GeneratedUIActions');
+  names.add('GeneratedUIProps');
+  names.add('generatedProps');
+
+  for (const occurrence of bindingAnalysis.occurrences) {
+    if (occurrence.kind !== 'local') continue;
+    names.add(occurrence.localSymbols.state);
+    names.add(occurrence.localSymbols.setter);
+  }
 
   if (framework === 'react') {
     names.add('React');
   } else {
-    const hasFields = Object.keys(emittedSchema.objectSchema ?? {}).length > 0;
-    const formMode = hasFields && isVueFormSchema(emittedSchema.screens);
+    const hasFields = Object.keys(schema.objectSchema ?? {}).length > 0;
+    const formMode = hasFields && isVueFormSchema(schema.screens);
     if (formMode) names.add('ref');
     else if (hasFields) names.add('defineProps');
-    for (const derived of vueDerivedBindings(emittedSchema)) {
+    for (const derived of vueDerivedBindings(schema)) {
       names.add('computed');
       names.add(derived);
     }
   }
 
   if (styling === 'tailwind') {
-    const variants = collectTailwindVariantDefinitions(emittedSchema.screens);
+    const variants = collectTailwindVariantDefinitions(schema.screens);
     if (variants.size > 0) names.add('cva');
     for (const definition of variants.values()) names.add(definition.variableName);
   }
@@ -114,16 +129,33 @@ function issue(message: string, node?: UiElement): CodegenIssue {
   };
 }
 
+function bindingIssue(issueValue: BindingAnalysisIssue): CodegenIssue {
+  const firstOccurrence = issueValue.occurrences?.[0];
+  const nodeId = issueValue.nodeId ?? firstOccurrence?.nodeId;
+  const component = issueValue.component ?? firstOccurrence?.component;
+
+  return {
+    code: 'OODS-V007',
+    message: issueValue.message,
+    ...(nodeId !== undefined ? { nodeId } : {}),
+    ...(component !== undefined ? { component } : {}),
+  };
+}
+
 export function preflightCodegenSyntax(
   schema: UiSchema,
   framework: FrameworkTarget,
   styling: StylingTarget,
 ): CodegenIssue[] {
+  const emittedSchema = normalizeSchemaForFramework(schema, framework);
+  const bindingAnalysis = analyzeBindings(emittedSchema.screens);
   const issues: CodegenIssue[] = [];
   const fieldByIdentifier = new Map<string, string>();
-  const generated = generatedBindings(schema, framework, styling);
+  const generated = generatedBindings(emittedSchema, framework, styling, bindingAnalysis);
 
-  for (const field of Object.keys(schema.objectSchema ?? {}).sort(compareCodePoint)) {
+  issues.push(...bindingAnalysis.issues.map(bindingIssue));
+
+  for (const field of Object.keys(emittedSchema.objectSchema ?? {}).sort(compareCodePoint)) {
     const identifier = snakeToCamel(field);
     if (!isBindingIdentifier(identifier)) {
       issues.push(issue(
@@ -148,7 +180,7 @@ export function preflightCodegenSyntax(
     fieldByIdentifier.set(identifier, field);
   }
 
-  for (const node of nodesInDocumentOrder(schema.screens)) {
+  for (const node of nodesInDocumentOrder(emittedSchema.screens)) {
     const props = node.props && typeof node.props === 'object'
       ? node.props as Record<string, unknown>
       : {};

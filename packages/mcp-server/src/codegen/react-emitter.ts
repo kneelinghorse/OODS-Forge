@@ -1,6 +1,10 @@
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
-import type { HandlerSignatureMap } from './binding-utils.js';
+import type {
+  BindingAnalysis,
+  LocalBindingOccurrence,
+  ResolvedBindingHandler,
+} from './binding-utils.js';
 import {
   buildTailwindStaticClasses,
   buildTailwindVariantExpression,
@@ -10,10 +14,14 @@ import {
 import {
   mapFieldType,
   snakeToCamel,
-  generateHandlerStubs,
   resolveFrameworkChildContent,
   resolveFieldProps,
 } from './binding-utils.js';
+import { artifactActionsFromBindings, bindingsForNode } from './action-protocol.js';
+import {
+  generatedActionContractDigest,
+  generatedActionSourceDigest,
+} from './artifact-envelope.js';
 import { runPreEmit } from './pre-emit.js';
 import { resolveSpacingLeaf } from '../render/spacing-leaf.js';
 import { normalizeSchemaForFramework, takeEmittedId } from './framework-normalization.js';
@@ -198,6 +206,57 @@ function buildReactClassAttr(staticClasses: string, variantExpression: string | 
   return null;
 }
 
+function localBindingForNode(
+  analysis: BindingAnalysis,
+  nodeId: string,
+): LocalBindingOccurrence | undefined {
+  return bindingsForNode(analysis, nodeId).find(
+    (occurrence): occurrence is LocalBindingOccurrence => occurrence.kind === 'local',
+  );
+}
+
+function reactControlledProp(occurrence: LocalBindingOccurrence): string | null {
+  if (occurrence.component === 'Checkbox') return 'checked';
+  if (
+    occurrence.component === 'DatePicker'
+    || occurrence.component === 'Input'
+    || occurrence.component === 'Select'
+    || occurrence.component === 'Textarea'
+  ) return 'value';
+  if (occurrence.component === 'Tabs') return 'selectedId';
+  return null;
+}
+
+function reactBindingAttrs(
+  node: UiElement,
+  analysis: BindingAnalysis,
+): string[] {
+  const occurrences = bindingsForNode(analysis, node.id);
+  const local = occurrences.find(
+    (occurrence): occurrence is LocalBindingOccurrence => occurrence.kind === 'local',
+  );
+  const attrs: string[] = [];
+  const controlledProp = local ? reactControlledProp(local) : null;
+  if (local && controlledProp) {
+    attrs.push(`${controlledProp}={${local.localSymbols.state}}`);
+  }
+  for (const occurrence of occurrences) {
+    // Screen bindings are semantic consumer requirements, not arbitrary props
+    // on the layout component used as the schema root.
+    if (occurrence.scope === 'screen') continue;
+    attrs.push(`${occurrence.event}={${occurrence.handlerName}}`);
+  }
+  return attrs;
+}
+
+function wrapReactLocalNode(
+  code: string,
+  occurrence: LocalBindingOccurrence | undefined,
+): string {
+  if (occurrence?.component !== 'Banner') return code;
+  return `{${occurrence.localSymbols.state} && (\n${indent(code, 1)}\n)}`;
+}
+
 // ---------------------------------------------------------------------------
 // JSX tree emitter
 // ---------------------------------------------------------------------------
@@ -208,6 +267,7 @@ function emitNode(
   warnings: CodegenIssue[],
   options: CodegenOptions,
   tailwindVariants: Map<string, TailwindVariantDefinition>,
+  bindingAnalysis: BindingAnalysis,
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): string {
   const tag = node.component;
@@ -219,6 +279,12 @@ function emitNode(
     ? { ...(node.props as Record<string, unknown>) }
     : null;
   const tailwindVariant = tailwindVariants.get(tag);
+  const localBinding = localBindingForNode(bindingAnalysis, node.id);
+  const controlledProp = localBinding ? reactControlledProp(localBinding) : null;
+  const finish = (code: string): string => wrapReactLocalNode(code, localBinding);
+  if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
+    propsObject = { ...(propsObject ?? {}), dismissLabel: 'Dismiss notification' };
+  }
 
   // Enrich props from objectSchema metadata (labels, placeholders, required, options, type)
   const enriched = resolveFieldProps(node, objectSchema);
@@ -236,6 +302,18 @@ function emitNode(
     delete propsObject.children;
     // `field` is a UiSchema binding directive, not a public component prop.
     delete propsObject.field;
+    if (controlledProp === 'checked') {
+      delete propsObject.checked;
+      delete propsObject.defaultChecked;
+      delete propsObject.modelValue;
+    } else if (controlledProp === 'selectedId') {
+      delete propsObject.selectedId;
+      delete propsObject.defaultSelectedId;
+    } else if (controlledProp === 'value') {
+      delete propsObject.value;
+      delete propsObject.defaultValue;
+      delete propsObject.modelValue;
+    }
   }
 
   // Build attributes list
@@ -258,12 +336,7 @@ function emitNode(
     if (propsStr) attrParts.push(propsStr);
   }
 
-  // Event bindings (e.g., onSubmit={handleSubmit})
-  if (node.bindings && typeof node.bindings === 'object') {
-    for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
-      attrParts.push(`${eventKey}={${handlerName}}`);
-    }
-  }
+  attrParts.push(...reactBindingAttrs(node, bindingAnalysis));
 
   if (options.styling === 'tailwind') {
     const variantExpression = buildTailwindVariantExpression(node, tailwindVariant);
@@ -287,8 +360,8 @@ function emitNode(
   // Sidebar layout needs wrapper elements
   if (node.layout?.type === 'sidebar' && children.length > 0) {
     const [mainChild, ...asideChildren] = children;
-    const mainJsx = mainChild ? emitNode(mainChild, depth + 2, warnings, options, tailwindVariants, objectSchema) : '';
-    const asideJsxParts = asideChildren.map((c) => emitNode(c, depth + 2, warnings, options, tailwindVariants, objectSchema));
+    const mainJsx = mainChild ? emitNode(mainChild, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema) : '';
+    const asideJsxParts = asideChildren.map((c) => emitNode(c, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema));
 
     const inner = [
       `<div data-sidebar-main>`,
@@ -301,12 +374,12 @@ function emitNode(
       .filter(Boolean)
       .join('\n');
 
-    return `<${tag}${attrs}>\n${indent(inner, depth + 1)}\n${'  '.repeat(depth)}</${tag}>`;
+    return finish(`<${tag}${attrs}>\n${indent(inner, depth + 1)}\n${'  '.repeat(depth)}</${tag}>`);
   }
 
   // Section layout wraps in a section element
   if (node.layout?.type === 'section') {
-    const innerJsx = children.map((c) => emitNode(c, depth + 2, warnings, options, tailwindVariants, objectSchema)).join('\n');
+    const innerJsx = children.map((c) => emitNode(c, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema)).join('\n');
     let sectionClassOrStyle = '';
     if (options.styling === 'tailwind') {
       const sectionClasses = buildTailwindStaticClasses(node, computedStyle, {
@@ -341,11 +414,7 @@ function emitNode(
       if (propsStr) innerAttrParts.push(propsStr);
     }
     // Event bindings belong on the component, not the section wrapper
-    if (node.bindings && typeof node.bindings === 'object') {
-      for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
-        innerAttrParts.push(`${eventKey}={${handlerName}}`);
-      }
-    }
+    innerAttrParts.push(...reactBindingAttrs(node, bindingAnalysis));
     if (options.styling === 'tailwind') {
       const variantExpression = buildTailwindVariantExpression(node, tailwindVariant);
       const staticClasses = buildTailwindStaticClasses(node, {}, {
@@ -354,7 +423,7 @@ function emitNode(
       const classAttr = buildReactClassAttr(staticClasses, variantExpression);
       if (classAttr) innerAttrParts.push(classAttr);
     }
-    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren) {
+    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren && !controlledProp) {
       innerAttrParts.push(
         `${sectionFieldContent.propName}={${sectionFieldContent.fieldName}}`,
       );
@@ -362,32 +431,32 @@ function emitNode(
     const innerAttrs = innerAttrParts.length > 0 ? ` ${innerAttrParts.join(' ')}` : '';
 
     if (children.length === 0 && sectionFieldContent?.isChildren) {
-      return [
+      return finish([
         sectionOpen,
         indent(`${componentOpen}${innerAttrs}>{${sectionFieldContent.fieldName}}</${tag}>`, 1),
         `${'  '.repeat(depth)}</section>`,
-      ].join('\n');
+      ].join('\n'));
     }
 
     if (children.length === 0 && staticChild !== undefined) {
-      return [
+      return finish([
         sectionOpen,
         indent(`${componentOpen}${innerAttrs}>${childValueToJsx(staticChild)}</${tag}>`, 1),
         `${'  '.repeat(depth)}</section>`,
-      ].join('\n');
+      ].join('\n'));
     }
 
     if (children.length === 0) {
-      return `${sectionOpen}\n${indent(`${componentOpen}${innerAttrs} />`, 1)}\n${'  '.repeat(depth)}</section>`;
+      return finish(`${sectionOpen}\n${indent(`${componentOpen}${innerAttrs} />`, 1)}\n${'  '.repeat(depth)}</section>`);
     }
 
-    return [
+    return finish([
       sectionOpen,
       indent(`${componentOpen}${innerAttrs}>`, 1),
       indent(innerJsx, 0),
       indent(`</${tag}>`, 1),
       `${'  '.repeat(depth)}</section>`,
-    ].join('\n');
+    ].join('\n'));
   }
 
   // Self-closing if no children — but inject field content if bound
@@ -395,7 +464,10 @@ function emitNode(
     const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
-        return `<${tag}${attrs}>{${fieldContent.fieldName}}</${tag}>`;
+        return finish(`<${tag}${attrs}>{${fieldContent.fieldName}}</${tag}>`);
+      }
+      if (controlledProp) {
+        return finish(`<${tag}${attrs} />`);
       }
       // Prop-based injection: rebuild attrs without the conflicting static prop
       // to avoid emitting both label="static" and label={dynamic}
@@ -410,11 +482,7 @@ function emitNode(
           const propsStr = propsToJsxAttrs(propsObject, options.styling === 'tailwind');
           if (propsStr) rebuiltAttrParts.push(propsStr);
         }
-        if (node.bindings && typeof node.bindings === 'object') {
-          for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
-            rebuiltAttrParts.push(`${eventKey}={${handlerName}}`);
-          }
-        }
+        rebuiltAttrParts.push(...reactBindingAttrs(node, bindingAnalysis));
         if (options.styling === 'tailwind') {
           const variantExpression = buildTailwindVariantExpression(node, tailwindVariant);
           const baseClasses = buildTailwindStaticClasses(node, computedStyle, { includeVariantFallback: !tailwindVariant });
@@ -428,16 +496,16 @@ function emitNode(
         cleanAttrs = rebuiltAttrParts.length > 0 ? ` ${rebuiltAttrParts.join(' ')}` : '';
       }
       const propAttr = `${fieldContent.propName}={${fieldContent.fieldName}}`;
-      return `<${tag}${cleanAttrs} ${propAttr} />`;
+      return finish(`<${tag}${cleanAttrs} ${propAttr} />`);
     }
     if (staticChild !== undefined) {
-      return `<${tag}${attrs}>${childValueToJsx(staticChild)}</${tag}>`;
+      return finish(`<${tag}${attrs}>${childValueToJsx(staticChild)}</${tag}>`);
     }
-    return `<${tag}${attrs} />`;
+    return finish(`<${tag}${attrs} />`);
   }
 
-  const childrenJsx = children.map((c) => emitNode(c, depth + 1, warnings, options, tailwindVariants, objectSchema)).join('\n');
-  return `<${tag}${attrs}>\n${indent(childrenJsx, depth + 1)}\n${'  '.repeat(depth)}</${tag}>`;
+  const childrenJsx = children.map((c) => emitNode(c, depth + 1, warnings, options, tailwindVariants, bindingAnalysis, objectSchema)).join('\n');
+  return finish(`<${tag}${attrs}>\n${indent(childrenJsx, depth + 1)}\n${'  '.repeat(depth)}</${tag}>`);
 }
 
 // ---------------------------------------------------------------------------
@@ -462,8 +530,11 @@ function generatePropTypes(components: Set<string>): string {
  */
 function generatePagePropsInterface(
   objectSchema: Record<string, FieldSchemaEntry>,
+  includeActions = false,
 ): string {
   const lines: string[] = ['export interface PageProps {'];
+
+  if (includeActions) lines.push('  actions: GeneratedUIActions;');
 
   for (const [fieldName, entry] of Object.entries(objectSchema).sort(([a], [b]) => a.localeCompare(b))) {
     const tsType = mapFieldType(entry);
@@ -481,18 +552,220 @@ function generatePagePropsInterface(
 }
 
 // ---------------------------------------------------------------------------
-// React-specific handler signatures (delegates to shared generateHandlerStubs)
+// Typed local behavior + consumer domain-action protocol
 // ---------------------------------------------------------------------------
 
-const REACT_HANDLER_SIGNATURES: HandlerSignatureMap = {
-  onSubmit:   { params: '(e)',        tsParams: '(e: React.FormEvent)' },
-  onChange:   { params: '(value)',     tsParams: '(value: unknown)' },
-  onRowClick: { params: '(row)',      tsParams: '(row: Record<string, unknown>)' },
-  onSort:     { params: '(column)',   tsParams: '(column: string)' },
-  onFilter:   { params: '(criteria)', tsParams: '(criteria: Record<string, unknown>)' },
-  onEdit:     { params: '()',         tsParams: '()' },
-  onDelete:   { params: '()',         tsParams: '()' },
-};
+function nodesById(screens: readonly UiElement[]): Map<string, UiElement> {
+  const nodes = new Map<string, UiElement>();
+  const stack = [...screens].reverse();
+  while (stack.length > 0) {
+    const node = stack.pop()!;
+    nodes.set(node.id, node);
+    if (node.children) stack.push(...node.children.slice().reverse());
+  }
+  return nodes;
+}
+
+function semanticParameters(
+  handler: ResolvedBindingHandler,
+  typescript: boolean,
+): string {
+  return handler.signature.parameters
+    .map((parameter) => (
+      typescript ? `${parameter.name}: ${parameter.type}` : parameter.name
+    ))
+    .join(', ');
+}
+
+function generateReactActionTypes(
+  analysis: BindingAnalysis,
+  typescript: boolean,
+  hasObjectSchema: boolean,
+): string {
+  const domainHandlers = analysis.handlers.filter((handler) => handler.kind === 'domain');
+  if (domainHandlers.length === 0) return '';
+  const actionsByName = new Map(
+    artifactActionsFromBindings(analysis).map((action) => [action.name, action]),
+  );
+  const markerLines = (handler: ResolvedBindingHandler): string[] => {
+    const action = actionsByName.get(handler.handlerName)!;
+    return [
+      `/* @oods-domain-action ${action.name} ${generatedActionContractDigest(action)} */`,
+      ...action.sources.map((source) => (
+        `/* @oods-domain-source ${generatedActionSourceDigest(action.name, source)} */`
+      )),
+    ];
+  };
+  if (typescript) {
+    const lines = ['export interface GeneratedUIActions {'];
+    for (const handler of domainHandlers) {
+      lines.push(...markerLines(handler).map((line) => `  ${line}`));
+      lines.push(`  ${handler.handlerName}: (${semanticParameters(handler, true)}) => void;`);
+    }
+    lines.push('}');
+    if (!hasObjectSchema) {
+      lines.push('', 'export interface GeneratedUIProps {', '  actions: GeneratedUIActions;', '}');
+    }
+    return lines.join('\n');
+  }
+
+  const properties = domainHandlers
+    .map((handler) => `${handler.handlerName}: (${semanticParameters(handler, true)}) => void`)
+    .join(', ');
+  return [
+    ...domainHandlers.flatMap(markerLines),
+    `/** @typedef {{ ${properties} }} GeneratedUIActions */`,
+    '/** @typedef {{ actions: GeneratedUIActions }} GeneratedUIProps */',
+  ].join('\n');
+}
+
+function explicitInitialValue(
+  node: UiElement,
+  occurrence: LocalBindingOccurrence,
+): unknown {
+  const props = (node.props ?? {}) as Record<string, unknown>;
+  if (occurrence.component === 'Checkbox') {
+    return props.modelValue ?? props.checked ?? props.defaultChecked;
+  }
+  if (occurrence.component === 'Tabs') {
+    const explicit = props.selectedId ?? props.defaultSelectedId;
+    if (explicit !== undefined) return explicit;
+    const items = Array.isArray(props.items) ? props.items : [];
+    const first = items.find((item) => (
+      typeof item === 'object'
+      && item !== null
+      && (item as Record<string, unknown>).disabled !== true
+      && (item as Record<string, unknown>).isDisabled !== true
+      && typeof (item as Record<string, unknown>).id === 'string'
+    ));
+    return first ? (first as Record<string, unknown>).id : undefined;
+  }
+  return props.modelValue ?? props.value ?? props.defaultValue;
+}
+
+function reactLocalInitialExpression(
+  node: UiElement,
+  occurrence: LocalBindingOccurrence,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): string {
+  if (occurrence.component === 'Banner') return 'true';
+
+  const explicit = explicitInitialValue(node, occurrence);
+  if (explicit !== undefined) {
+    if (occurrence.signature.parameters[0]?.type === 'boolean') {
+      return explicit === true ? 'true' : 'false';
+    }
+    return javascriptSingleQuotedString(String(explicit));
+  }
+
+  const field = node.props?.field;
+  if (typeof field === 'string' && objectSchema?.[field]) {
+    const fallback = occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
+    const source = snakeToCamel(field);
+    return occurrence.signature.parameters[0]?.type === 'boolean'
+      ? `${source} ?? ${fallback}`
+      : `String(${source} ?? ${fallback})`;
+  }
+  return occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
+}
+
+function reactElementType(component: string): string {
+  if (component === 'Select') return 'HTMLSelectElement';
+  if (component === 'Textarea') return 'HTMLTextAreaElement';
+  return 'HTMLInputElement';
+}
+
+function generateReactLocalHandler(
+  handler: ResolvedBindingHandler,
+  node: UiElement,
+  options: CodegenOptions,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): string[] {
+  const occurrence = handler.occurrences[0] as LocalBindingOccurrence;
+  const symbols = occurrence.localSymbols;
+  const type = occurrence.component === 'Banner'
+    ? 'boolean'
+    : occurrence.signature.parameters[0]?.type ?? 'unknown';
+  const initial = reactLocalInitialExpression(node, occurrence, objectSchema);
+  const stateType = options.typescript ? `<${type}>` : '';
+  const lines = [
+    `  const [${symbols.state}, ${symbols.setter}] = React.useState${stateType}(${initial});`,
+  ];
+
+  let params = '()';
+  let nextValue = 'false';
+  let jsDocParameter: string | null = null;
+  if (occurrence.component !== 'Banner') {
+    const parameter = occurrence.signature.parameters[0]!;
+    const receivesNativeEvent = occurrence.component !== 'Tabs'
+      && (occurrence.event === 'onChange' || occurrence.event === 'onInput');
+    if (receivesNativeEvent) {
+      const reactEvent = occurrence.event === 'onInput' ? 'React.FormEvent' : 'React.ChangeEvent';
+      params = options.typescript
+        ? `(event: ${reactEvent}<${reactElementType(occurrence.component)}>)`
+        : '(event)';
+      jsDocParameter = `  /** @param {${reactEvent}<${reactElementType(occurrence.component)}>} event */`;
+      nextValue = parameter.type === 'boolean'
+        ? 'event.currentTarget.checked'
+        : 'event.currentTarget.value';
+    } else {
+      params = options.typescript
+        ? `(${parameter.name}: ${parameter.type})`
+        : `(${parameter.name})`;
+      jsDocParameter = `  /** @param {${parameter.type}} ${parameter.name} */`;
+      nextValue = parameter.name;
+    }
+  }
+  if (!options.typescript && jsDocParameter) lines.push(jsDocParameter);
+  lines.push(
+    `  /* @oods-local-binding ${handler.handlerName} */ const ${handler.handlerName} = ${params} => { ${symbols.setter}(${nextValue}); };`,
+  );
+  return lines;
+}
+
+function generateReactBindingProtocol(
+  analysis: BindingAnalysis,
+  screens: readonly UiElement[],
+  options: CodegenOptions,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): string {
+  const lines: string[] = [];
+  const nodes = nodesById(screens);
+  for (const handler of analysis.handlers) {
+    if (handler.kind === 'local') {
+      const node = nodes.get(handler.occurrences[0]!.nodeId);
+      if (!node) continue;
+      lines.push(...generateReactLocalHandler(handler, node, options, objectSchema));
+      continue;
+    }
+
+    // Screen-level semantic actions are requirements on the consumer contract;
+    // only component events need an adapter inside the generated tree.
+    if (!handler.occurrences.some((occurrence) => occurrence.scope === 'component')) continue;
+    const params = semanticParameters(handler, options.typescript);
+    const args = handler.signature.parameters.map((parameter) => parameter.name).join(', ');
+    if (!options.typescript && handler.signature.parameters.length > 0) {
+      lines.push(...handler.signature.parameters.map(
+        (parameter) => `  /** @param {${parameter.type}} ${parameter.name} */`,
+      ));
+    }
+    lines.push(
+      `  /* @oods-domain-binding ${handler.handlerName} */ const ${handler.handlerName} = (${params}) => { actions.${handler.handlerName}(${args}); };`,
+    );
+  }
+  return lines.join('\n');
+}
+
+function generateReactActionGuards(analysis: BindingAnalysis): string {
+  return analysis.handlers
+    .filter((handler) => handler.kind === 'domain')
+    .map((handler) => (
+      `  if (!actions || !Object.prototype.hasOwnProperty.call(actions, ${javascriptSingleQuotedString(handler.handlerName)}) `
+      + `|| typeof actions.${handler.handlerName} !== 'function') { `
+      + `throw new Error(${javascriptSingleQuotedString(`GeneratedUI requires actions.${handler.handlerName}.`)}); }`
+    ))
+    .join('\n');
+}
 
 // ---------------------------------------------------------------------------
 // Top-level code assembly
@@ -526,10 +799,19 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const ctx = runPreEmit(normalizedSchema, { options });
   const components = ctx.components;
   const tailwindVariants = ctx.tailwindVariants;
+  const bindingAnalysis = ctx.bindingAnalysis;
 
   // Generate JSX for each screen
   const screenJsx = ctx.tree
-    .map((screen) => emitNode(screen, 2, warnings, options, tailwindVariants, ctx.objectSchema))
+    .map((screen) => emitNode(
+      screen,
+      2,
+      warnings,
+      options,
+      tailwindVariants,
+      bindingAnalysis,
+      ctx.objectSchema,
+    ))
     .join('\n');
 
   // Build the complete file
@@ -538,11 +820,17 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   const typeAnnotations = options.typescript ? generatePropTypes(components) : '';
   const hasObjectSchema = normalizedSchema.objectSchema && Object.keys(normalizedSchema.objectSchema).length > 0;
+  const hasDomainActions = bindingAnalysis.handlers.some((handler) => handler.kind === 'domain');
+  const actionTypes = generateReactActionTypes(bindingAnalysis, options.typescript, Boolean(hasObjectSchema));
   const pagePropsInterface = options.typescript && hasObjectSchema
-    ? generatePagePropsInterface(normalizedSchema.objectSchema!)
+    ? generatePagePropsInterface(normalizedSchema.objectSchema!, hasDomainActions)
     : '';
   const returnType = options.typescript
-    ? (hasObjectSchema ? ': React.FC<PageProps>' : ': React.FC')
+    ? (hasObjectSchema
+        ? ': React.FC<PageProps>'
+        : hasDomainActions
+          ? ': React.FC<GeneratedUIProps>'
+          : ': React.FC')
     : '';
 
   const lines: string[] = [
@@ -562,6 +850,10 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     lines.push('');
   }
 
+  if (actionTypes) {
+    lines.push(actionTypes, '');
+  }
+
   // Emit PageProps interface when objectSchema is present
   if (pagePropsInterface) {
     lines.push(pagePropsInterface, '');
@@ -571,26 +863,41 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     lines.push(typeAnnotations, '');
   }
 
-  // Handler stubs from bindings (collected in the shared pre-emit pass)
-  const handlers = ctx.handlers;
-  const handlerStubs = generateHandlerStubs(handlers, options.typescript, REACT_HANDLER_SIGNATURES, '  ');
+  const bindingProtocol = generateReactBindingProtocol(
+    bindingAnalysis,
+    ctx.tree,
+    options,
+    ctx.objectSchema,
+  );
+  const actionGuards = generateReactActionGuards(bindingAnalysis);
 
   // Prop defaults from objectSchema field values (collected in the shared pre-emit pass)
   const propDefaults = hasObjectSchema ? ctx.propDefaults : null;
 
   // Destructure object schema fields from props for type-safe JSX references
-  if (hasObjectSchema) {
-    const fieldNames = Object.keys(normalizedSchema.objectSchema!)
+  if (hasObjectSchema || hasDomainActions) {
+    const fieldNames = Object.keys(normalizedSchema.objectSchema ?? {})
       .map(snakeToCamel)
       .sort();
-    const destructure = `{ ${fieldNames.join(', ')} }`;
-    lines.push(`export const GeneratedUI${returnType} = (${destructure}) => {`);
+    const parameterNames = [...(hasDomainActions ? ['actions'] : []), ...fieldNames];
+    const destructure = `{ ${parameterNames.join(', ')} }`;
+    if (!options.typescript && hasDomainActions) {
+      lines.push('/** @param {GeneratedUIProps & Record<string, any>} props */');
+      lines.push(`export const GeneratedUI = (props) => {`);
+      lines.push(`  const ${destructure} = props;`);
+    } else {
+      lines.push(`export const GeneratedUI${returnType} = (${destructure}) => {`);
+    }
   } else {
     lines.push(`export const GeneratedUI${returnType} = () => {`);
   }
 
-  if (handlerStubs) {
-    lines.push(handlerStubs);
+  if (actionGuards) {
+    lines.push(actionGuards, '');
+  }
+
+  if (bindingProtocol) {
+    lines.push(bindingProtocol);
     lines.push('');
   }
 
@@ -638,5 +945,6 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     fileExtension: options.typescript ? '.tsx' : '.jsx',
     imports,
     warnings,
+    actions: artifactActionsFromBindings(bindingAnalysis),
   };
 }

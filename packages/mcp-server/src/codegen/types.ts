@@ -28,11 +28,35 @@ export type GeneratedDependency = {
   kind: 'dependency' | 'peerDependency';
 };
 
+export type GeneratedArtifactActionParameter = {
+  name: string;
+  type: string;
+};
+
+export type GeneratedArtifactActionSource = {
+  nodeId: string;
+  component: string;
+  event: string;
+};
+
+/**
+ * A domain action the generated UI cannot implement on the consumer's behalf.
+ * Every entry is a required injection point. Compatible occurrences share one
+ * entry and retain every schema declaration site. Component sites are wired by
+ * the generated tree; screen-root sites are invoked by a consumer-owned surface.
+ */
+export type GeneratedArtifactAction = {
+  name: string;
+  parameters: GeneratedArtifactActionParameter[];
+  sources: [GeneratedArtifactActionSource, ...GeneratedArtifactActionSource[]];
+};
+
 export type GeneratedArtifact = {
   schemaVersion: '1.0.0';
   framework: CodegenFramework;
   files: GeneratedArtifactFile[];
   dependencies: GeneratedDependency[];
+  actions: GeneratedArtifactAction[];
   contentHash: string;
 };
 
@@ -42,6 +66,8 @@ export type CodegenResult = {
   code: string;
   fileExtension: string;
   imports: string[];
+  /** Required domain actions to include in the generated artifact contract. */
+  actions?: GeneratedArtifactAction[];
   warnings: CodegenIssue[];
   errors?: CodegenIssue[];
   meta?: {

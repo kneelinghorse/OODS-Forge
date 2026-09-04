@@ -90,6 +90,22 @@ describe('Sprint 182 M04 packed generated consumers', () => {
             mount: 'passed',
             hydration: 'passed',
             browserRuntimeErrors: [],
+            interactions: {
+              emailValue: 'user@example.com',
+              emailValidBeforeInput: false,
+              emailValidAfterInput: true,
+              planValue: 'basic',
+              renewalValue: '2026-10-15',
+              notesValue: 'Follow up tomorrow.',
+              checkboxToggled: true,
+              selectedTab: 'true',
+              bannerVisibleAfterDismiss: false,
+              domainActions: {
+                primary: 1,
+                secondary: 1,
+                rowIds: ['sub-1'],
+              },
+            },
           },
         });
         expect(frameworkReport.browser.screenshots).toHaveLength(3);

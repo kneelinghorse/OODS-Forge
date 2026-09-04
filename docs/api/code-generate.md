@@ -1,6 +1,6 @@
 # code.generate
 
-> Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. The success payload includes exact dependency versions and kinds; legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires.
+> Generate a versioned, content-addressed React, Vue, or HTML file-set artifact from a validated UiSchema tree. The success payload includes exact dependency versions and kinds plus a deterministic artifact.actions contract for every required consumer-supplied domain action; compatible occurrences are grouped by action name with portable parameters and every raising schema source. Legacy code/fileExtension/imports aliases remain for compatibility. Accepts schemaRef from design.compose; save it before the 30-minute reference expires.
 
 **Registration:** auto
 

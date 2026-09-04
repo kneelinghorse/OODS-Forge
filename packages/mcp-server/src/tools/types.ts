@@ -8,6 +8,9 @@ import type { GeneratedArtifact } from "../codegen/types.js";
 
 export type {
   GeneratedArtifact,
+  GeneratedArtifactAction,
+  GeneratedArtifactActionParameter,
+  GeneratedArtifactActionSource,
   GeneratedArtifactFile,
   GeneratedDependency,
 } from "../codegen/types.js";

@@ -50,7 +50,10 @@ describe('Sprint 182 M04 public codegen matrix', () => {
       expect(result.status, JSON.stringify(result.errors ?? [])).toBe('ok');
       expect(result.meta).toMatchObject({ nodeCount: 18, componentCount: 14 });
       expect(result.warnings).toEqual([]);
-      expect(result.code).toContain('defaultValue="pro"');
+      // Sprint 183 promotes the Select default into Forge-owned controlled
+      // state instead of leaving the old uncontrolled prop beside a no-op.
+      expect(result.code).toContain("handlePlanChangeState");
+      expect(result.code).toContain("'pro'");
       const proof = verifyGeneratedSource({
         framework,
         styling,

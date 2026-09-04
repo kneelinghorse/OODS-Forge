@@ -1,6 +1,6 @@
 # pipeline
 
-> Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes). Use save to persist the schema.
+> Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. The code step carries the versioned artifact without flattening, including its exact dependencies and required consumer-supplied domain-action contract. Defaults to compact render mode (token CSS omitted, ~40% smaller). Supports optional validation/render skipping, accessibility checks, and schema persistence via save parameter. Returns schemaRefCreatedAt/schemaRefExpiresAt (default TTL: 30 minutes). Use save to persist the schema.
 
 **Registration:** auto
 

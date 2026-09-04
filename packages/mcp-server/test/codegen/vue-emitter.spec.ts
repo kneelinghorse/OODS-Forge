@@ -297,51 +297,57 @@ describe('vue-emitter — propSchema default value wiring (s63-m02)', () => {
   });
 });
 
-describe('vue-emitter — event handler stubs (s63-m04)', () => {
-  it('generates handler stubs from bindings in script setup', () => {
+describe('vue-emitter — typed action protocol (s183-m02)', () => {
+  it('declares screen bindings as required domain actions without TODO bodies', () => {
     const schema = makeSchema({
       id: 'form-root',
       component: 'Form',
       bindings: { onSubmit: 'handleSubmit', onChange: 'handleChange' },
     });
     const result = emit(schema, defaultOpts);
-    expect(result.code).toContain('const handleSubmit = (e: Event) => { /* TODO: implement handleSubmit */ };');
-    expect(result.code).toContain('const handleChange = (value: unknown) => { /* TODO: implement handleChange */ };');
+    expect(result.code).toContain('handleSubmit: () => void;');
+    expect(result.code).toContain('handleChange: () => void;');
+    expect(result.code).not.toMatch(/TODO|=>\s*\{\s*\}/);
   });
 
-  it('emits Vue @event binding attributes in template', () => {
+  it('does not leak semantic screen bindings onto a component event', () => {
     const schema = makeSchema({
       id: 'form-root',
       component: 'Form',
       bindings: { onSubmit: 'handleSubmit' },
     });
     const result = emit(schema, defaultOpts);
-    expect(result.code).toContain('@submit="handleSubmit"');
+    expect(result.code).not.toContain('@submit="handleSubmit"');
+    expect(result.actions).toEqual([{
+      name: 'handleSubmit',
+      parameters: [],
+      sources: [{ nodeId: 'form-root', component: 'Form', event: 'onSubmit' }],
+    }]);
   });
 
-  it('converts onXxx to @xxx format for Vue events', () => {
+  it('declares typed list context actions', () => {
     const schema = makeSchema({
       id: 'root',
       component: 'ListView',
       bindings: { onRowClick: 'handleRowClick', onSort: 'handleSort' },
     });
     const result = emit(schema, defaultOpts);
-    expect(result.code).toContain('@rowClick="handleRowClick"');
-    expect(result.code).toContain('@sort="handleSort"');
+    expect(result.code).toContain('handleRowClick: (rowId: string) => void;');
+    expect(result.code).toContain('handleSort: (column: string) => void;');
   });
 
-  it('generates stubs for detail context bindings', () => {
+  it('declares detail context actions', () => {
     const schema = makeSchema({
       id: 'detail-root',
       component: 'DetailView',
       bindings: { onEdit: 'handleEdit', onDelete: 'handleDelete' },
     });
     const result = emit(schema, defaultOpts);
-    expect(result.code).toContain('const handleEdit = () => { /* TODO: implement handleEdit */ };');
-    expect(result.code).toContain('const handleDelete = () => { /* TODO: implement handleDelete */ };');
+    expect(result.code).toContain('handleEdit: () => void;');
+    expect(result.code).toContain('handleDelete: () => void;');
   });
 
-  it('handler stubs are inside script setup block', () => {
+  it('runtime requirements are checked inside script setup', () => {
     const schema = makeSchema({
       id: 'root',
       component: 'Form',
@@ -349,33 +355,27 @@ describe('vue-emitter — event handler stubs (s63-m04)', () => {
     });
     const result = emit(schema, defaultOpts);
     const scriptStart = result.code.indexOf('<script setup');
-    const stubIdx = result.code.indexOf('const handleSubmit');
+    const guardIdx = result.code.indexOf("typeof actions.handleSubmit !== 'function'");
     const scriptEnd = result.code.indexOf('</script>');
-    expect(stubIdx).toBeGreaterThan(scriptStart);
-    expect(stubIdx).toBeLessThan(scriptEnd);
+    expect(guardIdx).toBeGreaterThan(scriptStart);
+    expect(guardIdx).toBeLessThan(scriptEnd);
   });
 
   it('collects bindings from nested children', () => {
     const schema = makeSchema({
       id: 'root',
-      component: 'Page',
+      component: 'Form',
+      bindings: { onSubmit: 'handleSubmit' },
       children: [
         {
-          id: 'form',
-          component: 'Form',
-          bindings: { onSubmit: 'handleSubmit' },
-          children: [
-            {
-              id: 'field',
-              component: 'Input',
-              bindings: { onChange: 'handleFieldChange' },
-            },
-          ],
+          id: 'field',
+          component: 'Input',
+          bindings: { onChange: 'handleFieldChange' },
         },
       ],
     });
     const result = emit(schema, defaultOpts);
-    expect(result.code).toContain('const handleSubmit');
+    expect(result.code).toContain('handleSubmit: () => void;');
     expect(result.code).toContain('const handleFieldChange');
   });
 
@@ -388,14 +388,15 @@ describe('vue-emitter — event handler stubs (s63-m04)', () => {
     expect(result.code).not.toContain('const handle');
   });
 
-  it('omits typed params when typescript=false', () => {
+  it('emits a runtime-required checked JSDoc contract when typescript=false', () => {
     const schema = makeSchema({
       id: 'root',
       component: 'Form',
       bindings: { onSubmit: 'handleSubmit' },
     });
     const result = emit(schema, { typescript: false, styling: 'tokens' });
-    expect(result.code).toContain('const handleSubmit = (e) => {');
+    expect(result.code).toContain('@typedef {{ handleSubmit: () => void }} GeneratedUIActions');
+    expect(result.code).toContain("typeof actions.handleSubmit !== 'function'");
     expect(result.code).not.toContain(': Event');
   });
 });
@@ -464,7 +465,7 @@ describe('vue-emitter — interactive Tailwind guard (s71-m05)', () => {
     }
   });
 
-  it('elements with bindings are treated as interactive', () => {
+  it('unsupported bindings do not make arbitrary elements interactive', () => {
     const schema = makeSchema({
       id: 'root',
       component: 'Box',
@@ -474,7 +475,7 @@ describe('vue-emitter — interactive Tailwind guard (s71-m05)', () => {
     const lines = result.code.split('\n');
     for (const line of lines) {
       if (line.includes('data-oods-component="Box"')) {
-        expect(line).toContain('focus:');
+        expect(line).not.toContain('focus:');
       }
     }
   });

@@ -32,6 +32,9 @@ export type {
   CodegenStyling,
   CodegenIssue,
   GeneratedArtifact,
+  GeneratedArtifactAction,
+  GeneratedArtifactActionParameter,
+  GeneratedArtifactActionSource,
   GeneratedArtifactFile,
   GeneratedDependency,
 

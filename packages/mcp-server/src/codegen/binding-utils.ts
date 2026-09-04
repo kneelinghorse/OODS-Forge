@@ -1,10 +1,6 @@
 /**
- * Shared codegen utilities for object schema type mapping, event handler
- * stub generation, and prop-value formatting.
- *
- * Both react-emitter and vue-emitter consume these; framework-specific
- * differences (e.g. React.FormEvent vs Event) are injected via the
- * HandlerSignatureMap parameter.
+ * Shared codegen utilities for object schema type mapping, binding analysis,
+ * and prop-value formatting.
  */
 import type { UiElement, FieldSchemaEntry } from '../schemas/generated.js';
 import { getContentStrategy, type ContentStrategy } from './content-strategy.js';
@@ -40,15 +36,407 @@ export function snakeToCamel(name: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Handler signature types
-// ---------------------------------------------------------------------------
-
-export type HandlerSignature = { params: string; tsParams: string };
-export type HandlerSignatureMap = Record<string, HandlerSignature>;
-
-// ---------------------------------------------------------------------------
 // Binding collection (tree walk)
 // ---------------------------------------------------------------------------
+
+export type BindingKind = 'local' | 'domain';
+
+export interface BindingParameter {
+  readonly name: string;
+  readonly type: string;
+}
+
+export interface BindingSemanticSignature {
+  readonly parameters: readonly BindingParameter[];
+}
+
+export interface LocalBindingSymbols {
+  readonly state: string;
+  readonly setter: string;
+}
+
+export interface SupportedBindingDefinition {
+  readonly id: string;
+  readonly scope: 'component' | 'screen';
+  /** Component name, or `$screen` for semantic bindings on a screen root. */
+  readonly component: string;
+  readonly event: string;
+  readonly kind: BindingKind;
+  readonly signature: BindingSemanticSignature;
+}
+
+interface BindingOccurrenceBase {
+  readonly nodeId: string;
+  readonly component: string;
+  readonly event: string;
+  readonly handlerName: string;
+  readonly path: string;
+}
+
+export interface LocalBindingOccurrence extends BindingOccurrenceBase {
+  readonly kind: 'local';
+  readonly signature: BindingSemanticSignature;
+  readonly definitionId: string;
+  readonly scope: 'component' | 'screen';
+  readonly localSymbols: LocalBindingSymbols;
+}
+
+export interface DomainBindingOccurrence extends BindingOccurrenceBase {
+  readonly kind: 'domain';
+  readonly signature: BindingSemanticSignature;
+  readonly definitionId: string;
+  readonly scope: 'component' | 'screen';
+  readonly localSymbols: null;
+}
+
+export interface UnknownBindingOccurrence extends BindingOccurrenceBase {
+  readonly kind: 'unknown';
+  readonly signature: null;
+  readonly definitionId: null;
+  readonly scope: null;
+  readonly localSymbols: null;
+}
+
+export type ResolvedBindingOccurrence = LocalBindingOccurrence | DomainBindingOccurrence;
+export type BindingOccurrence = ResolvedBindingOccurrence | UnknownBindingOccurrence;
+
+export interface ResolvedBindingHandler {
+  readonly handlerName: string;
+  readonly kind: BindingKind;
+  readonly signature: BindingSemanticSignature;
+  readonly occurrences: readonly ResolvedBindingOccurrence[];
+  readonly localSymbols: LocalBindingSymbols | null;
+}
+
+export type BindingAnalysisIssueCode =
+  | 'DUPLICATE_NODE_ID'
+  | 'UNKNOWN_BINDING'
+  | 'AMBIGUOUS_LOCAL_BINDING'
+  | 'AMBIGUOUS_HANDLER'
+  | 'INCOMPATIBLE_HANDLER'
+  | 'LOCAL_SYMBOL_COLLISION';
+
+export interface BindingAnalysisIssue {
+  readonly code: BindingAnalysisIssueCode;
+  readonly message: string;
+  readonly nodeId?: string;
+  readonly component?: string;
+  readonly event?: string;
+  readonly handlerName?: string;
+  readonly path?: string;
+  readonly firstPath?: string;
+  readonly occurrences?: readonly ResolvedBindingOccurrence[];
+}
+
+export interface BindingAnalysis {
+  readonly ok: boolean;
+  readonly occurrences: readonly BindingOccurrence[];
+  /** Compatible bindings grouped by their generated handler identifier. */
+  readonly handlers: readonly ResolvedBindingHandler[];
+  readonly issues: readonly BindingAnalysisIssue[];
+}
+
+const NO_PARAMETERS: BindingSemanticSignature = { parameters: [] };
+const STRING_VALUE: BindingSemanticSignature = {
+  parameters: [{ name: 'value', type: 'string' }],
+};
+const BOOLEAN_CHECKED: BindingSemanticSignature = {
+  parameters: [{ name: 'checked', type: 'boolean' }],
+};
+const SELECTED_ID: BindingSemanticSignature = {
+  parameters: [{ name: 'selectedId', type: 'string' }],
+};
+const ROW_ID: BindingSemanticSignature = {
+  parameters: [{ name: 'rowId', type: 'string' }],
+};
+const SORT_COLUMN: BindingSemanticSignature = {
+  parameters: [{ name: 'column', type: 'string' }],
+};
+const PAGE_NUMBER: BindingSemanticSignature = {
+  parameters: [{ name: 'page', type: 'number' }],
+};
+const FILTER_CRITERIA: BindingSemanticSignature = {
+  parameters: [{ name: 'criteria', type: 'Record<string, unknown>' }],
+};
+
+/**
+ * The finite binding vocabulary code generation can normalize identically in
+ * React and Vue. Component definitions take precedence over screen semantics,
+ * so a root Input/onChange remains local while a layout root/onChange is a
+ * domain callback.
+ */
+export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[] = [
+  { id: 'component:Banner.onDismiss', scope: 'component', component: 'Banner', event: 'onDismiss', kind: 'local', signature: NO_PARAMETERS },
+  { id: 'component:Button.onActivate', scope: 'component', component: 'Button', event: 'onActivate', kind: 'domain', signature: NO_PARAMETERS },
+  { id: 'component:Checkbox.onChange', scope: 'component', component: 'Checkbox', event: 'onChange', kind: 'local', signature: BOOLEAN_CHECKED },
+  { id: 'component:Checkbox.onUpdate', scope: 'component', component: 'Checkbox', event: 'onUpdate', kind: 'local', signature: BOOLEAN_CHECKED },
+  { id: 'component:DatePicker.onChange', scope: 'component', component: 'DatePicker', event: 'onChange', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:DatePicker.onInput', scope: 'component', component: 'DatePicker', event: 'onInput', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:DatePicker.onUpdate', scope: 'component', component: 'DatePicker', event: 'onUpdate', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:Input.onChange', scope: 'component', component: 'Input', event: 'onChange', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:Input.onInput', scope: 'component', component: 'Input', event: 'onInput', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:Input.onUpdate', scope: 'component', component: 'Input', event: 'onUpdate', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:Select.onChange', scope: 'component', component: 'Select', event: 'onChange', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:Select.onUpdate', scope: 'component', component: 'Select', event: 'onUpdate', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:Table.onRowActivate', scope: 'component', component: 'Table', event: 'onRowActivate', kind: 'domain', signature: ROW_ID },
+  { id: 'component:Tabs.onChange', scope: 'component', component: 'Tabs', event: 'onChange', kind: 'local', signature: SELECTED_ID },
+  { id: 'component:Tabs.onUpdate', scope: 'component', component: 'Tabs', event: 'onUpdate', kind: 'local', signature: SELECTED_ID },
+  { id: 'component:Textarea.onChange', scope: 'component', component: 'Textarea', event: 'onChange', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:Textarea.onInput', scope: 'component', component: 'Textarea', event: 'onInput', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:Textarea.onUpdate', scope: 'component', component: 'Textarea', event: 'onUpdate', kind: 'local', signature: STRING_VALUE },
+  { id: 'screen:onChange', scope: 'screen', component: '$screen', event: 'onChange', kind: 'domain', signature: NO_PARAMETERS },
+  { id: 'screen:onDelete', scope: 'screen', component: '$screen', event: 'onDelete', kind: 'domain', signature: NO_PARAMETERS },
+  { id: 'screen:onEdit', scope: 'screen', component: '$screen', event: 'onEdit', kind: 'domain', signature: NO_PARAMETERS },
+  { id: 'screen:onFilter', scope: 'screen', component: '$screen', event: 'onFilter', kind: 'domain', signature: FILTER_CRITERIA },
+  { id: 'screen:onPageChange', scope: 'screen', component: '$screen', event: 'onPageChange', kind: 'domain', signature: PAGE_NUMBER },
+  { id: 'screen:onRowClick', scope: 'screen', component: '$screen', event: 'onRowClick', kind: 'domain', signature: ROW_ID },
+  { id: 'screen:onSort', scope: 'screen', component: '$screen', event: 'onSort', kind: 'domain', signature: SORT_COLUMN },
+  { id: 'screen:onSubmit', scope: 'screen', component: '$screen', event: 'onSubmit', kind: 'domain', signature: NO_PARAMETERS },
+];
+
+function compareCodePoint(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+/** Identifier reserved for state owned by a local binding handler. */
+export function localStateSymbol(handlerName: string): string {
+  return `${handlerName}State`;
+}
+
+/** Identifier reserved for the setter owned by a local binding handler. */
+export function localSetterSymbol(handlerName: string): string {
+  return `set${handlerName.charAt(0).toUpperCase()}${handlerName.slice(1)}State`;
+}
+
+function localSymbols(handlerName: string): LocalBindingSymbols {
+  return {
+    state: localStateSymbol(handlerName),
+    setter: localSetterSymbol(handlerName),
+  };
+}
+
+function findBindingDefinition(
+  component: string,
+  event: string,
+  screenRoot: boolean,
+): SupportedBindingDefinition | undefined {
+  const componentDefinition = SUPPORTED_BINDING_DEFINITIONS.find((definition) => (
+    definition.scope === 'component'
+    && definition.component === component
+    && definition.event === event
+  ));
+  if (componentDefinition) return componentDefinition;
+  if (!screenRoot) return undefined;
+  return SUPPORTED_BINDING_DEFINITIONS.find((definition) => (
+    definition.scope === 'screen' && definition.event === event
+  ));
+}
+
+function signaturesAreCallableTogether(
+  left: BindingSemanticSignature,
+  right: BindingSemanticSignature,
+): boolean {
+  return left.parameters.length === right.parameters.length
+    && left.parameters.every((parameter, index) => {
+      const other = right.parameters[index];
+      return parameter.type === other?.type;
+    });
+}
+
+/**
+ * Resolve every binding occurrence without discarding provenance. Invalid or
+ * ambiguous input is returned as typed issues; consumers can inspect the full
+ * evidence while refusing emission whenever `ok` is false.
+ */
+export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis {
+  const occurrences: BindingOccurrence[] = [];
+  const issues: BindingAnalysisIssue[] = [];
+  const firstPathByNodeId = new Map<string, string>();
+  const invalidLocalHandlers = new Set<string>();
+
+  const visit = (node: UiElement, path: string, screenRoot: boolean): void => {
+    const firstPath = firstPathByNodeId.get(node.id);
+    if (firstPath !== undefined) {
+      issues.push({
+        code: 'DUPLICATE_NODE_ID',
+        message: `Node id ${JSON.stringify(node.id)} occurs at both ${firstPath} and ${path}.`,
+        nodeId: node.id,
+        path,
+        firstPath,
+      });
+    } else {
+      firstPathByNodeId.set(node.id, path);
+    }
+
+    const nodeOccurrences: BindingOccurrence[] = [];
+    for (const [event, handlerName] of Object.entries(node.bindings ?? {})
+      .sort(([left], [right]) => compareCodePoint(left, right))) {
+      const definition = findBindingDefinition(node.component, event, screenRoot);
+      if (!definition) {
+        const occurrence: UnknownBindingOccurrence = {
+          nodeId: node.id,
+          component: node.component,
+          event,
+          handlerName,
+          path,
+          kind: 'unknown',
+          signature: null,
+          definitionId: null,
+          scope: null,
+          localSymbols: null,
+        };
+        occurrences.push(occurrence);
+        nodeOccurrences.push(occurrence);
+        issues.push({
+          code: 'UNKNOWN_BINDING',
+          message: `Binding ${node.component}.${event} is not in the supported generation vocabulary.`,
+          nodeId: node.id,
+          component: node.component,
+          event,
+          handlerName,
+          path,
+        });
+        continue;
+      }
+
+      const occurrence: ResolvedBindingOccurrence = definition.kind === 'local'
+        ? {
+            nodeId: node.id,
+            component: node.component,
+            event,
+            handlerName,
+            path,
+            kind: 'local',
+            signature: definition.signature,
+            definitionId: definition.id,
+            scope: definition.scope,
+            localSymbols: localSymbols(handlerName),
+          }
+        : {
+            nodeId: node.id,
+            component: node.component,
+            event,
+            handlerName,
+            path,
+            kind: 'domain',
+            signature: definition.signature,
+            definitionId: definition.id,
+            scope: definition.scope,
+            localSymbols: null,
+          };
+      occurrences.push(occurrence);
+      nodeOccurrences.push(occurrence);
+    }
+
+    const localOccurrences = nodeOccurrences.filter(
+      (occurrence): occurrence is LocalBindingOccurrence => occurrence.kind === 'local',
+    );
+    if (localOccurrences.length > 1) {
+      for (const occurrence of localOccurrences) invalidLocalHandlers.add(occurrence.handlerName);
+      issues.push({
+        code: 'AMBIGUOUS_LOCAL_BINDING',
+        message: `Node ${JSON.stringify(node.id)} declares multiple aliases for one local state transition.`,
+        nodeId: node.id,
+        component: node.component,
+        path,
+        occurrences: localOccurrences,
+      });
+    }
+
+    for (const [index, child] of (node.children ?? []).entries()) {
+      visit(child, `${path}/children/${index}`, false);
+    }
+  };
+
+  for (const [index, screen] of screens.entries()) {
+    visit(screen, `/screens/${index}`, true);
+  }
+
+  const resolvedByHandler = new Map<string, ResolvedBindingOccurrence[]>();
+  for (const occurrence of occurrences) {
+    if (occurrence.kind === 'unknown') continue;
+    const grouped = resolvedByHandler.get(occurrence.handlerName);
+    if (grouped) grouped.push(occurrence);
+    else resolvedByHandler.set(occurrence.handlerName, [occurrence]);
+  }
+
+  const handlers: ResolvedBindingHandler[] = [];
+  for (const handlerName of [...resolvedByHandler.keys()].sort(compareCodePoint)) {
+    const grouped = resolvedByHandler.get(handlerName)!;
+    const first = grouped[0]!;
+    if (grouped.some((occurrence) => !signaturesAreCallableTogether(first.signature, occurrence.signature))) {
+      issues.push({
+        code: 'INCOMPATIBLE_HANDLER',
+        message: `Handler ${JSON.stringify(handlerName)} is reused with incompatible semantic signatures.`,
+        handlerName,
+        occurrences: grouped,
+      });
+      continue;
+    }
+
+    if (grouped.some((occurrence) => (
+      occurrence.kind !== first.kind || occurrence.definitionId !== first.definitionId
+    ))) {
+      issues.push({
+        code: 'AMBIGUOUS_HANDLER',
+        message: `Handler ${JSON.stringify(handlerName)} is reused for different binding semantics.`,
+        handlerName,
+        occurrences: grouped,
+      });
+      continue;
+    }
+
+    if (first.kind === 'local' && grouped.length > 1) {
+      issues.push({
+        code: 'AMBIGUOUS_HANDLER',
+        message: `Local handler ${JSON.stringify(handlerName)} is reused by multiple state owners.`,
+        handlerName,
+        occurrences: grouped,
+      });
+      continue;
+    }
+
+    if (invalidLocalHandlers.has(handlerName)) continue;
+
+    handlers.push({
+      handlerName,
+      kind: first.kind,
+      signature: first.signature,
+      occurrences: grouped,
+      localSymbols: first.localSymbols,
+    });
+  }
+
+  const localSymbolOwners = new Map<string, ResolvedBindingHandler>();
+  for (const handler of handlers.filter((candidate) => candidate.kind === 'local')) {
+    const symbols = handler.localSymbols!;
+    for (const symbol of [symbols.state, symbols.setter]) {
+      const owner = localSymbolOwners.get(symbol);
+      if (owner) {
+        const occurrence = handler.occurrences[0]!;
+        issues.push({
+          code: 'LOCAL_SYMBOL_COLLISION',
+          message: `Local handlers ${JSON.stringify(owner.handlerName)} and ${JSON.stringify(handler.handlerName)} generate the same identifier ${JSON.stringify(symbol)}.`,
+          handlerName: handler.handlerName,
+          nodeId: occurrence.nodeId,
+          component: occurrence.component,
+          event: occurrence.event,
+          path: occurrence.path,
+          occurrences: [...owner.occurrences, ...handler.occurrences],
+        });
+      } else {
+        localSymbolOwners.set(symbol, handler);
+      }
+    }
+  }
+
+  return {
+    ok: issues.length === 0,
+    occurrences,
+    handlers,
+    issues,
+  };
+}
 
 /**
  * Collect all unique handler names from bindings across the element tree.
@@ -69,34 +457,6 @@ export function collectBindings(screens: UiElement[]): Map<string, string> {
     if (node.children) stack.push(...node.children);
   }
   return handlers;
-}
-
-// ---------------------------------------------------------------------------
-// Handler stub generation
-// ---------------------------------------------------------------------------
-
-/**
- * Generate handler stubs as const arrow functions with typed parameters.
- * The `signatures` map is framework-specific (React vs Vue param types).
- * The optional `indentPrefix` controls leading whitespace (React needs `  `).
- */
-export function generateHandlerStubs(
-  handlers: Map<string, string>,
-  typescript: boolean,
-  signatures: HandlerSignatureMap,
-  indentPrefix = '',
-): string {
-  if (handlers.size === 0) return '';
-
-  const lines: string[] = [];
-  for (const [handlerName, bindingKey] of Array.from(handlers.entries()).sort(([a], [b]) => a.localeCompare(b))) {
-    const baseKey = bindingKey.replace(/_\w+$/, '');
-    const sig = signatures[baseKey] ?? signatures[bindingKey];
-    const params = typescript ? (sig?.tsParams ?? '()') : (sig?.params ?? '()');
-    lines.push(`${indentPrefix}const ${handlerName} = ${params} => { /* TODO: implement ${handlerName} */ };`);
-  }
-
-  return lines.join('\n');
 }
 
 // ---------------------------------------------------------------------------

@@ -1,6 +1,10 @@
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
-import type { HandlerSignatureMap } from './binding-utils.js';
+import type {
+  BindingAnalysis,
+  LocalBindingOccurrence,
+  ResolvedBindingHandler,
+} from './binding-utils.js';
 import {
   buildTailwindStaticClasses,
   buildTailwindVariantExpression,
@@ -10,10 +14,14 @@ import {
 import {
   mapFieldType,
   snakeToCamel,
-  generateHandlerStubs,
   resolveFrameworkChildContent,
   resolveFieldProps,
 } from './binding-utils.js';
+import { artifactActionsFromBindings, bindingsForNode } from './action-protocol.js';
+import {
+  generatedActionContractDigest,
+  generatedActionSourceDigest,
+} from './artifact-envelope.js';
 import { runPreEmit, type PreEmitContext } from './pre-emit.js';
 import { resolveSpacingLeaf } from '../render/spacing-leaf.js';
 import { normalizeSchemaForFramework, takeEmittedId } from './framework-normalization.js';
@@ -212,6 +220,57 @@ function buildVueClassAttr(staticClasses: string, variantExpression: string | nu
   return null;
 }
 
+function localBindingForNode(
+  analysis: BindingAnalysis,
+  nodeId: string,
+): LocalBindingOccurrence | undefined {
+  return bindingsForNode(analysis, nodeId).find(
+    (occurrence): occurrence is LocalBindingOccurrence => occurrence.kind === 'local',
+  );
+}
+
+function vueControlledProp(occurrence: LocalBindingOccurrence): string | null {
+  if (occurrence.component === 'Checkbox') return 'modelValue';
+  if (
+    occurrence.component === 'DatePicker'
+    || occurrence.component === 'Input'
+    || occurrence.component === 'Select'
+    || occurrence.component === 'Textarea'
+  ) return 'modelValue';
+  if (occurrence.component === 'Tabs') return 'selectedId';
+  return null;
+}
+
+function vueControlledUpdateEvent(controlledProp: string): string {
+  return controlledProp === 'selectedId' ? 'update:selectedId' : 'update:modelValue';
+}
+
+function vueBindingAttrs(node: UiElement, analysis: BindingAnalysis): string[] {
+  const occurrences = bindingsForNode(analysis, node.id);
+  const local = occurrences.find(
+    (occurrence): occurrence is LocalBindingOccurrence => occurrence.kind === 'local',
+  );
+  const attrs: string[] = [];
+  if (local?.component === 'Banner') {
+    attrs.push(`v-if="${local.localSymbols.state}"`);
+  }
+  const controlledProp = local ? vueControlledProp(local) : null;
+  if (local && controlledProp) {
+    attrs.push(`:${controlledProp}="${local.localSymbols.state}"`);
+    const declaredEvent = vueEventName(node.component, local.event);
+    const updateEvent = vueControlledUpdateEvent(controlledProp);
+    if (declaredEvent !== updateEvent) {
+      attrs.push(`@${updateEvent}="${local.localSymbols.setter}"`);
+    }
+  }
+  for (const occurrence of occurrences) {
+    if (occurrence.scope === 'screen') continue;
+    const event = vueEventName(node.component, occurrence.event);
+    attrs.push(`@${event}="${occurrence.handlerName}"`);
+  }
+  return attrs;
+}
+
 // ---------------------------------------------------------------------------
 // Template tree emitter
 // ---------------------------------------------------------------------------
@@ -222,6 +281,7 @@ function emitTemplateNode(
   warnings: CodegenIssue[],
   options: CodegenOptions,
   tailwindVariants: Map<string, TailwindVariantDefinition>,
+  bindingAnalysis: BindingAnalysis,
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): string {
   const tag = node.component;
@@ -233,6 +293,11 @@ function emitTemplateNode(
     ? { ...(node.props as Record<string, unknown>) }
     : null;
   const tailwindVariant = tailwindVariants.get(tag);
+  const localBinding = localBindingForNode(bindingAnalysis, node.id);
+  const controlledProp = localBinding ? vueControlledProp(localBinding) : null;
+  if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
+    propsObject = { ...(propsObject ?? {}), dismissLabel: 'Dismiss notification' };
+  }
 
   // Enrich props from objectSchema metadata (labels, placeholders, required, options, type)
   const enriched = resolveFieldProps(node, objectSchema);
@@ -255,12 +320,23 @@ function emitTemplateNode(
   const boundFieldName = fieldDirective
     && objectSchema?.[fieldDirective]
     && !hasExplicitControlledValue
+    && !controlledProp
     ? snakeToCamel(fieldDirective)
     : undefined;
   if (propsObject) {
     delete propsObject.children;
     // `field` drives generated bindings but is not a public component prop.
     delete propsObject.field;
+    if (controlledProp === 'modelValue') {
+      delete propsObject.modelValue;
+      delete propsObject.value;
+      delete propsObject.defaultValue;
+      delete propsObject.checked;
+      delete propsObject.defaultChecked;
+    } else if (controlledProp === 'selectedId') {
+      delete propsObject.selectedId;
+      delete propsObject.defaultSelectedId;
+    }
   }
 
   // Build attributes
@@ -282,14 +358,7 @@ function emitTemplateNode(
     attrParts.push(`v-model="${boundFieldName}"`);
   }
 
-  // Event bindings (e.g., @submit="handleSubmit")
-  if (node.bindings && typeof node.bindings === 'object') {
-    for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
-      // Convert React-style onXxx to Vue @xxx
-      const vueEvent = vueEventName(tag, eventKey);
-      attrParts.push(`@${vueEvent}="${handlerName}"`);
-    }
-  }
+  attrParts.push(...vueBindingAttrs(node, bindingAnalysis));
 
   if (options.styling === 'tailwind') {
     const variantExpression = buildTailwindVariantExpression(node, tailwindVariant);
@@ -313,9 +382,9 @@ function emitTemplateNode(
   // Sidebar layout
   if (node.layout?.type === 'sidebar' && children.length > 0) {
     const [mainChild, ...asideChildren] = children;
-    const mainTemplate = mainChild ? emitTemplateNode(mainChild, depth + 2, warnings, options, tailwindVariants, objectSchema) : '';
+    const mainTemplate = mainChild ? emitTemplateNode(mainChild, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema) : '';
     const asideTemplates = asideChildren
-      .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, objectSchema));
+      .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema));
 
     const inner = [
       `<div data-sidebar-main>`,
@@ -348,7 +417,7 @@ function emitTemplateNode(
         : '';
     }
     const innerChildren = children
-      .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, objectSchema))
+      .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema))
       .join('\n');
     const sectionFieldContent = children.length === 0
       ? resolveFrameworkChildContent(node, objectSchema)
@@ -371,12 +440,7 @@ function emitTemplateNode(
       innerAttrParts.push(`v-model="${boundFieldName}"`);
     }
     // Event bindings belong on the component, not the section wrapper
-    if (node.bindings && typeof node.bindings === 'object') {
-      for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
-        const vueEvent = vueEventName(tag, eventKey);
-        innerAttrParts.push(`@${vueEvent}="${handlerName}"`);
-      }
-    }
+    innerAttrParts.push(...vueBindingAttrs(node, bindingAnalysis));
     if (options.styling === 'tailwind') {
       const variantExpression = buildTailwindVariantExpression(node, tailwindVariant);
       const staticClasses = buildTailwindStaticClasses(node, {}, {
@@ -385,7 +449,12 @@ function emitTemplateNode(
       const classAttr = buildVueClassAttr(staticClasses, variantExpression);
       if (classAttr) innerAttrParts.push(classAttr);
     }
-    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren && !sectionUsesVModel) {
+    if (
+      sectionFieldContent?.propName
+      && !sectionFieldContent.isChildren
+      && !sectionUsesVModel
+      && !controlledProp
+    ) {
       innerAttrParts.push(`:${sectionFieldContent.propName}="${sectionFieldContent.fieldName}"`);
     }
     const innerAttrs = ` ${innerAttrParts.join(' ')}`;
@@ -431,6 +500,9 @@ function emitTemplateNode(
       if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
         return `<${tag}${attrs} />`;
       }
+      if (controlledProp) {
+        return `<${tag}${attrs} />`;
+      }
       let cleanAttrs = attrs;
       if (fieldContent.propName && propsObject?.[fieldContent.propName] !== undefined) {
         delete propsObject[fieldContent.propName];
@@ -445,12 +517,7 @@ function emitTemplateNode(
         if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
           rebuiltAttrParts.push(`v-model="${boundFieldName}"`);
         }
-        if (node.bindings && typeof node.bindings === 'object') {
-          for (const [eventKey, handlerName] of Object.entries(node.bindings).sort(([a], [b]) => a.localeCompare(b))) {
-            const vueEvent = vueEventName(tag, eventKey);
-            rebuiltAttrParts.push(`@${vueEvent}="${handlerName}"`);
-          }
-        }
+        rebuiltAttrParts.push(...vueBindingAttrs(node, bindingAnalysis));
         if (options.styling === 'tailwind') {
           const variantExpression = buildTailwindVariantExpression(node, tailwindVariant);
           const baseClasses = buildTailwindStaticClasses(node, computedStyle, { includeVariantFallback: !tailwindVariant });
@@ -476,24 +543,10 @@ function emitTemplateNode(
   }
 
   const childrenTemplate = children
-    .map((c) => emitTemplateNode(c, depth + 1, warnings, options, tailwindVariants, objectSchema))
+    .map((c) => emitTemplateNode(c, depth + 1, warnings, options, tailwindVariants, bindingAnalysis, objectSchema))
     .join('\n');
   return `<${tag}${attrs}>\n${ind(childrenTemplate, depth + 1)}\n${'  '.repeat(depth)}</${tag}>`;
 }
-
-// ---------------------------------------------------------------------------
-// Vue-specific handler signatures (delegates to shared binding-utils)
-// ---------------------------------------------------------------------------
-
-const VUE_HANDLER_SIGNATURES: HandlerSignatureMap = {
-  onSubmit:   { params: '(e)',        tsParams: '(e: Event)' },
-  onChange:   { params: '(value)',     tsParams: '(value: unknown)' },
-  onRowClick: { params: '(row)',      tsParams: '(row: Record<string, unknown>)' },
-  onSort:     { params: '(column)',   tsParams: '(column: string)' },
-  onFilter:   { params: '(criteria)', tsParams: '(criteria: Record<string, unknown>)' },
-  onEdit:     { params: '()',         tsParams: '()' },
-  onDelete:   { params: '()',         tsParams: '()' },
-};
 
 // ---------------------------------------------------------------------------
 // Vue reactivity helpers
@@ -523,8 +576,12 @@ function isFormSchema(screens: UiElement[]): boolean {
 function shouldImportVueRuntime(
   objectSchema: Record<string, FieldSchemaEntry> | undefined,
   screens: UiElement[],
+  analysis?: BindingAnalysis,
 ): boolean {
-  return Boolean(objectSchema && Object.keys(objectSchema).length > 0 && isFormSchema(screens));
+  return Boolean(
+    (objectSchema && Object.keys(objectSchema).length > 0 && isFormSchema(screens))
+    || analysis?.handlers.some((handler) => handler.kind === 'local'),
+  );
 }
 
 /** Map field type to a sensible ref() default value. */
@@ -537,6 +594,183 @@ function fieldRefDefault(entry: FieldSchemaEntry): string {
     case 'object': return '{}';
     default: return "''";
   }
+}
+
+function nodesById(screens: readonly UiElement[]): Map<string, UiElement> {
+  const nodes = new Map<string, UiElement>();
+  const stack = [...screens].reverse();
+  while (stack.length > 0) {
+    const node = stack.pop()!;
+    nodes.set(node.id, node);
+    if (node.children) stack.push(...node.children.slice().reverse());
+  }
+  return nodes;
+}
+
+function semanticParameters(
+  handler: ResolvedBindingHandler,
+  typescript: boolean,
+): string {
+  return handler.signature.parameters
+    .map((parameter) => (
+      typescript ? `${parameter.name}: ${parameter.type}` : parameter.name
+    ))
+    .join(', ');
+}
+
+function generateVueActionTypes(
+  analysis: BindingAnalysis,
+  typescript: boolean,
+): string {
+  const domainHandlers = analysis.handlers.filter((handler) => handler.kind === 'domain');
+  if (domainHandlers.length === 0) return '';
+  const actionsByName = new Map(
+    artifactActionsFromBindings(analysis).map((action) => [action.name, action]),
+  );
+  const markerLines = (handler: ResolvedBindingHandler): string[] => {
+    const action = actionsByName.get(handler.handlerName)!;
+    return [
+      `/* @oods-domain-action ${action.name} ${generatedActionContractDigest(action)} */`,
+      ...action.sources.map((source) => (
+        `/* @oods-domain-source ${generatedActionSourceDigest(action.name, source)} */`
+      )),
+    ];
+  };
+  if (typescript) {
+    const lines = ['interface GeneratedUIActions {'];
+    for (const handler of domainHandlers) {
+      lines.push(...markerLines(handler).map((line) => `  ${line}`));
+      lines.push(`  ${handler.handlerName}: (${semanticParameters(handler, true)}) => void;`);
+    }
+    lines.push('}');
+    return lines.join('\n');
+  }
+  const properties = domainHandlers
+    .map((handler) => `${handler.handlerName}: (${semanticParameters(handler, true)}) => void`)
+    .join(', ');
+  return [
+    ...domainHandlers.flatMap(markerLines),
+    `/** @typedef {{ ${properties} }} GeneratedUIActions */`,
+  ].join('\n');
+}
+
+function explicitInitialValue(
+  node: UiElement,
+  occurrence: LocalBindingOccurrence,
+): unknown {
+  const props = (node.props ?? {}) as Record<string, unknown>;
+  if (occurrence.component === 'Checkbox') {
+    return props.modelValue ?? props.checked ?? props.defaultChecked;
+  }
+  if (occurrence.component === 'Tabs') {
+    const explicit = props.selectedId ?? props.defaultSelectedId;
+    if (explicit !== undefined) return explicit;
+    const items = Array.isArray(props.items) ? props.items : [];
+    const first = items.find((item) => (
+      typeof item === 'object'
+      && item !== null
+      && (item as Record<string, unknown>).disabled !== true
+      && (item as Record<string, unknown>).isDisabled !== true
+      && typeof (item as Record<string, unknown>).id === 'string'
+    ));
+    return first ? (first as Record<string, unknown>).id : undefined;
+  }
+  return props.modelValue ?? props.value ?? props.defaultValue;
+}
+
+function vueLocalInitialExpression(
+  node: UiElement,
+  occurrence: LocalBindingOccurrence,
+  objectSchema: Record<string, FieldSchemaEntry> | undefined,
+  formMode: boolean,
+): string {
+  if (occurrence.component === 'Banner') return 'true';
+  const explicit = explicitInitialValue(node, occurrence);
+  if (explicit !== undefined) {
+    if (occurrence.signature.parameters[0]?.type === 'boolean') {
+      return explicit === true ? 'true' : 'false';
+    }
+    return javascriptSingleQuotedString(String(explicit));
+  }
+  const field = node.props?.field;
+  if (typeof field === 'string' && objectSchema?.[field]) {
+    const fallback = occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
+    const source = formMode ? `${snakeToCamel(field)}.value` : snakeToCamel(field);
+    return occurrence.signature.parameters[0]?.type === 'boolean'
+      ? `${source} ?? ${fallback}`
+      : `String(${source} ?? ${fallback})`;
+  }
+  return occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
+}
+
+function generateVueBindingProtocol(
+  analysis: BindingAnalysis,
+  screens: readonly UiElement[],
+  options: CodegenOptions,
+  objectSchema: Record<string, FieldSchemaEntry> | undefined,
+  formMode: boolean,
+): string {
+  const lines: string[] = [];
+  const nodes = nodesById(screens);
+  for (const handler of analysis.handlers) {
+    if (handler.kind === 'local') {
+      const occurrence = handler.occurrences[0] as LocalBindingOccurrence;
+      const node = nodes.get(occurrence.nodeId);
+      if (!node) continue;
+      const type = occurrence.component === 'Banner'
+        ? 'boolean'
+        : occurrence.signature.parameters[0]?.type ?? 'unknown';
+      const typeArgument = options.typescript ? `<${type}>` : '';
+      const initial = vueLocalInitialExpression(node, occurrence, objectSchema, formMode);
+      lines.push(`const ${occurrence.localSymbols.state} = ref${typeArgument}(${initial});`);
+      if (occurrence.component === 'Banner') {
+        lines.push(
+          `/* @oods-local-binding ${handler.handlerName} */ const ${handler.handlerName} = () => { ${occurrence.localSymbols.state}.value = false; };`,
+        );
+      } else {
+        const parameter = occurrence.signature.parameters[0]!;
+        const params = options.typescript
+          ? `(${parameter.name}: ${parameter.type})`
+          : `(${parameter.name})`;
+        if (!options.typescript) {
+          lines.push(`/** @param {${parameter.type}} ${parameter.name} */`);
+        }
+        lines.push(
+          `const ${occurrence.localSymbols.setter} = ${params} => { ${occurrence.localSymbols.state}.value = ${parameter.name}; };`,
+        );
+        if (!options.typescript) {
+          lines.push(`/** @param {${parameter.type}} ${parameter.name} */`);
+        }
+        lines.push(
+          `/* @oods-local-binding ${handler.handlerName} */ const ${handler.handlerName} = ${params} => { ${occurrence.localSymbols.setter}(${parameter.name}); };`,
+        );
+      }
+      continue;
+    }
+    if (!handler.occurrences.some((occurrence) => occurrence.scope === 'component')) continue;
+    const params = semanticParameters(handler, options.typescript);
+    const args = handler.signature.parameters.map((parameter) => parameter.name).join(', ');
+    if (!options.typescript && handler.signature.parameters.length > 0) {
+      lines.push(...handler.signature.parameters.map(
+        (parameter) => `/** @param {${parameter.type}} ${parameter.name} */`,
+      ));
+    }
+    lines.push(
+      `/* @oods-domain-binding ${handler.handlerName} */ const ${handler.handlerName} = (${params}) => { actions.${handler.handlerName}(${args}); };`,
+    );
+  }
+  return lines.join('\n');
+}
+
+function generateVueActionGuards(analysis: BindingAnalysis): string {
+  return analysis.handlers
+    .filter((handler) => handler.kind === 'domain')
+    .map((handler) => (
+      `if (!actions || !Object.prototype.hasOwnProperty.call(actions, ${javascriptSingleQuotedString(handler.handlerName)}) `
+      + `|| typeof actions.${handler.handlerName} !== 'function') { `
+      + `throw new Error(${javascriptSingleQuotedString(`GeneratedUI requires actions.${handler.handlerName}.`)}); }`
+    ))
+    .join('\n');
 }
 
 /** Detect derivable computed properties from field names. */
@@ -596,12 +830,20 @@ function detectComputedProperties(
 function buildScriptSetup(
   ctx: PreEmitContext,
 ): string {
-  const { components, options, tailwindVariants, objectSchema, tree: screens } = ctx;
+  const {
+    bindingAnalysis,
+    components,
+    options,
+    tailwindVariants,
+    objectSchema,
+    tree: screens,
+  } = ctx;
   const sorted = Array.from(components).sort();
   const lines: string[] = [];
   const hasObjectSchema = objectSchema && Object.keys(objectSchema).length > 0;
+  const hasDomainActions = bindingAnalysis.handlers.some((handler) => handler.kind === 'domain');
   const includeCva = tailwindVariants.size > 0;
-  const formMode = shouldImportVueRuntime(objectSchema, screens);
+  const formMode = Boolean(hasObjectSchema && isFormSchema(screens));
 
   if (options.typescript) {
     lines.push(`<script setup lang="ts">`);
@@ -610,7 +852,7 @@ function buildScriptSetup(
   }
 
   // Vue reactivity imports
-  if (formMode) {
+  if (shouldImportVueRuntime(objectSchema, screens, bindingAnalysis)) {
     const computedProps = hasObjectSchema ? detectComputedProperties(objectSchema!) : [];
     const vueImports = ['ref'];
     if (computedProps.length > 0) vueImports.push('computed');
@@ -631,6 +873,9 @@ function buildScriptSetup(
       lines.push(definition);
     }
   }
+
+  const actionTypes = generateVueActionTypes(bindingAnalysis, options.typescript);
+  if (actionTypes) lines.push('', actionTypes);
 
   if (formMode && hasObjectSchema) {
     // Vue 3 Composition API: ref() for each form field
@@ -659,10 +904,20 @@ function buildScriptSetup(
         lines.push(`const ${cp.name} = computed(() => ${cp.expression});`);
       }
     }
+    if (hasDomainActions) {
+      lines.push('');
+      if (options.typescript) {
+        lines.push('const { actions } = defineProps<{ actions: GeneratedUIActions }>();');
+      } else {
+        lines.push('const generatedProps = defineProps({ actions: { type: Object, required: true } });');
+        lines.push('const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
+      }
+    }
   } else if (options.typescript && hasObjectSchema) {
     // Non-form: use defineProps for display components
     lines.push('');
     lines.push('interface Props {');
+    if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
     for (const [fieldName, entry] of Object.entries(objectSchema!).sort(([a], [b]) => a.localeCompare(b))) {
       const tsType = mapFieldType(entry);
       const optional = entry.required ? '' : '?';
@@ -677,20 +932,38 @@ function buildScriptSetup(
     const fieldNames = Object.keys(objectSchema!)
       .map(snakeToCamel)
       .sort();
-    lines.push(`const { ${fieldNames.join(', ')} } = defineProps<Props>();`);
+    const propNames = [...(hasDomainActions ? ['actions'] : []), ...fieldNames];
+    lines.push(`const { ${propNames.join(', ')} } = defineProps<Props>();`);
   } else if (options.typescript) {
     lines.push('');
     lines.push(`defineProps<{`);
-    lines.push(`  // Props can be extended here`);
+    if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
+    else lines.push(`  // Props can be extended here`);
     lines.push(`}>();`);
+    if (hasDomainActions) {
+      lines.splice(lines.length - 3, 3,
+        `const { actions } = defineProps<{`,
+        '  actions: GeneratedUIActions;',
+        '}>();');
+    }
+  } else if (hasDomainActions) {
+    lines.push('');
+    lines.push('const generatedProps = defineProps({ actions: { type: Object, required: true } });');
+    lines.push('const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
   }
 
-  // Handler stubs from bindings (collected in the shared pre-emit pass)
-  const handlers = ctx.handlers;
-  const stubs = generateHandlerStubs(handlers, options.typescript, VUE_HANDLER_SIGNATURES);
-  if (stubs) {
-    lines.push('');
-    lines.push(stubs);
+  const actionGuards = generateVueActionGuards(bindingAnalysis);
+  if (actionGuards) lines.push('', actionGuards);
+
+  const bindingProtocol = generateVueBindingProtocol(
+    bindingAnalysis,
+    screens,
+    options,
+    objectSchema,
+    formMode,
+  );
+  if (bindingProtocol) {
+    lines.push('', bindingProtocol);
   }
 
   // Prop default declarations — skip names already declared as ref() or defineProps
@@ -765,7 +1038,15 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   // Build template block
   const screenTemplates = ctx.tree
-    .map((screen) => emitTemplateNode(screen, 1, warnings, options, tailwindVariants, ctx.objectSchema))
+    .map((screen) => emitTemplateNode(
+      screen,
+      1,
+      warnings,
+      options,
+      tailwindVariants,
+      ctx.bindingAnalysis,
+      ctx.objectSchema,
+    ))
     .join('\n');
 
   const templateBlock = [
@@ -804,7 +1085,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   const code = blocks.join('\n');
   const imports = [
-    ...(shouldImportVueRuntime(ctx.objectSchema, ctx.tree) ? ['vue'] : []),
+    ...(shouldImportVueRuntime(ctx.objectSchema, ctx.tree, ctx.bindingAnalysis) ? ['vue'] : []),
     '@oods/components-vue',
     '@oods/component-styles/css',
     ...(tailwindVariants.size > 0 ? ['class-variance-authority'] : []),
@@ -817,5 +1098,6 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     fileExtension: '.vue',
     imports,
     warnings,
+    actions: artifactActionsFromBindings(ctx.bindingAnalysis),
   };
 }

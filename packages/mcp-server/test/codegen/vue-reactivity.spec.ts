@@ -233,11 +233,11 @@ describe('vue-emitter — v-model', () => {
 });
 
 /* ------------------------------------------------------------------ */
-/*  Event handler stubs                                                */
+/*  Typed action protocol                                              */
 /* ------------------------------------------------------------------ */
 
-describe('vue-emitter — event handler stubs', () => {
-  it('generates Vue-typed handler parameters in TypeScript mode', () => {
+describe('vue-emitter — typed action protocol', () => {
+  it('adapts a supported component event to a required consumer action', () => {
     const schema: UiSchema = {
       version: '1.0',
       screens: [{
@@ -247,12 +247,14 @@ describe('vue-emitter — event handler stubs', () => {
         children: [{
           id: 'btn',
           component: 'Button',
-          bindings: { onSubmit: 'handleSubmit' },
+          bindings: { onActivate: 'handleActivate' },
         }],
       }],
     };
     const result = emit(schema, { typescript: true, styling: 'inline' });
-    expect(result.code).toContain('handleSubmit');
-    expect(result.code).toContain('Event');
+    expect(result.code).toContain('handleActivate: () => void;');
+    expect(result.code).toContain('@activate="handleActivate"');
+    expect(result.code).toContain('actions.handleActivate();');
+    expect(result.code).not.toMatch(/TODO|=>\s*\{\s*\}/);
   });
 });

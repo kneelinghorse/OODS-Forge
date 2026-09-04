@@ -171,7 +171,7 @@ describe('code.generate tool', () => {
             'foo="safe" @click': 'globalThis.pwned=true',
           },
           bindings: {
-            onChange: 'firstName',
+            onActivate: 'firstName',
             onClick: 'bad-name',
             'onClick bad': 'safeHandler',
           },
@@ -180,6 +180,18 @@ describe('code.generate tool', () => {
     };
 
     const expectedErrors = [
+      {
+        code: 'OODS-V007',
+        message: 'Binding Button.onClick is not in the supported generation vocabulary.',
+        nodeId: 'unsafe-button',
+        component: 'Button',
+      },
+      {
+        code: 'OODS-V007',
+        message: 'Binding Button.onClick bad is not in the supported generation vocabulary.',
+        nodeId: 'unsafe-button',
+        component: 'Button',
+      },
       {
         code: 'OODS-V007',
         message: 'Object schema field "first-name" does not normalize to a safe JavaScript identifier.',
@@ -359,9 +371,9 @@ describe('code.generate tool', () => {
           'data-layout': 'inline',
           'data-oods-component': 'Injected',
           'data-x.y': 'unsafe',
-          onClick: 'not-a-handler',
+          onEdit: 'not-a-handler',
         },
-        bindings: { onClick: 'handleClick' },
+        bindings: { onEdit: 'handleEdit' },
       }],
     };
 
@@ -389,7 +401,7 @@ describe('code.generate tool', () => {
       },
       {
         code: 'OODS-V007',
-        message: 'Prop key "onClick" duplicates a binding attribute for react.',
+        message: 'Prop key "onEdit" duplicates a binding attribute for react.',
         nodeId: 'root',
         component: 'Stack',
       },
@@ -408,7 +420,7 @@ describe('code.generate tool', () => {
         id: 'button',
         component: 'Button',
         props: { content: 'Save' },
-        bindings: { onClick: 'Button' },
+        bindings: { onActivate: 'Button' },
       }],
     };
 

@@ -161,8 +161,10 @@ export function extractUserClassName(props: NodeProps | null): string {
 }
 
 function interactiveStateClasses(node: UiElement, props: NodeProps | null): string[] {
-  const hasBindings = !!(node.bindings && Object.keys(node.bindings).length > 0);
-  const interactive = INTERACTIVE_COMPONENTS.has(node.component) || hasBindings;
+  // Domain-action metadata may live on structural nodes (for example a Stack
+  // carrying onEdit/onDelete). A binding alone does not make that container a
+  // focusable control, so interactive utilities follow the rendered component.
+  const interactive = INTERACTIVE_COMPONENTS.has(node.component);
   if (!interactive) return [];
 
   const classes = [
@@ -195,8 +197,7 @@ function isInteractiveClass(cls: string): boolean {
 }
 
 function isInteractiveElement(node: UiElement): boolean {
-  return INTERACTIVE_COMPONENTS.has(node.component) ||
-    !!(node.bindings && Object.keys(node.bindings).length > 0);
+  return INTERACTIVE_COMPONENTS.has(node.component);
 }
 
 export interface TailwindStaticClassOptions {
