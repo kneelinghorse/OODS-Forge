@@ -467,7 +467,7 @@ describe('Sprint 183 M02 typed action protocol', () => {
       const errors = reactConsumerErrors(result.code, true, true, omittedAction);
       expect(errors.join('\n'), omittedAction).toContain(omittedAction);
     }
-  });
+  }, 120_000);
 
   it.each(typescriptOptions)('Vue typescript=$typescript requires every injected action', async (typescript) => {
     const result = await handle({

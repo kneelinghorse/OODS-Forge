@@ -110,14 +110,17 @@ export default defineConfig({
           'packages/mcp-server/test/**/*.spec.ts',
           'packages/mcp-adapter/**/*.test.js'
         ],
-        // The M04 proof carriers compile a large generation matrix and rebuild shared
-        // `dist` trees through package lifecycles. test:coverage runs them sequentially
+        // Product-reality compiler and packaging proofs are resource-heavy, and package
+        // lifecycles replace shared `dist` trees. test:coverage runs them sequentially
         // through the package-native config after all root coverage readers finish.
         exclude: [
           'tests/a11y/**',
           'packages/mcp-server/test/soak/**',
           'packages/mcp-server/test/product-reality/codegen-matrix.s182.spec.ts',
           'packages/mcp-server/test/product-reality/packed-consumers.s182.spec.ts',
+          'packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts',
+          'packages/mcp-server/test/product-reality/saved-schema-consumers.s183.spec.ts',
+          'packages/mcp-server/test/product-reality/independent-review-approval.s183.spec.ts',
         ],
         environment: 'node'
       }

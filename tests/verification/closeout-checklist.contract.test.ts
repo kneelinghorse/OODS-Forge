@@ -191,6 +191,26 @@ describe("Sprint 177 closeout carrier", () => {
     );
   });
 
+  it("serializes product-reality proofs that rebuild shared package output", () => {
+    const coverageCommand = packageManifest.scripts?.["test:coverage"] ?? "";
+    const serializedProofs = [
+      "typed-action-protocol.s183.spec.ts",
+      "saved-schema-consumers.s183.spec.ts",
+      "independent-review-approval.s183.spec.ts",
+    ];
+
+    for (const proof of serializedProofs) {
+      expect(rootVitestConfig).toContain(
+        `'packages/mcp-server/test/product-reality/${proof}'`,
+      );
+      expect(coverageCommand).toContain(`test/product-reality/${proof}`);
+    }
+    expect(coverageCommand.indexOf(serializedProofs[0])).toBeGreaterThan(
+      coverageCommand.indexOf("vitest --coverage"),
+    );
+    expect(mcpVitestConfig).toContain("fileParallelism: false");
+  });
+
   it("carries every closeout-only control and preserves the build-input run-last semantics", () => {
     const rows = localRows
       .split("\n")

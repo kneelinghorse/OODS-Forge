@@ -106,9 +106,21 @@ const ROUND_TRIP_SCHEMA: UiSchema = {
           component: 'Grid',
           layout: { type: 'grid' },
           children: [
-            { id: 'card-1', component: 'Card', props: { title: 'Metric A' } },
-            { id: 'card-2', component: 'Card', props: { title: 'Metric B' } },
-            { id: 'card-3', component: 'Card', props: { title: 'Metric C' } },
+            {
+              id: 'card-1',
+              component: 'Card',
+              children: [{ id: 'card-1-title', component: 'Text', props: { content: 'Metric A' } }],
+            },
+            {
+              id: 'card-2',
+              component: 'Card',
+              children: [{ id: 'card-2-title', component: 'Text', props: { content: 'Metric B' } }],
+            },
+            {
+              id: 'card-3',
+              component: 'Card',
+              children: [{ id: 'card-3-title', component: 'Text', props: { content: 'Metric C' } }],
+            },
           ],
         },
         {
