@@ -1,191 +1,126 @@
 # Near Roadmap
 
-**Status:** Active — Forge serving horizon for the Shopify-selected direction
-**Updated:** 2026-08-25
-**Scope:** Next 1–3 Forge planning cycles; Shopify execution remains in its sibling repository
-**Companion to:** [Roadmap index](README.md) · [Sprint-178 locked direction memo](../../planning/forge-s178-brand-storybook-viztwin-decision-memo.md)
+**Status:** ACTIVE — program decision `#1652`; Sprint-182 lock decision `#1653`
 
-> **⚠️ FROZEN HISTORY / CURRENT RESET — 2026-08-25; NL→viz arc REVERTED 2026-06-29.**
-> The former sprint-144 horizon is a point-in-time record: dated facts are not silently rewritten
-> (decision #679), and its detailed s96–s107 shapes now remain in Git/CMOS history rather than this
-> live tier. The Shopify direction fired next step #1267, now complete, so decision #1542's “forward
-> rewrite remains parked” clause is superseded. The NL→viz disposition is unchanged (decisions #973 and
-> #1542): `viz.fromText`, the `@anthropic-ai/sdk` parser, the `nlviz/` module, and the uncommitted
-> dimension registry (`dimensionRef` / `^gd.`) did not ship and are not roadmap scope. The surviving
-> half is typed, structured `viz.render` intent: agents can send deterministic `goal`, named
-> `measures`/`dimensions`, optional `chartFamily`, and optional governed `measureRef`. The free-text
-> layer was reverted because it made an LLM parse English for the LLM agent that can emit that intent
-> directly. The 13-type matrix, governed measures, dashboards, deterministic HTML export, and
-> measure-aware accessibility narrative survived.
+**Updated:** 2026-09-03
 
-This file now answers one question: what Forge itself should do near-term while the Shopify proof
-arc discovers what it needs. It does not import another repository's roadmap. Current mission state
-comes from CMOS; this document supplies the direction and dependency gates behind that queue.
+**Scope:** The next three independently reviewed increments
 
-## Governing boundary — constraint #5 verbatim
+**Program authority:** [Forge Product Reality Program](product-reality-program.md)
 
-> CONSUMER MODEL (Derek, 2026-06-18 — standing constraint, supersedes the s115 "consumer pull"
-> framing): Forge's consumer is AGENTS using the Forge tools via MCP. That is who we build for. (1)
-> There is NO external project that PULLs from Forge — do NOT frame any sprint, mission, or value case
-> around "proving a consumer pull" or any other team adopting a Forge output. (2) Forge is NOT a
-> hosted/SaaS service and there are NO current plans to be one; nothing should assume a
-> deployed/reachable Forge endpoint. (3) There are NO plans to use Synthesis-Workbench with the
-> viz/export work — do not assume a Workbench surface. (4) Headless integrations are welcome IN
-> PRINCIPLE but are a SEPARATE initiative that must be discussed explicitly BEFORE any work — as must
-> ANY dependency that would be created for a live production site. Capabilities ship for agent use
-> first; cross-app/production wiring is its own decision, never an implied sprint goal. This is why
-> s115's m06 (a cmos-dashboard cutover) was correctly dropped and why the "demand signal / pull"
-> thesis behind it is retracted.
+## Direction
 
-Source: active CMOS constraint #5, reaffirmed unchanged 2026-08-22.
+OODS Foundry and Forge must function as one usable design system and agent toolchain Derek can use to
+build real work. Greenfield output is a first-class requirement. Mapping into an existing company
+system remains valuable, but it cannot substitute for Forge-owned components, runtime artifacts, or
+working generation.
 
-## Direction selected: Forge serves the Shopify proof
+The prior Shopify-serving roadmap and the schema-ingest version of Sprint 182 are retained in Git and
+CMOS as history. They no longer control this queue. The current program does not ratify MCP Apps,
+Figma, Penpot, or a custom canvas; surface selection follows runnable product foundations.
 
-Shopify is the selected enterprise-test target (decision #1532; planning session
-PS-2026-08-25-002). The proof has a separate sibling project and owns its discovery and build
-choices. Shopify's D1–D6 and sprint sequence remain in that sibling repository; Forge does not copy
-those missions here or assume their outcome.
+## Current measured gap
 
-Forge's role is narrower:
+| Claim area | Current evidence | Near-horizon obligation |
+|---|---|---|
+| Component catalog | 109 unique IDs; embedded count says 101 | One generated census with per-surface evidence |
+| React | 12 catalog names exactly match the root export surface; taxonomy is split | A real, installable React package |
+| Vue | Emitter fixtures exist; runtime implementations do not | A real, installable Vue package |
+| Generation | Both targets import nonexistent `@oods/components` | Target-aware imports and clean-consumer builds |
+| Saved designs | 16 schemas, all using `Stack` | Make their common primitive nucleus executable |
+| Visualization | 13 admitted types; five complete the folded certified path | Close public render/certification gaps before widening claims |
 
-1. answer discovery questions from verified repository and MCP evidence;
-2. expose existing capabilities to the proof's agents through Forge's MCP tools;
-3. send dated capability/status packets through `cmos_message` rather than creating a cross-repo
-   dependency; and
-4. charter a Forge build only after discovery identifies a Forge-owned gap and Derek approves that
-   movement explicitly.
+Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
+is not a runtime package, and an admitted chart name is not rendered output.
 
-This is compatible with constraint #5: the Shopify sibling is not a project that pulls Forge
-artifacts or requires a hosted Forge service. Its agents exercise Forge through the MCP boundary.
+## Increment 1 — Sprint 182: Product Reality Foundation
 
-## Verified Forge surface available to discovery
+Sprint 182 is the active first build increment. Its build authority is
+[forge-s182-product-reality-foundation-decision-memo.md](../../planning/forge-s182-product-reality-foundation-decision-memo.md).
 
-The claims below were re-counted against the live tree on 2026-08-25. They are capability facts,
-not promises about what Shopify will build.
+It delivers:
 
-| Surface               | Verified capability                                                                                                                                                                                                                                                                                                         | Source of truth                                                                                                                                |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| MCP registry          | 20 auto-registered tools plus 6 on-demand tools                                                                                                                                                                                                                                                                             | `packages/mcp-server/src/tools/registry.json:2-30`                                                                                             |
-| Visualization         | 13 `viz.render` types: 5 Cartesian (`bar`, `line`, `area`, `scatter`, `heatmap`) plus 8 explicit ECharts-primary types (`treemap`, `sunburst`, `sankey`, `force_graph`, `choropleth`, `bubble_map`, `flow_map`, `chord`)                                                                                                    | `packages/mcp-server/src/schemas/viz.render.input.json:272-275`                                                                                |
-| Governed measures     | With `resolveMeasures` enabled, `dashboard.render` can resolve a known `measureRef` for KPI compute; chart-panel and structured-intent measure refs add governed narrative context without changing chart compute. Unknown refs fail loud on the enabled path.                                                              | `packages/mcp-server/src/schemas/dashboard.render.input.json:66-70,246-249`; `packages/mcp-server/src/schemas/viz.render.input.json:339-384`   |
-| Dashboards and export | `dashboard.render` supports 11 of the 13 chart types (not `chord` or `flow_map`), deterministic auto-layout, KPI compute, cross-filter linking, optional brand/a11y output, and opt-in deterministic HTML. HTML renders Vega-Lite panels and KPI tiles; ECharts-primary panels remain accessibility-described placeholders. | `packages/mcp-server/src/schemas/dashboard.render.input.json:5-6,36-40,120-123`; `packages/mcp-server/src/tools/dashboard.render.html.ts:1-20` |
-| Narrative             | Governed unit, threshold, and comparison context reaches the accessibility narrative when HTML or a11y output is requested; V141/V142 stop threshold value/direction drift.                                                                                                                                                 | `packages/mcp-server/src/tools/dashboard.render.ts:415-475,692-700`                                                                            |
-| Multi-brand           | Brand A and Brand B each have base, dark, and high-contrast token cells; the generated bridge owns 41 semantic slots.                                                                                                                                                                                                       | `docs/theming/multi-brand.md:3,13-15`                                                                                                          |
-| Mobile                | Crawl 1–3 and compile-truth are done. Further crawl items and the native walk remain gated on a named mobile/native use case; no walk is implied here.                                                                                                                                                                      | `cmos/planning/forge-open-arcs-ledger-2026-08.md:161-171`                                                                                      |
+1. reconciliation proposals for all 109 current catalog claims and a surface-specific truth plane;
+   the 109-row obligation denominator changes only after Derek approves the reconciliation artifact
+   or a named amendment in CMOS;
+2. required package foundations for contracts, styles, React, and Vue, with a core package created
+   only if both frameworks consume real shared logic;
+3. the exact 14-component primitive nucleus in both frameworks:
+   `Badge`, `Banner`, `Button`, `Card`, `Checkbox`, `DatePicker`, `Grid`, `Input`, `Select`,
+   `Stack`, `Table`, `Tabs`, `Text`, and `Textarea`;
+4. the target/package foundation for code generation, with loud failure when the requested target is
+   not `emissionEligible`; and
+5. clean, isolated React and Vue consumers that install freshly packed local artifacts and compile,
+   build, and render the generated nucleus.
 
-### Certification truth — keep the two quartets separate
+The exact 14-component boundary is finite even if the implementation spans more than one build
+session. Nothing is silently removed to make the sprint appear complete.
 
-Decision #977's strategic quartet is **accuracy, fidelity, contract-determinism, and
-accessibility-by-construction**. It describes the flagship value thesis.
+## Increment 2 — Runnable Generation
 
-The `artifact.certify` response quartet is
-`{a11yEquivalence, determinism, contrast, accuracy}`. It describes wire-level pillar results. These
-are not aliases and must not be collapsed into one list.
+Number this sprint only after Sprint 182 receives independent genuine-close review.
 
-Current certification posture (`packages/mcp-adapter/tool-descriptions.json:20`):
+It delivers a versioned generated file-set artifact with exact dependencies, deterministic content
+and render hashes, typed event/action bindings, and explicit `draft`, `build`, and `release`
+validation profiles. At least one saved Forge schema must install, build, render, hydrate, and pass
+interactions in clean React and Vue consumers.
 
-- the 5 Cartesian types are `coverage:'certified'`; their contrast is measured from the chart Forge
-  actually renders, and a render—when performed—also participates in determinism through optional
-  `renderHash`;
-- the 8 ECharts-primary types are `coverage:'uncertified'` / `conformant:null`, but they do carry a
-  real contrast verdict: the 5 categorical types are reconstruction-graded from the adapter palette
-  and the 3 geo types are exempt under the existing sequential/continuous ruling; and
-- ECharts render-grading implementation is not shipped. Sprint-178 produced a planning-grade
-  feasibility record and a DRAFT charter only
-  (`../../planning/forge-s178-m05-echarts-render-grading-feasibility.md` and
-  `../../planning/forge-s179-echarts-render-grading-draft-charter.md`). Grounding, critique, lock,
-  real CI, text-timing closure, and resource gates precede any implementation mission.
+This is deliberately separate from Sprint 182. Changing the code-generation contract while creating
+two component libraries would make the first sprint too large to review honestly.
 
-“Uncertified” does not erase that existing reconstruction verdict, and the ECharts planning park
-must not be narrated as missing all certification behavior.
+## Increment 3 — First Complete Greenfield Workflow
 
-## Near-horizon Forge sequence
+Number this sprint only after the runnable-generation increment receives independent review.
 
-No Shopify D1–D6 item is a Forge mission. The near horizon uses three Forge-side gates:
+It delivers the high-use components and behavior needed for a complete Subscription workflow:
+list → detail → edit/cancel → timeline, including loading, empty, error, validation, confirmation,
+success, and permission-aware states. The same semantic workflow must work in React and Vue without
+consumer-authored replacement components.
 
-### Gate A — serve discovery from shipped facts
+The review of this increment determines whether component breadth, current visualization closure, or
+an adapter evaluation creates the most useful next artifact. The longer program table is dependency
+guidance, not a pre-ratified total order.
 
-Provide the Shopify sibling with a dated packet that names the current tool registry, exact
-`viz.render → artifact.certify` path, dashboard/measure/narrative capabilities, brand A/B posture,
-and known parks. Include source paths or a reproducible MCP transcript. Do not promise a hosted
-endpoint, a Workbench surface, or consumer-specific production wiring.
+## Gates that apply to every increment
 
-**Exit:** the packet is sent by `cmos_message`, and every capability claim resolves to a current
-source or live tool response.
+- Claims come from executable evidence, never catalog prose or research conclusions.
+- React and Vue are equal targets; framework-specific behavior stays idiomatic.
+- Packed-consumer tests use no workspace alias, repository source import, existing `node_modules`, or
+  user registry configuration.
+- An unsupported target fails with a typed gap; warning-only fallback is not success.
+- Exploratory work may use advisory validation. Production/release artifacts must pass the declared
+  enforced profile.
+- Every significant failure mode receives a negative test or mutation bite capable of proving the
+  gate is discriminating.
+- Automated snapshots prove stability, not design quality; an independent review inspects responsive
+  craft and interaction states before a greenfield artifact is called usable.
+- A build session records evidence and stops. A separate review session decides genuine close.
+- Public publishing, hosting, and paid external API use require explicit later decisions.
 
-**Evidence (2026-08-25):** info-push `9fdb345e-115c-4cd7-b9d3-2da8ba674537` was sent to
-`cmos://derek/shopify-forge` with the current registry, visualization/certification, dashboard,
-brand, mobile, and boundary facts above.
+## Parallel obligations and parks
 
-### Gate B — classify what discovery found
+Sprint-181 follow-ups `#1315`–`#1322` remain Forge-owned maintenance debt under decision `#1651`;
+they do not masquerade as Sprint-182 component work. Every planning/closeout session reviews their
+status, and Sprint 182 closeout records an explicit disposition. They must close before an integrated
+public release.
 
-For each reported need, record exactly one disposition:
+The following are parked until their named dependency is met:
 
-- already supported — point to the existing MCP path;
-- consumer-owned — keep it in Shopify-Forge;
-- Forge gap — cite the missing behavior and the smallest honest mover class; or
-- not approved / no evidence — park it with a trigger.
+- full remaining component breadth — after the first complete greenfield workflow;
+- closure of all current visualization recipes — after component/generation foundations are stable,
+  unless independent staffing permits parallel work;
+- visualization breadth beyond the current 13 — after the public render and certification path is
+  coherent;
+- Figma, Penpot, MCP Apps, or another design-surface adapter — after Forge artifacts are runnable and
+  the adapter's capabilities, costs, auth, and write semantics can be evaluated honestly;
+- public package publication or hosted Forge delivery — after licensing, distribution, and operating
+  cost decisions; and
+- `schema.ingest` — historically shelved by `#1649`; decision `#1652` retains the shelving result
+  while superseding its incorrect surface claim, so it has no place on the active critical path.
 
-**Exit:** a dated decision says whether Forge has a build to charter. “No Forge gap found” is a
-valid outcome.
+## Planning handoff
 
-### Gate C — charter only an approved Forge gap
-
-If Gate B identifies an approved Forge-owned gap, ground and critique a separate decision memo,
-enumerate advertised and visual movement, seed Rule-9 carriers, and only then create missions. If it
-does not, Forge creates no build merely to keep the arc busy.
-
-**Exit:** either a locked Forge memo exists or the no-build disposition is explicit. The Shopify
-sibling's execution sequence remains outside this file in both cases.
-
-### Adoption arc — current gates and next rung
-
-| Gate or rung | Current disposition |
-| ------------ | ------------------- |
-| Gate 1 — pinned private runtime | Chartered in the locked s181 memo: Forge builds a self-contained private bundle, pins it by commit and sha256, and hands it to named consumers to run themselves. Nothing is hosted or publicly published. |
-| Gate 2 — public distribution | Deferred and explicitly Derek's: license choice, public npm/registry publishing, `.mcpb`, and OCI remain unapproved; npm is not assumed to be the adoption UX. |
-| Schema-ingest walker + `schema.ingest` | Deferred together to s182; the grounded walker charter and advertised-tool rung remain in the s181 memo rather than entering s181 implementation. |
-
-## Named parks that do not silently enter this horizon
-
-| Park                                      | Trigger                                                                                                                |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| ECharts render-grading implementation     | The DRAFT s179 charter is independently grounded, critiqued, locked, and its true-CI/text/resource gates are accepted. |
-| `src/viz` diverged-twin retirement rung 2 | A sprint declares VRT movement on the four parked React adapters, or a viz-craft goal makes the mover intentional.     |
-| Mobile crawl 4–7 and native walk          | A named mobile-web/native use case is in view and the API commitment is approved.                                      |
-| Parts Town token/delivery work            | The held client arc resumes with the required answers and a fresh Stage1 extraction.                                   |
-| Narrated-correlation remediation          | A real agent consumer is demonstrably misled; resume from the recorded survivor fixtures, not a new hunt.              |
-
-The open-arcs ledger owns the full park inventory and exact source trail:
-[`forge-open-arcs-ledger-2026-08.md`](../../planning/forge-open-arcs-ledger-2026-08.md).
-
-## Historical disposition
-
-The s96–s107 mission shapes no longer occupy the active near-horizon file. They were not deleted
-from history or rewritten to fit the Shopify direction:
-
-- git retains the pre-rewrite 723-line file;
-- CMOS retains their missions, decisions, and planning sessions;
-- `cmos/reports/s96-*` through `cmos/reports/s105-*` retain the closeout reports that were written;
-  git and CMOS retain the s106–s107 record; and
-- the three 2026-05 foundational vision documents remain point-in-time context, each explicitly
-  disclaimed from current sequencing.
-
-That is decision #679's point-in-time convention applied without forcing historical sprint logs to
-masquerade as a live roadmap.
-
-## Success state for this horizon
-
-This horizon is successful when:
-
-1. Shopify-Forge can discover and exercise Forge's current agent-facing MCP capabilities from a
-   dated, source-backed packet;
-2. discovery produces an explicit already-supported, consumer-owned, Forge-gap, or parked
-   disposition for each need;
-3. no hosted-service, Workbench, external-pull, free-text parsing, or dimension-registry assumption
-   enters a Forge mission implicitly;
-4. any future Forge build begins from a separately approved and locked mover declaration; and
-5. the current roadmap stays short because completed sprint history remains in git, CMOS, and
-   closeout reports rather than accumulating here again.
-
-Progress is measured by dependency clearance and evidence quality, not a calendar promise.
+The next fresh session enters a clean isolated Sprint-182 worktree from the locked planning commit,
+reads `agents.md`, runs `cmos_review()`, reads the program and the locked Sprint-182 memo, and begins
+`s182-m01`. It does not re-plan the sprint from the old adoption memo or reuse the dirty planning
+checkout.

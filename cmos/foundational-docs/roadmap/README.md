@@ -1,29 +1,35 @@
 # Roadmap
 
-The historical 2026-05 strategic frame and track breakdown live in [../mission-graph.md](../mission-graph.md); this folder contains the live near-horizon surface and retained point-in-time roadmap records.
+The live roadmap is organized around the Forge Product Reality Recovery program. Historical strategy
+and sprint records remain available, but they do not override the current product contract.
 
-## Planned artifacts
+## Active artifacts
 
 | Doc | Scope |
 |---|---|
-| `near.md` | Next 1–3 Forge planning cycles. Serving posture, verified capability boundaries, dependency gates, and parks. |
-| `mid.md` | Horizon after near; track-level sequencing without sprint-level missions. Updated when near.md commits land. *(not yet created — `near.md` is the only live tier)* |
-| `far.md` | Position B/C destination state. Aspirational shape, not commitments. Updated when strategic context shifts. *(not yet created)* |
+| `product-reality-program.md` | Durable multi-sprint product contract, program sequence, and exit gates. |
+| `near.md` | Next 1–3 reviewed implementation increments and current dependency boundaries. |
+
+The program document carries the mid- and far-horizon sequence so those views cannot drift into
+separate, contradictory roadmaps. Sprint-level details remain in locked planning memos and CMOS.
 
 ## Authoring convention
 
-Each horizon doc:
-1. Names the missions in scope.
-2. Cites the prerequisites (Foundation completion, decision memo decisions, partner readiness signals).
-3. Specifies the success state at the end of the horizon.
-4. Avoids calendar dates. The unit is sessions / sprints / dependency clearance.
+Each active roadmap doc:
+1. The program names outcome increments and exit gates.
+2. The near roadmap names the current sprint and links its locked memo and CMOS record.
+3. Mission IDs and detailed acceptance criteria live in the locked memo and CMOS, not duplicated here.
+4. Prerequisites and success states are explicit.
+5. Audit dates are allowed; calendar delivery promises are not. The pacing unit is reviewed increments
+   and dependency clearance.
 
 ## Pacing
 
-`near.md` updates frequently — every sprint planning cycle.
-`mid.md` updates as near sprints close.
-`far.md` updates when strategic position shifts (rare).
+`near.md` updates after each sprint's independent review. The product-reality program changes only
+when Derek changes product direction or a program exit gate is explicitly amended.
 
 ## Active artifact
 
-`near.md` is the live Forge near-horizon planning surface, refreshed **2026-08-25** for the Shopify-selected direction. It records Forge's own serving posture and capability sequence; the Shopify enterprise proof's D1–D6 and sprint sequence remain in its sibling repository, and Forge serves that proof by `cmos_message`. Earlier roadmap material is retained or summarized as point-in-time history under decision #679; the 2026-05 vision documents are context, not current sequencing authority.
+`product-reality-program.md` is the durable direction and `near.md` is the active sequencing surface,
+both refreshed **2026-09-03**. The earlier Shopify-serving direction, 2026-05 strategy documents, and
+prior sprint memos remain point-in-time history under decision #679.
