@@ -1,0 +1,24 @@
+diff --git a/packages/mcp-server/src/tools/code.generate.ts b/packages/mcp-server/src/tools/code.generate.ts
+--- a/packages/mcp-server/src/tools/code.generate.ts
++++ b/packages/mcp-server/src/tools/code.generate.ts
+@@ -162,19 +162,7 @@
+   if (framework === 'react' || framework === 'vue') {
+     const readinessErrors = preflightTargetCapabilities(schema.screens, framework);
+     if (readinessErrors.length > 0) {
+-      return {
+-        status: 'error',
+-        framework,
+-        code: '',
+-        fileExtension: '',
+-        imports: [],
+-        warnings: [],
+-        errors: readinessErrors,
+-        meta: {
+-          nodeCount: meta.nodeCount,
+-          componentCount: meta.componentCount,
+-        },
+-      };
++      warnings.push(...readinessErrors);
+     }
+   }
+ 

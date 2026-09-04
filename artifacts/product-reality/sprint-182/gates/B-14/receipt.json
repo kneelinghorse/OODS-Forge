@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s182-m04",
+  "bite": "B-14",
+  "reviewHead": "e9915292c108b686d57623bc9bcfb84621a0ce23",
+  "carrier": {
+    "path": "packages/mcp-server/src/tools/__tests__/code.generate.test.ts",
+    "sha256": "ada34c7b81bfe9e616b8ffbb07a557397cfe7d163674e34ca07c540382eda54d",
+    "selector": "B-14 emits byte-identical governed source and evidence on repeated runs"
+  },
+  "mutationTarget": {
+    "path": "packages/mcp-server/src/tools/code.generate.ts",
+    "originalSha256": "c05a1ebb4d3e0ca7baff53ece231dae894148154d1c05031005b0853cd0e0a87",
+    "mutatedSha256": "94b8838d6f167f9a77b666ab70149668b7917bc3e9e3f6ebff0c31367e66bcb4",
+    "restoredSha256": "c05a1ebb4d3e0ca7baff53ece231dae894148154d1c05031005b0853cd0e0a87"
+  },
+  "command": "pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/code.generate.test.ts -t 'B-14 emits byte-identical governed source and evidence on repeated runs'",
+  "mutation": "Append a Math.random() invocation marker only to governed React source so identical inputs emit different bytes.",
+  "requiredAndObservedRedFinding": "The selected carrier observes unequal repeated React source buffers for identical governed inputs.",
+  "mutationPatchSha256": "a66e18c161098850c9fccb3b97ac4b3672818cf0952ad0aa92af7512fe6ca1c3",
+  "sequence": {
+    "preMutation": {
+      "selected": 1,
+      "passed": 1,
+      "failed": 0,
+      "selectedSkipped": 0,
+      "runnerFiltered": 12,
+      "runnerReportedSkipped": 12,
+      "todo": 0,
+      "total": 13,
+      "exitCode": 0
+    },
+    "mutation": {
+      "selected": 1,
+      "passed": 0,
+      "failed": 1,
+      "selectedSkipped": 0,
+      "runnerFiltered": 12,
+      "runnerReportedSkipped": 12,
+      "todo": 0,
+      "total": 13,
+      "exitCode": 1
+    },
+    "restoration": {
+      "selected": 1,
+      "passed": 1,
+      "failed": 0,
+      "selectedSkipped": 0,
+      "runnerFiltered": 12,
+      "runnerReportedSkipped": 12,
+      "todo": 0,
+      "total": 13,
+      "exitCode": 0
+    }
+  },
+  "supportingVerifier": null,
+  "restoreCommand": "pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/code.generate.test.ts -t 'B-14 emits byte-identical governed source and evidence on repeated runs'",
+  "restoredVerifier": null,
+  "restoration": {
+    "byteIdentical": true,
+    "mutationTargetSha256": "c05a1ebb4d3e0ca7baff53ece231dae894148154d1c05031005b0853cd0e0a87",
+    "carrierByteIdentical": true,
+    "carrierSha256": "ada34c7b81bfe9e616b8ffbb07a557397cfe7d163674e34ca07c540382eda54d",
+    "lockfileUnchanged": true,
+    "lockfileSha256": "1569b33b11cb46bd434aebafa7e4957b5d913466d853809abf92dd11b825da51"
+  },
+  "execution": {
+    "checkoutKind": "fresh detached git worktree",
+    "setupCommand": "pnpm install --frozen-lockfile --ignore-scripts && pnpm --filter @oods/component-contracts run build && pnpm --filter @oods/component-styles run build && pnpm --filter @oods/components-react run build && pnpm --filter @oods/components-vue run build && pnpm --filter @oods/mcp-server run build",
+    "setupExitCode": 0,
+    "checkoutHead": "e9915292c108b686d57623bc9bcfb84621a0ce23",
+    "detached": true,
+    "freshCheckoutCleanBeforeSetup": true,
+    "postSetupCheckoutClean": true,
+    "trackedCleanBeforeMutation": true,
+    "trackedCleanAfterRestoration": true,
+    "expectedVerifierArtifactsExcludedFromFinalCleanlinessCheck": false,
+    "worktreeRemovedBeforePublication": true
+  },
+  "toolchain": {
+    "node": "v24.6.0",
+    "npm": "11.5.1",
+    "pnpm": "9.12.2",
+    "vitest": "3.2.4"
+  },
+  "generatedArtifacts": [
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-14/mutation.patch",
+      "sha256": "a66e18c161098850c9fccb3b97ac4b3672818cf0952ad0aa92af7512fe6ca1c3"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-14/pre-green.log",
+      "sha256": "8ec896e1a40e9c6811c2f9034525f76dc6210ba28a24368a873ed23de901e80e"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-14/restored-green.log",
+      "sha256": "eb2285989ecf01d0150f6ced44a880f07367365e6f0591bb1eb4716ae0b6f6a3"
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-14/selected-red.log",
+      "sha256": "22d1fe151471d90457fd3907da75896793ac903af8a68a28963c8effa331624b"
+    },
+    {
+      "path": "packages/mcp-server/dist/tools/code.generate.d.ts",
+      "sha256": "bf25d362af8c9e0a2f4e3aae9db7b11f933bb9f544b413341887601ab96dd76c"
+    },
+    {
+      "path": "packages/mcp-server/dist/tools/code.generate.d.ts.map",
+      "sha256": "2c0632c3afeb93d06a63f6b8515c89c8e3fe585baec796fdeb79ad2e355ca5a8"
+    },
+    {
+      "path": "packages/mcp-server/dist/tools/code.generate.js",
+      "sha256": "473ae83ebab3f0ddd27c0811cb19a51e1dd3d62585988c522eba5b426eba92d3"
+    },
+    {
+      "path": "packages/mcp-server/dist/tools/code.generate.js.map",
+      "sha256": "14b0ef6da1ed9cda13911d1a1854171c221bacb6cf40a288d0feb5c36cf0f8cd"
+    }
+  ],
+  "canonicalGateDestination": "artifacts/product-reality/sprint-182/gates/B-14/"
+}

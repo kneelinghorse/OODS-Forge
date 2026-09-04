@@ -1,0 +1,38 @@
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/packed-consumers.s182.spec.ts -t 'B-12 installs and imports every required tarball and root export in isolation'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ❯ test/product-reality/packed-consumers.s182.spec.ts (2 tests | 1 failed | 1 skipped) 14729ms
+   × Sprint 182 M04 packed generated consumers > B-12 installs and imports every required tarball and root export in isolation 14729ms
+     → ENOENT: no such file or directory, lstat '<consumer-root>/node_modules/@oods/components-react'
+   ↓ Sprint 182 M04 packed generated consumers > B-13 resolves declared dependencies and shared CSS in a clean production build
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+   Start at  00:37:29
+   Duration  15.16s (transform 138ms, setup 11ms, collect 275ms, tests 14.73s, environment 0ms, prepare 42ms)
+
+undefined
+/private<disposable-checkout>/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/packed-consumers.s182.spec.ts -t B-12 installs and imports every required tarball and root export in isolation
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/packed-consumers.s182.spec.ts > Sprint 182 M04 packed generated consumers > B-12 installs and imports every required tarball and root export in isolation
+Error: ENOENT: no such file or directory, lstat '<consumer-root>/node_modules/@oods/components-react'
+ ❯ runPackedExportProof ../../scripts/product-reality/s182-m04-consumer-harness.mjs:391:11
+    389|       reason,
+    390|     });
+    391|     throw new Error(reason);
+       |           ^
+    392|   } finally {
+    393|     await fsp.rm(consumerRoot, { recursive: true, force: true });
+ ❯ test/product-reality/packed-consumers.s182.spec.ts:32:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

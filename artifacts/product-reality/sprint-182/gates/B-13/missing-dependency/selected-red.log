@@ -1,0 +1,49 @@
+$ node scripts/product-reality/verify-package-foundations.mjs --artifact-root artifacts/product-reality/sprint-182/gates/B-13/missing-dependency/verifier-red
+exitCode=1
+signal=
+
+[stdout]
+FAILED: 3/4 package foundations verified.
+/private<disposable-checkout>/artifacts/product-reality/sprint-182/gates/B-13/missing-dependency/verifier-red/package-foundations/report.json
+
+[stderr]
+
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/packed-consumers.s182.spec.ts -t 'B-13 resolves declared dependencies and shared CSS in a clean production build'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ❯ test/product-reality/packed-consumers.s182.spec.ts (2 tests | 1 failed | 1 skipped) 13012ms
+   ↓ Sprint 182 M04 packed generated consumers > B-12 installs and imports every required tarball and root export in isolation
+   × Sprint 182 M04 packed generated consumers > B-13 resolves declared dependencies and shared CSS in a clean production build 13012ms
+     → @oods/components-react packed manifest omits declared dependencies: @oods/component-styles
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+   Start at  00:42:09
+   Duration  13.39s (transform 132ms, setup 11ms, collect 223ms, tests 13.01s, environment 0ms, prepare 44ms)
+
+undefined
+/private<disposable-checkout>/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/packed-consumers.s182.spec.ts -t B-13 resolves declared dependencies and shared CSS in a clean production build
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/packed-consumers.s182.spec.ts > Sprint 182 M04 packed generated consumers > B-13 resolves declared dependencies and shared CSS in a clean production build
+Error: @oods/components-react packed manifest omits declared dependencies: @oods/component-styles
+ ❯ runFrameworkConsumer ../../scripts/product-reality/s182-m04-consumer-harness.mjs:1847:11
+    1845|       reason,
+    1846|     });
+    1847|     throw new Error(reason);
+       |           ^
+    1848|   } finally {
+    1849|     await fsp.rm(consumerRoot, { recursive: true, force: true });
+ ❯ runGeneratedConsumerProof ../../scripts/product-reality/s182-m04-consumer-harness.mjs:1861:18
+ ❯ test/product-reality/packed-consumers.s182.spec.ts:67:44
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

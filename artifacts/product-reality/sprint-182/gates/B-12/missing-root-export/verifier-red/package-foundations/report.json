@@ -1,0 +1,1361 @@
+{
+  "schemaVersion": "1.0.0",
+  "verifier": "scripts/product-reality/verify-package-foundations.mjs",
+  "artifactRoot": "package-foundations",
+  "policy": {
+    "packageCount": 4,
+    "packRunsPerPackage": 2,
+    "forbiddenProtocols": [
+      "workspace:",
+      "file:",
+      "link:"
+    ],
+    "userNpmConfiguration": "disabled via an empty verifier-owned npmrc"
+  },
+  "packages": [
+    {
+      "expectedName": "@oods/component-contracts",
+      "packageDirectory": "packages/component-contracts",
+      "sourceManifest": {
+        "name": "@oods/component-contracts",
+        "version": "0.1.0",
+        "description": "Versioned OODS component identities, semantic contracts, shared scenarios, and readiness predicates.",
+        "private": true,
+        "type": "module",
+        "license": "MIT",
+        "engines": {
+          "node": ">=20.11.1"
+        },
+        "files": [
+          "dist",
+          "registry"
+        ],
+        "scripts": {
+          "build": "rimraf dist && tsup --config tsup.config.ts",
+          "clean": "rimraf dist",
+          "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+          "test": "vitest run --config vitest.config.ts",
+          "prepack": "pnpm run build"
+        },
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./registry/intake": "./registry/component-intake.v1.json",
+          "./registry/reconciliation": "./registry/component-reconciliation.proposed.v1.json",
+          "./registry/capabilities": "./registry/component-capability-baseline.v1.json",
+          "./package.json": "./package.json"
+        },
+        "main": "./dist/index.cjs",
+        "module": "./dist/index.js",
+        "types": "./dist/index.d.ts",
+        "sideEffects": false,
+        "packageManager": "pnpm@9.12.2"
+      },
+      "sourceManifestSha256": "ca2dfb5f85dd05045414b6d5bde707e2aa868d598f3a28f13dd22c0835470471",
+      "build": {
+        "command": "pnpm run build",
+        "cwd": "packages/component-contracts",
+        "exitCode": 0,
+        "log": "logs/oods-component-contracts-build.log"
+      },
+      "packs": [
+        {
+          "run": 1,
+          "command": "npm pack --json --pack-destination <artifact-root>/package-foundations/tarballs/run-1/oods-component-contracts",
+          "exitCode": 0,
+          "log": "logs/oods-component-contracts-pack-run-1.log",
+          "tarball": "tarballs/run-1/oods-component-contracts/oods-component-contracts-0.1.0.tgz",
+          "tarballBytes": 40583,
+          "tarballSha256": "e0acbdffced05a4d6def5eb0266edbbf67af761bba99e03ed7868d316cc8335b",
+          "inventory": [
+            {
+              "path": "package/dist/index.cjs",
+              "bytes": 262289,
+              "sha256": "50455560202498d65b6c04663bc6deebb496f66772fbb6eb362034efd1aa64d9"
+            },
+            {
+              "path": "package/dist/index.d.cts",
+              "bytes": 7506,
+              "sha256": "1463905327fdc4aa003be0ae2bbf5176cf68eea8d96ef7f312e27a606acb2528"
+            },
+            {
+              "path": "package/dist/index.d.ts",
+              "bytes": 7506,
+              "sha256": "1463905327fdc4aa003be0ae2bbf5176cf68eea8d96ef7f312e27a606acb2528"
+            },
+            {
+              "path": "package/dist/index.js",
+              "bytes": 261748,
+              "sha256": "d5abd6dc6462b8641960aa0ef43ce56fac4dc1c0454eb81cd1d6cf29ce390eb0"
+            },
+            {
+              "path": "package/package.json",
+              "bytes": 1162,
+              "sha256": "ca2dfb5f85dd05045414b6d5bde707e2aa868d598f3a28f13dd22c0835470471"
+            },
+            {
+              "path": "package/registry/component-capability-baseline.v1.json",
+              "bytes": 137581,
+              "sha256": "c4d237cff92448f224d5ec7717816fb85418781e397955ed66536ffaf9ac142f"
+            },
+            {
+              "path": "package/registry/component-intake.v1.json",
+              "bytes": 67627,
+              "sha256": "9eaba8f8fe6d5c75f7815b128e9763b188ea2e80f3ffc21635ee1887ede3f299"
+            },
+            {
+              "path": "package/registry/component-reconciliation.proposed.v1.json",
+              "bytes": 49235,
+              "sha256": "04243a3215eb877d02425a7e6aa43600868802e9f05371cf3ad57007a6e64e0d"
+            }
+          ],
+          "inventorySha256": "0ed0681a761ca473ea61c4efbbff031ace373a70949d98a1cf96d79503ac3d32",
+          "inventoryArtifact": "inventories/oods-component-contracts-run-1.json",
+          "packedManifest": {
+            "name": "@oods/component-contracts",
+            "version": "0.1.0",
+            "description": "Versioned OODS component identities, semantic contracts, shared scenarios, and readiness predicates.",
+            "private": true,
+            "type": "module",
+            "license": "MIT",
+            "engines": {
+              "node": ">=20.11.1"
+            },
+            "files": [
+              "dist",
+              "registry"
+            ],
+            "scripts": {
+              "build": "rimraf dist && tsup --config tsup.config.ts",
+              "clean": "rimraf dist",
+              "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+              "test": "vitest run --config vitest.config.ts",
+              "prepack": "pnpm run build"
+            },
+            "exports": {
+              ".": {
+                "types": "./dist/index.d.ts",
+                "import": "./dist/index.js",
+                "require": "./dist/index.cjs"
+              },
+              "./registry/intake": "./registry/component-intake.v1.json",
+              "./registry/reconciliation": "./registry/component-reconciliation.proposed.v1.json",
+              "./registry/capabilities": "./registry/component-capability-baseline.v1.json",
+              "./package.json": "./package.json"
+            },
+            "main": "./dist/index.cjs",
+            "module": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "sideEffects": false,
+            "packageManager": "pnpm@9.12.2"
+          },
+          "checks": {
+            "protocolFindings": [],
+            "absolutePathLeaks": [],
+            "unsafeArchiveEntries": [],
+            "sourcePathLeaks": [],
+            "undeclaredBareImports": [],
+            "unresolvedRelativeImports": [],
+            "invalidExportTargets": [],
+            "missingExportTargets": [],
+            "missingLegacyEntryPoints": [],
+            "missingRequiredExports": [],
+            "missingRequiredDependencies": [],
+            "packageIdentityFindings": []
+          },
+          "findingCount": 0
+        },
+        {
+          "run": 2,
+          "command": "npm pack --json --pack-destination <artifact-root>/package-foundations/tarballs/run-2/oods-component-contracts",
+          "exitCode": 0,
+          "log": "logs/oods-component-contracts-pack-run-2.log",
+          "tarball": "tarballs/run-2/oods-component-contracts/oods-component-contracts-0.1.0.tgz",
+          "tarballBytes": 40583,
+          "tarballSha256": "e0acbdffced05a4d6def5eb0266edbbf67af761bba99e03ed7868d316cc8335b",
+          "inventory": [
+            {
+              "path": "package/dist/index.cjs",
+              "bytes": 262289,
+              "sha256": "50455560202498d65b6c04663bc6deebb496f66772fbb6eb362034efd1aa64d9"
+            },
+            {
+              "path": "package/dist/index.d.cts",
+              "bytes": 7506,
+              "sha256": "1463905327fdc4aa003be0ae2bbf5176cf68eea8d96ef7f312e27a606acb2528"
+            },
+            {
+              "path": "package/dist/index.d.ts",
+              "bytes": 7506,
+              "sha256": "1463905327fdc4aa003be0ae2bbf5176cf68eea8d96ef7f312e27a606acb2528"
+            },
+            {
+              "path": "package/dist/index.js",
+              "bytes": 261748,
+              "sha256": "d5abd6dc6462b8641960aa0ef43ce56fac4dc1c0454eb81cd1d6cf29ce390eb0"
+            },
+            {
+              "path": "package/package.json",
+              "bytes": 1162,
+              "sha256": "ca2dfb5f85dd05045414b6d5bde707e2aa868d598f3a28f13dd22c0835470471"
+            },
+            {
+              "path": "package/registry/component-capability-baseline.v1.json",
+              "bytes": 137581,
+              "sha256": "c4d237cff92448f224d5ec7717816fb85418781e397955ed66536ffaf9ac142f"
+            },
+            {
+              "path": "package/registry/component-intake.v1.json",
+              "bytes": 67627,
+              "sha256": "9eaba8f8fe6d5c75f7815b128e9763b188ea2e80f3ffc21635ee1887ede3f299"
+            },
+            {
+              "path": "package/registry/component-reconciliation.proposed.v1.json",
+              "bytes": 49235,
+              "sha256": "04243a3215eb877d02425a7e6aa43600868802e9f05371cf3ad57007a6e64e0d"
+            }
+          ],
+          "inventorySha256": "0ed0681a761ca473ea61c4efbbff031ace373a70949d98a1cf96d79503ac3d32",
+          "inventoryArtifact": "inventories/oods-component-contracts-run-2.json",
+          "packedManifest": {
+            "name": "@oods/component-contracts",
+            "version": "0.1.0",
+            "description": "Versioned OODS component identities, semantic contracts, shared scenarios, and readiness predicates.",
+            "private": true,
+            "type": "module",
+            "license": "MIT",
+            "engines": {
+              "node": ">=20.11.1"
+            },
+            "files": [
+              "dist",
+              "registry"
+            ],
+            "scripts": {
+              "build": "rimraf dist && tsup --config tsup.config.ts",
+              "clean": "rimraf dist",
+              "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+              "test": "vitest run --config vitest.config.ts",
+              "prepack": "pnpm run build"
+            },
+            "exports": {
+              ".": {
+                "types": "./dist/index.d.ts",
+                "import": "./dist/index.js",
+                "require": "./dist/index.cjs"
+              },
+              "./registry/intake": "./registry/component-intake.v1.json",
+              "./registry/reconciliation": "./registry/component-reconciliation.proposed.v1.json",
+              "./registry/capabilities": "./registry/component-capability-baseline.v1.json",
+              "./package.json": "./package.json"
+            },
+            "main": "./dist/index.cjs",
+            "module": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "sideEffects": false,
+            "packageManager": "pnpm@9.12.2"
+          },
+          "checks": {
+            "protocolFindings": [],
+            "absolutePathLeaks": [],
+            "unsafeArchiveEntries": [],
+            "sourcePathLeaks": [],
+            "undeclaredBareImports": [],
+            "unresolvedRelativeImports": [],
+            "invalidExportTargets": [],
+            "missingExportTargets": [],
+            "missingLegacyEntryPoints": [],
+            "missingRequiredExports": [],
+            "missingRequiredDependencies": [],
+            "packageIdentityFindings": []
+          },
+          "findingCount": 0
+        }
+      ],
+      "deterministic": true,
+      "passed": true
+    },
+    {
+      "expectedName": "@oods/component-styles",
+      "packageDirectory": "packages/component-styles",
+      "sourceManifest": {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "description": "Token-driven shared CSS contract for OODS React and Vue components.",
+        "private": true,
+        "type": "module",
+        "license": "MIT",
+        "engines": {
+          "node": ">=20.11.1"
+        },
+        "files": [
+          "dist"
+        ],
+        "scripts": {
+          "build": "rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs",
+          "clean": "rimraf dist",
+          "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+          "test": "vitest run --config vitest.config.ts",
+          "prepack": "pnpm run build"
+        },
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./css": {
+            "default": "./dist/components.css"
+          },
+          "./package.json": "./package.json"
+        },
+        "main": "./dist/index.cjs",
+        "module": "./dist/index.js",
+        "types": "./dist/index.d.ts",
+        "sideEffects": [
+          "**/*.css"
+        ],
+        "dependencies": {
+          "@oods/tokens": "0.1.0"
+        },
+        "devDependencies": {
+          "playwright": "^1.56.1"
+        },
+        "packageManager": "pnpm@9.12.2"
+      },
+      "sourceManifestSha256": "0a05a3928a5022823377ab33c440b8bfec4061dc63ab8223638445e3c8afe151",
+      "build": {
+        "command": "pnpm run build",
+        "cwd": "packages/component-styles",
+        "exitCode": 0,
+        "log": "logs/oods-component-styles-build.log"
+      },
+      "packs": [
+        {
+          "run": 1,
+          "command": "npm pack --json --pack-destination <artifact-root>/package-foundations/tarballs/run-1/oods-component-styles",
+          "exitCode": 0,
+          "log": "logs/oods-component-styles-pack-run-1.log",
+          "tarball": "tarballs/run-1/oods-component-styles/oods-component-styles-0.1.0.tgz",
+          "tarballBytes": 3946,
+          "tarballSha256": "f9e5a34eea946e1256036f823298199bfaf621a4533b3d79c13d06d3d8affa1c",
+          "inventory": [
+            {
+              "path": "package/dist/components.css",
+              "bytes": 15429,
+              "sha256": "646ab15806e08a21e56389ecfe46b8daeb57e1ce15ac36cc9a32f8843d17d204"
+            },
+            {
+              "path": "package/dist/index.cjs",
+              "bytes": 803,
+              "sha256": "adbab2742c9887c097985f2ac3ea67c4eb67445737a2d0f2eb0e57fc92961c8e"
+            },
+            {
+              "path": "package/dist/index.d.cts",
+              "bytes": 814,
+              "sha256": "a989969427a527c7dd9c5b62045673d28fd42a427ff917f3fd777507ac19e939"
+            },
+            {
+              "path": "package/dist/index.d.ts",
+              "bytes": 814,
+              "sha256": "a989969427a527c7dd9c5b62045673d28fd42a427ff917f3fd777507ac19e939"
+            },
+            {
+              "path": "package/dist/index.js",
+              "bytes": 658,
+              "sha256": "2e228874671918dfd7661f95f1b03c5dd809151ae44b8847ecb12de2e13955ac"
+            },
+            {
+              "path": "package/package.json",
+              "bytes": 1074,
+              "sha256": "0a05a3928a5022823377ab33c440b8bfec4061dc63ab8223638445e3c8afe151"
+            }
+          ],
+          "inventorySha256": "62b11dc4174f313d86519a163ac5b439877a5ae6ed1a276dc6497207dbc60a95",
+          "inventoryArtifact": "inventories/oods-component-styles-run-1.json",
+          "packedManifest": {
+            "name": "@oods/component-styles",
+            "version": "0.1.0",
+            "description": "Token-driven shared CSS contract for OODS React and Vue components.",
+            "private": true,
+            "type": "module",
+            "license": "MIT",
+            "engines": {
+              "node": ">=20.11.1"
+            },
+            "files": [
+              "dist"
+            ],
+            "scripts": {
+              "build": "rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs",
+              "clean": "rimraf dist",
+              "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+              "test": "vitest run --config vitest.config.ts",
+              "prepack": "pnpm run build"
+            },
+            "exports": {
+              ".": {
+                "types": "./dist/index.d.ts",
+                "import": "./dist/index.js",
+                "require": "./dist/index.cjs"
+              },
+              "./css": {
+                "default": "./dist/components.css"
+              },
+              "./package.json": "./package.json"
+            },
+            "main": "./dist/index.cjs",
+            "module": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "sideEffects": [
+              "**/*.css"
+            ],
+            "dependencies": {
+              "@oods/tokens": "0.1.0"
+            },
+            "devDependencies": {
+              "playwright": "^1.56.1"
+            },
+            "packageManager": "pnpm@9.12.2"
+          },
+          "checks": {
+            "protocolFindings": [],
+            "absolutePathLeaks": [],
+            "unsafeArchiveEntries": [],
+            "sourcePathLeaks": [],
+            "undeclaredBareImports": [],
+            "unresolvedRelativeImports": [],
+            "invalidExportTargets": [],
+            "missingExportTargets": [],
+            "missingLegacyEntryPoints": [],
+            "missingRequiredExports": [],
+            "missingRequiredDependencies": [],
+            "packageIdentityFindings": []
+          },
+          "findingCount": 0
+        },
+        {
+          "run": 2,
+          "command": "npm pack --json --pack-destination <artifact-root>/package-foundations/tarballs/run-2/oods-component-styles",
+          "exitCode": 0,
+          "log": "logs/oods-component-styles-pack-run-2.log",
+          "tarball": "tarballs/run-2/oods-component-styles/oods-component-styles-0.1.0.tgz",
+          "tarballBytes": 3946,
+          "tarballSha256": "f9e5a34eea946e1256036f823298199bfaf621a4533b3d79c13d06d3d8affa1c",
+          "inventory": [
+            {
+              "path": "package/dist/components.css",
+              "bytes": 15429,
+              "sha256": "646ab15806e08a21e56389ecfe46b8daeb57e1ce15ac36cc9a32f8843d17d204"
+            },
+            {
+              "path": "package/dist/index.cjs",
+              "bytes": 803,
+              "sha256": "adbab2742c9887c097985f2ac3ea67c4eb67445737a2d0f2eb0e57fc92961c8e"
+            },
+            {
+              "path": "package/dist/index.d.cts",
+              "bytes": 814,
+              "sha256": "a989969427a527c7dd9c5b62045673d28fd42a427ff917f3fd777507ac19e939"
+            },
+            {
+              "path": "package/dist/index.d.ts",
+              "bytes": 814,
+              "sha256": "a989969427a527c7dd9c5b62045673d28fd42a427ff917f3fd777507ac19e939"
+            },
+            {
+              "path": "package/dist/index.js",
+              "bytes": 658,
+              "sha256": "2e228874671918dfd7661f95f1b03c5dd809151ae44b8847ecb12de2e13955ac"
+            },
+            {
+              "path": "package/package.json",
+              "bytes": 1074,
+              "sha256": "0a05a3928a5022823377ab33c440b8bfec4061dc63ab8223638445e3c8afe151"
+            }
+          ],
+          "inventorySha256": "62b11dc4174f313d86519a163ac5b439877a5ae6ed1a276dc6497207dbc60a95",
+          "inventoryArtifact": "inventories/oods-component-styles-run-2.json",
+          "packedManifest": {
+            "name": "@oods/component-styles",
+            "version": "0.1.0",
+            "description": "Token-driven shared CSS contract for OODS React and Vue components.",
+            "private": true,
+            "type": "module",
+            "license": "MIT",
+            "engines": {
+              "node": ">=20.11.1"
+            },
+            "files": [
+              "dist"
+            ],
+            "scripts": {
+              "build": "rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs",
+              "clean": "rimraf dist",
+              "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+              "test": "vitest run --config vitest.config.ts",
+              "prepack": "pnpm run build"
+            },
+            "exports": {
+              ".": {
+                "types": "./dist/index.d.ts",
+                "import": "./dist/index.js",
+                "require": "./dist/index.cjs"
+              },
+              "./css": {
+                "default": "./dist/components.css"
+              },
+              "./package.json": "./package.json"
+            },
+            "main": "./dist/index.cjs",
+            "module": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "sideEffects": [
+              "**/*.css"
+            ],
+            "dependencies": {
+              "@oods/tokens": "0.1.0"
+            },
+            "devDependencies": {
+              "playwright": "^1.56.1"
+            },
+            "packageManager": "pnpm@9.12.2"
+          },
+          "checks": {
+            "protocolFindings": [],
+            "absolutePathLeaks": [],
+            "unsafeArchiveEntries": [],
+            "sourcePathLeaks": [],
+            "undeclaredBareImports": [],
+            "unresolvedRelativeImports": [],
+            "invalidExportTargets": [],
+            "missingExportTargets": [],
+            "missingLegacyEntryPoints": [],
+            "missingRequiredExports": [],
+            "missingRequiredDependencies": [],
+            "packageIdentityFindings": []
+          },
+          "findingCount": 0
+        }
+      ],
+      "deterministic": true,
+      "passed": true
+    },
+    {
+      "expectedName": "@oods/components-react",
+      "packageDirectory": "packages/components-react",
+      "sourceManifest": {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "description": "OODS React component package.",
+        "private": true,
+        "type": "module",
+        "license": "MIT",
+        "engines": {
+          "node": ">=20.11.1"
+        },
+        "files": [
+          "dist",
+          "evidence"
+        ],
+        "scripts": {
+          "build": "rimraf dist && tsup --config tsup.config.ts",
+          "clean": "rimraf dist",
+          "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+          "test": "vitest run --config vitest.config.ts",
+          "test:packed": "node test/packed-import-evidence.mjs",
+          "test:visual": "node test/visual-evidence.mjs",
+          "prepack": "pnpm run build"
+        },
+        "exports": {
+          "./readiness": {
+            "default": "./evidence/react-readiness.v1.json"
+          },
+          "./status": {
+            "types": "./dist/status.d.ts",
+            "import": "./dist/status.js",
+            "require": "./dist/status.cjs"
+          },
+          "./table": {
+            "types": "./dist/table.d.ts",
+            "import": "./dist/table.js",
+            "require": "./dist/table.cjs"
+          },
+          "./package.json": "./package.json"
+        },
+        "main": "./dist/index.cjs",
+        "module": "./dist/index.js",
+        "types": "./dist/index.d.ts",
+        "sideEffects": [
+          "**/*.css"
+        ],
+        "dependencies": {
+          "@radix-ui/react-slot": "^1.1.2",
+          "@oods/component-contracts": "0.1.0",
+          "@oods/component-styles": "0.1.0"
+        },
+        "peerDependencies": {
+          "react": ">=18 <20",
+          "react-dom": ">=18 <20"
+        },
+        "devDependencies": {
+          "@testing-library/react": "^16.0.0",
+          "@testing-library/user-event": "^14.6.1",
+          "@types/react": "^19.2.2",
+          "@types/react-dom": "^19.2.1",
+          "jsdom": "^24.0.0",
+          "playwright": "^1.56.1",
+          "react": "^19.2.0",
+          "react-dom": "^19.2.0",
+          "vite": "^6.4.1",
+          "vitest": "^3.2.4",
+          "vitest-axe": "^0.1.0"
+        },
+        "packageManager": "pnpm@9.12.2"
+      },
+      "sourceManifestSha256": "7c59a60788ec56785e790410b3a5fbbc3dc0e1f1e8fc66807ba08a8263513844",
+      "build": {
+        "command": "pnpm run build",
+        "cwd": "packages/components-react",
+        "exitCode": 0,
+        "log": "logs/oods-components-react-build.log"
+      },
+      "packs": [
+        {
+          "run": 1,
+          "command": "npm pack --json --pack-destination <artifact-root>/package-foundations/tarballs/run-1/oods-components-react",
+          "exitCode": 0,
+          "log": "logs/oods-components-react-pack-run-1.log",
+          "tarball": "tarballs/run-1/oods-components-react/oods-components-react-0.1.0.tgz",
+          "tarballBytes": 28738,
+          "tarballSha256": "cc8ec86407b8544c8b45a45d2d44fe3de51c95f7a35bc443d5f4780d7502152c",
+          "inventory": [
+            {
+              "path": "package/dist/chunk-54KQYKOO.js",
+              "bytes": 11126,
+              "sha256": "27e050a5999011d70bfb398791d5da194f0909aa35b5a9c9249c114c4f012751"
+            },
+            {
+              "path": "package/dist/chunk-FL4HFW57.js",
+              "bytes": 6314,
+              "sha256": "805d8db635fbd95fd9095cede2231bc1eef68a6d282b2ba2b6567f9484f9829f"
+            },
+            {
+              "path": "package/dist/index.cjs",
+              "bytes": 48941,
+              "sha256": "887ac01f40926ae669a05728f4e15ddf15cf12349a5c5fe02ab38efe727ea3ff"
+            },
+            {
+              "path": "package/dist/index.d.cts",
+              "bytes": 2291,
+              "sha256": "bd0f77858cffb711c2d7a23c02fba5c515878a25c4e25dcfac446738ac8c2834"
+            },
+            {
+              "path": "package/dist/index.d.ts",
+              "bytes": 2288,
+              "sha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594"
+            },
+            {
+              "path": "package/dist/index.js",
+              "bytes": 30398,
+              "sha256": "8d315b527fc53ba1f2e65900b005c65c9c1b4500b7cec4c1c021e0c88ed39240"
+            },
+            {
+              "path": "package/dist/status.cjs",
+              "bytes": 11326,
+              "sha256": "63563dc3bb900eba1c7da55f24624063515093bda467b6ffdb2421da58ebb262"
+            },
+            {
+              "path": "package/dist/status.d.cts",
+              "bytes": 1426,
+              "sha256": "f45aac783dae7d0038c87924af1a65c0e1b5461233d7214a976e4c962fae26e0"
+            },
+            {
+              "path": "package/dist/status.d.ts",
+              "bytes": 1425,
+              "sha256": "c12b17f5a99a6e636f76451944dd07d8b475f074db581692dad842c01b71382a"
+            },
+            {
+              "path": "package/dist/status.js",
+              "bytes": 171,
+              "sha256": "9eca56b090468a0b001c92a322deb1b4df56b975cb943334bf3536c78453c602"
+            },
+            {
+              "path": "package/dist/table.cjs",
+              "bytes": 17242,
+              "sha256": "02b473395a10df3a79802accc6f7e184b138087fe5b652585feb3d366b2c734c"
+            },
+            {
+              "path": "package/dist/table.d.cts",
+              "bytes": 1091,
+              "sha256": "6fa841216e3d71e92e3a9131dfaca0448ac4af407d59fbb79d7ed4876f7ff9f9"
+            },
+            {
+              "path": "package/dist/table.d.ts",
+              "bytes": 1090,
+              "sha256": "19701f5aa4750f99072d5f20905693733ad3527f4c825067542ac2674a2cba51"
+            },
+            {
+              "path": "package/dist/table.js",
+              "bytes": 149,
+              "sha256": "4201e92742651a8e2162b724e16c4645953fc7985ffea014933269085d2c89ca"
+            },
+            {
+              "path": "package/dist/types.cjs",
+              "bytes": 15,
+              "sha256": "4bf9a207f0ea5c9ae065bfcaff2afa53cbf6c02c7beb2d9e7ee3c3d06dc0d9f8"
+            },
+            {
+              "path": "package/dist/types.d.cts",
+              "bytes": 9118,
+              "sha256": "0de99ceed5208cc729569c742e2e3cbf1e62139a48d80272ec1c38c8f05496b5"
+            },
+            {
+              "path": "package/dist/types.d.ts",
+              "bytes": 9118,
+              "sha256": "0de99ceed5208cc729569c742e2e3cbf1e62139a48d80272ec1c38c8f05496b5"
+            },
+            {
+              "path": "package/dist/types.js",
+              "bytes": 1,
+              "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+            },
+            {
+              "path": "package/evidence/react-readiness.v1.json",
+              "bytes": 17010,
+              "sha256": "8ecfb88a0c76233bb477833ee686f7ca46fc7f9af2d0dcc2abf49bdea1cbde3d"
+            },
+            {
+              "path": "package/package.json",
+              "bytes": 1749,
+              "sha256": "7c59a60788ec56785e790410b3a5fbbc3dc0e1f1e8fc66807ba08a8263513844"
+            }
+          ],
+          "inventorySha256": "e6059acaaec5507bc8c330d7705d9f446b59db338446f07c2d6c8c013630b4e0",
+          "inventoryArtifact": "inventories/oods-components-react-run-1.json",
+          "packedManifest": {
+            "name": "@oods/components-react",
+            "version": "0.1.0",
+            "description": "OODS React component package.",
+            "private": true,
+            "type": "module",
+            "license": "MIT",
+            "engines": {
+              "node": ">=20.11.1"
+            },
+            "files": [
+              "dist",
+              "evidence"
+            ],
+            "scripts": {
+              "build": "rimraf dist && tsup --config tsup.config.ts",
+              "clean": "rimraf dist",
+              "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+              "test": "vitest run --config vitest.config.ts",
+              "test:packed": "node test/packed-import-evidence.mjs",
+              "test:visual": "node test/visual-evidence.mjs",
+              "prepack": "pnpm run build"
+            },
+            "exports": {
+              "./readiness": {
+                "default": "./evidence/react-readiness.v1.json"
+              },
+              "./status": {
+                "types": "./dist/status.d.ts",
+                "import": "./dist/status.js",
+                "require": "./dist/status.cjs"
+              },
+              "./table": {
+                "types": "./dist/table.d.ts",
+                "import": "./dist/table.js",
+                "require": "./dist/table.cjs"
+              },
+              "./package.json": "./package.json"
+            },
+            "main": "./dist/index.cjs",
+            "module": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "sideEffects": [
+              "**/*.css"
+            ],
+            "dependencies": {
+              "@radix-ui/react-slot": "^1.1.2",
+              "@oods/component-contracts": "0.1.0",
+              "@oods/component-styles": "0.1.0"
+            },
+            "peerDependencies": {
+              "react": ">=18 <20",
+              "react-dom": ">=18 <20"
+            },
+            "devDependencies": {
+              "@testing-library/react": "^16.0.0",
+              "@testing-library/user-event": "^14.6.1",
+              "@types/react": "^19.2.2",
+              "@types/react-dom": "^19.2.1",
+              "jsdom": "^24.0.0",
+              "playwright": "^1.56.1",
+              "react": "^19.2.0",
+              "react-dom": "^19.2.0",
+              "vite": "^6.4.1",
+              "vitest": "^3.2.4",
+              "vitest-axe": "^0.1.0"
+            },
+            "packageManager": "pnpm@9.12.2"
+          },
+          "checks": {
+            "protocolFindings": [],
+            "absolutePathLeaks": [],
+            "unsafeArchiveEntries": [],
+            "sourcePathLeaks": [],
+            "undeclaredBareImports": [],
+            "unresolvedRelativeImports": [],
+            "invalidExportTargets": [],
+            "missingExportTargets": [],
+            "missingLegacyEntryPoints": [],
+            "missingRequiredExports": [
+              {
+                "export": "."
+              }
+            ],
+            "missingRequiredDependencies": [],
+            "packageIdentityFindings": []
+          },
+          "findingCount": 1
+        },
+        {
+          "run": 2,
+          "command": "npm pack --json --pack-destination <artifact-root>/package-foundations/tarballs/run-2/oods-components-react",
+          "exitCode": 0,
+          "log": "logs/oods-components-react-pack-run-2.log",
+          "tarball": "tarballs/run-2/oods-components-react/oods-components-react-0.1.0.tgz",
+          "tarballBytes": 28738,
+          "tarballSha256": "cc8ec86407b8544c8b45a45d2d44fe3de51c95f7a35bc443d5f4780d7502152c",
+          "inventory": [
+            {
+              "path": "package/dist/chunk-54KQYKOO.js",
+              "bytes": 11126,
+              "sha256": "27e050a5999011d70bfb398791d5da194f0909aa35b5a9c9249c114c4f012751"
+            },
+            {
+              "path": "package/dist/chunk-FL4HFW57.js",
+              "bytes": 6314,
+              "sha256": "805d8db635fbd95fd9095cede2231bc1eef68a6d282b2ba2b6567f9484f9829f"
+            },
+            {
+              "path": "package/dist/index.cjs",
+              "bytes": 48941,
+              "sha256": "887ac01f40926ae669a05728f4e15ddf15cf12349a5c5fe02ab38efe727ea3ff"
+            },
+            {
+              "path": "package/dist/index.d.cts",
+              "bytes": 2291,
+              "sha256": "bd0f77858cffb711c2d7a23c02fba5c515878a25c4e25dcfac446738ac8c2834"
+            },
+            {
+              "path": "package/dist/index.d.ts",
+              "bytes": 2288,
+              "sha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594"
+            },
+            {
+              "path": "package/dist/index.js",
+              "bytes": 30398,
+              "sha256": "8d315b527fc53ba1f2e65900b005c65c9c1b4500b7cec4c1c021e0c88ed39240"
+            },
+            {
+              "path": "package/dist/status.cjs",
+              "bytes": 11326,
+              "sha256": "63563dc3bb900eba1c7da55f24624063515093bda467b6ffdb2421da58ebb262"
+            },
+            {
+              "path": "package/dist/status.d.cts",
+              "bytes": 1426,
+              "sha256": "f45aac783dae7d0038c87924af1a65c0e1b5461233d7214a976e4c962fae26e0"
+            },
+            {
+              "path": "package/dist/status.d.ts",
+              "bytes": 1425,
+              "sha256": "c12b17f5a99a6e636f76451944dd07d8b475f074db581692dad842c01b71382a"
+            },
+            {
+              "path": "package/dist/status.js",
+              "bytes": 171,
+              "sha256": "9eca56b090468a0b001c92a322deb1b4df56b975cb943334bf3536c78453c602"
+            },
+            {
+              "path": "package/dist/table.cjs",
+              "bytes": 17242,
+              "sha256": "02b473395a10df3a79802accc6f7e184b138087fe5b652585feb3d366b2c734c"
+            },
+            {
+              "path": "package/dist/table.d.cts",
+              "bytes": 1091,
+              "sha256": "6fa841216e3d71e92e3a9131dfaca0448ac4af407d59fbb79d7ed4876f7ff9f9"
+            },
+            {
+              "path": "package/dist/table.d.ts",
+              "bytes": 1090,
+              "sha256": "19701f5aa4750f99072d5f20905693733ad3527f4c825067542ac2674a2cba51"
+            },
+            {
+              "path": "package/dist/table.js",
+              "bytes": 149,
+              "sha256": "4201e92742651a8e2162b724e16c4645953fc7985ffea014933269085d2c89ca"
+            },
+            {
+              "path": "package/dist/types.cjs",
+              "bytes": 15,
+              "sha256": "4bf9a207f0ea5c9ae065bfcaff2afa53cbf6c02c7beb2d9e7ee3c3d06dc0d9f8"
+            },
+            {
+              "path": "package/dist/types.d.cts",
+              "bytes": 9118,
+              "sha256": "0de99ceed5208cc729569c742e2e3cbf1e62139a48d80272ec1c38c8f05496b5"
+            },
+            {
+              "path": "package/dist/types.d.ts",
+              "bytes": 9118,
+              "sha256": "0de99ceed5208cc729569c742e2e3cbf1e62139a48d80272ec1c38c8f05496b5"
+            },
+            {
+              "path": "package/dist/types.js",
+              "bytes": 1,
+              "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+            },
+            {
+              "path": "package/evidence/react-readiness.v1.json",
+              "bytes": 17010,
+              "sha256": "8ecfb88a0c76233bb477833ee686f7ca46fc7f9af2d0dcc2abf49bdea1cbde3d"
+            },
+            {
+              "path": "package/package.json",
+              "bytes": 1749,
+              "sha256": "7c59a60788ec56785e790410b3a5fbbc3dc0e1f1e8fc66807ba08a8263513844"
+            }
+          ],
+          "inventorySha256": "e6059acaaec5507bc8c330d7705d9f446b59db338446f07c2d6c8c013630b4e0",
+          "inventoryArtifact": "inventories/oods-components-react-run-2.json",
+          "packedManifest": {
+            "name": "@oods/components-react",
+            "version": "0.1.0",
+            "description": "OODS React component package.",
+            "private": true,
+            "type": "module",
+            "license": "MIT",
+            "engines": {
+              "node": ">=20.11.1"
+            },
+            "files": [
+              "dist",
+              "evidence"
+            ],
+            "scripts": {
+              "build": "rimraf dist && tsup --config tsup.config.ts",
+              "clean": "rimraf dist",
+              "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+              "test": "vitest run --config vitest.config.ts",
+              "test:packed": "node test/packed-import-evidence.mjs",
+              "test:visual": "node test/visual-evidence.mjs",
+              "prepack": "pnpm run build"
+            },
+            "exports": {
+              "./readiness": {
+                "default": "./evidence/react-readiness.v1.json"
+              },
+              "./status": {
+                "types": "./dist/status.d.ts",
+                "import": "./dist/status.js",
+                "require": "./dist/status.cjs"
+              },
+              "./table": {
+                "types": "./dist/table.d.ts",
+                "import": "./dist/table.js",
+                "require": "./dist/table.cjs"
+              },
+              "./package.json": "./package.json"
+            },
+            "main": "./dist/index.cjs",
+            "module": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "sideEffects": [
+              "**/*.css"
+            ],
+            "dependencies": {
+              "@radix-ui/react-slot": "^1.1.2",
+              "@oods/component-contracts": "0.1.0",
+              "@oods/component-styles": "0.1.0"
+            },
+            "peerDependencies": {
+              "react": ">=18 <20",
+              "react-dom": ">=18 <20"
+            },
+            "devDependencies": {
+              "@testing-library/react": "^16.0.0",
+              "@testing-library/user-event": "^14.6.1",
+              "@types/react": "^19.2.2",
+              "@types/react-dom": "^19.2.1",
+              "jsdom": "^24.0.0",
+              "playwright": "^1.56.1",
+              "react": "^19.2.0",
+              "react-dom": "^19.2.0",
+              "vite": "^6.4.1",
+              "vitest": "^3.2.4",
+              "vitest-axe": "^0.1.0"
+            },
+            "packageManager": "pnpm@9.12.2"
+          },
+          "checks": {
+            "protocolFindings": [],
+            "absolutePathLeaks": [],
+            "unsafeArchiveEntries": [],
+            "sourcePathLeaks": [],
+            "undeclaredBareImports": [],
+            "unresolvedRelativeImports": [],
+            "invalidExportTargets": [],
+            "missingExportTargets": [],
+            "missingLegacyEntryPoints": [],
+            "missingRequiredExports": [
+              {
+                "export": "."
+              }
+            ],
+            "missingRequiredDependencies": [],
+            "packageIdentityFindings": []
+          },
+          "findingCount": 1
+        }
+      ],
+      "deterministic": true,
+      "passed": false
+    },
+    {
+      "expectedName": "@oods/components-vue",
+      "packageDirectory": "packages/components-vue",
+      "sourceManifest": {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "description": "OODS Vue 3 component package.",
+        "private": true,
+        "type": "module",
+        "license": "MIT",
+        "engines": {
+          "node": ">=20.11.1"
+        },
+        "files": [
+          "dist",
+          "evidence"
+        ],
+        "scripts": {
+          "build": "rimraf dist && tsup --config tsup.config.ts",
+          "clean": "rimraf dist",
+          "typecheck": "vue-tsc --noEmit --pretty false -p tsconfig.json",
+          "test": "vitest run --config vitest.config.ts",
+          "test:pack": "node test/packed-import.mjs",
+          "test:visual": "node test/visual-evidence.mjs",
+          "prepack": "pnpm run build"
+        },
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+          },
+          "./readiness": {
+            "default": "./evidence/vue-readiness.v1.json"
+          },
+          "./package.json": "./package.json"
+        },
+        "main": "./dist/index.cjs",
+        "module": "./dist/index.js",
+        "types": "./dist/index.d.ts",
+        "sideEffects": [
+          "**/*.css"
+        ],
+        "dependencies": {
+          "@oods/component-contracts": "0.1.0",
+          "@oods/component-styles": "0.1.0"
+        },
+        "peerDependencies": {
+          "vue": "^3.5.0"
+        },
+        "devDependencies": {
+          "@vitejs/plugin-vue": "^5.2.4",
+          "@vue/compiler-sfc": "^3.5.42",
+          "@vue/server-renderer": "^3.5.42",
+          "@vue/test-utils": "^2.5.0",
+          "jsdom": "^24.0.0",
+          "playwright": "^1.56.1",
+          "typescript": "^5.9.3",
+          "vite": "^6.4.1",
+          "vitest": "^3.2.4",
+          "vitest-axe": "^0.1.0",
+          "vue": "^3.5.42",
+          "vue-tsc": "^3.3.11"
+        },
+        "packageManager": "pnpm@9.12.2"
+      },
+      "sourceManifestSha256": "9a4cacb4c4474c799cfd3acd3ffa559046e46b12621a56b68f08d68bfc9451ab",
+      "build": {
+        "command": "pnpm run build",
+        "cwd": "packages/components-vue",
+        "exitCode": 0,
+        "log": "logs/oods-components-vue-build.log"
+      },
+      "packs": [
+        {
+          "run": 1,
+          "command": "npm pack --json --pack-destination <artifact-root>/package-foundations/tarballs/run-1/oods-components-vue",
+          "exitCode": 0,
+          "log": "logs/oods-components-vue-pack-run-1.log",
+          "tarball": "tarballs/run-1/oods-components-vue/oods-components-vue-0.1.0.tgz",
+          "tarballBytes": 17672,
+          "tarballSha256": "3600f4ff82b3ac5adafe6384f4b9339e9da4a17beaed799a539982bc9fdcdbf3",
+          "inventory": [
+            {
+              "path": "package/dist/index.cjs",
+              "bytes": 30370,
+              "sha256": "5bec0683e79f9b2129d8aa244493035491f7199d70806b3989b390f486fc0962"
+            },
+            {
+              "path": "package/dist/index.d.cts",
+              "bytes": 24554,
+              "sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a"
+            },
+            {
+              "path": "package/dist/index.d.ts",
+              "bytes": 24554,
+              "sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a"
+            },
+            {
+              "path": "package/dist/index.js",
+              "bytes": 29679,
+              "sha256": "6952dfbd7aa523a5e16c976dc7c35ee81f165c1240f6b1dc58af065022557992"
+            },
+            {
+              "path": "package/evidence/vue-readiness.v1.json",
+              "bytes": 13127,
+              "sha256": "0bcb8104b303cdbd34a5d8506900fb6d8aa1750d06d5009001d5fa3dda9caafc"
+            },
+            {
+              "path": "package/package.json",
+              "bytes": 1545,
+              "sha256": "9a4cacb4c4474c799cfd3acd3ffa559046e46b12621a56b68f08d68bfc9451ab"
+            }
+          ],
+          "inventorySha256": "1c61335f8bc7875a50481d5db636f85f69c368127213d78254090f812ec54f44",
+          "inventoryArtifact": "inventories/oods-components-vue-run-1.json",
+          "packedManifest": {
+            "name": "@oods/components-vue",
+            "version": "0.1.0",
+            "description": "OODS Vue 3 component package.",
+            "private": true,
+            "type": "module",
+            "license": "MIT",
+            "engines": {
+              "node": ">=20.11.1"
+            },
+            "files": [
+              "dist",
+              "evidence"
+            ],
+            "scripts": {
+              "build": "rimraf dist && tsup --config tsup.config.ts",
+              "clean": "rimraf dist",
+              "typecheck": "vue-tsc --noEmit --pretty false -p tsconfig.json",
+              "test": "vitest run --config vitest.config.ts",
+              "test:pack": "node test/packed-import.mjs",
+              "test:visual": "node test/visual-evidence.mjs",
+              "prepack": "pnpm run build"
+            },
+            "exports": {
+              ".": {
+                "types": "./dist/index.d.ts",
+                "import": "./dist/index.js",
+                "require": "./dist/index.cjs"
+              },
+              "./readiness": {
+                "default": "./evidence/vue-readiness.v1.json"
+              },
+              "./package.json": "./package.json"
+            },
+            "main": "./dist/index.cjs",
+            "module": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "sideEffects": [
+              "**/*.css"
+            ],
+            "dependencies": {
+              "@oods/component-contracts": "0.1.0",
+              "@oods/component-styles": "0.1.0"
+            },
+            "peerDependencies": {
+              "vue": "^3.5.0"
+            },
+            "devDependencies": {
+              "@vitejs/plugin-vue": "^5.2.4",
+              "@vue/compiler-sfc": "^3.5.42",
+              "@vue/server-renderer": "^3.5.42",
+              "@vue/test-utils": "^2.5.0",
+              "jsdom": "^24.0.0",
+              "playwright": "^1.56.1",
+              "typescript": "^5.9.3",
+              "vite": "^6.4.1",
+              "vitest": "^3.2.4",
+              "vitest-axe": "^0.1.0",
+              "vue": "^3.5.42",
+              "vue-tsc": "^3.3.11"
+            },
+            "packageManager": "pnpm@9.12.2"
+          },
+          "checks": {
+            "protocolFindings": [],
+            "absolutePathLeaks": [],
+            "unsafeArchiveEntries": [],
+            "sourcePathLeaks": [],
+            "undeclaredBareImports": [],
+            "unresolvedRelativeImports": [],
+            "invalidExportTargets": [],
+            "missingExportTargets": [],
+            "missingLegacyEntryPoints": [],
+            "missingRequiredExports": [],
+            "missingRequiredDependencies": [],
+            "packageIdentityFindings": []
+          },
+          "findingCount": 0
+        },
+        {
+          "run": 2,
+          "command": "npm pack --json --pack-destination <artifact-root>/package-foundations/tarballs/run-2/oods-components-vue",
+          "exitCode": 0,
+          "log": "logs/oods-components-vue-pack-run-2.log",
+          "tarball": "tarballs/run-2/oods-components-vue/oods-components-vue-0.1.0.tgz",
+          "tarballBytes": 17672,
+          "tarballSha256": "3600f4ff82b3ac5adafe6384f4b9339e9da4a17beaed799a539982bc9fdcdbf3",
+          "inventory": [
+            {
+              "path": "package/dist/index.cjs",
+              "bytes": 30370,
+              "sha256": "5bec0683e79f9b2129d8aa244493035491f7199d70806b3989b390f486fc0962"
+            },
+            {
+              "path": "package/dist/index.d.cts",
+              "bytes": 24554,
+              "sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a"
+            },
+            {
+              "path": "package/dist/index.d.ts",
+              "bytes": 24554,
+              "sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a"
+            },
+            {
+              "path": "package/dist/index.js",
+              "bytes": 29679,
+              "sha256": "6952dfbd7aa523a5e16c976dc7c35ee81f165c1240f6b1dc58af065022557992"
+            },
+            {
+              "path": "package/evidence/vue-readiness.v1.json",
+              "bytes": 13127,
+              "sha256": "0bcb8104b303cdbd34a5d8506900fb6d8aa1750d06d5009001d5fa3dda9caafc"
+            },
+            {
+              "path": "package/package.json",
+              "bytes": 1545,
+              "sha256": "9a4cacb4c4474c799cfd3acd3ffa559046e46b12621a56b68f08d68bfc9451ab"
+            }
+          ],
+          "inventorySha256": "1c61335f8bc7875a50481d5db636f85f69c368127213d78254090f812ec54f44",
+          "inventoryArtifact": "inventories/oods-components-vue-run-2.json",
+          "packedManifest": {
+            "name": "@oods/components-vue",
+            "version": "0.1.0",
+            "description": "OODS Vue 3 component package.",
+            "private": true,
+            "type": "module",
+            "license": "MIT",
+            "engines": {
+              "node": ">=20.11.1"
+            },
+            "files": [
+              "dist",
+              "evidence"
+            ],
+            "scripts": {
+              "build": "rimraf dist && tsup --config tsup.config.ts",
+              "clean": "rimraf dist",
+              "typecheck": "vue-tsc --noEmit --pretty false -p tsconfig.json",
+              "test": "vitest run --config vitest.config.ts",
+              "test:pack": "node test/packed-import.mjs",
+              "test:visual": "node test/visual-evidence.mjs",
+              "prepack": "pnpm run build"
+            },
+            "exports": {
+              ".": {
+                "types": "./dist/index.d.ts",
+                "import": "./dist/index.js",
+                "require": "./dist/index.cjs"
+              },
+              "./readiness": {
+                "default": "./evidence/vue-readiness.v1.json"
+              },
+              "./package.json": "./package.json"
+            },
+            "main": "./dist/index.cjs",
+            "module": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "sideEffects": [
+              "**/*.css"
+            ],
+            "dependencies": {
+              "@oods/component-contracts": "0.1.0",
+              "@oods/component-styles": "0.1.0"
+            },
+            "peerDependencies": {
+              "vue": "^3.5.0"
+            },
+            "devDependencies": {
+              "@vitejs/plugin-vue": "^5.2.4",
+              "@vue/compiler-sfc": "^3.5.42",
+              "@vue/server-renderer": "^3.5.42",
+              "@vue/test-utils": "^2.5.0",
+              "jsdom": "^24.0.0",
+              "playwright": "^1.56.1",
+              "typescript": "^5.9.3",
+              "vite": "^6.4.1",
+              "vitest": "^3.2.4",
+              "vitest-axe": "^0.1.0",
+              "vue": "^3.5.42",
+              "vue-tsc": "^3.3.11"
+            },
+            "packageManager": "pnpm@9.12.2"
+          },
+          "checks": {
+            "protocolFindings": [],
+            "absolutePathLeaks": [],
+            "unsafeArchiveEntries": [],
+            "sourcePathLeaks": [],
+            "undeclaredBareImports": [],
+            "unresolvedRelativeImports": [],
+            "invalidExportTargets": [],
+            "missingExportTargets": [],
+            "missingLegacyEntryPoints": [],
+            "missingRequiredExports": [],
+            "missingRequiredDependencies": [],
+            "packageIdentityFindings": []
+          },
+          "findingCount": 0
+        }
+      ],
+      "deterministic": true,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "selected": 4,
+    "passed": 3,
+    "failed": 1,
+    "skipped": 0,
+    "status": "failed"
+  }
+}

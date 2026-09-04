@@ -1,0 +1,110 @@
+$ pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/code.generate.test.ts -t 'B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ❯ src/tools/__tests__/code.generate.test.ts (13 tests | 1 failed | 12 skipped) 12ms
+   ↓ code.generate tool > falls back to capability-baseline membership when the structured registry is empty
+   ↓ code.generate tool > emits Vue script comments safely when descriptions contain closing script tags
+   ↓ code.generate tool > accepts tailwind styling in input schema
+   ↓ code.generate tool > emits Tailwind classes for React and Vue when styling=tailwind
+   ↓ code.generate tool > defaults to tokens styling when options are omitted
+   ↓ code.generate tool > rejects valid-schema keys and identifiers that cannot be emitted safely
+   ↓ code.generate tool > preserves identifier, data-*, and aria-* prop keys
+   ↓ code.generate tool > rejects generated-name collisions for each target
+   ↓ code.generate tool > rejects emitter-owned and duplicate attributes before emission
+   ↓ code.generate tool > rejects handlers that shadow imported components
+   ↓ code.generate tool > checks known target readiness before emitted-syntax safety
+   × code.generate tool > B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible 11ms
+     → expected { status: 'ok', …(6) } to deeply equal { status: 'error', …(7) }
+   ↓ code.generate tool > B-14 emits byte-identical governed source and evidence on repeated runs
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 skipped (13)
+   Start at  00:36:44
+   Duration  418ms (transform 131ms, setup 12ms, collect 255ms, tests 12ms, environment 0ms, prepare 34ms)
+
+undefined
+/private<disposable-checkout>/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/__tests__/code.generate.test.ts -t B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/__tests__/code.generate.test.ts > code.generate tool > B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible
+AssertionError: expected { status: 'ok', …(6) } to deeply equal { status: 'error', …(7) }
+
+- Expected
++ Received
+
+@@ -1,8 +1,38 @@
+  {
+-   "code": "",
+-   "errors": [
++   "code": "import React from 'react';
++ import { ArchiveSummary, Stack, TagInput } from '@oods/components-react';
++ import '@oods/component-styles/css';
++
++ type ArchiveSummaryProps = React.ComponentPropsWithoutRef<typeof ArchiveSummary>;
++ type StackProps = React.ComponentPropsWithoutRef<typeof Stack>;
++ type TagInputProps = React.ComponentPropsWithoutRef<typeof TagInput>;
++
++ export const GeneratedUI: React.FC = () => {
++   return (
++     <>
++       <Stack id=\"readiness-root\" data-oods-component=\"Stack\">
++             <ArchiveSummary id=\"archive-summary\" data-oods-component=\"ArchiveSummary\" />
++             <TagInput id=\"tag-input\" data-oods-component=\"TagInput\" />
++           </Stack>
++     </>
++   );
++ };
++ ",
++   "fileExtension": ".tsx",
++   "framework": "react",
++   "imports": [
++     "react",
++     "@oods/components-react",
++     "@oods/component-styles/css",
++   ],
++   "meta": {
++     "componentCount": 3,
++     "nodeCount": 3,
++   },
++   "status": "ok",
++   "warnings": [
+      {
+        "code": "OODS-N015",
+        "component": "ArchiveSummary",
+        "message": "Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.",
+        "nodeId": "archive-summary",
+@@ -12,15 +42,6 @@
+        "component": "TagInput",
+        "message": "Component TagInput is not emission-eligible for react; evidence state: implemented-unverified.",
+        "nodeId": "tag-input",
+      },
+    ],
+-   "fileExtension": "",
+-   "framework": "react",
+-   "imports": [],
+-   "meta": {
+-     "componentCount": 3,
+-     "nodeCount": 3,
+-   },
+-   "status": "error",
+-   "warnings": [],
+  }
+
+ ❯ src/tools/__tests__/code.generate.test.ts:476:20
+    474|     });
+    475| 
+    476|     expect(result).toEqual({
+       |                    ^
+    477|       status: 'error',
+    478|       framework: 'react',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

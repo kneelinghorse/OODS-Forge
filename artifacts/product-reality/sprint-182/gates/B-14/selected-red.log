@@ -1,0 +1,89 @@
+$ pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/code.generate.test.ts -t 'B-14 emits byte-identical governed source and evidence on repeated runs'
+exitCode=1
+signal=
+
+[stdout]
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ❯ src/tools/__tests__/code.generate.test.ts (13 tests | 1 failed | 12 skipped) 23ms
+   ↓ code.generate tool > falls back to capability-baseline membership when the structured registry is empty
+   ↓ code.generate tool > emits Vue script comments safely when descriptions contain closing script tags
+   ↓ code.generate tool > accepts tailwind styling in input schema
+   ↓ code.generate tool > emits Tailwind classes for React and Vue when styling=tailwind
+   ↓ code.generate tool > defaults to tokens styling when options are omitted
+   ↓ code.generate tool > rejects valid-schema keys and identifiers that cannot be emitted safely
+   ↓ code.generate tool > preserves identifier, data-*, and aria-* prop keys
+   ↓ code.generate tool > rejects generated-name collisions for each target
+   ↓ code.generate tool > rejects emitter-owned and duplicate attributes before emission
+   ↓ code.generate tool > rejects handlers that shadow imported components
+   ↓ code.generate tool > checks known target readiness before emitted-syntax safety
+   ↓ code.generate tool > B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible
+   × code.generate tool > B-14 emits byte-identical governed source and evidence on repeated runs 23ms
+     → expected Buffer[ 105, 109, 112, 111, 114, …(678) ] to deeply equal Buffer[ 105, 109, 112, 111, 114, …(676) ]
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 skipped (13)
+   Start at  00:46:50
+   Duration  410ms (transform 125ms, setup 12ms, collect 237ms, tests 23ms, environment 0ms, prepare 34ms)
+
+undefined
+/private<disposable-checkout>/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/__tests__/code.generate.test.ts -t B-14 emits byte-identical governed source and evidence on repeated runs
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/__tests__/code.generate.test.ts > code.generate tool > B-14 emits byte-identical governed source and evidence on repeated runs
+AssertionError: expected Buffer[ 105, 109, 112, 111, 114, …(678) ] to deeply equal Buffer[ 105, 109, 112, 111, 114, …(676) ]
+
+- Expected
++ Received
+
+@@ -773,24 +773,26 @@
+      111,
+      110,
+      32,
+      48,
+      46,
+-     56,
+-     57,
+      48,
+-     49,
+-     49,
+-     55,
++     53,
+      56,
+      51,
++     48,
+      52,
+-     49,
+-     52,
++     48,
+      52,
+-     55,
++     48,
+      51,
+-     55,
++     48,
++     56,
++     52,
++     52,
++     57,
+      57,
++     51,
++     52,
+    ],
+    "type": "Buffer",
+  }
+
+ ❯ src/tools/__tests__/code.generate.test.ts:512:39
+    510|       expect(first.status).toBe('ok');
+    511|       expect(second.status).toBe('ok');
+    512|       expect(Buffer.from(first.code)).toEqual(Buffer.from(second.code)…
+       |                                       ^
+    513|       expect(evidenceDigest(first)).toBe(evidenceDigest(second));
+    514|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

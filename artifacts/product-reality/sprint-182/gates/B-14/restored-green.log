@@ -1,0 +1,81 @@
+$ pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-server exec vitest run src/tools/__tests__/code.generate.test.ts -t 'B-14 emits byte-identical governed source and evidence on repeated runs'
+exitCode=0
+signal=
+
+[stdout]
+
+> @oods/mcp-server@0.1.0 build /private<disposable-checkout>/packages/mcp-server
+> rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true && cp -f src/security/*.json dist/security/ 2>/dev/null || true && cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true
+
+src/a11y/token-color-resolver.ts(1,32): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/a11y/token-color-resolver.ts(2,51): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/a11y/validate-contrast.ts(5,63): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/a11y/validate-contrast.ts(6,41): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/a11y/validate-contrast.ts(99,30): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/lib/transcript.ts(10,8): error TS2307: Cannot find module '@oods/artifacts' or its corresponding type declarations.
+src/lib/transcript.ts(11,95): error TS2307: Cannot find module '@oods/artifacts' or its corresponding type declarations.
+src/tools/a11y.scan.ts(5,63): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/tools/a11y.scan.ts(6,41): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/tools/a11y.scan.ts(142,32): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/tools/a11y.scan.ts(143,32): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/tools/artifact.certify.ts(45,38): error TS2307: Cannot find module '@oods/artifacts' or its corresponding type declarations.
+src/tools/artifact.certify.ts(50,8): error TS2307: Cannot find module '@oods/viz-render' or its corresponding type declarations.
+src/tools/artifact.certify.ts(61,8): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/artifact.certify.ts(839,71): error TS7006: Parameter 'rule' implicitly has an 'any' type.
+src/tools/artifact.certify.ts(843,44): error TS7006: Parameter 'rule' implicitly has an 'any' type.
+src/tools/artifact.certify.ts(844,54): error TS7006: Parameter 'rule' implicitly has an 'any' type.
+src/tools/certify-contrast.ts(46,47): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/tools/certify-contrast.ts(53,8): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/certify-contrast.ts(54,56): error TS2307: Cannot find module '@oods/viz-render' or its corresponding type declarations.
+src/tools/certify-echarts-emit.ts(26,38): error TS2307: Cannot find module '@oods/artifacts' or its corresponding type declarations.
+src/tools/certify-echarts-emit.ts(37,8): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/certify-operand.ts(25,55): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/dashboard.render.html.ts(22,56): error TS2307: Cannot find module '@oods/viz-render' or its corresponding type declarations.
+src/tools/dashboard.render.html.ts(23,37): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/dashboard.render.html.ts(24,31): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/tools/dashboard.render.ts(31,8): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/dashboard.render.ts(32,38): error TS2307: Cannot find module '@oods/artifacts' or its corresponding type declarations.
+src/tools/dashboard.render.ts(522,69): error TS18046: 'err' is of type 'unknown'.
+src/tools/dashboard.render.ts(522,99): error TS18046: 'err' is of type 'unknown'.
+src/tools/dashboard.render.ts(534,75): error TS18046: 'err' is of type 'unknown'.
+src/tools/dashboard.render.ts(534,101): error TS18046: 'err' is of type 'unknown'.
+src/tools/dashboard.render.ts(537,100): error TS18046: 'err' is of type 'unknown'.
+src/tools/dashboard.render.ts(537,130): error TS18046: 'err' is of type 'unknown'.
+src/tools/diag.snapshot.ts(19,8): error TS2307: Cannot find module '@oods/artifacts' or its corresponding type declarations.
+src/tools/diag.snapshot.ts(20,63): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/tools/diag.snapshot.ts(94,39): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/tools/echarts-a11y-analysis.ts(44,8): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/echarts-geo-option.ts(28,8): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/echarts-link-integrity.ts(22,49): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/echarts-link-integrity.ts(24,69): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/echarts-role-a-assignment.ts(1,32): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/tools/measure-registry.ts(18,52): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/measure-resolver.ts(18,31): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/release.tag.ts(6,28): error TS2307: Cannot find module '@oods/release-utils' or its corresponding type declarations.
+src/tools/release.verify.ts(17,8): error TS2307: Cannot find module '@oods/release-utils' or its corresponding type declarations.
+src/tools/viz.render.ts(36,8): error TS2307: Cannot find module '@oods/viz-core' or its corresponding type declarations.
+src/tools/viz.render.ts(37,38): error TS2307: Cannot find module '@oods/artifacts' or its corresponding type declarations.
+src/tools/viz.render.ts(38,28): error TS2307: Cannot find module '@oods/a11y-tools' or its corresponding type declarations.
+src/tools/viz.render.ts(423,57): error TS7006: Parameter 'rule' implicitly has an 'any' type.
+src/tools/viz.render.ts(430,16): error TS7006: Parameter 'rule' implicitly has an 'any' type.
+src/tools/viz.render.ts(431,13): error TS7006: Parameter 'rule' implicitly has an 'any' type.
+src/tools/viz.render.ts(437,16): error TS7006: Parameter 'rule' implicitly has an 'any' type.
+src/tools/viz.render.ts(438,13): error TS7006: Parameter 'rule' implicitly has an 'any' type.
+src/tools/viz.render.ts(484,57): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/tools/viz.render.ts(500,53): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/tools/viz.render.ts(619,60): error TS7006: Parameter 'dup' implicitly has an 'any' type.
+src/tools/viz.render.ts(825,35): error TS7006: Parameter 'column' implicitly has an 'any' type.
+src/tools/viz.render.ts(830,29): error TS7006: Parameter 'row' implicitly has an 'any' type.
+src/tools/viz.render.ts(831,31): error TS7006: Parameter 'cell' implicitly has an 'any' type.
+
+ RUN  v3.2.4 /private<disposable-checkout>/packages/mcp-server
+
+ ✓ src/tools/__tests__/code.generate.test.ts (13 tests | 12 skipped) 23ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 12 skipped (13)
+   Start at  00:46:53
+   Duration  459ms (transform 146ms, setup 12ms, collect 288ms, tests 23ms, environment 0ms, prepare 35ms)
+
+
+[stderr]
