@@ -649,7 +649,7 @@ async function findTarImplementation() {
       return {
         command: "tar",
         kind: "bsdtar",
-        method: "bsdtar normalized local stream + gzip -9n",
+        method: "bsdtar normalized restricted-pax local stream + gzip -9n",
         determinismCertified: false,
       };
     }
@@ -736,7 +736,7 @@ async function createArchive(
           "-cf",
           "-",
           "--format",
-          "pax",
+          "paxr",
           "--uid",
           "0",
           "--gid",

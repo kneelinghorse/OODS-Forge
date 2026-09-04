@@ -98,9 +98,10 @@ cmp "$forge_runtime_tmp/out-1/forge-runtime.tar.gz.sha256" \
 ```
 
 The deterministic archive step is Linux/GNU-tar certified. When GNU tar is
-unavailable, the assembler uses local macOS bsdtar to produce a usable bundle
-whose manifest sets `archivePacking.determinismCertified` to `false`; that
-bundle can be extracted and exercised locally, but it is not the pack-twice
+unavailable, the assembler uses macOS bsdtar's restricted-pax format so local
+pack-twice checks remain stable without unrestricted-pax `ctime` headers.
+Its manifest still sets `archivePacking.determinismCertified` to `false`; that
+bundle can be extracted and exercised locally, but it is not the CI
 certification artifact.
 
 ## Accepted consumer requirements
