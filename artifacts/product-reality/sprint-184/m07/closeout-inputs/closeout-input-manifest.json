@@ -1,0 +1,284 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "s184-m07-closeout-input-manifest",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m07",
+  "sprintStatusSourcePath": "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-sprint-status-source.json",
+  "suiteAccountingScopes": [
+    {
+      "scopeId": "sprint-183-c7",
+      "purpose": "Re-derive Sprint 183 C7 over the exact root-core population from the Sprint 182 closeout head to the Sprint 183 review head.",
+      "baselineHead": "179a94f18a5fa557c5461543d851b08b05b81c4a",
+      "baselineReceiptPaths": {
+        "root-core": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-182/receipts/root-core.json"
+      },
+      "currentReceiptPaths": {
+        "root-core": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-183/receipts/root-core.json"
+      },
+      "membershipChangeEvidencePaths": {
+        "root-core": [
+          "vitest.config.ts"
+        ]
+      }
+    },
+    {
+      "scopeId": "sprint-184",
+      "purpose": "Account for all four suite populations from the frozen Sprint 184 baseline to the frozen M07 review head.",
+      "baselineHead": "2f94e31384949f3030600d18542be20615332b6e",
+      "baselineReceiptPaths": {
+        "mcp-server": "artifacts/product-reality/sprint-184/m01/four-suite-baseline/run-2/mcp-server.json",
+        "root-core": "artifacts/product-reality/sprint-184/m01/four-suite-baseline/run-2/root-core.json",
+        "viz-core": "artifacts/product-reality/sprint-184/m01/four-suite-baseline/run-2/viz-core.json",
+        "viz-render": "artifacts/product-reality/sprint-184/m01/four-suite-baseline/run-2/viz-render.json"
+      },
+      "currentReceiptPaths": {
+        "mcp-server": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/mcp-server.json",
+        "root-core": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/root-core.json",
+        "viz-core": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/viz-core.json",
+        "viz-render": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/viz-render.json"
+      },
+      "membershipChangeEvidencePaths": {}
+    }
+  ],
+  "executionRows": [
+    {
+      "rowId": "patch-population",
+      "executions": [
+        {
+          "executionId": "m07-patch-disposition",
+          "kind": "focused-test-and-artifact",
+          "status": "passed",
+          "evidencePaths": [
+            "artifacts/product-reality/sprint-184/m07/patch-disposition.json",
+            "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "rowId": "typed-gap-and-repoint-disposition",
+      "executions": [
+        {
+          "executionId": "m07-b2-legacy-inputs",
+          "kind": "focused-test-and-artifact",
+          "status": "passed",
+          "evidencePaths": [
+            "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
+            "packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "rowId": "historical-population-collection",
+      "executions": [
+        {
+          "executionId": "m07-s182-root-population-collection",
+          "kind": "root-core-vitest-collection",
+          "status": "passed",
+          "evidencePaths": [
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-182/report.json",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-182/receipts/root-core.json",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-182/logs/root-core-list-files.log",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-182/logs/root-core-list-tests.log",
+            "artifacts/product-reality/sprint-182/m05/logs/s182-m05-l-01-root-core.log"
+          ]
+        },
+        {
+          "executionId": "m07-s183-root-population-collection",
+          "kind": "root-core-vitest-collection",
+          "status": "passed",
+          "evidencePaths": [
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-183/report.json",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-183/receipts/root-core.json",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-183/logs/root-core-list-files.log",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-183/logs/root-core-list-tests.log",
+            "artifacts/product-reality/sprint-183/m06/l01-suite-attribution.json"
+          ]
+        }
+      ]
+    },
+    {
+      "rowId": "final-capture-1-three-suites",
+      "executions": [
+        {
+          "executionId": "m07-final-three-suite-capture",
+          "kind": "three-suite-vitest-capture",
+          "status": "passed",
+          "evidencePaths": [
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/mcp-server.json",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/viz-core.json",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/viz-render.json",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/logs/mcp-server.log",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/logs/viz-core.log",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/logs/viz-render.log"
+          ]
+        }
+      ]
+    },
+    {
+      "rowId": "final-capture-2-root-core",
+      "executions": [
+        {
+          "executionId": "m07-final-root-core-capture",
+          "kind": "root-core-vitest-capture",
+          "status": "passed",
+          "evidencePaths": [
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/root-core.json",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/logs/root-core.log",
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/root-core-report.json"
+          ]
+        }
+      ]
+    },
+    {
+      "rowId": "reconnect-attempt-record",
+      "executions": [
+        {
+          "executionId": "m07-reconnect-attempt-record",
+          "kind": "cmos-message-attempt-record",
+          "status": "passed",
+          "evidencePaths": [
+            "artifacts/product-reality/sprint-184/m07/reconnect-attempts.json",
+            "artifacts/product-reality/sprint-184/m07/reconnect-plan.json"
+          ]
+        }
+      ]
+    },
+    {
+      "rowId": "review-handoff-status",
+      "executions": [
+        {
+          "executionId": "m07-sprint-status-capture",
+          "kind": "cmos-status-capture",
+          "status": "passed",
+          "evidencePaths": [
+            "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-sprint-status-source.json"
+          ]
+        }
+      ]
+    }
+  ],
+  "claimBindings": [
+    {
+      "criterionIndex": 1,
+      "status": "passed",
+      "executionIds": [
+        "m07-patch-disposition"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/patch-disposition.json",
+        "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts"
+      ]
+    },
+    {
+      "criterionIndex": 2,
+      "status": "passed",
+      "executionIds": [
+        "m07-patch-disposition"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/patch-disposition.json",
+        "artifacts/product-reality/sprint-182/m01b/mutation/mutation.patch",
+        "artifacts/product-reality/sprint-182/review/foundation-v1-promotion-binding.v1.json",
+        "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts"
+      ]
+    },
+    {
+      "criterionIndex": 3,
+      "status": "passed",
+      "executionIds": [
+        "m07-patch-disposition"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/patch-disposition.json",
+        "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts"
+      ]
+    },
+    {
+      "criterionIndex": 4,
+      "status": "passed",
+      "executionIds": [
+        "m07-b2-legacy-inputs"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
+        "packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts"
+      ]
+    },
+    {
+      "criterionIndex": 5,
+      "status": "passed",
+      "executionIds": [
+        "m07-b2-legacy-inputs"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
+        "packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts"
+      ]
+    },
+    {
+      "criterionIndex": 6,
+      "status": "passed",
+      "executionIds": [
+        "m07-s182-root-population-collection",
+        "m07-s183-root-population-collection",
+        "m07-final-three-suite-capture",
+        "m07-final-root-core-capture"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-182/receipts/root-core.json",
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-183/receipts/root-core.json",
+        "artifacts/product-reality/sprint-182/m05/logs/s182-m05-l-01-root-core.log",
+        "artifacts/product-reality/sprint-183/m06/l01-suite-attribution.json",
+        "artifacts/product-reality/sprint-184/m01/four-suite-baseline/run-2/mcp-server.json",
+        "artifacts/product-reality/sprint-184/m01/four-suite-baseline/run-2/root-core.json",
+        "artifacts/product-reality/sprint-184/m01/four-suite-baseline/run-2/viz-core.json",
+        "artifacts/product-reality/sprint-184/m01/four-suite-baseline/run-2/viz-render.json",
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/mcp-server.json",
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/root-core.json",
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/viz-core.json",
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/viz-render.json",
+        "vitest.config.ts",
+        "scripts/product-reality/s184-m07-closeout.mjs",
+        "packages/mcp-server/test/product-reality/closeout.s184.spec.ts"
+      ]
+    },
+    {
+      "criterionIndex": 7,
+      "status": "unproven",
+      "executionIds": [
+        "m07-reconnect-attempt-record"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/reconnect-attempts.json",
+        "artifacts/product-reality/sprint-184/m07/reconnect-plan.json"
+      ]
+    },
+    {
+      "criterionIndex": 8,
+      "status": "passed",
+      "executionIds": [
+        "m07-final-three-suite-capture"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-mission-contract-source.json",
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/mcp-server.json",
+        "scripts/product-reality/s184-m07-closeout.mjs",
+        "packages/mcp-server/test/product-reality/closeout.s184.spec.ts"
+      ]
+    },
+    {
+      "criterionIndex": 9,
+      "status": "passed",
+      "executionIds": [
+        "m07-sprint-status-capture"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-sprint-status-source.json",
+        "scripts/product-reality/s184-m07-closeout.mjs",
+        "packages/mcp-server/test/product-reality/closeout.s184.spec.ts"
+      ]
+    }
+  ]
+}

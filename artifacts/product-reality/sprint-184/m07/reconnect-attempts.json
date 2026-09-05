@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s184-m07",
+  "kind": "three-consumer-reconnect-attempt-record",
+  "status": "passed",
+  "recordingStatus": "passed",
+  "deliveryStatus": "blocked",
+  "criterionStatus": "unproven",
+  "statusMeaning": "Passed means the three attempts and their observed results are faithfully recorded; it does not assert that all three deliveries succeeded.",
+  "auditHead": "cbcbce242f922c18ccfeefbe071bbb26d450dabf",
+  "implementationHead": "4f50d0b29693006261fba09ba54a353f19a2e820",
+  "plan": {
+    "path": "artifacts/product-reality/sprint-184/m07/reconnect-plan.json",
+    "revision": "4f50d0b29693006261fba09ba54a353f19a2e820",
+    "bytes": 17173,
+    "sha256": "1187af654cb50937d7469728c14b1d55e8aafa25693a69247a528178c1d68286"
+  },
+  "derivation": {
+    "sprint183Movers": 10,
+    "sprint184TrancheMovers": 60,
+    "sprint184UniqueMovers": 48,
+    "sprint184DuplicatesRemoved": 12,
+    "crossSprintOverlap": 7,
+    "combinedUniqueMovers": 51
+  },
+  "attempts": [
+    {
+      "targetAddress": "cmos://derek/aquex-mcp",
+      "consumerKind": "live-mcp",
+      "status": "sent",
+      "result": {
+        "success": true,
+        "messageId": "fba7014a-b7d3-46b9-89f0-9ac8afde69c3"
+      }
+    },
+    {
+      "targetAddress": "cmos://derek/dashboard-demos",
+      "consumerKind": "vendored",
+      "status": "rejected",
+      "attemptCount": 2,
+      "result": {
+        "success": false,
+        "errorCode": "DASHBOARD_ERROR"
+      },
+      "failure": {
+        "classification": "archived-project",
+        "message": "Dashboard error: Project 'dashboard-demos' is archived and no longer accepts messages.",
+        "retryCondition": "Unarchive cmos://derek/dashboard-demos, then resend the exact Git-derived request and record its message ID."
+      }
+    },
+    {
+      "targetAddress": "cmos://derek/forge-demos",
+      "consumerKind": "vendored",
+      "status": "sent",
+      "result": {
+        "success": true,
+        "messageId": "3f764e7e-b716-41ba-beef-4b6bc2407b86"
+      }
+    }
+  ],
+  "successfulMessageIds": [
+    "fba7014a-b7d3-46b9-89f0-9ac8afde69c3",
+    "3f764e7e-b716-41ba-beef-4b6bc2407b86"
+  ],
+  "summary": {
+    "requiredDestinations": 3,
+    "attemptedDestinations": 3,
+    "deliveryAttempts": 4,
+    "successfulDeliveries": 2,
+    "failedDeliveries": 1,
+    "requiredMessageIds": 3,
+    "recordedMessageIds": 2,
+    "allRequiredDeliveriesProven": false
+  },
+  "blocker": {
+    "targetAddress": "cmos://derek/dashboard-demos",
+    "reason": "The required destination is archived and refuses messages.",
+    "needed": "Unarchive the destination so the third exact request can be delivered and its unique non-empty message ID recorded."
+  }
+}
