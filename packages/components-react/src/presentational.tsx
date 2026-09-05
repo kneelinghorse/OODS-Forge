@@ -274,7 +274,20 @@ const TEXT_WEIGHT_CLASSES: Record<NonNullable<TextProps['weight']>, string> = {
 };
 
 export const Text = React.forwardRef<HTMLElement, TextProps>(
-  ({ as = 'span', content, children, size = 'md', weight = 'regular', className, ...rest }, ref) => {
+  (
+    {
+      as = 'span',
+      content,
+      children,
+      label,
+      size = 'md',
+      weight = 'regular',
+      className,
+      'aria-description': ariaDescription,
+      ...rest
+    },
+    ref
+  ) => {
     const Element = as;
     return (
       <Element
@@ -283,6 +296,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
         data-oods-component="Text"
         data-size={size}
         data-weight={weight}
+        aria-description={ariaDescription ?? label}
         {...rest}
       >
         {children ?? content}

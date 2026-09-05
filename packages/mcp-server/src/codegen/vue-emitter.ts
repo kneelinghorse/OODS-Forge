@@ -33,6 +33,7 @@ import {
   javascriptSingleQuotedString,
   tokenOverrideVariableName,
 } from './emission-safety.js';
+import { executeCompositionDirectives } from './composition-directives.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (shared logic with tree-renderer.ts / react-emitter.ts)
@@ -272,6 +273,30 @@ function vueBindingAttrs(node: UiElement, analysis: BindingAnalysis): string[] {
   return attrs;
 }
 
+function vueFieldExpression(
+  node: UiElement,
+  fieldName: string,
+  propName: string | undefined,
+  isChildren: boolean,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): string {
+  const sourceField = node.props?.field;
+  const entry = typeof sourceField === 'string'
+    ? ownFieldSchemaEntry(objectSchema, sourceField)
+    : undefined;
+  if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
+    return `String(${fieldName})`;
+  }
+  if (
+    node.component === 'Text'
+    && isChildren
+    && (entry?.type === 'array' || entry?.type.endsWith('[]'))
+  ) {
+    return `Array.isArray(${fieldName}) ? ${fieldName}.join(', ') : ''`;
+  }
+  return fieldName;
+}
+
 // ---------------------------------------------------------------------------
 // Template tree emitter
 // ---------------------------------------------------------------------------
@@ -325,6 +350,14 @@ function emitTemplateNode(
     && !controlledProp
     ? snakeToCamel(fieldDirective)
     : undefined;
+  const boundFieldEntry = fieldDirective
+    ? ownFieldSchemaEntry(objectSchema, fieldDirective)
+    : undefined;
+  const coercedSelectField = tag === 'Select'
+    && boundFieldName
+    && boundFieldEntry?.type === 'boolean'
+    ? `String(${boundFieldName})`
+    : undefined;
   if (propsObject) {
     delete propsObject.children;
     // `field` drives generated bindings but is not a public component prop.
@@ -357,7 +390,9 @@ function emitTemplateNode(
 
   // v-model for form input components when bound to a field
   if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
-    attrParts.push(`v-model="${boundFieldName}"`);
+    attrParts.push(coercedSelectField
+      ? `:modelValue="${coercedSelectField}"`
+      : `v-model="${boundFieldName}"`);
   }
 
   attrParts.push(...vueBindingAttrs(node, bindingAnalysis));
@@ -458,10 +493,10 @@ function emitTemplateNode(
     const sectionFieldContent = children.length === 0
       ? resolveFrameworkChildContent(node, objectSchema)
       : null;
-    const sectionUsesVModel = FORM_INPUT_COMPONENTS.has(tag) && Boolean(boundFieldName);
+    const sectionUsesFieldBinding = FORM_INPUT_COMPONENTS.has(tag) && Boolean(boundFieldName);
     if (
       sectionFieldContent?.propName
-      && !sectionUsesVModel
+      && !sectionUsesFieldBinding
       && propsObject?.[sectionFieldContent.propName] !== undefined
     ) {
       delete propsObject[sectionFieldContent.propName];
@@ -472,8 +507,10 @@ function emitTemplateNode(
       const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
       if (propsStr) innerAttrParts.push(propsStr);
     }
-    if (sectionUsesVModel) {
-      innerAttrParts.push(`v-model="${boundFieldName}"`);
+    if (sectionUsesFieldBinding) {
+      innerAttrParts.push(coercedSelectField
+        ? `:modelValue="${coercedSelectField}"`
+        : `v-model="${boundFieldName}"`);
     }
     // Event bindings belong on the component, not the section wrapper
     innerAttrParts.push(...vueBindingAttrs(node, bindingAnalysis));
@@ -488,17 +525,31 @@ function emitTemplateNode(
     if (
       sectionFieldContent?.propName
       && !sectionFieldContent.isChildren
-      && !sectionUsesVModel
+      && !sectionUsesFieldBinding
       && !controlledProp
     ) {
-      innerAttrParts.push(`:${sectionFieldContent.propName}="${sectionFieldContent.fieldName}"`);
+      const fieldExpression = vueFieldExpression(
+        node,
+        sectionFieldContent.fieldName,
+        sectionFieldContent.propName,
+        sectionFieldContent.isChildren,
+        objectSchema,
+      );
+      innerAttrParts.push(`:${sectionFieldContent.propName}="${fieldExpression}"`);
     }
     const innerAttrs = ` ${innerAttrParts.join(' ')}`;
 
     if (children.length === 0 && sectionFieldContent?.isChildren) {
+      const fieldExpression = vueFieldExpression(
+        node,
+        sectionFieldContent.fieldName,
+        sectionFieldContent.propName,
+        sectionFieldContent.isChildren,
+        objectSchema,
+      );
       return [
         `<section data-layout="section" data-layout-node-id="${escapeDoubleQuotedAttr(node.id)}"${sectionClassOrStyle}>`,
-        ind(`<${tag}${innerAttrs}>{{ ${sectionFieldContent.fieldName} }}</${tag}>`, depth + 1),
+        ind(`<${tag}${innerAttrs}>{{ ${fieldExpression} }}</${tag}>`, depth + 1),
         `${'  '.repeat(depth)}</section>`,
       ].join('\n');
     }
@@ -529,7 +580,14 @@ function emitTemplateNode(
     const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
-        return `<${tag}${attrs}>{{ ${fieldContent.fieldName} }}</${tag}>`;
+        const fieldExpression = vueFieldExpression(
+          node,
+          fieldContent.fieldName,
+          fieldContent.propName,
+          fieldContent.isChildren,
+          objectSchema,
+        );
+        return `<${tag}${attrs}>{{ ${fieldExpression} }}</${tag}>`;
       }
       // Rebuild attrs without the conflicting static prop
       // to avoid emitting both prop="static" and :prop="dynamic"
@@ -551,7 +609,9 @@ function emitTemplateNode(
           if (propsStr) rebuiltAttrParts.push(propsStr);
         }
         if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
-          rebuiltAttrParts.push(`v-model="${boundFieldName}"`);
+          rebuiltAttrParts.push(coercedSelectField
+            ? `:modelValue="${coercedSelectField}"`
+            : `v-model="${boundFieldName}"`);
         }
         rebuiltAttrParts.push(...vueBindingAttrs(node, bindingAnalysis));
         if (options.styling === 'tailwind') {
@@ -569,7 +629,14 @@ function emitTemplateNode(
         }
         cleanAttrs = rebuiltAttrParts.length > 0 ? ` ${rebuiltAttrParts.join(' ')}` : '';
       }
-      const propAttr = `:${fieldContent.propName}="${fieldContent.fieldName}"`;
+      const fieldExpression = vueFieldExpression(
+        node,
+        fieldContent.fieldName,
+        fieldContent.propName,
+        fieldContent.isChildren,
+        objectSchema,
+      );
+      const propAttr = `:${fieldContent.propName}="${fieldExpression}"`;
       return `<${tag}${cleanAttrs} ${propAttr} />`;
     }
     if (staticChild !== undefined) {
@@ -623,6 +690,7 @@ function shouldImportVueRuntime(
 /** Map field type to a sensible ref() default value. */
 function fieldRefDefault(entry: FieldSchemaEntry): string {
   if (entry.enum && entry.enum.length > 0) return javascriptSingleQuotedString(entry.enum[0]);
+  if (entry.type.endsWith('[]')) return '[]';
   switch (entry.type) {
     case 'boolean': return 'false';
     case 'integer': case 'number': return '0';
@@ -1068,7 +1136,8 @@ function buildScopedStyle(screens: UiElement[], options: CodegenOptions): string
  */
 export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const warnings: CodegenIssue[] = [];
-  const normalizedSchema = normalizeSchemaForFramework(schema, 'vue');
+  const expandedSchema = executeCompositionDirectives(schema);
+  const normalizedSchema = normalizeSchemaForFramework(expandedSchema, 'vue');
   const ctx = runPreEmit(normalizedSchema, { options });
   const tailwindVariants = ctx.tailwindVariants;
 

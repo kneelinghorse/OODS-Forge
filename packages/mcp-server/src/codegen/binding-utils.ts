@@ -28,6 +28,10 @@ export function mapFieldType(entry: FieldSchemaEntry): string {
   if (entry.enum && entry.enum.length > 0) {
     return entry.enum.map(javascriptSingleQuotedString).join(' | ');
   }
+  if (entry.type.endsWith('[]')) {
+    const elementType = FIELD_TYPE_MAP[entry.type.slice(0, -2)] ?? 'unknown';
+    return `${elementType}[]`;
+  }
   return FIELD_TYPE_MAP[entry.type] ?? 'unknown';
 }
 

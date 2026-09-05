@@ -168,6 +168,22 @@ describe('component map coverage', () => {
     expect(html).toContain('>Heading</h3>');
   });
 
+  it('renders Text label as an accessible description without overriding explicit ARIA', () => {
+    const derived = renderMappedComponent(makeNode('Text', {
+      content: 'Active',
+      label: 'Current lifecycle status',
+    }));
+    const explicit = renderMappedComponent(makeNode('Text', {
+      content: 'Active',
+      label: 'Current lifecycle status',
+      'aria-description': 'Explicit status description',
+    }));
+
+    expect(derived).toContain('aria-description="Current lifecycle status"');
+    expect(derived).not.toContain('data-prop-label');
+    expect(explicit).toContain('aria-description="Explicit status description"');
+  });
+
   it('renders Input as semantic input element', () => {
     const html = renderMappedComponent(
       makeNode('Input', { type: 'email', placeholder: 'name@site.tld', required: true, mask: 'email' })
@@ -217,6 +233,16 @@ describe('component map coverage', () => {
     expect(html).toContain('type="date"');
     expect(html).toContain('name="startDate"');
     expect(html).toContain('value="2026-03-06"');
+  });
+
+  it('renders Select placeholder as a disabled empty-value option', () => {
+    const html = renderMappedComponent(makeNode('Select', {
+      placeholder: 'Choose a status',
+      options: [{ value: 'active', label: 'Active' }],
+    }));
+
+    expect(html).toContain('<option value="" disabled selected>Choose a status</option>');
+    expect(html).not.toContain('data-prop-placeholder');
   });
 
   it('renders Select with option list and selected value', () => {

@@ -204,7 +204,6 @@ function normalizeNode(node: UiElement, framework: FrameworkTarget): UiElement {
     const childItems = children?.map((child, index) => tabItemFromChild(node.id, child, index));
     const sourceItems = suppliedItems ?? childItems;
     const preservePanelTrees = !suppliedItems
-      && framework !== 'html'
       && Boolean(children?.some(tabChildNeedsPanelTree));
 
     if (sourceItems) {

@@ -2,7 +2,11 @@ import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
 import { resolveSpacingLeaf } from './spacing-leaf.js';
 
-export type ComponentRenderer = (node: UiElement, childrenHtml?: string) => string;
+export type ComponentRenderer = (
+  node: UiElement,
+  childrenHtml?: string,
+  renderedChildren?: readonly string[],
+) => string;
 
 type TableColumn = { key: string; label: string };
 type TabItem = { id: string; label: string; panel: string; active: boolean; disabled: boolean };
@@ -277,9 +281,11 @@ function renderText(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const tagCandidate = asString(props.as)?.toLowerCase();
   const tag = tagCandidate && TEXT_TAGS.has(tagCandidate) ? tagCandidate : 'p';
+  const label = asString(props.label);
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: TEXT_HTML_ATTRS,
-    consumedProps: new Set(['as', 'content', 'text', 'value']),
+    consumedProps: new Set(['as', 'content', 'label', 'text', 'value']),
+    htmlOverrides: label ? { 'aria-description': label } : undefined,
   });
   const text = firstSerialized(props, ['content', 'text', 'value']) ?? node.meta?.label ?? '';
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(text);
@@ -378,17 +384,18 @@ function renderSelect(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: SELECT_HTML_ATTRS,
-    consumedProps: new Set(['options']),
+    consumedProps: new Set(['options', 'placeholder']),
   });
 
   const options = normalizeSelectOptions(props.options, props.value);
-  if (options.length === 0) {
-    return `<select${attrs}>${childrenHtml}</select>`;
-  }
+  const placeholder = asString(props.placeholder);
+  const placeholderHtml = placeholder
+    ? `<option value="" disabled${options.some((option) => option.selected) ? '' : ' selected'}>${escapeHtml(placeholder)}</option>`
+    : '';
   const optionsHtml = options
     .map((option) => `<option value="${escapeHtml(option.value)}"${option.selected ? ' selected' : ''}>${escapeHtml(option.label)}</option>`)
     .join('');
-  return `<select${attrs}>${optionsHtml}</select>`;
+  return `<select${attrs}>${placeholderHtml}${optionsHtml || childrenHtml}</select>`;
 }
 
 function renderTextarea(node: UiElement, childrenHtml = ''): string {
@@ -1798,7 +1805,11 @@ function normalizeTabs(rawTabs: unknown, activeTab: unknown, nodeId: string): Ta
   return tabs;
 }
 
-function renderTabs(node: UiElement, childrenHtml = ''): string {
+function renderTabs(
+  node: UiElement,
+  childrenHtml = '',
+  renderedChildren: readonly string[] = [],
+): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
@@ -1839,7 +1850,8 @@ function renderTabs(node: UiElement, childrenHtml = ''): string {
     .map((tab, index) => {
       const buttonId = `${node.id}-tab-button-${index + 1}`;
       const panelId = `${node.id}-tab-panel-${index + 1}`;
-      return `<div role="tabpanel" id="${escapeHtml(panelId)}" aria-labelledby="${escapeHtml(buttonId)}"${tab.active ? '' : ' hidden'}>${escapeHtml(tab.panel)}</div>`;
+      const panelContent = renderedChildren[index] ?? escapeHtml(tab.panel);
+      return `<div role="tabpanel" id="${escapeHtml(panelId)}" aria-labelledby="${escapeHtml(buttonId)}"${tab.active ? '' : ' hidden'}>${panelContent}</div>`;
     })
     .join('');
 
@@ -2027,9 +2039,13 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   FilterPanel: renderFilterPanel,
 };
 
-export function renderMappedComponent(node: UiElement, childrenHtml = ''): string {
+export function renderMappedComponent(
+  node: UiElement,
+  childrenHtml = '',
+  renderedChildren: readonly string[] = [],
+): string {
   const renderer = componentRenderers[node.component] ?? renderFallback;
-  return renderer(node, childrenHtml);
+  return renderer(node, childrenHtml, renderedChildren);
 }
 
 export function hasMappedRenderer(componentName: string): boolean {

@@ -30,7 +30,7 @@ export type NucleusComponentId = (typeof NUCLEUS_COMPONENT_IDS)[number];
 
 export type ComponentContract = {
   id: NucleusComponentId;
-  version: '1.0.0';
+  version: '1.0.0' | '1.1.0';
   props: readonly string[];
   slots: readonly string[];
   events: readonly string[];

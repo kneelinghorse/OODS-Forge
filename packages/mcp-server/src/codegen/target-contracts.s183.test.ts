@@ -299,7 +299,7 @@ describe('Sprint 183 target prop value contracts', () => {
   it.each([
     ['react', 'Input', 'boolean'],
     ['vue', 'Input', 'number'],
-    ['react', 'Select', 'boolean'],
+    ['react', 'Select', 'object'],
     ['vue', 'Select', 'integer'],
     ['react', 'Textarea', 'boolean'],
     ['vue', 'Textarea', 'number'],
@@ -341,7 +341,9 @@ describe('Sprint 183 target prop value contracts', () => {
     ['react', 'Input', 'number'],
     ['vue', 'Input', 'email'],
     ['react', 'Select', 'integer'],
+    ['react', 'Select', 'boolean'],
     ['vue', 'Select', 'string'],
+    ['vue', 'Select', 'boolean'],
     ['react', 'Textarea', 'number'],
     ['vue', 'Textarea', 'string'],
     ['react', 'DatePicker', 'number'],

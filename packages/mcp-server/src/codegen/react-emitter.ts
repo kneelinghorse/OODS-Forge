@@ -32,6 +32,7 @@ import {
   javascriptSingleQuotedString,
   tokenOverrideVariableName,
 } from './emission-safety.js';
+import { executeCompositionDirectives } from './composition-directives.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (mirrors tree-renderer.ts logic in React style format)
@@ -258,6 +259,30 @@ function wrapReactLocalNode(
   return `{${occurrence.localSymbols.state} && (\n${indent(code, 1)}\n)}`;
 }
 
+function reactFieldExpression(
+  node: UiElement,
+  fieldName: string,
+  propName: string | undefined,
+  isChildren: boolean,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): string {
+  const sourceField = node.props?.field;
+  const entry = typeof sourceField === 'string'
+    ? ownFieldSchemaEntry(objectSchema, sourceField)
+    : undefined;
+  if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
+    return `String(${fieldName})`;
+  }
+  if (
+    node.component === 'Text'
+    && isChildren
+    && (entry?.type === 'array' || entry?.type.endsWith('[]'))
+  ) {
+    return `Array.isArray(${fieldName}) ? ${fieldName}.join(', ') : ''`;
+  }
+  return fieldName;
+}
+
 // ---------------------------------------------------------------------------
 // JSX tree emitter
 // ---------------------------------------------------------------------------
@@ -461,16 +486,30 @@ function emitNode(
       if (classAttr) innerAttrParts.push(classAttr);
     }
     if (sectionFieldContent?.propName && !sectionFieldContent.isChildren && !controlledProp) {
+      const fieldExpression = reactFieldExpression(
+        node,
+        sectionFieldContent.fieldName,
+        sectionFieldContent.propName,
+        sectionFieldContent.isChildren,
+        objectSchema,
+      );
       innerAttrParts.push(
-        `${sectionFieldContent.propName}={${sectionFieldContent.fieldName}}`,
+        `${sectionFieldContent.propName}={${fieldExpression}}`,
       );
     }
     const innerAttrs = innerAttrParts.length > 0 ? ` ${innerAttrParts.join(' ')}` : '';
 
     if (children.length === 0 && sectionFieldContent?.isChildren) {
+      const fieldExpression = reactFieldExpression(
+        node,
+        sectionFieldContent.fieldName,
+        sectionFieldContent.propName,
+        sectionFieldContent.isChildren,
+        objectSchema,
+      );
       return finish([
         sectionOpen,
-        indent(`${componentOpen}${innerAttrs}>{${sectionFieldContent.fieldName}}</${tag}>`, 1),
+        indent(`${componentOpen}${innerAttrs}>{${fieldExpression}}</${tag}>`, 1),
         `${'  '.repeat(depth)}</section>`,
       ].join('\n'));
     }
@@ -501,7 +540,14 @@ function emitNode(
     const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
-        return finish(`<${tag}${attrs}>{${fieldContent.fieldName}}</${tag}>`);
+        const fieldExpression = reactFieldExpression(
+          node,
+          fieldContent.fieldName,
+          fieldContent.propName,
+          fieldContent.isChildren,
+          objectSchema,
+        );
+        return finish(`<${tag}${attrs}>{${fieldExpression}}</${tag}>`);
       }
       if (controlledProp) {
         return finish(`<${tag}${attrs} />`);
@@ -532,7 +578,14 @@ function emitNode(
         }
         cleanAttrs = rebuiltAttrParts.length > 0 ? ` ${rebuiltAttrParts.join(' ')}` : '';
       }
-      const propAttr = `${fieldContent.propName}={${fieldContent.fieldName}}`;
+      const fieldExpression = reactFieldExpression(
+        node,
+        fieldContent.fieldName,
+        fieldContent.propName,
+        fieldContent.isChildren,
+        objectSchema,
+      );
+      const propAttr = `${fieldContent.propName}={${fieldExpression}}`;
       return finish(`<${tag}${cleanAttrs} ${propAttr} />`);
     }
     if (staticChild !== undefined) {
@@ -832,7 +885,8 @@ function buildImportList(_components: Set<string>, includeCva: boolean): string[
  */
 export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const warnings: CodegenIssue[] = [];
-  const normalizedSchema = normalizeSchemaForFramework(schema, 'react');
+  const expandedSchema = executeCompositionDirectives(schema);
+  const normalizedSchema = normalizeSchemaForFramework(expandedSchema, 'react');
   const ctx = runPreEmit(normalizedSchema, { options });
   const components = ctx.components;
   const tailwindVariants = ctx.tailwindVariants;

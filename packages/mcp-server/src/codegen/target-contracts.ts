@@ -58,6 +58,12 @@ function hasOnlyKeys(record: Record<string, unknown>, keys: readonly string[]): 
 }
 
 const STRING_VALUE = valueContract('a string', (value) => typeof value === 'string');
+const NON_EMPTY_STRING_ARRAY_VALUE = valueContract(
+  'a non-empty array of strings',
+  (value) => Array.isArray(value)
+    && value.length > 0
+    && value.every((entry) => typeof entry === 'string' && entry.length > 0),
+);
 const BOOLEAN_VALUE = valueContract('a boolean', (value) => typeof value === 'boolean');
 const NUMBER_VALUE = valueContract(
   'a finite number',
@@ -318,6 +324,7 @@ const PROP_VALUE_CONTRACTS: Readonly<
     label: STRING_VALUE,
     value: STRING_VALUE,
     defaultValue: STRING_VALUE,
+    placeholder: STRING_VALUE,
     required: BOOLEAN_VALUE,
     disabled: BOOLEAN_VALUE,
     options: SELECT_OPTIONS_VALUE,
@@ -330,6 +337,8 @@ const PROP_VALUE_CONTRACTS: Readonly<
     align: STRING_VALUE,
     justify: STRING_VALUE,
     wrap: BOOLEAN_VALUE,
+    patternComponent: enumContract(['StatusTimeline']),
+    fields: NON_EMPTY_STRING_ARRAY_VALUE,
   },
   Table: {
     caption: STRING_VALUE,
@@ -348,6 +357,7 @@ const PROP_VALUE_CONTRACTS: Readonly<
   },
   Text: {
     content: STRING_OR_NUMBER_VALUE,
+    label: STRING_VALUE,
     as: enumContract([
       'span', 'p', 'strong', 'em', 'small', 'div', 'label',
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -444,6 +454,7 @@ type FieldValueKind = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'un
 
 function fieldValueKind(entry: FieldSchemaEntry): FieldValueKind {
   if (entry.enum?.length) return 'string';
+  if (entry.type.endsWith('[]')) return 'array';
   if (['string', 'datetime', 'email', 'date', 'url', 'uuid'].includes(entry.type)) {
     return 'string';
   }
@@ -456,6 +467,7 @@ function fieldValueKind(entry: FieldSchemaEntry): FieldValueKind {
 
 function acceptedFieldKinds(
   framework: CodegenFramework,
+  component: string,
   propName: string | undefined,
   isChildren: boolean,
   localStateType: string | undefined,
@@ -467,10 +479,19 @@ function acceptedFieldKinds(
   if (localStateType === 'boolean') return ['boolean'];
   if (localStateType === 'string') return ['string', 'number', 'boolean'];
   if (propName === 'checked') return ['boolean'];
-  if (propName === 'value') return framework === 'vue' ? ['string'] : ['string', 'number'];
+  if (propName === 'value') {
+    if (component === 'Select') {
+      return framework === 'vue'
+        ? ['string', 'boolean']
+        : ['string', 'number', 'boolean'];
+    }
+    return framework === 'vue' ? ['string'] : ['string', 'number'];
+  }
   if (propName === 'content') return ['string', 'number'];
   if (propName === 'status') return ['string'];
-  if (isChildren) return ['string', 'number'];
+  if (isChildren) {
+    return component === 'Text' ? ['string', 'number', 'array'] : ['string', 'number'];
+  }
   return [];
 }
 
@@ -504,6 +525,7 @@ function fieldContractIssues(
   const actualKind = fieldValueKind(fieldEntry);
   const acceptedKinds = acceptedFieldKinds(
     framework,
+    node.component,
     resolution.propName,
     resolution.isChildren,
     localStateType,
@@ -520,6 +542,29 @@ function fieldContractIssues(
     )];
   }
   return [];
+}
+
+function compositionDirectiveIssues(node: UiElement, schema: UiSchema): CodegenIssue[] {
+  if (node.component !== 'Stack') return [];
+  const patternComponent = node.props?.patternComponent;
+  const fields = node.props?.fields;
+  if (patternComponent === undefined && fields === undefined) return [];
+  if (patternComponent === undefined || fields === undefined) {
+    return [issue(
+      'Stack composition directives require patternComponent and fields together.',
+      node,
+    )];
+  }
+  if (patternComponent !== 'StatusTimeline' || !Array.isArray(fields)) return [];
+
+  return fields.flatMap((field) => (
+    typeof field === 'string' && !ownFieldSchemaEntry(schema.objectSchema, field)
+      ? [issue(
+          `Composition field ${JSON.stringify(field)} referenced by Stack does not exist in objectSchema.`,
+          node,
+        )]
+      : []
+  ));
 }
 
 /** Validate canonical nucleus props, default-slot use, and supported event mappings. */
@@ -544,6 +589,7 @@ export function preflightTargetContracts(
       occurrence.kind === 'local' && occurrence.nodeId === node.id
     ))?.signature?.parameters[0]?.type;
     issues.push(...fieldContractIssues(node, normalized, framework, localStateType));
+    issues.push(...compositionDirectiveIssues(node, normalized));
     const enrichedProps = resolveFieldProps(node, schema.objectSchema);
     const props: Record<string, unknown> = {
       ...(node.props ?? {}),
