@@ -1,8 +1,8 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint-183 lock decision `#1664`
+**Status:** ACTIVE — program decision `#1652`; Sprint-185 lock decision `#1724`
 
-**Updated:** 2026-09-04
+**Updated:** 2026-09-05
 
 **Scope:** The next three independently reviewed increments
 
@@ -15,98 +15,92 @@ build real work. Greenfield output is a first-class requirement. Mapping into an
 system remains valuable, but it cannot substitute for Forge-owned components, runtime artifacts, or
 working generation.
 
-The prior Shopify-serving roadmap and the schema-ingest version of Sprint 182 are retained in Git and
-CMOS as history. They no longer control this queue. The current program does not ratify MCP Apps,
-Figma, Penpot, or a custom canvas; surface selection follows runnable product foundations.
+Two direction decisions from 2026-09-05 govern this queue. The Sprint 182 promotion freeze is void
+(`#1722`): it was self-imposed, nothing outside our own scripts depends on it, and it is never cited
+as a constraint again — new components go straight into the nucleus. The binding constraint on the
+program is component breadth (`#1723`), so the increments after Runnable Generation are breadth waves
+ordered by how many pre-existing saved schemas each wave makes reachable.
 
-## Current measured state — Sprint 183 build handoff
+The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
+follows runnable product foundations.
+
+## Current measured state — at `1118f436`, the Sprint 185 build base
 
 | Claim area | Current evidence | Near-horizon obligation |
 |---|---|---|
-| Component catalog | 109 unique IDs; 98 runtime rows and 11 authoring-only rows remain a proposal, while 28 independently reviewed foundation cells are promoted | Derek approval of the full runtime census remains separate |
-| React | The installable package exports the exact 14-component foundation nucleus; the saved-schema consumer passes the eight runnable gates | Independent review of the Sprint-183 handoff |
-| Vue | The installable package exports the same 14-component nucleus without React, Radix, or RJSF runtime dependencies; the same eight consumer gates pass | Independent review at the same bar as React |
-| Generation | Target-aware output is a versioned, content-addressed file set with exact dependencies, typed actions, and named validation profiles | Review the runnable contract and evidence before genuine close |
-| Saved designs | All 16 records are vendored; genuine `compose-7d860337` compiles for React and Vue, while the other 15 report typed per-target gaps | Start later breadth work from the recorded unblock ranking, not a blended pass rate |
-| Visualization | 13 admitted types; five complete the folded certified path | Close public render/certification gaps before widening claims |
+| Component catalog | 109 unique IDs; 22 governed (14 nucleus + 8 ported on `/ported` subpaths); 5 of 16 saved schemas fully reachable | Sprint 185 takes the nucleus to 19 and reachability to 11/16 |
+| React | Installable package exports the 14-family nucleus at the root and 8 ported families on a subpath; live generation of two Subscription schemas passes the eight consumer gates | Five more root families with the same evidence bar |
+| Vue | Same surface, same gates, no React/Radix/RJSF runtime dependency | Same bar as React |
+| Generation | Versioned file-set artifact, exact dependencies, typed actions with a behavioral forwarding guard, `draft`/`build`/`release` profiles, a `loading`/`empty`/`error`/`success` state axis | Consumers still owe a notice for Sprint 184's Table and diagnostic movers — sent in Sprint 185 |
+| Saved designs | All 16 records vendored; the 5 reachable ones generate green in both frameworks; 6 fail only on the five components Sprint 185 adds; 5 need 4–6 component clusters each | Breadth waves 2+ take the remaining five |
+| Visualization | 13 admitted types; five complete the folded certified path | Unchanged; parked behind component breadth |
 
 Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
-is not a runtime package, and an admitted chart name is not rendered output.
+is not a runtime package, an admitted chart name is not rendered output, and a preview frame is not a
+chart.
 
 ## Increment 1 — Sprint 182: Product Reality Foundation — CLOSED 2026-09-04
 
-Sprint 182 is complete, 7/7 missions, nothing descoped. It was reviewed independently by
-`PS-2026-09-04-004` (decision `#1662`) with the evidence re-executed rather than read, and Derek
-promoted `foundation-v1` the same day (decision `#1663`): all 28 cells — 14 components across React
-and Vue — now satisfy the named profile.
-
-Two facts from that close carry forward and shape Increment 2. The controlling obligation
-denominator remains **109** and `approvedRuntimeCensus` remains **null**, so the 98-row runtime
-census is still a proposal awaiting Derek. And promotion runs through a separate reviewer-approval
-record that the closeout generator consumes, which keeps builder self-promotion structurally
-impossible; that mechanism is generalized in Sprint 183.
-
-Its build authority was
+Reviewed by `PS-2026-09-04-004` (decision `#1662`); `foundation-v1` promoted by Derek (decision
+`#1663`). The 14-component nucleus is real in React and Vue with clean packed-consumer proof. Its build
+authority was
 [forge-s182-product-reality-foundation-decision-memo.md](../../planning/forge-s182-product-reality-foundation-decision-memo.md).
 
-It delivered:
+## Increment 2 — Sprint 183: Runnable Generation — CLOSED 2026-09-05
 
-1. reconciliation proposals for all 109 current catalog claims and a surface-specific truth plane;
-   the 109-row obligation denominator changes only after Derek approves the reconciliation artifact
-   or a named amendment in CMOS;
-2. required package foundations for contracts, styles, React, and Vue, with a core package created
-   only if both frameworks consume real shared logic;
-3. the exact 14-component primitive nucleus in both frameworks:
-   `Badge`, `Banner`, `Button`, `Card`, `Checkbox`, `DatePicker`, `Grid`, `Input`, `Select`,
-   `Stack`, `Table`, `Tabs`, `Text`, and `Textarea`;
-4. the target/package foundation for code generation, with loud failure when the requested target is
-   not `emissionEligible`; and
-5. clean, isolated React and Vue consumers that install freshly packed local artifacts and compile,
-   build, and render the generated nucleus.
+Built by `PS-2026-09-04-007` at frozen head `9a4202fe` and independently reviewed by `PS-2026-09-05-001`
+(decision `#1689`, determination in
+[forge-s183-review-determination.md](../../planning/forge-s183-review-determination.md)). The exit gate
+was genuinely met: the six-month-old schema `compose-7d860337` installs, builds, renders, hydrates and
+passes interactions in clean React and Vue consumers. Two record defects blocked certification — a
+`passed` claim that five archived mutation patches could not support, and an undisclosed loss of HTML
+generation for Forge's own detail template absorbed by repointing tests. Both were repaired in
+`s184-m07`, and the sprint was closed on 2026-09-05.
 
-The exact 14-component boundary is finite even if the implementation spans more than one build
-session. Nothing is silently removed to make the sprint appear complete.
+## Increment 3 — Sprint 184: First Greenfield Workflow — CLOSED 2026-09-05, PARTIAL BY DESIGN
 
-## Increment 2 — Sprint 183: Runnable Generation — BUILT, REVIEW PENDING
+Built from `ab0d712d` and reviewed by `PS-2026-09-05-004`; closed by Derek the same day. Its build
+authority was
+[forge-s184-greenfield-workflow-decision-memo.md](../../planning/forge-s184-greenfield-workflow-decision-memo.md).
 
-Sprint 182's independent review is resolved, so this increment is numbered. Its build authority is
-[forge-s183-runnable-generation-decision-memo.md](../../planning/forge-s183-runnable-generation-decision-memo.md),
-locked by decision `#1664` at planning baseline `ca8d84bbce165b656fd5cd83cc097c28fa774f19`.
+It ported the eight components the two March-2026 Subscription schemas needed, resolved six
+off-contract facts by moving contracts rather than schemas, added the workflow state axis to the
+schema language and both emitters, reversed the screen-scope binding rule so generated call sites
+exist, replaced the textual stub guard with a forwarding check, and proved the list → detail slice
+from live generation in both frameworks.
 
-The build handoff delivers a versioned generated file-set artifact with exact dependencies,
-deterministic content and render hashes, typed event/action bindings, and explicit `draft`, `build`,
-and `release` validation profiles. The genuine pre-sprint `compose-7d860337` schema installs, builds,
-renders, hydrates, resolves shared CSS, and passes discriminating interactions in clean React and Vue
-consumers. These are builder evidence claims; a separate review session still decides genuine close.
+**Increment 3 is recorded as partial, in those words.** The four workflow states are proven on a
+schema the sprint's own script builds; the real Subscription schemas are proven state-neutral. No
+single artifact demonstrates the program sentence "the same semantic workflow is usable in both
+frameworks with loading, empty, error, and success states." Edit/cancel and timeline have no
+pre-existing schema, and authoring one would be the circularity the increment exists to avoid. The
+review also found that the sprint's per-mission mover accounting missed five consumer-relevant
+advertised movers, including the nucleus Table's zero-row output; that notice is owed and is sent in
+Sprint 185.
 
-Planning measured the starting point by executing the real emitter rather than reading it, and two
-results shaped the scope. Emission is **already** byte-deterministic and imports **already** resolve
-to the real packages, so the sprint declares and gates properties it does not need to build. But the
-payload is still one source string with a versionless flat `imports` array, and a bound action really
-does ship `const handleSave = () => { /* TODO: implement handleSave */ };` — an empty body that no
-interaction test can pass. Ending that blank stub is the sprint's load-bearing problem, split into
-Forge-owned behavior which is generated for real and domain actions which become typed, declared,
-required injection points.
+## Increment 4 — Sprint 185: Component Breadth Wave 1
 
-The exit-gate schema must be one that already existed in Forge's saved-schema store before the
-sprint. Authoring a fresh schema that happens to use exactly the fourteen implemented components
-would prove nothing.
+Numbered because Sprint 184 is independently reviewed and closed. Its build authority is
+[forge-s185-component-breadth-wave-1-decision-memo.md](../../planning/forge-s185-component-breadth-wave-1-decision-memo.md),
+locked by decision `#1724` at build base `1118f436`.
 
-This is deliberately separate from Sprint 182. Changing the code-generation contract while creating
-two component libraries would make the first sprint too large to review honestly.
+It adds **DetailHeader, CardHeader, ColorSwatch, ColorizedBadge and VizAreaPreview** to the nucleus as
+real React and Vue components and proves them by running the six pre-existing saved schemas they block
+through live generation and the consumer gates in both frameworks. Reachable saved schemas go from
+5/16 to 11/16.
 
-## Increment 3 — First Complete Greenfield Workflow
+Planning measured the starting point by executing the real emitter. All twelve target cells fail today
+with only `OODS-N015` on exactly those five ids, and with those nodes pruned all twelve generate green.
+Unlike Sprint 184, no contract defects hide behind the component gap — this is a pure port plus the
+retirement of the voided freeze from the live gates, which still pin the nucleus at 14 and would red
+any addition. VizAreaPreview ships honestly as a sized preview frame, not a chart (`#1727`).
 
-Number this sprint only after Sprint 183 receives independent review.
+## Increment 5 — Component Breadth Wave 2
 
-It delivers the high-use components and behavior needed for a complete Subscription workflow:
-list → detail → edit/cancel → timeline, including loading, empty, error, validation, confirmation,
-success, and permission-aware states. The same semantic workflow must work in React and Vue without
-consumer-authored replacement components.
-
-The review of this increment determines whether component breadth, current visualization closure, or
-an adapter evaluation creates the most useful next artifact. The longer program table is dependency
-guidance, not a pre-ratified total order.
+Number this sprint only after Sprint 185 receives independent review. The remaining five unreachable
+schemas (the four `user-*` showcases and `test-tagged-schema`) each need a cluster of four to six
+components — address, membership, preference, tag, role, message and classification families. The
+Sprint 185 review determines the order, measured by the same reachability census.
 
 ## Gates that apply to every increment
 
@@ -118,24 +112,32 @@ guidance, not a pre-ratified total order.
 - Exploratory work may use advisory validation. Production/release artifacts must pass the declared
   enforced profile.
 - Every significant failure mode receives a negative test or mutation bite capable of proving the
-  gate is discriminating.
+  gate is discriminating, and a bite for a behavioral promise removes the behavior, not a string.
+- A pre-existing test whose input changes during a sprint carries a stated reason in the closeout.
+- A claim quantified with "every" is measured against the full tracked population at the review head.
+- Advertised-surface movement is computed once, sprint-wide, from the final diff — never assembled
+  from per-mission scopes.
 - Automated snapshots prove stability, not design quality; an independent review inspects responsive
   craft and interaction states before a greenfield artifact is called usable.
-- A build session records evidence and stops. A separate review session decides genuine close.
+- A build session records evidence and stops. A separate review session decides genuine close, and
+  scopes its verification to findings that could flip the determination.
 - Public publishing, hosting, and paid external API use require explicit later decisions.
 
 ## Parallel obligations and parks
 
-Sprint-181 follow-ups remain Forge-owned maintenance debt under decision `#1651`; they do not
-masquerade as product-foundation work. Sprint 183 resolves consumer-visible defects `#1316` and
-`#1317`. Items `#1315` and `#1318`–`#1322` remain explicitly carried and unabsorbed; they must close
-before an integrated public release.
+Sprint-181 follow-ups `#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt under decision
+`#1651`; they are named at every closeout and must close before an integrated public release.
+
+Derek's open call, untouched by any sprint: approve or revise the 98-row proposed runtime census so
+`approvedRuntimeCensus` stops being null and the 109 denominator can move (`#1331`). Surface-cell
+edits in the capability baseline are evidence updates and do not move that denominator (`#1726`).
 
 The following are parked until their named dependency is met:
 
-- full remaining component breadth — after the first complete greenfield workflow;
-- closure of all current visualization recipes — after component/generation foundations are stable,
-  unless independent staffing permits parallel work;
+- folding the eight ported components into the root export — the next sprint that already moves the
+  root export surface for another reason (`#1729`);
+- closure of all current visualization recipes, and making VizAreaPreview a real chart — after
+  component breadth, unless independent staffing permits parallel work;
 - visualization breadth beyond the current 13 — after the public render and certification path is
   coherent;
 - Figma, Penpot, MCP Apps, or another design-surface adapter — after Forge artifacts are runnable and
@@ -143,12 +145,11 @@ The following are parked until their named dependency is met:
 - public package publication or hosted Forge delivery — after licensing, distribution, and operating
   cost decisions; and
 - `schema.ingest` — historically shelved by `#1649`; decision `#1652` retains the shelving result
-  while superseding its incorrect surface claim, so it has no place on the active critical path.
+  while superseding its incorrect surface claim.
 
-## Review handoff
+## Build handoff
 
-The next fresh session is an independent Sprint-183 review. It reads `agents.md`, runs
-`cmos_review()`, checks the locked Sprint-183 memo and the `s183-m06` evidence handoff, replays the
-named controls from a clean worktree, and decides whether the sprint genuinely closes. It does not
-infer approval from the builder's completed mission status, and it does not begin Increment 3 until
-that separate decision exists.
+The next fresh session is the Sprint 185 build. It reads `agents.md`, runs `cmos_review()`, reads the
+locked Sprint 185 memo, creates an exclusive worktree from `1118f436` on a new branch, and begins
+`s185-m01`. It does not re-plan the sprint, does not build from the Sprint 184 memo, and does not touch
+the primary checkout. It records evidence and stops; a separate review session decides genuine close.
