@@ -46,14 +46,25 @@ function argument(name) {
 const workspaceArgument = argument("--workspace");
 const outputArgument = argument("--output-root");
 const maxWorkersArgument = argument("--max-workers");
+const suiteArgument = argument("--suite");
 const repositoryOutputPrefix =
   argument("--repository-output-prefix") ??
   "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current";
 if (!workspaceArgument || !outputArgument) {
   throw new Error(
-    "Usage: node scripts/product-reality/capture-s184-m07-suites.mjs --workspace <clean-frozen-worktree> --output-root <outside-worktree-directory> [--repository-output-prefix <artifacts/.../closeout-inputs/path>] [--max-workers <n>] [--collection-only --suite <id> --expected-files <n> --expected-tests <n> --expected-skipped-tests <n>]",
+    "Usage: node scripts/product-reality/capture-s184-m07-suites.mjs --workspace <clean-frozen-worktree> --output-root <outside-worktree-directory> [--repository-output-prefix <artifacts/.../closeout-inputs/path>] [--max-workers <n>] [--suite <id>] [--collection-only --suite <id> --expected-files <n> --expected-tests <n> --expected-skipped-tests <n>]",
   );
 }
+
+const selectedSuite = suiteArgument
+  ? SUITES.find(({ id }) => id === suiteArgument)
+  : null;
+if (suiteArgument && !selectedSuite) {
+  throw new Error(
+    `--suite must be one of ${SUITES.map(({ id }) => id).join("|")}.`,
+  );
+}
+const executionSuites = selectedSuite ? [selectedSuite] : SUITES;
 
 const maxWorkers =
   maxWorkersArgument === undefined ? null : Number(maxWorkersArgument);
@@ -269,8 +280,7 @@ function repositoryPath(absolutePath) {
 }
 
 function captureCollectionOnly() {
-  const suiteId = argument("--suite");
-  const suite = SUITES.find(({ id }) => id === suiteId);
+  const suite = selectedSuite;
   if (!suite) {
     throw new Error(
       `--collection-only requires --suite ${SUITES.map(({ id }) => id).join("|")}.`,
@@ -432,7 +442,10 @@ if (process.argv.includes("--collection-only")) {
   const measuredHead = git(["rev-parse", "HEAD"]);
   const capture = {
     schemaVersion: "1.0.0",
-    kind: "s184-m07-four-suite-capture",
+    kind:
+      executionSuites.length === SUITES.length
+        ? "s184-m07-four-suite-capture"
+        : "s184-m07-selected-suite-capture",
     sprintId: "sprint-184",
     missionId: "s184-m07",
     measuredHead,
@@ -440,6 +453,7 @@ if (process.argv.includes("--collection-only")) {
     repositoryOutputPrefix,
     maxWorkers,
     suiteConcurrency: "sequential; no concurrent suite jobs",
+    selectedSuites: executionSuites.map(({ id }) => id),
     cleanBefore: cleanliness(),
     cleanAfter: null,
     suites: [],
@@ -452,7 +466,7 @@ if (process.argv.includes("--collection-only")) {
         `Suite capture requires a clean frozen worktree; found ${capture.cleanBefore.rows.length} row(s).`,
       );
     }
-    for (const suite of SUITES) {
+    for (const suite of executionSuites) {
       const reporterPath = path.join(temporaryRoot, `${suite.id}.json`);
       const executedArgs = [
         ...withWorkerLimit(suite.args),
@@ -510,13 +524,13 @@ if (process.argv.includes("--collection-only")) {
     capture.cleanAfter = cleanliness();
     capture.status =
       capture.cleanAfter.clean &&
-      capture.suites.length === SUITES.length &&
+      capture.suites.length === executionSuites.length &&
       capture.suites.every(({ status }) => status === "passed")
         ? "passed"
         : "failed";
     writeJson("report.json", capture);
     process.stdout.write(
-      `Sprint 184 M07 suite capture: ${capture.status} (${capture.suites.filter(({ status }) => status === "passed").length}/${SUITES.length} suites)\n`,
+      `Sprint 184 M07 suite capture: ${capture.status} (${capture.suites.filter(({ status }) => status === "passed").length}/${executionSuites.length} suites)\n`,
     );
     if (capture.status !== "passed") process.exitCode = 1;
   } finally {
