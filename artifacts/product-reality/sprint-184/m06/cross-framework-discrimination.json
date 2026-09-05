@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s184-m06",
+  "kind": "cross-framework-workflow-discrimination",
+  "status": "passed",
+  "method": {
+    "componentId": "StatusBadge",
+    "rationale": "StatusBadge is the ported component present in both frozen Subscription schemas; the injected source removes its complete declaration and implementation body.",
+    "physicalSourceWrites": false,
+    "profile": "build"
+  },
+  "cases": [
+    {
+      "id": "react-StatusBadge-implementation-deleted",
+      "deletedFramework": "react",
+      "componentId": "StatusBadge",
+      "sourcePath": "packages/components-react/src/ported.tsx",
+      "replacementCount": 1,
+      "removedImplementationSha256": "sha256:e245b2cbb2c9ba83c9844e957fa54014a3465165a344b34ffcccabdce12df70f",
+      "sourceSha256Before": "sha256:c1e65586e42ee619077ba57b20f9047c5e4c367ba79802f9a4bb66e1e40d5b9e",
+      "virtualSourceSha256After": "sha256:020e547a1edd75f44cf94a45fc5de05b8dd6026021d30cfeecabcb3ce4c2924a",
+      "observations": [
+        {
+          "cell": "subscription-list-dark/react",
+          "schema": "subscription-list-dark",
+          "framework": "react",
+          "status": "red",
+          "errorCodes": [
+            "OODS-N015"
+          ],
+          "artifactNonempty": false
+        },
+        {
+          "cell": "subscription-list-dark/vue",
+          "schema": "subscription-list-dark",
+          "framework": "vue",
+          "status": "green",
+          "errorCodes": [],
+          "artifactNonempty": true
+        },
+        {
+          "cell": "subscription-detail-dark/react",
+          "schema": "subscription-detail-dark",
+          "framework": "react",
+          "status": "red",
+          "errorCodes": [
+            "OODS-N015"
+          ],
+          "artifactNonempty": false
+        },
+        {
+          "cell": "subscription-detail-dark/vue",
+          "schema": "subscription-detail-dark",
+          "framework": "vue",
+          "status": "green",
+          "errorCodes": [],
+          "artifactNonempty": true
+        }
+      ],
+      "redCells": [
+        "subscription-list-dark/react",
+        "subscription-detail-dark/react"
+      ],
+      "greenCells": [
+        "subscription-list-dark/vue",
+        "subscription-detail-dark/vue"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "vue-StatusBadge-implementation-deleted",
+      "deletedFramework": "vue",
+      "componentId": "StatusBadge",
+      "sourcePath": "packages/components-vue/src/ported.ts",
+      "replacementCount": 1,
+      "removedImplementationSha256": "sha256:87673885eb6111090c3d47ec758e916b130fda59134079acc5bce3b8e4caf62f",
+      "sourceSha256Before": "sha256:6139d93d3371072f815dc8d57939c69d02bc8d904bec571f7f3e11fecfd06086",
+      "virtualSourceSha256After": "sha256:426a0703492243a41369f9fda17c888ca39141dac20d3cab4ee32034408daaa3",
+      "observations": [
+        {
+          "cell": "subscription-list-dark/react",
+          "schema": "subscription-list-dark",
+          "framework": "react",
+          "status": "green",
+          "errorCodes": [],
+          "artifactNonempty": true
+        },
+        {
+          "cell": "subscription-list-dark/vue",
+          "schema": "subscription-list-dark",
+          "framework": "vue",
+          "status": "red",
+          "errorCodes": [
+            "OODS-N015"
+          ],
+          "artifactNonempty": false
+        },
+        {
+          "cell": "subscription-detail-dark/react",
+          "schema": "subscription-detail-dark",
+          "framework": "react",
+          "status": "green",
+          "errorCodes": [],
+          "artifactNonempty": true
+        },
+        {
+          "cell": "subscription-detail-dark/vue",
+          "schema": "subscription-detail-dark",
+          "framework": "vue",
+          "status": "red",
+          "errorCodes": [
+            "OODS-N015"
+          ],
+          "artifactNonempty": false
+        }
+      ],
+      "redCells": [
+        "subscription-list-dark/vue",
+        "subscription-detail-dark/vue"
+      ],
+      "greenCells": [
+        "subscription-list-dark/react",
+        "subscription-detail-dark/react"
+      ],
+      "status": "passed"
+    }
+  ],
+  "restoration": {
+    "observations": [
+      {
+        "cell": "subscription-list-dark/react",
+        "schema": "subscription-list-dark",
+        "framework": "react",
+        "status": "green",
+        "errorCodes": [],
+        "artifactNonempty": true
+      },
+      {
+        "cell": "subscription-list-dark/vue",
+        "schema": "subscription-list-dark",
+        "framework": "vue",
+        "status": "green",
+        "errorCodes": [],
+        "artifactNonempty": true
+      },
+      {
+        "cell": "subscription-detail-dark/react",
+        "schema": "subscription-detail-dark",
+        "framework": "react",
+        "status": "green",
+        "errorCodes": [],
+        "artifactNonempty": true
+      },
+      {
+        "cell": "subscription-detail-dark/vue",
+        "schema": "subscription-detail-dark",
+        "framework": "vue",
+        "status": "green",
+        "errorCodes": [],
+        "artifactNonempty": true
+      }
+    ],
+    "greenCells": [
+      "subscription-list-dark/react",
+      "subscription-list-dark/vue",
+      "subscription-detail-dark/react",
+      "subscription-detail-dark/vue"
+    ],
+    "sourceDigests": {
+      "react": {
+        "path": "packages/components-react/src/ported.tsx",
+        "before": "sha256:c1e65586e42ee619077ba57b20f9047c5e4c367ba79802f9a4bb66e1e40d5b9e",
+        "after": "sha256:c1e65586e42ee619077ba57b20f9047c5e4c367ba79802f9a4bb66e1e40d5b9e",
+        "unchanged": true
+      },
+      "vue": {
+        "path": "packages/components-vue/src/ported.ts",
+        "before": "sha256:6139d93d3371072f815dc8d57939c69d02bc8d904bec571f7f3e11fecfd06086",
+        "after": "sha256:6139d93d3371072f815dc8d57939c69d02bc8d904bec571f7f3e11fecfd06086",
+        "unchanged": true
+      }
+    },
+    "status": "passed"
+  },
+  "totals": {
+    "cases": 2,
+    "selectedRedCells": 4,
+    "counterpartGreenCells": 4,
+    "restoredGreenCells": 4
+  }
+}

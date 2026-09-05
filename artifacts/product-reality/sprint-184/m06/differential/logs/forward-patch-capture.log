@@ -1,0 +1,20 @@
+$ git diff --binary -- packages/mcp-server/src/codegen/react-emitter.ts
+exitCode=0
+signal=
+
+[stdout]
+diff --git a/packages/mcp-server/src/codegen/react-emitter.ts b/packages/mcp-server/src/codegen/react-emitter.ts
+index f2cdce3e..5a01855d 100644
+--- a/packages/mcp-server/src/codegen/react-emitter.ts
++++ b/packages/mcp-server/src/codegen/react-emitter.ts
+@@ -312,7 +312,7 @@ function reactScreenActionSurface(
+     return `<button type="button" data-oods-action="${escapeDoubleQuotedAttr(occurrence.handlerName)}" onClick={() => ${occurrence.handlerName}(${args})}>${childValueToJsx(label)}</button>`;
+   });
+   return [
+-    `<div role="group" aria-label="Screen actions" data-oods-screen-actions="${escapeDoubleQuotedAttr(node.id)}">`,
++    `<div role="group" aria-label="Generated screen actions" data-oods-screen-actions="${escapeDoubleQuotedAttr(node.id)}">`,
+     ...buttons.map((button) => indent(button, 1)),
+     '</div>',
+   ].join('\n');
+
+[stderr]

@@ -1,0 +1,208 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s184-m06",
+  "schema": "subscription-detail-dark",
+  "schemaRef": "compose-a710f0a9",
+  "framework": "react",
+  "status": "detected",
+  "selected": 8,
+  "passed": 4,
+  "failed": 1,
+  "skipped": 0,
+  "logPathBase": "artifact-root",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/shared-css-resolution/logs/install.log",
+        "gate-bites/react/shared-css-resolution/logs/isolation.log"
+      ],
+      "detail": {
+        "localTarballCount": 4,
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-react",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-react"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/component-styles/css-ported",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+          },
+          {
+            "specifier": "@oods/components-react",
+            "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+          },
+          {
+            "specifier": "@oods/components-react/ported",
+            "consumerRelative": "node_modules/@oods/components-react/dist/ported.js"
+          },
+          {
+            "specifier": "react",
+            "consumerRelative": "node_modules/react/index.js"
+          },
+          {
+            "specifier": "react-dom/client",
+            "consumerRelative": "node_modules/react-dom/client.js"
+          },
+          {
+            "specifier": "react-dom/server",
+            "consumerRelative": "node_modules/react-dom/server.node.js"
+          },
+          {
+            "specifier": "vite",
+            "consumerRelative": "node_modules/vite/dist/node/index.js"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/shared-css-resolution/logs/typecheck.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/shared-css-resolution/logs/production-build.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/shared-css-resolution/logs/server-render-build.log",
+        "gate-bites/react/shared-css-resolution/logs/server-render-render.log"
+      ],
+      "detail": {
+        "bytes": 8505,
+        "sha256": "sha256:69ce63a5f6b5e7333c617808b6eab06d823d3d81a2a597d3da6fba5e9aa5ad40"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after shared-css-resolution failed."
+    },
+    {
+      "name": "hydration",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after shared-css-resolution failed."
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "failed",
+      "logs": [
+        "gate-bites/react/shared-css-resolution/logs/shared-css-resolution-failure-diagnostic.log"
+      ],
+      "reason": "Production CSS closure is incomplete: {\"core\":true,\"ported\":true,\"tokens\":false}"
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after shared-css-resolution failed."
+    }
+  ],
+  "accounting": {
+    "totalGateCount": 8,
+    "provenCount": 4,
+    "namedUnprovenCount": 4,
+    "namedUnproven": [
+      {
+        "name": "mount",
+        "status": "unproven",
+        "reason": "Not reached after shared-css-resolution failed."
+      },
+      {
+        "name": "hydration",
+        "status": "unproven",
+        "reason": "Not reached after shared-css-resolution failed."
+      },
+      {
+        "name": "shared-css-resolution",
+        "status": "failed",
+        "reason": "Production CSS closure is incomplete: {\"core\":true,\"ported\":true,\"tokens\":false}"
+      },
+      {
+        "name": "interaction-evidence",
+        "status": "unproven",
+        "reason": "Not reached after shared-css-resolution failed."
+      }
+    ],
+    "balanced": true
+  },
+  "reason": "Production CSS closure is incomplete: {\"core\":true,\"ported\":true,\"tokens\":false}",
+  "mutation": {
+    "id": "react-shared-css-resolution-bite",
+    "gate": "shared-css-resolution",
+    "operations": [
+      {
+        "target": "dist/assets/index-7opa3Na3.css",
+        "operation": "remove the shared primary-text token name from the built CSS asset",
+        "replacementCount": 4,
+        "beforeSha256": "sha256:00e647758179e4cd9a383cabf271ea1bc3f7564268b900066d09b1b7238c4165",
+        "afterSha256": "sha256:101524269e421e1c4aec7312a234cbd0a0cceb3865144adb258331bdc781ed59"
+      }
+    ]
+  },
+  "expectedFailedGate": "shared-css-resolution",
+  "observedFailedGates": [
+    "shared-css-resolution"
+  ],
+  "logs": [
+    "gate-bites/react/shared-css-resolution/logs/install.log",
+    "gate-bites/react/shared-css-resolution/logs/isolation.log",
+    "gate-bites/react/shared-css-resolution/logs/typecheck.log",
+    "gate-bites/react/shared-css-resolution/logs/production-build.log",
+    "gate-bites/react/shared-css-resolution/logs/server-render-build.log",
+    "gate-bites/react/shared-css-resolution/logs/server-render-render.log",
+    "gate-bites/react/shared-css-resolution/logs/shared-css-resolution-failure-diagnostic.log",
+    "gate-bites/react/shared-css-resolution/logs/mutation.log"
+  ]
+}

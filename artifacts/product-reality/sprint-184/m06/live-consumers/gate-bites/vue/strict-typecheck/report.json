@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s184-m06",
+  "schema": "subscription-detail-dark",
+  "schemaRef": "compose-a710f0a9",
+  "framework": "vue",
+  "status": "detected",
+  "selected": 8,
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "logPathBase": "artifact-root",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "logs": [
+        "gate-bites/vue/strict-typecheck/logs/install.log",
+        "gate-bites/vue/strict-typecheck/logs/isolation.log"
+      ],
+      "detail": {
+        "localTarballCount": 4,
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-vue",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-vue"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/component-styles/css-ported",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+          },
+          {
+            "specifier": "@oods/components-vue",
+            "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+          },
+          {
+            "specifier": "@oods/components-vue/ported",
+            "consumerRelative": "node_modules/@oods/components-vue/dist/ported.js"
+          },
+          {
+            "specifier": "@vitejs/plugin-vue",
+            "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+          },
+          {
+            "specifier": "@vue/server-renderer",
+            "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+          },
+          {
+            "specifier": "vite",
+            "consumerRelative": "node_modules/vite/dist/node/index.js"
+          },
+          {
+            "specifier": "vue",
+            "consumerRelative": "node_modules/vue/index.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "failed",
+      "logs": [
+        "gate-bites/vue/strict-typecheck/logs/typecheck.log"
+      ],
+      "reason": "subscription-detail-dark/vue strict typecheck failed (2)\nsrc/s184-gate-bite.ts(1,7): error TS2322: Type 'number' is not assignable to type 'string'.\n"
+    },
+    {
+      "name": "production-build",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after strict-typecheck failed."
+    },
+    {
+      "name": "server-render",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after strict-typecheck failed."
+    },
+    {
+      "name": "mount",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after strict-typecheck failed."
+    },
+    {
+      "name": "hydration",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after strict-typecheck failed."
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after strict-typecheck failed."
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after strict-typecheck failed."
+    }
+  ],
+  "accounting": {
+    "totalGateCount": 8,
+    "provenCount": 1,
+    "namedUnprovenCount": 7,
+    "namedUnproven": [
+      {
+        "name": "strict-typecheck",
+        "status": "failed",
+        "reason": "subscription-detail-dark/vue strict typecheck failed (2)\nsrc/s184-gate-bite.ts(1,7): error TS2322: Type 'number' is not assignable to type 'string'.\n"
+      },
+      {
+        "name": "production-build",
+        "status": "unproven",
+        "reason": "Not reached after strict-typecheck failed."
+      },
+      {
+        "name": "server-render",
+        "status": "unproven",
+        "reason": "Not reached after strict-typecheck failed."
+      },
+      {
+        "name": "mount",
+        "status": "unproven",
+        "reason": "Not reached after strict-typecheck failed."
+      },
+      {
+        "name": "hydration",
+        "status": "unproven",
+        "reason": "Not reached after strict-typecheck failed."
+      },
+      {
+        "name": "shared-css-resolution",
+        "status": "unproven",
+        "reason": "Not reached after strict-typecheck failed."
+      },
+      {
+        "name": "interaction-evidence",
+        "status": "unproven",
+        "reason": "Not reached after strict-typecheck failed."
+      }
+    ],
+    "balanced": true
+  },
+  "reason": "subscription-detail-dark/vue strict typecheck failed (2)\nsrc/s184-gate-bite.ts(1,7): error TS2322: Type 'number' is not assignable to type 'string'.\n",
+  "mutation": {
+    "id": "vue-strict-typecheck-bite",
+    "gate": "strict-typecheck",
+    "operations": [
+      {
+        "target": "src/s184-gate-bite.ts",
+        "operation": "add a strict TypeScript assignment error to the included source set",
+        "replacementCount": 1,
+        "beforeSha256": null,
+        "afterSha256": "sha256:c2803e78df93de169e9aae8fd5f5b8b2265687b1727efb2ead8fd810dcb93118"
+      }
+    ]
+  },
+  "expectedFailedGate": "strict-typecheck",
+  "observedFailedGates": [
+    "strict-typecheck"
+  ],
+  "logs": [
+    "gate-bites/vue/strict-typecheck/logs/install.log",
+    "gate-bites/vue/strict-typecheck/logs/isolation.log",
+    "gate-bites/vue/strict-typecheck/logs/typecheck.log",
+    "gate-bites/vue/strict-typecheck/logs/mutation.log"
+  ]
+}
