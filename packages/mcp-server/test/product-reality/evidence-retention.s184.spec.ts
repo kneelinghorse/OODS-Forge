@@ -26,6 +26,10 @@ const freezeInventoryPath = path.join(
   repositoryRoot,
   "artifacts/product-reality/sprint-184/m01/freeze-inventory.json",
 );
+const savedSchemaFreezePath = path.join(
+  repositoryRoot,
+  "artifacts/product-reality/sprint-184/m01/saved-schema-freeze.json",
+);
 const pinnedVueOutputPrefix =
   "artifacts/product-reality/sprint-182/m03/package-verification/";
 
@@ -93,6 +97,16 @@ describe("Sprint 184 m01 — evidence survives and frozen surfaces stay classifi
         assertion: "working-tree-sha256",
       }),
     );
+  });
+
+  it("freezes the three saved schemas consumed by the greenfield workflow", () => {
+    const freeze = JSON.parse(fs.readFileSync(savedSchemaFreezePath, "utf8"));
+    expect(freeze.files).toHaveLength(3);
+    for (const row of freeze.files) {
+      const filePath = path.join(repositoryRoot, row.path);
+      expect(fs.statSync(filePath).size, row.path).toBe(row.bytes);
+      expect(sha256(filePath), row.path).toBe(row.sha256);
+    }
   });
 
   it("keeps all 35 formerly orphaned Sprint 183 m05 logs in the index", () => {
