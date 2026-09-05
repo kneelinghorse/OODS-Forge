@@ -8,6 +8,7 @@ import {
 } from './binding-utils.js';
 import { normalizeSchemaForFramework } from './framework-normalization.js';
 import { collectTailwindVariantDefinitions } from './tailwind-codegen-utils.js';
+import { collectUiStateBranches } from './state-contract.js';
 
 const IDENTIFIER_NAME = /^[$_\p{ID_Start}][$_\u200c\u200d\p{ID_Continue}]*$/u;
 const DATA_OR_ARIA_ATTRIBUTE = /^(?:data|aria)-[a-zA-Z0-9_]+(?:-[a-zA-Z0-9_]+)*$/;
@@ -81,6 +82,10 @@ function generatedBindings(
   names.add('GeneratedUIActions');
   names.add('GeneratedUIProps');
   names.add('generatedProps');
+  if (collectUiStateBranches(schema.screens).length > 0) {
+    names.add('uiState');
+    names.add('GeneratedUIState');
+  }
 
   for (const occurrence of bindingAnalysis.occurrences) {
     if (occurrence.kind !== 'local') continue;
@@ -192,6 +197,7 @@ export function preflightCodegenSyntax(
         ));
       } else if (
         key === 'data-oods-component'
+        || (key === 'data-oods-state' && node.state !== undefined)
         || (key === 'data-layout' && node.layout?.type !== undefined)
       ) {
         issues.push(issue(

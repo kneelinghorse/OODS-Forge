@@ -53,6 +53,7 @@ function expectedTargetReadinessReceipt(framework: 'react' | 'vue') {
     createValidationReceipt(undefined, framework),
     'schema-structure',
     'component-registry',
+    'state-contract',
     'target-readiness',
   );
 }

@@ -15,6 +15,7 @@ import { preflightCodegenSyntax } from '../codegen/syntax-preflight.js';
 import { buildGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { preflightTargetContracts } from '../codegen/target-contracts.js';
 import { preflightNormalizationSafety } from '../codegen/normalization-safety.js';
+import { preflightStateContract } from '../codegen/state-contract.js';
 import { hasMappedRenderer } from '../render/component-map.js';
 import {
   bindReleaseEvidence,
@@ -201,15 +202,23 @@ export async function handle(
       schema.screens,
       framework,
     );
-  validationReceipt = recordValidationChecks(validationReceipt, 'target-readiness');
-  const registrationAndReadinessIssues = [...registryIssues, ...readinessErrors];
-  if (registrationAndReadinessIssues.length > 0) {
-    // Evaluate these together: an unknown component also lacks a runnable
-    // target. Returning after V119 would conceal the independently actionable
-    // N015 evidence failure and used to expose prototype-key exceptions later.
+  const stateContractIssues = preflightStateContract(schema.screens, framework);
+  validationReceipt = recordValidationChecks(
+    validationReceipt,
+    'state-contract',
+    'target-readiness',
+  );
+  const earlyContractIssues = [
+    ...registryIssues,
+    ...stateContractIssues,
+    ...readinessErrors,
+  ];
+  if (earlyContractIssues.length > 0) {
+    // Evaluate these together: registry, state-vocabulary, and target gaps are
+    // independent. Returning after the first would conceal actionable issues.
     const profiled = enforceValidationProfile(
       validationReceipt,
-      registrationAndReadinessIssues,
+      earlyContractIssues,
     );
     warnings.push(...profiled.warnings);
     if (profiled.errors.length > 0) {

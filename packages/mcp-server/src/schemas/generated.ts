@@ -86,6 +86,10 @@ export namespace A11yScanInputSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;
@@ -1167,6 +1171,10 @@ export namespace CodeGenerateInputSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;
@@ -1313,6 +1321,7 @@ export namespace CodeGenerateOutputSchema {
   export type ValidationCheck =
     | 'schema-structure'
     | 'component-registry'
+    | 'state-contract'
     | 'binding-contract'
     | 'props-contract'
     | 'slots-contract'
@@ -2858,6 +2867,10 @@ export namespace DesignComposeOutputSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;
@@ -4758,6 +4771,7 @@ export namespace PipelineOutputSchema {
   export type ValidationCheck =
     | 'schema-structure'
     | 'component-registry'
+    | 'state-contract'
     | 'binding-contract'
     | 'props-contract'
     | 'slots-contract'
@@ -5273,6 +5287,10 @@ export namespace ReplOutputSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;
@@ -5509,6 +5527,10 @@ export namespace ReplRenderInputSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;
@@ -5699,6 +5721,10 @@ export namespace ReplRenderOutputSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;
@@ -5806,6 +5832,10 @@ export namespace UiSchemaSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;
@@ -5933,6 +5963,10 @@ export namespace ReplValidateInputSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;
@@ -6102,6 +6136,10 @@ export namespace ReplValidateOutputSchema {
   export interface UiElement {
     id: string;
     component: string;
+    /**
+     * Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning.
+     */
+    state?: string;
     route?: string;
     layout?: Layout;
     style?: Style;

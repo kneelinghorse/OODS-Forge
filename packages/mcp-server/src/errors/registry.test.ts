@@ -73,6 +73,15 @@ describe('Error Registry', () => {
     });
   });
 
+  it('registers unknown UI workflow state as a retryable validation error', () => {
+    expect(getDefinition('OODS-V164')).toEqual({
+      code: 'OODS-V164',
+      category: 'validation',
+      message: 'Unknown UI workflow state',
+      retryable: true,
+    });
+  });
+
   // ── isRetryable ────────────────────────────────────────────────────────
   it('returns true for retryable codes', () => {
     expect(isRetryable('OODS-R001')).toBe(true);   // rate limit

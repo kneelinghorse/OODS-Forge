@@ -400,7 +400,7 @@
     "validationCheck": {
       "type": "string",
       "enum": [
-        "schema-structure", "component-registry", "binding-contract",
+        "schema-structure", "component-registry", "state-contract", "binding-contract",
         "props-contract", "slots-contract", "events-contract", "target-readiness", "normalization-fidelity",
         "dependency-closure", "fallback-policy", "rendered-evidence",
         "interaction-evidence", "accessibility-evidence", "theme-evidence",
@@ -417,6 +417,10 @@
         { "oneOf": [
           { "properties": { "checks": { "contains": { "const": "component-registry" } } } },
           { "properties": { "notChecked": { "contains": { "const": "component-registry" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "state-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "state-contract" } } } }
         ] },
         { "oneOf": [
           { "properties": { "checks": { "contains": { "const": "target-readiness" } } } },
@@ -544,6 +548,7 @@
           "allOf": [
             { "contains": { "const": "schema-structure" } },
             { "contains": { "const": "component-registry" } },
+            { "contains": { "const": "state-contract" } },
             { "contains": { "const": "target-readiness" } },
             { "contains": { "const": "normalization-fidelity" } },
             { "contains": { "const": "binding-contract" } },

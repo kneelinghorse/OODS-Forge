@@ -102,6 +102,7 @@ function codegenOk(framework: CodegenFramework = 'react') {
       createValidationReceipt(undefined, framework),
       'schema-structure',
       'component-registry',
+      'state-contract',
       'target-readiness',
       'normalization-fidelity',
       'binding-contract',
@@ -766,6 +767,7 @@ describe('pipeline orchestration', () => {
           createValidationReceipt(undefined, 'react'),
           'schema-structure',
           'component-registry',
+          'state-contract',
           'target-readiness',
         ),
         errors: [

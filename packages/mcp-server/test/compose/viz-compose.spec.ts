@@ -10,6 +10,7 @@ function expectedTargetReadinessReceipt() {
     createValidationReceipt(undefined, 'react'),
     'schema-structure',
     'component-registry',
+    'state-contract',
     'target-readiness',
   );
 }

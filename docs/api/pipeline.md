@@ -23,7 +23,7 @@
 | `actionMappings` | object[] | No |  | Sprint 88: Stage1 BridgeSummary action_mappings, flat verb-keyed entries. See docs/integration/stage1-oods-contract.md §2c. |
 | `framework` | `react` \| `vue` \| `html` | No |  | Target framework for code generation. |
 | `styling` | `inline` \| `tokens` \| `tailwind` | No |  | Styling strategy for code generation. |
-| `profile` | `draft` \| `build` \| `release` | No |  | Validation profile forwarded unchanged to code.generate. build is the default runnable-artifact gate. |
+| `profile` | `draft` \| `build` \| `release` | No |  | Validation profile forwarded unchanged to code.generate, including its workflow-state contract gate. build is the default runnable-artifact gate. |
 | `releaseEvidence` | object | No |  | Hash-bound release evidence forwarded unchanged to code.generate. |
 | `releaseEvidence.rendered` | _ref_ | No |  |  |
 | `releaseEvidence.interaction` | _ref_ | No |  |  |

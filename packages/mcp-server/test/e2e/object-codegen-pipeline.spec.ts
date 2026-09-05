@@ -61,6 +61,7 @@ function expectedTargetReadinessReceipt(framework: Framework) {
     createValidationReceipt(undefined, framework),
     'schema-structure',
     'component-registry',
+    'state-contract',
     'target-readiness',
   );
 }

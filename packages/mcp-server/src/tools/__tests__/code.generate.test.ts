@@ -47,6 +47,7 @@ const schemaFixture: UiSchema = {
 const buildChecks = [
   'schema-structure',
   'component-registry',
+  'state-contract',
   'target-readiness',
   'normalization-fidelity',
   'binding-contract',
@@ -306,6 +307,7 @@ describe('code.generate tool', () => {
         validationReceipt: expectedDefaultBuildReceipt(framework, [
           'schema-structure',
           'component-registry',
+          'state-contract',
           'target-readiness',
           'normalization-fidelity',
           'binding-contract',
@@ -537,6 +539,7 @@ describe('code.generate tool', () => {
       validationReceipt: expectedDefaultBuildReceipt('react', [
         'schema-structure',
         'component-registry',
+        'state-contract',
         'target-readiness',
       ]),
       errors: [{
@@ -577,6 +580,7 @@ describe('code.generate tool', () => {
       validationReceipt: expectedDefaultBuildReceipt('react', [
         'schema-structure',
         'component-registry',
+        'state-contract',
         'target-readiness',
       ]),
       errors: [

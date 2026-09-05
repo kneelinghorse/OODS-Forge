@@ -42,6 +42,21 @@ export const PORTED_COMPONENT_IDS = [
 export type PortedComponentId = (typeof PORTED_COMPONENT_IDS)[number];
 export type GovernedComponentId = NucleusComponentId | PortedComponentId;
 
+/**
+ * Cross-component workflow states understood by generated UI branches.
+ *
+ * These are deliberately separate from `ComponentContract.states`, which
+ * describe a component's own visual or interaction states.
+ */
+export const UI_WORKFLOW_STATES = [
+  'loading',
+  'empty',
+  'error',
+  'success',
+] as const;
+
+export type UiWorkflowState = (typeof UI_WORKFLOW_STATES)[number];
+
 export type ComponentContract = {
   id: GovernedComponentId;
   version: '1.0.0' | '1.1.0';

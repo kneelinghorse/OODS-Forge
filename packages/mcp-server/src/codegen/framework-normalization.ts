@@ -133,7 +133,8 @@ function tabChildNeedsPanelTree(child: UiElement): boolean {
     ? child.props as Record<string, unknown>
     : {};
   return Boolean(
-    child.children?.length
+    child.state !== undefined
+    || child.children?.length
     || child.route !== undefined
     || recordHasKeys(child.layout)
     || recordHasKeys(child.style)

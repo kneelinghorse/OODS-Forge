@@ -35,6 +35,7 @@ import {
   tokenOverrideVariableName,
 } from './emission-safety.js';
 import { executeCompositionDirectives } from './composition-directives.js';
+import { collectUiStateBranches } from './state-contract.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (mirrors tree-renderer.ts logic in React style format)
@@ -261,6 +262,18 @@ function wrapReactLocalNode(
   return `{${occurrence.localSymbols.state} && (\n${indent(code, 1)}\n)}`;
 }
 
+function wrapReactStateNode(
+  code: string,
+  state: string | undefined,
+  occurrence: LocalBindingOccurrence | undefined,
+): string {
+  if (state === undefined) return wrapReactLocalNode(code, occurrence);
+  const stateBody = occurrence?.component === 'Banner'
+    ? `${occurrence.localSymbols.state} && (\n${indent(code, 1)}\n)`
+    : code;
+  return `{uiState === ${javascriptSingleQuotedString(state)} && (\n${indent(stateBody, 1)}\n)}`;
+}
+
 function reactFieldExpression(
   node: UiElement,
   fieldName: string,
@@ -311,7 +324,7 @@ function emitNode(
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const controlledProp = localBinding ? reactControlledProp(localBinding) : null;
   const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
-  const finish = (code: string): string => wrapReactLocalNode(code, localBinding);
+  const finish = (code: string): string => wrapReactStateNode(code, node.state, localBinding);
   if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
     propsObject = { ...(propsObject ?? {}), dismissLabel: 'Dismiss notification' };
   }
@@ -363,6 +376,9 @@ function emitNode(
 
   // data-oods-component for runtime identification
   attrParts.push(`data-oods-component="${tag}"`);
+  if (node.state !== undefined) {
+    attrParts.push(`data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
+  }
 
   // layout data attribute
   if (node.layout?.type) {
@@ -466,7 +482,10 @@ function emitNode(
 
     // Section wraps the component output
     const sectionOpen = `<section data-layout="section" data-layout-node-id="${escapeDoubleQuotedAttr(node.id)}"${sectionClassOrStyle}>`;
-    const componentOpen = `<${tag} id="${escapeDoubleQuotedAttr(emittedId)}" data-oods-component="${tag}"`;
+    const stateAttr = node.state === undefined
+      ? ''
+      : ` data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`;
+    const componentOpen = `<${tag} id="${escapeDoubleQuotedAttr(emittedId)}" data-oods-component="${tag}"${stateAttr}`;
     const sectionFieldContent = children.length === 0
       ? resolveFrameworkChildContent(node, objectSchema)
       : null;
@@ -571,6 +590,9 @@ function emitNode(
         const rebuiltAttrParts: string[] = [];
         rebuiltAttrParts.push(`id="${escapeDoubleQuotedAttr(emittedId)}"`);
         rebuiltAttrParts.push(`data-oods-component="${tag}"`);
+        if (node.state !== undefined) {
+          rebuiltAttrParts.push(`data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
+        }
         if (node.layout?.type) rebuiltAttrParts.push(`data-layout="${node.layout.type}"`);
         if (propsObject) {
           const propsStr = propsToJsxAttrs(propsObject, options.styling === 'tailwind');
@@ -635,10 +657,12 @@ function generatePropTypes(components: Set<string>): string {
 function generatePagePropsInterface(
   objectSchema: Record<string, FieldSchemaEntry>,
   includeActions = false,
+  includeState = false,
 ): string {
   const lines: string[] = ['export interface PageProps {'];
 
   if (includeActions) lines.push('  actions: GeneratedUIActions;');
+  if (includeState) lines.push('  uiState: GeneratedUIState;');
 
   for (const [fieldName, entry] of Object.entries(objectSchema).sort(([a], [b]) => a.localeCompare(b))) {
     const tsType = mapFieldType(entry);
@@ -685,6 +709,7 @@ function generateReactActionTypes(
   analysis: BindingAnalysis,
   typescript: boolean,
   hasObjectSchema: boolean,
+  hasStateBranches: boolean,
 ): string {
   const domainHandlers = analysis.handlers.filter((handler) => handler.kind === 'domain');
   if (domainHandlers.length === 0) return '';
@@ -708,7 +733,9 @@ function generateReactActionTypes(
     }
     lines.push('}');
     if (!hasObjectSchema) {
-      lines.push('', 'export interface GeneratedUIProps {', '  actions: GeneratedUIActions;', '}');
+      lines.push('', 'export interface GeneratedUIProps {', '  actions: GeneratedUIActions;');
+      if (hasStateBranches) lines.push('  uiState: GeneratedUIState;');
+      lines.push('}');
     }
     return lines.join('\n');
   }
@@ -719,8 +746,30 @@ function generateReactActionTypes(
   return [
     ...domainHandlers.flatMap(markerLines),
     `/** @typedef {{ ${properties} }} GeneratedUIActions */`,
-    '/** @typedef {{ actions: GeneratedUIActions }} GeneratedUIProps */',
+    hasStateBranches
+      ? '/** @typedef {{ actions: GeneratedUIActions, uiState: GeneratedUIState }} GeneratedUIProps */'
+      : '/** @typedef {{ actions: GeneratedUIActions }} GeneratedUIProps */',
   ].join('\n');
+}
+
+function generateReactStateTypes(
+  states: readonly string[],
+  typescript: boolean,
+  hasObjectSchema: boolean,
+  hasDomainActions: boolean,
+): string {
+  if (states.length === 0) return '';
+  const union = states.map(javascriptSingleQuotedString).join(' | ');
+  const alias = typescript
+    ? `export type GeneratedUIState = ${union};`
+    : `/** @typedef {${union}} GeneratedUIState */`;
+  const actionTypesOwnProps = hasDomainActions && (!typescript || !hasObjectSchema);
+  const needsProps = (!hasObjectSchema && !hasDomainActions)
+    || (!typescript && !actionTypesOwnProps);
+  if (!needsProps) return alias;
+  return typescript
+    ? `${alias}\n\nexport interface GeneratedUIProps {\n  uiState: GeneratedUIState;\n}`
+    : `${alias}\n/** @typedef {{ uiState: GeneratedUIState }} GeneratedUIProps */`;
 }
 
 function explicitInitialValue(
@@ -950,14 +999,33 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const typeAnnotations = options.typescript ? generatePropTypes(components) : '';
   const hasObjectSchema = normalizedSchema.objectSchema && Object.keys(normalizedSchema.objectSchema).length > 0;
   const hasDomainActions = bindingAnalysis.handlers.some((handler) => handler.kind === 'domain');
-  const actionTypes = generateReactActionTypes(bindingAnalysis, options.typescript, Boolean(hasObjectSchema));
+  const stateNames = Array.from(new Set(
+    collectUiStateBranches(ctx.tree).map(({ state }) => state),
+  ));
+  const hasStateBranches = stateNames.length > 0;
+  const stateTypes = generateReactStateTypes(
+    stateNames,
+    options.typescript,
+    Boolean(hasObjectSchema),
+    hasDomainActions,
+  );
+  const actionTypes = generateReactActionTypes(
+    bindingAnalysis,
+    options.typescript,
+    Boolean(hasObjectSchema),
+    hasStateBranches,
+  );
   const pagePropsInterface = options.typescript && hasObjectSchema
-    ? generatePagePropsInterface(normalizedSchema.objectSchema!, hasDomainActions)
+    ? generatePagePropsInterface(
+      normalizedSchema.objectSchema!,
+      hasDomainActions,
+      hasStateBranches,
+    )
     : '';
   const returnType = options.typescript
     ? (hasObjectSchema
         ? ': React.FC<PageProps>'
-        : hasDomainActions
+        : hasDomainActions || hasStateBranches
           ? ': React.FC<GeneratedUIProps>'
           : ': React.FC')
     : '';
@@ -977,6 +1045,10 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     }
     lines.push(' */');
     lines.push('');
+  }
+
+  if (stateTypes) {
+    lines.push(stateTypes, '');
   }
 
   if (actionTypes) {
@@ -1004,13 +1076,17 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const propDefaults = hasObjectSchema ? ctx.propDefaults : null;
 
   // Destructure object schema fields from props for type-safe JSX references
-  if (hasObjectSchema || hasDomainActions) {
+  if (hasObjectSchema || hasDomainActions || hasStateBranches) {
     const fieldNames = Object.keys(normalizedSchema.objectSchema ?? {})
       .map(snakeToCamel)
       .sort();
-    const parameterNames = [...(hasDomainActions ? ['actions'] : []), ...fieldNames];
+    const parameterNames = [
+      ...(hasDomainActions ? ['actions'] : []),
+      ...(hasStateBranches ? ['uiState'] : []),
+      ...fieldNames,
+    ];
     const destructure = `{ ${parameterNames.join(', ')} }`;
-    if (!options.typescript && hasDomainActions) {
+    if (!options.typescript && (hasDomainActions || hasStateBranches)) {
       lines.push('/** @param {GeneratedUIProps & Record<string, any>} props */');
       lines.push(`export const GeneratedUI = (props) => {`);
       lines.push(`  const ${destructure} = props;`);

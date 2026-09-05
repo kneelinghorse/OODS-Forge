@@ -9,10 +9,10 @@
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `dslVersion` | string | No |  | DSL version to use for this request. Defaults to the current version (1.0). |
-| `schema` | _ref_ | No |  | A validated UiSchema tree to generate code from. |
+| `schema` | _ref_ | No |  | A structurally valid UiSchema tree to generate code from. UiElement.state branches are checked against the canonical workflow-state vocabulary by the state-contract gate. |
 | `schemaRef` | string | No |  | Reference to a cached UiSchema returned by design.compose. |
 | `framework` | `react` \| `vue` \| `html` | Yes |  | Target framework for code generation. HTML delegates to the `repl` tool's `render` action (document mode). |
-| `profile` | `draft` \| `build` \| `release` | No |  | Validation profile. draft reports non-structural target/contract gaps as warnings; build is the default runnable-artifact gate; release additionally requires hash-bound evidence. |
+| `profile` | `draft` \| `build` \| `release` | No |  | Validation profile. draft reports non-structural target/contract gaps, including workflow-state contract gaps, as warnings; build is the default runnable-artifact gate; release additionally requires hash-bound evidence. |
 | `releaseEvidence` | object | No |  | Evidence for release. All six named classes are required by the release gate and must bind to the generated artifact contentHash. |
 | `releaseEvidence.rendered` | _ref_ | No |  |  |
 | `releaseEvidence.interaction` | _ref_ | No |  |  |

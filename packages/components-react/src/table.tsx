@@ -190,33 +190,41 @@ const TableRoot = React.forwardRef<HTMLTableElement, TableProps>(
               </tr>
             </TableHead>
             <TableBody>
-              {rows?.map(row => (
-                <tr
-                  key={row.id}
-                  className="oods-table__row"
-                  data-selectable={selectable ? 'true' : undefined}
-                >
-                  {columns?.map((column, columnIndex) => {
-                    const value = row[column.key];
-                    const rendered = column.render ? column.render(value, row) : String(value ?? '');
-                    return (
-                      <TableCell key={column.key} numeric={column.numeric}>
-                        {selectable && columnIndex === 0 ? (
-                          <button
-                            type="button"
-                            className="oods-table-row-action"
-                            onClick={event => onRowActivate?.(row.id, row, event)}
-                          >
-                            {rendered}
-                          </button>
-                        ) : (
-                          rendered
-                        )}
-                      </TableCell>
-                    );
-                  })}
+              {(rows?.length ?? 0) === 0 ? (
+                <tr className="oods-table__row">
+                  <TableCell colSpan={Math.max(columns?.length ?? 0, 1)}>
+                    No rows available.
+                  </TableCell>
                 </tr>
-              ))}
+              ) : (
+                rows?.map(row => (
+                  <tr
+                    key={row.id}
+                    className="oods-table__row"
+                    data-selectable={selectable ? 'true' : undefined}
+                  >
+                    {columns?.map((column, columnIndex) => {
+                      const value = row[column.key];
+                      const rendered = column.render ? column.render(value, row) : String(value ?? '');
+                      return (
+                        <TableCell key={column.key} numeric={column.numeric}>
+                          {selectable && columnIndex === 0 ? (
+                            <button
+                              type="button"
+                              className="oods-table-row-action"
+                              onClick={event => onRowActivate?.(row.id, row, event)}
+                            >
+                              {rendered}
+                            </button>
+                          ) : (
+                            rendered
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </tr>
+                ))
+              )}
             </TableBody>
           </>
         )}

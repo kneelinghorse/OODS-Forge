@@ -36,6 +36,7 @@ import {
   tokenOverrideVariableName,
 } from './emission-safety.js';
 import { executeCompositionDirectives } from './composition-directives.js';
+import { collectUiStateBranches } from './state-contract.js';
 
 // ---------------------------------------------------------------------------
 // Token + layout helpers (shared logic with tree-renderer.ts / react-emitter.ts)
@@ -312,6 +313,31 @@ function emitTemplateNode(
   bindingAnalysis: BindingAnalysis,
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): string {
+  const code = emitTemplateNodeBody(
+    node,
+    depth,
+    warnings,
+    options,
+    tailwindVariants,
+    bindingAnalysis,
+    objectSchema,
+  );
+  if (node.state === undefined) return code;
+  const condition = escapeDoubleQuotedAttr(
+    `uiState === ${javascriptSingleQuotedString(node.state)}`,
+  );
+  return `<template v-if="${condition}">\n${ind(code, 1)}\n</template>`;
+}
+
+function emitTemplateNodeBody(
+  node: UiElement,
+  depth: number,
+  warnings: CodegenIssue[],
+  options: CodegenOptions,
+  tailwindVariants: Map<string, TailwindVariantDefinition>,
+  bindingAnalysis: BindingAnalysis,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): string {
   const tag = node.component;
   const children = Array.isArray(node.children) ? node.children : [];
   const computedStyle = mergeDecl(
@@ -382,6 +408,9 @@ function emitTemplateNode(
   const attrParts: string[] = [];
   attrParts.push(`id="${escapeDoubleQuotedAttr(emittedId)}"`);
   attrParts.push(`data-oods-component="${tag}"`);
+  if (node.state !== undefined) {
+    attrParts.push(`data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
+  }
 
   if (node.layout?.type) {
     attrParts.push(`data-layout="${node.layout.type}"`);
@@ -511,6 +540,9 @@ function emitTemplateNode(
     }
 
     const innerAttrParts: string[] = [`id="${escapeDoubleQuotedAttr(emittedId)}"`, `data-oods-component="${tag}"`];
+    if (node.state !== undefined) {
+      innerAttrParts.push(`data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
+    }
     if (propsObject) {
       const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
       if (propsStr) innerAttrParts.push(propsStr);
@@ -614,6 +646,9 @@ function emitTemplateNode(
         const rebuiltAttrParts: string[] = [];
         rebuiltAttrParts.push(`id="${escapeDoubleQuotedAttr(emittedId)}"`);
         rebuiltAttrParts.push(`data-oods-component="${tag}"`);
+        if (node.state !== undefined) {
+          rebuiltAttrParts.push(`data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
+        }
         if (node.layout?.type) rebuiltAttrParts.push(`data-layout="${node.layout.type}"`);
         if (propsObject) {
           const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
@@ -770,6 +805,14 @@ function generateVueActionTypes(
     ...domainHandlers.flatMap(markerLines),
     `/** @typedef {{ ${properties} }} GeneratedUIActions */`,
   ].join('\n');
+}
+
+function generateVueStateTypes(states: readonly string[], typescript: boolean): string {
+  if (states.length === 0) return '';
+  const union = states.map(javascriptSingleQuotedString).join(' | ');
+  return typescript
+    ? `type GeneratedUIState = ${union};`
+    : `/** @typedef {${union}} GeneratedUIState */`;
 }
 
 function explicitInitialValue(
@@ -974,6 +1017,10 @@ function buildScriptSetup(
   const lines: string[] = [];
   const hasObjectSchema = objectSchema && Object.keys(objectSchema).length > 0;
   const hasDomainActions = bindingAnalysis.handlers.some((handler) => handler.kind === 'domain');
+  const stateNames = Array.from(new Set(
+    collectUiStateBranches(screens).map(({ state }) => state),
+  ));
+  const hasStateBranches = stateNames.length > 0;
   const includeCva = tailwindVariants.size > 0;
   const formMode = Boolean(hasObjectSchema && isFormSchema(screens));
 
@@ -1012,6 +1059,9 @@ function buildScriptSetup(
     }
   }
 
+  const stateTypes = generateVueStateTypes(stateNames, options.typescript);
+  if (stateTypes) lines.push('', stateTypes);
+
   const actionTypes = generateVueActionTypes(bindingAnalysis, options.typescript);
   if (actionTypes) lines.push('', actionTypes);
 
@@ -1042,13 +1092,30 @@ function buildScriptSetup(
         lines.push(`const ${cp.name} = computed(() => ${cp.expression});`);
       }
     }
-    if (hasDomainActions) {
+    if (hasDomainActions || hasStateBranches) {
       lines.push('');
       if (options.typescript) {
-        lines.push('const { actions } = defineProps<{ actions: GeneratedUIActions }>();');
+        const propNames = [
+          ...(hasDomainActions ? ['actions'] : []),
+          ...(hasStateBranches ? ['uiState'] : []),
+        ];
+        const propTypes = [
+          ...(hasDomainActions ? ['actions: GeneratedUIActions'] : []),
+          ...(hasStateBranches ? ['uiState: GeneratedUIState'] : []),
+        ];
+        lines.push(`const { ${propNames.join(', ')} } = defineProps<{ ${propTypes.join('; ')} }>();`);
       } else {
-        lines.push('const generatedProps = defineProps({ actions: { type: Object, required: true } });');
-        lines.push('const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
+        const runtimeProps = [
+          ...(hasDomainActions ? ['actions: { type: Object, required: true }'] : []),
+          ...(hasStateBranches ? ['uiState: { type: String, required: true }'] : []),
+        ];
+        lines.push(`const generatedProps = defineProps({ ${runtimeProps.join(', ')} });`);
+        if (hasDomainActions) {
+          lines.push('const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
+        }
+        if (hasStateBranches) {
+          lines.push('const uiState = /** @type {GeneratedUIState} */ (generatedProps.uiState);');
+        }
       }
     }
   } else if (options.typescript && hasObjectSchema) {
@@ -1056,6 +1123,7 @@ function buildScriptSetup(
     lines.push('');
     lines.push('interface Props {');
     if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
+    if (hasStateBranches) lines.push('  uiState: GeneratedUIState;');
     for (const [fieldName, entry] of Object.entries(objectSchema!).sort(([a], [b]) => a.localeCompare(b))) {
       const tsType = mapFieldType(entry);
       const optional = entry.required ? '' : '?';
@@ -1070,24 +1138,49 @@ function buildScriptSetup(
     const fieldNames = Object.keys(objectSchema!)
       .map(snakeToCamel)
       .sort();
-    const propNames = [...(hasDomainActions ? ['actions'] : []), ...fieldNames];
+    const propNames = [
+      ...(hasDomainActions ? ['actions'] : []),
+      ...(hasStateBranches ? ['uiState'] : []),
+      ...fieldNames,
+    ];
     lines.push(`const { ${propNames.join(', ')} } = defineProps<Props>();`);
   } else if (options.typescript) {
-    lines.push('');
-    lines.push(`defineProps<{`);
-    if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
-    else lines.push(`  // Props can be extended here`);
-    lines.push(`}>();`);
-    if (hasDomainActions) {
-      lines.splice(lines.length - 3, 3,
-        `const { actions } = defineProps<{`,
-        '  actions: GeneratedUIActions;',
-        '}>();');
+    if (hasStateBranches) {
+      lines.push('');
+      const propNames = [
+        ...(hasDomainActions ? ['actions'] : []),
+        'uiState',
+      ];
+      lines.push(`const { ${propNames.join(', ')} } = defineProps<{`);
+      if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
+      lines.push('  uiState: GeneratedUIState;');
+      lines.push('}>();');
+    } else {
+      lines.push('');
+      lines.push(`defineProps<{`);
+      if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
+      else lines.push(`  // Props can be extended here`);
+      lines.push(`}>();`);
+      if (hasDomainActions) {
+        lines.splice(lines.length - 3, 3,
+          `const { actions } = defineProps<{`,
+          '  actions: GeneratedUIActions;',
+          '}>();');
+      }
     }
-  } else if (hasDomainActions) {
+  } else if (hasDomainActions || hasStateBranches) {
     lines.push('');
-    lines.push('const generatedProps = defineProps({ actions: { type: Object, required: true } });');
-    lines.push('const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
+    const runtimeProps = [
+      ...(hasDomainActions ? ['actions: { type: Object, required: true }'] : []),
+      ...(hasStateBranches ? ['uiState: { type: String, required: true }'] : []),
+    ];
+    lines.push(`const generatedProps = defineProps({ ${runtimeProps.join(', ')} });`);
+    if (hasDomainActions) {
+      lines.push('const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
+    }
+    if (hasStateBranches) {
+      lines.push('const uiState = /** @type {GeneratedUIState} */ (generatedProps.uiState);');
+    }
   }
 
   const actionGuards = generateVueActionGuards(bindingAnalysis);

@@ -24,6 +24,7 @@ import type { CodeGenerateInput } from '../../src/tools/types.js';
 const BUILD_CHECKS = [
   'schema-structure',
   'component-registry',
+  'state-contract',
   'target-readiness',
   'normalization-fidelity',
   'binding-contract',
@@ -365,6 +366,7 @@ describe('Sprint 183 M03 validation profiles', () => {
       expect(blocked.validationReceipt.checks).toEqual([
         'schema-structure',
         'component-registry',
+        'state-contract',
         'target-readiness',
         'normalization-fidelity',
         'binding-contract',
@@ -564,6 +566,7 @@ describe('Sprint 183 M03 validation profiles', () => {
       expect(result.validationReceipt.checks).toEqual([
         'schema-structure',
         'component-registry',
+        'state-contract',
         'target-readiness',
         'normalization-fidelity',
       ]);
@@ -693,6 +696,7 @@ describe('Sprint 183 M03 validation profiles', () => {
     expect(result.validationReceipt.checks).toEqual([
       'schema-structure',
       'component-registry',
+      'state-contract',
       'target-readiness',
       'normalization-fidelity',
     ]);

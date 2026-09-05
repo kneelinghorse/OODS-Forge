@@ -29,6 +29,7 @@ const RELEASE_CHECKS = [
 const BUILD_CHECKS = [
   'schema-structure',
   'component-registry',
+  'state-contract',
   'target-readiness',
   'normalization-fidelity',
   'binding-contract',

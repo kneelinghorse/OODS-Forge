@@ -21,6 +21,7 @@ export type CodegenTargetResolution = {
 export type CodegenValidationCheck =
   | 'schema-structure'
   | 'component-registry'
+  | 'state-contract'
   | 'binding-contract'
   | 'props-contract'
   | 'slots-contract'
