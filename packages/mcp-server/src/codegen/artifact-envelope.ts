@@ -358,9 +358,10 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
   }
 
   // Emitters place hash-bound markers beside generated action declarations and
-  // behavior handlers. They make two otherwise source-only regressions
-  // mechanically visible: deleting an action from metadata while its binding
-  // remains, and restoring the former empty/TODO handler path.
+  // named markers beside behavior handlers. They make source-only regressions
+  // mechanically visible:
+  // deleting an action from metadata while its binding remains, and changing a
+  // domain handler so it no longer forwards to its own consumer action.
   const declaredActionMarkers = new Map<string, { digest: string; contents: string }>();
   const declaredSourceMarkers = new Set<string>();
   const domainBindingMarkers = new Set<string>();
@@ -400,7 +401,15 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
         continue;
       }
       const body = handler[1]?.trim() ?? '';
-      if (!body || /\bTODO\b/i.test(body)) {
+      const forwardingCall = new RegExp(
+        `^actions\\.${escapedName}\\s*\\([^;{}]*\\)\\s*;?$`,
+        'u',
+      );
+      if (kind === 'domain' && !forwardingCall.test(body)) {
+        issues.push(
+          `Generated domain binding handler '${name}' must forward to actions.${name}.`,
+        );
+      } else if (kind === 'local' && (!body || /\bTODO\b/i.test(body))) {
         issues.push(`Generated binding handler '${name}' must contain executable behavior.`);
       }
     }
@@ -424,6 +433,9 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
       }
       if (!marker.contents.includes(generatedActionTypeSignature(action))) {
         issues.push(`Generated action '${action.name}' is missing its exact typed member signature.`);
+      }
+      if (!domainBindingMarkers.has(action.name)) {
+        issues.push(`Artifact action '${action.name}' is missing its generated domain binding handler.`);
       }
     }
     for (const name of domainBindingMarkers) {

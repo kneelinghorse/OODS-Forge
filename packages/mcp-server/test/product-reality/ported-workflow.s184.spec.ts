@@ -1,5 +1,4 @@
 import { spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import {
   mkdirSync,
   mkdtempSync,
@@ -34,10 +33,6 @@ const rootRequire = createRequire(path.join(repositoryRoot, 'package.json'));
 
 const SCHEMA_NAMES = ['subscription-list-dark', 'subscription-detail-dark'] as const;
 const FRAMEWORKS = ['react', 'vue'] as const;
-
-function sha256(value: string): string {
-  return `sha256:${createHash('sha256').update(value).digest('hex')}`;
-}
 
 function savedSchema(name: typeof SCHEMA_NAMES[number]): UiSchema {
   const record = JSON.parse(readFileSync(path.join(
@@ -156,7 +151,7 @@ describe('Sprint 184 m04 ported Subscription workflow', () => {
     }
   });
 
-  it('turns the four measured red baseline cells green with non-empty artifacts and no errors', () => {
+  it('retains the four-cell m04 proof while current live outputs remain green', () => {
     const baseline = JSON.parse(readFileSync(path.join(
       repositoryRoot,
       'artifacts/product-reality/sprint-183/m04/compilation-report.json',
@@ -189,12 +184,18 @@ describe('Sprint 184 m04 ported Subscription workflow', () => {
         expect(result.artifact?.files[0]?.contents.length, `${schemaName}/${framework}`)
           .toBeGreaterThan(0);
         expect(result.errors, `${schemaName}/${framework}`).toBeUndefined();
-        expect(report.cells).toContainEqual(expect.objectContaining({
+        // M04's hashes are immutable historical evidence. M06 deliberately
+        // changes live emitter bytes by generating the screen action surface.
+        const historicalCell = report.cells.find((cell) => (
+          cell.schema === schemaName && cell.framework === framework
+        ));
+        expect(historicalCell).toMatchObject({
           schema: schemaName,
           framework,
-          codeBytes: Buffer.byteLength(result.code),
-          codeSha256: sha256(result.code),
-        }));
+          codeBytes: expect.any(Number),
+          codeSha256: expect.stringMatching(/^sha256:[a-f0-9]{64}$/),
+        });
+        expect(historicalCell!.codeBytes).toBeGreaterThan(0);
       }
     }
     expect(report.summary).toMatchObject({ cellCount: 4, greenCellCount: 4, strictCompileCount: 4 });

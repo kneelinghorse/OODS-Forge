@@ -33,31 +33,37 @@ them instead of guessing.
 | Screen root | `onFilter` | `criteria: Record<string, unknown>` |
 | Screen root | `onPageChange` | `page: number` |
 
-React emits a required `actions: GeneratedUIActions` prop and component-event
+React emits a required `actions: GeneratedUIActions` prop and domain-event
 adapters. Vue emits the equivalent required `defineProps` contract and
-idiomatic event adapters. JavaScript output retains checked JSDoc or a required
+idiomatic adapters. JavaScript output retains checked JSDoc or a required
 runtime prop, so choosing `typescript: false` does not turn a missing action
 into a silent no-op. Both targets also fail visibly at runtime if a caller
 bypasses type checking and omits a named action.
 
-Screen-root bindings are declarations for a consumer-owned action surface.
-They appear in the typed contract and `artifact.actions`, but are not attached
-as unsupported props to the layout component used as the root. The consumer's
-toolbar, menu, or routing surface invokes those required functions explicitly.
+Screen-root bindings produce a generated action surface beside the schema
+root. Each native button has a deterministic
+`data-oods-action="<handlerName>"` selector and invokes the matching injected
+action through a generated adapter; semantic screen events are never attached
+as fictional props to the layout component. Portable action parameters use
+stable schema-derived operands, so the generated call site remains executable
+without a consumer-authored replacement control. This deliberately supersedes
+the Sprint 183 rule that treated screen bindings as external action-surface
+declarations: the Subscription exit schemas declare all domain bindings on
+their screen roots, and the older rule could not generate an interactive
+workflow from those saved schemas.
 
 ## Artifact contract
 
 `artifact.actions` groups compatible occurrences by handler name. Each entry
 contains the portable ordered parameter list and every `{ nodeId, component,
-event }` declaration source. A component source is wired by the generated tree;
-a screen-root source records the schema declaration consumed by the external
-action surface. Actions and sources are deterministically ordered, and the
-whole contract participates in the artifact content hash. Hash-bound source
-markers make either of these regressions fail artifact validation:
+event }` declaration source. Component and screen-root sources are wired by the
+generated tree. Actions and sources are deterministically ordered, and the
+whole contract participates in the artifact content hash. Hash-bound markers
+make any of these regressions fail artifact validation:
 
 - a schema binding remains but its domain action is deleted from metadata;
-- a generated local or component-action handler is changed to an empty or
-  TODO-only body.
+- a generated domain handler no longer forwards to `actions.<its own name>`;
+- a generated local handler is changed to an empty or TODO-only body.
 
 HTML remains the static control target. It emits the required empty
 `artifact.actions` contract, but no runnable binding behavior or domain-action

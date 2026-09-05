@@ -1118,7 +1118,7 @@ export namespace CodeGenerateInputSchema {
      */
     framework: 'react' | 'vue' | 'html';
     /**
-     * Validation profile. draft reports non-structural target/contract gaps as warnings; build is the default runnable-artifact gate; release additionally requires hash-bound evidence.
+     * Validation profile. draft reports non-structural target/contract gaps, including workflow-state contract gaps, as warnings; build is the default runnable-artifact gate; release additionally requires hash-bound evidence.
      */
     profile?: 'draft' | 'build' | 'release';
     /**
@@ -1144,7 +1144,7 @@ export namespace CodeGenerateInputSchema {
     };
   }
   /**
-   * A validated UiSchema tree to generate code from.
+   * A structurally valid UiSchema tree to generate code from. UiElement.state branches are checked against the canonical workflow-state vocabulary by the state-contract gate.
    */
   export interface AgenticREPLUISchema {
     $schema?: string;
@@ -1438,7 +1438,7 @@ export namespace CodeGenerateOutputSchema {
      */
     parameters: GeneratedArtifactActionParameter[];
     /**
-     * Schema declaration sources; component sources are generated-tree events, while screen-root sources are consumer-owned surfaces. Deterministic node-event-component order.
+     * Schema declaration sources; component sources are generated-tree events, while screen-root sources drive generated action controls. Deterministic node-event-component order.
      *
      * @minItems 1
      */
@@ -4637,7 +4637,7 @@ export namespace PipelineInputSchema {
      */
     styling?: 'inline' | 'tokens' | 'tailwind';
     /**
-     * Validation profile forwarded unchanged to code.generate. build is the default runnable-artifact gate.
+     * Validation profile forwarded unchanged to code.generate, including its workflow-state contract gate. build is the default runnable-artifact gate.
      */
     profile?: 'draft' | 'build' | 'release';
     /**
@@ -4967,7 +4967,7 @@ export namespace PipelineOutputSchema {
      */
     parameters: GeneratedArtifactActionParameter[];
     /**
-     * Schema declaration sources; component sources are generated-tree events, while screen-root sources are consumer-owned surfaces. Deterministic node-event-component order.
+     * Schema declaration sources; component sources are generated-tree events, while screen-root sources drive generated action controls. Deterministic node-event-component order.
      *
      * @minItems 1
      */

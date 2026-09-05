@@ -11,8 +11,8 @@ function compareCodePoint(left: string, right: string): number {
 /**
  * Project the normalized binding analysis into the portable artifact contract.
  * Compatible occurrences share one consumer action while retaining every
- * schema declaration site. Screen-root declarations intentionally describe a
- * consumer-owned action surface rather than a prop on a layout component.
+ * schema declaration site. Screen-root declarations drive generated action
+ * controls rather than fictional props on a layout component.
  */
 export function artifactActionsFromBindings(
   analysis: BindingAnalysis,

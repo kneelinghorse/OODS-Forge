@@ -3,6 +3,7 @@ import { PORTED_COMPONENT_IDS } from '@oods/component-contracts';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
 import type {
   BindingAnalysis,
+  DomainBindingOccurrence,
   LocalBindingOccurrence,
   ResolvedBindingHandler,
 } from './binding-utils.js';
@@ -276,6 +277,69 @@ function vueBindingAttrs(node: UiElement, analysis: BindingAnalysis): string[] {
   return attrs;
 }
 
+const SCREEN_ACTION_LABELS: Readonly<Record<string, string>> = {
+  onChange: 'Change',
+  onDelete: 'Delete',
+  onEdit: 'Edit',
+  onFilter: 'Filter',
+  onPageChange: 'Change page',
+  onRowClick: 'Open row',
+  onSort: 'Sort',
+  onSubmit: 'Submit',
+};
+
+function screenActionArgumentExpressions(
+  occurrence: DomainBindingOccurrence,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): string[] {
+  const fieldNames = Object.keys(objectSchema ?? {}).sort();
+  const requiredStringFields = fieldNames.filter((fieldName) => {
+    const entry = ownFieldSchemaEntry(objectSchema, fieldName);
+    return entry?.required === true && mapFieldType(entry) === 'string';
+  });
+  const rowIdField = requiredStringFields.find((fieldName) => fieldName === 'id')
+    ?? requiredStringFields.find((fieldName) => fieldName.endsWith('_id'));
+  const column = fieldNames.includes('status') ? 'status' : fieldNames[0] ?? 'column';
+
+  return occurrence.signature.parameters.map((parameter) => {
+    if (parameter.name === 'rowId') {
+      return rowIdField ? snakeToCamel(rowIdField) : javascriptSingleQuotedString('generated-row');
+    }
+    if (parameter.name === 'column') return javascriptSingleQuotedString(column);
+    if (parameter.name === 'criteria') return '{}';
+    if (parameter.name === 'page') return '1';
+    if (parameter.type === 'string') return javascriptSingleQuotedString('');
+    if (parameter.type === 'number') return '0';
+    if (parameter.type === 'boolean') return 'false';
+    if (parameter.type === 'Record<string, unknown>') return '{}';
+    return 'undefined';
+  });
+}
+
+function vueScreenActionSurface(
+  node: UiElement,
+  analysis: BindingAnalysis,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): string {
+  const occurrences = bindingsForNode(analysis, node.id).filter(
+    (occurrence): occurrence is DomainBindingOccurrence => (
+      occurrence.kind === 'domain' && occurrence.scope === 'screen'
+    ),
+  );
+  if (occurrences.length === 0) return '';
+
+  const buttons = occurrences.map((occurrence) => {
+    const args = screenActionArgumentExpressions(occurrence, objectSchema).join(', ');
+    const label = SCREEN_ACTION_LABELS[occurrence.event] ?? occurrence.event;
+    return `<button type="button" data-oods-action="${escapeDoubleQuotedAttr(occurrence.handlerName)}" @click="${occurrence.handlerName}(${escapeDoubleQuotedAttr(args)})">${childValueToVue(label)}</button>`;
+  });
+  return [
+    `<div role="group" aria-label="Screen actions" data-oods-screen-actions="${escapeDoubleQuotedAttr(node.id)}">`,
+    ...buttons.map((button) => ind(button, 1)),
+    '</div>',
+  ].join('\n');
+}
+
 function vueFieldExpression(
   node: UiElement,
   fieldName: string,
@@ -313,7 +377,7 @@ function emitTemplateNode(
   bindingAnalysis: BindingAnalysis,
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): string {
-  const code = emitTemplateNodeBody(
+  const nodeBody = emitTemplateNodeBody(
     node,
     depth,
     warnings,
@@ -322,6 +386,8 @@ function emitTemplateNode(
     bindingAnalysis,
     objectSchema,
   );
+  const actionSurface = vueScreenActionSurface(node, bindingAnalysis, objectSchema);
+  const code = actionSurface ? `${nodeBody}\n${actionSurface}` : nodeBody;
   if (node.state === undefined) return code;
   const condition = escapeDoubleQuotedAttr(
     `uiState === ${javascriptSingleQuotedString(node.state)}`,
@@ -908,7 +974,6 @@ function generateVueBindingProtocol(
       }
       continue;
     }
-    if (!handler.occurrences.some((occurrence) => occurrence.scope === 'component')) continue;
     const params = semanticParameters(handler, options.typescript);
     const args = handler.signature.parameters.map((parameter) => parameter.name).join(', ');
     if (!options.typescript && handler.signature.parameters.length > 0) {

@@ -7,6 +7,8 @@ import { canonicalize, sha256 } from '@oods/artifacts';
 import { getAjv } from '../lib/ajv.js';
 import codeGenerateOutputSchema from '../schemas/code.generate.output.json' assert { type: 'json' };
 import pipelineOutputSchema from '../schemas/pipeline.output.json' assert { type: 'json' };
+import type { UiSchema } from '../schemas/generated.js';
+import { handle as codeGenerate } from '../tools/code.generate.js';
 import type { GeneratedArtifact, GeneratedArtifactAction } from './types.js';
 import {
   buildGeneratedArtifact,
@@ -23,6 +25,14 @@ import {
 
 function readJson(relativeUrl: string): Record<string, unknown> {
   return JSON.parse(readFileSync(new URL(relativeUrl, import.meta.url), 'utf8')) as Record<string, unknown>;
+}
+
+function savedSubscriptionDetailSchema(): UiSchema {
+  const record = JSON.parse(readFileSync(new URL(
+    '../../../../artifacts/product-reality/sprint-183/m04/saved-schema-store/subscription-detail-dark.json',
+    import.meta.url,
+  ), 'utf8')) as { schema: UiSchema };
+  return record.schema;
 }
 
 function resolvedLockVersion(importer: string, section: string, name: string): string {
@@ -50,6 +60,8 @@ function rehashArtifact(artifact: GeneratedArtifact): void {
 }
 
 function sourceWithActionContract(action: GeneratedArtifactAction): string {
+  const parameters = action.parameters.map(({ name, type }) => `${name}: ${type}`).join(', ');
+  const argumentsList = action.parameters.map(({ name }) => name).join(', ');
   return [
     "import React from 'react';",
     'export interface GeneratedUIActions {',
@@ -57,9 +69,12 @@ function sourceWithActionContract(action: GeneratedArtifactAction): string {
     ...action.sources.map((source) => (
       `  /* @oods-domain-source ${generatedActionSourceDigest(action.name, source)} */`
     )),
-    `  ${action.name}: (${action.parameters.map(({ name, type }) => `${name}: ${type}`).join(', ')}) => void;`,
+    `  ${action.name}: (${parameters}) => void;`,
     '}',
-    'export const GeneratedUI = () => null;',
+    `export const GeneratedUI = ({ actions }: { actions: GeneratedUIActions }) => {`,
+    `  /* @oods-domain-binding ${action.name} */ const ${action.name} = (${parameters}) => { actions.${action.name}(${argumentsList}); };`,
+    '  return null;',
+    '};',
     '',
   ].join('\n');
 }
@@ -368,6 +383,42 @@ describe('generated artifact envelope', () => {
       "Generated action marker 'handleEdit' does not match its artifact contract.",
       expect.stringContaining('absent from artifact metadata'),
     ]));
+
+    const deletedBinding = structuredClone(artifact);
+    deletedBinding.files[0]!.contents = deletedBinding.files[0]!.contents
+      .replace(/^.*\/\* @oods-domain-binding handleEdit \*\/.*\n/m, '');
+    rehashArtifact(deletedBinding);
+    expect(validateGeneratedArtifact(deletedBinding)).toContain(
+      "Artifact action 'handleEdit' is missing its generated domain binding handler.",
+    );
+  });
+
+  it.each([
+    { mutation: 'void body', body: 'void 0;' },
+    { mutation: 'bare return', body: 'return;' },
+    { mutation: 'different action', body: 'actions.handleDelete();' },
+  ])('rejects a re-sealed live generated domain handler with $mutation', async ({ body }) => {
+    const generated = await codeGenerate({
+      framework: 'react',
+      profile: 'build',
+      schema: savedSubscriptionDetailSchema(),
+    });
+    expect(generated.status, JSON.stringify(generated.errors ?? [])).toBe('ok');
+    expect(generated.artifact).toBeDefined();
+    const artifact = structuredClone(generated.artifact!);
+    expect(validateGeneratedArtifact(artifact)).toEqual([]);
+    const sourceBefore = artifact.files[0]!.contents;
+    expect(sourceBefore.split('/* @oods-domain-binding handleEdit */')).toHaveLength(2);
+    artifact.files[0]!.contents = sourceBefore.replace(
+      /(\/\* @oods-domain-binding handleEdit \*\/ const handleEdit = .*?=> \{).*?(\};)/,
+      `$1 ${body} $2`,
+    );
+    expect(artifact.files[0]!.contents).not.toBe(sourceBefore);
+    rehashArtifact(artifact);
+
+    expect(validateGeneratedArtifact(artifact)).toContain(
+      "Generated domain binding handler 'handleEdit' must forward to actions.handleEdit.",
+    );
   });
 
   it('requires the closed domain-action contract on the code.generate wire', () => {

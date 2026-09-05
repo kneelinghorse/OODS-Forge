@@ -298,7 +298,7 @@ describe('vue-emitter — propSchema default value wiring (s63-m02)', () => {
 });
 
 describe('vue-emitter — typed action protocol (s183-m02)', () => {
-  it('declares screen bindings as required domain actions without TODO bodies', () => {
+  it('emits screen bindings as required domain actions with generated action controls', () => {
     const schema = makeSchema({
       id: 'form-root',
       component: 'Form',
@@ -307,10 +307,16 @@ describe('vue-emitter — typed action protocol (s183-m02)', () => {
     const result = emit(schema, defaultOpts);
     expect(result.code).toContain('handleSubmit: () => void;');
     expect(result.code).toContain('handleChange: () => void;');
+    expect(result.code).toContain('/* @oods-domain-binding handleSubmit */');
+    expect(result.code).toContain('actions.handleSubmit();');
+    expect(result.code).toContain('data-oods-screen-actions="form-root"');
+    expect(result.code).toContain('data-oods-action="handleSubmit"');
+    expect(result.code).toContain('@click="handleSubmit()"');
+    expect(result.code).toContain('>Submit</button>');
     expect(result.code).not.toMatch(/TODO|=>\s*\{\s*\}/);
   });
 
-  it('does not leak semantic screen bindings onto a component event', () => {
+  it('keeps semantic screen bindings off component events while rendering controls', () => {
     const schema = makeSchema({
       id: 'form-root',
       component: 'Form',
@@ -318,6 +324,8 @@ describe('vue-emitter — typed action protocol (s183-m02)', () => {
     });
     const result = emit(schema, defaultOpts);
     expect(result.code).not.toContain('@submit="handleSubmit"');
+    expect(result.code).toContain('data-oods-action="handleSubmit"');
+    expect(result.code).toContain('@click="handleSubmit()"');
     expect(result.actions).toEqual([{
       name: 'handleSubmit',
       parameters: [],
@@ -334,6 +342,8 @@ describe('vue-emitter — typed action protocol (s183-m02)', () => {
     const result = emit(schema, defaultOpts);
     expect(result.code).toContain('handleRowClick: (rowId: string) => void;');
     expect(result.code).toContain('handleSort: (column: string) => void;');
+    expect(result.code).toContain('@click="handleRowClick(\'generated-row\')"');
+    expect(result.code).toContain('@click="handleSort(\'column\')"');
   });
 
   it('declares detail context actions', () => {

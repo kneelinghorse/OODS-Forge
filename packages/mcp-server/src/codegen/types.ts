@@ -132,7 +132,7 @@ export type GeneratedArtifactActionSource = {
  * A domain action the generated UI cannot implement on the consumer's behalf.
  * Every entry is a required injection point. Compatible occurrences share one
  * entry and retain every schema declaration site. Component sites are wired by
- * the generated tree; screen-root sites are invoked by a consumer-owned surface.
+ * the generated tree; screen-root sites are invoked by generated action controls.
  */
 export type GeneratedArtifactAction = {
   name: string;
