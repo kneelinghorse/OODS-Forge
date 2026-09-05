@@ -1,0 +1,123 @@
+
+> @oods/foundry-mcp@0.1.0 build:tokens /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge
+> node packages/tokens/scripts/build.mjs
+
+✔︎ collision guard: no non-exempt collisions across 6 scopes
+Building design tokens with Style Dictionary…
+
+Token collisions detected (2):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+
+ios-swift
+- dist/ios-swift/OodsTokens.swift
+
+compose
+- dist/compose/OodsTokens.kt
+- dist/ios-swift
+- dist/compose
+
+ts
+- dist/ts/tokens.ts
+
+tailwind
+- dist/tailwind/tokens.json
+- dist/ts
+- dist/tailwind
+
+ios-swift
+✔︎ dist/ios-swift/OodsTokens.swift
+
+compose
+✔︎ dist/compose/OodsTokens.kt
+
+ts
+✔︎ dist/ts/tokens.ts
+
+tailwind
+✔︎ dist/tailwind/tokens.json
+
+Token collisions detected (2):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+
+css
+✔︎ dist/css/tokens.css
+
+Token collisions detected (2):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+
+css
+✔︎ dist/css/tokens.css
+
+Token collisions detected (222):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+
+css
+✔︎ dist/css/tokens.css
+
+Token collisions detected (222):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+
+css
+✔︎ dist/css/tokens.css
+
+Token collisions detected (2):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+
+css
+✔︎ dist/css/tokens.css
+
+Token collisions detected (222):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+
+css
+✔︎ dist/css/tokens.css
+
+Token collisions detected (222):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+
+css
+✔︎ dist/css/tokens.css
+
+Token collisions detected (2):
+Use log.verbosity "verbose" or use CLI option --verbose for more details.
+Refer to: https://styledictionary.com/reference/logging/
+✔︎ tokens built successfully in 1.55s
+   css:      dist/css/tokens.css (6 brand × theme scopes)
+   types:    dist/ts/tokens.ts
+   tailwind: dist/tailwind/tokens.json
+   ios:      dist/ios-swift/OodsTokens.swift
+   compose:  dist/compose/OodsTokens.kt
+
+> @oods/foundry-mcp@0.1.0 tokens:governance /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge
+> tsx tools/tokens-governance/index.ts "--" "diff" "--brand" "A" "--json" "/Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge/artifacts/state/governance/brand-A.json" "--base" "ca8d84bbce165b656fd5cd83cc097c28fa774f19" "--head" "HEAD"
+
+Token Governance (Brand A)
+  base: ca8d84bbce165b656fd5cd83cc097c28fa774f19  →  head: HEAD
+  changes: +0 / -0 / Δ0
+  removals: 0 duplicate-removed / 0 plain
+  risk: high=0 medium=0 low=0
+  orphans: 0  leaks: 0
+
+> @oods/foundry-mcp@0.1.0 tokens:governance /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge
+> tsx tools/tokens-governance/index.ts "--" "diff" "--brand" "B" "--json" "/Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge/artifacts/state/governance/brand-B.json" "--base" "ca8d84bbce165b656fd5cd83cc097c28fa774f19" "--head" "HEAD"
+
+Token Governance (Brand B)
+  base: ca8d84bbce165b656fd5cd83cc097c28fa774f19  →  head: HEAD
+  changes: +0 / -0 / Δ0
+  removals: 0 duplicate-removed / 0 plain
+  risk: high=0 medium=0 low=0
+  orphans: 0  leaks: 0
+
+State assessment results
+------------------------
+Overall status: GREEN
+- Metadata & tenancy guardrails: GREEN (Metadata violations: 0 | Tenancy overrides: 0)
+- Token governance & CSS purity: GREEN (High-risk token deltas: 0 | CSS literals: 0)

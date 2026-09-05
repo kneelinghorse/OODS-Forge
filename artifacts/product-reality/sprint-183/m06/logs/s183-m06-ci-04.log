@@ -1,0 +1,447 @@
+
+> @oods/foundry-mcp@0.1.0 tenancy:check /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge
+> tsx scripts/tenancy/check.ts
+
+🔍 OODS Tenancy Matrix Check
+
+Testing modes: shared-schema, schema-per-tenant, external-adapter
+────────────────────────────────────────────────────────────
+
+🧪 Running tests in shared-schema mode...
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant
+[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant
+[SharedSchema] Query for tenant tenant-bob: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-bob'
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Tenant Alice Corp (tenant-alice) → alice.db.internal:5432/oods_alice
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Query in oods_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Tenant Bob Industries (tenant-bob) → bob.db.internal:5432/oods_bob
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Query in oods_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should prevent cross-tenant data access
+[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] BEGIN in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] COMMIT in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] BEGIN in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] BEGIN for tenant tenant-alice
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] Execute for tenant tenant-alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] COMMIT for tenant tenant-alice
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] BEGIN for tenant tenant-bob
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] Execute for tenant tenant-bob: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Concurrent Access > should handle multiple tenants querying simultaneously
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+[SchemaPerTenant] Using schema: tenant_tenant_charlie
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+[SchemaPerTenant] Query in tenant_tenant_charlie: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] ROLLBACK for tenant tenant-bob
+
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases 2ms
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should include registry metadata in tenant context 0ms
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Error Handling > should fail fast when tenant configuration is missing 1ms
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant 2ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should prevent cross-tenant data access 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should enforce tenant context requirement 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should restore previous tenant context after withTenant 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Query Scoping > should append tenant filter to WHERE clause 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Query Scoping > should add WHERE clause if missing 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should handle concurrent tenant contexts 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should handle nested tenant contexts 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should reject invalid tenant IDs 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema 2ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should not append tenant_id filter to queries 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Naming > should use tenant-specific schema names 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Concurrent Access > should handle multiple tenants querying simultaneously 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Error Handling > should fail fast when tenant context is missing 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Error Handling > should reject empty schema names 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions 1ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  19:59:46
+   Duration  374ms (transform 72ms, setup 0ms, collect 255ms, tests 14ms, environment 0ms, prepare 213ms)
+
+
+✅ Tests passed in shared-schema mode (1466ms)
+
+🧪 Running tests in schema-per-tenant mode...
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant
+[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant
+[SharedSchema] Query for tenant tenant-bob: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-bob'
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Tenant Alice Corp (tenant-alice) → alice.db.internal:5432/oods_alice
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Query in oods_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Tenant Bob Industries (tenant-bob) → bob.db.internal:5432/oods_bob
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Query in oods_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should prevent cross-tenant data access
+[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] BEGIN in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] COMMIT in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] BEGIN in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] BEGIN for tenant tenant-alice
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] Execute for tenant tenant-alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] COMMIT for tenant tenant-alice
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] BEGIN for tenant tenant-bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Concurrent Access > should handle multiple tenants querying simultaneously
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+[SchemaPerTenant] Using schema: tenant_tenant_charlie
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+[SchemaPerTenant] Query in tenant_tenant_charlie: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] Execute for tenant tenant-bob: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] ROLLBACK for tenant tenant-bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases 3ms
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should include registry metadata in tenant context 0ms
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Error Handling > should fail fast when tenant configuration is missing 1ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant 2ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should prevent cross-tenant data access 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should enforce tenant context requirement 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should restore previous tenant context after withTenant 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Query Scoping > should append tenant filter to WHERE clause 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Query Scoping > should add WHERE clause if missing 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should handle concurrent tenant contexts 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should handle nested tenant contexts 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should reject invalid tenant IDs 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema 2ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should not append tenant_id filter to queries 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Naming > should use tenant-specific schema names 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Concurrent Access > should handle multiple tenants querying simultaneously 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Error Handling > should fail fast when tenant context is missing 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Error Handling > should reject empty schema names 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions 0ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  19:59:47
+   Duration  330ms (transform 74ms, setup 0ms, collect 194ms, tests 14ms, environment 0ms, prepare 167ms)
+
+
+✅ Tests passed in schema-per-tenant mode (944ms)
+
+🧪 Running tests in external-adapter mode...
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant
+[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant
+[SharedSchema] Query for tenant tenant-bob: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-bob'
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Tenant Alice Corp (tenant-alice) → alice.db.internal:5432/oods_alice
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Query in oods_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Tenant Bob Industries (tenant-bob) → bob.db.internal:5432/oods_bob
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Query in oods_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should prevent cross-tenant data access
+[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] BEGIN in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] COMMIT in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] BEGIN in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Concurrent Access > should handle multiple tenants querying simultaneously
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+[SchemaPerTenant] Using schema: tenant_tenant_charlie
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+[SchemaPerTenant] Query in tenant_tenant_charlie: SELECT * FROM subscriptions
+
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases 4ms
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should include registry metadata in tenant context 1ms
+ ✓ |core| tests/tenancy/external.spec.ts > External Adapter Tenancy > Error Handling > should fail fast when tenant configuration is missing 1ms
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] BEGIN for tenant tenant-alice
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] Execute for tenant tenant-alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] COMMIT for tenant tenant-alice
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] BEGIN for tenant tenant-bob
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] Execute for tenant tenant-bob: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] ROLLBACK for tenant tenant-bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant 3ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should prevent cross-tenant data access 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should enforce tenant context requirement 1ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should restore previous tenant context after withTenant 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Query Scoping > should append tenant filter to WHERE clause 1ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Query Scoping > should add WHERE clause if missing 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should handle concurrent tenant contexts 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should handle nested tenant contexts 0ms
+ ✓ |core| tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Multi-Tenant Edge Cases > should reject invalid tenant IDs 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema 4ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should not append tenant_id filter to queries 1ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Naming > should use tenant-specific schema names 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Concurrent Access > should handle multiple tenants querying simultaneously 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Error Handling > should fail fast when tenant context is missing 1ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Error Handling > should reject empty schema names 0ms
+ ✓ |core| tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions 1ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  19:59:48
+   Duration  315ms (transform 64ms, setup 0ms, collect 176ms, tests 25ms, environment 0ms, prepare 173ms)
+
+
+✅ Tests passed in external-adapter mode (941ms)
+
+════════════════════════════════════════════════════════════
+📊 Summary
+
+  ✅ PASS | shared-schema        | 1466ms
+  ✅ PASS | schema-per-tenant    | 944ms
+  ✅ PASS | external-adapter     | 941ms
+
+════════════════════════════════════════════════════════════
+Total time: 3351ms
+
+✅ All tenancy modes passed!
+
