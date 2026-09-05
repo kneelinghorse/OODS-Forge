@@ -45,13 +45,20 @@ function argument(name) {
 
 const workspaceArgument = argument("--workspace");
 const outputArgument = argument("--output-root");
+const maxWorkersArgument = argument("--max-workers");
 const repositoryOutputPrefix =
   argument("--repository-output-prefix") ??
   "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current";
 if (!workspaceArgument || !outputArgument) {
   throw new Error(
-    "Usage: node scripts/product-reality/capture-s184-m07-suites.mjs --workspace <clean-frozen-worktree> --output-root <outside-worktree-directory> [--repository-output-prefix <artifacts/.../closeout-inputs/path>] [--collection-only --suite <id> --expected-files <n> --expected-tests <n> --expected-skipped-tests <n>]",
+    "Usage: node scripts/product-reality/capture-s184-m07-suites.mjs --workspace <clean-frozen-worktree> --output-root <outside-worktree-directory> [--repository-output-prefix <artifacts/.../closeout-inputs/path>] [--max-workers <n>] [--collection-only --suite <id> --expected-files <n> --expected-tests <n> --expected-skipped-tests <n>]",
   );
+}
+
+const maxWorkers =
+  maxWorkersArgument === undefined ? null : Number(maxWorkersArgument);
+if (maxWorkers !== null && (!Number.isInteger(maxWorkers) || maxWorkers < 1)) {
+  throw new Error("--max-workers must be a positive integer.");
 }
 
 const workspace = path.resolve(workspaceArgument);
@@ -77,6 +84,12 @@ function sha256(bytes) {
 
 function commandText(command, args) {
   return [command, ...args].join(" ");
+}
+
+function withWorkerLimit(args) {
+  return maxWorkers === null
+    ? [...args]
+    : [...args, `--maxWorkers=${maxWorkers}`];
 }
 
 function run(command, args) {
@@ -279,8 +292,15 @@ function captureCollectionOnly() {
   try {
     const testsPath = path.join(temporaryRoot, "tests.json");
     const filesPath = path.join(temporaryRoot, "files.json");
-    const testsArgs = [...suite.listArgs, `--json=${testsPath}`];
-    const filesArgs = [...suite.listArgs, "--filesOnly", `--json=${filesPath}`];
+    const testsArgs = [
+      ...withWorkerLimit(suite.listArgs),
+      `--json=${testsPath}`,
+    ];
+    const filesArgs = [
+      ...withWorkerLimit(suite.listArgs),
+      "--filesOnly",
+      `--json=${filesPath}`,
+    ];
     const testsResult = run(suite.command, testsArgs);
     const filesResult = run(suite.command, filesArgs);
     const testRows =
@@ -340,6 +360,7 @@ function captureCollectionOnly() {
       missionId: "s184-m07",
       suite: suite.id,
       measuredHead: git(["rev-parse", "HEAD"]),
+      maxWorkers,
       status: populationPassed && cleanAfter.clean ? "collected" : "failed",
       collectionCommands: {
         runnableTests: commandText(suite.command, testsArgs),
@@ -417,6 +438,7 @@ if (process.argv.includes("--collection-only")) {
     measuredHead,
     workspace,
     repositoryOutputPrefix,
+    maxWorkers,
     suiteConcurrency: "sequential; no concurrent suite jobs",
     cleanBefore: cleanliness(),
     cleanAfter: null,
@@ -433,7 +455,7 @@ if (process.argv.includes("--collection-only")) {
     for (const suite of SUITES) {
       const reporterPath = path.join(temporaryRoot, `${suite.id}.json`);
       const executedArgs = [
-        ...suite.args,
+        ...withWorkerLimit(suite.args),
         "--reporter=json",
         `--outputFile=${reporterPath}`,
       ];
@@ -458,6 +480,7 @@ if (process.argv.includes("--collection-only")) {
         missionId: "s184-m07",
         suite: suite.id,
         measuredHead,
+        maxWorkers,
         literalCommand: suite.literalCommand,
         executedCommand,
         startedAt: result.startedAt,
