@@ -1,0 +1,479 @@
+import { promises as fs } from "node:fs";
+import { spawnSync } from "node:child_process";
+import os from "node:os";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import ts from "typescript";
+import { describe, expect, it } from "vitest";
+
+import { handle as pipelineHandle } from "../../src/tools/pipeline.js";
+
+const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+const repositoryRoot = path.resolve(testDirectory, "../../../..");
+const dispositionPath = path.join(
+  repositoryRoot,
+  "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
+);
+
+type TypedOutcome = {
+  id: string;
+  input: {
+    object: string;
+    context?: "detail" | "card";
+    framework: "react" | "vue" | "html";
+    profile?: "release";
+    save?: string;
+  };
+  profile: "build" | "release";
+  step: "codegen";
+  code: "OODS-V007" | "OODS-N015" | "OODS-V162";
+  message: string;
+};
+
+type CallSiteDisposition = {
+  id: string;
+  file: string;
+  selector: string;
+  invocation: "pipelineHandle";
+  pipelineInvocationOrdinal: number;
+  changedField: "intent" | "context";
+  historicalValue: string | null;
+  currentValue: string;
+  disposition: "retained-repoint";
+  reason: string;
+};
+
+type B2Disposition = {
+  reviewedSourceHead: string;
+  repointCommit: string;
+  repointParent: string;
+  countBasis: string;
+  advertisedBehaviorMovement: {
+    intended: boolean;
+    scope: string;
+    reason: string;
+    replacementTest: string;
+  };
+  summary: {
+    reviewCallSites: number;
+    restored: number;
+    retainedWithReason: number;
+  };
+  fileCounts: Record<string, number>;
+  typedOutcomes: TypedOutcome[];
+  callSites: CallSiteDisposition[];
+  excludedNeighboringChanges: Array<{
+    invocation: string;
+    selector: string;
+    reason: string;
+  }>;
+  status: string;
+};
+
+async function readDisposition(): Promise<B2Disposition> {
+  return JSON.parse(
+    await fs.readFile(dispositionPath, "utf8"),
+  ) as B2Disposition;
+}
+
+function testCaseBody(source: string, selector: string): string {
+  const selectorOffset = source.indexOf(`'${selector}'`);
+  expect(selectorOffset, selector).toBeGreaterThanOrEqual(0);
+  const nextCaseOffset = source.indexOf(
+    "\n  it",
+    selectorOffset + selector.length + 2,
+  );
+  return source.slice(
+    selectorOffset,
+    nextCaseOffset >= 0 ? nextCaseOffset : source.length,
+  );
+}
+
+function gitShow(commit: string, file: string): string {
+  const result = spawnSync("git", ["show", `${commit}:${file}`], {
+    cwd: repositoryRoot,
+    encoding: "utf8",
+  });
+  expect(result.status, `${commit}:${file}\n${result.stderr}`).toBe(0);
+  return result.stdout;
+}
+
+function gitCommand(args: string[], label: string): string {
+  const result = spawnSync("git", args, {
+    cwd: repositoryRoot,
+    encoding: "utf8",
+  });
+  expect(result.status, `${label}\n${result.stderr}`).toBe(0);
+  return result.stdout.trim();
+}
+
+function pipelineOperands(
+  source: string,
+  fileName: string,
+): Array<{ intent: string | null; context: string | null }> {
+  const sourceFile = ts.createSourceFile(
+    fileName,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  const operands: Array<{ intent: string | null; context: string | null }> = [];
+
+  const visit = (node: ts.Node): void => {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === "pipelineHandle"
+    ) {
+      const input = node.arguments[0];
+      expect(ts.isObjectLiteralExpression(input), fileName).toBe(true);
+      const values = new Map<string, string>();
+      if (input && ts.isObjectLiteralExpression(input)) {
+        for (const property of input.properties) {
+          if (
+            ts.isPropertyAssignment(property) &&
+            (ts.isIdentifier(property.name) ||
+              ts.isStringLiteral(property.name)) &&
+            ts.isStringLiteral(property.initializer)
+          ) {
+            values.set(property.name.text, property.initializer.text);
+          }
+        }
+      }
+      operands.push({
+        intent: values.get("intent") ?? null,
+        context: values.get("context") ?? null,
+      });
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sourceFile);
+  return operands;
+}
+
+describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
+  it.each([
+    {
+      framework: "html" as const,
+      code: "OODS-V007",
+      message:
+        'Nested content under Tabs child "detail-tab-panel-3" cannot be preserved when the child is normalized into a scalar item record.',
+    },
+    {
+      framework: "react" as const,
+      code: "OODS-N015",
+      message:
+        "Component DetailHeader is not emission-eligible for react; evidence state: unavailable.",
+    },
+    {
+      framework: "vue" as const,
+      code: "OODS-N015",
+      message:
+        "Component DetailHeader is not emission-eligible for vue; evidence state: unavailable.",
+    },
+  ])(
+    "retains the Product/detail $framework typed gap as $code",
+    async ({ framework, code, message }) => {
+      const result = await pipelineHandle({
+        object: "Product",
+        context: "detail",
+        framework,
+      });
+
+      expect(result.error).toEqual({ step: "codegen", code, message });
+      expect(result.code).toBeUndefined();
+      expect(result.saved).toBeUndefined();
+      expect(result.validationReceipt.profile).toBe("build");
+      expect(result.pipeline.steps).toEqual([
+        "compose",
+        "validate",
+        "render",
+        "codegen",
+      ]);
+    },
+  );
+
+  it("retains OODS-V162 for Product/card/HTML at release without evidence", async () => {
+    const result = await pipelineHandle({
+      object: "Product",
+      context: "card",
+      framework: "html",
+      profile: "release",
+    });
+
+    expect(result.error).toEqual({
+      step: "codegen",
+      code: "OODS-V162",
+      message:
+        "Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance.",
+    });
+    expect(result.code).toBeUndefined();
+    expect(result.saved).toBeUndefined();
+    expect(result.validationReceipt.profile).toBe("release");
+    expect(result.pipeline.steps).toEqual([
+      "compose",
+      "validate",
+      "render",
+      "codegen",
+    ]);
+  });
+
+  it("returns a typed OODS-V007 error on the no-context Product/HTML save path", async () => {
+    const tempRoot = await fs.mkdtemp(
+      path.join(os.tmpdir(), "oods-s184-b2-default-"),
+    );
+    const previousRoot = process.env.MCP_SCHEMA_STORE_ROOT;
+    const previousDirectory = process.env.MCP_SCHEMA_STORE_DIR;
+    process.env.MCP_SCHEMA_STORE_ROOT = tempRoot;
+    delete process.env.MCP_SCHEMA_STORE_DIR;
+
+    try {
+      const result = await pipelineHandle({
+        object: "Product",
+        framework: "html",
+        save: "s184-b2-no-context",
+      });
+
+      expect(result).toHaveProperty("error");
+      expect(result.error).toEqual({
+        step: "codegen",
+        code: "OODS-V007",
+        message:
+          'Nested content under Tabs child "detail-tab-panel-3" cannot be preserved when the child is normalized into a scalar item record.',
+      });
+      expect(result.code).toBeUndefined();
+      expect(result.saved).toBeUndefined();
+      expect(result.validationReceipt.profile).toBe("build");
+      expect(result.pipeline.steps).toEqual([
+        "compose",
+        "validate",
+        "render",
+        "codegen",
+      ]);
+      expect(await fs.readdir(tempRoot)).toEqual([]);
+    } finally {
+      if (previousRoot === undefined) delete process.env.MCP_SCHEMA_STORE_ROOT;
+      else process.env.MCP_SCHEMA_STORE_ROOT = previousRoot;
+      if (previousDirectory === undefined)
+        delete process.env.MCP_SCHEMA_STORE_DIR;
+      else process.env.MCP_SCHEMA_STORE_DIR = previousDirectory;
+      await fs.rm(tempRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("binds all 13 retained repoints to a source selector and a non-empty reason", async () => {
+    const disposition = await readDisposition();
+    expect(disposition).toMatchObject({
+      reviewedSourceHead: "9a4202fe3ff8560a791cc92c114ef364739a1c45",
+      repointCommit: "3993c2b6dbe875ec8ea202c803b5e52bfda59be6",
+      repointParent: "ed1568407fa3e1894d1b40fc4cca05f51e46f89b",
+      status: "passed",
+      advertisedBehaviorMovement: {
+        intended: true,
+        replacementTest:
+          "packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts",
+      },
+      summary: {
+        reviewCallSites: 13,
+        restored: 0,
+        retainedWithReason: 13,
+      },
+    });
+    expect(
+      gitCommand(
+        ["rev-parse", `${disposition.repointCommit}^`],
+        "resolve the repoint commit parent",
+      ),
+    ).toBe(disposition.repointParent);
+    gitCommand(
+      [
+        "merge-base",
+        "--is-ancestor",
+        disposition.repointCommit,
+        disposition.reviewedSourceHead,
+      ],
+      "prove the repoint commit is an ancestor of the reviewed source head",
+    );
+    expect(disposition.countBasis).toContain(
+      "pipelineHandle invocation operands",
+    );
+    expect(disposition.advertisedBehaviorMovement.scope).toContain("OODS-V007");
+    expect(disposition.advertisedBehaviorMovement.scope).toContain("OODS-N015");
+    expect(disposition.advertisedBehaviorMovement.scope).toContain("OODS-V162");
+    expect(disposition.advertisedBehaviorMovement.reason).toContain(
+      "Decisions 1673 and 1678",
+    );
+
+    expect(disposition.callSites.map(({ id }) => id)).toEqual([
+      "pipeline-compact-default",
+      "pipeline-summary",
+      "pipeline-compact-opt-out",
+      "pipeline-object-fields",
+      "actions-synthetic-lifecycle",
+      "actions-empty-mappings",
+      "actions-absent-mappings",
+      "actions-stage1-aliases",
+      "actions-stage1-slot-actions",
+      "actions-stripe-vocabulary",
+      "contract-save-name-tags",
+      "contract-save-tags-roundtrip",
+      "tier1-html-save-load-health",
+    ]);
+    expect(new Set(disposition.callSites.map(({ id }) => id)).size).toBe(13);
+    expect(
+      disposition.callSites.every(({ reason }) => reason.trim().length >= 80),
+    ).toBe(true);
+    expect(
+      disposition.callSites.every(
+        ({ disposition: state }) => state === "retained-repoint",
+      ),
+    ).toBe(true);
+
+    const derivedFileCounts = Object.fromEntries(
+      Object.entries(
+        Object.groupBy(disposition.callSites, ({ file }) => file),
+      ).map(([file, rows]) => [file, rows?.length ?? 0]),
+    );
+    expect(derivedFileCounts).toEqual(disposition.fileCounts);
+    expect(disposition.fileCounts).toEqual({
+      "packages/mcp-server/test/tools/pipeline.compact.spec.ts": 4,
+      "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts": 6,
+      "packages/mcp-server/test/contracts/contract-alignment.spec.ts": 2,
+      "packages/mcp-server/test/e2e/tier1-acceptance.e2e.spec.ts": 1,
+    });
+
+    const sourceByFile = new Map<string, string>();
+    for (const callSite of disposition.callSites) {
+      let source = sourceByFile.get(callSite.file);
+      if (source === undefined) {
+        source = await fs.readFile(
+          path.join(repositoryRoot, callSite.file),
+          "utf8",
+        );
+        sourceByFile.set(callSite.file, source);
+      }
+      const body = testCaseBody(source, callSite.selector);
+      expect(body, callSite.id).toContain(`${callSite.invocation}({`);
+      expect(body, callSite.id).toContain(
+        `${callSite.changedField}: '${callSite.currentValue}'`,
+      );
+      if (callSite.historicalValue !== null) {
+        expect(body, callSite.id).not.toContain(
+          `${callSite.changedField}: '${callSite.historicalValue}'`,
+        );
+      }
+    }
+
+    const rederivedRepoints: Array<{
+      file: string;
+      pipelineInvocationOrdinal: number;
+      changedField: "intent" | "context";
+      historicalValue: string | null;
+      currentValue: string;
+    }> = [];
+    for (const file of Object.keys(disposition.fileCounts)) {
+      const before = pipelineOperands(
+        gitShow(disposition.repointParent, file),
+        file,
+      );
+      const after = pipelineOperands(
+        gitShow(disposition.repointCommit, file),
+        file,
+      );
+      expect(after.length, file).toBe(before.length);
+      for (const [index, current] of after.entries()) {
+        const historical = before[index];
+        expect(
+          historical,
+          `${file} pipelineHandle #${index + 1}`,
+        ).toBeDefined();
+        for (const changedField of ["intent", "context"] as const) {
+          if (historical?.[changedField] === current[changedField]) continue;
+          expect(
+            current[changedField],
+            `${file} ${changedField}`,
+          ).not.toBeNull();
+          rederivedRepoints.push({
+            file,
+            pipelineInvocationOrdinal: index + 1,
+            changedField,
+            historicalValue: historical?.[changedField] ?? null,
+            currentValue: current[changedField]!,
+          });
+        }
+      }
+    }
+    expect(rederivedRepoints).toEqual(
+      disposition.callSites.map(
+        ({
+          file,
+          pipelineInvocationOrdinal,
+          changedField,
+          historicalValue,
+          currentValue,
+        }) => ({
+          file,
+          pipelineInvocationOrdinal,
+          changedField,
+          historicalValue,
+          currentValue,
+        }),
+      ),
+    );
+
+    expect(disposition.excludedNeighboringChanges).toEqual([
+      expect.objectContaining({
+        invocation: "composeHandle",
+        selector:
+          "meta.unresolvedEntity is stamped on composed nodes matching an unresolved sourceComponent",
+      }),
+    ]);
+  });
+
+  it("binds the machine-readable typed outcomes to the live historical operands", async () => {
+    const disposition = await readDisposition();
+    expect(
+      disposition.typedOutcomes.map(({ id, code }) => ({ id, code })),
+    ).toEqual([
+      { id: "product-detail-html-build", code: "OODS-V007" },
+      { id: "product-detail-react-build", code: "OODS-N015" },
+      { id: "product-detail-vue-build", code: "OODS-N015" },
+      { id: "product-card-html-release", code: "OODS-V162" },
+      { id: "product-no-context-html-build-save", code: "OODS-V007" },
+    ]);
+
+    const tempRoot = await fs.mkdtemp(
+      path.join(os.tmpdir(), "oods-s184-b2-bindings-"),
+    );
+    const previousRoot = process.env.MCP_SCHEMA_STORE_ROOT;
+    const previousDirectory = process.env.MCP_SCHEMA_STORE_DIR;
+    process.env.MCP_SCHEMA_STORE_ROOT = tempRoot;
+    delete process.env.MCP_SCHEMA_STORE_DIR;
+
+    try {
+      for (const outcome of disposition.typedOutcomes) {
+        const result = await pipelineHandle(outcome.input);
+        expect(result.error, outcome.id).toEqual({
+          step: outcome.step,
+          code: outcome.code,
+          message: outcome.message,
+        });
+        expect(result.validationReceipt.profile, outcome.id).toBe(
+          outcome.profile,
+        );
+        expect(result.code, outcome.id).toBeUndefined();
+        expect(result.saved, outcome.id).toBeUndefined();
+      }
+      expect(await fs.readdir(tempRoot)).toEqual([]);
+    } finally {
+      if (previousRoot === undefined) delete process.env.MCP_SCHEMA_STORE_ROOT;
+      else process.env.MCP_SCHEMA_STORE_ROOT = previousRoot;
+      if (previousDirectory === undefined)
+        delete process.env.MCP_SCHEMA_STORE_DIR;
+      else process.env.MCP_SCHEMA_STORE_DIR = previousDirectory;
+      await fs.rm(tempRoot, { recursive: true, force: true });
+    }
+  });
+});

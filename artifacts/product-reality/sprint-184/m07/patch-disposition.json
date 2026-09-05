@@ -1,0 +1,505 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s184-m07",
+  "kind": "tracked-mutation-patch-disposition",
+  "status": "passed",
+  "auditHead": "cbcbce242f922c18ccfeefbe071bbb26d450dabf",
+  "population": {
+    "command": "git ls-tree -r --name-only cbcbce242f922c18ccfeefbe071bbb26d450dabf -- artifacts",
+    "filter": "path.endsWith('.patch')",
+    "tracked": 38,
+    "classified": 38,
+    "unclassified": 0,
+    "classCounts": {
+      "class-1": 5,
+      "class-2": 3,
+      "class-3": 4,
+      "ordinary": 26
+    }
+  },
+  "fieldSemantics": {
+    "patchCommittedAtBaseline": "True only when the exact auditHead patch bytes, not merely the same path, exist in the named baseline commit."
+  },
+  "verification": {
+    "retainedSpec": "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts",
+    "applicableAndByteIdenticallyRestored": 33,
+    "machineUnappliable": 5,
+    "failed": 0,
+    "skipped": 0
+  },
+  "classDefinitions": {
+    "class-1": "Historical bare-@@ archives that are not syntactically valid unified diffs.",
+    "class-2": "The three syntactically valid repository patches identified by the Sprint 183 review whose target context had drifted at that review head: B-11, B-14, and B-15.",
+    "class-3": "Syntactically valid patches rooted intentionally inside a generated consumer workspace, not at the repository root.",
+    "ordinary": "All other syntactically valid patches, replayed at an explicit committed or derived baseline."
+  },
+  "baselines": {
+    "s182-m01-review-head": {
+      "kind": "git-commit",
+      "commit": "38afc8a32f71a7dce4301dff46ac73de7575f088",
+      "sourceEvidence": [
+        "artifacts/product-reality/sprint-182/m03/gates/B-08/receipt.json#/reviewHead",
+        "artifacts/product-reality/sprint-182/m03/gates/B-09/receipt.json#/reviewHead",
+        "artifacts/product-reality/sprint-182/m03/gates/B-10/receipt.json#/reviewHead"
+      ],
+      "limitationCode": "UNCOMMITTED_MISSION_TREE_NOT_IN_COMMIT",
+      "limitation": "The owned receipts were captured from the M03 working tree while reviewHead still named the earlier M01 commit; fields.ts and tabs.ts are absent and index.ts is pre-M03 at this commit."
+    },
+    "s182-m01a-artifact-commit": {
+      "kind": "git-commit",
+      "commit": "3a21a2f06bd6feb80875fd763029cef6d41dc308",
+      "sourceEvidence": "git log --diff-filter=A -- artifacts/product-reality/sprint-182/m01a/mutation/mutation.patch"
+    },
+    "s182-m01b-artifact-commit": {
+      "kind": "git-commit",
+      "commit": "141be62ac02eb54dcd41284fb7de957a1abeeab1",
+      "sourceEvidence": "git log --diff-filter=A -- artifacts/product-reality/sprint-182/m01b/mutation/mutation.patch"
+    },
+    "s182-closeout-review-head": {
+      "kind": "git-commit",
+      "commit": "179a94f18a5fa557c5461543d851b08b05b81c4a",
+      "sourceEvidence": "artifacts/product-reality/sprint-182/gates/**/receipt.json#/reviewHead"
+    },
+    "s183-m05-repository": {
+      "kind": "git-commit",
+      "commit": "4b4c77f0ec06d632e11f910f6124859ac65c7106",
+      "sourceEvidence": "artifacts/product-reality/sprint-183/m06/mutation-replay/report.json#/baselineCommit"
+    },
+    "s183-m05-react-consumer": {
+      "kind": "git-commit",
+      "commit": "4b4c77f0ec06d632e11f910f6124859ac65c7106",
+      "workspaceRoot": "artifacts/product-reality/sprint-183/m05/consumers/react/source",
+      "sourceEvidence": "scripts/product-reality/s183-m06-evidence.mjs#/M05_MUTATION_CASES"
+    },
+    "s183-m05-vue-consumer": {
+      "kind": "git-commit",
+      "commit": "4b4c77f0ec06d632e11f910f6124859ac65c7106",
+      "workspaceRoot": "artifacts/product-reality/sprint-183/m05/consumers/vue/source",
+      "sourceEvidence": "scripts/product-reality/s183-m06-evidence.mjs#/M05_MUTATION_CASES"
+    },
+    "s184-m03-implementation": {
+      "kind": "git-commit",
+      "commit": "b4697e40fb67dfd59e638f7c847f103d9f06a8d2",
+      "sourceEvidence": "artifacts/product-reality/sprint-184/m03/mutations/mutation-manifest.json#/implementationCommit"
+    },
+    "s184-m06-implementation": {
+      "kind": "git-commit",
+      "commit": "b17b0df8f5a56e66ba15716cfa5754641b176a13",
+      "sourceEvidence": "artifacts/product-reality/sprint-184/m06/closeout-report.json#/measuredImplementationCommit"
+    },
+    "s184-m06-forward-result": {
+      "kind": "derived-patch-result",
+      "parentBaselineId": "s184-m06-implementation",
+      "patchPath": "artifacts/product-reality/sprint-184/m06/differential/emitter-forward.patch",
+      "sourceEvidence": "artifacts/product-reality/sprint-184/m06/differential/report.json#/mutation"
+    },
+    "audit-head": {
+      "kind": "git-commit",
+      "commit": "cbcbce242f922c18ccfeefbe071bbb26d450dabf",
+      "sourceEvidence": "s184-m07 frozen patch-population head"
+    }
+  },
+  "replacementClaim": {
+    "supersedesClaimId": "s183-m06-sc02",
+    "priorEvidence": {
+      "path": "artifacts/product-reality/sprint-183/m06/claim-ledger.json",
+      "selector": {
+        "claimId": "s183-m06-sc02"
+      }
+    },
+    "priorPopulation": 5,
+    "priorPaths": [
+      "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/domain-action-handle-edit-inert/mutation.patch",
+      "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/tabs-selection-behavior-removed/mutation.patch",
+      "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/domain-action-handle-edit-inert/mutation.patch",
+      "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/tabs-selection-behavior-removed/mutation.patch",
+      "artifacts/product-reality/sprint-183/m06/mutation-replay/s182-m01b-brand-b-primary-contrast/mutation.patch"
+    ],
+    "replacementPopulation": 38,
+    "coverage": "full-tracked-population",
+    "executedBy": "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts",
+    "status": "passed"
+  },
+  "patches": [
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-01/drop/mutation.patch",
+      "sha256": "sha256:359cc6343b37594414531fc4cba6d091350b3999292bb4e7ac7cdfee59832927",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-01/duplicate/mutation.patch",
+      "sha256": "sha256:ae63afbf5579fde0996a2dfdc2da3833ed8f1e6df3f19fa21a7ed29dfe89e3fb",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-02/mutation.patch",
+      "sha256": "sha256:0537efce23619496fe3b3435b548c44dbc1a65e713bd75792231375585a7ba96",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-03/emission/mutation.patch",
+      "sha256": "sha256:49ffaf21084dcd9b574ea060b0e9d5cd090283cc11f7b5726363ac16810fef52",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-03/foundation/mutation.patch",
+      "sha256": "sha256:5a3cac12e6642238492288d84a86e045422338094a2537144fa072f917cefa48",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-04/mutation.patch",
+      "sha256": "sha256:f7f2fdfa04e7c4fc1b43dbfcda090f1374e80b11b9f7569f42a74bcc4395394a",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-05/mutation.patch",
+      "sha256": "sha256:ecb86f70e54d554db8a51a24e78f4ee872bbb59cd79e13cd9506d3c1ff752f66",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-06/mutation.patch",
+      "sha256": "sha256:a0f53840ec8a6a6c56b9fd058481b2a3b59fb0651f2df6b6e3404b0bceada62e",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-07/mutation.patch",
+      "sha256": "sha256:dfdd36a2fe83fd6ec47cda98be924b2d178059c619148f43e76da5a02d034088",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-08/mutation.patch",
+      "sha256": "sha256:d2b14f23914bc3a6f3efa830e1f6a8e605f07fbf4243a6a3b24f18491f358d78",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-09/mutation.patch",
+      "sha256": "sha256:f26e7100b22b2d893e7a7d13ffa02c5d044082e87866950628a1b5db1e685f9b",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-10/mutation.patch",
+      "sha256": "sha256:f93463411f47e802e86b8d81b2a7fbcc0890269d8001f4fff0abf7aabc903494",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-11/mutation.patch",
+      "sha256": "sha256:f646172835452772525a9a5d27f6bec1da654bbc866fe2409a7b7186ef96a261",
+      "classId": "class-2",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": true,
+      "auditHeadCheck": {
+        "commit": "cbcbce242f922c18ccfeefbe071bbb26d450dabf",
+        "status": "does-not-apply",
+        "reasonCode": "TARGET_CONTEXT_DRIFT"
+      }
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-12/missing-root-export/mutation.patch",
+      "sha256": "sha256:c790ddc507384d53c1bca07e7ebb3bed29b0fac81876dfbcda5f9a955a148c23",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": true
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-12/missing-tarball/mutation.patch",
+      "sha256": "sha256:42b0ea4e15adece7f1040743ec88df7e392834fa2f062c948d185d84aa5aec32",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": true
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-13/missing-css-export/mutation.patch",
+      "sha256": "sha256:2bb263c861311b2d6208a2a72917318af1e3969375d7a13e6bac22aa3adab14e",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": true
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-13/missing-dependency/mutation.patch",
+      "sha256": "sha256:826a85cb76e34e4021d84b7c4f7b540f00f0bddf2e3fab2897f528e7fec85df5",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": true
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-14/mutation.patch",
+      "sha256": "sha256:a66e18c161098850c9fccb3b97ac4b3672818cf0952ad0aa92af7512fe6ca1c3",
+      "classId": "class-2",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": true,
+      "auditHeadCheck": {
+        "commit": "cbcbce242f922c18ccfeefbe071bbb26d450dabf",
+        "status": "does-not-apply",
+        "reasonCode": "TARGET_CONTEXT_DRIFT"
+      }
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/gates/B-15/mutation.patch",
+      "sha256": "sha256:588f7f131c441dec295807f7116ca6fe84de378bf646059c064ceaf2a37712f7",
+      "classId": "class-2",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s182-closeout-review-head",
+      "patchCommittedAtBaseline": true,
+      "auditHeadCheck": {
+        "commit": "cbcbce242f922c18ccfeefbe071bbb26d450dabf",
+        "status": "does-not-apply",
+        "reasonCode": "TARGET_CONTEXT_DRIFT"
+      }
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/m01a/mutation/mutation.patch",
+      "sha256": "sha256:19cf3e47769110af336eb4e5b47cfa37223c92aa1379141c400fcc81f98639c3",
+      "classId": "class-1",
+      "disposition": "does-not-apply",
+      "baselineId": "s182-m01a-artifact-commit",
+      "patchCommittedAtBaseline": true,
+      "unappliableReason": {
+        "code": "MISSING_UNIFIED_HUNK_RANGE",
+        "detail": "The archived patch has a bare @@ header and is rejected by git apply as having no valid patch."
+      },
+      "replacement": null
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/m01b/mutation/mutation.patch",
+      "sha256": "sha256:a8ab5fd497ca1efcf7920f72c2afbe063a831133134baaa8288c6c9b2199ccaf",
+      "classId": "class-1",
+      "disposition": "does-not-apply",
+      "baselineId": "s182-m01b-artifact-commit",
+      "patchCommittedAtBaseline": true,
+      "unappliableReason": {
+        "code": "MISSING_UNIFIED_HUNK_RANGE_AND_SELECTOR_SCOPE",
+        "detail": "The bare @@ header is invalid and its unscoped Button selector does not match the shipped [data-intent='primary'] correction."
+      },
+      "contentMismatchBaselineIds": [
+        "s182-closeout-review-head",
+        "s183-m05-repository"
+      ],
+      "historicalFreeze": {
+        "commit": "ca8d84bbce165b656fd5cd83cc097c28fa774f19",
+        "sha256": "sha256:a8ab5fd497ca1efcf7920f72c2afbe063a831133134baaa8288c6c9b2199ccaf"
+      },
+      "replacement": {
+        "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s182-m01b-brand-b-primary-contrast/mutation.patch",
+        "authoredInSprint": "183",
+        "baselineId": "s183-m05-repository",
+        "committedAtBaseline": false,
+        "report": "artifacts/product-reality/sprint-183/m06/mutation-replay/s182-m01b-brand-b-primary-contrast/report.json"
+      }
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/m03/gates/B-08/mutation.patch",
+      "sha256": "sha256:1cb5223a68d3c94731596dc1d0fab7062e5dbfdcec93d552d7c4dfbdcae49a65",
+      "classId": "class-1",
+      "disposition": "does-not-apply",
+      "baselineId": "s182-m01-review-head",
+      "patchCommittedAtBaseline": false,
+      "unappliableReason": {
+        "code": "MISSING_UNIFIED_HUNK_RANGE_UNCOMMITTED_TREE",
+        "detail": "The owned patch has a bare @@ header and its receipt binds an uncommitted M03 working tree that cannot be reconstructed from reviewHead."
+      },
+      "replacement": {
+        "path": "artifacts/product-reality/sprint-182/gates/B-08/mutation.patch",
+        "kind": "canonical-well-formed-twin",
+        "verifiedBaselineIds": [
+          "s182-closeout-review-head",
+          "s183-m05-repository"
+        ]
+      }
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/m03/gates/B-09/mutation.patch",
+      "sha256": "sha256:0fcb6adf57d60c81a260f0a614e0af4c0b43aa38c1d5fba28456f2456c2b4e35",
+      "classId": "class-1",
+      "disposition": "does-not-apply",
+      "baselineId": "s182-m01-review-head",
+      "patchCommittedAtBaseline": false,
+      "unappliableReason": {
+        "code": "MISSING_UNIFIED_HUNK_RANGE_UNCOMMITTED_TREE",
+        "detail": "The owned patch has a bare @@ header and fields.ts is absent from its receipt's committed reviewHead."
+      },
+      "replacement": {
+        "path": "artifacts/product-reality/sprint-182/gates/B-09/mutation.patch",
+        "kind": "canonical-well-formed-twin",
+        "verifiedBaselineIds": [
+          "s182-closeout-review-head",
+          "s183-m05-repository"
+        ]
+      }
+    },
+    {
+      "path": "artifacts/product-reality/sprint-182/m03/gates/B-10/mutation.patch",
+      "sha256": "sha256:418f1442bae5356838d9d2eaacfe0ed625c3aee1bb418e3441853e3daaff5812",
+      "classId": "class-1",
+      "disposition": "does-not-apply",
+      "baselineId": "s182-m01-review-head",
+      "patchCommittedAtBaseline": false,
+      "unappliableReason": {
+        "code": "MISSING_UNIFIED_HUNK_RANGE_UNCOMMITTED_TREE",
+        "detail": "The owned patch has a bare @@ header and tabs.ts is absent from its receipt's committed reviewHead."
+      },
+      "replacement": {
+        "path": "artifacts/product-reality/sprint-182/gates/B-10/mutation.patch",
+        "kind": "canonical-well-formed-twin",
+        "verifiedBaselineIds": [
+          "s182-closeout-review-head",
+          "s183-m05-repository"
+        ]
+      }
+    },
+    {
+      "path": "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/domain-action-handle-edit-inert/mutation.patch",
+      "sha256": "sha256:53e88de04bba810dd95a1a75c7591ad646f536651342a591aeca99951a3c69cc",
+      "classId": "class-3",
+      "disposition": "applies-in-consumer-workspace",
+      "baselineId": "s183-m05-react-consumer",
+      "patchCommittedAtBaseline": true
+    },
+    {
+      "path": "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/tabs-selection-behavior-removed/mutation.patch",
+      "sha256": "sha256:f62ad6cace198003b2cea084084e6327d1bb7882447a842c5877ea97e5a29a9c",
+      "classId": "class-3",
+      "disposition": "applies-in-consumer-workspace",
+      "baselineId": "s183-m05-react-consumer",
+      "patchCommittedAtBaseline": true
+    },
+    {
+      "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/domain-action-handle-edit-inert/mutation.patch",
+      "sha256": "sha256:ff3edb56d8bacf60a1b8cede6135927265021a8a969f39dca3aafc8b523444ec",
+      "classId": "class-3",
+      "disposition": "applies-in-consumer-workspace",
+      "baselineId": "s183-m05-vue-consumer",
+      "patchCommittedAtBaseline": true
+    },
+    {
+      "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/tabs-selection-behavior-removed/mutation.patch",
+      "sha256": "sha256:2dbd14c85c0f118ad646b2d88d5c3b2aba7c3a8c9c08d8f4b749fdc488b30d51",
+      "classId": "class-3",
+      "disposition": "applies-in-consumer-workspace",
+      "baselineId": "s183-m05-vue-consumer",
+      "patchCommittedAtBaseline": true
+    },
+    {
+      "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s182-m01b-brand-b-primary-contrast/mutation.patch",
+      "sha256": "sha256:e6368bbd562ce69a60041956333451342f2bbd0b5dc9e487d41938b4a392bee7",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s183-m05-repository",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m03/mutations/M01-select-placeholder-contract.patch",
+      "sha256": "sha256:19c756125554f3fbbe2fee06ea8caa25175eb0991f2bf8f8d8f95cd2e4b44279",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m03-implementation",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m03/mutations/M02-text-label-contract.patch",
+      "sha256": "sha256:b64c98143d30489f43bb78882f7772740d126183b7dd26f6439b8c1ee557f9c4",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m03-implementation",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m03/mutations/M03-stack-pattern-component-contract.patch",
+      "sha256": "sha256:e3977e76c0c463724705a7d2f4df57ab5d681edb78ff07780b5308f88a68dc80",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m03-implementation",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m03/mutations/M04-stack-fields-contract.patch",
+      "sha256": "sha256:f44f4ff682e8b6ee58db8bc7caa1d6f5668e2fa7c30ec1b36dbd1c47582e3f08",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m03-implementation",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m03/mutations/M05-boolean-select-field-kind.patch",
+      "sha256": "sha256:75ed7a73f5536f4e7bd837ab78db66f04ecc80b02064cc01e2dcc4c511d3dad0",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m03-implementation",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m03/mutations/M06-array-text-field-kind.patch",
+      "sha256": "sha256:3eb2ac4fd0541b0cc962f35d17471efb08c301b25eb1de6e435a378bedb6d6d2",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m03-implementation",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m03/mutations/M07-bypass-composition-directives.patch",
+      "sha256": "sha256:1e10d20f311a97369c36441c44d3053304d1e44edd44a42b74f853b472e62bd0",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m03-implementation",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m06/differential/emitter-forward.patch",
+      "sha256": "sha256:a1eaf0ddc479516ab75fab3a0a3d3c48b467a871af853fcb83403624746a18b4",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m06-implementation",
+      "patchCommittedAtBaseline": false
+    },
+    {
+      "path": "artifacts/product-reality/sprint-184/m06/differential/emitter-reverse.patch",
+      "sha256": "sha256:ab114bfcd6886599a5756f0e7ec0fc7abd92507efabcd83a9c83fe18f7563002",
+      "classId": "ordinary",
+      "disposition": "applies-at-declared-baseline",
+      "baselineId": "s184-m06-forward-result",
+      "patchCommittedAtBaseline": false
+    }
+  ],
+  "unrunChecks": []
+}
