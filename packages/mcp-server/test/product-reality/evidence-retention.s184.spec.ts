@@ -149,4 +149,15 @@ describe("Sprint 184 m01 — evidence survives and frozen surfaces stay classifi
       "Usage: node test/packed-import.mjs --artifact-root <directory>",
     );
   });
+
+  it("builds the publishable root package before running the root-core suite", () => {
+    const captureScript = fs.readFileSync(
+      path.join(
+        repositoryRoot,
+        "scripts/product-reality/capture-s184-m01-baseline.mjs",
+      ),
+      "utf8",
+    );
+    expect(captureScript).toContain('args: ["run", "pkg:build"]');
+  });
 });

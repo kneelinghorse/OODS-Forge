@@ -45,6 +45,11 @@ const setupCommands = [
     command: "pnpm",
     args: ["run", "build:packages"],
   },
+  {
+    id: "build-publishable-package",
+    command: "pnpm",
+    args: ["run", "pkg:build"],
+  },
 ];
 
 const suites = [
