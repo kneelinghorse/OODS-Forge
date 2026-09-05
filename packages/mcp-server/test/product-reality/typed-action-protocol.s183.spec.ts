@@ -66,6 +66,12 @@ function actionObjectSource(
   ].filter((line): line is string => line !== null).join('\n');
 }
 
+// vue-tsc remains synchronous so its diagnostics stay exact; yielding between
+// invocations lets Vitest flush task-result RPC traffic.
+async function yieldToVitestRpc(): Promise<void> {
+  await new Promise<void>((resolve) => setImmediate(resolve));
+}
+
 function reactConsumerErrors(
   code: string,
   typescript: boolean,
@@ -108,12 +114,13 @@ export const Consumer = () => <GeneratedUI actions={actions} />;
   }
 }
 
-function vueConsumerResult(
+async function vueConsumerResult(
   code: string,
   typescript: boolean,
   supplyActions: boolean,
   omittedAction?: RequiredActionName,
-): { status: number | null; output: string } {
+): Promise<{ status: number | null; output: string }> {
+  await yieldToVitestRpc();
   const root = mkdtempSync(path.join(mcpServerRoot, '.s183-vue-actions-'));
   try {
     mkdirSync(path.join(root, 'node_modules'));
@@ -439,7 +446,7 @@ describe('Sprint 183 M02 typed action protocol', () => {
     expect(reactConsumerErrors(react.code, true, false)).toEqual([]);
     expect(vue.status, JSON.stringify(vue.errors ?? [])).toBe('ok');
     expect(vue.code).toContain("ref<string>(String(age.value ?? ''))");
-    expect(vueConsumerResult(vue.code, true, false)).toEqual({ status: 0, output: '' });
+    expect(await vueConsumerResult(vue.code, true, false)).toEqual({ status: 0, output: '' });
   }, 120_000);
 
   it.each(typescriptOptions)('React typescript=$typescript requires every injected action', async (typescript) => {
@@ -475,8 +482,8 @@ describe('Sprint 183 M02 typed action protocol', () => {
       schema: FOUNDATION_V1_SHOWCASE_SCHEMA,
       options: { styling: 'tokens', typescript },
     });
-    const missing = vueConsumerResult(result.code, typescript, false);
-    const complete = vueConsumerResult(result.code, typescript, true);
+    const missing = await vueConsumerResult(result.code, typescript, false);
+    const complete = await vueConsumerResult(result.code, typescript, true);
 
     expect(missing.status).not.toBe(0);
     expect(missing.output).toContain('actions');
@@ -491,11 +498,11 @@ describe('Sprint 183 M02 typed action protocol', () => {
       options: { styling: 'tokens', typescript: true },
     });
 
-    const complete = vueConsumerResult(result.code, true, true);
+    const complete = await vueConsumerResult(result.code, true, true);
     expect(complete.output).toBe('');
     expect(complete.status).toBe(0);
     for (const omittedAction of requiredActionNames) {
-      const missing = vueConsumerResult(result.code, true, true, omittedAction);
+      const missing = await vueConsumerResult(result.code, true, true, omittedAction);
       expect(missing.status, omittedAction).not.toBe(0);
       expect(missing.output, omittedAction).toContain(omittedAction);
     }
