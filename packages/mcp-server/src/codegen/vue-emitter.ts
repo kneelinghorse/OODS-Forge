@@ -1,4 +1,5 @@
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
+import { PORTED_COMPONENT_IDS } from '@oods/component-contracts';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
 import type {
   BindingAnalysis,
@@ -15,6 +16,7 @@ import {
   mapFieldType,
   snakeToCamel,
   resolveFrameworkChildContent,
+  resolveFrameworkRecipeProps,
   ownFieldSchemaEntry,
   resolveFieldProps,
 } from './binding-utils.js';
@@ -322,6 +324,7 @@ function emitTemplateNode(
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const controlledProp = localBinding ? vueControlledProp(localBinding) : null;
+  const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
   if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
     propsObject = { ...(propsObject ?? {}), dismissLabel: 'Dismiss notification' };
   }
@@ -362,6 +365,7 @@ function emitTemplateNode(
     delete propsObject.children;
     // `field` drives generated bindings but is not a public component prop.
     delete propsObject.field;
+    for (const sourceProp of recipeProps.consumedProps) delete propsObject[sourceProp];
     if (controlledProp === 'modelValue') {
       delete propsObject.modelValue;
       delete propsObject.value;
@@ -387,6 +391,10 @@ function emitTemplateNode(
     const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
     if (propsStr) attrParts.push(propsStr);
   }
+
+  attrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
+    `:${targetProp}="${expression}"`
+  )));
 
   // v-model for form input components when bound to a field
   if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
@@ -507,6 +515,9 @@ function emitTemplateNode(
       const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
       if (propsStr) innerAttrParts.push(propsStr);
     }
+    innerAttrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
+      `:${targetProp}="${expression}"`
+    )));
     if (sectionUsesFieldBinding) {
       innerAttrParts.push(coercedSelectField
         ? `:modelValue="${coercedSelectField}"`
@@ -608,6 +619,9 @@ function emitTemplateNode(
           const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
           if (propsStr) rebuiltAttrParts.push(propsStr);
         }
+        rebuiltAttrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
+          `:${targetProp}="${expression}"`
+        )));
         if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
           rebuiltAttrParts.push(coercedSelectField
             ? `:modelValue="${coercedSelectField}"`
@@ -931,6 +945,20 @@ function detectComputedProperties(
 // Script setup block
 // ---------------------------------------------------------------------------
 
+const PORTED_COMPONENT_ID_SET: ReadonlySet<string> = new Set(PORTED_COMPONENT_IDS);
+
+function splitComponentImports(components: Set<string>): {
+  nucleus: string[];
+  ported: string[];
+} {
+  const nucleus: string[] = [];
+  const ported: string[] = [];
+  for (const component of Array.from(components).sort()) {
+    (PORTED_COMPONENT_ID_SET.has(component) ? ported : nucleus).push(component);
+  }
+  return { nucleus, ported };
+}
+
 function buildScriptSetup(
   ctx: PreEmitContext,
 ): string {
@@ -942,7 +970,7 @@ function buildScriptSetup(
     objectSchema,
     tree: screens,
   } = ctx;
-  const sorted = Array.from(components).sort();
+  const { nucleus, ported } = splitComponentImports(components);
   const lines: string[] = [];
   const hasObjectSchema = objectSchema && Object.keys(objectSchema).length > 0;
   const hasDomainActions = bindingAnalysis.handlers.some((handler) => handler.kind === 'domain');
@@ -963,8 +991,14 @@ function buildScriptSetup(
     lines.push(`import { ${vueImports.sort().join(', ')} } from 'vue';`);
   }
 
-  lines.push(`import { ${sorted.join(', ')} } from '@oods/components-vue';`);
-  lines.push(`import '@oods/component-styles/css';`);
+  if (nucleus.length > 0) {
+    lines.push(`import { ${nucleus.join(', ')} } from '@oods/components-vue';`);
+  }
+  if (ported.length > 0) {
+    lines.push(`import { ${ported.join(', ')} } from '@oods/components-vue/ported';`);
+  }
+  if (nucleus.length > 0) lines.push(`import '@oods/component-styles/css';`);
+  if (ported.length > 0) lines.push(`import '@oods/component-styles/css-ported';`);
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
   }
@@ -1189,10 +1223,13 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   blocks.push('');
 
   const code = blocks.join('\n');
+  const { nucleus, ported } = splitComponentImports(ctx.components);
   const imports = [
     ...(shouldImportVueRuntime(ctx.objectSchema, ctx.tree, ctx.bindingAnalysis) ? ['vue'] : []),
-    '@oods/components-vue',
-    '@oods/component-styles/css',
+    ...(nucleus.length > 0 ? ['@oods/components-vue', '@oods/component-styles/css'] : []),
+    ...(ported.length > 0
+      ? ['@oods/components-vue/ported', '@oods/component-styles/css-ported']
+      : []),
     ...(tailwindVariants.size > 0 ? ['class-variance-authority'] : []),
   ];
 

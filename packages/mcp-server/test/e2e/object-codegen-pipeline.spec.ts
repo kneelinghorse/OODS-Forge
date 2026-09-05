@@ -1,9 +1,9 @@
 /**
  * Object-aware compose → validate → render → target-readiness preflight.
  *
- * HTML remains usable for the complete object schemas. React and Vue must fail
- * loudly until every requested target component is emission-eligible; a partial
- * generated payload would overstate the package surface.
+ * HTML remains usable for the complete object schemas. React and Vue now build
+ * the fully ported Subscription list, while compositions that still contain an
+ * unavailable component fail loudly instead of returning a partial payload.
  */
 import { describe, expect, it } from 'vitest';
 import type { UiSchema } from '../../src/schemas/generated.js';
@@ -17,28 +17,14 @@ type Framework = 'react' | 'vue';
 type AffectedNode = readonly [nodeId: string, component: string];
 
 const SUBSCRIPTION_DETAIL_UNREADY: readonly AffectedNode[] = [
-  ['ve-header-24', 'StatusTimeline'],
-  ['ve-header-25', 'CancellationSummary'],
   ['ve-header-26', 'ArchiveSummary'],
-  ['slot-tab-3-15', 'StatusBadge'],
-  ['slot-metadata-12', 'AuditTimeline'],
-];
-
-const SUBSCRIPTION_LIST_UNREADY: readonly AffectedNode[] = [
-  ['slot-search-1', 'SearchInput'],
-  ['ve-toolbar-actions-12', 'PriceBadge'],
-  ['ve-items-10', 'StatusBadge'],
-  ['ve-items-11', 'RelativeTimestamp'],
-  ['slot-pagination-8', 'PaginationBar'],
 ];
 
 const USER_DETAIL_UNREADY: readonly AffectedNode[] = [
-  ['ve-header-28', 'StatusTimeline'],
   ['ve-header-29', 'TagManager'],
   ['slot-tab-1-6', 'MembershipPanel'],
   ['slot-tab-2-8', 'AddressCollectionPanel'],
   ['slot-tab-3-15', 'PreferencePanel'],
-  ['slot-metadata-12', 'AuditTimeline'],
 ];
 
 const DASHBOARD_UNREADY: readonly AffectedNode[] = [
@@ -112,10 +98,46 @@ async function expectTargetUnavailable(
   });
 }
 
+async function expectTargetGenerated(
+  schemaRef: string,
+  schema: UiSchema,
+  framework: Framework,
+): Promise<void> {
+  const result = await codegenHandle({
+    schemaRef,
+    framework,
+    options: { typescript: true, styling: 'tokens' },
+  });
+
+  expect(result).toMatchObject({
+    status: 'ok',
+    framework,
+    warnings: [],
+    meta: {
+      nodeCount: countNodes(schema),
+      componentCount: countComponents(schema),
+    },
+  });
+  expect(result.errors).toBeUndefined();
+  expect(result.code.length).toBeGreaterThan(0);
+  expect(result.code).toContain(`from '@oods/components-${framework}/ported'`);
+  expect(result.code).toContain("import '@oods/component-styles/css-ported';");
+  expect(result.imports).toEqual(expect.arrayContaining([
+    `@oods/components-${framework}/ported`,
+    '@oods/component-styles/css-ported',
+  ]));
+  expect(result.artifact?.files).toHaveLength(1);
+  expect(result.artifact?.files[0]?.contents.length).toBeGreaterThan(0);
+  expect(result.validationReceipt.checks).toEqual(expect.arrayContaining([
+    'target-readiness',
+    'dependency-closure',
+  ]));
+}
+
 async function composeAndCheck(
   object: 'Subscription' | 'User',
   context: 'detail' | 'list',
-  affectedNodes: readonly AffectedNode[],
+  affectedNodes: readonly AffectedNode[] = [],
 ): Promise<void> {
   const compose = await composeHandle({ object, context });
   expect(compose.status).toBe('ok');
@@ -145,17 +167,22 @@ async function composeAndCheck(
   expect(render.html).toContain('data-oods-component=');
   expect(render.html.match(/data-oods-component=/g)?.length ?? 0).toBeGreaterThan(1);
 
-  await expectTargetUnavailable(schemaRef, compose.schema, 'react', affectedNodes);
-  await expectTargetUnavailable(schemaRef, compose.schema, 'vue', affectedNodes);
+  for (const framework of ['react', 'vue'] as const) {
+    if (affectedNodes.length > 0) {
+      await expectTargetUnavailable(schemaRef, compose.schema, framework, affectedNodes);
+    } else {
+      await expectTargetGenerated(schemaRef, compose.schema, framework);
+    }
+  }
 }
 
 describe('E2E object codegen target readiness', () => {
-  it('keeps Subscription detail composition/rendering and returns exact target unavailability', async () => {
+  it('keeps Subscription detail blocked only by the remaining unavailable component', async () => {
     await composeAndCheck('Subscription', 'detail', SUBSCRIPTION_DETAIL_UNREADY);
   });
 
-  it('keeps Subscription list composition/rendering and returns exact target unavailability', async () => {
-    await composeAndCheck('Subscription', 'list', SUBSCRIPTION_LIST_UNREADY);
+  it('builds the fully ported Subscription list for both framework targets', async () => {
+    await composeAndCheck('Subscription', 'list');
   });
 
   it('keeps User detail composition/rendering and returns exact target unavailability', async () => {

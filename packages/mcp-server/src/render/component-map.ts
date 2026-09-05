@@ -593,7 +593,7 @@ function renderPriceBadge(node: UiElement, childrenHtml = ''): string {
     defaultLabel: derivedLabel,
     labelKeys: ['label', 'text', 'value'],
     statusKeys: ['status', 'state'],
-    variantKeys: ['variant', 'tone', 'currency'],
+    variantKeys: ['variant', 'tone'],
     defaultVariant: 'price',
   });
 }
@@ -1165,6 +1165,7 @@ function renderRelativeTimestamp(node: UiElement): string {
 type SummaryField = {
   term: string;
   keys: string[];
+  format?: (value: unknown) => string | undefined;
 };
 
 type SummaryOptions = {
@@ -1188,7 +1189,12 @@ function renderSummarySection(node: UiElement, childrenHtml: string, options: Su
 
   const entries = options.fields
     .map((field) => {
-      const value = firstSerialized(props, field.keys);
+      const rawValue = field.keys
+        .map((key) => props[key])
+        .find((value) => value !== undefined && value !== null);
+      const value = field.format
+        ? field.format(rawValue)
+        : firstSerialized(props, field.keys);
       if (!value) return '';
       return `<div data-summary-item="true"><dt>${escapeHtml(field.term)}</dt><dd>${escapeHtml(value)}</dd></div>`;
     })
@@ -1244,7 +1250,13 @@ function renderCancellationSummary(node: UiElement, childrenHtml = ''): string {
     defaultTitle: 'Cancellation Summary',
     summaryType: 'cancellation',
     fields: [
-      { term: 'Cancel at Period End', keys: ['cancelAtPeriodEnd', 'cancelAtPeriodEndField'] },
+      {
+        term: 'Cancel at Period End',
+        keys: ['cancelAtPeriodEnd', 'cancelAtPeriodEndField'],
+        format: (value) => typeof value === 'boolean'
+          ? (value ? 'Yes' : 'No')
+          : (value === undefined || value === null ? undefined : serializePropValue(value)),
+      },
       { term: 'Requested At', keys: ['requestedAt', 'requestedAtField'] },
       { term: 'Reason', keys: ['reason', 'cancellationReason', 'reasonField'] },
     ],

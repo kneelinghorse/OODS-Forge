@@ -613,7 +613,11 @@ export function resolveFieldProps(
   const props: FieldPropEnrichment = {};
 
   // Label: humanize field name for label-prop and status-prop components
-  if (!existing.label && (strategy === 'label-prop' || strategy === 'status-prop')) {
+  if (
+    !existing.label
+    && (strategy === 'label-prop' || strategy === 'status-prop')
+    && node.component !== 'StatusTimeline'
+  ) {
     props.label = humanizeFieldName(fieldProp);
   }
 
@@ -691,7 +695,10 @@ export function resolveChildContent(
       return { strategy, fieldName, propName: 'value', isChildren: false };
     case 'label-prop':
       // Don't override an explicitly set label prop
-      if (existing.label !== undefined) return null;
+      // PriceBadge recipes use label as accessible authoring guidance while
+      // `field` remains the value that must be rendered. The generated runtime
+      // binding therefore replaces that static authoring label.
+      if (existing.label !== undefined && node.component !== 'PriceBadge') return null;
       return { strategy, fieldName, propName: 'label', isChildren: false };
     case 'status-prop':
       // Don't override an explicitly set status prop
@@ -711,6 +718,37 @@ export function resolveFrameworkChildContent(
   node: UiElement,
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): FieldContentResolution | null {
+  const sourceField = node.props?.field;
+  if (
+    node.component === 'RelativeTimestamp'
+    && typeof sourceField === 'string'
+    && ownFieldSchemaEntry(objectSchema, sourceField)
+  ) {
+    const fallbackField = node.props?.fallbackField;
+    const fallback = typeof fallbackField === 'string'
+      && ownFieldSchemaEntry(objectSchema, fallbackField)
+      ? ` ?? ${snakeToCamel(fallbackField)}`
+      : '';
+    return {
+      strategy: 'value-prop',
+      fieldName: `${snakeToCamel(sourceField)}${fallback}`,
+      propName: 'datetime',
+      isChildren: false,
+    };
+  }
+  if (
+    node.component === 'CancellationSummary'
+    && typeof sourceField === 'string'
+    && ownFieldSchemaEntry(objectSchema, sourceField)
+  ) {
+    return {
+      strategy: 'value-prop',
+      fieldName: snakeToCamel(sourceField),
+      propName: 'cancelAtPeriodEnd',
+      isChildren: false,
+    };
+  }
+
   const resolution = resolveChildContent(node, objectSchema);
   if (!resolution) {
     const field = node.props?.field;
@@ -748,4 +786,130 @@ export function resolveFrameworkChildContent(
   const existing = (node.props as Record<string, unknown>) ?? {};
   if (existing.content !== undefined) return null;
   return { ...resolution, propName: 'content' };
+}
+
+export type FrameworkRecipePropBinding = {
+  /** Authoring-only directive removed from generated component props. */
+  sourceProp: string;
+  /** Runtime component prop receiving the object field expression. */
+  targetProp: string;
+  /** Camel-cased object field expression used by both JSX and Vue templates. */
+  expression: string;
+};
+
+export type FrameworkRecipePropResolution = {
+  bindings: FrameworkRecipePropBinding[];
+  consumedProps: string[];
+};
+
+const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  AuditTimeline: {
+    auditLogField: 'auditLog',
+  },
+  CancellationSummary: {
+    cancelAtPeriodEndField: 'cancelAtPeriodEnd',
+    requestedAtField: 'requestedAt',
+    reasonField: 'reason',
+    codeField: 'code',
+  },
+  PaginationBar: {
+    pageField: 'page',
+    pageSizeField: 'pageSize',
+    totalItemsField: 'totalItems',
+    totalPagesField: 'totalPages',
+  },
+  PriceBadge: {
+    amountField: 'amount',
+    currencyField: 'currency',
+    intervalField: 'data-interval',
+  },
+  StatusBadge: {
+    statusField: 'status',
+    domainField: 'domain',
+  },
+  StatusTimeline: {
+    historyField: 'history',
+  },
+};
+
+const RECIPE_PARAMETER_PROPS = new Set([
+  'clearableParameter',
+  'debounceParameter',
+  'eventOptionsParameter',
+  'minorUnitsParameter',
+  'minQueryLengthParameter',
+  'pageSizeOptionsParameter',
+  'placeholderParameter',
+  'showGotoPageParameter',
+  'showItemRangeParameter',
+  'showPageSizeSelectorParameter',
+  'statesParameter',
+  'timezoneParameter',
+]);
+
+/**
+ * Convert object recipe metadata (`amountField`, `historyField`, etc.) into
+ * executable runtime prop bindings. Directive names never leak into generated
+ * framework components: they describe how to bind data, not public runtime
+ * values themselves.
+ */
+export function resolveFrameworkRecipeProps(
+  node: UiElement,
+  objectSchema?: Record<string, FieldSchemaEntry>,
+): FrameworkRecipePropResolution {
+  const props = (node.props ?? {}) as Record<string, unknown>;
+  const mappings = RECIPE_FIELD_TARGETS[node.component] ?? {};
+  const bindings: FrameworkRecipePropBinding[] = [];
+  const consumedProps = new Set<string>();
+  const boundTargets = new Set<string>();
+
+  for (const [sourceProp, defaultTarget] of Object.entries(mappings)) {
+    if (!Object.hasOwn(props, sourceProp)) continue;
+    consumedProps.add(sourceProp);
+    const sourceField = props[sourceProp];
+    if (typeof sourceField !== 'string' || !ownFieldSchemaEntry(objectSchema, sourceField)) continue;
+
+    const targetProp = node.component === 'PriceBadge'
+      && sourceProp === 'amountField'
+      && typeof props.minorUnitsParameter === 'string'
+      ? 'amountCents'
+      : defaultTarget;
+    if (props[targetProp] !== undefined || boundTargets.has(targetProp)) continue;
+    bindings.push({
+      sourceProp,
+      targetProp,
+      expression: snakeToCamel(sourceField),
+    });
+    boundTargets.add(targetProp);
+  }
+
+  for (const parameterProp of RECIPE_PARAMETER_PROPS) {
+    if (Object.hasOwn(props, parameterProp)) consumedProps.add(parameterProp);
+  }
+
+  // The historical recipe calls the source `states`, while the materialized
+  // object field is the semantically narrower list of valid next transitions.
+  if (
+    node.component === 'StatusTimeline'
+    && Object.hasOwn(props, 'statesParameter')
+    && props.allowedTransitions === undefined
+    && ownFieldSchemaEntry(objectSchema, 'allowed_transitions')
+  ) {
+    bindings.push({
+      sourceProp: 'statesParameter',
+      targetProp: 'allowedTransitions',
+      expression: 'allowedTransitions',
+    });
+  }
+
+  // RelativeTimestamp's fallback participates in its primary `datetime`
+  // expression and must not survive as an unsupported string-valued prop.
+  if (node.component === 'RelativeTimestamp' && Object.hasOwn(props, 'fallbackField')) {
+    consumedProps.add('fallbackField');
+  }
+
+  return {
+    bindings,
+    consumedProps: [...consumedProps].sort(compareCodePoint),
+  };
 }

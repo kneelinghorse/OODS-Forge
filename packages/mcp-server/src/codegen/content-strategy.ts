@@ -93,7 +93,7 @@ const STRATEGY_MAP: Record<string, ContentStrategy> = {
   StateTransitionEvent: 'none',
   StatusBadge: 'status-prop',
   StatusSelector: 'value-prop',
-  StatusTimeline: 'none',
+  StatusTimeline: 'status-prop',
 
   // --- Structural ---
   OwnerBadge: 'label-prop',

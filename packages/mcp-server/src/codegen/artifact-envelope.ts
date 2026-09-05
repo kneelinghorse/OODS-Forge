@@ -37,13 +37,17 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
   html: new Set(),
   react: new Set([
     '@oods/component-styles/css',
+    '@oods/component-styles/css-ported',
     '@oods/components-react',
+    '@oods/components-react/ported',
     'class-variance-authority',
     'react',
   ]),
   vue: new Set([
     '@oods/component-styles/css',
+    '@oods/component-styles/css-ported',
     '@oods/components-vue',
+    '@oods/components-vue/ported',
     'class-variance-authority',
     'vue',
   ]),

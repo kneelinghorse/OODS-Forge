@@ -349,7 +349,7 @@ describe('component map coverage', () => {
     {
       component: 'PriceBadge',
       props: { amountCents: 2599, currency: 'usd' },
-      expectedVariant: 'usd',
+      expectedVariant: 'price',
     },
   ])(
     'renders $component as a span badge and maps status/variant/color props to data attributes',
@@ -745,6 +745,17 @@ describe('component map coverage', () => {
     expect(html).toContain('data-oods-component="RelativeTimestamp"');
     expect(html).toContain('datetime="2026-02-26T03:00:00Z"');
     expect(html).toContain('>2 minutes ago</time>');
+  });
+
+  it('renders cancellation booleans as named values rather than a literal boolean', () => {
+    const html = renderMappedComponent(makeNode('CancellationSummary', {
+      label: 'Cancellation schedule',
+      cancelAtPeriodEnd: true,
+    }));
+
+    expect(html).toContain('Cancellation schedule');
+    expect(html).toContain('<dt>Cancel at Period End</dt><dd>Yes</dd>');
+    expect(html).not.toContain('<dd>true</dd>');
   });
 
   it.each([

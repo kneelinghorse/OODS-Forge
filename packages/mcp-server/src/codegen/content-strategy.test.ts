@@ -32,7 +32,7 @@ describe('content-strategy', () => {
     });
 
     it('maps status components to status-prop', () => {
-      const status = ['StatusBadge', 'MessageStatusBadge'];
+      const status = ['StatusBadge', 'StatusTimeline', 'MessageStatusBadge'];
       for (const name of status) {
         expect(getContentStrategy(name)).toBe('status-prop');
       }

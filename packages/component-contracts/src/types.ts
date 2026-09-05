@@ -28,8 +28,22 @@ export const NUCLEUS_COMPONENT_IDS = [
 
 export type NucleusComponentId = (typeof NUCLEUS_COMPONENT_IDS)[number];
 
+export const PORTED_COMPONENT_IDS = [
+  'AuditTimeline',
+  'CancellationSummary',
+  'PaginationBar',
+  'PriceBadge',
+  'RelativeTimestamp',
+  'SearchInput',
+  'StatusBadge',
+  'StatusTimeline',
+] as const;
+
+export type PortedComponentId = (typeof PORTED_COMPONENT_IDS)[number];
+export type GovernedComponentId = NucleusComponentId | PortedComponentId;
+
 export type ComponentContract = {
-  id: NucleusComponentId;
+  id: GovernedComponentId;
   version: '1.0.0' | '1.1.0';
   props: readonly string[];
   slots: readonly string[];
@@ -42,7 +56,7 @@ export type ComponentContract = {
 
 export type SharedScenario = {
   id: string;
-  oodsComponentId: NucleusComponentId;
+  oodsComponentId: GovernedComponentId;
   props: Readonly<Record<string, unknown>>;
   slots: Readonly<Record<string, unknown>>;
   initialState: Readonly<Record<string, unknown>>;

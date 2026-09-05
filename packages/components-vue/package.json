@@ -8,7 +8,7 @@
   "engines": { "node": ">=20.11.1" },
   "files": ["dist", "evidence"],
   "scripts": {
-    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "build": "rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts",
     "clean": "rimraf dist",
     "typecheck": "vue-tsc --noEmit --pretty false -p tsconfig.json",
     "test": "vitest run --config vitest.config.ts",
@@ -22,8 +22,16 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./ported": {
+      "types": "./dist/ported.d.ts",
+      "import": "./dist/ported.js",
+      "require": "./dist/ported.cjs"
+    },
     "./readiness": {
       "default": "./evidence/vue-readiness.v1.json"
+    },
+    "./readiness-ported": {
+      "default": "./evidence/vue-readiness-ported.v1.json"
     },
     "./package.json": "./package.json"
   },

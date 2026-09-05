@@ -133,6 +133,43 @@ describe('generated artifact envelope', () => {
     expect(validateGeneratedArtifact(artifact)).toEqual([]);
   });
 
+  it.each([
+    {
+      framework: 'react' as const,
+      componentImport: '@oods/components-react/ported',
+      styleImport: '@oods/component-styles/css-ported',
+      peerNames: ['react', 'react-dom'],
+      extension: '.tsx',
+    },
+    {
+      framework: 'vue' as const,
+      componentImport: '@oods/components-vue/ported',
+      styleImport: '@oods/component-styles/css-ported',
+      peerNames: ['vue'],
+      extension: '.vue',
+    },
+  ])('admits the additive $framework ported subpaths without duplicating package dependencies', ({
+    framework,
+    componentImport,
+    styleImport,
+    peerNames,
+    extension,
+  }) => {
+    const artifact = buildGeneratedArtifact({
+      framework,
+      code: `import { StatusBadge } from '${componentImport}';\nimport '${styleImport}';\n`,
+      fileExtension: extension,
+      imports: [componentImport, styleImport],
+    });
+
+    expect(artifact.dependencies.map(({ name }) => name)).toEqual([
+      '@oods/component-styles',
+      framework === 'react' ? '@oods/components-react' : '@oods/components-vue',
+      ...peerNames,
+    ]);
+    expect(validateGeneratedArtifact(artifact)).toEqual([]);
+  });
+
   it('sorts multi-file inputs and hashes identical inputs byte-for-byte', () => {
     const first = buildGeneratedArtifact({
       framework: 'react',

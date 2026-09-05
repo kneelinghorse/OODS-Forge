@@ -1,4 +1,8 @@
-import { componentContracts, type NucleusComponentId } from '@oods/component-contracts';
+import {
+  componentContracts,
+  portedComponentContracts,
+  type GovernedComponentId,
+} from '@oods/component-contracts';
 
 import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated.js';
 import {
@@ -13,7 +17,7 @@ import type { CodegenFramework, CodegenIssue, CodegenValidationCheck } from './t
 
 const GENERIC_PROPS = new Set(['field', 'id']);
 const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
-  Partial<Record<NucleusComponentId, ReadonlySet<string>>>
+  Partial<Record<GovernedComponentId, ReadonlySet<string>>>
 > = {
   Checkbox: new Set(['name']),
   DatePicker: new Set(['name']),
@@ -22,7 +26,7 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   Textarea: new Set(['name']),
 };
 
-const REQUIRED_PROPS: Readonly<Partial<Record<NucleusComponentId, readonly string[]>>> = {
+const REQUIRED_PROPS: Readonly<Partial<Record<GovernedComponentId, readonly string[]>>> = {
   // Vue supplies an empty runtime default, but React's public TabsProps requires
   // items. The shared generation contract must compile against both packages.
   Tabs: ['items'],
@@ -72,6 +76,20 @@ const NUMBER_VALUE = valueContract(
 const STRING_OR_NUMBER_VALUE = valueContract(
   'a string or finite number',
   (value) => typeof value === 'string' || (typeof value === 'number' && Number.isFinite(value)),
+);
+const STRING_ARRAY_VALUE = valueContract(
+  'an array of strings',
+  (value) => Array.isArray(value) && value.every((entry) => typeof entry === 'string'),
+);
+const NUMBER_ARRAY_VALUE = valueContract(
+  'an array of finite numbers',
+  (value) => Array.isArray(value) && value.every((entry) => (
+    typeof entry === 'number' && Number.isFinite(entry)
+  )),
+);
+const RECORD_ARRAY_VALUE = valueContract(
+  'an array of objects',
+  (value) => Array.isArray(value) && value.every(isRecord),
 );
 const ATTRIBUTE_VALUE = valueContract(
   'a string, finite number, or boolean',
@@ -241,8 +259,25 @@ const TAB_ITEMS_VALUE = valueContract(
 );
 
 const PROP_VALUE_CONTRACTS: Readonly<
-  Record<NucleusComponentId, Readonly<Record<string, PropValueContract>>>
+  Record<GovernedComponentId, Readonly<Record<string, PropValueContract>>>
 > = {
+  AuditTimeline: {
+    title: STRING_VALUE,
+    events: RECORD_ARRAY_VALUE,
+    history: RECORD_ARRAY_VALUE,
+    entries: RECORD_ARRAY_VALUE,
+    auditLog: RECORD_ARRAY_VALUE,
+    auditLogField: STRING_VALUE,
+    createdField: STRING_VALUE,
+    updatedField: STRING_VALUE,
+    eventField: STRING_VALUE,
+    eventTimestampField: STRING_VALUE,
+    eventOptionsParameter: STRING_VALUE,
+    maxVisible: NUMBER_VALUE,
+    showFromState: BOOLEAN_VALUE,
+    showActorId: BOOLEAN_VALUE,
+    showReason: BOOLEAN_VALUE,
+  },
   Badge: {
     content: STRING_OR_NUMBER_VALUE,
     status: STRING_VALUE,
@@ -282,6 +317,18 @@ const PROP_VALUE_CONTRACTS: Readonly<
     help: STRING_VALUE,
     validation: VALIDATION_VALUE,
   },
+  CancellationSummary: {
+    title: STRING_VALUE,
+    label: STRING_VALUE,
+    cancelAtPeriodEnd: BOOLEAN_VALUE,
+    requestedAt: STRING_VALUE,
+    reason: STRING_VALUE,
+    code: STRING_VALUE,
+    cancelAtPeriodEndField: STRING_VALUE,
+    requestedAtField: STRING_VALUE,
+    reasonField: STRING_VALUE,
+    codeField: STRING_VALUE,
+  },
   DatePicker: {
     id: STRING_VALUE,
     label: STRING_VALUE,
@@ -319,6 +366,69 @@ const PROP_VALUE_CONTRACTS: Readonly<
     help: STRING_VALUE,
     validation: VALIDATION_VALUE,
   },
+  PaginationBar: {
+    page: NUMBER_VALUE,
+    pageSize: NUMBER_VALUE,
+    totalItems: NUMBER_VALUE,
+    totalPages: NUMBER_VALUE,
+    pageSizeOptions: NUMBER_ARRAY_VALUE,
+    showPageSizeSelector: BOOLEAN_VALUE,
+    showGotoPage: BOOLEAN_VALUE,
+    showItemRange: BOOLEAN_VALUE,
+    pageField: STRING_VALUE,
+    pageSizeField: STRING_VALUE,
+    totalItemsField: STRING_VALUE,
+    totalPagesField: STRING_VALUE,
+    pageSizeOptionsParameter: STRING_VALUE,
+    showPageSizeSelectorParameter: STRING_VALUE,
+    showGotoPageParameter: STRING_VALUE,
+    showItemRangeParameter: STRING_VALUE,
+  },
+  PriceBadge: {
+    amountCents: NUMBER_VALUE,
+    unitAmountCents: NUMBER_VALUE,
+    amount: NUMBER_VALUE,
+    unitAmount: NUMBER_VALUE,
+    currency: STRING_VALUE,
+    currencyCode: STRING_VALUE,
+    label: STRING_VALUE,
+    value: STRING_OR_NUMBER_VALUE,
+    emphasis: EMPHASIS_VALUE,
+    amountField: STRING_VALUE,
+    currencyField: STRING_VALUE,
+    intervalField: STRING_VALUE,
+    minorUnitsParameter: STRING_VALUE,
+  },
+  RelativeTimestamp: {
+    datetime: STRING_VALUE,
+    timestamp: STRING_VALUE,
+    value: STRING_VALUE,
+    updatedAt: STRING_VALUE,
+    createdAt: STRING_VALUE,
+    relative: STRING_VALUE,
+    label: STRING_VALUE,
+    text: STRING_VALUE,
+    timezone: STRING_VALUE,
+    now: STRING_OR_NUMBER_VALUE,
+    fallbackField: STRING_VALUE,
+    timezoneParameter: STRING_VALUE,
+  },
+  SearchInput: {
+    id: STRING_VALUE,
+    label: STRING_VALUE,
+    value: STRING_VALUE,
+    defaultValue: STRING_VALUE,
+    placeholder: STRING_VALUE,
+    clearable: BOOLEAN_VALUE,
+    debounceMs: NUMBER_VALUE,
+    debounce: NUMBER_VALUE,
+    minQueryLength: NUMBER_VALUE,
+    disabled: BOOLEAN_VALUE,
+    placeholderParameter: STRING_VALUE,
+    debounceParameter: STRING_VALUE,
+    minQueryLengthParameter: STRING_VALUE,
+    clearableParameter: STRING_VALUE,
+  },
   Select: {
     id: STRING_VALUE,
     label: STRING_VALUE,
@@ -339,6 +449,38 @@ const PROP_VALUE_CONTRACTS: Readonly<
     wrap: BOOLEAN_VALUE,
     patternComponent: enumContract(['StatusTimeline']),
     fields: NON_EMPTY_STRING_ARRAY_VALUE,
+  },
+  StatusBadge: {
+    status: STRING_VALUE,
+    value: STRING_VALUE,
+    label: STRING_VALUE,
+    content: STRING_OR_NUMBER_VALUE,
+    domain: STRING_VALUE,
+    tone: enumContract([
+      'lifecycle', 'neutral', 'info', 'accent', 'positive', 'success', 'warning',
+      'critical', 'danger',
+    ]),
+    emphasis: EMPHASIS_VALUE,
+    showIcon: BOOLEAN_VALUE,
+    variant: STRING_VALUE,
+    statusField: STRING_VALUE,
+    domainField: STRING_VALUE,
+    readOnly: BOOLEAN_VALUE,
+    compact: BOOLEAN_VALUE,
+  },
+  StatusTimeline: {
+    title: STRING_VALUE,
+    events: RECORD_ARRAY_VALUE,
+    history: RECORD_ARRAY_VALUE,
+    entries: RECORD_ARRAY_VALUE,
+    stateHistory: RECORD_ARRAY_VALUE,
+    status: STRING_VALUE,
+    allowedTransitions: STRING_ARRAY_VALUE,
+    historyField: STRING_VALUE,
+    statesParameter: STRING_VALUE,
+    showActorId: BOOLEAN_VALUE,
+    showReason: BOOLEAN_VALUE,
+    maxVisible: NUMBER_VALUE,
   },
   Table: {
     caption: STRING_VALUE,
@@ -381,7 +523,7 @@ const PROP_VALUE_CONTRACTS: Readonly<
 };
 
 function propValueContract(
-  component: NucleusComponentId,
+  component: GovernedComponentId,
   prop: string,
 ): PropValueContract | undefined {
   const componentRules = Object.hasOwn(PROP_VALUE_CONTRACTS, component)
@@ -432,8 +574,11 @@ function nodesInDocumentOrder(screens: readonly UiElement[]): UiElement[] {
 }
 
 function contractFor(component: string) {
-  return Object.hasOwn(componentContracts, component)
-    ? componentContracts[component as NucleusComponentId]
+  if (Object.hasOwn(componentContracts, component)) {
+    return componentContracts[component as keyof typeof componentContracts];
+  }
+  return Object.hasOwn(portedComponentContracts, component)
+    ? portedComponentContracts[component as keyof typeof portedComponentContracts]
     : undefined;
 }
 
@@ -488,6 +633,8 @@ function acceptedFieldKinds(
     return framework === 'vue' ? ['string'] : ['string', 'number'];
   }
   if (propName === 'content') return ['string', 'number'];
+  if (propName === 'label' && component === 'PriceBadge') return ['string', 'number'];
+  if (propName === 'datetime' && component === 'RelativeTimestamp') return ['string'];
   if (propName === 'status') return ['string'];
   if (isChildren) {
     return component === 'Text' ? ['string', 'number', 'array'] : ['string', 'number'];
@@ -567,7 +714,7 @@ function compositionDirectiveIssues(node: UiElement, schema: UiSchema): CodegenI
   ));
 }
 
-/** Validate canonical nucleus props, default-slot use, and supported event mappings. */
+/** Validate governed props, default-slot use, and supported event mappings. */
 export function preflightTargetContracts(
   schema: UiSchema,
   framework: CodegenFramework,
@@ -579,7 +726,7 @@ export function preflightTargetContracts(
   const normalized = normalizeSchemaForFramework(schema, framework);
   const nodes = nodesInDocumentOrder(normalized.screens);
   const bindingAnalysis = analyzeBindings(normalized.screens);
-  const hasNucleusComponent = nodes.some((node) => contractFor(node.component) !== undefined);
+  const hasGovernedComponent = nodes.some((node) => contractFor(node.component) !== undefined);
   const issues: CodegenIssue[] = [];
 
   for (const node of nodes) {
@@ -604,7 +751,7 @@ export function preflightTargetContracts(
       delete props.label;
     }
     const allowedProps = new Set(contract.props);
-    const component = node.component as NucleusComponentId;
+    const component = node.component as GovernedComponentId;
     const targetExtensions = Object.hasOwn(CROSS_TARGET_PROP_EXTENSIONS, component)
       ? CROSS_TARGET_PROP_EXTENSIONS[component]
       : undefined;
@@ -696,7 +843,7 @@ export function preflightTargetContracts(
 
   return {
     checks: CONTRACT_CHECK_ORDER.filter((check) => (
-      check === 'events-contract' || hasNucleusComponent
+      check === 'events-contract' || hasGovernedComponent
     )),
     issues,
     bindingSafetyIssues,

@@ -3,16 +3,6 @@ import { handle as composeHandle } from '../../src/tools/design.compose.js';
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
 import { handle as codegenHandle } from '../../src/tools/code.generate.js';
-import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
-
-function expectedTargetReadinessReceipt() {
-  return recordValidationChecks(
-    createValidationReceipt(undefined, 'react'),
-    'schema-structure',
-    'component-registry',
-    'target-readiness',
-  );
-}
 
 describe('schemaRef workflow', () => {
   it('design.compose returns a bounded Card schemaRef that downstream tools accept', async () => {
@@ -49,30 +39,29 @@ describe('schemaRef workflow', () => {
     expect(render.html).toContain('data-oods-component="Table"');
 
     const codegen = await codegenHandle({ schemaRef, framework: 'react' });
-    expect(codegen).toEqual({
-      status: 'error',
+    expect(codegen).toMatchObject({
+      status: 'ok',
       framework: 'react',
-      code: '',
-      fileExtension: '',
-      imports: [],
       warnings: [],
-      validationReceipt: expectedTargetReadinessReceipt(),
-      errors: [
-        {
-          code: 'OODS-N015',
-          message: 'Component SearchInput is not emission-eligible for react; evidence state: unavailable.',
-          nodeId: 'slot-search-1',
-          component: 'SearchInput',
-        },
-        {
-          code: 'OODS-N015',
-          message: 'Component PaginationBar is not emission-eligible for react; evidence state: unavailable.',
-          nodeId: 'slot-pagination-8',
-          component: 'PaginationBar',
-        },
-      ],
       meta: { nodeCount: 9, componentCount: 6 },
     });
+    expect(codegen.errors).toBeUndefined();
+    expect(codegen.code.length).toBeGreaterThan(0);
+    expect(codegen.code).toContain(
+      "import { PaginationBar, SearchInput } from '@oods/components-react/ported';",
+    );
+    expect(codegen.code).toContain("import '@oods/component-styles/css-ported';");
+    expect(codegen.code).toContain('<Table id="slot-items-6"');
+    expect(codegen.imports).toEqual(expect.arrayContaining([
+      '@oods/components-react/ported',
+      '@oods/component-styles/css-ported',
+    ]));
+    expect(codegen.artifact?.files).toHaveLength(1);
+    expect(codegen.artifact?.files[0]?.contents.length).toBeGreaterThan(0);
+    expect(codegen.validationReceipt.checks).toEqual(expect.arrayContaining([
+      'target-readiness',
+      'dependency-closure',
+    ]));
   });
 
   it('supports patch validation with schemaRef and renders the patched tree', async () => {

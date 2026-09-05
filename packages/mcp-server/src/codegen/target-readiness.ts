@@ -65,9 +65,38 @@ const require = createRequire(import.meta.url);
 const defaultCapabilityBaseline = require(
   '@oods/component-contracts/registry/capabilities',
 ) as CapabilityBaseline;
+
+export function mergeTargetReadiness(
+  nucleus: TargetReadiness,
+  ported: TargetReadiness,
+): TargetReadiness {
+  if (nucleus.target !== ported.target) {
+    throw new Error(
+      `Cannot merge readiness for ${nucleus.target} with readiness for ${ported.target}.`,
+    );
+  }
+  const rows = [...nucleus.rows, ...ported.rows];
+  const seen = new Set<string>();
+  for (const row of rows) {
+    if (seen.has(row.componentId)) {
+      throw new Error(
+        `Duplicate ${nucleus.target} readiness row for ${row.componentId}.`,
+      );
+    }
+    seen.add(row.componentId);
+  }
+  return { target: nucleus.target, rows };
+}
+
 const defaultReadiness: Readonly<Record<TargetFramework, TargetReadiness>> = {
-  react: require('@oods/components-react/readiness') as TargetReadiness,
-  vue: require('@oods/components-vue/readiness') as TargetReadiness,
+  react: mergeTargetReadiness(
+    require('@oods/components-react/readiness') as TargetReadiness,
+    require('@oods/components-react/readiness-ported') as TargetReadiness,
+  ),
+  vue: mergeTargetReadiness(
+    require('@oods/components-vue/readiness') as TargetReadiness,
+    require('@oods/components-vue/readiness-ported') as TargetReadiness,
+  ),
 };
 
 // This relative shape is identical in source and built package layouts:
@@ -97,7 +126,9 @@ function hasNamedExport(source: string, symbol: string): boolean {
 }
 
 function hasVersionedContract(source: string, symbol: string): boolean {
-  if (!/\bexport\s+const\s+componentContracts\b/.test(source)) return false;
+  if (!/\bexport\s+const\s+(?:componentContracts|portedComponentContracts)\b/.test(source)) {
+    return false;
+  }
   const escaped = escapeRegExp(symbol);
   return new RegExp(`(?:^|\\n)\\s*${escaped}\\s*:`).test(source);
 }

@@ -1,4 +1,5 @@
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
+import { PORTED_COMPONENT_IDS } from '@oods/component-contracts';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
 import type {
   BindingAnalysis,
@@ -15,6 +16,7 @@ import {
   mapFieldType,
   snakeToCamel,
   resolveFrameworkChildContent,
+  resolveFrameworkRecipeProps,
   ownFieldSchemaEntry,
   resolveFieldProps,
 } from './binding-utils.js';
@@ -308,6 +310,7 @@ function emitNode(
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const controlledProp = localBinding ? reactControlledProp(localBinding) : null;
+  const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
   const finish = (code: string): string => wrapReactLocalNode(code, localBinding);
   if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
     propsObject = { ...(propsObject ?? {}), dismissLabel: 'Dismiss notification' };
@@ -329,6 +332,7 @@ function emitNode(
     delete propsObject.children;
     // `field` is a UiSchema binding directive, not a public component prop.
     delete propsObject.field;
+    for (const sourceProp of recipeProps.consumedProps) delete propsObject[sourceProp];
     if (controlledProp === 'checked') {
       delete propsObject.checked;
       delete propsObject.defaultChecked;
@@ -370,6 +374,10 @@ function emitNode(
     const propsStr = propsToJsxAttrs(propsObject, options.styling === 'tailwind');
     if (propsStr) attrParts.push(propsStr);
   }
+
+  attrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
+    `${targetProp}={${expression}}`
+  )));
 
   attrParts.push(...reactBindingAttrs(node, bindingAnalysis));
 
@@ -475,6 +483,9 @@ function emitNode(
       const propsStr = propsToJsxAttrs(propsObject, options.styling === 'tailwind');
       if (propsStr) innerAttrParts.push(propsStr);
     }
+    innerAttrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
+      `${targetProp}={${expression}}`
+    )));
     // Event bindings belong on the component, not the section wrapper
     innerAttrParts.push(...reactBindingAttrs(node, bindingAnalysis));
     if (options.styling === 'tailwind') {
@@ -565,6 +576,9 @@ function emitNode(
           const propsStr = propsToJsxAttrs(propsObject, options.styling === 'tailwind');
           if (propsStr) rebuiltAttrParts.push(propsStr);
         }
+        rebuiltAttrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
+          `${targetProp}={${expression}}`
+        )));
         rebuiltAttrParts.push(...reactBindingAttrs(node, bindingAnalysis));
         if (options.styling === 'tailwind') {
           const variantExpression = buildTailwindVariantExpression(node, tailwindVariant);
@@ -861,23 +875,47 @@ function generateReactActionGuards(analysis: BindingAnalysis): string {
 // Top-level code assembly
 // ---------------------------------------------------------------------------
 
+const PORTED_COMPONENT_ID_SET: ReadonlySet<string> = new Set(PORTED_COMPONENT_IDS);
+
+function splitComponentImports(components: Set<string>): {
+  nucleus: string[];
+  ported: string[];
+} {
+  const nucleus: string[] = [];
+  const ported: string[] = [];
+  for (const component of Array.from(components).sort()) {
+    (PORTED_COMPONENT_ID_SET.has(component) ? ported : nucleus).push(component);
+  }
+  return { nucleus, ported };
+}
+
 function buildImportBlock(components: Set<string>, includeCva: boolean): string {
-  const sorted = Array.from(components).sort();
-  const lines: string[] = [
-    `import React from 'react';`,
-    `import { ${sorted.join(', ')} } from '@oods/components-react';`,
-    `import '@oods/component-styles/css';`,
-  ];
+  const { nucleus, ported } = splitComponentImports(components);
+  const lines: string[] = [`import React from 'react';`];
+  if (nucleus.length > 0) {
+    lines.push(`import { ${nucleus.join(', ')} } from '@oods/components-react';`);
+  }
+  if (ported.length > 0) {
+    lines.push(`import { ${ported.join(', ')} } from '@oods/components-react/ported';`);
+  }
+  if (nucleus.length > 0) lines.push(`import '@oods/component-styles/css';`);
+  if (ported.length > 0) lines.push(`import '@oods/component-styles/css-ported';`);
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
   }
   return lines.join('\n');
 }
 
-function buildImportList(_components: Set<string>, includeCva: boolean): string[] {
-  return includeCva
-    ? ['react', '@oods/components-react', '@oods/component-styles/css', 'class-variance-authority']
-    : ['react', '@oods/components-react', '@oods/component-styles/css'];
+function buildImportList(components: Set<string>, includeCva: boolean): string[] {
+  const { nucleus, ported } = splitComponentImports(components);
+  return [
+    'react',
+    ...(nucleus.length > 0 ? ['@oods/components-react', '@oods/component-styles/css'] : []),
+    ...(ported.length > 0
+      ? ['@oods/components-react/ported', '@oods/component-styles/css-ported']
+      : []),
+    ...(includeCva ? ['class-variance-authority'] : []),
+  ];
 }
 
 /**

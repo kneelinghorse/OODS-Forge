@@ -39,6 +39,149 @@ const defaultOptions: CodegenOptions = {
 };
 
 describe('codegen prop binding', () => {
+  describe('Sprint 184 ported recipe bindings', () => {
+    const portedSchema: UiSchema = {
+      version: '2026.03',
+      objectSchema: {
+        allowed_transitions: { type: 'string[]', required: false },
+        amount: { type: 'integer', required: true },
+        billing_interval: { type: 'string', required: false },
+        cancel_at_period_end: { type: 'boolean', required: true },
+        cancellation_reason: { type: 'string', required: false },
+        cancellation_reason_code: { type: 'string', required: false },
+        cancellation_requested_at: { type: 'datetime', required: false },
+        created_at: { type: 'datetime', required: true },
+        currency: { type: 'string', required: true },
+        state_history: { type: 'StateTransition[]', required: false },
+        status: { type: 'string', required: true },
+        updated_at: { type: 'datetime', required: false },
+      },
+      screens: [{
+        id: 'detail',
+        component: 'Stack',
+        children: [
+          {
+            id: 'price',
+            component: 'PriceBadge',
+            props: {
+              amountField: 'amount',
+              currencyField: 'currency',
+              intervalField: 'billing_interval',
+              minorUnitsParameter: 'minorUnits',
+            },
+          },
+          {
+            id: 'currency',
+            component: 'PriceBadge',
+            props: { field: 'currency', label: 'ISO 4217 currency code.' },
+          },
+          {
+            id: 'status',
+            component: 'StatusTimeline',
+            props: {
+              field: 'status',
+              historyField: 'state_history',
+              statesParameter: 'states',
+            },
+          },
+          {
+            id: 'cancellation',
+            component: 'CancellationSummary',
+            props: {
+              cancelAtPeriodEndField: 'cancel_at_period_end',
+              requestedAtField: 'cancellation_requested_at',
+              reasonField: 'cancellation_reason',
+              codeField: 'cancellation_reason_code',
+            },
+          },
+          {
+            id: 'updated',
+            component: 'RelativeTimestamp',
+            props: {
+              field: 'updated_at',
+              fallbackField: 'created_at',
+              timezoneParameter: 'timezone',
+            },
+          },
+        ],
+      }],
+    };
+
+    it.each([
+      {
+        framework: 'React',
+        emit: reactEmit,
+        rootImport: "import { Stack } from '@oods/components-react';",
+        portedImport: "from '@oods/components-react/ported';",
+        styleImport: "import '@oods/component-styles/css-ported';",
+        expectedBindings: [
+          'amountCents={amount}',
+          'currency={currency}',
+          'data-interval={billingInterval}',
+          'label={currency}',
+          'status={status}',
+          'history={stateHistory}',
+          'allowedTransitions={allowedTransitions}',
+          'cancelAtPeriodEnd={cancelAtPeriodEnd}',
+          'requestedAt={cancellationRequestedAt}',
+          'reason={cancellationReason}',
+          'code={cancellationReasonCode}',
+          'datetime={updatedAt ?? createdAt}',
+        ],
+      },
+      {
+        framework: 'Vue',
+        emit: vueEmit,
+        rootImport: "import { Stack } from '@oods/components-vue';",
+        portedImport: "from '@oods/components-vue/ported';",
+        styleImport: "import '@oods/component-styles/css-ported';",
+        expectedBindings: [
+          ':amountCents="amount"',
+          ':currency="currency"',
+          ':data-interval="billingInterval"',
+          ':label="currency"',
+          ':status="status"',
+          ':history="stateHistory"',
+          ':allowedTransitions="allowedTransitions"',
+          ':cancelAtPeriodEnd="cancelAtPeriodEnd"',
+          ':requestedAt="cancellationRequestedAt"',
+          ':reason="cancellationReason"',
+          ':code="cancellationReasonCode"',
+          ':datetime="updatedAt ?? createdAt"',
+        ],
+      },
+    ])('turns declarative field recipes into executable $framework props', ({
+      emit,
+      rootImport,
+      portedImport,
+      styleImport,
+      expectedBindings,
+    }) => {
+      const result = emit(portedSchema, defaultOptions);
+      expect(result.status).toBe('ok');
+      expect(result.code).toContain(rootImport);
+      expect(result.code).toContain(portedImport);
+      expect(result.code).toContain(styleImport);
+      for (const binding of expectedBindings) expect(result.code, binding).toContain(binding);
+      for (const directive of [
+        'amountField',
+        'currencyField',
+        'intervalField',
+        'minorUnitsParameter',
+        'historyField',
+        'statesParameter',
+        'cancelAtPeriodEndField',
+        'requestedAtField',
+        'reasonField',
+        'codeField',
+        'fallbackField',
+        'timezoneParameter',
+      ]) {
+        expect(result.code, directive).not.toContain(directive);
+      }
+    });
+  });
+
   describe('React emitter', () => {
     it('injects field names as JSX children for children-strategy components', () => {
       const result = reactEmit(schema, defaultOptions);
