@@ -1,0 +1,16 @@
+Sprint 184 m02 promotion-boundary verification
+
+In-repository check:
+  cwd=/Users/systemsystems/.codex/worktrees/s184/OODS-Forge
+  command=node scripts/product-reality/generate-s182-m05-closeout.mjs --check-promotion
+  exitCode=0
+  stdout=Verified Sprint 182 independent-review projection: 28 foundation-v1 cells (approved).
+
+Non-Git check:
+  cwd=/tmp
+  command=node /Users/systemsystems/.codex/worktrees/s184/OODS-Forge/scripts/product-reality/generate-s182-m05-closeout.mjs --check-promotion
+  exitCode=1
+  stderr=Only the approved 28-cell projection can be published as the promotion supersession (approval outcome: unverifiable)
+
+Interpretation:
+  The genuine repository-backed approval remains publishable. Without a readable Git object database, approval is explicitly unverifiable and the 28-cell promotion supersession fails closed.

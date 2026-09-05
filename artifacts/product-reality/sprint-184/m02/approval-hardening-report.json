@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m02",
+  "kind": "independent-review-approval-hardening-report",
+  "status": "passed",
+  "measuredHead": "da1a3fd789bba09e626201d92e6fb6841c21deac",
+  "implemented": {
+    "resolverContract": [
+      {
+        "status": "resolved",
+        "requiredField": "commit",
+        "meaning": "The full lowercase SHA resolves to this commit."
+      },
+      {
+        "status": "not-found",
+        "meaning": "The repository is readable but the candidate is not an available commit."
+      },
+      {
+        "status": "unverifiable",
+        "optionalField": "reason",
+        "meaning": "Repository-backed verification cannot be performed."
+      }
+    ],
+    "headRules": [
+      "Both heads must be full lowercase 40-hex commit SHAs.",
+      "Both heads must resolve to the exact commit named by the field.",
+      "The derivation and review commits must be distinct."
+    ],
+    "principalCanonicalization": [
+      "NFKC normalization",
+      "Default_Ignorable_Code_Point removal",
+      "en-US lowercase conversion",
+      "bounded Cyrillic-to-Latin lookalike folding",
+      "outer whitespace trimming"
+    ],
+    "gateOutcomes": {
+      "invalid": "Record or approval semantics fail, including malformed, unresolved, aliased, or equal heads.",
+      "unverifiable": "No semantic failure was found, but commit resolution is unavailable.",
+      "approvedOrRejected": "Semantic outcome is returned only after both commits are verified."
+    },
+    "promotionBoundary": "The resolver passes through closeout and promotion construction; an unverifiable approval projects zero promoted cells and cannot publish the approved 28-cell supersession."
+  },
+  "verification": {
+    "focusedSuite": {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/independent-review-approval.s183.spec.ts --reporter=verbose",
+      "exitCode": 0,
+      "files": {
+        "selected": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "tests": {
+        "selected": 39,
+        "passed": 39,
+        "failed": 0,
+        "skipped": 0
+      },
+      "durationSeconds": 5.24,
+      "receipt": "logs/focused-suite.log"
+    },
+    "inRepositoryPromotionCheck": {
+      "command": "node scripts/product-reality/generate-s182-m05-closeout.mjs --check-promotion",
+      "exitCode": 0,
+      "message": "Verified Sprint 182 independent-review projection: 28 foundation-v1 cells (approved).",
+      "receipt": "logs/check-promotion.log"
+    },
+    "nonGitPromotionCheck": {
+      "cwd": "/tmp",
+      "command": "node /Users/systemsystems/.codex/worktrees/s184/OODS-Forge/scripts/product-reality/generate-s182-m05-closeout.mjs --check-promotion",
+      "exitCode": 1,
+      "approvalOutcome": "unverifiable",
+      "reasonCode": "head-resolution-unavailable",
+      "message": "Only the approved 28-cell projection can be published as the promotion supersession (approval outcome: unverifiable)",
+      "receipt": "logs/check-promotion.log"
+    },
+    "frozenOutputs": [
+      {
+        "path": "artifacts/product-reality/sprint-182/review/independent-review.v1.json",
+        "sha256": "65b83335555d5221cc0d02aa010118e901ddd862b204b23433d8332e0e796951",
+        "gitDiffExitCode": 0
+      },
+      {
+        "path": "artifacts/product-reality/sprint-182/review/foundation-v1-promotion-projection.v1.json",
+        "sha256": "7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71",
+        "gitDiffExitCode": 0
+      },
+      {
+        "path": "artifacts/product-reality/sprint-182/review/foundation-v1-claim-diff.v1.json",
+        "sha256": "4312447a69ebfe6b98907ea1741225be255c7e1dddb90b66335f737a3c860255",
+        "gitDiffExitCode": 0
+      },
+      {
+        "path": "artifacts/product-reality/sprint-182/review/foundation-v1-promotion-binding.v1.json",
+        "sha256": "00ac40c67b1557607b26aad960c3a6ed57d36cd45bbe872e768950ed4b14918c",
+        "gitDiffExitCode": 0
+      },
+      {
+        "path": "packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json",
+        "sha256": "7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71",
+        "gitDiffExitCode": 0
+      }
+    ],
+    "mutationBites": {
+      "selected": 9,
+      "detected": 9,
+      "missed": 0,
+      "skipped": 0,
+      "receipt": "logs/mutation-bites.log"
+    }
+  },
+  "knownLimitations": [
+    "A readable Git object database is required for approval. A non-Git runtime intentionally returns the named unverifiable outcome and cannot publish the promotion supersession.",
+    "Principal folding is deliberately bounded to a reviewed Cyrillic lookalike table; it is not a general-purpose Unicode identifier security algorithm."
+  ],
+  "unrunChecks": []
+}

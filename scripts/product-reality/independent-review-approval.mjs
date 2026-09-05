@@ -1,5 +1,29 @@
+import childProcess from "node:child_process";
+
 const VALID_OUTCOMES = new Set(["approved", "rejected"]);
 const VALID_REVIEW_DISPOSITIONS = new Set(["accepted", "rejected"]);
+const FULL_COMMIT_SHA = /^[0-9a-f]{40}$/;
+const CYRILLIC_LATIN_LOOKALIKES = new Map([
+  ["\u0430", "a"],
+  ["\u0432", "b"],
+  ["\u0441", "c"],
+  ["\u0501", "d"],
+  ["\u0435", "e"],
+  ["\u04bb", "h"],
+  ["\u0456", "i"],
+  ["\u0458", "j"],
+  ["\u043a", "k"],
+  ["\u04cf", "l"],
+  ["\u043c", "m"],
+  ["\u043e", "o"],
+  ["\u0440", "p"],
+  ["\u051b", "q"],
+  ["\u0455", "s"],
+  ["\u0442", "t"],
+  ["\u051d", "w"],
+  ["\u0445", "x"],
+  ["\u0443", "y"],
+]);
 
 function isObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -58,9 +82,92 @@ function addMismatch(reasons, code, label, expected, actual) {
 }
 
 function canonicalPrincipal(value) {
-  return typeof value === "string" && value.trim().length > 0
-    ? value.trim().toLocaleLowerCase("en-US")
-    : null;
+  if (typeof value !== "string") return null;
+  const normalized = value
+    .normalize("NFKC")
+    .replace(/\p{Default_Ignorable_Code_Point}/gu, "")
+    .toLocaleLowerCase("en-US");
+  const folded = [...normalized]
+    .map((character) => CYRILLIC_LATIN_LOOKALIKES.get(character) ?? character)
+    .join("")
+    .trim();
+  return folded.length > 0 ? folded : null;
+}
+
+function resolveGitHead(head) {
+  const repository = childProcess.spawnSync("git", ["rev-parse", "--git-dir"], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  if (repository.error || repository.status !== 0) {
+    return {
+      status: "unverifiable",
+      reason: "the current directory is not a readable Git repository",
+    };
+  }
+
+  const resolved = childProcess.spawnSync(
+    "git",
+    ["rev-parse", "--verify", `${head}^{commit}`],
+    {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
+  if (resolved.error) {
+    return {
+      status: "unverifiable",
+      reason: "Git commit resolution is unavailable",
+    };
+  }
+  if (resolved.status !== 0) return { status: "not-found" };
+  return { status: "resolved", commit: resolved.stdout.trim() };
+}
+
+function validateHeadResolution({
+  head,
+  label,
+  reasonPrefix,
+  resolveHead,
+  reasons,
+  unverifiableReasons,
+}) {
+  let resolution;
+  try {
+    resolution = resolveHead(head);
+  } catch {
+    resolution = {
+      status: "unverifiable",
+      reason: "the head resolver threw while checking the repository",
+    };
+  }
+
+  if (resolution?.status === "not-found") {
+    reasons.push({
+      code: `${reasonPrefix}-head-unresolved`,
+      message: `${label} does not resolve to an available commit`,
+    });
+    return true;
+  }
+  if (resolution?.status === "resolved") {
+    if (resolution.commit !== head) {
+      reasons.push({
+        code: `${reasonPrefix}-head-resolution-drift`,
+        message: `${label} resolved to a different commit`,
+      });
+    }
+    return true;
+  }
+
+  unverifiableReasons.push({
+    code: "head-resolution-unavailable",
+    message: `Commit-head verification is unavailable${
+      typeof resolution?.reason === "string" && resolution.reason.length > 0
+        ? `: ${resolution.reason}`
+        : ""
+    }`,
+  });
+  return false;
 }
 
 /**
@@ -72,12 +179,17 @@ function canonicalPrincipal(value) {
  * evaluated. A record cannot authorize the expectations used to validate
  * itself.
  */
-export function evaluateIndependentReviewApproval({ record, expectation }) {
+export function evaluateIndependentReviewApproval({
+  record,
+  expectation,
+  resolveHead = resolveGitHead,
+}) {
   if (record === null || record === undefined) {
     return { outcome: "missing", reasons: [] };
   }
 
   const reasons = [];
+  const unverifiableReasons = [];
   if (!isObject(record)) {
     return {
       outcome: "invalid",
@@ -193,6 +305,57 @@ export function evaluateIndependentReviewApproval({ record, expectation }) {
     expectation.reviewedHead,
     review.reviewedHead,
   );
+  const heads = [
+    {
+      head: subject.derivationHead,
+      label: "Derivation head",
+      reasonPrefix: "derivation",
+    },
+    {
+      head: review.reviewedHead,
+      label: "Reviewed head",
+      reasonPrefix: "review",
+    },
+  ];
+  let headsAreWellFormed = true;
+  for (const { head, label, reasonPrefix } of heads) {
+    if (typeof head === "string" && FULL_COMMIT_SHA.test(head)) continue;
+    headsAreWellFormed = false;
+    reasons.push({
+      code: `${reasonPrefix}-head-format`,
+      message: `${label} must be a full lowercase 40-hex commit SHA`,
+    });
+  }
+  const headsAreDistinct =
+    subject.derivationHead !== review.reviewedHead || !headsAreWellFormed;
+  if (!headsAreDistinct) {
+    reasons.push({
+      code: "review-head-not-independent",
+      message:
+        "Derivation head and reviewed head must identify distinct commits",
+    });
+  }
+  if (headsAreWellFormed && headsAreDistinct) {
+    if (typeof resolveHead !== "function") {
+      unverifiableReasons.push({
+        code: "head-resolution-unavailable",
+        message: "Commit-head verification requires a resolver function",
+      });
+    } else {
+      for (const head of heads) {
+        if (
+          !validateHeadResolution({
+            ...head,
+            resolveHead,
+            reasons,
+            unverifiableReasons,
+          })
+        ) {
+          break;
+        }
+      }
+    }
+  }
   addMismatch(
     reasons,
     "review-decision-drift",
@@ -378,5 +541,8 @@ export function evaluateIndependentReviewApproval({ record, expectation }) {
   }
 
   if (reasons.length > 0) return { outcome: "invalid", reasons };
+  if (unverifiableReasons.length > 0) {
+    return { outcome: "unverifiable", reasons: unverifiableReasons };
+  }
   return { outcome: authorization.disposition, reasons: [] };
 }

@@ -2,8 +2,9 @@ import childProcess from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { createRequire } from "node:module";
+import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -42,6 +43,20 @@ describe("Sprint 183 reusable independent-review approval gate", () => {
     expectation = closeoutGenerator.S182_FOUNDATION_REVIEW_EXPECTATION;
     record = JSON.parse(fs.readFileSync(approvalPath, "utf8"));
   });
+
+  function evaluatePairedMutation(
+    mutate: (mutatedRecord: any, mutatedExpectation: any) => void,
+    resolveHead?: (head: string) => any,
+  ) {
+    const mutatedRecord = structuredClone(record);
+    const mutatedExpectation = structuredClone(expectation);
+    mutate(mutatedRecord, mutatedExpectation);
+    return evaluateIndependentReviewApproval({
+      record: mutatedRecord,
+      expectation: mutatedExpectation,
+      resolveHead,
+    });
+  }
 
   it("reconstructs the three-session approval with the exact heads, 28 cells, and 11 review rows", () => {
     expect(record).toMatchObject({
@@ -99,6 +114,247 @@ describe("Sprint 183 reusable independent-review approval gate", () => {
     expect(Object.isFrozen(expectation)).toBe(true);
     expect(Object.isFrozen(expectation.cells)).toBe(true);
     expect(Object.isFrozen(expectation.verificationIds)).toBe(true);
+  });
+
+  it.each([
+    [
+      "zero-width and Cyrillic principal spellings",
+      (mutatedRecord: any, mutatedExpectation: any) => {
+        mutatedRecord.subject.producerActor = "Reviewer";
+        mutatedExpectation.producerActor = "Reviewer";
+        mutatedRecord.review.reviewerActor = "Rev\u200Biewer";
+        mutatedExpectation.reviewerActor = "Rev\u200Biewer";
+        mutatedRecord.authorization.authorizedBy = "R\u0435viewer";
+        mutatedExpectation.authorizerPrincipal = "R\u0435viewer";
+      },
+      "self-review-actor",
+    ],
+    [
+      "fabricated full-length heads",
+      (mutatedRecord: any, mutatedExpectation: any) => {
+        mutatedRecord.subject.derivationHead = "0".repeat(40);
+        mutatedExpectation.derivationHead = "0".repeat(40);
+        mutatedRecord.review.reviewedHead = "1".repeat(40);
+        mutatedExpectation.reviewedHead = "1".repeat(40);
+      },
+      "derivation-head-unresolved",
+    ],
+    [
+      "empty heads",
+      (mutatedRecord: any, mutatedExpectation: any) => {
+        mutatedRecord.subject.derivationHead = "";
+        mutatedExpectation.derivationHead = "";
+        mutatedRecord.review.reviewedHead = "";
+        mutatedExpectation.reviewedHead = "";
+      },
+      "derivation-head-format",
+    ],
+    [
+      "a review head equal to its derivation head",
+      (mutatedRecord: any, mutatedExpectation: any) => {
+        mutatedRecord.subject.derivationHead = record.review.reviewedHead;
+        mutatedExpectation.derivationHead = record.review.reviewedHead;
+        mutatedRecord.review.reviewedHead = record.review.reviewedHead;
+        mutatedExpectation.reviewedHead = record.review.reviewedHead;
+      },
+      "review-head-not-independent",
+    ],
+  ])(
+    "rejects the approval bypass using %s",
+    (_name, mutate, expectedReason) => {
+      const result = evaluatePairedMutation(mutate);
+      expect(result.outcome).not.toBe("approved");
+      expect(result.reasons.map(({ code }: any) => code)).toContain(
+        expectedReason,
+      );
+    },
+  );
+
+  it.each([
+    [
+      "NFKC compatibility spelling",
+      "\uFF41\uFF53\uFF53\uFF49\uFF53\uFF54\uFF41\uFF4E\uFF54",
+    ],
+    ["a zero-width insertion", "ass\u200Bistant"],
+    ["a Cyrillic lookalike", "\u0430ssistant"],
+  ])("collapses %s to the same principal", (_name, spoofedPrincipal) => {
+    const result = evaluatePairedMutation(
+      (mutatedRecord, mutatedExpectation) => {
+        mutatedRecord.subject.producerActor = "assistant";
+        mutatedExpectation.producerActor = "assistant";
+        mutatedRecord.review.reviewerActor = spoofedPrincipal;
+        mutatedExpectation.reviewerActor = spoofedPrincipal;
+      },
+    );
+    expect(result.outcome).toBe("invalid");
+    expect(result.reasons.map(({ code }: any) => code)).toContain(
+      "self-review-actor",
+    );
+  });
+
+  it("uses an injected resolver for both independently fixed commit heads", () => {
+    const resolvedHeads: string[] = [];
+    const result = evaluateIndependentReviewApproval({
+      record,
+      expectation,
+      resolveHead: (head: string) => {
+        resolvedHeads.push(head);
+        return { status: "resolved", commit: head };
+      },
+    });
+    expect(result).toEqual({ outcome: "approved", reasons: [] });
+    expect(resolvedHeads).toEqual([
+      record.subject.derivationHead,
+      record.review.reviewedHead,
+    ]);
+  });
+
+  it("fails a well-formed head that the injected resolver cannot find", () => {
+    const result = evaluateIndependentReviewApproval({
+      record,
+      expectation,
+      resolveHead: (head: string) =>
+        head === record.subject.derivationHead
+          ? { status: "not-found" }
+          : { status: "resolved", commit: head },
+    });
+    expect(result.outcome).toBe("invalid");
+    expect(result.reasons.map(({ code }: any) => code)).toContain(
+      "derivation-head-unresolved",
+    );
+  });
+
+  it("rejects a resolver result that aliases a head to another commit", () => {
+    const result = evaluateIndependentReviewApproval({
+      record,
+      expectation,
+      resolveHead: (head: string) => ({
+        status: "resolved",
+        commit:
+          head === record.subject.derivationHead
+            ? record.review.reviewedHead
+            : head,
+      }),
+    });
+    expect(result.outcome).toBe("invalid");
+    expect(result.reasons.map(({ code }: any) => code)).toContain(
+      "derivation-head-resolution-drift",
+    );
+  });
+
+  it.each([
+    ["empty", ""],
+    ["missing", undefined],
+    ["short", "a".repeat(39)],
+    ["uppercase", "DB302641ACAD22DC29FD0E2C6B1A0925411D4F34"],
+  ])(
+    "rejects a malformed head (%s) before invoking the resolver",
+    (_name, head) => {
+      let resolutionCalls = 0;
+      const result = evaluatePairedMutation(
+        (mutatedRecord, mutatedExpectation) => {
+          mutatedRecord.subject.derivationHead = head;
+          mutatedExpectation.derivationHead = head;
+        },
+        (candidate: string) => {
+          resolutionCalls += 1;
+          return { status: "resolved", commit: candidate };
+        },
+      );
+      expect(result.outcome).toBe("invalid");
+      expect(result.reasons.map(({ code }: any) => code)).toContain(
+        "derivation-head-format",
+      );
+      expect(resolutionCalls).toBe(0);
+    },
+  );
+
+  it.each([
+    [
+      "reports unavailability",
+      () => ({ status: "unverifiable", reason: "fixture has no Git data" }),
+    ],
+    [
+      "throws",
+      () => {
+        throw new Error("fixture resolver failure");
+      },
+    ],
+  ])(
+    "returns unverifiable when the injected resolver %s",
+    (_name, resolver) => {
+      const result = evaluateIndependentReviewApproval({
+        record,
+        expectation,
+        resolveHead: resolver,
+      });
+      expect(result.outcome).toBe("unverifiable");
+      expect(result.reasons.map(({ code }: any) => code)).toContain(
+        "head-resolution-unavailable",
+      );
+    },
+  );
+
+  it("returns unverifiable with a named reason outside a Git repository", () => {
+    const temporaryRoot = fs.mkdtempSync(
+      path.join(os.tmpdir(), "oods-independent-review-non-git-"),
+    );
+    try {
+      const evaluatorUrl = pathToFileURL(
+        path.join(
+          repositoryRoot,
+          "scripts/product-reality/independent-review-approval.mjs",
+        ),
+      ).href;
+      const generatorUrl = pathToFileURL(
+        path.join(
+          repositoryRoot,
+          "scripts/product-reality/generate-s182-m05-closeout.mjs",
+        ),
+      ).href;
+      const childSource = [
+        'import fs from "node:fs";',
+        `import { evaluateIndependentReviewApproval } from ${JSON.stringify(evaluatorUrl)};`,
+        `import { S182_FOUNDATION_REVIEW_EXPECTATION as expectation } from ${JSON.stringify(generatorUrl)};`,
+        `const record = JSON.parse(fs.readFileSync(${JSON.stringify(approvalPath)}, "utf8"));`,
+        "process.stdout.write(JSON.stringify(evaluateIndependentReviewApproval({ record, expectation })));",
+      ].join("\n");
+      const result = JSON.parse(
+        childProcess.execFileSync(
+          process.execPath,
+          ["--input-type=module", "--eval", childSource],
+          { cwd: temporaryRoot, encoding: "utf8" },
+        ),
+      );
+      expect(result.outcome).toBe("unverifiable");
+      expect(result.reasons.map(({ code }: any) => code)).toContain(
+        "head-resolution-unavailable",
+      );
+    } finally {
+      fs.rmSync(temporaryRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("keeps unverifiable approval out of the promotion check", () => {
+    const resolveHead = () => ({
+      status: "unverifiable",
+      reason: "fixture has no Git data",
+    });
+    const projection = closeoutGenerator.buildPromotionProjection({
+      approvalRecord: record,
+      resolveHead,
+    });
+    expect(projection.closeout).toMatchObject({
+      independentReviewApproved: false,
+      independentReviewOutcome: "unverifiable",
+      summary: { foundationV1CandidateCells: 28, foundationV1Cells: 0 },
+    });
+    expect(() =>
+      closeoutGenerator.run("--check-promotion", {
+        approvalRecord: record,
+        resolveHead,
+      }),
+    ).toThrow(/approved 28-cell projection.*approval outcome: unverifiable/i);
   });
 
   it("discriminates approved and missing records in both ledger directions", () => {

@@ -1,0 +1,55 @@
+Sprint 184 m02 approval-gate mutation bites
+
+Protocol:
+  Each source mutation was applied alone with apply_patch, its named focused test was run, and the mutation was restored with apply_patch before the next bite. The final unmutated focused suite passed 39/39 with zero skips.
+
+1. Remove NFKC normalization
+   selected=NFKC compatibility spelling
+   exitCode=1
+   detected=spoofed principal was approved instead of invalid
+
+2. Remove Default_Ignorable_Code_Point stripping
+   selected=a zero-width insertion
+   exitCode=1
+   detected=spoofed principal was approved instead of invalid
+
+3. Remove Cyrillic lookalike folding
+   selected=a Cyrillic lookalike
+   exitCode=1
+   detected=spoofed principal was approved instead of invalid
+
+4. Accept arbitrary string head formats
+   selected=rejects a malformed head
+   exitCode=1
+   detected=malformed head was approved instead of invalid
+
+5. Suppress not-found head rejection
+   selected=fabricated full-length heads
+   exitCode=1
+   detected=fabricated commits restored the approval bypass
+
+6. Suppress equal-head rejection
+   selected=a review head equal to its derivation head
+   exitCode=1
+   detected=same-commit review restored the approval bypass
+
+7. Treat a non-Git repository as not-found
+   selected=returns unverifiable with a named reason outside a Git repository
+   exitCode=1
+   detected=outcome changed from unverifiable to invalid
+
+8. Remove closeout resolver pass-through
+   selected=keeps unverifiable approval out of the promotion check
+   exitCode=1
+   detected=injected unavailability was ignored and produced approved/28
+
+9. Remove the approved-28 assertion at the publishing boundary
+   selected=keeps unverifiable approval out of the promotion check
+   exitCode=1
+   detected=the named fail-closed boundary was bypassed and a later stale-projection assertion fired
+
+Totals:
+  selected=9
+  detected=9
+  missed=0
+  skipped=0

@@ -644,6 +644,7 @@ export function buildCapabilityCloseout(options = {}) {
   const reviewGate = evaluateIndependentReviewApproval({
     record: approvalRecord,
     expectation: S182_FOUNDATION_REVIEW_EXPECTATION,
+    resolveHead: options.resolveHead,
   });
   assert(
     reviewGate.outcome !== "invalid",
@@ -1636,7 +1637,7 @@ export function buildPromotionBinding(projection) {
   assert(
     projection.closeout.independentReviewApproved === true &&
       projection.closeout.summary.foundationV1Cells === 28,
-    "Only the approved 28-cell projection can be published as the promotion supersession",
+    `Only the approved 28-cell projection can be published as the promotion supersession (approval outcome: ${projection.closeout.independentReviewOutcome})`,
   );
   return {
     schemaVersion: "1.0.0",
@@ -1777,15 +1778,15 @@ function checkDocuments(documents) {
   }
 }
 
-export function run(command = "--check") {
+export function run(command = "--check", options = {}) {
   if (command === "--write-promotion") {
-    const projection = buildPromotionProjection();
+    const projection = buildPromotionProjection(options);
     writePromotionProjection(projection);
     console.log(
       `Wrote separately addressed Sprint 182 independent-review projection: ${projection.closeout.summary.foundationV1Cells} foundation-v1 cells (${projection.closeout.independentReviewOutcome}). The ca8d84bb historical paths remain byte-exact.`,
     );
   } else if (command === "--check-promotion") {
-    const projection = buildPromotionProjection();
+    const projection = buildPromotionProjection(options);
     checkPromotionProjection(projection);
     console.log(
       `Verified Sprint 182 independent-review projection: ${projection.closeout.summary.foundationV1Cells} foundation-v1 cells (${projection.closeout.independentReviewOutcome}).`,
