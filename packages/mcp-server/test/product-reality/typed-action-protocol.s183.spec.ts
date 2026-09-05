@@ -7,6 +7,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -121,12 +122,18 @@ async function vueConsumerResult(
   omittedAction?: RequiredActionName,
 ): Promise<{ status: number | null; output: string }> {
   await yieldToVitestRpc();
-  const root = mkdtempSync(path.join(mcpServerRoot, '.s183-vue-actions-'));
+  const root = mkdtempSync(path.join(tmpdir(), 'oods-s183-vue-actions-'));
   try {
     mkdirSync(path.join(root, 'node_modules'));
+    mkdirSync(path.join(root, 'node_modules', '@oods'));
     symlinkSync(
       path.dirname(vueRequire.resolve('vue/package.json')),
       path.join(root, 'node_modules', 'vue'),
+      'junction',
+    );
+    symlinkSync(
+      vuePackageRoot,
+      path.join(root, 'node_modules', '@oods', 'components-vue'),
       'junction',
     );
     writeFileSync(path.join(root, 'GeneratedUI.vue'), code);

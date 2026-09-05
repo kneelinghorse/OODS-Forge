@@ -7,7 +7,17 @@ import { fileURLToPath } from 'node:url';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const repositoryRoot = resolve(packageRoot, '../..');
-const artifactRoot = resolve(repositoryRoot, 'artifacts/product-reality/sprint-182/m03/package-verification');
+const artifactArgument = process.argv.indexOf('--artifact-root');
+const missionArgument = process.argv.indexOf('--mission');
+
+if (artifactArgument < 0 || !process.argv[artifactArgument + 1]) {
+  throw new Error('Usage: node test/packed-import.mjs --artifact-root <directory>');
+}
+
+const artifactRoot = resolve(repositoryRoot, process.argv[artifactArgument + 1]);
+const mission = missionArgument >= 0 && process.argv[missionArgument + 1]
+  ? process.argv[missionArgument + 1]
+  : 's182-m03';
 const tarballRoot = resolve(artifactRoot, 'tarballs');
 const consumerRoot = mkdtempSync(join(tmpdir(), 'oods-vue-s182-m03-'));
 const packageDirectories = [
@@ -163,7 +173,7 @@ process.stdout.write(JSON.stringify({
   const report = {
     schemaVersion: '1.0.0',
     generatedAt: new Date().toISOString(),
-    mission: 's182-m03',
+    mission,
     target: 'vue',
     status: 'passed',
     selected: 6,
@@ -190,7 +200,7 @@ process.stdout.write(JSON.stringify({
   const message = error instanceof Error ? error.message : String(error);
   writeFileSync(resolve(artifactRoot, 'report.json'), `${JSON.stringify({
     schemaVersion: '1.0.0',
-    mission: 's182-m03',
+    mission,
     target: 'vue',
     status: 'failed',
     selected: 1,
