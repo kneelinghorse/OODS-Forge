@@ -1,0 +1,56 @@
+Detached worktree HEAD
+$ git rev-parse HEAD
+exit_code=0
+b4697e40fb67dfd59e638f7c847f103d9f06a8d2
+
+Canonical contract pre-green
+$ pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts --reporter=verbose
+exit_code=0
+
+ RUN  v3.2.4 /private/tmp/oods-s184-m03-mutations.kPGdQU/repo/packages/component-contracts
+
+ ✓ test/contract-amendments.s184.spec.ts > Sprint 184 nucleus contract amendments > versions only the three contracts whose saved-schema semantics changed 1ms
+ ✓ test/contract-amendments.s184.spec.ts > Sprint 184 nucleus contract amendments > recognizes every new render prop and composition directive explicitly 0ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Duration  380ms (transform 53ms, setup 0ms, collect 65ms, tests 2ms, environment 0ms, prepare 81ms)
+
+MCP runtime pre-green
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts --reporter=verbose
+exit_code=0
+
+ RUN  v3.2.4 /private/tmp/oods-s184-m03-mutations.kPGdQU/repo/packages/mcp-server
+
+ ✓ ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on react 8ms
+ ✓ ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on vue 1ms
+ ✓ ... > accepts only the declared boolean Select and array Text bindings on react 0ms
+ ✓ ... > accepts only the declared boolean Select and array Text bindings on vue 0ms
+ ✓ ... > emits explicit React coercion and joining expressions that strict-check against the built package 2462ms
+ ✓ ... > emits readonly-safe Vue coercion and joining expressions that strict-check against the built package 2761ms
+ ✓ ... > keeps both HTML field bindings visible without stringifying an array object 4ms
+ ✓ ... > executes the fields directive as an actual StatusTimeline on react even without authored children 1ms
+ ✓ ... > executes the fields directive as an actual StatusTimeline on vue even without authored children 1ms
+ ✓ ... > executes the fields directive as an actual StatusTimeline on html even without authored children 1ms
+ ✓ ... > lowers the saved directive to the exact named pattern and authored field order 1ms
+ ✓ ... > executes the directive through the direct tree renderer and repl.render document path 9ms
+ ✓ ... > preserves the saved directive node and its two visible field bindings on react 3ms
+ ✓ ... > preserves the saved directive node and its two visible field bindings on vue 2ms
+ ✓ ... > preserves the saved directive node and its two visible field bindings on html 2ms
+ ✓ ... > keeps react Select invalid input blocked after the bounded widening 2ms
+ ✓ ... > keeps react Stack invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps react Text invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps react Select invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps vue Select invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps vue Stack invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps vue Text invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps vue Select invalid input blocked after the bounded widening 0ms
+ ✓ ... > fails a react directive closed when a named composition field is absent 0ms
+ ✓ ... > fails a vue directive closed when a named composition field is absent 0ms
+
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+   Duration  6.70s (transform 432ms, setup 17ms, collect 1.19s, tests 5.26s, environment 0ms, prepare 60ms)
+
+Note: the repeated prefix abbreviated above as "..." was exactly
+"test/product-reality/emitter-directives.s184.spec.ts > Sprint 184 m03 target contract and emitter movement".

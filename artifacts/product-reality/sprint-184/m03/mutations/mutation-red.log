@@ -1,0 +1,209 @@
+M01 — remove Select.placeholder canonical prop
+$ pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts -t "recognizes every new render prop" --reporter=verbose
+exit_code=1
+ × ... > recognizes every new render prop and composition directive explicitly
+AssertionError: expected [ 'id', 'label', 'value', …(6) ] to include 'placeholder'
+ ❯ test/contract-amendments.s184.spec.ts:43:45
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "clears every nucleus contract issue" --reporter=verbose
+exit_code=1
+ × ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on react
+ × ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on vue
++ Received
++ [
++   {
++     "code": "OODS-V007",
++     "component": "Select",
++     "message": "Prop \"placeholder\" is not in the canonical Select contract.",
++     "nodeId": "slot-filters-2",
++   },
++ ]
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 skipped (25)
+
+M02 — remove Text.label canonical prop
+$ pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts -t "recognizes every new render prop" --reporter=verbose
+exit_code=1
+ × ... > recognizes every new render prop and composition directive explicitly
+AssertionError: expected [ 'content', 'as', 'size', 'weight' ] to include 'label'
+ ❯ test/contract-amendments.s184.spec.ts:44:43
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "clears every nucleus contract issue" --reporter=verbose
+exit_code=1
+ × ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on react
+ × ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on vue
++ Received
++ [
++   { "code": "OODS-V007", "component": "Text", "message": "Prop \"label\" is not in the canonical Text contract.", "nodeId": "pg-status-timeline-25" },
++   { "code": "OODS-V007", "component": "Text", "message": "Prop \"label\" is not in the canonical Text contract.", "nodeId": "pg-status-timeline-26" },
++   { "code": "OODS-V007", "component": "Text", "message": "Prop \"label\" is not in the canonical Text contract.", "nodeId": "slot-tab-4-17" },
++ ]
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 skipped (25)
+
+M03 — remove Stack.patternComponent canonical prop
+$ pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts -t "recognizes every new render prop" --reporter=verbose
+exit_code=1
+ × ... > recognizes every new render prop and composition directive explicitly
+- ArrayContaining [
+-   "patternComponent",
++ [
++   "direction",
++   "gap",
++   "align",
++   "justify",
++   "wrap",
+    "fields",
+  ]
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "clears every nucleus contract issue" --reporter=verbose
+exit_code=1
+ × ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on react
+ × ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on vue
++ Received
++ [
++   {
++     "code": "OODS-V007",
++     "component": "Stack",
++     "message": "Prop \"patternComponent\" is not in the canonical Stack contract.",
++     "nodeId": "slot-tab-0-4",
++   },
++ ]
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 skipped (25)
+
+M04 — remove Stack.fields canonical prop
+$ pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts -t "recognizes every new render prop" --reporter=verbose
+exit_code=1
+ × ... > recognizes every new render prop and composition directive explicitly
+- ArrayContaining [
++ [
++   "direction",
++   "gap",
++   "align",
++   "justify",
++   "wrap",
+    "patternComponent",
+-   "fields",
+  ]
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "clears every nucleus contract issue" --reporter=verbose
+exit_code=1
+ × ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on react
+ × ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on vue
++ Received
++ [
++   {
++     "code": "OODS-V007",
++     "component": "Stack",
++     "message": "Prop \"fields\" is not in the canonical Stack contract.",
++     "nodeId": "slot-tab-0-4",
++   },
++ ]
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 skipped (25)
+
+M05 — revert boolean Select.value accepted kinds
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "accepts only the declared boolean Select" --reporter=verbose
+exit_code=1
+ × ... > accepts only the declared boolean Select and array Text bindings on react
+ × ... > accepts only the declared boolean Select and array Text bindings on vue
++ Received
++ [
++   {
++     "code": "OODS-V007",
++     "component": "Select",
++     "message": "Field \"cancel_at_period_end\" has boolean data, which cannot bind to Select.value on the react target; accepted field kinds: string, number.",
++     "nodeId": "boolean-select",
++   },
++ ]
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 skipped (25)
+
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "accepts only the declared boolean Select and array Text bindings on vue" --reporter=verbose
+exit_code=1
++ Received
++ [
++   {
++     "code": "OODS-V007",
++     "component": "Select",
++     "message": "Field \"cancel_at_period_end\" has boolean data, which cannot bind to Select.value on the vue target; accepted field kinds: string.",
++     "nodeId": "boolean-select",
++   },
++ ]
+ Test Files  1 failed (1)
+      Tests  1 failed | 24 skipped (25)
+
+M06 — revert T[] Text children accepted kinds
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "accepts only the declared boolean Select" --reporter=verbose
+exit_code=1
+ × ... > accepts only the declared boolean Select and array Text bindings on react
+ × ... > accepts only the declared boolean Select and array Text bindings on vue
++ Received
++ [
++   {
++     "code": "OODS-V007",
++     "component": "Text",
++     "message": "Field \"allowed_transitions\" has array data, which cannot bind to Text children on the react target; accepted field kinds: string, number.",
++     "nodeId": "array-text",
++   },
++ ]
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 skipped (25)
+
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "accepts only the declared boolean Select and array Text bindings on vue" --reporter=verbose
+exit_code=1
++ Received
++ [
++   {
++     "code": "OODS-V007",
++     "component": "Text",
++     "message": "Field \"allowed_transitions\" has array data, which cannot bind to Text children on the vue target; accepted field kinds: string, number.",
++     "nodeId": "array-text",
++   },
++ ]
+ Test Files  1 failed (1)
+      Tests  1 failed | 24 skipped (25)
+
+M07 — bypass executeCompositionDirectives in emit/render entry points
+$ set -o pipefail
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t "executes the fields directive|executes the directive through|preserves the saved directive node" --reporter=verbose 2>&1 | rg "^( RUN| ×| FAIL | Test Files|      Tests|   →|.*ERR_PNPM)"
+exit_code=1
+ RUN  v3.2.4 /private/tmp/oods-s184-m03-mutations.kPGdQU/repo/packages/mcp-server
+ × ... > executes the fields directive as an actual StatusTimeline on react even without authored children 14ms
+   → expected 'import React from \'react\';\nimport …' not to match /\spatternComponent=/
+ × ... > executes the fields directive as an actual StatusTimeline on vue even without authored children 1ms
+   → expected '<template>\n  <Stack id="slot-tab-0-4…' not to match /\spatternComponent=/
+ × ... > executes the fields directive as an actual StatusTimeline on html even without authored children 4ms
+   → expected '<!DOCTYPE html>\n<html lang="en" data…' to contain 'allowedTransitions'
+ × ... > executes the directive through the direct tree renderer and repl.render document path 6ms
+   → expected '<div id="slot-tab-0-4" data-oods-comp…' to match /id="slot-tab-0-4"[^>]*data-oods-compo…/
+ × ... > preserves the saved directive node and its two visible field bindings on react 3ms
+   → expected 'import React from \'react\';\nimport …' not to match /\spatternComponent=/
+ × ... > preserves the saved directive node and its two visible field bindings on vue 2ms
+   → expected '<template>\n  <Stack id="screen-detai…' not to match /\spatternComponent=/
+ × ... > preserves the saved directive node and its two visible field bindings on html 4ms
+   → expected '<!DOCTYPE html>\n<html lang="en" data…' not to contain 'data-prop-pattern-component'
+ FAIL  ... > executes the fields directive as an actual StatusTimeline on react even without authored children
+ FAIL  ... > executes the fields directive as an actual StatusTimeline on vue even without authored children
+ FAIL  ... > executes the fields directive as an actual StatusTimeline on html even without authored children
+ FAIL  ... > executes the directive through the direct tree renderer and repl.render document path
+ FAIL  ... > preserves the saved directive node and its two visible field bindings on react
+ FAIL  ... > preserves the saved directive node and its two visible field bindings on vue
+ FAIL  ... > preserves the saved directive node and its two visible field bindings on html
+ Test Files  1 failed (1)
+      Tests  7 failed | 18 skipped (25)
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command failed with exit code 1
+
+For readability, this log preserves the assertion/result lines emitted by the
+commands. Vitest's repeated skipped-test listings are omitted for M01–M06.
+M07 is the exact output of the recorded `rg` filter rerun; `pipefail` preserved
+the underlying Vitest exit code. No failing test or failure message is omitted.

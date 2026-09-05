@@ -1,0 +1,247 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m03",
+  "kind": "pre-change-target-contract-control",
+  "capturedAt": "2026-09-05T08:21:59Z",
+  "sourceCommit": "d51fb5ba80d7e67d7d4e25e16e2943e694019683",
+  "sourceCommitSubject": "s184-m02: enforce readiness evidence at emission",
+  "isolation": {
+    "mode": "disposable-detached-git-worktree",
+    "pathDuringCapture": "/private/tmp/oods-s184-m03-baseline.bTC8eB/OODS-Forge",
+    "removedAfterCapture": true,
+    "sourceStatusBeforeProbe": "clean"
+  },
+  "runtime": {
+    "node": "v24.6.0",
+    "pnpm": "9.12.2"
+  },
+  "setup": [
+    {
+      "command": "pnpm install --offline --frozen-lockfile --ignore-scripts",
+      "exitCode": 0,
+      "observedOutput": [
+        "Scope: all 22 workspace projects",
+        "Lockfile is up to date, resolution step is skipped",
+        "Progress: resolved 947, reused 946, downloaded 0, added 947, done",
+        "Done in 5.1s"
+      ]
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server... run build",
+      "exitCode": 0,
+      "observedOutput": [
+        "Scope: 11 of 22 workspace projects",
+        "packages/component-contracts build: Done",
+        "packages/components-react build: Done",
+        "packages/components-vue build: Done",
+        "packages/mcp-server build: Done"
+      ],
+      "builtPackagesInDependencyOrder": [
+        "@oods/a11y-tools",
+        "@oods/component-contracts",
+        "@oods/tokens",
+        "@oods/artifacts",
+        "@oods/release-utils",
+        "@oods/viz-render",
+        "@oods/component-styles",
+        "@oods/viz-core",
+        "@oods/components-react",
+        "@oods/components-vue",
+        "@oods/mcp-server"
+      ],
+      "nonFatalObservedWarnings": [
+        "Style Dictionary reported existing token-collision notices during the successful @oods/tokens build.",
+        "The build completed with exit code 0; these notices did not affect target-contract probing."
+      ]
+    }
+  ],
+  "probe": {
+    "implementation": "Imported preflightTargetContracts from packages/mcp-server/dist/codegen/target-contracts.js and passed each saved record's schema property for react and vue.",
+    "checks": [
+      "props-contract",
+      "slots-contract",
+      "events-contract"
+    ],
+    "expectedControlCounts": {
+      "subscription-list-dark": {
+        "react": 2,
+        "vue": 2
+      },
+      "subscription-detail-dark": {
+        "react": 6,
+        "vue": 6
+      },
+      "tier1-acceptance-sub-detail": {
+        "react": 0,
+        "vue": 0
+      }
+    },
+    "observedControlCounts": {
+      "subscription-list-dark": {
+        "react": 2,
+        "vue": 2
+      },
+      "subscription-detail-dark": {
+        "react": 6,
+        "vue": 6
+      },
+      "tier1-acceptance-sub-detail": {
+        "react": 0,
+        "vue": 0
+      }
+    },
+    "countAssertion": "passed"
+  },
+  "results": [
+    {
+      "name": "subscription-list-dark",
+      "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/subscription-list-dark.json",
+      "bytes": 12745,
+      "sha256": "805165020b91ced845db98f0144d29ebcca732ea744aa5940dec9fd56c407a64",
+      "targets": {
+        "react": {
+          "issueCount": 2,
+          "issues": [
+            {
+              "code": "OODS-V007",
+              "message": "Field \"cancel_at_period_end\" has boolean data, which cannot bind to Select.value on the react target; accepted field kinds: string, number.",
+              "nodeId": "slot-filters-2",
+              "component": "Select"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"placeholder\" is not in the canonical Select contract.",
+              "nodeId": "slot-filters-2",
+              "component": "Select"
+            }
+          ]
+        },
+        "vue": {
+          "issueCount": 2,
+          "issues": [
+            {
+              "code": "OODS-V007",
+              "message": "Field \"cancel_at_period_end\" has boolean data, which cannot bind to Select.value on the vue target; accepted field kinds: string.",
+              "nodeId": "slot-filters-2",
+              "component": "Select"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"placeholder\" is not in the canonical Select contract.",
+              "nodeId": "slot-filters-2",
+              "component": "Select"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "subscription-detail-dark",
+      "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/subscription-detail-dark.json",
+      "bytes": 19119,
+      "sha256": "7d4e9b9fec2d666309fcd7b4e83a8e3b7c98c82afeb52dbed90e48730943a7cd",
+      "targets": {
+        "react": {
+          "issueCount": 6,
+          "issues": [
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"fields\" is not in the canonical Stack contract.",
+              "nodeId": "slot-tab-0-4",
+              "component": "Stack"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"patternComponent\" is not in the canonical Stack contract.",
+              "nodeId": "slot-tab-0-4",
+              "component": "Stack"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"label\" is not in the canonical Text contract.",
+              "nodeId": "pg-status-timeline-25",
+              "component": "Text"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Field \"allowed_transitions\" has unknown data, which cannot bind to Text children on the react target; accepted field kinds: string, number.",
+              "nodeId": "pg-status-timeline-26",
+              "component": "Text"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"label\" is not in the canonical Text contract.",
+              "nodeId": "pg-status-timeline-26",
+              "component": "Text"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"label\" is not in the canonical Text contract.",
+              "nodeId": "slot-tab-4-17",
+              "component": "Text"
+            }
+          ]
+        },
+        "vue": {
+          "issueCount": 6,
+          "issues": [
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"fields\" is not in the canonical Stack contract.",
+              "nodeId": "slot-tab-0-4",
+              "component": "Stack"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"patternComponent\" is not in the canonical Stack contract.",
+              "nodeId": "slot-tab-0-4",
+              "component": "Stack"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"label\" is not in the canonical Text contract.",
+              "nodeId": "pg-status-timeline-25",
+              "component": "Text"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Field \"allowed_transitions\" has unknown data, which cannot bind to Text children on the vue target; accepted field kinds: string, number.",
+              "nodeId": "pg-status-timeline-26",
+              "component": "Text"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"label\" is not in the canonical Text contract.",
+              "nodeId": "pg-status-timeline-26",
+              "component": "Text"
+            },
+            {
+              "code": "OODS-V007",
+              "message": "Prop \"label\" is not in the canonical Text contract.",
+              "nodeId": "slot-tab-4-17",
+              "component": "Text"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "tier1-acceptance-sub-detail",
+      "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/tier1-acceptance-sub-detail.json",
+      "bytes": 15823,
+      "sha256": "f842c3c61933caf7cf26af48e02b7a7de84c5f60fd49b8c03458821fdd55318b",
+      "targets": {
+        "react": {
+          "issueCount": 0,
+          "issues": []
+        },
+        "vue": {
+          "issueCount": 0,
+          "issues": []
+        }
+      }
+    }
+  ],
+  "status": "passed"
+}

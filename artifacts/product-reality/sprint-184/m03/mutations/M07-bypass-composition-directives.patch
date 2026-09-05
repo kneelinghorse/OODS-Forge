@@ -1,0 +1,54 @@
+diff --git a/packages/mcp-server/src/codegen/html-emitter.ts b/packages/mcp-server/src/codegen/html-emitter.ts
+index 6e2e8784..933e969e 100644
+--- a/packages/mcp-server/src/codegen/html-emitter.ts
++++ b/packages/mcp-server/src/codegen/html-emitter.ts
+@@ -57,3 +57,3 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
+   try {
+-    const expandedSchema = executeCompositionDirectives(schema);
++    const expandedSchema = schema;
+     const ctx = runPreEmit(expandedSchema, { options });
+diff --git a/packages/mcp-server/src/codegen/react-emitter.ts b/packages/mcp-server/src/codegen/react-emitter.ts
+index 7de0783f..2fcaaacb 100644
+--- a/packages/mcp-server/src/codegen/react-emitter.ts
++++ b/packages/mcp-server/src/codegen/react-emitter.ts
+@@ -887,3 +887,3 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
+   const warnings: CodegenIssue[] = [];
+-  const expandedSchema = executeCompositionDirectives(schema);
++  const expandedSchema = schema;
+   const normalizedSchema = normalizeSchemaForFramework(expandedSchema, 'react');
+diff --git a/packages/mcp-server/src/codegen/vue-emitter.ts b/packages/mcp-server/src/codegen/vue-emitter.ts
+index 6b4beb9b..356462fc 100644
+--- a/packages/mcp-server/src/codegen/vue-emitter.ts
++++ b/packages/mcp-server/src/codegen/vue-emitter.ts
+@@ -1138,3 +1138,3 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
+   const warnings: CodegenIssue[] = [];
+-  const expandedSchema = executeCompositionDirectives(schema);
++  const expandedSchema = schema;
+   const normalizedSchema = normalizeSchemaForFramework(expandedSchema, 'vue');
+diff --git a/packages/mcp-server/src/render/tree-renderer.ts b/packages/mcp-server/src/render/tree-renderer.ts
+index 6cf5cc22..7f601d0a 100644
+--- a/packages/mcp-server/src/render/tree-renderer.ts
++++ b/packages/mcp-server/src/render/tree-renderer.ts
+@@ -192,17 +192,17 @@ function renderTokenOverrides(tokenOverrides?: Record<string, string>): string {
+ export function renderTree(schema: UiSchema): string {
+-  const expandedSchema = executeCompositionDirectives(schema);
++  const expandedSchema = schema;
+   const tokenStyle = renderTokenOverrides(expandedSchema.tokenOverrides);
+   const body = expandedSchema.screens.map((screen) => renderNode(screen)).join('');
+   return tokenStyle ? `${tokenStyle}\n${body}` : body;
+ }
+-
++
+ export function renderFragments(schema: UiSchema): Map<string, FragmentResult> {
+   return renderFragmentsWithErrors(schema).fragments;
+ }
+-
++
+ export function renderFragmentsWithErrors(schema: UiSchema): FragmentRenderBatch {
+   const fragments = new Map<string, FragmentResult>();
+   const errors: FragmentRenderError[] = [];
+-  const expandedSchema = executeCompositionDirectives(schema);
++  const expandedSchema = schema;
+-
++
+   for (const screen of expandedSchema.screens) {

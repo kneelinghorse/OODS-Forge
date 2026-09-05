@@ -86,6 +86,13 @@ const directiveWithoutChildrenSchema: UiSchema = {
   }],
 };
 
+const INVALID_PROP_CASES = (['react', 'vue'] as const).flatMap((framework) => ([
+  [framework, 'Select', { bogusProp: true }],
+  [framework, 'Stack', { bogusProp: true }],
+  [framework, 'Text', { bogusProp: true }],
+  [framework, 'Select', { placeholder: 3 }],
+] as const));
+
 function reactSemanticErrors(code: string): string[] {
   const root = mkdtempSync(path.join(tmpdir(), 'oods-s184-react-widening-'));
   try {
@@ -327,12 +334,13 @@ describe('Sprint 184 m03 target contract and emitter movement', () => {
     },
   );
 
-  it.each((['react', 'vue'] as const).flatMap((framework) => ([
-    [framework, 'Select', { bogusProp: true }],
-    [framework, 'Stack', { bogusProp: true }],
-    [framework, 'Text', { bogusProp: true }],
-    [framework, 'Select', { placeholder: 3 }],
-  ] as const)))(
+  it('pins the invalid-prop companion matrix at four cases for each target', () => {
+    expect(INVALID_PROP_CASES).toHaveLength(8);
+    expect(INVALID_PROP_CASES.filter(([framework]) => framework === 'react')).toHaveLength(4);
+    expect(INVALID_PROP_CASES.filter(([framework]) => framework === 'vue')).toHaveLength(4);
+  });
+
+  it.each(INVALID_PROP_CASES)(
     'keeps %s %s invalid input blocked after the bounded widening',
     async (framework, component, props) => {
       const schema: UiSchema = {

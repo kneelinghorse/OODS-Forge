@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m03",
+  "kind": "contract-amendment-closeout-evidence",
+  "capturedAt": "2026-09-05T08:22:57Z",
+  "baseCommit": "d51fb5ba80d7e67d7d4e25e16e2943e694019683",
+  "measuredImplementationCommit": "b4697e40fb67dfd59e638f7c847f103d9f06a8d2",
+  "savedSchemaFreeze": {
+    "source": "artifacts/product-reality/sprint-184/m01/saved-schema-freeze.json",
+    "mutationPolicy": "The three saved records are immutable inputs for Sprint 184.",
+    "files": [
+      {
+        "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/subscription-detail-dark.json",
+        "bytes": 19119,
+        "sha256": "7d4e9b9fec2d666309fcd7b4e83a8e3b7c98c82afeb52dbed90e48730943a7cd"
+      },
+      {
+        "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/subscription-list-dark.json",
+        "bytes": 12745,
+        "sha256": "805165020b91ced845db98f0144d29ebcca732ea744aa5940dec9fd56c407a64"
+      },
+      {
+        "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/tier1-acceptance-sub-detail.json",
+        "bytes": 15823,
+        "sha256": "f842c3c61933caf7cf26af48e02b7a7de84c5f60fd49b8c03458821fdd55318b"
+      }
+    ]
+  },
+  "componentContractAmendment": {
+    "contractCount": 14,
+    "versionCounts": {
+      "1.0.0": 11,
+      "1.1.0": 3
+    },
+    "version1_1Components": [
+      {
+        "componentId": "Select",
+        "addedProps": [
+          "placeholder"
+        ],
+        "behavior": "A placeholder is a genuine empty-value option; boolean field bindings are accepted and emitted through safe string coercion."
+      },
+      {
+        "componentId": "Stack",
+        "addedProps": [
+          "patternComponent",
+          "fields"
+        ],
+        "behavior": "The pair is an executable composition directive rather than raw target attributes."
+      },
+      {
+        "componentId": "Text",
+        "addedProps": [
+          "label"
+        ],
+        "behavior": "Label is a genuine accessible-description prop; string-array child bindings use safe display coercion."
+      }
+    ],
+    "version1_0Components": [
+      "Badge",
+      "Banner",
+      "Button",
+      "Card",
+      "Checkbox",
+      "DatePicker",
+      "Grid",
+      "Input",
+      "Table",
+      "Tabs",
+      "Textarea"
+    ]
+  },
+  "readinessManifestDisposition": {
+    "decision": "Keep the two Sprint-182 readiness manifests byte-frozen as global foundation-v1 evidence. Their top-level contractVersion remains 1.0.0 and is not reinterpreted as a current per-component version declaration. The Select, Stack, and Text 1.1.0 amendments are recorded explicitly in this mission evidence and the versioned component-contract source.",
+    "stranded": false,
+    "files": [
+      {
+        "path": "packages/components-react/evidence/react-readiness.v1.json",
+        "contractVersion": "1.0.0",
+        "rowCount": 14,
+        "bytes": 17010,
+        "m01Sha256": "8ecfb88a0c76233bb477833ee686f7ca46fc7f9af2d0dcc2abf49bdea1cbde3d",
+        "measuredSha256": "8ecfb88a0c76233bb477833ee686f7ca46fc7f9af2d0dcc2abf49bdea1cbde3d",
+        "byteFreezeAssertion": "passed"
+      },
+      {
+        "path": "packages/components-vue/evidence/vue-readiness.v1.json",
+        "contractVersion": "1.0.0",
+        "rowCount": 14,
+        "bytes": 13127,
+        "m01Sha256": "0bcb8104b303cdbd34a5d8506900fb6d8aa1750d06d5009001d5fa3dda9caafc",
+        "measuredSha256": "0bcb8104b303cdbd34a5d8506900fb6d8aa1750d06d5009001d5fa3dda9caafc",
+        "byteFreezeAssertion": "passed"
+      }
+    ]
+  },
+  "m01FreezeAccounting": {
+    "source": "artifacts/product-reality/sprint-184/m01/freeze-inventory.json",
+    "workingTreeBuildOutputsMeasuredAt": "2026-09-05T08:22:57Z",
+    "comparisonPolicy": "Deduplicate the 34 inventory rows by path, then compare the current SHA-256 to workingTreeSha256 when present, otherwise recordedSha256 for the originally unbuilt output.",
+    "inventoryRowCount": 34,
+    "uniquePathCount": 33,
+    "unchangedPathCount": 31,
+    "moverCount": 2,
+    "movers": [
+      {
+        "path": "packages/component-contracts/src/contracts.ts",
+        "rowClass": "git-show-and-working-tree",
+        "m01Sha256": "68044cf36746e45bac74fe77aa9c73e3094aba1aeea5b3ef1754b47707ab2d8a",
+        "measuredSha256": "208edf7ec52b8bb56f3def2262d1b1fbcd7676fe1b84cfd3e453dad5f9212211",
+        "measuredBytes": 8062,
+        "disposition": "Expected substantive m03 mover: exactly three component contracts advance to 1.1.0."
+      },
+      {
+        "path": "packages/components-vue/dist/index.d.ts",
+        "rowClass": "build-output",
+        "m01Sha256": "3305b40ba2bf04f2190fb9d4f24c0ea98e0704c976e3a12426020cc19713699a",
+        "measuredSha256": "a3300d23e17e3b1915f7d1382eeebe773aa32ddc1f8b7534a066f4c5eea58723",
+        "measuredBytes": 24686,
+        "disposition": "Expected ignored derived build output from the Vue public type widening; retained in accounting and not advertised as an implementation source mover."
+      }
+    ],
+    "namedUnchangedCheck": {
+      "path": "packages/components-react/dist/index.d.ts",
+      "rowClass": "build-output",
+      "m01RecordedSha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594",
+      "measuredSha256": "672ff53eeba027cb16c0e618f938096944cf757a86dad16867380cc169c0a594",
+      "measuredBytes": 2288,
+      "assertion": "unchanged"
+    }
+  },
+  "relatedEvidence": [
+    "artifacts/product-reality/sprint-184/m03/baseline-red-control.json",
+    "artifacts/product-reality/sprint-184/m03/baseline-reconstruction.log",
+    "artifacts/product-reality/sprint-184/m03/advertised-movers.json",
+    "artifacts/product-reality/sprint-184/m03/test-movers.json"
+  ],
+  "scopeStatus": "captured"
+}
