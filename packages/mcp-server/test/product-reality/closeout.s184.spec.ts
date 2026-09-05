@@ -17,6 +17,13 @@ import {
   sha256,
   writeOrCheckArtifacts,
 } from "../../../../scripts/product-reality/s184-m07-closeout.mjs";
+import {
+  AUDIT_HEAD as RECONNECT_AUDIT_HEAD,
+  DESTINATIONS as RECONNECT_DESTINATIONS,
+  DISPOSITION_PATH as RECONNECT_DISPOSITION_PATH,
+  PLAN_PATH as RECONNECT_PLAN_PATH,
+  buildReconnectRequests,
+} from "../../../../scripts/product-reality/s184-m07-reconnect.mjs";
 
 interface Fixture {
   repositoryRoot: string;
@@ -28,7 +35,8 @@ interface Fixture {
     currentReceipt: string;
     patchReport: string;
     remediationReport: string;
-    reconnectReport: string;
+    reconnectDisposition: string;
+    reconnectPlan: string;
     focusedReceipt: string;
     sprintStatus: string;
   };
@@ -119,6 +127,48 @@ function suiteReceipt({
   };
 }
 
+function reconnectPlanFixture() {
+  return {
+    schemaVersion: "1.0.0",
+    missionId: "s184-m07",
+    kind: "reconnect-derivation-plan",
+    status: "ready-for-send",
+    auditHead: RECONNECT_AUDIT_HEAD,
+    sprint183: {
+      derivedCount: 2,
+      movers: ["tests/added.spec.ts", "tests/removed.spec.ts"],
+    },
+    sprint184: {
+      union: {
+        sourceCount: 1,
+        count: 1,
+        duplicatesRemoved: 0,
+        movers: ["tests/added.spec.ts"],
+      },
+    },
+    combinedUnique: {
+      count: 2,
+      crossSprintOverlap: 1,
+      movers: ["tests/added.spec.ts", "tests/removed.spec.ts"],
+    },
+    destinations: RECONNECT_DESTINATIONS.map((destination) => ({
+      ...destination,
+    })),
+    finalization: {
+      noticeRecordPath:
+        "artifacts/product-reality/sprint-184/m07/reconnect-notices.json",
+      requiresImplementationHeadCommit: true,
+      requiredMessageIds: 3,
+      messageIdsMustBeNonEmptyAndUnique: true,
+    },
+    unrunChecks: [
+      "The implementation head has not been committed.",
+      "The three CMOS info_push requests have not been sent.",
+      "The three unique non-empty message IDs have not been recorded.",
+    ],
+  };
+}
+
 function createFixture(
   implementationMessage = "s184-m07: add and remove accounting fixtures",
   removeBySuiteConfiguration = false,
@@ -139,6 +189,17 @@ function createFixture(
     "export default { exclude: [] };\n",
   );
   const sprintBaseSha = commit(repositoryRoot, "s184-m01: suite baseline");
+  const outputRoot = "artifacts/product-reality/sprint-184/m07";
+  const paths = {
+    baselineReceipt: `${outputRoot}/suite/baseline-root-core.json`,
+    currentReceipt: `${outputRoot}/suite/current-root-core.json`,
+    patchReport: `${outputRoot}/patch-disposition.json`,
+    remediationReport: `${outputRoot}/b2-remediation.json`,
+    reconnectDisposition: RECONNECT_DISPOSITION_PATH,
+    reconnectPlan: RECONNECT_PLAN_PATH,
+    focusedReceipt: `${outputRoot}/focused-suite.json`,
+    sprintStatus: `${outputRoot}/sprint-status.json`,
+  };
 
   if (removeBySuiteConfiguration) {
     writeFile(
@@ -150,18 +211,9 @@ function createFixture(
     fs.rmSync(path.join(repositoryRoot, "tests/removed.spec.ts"));
   }
   writeFile(repositoryRoot, "tests/added.spec.ts");
+  const reconnectPlan = reconnectPlanFixture();
+  writeJson(repositoryRoot, paths.reconnectPlan, reconnectPlan);
   const implementationHead = commit(repositoryRoot, implementationMessage);
-
-  const outputRoot = "artifacts/product-reality/sprint-184/m07";
-  const paths = {
-    baselineReceipt: `${outputRoot}/suite/baseline-root-core.json`,
-    currentReceipt: `${outputRoot}/suite/current-root-core.json`,
-    patchReport: `${outputRoot}/patch-disposition.json`,
-    remediationReport: `${outputRoot}/b2-remediation.json`,
-    reconnectReport: `${outputRoot}/reconnect-notices.json`,
-    focusedReceipt: `${outputRoot}/focused-suite.json`,
-    sprintStatus: `${outputRoot}/sprint-status.json`,
-  };
   writeJson(
     repositoryRoot,
     paths.baselineReceipt,
@@ -189,11 +241,6 @@ function createFixture(
     kind: "b2-remediation-proof",
     status: "passed",
   });
-  writeJson(repositoryRoot, paths.reconnectReport, {
-    kind: "reconnect-proof",
-    status: "passed",
-    messageIds: ["message-1", "message-2", "message-3"],
-  });
   writeJson(repositoryRoot, paths.focusedReceipt, {
     kind: "focused-closeout-controls",
     status: "passed",
@@ -208,6 +255,140 @@ function createFixture(
     kind: "cmos-mission-contract-source",
     missionId: "s184-m07",
     successCriteria: MISSION_CRITERIA,
+  });
+
+  const requests = buildReconnectRequests(reconnectPlan, implementationHead);
+  const requestSha256 = (index: number) =>
+    sha256(Buffer.from(canonicalJson(requests[index]), "utf8"));
+  const reconnectPlanBytes = fs.readFileSync(
+    path.join(repositoryRoot, paths.reconnectPlan),
+  );
+  writeJson(repositoryRoot, paths.reconnectDisposition, {
+    schemaVersion: "1.0.0",
+    missionId: "s184-m07",
+    kind: "three-consumer-reconnect-disposition",
+    status: "passed",
+    recordingStatus: "passed",
+    deliveryStatus: "completed-with-retired-consumer",
+    criterionStatus: "passed",
+    statusMeaning:
+      "Passed means both active consumers received the exact Git-derived notice and the archived consumer has an explicit, machine-readable retirement disposition; no message id is fabricated.",
+    auditHead: RECONNECT_AUDIT_HEAD,
+    implementationHead,
+    plan: {
+      path: paths.reconnectPlan,
+      revision: implementationHead,
+      bytes: reconnectPlanBytes.byteLength,
+      sha256: sha256(reconnectPlanBytes),
+    },
+    planFinalizationDisposition: {
+      historicalFinalization: { ...reconnectPlan.finalization },
+      unrunCheckDispositions: [
+        {
+          check: reconnectPlan.unrunChecks[0],
+          resolution: "satisfied",
+          evidence: "implementation-head-and-plan-byte-binding",
+        },
+        {
+          check: reconnectPlan.unrunChecks[1],
+          resolution: "two-active-sends-satisfied-one-retired",
+          preservedRequiredSuccessfulDeliveries: 2,
+          supersededRetiredDeliveryRequirements: 1,
+        },
+        {
+          check: reconnectPlan.unrunChecks[2],
+          resolution: "two-active-message-ids-satisfied-one-retired",
+          preservedRequiredMessageIds: 2,
+          supersededRetiredMessageIdRequirements: 1,
+        },
+      ],
+      supersession: {
+        authority: "product-owner",
+        scope: "retired-destination-only",
+        effectiveDispositionRecordPath: paths.reconnectDisposition,
+        strictThreeSuccessNoticeContractPreserved: true,
+        retiredDestination: {
+          ...RECONNECT_DESTINATIONS[1],
+          projectId: "0dc6bde8-2c52-4ffb-8a90-7cbe35eb031c",
+        },
+        preservedActiveDestinations: [
+          { ...RECONNECT_DESTINATIONS[0] },
+          { ...RECONNECT_DESTINATIONS[2] },
+        ],
+        supersededRequirements: {
+          successfulDeliveryForRetiredDestination: true,
+          messageIdForRetiredDestination: true,
+        },
+        preservedRequirements: {
+          implementationHeadCommit: true,
+          successfulActiveDeliveries: 2,
+          uniqueNonEmptyActiveMessageIds: 2,
+          activeMessageIdsMustBeNonEmptyAndUnique: true,
+          activeRequestsMustRemainGitDerived: true,
+        },
+      },
+    },
+    derivation: {
+      sprint183Movers: 2,
+      sprint184TrancheMovers: 1,
+      sprint184UniqueMovers: 1,
+      sprint184DuplicatesRemoved: 0,
+      crossSprintOverlap: 1,
+      combinedUniqueMovers: 2,
+    },
+    attempts: [
+      {
+        ...RECONNECT_DESTINATIONS[0],
+        status: "sent",
+        attemptCount: 1,
+        requestSha256: requestSha256(0),
+        result: { success: true, messageId: "message-1" },
+      },
+      {
+        ...RECONNECT_DESTINATIONS[1],
+        status: "retired",
+        attemptCount: 2,
+        result: { success: false, errorCode: "DASHBOARD_ERROR" },
+        failure: {
+          classification: "archived-project",
+          projectId: "0dc6bde8-2c52-4ffb-8a90-7cbe35eb031c",
+          message:
+            "Dashboard error: Project 'dashboard-demos' is archived and no longer accepts messages.",
+          terminalDisposition:
+            "Retired from the delivery requirement by explicit product-owner direction; no message id exists or is fabricated.",
+        },
+      },
+      {
+        ...RECONNECT_DESTINATIONS[2],
+        status: "sent",
+        attemptCount: 1,
+        requestSha256: requestSha256(2),
+        result: { success: true, messageId: "message-2" },
+      },
+    ],
+    successfulMessageIds: ["message-1", "message-2"],
+    summary: {
+      requiredDestinations: 3,
+      attemptedDestinations: 3,
+      dispositionedDestinations: 3,
+      deliveryAttempts: 4,
+      successfulDeliveries: 2,
+      retiredDestinations: 1,
+      failedDeliveryAttempts: 2,
+      unresolvedDestinations: 0,
+      recordedMessageIds: 2,
+      allActiveDeliveriesProven: true,
+      allRequiredConsumerObligationsDispositioned: true,
+    },
+    retirementDecision: {
+      authority: "product-owner",
+      targetAddress: RECONNECT_DESTINATIONS[1].targetAddress,
+      projectId: "0dc6bde8-2c52-4ffb-8a90-7cbe35eb031c",
+      reason:
+        "The destination is archived, refuses messages, and is no longer an active project.",
+      policy:
+        "A retired destination is closed by machine-readable disposition, not by a fabricated successful delivery or message id.",
+    },
   });
 
   const executionRows = [
@@ -251,7 +432,7 @@ function createFixture(
           executionId: "m07-reconnect",
           kind: "cmos-message-send",
           status: "passed",
-          evidencePaths: [paths.reconnectReport],
+          evidencePaths: [paths.reconnectDisposition, paths.reconnectPlan],
         },
       ],
     },
@@ -322,7 +503,10 @@ function createFixture(
       binding(4, "m07-typed-gap-remediation", paths.remediationReport),
       binding(5, "m07-typed-gap-remediation", paths.remediationReport),
       binding(6, "m07-suite-accounting", paths.currentReceipt),
-      binding(7, "m07-reconnect", paths.reconnectReport),
+      {
+        ...binding(7, "m07-reconnect", paths.reconnectDisposition),
+        evidencePaths: [paths.reconnectDisposition, paths.reconnectPlan],
+      },
       binding(8, "m07-ledger-controls", paths.focusedReceipt),
       binding(9, "m07-review-handoff", paths.sprintStatus),
     ],
@@ -592,10 +776,11 @@ function independentlyVerifyArtifacts({
   }
 }
 
-afterEach(() => {
-  while (temporaryRoots.length > 0) {
-    fs.rmSync(temporaryRoots.pop()!, { recursive: true, force: true });
-  }
+afterEach(async () => {
+  const roots = temporaryRoots.splice(0);
+  await Promise.all(
+    roots.map((root) => fs.promises.rm(root, { recursive: true, force: true })),
+  );
 });
 
 describe("Sprint 184 M07 closeout accounting", () => {
@@ -610,7 +795,7 @@ describe("Sprint 184 M07 closeout accounting", () => {
     expect(() =>
       writeOrCheckArtifacts({
         repositoryRoot: fixture.repositoryRoot,
-        artifacts: build(fixture),
+        artifacts,
         mode: "check",
       }),
     ).not.toThrow();
@@ -733,10 +918,53 @@ describe("Sprint 184 M07 closeout accounting", () => {
     expect(() => build(fixture)).toThrow(/rolled up under more than one row/);
   });
 
+  it("rejects malformed frozen reconnect evidence despite a passed criterion 7 manifest status", () => {
+    const fixture = createFixture();
+    updateJsonAtHead(
+      fixture,
+      fixture.paths.reconnectDisposition,
+      (disposition) => {
+        disposition.attempts[0].result.messageId = "";
+      },
+    );
+    expect(() => build(fixture)).toThrow(
+      /Frozen reconnect disposition is invalid:.*DELIVERED_MESSAGE_ID/,
+    );
+
+    const disposition = JSON.parse(
+      fs.readFileSync(
+        path.join(fixture.repositoryRoot, fixture.paths.reconnectDisposition),
+        "utf8",
+      ),
+    );
+    disposition.attempts[0].result.messageId = "message-1";
+    writeJson(
+      fixture.repositoryRoot,
+      fixture.paths.reconnectDisposition,
+      disposition,
+    );
+    updateJsonAtHead(fixture, fixture.paths.reconnectPlan, (plan) => {
+      plan.sprint183.derivedCount += 1;
+    });
+    expect(() => build(fixture)).toThrow(
+      /plan binding does not match reviewHead bytes/,
+    );
+  });
+
+  it("rejects criterion 7 when its execution does not bind the frozen reconnect inputs", () => {
+    const fixture = createFixture();
+    updateJsonAtHead(fixture, INPUT_PATHS.manifest, (manifest) => {
+      manifest.claimBindings[6].executionIds = ["m07-patch-population"];
+    });
+    expect(() => build(fixture)).toThrow(
+      /Criterion 7 execution does not bind both frozen reconnect disposition inputs/,
+    );
+  });
+
   it("counts only proven claim rows in the headline", () => {
     const fixture = createFixture();
     updateJsonAtHead(fixture, INPUT_PATHS.manifest, (manifest) => {
-      manifest.claimBindings[5].status = "unproven";
+      manifest.claimBindings[6].status = "unproven";
     });
     const ledger = build(fixture)[OUTPUT_PATHS.claimLedger];
     expect(ledger.status).toBe("incomplete");
@@ -817,6 +1045,10 @@ describe("Sprint 184 M07 closeout accounting", () => {
     fs.appendFileSync(
       path.join(fixture.repositoryRoot, fixture.paths.patchReport),
       "working-tree-only tamper\n",
+    );
+    fs.writeFileSync(
+      path.join(fixture.repositoryRoot, fixture.paths.reconnectDisposition),
+      "not valid JSON\n",
     );
     const after =
       build(fixture)[OUTPUT_PATHS.claimLedger].claims[0].evidence[0];

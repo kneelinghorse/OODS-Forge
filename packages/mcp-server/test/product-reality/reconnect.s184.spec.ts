@@ -10,6 +10,7 @@ import {
   AUDIT_HEAD,
   CANONICAL_ADVERTISED_SCOPE,
   DESTINATIONS,
+  DISPOSITION_PATH,
   NOTICES_PATH,
   PLAN_PATH,
   REPOSITORY_ROOT,
@@ -20,6 +21,8 @@ import {
   buildReconnectRequests,
   canonicalJson,
   deriveReconnectPlan,
+  validateDispositionRecord,
+  validateDispositionShape,
   validateNoticeRecord,
   validateNoticeShape,
 } from "../../../../scripts/product-reality/s184-m07-reconnect.mjs";
@@ -28,6 +31,10 @@ const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(testDirectory, "../../../..");
 const planBytes = fs.readFileSync(path.join(repositoryRoot, PLAN_PATH));
 const plan: any = JSON.parse(planBytes.toString("utf8"));
+const dispositionPath = path.join(repositoryRoot, DISPOSITION_PATH);
+const dispositionRecord: any = JSON.parse(
+  fs.readFileSync(dispositionPath, "utf8"),
+);
 
 function git(args: string[], encoding: BufferEncoding | null = "utf8") {
   return execFileSync("git", args, {
@@ -345,6 +352,273 @@ describe("Sprint 184 M07 reconnect derivation and receipt validation", () => {
     );
     expect(validateNoticeShape(rewrittenBody, plan)).toContainEqual(
       expect.objectContaining({ code: "REQUEST_BODY_MISMATCH" }),
+    );
+  });
+
+  it("retains a machine-checked disposition for two sends and the explicitly retired archived consumer", () => {
+    expect(
+      validateDispositionRecord(dispositionRecord, { repositoryRoot }),
+    ).toEqual([]);
+    const requests = buildReconnectRequests(
+      plan,
+      dispositionRecord.implementationHead,
+    );
+    for (const index of [0, 2]) {
+      expect(dispositionRecord.attempts[index].attemptCount).toBe(1);
+      expect(dispositionRecord.attempts[index].requestSha256).toBe(
+        digest(Buffer.from(canonicalJson(requests[index]))),
+      );
+    }
+    expect(
+      dispositionRecord.planFinalizationDisposition.historicalFinalization,
+    ).toEqual(plan.finalization);
+    expect(
+      dispositionRecord.planFinalizationDisposition.unrunCheckDispositions.map(
+        ({ check }: any) => check,
+      ),
+    ).toEqual(plan.unrunChecks);
+    expect(dispositionRecord.summary).toMatchObject({
+      deliveryAttempts: 4,
+      successfulDeliveries: 2,
+      retiredDestinations: 1,
+      failedDeliveryAttempts: 2,
+      unresolvedDestinations: 0,
+    });
+    expect(
+      execFileSync(
+        process.execPath,
+        [
+          path.join(
+            repositoryRoot,
+            "scripts/product-reality/s184-m07-reconnect.mjs",
+          ),
+          "--check-disposition",
+        ],
+        { cwd: repositoryRoot, encoding: "utf8" },
+      ).trim(),
+    ).toBe("reconnect consumer disposition is valid");
+  });
+
+  it("rejects reordered consumers, invalid delivery IDs, and a fabricated retired-consumer ID", () => {
+    const reordered = structuredClone(dispositionRecord);
+    [reordered.attempts[0], reordered.attempts[1]] = [
+      reordered.attempts[1],
+      reordered.attempts[0],
+    ];
+    expect(validateDispositionShape(reordered, plan)).toContainEqual(
+      expect.objectContaining({ code: "DISPOSITION_DESTINATIONS" }),
+    );
+
+    const missingId = structuredClone(dispositionRecord);
+    missingId.attempts[0].result.messageId = " ";
+    expect(validateDispositionShape(missingId, plan)).toContainEqual(
+      expect.objectContaining({ code: "DELIVERED_MESSAGE_ID" }),
+    );
+
+    const duplicateId = structuredClone(dispositionRecord);
+    duplicateId.attempts[2].result.messageId =
+      duplicateId.attempts[0].result.messageId;
+    duplicateId.successfulMessageIds[1] = duplicateId.successfulMessageIds[0];
+    expect(validateDispositionShape(duplicateId, plan)).toContainEqual(
+      expect.objectContaining({ code: "DELIVERED_MESSAGE_IDS_UNIQUE" }),
+    );
+
+    const fabricatedId = structuredClone(dispositionRecord);
+    fabricatedId.attempts[1].result.messageId = "invented-dashboard-id";
+    expect(validateDispositionShape(fabricatedId, plan)).toContainEqual(
+      expect.objectContaining({ code: "RETIRED_MESSAGE_ID" }),
+    );
+  });
+
+  it("rejects request hashes that do not bind each active destination to its exact generated body", () => {
+    const rewrittenHash = structuredClone(dispositionRecord);
+    rewrittenHash.attempts[0].requestSha256 = "0".repeat(64);
+    expect(validateDispositionShape(rewrittenHash, plan)).toContainEqual(
+      expect.objectContaining({ code: "DELIVERED_REQUEST_BINDING" }),
+    );
+
+    const swappedHashes = structuredClone(dispositionRecord);
+    [
+      swappedHashes.attempts[0].requestSha256,
+      swappedHashes.attempts[2].requestSha256,
+    ] = [
+      swappedHashes.attempts[2].requestSha256,
+      swappedHashes.attempts[0].requestSha256,
+    ];
+    const issues = validateDispositionShape(swappedHashes, plan);
+    expect(
+      issues.filter(({ code }) => code === "DELIVERED_REQUEST_BINDING"),
+    ).toHaveLength(2);
+  });
+
+  it("rejects a rewritten retirement, derivation, summary, or implementation-head plan binding", () => {
+    const wrongProject = structuredClone(dispositionRecord);
+    wrongProject.attempts[1].failure.projectId = crypto.randomUUID();
+    expect(validateDispositionShape(wrongProject, plan)).toContainEqual(
+      expect.objectContaining({ code: "RETIRED_CONSUMER" }),
+    );
+
+    const wrongError = structuredClone(dispositionRecord);
+    wrongError.attempts[1].result.errorCode = "MESSAGE_REJECTED";
+    expect(validateDispositionShape(wrongError, plan)).toContainEqual(
+      expect.objectContaining({ code: "RETIRED_CONSUMER" }),
+    );
+
+    const missingTerminalDisposition = structuredClone(dispositionRecord);
+    delete missingTerminalDisposition.attempts[1].failure.terminalDisposition;
+    expect(validateDispositionShape(missingTerminalDisposition, plan)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "RETIRED_FAILURE_FIELDS" }),
+        expect.objectContaining({ code: "RETIRED_CONSUMER" }),
+      ]),
+    );
+
+    const wrongAuthority = structuredClone(dispositionRecord);
+    wrongAuthority.retirementDecision.authority = "inferred-by-agent";
+    expect(validateDispositionShape(wrongAuthority, plan)).toContainEqual(
+      expect.objectContaining({ code: "RETIREMENT_DECISION" }),
+    );
+
+    for (const key of [
+      "sprint183Movers",
+      "sprint184UniqueMovers",
+      "combinedUniqueMovers",
+    ]) {
+      const staleDerivation = structuredClone(dispositionRecord);
+      staleDerivation.derivation[key] -= 1;
+      expect(
+        validateDispositionShape(staleDerivation, plan),
+        key,
+      ).toContainEqual(
+        expect.objectContaining({ code: "DISPOSITION_DERIVATION" }),
+      );
+    }
+
+    const falseSummary = structuredClone(dispositionRecord);
+    falseSummary.summary.dispositionedDestinations = 2;
+    expect(validateDispositionShape(falseSummary, plan)).toContainEqual(
+      expect.objectContaining({ code: "DISPOSITION_SUMMARY" }),
+    );
+
+    const stalePlanBinding = structuredClone(dispositionRecord);
+    stalePlanBinding.plan.sha256 = "0".repeat(64);
+    expect(validateDispositionRecord(stalePlanBinding)).toContainEqual(
+      expect.objectContaining({ code: "DISPOSITION_PLAN_BINDING" }),
+    );
+  });
+
+  it("rejects drift from the immutable plan or a supersession broader than the retired destination", () => {
+    const mutations = [
+      (record: any) => {
+        record.planFinalizationDisposition.historicalFinalization.requiredMessageIds = 2;
+      },
+      (record: any) => {
+        record.planFinalizationDisposition.unrunCheckDispositions[1].check =
+          "Only two requests were required.";
+      },
+      (record: any) => {
+        record.planFinalizationDisposition.supersession.scope =
+          "all-destinations";
+      },
+      (record: any) => {
+        record.planFinalizationDisposition.supersession.preservedActiveDestinations.pop();
+      },
+      (record: any) => {
+        record.planFinalizationDisposition.supersession.strictThreeSuccessNoticeContractPreserved = false;
+      },
+      (record: any) => {
+        record.planFinalizationDisposition.supersession.preservedRequirements.uniqueNonEmptyActiveMessageIds = 1;
+      },
+    ];
+    for (const mutate of mutations) {
+      const rewritten = structuredClone(dispositionRecord);
+      mutate(rewritten);
+      expect(validateDispositionShape(rewritten, plan)).toContainEqual(
+        expect.objectContaining({ code: "PLAN_FINALIZATION_DISPOSITION" }),
+      );
+    }
+  });
+
+  it("derives two failed delivery attempts without leaving an unresolved destination", () => {
+    const misleadingFailureCount = structuredClone(dispositionRecord);
+    misleadingFailureCount.summary.failedDeliveryAttempts = 0;
+    expect(
+      validateDispositionShape(misleadingFailureCount, plan),
+    ).toContainEqual(expect.objectContaining({ code: "DISPOSITION_SUMMARY" }));
+
+    const falseUnresolvedDestination = structuredClone(dispositionRecord);
+    falseUnresolvedDestination.summary.unresolvedDestinations = 1;
+    expect(
+      validateDispositionShape(falseUnresolvedDestination, plan),
+    ).toContainEqual(expect.objectContaining({ code: "DISPOSITION_SUMMARY" }));
+
+    const extraRejectedAttempt = structuredClone(dispositionRecord);
+    extraRejectedAttempt.attempts[1].attemptCount = 3;
+    expect(validateDispositionShape(extraRejectedAttempt, plan)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "RETIRED_CONSUMER" }),
+        expect.objectContaining({ code: "DISPOSITION_SUMMARY" }),
+      ]),
+    );
+  });
+
+  it("derives the summary from exact attempt semantics and rejects legacy or surplus evidence fields", () => {
+    const changedAttemptCount = structuredClone(dispositionRecord);
+    changedAttemptCount.attempts[0].attemptCount = 2;
+    expect(validateDispositionShape(changedAttemptCount, plan)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "DELIVERED_ATTEMPT_COUNT" }),
+        expect.objectContaining({ code: "DISPOSITION_SUMMARY" }),
+      ]),
+    );
+
+    const forgedMatchingSummary = structuredClone(changedAttemptCount);
+    forgedMatchingSummary.summary.deliveryAttempts = 5;
+    forgedMatchingSummary.summary.dispositionedDestinations = 2;
+    forgedMatchingSummary.summary.successfulDeliveries = 1;
+    forgedMatchingSummary.summary.unresolvedDestinations = 1;
+    forgedMatchingSummary.summary.allActiveDeliveriesProven = false;
+    forgedMatchingSummary.summary.allRequiredConsumerObligationsDispositioned = false;
+    const forgedIssues = validateDispositionShape(forgedMatchingSummary, plan);
+    expect(forgedIssues).toContainEqual(
+      expect.objectContaining({ code: "DELIVERED_ATTEMPT_COUNT" }),
+    );
+    expect(forgedIssues).not.toContainEqual(
+      expect.objectContaining({ code: "DISPOSITION_SUMMARY" }),
+    );
+
+    const surplusRecordField = structuredClone(dispositionRecord);
+    surplusRecordField.requiredMessageIds = 3;
+    expect(validateDispositionShape(surplusRecordField, plan)).toContainEqual(
+      expect.objectContaining({ code: "DISPOSITION_FIELDS" }),
+    );
+
+    const surplusAttemptField = structuredClone(dispositionRecord);
+    surplusAttemptField.attempts[0].sentAt = "2026-09-05T12:00:00.000Z";
+    expect(validateDispositionShape(surplusAttemptField, plan)).toContainEqual(
+      expect.objectContaining({ code: "DELIVERED_ATTEMPT_FIELDS" }),
+    );
+
+    const surplusResultField = structuredClone(dispositionRecord);
+    surplusResultField.attempts[2].result.errorCode = "NONE";
+    expect(validateDispositionShape(surplusResultField, plan)).toContainEqual(
+      expect.objectContaining({ code: "DELIVERED_RESULT_FIELDS" }),
+    );
+  });
+
+  it("rejects stale blocked semantics after the product-owner retirement decision", () => {
+    const blocked = structuredClone(dispositionRecord);
+    blocked.deliveryStatus = "blocked";
+    blocked.statusMeaning = "One destination still needs to be unarchived.";
+    blocked.attempts[1].failure.retryCondition = "Unarchive and retry.";
+    blocked.blocker = { targetAddress: DESTINATIONS[1].targetAddress };
+    const issues = validateDispositionShape(blocked, plan);
+    expect(issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "DISPOSITION_STATUS" }),
+        expect.objectContaining({ code: "RETIRED_RETRY_CONDITION" }),
+        expect.objectContaining({ code: "DISPOSITION_BLOCKER" }),
+      ]),
     );
   });
 

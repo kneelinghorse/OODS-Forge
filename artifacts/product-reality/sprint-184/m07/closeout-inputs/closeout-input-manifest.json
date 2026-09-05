@@ -16,9 +16,7 @@
         "root-core": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/sprint-183/receipts/root-core.json"
       },
       "membershipChangeEvidencePaths": {
-        "root-core": [
-          "vitest.config.ts"
-        ]
+        "root-core": ["vitest.config.ts"]
       }
     },
     {
@@ -132,15 +130,19 @@
       ]
     },
     {
-      "rowId": "reconnect-attempt-record",
+      "rowId": "consumer-reconnect-disposition",
       "executions": [
         {
-          "executionId": "m07-reconnect-attempt-record",
-          "kind": "cmos-message-attempt-record",
+          "executionId": "m07-consumer-reconnect-disposition",
+          "kind": "cmos-message-retirement-and-frozen-validation",
           "status": "passed",
           "evidencePaths": [
             "artifacts/product-reality/sprint-184/m07/reconnect-attempts.json",
-            "artifacts/product-reality/sprint-184/m07/reconnect-plan.json"
+            "artifacts/product-reality/sprint-184/m07/reconnect-plan.json",
+            "scripts/product-reality/s184-m07-reconnect.mjs",
+            "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+            "scripts/product-reality/s184-m07-closeout.mjs",
+            "packages/mcp-server/test/product-reality/closeout.s184.spec.ts"
           ]
         }
       ]
@@ -163,9 +165,7 @@
     {
       "criterionIndex": 1,
       "status": "passed",
-      "executionIds": [
-        "m07-patch-disposition"
-      ],
+      "executionIds": ["m07-patch-disposition"],
       "evidencePaths": [
         "artifacts/product-reality/sprint-184/m07/patch-disposition.json",
         "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts"
@@ -174,9 +174,7 @@
     {
       "criterionIndex": 2,
       "status": "passed",
-      "executionIds": [
-        "m07-patch-disposition"
-      ],
+      "executionIds": ["m07-patch-disposition"],
       "evidencePaths": [
         "artifacts/product-reality/sprint-184/m07/patch-disposition.json",
         "artifacts/product-reality/sprint-182/m01b/mutation/mutation.patch",
@@ -187,9 +185,7 @@
     {
       "criterionIndex": 3,
       "status": "passed",
-      "executionIds": [
-        "m07-patch-disposition"
-      ],
+      "executionIds": ["m07-patch-disposition"],
       "evidencePaths": [
         "artifacts/product-reality/sprint-184/m07/patch-disposition.json",
         "packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts"
@@ -198,9 +194,7 @@
     {
       "criterionIndex": 4,
       "status": "passed",
-      "executionIds": [
-        "m07-b2-legacy-inputs"
-      ],
+      "executionIds": ["m07-b2-legacy-inputs"],
       "evidencePaths": [
         "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
         "packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts"
@@ -209,9 +203,7 @@
     {
       "criterionIndex": 5,
       "status": "passed",
-      "executionIds": [
-        "m07-b2-legacy-inputs"
-      ],
+      "executionIds": ["m07-b2-legacy-inputs"],
       "evidencePaths": [
         "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
         "packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts"
@@ -246,21 +238,21 @@
     },
     {
       "criterionIndex": 7,
-      "status": "unproven",
-      "executionIds": [
-        "m07-reconnect-attempt-record"
-      ],
+      "status": "passed",
+      "executionIds": ["m07-consumer-reconnect-disposition"],
       "evidencePaths": [
         "artifacts/product-reality/sprint-184/m07/reconnect-attempts.json",
-        "artifacts/product-reality/sprint-184/m07/reconnect-plan.json"
+        "artifacts/product-reality/sprint-184/m07/reconnect-plan.json",
+        "scripts/product-reality/s184-m07-reconnect.mjs",
+        "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "scripts/product-reality/s184-m07-closeout.mjs",
+        "packages/mcp-server/test/product-reality/closeout.s184.spec.ts"
       ]
     },
     {
       "criterionIndex": 8,
       "status": "passed",
-      "executionIds": [
-        "m07-final-three-suite-capture"
-      ],
+      "executionIds": ["m07-final-three-suite-capture"],
       "evidencePaths": [
         "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-mission-contract-source.json",
         "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/mcp-server.json",
@@ -271,9 +263,7 @@
     {
       "criterionIndex": 9,
       "status": "passed",
-      "executionIds": [
-        "m07-sprint-status-capture"
-      ],
+      "executionIds": ["m07-sprint-status-capture"],
       "evidencePaths": [
         "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-sprint-status-source.json",
         "scripts/product-reality/s184-m07-closeout.mjs",

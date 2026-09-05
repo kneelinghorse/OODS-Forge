@@ -7,6 +7,13 @@ import process from "node:process";
 import { execFileSync, spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import {
+  DISPOSITION_PATH as RECONNECT_DISPOSITION_PATH,
+  PLAN_PATH as RECONNECT_PLAN_PATH,
+  validateDispositionRecord,
+  validateDispositionShape,
+} from "./s184-m07-reconnect.mjs";
+
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const defaultRepositoryRoot = path.resolve(scriptDirectory, "../..");
 
@@ -25,7 +32,7 @@ export const MISSION_CRITERIA = Object.freeze([
   "A test at the OLD detail input asserts the typed gap for each of the three codes (OODS-V007 html, OODS-N015 react/vue, OODS-V162 card/html at release), and a spec asserts the no-context default path returns a typed error rather than silently returning undefined",
   "Each of the 13 repointed call sites in pipeline.compact.spec.ts, action-mappings.e2e.spec.ts, contract-alignment.spec.ts and tier1-acceptance.e2e.spec.ts is either restored to its original input or carries a stated reason in the closeout record",
   "The closeout accounting reconciles: suite deltas attribute every added AND removed file with unattributedDeltas genuinely empty, no execution is rolled up under two rows, and the headline pass count equals proven rows only",
-  "All three reconnect notices are sent with message ids recorded, covering Sprint 183's ten movers plus Sprint 184's own, computed by git diff rather than hand-written",
+  "Reconnect obligations are dispositioned for all three named consumers: successful sends to active destinations have unique message ids recorded, and any retired or archived destination carries machine-readable evidence that it no longer accepts messages; coverage includes Sprint 183's ten movers plus Sprint 184's own, computed by git diff rather than hand-written",
   "A claim ledger where every claim binds an execution, every cited path exists at the frozen head with a matching hash, and each criterion text matches CMOS character for character — verified by re-derivation, not by the generator that produced it",
   "The sprint is left Active with a review handoff recording builderSelfCertified:false. Sprint-COMPLETE is not the builder's to take",
 ]);
@@ -132,6 +139,107 @@ function readJsonAt(repositoryRoot, revision, repositoryPath) {
       `Frozen JSON is invalid at ${revision}:${repositoryPath}: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
+}
+
+function validateFrozenReconnectDisposition({
+  manifest,
+  repositoryRoot,
+  reviewHead,
+  requireCanonicalScopePlan,
+}) {
+  const binding = manifest.claimBindings?.find(
+    ({ criterionIndex }) => criterionIndex === 7,
+  );
+  assert(binding, "Criterion 7 has no reconnect claim binding.");
+  assert(
+    ["passed", "unproven"].includes(binding.status),
+    "Criterion 7 has invalid status.",
+  );
+
+  const requiredPaths = [RECONNECT_DISPOSITION_PATH, RECONNECT_PLAN_PATH];
+  assert(
+    requiredPaths.every((repositoryPath) =>
+      binding.evidencePaths?.includes(repositoryPath),
+    ),
+    "Criterion 7 does not cite both frozen reconnect disposition inputs.",
+  );
+  assert(
+    binding.executionIds?.length === 1,
+    "Criterion 7 must bind exactly one reconnect disposition execution.",
+  );
+  const execution = manifest.executionRows
+    ?.flatMap(({ executions }) => executions)
+    .find(({ executionId }) => executionId === binding.executionIds[0]);
+  assert(
+    execution &&
+      requiredPaths.every((repositoryPath) =>
+        execution.evidencePaths?.includes(repositoryPath),
+      ),
+    "Criterion 7 execution does not bind both frozen reconnect disposition inputs.",
+  );
+
+  if (binding.status === "unproven") return;
+
+  const disposition = readJsonAt(
+    repositoryRoot,
+    reviewHead,
+    RECONNECT_DISPOSITION_PATH,
+  );
+  const reviewPlan = readJsonAt(
+    repositoryRoot,
+    reviewHead,
+    RECONNECT_PLAN_PATH,
+  );
+  const reviewPlanReference = frozenReference(
+    repositoryRoot,
+    reviewHead,
+    RECONNECT_PLAN_PATH,
+  );
+  const implementationHead = resolveCommit(
+    repositoryRoot,
+    disposition.implementationHead,
+  );
+  assert(
+    disposition.implementationHead === implementationHead &&
+      disposition.plan?.revision === implementationHead,
+    "Frozen reconnect disposition does not bind a canonical implementation head.",
+  );
+  const ancestry = spawnSync(
+    "git",
+    ["merge-base", "--is-ancestor", implementationHead, reviewHead],
+    { cwd: repositoryRoot },
+  );
+  assert(
+    ancestry.status === 0,
+    "Frozen reconnect disposition implementation head is not an ancestor of reviewHead.",
+  );
+  const implementationPlanReference = frozenReference(
+    repositoryRoot,
+    implementationHead,
+    RECONNECT_PLAN_PATH,
+  );
+  assert(
+    canonicalJson(disposition.plan) ===
+      canonicalJson({
+        path: RECONNECT_PLAN_PATH,
+        revision: implementationHead,
+        bytes: implementationPlanReference.bytes,
+        sha256: implementationPlanReference.sha256,
+      }) &&
+      reviewPlanReference.bytes === implementationPlanReference.bytes &&
+      reviewPlanReference.sha256 === implementationPlanReference.sha256,
+    "Frozen reconnect disposition plan binding does not match reviewHead bytes.",
+  );
+
+  const issues = requireCanonicalScopePlan
+    ? validateDispositionRecord(disposition, { repositoryRoot })
+    : validateDispositionShape(disposition, reviewPlan);
+  assert(
+    issues.length === 0,
+    `Frozen reconnect disposition is invalid: ${issues
+      .map(({ code, message }) => `${code}: ${message}`)
+      .join("; ")}`,
+  );
 }
 
 function extractMissionCriteria(source) {
@@ -968,6 +1076,12 @@ export function buildCloseoutArtifacts({
     frozenHead,
     repositoryRoot,
   );
+  validateFrozenReconnectDisposition({
+    manifest,
+    repositoryRoot,
+    reviewHead: frozenHead,
+    requireCanonicalScopePlan,
+  });
   const claims = buildClaims({
     manifest,
     cmosCriteria,
