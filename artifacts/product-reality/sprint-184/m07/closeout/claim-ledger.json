@@ -3,11 +3,11 @@
   "kind": "s184-m07-claim-ledger",
   "sprintId": "sprint-184",
   "missionId": "s184-m07",
-  "reviewHead": "218717e25ec252260ac0e5cc59dc21988edb437d",
+  "reviewHead": "9c1a10a48bce6a586f8e92cec53ff05ee336c31c",
   "criterionSource": {
     "path": "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-mission-contract-source.json",
-    "bytes": 2397,
-    "sha256": "28c664200579b498ff3235ee4f35142c6501b8670fcbbaaf9276c54e6d5687f7"
+    "bytes": 2597,
+    "sha256": "e2e8d6c203fcd84d715e59dc5759d0a969c8e50a919d25f2eefcbb357c62e52a"
   },
   "executionPolicy": "Every claim binds at least one execution from the single-row execution rollup and one or more repository paths content-addressed at reviewHead.",
   "executions": [
@@ -175,22 +175,42 @@
       "rollupRowId": "final-capture-2-root-core"
     },
     {
-      "executionId": "m07-reconnect-attempt-record",
-      "kind": "cmos-message-attempt-record",
+      "executionId": "m07-consumer-reconnect-disposition",
+      "kind": "cmos-message-retirement-and-frozen-validation",
       "status": "passed",
       "evidence": [
         {
           "path": "artifacts/product-reality/sprint-184/m07/reconnect-attempts.json",
-          "bytes": 2704,
-          "sha256": "55a4cba8d7333c7237a069bf8e6102ee81101eb4c9396a0b471e4e2ce64805cf"
+          "bytes": 5533,
+          "sha256": "1e41e07a0a173c7d62cfa8c5a367da578722d5e8990cba22c67ac74689877206"
         },
         {
           "path": "artifacts/product-reality/sprint-184/m07/reconnect-plan.json",
           "bytes": 17173,
           "sha256": "1187af654cb50937d7469728c14b1d55e8aafa25693a69247a528178c1d68286"
+        },
+        {
+          "path": "scripts/product-reality/s184-m07-reconnect.mjs",
+          "bytes": 41438,
+          "sha256": "aa640a0da3a03caa4f6a4ddc9c7d9b0826490b46eb6d334110edd48c5116e5aa"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+          "bytes": 23384,
+          "sha256": "00487bab2203394f71d87a7a5b2fe9679aa51c32b3571d06190c7511e5332b1c"
+        },
+        {
+          "path": "scripts/product-reality/s184-m07-closeout.mjs",
+          "bytes": 47286,
+          "sha256": "40a9dd59a4323c0003c45a916c0354fe73d5d3b421ddddb38ba621802486fb20"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/closeout.s184.spec.ts",
+          "bytes": 33808,
+          "sha256": "c9b17a1b82313afa7d961b51606926d2a4ef70bde8eaf14b6089c511c50a2fb5"
         }
       ],
-      "rollupRowId": "reconnect-attempt-record"
+      "rollupRowId": "consumer-reconnect-disposition"
     },
     {
       "executionId": "m07-sprint-status-capture",
@@ -407,13 +427,13 @@
         },
         {
           "path": "scripts/product-reality/s184-m07-closeout.mjs",
-          "bytes": 43640,
-          "sha256": "f1826fe34eced5201c60a7a05b6bf2dd22937432c39b629c4b96fb32b127430f"
+          "bytes": 47286,
+          "sha256": "40a9dd59a4323c0003c45a916c0354fe73d5d3b421ddddb38ba621802486fb20"
         },
         {
           "path": "packages/mcp-server/test/product-reality/closeout.s184.spec.ts",
-          "bytes": 25716,
-          "sha256": "948c00fddfdd1912303cb68a8dc3c221f5340c39aa932f72ed9170d1fa829c79"
+          "bytes": 33808,
+          "sha256": "c9b17a1b82313afa7d961b51606926d2a4ef70bde8eaf14b6089c511c50a2fb5"
         }
       ]
     },
@@ -421,21 +441,41 @@
       "claimId": "s184-m07-sc07",
       "missionId": "s184-m07",
       "criterionIndex": 7,
-      "criterion": "All three reconnect notices are sent with message ids recorded, covering Sprint 183's ten movers plus Sprint 184's own, computed by git diff rather than hand-written",
-      "status": "unproven",
+      "criterion": "Reconnect obligations are dispositioned for all three named consumers: successful sends to active destinations have unique message ids recorded, and any retired or archived destination carries machine-readable evidence that it no longer accepts messages; coverage includes Sprint 183's ten movers plus Sprint 184's own, computed by git diff rather than hand-written",
+      "status": "passed",
       "executionIds": [
-        "m07-reconnect-attempt-record"
+        "m07-consumer-reconnect-disposition"
       ],
       "evidence": [
         {
           "path": "artifacts/product-reality/sprint-184/m07/reconnect-attempts.json",
-          "bytes": 2704,
-          "sha256": "55a4cba8d7333c7237a069bf8e6102ee81101eb4c9396a0b471e4e2ce64805cf"
+          "bytes": 5533,
+          "sha256": "1e41e07a0a173c7d62cfa8c5a367da578722d5e8990cba22c67ac74689877206"
         },
         {
           "path": "artifacts/product-reality/sprint-184/m07/reconnect-plan.json",
           "bytes": 17173,
           "sha256": "1187af654cb50937d7469728c14b1d55e8aafa25693a69247a528178c1d68286"
+        },
+        {
+          "path": "scripts/product-reality/s184-m07-reconnect.mjs",
+          "bytes": 41438,
+          "sha256": "aa640a0da3a03caa4f6a4ddc9c7d9b0826490b46eb6d334110edd48c5116e5aa"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+          "bytes": 23384,
+          "sha256": "00487bab2203394f71d87a7a5b2fe9679aa51c32b3571d06190c7511e5332b1c"
+        },
+        {
+          "path": "scripts/product-reality/s184-m07-closeout.mjs",
+          "bytes": 47286,
+          "sha256": "40a9dd59a4323c0003c45a916c0354fe73d5d3b421ddddb38ba621802486fb20"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/closeout.s184.spec.ts",
+          "bytes": 33808,
+          "sha256": "c9b17a1b82313afa7d961b51606926d2a4ef70bde8eaf14b6089c511c50a2fb5"
         }
       ]
     },
@@ -451,8 +491,8 @@
       "evidence": [
         {
           "path": "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-mission-contract-source.json",
-          "bytes": 2397,
-          "sha256": "28c664200579b498ff3235ee4f35142c6501b8670fcbbaaf9276c54e6d5687f7"
+          "bytes": 2597,
+          "sha256": "e2e8d6c203fcd84d715e59dc5759d0a969c8e50a919d25f2eefcbb357c62e52a"
         },
         {
           "path": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/mcp-server.json",
@@ -461,13 +501,13 @@
         },
         {
           "path": "scripts/product-reality/s184-m07-closeout.mjs",
-          "bytes": 43640,
-          "sha256": "f1826fe34eced5201c60a7a05b6bf2dd22937432c39b629c4b96fb32b127430f"
+          "bytes": 47286,
+          "sha256": "40a9dd59a4323c0003c45a916c0354fe73d5d3b421ddddb38ba621802486fb20"
         },
         {
           "path": "packages/mcp-server/test/product-reality/closeout.s184.spec.ts",
-          "bytes": 25716,
-          "sha256": "948c00fddfdd1912303cb68a8dc3c221f5340c39aa932f72ed9170d1fa829c79"
+          "bytes": 33808,
+          "sha256": "c9b17a1b82313afa7d961b51606926d2a4ef70bde8eaf14b6089c511c50a2fb5"
         }
       ]
     },
@@ -488,22 +528,22 @@
         },
         {
           "path": "scripts/product-reality/s184-m07-closeout.mjs",
-          "bytes": 43640,
-          "sha256": "f1826fe34eced5201c60a7a05b6bf2dd22937432c39b629c4b96fb32b127430f"
+          "bytes": 47286,
+          "sha256": "40a9dd59a4323c0003c45a916c0354fe73d5d3b421ddddb38ba621802486fb20"
         },
         {
           "path": "packages/mcp-server/test/product-reality/closeout.s184.spec.ts",
-          "bytes": 25716,
-          "sha256": "948c00fddfdd1912303cb68a8dc3c221f5340c39aa932f72ed9170d1fa829c79"
+          "bytes": 33808,
+          "sha256": "c9b17a1b82313afa7d961b51606926d2a4ef70bde8eaf14b6089c511c50a2fb5"
         }
       ]
     }
   ],
   "headline": {
     "selected": 9,
-    "passed": 8,
-    "unproven": 1,
+    "passed": 9,
+    "unproven": 0,
     "countingMethod": "passed = claims.filter(status === 'passed').length; execution and test counts are never added to this number"
   },
-  "status": "incomplete"
+  "status": "passed"
 }
