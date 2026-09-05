@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "cmos-mission-contract-snapshot",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m07",
+  "source": {
+    "tool": "cmos_mission",
+    "action": "show",
+    "evidence": {
+      "path": "artifacts/product-reality/sprint-184/m07/closeout-inputs/cmos-mission-contract-source.json",
+      "bytes": 2397,
+      "sha256": "28c664200579b498ff3235ee4f35142c6501b8670fcbbaaf9276c54e6d5687f7"
+    }
+  },
+  "successCriteria": [
+    "EVERY tracked *.patch under artifacts/ is dispositioned by class, and a spec asserts each Class 1 and Class 2 patch either applies at its DECLARED baseline commit or carries a machine-readable unappliable annotation naming why. Baseline: 12 of 29 fail from the repo root; 5 are unparseable at any commit",
+    "The m01b entry states in the artifact itself that the patch does not apply and that the case labelled its replay used a patch Sprint 183 authored (committedAtBaseline:false). Its bytes are unchanged and its sha256 still matches the promotion binding",
+    "s183-m06-sc02's replacement claim is asserted true by execution over the FULL tracked population at the review head, not the subset the sprint touched, and the word 'every' is measured rather than written",
+    "A test at the OLD detail input asserts the typed gap for each of the three codes (OODS-V007 html, OODS-N015 react/vue, OODS-V162 card/html at release), and a spec asserts the no-context default path returns a typed error rather than silently returning undefined",
+    "Each of the 13 repointed call sites in pipeline.compact.spec.ts, action-mappings.e2e.spec.ts, contract-alignment.spec.ts and tier1-acceptance.e2e.spec.ts is either restored to its original input or carries a stated reason in the closeout record",
+    "The closeout accounting reconciles: suite deltas attribute every added AND removed file with unattributedDeltas genuinely empty, no execution is rolled up under two rows, and the headline pass count equals proven rows only",
+    "All three reconnect notices are sent with message ids recorded, covering Sprint 183's ten movers plus Sprint 184's own, computed by git diff rather than hand-written",
+    "A claim ledger where every claim binds an execution, every cited path exists at the frozen head with a matching hash, and each criterion text matches CMOS character for character — verified by re-derivation, not by the generator that produced it",
+    "The sprint is left Active with a review handoff recording builderSelfCertified:false. Sprint-COMPLETE is not the builder's to take"
+  ]
+}
