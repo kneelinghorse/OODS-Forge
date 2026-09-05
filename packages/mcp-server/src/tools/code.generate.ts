@@ -29,6 +29,10 @@ const emitters: Record<string, Emitter> = {
   vue: emitVue,
 };
 
+export type CodeGenerateDependencies = {
+  targetCapabilityPreflight?: typeof preflightTargetCapabilities;
+};
+
 function countNodes(screens: UiSchema['screens']): number {
   let count = 0;
   const stack = [...screens];
@@ -73,7 +77,10 @@ function preflightHtmlTarget(screens: UiSchema['screens']): CodegenIssue[] {
   return issues;
 }
 
-export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutput> {
+export async function handle(
+  input: CodeGenerateInput,
+  dependencies: CodeGenerateDependencies = {},
+): Promise<CodeGenerateOutput> {
   const { framework } = input;
   const warnings: CodegenIssue[] = [];
   let validationReceipt = createValidationReceipt(input.profile, framework);
@@ -179,13 +186,31 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
     validationReceipt,
     'component-registry',
   );
-  if (unknownComponents.length > 0) {
-    const profiled = enforceValidationProfile(validationReceipt, [{
+  const registryIssues: CodegenIssue[] = unknownComponents.length > 0
+    ? [{
       code: 'OODS-V119',
       message:
         `Schema contains unregistered component${unknownComponents.length === 1 ? '' : 's'}: `
         + `${unknownComponents.join(', ')}. Fix the schema or run repl.validate before code generation.`,
-    }]);
+    }]
+    : [];
+
+  const readinessErrors = framework === 'html'
+    ? preflightHtmlTarget(schema.screens)
+    : (dependencies.targetCapabilityPreflight ?? preflightTargetCapabilities)(
+      schema.screens,
+      framework,
+    );
+  validationReceipt = recordValidationChecks(validationReceipt, 'target-readiness');
+  const registrationAndReadinessIssues = [...registryIssues, ...readinessErrors];
+  if (registrationAndReadinessIssues.length > 0) {
+    // Evaluate these together: an unknown component also lacks a runnable
+    // target. Returning after V119 would conceal the independently actionable
+    // N015 evidence failure and used to expose prototype-key exceptions later.
+    const profiled = enforceValidationProfile(
+      validationReceipt,
+      registrationAndReadinessIssues,
+    );
     warnings.push(...profiled.warnings);
     if (profiled.errors.length > 0) {
       return {
@@ -198,31 +223,6 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
         validationReceipt,
         errors: profiled.errors,
         meta,
-      };
-    }
-  }
-
-  const readinessErrors = framework === 'html'
-    ? preflightHtmlTarget(schema.screens)
-    : preflightTargetCapabilities(schema.screens, framework);
-  validationReceipt = recordValidationChecks(validationReceipt, 'target-readiness');
-  if (readinessErrors.length > 0) {
-    const profiled = enforceValidationProfile(validationReceipt, readinessErrors);
-    warnings.push(...profiled.warnings);
-    if (profiled.errors.length > 0) {
-      return {
-        status: 'error',
-        framework,
-        code: '',
-        fileExtension: '',
-        imports: [],
-        warnings,
-        validationReceipt,
-        errors: profiled.errors,
-        meta: {
-          nodeCount: meta.nodeCount,
-          componentCount: meta.componentCount,
-        },
       };
     }
   }

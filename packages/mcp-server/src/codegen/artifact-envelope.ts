@@ -49,6 +49,24 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
   ]),
 };
 
+const EMPTY_IMPORT_SET: ReadonlySet<string> = new Set();
+
+function dependencyCatalogEntry(name: string): DependencyCatalogEntry | undefined {
+  return Object.hasOwn(GENERATED_DEPENDENCY_CATALOG, name)
+    ? GENERATED_DEPENDENCY_CATALOG[name as keyof typeof GENERATED_DEPENDENCY_CATALOG]
+    : undefined;
+}
+
+function frameworkPeers(framework: CodegenFramework): readonly string[] {
+  return Object.hasOwn(FRAMEWORK_PEERS, framework) ? FRAMEWORK_PEERS[framework] : [];
+}
+
+function frameworkImports(framework: CodegenFramework): ReadonlySet<string> {
+  return Object.hasOwn(FRAMEWORK_IMPORTS, framework)
+    ? FRAMEWORK_IMPORTS[framework]
+    : EMPTY_IMPORT_SET;
+}
+
 const EXACT_VERSION = /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const PACKAGE_NAME = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
 const CONTENT_HASH = /^sha256:[a-f0-9]{64}$/;
@@ -151,17 +169,17 @@ function resolveDependencies(
   framework: CodegenFramework,
   importSpecifiers: readonly string[],
 ): GeneratedDependency[] {
-  const packageNames = new Set(FRAMEWORK_PEERS[framework]);
+  const packageNames = new Set(frameworkPeers(framework));
 
   for (const specifier of importSpecifiers) {
     const packageName = packageNameFromSpecifier(specifier);
     if (!packageName) {
       throw new Error(`Generated import '${specifier}' is not a portable package import.`);
     }
-    if (!GENERATED_DEPENDENCY_CATALOG[packageName as keyof typeof GENERATED_DEPENDENCY_CATALOG]) {
+    if (!dependencyCatalogEntry(packageName)) {
       throw new Error(`Generated import '${packageName}' has no exact dependency manifest entry.`);
     }
-    if (!FRAMEWORK_IMPORTS[framework].has(specifier)) {
+    if (!frameworkImports(framework).has(specifier)) {
       throw new Error(`Generated import '${specifier}' is not a supported ${framework} artifact import.`);
     }
     packageNames.add(packageName);
@@ -169,7 +187,7 @@ function resolveDependencies(
 
   return [...packageNames]
     .map((name): GeneratedDependency => {
-      const entry = GENERATED_DEPENDENCY_CATALOG[name as keyof typeof GENERATED_DEPENDENCY_CATALOG];
+      const entry = dependencyCatalogEntry(name);
       if (!entry) {
         throw new Error(`Generated import '${name}' has no exact dependency manifest entry.`);
       }
@@ -233,9 +251,7 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
     }
     previousDependencyKey = key;
 
-    const catalogEntry = GENERATED_DEPENDENCY_CATALOG[
-      dependency.name as keyof typeof GENERATED_DEPENDENCY_CATALOG
-    ];
+    const catalogEntry = dependencyCatalogEntry(dependency.name);
     if (!catalogEntry) {
       issues.push(`Dependency '${dependency.name}' is not in the generated-artifact catalog.`);
     } else if (
@@ -248,13 +264,13 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
 
   const emittedSpecifiers = collectBareImportSpecifiers(artifact.files);
   for (const specifier of emittedSpecifiers) {
-    if (!FRAMEWORK_IMPORTS[artifact.framework].has(specifier)) {
+    if (!frameworkImports(artifact.framework).has(specifier)) {
       issues.push(`Generated import '${specifier}' is not supported for ${artifact.framework}.`);
     }
   }
   const expectedDependencies = new Set([
     ...emittedSpecifiers.map((specifier) => packageNameFromSpecifier(specifier)!),
-    ...FRAMEWORK_PEERS[artifact.framework],
+    ...frameworkPeers(artifact.framework),
   ]);
   for (const name of expectedDependencies) {
     if (!dependencyNames.has(name)) {

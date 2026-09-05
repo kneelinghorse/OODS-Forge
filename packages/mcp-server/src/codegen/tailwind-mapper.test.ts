@@ -170,6 +170,13 @@ describe('tailwind-mapper', () => {
   // ── inlineStyleToTailwind ─────────────────────────────────────────
 
   describe('inlineStyleToTailwind', () => {
+    it.each(['constructor', 'toString', 'valueOf', '__proto__', 'hasOwnProperty'])(
+      'ignores inherited style-map key %s',
+      (property) => {
+        expect(inlineStyleToTailwind({ [property]: 'red' })).toBe('');
+      },
+    );
+
     it('converts a full inline style object to Tailwind classes', () => {
       const classes = inlineStyleToTailwind({
         display: 'flex',

@@ -65,6 +65,18 @@ function sourceWithActionContract(action: GeneratedArtifactAction): string {
 }
 
 describe('generated artifact envelope', () => {
+  it.each(['constructor', 'toString', 'valueOf', '__proto__', 'hasOwnProperty'])(
+    'does not accept inherited dependency-catalog key %s',
+    (packageName) => {
+      expect(() => buildGeneratedArtifact({
+        framework: 'react',
+        code: `import '${packageName}';\n`,
+        fileExtension: '.tsx',
+        imports: [packageName],
+      })).toThrow(`Generated import '${packageName}' has no exact dependency manifest entry.`);
+    },
+  );
+
   it('exposes action sources as a nonempty public tuple', () => {
     expectTypeOf<[]>().not.toExtend<GeneratedArtifactAction['sources']>();
     expectTypeOf<[{ nodeId: string; component: string; event: string }]>()

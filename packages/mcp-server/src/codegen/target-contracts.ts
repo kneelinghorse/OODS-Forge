@@ -374,18 +374,28 @@ function propValueContract(
   component: NucleusComponentId,
   prop: string,
 ): PropValueContract | undefined {
-  const canonical = PROP_VALUE_CONTRACTS[component][prop];
+  const componentRules = Object.hasOwn(PROP_VALUE_CONTRACTS, component)
+    ? PROP_VALUE_CONTRACTS[component]
+    : undefined;
+  const canonical = componentRules && Object.hasOwn(componentRules, prop)
+    ? componentRules[prop]
+    : undefined;
   if (canonical) return canonical;
   if (component === 'Tabs' && prop === 'aria-label') return STRING_VALUE;
   if (GENERIC_PROPS.has(prop)) return STRING_VALUE;
-  if (CROSS_TARGET_PROP_EXTENSIONS[component]?.has(prop)) return STRING_VALUE;
+  const extensions = Object.hasOwn(CROSS_TARGET_PROP_EXTENSIONS, component)
+    ? CROSS_TARGET_PROP_EXTENSIONS[component]
+    : undefined;
+  if (extensions?.has(prop)) return STRING_VALUE;
   if (prop.startsWith('data-')) return ATTRIBUTE_VALUE;
-  if (prop.startsWith('aria-')) return ARIA_VALUE_CONTRACTS[prop];
+  if (prop.startsWith('aria-') && Object.hasOwn(ARIA_VALUE_CONTRACTS, prop)) {
+    return ARIA_VALUE_CONTRACTS[prop];
+  }
   return undefined;
 }
 
 function isKnownAriaProp(prop: string): boolean {
-  return ARIA_VALUE_CONTRACTS[prop] !== undefined;
+  return Object.hasOwn(ARIA_VALUE_CONTRACTS, prop);
 }
 
 function valueType(value: unknown): string {
@@ -412,7 +422,9 @@ function nodesInDocumentOrder(screens: readonly UiElement[]): UiElement[] {
 }
 
 function contractFor(component: string) {
-  return componentContracts[component as NucleusComponentId];
+  return Object.hasOwn(componentContracts, component)
+    ? componentContracts[component as NucleusComponentId]
+    : undefined;
 }
 
 function semanticEventName(bindingEvent: string): string {
@@ -547,8 +559,13 @@ export function preflightTargetContracts(
     }
     const allowedProps = new Set(contract.props);
     const component = node.component as NucleusComponentId;
-    const targetExtensions = CROSS_TARGET_PROP_EXTENSIONS[component];
-    for (const requiredProp of REQUIRED_PROPS[component] ?? []) {
+    const targetExtensions = Object.hasOwn(CROSS_TARGET_PROP_EXTENSIONS, component)
+      ? CROSS_TARGET_PROP_EXTENSIONS[component]
+      : undefined;
+    const requiredProps = Object.hasOwn(REQUIRED_PROPS, component)
+      ? REQUIRED_PROPS[component]
+      : undefined;
+    for (const requiredProp of requiredProps ?? []) {
       if (props[requiredProp] === undefined) {
         issues.push(issue(
           `Required prop ${JSON.stringify(requiredProp)} is missing from the canonical `

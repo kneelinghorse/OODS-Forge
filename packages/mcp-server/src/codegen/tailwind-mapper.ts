@@ -846,7 +846,9 @@ export function inlineStyleToTailwind(
       continue;
     }
 
-    const utility = STYLE_TO_UTILITY[property];
+    const utility = Object.hasOwn(STYLE_TO_UTILITY, property)
+      ? STYLE_TO_UTILITY[property]
+      : undefined;
     if (!utility) continue;
 
     if (isTokenReference(value)) {

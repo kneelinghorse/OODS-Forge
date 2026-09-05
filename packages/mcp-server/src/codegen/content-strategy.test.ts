@@ -43,6 +43,14 @@ describe('content-strategy', () => {
       expect(getContentStrategy('')).toBe('none');
     });
 
+    it.each(['constructor', 'toString', 'valueOf', '__proto__', 'hasOwnProperty'])(
+      'does not treat inherited Object key %s as a registered strategy',
+      (name) => {
+        expect(getContentStrategy(name)).toBe('none');
+        expect(acceptsFieldContent(name)).toBe(false);
+      },
+    );
+
     it('covers all 97 catalog components', () => {
       const allComponents = [
         'Text', 'Button', 'Badge', 'Banner', 'Input', 'Select', 'Card', 'Stack', 'Grid', 'Table', 'Tabs',

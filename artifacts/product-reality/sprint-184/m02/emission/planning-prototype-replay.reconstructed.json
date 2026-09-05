@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m02",
+  "kind": "planning-prototype-red-replay",
+  "status": "red-control-confirmed",
+  "provenance": {
+    "classification": "reconstructed exact replay",
+    "archivedCommit": "da1a3fd789bba09e626201d92e6fb6841c21deac",
+    "method": "git archive into a fresh external temporary directory; import the archived TypeScript handler with tsx; run the literal 5 x 2 x 3 matrix",
+    "limitation": "No verbatim planning-session stdout transcript was present in the repository or CMOS mission record. This is an exact executable replay from the mission-start commit, not the original planning transcript."
+  },
+  "dimensions": {
+    "components": ["constructor", "toString", "valueOf", "__proto__", "hasOwnProperty"],
+    "frameworks": ["react", "vue"],
+    "profiles": ["draft", "build", "release"]
+  },
+  "totals": {
+    "cells": 30,
+    "exceptions": 10,
+    "v119OnlyResponses": 20,
+    "cellsWithV119AndN015": 0
+  },
+  "observedPattern": {
+    "draft": {
+      "cells": 10,
+      "outcome": "exception",
+      "constructorToStringValueOfHasOwnProperty": "TypeError: function is not iterable (cannot read property Symbol(Symbol.iterator))",
+      "__proto__": "TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))"
+    },
+    "build": {
+      "cells": 10,
+      "outcome": "error response",
+      "issueCodes": ["OODS-V119"],
+      "exception": null
+    },
+    "release": {
+      "cells": 10,
+      "outcome": "error response",
+      "issueCodes": ["OODS-V119"],
+      "exception": null
+    }
+  },
+  "correctionToMissionShorthand": "The literal replay does not show 30 thrown exceptions: draft threw in 10 cells; build/release returned early with only OODS-V119 in 20 cells."
+}
