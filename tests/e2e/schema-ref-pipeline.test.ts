@@ -41,24 +41,14 @@ describe('schemaRef E2E pipeline', () => {
     expect(codegen.fileExtension).toBe('');
     expect(codegen.imports).toEqual([]);
     expect(codegen.warnings).toEqual([]);
+    // Sprint 184 ported PriceBadge and AuditTimeline. DetailHeader remains
+    // outside the eligible React surfaces, so it is the sole typed gap.
     expect(codegen.errors).toEqual([
       {
         code: 'OODS-N015',
         message: 'Component DetailHeader is not emission-eligible for react; evidence state: unavailable.',
         nodeId: 'slot-header-2',
         component: 'DetailHeader',
-      },
-      {
-        code: 'OODS-N015',
-        message: 'Component PriceBadge is not emission-eligible for react; evidence state: unavailable.',
-        nodeId: 'slot-tab-1-6',
-        component: 'PriceBadge',
-      },
-      {
-        code: 'OODS-N015',
-        message: 'Component AuditTimeline is not emission-eligible for react; evidence state: unavailable.',
-        nodeId: 'slot-metadata-14',
-        component: 'AuditTimeline',
       },
     ]);
     expect(codegen.meta).toEqual({ nodeCount: 15, componentCount: 6 });
