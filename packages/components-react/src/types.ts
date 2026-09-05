@@ -120,6 +120,7 @@ type NativeSelectProps = Omit<
 
 export interface SelectProps extends NativeSelectProps, CommonFieldProps {
   readonly options?: readonly SelectOption[];
+  readonly placeholder?: string;
   readonly selectClassName?: string;
   readonly selectStyle?: React.CSSProperties;
   readonly onValueChange?: (value: string) => void;
@@ -271,6 +272,7 @@ export type SafeTextElement =
 export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'content'> {
   readonly content?: React.ReactNode;
   readonly children?: React.ReactNode;
+  readonly label?: string;
   readonly size?: ComponentSize;
   readonly weight?: 'regular' | 'medium' | 'semibold';
   readonly as?: SafeTextElement;

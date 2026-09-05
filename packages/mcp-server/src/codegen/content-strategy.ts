@@ -93,7 +93,7 @@ const STRATEGY_MAP: Record<string, ContentStrategy> = {
   StateTransitionEvent: 'none',
   StatusBadge: 'status-prop',
   StatusSelector: 'value-prop',
-  StatusTimeline: 'none',
+  StatusTimeline: 'status-prop',
 
   // --- Structural ---
   OwnerBadge: 'label-prop',
@@ -149,7 +149,9 @@ const STRATEGY_MAP: Record<string, ContentStrategy> = {
  * Returns 'none' for unknown components (safe default — no content injection).
  */
 export function getContentStrategy(componentName: string): ContentStrategy {
-  return STRATEGY_MAP[componentName] ?? 'none';
+  return Object.hasOwn(STRATEGY_MAP, componentName)
+    ? STRATEGY_MAP[componentName]!
+    : 'none';
 }
 
 /**

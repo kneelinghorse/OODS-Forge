@@ -1,0 +1,203 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s184-m03",
+  "implementationCommit": "b4697e40fb67dfd59e638f7c847f103d9f06a8d2",
+  "executionDate": "2026-09-05",
+  "disposableWorktree": "/private/tmp/oods-s184-m03-mutations.kPGdQU/repo",
+  "summary": {
+    "requested": 7,
+    "killed": 7,
+    "survived": 0,
+    "restoredByteIdentically": 7,
+    "gaps": []
+  },
+  "sharedPreGreen": [
+    {
+      "command": "pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts --reporter=verbose",
+      "exitCode": 0,
+      "result": "2 passed"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts --reporter=verbose",
+      "exitCode": 0,
+      "result": "25 passed"
+    }
+  ],
+  "baselineSha256": {
+    "packages/component-contracts/src/contracts.ts": "208edf7ec52b8bb56f3def2262d1b1fbcd7676fe1b84cfd3e453dad5f9212211",
+    "packages/mcp-server/src/codegen/target-contracts.ts": "99c04b5840f69c44261e4b98ed502bb11e1c24191d46802c9391870e8eec8673",
+    "packages/mcp-server/src/codegen/html-emitter.ts": "c56773b0b56bfb9b595818a19b276d119df70dfaf6331f0290dae930d955abb0",
+    "packages/mcp-server/src/codegen/react-emitter.ts": "8cdd60ef51125e3b82c1147553512a4797e12b252f8318c9b2f53d1596b61050",
+    "packages/mcp-server/src/codegen/vue-emitter.ts": "68bc5e246af003bbd6dc843f6d4adaddce4bafe8b8e2ecfb8ab838e76e736e4e",
+    "packages/mcp-server/src/render/tree-renderer.ts": "0b722b547e0d7fde6eab5f59af70fbcc87fc560ceae60133c5465bb6788df200"
+  },
+  "mutants": [
+    {
+      "id": "M01-select-placeholder-contract",
+      "description": "Remove Select.placeholder from the canonical contract.",
+      "patch": "M01-select-placeholder-contract.patch",
+      "mutatedSha256": "fa60f59471d35612e90c0f6ac5c84385980062434dcff37c3b643f5c58b944e2",
+      "selectors": [
+        {
+          "command": "pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts -t \"recognizes every new render prop\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "1 failed: Select.props no longer contains placeholder"
+        },
+        {
+          "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"clears every nucleus contract issue\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "2 failed (React and Vue): OODS-V007 at slot-filters-2"
+        }
+      ],
+      "restoredSha256": "208edf7ec52b8bb56f3def2262d1b1fbcd7676fe1b84cfd3e453dad5f9212211",
+      "restoredDiffExitCode": 0,
+      "restoredSelectorExitCode": 0,
+      "status": "killed"
+    },
+    {
+      "id": "M02-text-label-contract",
+      "description": "Remove Text.label from the canonical contract.",
+      "patch": "M02-text-label-contract.patch",
+      "mutatedSha256": "c36e4ce2f56dd4ef190077121054bb576910c09c77957232c9674c991f4f1511",
+      "selectors": [
+        {
+          "command": "pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts -t \"recognizes every new render prop\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "1 failed: Text.props no longer contains label"
+        },
+        {
+          "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"clears every nucleus contract issue\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "2 failed (React and Vue): OODS-V007 at pg-status-timeline-25, pg-status-timeline-26, and slot-tab-4-17"
+        }
+      ],
+      "restoredSha256": "208edf7ec52b8bb56f3def2262d1b1fbcd7676fe1b84cfd3e453dad5f9212211",
+      "restoredDiffExitCode": 0,
+      "restoredSelectorExitCode": 0,
+      "status": "killed"
+    },
+    {
+      "id": "M03-stack-pattern-component-contract",
+      "description": "Remove Stack.patternComponent from the canonical contract.",
+      "patch": "M03-stack-pattern-component-contract.patch",
+      "mutatedSha256": "6383e152997f0d82aec150e6b9fed641718b476c18e57a9343968ffe3873a3f1",
+      "selectors": [
+        {
+          "command": "pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts -t \"recognizes every new render prop\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "1 failed: Stack.props no longer contains patternComponent"
+        },
+        {
+          "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"clears every nucleus contract issue\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "2 failed (React and Vue): OODS-V007 at slot-tab-0-4"
+        }
+      ],
+      "restoredSha256": "208edf7ec52b8bb56f3def2262d1b1fbcd7676fe1b84cfd3e453dad5f9212211",
+      "restoredDiffExitCode": 0,
+      "restoredSelectorExitCode": 0,
+      "status": "killed"
+    },
+    {
+      "id": "M04-stack-fields-contract",
+      "description": "Remove Stack.fields from the canonical contract.",
+      "patch": "M04-stack-fields-contract.patch",
+      "mutatedSha256": "a3e361dd9b6477b8f2762e1580e846445862c18b994426c4948a62d43b7db0b2",
+      "selectors": [
+        {
+          "command": "pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts -t \"recognizes every new render prop\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "1 failed: Stack.props no longer contains fields"
+        },
+        {
+          "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"clears every nucleus contract issue\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "2 failed (React and Vue): OODS-V007 at slot-tab-0-4"
+        }
+      ],
+      "restoredSha256": "208edf7ec52b8bb56f3def2262d1b1fbcd7676fe1b84cfd3e453dad5f9212211",
+      "restoredDiffExitCode": 0,
+      "restoredSelectorExitCode": 0,
+      "status": "killed"
+    },
+    {
+      "id": "M05-boolean-select-field-kind",
+      "description": "Revert boolean Select.value acceptance for React and Vue.",
+      "patch": "M05-boolean-select-field-kind.patch",
+      "mutatedSha256": "56bee3e969b67ad2e626c9902c07eb8958dd6fbdefb43a1f407b22cb8b117282",
+      "selectors": [
+        {
+          "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"accepts only the declared boolean Select\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "2 failed: React and Vue reject boolean-select with OODS-V007"
+        },
+        {
+          "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"accepts only the declared boolean Select and array Text bindings on vue\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "Vue-only failure names the vue target and accepted kind string"
+        }
+      ],
+      "restoredSha256": "99c04b5840f69c44261e4b98ed502bb11e1c24191d46802c9391870e8eec8673",
+      "restoredDiffExitCode": 0,
+      "restoredSelectorExitCode": 0,
+      "status": "killed"
+    },
+    {
+      "id": "M06-array-text-field-kind",
+      "description": "Revert T[] acceptance for Text children on React and Vue.",
+      "patch": "M06-array-text-field-kind.patch",
+      "mutatedSha256": "768c03a496faf8ae65536f673aea8b1212cdaf47c75d355c18536722baaae7dd",
+      "selectors": [
+        {
+          "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"accepts only the declared boolean Select\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "2 failed: React and Vue reject array-text with OODS-V007"
+        },
+        {
+          "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"accepts only the declared boolean Select and array Text bindings on vue\" --reporter=verbose",
+          "exitCode": 1,
+          "observed": "Vue-only failure names the vue target and accepted kinds string, number"
+        }
+      ],
+      "restoredSha256": "99c04b5840f69c44261e4b98ed502bb11e1c24191d46802c9391870e8eec8673",
+      "restoredDiffExitCode": 0,
+      "restoredSelectorExitCode": 0,
+      "status": "killed"
+    },
+    {
+      "id": "M07-bypass-composition-directives",
+      "description": "Bypass executeCompositionDirectives in all emit/render entry points.",
+      "patch": "M07-bypass-composition-directives.patch",
+      "mutatedSha256": {
+        "packages/mcp-server/src/codegen/html-emitter.ts": "619d4a28a0e2ae06cc918dc7e19679698d60abdc433b7aa6d4fc7267b2509d4c",
+        "packages/mcp-server/src/codegen/react-emitter.ts": "dde5951a3feb241af06e9fcc3a3935d7fedff2494710e79a9a79e6e552a45fc5",
+        "packages/mcp-server/src/codegen/vue-emitter.ts": "beccea1f3af634f4897dbeb920fcb89e4b67a6f596b6bed8f543928294798974",
+        "packages/mcp-server/src/render/tree-renderer.ts": "f149e4fc64fc0fe5cbf8ba2ac2d76dfaa17a5301b719024da4347e99a2bcacf7"
+      },
+      "selectors": [
+        {
+          "command": "set -o pipefail; pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts -t \"executes the fields directive|executes the directive through|preserves the saved directive node\" --reporter=verbose 2>&1 | rg \"^( RUN| ×| FAIL | Test Files|      Tests|   →|.*ERR_PNPM)\"",
+          "exitCode": 1,
+          "observed": "7 failed: synthetic React/Vue/HTML, direct renderTree/repl.render, saved React/Vue/HTML"
+        }
+      ],
+      "restoredSha256": {
+        "packages/mcp-server/src/codegen/html-emitter.ts": "c56773b0b56bfb9b595818a19b276d119df70dfaf6331f0290dae930d955abb0",
+        "packages/mcp-server/src/codegen/react-emitter.ts": "8cdd60ef51125e3b82c1147553512a4797e12b252f8318c9b2f53d1596b61050",
+        "packages/mcp-server/src/codegen/vue-emitter.ts": "68bc5e246af003bbd6dc843f6d4adaddce4bafe8b8e2ecfb8ab838e76e736e4e",
+        "packages/mcp-server/src/render/tree-renderer.ts": "0b722b547e0d7fde6eab5f59af70fbcc87fc560ceae60133c5465bb6788df200"
+      },
+      "restoredDiffExitCode": 0,
+      "restoredSelectorExitCode": 0,
+      "status": "killed"
+    }
+  ],
+  "finalRestoration": {
+    "gitStatusShort": "",
+    "gitStatusExitCode": 0,
+    "canonicalSuite": "2 passed",
+    "canonicalSuiteExitCode": 0,
+    "runtimeSuite": "25 passed",
+    "runtimeSuiteExitCode": 0
+  }
+}

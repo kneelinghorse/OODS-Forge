@@ -250,16 +250,15 @@ describe('cross-framework parity', () => {
       expect(vue.code).toContain('<section data-layout="section"');
     });
 
-    it('both frameworks include binding on inner component (not section wrapper)', () => {
-      // React: onEdit={handleEdit} on inner component
-      expect(react.code).toMatch(/Card[^>]*onEdit=\{handleEdit\}/);
-      // Vue: @edit="handleEdit" on inner component
-      expect(vue.code).toMatch(/Card[^>]*@edit="handleEdit"/);
+    it('both frameworks keep semantic screen actions off the section component', () => {
+      expect(react.code).not.toMatch(/Card[^>]*onEdit=/);
+      expect(vue.code).not.toMatch(/Card[^>]*@edit=/);
     });
 
-    it('both frameworks generate handler stubs', () => {
-      expect(react.code).toContain('const handleEdit');
-      expect(vue.code).toContain('const handleEdit');
+    it('both frameworks declare the same required action', () => {
+      expect(react.code).toContain('handleEdit: () => void;');
+      expect(vue.code).toContain('handleEdit: () => void;');
+      expect(react.actions).toEqual(vue.actions);
     });
   });
 
@@ -301,7 +300,7 @@ describe('cross-framework parity', () => {
     });
 
     it('React destructures field names from props', () => {
-      expect(react.code).toMatch(/\{\s*email.*name.*price.*status\s*\}/);
+      expect(react.code).toMatch(/\{\s*actions.*email.*name.*price.*status\s*\}/);
     });
   });
 
@@ -309,17 +308,19 @@ describe('cross-framework parity', () => {
     const react = reactEmit(fieldBindingSchema, defaultOpts);
     const vue = vueEmit(fieldBindingSchema, defaultOpts);
 
-    it('React emits onSubmit={handleSubmit}', () => {
-      expect(react.code).toContain('onSubmit={handleSubmit}');
+    it('React declares onSubmit as a required semantic action', () => {
+      expect(react.code).not.toContain('onSubmit={handleSubmit}');
+      expect(react.code).toContain('handleSubmit: () => void;');
     });
 
-    it('Vue emits @submit="handleSubmit"', () => {
-      expect(vue.code).toContain('@submit="handleSubmit"');
+    it('Vue declares onSubmit as a required semantic action', () => {
+      expect(vue.code).not.toContain('@submit="handleSubmit"');
+      expect(vue.code).toContain('handleSubmit: () => void;');
     });
 
-    it('both generate handler stubs', () => {
-      expect(react.code).toContain('const handleSubmit');
-      expect(vue.code).toContain('const handleSubmit');
+    it('both omit blank handler stubs', () => {
+      expect(react.code).not.toMatch(/TODO|=>\s*\{\s*\}/);
+      expect(vue.code).not.toMatch(/TODO|=>\s*\{\s*\}/);
     });
   });
 
@@ -456,9 +457,9 @@ describe('Sprint 182 bounded framework normalization', () => {
           {
             id: 'child-panel',
             component: 'Stack',
-            props: { label: 'Child panel', content: 'Visible child panel' },
+            props: { label: 'Child panel' },
             children: [
-              { id: 'tabs-panel-copy', component: 'Text', props: { content: 'must not emit as a child' } },
+              { id: 'tabs-panel-copy', component: 'Text', props: { content: 'Visible child panel' } },
             ],
           },
         ],
@@ -669,7 +670,8 @@ describe('Sprint 182 bounded framework normalization', () => {
   it('normalizes legacy Tabs items, panels, and active selection', () => {
     for (const code of [react.code, vue.code]) {
       expect(code).toContain('defaultSelectedId="overview"');
-      expect(code).toContain('defaultSelectedId="billing"');
+      expect(code).toContain('handleTabUpdateState');
+      expect(code).toContain("'billing'");
       expect(code).toContain('Overview panel');
       expect(code).toContain('Billing panel');
       expect(code).not.toContain('content":"Overview panel');
@@ -679,13 +681,14 @@ describe('Sprint 182 bounded framework normalization', () => {
     }
   });
 
-  it('turns Tabs child panels into items and removes their emitted subtree', () => {
+  it('lowers Tabs child panel subtrees onto each target panel surface', () => {
     expect(react.code).toContain('Visible child panel');
     expect(vue.code).toContain('Visible child panel');
-    expect(react.code).not.toContain('tabs-panel-copy');
-    expect(vue.code).not.toContain('tabs-panel-copy');
-    expect(react.code).not.toContain('must not emit as a child');
-    expect(vue.code).not.toContain('must not emit as a child');
+    expect(react.code).toMatch(/panel: \(\s*<Stack[\s\S]*id="tabs-panel-copy"/);
+    expect(vue.code).toContain('<template #panel="{ item }">');
+    expect(vue.code).toContain("item.id === 'child-panel'");
+    expect(vue.code).toMatch(/item\.id === 'child-panel'[\s\S]*id="tabs-panel-copy"/);
+    expect(reactSemanticErrors(react.code)).toEqual([]);
   });
 
   it('preserves normalized Card body and active state when deriving Tabs items', () => {

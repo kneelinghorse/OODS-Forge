@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m02",
+  "kind": "emission-readiness-hardening-report",
+  "status": "passed",
+  "measuredBaseHead": "da1a3fd789bba09e626201d92e6fb6841c21deac",
+  "implementation": {
+    "foundationPredicateChanged": false,
+    "readinessResolution": "All six evidence classes are checked once when the target evidence view is constructed. Every ref occurrence must resolve before emission eligibility is actionable.",
+    "referenceClasses": {
+      "A": "versionedContract, targetImplementation, packageExport, dependencyClosure, frameworkScenario",
+      "B": "publicDeclaration"
+    },
+    "failureStates": {
+      "declaration-unbuilt": "A Class B declaration file is unavailable.",
+      "reference-unresolved": "An evidence class, Class A file, or required symbol is unavailable."
+    },
+    "profileAggregation": "Component registry and target readiness issues are evaluated together, preserving OODS-V119 and OODS-N015 in the same profile response.",
+    "prototypeDefense": "Object.hasOwn guards protect component contracts, prop rules, target extensions, required props, content strategies, style mappings, dependency catalogs, and framework maps."
+  },
+  "verification": {
+    "readinessReferences": {
+      "status": "passed",
+      "references": 178,
+      "resolved": 178,
+      "classA": 150,
+      "classB": 28,
+      "report": "readiness-ref-report.json"
+    },
+    "truthyFabricatedStatusBadgeRow": {
+      "emissionEligible": true,
+      "fabricatedRef": "packages/does-not-exist/NOPE.tsx#Imaginary",
+      "handlerProfile": "build",
+      "status": "error",
+      "issueCodes": ["OODS-N015"],
+      "evidenceState": "reference-unresolved",
+      "codeLength": 0,
+      "artifactPresent": false,
+      "receipt": "fabricated-statusbadge-replay.reconstructed.json"
+    },
+    "declarationRemoval": {
+      "react": { "rowsRed": 14, "evidenceState": "declaration-unbuilt" },
+      "vue": { "rowsRed": 14, "evidenceState": "declaration-unbuilt" }
+    },
+    "singleExportRemoval": {
+      "react": { "componentRed": "Badge", "rowsGreen": 13 },
+      "vue": { "componentRed": "Badge", "rowsGreen": 13 },
+      "mutationMethod": "in-memory read view; tracked package sources were never edited"
+    },
+    "prototypeMatrix": {
+      "cells": 30,
+      "exceptions": 0,
+      "cellsWithV119AndN015": 30,
+      "blockingCellsSourceFree": 20,
+      "report": "prototype-key-matrix.json"
+    },
+    "portableBuiltModule": {
+      "method": "Relocate the built mcp-server package beneath an external non-Git temporary root with repository source and target declarations absent, then import the relocated code.generate handler.",
+      "startup": "loaded",
+      "react": { "status": "error", "issueCodes": ["OODS-N015"], "evidenceState": "declaration-unbuilt", "codeLength": 0, "artifactPresent": false },
+      "vue": { "status": "error", "issueCodes": ["OODS-N015"], "evidenceState": "declaration-unbuilt", "codeLength": 0, "artifactPresent": false }
+    },
+    "frozenSurface": {
+      "foundationV1Sha256": "7f4c9ae5e2863880859c312a2587254322a36f194f5a66eb25c34a993ba4194f",
+      "canonicalSprint182ConsumerSha256": "f1d6dd4518bfd3036b2dca89b0d61f041d531a76e7e8de6a1c7325d37fe67491",
+      "freshVuePackedRun": { "passed": 6, "failed": 0, "skipped": 0 },
+      "report": "fresh-vue-packed-import.json"
+    },
+    "focusedTests": {
+      "files": 4,
+      "passed": 102,
+      "failed": 0,
+      "skipped": 0,
+      "receipt": "logs/emission-focused-suite.log"
+    },
+    "serverBuild": {
+      "command": "pnpm --filter @oods/mcp-server run build",
+      "exitCode": 0
+    },
+    "fullServerSuite": {
+      "command": "pnpm --filter @oods/mcp-server test",
+      "testFilesPassed": 244,
+      "testFilesSkipped": 1,
+      "testsPassed": 4878,
+      "testsSkipped": 16,
+      "exitCode": 0,
+      "receipt": "logs/full-server-suite.log"
+    }
+  },
+  "limitations": [
+    "The original planning-session prototype stdout was not retained. planning-prototype-replay.reconstructed.json is an exact archived-commit replay and is labeled reconstructed.",
+    "The fresh packed run used an external temporary artifact root; its sanitized outcome and tarball hashes are retained here, not the temporary tarballs themselves."
+  ]
+}

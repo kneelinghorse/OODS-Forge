@@ -1,0 +1,13 @@
+diff --git a/packages/mcp-server/src/codegen/target-contracts.ts b/packages/mcp-server/src/codegen/target-contracts.ts
+index 4400e35a..5ec2c691 100644
+--- a/packages/mcp-server/src/codegen/target-contracts.ts
++++ b/packages/mcp-server/src/codegen/target-contracts.ts
+@@ -490,7 +490,7 @@ function acceptedFieldKinds(
+   if (propName === 'content') return ['string', 'number'];
+   if (propName === 'status') return ['string'];
+   if (isChildren) {
+-    return component === 'Text' ? ['string', 'number', 'array'] : ['string', 'number'];
++    return ['string', 'number'];
+   }
+   return [];
+ }

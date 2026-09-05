@@ -210,6 +210,7 @@ describe('pipeline — nested options aliases contract', () => {
     try {
       const result = await pipelineHandle({
         object: 'Product',
+        context: 'card',
         framework: 'html',
         save: { name: 'test-tagged-schema', tags: ['test', 'sprint74'] },
       });
@@ -235,6 +236,7 @@ describe('pipeline — nested options aliases contract', () => {
     try {
       const result = await pipelineHandle({
         object: 'Product',
+        context: 'card',
         framework: 'html',
         save: { name: 'test-tagged-schema', tags: ['receipt', 'transaction'] },
       });

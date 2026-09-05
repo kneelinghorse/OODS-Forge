@@ -2,6 +2,8 @@ import type { UiElement, UiLayout, UiSchema, UiStyle } from '../schemas/generate
 import { renderMappedComponent } from './component-map.js';
 import { escapeHtml } from './escape-html.js';
 import { resolveSpacingLeaf } from './spacing-leaf.js';
+import { executeCompositionDirectives } from '../codegen/composition-directives.js';
+import { snakeToCamel } from '../codegen/binding-utils.js';
 
 type CssDeclarations = Record<string, string>;
 export interface FragmentResult {
@@ -139,21 +141,41 @@ function renderSidebarChildren(children: string[]): string {
   return `<div data-sidebar-main="true">${main}</div><aside data-sidebar-aside="true">${asideHtml}</aside>`;
 }
 
-function renderNode(node: UiElement): string {
+function renderNode(node: UiElement, insideStatusTimeline = false): string {
+  if (
+    insideStatusTimeline
+    && node.component === 'Text'
+    && typeof node.props?.field === 'string'
+    && node.props.content === undefined
+    && node.props.text === undefined
+    && node.props.value === undefined
+  ) {
+    const fieldName = snakeToCamel(node.props.field);
+    node = {
+      ...node,
+      props: {
+        ...node.props,
+        text: `[${fieldName}]`,
+        'data-bind': fieldName,
+      },
+    };
+  }
   const childNodes = Array.isArray(node.children) ? node.children : [];
-  const renderedChildren = childNodes.map((child) => renderNode(child));
+  const renderedChildren = childNodes.map((child) => (
+    renderNode(child, node.component === 'StatusTimeline')
+  ));
   const childHtml = node.layout?.type === 'sidebar' ? renderSidebarChildren(renderedChildren) : renderedChildren.join('');
   const declarations = styleForNode(node);
 
   if (node.layout?.type === 'section') {
-    const inner = renderMappedComponent(node, childHtml);
+    const inner = renderMappedComponent(node, childHtml, renderedChildren);
     const sectionStyle = toCssString(declarations);
     const styleAttribute = sectionStyle ? ` style="${escapeHtml(sectionStyle)}"` : '';
     return `<section data-layout="section" data-layout-node-id="${escapeHtml(node.id)}"${styleAttribute}>${inner}</section>`;
   }
 
   const styledNode = withComputedStyle(node, declarations);
-  return renderMappedComponent(styledNode, childHtml);
+  return renderMappedComponent(styledNode, childHtml, renderedChildren);
 }
 
 function renderTokenOverrides(tokenOverrides?: Record<string, string>): string {
@@ -168,8 +190,9 @@ function renderTokenOverrides(tokenOverrides?: Record<string, string>): string {
 }
 
 export function renderTree(schema: UiSchema): string {
-  const tokenStyle = renderTokenOverrides(schema.tokenOverrides);
-  const body = schema.screens.map((screen) => renderNode(screen)).join('');
+  const expandedSchema = executeCompositionDirectives(schema);
+  const tokenStyle = renderTokenOverrides(expandedSchema.tokenOverrides);
+  const body = expandedSchema.screens.map((screen) => renderNode(screen)).join('');
   return tokenStyle ? `${tokenStyle}\n${body}` : body;
 }
 
@@ -180,8 +203,9 @@ export function renderFragments(schema: UiSchema): Map<string, FragmentResult> {
 export function renderFragmentsWithErrors(schema: UiSchema): FragmentRenderBatch {
   const fragments = new Map<string, FragmentResult>();
   const errors: FragmentRenderError[] = [];
+  const expandedSchema = executeCompositionDirectives(schema);
 
-  for (const screen of schema.screens) {
+  for (const screen of expandedSchema.screens) {
     const topLevelChildren = Array.isArray(screen.children) ? screen.children : [];
     for (const node of topLevelChildren) {
       try {

@@ -1,0 +1,194 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m04",
+  "kind": "ported-component-union-closeout-evidence",
+  "capturedAt": "2026-09-05T09:37:16Z",
+  "baseCommit": "158a34bf80742d759ee7f7f079579a854e226ad6",
+  "measuredImplementationCommit": "18cf286f91ffd45abe90e6f00360d3e20c4eb9b4",
+  "status": "passed",
+  "portedComponents": [
+    "AuditTimeline",
+    "CancellationSummary",
+    "PaginationBar",
+    "PriceBadge",
+    "RelativeTimestamp",
+    "SearchInput",
+    "StatusBadge",
+    "StatusTimeline"
+  ],
+  "packageSurfaces": {
+    "contracts": [
+      "@oods/component-contracts#PORTED_COMPONENT_IDS",
+      "@oods/component-contracts#PortedComponentId",
+      "@oods/component-contracts#GovernedComponentId",
+      "@oods/component-contracts#portedComponentContracts",
+      "@oods/component-contracts#portedScenarios",
+      "@oods/component-contracts/registry/capabilities/ported"
+    ],
+    "react": [
+      "@oods/components-react/ported",
+      "@oods/components-react/readiness-ported"
+    ],
+    "vue": [
+      "@oods/components-vue/ported",
+      "@oods/components-vue/readiness-ported"
+    ],
+    "styles": [
+      "@oods/component-styles/ported",
+      "@oods/component-styles/css-ported"
+    ],
+    "styleMetadataDisposition": "The existing ./css convention resolves raw CSS, so PORTED_COMPONENT_STYLE_IDS is exported from the additive ./ported JavaScript subpath while ./css-ported resolves components-ported.css."
+  },
+  "advertisedMovers": {
+    "source": "artifacts/product-reality/sprint-184/m04/advertised-movers.json",
+    "implementationPathCount": 28,
+    "publicSubpathCount": 7,
+    "consumer": "s184-m07 reconnect audit"
+  },
+  "buildProfileCompilation": {
+    "source": "artifacts/product-reality/sprint-184/m04/compilation-report.json",
+    "savedSchemas": 2,
+    "frameworks": 2,
+    "selectedCells": 4,
+    "greenCells": 4,
+    "nonEmptyArtifacts": 4,
+    "strictCompiles": 4,
+    "errors": 0,
+    "builtImportResolution": "passed"
+  },
+  "freezeAndPromotion": {
+    "test": "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts",
+    "m01FreezeInventoryRows": 34,
+    "m01FreezeInventoryUniquePaths": 33,
+    "unchangedPaths": 31,
+    "declaredM03Transitions": 2,
+    "namedFrozenSurfaces": "byte-identical-to-m04-base",
+    "idListPins": "byte-identical-to-m04-base",
+    "nucleusComponentCount": 14,
+    "foundationV1CellCount": 28,
+    "newIndependentReviewApprovalCalls": 0,
+    "promotionCheck": {
+      "command": "node scripts/product-reality/generate-s182-m05-closeout.mjs --check-promotion",
+      "exitCode": 0,
+      "writes": 0
+    },
+    "independentReviewSuite": {
+      "selected": 39,
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "capabilityAccounting": {
+    "controllingDenominator": 109,
+    "baselinePath": "packages/component-contracts/registry/component-capability-baseline.v1.json",
+    "baselineChangedValues": 0,
+    "overlayPath": "packages/component-contracts/registry/component-capability-ported-surfaces.v1.json",
+    "overlayRows": 8,
+    "surfaceCellsPerRow": 3,
+    "overlaySurfaceCells": 24,
+    "foundationPromotion": "none"
+  },
+  "packedConsumers": {
+    "source": "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json",
+    "targets": 2,
+    "selectedComponentCells": 16,
+    "passedComponentCells": 16,
+    "failedComponentCells": 0,
+    "builtTarballs": 5,
+    "workspaceAliases": false,
+    "workspaceSymlinks": false,
+    "repositorySourceImports": false,
+    "allResolvedPathsOutsideRepository": true,
+    "serverRenderedComponent": "PriceBadge"
+  },
+  "mutationIsolation": {
+    "source": "artifacts/product-reality/sprint-184/m04/mutations/mutation-matrix.json",
+    "mutations": 16,
+    "cellsPerMutation": 16,
+    "totalCellObservations": 256,
+    "exactSelectedReadinessReds": 16,
+    "exactSelectedGenerationReds": 16,
+    "unselectedGreenObservations": 240,
+    "crossFrameworkDiscriminations": 16,
+    "restoredGreenCells": 16,
+    "trackedLog": "artifacts/product-reality/sprint-184/m04/mutations/mutation-matrix.log",
+    "checksumReceipt": "artifacts/product-reality/sprint-184/m04/mutations/SHA256SUMS"
+  },
+  "recipeDefects": {
+    "PriceBadge": "HTML, React, and Vue preserve currency as content while emitting the price variant marker.",
+    "CancellationSummary": "HTML, React, and Vue render the declared label for boolean field bindings rather than the literal true value.",
+    "statusablesCss": "The previously orphaned statusables.css is included by the packed css-ported surface."
+  },
+  "tierThree": {
+    "source": "artifacts/product-reality/sprint-184/m04/tier-three-census.json",
+    "initialFacts": 4,
+    "initialUniqueFacts": 2,
+    "transientFacts": 2,
+    "transientUniqueFacts": 1,
+    "finalFacts": 0,
+    "resizeDecision": "Do not resize s184-m05."
+  },
+  "verification": {
+    "missionGateTests": {
+      "selected": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "files": [
+        "packages/mcp-server/test/product-reality/ported-workflow.s184.spec.ts",
+        "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts",
+        "packages/mcp-server/test/product-reality/ported-mutation-matrix.s184.spec.ts",
+        "packages/mcp-server/test/product-reality/packed-ported-consumers.s184.spec.ts"
+      ]
+    },
+    "packageBuilds": {
+      "selected": 5,
+      "passed": 5,
+      "failed": 0,
+      "packages": [
+        "@oods/component-contracts",
+        "@oods/component-styles",
+        "@oods/components-react",
+        "@oods/components-vue",
+        "@oods/mcp-server"
+      ]
+    },
+    "componentPackageTests": {
+      "selected": 128,
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0,
+      "byPackage": {
+        "component-contracts": 13,
+        "component-styles": 18,
+        "components-react": 48,
+        "components-vue": 49
+      }
+    },
+    "compatibilityTests": {
+      "selected": 19,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0
+    },
+    "fullMcpServerSuite": {
+      "command": "pnpm --filter @oods/mcp-server test",
+      "filesPassed": 252,
+      "filesSkipped": 1,
+      "testsPassed": 4953,
+      "testsSkipped": 16,
+      "testsFailed": 0,
+      "durationSeconds": 289.66,
+      "skipDisposition": "The 16 pre-existing environment-gated skips are explicit: 7 Stage1 rollup tests and 9 Stage1 action-mapping tests require artifacts from an adjacent Stage1 checkout that is absent on this machine. No s184-m04 test was skipped."
+    },
+    "diffCheck": "passed"
+  },
+  "scopeStatement": "Mission s184-m04 supplies the separate eight-component ported union and turns the existing Subscription list and detail schemas green at build profile in both targets. Workflow state behavior remains s184-m05 scope; this is not a claim that the full Product Reality exit gate is complete.",
+  "knownLimitations": [
+    "The 109-row capability baseline intentionally remains stale-looking for these eight rows; the separate 24-cell overlay records current ported surface truth until a later reviewer event reconciles it.",
+    "The eight components are not promoted into foundation-v1 and do not alter the 14-component nucleus."
+  ],
+  "unrunChecks": []
+}

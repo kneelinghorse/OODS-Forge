@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s183-m06",
+  "rowId": "L-09",
+  "evidenceId": "s183-m06-l-09",
+  "baseSha": "ca8d84bbce165b656fd5cd83cc097c28fa774f19",
+  "reviewHead": "9a4202fe3ff8560a791cc92c114ef364739a1c45",
+  "measuredHead": "9a4202fe3ff8560a791cc92c114ef364739a1c45",
+  "headMismatchAllowed": false,
+  "detachedHead": true,
+  "cwd": "/Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge",
+  "environment": {
+    "PR_LABELS": "",
+    "TOKEN_GOV_BASE_REF": null,
+    "CHROMATIC_PROJECT_TOKEN": null
+  },
+  "literalCommands": [
+    "git diff --unified=0 ca8d84bbce165b656fd5cd83cc097c28fa774f19 -- .",
+    "while IFS= read -r file; do git diff --no-index --unified=0 -- /dev/null \"$file\"; diff_status=$?; if test \"$diff_status\" -gt 1; then exit \"$diff_status\"; fi; done < <(git ls-files --others --exclude-standard)"
+  ],
+  "literalCommand": "git diff --unified=0 ca8d84bbce165b656fd5cd83cc097c28fa774f19 -- . && while IFS= read -r file; do git diff --no-index --unified=0 -- /dev/null \"$file\"; diff_status=$?; if test \"$diff_status\" -gt 1; then exit \"$diff_status\"; fi; done < <(git ls-files --others --exclude-standard)",
+  "executionCommands": [
+    "git diff --unified=0 ca8d84bbce165b656fd5cd83cc097c28fa774f19 -- .",
+    "git ls-files --others --exclude-standard >/dev/null",
+    "while IFS= read -r file; do set +e; git diff --no-index --unified=0 -- /dev/null \"$file\"; diff_status=$?; set -e; if test \"$diff_status\" -gt 1; then exit \"$diff_status\"; fi; done < <(git ls-files --others --exclude-standard)"
+  ],
+  "executedCommand": "git diff --unified=0 ca8d84bbce165b656fd5cd83cc097c28fa774f19 -- . && git ls-files --others --exclude-standard >/dev/null && while IFS= read -r file; do set +e; git diff --no-index --unified=0 -- /dev/null \"$file\"; diff_status=$?; set -e; if test \"$diff_status\" -gt 1; then exit \"$diff_status\"; fi; done < <(git ls-files --others --exclude-standard)",
+  "startedAt": "2026-09-05T01:44:19.655Z",
+  "endedAt": "2026-09-05T01:44:19.910Z",
+  "exitCode": 0,
+  "status": "pass",
+  "log": {
+    "path": "artifacts/product-reality/sprint-183/m06/logs/s183-m06-l-09.log",
+    "bytes": 2061872,
+    "sha256": "d21c0a0f5858d3cb50cf0f4f560bc14de634fd77578e83eb58ecaba53e32c7f4"
+  },
+  "gitStatusBefore": [],
+  "gitStatusAfter": [],
+  "sideEffects": [],
+  "sprintId": "sprint-183"
+}

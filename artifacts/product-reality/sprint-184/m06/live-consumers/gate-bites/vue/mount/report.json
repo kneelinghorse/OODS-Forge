@@ -1,0 +1,227 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s184-m06",
+  "schema": "subscription-detail-dark",
+  "schemaRef": "compose-a710f0a9",
+  "framework": "vue",
+  "status": "detected",
+  "selected": 8,
+  "passed": 5,
+  "failed": 1,
+  "skipped": 0,
+  "logPathBase": "artifact-root",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "logs": [
+        "gate-bites/vue/mount/logs/install.log",
+        "gate-bites/vue/mount/logs/isolation.log"
+      ],
+      "detail": {
+        "localTarballCount": 4,
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-vue",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-vue"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/component-styles/css-ported",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+          },
+          {
+            "specifier": "@oods/components-vue",
+            "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+          },
+          {
+            "specifier": "@oods/components-vue/ported",
+            "consumerRelative": "node_modules/@oods/components-vue/dist/ported.js"
+          },
+          {
+            "specifier": "@vitejs/plugin-vue",
+            "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+          },
+          {
+            "specifier": "@vue/server-renderer",
+            "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+          },
+          {
+            "specifier": "vite",
+            "consumerRelative": "node_modules/vite/dist/node/index.js"
+          },
+          {
+            "specifier": "vue",
+            "consumerRelative": "node_modules/vue/index.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "logs": [
+        "gate-bites/vue/mount/logs/typecheck.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "logs": [
+        "gate-bites/vue/mount/logs/production-build.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "logs": [
+        "gate-bites/vue/mount/logs/server-render-build.log",
+        "gate-bites/vue/mount/logs/server-render-render.log"
+      ],
+      "detail": {
+        "bytes": 12496,
+        "sha256": "sha256:6304ff62e1e993157e41a43a45242f1f89786499a64275e2ced44fce8fdee551"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "failed",
+      "logs": [
+        "gate-bites/vue/mount/logs/browser-proof.log"
+      ],
+      "reason": "subscription-detail-dark/vue: mount failed or omitted ."
+    },
+    {
+      "name": "hydration",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after mount failed."
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "passed",
+      "logs": [
+        "gate-bites/vue/mount/logs/css-proof.log",
+        "gate-bites/vue/mount/logs/browser-proof.log"
+      ],
+      "detail": {
+        "files": [
+          "index-DIPEXikt.css"
+        ],
+        "bytes": 293719,
+        "sha256": "sha256:72e56dcfa14f2d6a75611614a73abd69f36ad6d5bd7e863cd6521a3cfb36c790",
+        "core": true,
+        "ported": true,
+        "tokens": true,
+        "browser": {
+          "primaryTextToken": "oklch(0.92 0.02 92)",
+          "canvasToken": "oklch(0.18 0.05 45)"
+        }
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after mount failed."
+    }
+  ],
+  "accounting": {
+    "totalGateCount": 8,
+    "provenCount": 5,
+    "namedUnprovenCount": 3,
+    "namedUnproven": [
+      {
+        "name": "mount",
+        "status": "failed",
+        "reason": "subscription-detail-dark/vue: mount failed or omitted ."
+      },
+      {
+        "name": "hydration",
+        "status": "unproven",
+        "reason": "Not reached after mount failed."
+      },
+      {
+        "name": "interaction-evidence",
+        "status": "unproven",
+        "reason": "Not reached after mount failed."
+      }
+    ],
+    "balanced": true
+  },
+  "reason": "subscription-detail-dark/vue: mount failed or omitted .",
+  "mutation": {
+    "id": "vue-mount-bite",
+    "gate": "mount",
+    "operations": [
+      {
+        "target": "server-render-output.html",
+        "operation": "replace the expected saved-schema root id in SSR output before hydration",
+        "replacementCount": 2,
+        "beforeSha256": "sha256:6304ff62e1e993157e41a43a45242f1f89786499a64275e2ced44fce8fdee551",
+        "afterSha256": "sha256:d4d8831e5dd6f2807e95a7c105cd699cf6f65a98501f90e4af131be9917d48a2"
+      },
+      {
+        "target": "dist/assets/index-Ce5EXYyj.js",
+        "operation": "replace the expected saved-schema root id in the built client artifact",
+        "replacementCount": 2,
+        "beforeSha256": "sha256:9557a50f90771fabbfca019083c4e7230d5e4b5c1aad44424206f84ca4188e76",
+        "afterSha256": "sha256:c50300206e8b08fa71d9dc99662b1ecf5e14b580813babac6b9f22abcccdf909"
+      }
+    ]
+  },
+  "expectedFailedGate": "mount",
+  "observedFailedGates": [
+    "mount"
+  ],
+  "logs": [
+    "gate-bites/vue/mount/logs/install.log",
+    "gate-bites/vue/mount/logs/isolation.log",
+    "gate-bites/vue/mount/logs/typecheck.log",
+    "gate-bites/vue/mount/logs/production-build.log",
+    "gate-bites/vue/mount/logs/server-render-build.log",
+    "gate-bites/vue/mount/logs/server-render-render.log",
+    "gate-bites/vue/mount/logs/browser-proof.log",
+    "gate-bites/vue/mount/logs/css-proof.log",
+    "gate-bites/vue/mount/logs/mutation.log"
+  ]
+}

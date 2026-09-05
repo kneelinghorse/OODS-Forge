@@ -191,6 +191,45 @@ describe("Sprint 177 closeout carrier", () => {
     );
   });
 
+  it("serializes compiler and packaging proofs that can starve parallel readers", () => {
+    const coverageCommand = packageManifest.scripts?.["test:coverage"] ?? "";
+    const serializedProofs = [
+      {
+        rootPath:
+          "packages/mcp-server/test/codegen/cross-framework-parity.spec.ts",
+        packagePath: "test/codegen/cross-framework-parity.spec.ts",
+      },
+      {
+        rootPath:
+          "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+        packagePath: "test/product-reality/typed-action-protocol.s183.spec.ts",
+      },
+      {
+        rootPath:
+          "packages/mcp-server/test/product-reality/saved-schema-consumers.s183.spec.ts",
+        packagePath:
+          "test/product-reality/saved-schema-consumers.s183.spec.ts",
+      },
+      {
+        rootPath:
+          "packages/mcp-server/test/product-reality/independent-review-approval.s183.spec.ts",
+        packagePath:
+          "test/product-reality/independent-review-approval.s183.spec.ts",
+      },
+    ];
+
+    for (const proof of serializedProofs) {
+      expect(rootVitestConfig).toContain(`'${proof.rootPath}'`);
+      expect(coverageCommand).toContain(proof.packagePath);
+    }
+    expect(
+      coverageCommand.indexOf(serializedProofs[0].packagePath),
+    ).toBeGreaterThan(
+      coverageCommand.indexOf("vitest --coverage"),
+    );
+    expect(mcpVitestConfig).toContain("fileParallelism: false");
+  });
+
   it("carries every closeout-only control and preserves the build-input run-last semantics", () => {
     const rows = localRows
       .split("\n")
@@ -218,6 +257,14 @@ describe("Sprint 177 closeout carrier", () => {
     expect(localRows).toContain("decisionCount >= 1");
     expect(localRows).toContain("http://127.0.0.1:4466/health");
     expect(localRows).toContain("after **any** advertised");
+    const rebuildRow = rows.find((row) => row.startsWith("| L-06 |"));
+    expect(rebuildRow).toContain("for attempt in $(seq 1 30)");
+    expect(rebuildRow).toContain(
+      "curl --fail --silent http://127.0.0.1:4466/health >/dev/null",
+    );
+    expect(rebuildRow).toContain(
+      "done; curl --fail --silent --show-error http://127.0.0.1:4466/health",
+    );
     expect(localRows).toContain("Sequential-only heavy-suite protocol");
     expect(rows.at(-2)).toContain(
       "| L-08 | Gitignored build-input survival — run last and again after governance |",

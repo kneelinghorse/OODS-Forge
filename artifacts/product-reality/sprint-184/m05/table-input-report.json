@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m05",
+  "kind": "table-empty-and-input-validation-regressions",
+  "capturedAt": "2026-09-05T10:23:48.806Z",
+  "table": {
+    "text": "No rows available.",
+    "targets": 2,
+    "greenTargets": 2,
+    "assertions": [
+      "tbody text is non-empty and exact",
+      "one semantic empty row is present",
+      "empty cell colspan equals max(declared columns, 1)",
+      "consumer-authored React children and Vue body slots retain precedence"
+    ],
+    "tests": [
+      "packages/components-react/test/table-empty.s184.spec.tsx",
+      "packages/components-vue/test/table-empty.s184.spec.ts"
+    ]
+  },
+  "inputValidation": {
+    "disposition": "pre-existing free-standing fact; not claimed as Sprint 184 work",
+    "states": [
+      "error",
+      "success"
+    ],
+    "targets": [
+      "react",
+      "vue"
+    ],
+    "selectedCells": 4,
+    "greenCells": 4,
+    "cells": [
+      {
+        "framework": "react",
+        "validationState": "error",
+        "status": "ok",
+        "artifactPresent": true,
+        "codeBytes": 412,
+        "errorCount": 0
+      },
+      {
+        "framework": "vue",
+        "validationState": "error",
+        "status": "ok",
+        "artifactPresent": true,
+        "codeBytes": 347,
+        "errorCount": 0
+      },
+      {
+        "framework": "react",
+        "validationState": "success",
+        "status": "ok",
+        "artifactPresent": true,
+        "codeBytes": 421,
+        "errorCount": 0
+      },
+      {
+        "framework": "vue",
+        "validationState": "success",
+        "status": "ok",
+        "artifactPresent": true,
+        "codeBytes": 356,
+        "errorCount": 0
+      }
+    ],
+    "test": "packages/mcp-server/test/product-reality/input-validation-state.s184.spec.ts"
+  },
+  "status": "passed"
+}

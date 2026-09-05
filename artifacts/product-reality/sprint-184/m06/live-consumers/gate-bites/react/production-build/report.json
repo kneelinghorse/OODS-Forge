@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s184-m06",
+  "schema": "subscription-detail-dark",
+  "schemaRef": "compose-a710f0a9",
+  "framework": "react",
+  "status": "detected",
+  "selected": 8,
+  "passed": 2,
+  "failed": 1,
+  "skipped": 0,
+  "logPathBase": "artifact-root",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/production-build/logs/install.log",
+        "gate-bites/react/production-build/logs/isolation.log"
+      ],
+      "detail": {
+        "localTarballCount": 4,
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-react",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-react"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/component-styles/css-ported",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+          },
+          {
+            "specifier": "@oods/components-react",
+            "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+          },
+          {
+            "specifier": "@oods/components-react/ported",
+            "consumerRelative": "node_modules/@oods/components-react/dist/ported.js"
+          },
+          {
+            "specifier": "react",
+            "consumerRelative": "node_modules/react/index.js"
+          },
+          {
+            "specifier": "react-dom/client",
+            "consumerRelative": "node_modules/react-dom/client.js"
+          },
+          {
+            "specifier": "react-dom/server",
+            "consumerRelative": "node_modules/react-dom/server.node.js"
+          },
+          {
+            "specifier": "vite",
+            "consumerRelative": "node_modules/vite/dist/node/index.js"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/production-build/logs/typecheck.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "failed",
+      "logs": [
+        "gate-bites/react/production-build/logs/production-build.log"
+      ],
+      "reason": "subscription-detail-dark/react production build failed (1)\n✗ Build failed in 20ms\nerror during build:\n[vite:build-html] Failed to resolve /src/missing-s184-production-entry.ts from /private<consumer-root>/index.html\nfile: /private<consumer-root>/index.html\n    at file:///private<consumer-root>/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:36314:29\n    at async Promise.all (index 0)\n    at async Object.handler (file:///private<consumer-root>/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:36511:11)\n    at async transform (file:///private<consumer-root>/node_modules/rollup/dist/es/shared/node-entry.js:21562:16)\n    at async ModuleLoader.addModuleSource (file:///private<consumer-root>/node_modules/rollup/dist/es/shared/node-entry.js:21781:36)\n"
+    },
+    {
+      "name": "server-render",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after production-build failed."
+    },
+    {
+      "name": "mount",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after production-build failed."
+    },
+    {
+      "name": "hydration",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after production-build failed."
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after production-build failed."
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after production-build failed."
+    }
+  ],
+  "accounting": {
+    "totalGateCount": 8,
+    "provenCount": 2,
+    "namedUnprovenCount": 6,
+    "namedUnproven": [
+      {
+        "name": "production-build",
+        "status": "failed",
+        "reason": "subscription-detail-dark/react production build failed (1)\n✗ Build failed in 20ms\nerror during build:\n[vite:build-html] Failed to resolve /src/missing-s184-production-entry.ts from /private<consumer-root>/index.html\nfile: /private<consumer-root>/index.html\n    at file:///private<consumer-root>/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:36314:29\n    at async Promise.all (index 0)\n    at async Object.handler (file:///private<consumer-root>/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:36511:11)\n    at async transform (file:///private<consumer-root>/node_modules/rollup/dist/es/shared/node-entry.js:21562:16)\n    at async ModuleLoader.addModuleSource (file:///private<consumer-root>/node_modules/rollup/dist/es/shared/node-entry.js:21781:36)\n"
+      },
+      {
+        "name": "server-render",
+        "status": "unproven",
+        "reason": "Not reached after production-build failed."
+      },
+      {
+        "name": "mount",
+        "status": "unproven",
+        "reason": "Not reached after production-build failed."
+      },
+      {
+        "name": "hydration",
+        "status": "unproven",
+        "reason": "Not reached after production-build failed."
+      },
+      {
+        "name": "shared-css-resolution",
+        "status": "unproven",
+        "reason": "Not reached after production-build failed."
+      },
+      {
+        "name": "interaction-evidence",
+        "status": "unproven",
+        "reason": "Not reached after production-build failed."
+      }
+    ],
+    "balanced": true
+  },
+  "reason": "subscription-detail-dark/react production build failed (1)\n✗ Build failed in 20ms\nerror during build:\n[vite:build-html] Failed to resolve /src/missing-s184-production-entry.ts from /private<consumer-root>/index.html\nfile: /private<consumer-root>/index.html\n    at file:///private<consumer-root>/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:36314:29\n    at async Promise.all (index 0)\n    at async Object.handler (file:///private<consumer-root>/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:36511:11)\n    at async transform (file:///private<consumer-root>/node_modules/rollup/dist/es/shared/node-entry.js:21562:16)\n    at async ModuleLoader.addModuleSource (file:///private<consumer-root>/node_modules/rollup/dist/es/shared/node-entry.js:21781:36)\n",
+  "mutation": {
+    "id": "react-production-build-bite",
+    "gate": "production-build",
+    "operations": [
+      {
+        "target": "index.html",
+        "operation": "replace the production module entry with a nonexistent source",
+        "replacementCount": 1,
+        "beforeSha256": "sha256:2e6d0432386f02ba8935c0050a2e9312062eced3c1cb1b78a6b11daf431d0356",
+        "afterSha256": "sha256:9055aa8abd183bdda0f61f941153dc7bee5ebf4af704a8df0a409c50d2ea9564"
+      }
+    ]
+  },
+  "expectedFailedGate": "production-build",
+  "observedFailedGates": [
+    "production-build"
+  ],
+  "logs": [
+    "gate-bites/react/production-build/logs/install.log",
+    "gate-bites/react/production-build/logs/isolation.log",
+    "gate-bites/react/production-build/logs/typecheck.log",
+    "gate-bites/react/production-build/logs/production-build.log",
+    "gate-bites/react/production-build/logs/mutation.log"
+  ]
+}

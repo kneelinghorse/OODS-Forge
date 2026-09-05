@@ -6,6 +6,7 @@ import path from 'node:path';
 const ROOT = path.resolve(import.meta.dirname, '../../../../');
 const DOCS_DIR = path.join(ROOT, 'docs/api');
 const REGISTRY_PATH = path.join(ROOT, 'packages/mcp-server/src/tools/registry.json');
+const DESCRIPTIONS_PATH = path.join(ROOT, 'packages/mcp-adapter/tool-descriptions.json');
 
 describe('API reference generator', () => {
   it('docs/api/ directory exists with generated files', () => {
@@ -68,6 +69,55 @@ describe('API reference generator', () => {
     for (const file of files) {
       expect(indexContent, `README.md missing link to ${file}`).toContain(`./${file}`);
     }
+  });
+
+  it('documents code-generation failures and hash binding without overclaiming early receipts', () => {
+    const codeGenerateDoc = fs.readFileSync(path.join(DOCS_DIR, 'code-generate.md'), 'utf-8');
+    const pipelineDoc = fs.readFileSync(path.join(DOCS_DIR, 'pipeline.md'), 'utf-8');
+    const descriptions = JSON.parse(fs.readFileSync(DESCRIPTIONS_PATH, 'utf-8')) as Record<string, string>;
+
+    for (const code of [
+      'OODS-V007',
+      'OODS-V009',
+      'OODS-V119',
+      'OODS-V162',
+      'OODS-V163',
+      'OODS-N003',
+      'OODS-N004',
+      'OODS-N013',
+      'OODS-N015',
+      'OODS-N016',
+    ]) {
+      expect(codeGenerateDoc).toContain(`| \`${code}\` |`);
+    }
+    expect(codeGenerateDoc).not.toContain('| `OODS-N002` |');
+    expect(codeGenerateDoc).not.toContain('| `OODS-V006` |');
+
+    for (const code of [
+      'OODS-V007',
+      'OODS-V162',
+      'OODS-V163',
+      'OODS-N013',
+      'OODS-N015',
+      'OODS-N016',
+      'OODS-N017',
+      'OODS-S009',
+      'OODS-S010',
+      'OODS-S011',
+      'OODS-S012',
+      'OODS-S013',
+      'OODS-S014',
+    ]) {
+      expect(pipelineDoc).toContain(`| \`${code}\` |`);
+    }
+
+    expect(descriptions['code.generate']).toContain(
+      'every response includes a validationReceipt naming applied policy, checks, omissions, and evidence disposition',
+    );
+    expect(descriptions['code.generate']).toContain(
+      "Receipts produced after artifact construction also name that artifact's content hash.",
+    );
+    expect(descriptions['code.generate']).not.toContain('every response includes a validationReceipt naming applied policy, checks, omissions, and hash-bound evidence');
   });
 
   it('regeneration is idempotent', () => {

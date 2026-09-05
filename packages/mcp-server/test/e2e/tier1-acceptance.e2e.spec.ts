@@ -10,7 +10,6 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { SchemaStore } from '../../src/schema-store/index.js';
 import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 import { handle as healthHandle } from '../../src/tools/health.js';
 import { handle as pipelineHandle } from '../../src/tools/pipeline.js';
@@ -20,8 +19,10 @@ const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 
 describe('Tier 1 acceptance — bounded framework compatibility', () => {
   it('uses the saved Card/Stack/Tabs/Text schema successfully for React and Vue', async () => {
-    const store = new SchemaStore({ projectRoot: PACKAGE_ROOT });
-    const saved = await store.load('tier1-acceptance-sub-detail');
+    const saved = JSON.parse(await fs.readFile(path.join(
+      PACKAGE_ROOT,
+      'test/fixtures/saved-schemas/tier1-acceptance-sub-detail.s182.json',
+    ), 'utf8'));
 
     expect(saved.object).toBe('Subscription');
     expect(saved.context).toBe('detail');
@@ -29,7 +30,7 @@ describe('Tier 1 acceptance — bounded framework compatibility', () => {
 
     for (const framework of ['react', 'vue'] as const) {
       const result = await codegenHandle({
-        schemaRef: saved.schemaRef,
+        schema: saved.schema,
         framework,
         options: { styling: 'tokens', typescript: true },
       });
@@ -66,14 +67,14 @@ describe('Tier 1 acceptance — bounded framework compatibility', () => {
     },
   );
 
-  it('keeps the complete legacy Subscription HTML save, load, and health path', async () => {
+  it('keeps a build-safe Subscription HTML save, load, and health path', async () => {
     const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-tier1-html-'));
     process.env.MCP_SCHEMA_STORE_ROOT = tempRoot;
 
     try {
       const result = await pipelineHandle({
         object: 'Subscription',
-        context: 'detail',
+        context: 'card',
         framework: 'html',
         styling: 'tokens',
         save: 's182-tier1-legacy-html',

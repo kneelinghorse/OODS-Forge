@@ -1,0 +1,66 @@
+Final restoration identity
+$ git status --short
+exit_code=0
+<empty>
+
+$ git rev-parse HEAD
+exit_code=0
+b4697e40fb67dfd59e638f7c847f103d9f06a8d2
+
+$ shasum -a 256 packages/component-contracts/src/contracts.ts packages/mcp-server/src/codegen/target-contracts.ts packages/mcp-server/src/codegen/html-emitter.ts packages/mcp-server/src/codegen/react-emitter.ts packages/mcp-server/src/codegen/vue-emitter.ts packages/mcp-server/src/render/tree-renderer.ts
+exit_code=0
+208edf7ec52b8bb56f3def2262d1b1fbcd7676fe1b84cfd3e453dad5f9212211  packages/component-contracts/src/contracts.ts
+99c04b5840f69c44261e4b98ed502bb11e1c24191d46802c9391870e8eec8673  packages/mcp-server/src/codegen/target-contracts.ts
+c56773b0b56bfb9b595818a19b276d119df70dfaf6331f0290dae930d955abb0  packages/mcp-server/src/codegen/html-emitter.ts
+8cdd60ef51125e3b82c1147553512a4797e12b252f8318c9b2f53d1596b61050  packages/mcp-server/src/codegen/react-emitter.ts
+68bc5e246af003bbd6dc843f6d4adaddce4bafe8b8e2ecfb8ab838e76e736e4e  packages/mcp-server/src/codegen/vue-emitter.ts
+0b722b547e0d7fde6eab5f59af70fbcc87fc560ceae60133c5465bb6788df200  packages/mcp-server/src/render/tree-renderer.ts
+
+Every per-mutant restoration also ran `git diff --exit-code -- <mutated paths>`
+and returned exit_code=0 before its restored selector was invoked.
+
+Canonical contract post-restore
+$ pnpm --filter @oods/component-contracts exec vitest run test/contract-amendments.s184.spec.ts --reporter=verbose
+exit_code=0
+
+ ✓ test/contract-amendments.s184.spec.ts > Sprint 184 nucleus contract amendments > versions only the three contracts whose saved-schema semantics changed 1ms
+ ✓ test/contract-amendments.s184.spec.ts > Sprint 184 nucleus contract amendments > recognizes every new render prop and composition directive explicitly 0ms
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Duration  277ms (transform 45ms, setup 0ms, collect 40ms, tests 2ms, environment 0ms, prepare 54ms)
+
+MCP runtime post-restore
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality/emitter-directives.s184.spec.ts --reporter=verbose
+exit_code=0
+
+ ✓ ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on react 4ms
+ ✓ ... > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on vue 1ms
+ ✓ ... > accepts only the declared boolean Select and array Text bindings on react 0ms
+ ✓ ... > accepts only the declared boolean Select and array Text bindings on vue 0ms
+ ✓ ... > emits explicit React coercion and joining expressions that strict-check against the built package 1640ms
+ ✓ ... > emits readonly-safe Vue coercion and joining expressions that strict-check against the built package 2963ms
+ ✓ ... > keeps both HTML field bindings visible without stringifying an array object 4ms
+ ✓ ... > executes the fields directive as an actual StatusTimeline on react even without authored children 1ms
+ ✓ ... > executes the fields directive as an actual StatusTimeline on vue even without authored children 0ms
+ ✓ ... > executes the fields directive as an actual StatusTimeline on html even without authored children 1ms
+ ✓ ... > lowers the saved directive to the exact named pattern and authored field order 1ms
+ ✓ ... > executes the directive through the direct tree renderer and repl.render document path 7ms
+ ✓ ... > preserves the saved directive node and its two visible field bindings on react 2ms
+ ✓ ... > preserves the saved directive node and its two visible field bindings on vue 1ms
+ ✓ ... > preserves the saved directive node and its two visible field bindings on html 2ms
+ ✓ ... > keeps react Select invalid input blocked after the bounded widening 2ms
+ ✓ ... > keeps react Stack invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps react Text invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps react Select invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps vue Select invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps vue Stack invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps vue Text invalid input blocked after the bounded widening 0ms
+ ✓ ... > keeps vue Select invalid input blocked after the bounded widening 0ms
+ ✓ ... > fails a react directive closed when a named composition field is absent 0ms
+ ✓ ... > fails a vue directive closed when a named composition field is absent 0ms
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+   Duration  5.45s (transform 234ms, setup 11ms, collect 650ms, tests 4.63s, environment 0ms, prepare 31ms)
+
+The repeated prefix abbreviated as "..." is
+"test/product-reality/emitter-directives.s184.spec.ts > Sprint 184 m03 target contract and emitter movement".

@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m02",
+  "kind": "approval-bypass-pre-fix-replay",
+  "status": "red-control-confirmed",
+  "measuredHead": "da1a3fd789bba09e626201d92e6fb6841c21deac",
+  "evaluator": "scripts/product-reality/independent-review-approval.mjs",
+  "record": "artifacts/product-reality/sprint-182/review/independent-review.v1.json",
+  "expectationSource": "scripts/product-reality/generate-s182-m05-closeout.mjs#S182_FOUNDATION_REVIEW_EXPECTATION",
+  "cases": [
+    {
+      "id": "genuine-control",
+      "mutation": "none",
+      "observed": {
+        "outcome": "approved",
+        "reasons": []
+      },
+      "expectedControl": true
+    },
+    {
+      "id": "principal-confusable-bypass",
+      "mutation": {
+        "producerActor": "Reviewer",
+        "reviewerActor": "Rev\u200biewer",
+        "authorizerPrincipal": "R\u0435viewer"
+      },
+      "observed": {
+        "outcome": "approved",
+        "reasons": []
+      },
+      "expectedControl": false
+    },
+    {
+      "id": "fabricated-full-length-heads-bypass",
+      "mutation": {
+        "derivationHead": "0000000000000000000000000000000000000000",
+        "reviewedHead": "1111111111111111111111111111111111111111"
+      },
+      "observed": {
+        "outcome": "approved",
+        "reasons": []
+      },
+      "expectedControl": false
+    },
+    {
+      "id": "empty-heads-bypass",
+      "mutation": {
+        "derivationHead": "",
+        "reviewedHead": ""
+      },
+      "observed": {
+        "outcome": "approved",
+        "reasons": []
+      },
+      "expectedControl": false
+    },
+    {
+      "id": "same-head-bypass",
+      "mutation": {
+        "derivationHead": "ca8d84bbce165b656fd5cd83cc097c28fa774f19",
+        "reviewedHead": "ca8d84bbce165b656fd5cd83cc097c28fa774f19"
+      },
+      "observed": {
+        "outcome": "approved",
+        "reasons": []
+      },
+      "expectedControl": false
+    },
+    {
+      "id": "non-git-cwd-bypass",
+      "cwd": "/private/tmp",
+      "mutation": "none",
+      "observed": {
+        "outcome": "approved",
+        "reasons": []
+      },
+      "expectedControl": false
+    }
+  ],
+  "interpretation": "Before the s184-m02 hardening, all four paired-field bypasses and a genuine-record evaluation outside Git retained an approved outcome."
+}

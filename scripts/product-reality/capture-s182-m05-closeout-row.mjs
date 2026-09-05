@@ -145,7 +145,7 @@ const rowCommands = {
     "pnpm --filter @oods/mcp-bridge run build",
     'if test "$PWD" != "{BRIDGE_RUNTIME_ROOT}"; then rsync -a --delete packages/mcp-server/dist/ "{BRIDGE_RUNTIME_ROOT}/packages/mcp-server/dist/"; rsync -a --delete packages/mcp-bridge/dist/ "{BRIDGE_RUNTIME_ROOT}/packages/mcp-bridge/dist/"; fi',
     "pm2 restart oods-forge-bridge",
-    "curl --fail --silent --show-error http://127.0.0.1:4466/health",
+    "for attempt in $(seq 1 30); do if curl --fail --silent http://127.0.0.1:4466/health >/dev/null; then break; fi; sleep 1; done; curl --fail --silent --show-error http://127.0.0.1:4466/health",
   ],
   "L-07-scale": ["pnpm --filter @oods/mcp-server run test:scale"],
   "L-07-soak": ["pnpm --filter @oods/mcp-server run test:echarts-soak"],

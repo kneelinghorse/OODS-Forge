@@ -840,7 +840,7 @@ describe("s180 m03 dry-run intake reconciliation", () => {
       persisted: false,
       accepted_population: { count: 1_359, membership: expectedAccepted },
       disclosure:
-        "Accepted members passed dry-run validation only. No token build artifact was emitted or persisted; persisted artifact labeling belongs to the deferred brand.intake tool rung.",
+        "Accepted members passed dry-run validation only. No token build artifact was emitted or persisted; persisted artifact labeling is brand.apply's; brand.intake is preview-only by contract.",
     });
 
     expect(receipt.theme_documents[1]!.issues).toEqual([

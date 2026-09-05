@@ -38,7 +38,7 @@
     "test:integration": "vitest run tests/integration",
     "test:validation": "vitest run tests/validation",
     "pretest:coverage": "pnpm run build && pnpm run build:packages && pnpm run pkg:build",
-    "test:coverage": "vitest --coverage && pnpm --filter @oods/mcp-server exec vitest run test/product-reality/codegen-matrix.s182.spec.ts && pnpm --filter @oods/mcp-server exec vitest run test/product-reality/packed-consumers.s182.spec.ts",
+    "test:coverage": "vitest --coverage && pnpm --filter @oods/mcp-server exec vitest run test/product-reality/codegen-matrix.s182.spec.ts && pnpm --filter @oods/mcp-server exec vitest run test/product-reality/packed-consumers.s182.spec.ts && pnpm --filter @oods/mcp-server exec vitest run test/codegen/cross-framework-parity.spec.ts test/product-reality/typed-action-protocol.s183.spec.ts test/product-reality/saved-schema-consumers.s183.spec.ts test/product-reality/independent-review-approval.s183.spec.ts",
     "test:axe": "vitest run tests/a11y/components.a11y.test.tsx tests/a11y/dark.components.a11y.test.tsx",
     "test:contrast": "vitest run --project guardrails",
     "build:stories": "tsc --project tsconfig.stories.json",
@@ -164,6 +164,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",
     "@oods/a11y-tools": "workspace:*",
+    "@oods/component-contracts": "workspace:*",
     "@oods/tokens": "workspace:*",
     "@oods/viz-core": "workspace:*",
     "@playwright/test": "^1.56.1",

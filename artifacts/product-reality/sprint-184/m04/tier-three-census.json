@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m04",
+  "kind": "ported-contract-tier-three-census",
+  "savedSchemas": [
+    "subscription-list-dark",
+    "subscription-detail-dark"
+  ],
+  "checkpoints": [
+    {
+      "name": "ported-contracts-enabled-before-bounded-field-acceptance",
+      "factCount": 4,
+      "uniqueFactCount": 2,
+      "facts": [
+        {
+          "framework": "react",
+          "schema": "subscription-detail-dark",
+          "code": "OODS-V007",
+          "component": "StatusTimeline",
+          "nodeId": "ve-header-22",
+          "field": "status",
+          "reason": "The direct status field binding was not yet represented by the ported field contract."
+        },
+        {
+          "framework": "vue",
+          "schema": "subscription-detail-dark",
+          "code": "OODS-V007",
+          "component": "StatusTimeline",
+          "nodeId": "ve-header-22",
+          "field": "status",
+          "reason": "The direct status field binding was not yet represented by the ported field contract."
+        },
+        {
+          "framework": "react",
+          "schema": "subscription-detail-dark",
+          "code": "OODS-V007",
+          "component": "PriceBadge",
+          "nodeId": "slot-tab-1-6",
+          "field": "currency",
+          "reason": "The numeric-or-string currency field binding was not yet accepted as the badge label source."
+        },
+        {
+          "framework": "vue",
+          "schema": "subscription-detail-dark",
+          "code": "OODS-V007",
+          "component": "PriceBadge",
+          "nodeId": "slot-tab-1-6",
+          "field": "currency",
+          "reason": "The numeric-or-string currency field binding was not yet accepted as the badge label source."
+        }
+      ]
+    },
+    {
+      "name": "recipe-binding-enabled-before-relative-datetime-acceptance",
+      "factCount": 2,
+      "uniqueFactCount": 1,
+      "facts": [
+        {
+          "framework": "react",
+          "schema": "subscription-list-dark",
+          "code": "OODS-V007",
+          "component": "RelativeTimestamp",
+          "nodeId": "ve-items-11",
+          "field": "updated_at",
+          "reason": "The recipe correctly lowered the field to datetime before datetime was admitted as a string field binding."
+        },
+        {
+          "framework": "vue",
+          "schema": "subscription-list-dark",
+          "code": "OODS-V007",
+          "component": "RelativeTimestamp",
+          "nodeId": "ve-items-11",
+          "field": "updated_at",
+          "reason": "The recipe correctly lowered the field to datetime before datetime was admitted as a string field binding."
+        }
+      ]
+    },
+    {
+      "name": "final",
+      "factCount": 0,
+      "uniqueFactCount": 0,
+      "facts": []
+    }
+  ],
+  "resizeDecision": {
+    "currentTierThreeFactCount": 0,
+    "decision": "Do not resize m05: every enumerated ported-contract issue is resolved and the final census is empty on both saved schemas and both targets."
+  }
+}

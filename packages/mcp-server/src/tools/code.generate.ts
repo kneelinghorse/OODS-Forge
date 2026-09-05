@@ -12,11 +12,26 @@ import {
   preflightTargetCapabilities,
 } from '../codegen/target-readiness.js';
 import { preflightCodegenSyntax } from '../codegen/syntax-preflight.js';
+import { buildGeneratedArtifact } from '../codegen/artifact-envelope.js';
+import { preflightTargetContracts } from '../codegen/target-contracts.js';
+import { preflightNormalizationSafety } from '../codegen/normalization-safety.js';
+import { preflightStateContract } from '../codegen/state-contract.js';
+import { hasMappedRenderer } from '../render/component-map.js';
+import {
+  bindReleaseEvidence,
+  createValidationReceipt,
+  enforceValidationProfile,
+  recordValidationChecks,
+} from '../codegen/validation-profile.js';
 
 const emitters: Record<string, Emitter> = {
   html: emitHtml,
   react: emitReact,
   vue: emitVue,
+};
+
+export type CodeGenerateDependencies = {
+  targetCapabilityPreflight?: typeof preflightTargetCapabilities;
 };
 
 function countNodes(screens: UiSchema['screens']): number {
@@ -45,9 +60,31 @@ function collectComponents(screens: UiSchema['screens']): Set<string> {
   return components;
 }
 
-export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutput> {
+function preflightHtmlTarget(screens: UiSchema['screens']): CodegenIssue[] {
+  const issues: CodegenIssue[] = [];
+  const stack = [...screens].reverse();
+  while (stack.length > 0) {
+    const node = stack.pop()!;
+    if (!hasMappedRenderer(node.component)) {
+      issues.push({
+        code: 'OODS-N013',
+        message: `Component ${node.component} has no mapped HTML renderer; fallback output is forbidden at build or release confidence.`,
+        nodeId: node.id,
+        component: node.component,
+      });
+    }
+    if (node.children) stack.push(...node.children.slice().reverse());
+  }
+  return issues;
+}
+
+export async function handle(
+  input: CodeGenerateInput,
+  dependencies: CodeGenerateDependencies = {},
+): Promise<CodeGenerateOutput> {
   const { framework } = input;
   const warnings: CodegenIssue[] = [];
+  let validationReceipt = createValidationReceipt(input.profile, framework);
   let schema: UiSchema | undefined = input.schema;
 
   if (!schema && input.schemaRef) {
@@ -62,6 +99,7 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
         fileExtension: '',
         imports: [],
         warnings,
+        validationReceipt,
         errors: [
           {
             code: resolved.reason === 'expired' ? 'OODS-N004' : 'OODS-N003',
@@ -82,6 +120,7 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
       fileExtension: '',
       imports: [],
       warnings,
+      validationReceipt,
       errors: [
         {
           code: 'OODS-V009',
@@ -93,6 +132,7 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
 
   // Validate the input schema structurally
   const schemaErrors = validateSchema(schema);
+  validationReceipt = recordValidationChecks(validationReceipt, 'schema-structure');
   if (schemaErrors.length > 0) {
     return {
       status: 'error',
@@ -101,6 +141,7 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
       fileExtension: '',
       imports: [],
       warnings: [],
+      validationReceipt,
       errors: schemaErrors.map((issue) => ({
         code: issue.code,
         message: issue.message,
@@ -136,44 +177,61 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
       fileExtension: '',
       imports: [],
       warnings,
+      validationReceipt,
       meta,
       errors: [{ code: 'OODS-V005', message: `No emitter registered for framework '${framework}'` }],
     };
   }
 
-  if (unknownComponents.length > 0) {
-    return {
-      status: 'error',
-      framework,
-      code: '',
-      fileExtension: '',
-      imports: [],
-      warnings,
-      errors: [{
-        code: 'OODS-V119',
-        message:
-          `Schema contains unregistered component${unknownComponents.length === 1 ? '' : 's'}: ` +
-          `${unknownComponents.join(', ')}. Fix the schema or run repl.validate before code generation.`,
-      }],
-      meta,
-    };
-  }
+  validationReceipt = recordValidationChecks(
+    validationReceipt,
+    'component-registry',
+  );
+  const registryIssues: CodegenIssue[] = unknownComponents.length > 0
+    ? [{
+      code: 'OODS-V119',
+      message:
+        `Schema contains unregistered component${unknownComponents.length === 1 ? '' : 's'}: `
+        + `${unknownComponents.join(', ')}. Fix the schema or run repl.validate before code generation.`,
+    }]
+    : [];
 
-  if (framework === 'react' || framework === 'vue') {
-    const readinessErrors = preflightTargetCapabilities(schema.screens, framework);
-    if (readinessErrors.length > 0) {
+  const readinessErrors = framework === 'html'
+    ? preflightHtmlTarget(schema.screens)
+    : (dependencies.targetCapabilityPreflight ?? preflightTargetCapabilities)(
+      schema.screens,
+      framework,
+    );
+  const stateContractIssues = preflightStateContract(schema.screens, framework);
+  validationReceipt = recordValidationChecks(
+    validationReceipt,
+    'state-contract',
+    'target-readiness',
+  );
+  const earlyContractIssues = [
+    ...registryIssues,
+    ...stateContractIssues,
+    ...readinessErrors,
+  ];
+  if (earlyContractIssues.length > 0) {
+    // Evaluate these together: registry, state-vocabulary, and target gaps are
+    // independent. Returning after the first would conceal actionable issues.
+    const profiled = enforceValidationProfile(
+      validationReceipt,
+      earlyContractIssues,
+    );
+    warnings.push(...profiled.warnings);
+    if (profiled.errors.length > 0) {
       return {
         status: 'error',
         framework,
         code: '',
         fileExtension: '',
         imports: [],
-        warnings: [],
-        errors: readinessErrors,
-        meta: {
-          nodeCount: meta.nodeCount,
-          componentCount: meta.componentCount,
-        },
+        warnings,
+        validationReceipt,
+        errors: profiled.errors,
+        meta,
       };
     }
   }
@@ -185,8 +243,33 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
     styling: input.options?.styling ?? rc.styling ?? 'tokens',
   };
 
+  const normalizationErrors = preflightNormalizationSafety(schema.screens, framework);
+  validationReceipt = recordValidationChecks(validationReceipt, 'normalization-fidelity');
+  if (normalizationErrors.length > 0) {
+    const profiled = enforceValidationProfile(validationReceipt, normalizationErrors);
+    warnings.push(...profiled.warnings);
+    if (profiled.errors.length > 0) {
+      return {
+        status: 'error',
+        framework,
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings,
+        validationReceipt,
+        errors: profiled.errors,
+        meta,
+      };
+    }
+  }
+
   if (framework === 'react' || framework === 'vue') {
     const syntaxErrors = preflightCodegenSyntax(schema, framework, options.styling);
+    validationReceipt = recordValidationChecks(
+      validationReceipt,
+      'binding-contract',
+      'events-contract',
+    );
     if (syntaxErrors.length > 0) {
       return {
         status: 'error',
@@ -194,7 +277,8 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
         code: '',
         fileExtension: '',
         imports: [],
-        warnings: [],
+        warnings,
+        validationReceipt,
         errors: syntaxErrors,
         meta: {
           nodeCount: meta.nodeCount,
@@ -204,19 +288,135 @@ export async function handle(input: CodeGenerateInput): Promise<CodeGenerateOutp
     }
   }
 
+  const contractResult = preflightTargetContracts(schema, framework);
+  validationReceipt = recordValidationChecks(
+    validationReceipt,
+    ...(framework === 'html' ? ['binding-contract' as const] : []),
+    ...contractResult.checks,
+  );
+  if (framework === 'html' && contractResult.bindingSafetyIssues.length > 0) {
+    return {
+      status: 'error',
+      framework,
+      code: '',
+      fileExtension: '',
+      imports: [],
+      warnings,
+      validationReceipt,
+      errors: contractResult.bindingSafetyIssues,
+      meta,
+    };
+  }
+  if (contractResult.issues.length > 0) {
+    const profiled = enforceValidationProfile(validationReceipt, contractResult.issues);
+    warnings.push(...profiled.warnings);
+    if (profiled.errors.length > 0) {
+      return {
+        status: 'error',
+        framework,
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings,
+        validationReceipt,
+        errors: profiled.errors,
+        meta,
+      };
+    }
+  }
+
   // Dispatch to framework emitter
   const result = emitter(schema, options);
 
   // Merge warnings
   const allWarnings = [...warnings, ...result.warnings];
+  validationReceipt = recordValidationChecks(validationReceipt, 'fallback-policy');
+  if (framework === 'html' && result.code.includes('data-oods-fallback="true"')) {
+    const profiled = enforceValidationProfile(validationReceipt, [{
+      code: 'OODS-N013',
+      message: 'Generated HTML contains a component fallback marker and is not runnable at build or release confidence.',
+    }]);
+    allWarnings.push(...profiled.warnings);
+    if (profiled.errors.length > 0) {
+      return {
+        status: 'error',
+        framework: result.framework,
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings: allWarnings,
+        validationReceipt,
+        errors: profiled.errors,
+        meta,
+      };
+    }
+  }
+
+  if (result.status !== 'ok') {
+    return {
+      status: result.status,
+      framework: result.framework,
+      code: result.code,
+      fileExtension: result.fileExtension,
+      imports: result.imports,
+      warnings: allWarnings,
+      validationReceipt,
+      ...(result.errors?.length ? { errors: result.errors } : {}),
+      meta,
+    };
+  }
+
+  let artifact: NonNullable<CodeGenerateOutput['artifact']>;
+  try {
+    artifact = buildGeneratedArtifact(result);
+  } catch (error) {
+    validationReceipt = recordValidationChecks(validationReceipt, 'dependency-closure');
+    return {
+      status: 'error',
+      framework: result.framework,
+      code: '',
+      fileExtension: '',
+      imports: [],
+      warnings: allWarnings,
+      validationReceipt,
+      errors: [{
+        code: 'OODS-N016',
+        message: error instanceof Error ? error.message : String(error),
+      }],
+      meta,
+    };
+  }
+
+  validationReceipt = recordValidationChecks(validationReceipt, 'dependency-closure');
+  const evidenceResult = bindReleaseEvidence(
+    validationReceipt,
+    input.releaseEvidence,
+    artifact.contentHash,
+  );
+  validationReceipt = evidenceResult.receipt;
+  if (evidenceResult.errors.length > 0) {
+    return {
+      status: 'error',
+      framework: result.framework,
+      code: '',
+      fileExtension: '',
+      imports: [],
+      warnings: allWarnings,
+      validationReceipt,
+      errors: evidenceResult.errors,
+      meta,
+    };
+  }
 
   return {
     status: result.status,
     framework: result.framework,
+    artifact,
     code: result.code,
     fileExtension: result.fileExtension,
     imports: result.imports,
     warnings: allWarnings,
+    validationReceipt,
     ...(result.errors?.length ? { errors: result.errors } : {}),
     meta,
   };

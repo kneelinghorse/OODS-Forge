@@ -1,0 +1,80 @@
+{
+  "id": "s183-m05-react-tabs-selection-behavior-removed",
+  "sourceMission": "s183-m05",
+  "framework": "react",
+  "kind": "tabs-selection-behavior-removed",
+  "status": "passed",
+  "baseline": {
+    "commit": "4b4c77f0ec06d632e11f910f6124859ac65c7106",
+    "path": "artifacts/product-reality/sprint-183/m05/consumers/react/source/src/GeneratedUI.tsx",
+    "targetFile": "src/GeneratedUI.tsx",
+    "sha256": "sha256:60a100d231ecfcba4baff49f800ed8968874edd6ace74c01c1860766eb895a18"
+  },
+  "patch": {
+    "path": "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/tabs-selection-behavior-removed/mutation.patch",
+    "sha256": "sha256:f62ad6cace198003b2cea084084e6327d1bb7882447a842c5877ea97e5a29a9c",
+    "committedAtBaseline": true,
+    "checkExitCode": 0,
+    "applyExitCode": 0
+  },
+  "mutatedSha256": "sha256:1b934252d1d23e337dbe8183d9e1675b7f36ec1eac4391b8eb81143cc60b1e74",
+  "reverse": {
+    "checkExitCode": 0,
+    "applyExitCode": 0,
+    "restoredSha256": "sha256:60a100d231ecfcba4baff49f800ed8968874edd6ace74c01c1860766eb895a18",
+    "byteIdentical": true
+  },
+  "descriptor": {
+    "schemaVersion": "1.0.0",
+    "mission": "s183-m05",
+    "framework": "react",
+    "kind": "tabs-selection-behavior-removed",
+    "operation": "replace-exactly-once",
+    "targetFile": "src/GeneratedUI.tsx",
+    "needle": "\"id\":\"detail-tab-panel-5\",\"label\":\"Tab 2\"",
+    "replacement": "\"id\":\"detail-tab-panel-5\",\"label\":\"Tab 2\",\"disabled\":true",
+    "expectedGate": "interaction-evidence",
+    "beforeSha256": "sha256:60a100d231ecfcba4baff49f800ed8968874edd6ace74c01c1860766eb895a18",
+    "afterSha256": "sha256:1b934252d1d23e337dbe8183d9e1675b7f36ec1eac4391b8eb81143cc60b1e74",
+    "patchSha256": "sha256:f62ad6cace198003b2cea084084e6327d1bb7882447a842c5877ea97e5a29a9c"
+  },
+  "expectedGate": "interaction-evidence",
+  "redControl": {
+    "executed": true,
+    "verifier": "fresh isolated Sprint-183 M05 packed-consumer harness",
+    "patchByteIdenticalToStoredArtifact": true,
+    "status": "detected",
+    "expected": {
+      "gate": "interaction-evidence",
+      "status": "failed"
+    },
+    "observed": {
+      "gate": "interaction-evidence",
+      "status": "failed"
+    },
+    "reason": "[interaction-evidence] react Tabs did not select Tab 2: {\"initialSelectedTab\":\"detail-tab-panel-3\",\"selectedTab\":\"detail-tab-panel-3\",\"selectedPanel\":null,\"selectedTabPanelDomId\":\"_R_q_-panel-detail-tab-panel-3\",\"initialVisiblePanelContentId\":\"slot-tab-0-4\",\"initialFirstTabSelected\":true,\"initialFirstPanelHidden\":false,\"firstTabSelectedAfter\":true,\"firstPanelHiddenAfter\":false,\"secondTabSelectedAfter\":false,\"secondPanelHiddenAfter\":true,\"domainActions\":{\"handleEdit\":1,\"handleDelete\":1}}.",
+    "browser": {
+      "mount": "passed",
+      "hydration": "passed",
+      "hydrationInvariantEqual": true,
+      "runtimeErrors": [],
+      "interactions": {
+        "initialSelectedTab": "detail-tab-panel-3",
+        "selectedTab": "detail-tab-panel-3",
+        "selectedPanel": null,
+        "selectedTabPanelDomId": "_R_q_-panel-detail-tab-panel-3",
+        "initialVisiblePanelContentId": "slot-tab-0-4",
+        "initialFirstTabSelected": true,
+        "initialFirstPanelHidden": false,
+        "firstTabSelectedAfter": true,
+        "firstPanelHiddenAfter": false,
+        "secondTabSelectedAfter": false,
+        "secondPanelHiddenAfter": true,
+        "domainActions": {
+          "handleEdit": 1,
+          "handleDelete": 1
+        }
+      }
+    }
+  }
+}

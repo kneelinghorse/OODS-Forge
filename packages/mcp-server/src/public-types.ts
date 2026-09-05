@@ -30,9 +30,26 @@ export type { PipelineInput, PipelineOutput } from "./tools/pipeline.js";
 export type {
   CodeGenerateInput,
   CodeGenerateOutput,
+  CodegenAcceptedReleaseEvidence,
   CodegenFramework,
   CodegenStyling,
   CodegenIssue,
+  CodegenFallbackPolicy,
+  CodegenReleaseEvidence,
+  CodegenReleaseEvidenceClass,
+  CodegenReleaseEvidenceItem,
+  CodegenTargetResolution,
+  CodegenValidationCheck,
+  CodegenValidationEnforcement,
+  CodegenValidationProfile,
+  CodegenValidationReceipt,
+  CodegenValidationScope,
+  GeneratedArtifact,
+  GeneratedArtifactAction,
+  GeneratedArtifactActionParameter,
+  GeneratedArtifactActionSource,
+  GeneratedArtifactFile,
+  GeneratedDependency,
 } from "./tools/types.js";
 
 // -- catalog --

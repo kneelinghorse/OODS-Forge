@@ -422,52 +422,69 @@ describe('react-emitter', () => {
     });
   });
 
-  describe('event handler stubs (s63-m04)', () => {
-    it('generates handler stubs from bindings', () => {
+  describe('typed action protocol (s183-m02)', () => {
+    it('emits screen bindings as required domain actions with generated action controls', () => {
       const schema = makeSchema({
         id: 'form-root',
         component: 'Form',
         bindings: { onSubmit: 'handleSubmit', onChange: 'handleChange' },
       });
       const result = emit(schema, defaultOpts);
-      expect(result.code).toContain('const handleSubmit = (e: React.FormEvent) => { /* TODO: implement handleSubmit */ };');
-      expect(result.code).toContain('const handleChange = (value: unknown) => { /* TODO: implement handleChange */ };');
+      expect(result.code).toContain('handleSubmit: () => void;');
+      expect(result.code).toContain('handleChange: () => void;');
+      expect(result.code).toContain('/* @oods-domain-binding handleSubmit */');
+      expect(result.code).toContain('actions.handleSubmit();');
+      expect(result.code).toContain('data-oods-screen-actions="form-root"');
+      expect(result.code).toContain('data-oods-action="handleSubmit"');
+      expect(result.code).toContain('onClick={() => handleSubmit()}');
+      expect(result.code).toContain('>Submit</button>');
+      expect(result.code).not.toMatch(/TODO|=>\s*\{\s*\}/);
     });
 
-    it('emits binding attributes in JSX', () => {
+    it('keeps semantic screen bindings off component props while rendering controls', () => {
       const schema = makeSchema({
         id: 'form-root',
         component: 'Form',
         bindings: { onSubmit: 'handleSubmit' },
       });
       const result = emit(schema, defaultOpts);
-      expect(result.code).toContain('onSubmit={handleSubmit}');
+      expect(result.code).not.toContain('onSubmit={handleSubmit}');
+      expect(result.code).toContain('data-oods-action="handleSubmit"');
+      expect(result.code).toContain('onClick={() => handleSubmit()}');
+      expect(result.actions).toEqual([{
+        name: 'handleSubmit',
+        parameters: [],
+        sources: [{ nodeId: 'form-root', component: 'Form', event: 'onSubmit' }],
+      }]);
     });
 
-    it('generates stubs for detail context bindings', () => {
+    it('declares detail context actions', () => {
       const schema = makeSchema({
         id: 'detail-root',
         component: 'DetailView',
         bindings: { onEdit: 'handleEdit', onDelete: 'handleDelete' },
       });
       const result = emit(schema, defaultOpts);
-      expect(result.code).toContain('const handleEdit = () => { /* TODO: implement handleEdit */ };');
-      expect(result.code).toContain('const handleDelete = () => { /* TODO: implement handleDelete */ };');
+      expect(result.code).toContain('handleEdit: () => void;');
+      expect(result.code).toContain('handleDelete: () => void;');
     });
 
-    it('generates stubs for list context bindings', () => {
+    it('declares typed list context actions', () => {
       const schema = makeSchema({
         id: 'list-root',
         component: 'ListView',
         bindings: { onRowClick: 'handleRowClick', onSort: 'handleSort', onFilter: 'handleFilter' },
       });
       const result = emit(schema, defaultOpts);
-      expect(result.code).toContain('const handleRowClick = (row: Record<string, unknown>) => { /* TODO');
-      expect(result.code).toContain('const handleSort = (column: string) => { /* TODO');
-      expect(result.code).toContain('const handleFilter = (criteria: Record<string, unknown>) => { /* TODO');
+      expect(result.code).toContain('handleRowClick: (rowId: string) => void;');
+      expect(result.code).toContain('handleSort: (column: string) => void;');
+      expect(result.code).toContain('handleFilter: (criteria: Record<string, unknown>) => void;');
+      expect(result.code).toContain('onClick={() => handleRowClick(\'generated-row\')}');
+      expect(result.code).toContain('onClick={() => handleSort(\'column\')}');
+      expect(result.code).toContain('onClick={() => handleFilter({})}');
     });
 
-    it('handler stubs are inside the component function', () => {
+    it('runtime requirements are checked inside the component function', () => {
       const schema = makeSchema({
         id: 'root',
         component: 'Form',
@@ -475,33 +492,27 @@ describe('react-emitter', () => {
       });
       const result = emit(schema, defaultOpts);
       const exportIdx = result.code.indexOf('export const GeneratedUI');
-      const stubIdx = result.code.indexOf('const handleSubmit');
+      const guardIdx = result.code.indexOf("typeof actions.handleSubmit !== 'function'");
       const returnIdx = result.code.indexOf('return (');
-      expect(stubIdx).toBeGreaterThan(exportIdx);
-      expect(stubIdx).toBeLessThan(returnIdx);
+      expect(guardIdx).toBeGreaterThan(exportIdx);
+      expect(guardIdx).toBeLessThan(returnIdx);
     });
 
     it('collects bindings from nested children', () => {
       const schema = makeSchema({
         id: 'root',
-        component: 'Page',
+        component: 'Form',
+        bindings: { onSubmit: 'handleSubmit' },
         children: [
           {
-            id: 'form',
-            component: 'Form',
-            bindings: { onSubmit: 'handleSubmit' },
-            children: [
-              {
-                id: 'field',
-                component: 'Input',
-                bindings: { onChange: 'handleFieldChange' },
-              },
-            ],
+            id: 'field',
+            component: 'Input',
+            bindings: { onChange: 'handleFieldChange' },
           },
         ],
       });
       const result = emit(schema, defaultOpts);
-      expect(result.code).toContain('const handleSubmit');
+      expect(result.code).toContain('handleSubmit: () => void;');
       expect(result.code).toContain('const handleFieldChange');
     });
 
@@ -514,14 +525,15 @@ describe('react-emitter', () => {
       expect(result.code).not.toContain('const handle');
     });
 
-    it('omits typed params when typescript=false', () => {
+    it('emits a checked JSDoc contract when typescript=false', () => {
       const schema = makeSchema({
         id: 'root',
         component: 'Form',
         bindings: { onSubmit: 'handleSubmit' },
       });
       const result = emit(schema, { typescript: false, styling: 'tokens' });
-      expect(result.code).toContain('const handleSubmit = (e) => {');
+      expect(result.code).toContain('@typedef {{ handleSubmit: () => void }} GeneratedUIActions');
+      expect(result.code).toContain("typeof actions.handleSubmit !== 'function'");
       expect(result.code).not.toContain('React.FormEvent');
     });
   });

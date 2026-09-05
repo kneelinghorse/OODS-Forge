@@ -47,6 +47,9 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain(
       "packages/mcp-server/src/tools/registry.json</span>: 20 tools register by default and 6 more",
     );
+    expect(html).toContain(
+      `The ${registry.auto.length + registry.onDemand.length}-tool roster comes from`,
+    );
 
     const onDemandRow = html.match(
       /<tr><td>On demand<\/td><td>(.*?)<\/td><\/tr>/,
@@ -139,6 +142,11 @@ describe("how Forge works narrative truth", () => {
         evaluation: { candidate: boolean; foundationV1: boolean };
       }>;
     };
+    const promotedFoundation = JSON.parse(
+      read(
+        "packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json",
+      ),
+    ) as typeof capabilityCloseout;
     const nonRuntimeRows = capabilityCloseout.rows.filter(
       (row) => row.proposedClassification === "authoring-only",
     );
@@ -179,6 +187,14 @@ describe("how Forge works narrative truth", () => {
         (cell) => cell.evaluation.foundationV1 === false,
       ),
     ).toBe(true);
+    expect(promotedFoundation.approvedRuntimeCensus).toBeNull();
+    expect(promotedFoundation.independentReviewApproved).toBe(true);
+    expect(promotedFoundation.foundationCells).toHaveLength(28);
+    expect(
+      promotedFoundation.foundationCells.every(
+        (cell) => cell.evaluation.foundationV1 === true,
+      ),
+    ).toBe(true);
     expect(reactReadiness.rows).toHaveLength(14);
     expect(vueReadiness.rows).toHaveLength(14);
 
@@ -187,23 +203,37 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("11 as non-runtime authoring-only rows");
     expect(html).toContain("All 109 remain pending Derek approval");
     expect(html).toContain("exactly 14 React and 14 Vue surface cells");
-    expect(html).toContain("require a separate independent review");
+    expect(html).toContain("a separate independent review accepted");
+    expect(html).toContain("promoted all 28");
+    expect(html).toContain("does not approve the 98-row runtime census");
     expect(html).toContain("@oods/components-react</span> package");
     expect(html).toContain("@oods/components-vue</span>");
     expect(html).toContain("@oods/component-styles/css</span>");
     expect(html).toContain("OODS-N015</span> and no source payload");
 
-    expect(nearRoadmap).toContain("98 runtime rows and 11 non-runtime rows");
-    expect(nearRoadmap).toContain("all pending Derek approval");
+    expect(nearRoadmap).toContain("Sprint 182 is complete, 7/7 missions");
+    expect(nearRoadmap).toContain("decision `#1662`");
+    expect(nearRoadmap).toContain("decision `#1663`");
+    expect(nearRoadmap).toContain("all 28 cells");
+    expect(nearRoadmap).toContain("`approvedRuntimeCensus` remains **null**");
+    expect(nearRoadmap).toContain("98-row runtime");
+    expect(nearRoadmap).toContain("versioned generated file-set artifact");
     expect(nearRoadmap).toContain(
-      "exactly 14 React and 14 Vue `foundation-v1-candidate` cells",
+      "schema installs, builds,\nrenders, hydrates, resolves shared CSS",
     );
-    expect(nearRoadmap).toContain("pending a separate independent review");
-    expect(nearRoadmap).toContain("React imports `@oods/components-react`");
-    expect(nearRoadmap).toContain("Vue imports `@oods/components-vue`");
-    expect(nearRoadmap).toContain("both import `@oods/component-styles/css`");
-    expect(nearRoadmap).toContain("typed `OODS-N015`");
-
-    expect(html).toContain("The 25-tool roster comes from");
+    expect(nearRoadmap).toContain(
+      "Number this sprint only after Sprint 183 receives independent review",
+    );
+    expect(nearRoadmap).toContain(
+      "The next fresh session is an independent Sprint-183 review",
+    );
+    expect(nearRoadmap).toContain("Items `#1315` and `#1318`–`#1322`");
+    expect(nearRoadmap).not.toContain(
+      "Both targets import nonexistent `@oods/components`",
+    );
+    expect(nearRoadmap).not.toContain(
+      "Vue | Emitter fixtures exist; runtime implementations do not",
+    );
+    expect(nearRoadmap).not.toContain("begins\n`s182-m01`");
   });
 });

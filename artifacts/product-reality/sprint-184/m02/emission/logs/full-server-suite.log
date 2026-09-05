@@ -1,0 +1,26 @@
+Sprint 184 m02 full MCP-server verification
+
+Command:
+  pnpm --filter @oods/mcp-server test
+
+Attempt 1:
+  exitCode=1
+  testFiles=243 passed, 1 failed, 1 skipped
+  tests=4877 passed, 1 failed, 16 skipped
+  sole failure=test/product-reality/evidence-retention.s184.spec.ts
+  cause=the two newly indexed emission logs had not yet been staged, so the
+    retention audit correctly classified them as untracked
+
+Correction:
+  staged every intended m02 emission source, test, artifact, and log
+  focused retention suite=10 passed, 0 failed, 0 skipped
+  retention audit=passed, 60 named logs, 0 missing, 0 untracked
+
+Attempt 2:
+  exitCode=0
+  testFiles=244 passed, 0 failed, 1 skipped
+  tests=4878 passed, 0 failed, 16 skipped
+  duration=242.29s
+
+The 16 skips are pre-existing declared skips: nine action-mapping E2E cases and
+seven stage1-rollup E2E cases. No failed attempt or skipped test is omitted.

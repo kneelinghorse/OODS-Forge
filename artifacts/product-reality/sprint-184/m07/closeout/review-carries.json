@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "sprint-183-review-carry-disposition",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m07",
+  "reviewHead": "9c1a10a48bce6a586f8e92cec53ff05ee336c31c",
+  "carries": [
+    {
+      "id": "C7",
+      "status": "remediated",
+      "concern": "Four files left root-core carrying 106 tests while the Sprint 183 artifact reported +66 with unattributedDeltas:[]; a Vitest exclude is invisible to the skip counter.",
+      "disposition": "Re-derived from frozen baseline/current fileResults populations; both added and removed files are enumerated and attributed. Execution, not either prior prose count, decides the population.",
+      "sourceConflict": {
+        "cmosM07": "four files left root-core carrying 106 tests",
+        "independentReview": "five files added carrying 114 tests and one 50-test file newly excluded",
+        "authority": "Neither count is accepted as an input assertion; the historical accounting scope computes exact set differences from the 179a94f and frozen-current receipts."
+      },
+      "suiteAccounting": "artifacts/product-reality/sprint-184/m07/closeout/suite-accounting.json"
+    },
+    {
+      "id": "C8",
+      "status": "disclosed-historical-evidence-not-reused",
+      "concern": "Sprint 183 L-04 was measured at 8ce34907 in a dirty tree against an untracked database.",
+      "disposition": "That row remains historical disclosure and is not cited as Sprint 184 frozen-head proof."
+    },
+    {
+      "id": "C9",
+      "status": "remediated",
+      "concern": "The parked soak failure was rolled up twice, as CI-14 parked-disclosed and L-07 pass, inflating the headline by one.",
+      "disposition": "Every executionId appears in one rollup row, and the headline is counted from passed claim rows only.",
+      "executionRollup": "artifacts/product-reality/sprint-184/m07/closeout/execution-rollup.json"
+    },
+    {
+      "id": "C15",
+      "status": "carried-structured-disclosure",
+      "concern": "Sixteen skipped tests gate on an adjacent Stage1 checkout that is absent machine-wide.",
+      "disposition": "The skip cause remains named; relocating the build would not make the absent Stage1 checkout present and would not un-skip these tests.",
+      "skippedTests": 16,
+      "evidence": {
+        "currentSuiteReceipt": {
+          "path": "artifacts/product-reality/sprint-184/m07/closeout-inputs/suites/current/receipts/mcp-server.json",
+          "bytes": 83417,
+          "sha256": "62647af5064eb60637d11772b6f0140e97b83bdd3eaf7349601a60a72d04d093"
+        },
+        "historicalDisclosure": {
+          "path": "artifacts/product-reality/sprint-184/m04/closeout-report.json",
+          "bytes": 7234,
+          "sha256": "00f9e5bfe32def9181c7bddd72a166374fb414827ea4148b51dd92de0aaa6571"
+        },
+        "skippedRows": [
+          {
+            "path": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+            "skipped": 9
+          },
+          {
+            "path": "packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts",
+            "skipped": 7
+          }
+        ]
+      },
+      "relocationInference": "The cited disclosure establishes machine-wide absence; changing the build directory cannot manufacture either missing Stage1 artifact set."
+    }
+  ]
+}

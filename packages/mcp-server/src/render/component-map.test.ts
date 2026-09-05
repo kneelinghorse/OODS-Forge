@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { Window } from 'happy-dom';
 import type { UiElement } from '../schemas/generated.js';
 import { hasMappedRenderer, renderMappedComponent } from './component-map.js';
 
@@ -141,6 +142,14 @@ describe('component map coverage', () => {
     expect(html).toContain('<p>Content</p>');
   });
 
+  it('honors the canonical Card container element', () => {
+    const html = renderMappedComponent(makeNode('Card', { as: 'aside' }), 'Supporting content');
+
+    expect(html.startsWith('<aside')).toBe(true);
+    expect(html).toContain('>Supporting content</aside>');
+    expect(html).not.toContain('data-prop-as');
+  });
+
   it('renders Stack as div and preserves child HTML', () => {
     const html = renderMappedComponent(makeNode('Stack', { gapToken: 'spacing.md' }), '<span>Row</span>');
 
@@ -159,6 +168,22 @@ describe('component map coverage', () => {
     expect(html).toContain('>Heading</h3>');
   });
 
+  it('renders Text label as an accessible description without overriding explicit ARIA', () => {
+    const derived = renderMappedComponent(makeNode('Text', {
+      content: 'Active',
+      label: 'Current lifecycle status',
+    }));
+    const explicit = renderMappedComponent(makeNode('Text', {
+      content: 'Active',
+      label: 'Current lifecycle status',
+      'aria-description': 'Explicit status description',
+    }));
+
+    expect(derived).toContain('aria-description="Current lifecycle status"');
+    expect(derived).not.toContain('data-prop-label');
+    expect(explicit).toContain('aria-description="Explicit status description"');
+  });
+
   it('renders Input as semantic input element', () => {
     const html = renderMappedComponent(
       makeNode('Input', { type: 'email', placeholder: 'name@site.tld', required: true, mask: 'email' })
@@ -169,6 +194,23 @@ describe('component map coverage', () => {
     expect(html).toContain('placeholder="name@site.tld"');
     expect(html).toContain(' required');
     expect(html).toContain('data-prop-mask="email"');
+  });
+
+  it('associates canonical Input label, help, and validation content', () => {
+    const html = renderMappedComponent(makeNode('Input', {
+      id: 'email-input',
+      label: 'Email address',
+      help: 'Use a work address.',
+      validation: { state: 'error', message: 'Email is required.' },
+    }));
+
+    expect(html).toContain('<label for="email-input">Email address</label>');
+    expect(html).toContain('<input id="email-input"');
+    expect(html).toContain('aria-describedby="email-input-help email-input-validation"');
+    expect(html).toContain('aria-invalid="true"');
+    expect(html).toContain('<small id="email-input-help">Use a work address.</small>');
+    expect(html).toContain('>Email is required.</p>');
+    expect(html).not.toContain('data-prop-label');
   });
 
   it('renders Checkbox as semantic checkbox input', () => {
@@ -191,6 +233,16 @@ describe('component map coverage', () => {
     expect(html).toContain('type="date"');
     expect(html).toContain('name="startDate"');
     expect(html).toContain('value="2026-03-06"');
+  });
+
+  it('renders Select placeholder as a disabled empty-value option', () => {
+    const html = renderMappedComponent(makeNode('Select', {
+      placeholder: 'Choose a status',
+      options: [{ value: 'active', label: 'Active' }],
+    }));
+
+    expect(html).toContain('<option value="" disabled selected>Choose a status</option>');
+    expect(html).not.toContain('data-prop-placeholder');
   });
 
   it('renders Select with option list and selected value', () => {
@@ -297,7 +349,7 @@ describe('component map coverage', () => {
     {
       component: 'PriceBadge',
       props: { amountCents: 2599, currency: 'usd' },
-      expectedVariant: 'usd',
+      expectedVariant: 'price',
     },
   ])(
     'renders $component as a span badge and maps status/variant/color props to data attributes',
@@ -695,6 +747,17 @@ describe('component map coverage', () => {
     expect(html).toContain('>2 minutes ago</time>');
   });
 
+  it('renders cancellation booleans as named values rather than a literal boolean', () => {
+    const html = renderMappedComponent(makeNode('CancellationSummary', {
+      label: 'Cancellation schedule',
+      cancelAtPeriodEnd: true,
+    }));
+
+    expect(html).toContain('Cancellation schedule');
+    expect(html).toContain('<dt>Cancel at Period End</dt><dd>Yes</dd>');
+    expect(html).not.toContain('<dd>true</dd>');
+  });
+
   it.each([
     {
       component: 'ArchiveSummary',
@@ -987,6 +1050,40 @@ describe('component map coverage', () => {
     expect(html).toContain('role="tabpanel"');
     expect(html).toContain('Overview panel');
     expect(html).toContain('Details panel');
+  });
+
+  it('runs Tabs pointer and keyboard selection while skipping disabled items', () => {
+    const html = renderMappedComponent(
+      makeNode('Tabs', {
+        items: [
+          { id: 'overview', label: 'Overview', panel: 'Overview panel' },
+          { id: 'locked', label: 'Locked', panel: 'Locked panel', disabled: true },
+          { id: 'history', label: 'History', panel: 'History panel' },
+        ],
+        ariaLabel: 'Account sections',
+      }),
+    );
+
+    const window = new Window({ settings: { disableJavaScriptEvaluation: false } });
+    window.document.write(html);
+    const tabs = [...window.document.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...window.document.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+
+    expect(window.document.querySelector('script')?.dataset.oodsRuntime).toBe('tabs');
+    expect(tabs[1]?.disabled).toBe(true);
+
+    tabs[0]?.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(tabs.map((tab) => tab.getAttribute('aria-selected'))).toEqual(['false', 'false', 'true']);
+    expect(tabs.map((tab) => tab.tabIndex)).toEqual([-1, -1, 0]);
+    expect(panels.map((panel) => panel.hidden)).toEqual([true, true, false]);
+    expect(window.document.activeElement).toBe(tabs[2]);
+
+    tabs[2]?.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+    expect(window.document.activeElement).toBe(tabs[0]);
+    tabs[2]?.click();
+    expect(tabs[2]?.getAttribute('aria-selected')).toBe('true');
+
+    window.close();
   });
 
   it('renders fallback div for unknown components with component label', () => {

@@ -298,6 +298,7 @@ export const Text = defineComponent({
   name: 'OodsText',
   props: {
     content: { type: [String, Number] as PropType<string | number>, default: '' },
+    label: String,
     as: { type: String as PropType<TextElement>, default: 'span' },
     size: { type: sizeProp, default: 'md' },
     weight: { type: String, default: 'normal' },
@@ -308,6 +309,7 @@ export const Text = defineComponent({
       'data-oods-component': 'Text',
       'data-size': props.size,
       'data-weight': props.weight,
+      'aria-description': props.label,
     }, [slotOrValue(slots.default, props.content)]);
   },
 });

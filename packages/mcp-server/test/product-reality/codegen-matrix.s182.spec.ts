@@ -41,6 +41,11 @@ describe('Sprint 182 M04 public codegen matrix', () => {
   it.each(matrix)(
     'compiles and closes dependencies for $framework/$styling/typescript=$typescript',
     async ({ framework, styling, typescript }) => {
+      // The Vue verifier performs synchronous compiler work. Yield between
+      // matrix rows so Vitest can acknowledge the previous row's task update
+      // instead of accumulating more than its 60-second worker RPC timeout.
+      await new Promise<void>((resolve) => setImmediate(resolve));
+
       const result = await handle({
         framework,
         schema: FOUNDATION_V1_SHOWCASE_SCHEMA,
@@ -50,7 +55,10 @@ describe('Sprint 182 M04 public codegen matrix', () => {
       expect(result.status, JSON.stringify(result.errors ?? [])).toBe('ok');
       expect(result.meta).toMatchObject({ nodeCount: 18, componentCount: 14 });
       expect(result.warnings).toEqual([]);
-      expect(result.code).toContain('defaultValue="pro"');
+      // Sprint 183 promotes the Select default into Forge-owned controlled
+      // state instead of leaving the old uncontrolled prop beside a no-op.
+      expect(result.code).toContain("handlePlanChangeState");
+      expect(result.code).toContain("'pro'");
       const proof = verifyGeneratedSource({
         framework,
         styling,

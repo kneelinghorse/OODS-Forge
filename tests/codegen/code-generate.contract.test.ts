@@ -113,17 +113,17 @@ const ALL_PROPS_SCHEMA: UiSchema = {
         {
           id: 'input-str',
           component: 'Input',
-          props: { placeholder: 'Enter name', type: 'text' },
+          props: { label: 'Name', placeholder: 'Enter name', type: 'text' },
         },
         {
-          id: 'input-num',
-          component: 'Input',
-          props: { maxLength: 50, min: 0, max: 100 },
+          id: 'textarea-num',
+          component: 'Textarea',
+          props: { label: 'Rows', rows: 5 },
         },
         {
           id: 'input-bool',
           component: 'Input',
-          props: { required: true, disabled: false, readonly: true },
+          props: { label: 'Enabled', required: true, disabled: false, readOnly: true },
         },
         {
           id: 'table-1',
@@ -133,10 +133,11 @@ const ALL_PROPS_SCHEMA: UiSchema = {
           },
         },
         {
-          id: 'config-1',
-          component: 'Card',
+          id: 'validation-1',
+          component: 'Input',
           props: {
-            config: { striped: true, bordered: false, size: 'lg' },
+            label: 'Status',
+            validation: { state: 'success', message: 'Valid' },
           },
         },
       ],
@@ -224,9 +225,7 @@ describe('code.generate contracts — React', () => {
     expect(result.code).toContain('type="text"');
 
     // Number props
-    expect(result.code).toContain('maxLength={50}');
-    expect(result.code).toContain('min={0}');
-    expect(result.code).toContain('max={100}');
+    expect(result.code).toContain('rows={5}');
 
     // Boolean props
     expect(result.code).toContain('required');
@@ -236,7 +235,7 @@ describe('code.generate contracts — React', () => {
     expect(result.code).toContain('columns={');
 
     // Object props
-    expect(result.code).toContain('config={');
+    expect(result.code).toContain('validation={');
   });
 
   it('includes meta information', async () => {
@@ -315,7 +314,7 @@ describe('code.generate contracts — Vue', () => {
     expect(result.code).toContain('type="text"');
 
     // Number props: v-bind
-    expect(result.code).toContain(':maxLength="50"');
+    expect(result.code).toContain(':rows="5"');
 
     // Boolean true: bare attribute
     expect(result.code).toMatch(/\brequired\b/);
@@ -325,6 +324,9 @@ describe('code.generate contracts — Vue', () => {
 
     // Array props: v-bind
     expect(result.code).toContain(':columns=');
+
+    // Object props: v-bind
+    expect(result.code).toContain(':validation=');
   });
 
   it('includes scoped style block when token refs are present', async () => {

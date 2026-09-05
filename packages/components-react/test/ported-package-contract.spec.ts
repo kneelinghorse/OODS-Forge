@@ -1,0 +1,120 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+import {
+  PORTED_COMPONENT_IDS,
+  evaluateEmissionEligibility,
+  portedScenarios,
+  type EmissionEligibilityEvidence,
+} from '@oods/component-contracts';
+import { describe, expect, it } from 'vitest';
+
+import * as portedPackage from '../src/ported.js';
+
+const packageRoot = process.cwd();
+const repositoryRoot = resolve(packageRoot, '../..');
+const expectedPortedIds = [
+  'AuditTimeline',
+  'CancellationSummary',
+  'PaginationBar',
+  'PriceBadge',
+  'RelativeTimestamp',
+  'SearchInput',
+  'StatusBadge',
+  'StatusTimeline',
+] as const;
+const portedIds = [...PORTED_COMPONENT_IDS];
+
+function readJson(path: string): Record<string, unknown> {
+  return JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>;
+}
+
+describe('@oods/components-react ported package contract', () => {
+  it('exports exactly the eight non-nucleus components with public declarations', () => {
+    expect(portedIds).toEqual(expectedPortedIds);
+    expect(Object.keys(portedPackage).sort()).toEqual([...portedIds]);
+
+    const declarations = readFileSync(`${packageRoot}/dist/ported.d.ts`, 'utf8');
+    for (const componentId of portedIds) {
+      expect(declarations, `${componentId} public value declaration`).toMatch(
+        new RegExp(`export \\{[^;]*\\b${componentId}\\b[^;]*\\};`)
+      );
+    }
+  });
+
+  it('dependency-closure publishes only the coordinated additive subpaths', () => {
+    const manifest = readJson(`${packageRoot}/package.json`) as {
+      exports?: Record<string, unknown>;
+    };
+    expect(manifest.exports).toMatchObject({
+      './ported': {
+        types: './dist/ported.d.ts',
+        import: './dist/ported.js',
+        require: './dist/ported.cjs',
+      },
+      './readiness-ported': {
+        default: './evidence/react-ported-readiness.v1.json',
+      },
+    });
+
+    const stylesManifest = readJson(
+      `${repositoryRoot}/packages/component-styles/package.json`
+    ) as { exports?: Record<string, unknown> };
+    expect(stylesManifest.exports).toMatchObject({
+      './css-ported': { default: './dist/components-ported.css' },
+    });
+  });
+
+  it('publishes exactly eight independently derived ported readiness rows', () => {
+    const readiness = readJson(
+      `${packageRoot}/evidence/react-ported-readiness.v1.json`
+    ) as {
+      target: string;
+      rows: Array<{
+        componentId: string;
+        state: string;
+        emissionEligible: boolean;
+        evidence: EmissionEligibilityEvidence;
+      }>;
+    };
+    expect(readiness.target).toBe('react');
+    expect(readiness.rows.map(row => row.componentId)).toEqual(portedIds);
+    expect(portedScenarios.map(scenario => scenario.oodsComponentId)).toEqual(portedIds);
+    const scenarioSource = readFileSync(
+      `${packageRoot}/test/ported-scenarios.spec.tsx`,
+      'utf8'
+    );
+    for (const row of readiness.rows) {
+      expect(row.state).toBe('implemented-evidence-complete');
+      expect(evaluateEmissionEligibility(row.evidence)).toEqual({
+        emissionEligible: true,
+        incomplete: [],
+      });
+      expect(row.emissionEligible).toBe(true);
+      for (const evidence of Object.values(row.evidence)) {
+        expect(evidence.status).toBe('passed');
+        expect(evidence.refs.length).toBeGreaterThan(0);
+      }
+      const scenarioId = portedScenarios.find(
+        scenario => scenario.oodsComponentId === row.componentId
+      )?.id;
+      expect(scenarioId).toBeTruthy();
+      expect(scenarioSource).toContain(`'${scenarioId}`);
+    }
+  });
+
+  it('keeps the root package export and main readiness document nucleus-only', () => {
+    const rootSource = readFileSync(`${packageRoot}/src/index.ts`, 'utf8');
+    for (const componentId of portedIds) {
+      expect(rootSource).not.toMatch(new RegExp(`\\b${componentId}\\b`));
+    }
+
+    const mainReadiness = readJson(`${packageRoot}/evidence/react-readiness.v1.json`) as {
+      rows: Array<{ componentId: string }>;
+    };
+    expect(mainReadiness.rows).toHaveLength(14);
+    expect(mainReadiness.rows.map(row => row.componentId)).not.toEqual(
+      expect.arrayContaining([...portedIds])
+    );
+  });
+});

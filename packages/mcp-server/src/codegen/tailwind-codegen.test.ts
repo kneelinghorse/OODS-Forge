@@ -270,6 +270,19 @@ describe('tailwind-codegen-utils', () => {
       expect(result).not.toContain('disabled:opacity-50');
     });
 
+    it('does not make a structural node interactive solely because it declares a domain action', () => {
+      const node: UiElement = {
+        id: 'detail-root',
+        component: 'Stack',
+        bindings: { onEdit: 'handleEdit', onDelete: 'handleDelete' },
+      };
+
+      const result = buildTailwindStaticClasses(node, {});
+      expect(result).not.toContain('focus:ring-2');
+      expect(result).not.toContain('disabled:opacity-50');
+      expect(result).not.toContain('hover:opacity-90');
+    });
+
     it('includes variant fallback classes for intent props', () => {
       const node: UiElement = {
         id: 'test-btn',

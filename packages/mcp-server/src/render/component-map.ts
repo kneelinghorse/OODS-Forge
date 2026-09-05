@@ -2,10 +2,14 @@ import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
 import { resolveSpacingLeaf } from './spacing-leaf.js';
 
-export type ComponentRenderer = (node: UiElement, childrenHtml?: string) => string;
+export type ComponentRenderer = (
+  node: UiElement,
+  childrenHtml?: string,
+  renderedChildren?: readonly string[],
+) => string;
 
 type TableColumn = { key: string; label: string };
-type TabItem = { id: string; label: string; panel: string; active: boolean };
+type TabItem = { id: string; label: string; panel: string; active: boolean; disabled: boolean };
 
 const BOOLEAN_ATTRIBUTES = new Set([
   'autofocus',
@@ -18,7 +22,7 @@ const BOOLEAN_ATTRIBUTES = new Set([
   'selected',
 ]);
 
-const TEXT_TAGS = new Set(['p', 'span', 'small', 'strong', 'em', 'label', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
+const TEXT_TAGS = new Set(['p', 'span', 'small', 'strong', 'em', 'div', 'label', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 
 const BUTTON_HTML_ATTRS = new Set(['type', 'name', 'value', 'title', 'disabled', 'autofocus']);
 const TEXT_HTML_ATTRS = new Set(['title']);
@@ -136,6 +140,8 @@ function buildAttributes(node: UiElement, options: BuildAttrOptions): string {
   for (const [rawKey, rawValue] of Object.entries(props)) {
     if (rawValue === undefined || rawValue === null) continue;
     const normalizedKey = rawKey === 'className' ? 'class' : rawKey;
+    // buildAttributes already emitted the public id (or the stable node id).
+    if (rawKey === 'id') continue;
     if (consumedProps.has(rawKey) || consumedProps.has(normalizedKey)) continue;
 
     if (isHtmlAttribute(normalizedKey, options.allowedHtmlAttrs)) {
@@ -197,23 +203,26 @@ function renderButton(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: BUTTON_HTML_ATTRS,
-    consumedProps: new Set(['label', 'text']),
+    consumedProps: new Set(['content', 'label', 'text']),
     htmlOverrides: { type: asString(props.type) ?? 'button' },
   });
-  const label = asString(props.label) ?? asString(props.text) ?? node.meta?.label ?? 'Button';
+  const label = firstSerialized(props, ['content', 'label', 'text']) ?? node.meta?.label ?? 'Button';
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(label);
   return `<button${attrs}>${content}</button>`;
 }
 
 function renderCard(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
+  const tag = typeof props.as === 'string' && ['div', 'section', 'article', 'aside'].includes(props.as)
+    ? props.as
+    : 'article';
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
-    consumedProps: new Set(['body']),
+    consumedProps: new Set(['as', 'body', 'children']),
   });
-  const body = asString(props.body) ?? '';
+  const body = firstSerialized(props, ['children', 'body']) ?? '';
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(body);
-  return `<article${attrs}>${content}</article>`;
+  return `<${tag}${attrs}>${content}</${tag}>`;
 }
 
 function renderStack(node: UiElement, childrenHtml = ''): string {
@@ -272,22 +281,59 @@ function renderText(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const tagCandidate = asString(props.as)?.toLowerCase();
   const tag = tagCandidate && TEXT_TAGS.has(tagCandidate) ? tagCandidate : 'p';
+  const label = asString(props.label);
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: TEXT_HTML_ATTRS,
-    consumedProps: new Set(['as', 'text', 'value']),
+    consumedProps: new Set(['as', 'content', 'label', 'text', 'value']),
+    htmlOverrides: label ? { 'aria-description': label } : undefined,
   });
-  const text = asString(props.text) ?? asString(props.value) ?? node.meta?.label ?? '';
+  const text = firstSerialized(props, ['content', 'text', 'value']) ?? node.meta?.label ?? '';
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(text);
   return `<${tag}${attrs}>${content}</${tag}>`;
 }
 
 function renderInput(node: UiElement): string {
   const props = isRecord(node.props) ? node.props : {};
+  const inputId = asString(props.id) ?? node.id;
+  const help = asString(props.help);
+  const validation = isRecord(props.validation) ? props.validation : undefined;
+  const validationMessage = validation ? asString(validation.message) : undefined;
+  const helpId = help ? `${inputId}-help` : undefined;
+  const validationId = validationMessage ? `${inputId}-validation` : undefined;
+  const describedBy = [asString(props['aria-describedby']), helpId, validationId]
+    .filter((value): value is string => Boolean(value))
+    .join(' ');
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: INPUT_HTML_ATTRS,
-    htmlOverrides: { type: asString(props.type) ?? 'text' },
+    consumedProps: new Set([
+      'defaultValue',
+      'help',
+      'label',
+      'readOnly',
+      'validation',
+      'aria-describedby',
+    ]),
+    htmlOverrides: {
+      type: asString(props.type) ?? 'text',
+      ...(props.value === undefined && props.defaultValue !== undefined
+        ? { value: props.defaultValue }
+        : {}),
+      ...(props.readOnly !== undefined ? { readonly: props.readOnly } : {}),
+      ...(validation?.state === 'error' ? { 'aria-invalid': 'true' } : {}),
+      ...(describedBy ? { 'aria-describedby': describedBy } : {}),
+    },
   });
-  return `<input${attrs} />`;
+  const label = asString(props.label);
+  const labelHtml = label
+    ? `<label for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>`
+    : '';
+  const helpHtml = helpId
+    ? `<small id="${escapeHtml(helpId)}">${escapeHtml(help!)}</small>`
+    : '';
+  const validationHtml = validationId
+    ? `<p id="${escapeHtml(validationId)}" data-validation-state="${escapeHtml(String(validation?.state ?? ''))}">${escapeHtml(validationMessage!)}</p>`
+    : '';
+  return `${labelHtml}<input${attrs} />${helpHtml}${validationHtml}`;
 }
 
 function renderCheckbox(node: UiElement): string {
@@ -338,17 +384,18 @@ function renderSelect(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: SELECT_HTML_ATTRS,
-    consumedProps: new Set(['options']),
+    consumedProps: new Set(['options', 'placeholder']),
   });
 
   const options = normalizeSelectOptions(props.options, props.value);
-  if (options.length === 0) {
-    return `<select${attrs}>${childrenHtml}</select>`;
-  }
+  const placeholder = asString(props.placeholder);
+  const placeholderHtml = placeholder
+    ? `<option value="" disabled${options.some((option) => option.selected) ? '' : ' selected'}>${escapeHtml(placeholder)}</option>`
+    : '';
   const optionsHtml = options
     .map((option) => `<option value="${escapeHtml(option.value)}"${option.selected ? ' selected' : ''}>${escapeHtml(option.label)}</option>`)
     .join('');
-  return `<select${attrs}>${optionsHtml}</select>`;
+  return `<select${attrs}>${placeholderHtml}${optionsHtml || childrenHtml}</select>`;
 }
 
 function renderTextarea(node: UiElement, childrenHtml = ''): string {
@@ -366,9 +413,9 @@ function renderBadge(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
-    consumedProps: new Set(['label', 'text']),
+    consumedProps: new Set(['content', 'label', 'text']),
   });
-  const label = asString(props.label) ?? asString(props.text) ?? node.meta?.label ?? 'Badge';
+  const label = firstSerialized(props, ['content', 'label', 'text']) ?? node.meta?.label ?? 'Badge';
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(label);
   return `<span${attrs}>${content}</span>`;
 }
@@ -377,12 +424,16 @@ function renderBanner(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: new Set(['role', 'title']),
-    consumedProps: new Set(['message', 'text']),
+    consumedProps: new Set(['content', 'detail', 'message', 'text', 'title']),
     htmlOverrides: props.role ? undefined : { role: 'status' },
   });
-  const text = asString(props.message) ?? asString(props.text) ?? node.meta?.label ?? '';
-  const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(text);
-  return `<section${attrs}>${content}</section>`;
+  const title = firstSerialized(props, ['title']) ?? node.meta?.label;
+  const detail = firstSerialized(props, ['detail']);
+  const text = firstSerialized(props, ['content', 'message', 'text']) ?? '';
+  const body = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(text);
+  const titleHtml = title ? `<strong data-banner-title="true">${escapeHtml(title)}</strong>` : '';
+  const detailHtml = detail ? `<p data-banner-detail="true">${escapeHtml(detail)}</p>` : '';
+  return `<section${attrs}>${titleHtml}${detailHtml}${body}</section>`;
 }
 
 type BadgePrimitiveOptions = {
@@ -542,7 +593,7 @@ function renderPriceBadge(node: UiElement, childrenHtml = ''): string {
     defaultLabel: derivedLabel,
     labelKeys: ['label', 'text', 'value'],
     statusKeys: ['status', 'state'],
-    variantKeys: ['variant', 'tone', 'currency'],
+    variantKeys: ['variant', 'tone'],
     defaultVariant: 'price',
   });
 }
@@ -1114,6 +1165,7 @@ function renderRelativeTimestamp(node: UiElement): string {
 type SummaryField = {
   term: string;
   keys: string[];
+  format?: (value: unknown) => string | undefined;
 };
 
 type SummaryOptions = {
@@ -1137,7 +1189,12 @@ function renderSummarySection(node: UiElement, childrenHtml: string, options: Su
 
   const entries = options.fields
     .map((field) => {
-      const value = firstSerialized(props, field.keys);
+      const rawValue = field.keys
+        .map((key) => props[key])
+        .find((value) => value !== undefined && value !== null);
+      const value = field.format
+        ? field.format(rawValue)
+        : firstSerialized(props, field.keys);
       if (!value) return '';
       return `<div data-summary-item="true"><dt>${escapeHtml(field.term)}</dt><dd>${escapeHtml(value)}</dd></div>`;
     })
@@ -1193,7 +1250,13 @@ function renderCancellationSummary(node: UiElement, childrenHtml = ''): string {
     defaultTitle: 'Cancellation Summary',
     summaryType: 'cancellation',
     fields: [
-      { term: 'Cancel at Period End', keys: ['cancelAtPeriodEnd', 'cancelAtPeriodEndField'] },
+      {
+        term: 'Cancel at Period End',
+        keys: ['cancelAtPeriodEnd', 'cancelAtPeriodEndField'],
+        format: (value) => typeof value === 'boolean'
+          ? (value ? 'Yes' : 'No')
+          : (value === undefined || value === null ? undefined : serializePropValue(value)),
+      },
       { term: 'Requested At', keys: ['requestedAt', 'requestedAtField'] },
       { term: 'Reason', keys: ['reason', 'cancellationReason', 'reasonField'] },
     ],
@@ -1732,28 +1795,57 @@ function normalizeTabs(rawTabs: unknown, activeTab: unknown, nodeId: string): Ta
       const id = asString(entry.id) ?? `${nodeId}-tab-${index + 1}`;
       const label = asString(entry.label) ?? asString(entry.title) ?? `Tab ${index + 1}`;
       const panel = asString(entry.panel) ?? asString(entry.content) ?? '';
-      const active = Boolean(entry.active) || (activeId ? activeId === id : index === 0);
-      tabs.push({ id, label, panel, active });
+      const disabled = entry.disabled === true || entry.isDisabled === true;
+      const active = !disabled && (Boolean(entry.active) || (activeId ? activeId === id : index === 0));
+      tabs.push({ id, label, panel, active, disabled });
       continue;
     }
     const label = serializePropValue(entry) || `Tab ${index + 1}`;
     const id = `${nodeId}-tab-${index + 1}`;
-    tabs.push({ id, label, panel: '', active: activeId ? activeId === id : index === 0 });
+    tabs.push({
+      id,
+      label,
+      panel: '',
+      active: activeId ? activeId === id : index === 0,
+      disabled: false,
+    });
   }
-  if (!tabs.some((tab) => tab.active) && tabs[0]) {
-    tabs[0].active = true;
+  if (!tabs.some((tab) => tab.active)) {
+    const firstEnabled = tabs.find((tab) => !tab.disabled);
+    if (firstEnabled) firstEnabled.active = true;
   }
   return tabs;
 }
 
-function renderTabs(node: UiElement, childrenHtml = ''): string {
+function renderTabs(
+  node: UiElement,
+  childrenHtml = '',
+  renderedChildren: readonly string[] = [],
+): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
-    consumedProps: new Set(['tabs', 'activeTab']),
+    consumedProps: new Set([
+      'activeTab',
+      'aria-label',
+      'defaultSelectedId',
+      'items',
+      'overflowLabel',
+      'selectedId',
+      'size',
+      'tabs',
+    ]),
+    dataOverrides: {
+      ...(props.size !== undefined ? { 'data-size': props.size } : {}),
+      ...(props.overflowLabel !== undefined ? { 'data-overflow-label': props.overflowLabel } : {}),
+    },
   });
 
-  const tabs = normalizeTabs(props.tabs, props.activeTab, node.id);
+  const tabs = normalizeTabs(
+    props.items ?? props.tabs,
+    props.selectedId ?? props.defaultSelectedId ?? props.activeTab,
+    node.id,
+  );
   if (tabs.length === 0) {
     return `<section${attrs}>${childrenHtml}</section>`;
   }
@@ -1762,7 +1854,7 @@ function renderTabs(node: UiElement, childrenHtml = ''): string {
     .map((tab, index) => {
       const buttonId = `${node.id}-tab-button-${index + 1}`;
       const panelId = `${node.id}-tab-panel-${index + 1}`;
-      return `<button role="tab" id="${escapeHtml(buttonId)}" aria-controls="${escapeHtml(panelId)}" aria-selected="${tab.active ? 'true' : 'false'}" tabindex="${tab.active ? '0' : '-1'}">${escapeHtml(tab.label)}</button>`;
+      return `<button role="tab" type="button" id="${escapeHtml(buttonId)}" aria-controls="${escapeHtml(panelId)}" aria-selected="${tab.active ? 'true' : 'false'}" tabindex="${tab.active ? '0' : '-1'}"${tab.disabled ? ' disabled' : ''}>${escapeHtml(tab.label)}</button>`;
     })
     .join('');
 
@@ -1770,11 +1862,15 @@ function renderTabs(node: UiElement, childrenHtml = ''): string {
     .map((tab, index) => {
       const buttonId = `${node.id}-tab-button-${index + 1}`;
       const panelId = `${node.id}-tab-panel-${index + 1}`;
-      return `<div role="tabpanel" id="${escapeHtml(panelId)}" aria-labelledby="${escapeHtml(buttonId)}"${tab.active ? '' : ' hidden'}>${escapeHtml(tab.panel)}</div>`;
+      const panelContent = renderedChildren[index] ?? escapeHtml(tab.panel);
+      return `<div role="tabpanel" id="${escapeHtml(panelId)}" aria-labelledby="${escapeHtml(buttonId)}"${tab.active ? '' : ' hidden'}>${panelContent}</div>`;
     })
     .join('');
 
-  return `<section${attrs}><div role="tablist">${tabButtons}</div>${tabPanels}</section>`;
+  const ariaLabel = asString(props['aria-label']);
+  const tabListLabel = ariaLabel ? ` aria-label="${escapeHtml(ariaLabel)}"` : '';
+  const behavior = '<script data-oods-runtime="tabs">(()=>{const root=document.currentScript&&document.currentScript.previousElementSibling;if(!root)return;const tabs=[...root.querySelectorAll(\'[role="tab"]\')];const panels=[...root.querySelectorAll(\'[role="tabpanel"]\')];const select=(tab)=>{if(tab.disabled)return;tabs.forEach((item,index)=>{const active=item===tab;item.setAttribute(\'aria-selected\',String(active));item.tabIndex=active?0:-1;if(panels[index])panels[index].hidden=!active;});tab.focus();};tabs.forEach((tab)=>{tab.addEventListener(\'click\',()=>select(tab));tab.addEventListener(\'keydown\',(event)=>{const enabled=tabs.filter((item)=>!item.disabled);const index=enabled.indexOf(tab);let next;if(event.key===\'Home\')next=enabled[0];else if(event.key===\'End\')next=enabled[enabled.length-1];else if(event.key===\'ArrowRight\'||event.key===\'ArrowDown\')next=enabled[(index+1)%enabled.length];else if(event.key===\'ArrowLeft\'||event.key===\'ArrowUp\')next=enabled[(index-1+enabled.length)%enabled.length];if(next){event.preventDefault();select(next);}});});})();</script>';
+  return `<section${attrs}><div role="tablist"${tabListLabel}>${tabButtons}</div>${tabPanels}</section>${behavior}`;
 }
 
 function renderFallback(node: UiElement, childrenHtml = ''): string {
@@ -1955,9 +2051,13 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   FilterPanel: renderFilterPanel,
 };
 
-export function renderMappedComponent(node: UiElement, childrenHtml = ''): string {
+export function renderMappedComponent(
+  node: UiElement,
+  childrenHtml = '',
+  renderedChildren: readonly string[] = [],
+): string {
   const renderer = componentRenderers[node.component] ?? renderFallback;
-  return renderer(node, childrenHtml);
+  return renderer(node, childrenHtml, renderedChildren);
 }
 
 export function hasMappedRenderer(componentName: string): boolean {

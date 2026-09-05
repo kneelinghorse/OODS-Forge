@@ -3,6 +3,17 @@ import { handle } from '../../src/tools/viz.compose.js';
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
 import { handle as codeGenerateHandle } from '../../src/tools/code.generate.js';
+import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
+
+function expectedTargetReadinessReceipt() {
+  return recordValidationChecks(
+    createValidationReceipt(undefined, 'react'),
+    'schema-structure',
+    'component-registry',
+    'state-contract',
+    'target-readiness',
+  );
+}
 
 describe('viz.compose handler', () => {
   describe('chartType input mode', () => {
@@ -319,6 +330,7 @@ describe('viz.compose handler', () => {
         fileExtension: '',
         imports: [],
         warnings: [],
+        validationReceipt: expectedTargetReadinessReceipt(),
         errors: [
           ['viz-1', 'VizMarkPreview'],
           ['viz-2', 'VizMarkControls'],

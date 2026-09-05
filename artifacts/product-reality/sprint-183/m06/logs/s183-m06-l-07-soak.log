@@ -1,0 +1,41 @@
+
+> @oods/mcp-server@0.1.0 test:echarts-soak /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge/packages/mcp-server
+> node --expose-gc ../../node_modules/vitest/vitest.mjs run --config vitest.echarts-soak.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge/packages/mcp-server
+
+
+ECHARTS_SOAK_EVIDENCE concurrency {"serverCap":4,"callCount":4,"elapsedMs":460.61808299999996,"geoContentHashes":["b5421816b5a82d74da421dc58bb1933b0494f4c3b936e9a71412ad150ba464c3","ed4699cf23c7b27082957c2675979d815d470e7f1088f12fef025b593ec4d5be"],"geoRenderHashes":["5f963ac7a9229d4d42eec82d0f29a40615c74387320c07a6a5e33969a405aa96","2f8d2e1b442a5471527e1143c14e903dc99d6c51c69c0e98b2e5637582e57576"],"state":{"loadCount":1,"activeJobs":0,"maxActiveJobs":1,"completedJobs":12,"chartsCreated":12,"chartsDisposed":12,"activeCharts":0,"renderFaults":0,"geoRegistrationCount":8,"geoRegistrySize":1,"lastGeometryHash":"338601933d06dad941cef3c9243c5e84d2cbf48793caae8f988533ac89824908","randomRestored":true,"clockGuardRestored":true,"ambientAccesses":0,"workerCreated":true,"echartsLoaded":true,"spawnCount":1,"queuedJobs":0}}
+
+ECHARTS_SOAK_EVIDENCE latency {"percentileMethod":"nearest-rank sorted[ceil(0.95*n)-1]","freshTrialCount":10,"warmTreemapSamples":50,"force100Samples":8,"force250Samples":5,"measured":{"packageImportP95Ms":8.391000000000002,"workerStartupP95Ms":53.248,"incrementalFirstUseP95Ms":280.233459,"startupPlusFirstUseP95Ms":321.884459,"warmTreemapP95Ms":4.165041999999971,"force100P95Ms":82.35008299999998,"force250P95Ms":234.66550000000007},"budgets":{"packageImportP95Ms":100,"workerStartupP95Ms":250,"incrementalFirstUseP95Ms":900,"startupPlusFirstUseP95Ms":1000,"warmTreemapP95Ms":15,"force100P95Ms":500,"force250P95Ms":1500,"workerHeapAbsoluteDeltaBytes":12582912,"workerHeapSlopeBytesPerWindow":262144,"processRssSlopeBytesPerWindow":2097152,"repeatedWindowGrowthBytes":4194304},"freshTrials":[{"packageImportMs":8.093334000000002,"workerStartupMs":44.204916,"incrementalFirstUseMs":232.54625000000001,"startupPlusFirstUseMs":276.751166,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":7.913375000000002,"workerStartupMs":39.304625,"incrementalFirstUseMs":225.57454199999998,"startupPlusFirstUseMs":264.879167,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":7.328499999999998,"workerStartupMs":39.269290999999996,"incrementalFirstUseMs":241.037125,"startupPlusFirstUseMs":280.306416,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":7.888542000000001,"workerStartupMs":38.920166,"incrementalFirstUseMs":233.34858400000002,"startupPlusFirstUseMs":272.26875,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":7.725624999999999,"workerStartupMs":42.948083000000004,"incrementalFirstUseMs":250.98708400000004,"startupPlusFirstUseMs":293.93516700000004,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":7.362667,"workerStartupMs":40.771833,"incrementalFirstUseMs":255.353542,"startupPlusFirstUseMs":296.125375,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":7.939334000000001,"workerStartupMs":39.592290999999996,"incrementalFirstUseMs":224.202625,"startupPlusFirstUseMs":263.794916,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":8.126792000000002,"workerStartupMs":53.248,"incrementalFirstUseMs":262.595875,"startupPlusFirstUseMs":315.84387499999997,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":7.963458000000001,"workerStartupMs":41.650999999999996,"incrementalFirstUseMs":280.233459,"startupPlusFirstUseMs":321.884459,"startupLoadCount":0,"startupForcedGc":true},{"packageImportMs":8.391000000000002,"workerStartupMs":40.709208000000004,"incrementalFirstUseMs":245.68633400000002,"startupPlusFirstUseMs":286.39554200000003,"startupLoadCount":0,"startupForcedGc":true}]}
+ ❯ test/soak/echarts-render-soak.s179.spec.ts (3 tests | 1 failed) 12731ms
+   ✓ ECharts artifact.certify concurrency and resource release gate > runs four artifact.certify calls at the server cap with conflicting geo data and mixed families  482ms
+   ✓ ECharts artifact.certify concurrency and resource release gate > pins fresh startup/first-use, warm treemap, and force-size p95 budgets  5337ms
+   × ECharts artifact.certify concurrency and resource release gate > plateaus after 100 warmups plus 2,000 unique-geo renders and disposes faulted charts 6911ms
+     → expected 872.883787201733 to be less than or equal to 0
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/soak/echarts-render-soak.s179.spec.ts > ECharts artifact.certify concurrency and resource release gate > plateaus after 100 warmups plus 2,000 unique-geo renders and disposes faulted charts
+AssertionError: expected 872.883787201733 to be less than or equal to 0
+ ❯ plateauEvidence test/soak/echarts-render-soak.s179.spec.ts:283:40
+    281|   ) {
+    282|     expect(trend.slope).toBeLessThanOrEqual(slopeBudget);
+    283|     expect(trend.positiveTrendLower99).toBeLessThanOrEqual(0);
+       |                                        ^
+    284|     return {
+    285|       method: "least-squares-slope",
+ ❯ test/soak/echarts-render-soak.s179.spec.ts:635:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  20:31:29
+   Duration  13.71s (transform 575ms, setup 13ms, collect 798ms, tests 12.73s, environment 0ms, prepare 51ms)
+
+/Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/mcp-server@0.1.0 test:echarts-soak: `node --expose-gc ../../node_modules/vitest/vitest.mjs run --config vitest.echarts-soak.config.ts`
+Exit status 1

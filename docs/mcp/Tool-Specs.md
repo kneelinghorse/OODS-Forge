@@ -490,7 +490,7 @@ Example input (explicit full detail):
 - **Input schema**: `packages/mcp-server/src/schemas/code.generate.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/code.generate.output.json`
 - **Policy**: designer, maintainer | read-only | timeout 30s | rate 60/min | concurrency 4
-- **Purpose**: Generate framework-specific code from a validated UiSchema. Supports React/TSX, Vue SFC, and HTML output.
+- **Purpose**: Generate a versioned, content-addressed file-set artifact from a validated UiSchema. Supports React/TSX, Vue SFC, and HTML output. `artifact.actions` declares every required consumer-supplied domain action; compatible occurrences share one action entry and retain all raising schema sources.
 
 Example input:
 ```json
@@ -527,10 +527,56 @@ Example output:
 {
   "status": "ok",
   "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\n...",
+        "contentHash": "sha256:<64 lowercase hexadecimal characters>"
+      }
+    ],
+    "dependencies": [
+      { "name": "@oods/component-styles", "version": "0.1.0", "kind": "dependency" },
+      { "name": "@oods/components-react", "version": "0.1.0", "kind": "dependency" },
+      { "name": "react", "version": "19.2.0", "kind": "peerDependency" },
+      { "name": "react-dom", "version": "19.2.0", "kind": "peerDependency" }
+    ],
+    "actions": [
+      {
+        "name": "handleRowActivate",
+        "parameters": [{ "name": "rowId", "type": "string" }],
+        "sources": [{ "nodeId": "subscriptions", "component": "Table", "event": "onRowActivate" }]
+      }
+    ],
+    "contentHash": "sha256:<64 lowercase hexadecimal characters>"
+  },
   "code": "import React from 'react';\n...",
   "fileExtension": ".tsx",
-  "imports": ["react"],
+  "imports": ["react", "@oods/components-react", "@oods/component-styles/css"],
   "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": true,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": { "requested": "react", "resolved": "react", "source": "explicit" }
+    },
+    "checks": ["schema-structure", "component-registry", "target-readiness", "normalization-fidelity", "binding-contract", "props-contract", "slots-contract", "events-contract", "dependency-closure", "fallback-policy"],
+    "notChecked": [
+      "rendered-evidence", "interaction-evidence", "accessibility-evidence",
+      "theme-evidence", "determinism-evidence", "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [], "provided": [], "missing": [], "mismatched": [], "accepted": [], "notApplicable": [],
+      "artifactContentHash": "sha256:<same value as artifact.contentHash>"
+    }
+  },
   "meta": { "nodeCount": 3, "componentCount": 3, "unknownComponents": [] }
 }
 ```
@@ -541,20 +587,55 @@ Input fields:
 | `schema` | UiSchema | Yes (unless `schemaRef` provided) | A validated UiSchema tree |
 | `schemaRef` | string | No | Cached schema reference from `design.compose` |
 | `framework` | `"react"` \| `"vue"` \| `"html"` | Yes | Target framework |
+| `profile` | `"draft"` \| `"build"` \| `"release"` | No (default `"build"`) | Named validation profile |
+| `releaseEvidence` | object | Required by the release gate | Passed rendered, interaction, accessibility, theme, determinism, and performance evidence; every item names the generated artifact contentHash |
 | `options.typescript` | boolean | No (default `true`) | Emit TypeScript types (React/Vue). Ignored for HTML. |
-| `options.styling` | `"inline"` \| `"tokens"` | No (default `"tokens"`) | Styling strategy: inline style objects or design-token CSS variables |
+| `options.styling` | `"inline"` \| `"tokens"` \| `"tailwind"` | No (default `"tokens"`) | Styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes |
 
 Output fields:
 | Field | Type | Description |
 |-------|------|-------------|
 | `status` | `"ok"` \| `"error"` | Generation result |
 | `framework` | string | The framework used |
-| `code` | string | Generated source code |
-| `fileExtension` | string | Suggested extension (`.tsx`, `.vue`, `.html`) |
-| `imports` | string[] | Required import statements |
+| `artifact` | object | Primary success payload: schemaVersion, deterministically ordered files with hashes, exact dependencies with kinds, required domain actions with raising sources, and artifact contentHash |
+| `code` | string | Deprecated v0 alias for `artifact.files[0].contents`; retained through artifact schema v1 |
+| `fileExtension` | string | Deprecated v0 alias for the primary file extension; retained through artifact schema v1 |
+| `imports` | string[] | Deprecated v0 package-specifier alias; retained through artifact schema v1 |
 | `warnings` | codegenIssue[] | Non-fatal issues |
+| `validationReceipt` | object | Always-present applied profile, independent scope/enforcement/fallback/target axes, attempted checks, not-checked checks, and evidence disposition; after artifact construction it also names that artifact's content hash |
 | `errors` | codegenIssue[] | Fatal issues (code will be empty) |
 | `meta` | object | nodeCount, componentCount, unknownComponents |
+
+`artifact` is required on successful responses and absent on errors. Its content hash covers the
+files, dependencies, and action contract. Dependency entries use exact semantic versions—never
+workspace aliases, ranges, repository paths, or inferred package names.
+`pipeline.code.artifact` carries the same envelope without flattening it; `pipeline.code.output`
+remains the deprecated v0 source alias for compatibility.
+The binding classification and framework-specific injection rules are defined in
+[Typed action protocol](./Typed-Action-Protocol.md).
+
+Validation profiles are deliberately not one overloaded strictness flag:
+
+| Profile | Scope | Enforcement | Fallback policy | Additional claim |
+|---------|-------|-------------|-----------------|------------------|
+| `draft` | structural | advisory for known target/contract gaps | visible | Exploratory output; warnings keep unsupported targets, fallbacks, or lossy normalization visible. Invalid input and unsafe or unemittable code still block. |
+| `build` (default) | generated artifact | blocking | forbidden | Runnable target, canonical props/slots/events, exact dependency closure, and no HTML fallback markers. |
+| `release` | release evidence | blocking | forbidden | All build checks plus six passed, hash-bound evidence classes: rendered, interaction, accessibility, theme, determinism, and performance. |
+
+For current generated UI targets there is no applicable artifact-certification adapter, so the
+server records `certification` in `validationReceipt.evidence.notApplicable` with a stable
+rationale; callers cannot self-declare that exception. `checks` contains only checks actually
+attempted before return, while `notChecked` names every profile check not reached on both success
+and error responses. `normalization-fidelity` reports whether compatibility normalization can retain
+the input tree; findings are visible warnings in draft and block build/release before lossy output can
+claim runnable confidence. After artifact construction,
+`validationReceipt.evidence.artifactContentHash` names that exact artifact; successful responses
+also expose the same value as `artifact.contentHash`. Release receipts retain each caller-supplied
+evidence envelope in canonical class order under `evidence.accepted` (class, status, artifact hash,
+and reference). These are accepted hash bindings for auditability; M03 does not claim to execute or
+resolve the external reports. Pipeline
+forwards `profile` and `releaseEvidence` unchanged, retains the code-generation receipt, and
+adds target-resolution provenance (`explicit`, `options-alias`, `.oodsrc`, or default).
 
 ---
 

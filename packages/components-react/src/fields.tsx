@@ -282,6 +282,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       className,
       style,
       options,
+      placeholder,
       selectClassName,
       selectStyle,
       onChange,
@@ -327,6 +328,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           onChange={handleChange}
           {...rest}
         >
+          {placeholder ? (
+            <option value="" disabled>
+              {placeholder}
+            </option>
+          ) : null}
           {children ??
             options?.map(option => (
               <option key={option.value} value={option.value} disabled={option.disabled}>

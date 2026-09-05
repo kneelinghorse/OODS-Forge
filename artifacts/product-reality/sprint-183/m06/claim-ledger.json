@@ -1,0 +1,1265 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "sprint-claim-ledger",
+  "sprintId": "sprint-183",
+  "reviewHead": "9a4202fe3ff8560a791cc92c114ef364739a1c45",
+  "expectedClaimCount": 38,
+  "executionPolicy": "Every passed claim binds at least one validated execution and one or more content-addressed repository evidence files.",
+  "executions": [
+    {
+      "executionId": "s183-focused-suite",
+      "kind": "test-suite",
+      "status": "passed",
+      "selected": 202,
+      "passed": 202,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": {
+        "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+        "bytes": 5751,
+        "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+      }
+    },
+    {
+      "executionId": "s183-canonical-closeout-gates",
+      "kind": "canonical-gate-record",
+      "status": "complete-with-explicit-non-local-and-parked-disclosures",
+      "selected": 24,
+      "resultSummary": {
+        "pass": 22,
+        "structurally-non-local": 1,
+        "parked-disclosed": 1
+      },
+      "evidence": {
+        "path": "artifacts/product-reality/sprint-183/m06/gate-record.json",
+        "bytes": 235924,
+        "sha256": "ca18631a09b57dc484605277cf738871d30bc2527145a85330eb77ea850259a6"
+      }
+    },
+    {
+      "executionId": "s183-m04-compilation",
+      "kind": "saved-schema-compilation",
+      "status": "passed",
+      "selected": 32,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": {
+        "path": "artifacts/product-reality/sprint-183/m04/compilation-report.json",
+        "bytes": 101585,
+        "sha256": "368b287e01f6b67768560b98fe581d285a3fa348ce4a09f070e1c83e3fd1af45"
+      }
+    },
+    {
+      "executionId": "s183-m05-consumers",
+      "kind": "clean-consumer-proof",
+      "status": "passed",
+      "selected": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": {
+        "path": "artifacts/product-reality/sprint-183/m05/report.json",
+        "bytes": 3825,
+        "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+      }
+    },
+    {
+      "executionId": "s183-m06-mutation-replay",
+      "kind": "mutation-replay",
+      "status": "passed",
+      "selected": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": {
+        "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/report.json",
+        "bytes": 4561,
+        "sha256": "c500e918fe398f15aab46612a0038b54c27e6fb7bf7ac63cde468badffcf1663"
+      }
+    },
+    {
+      "executionId": "s183-m06-r02-resolution",
+      "kind": "package-export-evidence-resolution",
+      "status": "passed",
+      "selected": 28,
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": {
+        "path": "artifacts/product-reality/sprint-183/m06/r02-package-export-resolution.json",
+        "bytes": 19137,
+        "sha256": "e9ad57694382929f128ac8694306309d9dd72dcff6f2b5eea844a6778149f4cf"
+      }
+    },
+    {
+      "executionId": "s183-m06-builder-handoff",
+      "kind": "review-handoff",
+      "status": "awaiting-independent-review",
+      "builderSelfCertified": false,
+      "separateReviewRequired": true,
+      "evidence": {
+        "path": "artifacts/product-reality/sprint-183/m06/review-handoff.json",
+        "bytes": 648,
+        "sha256": "70d6b2ba4ee55dd2034d77b9aa76b7a71c9f50b76ee9b68bc9aea65e7570d855"
+      }
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "s183-m01-sc01",
+      "missionId": "s183-m01",
+      "criterionIndex": 1,
+      "criterion": "The envelope carries schemaVersion, files[], dependency manifest, and content hash, and the JSON Schema for code.generate output is regenerated to match",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/runnable-artifact.s183.spec.ts",
+          "bytes": 6430,
+          "sha256": "5442c50e15713d588670c4491a34ca5c3224e458bd15e5af22b6497efea0f654"
+        },
+        {
+          "path": "packages/mcp-server/src/schemas/code.generate.output.json",
+          "bytes": 21599,
+          "sha256": "451ea327b4a93d52c9720064fd81c38b5ef40918b5aefd690a792e172c0a0e66"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m01-sc02",
+      "missionId": "s183-m01",
+      "criterionIndex": 2,
+      "criterion": "Every dependency entry names an exact version and its kind; a mutation that emits a versionless or workspace-aliased dependency fails a gate",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/runnable-artifact.s183.spec.ts",
+          "bytes": 6430,
+          "sha256": "5442c50e15713d588670c4491a34ca5c3224e458bd15e5af22b6497efea0f654"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/artifact-envelope.ts",
+          "bytes": 19038,
+          "sha256": "b55b929df4e92ace8d2048cb350ece2876806ff1952f71cdae4da1c50495f916"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m01-sc03",
+      "missionId": "s183-m01",
+      "criterionIndex": 3,
+      "criterion": "Re-emitting identical input twice produces byte-identical artifact and per-file hashes; a mutation introducing nondeterministic ordering or a timestamp makes the determinism gate red",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/runnable-artifact.s183.spec.ts",
+          "bytes": 6430,
+          "sha256": "5442c50e15713d588670c4491a34ca5c3224e458bd15e5af22b6497efea0f654"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/artifact-envelope.test.ts",
+          "bytes": 24968,
+          "sha256": "d843a272c793f66a83fbf0b5d13a26f3353e1816a4469ea8dc8effc5d09e4243"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m01-sc04",
+      "missionId": "s183-m01",
+      "criterionIndex": 4,
+      "criterion": "Existing consumers are not silently broken: the compatibility disposition is implemented and stated, and pipeline's output path is updated rather than left flattening a multi-file artifact to one string",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/src/tools/__tests__/pipeline.test.ts",
+          "bytes": 37767,
+          "sha256": "68c7cce13b557075a559e84cde30a68d134e959808690973ec93662dbc386bb8"
+        },
+        {
+          "path": "packages/mcp-server/src/schemas/pipeline.output.json",
+          "bytes": 24667,
+          "sha256": "d9d9663ad2b0e2a4f2978ff3042fe7244c78776778d966802d18eee1dc257860"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m01-sc05",
+      "missionId": "s183-m01",
+      "criterionIndex": 5,
+      "criterion": "All 12 public option cells (react/vue x typescript on/off x inline/tailwind/tokens) emit a well-formed artifact",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/runnable-artifact.s183.spec.ts",
+          "bytes": 6430,
+          "sha256": "5442c50e15713d588670c4491a34ca5c3224e458bd15e5af22b6497efea0f654"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m01-sc06",
+      "missionId": "s183-m01",
+      "criterionIndex": 6,
+      "criterion": "No emitted import resolves to a fictional package, workspace alias, or repository source path",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/runnable-artifact.s183.spec.ts",
+          "bytes": 6430,
+          "sha256": "5442c50e15713d588670c4491a34ca5c3224e458bd15e5af22b6497efea0f654"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/artifact-envelope.ts",
+          "bytes": 19038,
+          "sha256": "b55b929df4e92ace8d2048cb350ece2876806ff1952f71cdae4da1c50495f916"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m02-sc01",
+      "missionId": "s183-m02",
+      "criterionIndex": 1,
+      "criterion": "No generated output in any of the 12 option cells contains an empty or TODO-only handler body",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+          "bytes": 19537,
+          "sha256": "e0fcbcc2440781768ee0baa0ec55a657916cd9ae9f2cea2ad2718b694b55992f"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m02-sc02",
+      "missionId": "s183-m02",
+      "criterionIndex": 2,
+      "criterion": "Forge-owned bindings produce working behavior provable by interaction in a real consumer, not merely by source inspection",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+          "bytes": 19537,
+          "sha256": "e0fcbcc2440781768ee0baa0ec55a657916cd9ae9f2cea2ad2718b694b55992f"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/report.json",
+          "bytes": 3825,
+          "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m02-sc03",
+      "missionId": "s183-m02",
+      "criterionIndex": 3,
+      "criterion": "Every domain action appears in the artifact's typed action contract with parameter types, and a consumer that fails to supply one gets a typed failure rather than a silent no-op",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+          "bytes": 19537,
+          "sha256": "e0fcbcc2440781768ee0baa0ec55a657916cd9ae9f2cea2ad2718b694b55992f"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/action-protocol.ts",
+          "bytes": 2106,
+          "sha256": "68afa1babca09fb19e5d458865bd43d3975d2594f8ed54317541c357104639d1"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m02-sc04",
+      "missionId": "s183-m02",
+      "criterionIndex": 4,
+      "criterion": "React and Vue express the same action contract idiomatically without one framework's gate being lowered",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+          "bytes": 19537,
+          "sha256": "e0fcbcc2440781768ee0baa0ec55a657916cd9ae9f2cea2ad2718b694b55992f"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m02-sc05",
+      "missionId": "s183-m02",
+      "criterionIndex": 5,
+      "criterion": "A mutation restoring an empty handler body makes a gate red, and a mutation removing an action from the typed contract while leaving its binding also makes a gate red",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+          "bytes": 19537,
+          "sha256": "e0fcbcc2440781768ee0baa0ec55a657916cd9ae9f2cea2ad2718b694b55992f"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m02-sc06",
+      "missionId": "s183-m02",
+      "criterionIndex": 6,
+      "criterion": "The behavior split is documented so a reviewer can tell why a given binding was generated rather than declared",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "docs/mcp/Typed-Action-Protocol.md",
+          "bytes": 3600,
+          "sha256": "8dc4f8a6ba5d0b67b6f7da6a230ad1aea41ed4381c67579d7f0582c45101160f"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m03-sc01",
+      "missionId": "s183-m03",
+      "criterionIndex": 1,
+      "criterion": "The same input under draft, build, and release produces materially different enforcement, proven by an input that passes draft and is blocked by build",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/validation-profiles.s183.spec.ts",
+          "bytes": 34060,
+          "sha256": "c1fa91f1e4c8e483495e8fa9872d3158e4def1a508a5138152cb9630a22bf456"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/validation-profile.ts",
+          "bytes": 12973,
+          "sha256": "7c4d2ce0d30c842cb775c4c8ba6f2e798412016a3a226f8540a4e66bef30a7b6"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m03-sc02",
+      "missionId": "s183-m03",
+      "criterionIndex": 2,
+      "criterion": "An unresolved import or silent target fallback cannot pass build or release under any option combination",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/validation-profiles.s183.spec.ts",
+          "bytes": 34060,
+          "sha256": "c1fa91f1e4c8e483495e8fa9872d3158e4def1a508a5138152cb9630a22bf456"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m03-sc03",
+      "missionId": "s183-m03",
+      "criterionIndex": 3,
+      "criterion": "Release cannot pass while any required evidence class is missing, and the response names the missing class",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/validation-profiles.s183.spec.ts",
+          "bytes": 34060,
+          "sha256": "c1fa91f1e4c8e483495e8fa9872d3158e4def1a508a5138152cb9630a22bf456"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m03-sc04",
+      "missionId": "s183-m03",
+      "criterionIndex": 4,
+      "criterion": "Every response states the profile that ran and what it did not check; a response that omits the disclosure fails a gate",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/validation-profiles.s183.spec.ts",
+          "bytes": 34060,
+          "sha256": "c1fa91f1e4c8e483495e8fa9872d3158e4def1a508a5138152cb9630a22bf456"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/validation-profile.ts",
+          "bytes": 12973,
+          "sha256": "7c4d2ce0d30c842cb775c4c8ba6f2e798412016a3a226f8540a4e66bef30a7b6"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m03-sc05",
+      "missionId": "s183-m03",
+      "criterionIndex": 5,
+      "criterion": "A mutation weakening one profile's enforcement to another's is caught by a discriminating test rather than passing silently",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/validation-profiles.s183.spec.ts",
+          "bytes": 34060,
+          "sha256": "c1fa91f1e4c8e483495e8fa9872d3158e4def1a508a5138152cb9630a22bf456"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m03-sc06",
+      "missionId": "s183-m03",
+      "criterionIndex": 6,
+      "criterion": "The three profiles are described in the artifact contract so a consumer can tell what a given artifact was actually certified for",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "docs/api/code-generate.md",
+          "bytes": 4698,
+          "sha256": "9f624282a4f08fd357749e27a2197a0c5b60d6fc63f68865b4b96f563eb6b566"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m04-sc01",
+      "missionId": "s183-m04",
+      "criterionIndex": 1,
+      "criterion": "The genuine compose-7d860337 record, created 2026-03-05, compiles to a complete artifact in both React and Vue",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m04-compilation"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/compilation-report.json",
+          "bytes": 101585,
+          "sha256": "368b287e01f6b67768560b98fe581d285a3fa348ce4a09f070e1c83e3fd1af45"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/compiled/tier1-acceptance-sub-detail/react.artifact.json",
+          "bytes": 11458,
+          "sha256": "28f3c86793f5d6466d8cde6eb01659ba8ee6a73a9e2fe73a49c220d82a5f1763"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/compiled/tier1-acceptance-sub-detail/vue.artifact.json",
+          "bytes": 11298,
+          "sha256": "f0cc07da0bbf4952272b2162e22b005d0e0365d1f8af90ca5d848dab9b7cacca"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m04-sc02",
+      "missionId": "s183-m04",
+      "criterionIndex": 2,
+      "criterion": "The exit-gate schema is demonstrably pre-existing: its recorded schemaRef and creation date predate this sprint, and the s182-authored same-named fixture is not the subject",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m04-compilation"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/compilation-report.json",
+          "bytes": 101585,
+          "sha256": "368b287e01f6b67768560b98fe581d285a3fa348ce4a09f070e1c83e3fd1af45"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/tier1-acceptance-sub-detail.json",
+          "bytes": 15823,
+          "sha256": "f842c3c61933caf7cf26af48e02b7a7de84c5f60fd49b8c03458821fdd55318b"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m04-sc03",
+      "missionId": "s183-m04",
+      "criterionIndex": 3,
+      "criterion": "All 16 saved schemas are vendored as tracked evidence and reproducible from the repository by a reviewer with no access to the gitignored store",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m04-compilation"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/corpus-manifest.json",
+          "bytes": 8259,
+          "sha256": "45b87231ead62fdc379e8c043857e42f790167abe8945bf6d84e92896b077543"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/_index.json",
+          "bytes": 4015,
+          "sha256": "7cfe3bfab700a6ab7077130f47b91370531526fdf0c22f84184130e381fad393"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m04-sc04",
+      "missionId": "s183-m04",
+      "criterionIndex": 4,
+      "criterion": "Each of the 16 has a recorded disposition; the roughly 15 typed-gap outcomes are reported as results and are never averaged with compiled outcomes into a single number",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m04-compilation"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/compilation-report.json",
+          "bytes": 101585,
+          "sha256": "368b287e01f6b67768560b98fe581d285a3fa348ce4a09f070e1c83e3fd1af45"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m04-sc05",
+      "missionId": "s183-m04",
+      "criterionIndex": 5,
+      "criterion": "A schema node outside the foundation-v1 nucleus produces a typed gap rather than a fallback, placeholder, or silent omission",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m04-compilation"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/saved-schema-compiler.s183.spec.ts",
+          "bytes": 4021,
+          "sha256": "c40831e3df0efb67ea4fbfbf639b11cc4c1fd4b2b36df2221d27fce2a2049882"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/compilation-report.json",
+          "bytes": 101585,
+          "sha256": "368b287e01f6b67768560b98fe581d285a3fa348ce4a09f070e1c83e3fd1af45"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m04-sc06",
+      "missionId": "s183-m04",
+      "criterionIndex": 6,
+      "criterion": "A mutation that makes an out-of-nucleus node emit a fallback instead of a typed gap turns a gate red",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m04-compilation"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/saved-schema-compiler.s183.spec.ts",
+          "bytes": 4021,
+          "sha256": "c40831e3df0efb67ea4fbfbf639b11cc4c1fd4b2b36df2221d27fce2a2049882"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m04-sc07",
+      "missionId": "s183-m04",
+      "criterionIndex": 7,
+      "criterion": "Compilation is deterministic: the same saved schema re-compiled produces byte-identical artifact hashes",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m04-compilation"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/compilation-report.json",
+          "bytes": 101585,
+          "sha256": "368b287e01f6b67768560b98fe581d285a3fa348ce4a09f070e1c83e3fd1af45"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m05-sc01",
+      "missionId": "s183-m05",
+      "criterionIndex": 1,
+      "criterion": "The real compose-7d860337 saved schema installs, builds, renders, hydrates, and passes interactions in both a clean React consumer and a clean Vue consumer",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m05-consumers"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/report.json",
+          "bytes": 3825,
+          "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/react/report.json",
+          "bytes": 27295,
+          "sha256": "7a2e559ba1a76642ddbe9b782d15659153c129c191e9edd71bf406ff9d707de3"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/report.json",
+          "bytes": 28346,
+          "sha256": "f486aa5af997125f1a97323895cb2108202decd8ddc4cc025bfb82f6379ca9b8"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m05-sc02",
+      "missionId": "s183-m05",
+      "criterionIndex": 2,
+      "criterion": "The Tabs interaction is proven to work as generated Forge-owned behavior, and the onEdit/onDelete domain actions are proven to reach consumer-supplied implementations",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m05-consumers"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/report.json",
+          "bytes": 3825,
+          "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/saved-schema-consumers.s183.spec.ts",
+          "bytes": 10830,
+          "sha256": "4486830e6a391080c9ca4245a9ef25965538b3433d8f6244a8cad06ac7237684"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m05-sc03",
+      "missionId": "s183-m05",
+      "criterionIndex": 3,
+      "criterion": "The consumers resolve every dependency from the artifact's declared manifest alone; a missing or versionless manifest entry makes the install fail rather than silently resolving from the workspace",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m05-consumers"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/report.json",
+          "bytes": 3825,
+          "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/react/dependency-plan.json",
+          "bytes": 4247,
+          "sha256": "fff3f202bc545c941fd63a8d576ee575a302726a9c4736c2dc8038e9f28b8573"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/dependency-plan.json",
+          "bytes": 4044,
+          "sha256": "6e98292a23be6c38f33cc73f59ae28fa357d242386cd4aa108a944ef389bcc3a"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m05-sc04",
+      "missionId": "s183-m05",
+      "criterionIndex": 4,
+      "criterion": "Interaction assertions are shown to be discriminating: removing the generated Tabs behavior, or the injected domain action, makes them red",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m05-consumers"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/report.json",
+          "bytes": 3825,
+          "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/tabs-selection-behavior-removed/report.json",
+          "bytes": 5515,
+          "sha256": "882adc617e172ed67a962145022e2d0c8265bac5beda20f21655d88cb7f89e3b"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/domain-action-handle-edit-inert/report.json",
+          "bytes": 5086,
+          "sha256": "a653fcf88700b52a5ab4093124482f80b60be5d8092bf7f6374e3325dc110328"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/tabs-selection-behavior-removed/report.json",
+          "bytes": 6080,
+          "sha256": "2f26eb7d2169579a0211f48dce1fe25645ca103815f0e77e53f1d39bd83a1b28"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/domain-action-handle-edit-inert/report.json",
+          "bytes": 5643,
+          "sha256": "79147bdfc962926230dab48369064ecb24bc5b6d767fb459e7e41dafbdd818b9"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m05-sc05",
+      "missionId": "s183-m05",
+      "criterionIndex": 5,
+      "criterion": "Isolation holds — no workspace symlink, repository source import, inherited node_modules, or user npm configuration participates",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m05-consumers"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/report.json",
+          "bytes": 3825,
+          "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+        },
+        {
+          "path": "scripts/product-reality/s183-m05-saved-schema-consumers.mjs",
+          "bytes": 58320,
+          "sha256": "f99acd9d86c68bb9cd49bd49e5caa62ff2587f345d34d0098d7305de47594c2e"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m05-sc06",
+      "missionId": "s183-m05",
+      "criterionIndex": 6,
+      "criterion": "React and Vue meet the same gate; neither framework's bar is lowered to let the sprint close",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m05-consumers"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/report.json",
+          "bytes": 3825,
+          "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/react/report.json",
+          "bytes": 27295,
+          "sha256": "7a2e559ba1a76642ddbe9b782d15659153c129c191e9edd71bf406ff9d707de3"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/report.json",
+          "bytes": 28346,
+          "sha256": "f486aa5af997125f1a97323895cb2108202decd8ddc4cc025bfb82f6379ca9b8"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m05-sc07",
+      "missionId": "s183-m05",
+      "criterionIndex": 7,
+      "criterion": "Any check that could not run is named explicitly rather than omitted from the success statement",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-m05-consumers"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/report.json",
+          "bytes": 3825,
+          "sha256": "a3dc410bf95d8a1cbeb9373c5300f77d1bb2e2480504964370df56bb4c3f18ba"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m06-sc01",
+      "missionId": "s183-m06",
+      "criterionIndex": 1,
+      "criterion": "Every Sprint-183 claim resolves to evidence that exists and was executed, provable by a mechanical audit of the cited paths",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite",
+        "s183-canonical-closeout-gates"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/gate-record.json",
+          "bytes": 235924,
+          "sha256": "ca18631a09b57dc484605277cf738871d30bc2527145a85330eb77ea850259a6"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/cmos-mission-contract-source.json",
+          "bytes": 7191,
+          "sha256": "ff2eff4db50a6f361f9d4b5cb8242684e5bd04bf1300992b2f14d8ab73c41b1d"
+        },
+        {
+          "path": "scripts/product-reality/generate-s183-m06-closeout.mjs",
+          "bytes": 82454,
+          "sha256": "69ef9653b620bb145b864550f8e0bcbd0e4550557e033aa1fc9c7850b51543b6"
+        },
+        {
+          "path": "scripts/product-reality/generate-s183-m06-gate-record.mjs",
+          "bytes": 61090,
+          "sha256": "b48e6a9a6b9b72221df83c71fa032f8d352b9717db30cd20613ca8110bc1804e"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/closeout.s183.spec.ts",
+          "bytes": 27445,
+          "sha256": "6afd72e2af0dbc238ecaa1f532ab7c70bd6b733b54c28ab3427453fb3f6e611e"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mission-contracts.json",
+          "bytes": 6880,
+          "sha256": "a5c00d40c6729b9e5469e0e8b093ab7d2ae2848c43b327420e7b4b752ad19bbc"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m06-sc02",
+      "missionId": "s183-m06",
+      "criterionIndex": 2,
+      "criterion": "Every archived mutation patch applies cleanly and has been replayed from the artifact, not merely written down",
+      "status": "passed",
+      "executionIds": [
+        "s183-m06-mutation-replay"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/report.json",
+          "bytes": 4561,
+          "sha256": "c500e918fe398f15aab46612a0038b54c27e6fb7bf7ac63cde468badffcf1663"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/s183-m06-replay-r02.spec.ts",
+          "bytes": 6851,
+          "sha256": "f89623e22e7c37f2c518c5742dda37eef31a8d90f7ed6c8c745bdbf0144868fa"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/tabs-selection-behavior-removed/mutation.patch",
+          "bytes": 729,
+          "sha256": "f62ad6cace198003b2cea084084e6327d1bb7882447a842c5877ea97e5a29a9c"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s183-m05-react-tabs-selection-behavior-removed/report.json",
+          "bytes": 3526,
+          "sha256": "b8eb8291ff19d272976ff71dc0b959375f67525daa47d6f039c8be0e170f3648"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/react/mutations/domain-action-handle-edit-inert/mutation.patch",
+          "bytes": 484,
+          "sha256": "53e88de04bba810dd95a1a75c7591ad646f536651342a591aeca99951a3c69cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s183-m05-react-domain-action-handle-edit-inert/report.json",
+          "bytes": 3083,
+          "sha256": "c4cc7d616b0b29f0b43377ee71316a9a488995e3278a02ea2b0cbdcc36f944fa"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/tabs-selection-behavior-removed/mutation.patch",
+          "bytes": 1179,
+          "sha256": "2dbd14c85c0f118ad646b2d88d5c3b2aba7c3a8c9c08d8f4b749fdc488b30d51"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s183-m05-vue-tabs-selection-behavior-removed/report.json",
+          "bytes": 3524,
+          "sha256": "1561579ad4dc2c39592fa434add01e33d639412f78428ded342fb5fd4f5ab07c"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/domain-action-handle-edit-inert/mutation.patch",
+          "bytes": 421,
+          "sha256": "ff3edb56d8bacf60a1b8cede6135927265021a8a969f39dca3aafc8b523444ec"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s183-m05-vue-domain-action-handle-edit-inert/report.json",
+          "bytes": 3071,
+          "sha256": "ec401085c1144734ab544ee38bb4acee05e88d6183efb7458132cd9152b165f2"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s182-m01b-brand-b-primary-contrast/mutation.patch",
+          "bytes": 770,
+          "sha256": "e6368bbd562ce69a60041956333451342f2bbd0b5dc9e487d41938b4a392bee7"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s182-m01b-brand-b-primary-contrast/report.json",
+          "bytes": 2481,
+          "sha256": "a0570cc93e30fdf5ad8fa38ce3efa44f87153c8b1b2ddfff595f366dee88b748"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m06-sc03",
+      "missionId": "s183-m06",
+      "criterionIndex": 3,
+      "criterion": "The review approval mechanism is reusable and still prevents self-promotion, proven by a discrimination test in both directions",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "scripts/product-reality/independent-review-approval.mjs",
+          "bytes": 10169,
+          "sha256": "66839277f29118d563cf50ab8efd06af63b0d63c69252c43d30cb21d87371a7f"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/independent-review-approval.s183.spec.ts",
+          "bytes": 14721,
+          "sha256": "2a92c1c4d12c070b9525d8b9cc8a63c89ed754a46cd27e59295ba10d352e84e2"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-182/review/independent-review.v1.json",
+          "bytes": 4420,
+          "sha256": "65b83335555d5221cc0d02aa010118e901ddd862b204b23433d8332e0e796951"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-182/review/foundation-v1-promotion-projection.v1.json",
+          "bytes": 259610,
+          "sha256": "7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-182/review/foundation-v1-claim-diff.v1.json",
+          "bytes": 3198,
+          "sha256": "4312447a69ebfe6b98907ea1741225be255c7e1dddb90b66335f737a3c860255"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-182/review/foundation-v1-promotion-binding.v1.json",
+          "bytes": 6276,
+          "sha256": "00ac40c67b1557607b26aad960c3a6ed57d36cd45bbe872e768950ed4b14918c"
+        },
+        {
+          "path": "packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json",
+          "bytes": 259610,
+          "sha256": "7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71"
+        },
+        {
+          "path": "packages/component-contracts/package.json",
+          "bytes": 1269,
+          "sha256": "2de78b3fd5238c1245700b4bf1ad764a3ef8ac47c97971c9baca652fe0d73dde"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m06-sc04",
+      "missionId": "s183-m06",
+      "criterionIndex": 4,
+      "criterion": "#1316 and #1317 are fixed and verified; the other six maintenance items are explicitly carried with named status rather than quietly dropped",
+      "status": "passed",
+      "executionIds": [
+        "s183-focused-suite"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/focused-suite-receipt.json",
+          "bytes": 5751,
+          "sha256": "94a92164d1cc9dc33f8017774b73bb1fb2c65de50e24aca1b071a4a0f40989cc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/maintenance-disposition.json",
+          "bytes": 1852,
+          "sha256": "ed255bc20d4e7d85091b0bad6fd074df7343bd2bd3afd44207ea556944d37d96"
+        },
+        {
+          "path": "packages/mcp-server/src/lib/dtcg-intake/index.ts",
+          "bytes": 25445,
+          "sha256": "67a883397ada3acbc2ee8f2031754f4f0262c044a62abb069a93e62d7a8fa8f4"
+        },
+        {
+          "path": "packages/mcp-server/test/contracts/dtcg-intake.s180.spec.ts",
+          "bytes": 44481,
+          "sha256": "83ceb5eb53966d302f942d7bd2820fa775f678e6c09757c53f1f751398bd3109"
+        },
+        {
+          "path": "docs/how-forge-works.html",
+          "bytes": 54783,
+          "sha256": "0653265a3294151998d3124a3cfe8dd3b1cfb00b0949c708cd6e6b178e113488"
+        },
+        {
+          "path": "tests/verification/how-forge-works.contract.test.ts",
+          "bytes": 9108,
+          "sha256": "425c2d0a7896b0734db620ca58f074d2c4a6d455b95395dbd136125d4a722d04"
+        },
+        {
+          "path": "tests/verification/s177-prose-carriers.contract.test.ts",
+          "bytes": 7408,
+          "sha256": "884fdefea5f6b35b10c08995d4484374019dbb75cb3dcf8eee37d22eff8d58e2"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m06-sc05",
+      "missionId": "s183-m06",
+      "criterionIndex": 5,
+      "criterion": "The s182 R-02 carry is resolved or has a recorded decision explaining why it stands",
+      "status": "passed",
+      "executionIds": [
+        "s183-m06-r02-resolution"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/r02-package-export-resolution.json",
+          "bytes": 19137,
+          "sha256": "e9ad57694382929f128ac8694306309d9dd72dcff6f2b5eea844a6778149f4cf"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/s183-m06-replay-r02.spec.ts",
+          "bytes": 6851,
+          "sha256": "f89623e22e7c37f2c518c5742dda37eef31a8d90f7ed6c8c745bdbf0144868fa"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-182/review/foundation-v1-promotion-binding.v1.json",
+          "bytes": 6276,
+          "sha256": "00ac40c67b1557607b26aad960c3a6ed57d36cd45bbe872e768950ed4b14918c"
+        },
+        {
+          "path": "packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json",
+          "bytes": 259610,
+          "sha256": "7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/submitted-packages/tarballs/oods-components-react-0.1.0.tgz",
+          "bytes": 28749,
+          "sha256": "06ff5920586cdaab2719ae98878f616570031edcb67656515c3bca68ddb543ad"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/submitted-packages/tarballs/oods-components-vue-0.1.0.tgz",
+          "bytes": 17672,
+          "sha256": "3600f4ff82b3ac5adafe6384f4b9339e9da4a17beaed799a539982bc9fdcdbf3"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m05/submitted-packages/inventory.json",
+          "bytes": 1961,
+          "sha256": "45e42dcf019d95b9bb6727b63457d56240bfac7835df160f06b55095472be824"
+        }
+      ]
+    },
+    {
+      "claimId": "s183-m06-sc06",
+      "missionId": "s183-m06",
+      "criterionIndex": 6,
+      "criterion": "Sprint 183 is left for a separate reviewer to decide genuine close; the build session records evidence and does not self-certify",
+      "status": "passed",
+      "executionIds": [
+        "s183-m06-builder-handoff"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/review-handoff.json",
+          "bytes": 648,
+          "sha256": "70d6b2ba4ee55dd2034d77b9aa76b7a71c9f50b76ee9b68bc9aea65e7570d855"
+        },
+        {
+          "path": "cmos/planning/forge-s183-runnable-generation-decision-memo.md",
+          "bytes": 15505,
+          "sha256": "ba12067242c98399059abccda4959d398e7a107758eed02e5f3a2104a88b4565"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "selected": 38,
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0,
+    "missionCounts": {
+      "s183-m01": 6,
+      "s183-m02": 6,
+      "s183-m03": 6,
+      "s183-m04": 7,
+      "s183-m05": 7,
+      "s183-m06": 6
+    }
+  }
+}

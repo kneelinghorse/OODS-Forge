@@ -1,0 +1,12 @@
+Sprint 184 m01 evidence-retention control
+
+Baseline at ab0d712d before the .gitignore repair:
+  git check-ignore artifacts/product-reality/sprint-184/m01/evidence-retention-green.log
+  exitCode=0
+  source=.gitignore:34:*.log
+
+Green after placing !/artifacts/product-reality/**/*.log after the blanket rule:
+  git check-ignore artifacts/product-reality/sprint-184/m01/evidence-retention-green.log
+  exitCode=1
+  git add artifacts/product-reality/sprint-184/m01/evidence-retention-green.log
+  exitCode=0

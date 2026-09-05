@@ -36,8 +36,10 @@ import type {
   ElementSpec,
 } from '../object-catalog/types.js';
 import {
+  analyzeBindings,
   collectBindings as collectHandlerBindings,
   collectPropDefaults,
+  type BindingAnalysis,
 } from './binding-utils.js';
 import {
   collectTailwindVariantDefinitions,
@@ -103,6 +105,9 @@ export interface PreEmitContext {
 
   /** Handler name → binding key. */
   handlers: Map<string, string>;
+
+  /** Lossless binding classification, signatures, provenance, and validation issues. */
+  bindingAnalysis: BindingAnalysis;
 
   /** Prop defaults derived from objectSchema field metadata (camelCase name → formatted value). */
   propDefaults: Map<string, { formatted: string; isExpression: boolean }>;
@@ -319,6 +324,7 @@ export function runPreEmit(
 
   const components = collectComponents(schema.screens);
   const handlers = collectHandlerBindings(schema.screens);
+  const bindingAnalysis = analyzeBindings(schema.screens);
 
   const objectSchema = schema.objectSchema;
   const hasObjectSchema = !!objectSchema && Object.keys(objectSchema).length > 0;
@@ -340,6 +346,7 @@ export function runPreEmit(
     tokenOverrides: schema.tokenOverrides,
     components,
     handlers,
+    bindingAnalysis,
     propDefaults,
     tailwindVariants,
     options: codegenOptions,

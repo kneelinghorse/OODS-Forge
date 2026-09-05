@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m05",
+  "kind": "workflow-state-axis-closeout",
+  "capturedAt": "2026-09-05T10:23:48.806Z",
+  "baseCommit": "9db7db1a3936c656c96314d45ab0abec34171bdf",
+  "measuredImplementationCommit": "e351cf2d6e2b0e8b6e693972c1dfe234665c4673",
+  "headline": {
+    "stateBuildCells": "8/8 green",
+    "parityDifferences": 0,
+    "parityAllowlistEntries": 0,
+    "isolatedMutationBites": "8/8 red exactly selected cell; restored 8/8 green",
+    "tableEmptyTargets": "2/2 green",
+    "inputValidationPins": "4/4 green (pre-existing)",
+    "unrunChecks": []
+  },
+  "schemaAndContract": {
+    "structuralField": "UiElement.state: non-empty string",
+    "semanticVocabulary": [
+      "loading",
+      "empty",
+      "error",
+      "success"
+    ],
+    "unknownCode": "OODS-V164",
+    "receiptCheck": "state-contract",
+    "componentLocalStatesChanged": false,
+    "nucleusAndPortedGovernedIdsChecked": 22,
+    "htmlDisposition": "build/release OODS-V007; draft warning because HTML cannot preserve branch selection"
+  },
+  "emission": {
+    "selector": "uiState",
+    "marker": "data-oods-state",
+    "reactBranching": "conditional JSX expression",
+    "vueBranching": "no-DOM template v-if",
+    "aggregateBranchCounts": {
+      "react": {
+        "guards": 4,
+        "markers": 4
+      },
+      "vue": {
+        "guards": 4,
+        "markers": 4
+      }
+    }
+  },
+  "parity": {
+    "differenceCount": 0,
+    "allowlistCount": 0,
+    "source": "artifacts/product-reality/sprint-184/m05/parity-report.json"
+  },
+  "mutations": {
+    "selected": 8,
+    "passed": 8,
+    "exactSelectedReds": 8,
+    "unselectedGreenObservations": 56,
+    "restoredGreenCells": 8,
+    "source": "artifacts/product-reality/sprint-184/m05/mutations/mutation-matrix.json",
+    "trackedLog": "artifacts/product-reality/sprint-184/m05/mutations/mutation-matrix.log"
+  },
+  "verification": {
+    "componentPackages": {
+      "componentContracts": 15,
+      "react": 49,
+      "vue": 50,
+      "passed": 114,
+      "failed": 0
+    },
+    "fullMcpServerSuite": {
+      "filesPassed": 256,
+      "filesSkipped": 1,
+      "testsPassed": 5054,
+      "testsSkipped": 16,
+      "testsFailed": 0,
+      "durationSeconds": 304.29,
+      "skipDisposition": "The 16 pre-existing environment-gated skips require adjacent Stage1 artifacts; no s184-m05 test skipped."
+    },
+    "schemaGenerationDrift": "none",
+    "typechecks": [
+      "component-contracts",
+      "components-react",
+      "components-vue",
+      "mcp-server"
+    ],
+    "diffCheck": "passed"
+  },
+  "advertisedMovers": {
+    "count": 8,
+    "source": "artifacts/product-reality/sprint-184/m05/advertised-movers.json",
+    "consumer": "s184-m07 reconnect audit"
+  },
+  "scopeStatement": "Mission s184-m05 makes loading, empty, error, and success branchable in generated React and Vue artifacts. It does not claim the full Subscription workflow exit gate; m06 still owns the two-step workflow proof.",
+  "knownLimitations": [
+    "REPL HTML preview remains non-branching; code.generate fails closed at build/release and warns at draft rather than silently discarding state semantics.",
+    "The generated selector is a required uiState prop; object fields that camelize to uiState are rejected as a typed collision when state branches exist."
+  ],
+  "unrunChecks": [],
+  "status": "passed"
+}

@@ -1,0 +1,227 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m03",
+  "kind": "saved-schema-contract-resolution",
+  "capturedAt": "2026-09-05T08:35:27Z",
+  "baseCommit": "d51fb5ba80d7e67d7d4e25e16e2943e694019683",
+  "measuredImplementationCommit": "b4697e40fb67dfd59e638f7c847f103d9f06a8d2",
+  "issueAccounting": {
+    "logicalFactClasses": 6,
+    "affectedNodeCount": 5,
+    "baselineTargetIssueRows": 16,
+    "baseline": {
+      "source": "artifacts/product-reality/sprint-184/m03/baseline-red-control.json",
+      "cells": [
+        { "schema": "subscription-list-dark", "target": "react", "issues": 2 },
+        { "schema": "subscription-list-dark", "target": "vue", "issues": 2 },
+        { "schema": "subscription-detail-dark", "target": "react", "issues": 6 },
+        { "schema": "subscription-detail-dark", "target": "vue", "issues": 6 },
+        { "schema": "tier1-acceptance-sub-detail", "target": "react", "issues": 0 },
+        { "schema": "tier1-acceptance-sub-detail", "target": "vue", "issues": 0 }
+      ]
+    },
+    "resolved": {
+      "cells": [
+        { "schema": "subscription-list-dark", "target": "react", "issues": 0 },
+        { "schema": "subscription-list-dark", "target": "vue", "issues": 0 },
+        { "schema": "subscription-detail-dark", "target": "react", "issues": 0 },
+        { "schema": "subscription-detail-dark", "target": "vue", "issues": 0 },
+        { "schema": "tier1-acceptance-sub-detail", "target": "react", "issues": 0 },
+        { "schema": "tier1-acceptance-sub-detail", "target": "vue", "issues": 0 }
+      ],
+      "assertion": "passed"
+    }
+  },
+  "savedSchemaFreeze": {
+    "source": "artifacts/product-reality/sprint-184/m01/saved-schema-freeze.json",
+    "shaAndByteAssertions": 3,
+    "gitDiffCommand": "git diff --name-only d51fb5ba80d7e67d7d4e25e16e2943e694019683..HEAD -- artifacts/product-reality/sprint-183/m04/saved-schema-store",
+    "gitDiffOutput": "",
+    "status": "passed"
+  },
+  "widenings": [
+    {
+      "factClass": "Select.placeholder",
+      "nodes": ["slot-filters-2"],
+      "treatment": "render-prop",
+      "observableBehavior": "disabled empty-value option on HTML, React, and Vue"
+    },
+    {
+      "factClass": "Select.value<boolean>",
+      "nodes": ["slot-filters-2"],
+      "treatment": "binding-kind-and-emitter-coercion",
+      "observableBehavior": "String(cancelAtPeriodEnd) on React and Vue; named value binding on HTML"
+    },
+    {
+      "factClass": "Stack.patternComponent",
+      "nodes": ["slot-tab-0-4"],
+      "treatment": "composition-directive",
+      "observableBehavior": "lowered to StatusTimeline before component collection and rendering"
+    },
+    {
+      "factClass": "Stack.fields",
+      "nodes": ["slot-tab-0-4"],
+      "treatment": "composition-directive",
+      "observableBehavior": "orders status then allowed_transitions without raw target attributes"
+    },
+    {
+      "factClass": "Text.label",
+      "nodes": ["pg-status-timeline-25", "pg-status-timeline-26", "slot-tab-4-17"],
+      "treatment": "render-prop",
+      "observableBehavior": "accessible description on HTML, React, and Vue"
+    },
+    {
+      "factClass": "Text.children<string[]>",
+      "nodes": ["pg-status-timeline-26"],
+      "treatment": "binding-kind-and-emitter-coercion",
+      "observableBehavior": "array guard and comma-joined display on React and Vue; named binding placeholder on HTML"
+    }
+  ],
+  "compositionDirective": {
+    "authoredComponent": "Stack",
+    "renderedComponent": "StatusTimeline",
+    "nodeId": "slot-tab-0-4",
+    "fields": ["status", "allowed_transitions"],
+    "preservedChildren": [
+      { "id": "pg-status-timeline-25", "field": "status" },
+      { "id": "pg-status-timeline-26", "field": "allowed_transitions" }
+    ],
+    "surfaces": [
+      {
+        "surface": "html",
+        "codeBytes": 150072,
+        "sha256": "b9289d7a4320a640607b89e65221abb449f7b6a938566d96c51e81953fb96b59",
+        "rawDirectiveAttributes": false,
+        "childOrderAssertion": "passed"
+      },
+      {
+        "surface": "react",
+        "codeBytes": 12346,
+        "sha256": "b3f82df4b05c2648821e9583ebdf19e3e92b4076701376d50b2b5d3eca02100c",
+        "rawDirectiveAttributes": false,
+        "childOrderAssertion": "passed"
+      },
+      {
+        "surface": "vue",
+        "codeBytes": 12081,
+        "sha256": "048895a0df3411d5725d372b3194cb2b3f00c383bfc46d05cbd78c7277ffdd65",
+        "rawDirectiveAttributes": false,
+        "childOrderAssertion": "passed"
+      }
+    ],
+    "directRenderTree": "passed",
+    "replRenderDocument": "passed",
+    "mutationControl": "M07-bypass-composition-directives"
+  },
+  "strictTypecheck": {
+    "scope": "isolated widened nucleus binding probe against freshly built packages",
+    "react": {
+      "tool": "TypeScript createProgram strict:true, skipLibCheck:false",
+      "errors": 0,
+      "status": "passed"
+    },
+    "vue": {
+      "tool": "vue-tsc --noEmit --pretty false with strict:true, skipLibCheck:false",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    "fullSavedSchemaDependency": "Full Subscription output imports the eight non-nucleus components whose /ported package exports are introduced by s184-m04. No stub or premature main-export was added in m03."
+  },
+  "bindingRepresentations": {
+    "booleanSelect": {
+      "html": "data-bind=value:cancelAtPeriodEnd plus a non-bare placeholder value",
+      "react": "value={String(cancelAtPeriodEnd)}",
+      "vue": ":modelValue=String(cancelAtPeriodEnd) without v-model on the readonly boolean"
+    },
+    "arrayText": {
+      "html": "[allowedTransitions] named binding placeholder",
+      "react": "Array.isArray(allowedTransitions) ? allowedTransitions.join(', ') : ''",
+      "vue": "Array.isArray(allowedTransitions) ? allowedTransitions.join(', ') : ''"
+    },
+    "forbiddenRepresentations": ["[object Object]", "bare true"],
+    "status": "passed"
+  },
+  "invalidPropMatrix": {
+    "casesPerTarget": 4,
+    "targetCells": 8,
+    "cases": [
+      "Select.bogusProp",
+      "Stack.bogusProp",
+      "Text.bogusProp",
+      "Select.placeholder<number>"
+    ],
+    "targets": ["react", "vue"],
+    "expected": {
+      "code": "OODS-V007",
+      "status": "error",
+      "generatedCode": "",
+      "imports": [],
+      "artifact": "absent"
+    },
+    "observedErrorCells": 8,
+    "observedNoArtifactCells": 8,
+    "companionCountAssertion": "passed"
+  },
+  "contractVersions": {
+    "total": 14,
+    "version1_1": 3,
+    "version1_1Ids": ["Select", "Stack", "Text"],
+    "version1_0": 11,
+    "nucleusKeySetAssertion": "passed"
+  },
+  "readinessDisposition": {
+    "source": "artifacts/product-reality/sprint-184/m03/closeout-report.json",
+    "historicalManifestContractVersion": "1.0.0",
+    "meaning": "frozen Sprint-182 foundation evidence metadata, not a live per-component version claim",
+    "manifestsByteExact": 2,
+    "referencesResolved": 178,
+    "referencesTotal": 178,
+    "componentAmendmentsStranded": false,
+    "status": "passed"
+  },
+  "m01FreezeAccounting": {
+    "inventoryRows": 34,
+    "uniquePaths": 33,
+    "unchangedPaths": 31,
+    "declaredTrackedTransition": "packages/component-contracts/src/contracts.ts",
+    "declaredDerivedTransition": "packages/components-vue/dist/index.d.ts",
+    "reactDeclarationUnchanged": "packages/components-react/dist/index.d.ts",
+    "status": "passed"
+  },
+  "advertisedSurface": {
+    "source": "artifacts/product-reality/sprint-184/m03/advertised-movers.json",
+    "implementationMovers": 16,
+    "testMovers": 6,
+    "setEqualityBothDirections": "passed",
+    "forwardConsumer": "s184-m07"
+  },
+  "mutationEvidence": {
+    "source": "artifacts/product-reality/sprint-184/m03/mutations/mutation-manifest.json",
+    "requested": 7,
+    "killed": 7,
+    "survived": 0,
+    "restoredByteIdentically": 7,
+    "status": "passed"
+  },
+  "verification": {
+    "packageLog": "artifacts/product-reality/sprint-184/m03/logs/package-verification.log",
+    "focusedLog": "artifacts/product-reality/sprint-184/m03/logs/focused-suite.log",
+    "readinessLog": "artifacts/product-reality/sprint-184/m03/logs/readiness-refs.log",
+    "fullServerLog": "artifacts/product-reality/sprint-184/m03/logs/full-server-suite.log",
+    "fullServerSuite": {
+      "filesPassed": 246,
+      "filesSkipped": 1,
+      "testsPassed": 4917,
+      "testsSkipped": 16,
+      "exitCode": 0,
+      "knownPreExistingSkips": [
+        "test/e2e/action-mappings.e2e.spec.ts: 9",
+        "test/e2e/stage1-rollups.e2e.spec.ts: 7"
+      ],
+      "missionSelectedSkipped": 0
+    }
+  },
+  "unrunChecks": [],
+  "status": "passed"
+}

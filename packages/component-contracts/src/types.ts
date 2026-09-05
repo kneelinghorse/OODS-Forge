@@ -28,9 +28,38 @@ export const NUCLEUS_COMPONENT_IDS = [
 
 export type NucleusComponentId = (typeof NUCLEUS_COMPONENT_IDS)[number];
 
+export const PORTED_COMPONENT_IDS = [
+  'AuditTimeline',
+  'CancellationSummary',
+  'PaginationBar',
+  'PriceBadge',
+  'RelativeTimestamp',
+  'SearchInput',
+  'StatusBadge',
+  'StatusTimeline',
+] as const;
+
+export type PortedComponentId = (typeof PORTED_COMPONENT_IDS)[number];
+export type GovernedComponentId = NucleusComponentId | PortedComponentId;
+
+/**
+ * Cross-component workflow states understood by generated UI branches.
+ *
+ * These are deliberately separate from `ComponentContract.states`, which
+ * describe a component's own visual or interaction states.
+ */
+export const UI_WORKFLOW_STATES = [
+  'loading',
+  'empty',
+  'error',
+  'success',
+] as const;
+
+export type UiWorkflowState = (typeof UI_WORKFLOW_STATES)[number];
+
 export type ComponentContract = {
-  id: NucleusComponentId;
-  version: '1.0.0';
+  id: GovernedComponentId;
+  version: '1.0.0' | '1.1.0';
   props: readonly string[];
   slots: readonly string[];
   events: readonly string[];
@@ -42,7 +71,7 @@ export type ComponentContract = {
 
 export type SharedScenario = {
   id: string;
-  oodsComponentId: NucleusComponentId;
+  oodsComponentId: GovernedComponentId;
   props: Readonly<Record<string, unknown>>;
   slots: Readonly<Record<string, unknown>>;
   initialState: Readonly<Record<string, unknown>>;

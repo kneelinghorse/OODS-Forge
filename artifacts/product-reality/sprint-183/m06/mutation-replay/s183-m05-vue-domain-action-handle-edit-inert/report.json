@@ -1,0 +1,80 @@
+{
+  "id": "s183-m05-vue-domain-action-handle-edit-inert",
+  "sourceMission": "s183-m05",
+  "framework": "vue",
+  "kind": "domain-action-handle-edit-inert",
+  "status": "passed",
+  "baseline": {
+    "commit": "4b4c77f0ec06d632e11f910f6124859ac65c7106",
+    "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/source/src/main.ts",
+    "targetFile": "src/main.ts",
+    "sha256": "sha256:19753271133816b58c00da2705c767190ffc48b23e87b71a8663d954b815e191"
+  },
+  "patch": {
+    "path": "artifacts/product-reality/sprint-183/m05/consumers/vue/mutations/domain-action-handle-edit-inert/mutation.patch",
+    "sha256": "sha256:ff3edb56d8bacf60a1b8cede6135927265021a8a969f39dca3aafc8b523444ec",
+    "committedAtBaseline": true,
+    "checkExitCode": 0,
+    "applyExitCode": 0
+  },
+  "mutatedSha256": "sha256:0481379e05501c606effa5bed5bb3b0f616d6a34944d9119c735ba403be7028d",
+  "reverse": {
+    "checkExitCode": 0,
+    "applyExitCode": 0,
+    "restoredSha256": "sha256:19753271133816b58c00da2705c767190ffc48b23e87b71a8663d954b815e191",
+    "byteIdentical": true
+  },
+  "descriptor": {
+    "schemaVersion": "1.0.0",
+    "mission": "s183-m05",
+    "framework": "vue",
+    "kind": "domain-action-handle-edit-inert",
+    "operation": "replace-exactly-once",
+    "targetFile": "src/main.ts",
+    "needle": "  handleEdit: () => { window.__OODS_DOMAIN_ACTIONS__.handleEdit += 1; },",
+    "replacement": "  handleEdit: () => undefined,",
+    "expectedGate": "interaction-evidence",
+    "beforeSha256": "sha256:19753271133816b58c00da2705c767190ffc48b23e87b71a8663d954b815e191",
+    "afterSha256": "sha256:0481379e05501c606effa5bed5bb3b0f616d6a34944d9119c735ba403be7028d",
+    "patchSha256": "sha256:ff3edb56d8bacf60a1b8cede6135927265021a8a969f39dca3aafc8b523444ec"
+  },
+  "expectedGate": "interaction-evidence",
+  "redControl": {
+    "executed": true,
+    "verifier": "fresh isolated Sprint-183 M05 packed-consumer harness",
+    "patchByteIdenticalToStoredArtifact": true,
+    "status": "detected",
+    "expected": {
+      "gate": "interaction-evidence",
+      "status": "failed"
+    },
+    "observed": {
+      "gate": "interaction-evidence",
+      "status": "failed"
+    },
+    "reason": "[interaction-evidence] vue domain actions were not both invoked once: {\"handleEdit\":0,\"handleDelete\":1}.",
+    "browser": {
+      "mount": "passed",
+      "hydration": "passed",
+      "hydrationInvariantEqual": true,
+      "runtimeErrors": [],
+      "interactions": {
+        "initialSelectedTab": "detail-tab-panel-3",
+        "selectedTab": "detail-tab-panel-5",
+        "selectedPanel": "slot-tab-1-6",
+        "selectedTabPanelDomId": "oods-v-0-panel-detail-tab-panel-5",
+        "initialVisiblePanelContentId": "slot-tab-0-4",
+        "initialFirstTabSelected": true,
+        "initialFirstPanelHidden": false,
+        "firstTabSelectedAfter": false,
+        "firstPanelHiddenAfter": true,
+        "secondTabSelectedAfter": true,
+        "secondPanelHiddenAfter": false,
+        "domainActions": {
+          "handleEdit": 0,
+          "handleDelete": 1
+        }
+      }
+    }
+  }
+}

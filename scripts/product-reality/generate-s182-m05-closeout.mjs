@@ -7,14 +7,18 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { evaluateIndependentReviewApproval } from "./independent-review-approval.mjs";
+
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, "../..");
 
 const BASELINE_COMMIT = "ae560bc22969c1fd81336730be4330c9115fc316";
 const PLANNING_COMMIT = "8ce349076e7e3ba3f0b2f3f667d4fbb5c6a4b63b";
 const DERIVATION_HEAD = "db302641acad22dc29fd0e2c6b1a0925411d4f34";
+const HISTORICAL_CLOSEOUT_COMMIT = "ca8d84bbce165b656fd5cd83cc097c28fa774f19";
 const SPRINT_ROOT = "artifacts/product-reality/sprint-182";
 const M05_ROOT = `${SPRINT_ROOT}/m05`;
+const REVIEW_ROOT = `${SPRINT_ROOT}/review`;
 
 const PATHS = {
   baseline:
@@ -26,12 +30,81 @@ const PATHS = {
   reactReadiness: "packages/components-react/evidence/react-readiness.v1.json",
   vueReadiness: "packages/components-vue/evidence/vue-readiness.v1.json",
   m04Ledger: `${SPRINT_ROOT}/m04/codegen-usable-ledger.json`,
+  independentReview: `${SPRINT_ROOT}/review/independent-review.v1.json`,
+  r02PackageExportResolution:
+    "artifacts/product-reality/sprint-183/m06/r02-package-export-resolution.json",
+  r01CorrectedMutation:
+    "artifacts/product-reality/sprint-183/m06/mutation-replay/s182-m01b-brand-b-primary-contrast/mutation.patch",
+  r01ReplayReport:
+    "artifacts/product-reality/sprint-183/m06/mutation-replay/s182-m01b-brand-b-primary-contrast/report.json",
+  mutationReplayReceipt:
+    "artifacts/product-reality/sprint-183/m06/mutation-replay/report.json",
   claimDiff: `${M05_ROOT}/claim-diff.json`,
+  promotionCloseout: `${REVIEW_ROOT}/foundation-v1-promotion-projection.v1.json`,
+  promotionClaimDiff: `${REVIEW_ROOT}/foundation-v1-claim-diff.v1.json`,
+  promotionBinding: `${REVIEW_ROOT}/foundation-v1-promotion-binding.v1.json`,
+  canonicalFoundationV1:
+    "packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json",
   evidenceIndex: `${M05_ROOT}/evidence-index.json`,
   maintenanceDisposition: `${M05_ROOT}/maintenance-disposition.json`,
   changedPathInventory: `${M05_ROOT}/changed-path-inventory.json`,
   rehashPaths: `${M05_ROOT}/rehash-paths.txt`,
 };
+
+export const S182_PROMOTION_PATHS = deepFreeze({
+  closeout: PATHS.promotionCloseout,
+  claimDiff: PATHS.promotionClaimDiff,
+  binding: PATHS.promotionBinding,
+  canonicalFoundationV1: PATHS.canonicalFoundationV1,
+});
+
+export const S182_HISTORICAL_INTEGRITY = deepFreeze({
+  commit: HISTORICAL_CLOSEOUT_COMMIT,
+  artifacts: [
+    {
+      path: `${SPRINT_ROOT}/m01b/mutation/mutation.patch`,
+      bytes: 306,
+      sha256:
+        "a8ab5fd497ca1efcf7920f72c2afbe063a831133134baaa8288c6c9b2199ccaf",
+      role: "frozen-mutation-patch",
+    },
+    {
+      path: PATHS.closeout,
+      bytes: 255063,
+      sha256:
+        "860218936e3e1a7b081e4849ce2abacacea03cb5714642b74e249a918e18202f",
+      role: "indexed-truth-plane",
+    },
+    {
+      path: PATHS.claimDiff,
+      bytes: 3143,
+      sha256:
+        "d62ebfdccf731f6a0c74ac1dd4988b8ee302c41330c0c6db7fe274554fe1fa60",
+      role: "frozen-claim-diff",
+    },
+    {
+      path: PATHS.evidenceIndex,
+      bytes: 189914,
+      sha256:
+        "f341a33e7544300d7d0a7357b6fab00e9e0515a5778880dac5938e00d2caab47",
+      role: "frozen-evidence-index",
+    },
+    {
+      path: `${M05_ROOT}/gate-record.json`,
+      bytes: 12590795,
+      sha256:
+        "c4a14def13d494fdf0b447a4592dbda1ad2d3cc78710502b8934e818063b9202",
+      role: "frozen-gate-record",
+    },
+    {
+      path: `${M05_ROOT}/gate-record.md`,
+      bytes: 12493042,
+      sha256:
+        "4da0a450296137f0a5efab55e24f69acff4563cbfbf4c9ee6a4d4f1532d5e8ff",
+      role: "frozen-gate-record",
+    },
+  ],
+});
 
 const JSON_OUTPUTS = [
   PATHS.closeout,
@@ -89,6 +162,54 @@ const FROZEN_FOUNDATION_EVIDENCE_CLASSES = [
   "packedImport",
   "codegenConsumer",
 ];
+
+const S182_REVIEW_VERIFICATION_IDS = [
+  "final-head-source-equivalence",
+  "package-foundations-4-of-4",
+  "root-typecheck",
+  "codegen-19-of-19",
+  "react-root-export-14",
+  "vue-root-export-14",
+  "vue-no-react-radix-rjsf-runtime",
+  "m01b-mutation-discrimination",
+  "claim-ref-existence-654",
+  "l06-reconnect",
+  "maintenance-carry-1315-1322",
+];
+
+function deepFreeze(value) {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    for (const child of Object.values(value)) deepFreeze(child);
+    Object.freeze(value);
+  }
+  return value;
+}
+
+export const S182_FOUNDATION_REVIEW_EXPECTATION = deepFreeze({
+  predicate: "foundation-v1",
+  producerSessionId: "PS-2026-09-04-003",
+  producerActor: "Codex",
+  reviewSessionId: "PS-2026-09-04-004",
+  reviewerActor: "assistant",
+  authorizationSessionId: "PS-2026-09-04-005",
+  authorizerPrincipal: "Derek",
+  derivationHead: DERIVATION_HEAD,
+  reviewedHead: "ca8d84bbce165b656fd5cd83cc097c28fa774f19",
+  reviewDecisionId: 1662,
+  reviewedAt: "2026-09-04T16:19:45.117Z",
+  authorizationDecisionId: 1663,
+  authorizedAt: "2026-09-04T17:03:16.318Z",
+  reviewDisposition: "accepted",
+  authorizationDisposition: "approved",
+  cells: ["react", "vue"].flatMap((target) =>
+    FROZEN_NUCLEUS.map((componentId) => ({ target, componentId })),
+  ),
+  verificationIds: S182_REVIEW_VERIFICATION_IDS,
+  residuals: [
+    { id: "R-01", disposition: "resolved-before-promotion" },
+    { id: "R-02", disposition: "carried-disclosed" },
+  ],
+});
 
 const CANONICAL_MUTATION_RECEIPT_PATHS = [
   `${SPRINT_ROOT}/gates/B-01/drop/receipt.json`,
@@ -320,6 +441,52 @@ function readJson(repoPath) {
   return JSON.parse(fs.readFileSync(fullPath(repoPath), "utf8"));
 }
 
+function contentAddress(repoPath, contents) {
+  return {
+    path: repoPath,
+    bytes: contents.byteLength,
+    sha256: sha256(contents),
+  };
+}
+
+function readHistoricalArtifact(repoPath) {
+  return childProcess.execFileSync(
+    "git",
+    ["show", `${HISTORICAL_CLOSEOUT_COMMIT}:${repoPath}`],
+    { cwd: repoRoot, maxBuffer: 32 * 1024 * 1024 },
+  );
+}
+
+export function checkHistoricalIntegrity() {
+  for (const expected of S182_HISTORICAL_INTEGRITY.artifacts) {
+    const contents = fs.readFileSync(fullPath(expected.path));
+    assert(
+      contents.byteLength === expected.bytes &&
+        sha256(contents) === expected.sha256,
+      `Historical Sprint 182 artifact drifted from ${HISTORICAL_CLOSEOUT_COMMIT}: ${expected.path}`,
+    );
+  }
+  return true;
+}
+
+export function restoreHistoricalIntegrity() {
+  for (const expected of S182_HISTORICAL_INTEGRITY.artifacts) {
+    const contents = readHistoricalArtifact(expected.path);
+    assert(
+      contents.byteLength === expected.bytes &&
+        sha256(contents) === expected.sha256,
+      `Git object does not match the pinned historical address: ${expected.path}`,
+    );
+    fs.writeFileSync(fullPath(expected.path), contents);
+  }
+  checkHistoricalIntegrity();
+}
+
+function readOptionalJson(repoPath) {
+  if (!fs.existsSync(fullPath(repoPath))) return null;
+  return readJson(repoPath);
+}
+
 function git(args) {
   return childProcess
     .execFileSync("git", args, { cwd: repoRoot, encoding: "utf8" })
@@ -370,7 +537,7 @@ function targetInputs(target) {
   };
 }
 
-function passingFoundationEvidence(target, readinessRow) {
+function passingFoundationEvidence(target, readinessRow, r02Cell) {
   const inputs = targetInputs(target);
   const readinessEvidence = readinessRow.evidence;
   return {
@@ -389,8 +556,9 @@ function passingFoundationEvidence(target, readinessRow) {
         inputs.readinessPath,
         `${SPRINT_ROOT}/gates/B-12/verifier-green/package-foundations/report.json`,
         ...readinessEvidence.packageExport.refs,
-        ...readinessEvidence.publicDeclaration.refs,
         ...readinessEvidence.dependencyClosure.refs,
+        r02Cell.packageExport.tarballPath,
+        `${PATHS.r02PackageExportResolution}#${target}:${readinessRow.componentId}`,
       ]),
     },
     scenarioBehavior: {
@@ -449,10 +617,11 @@ function surfaceEvidence(target, readinessRow) {
   ]);
 }
 
-function buildCapabilityCloseout() {
+export function buildCapabilityCloseout(options = {}) {
   const baseline = readJson(PATHS.baseline);
   const reconciliation = readJson(PATHS.reconciliation);
   const codegenLedger = readJson(PATHS.m04Ledger);
+  const r02Resolution = readJson(PATHS.r02PackageExportResolution);
   const readinessDocuments = {
     react: readJson(PATHS.reactReadiness),
     vue: readJson(PATHS.vueReadiness),
@@ -461,6 +630,29 @@ function buildCapabilityCloseout() {
   const nucleusSet = new Set(nucleus);
   const baselineIds = baseline.rows.map((row) => row.id);
   const reconciliationIds = reconciliation.rows.map((row) => row.id);
+  const r02Cells = new Map(
+    (Array.isArray(r02Resolution.cells) ? r02Resolution.cells : []).map(
+      (cell) => [`${cell.target}:${cell.componentId}`, cell],
+    ),
+  );
+  const approvalRecord = Object.prototype.hasOwnProperty.call(
+    options,
+    "approvalRecord",
+  )
+    ? options.approvalRecord
+    : readOptionalJson(PATHS.independentReview);
+  const reviewGate = evaluateIndependentReviewApproval({
+    record: approvalRecord,
+    expectation: S182_FOUNDATION_REVIEW_EXPECTATION,
+    resolveHead: options.resolveHead,
+  });
+  assert(
+    reviewGate.outcome !== "invalid",
+    `Independent-review approval record is invalid: ${reviewGate.reasons
+      .map((reason) => `${reason.code}: ${reason.message}`)
+      .join("; ")}`,
+  );
+  const independentReviewApproved = reviewGate.outcome === "approved";
 
   assert(
     JSON.stringify(nucleus) === JSON.stringify(FROZEN_NUCLEUS),
@@ -495,6 +687,17 @@ function buildCapabilityCloseout() {
   assert(
     reconciliation.proposedRuntimeCensus.nonRuntimeRows === 11,
     "Proposed non-runtime census must remain 11",
+  );
+  assert(
+    r02Resolution.risk === "R-02" &&
+      r02Resolution.status === "resolved" &&
+      r02Resolution.selected === 28 &&
+      r02Resolution.passed === 28 &&
+      r02Resolution.failed === 0 &&
+      r02Resolution.skipped === 0 &&
+      r02Resolution.workspaceBuildOutputRequired === false &&
+      r02Cells.size === 28,
+    "R-02 package-export resolution must prove all 28 cells from tracked tarballs",
   );
 
   const codegenCells = new Set(
@@ -545,9 +748,16 @@ function buildCapabilityCloseout() {
         codegenCells.has(`${target}:${componentId}`),
         `${target}:${componentId} is not codegenUsable`,
       );
-      const evidence = passingFoundationEvidence(target, readinessRow);
+      const r02Cell = r02Cells.get(`${target}:${componentId}`);
+      assert(
+        r02Cell?.packageExport?.status === "passed" &&
+          typeof r02Cell.packageExport.tarballPath === "string" &&
+          fs.existsSync(fullPath(r02Cell.packageExport.tarballPath)),
+        `${target}:${componentId} lacks tracked R-02 package-export evidence`,
+      );
+      const evidence = passingFoundationEvidence(target, readinessRow, r02Cell);
       const evaluation = evaluateFoundationV1(evidence, {
-        independentReviewApproved: false,
+        independentReviewApproved,
       });
       foundationCells.push({
         componentId,
@@ -556,7 +766,7 @@ function buildCapabilityCloseout() {
         emissionEligible: true,
         codegenUsable: true,
         evidence,
-        independentReviewApproved: false,
+        independentReviewApproved,
         evaluation,
       });
     }
@@ -625,7 +835,12 @@ function buildCapabilityCloseout() {
     proposedRuntimeCensus: structuredClone(
       reconciliation.proposedRuntimeCensus,
     ),
-    independentReviewApproved: false,
+    independentReviewApproved,
+    independentReviewOutcome: reviewGate.outcome,
+    independentReviewRecord: PATHS.independentReview,
+    riskResolutions: {
+      "R-02": PATHS.r02PackageExportResolution,
+    },
     foundationEvidenceClasses: [...FOUNDATION_V1_EVIDENCE_CLASSES],
     summary: {
       rows: rows.length,
@@ -645,7 +860,7 @@ function buildCapabilityCloseout() {
   };
 }
 
-function buildClaimDiff(closeout) {
+export function buildClaimDiff(closeout) {
   const baseline = readJson(PATHS.baseline);
   const baselineSurfaceStates = {};
   const closeoutSurfaceStates = {};
@@ -671,7 +886,9 @@ function buildClaimDiff(closeout) {
     planningCommit: PLANNING_COMMIT,
     derivationHead: closeout.derivationHead,
     boundary:
-      "Evidence-derived closeout claims only; independent review remains required for foundation-v1.",
+      closeout.independentReviewOutcome === "approved"
+        ? "Foundation-v1 is promoted only by the validated independent-review approval record; runtime-census approval remains outside this scope."
+        : "Evidence-derived closeout claims only; independent review remains required for foundation-v1.",
     claims: [
       {
         id: "controlling-component-denominator",
@@ -717,7 +934,10 @@ function buildClaimDiff(closeout) {
         id: "foundation-v1",
         baseline: 0,
         closeout: closeout.summary.foundationV1Cells,
-        disposition: "withheld-pending-independent-review",
+        disposition:
+          closeout.independentReviewOutcome === "approved"
+            ? "promoted-by-validated-independent-review-record"
+            : "withheld-pending-independent-review",
       },
     ],
     surfaceStateDiff: {
@@ -1226,17 +1446,11 @@ function buildRehashPaths(evidenceIndex) {
   return `${uniqueSorted([...critical, ...receiptsAndStableFinalEvidence]).join("\n")}\n`;
 }
 
-function validateDocuments(documents) {
-  const {
-    closeout,
-    claimDiff,
-    evidenceIndex,
-    maintenanceDisposition,
-    changedPathInventory,
-    rehashPaths,
-  } = documents;
+function validatePromotionProjection({ closeout, claimDiff }) {
   const baseline = readJson(PATHS.baseline);
   const nucleus = new Set(FROZEN_NUCLEUS);
+  const expectedFoundationCells =
+    closeout.independentReviewOutcome === "approved" ? 28 : 0;
   assert(
     closeout.rows.length === 109,
     "Closeout capability ledger must preserve all 109 rows",
@@ -1259,13 +1473,14 @@ function validateDocuments(documents) {
     "Exactly 28 cells must be foundation-v1 candidates",
   );
   assert(
-    closeout.summary.foundationV1Cells === 0,
-    "No cell may self-promote to foundation-v1",
+    closeout.summary.foundationV1Cells === expectedFoundationCells,
+    `Expected ${expectedFoundationCells} independently reviewed foundation-v1 cells`,
   );
   for (const cell of closeout.foundationCells) {
     assert(
-      cell.independentReviewApproved === false,
-      `${cell.target}:${cell.componentId} review approval must be false`,
+      cell.independentReviewApproved ===
+        (closeout.independentReviewOutcome === "approved"),
+      `${cell.target}:${cell.componentId} review projection differs from the validated record`,
     );
     assert(
       JSON.stringify(Object.keys(cell.evidence)) ===
@@ -1278,9 +1493,10 @@ function validateDocuments(documents) {
       `${cell.target}:${cell.componentId} is not a complete candidate`,
     );
     assert(
-      cell.evaluation.foundationV1 === false &&
+      cell.evaluation.foundationV1 ===
+        (closeout.independentReviewOutcome === "approved") &&
         cell.evaluation.incomplete.length === 0,
-      `${cell.target}:${cell.componentId} crossed the independent-review boundary`,
+      `${cell.target}:${cell.componentId} differs from the independent-review boundary`,
     );
   }
   for (let index = 0; index < baseline.rows.length; index += 1) {
@@ -1305,9 +1521,21 @@ function validateDocuments(documents) {
   );
   assert(
     claimDiff.claims.find((claim) => claim.id === "foundation-v1").closeout ===
-      0,
-    "Claim diff may not claim foundation-v1",
+      expectedFoundationCells,
+    "Claim diff foundation-v1 total differs from the validated review projection",
   );
+}
+
+function validateDocuments(documents) {
+  const {
+    closeout,
+    claimDiff,
+    evidenceIndex,
+    maintenanceDisposition,
+    changedPathInventory,
+    rehashPaths,
+  } = documents;
+  validatePromotionProjection({ closeout, claimDiff });
   assert(
     maintenanceDisposition.rows.length === 8,
     "Maintenance disposition must contain #1315-#1322",
@@ -1365,9 +1593,16 @@ function validateDocuments(documents) {
   );
 }
 
-function buildDocuments() {
-  const closeout = buildCapabilityCloseout();
+export function buildPromotionProjection(options = {}) {
+  const closeout = buildCapabilityCloseout(options);
   const claimDiff = buildClaimDiff(closeout);
+  const projection = { closeout, claimDiff };
+  validatePromotionProjection(projection);
+  return projection;
+}
+
+function buildDocuments() {
+  const { closeout, claimDiff } = buildPromotionProjection();
   const evidenceIndex = buildEvidenceIndex(closeout);
   const maintenanceDisposition = buildMaintenanceDisposition(closeout);
   const changedPathInventory = buildChangedPathInventory(closeout);
@@ -1382,6 +1617,123 @@ function buildDocuments() {
   };
   validateDocuments(documents);
   return documents;
+}
+
+export function buildPromotionBinding(projection) {
+  validatePromotionProjection(projection);
+  const approvalRecord = fs.readFileSync(fullPath(PATHS.independentReview));
+  const r01CorrectedMutation = fs.readFileSync(
+    fullPath(PATHS.r01CorrectedMutation),
+  );
+  const r01ReplayReport = fs.readFileSync(fullPath(PATHS.r01ReplayReport));
+  const mutationReplayReceipt = fs.readFileSync(
+    fullPath(PATHS.mutationReplayReceipt),
+  );
+  const r02Resolution = fs.readFileSync(
+    fullPath(PATHS.r02PackageExportResolution),
+  );
+  const closeout = Buffer.from(canonicalJson(projection.closeout));
+  const claimDiff = Buffer.from(canonicalJson(projection.claimDiff));
+  assert(
+    projection.closeout.independentReviewApproved === true &&
+      projection.closeout.summary.foundationV1Cells === 28,
+    `Only the approved 28-cell projection can be published as the promotion supersession (approval outcome: ${projection.closeout.independentReviewOutcome})`,
+  );
+  return {
+    schemaVersion: "1.0.0",
+    mission: "s183-m06",
+    kind: "content-addressed-promotion-supersession",
+    status: "bound",
+    predicate: "foundation-v1",
+    historicalSnapshot: {
+      commit: HISTORICAL_CLOSEOUT_COMMIT,
+      preservedInPlace: true,
+      artifacts: S182_HISTORICAL_INTEGRITY.artifacts.map((artifact) => ({
+        ...artifact,
+        gitObject: `${HISTORICAL_CLOSEOUT_COMMIT}:${artifact.path}`,
+      })),
+    },
+    promotion: {
+      outcome: projection.closeout.independentReviewOutcome,
+      foundationV1Cells: projection.closeout.summary.foundationV1Cells,
+      inputs: [
+        contentAddress(PATHS.independentReview, approvalRecord),
+        contentAddress(PATHS.r01CorrectedMutation, r01CorrectedMutation),
+        contentAddress(PATHS.r01ReplayReport, r01ReplayReport),
+        contentAddress(PATHS.mutationReplayReceipt, mutationReplayReceipt),
+        contentAddress(PATHS.r02PackageExportResolution, r02Resolution),
+      ],
+      projections: [
+        {
+          ...contentAddress(PATHS.promotionCloseout, closeout),
+          supersedesInterpretationOf: PATHS.closeout,
+          historicalArtifactRewritten: false,
+        },
+        {
+          ...contentAddress(PATHS.promotionClaimDiff, claimDiff),
+          supersedesInterpretationOf: PATHS.claimDiff,
+          historicalArtifactRewritten: false,
+        },
+        {
+          ...contentAddress(PATHS.canonicalFoundationV1, closeout),
+          mirrors: PATHS.promotionCloseout,
+          packageExport:
+            "@oods/component-contracts/registry/capabilities/foundation-v1",
+          historicalArtifactRewritten: false,
+        },
+      ],
+    },
+    discovery: {
+      approvedCapabilityProjection: PATHS.promotionCloseout,
+      canonicalFoundationV1: PATHS.canonicalFoundationV1,
+      packageExport:
+        "@oods/component-contracts/registry/capabilities/foundation-v1",
+      approvedClaimDiff: PATHS.promotionClaimDiff,
+      approvalRecord: PATHS.independentReview,
+      r01CorrectedMutation: PATHS.r01CorrectedMutation,
+      r01ReplayReport: PATHS.r01ReplayReport,
+      mutationReplayReceipt: PATHS.mutationReplayReceipt,
+      r02Resolution: PATHS.r02PackageExportResolution,
+    },
+    integrityRule:
+      "The ca8d84bb Sprint 182 snapshot remains byte-exact at its indexed paths; later approval is a separately addressed projection, never an in-place rewrite.",
+  };
+}
+
+function writePromotionProjection(projection) {
+  checkHistoricalIntegrity();
+  const binding = buildPromotionBinding(projection);
+  const outputValues = {
+    [PATHS.promotionCloseout]: canonicalJson(projection.closeout),
+    [PATHS.promotionClaimDiff]: canonicalJson(projection.claimDiff),
+    [PATHS.canonicalFoundationV1]: canonicalJson(projection.closeout),
+    [PATHS.promotionBinding]: canonicalJson(binding),
+  };
+  for (const [repoPath, contents] of Object.entries(outputValues)) {
+    fs.mkdirSync(path.dirname(fullPath(repoPath)), { recursive: true });
+    fs.writeFileSync(fullPath(repoPath), contents);
+  }
+}
+
+function checkPromotionProjection(projection) {
+  checkHistoricalIntegrity();
+  const binding = buildPromotionBinding(projection);
+  const outputValues = {
+    [PATHS.promotionCloseout]: canonicalJson(projection.closeout),
+    [PATHS.promotionClaimDiff]: canonicalJson(projection.claimDiff),
+    [PATHS.canonicalFoundationV1]: canonicalJson(projection.closeout),
+    [PATHS.promotionBinding]: canonicalJson(binding),
+  };
+  for (const [repoPath, expected] of Object.entries(outputValues)) {
+    assert(
+      fs.existsSync(fullPath(repoPath)),
+      `Missing generated promotion projection: ${repoPath}`,
+    );
+    assert(
+      fs.readFileSync(fullPath(repoPath), "utf8") === expected,
+      `Generated promotion projection is stale: ${repoPath}`,
+    );
+  }
 }
 
 function writeDocuments(documents) {
@@ -1426,19 +1778,41 @@ function checkDocuments(documents) {
   }
 }
 
-const command = process.argv[2] ?? "--check";
-if (command === "--write") {
-  const documents = buildDocuments();
-  writeDocuments(documents);
-  console.log(
-    `Wrote Sprint 182 M05 closeout: ${documents.closeout.rows.length} rows, ${documents.closeout.summary.foundationV1CandidateCells} candidates, ${documents.closeout.summary.foundationV1Cells} foundation-v1.`,
-  );
-} else if (command === "--check") {
-  const documents = buildDocuments();
-  checkDocuments(documents);
-  console.log(
-    `Verified Sprint 182 M05 closeout: 109 rows, 98/11 proposed census, 28 candidates, 0 foundation-v1; ${documents.evidenceIndex.files.length} evidence files indexed.`,
-  );
-} else {
-  throw new Error(`Unknown command: ${command}`);
+export function run(command = "--check", options = {}) {
+  if (command === "--write-promotion") {
+    const projection = buildPromotionProjection(options);
+    writePromotionProjection(projection);
+    console.log(
+      `Wrote separately addressed Sprint 182 independent-review projection: ${projection.closeout.summary.foundationV1Cells} foundation-v1 cells (${projection.closeout.independentReviewOutcome}). The ca8d84bb historical paths remain byte-exact.`,
+    );
+  } else if (command === "--check-promotion") {
+    const projection = buildPromotionProjection(options);
+    checkPromotionProjection(projection);
+    console.log(
+      `Verified Sprint 182 independent-review projection: ${projection.closeout.summary.foundationV1Cells} foundation-v1 cells (${projection.closeout.independentReviewOutcome}).`,
+    );
+  } else if (command === "--restore-historical") {
+    restoreHistoricalIntegrity();
+    console.log(
+      `Restored all pinned Sprint 182 historical artifacts to their exact ${HISTORICAL_CLOSEOUT_COMMIT} bytes.`,
+    );
+  } else if (command === "--write") {
+    throw new Error(
+      "Sprint 182 closeout history is frozen; use --write-promotion for the separately addressed approval projection.",
+    );
+  } else if (command === "--check") {
+    checkHistoricalIntegrity();
+    console.log(
+      `Verified the byte-exact ${HISTORICAL_CLOSEOUT_COMMIT} Sprint 182 closeout, claim diff, evidence index, and gate records.`,
+    );
+  } else {
+    throw new Error(
+      `Unknown command: ${command}; expected --check-promotion, --write-promotion, --restore-historical, --check, or --write`,
+    );
+  }
 }
+
+const invokedPath = process.argv[1]
+  ? pathToFileURL(path.resolve(process.argv[1])).href
+  : null;
+if (invokedPath === import.meta.url) run(process.argv[2] ?? "--check");

@@ -308,8 +308,14 @@ describe('XSS: nested prop escalation', () => {
         ],
       }),
     );
-    expect(html).not.toContain('<script>');
+    // Tabs ships one fixed first-party behavior bootstrap. Untrusted content
+    // remains escaped and never enters that script body.
+    expect(html.match(/<script\b/g)).toHaveLength(1);
+    expect(html).toContain('<script data-oods-runtime="tabs">');
+    expect(html).not.toContain('<script>alert');
     expect(html).not.toContain('<img');
+    expect(html).toContain('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
+    expect(html).toContain('&lt;img onerror=alert(1) src=x&gt;');
   });
 
   it('escapes XSS in timeline event fields', () => {

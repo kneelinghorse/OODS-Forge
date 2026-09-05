@@ -77,24 +77,34 @@ export const Table = defineComponent({
         }),
       }),
       h(TableBody, {}, {
-        default: () => slots.body?.() ?? props.rows.map((row, rowIndex) => (
-          slots.row?.({ row, rowIndex, activate: () => activate(row) })
-          ?? h(TableRow, { key: row.id }, {
-            default: () => props.columns.map((column, columnIndex) => {
-              const content = slots.cell?.({ row, column, value: row[column.key] })
-                ?? String(row[column.key] ?? '');
-              return h(TableCell, { key: column.key }, {
-                default: () => props.selectable && columnIndex === 0
-                  ? h('button', {
-                      type: 'button',
-                      class: 'oods-table-row-action',
-                      onClick: () => activate(row),
-                    }, content)
-                  : content,
-              });
-            }),
-          })
-        )),
+        default: () => slots.body?.() ?? (
+          props.rows.length === 0
+            ? h(TableRow, {}, {
+                default: () => h(TableCell, {
+                  colspan: Math.max(props.columns.length, 1),
+                }, {
+                  default: () => 'No rows available.',
+                }),
+              })
+            : props.rows.map((row, rowIndex) => (
+                slots.row?.({ row, rowIndex, activate: () => activate(row) })
+                ?? h(TableRow, { key: row.id }, {
+                  default: () => props.columns.map((column, columnIndex) => {
+                    const content = slots.cell?.({ row, column, value: row[column.key] })
+                      ?? String(row[column.key] ?? '');
+                    return h(TableCell, { key: column.key }, {
+                      default: () => props.selectable && columnIndex === 0
+                        ? h('button', {
+                            type: 'button',
+                            class: 'oods-table-row-action',
+                            onClick: () => activate(row),
+                          }, content)
+                        : content,
+                    });
+                  }),
+                })
+              ))
+        ),
       }),
     ]);
   },

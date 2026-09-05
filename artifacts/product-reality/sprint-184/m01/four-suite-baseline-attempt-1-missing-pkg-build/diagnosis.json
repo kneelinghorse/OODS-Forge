@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-184",
+  "missionId": "s184-m01",
+  "kind": "four-suite-baseline-attempt-diagnosis",
+  "measuredHead": "897e917c22f28cc0c2780e346cdc8a3fef0cdc86",
+  "classification": "setup-precondition-missing",
+  "failedSuite": "root-core",
+  "failedFile": "tests/contracts/public-api.contract.test.ts",
+  "failedTests": [
+    {
+      "name": "do not expose explicit `any` types",
+      "reason": "No generated declaration files were present in dist/pkg."
+    },
+    {
+      "name": "bundles viz-core runtime and types instead of leaking a workspace-only import",
+      "reason": "dist/pkg/index.js was absent."
+    },
+    {
+      "name": "keeps the source workspace dependency but publishes no workspace protocol",
+      "reason": "dist/pkg/package.json was absent."
+    }
+  ],
+  "runsAffected": [1, 2],
+  "sourceFix": "Add pnpm run pkg:build to capture setup before either full-suite run.",
+  "disposition": "Retained as a red attempt; it is not counted as an accepted baseline run."
+}

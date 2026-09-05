@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s184-m06",
+  "schema": "subscription-detail-dark",
+  "schemaRef": "compose-a710f0a9",
+  "framework": "react",
+  "status": "detected",
+  "selected": 8,
+  "passed": 6,
+  "failed": 1,
+  "skipped": 0,
+  "logPathBase": "artifact-root",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/hydration/logs/install.log",
+        "gate-bites/react/hydration/logs/isolation.log"
+      ],
+      "detail": {
+        "localTarballCount": 4,
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-react",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-react"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/component-styles/css-ported",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+          },
+          {
+            "specifier": "@oods/components-react",
+            "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+          },
+          {
+            "specifier": "@oods/components-react/ported",
+            "consumerRelative": "node_modules/@oods/components-react/dist/ported.js"
+          },
+          {
+            "specifier": "react",
+            "consumerRelative": "node_modules/react/index.js"
+          },
+          {
+            "specifier": "react-dom/client",
+            "consumerRelative": "node_modules/react-dom/client.js"
+          },
+          {
+            "specifier": "react-dom/server",
+            "consumerRelative": "node_modules/react-dom/server.node.js"
+          },
+          {
+            "specifier": "vite",
+            "consumerRelative": "node_modules/vite/dist/node/index.js"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/hydration/logs/typecheck.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/hydration/logs/production-build.log"
+      ],
+      "detail": {
+        "exitCode": 0
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/hydration/logs/server-render-build.log",
+        "gate-bites/react/hydration/logs/server-render-render.log"
+      ],
+      "detail": {
+        "bytes": 8505,
+        "sha256": "sha256:69ce63a5f6b5e7333c617808b6eab06d823d3d81a2a597d3da6fba5e9aa5ad40"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/hydration/logs/browser-proof.log"
+      ],
+      "detail": {
+        "rootId": "screen-detail-13",
+        "componentCounts": {
+          "AuditTimeline": 1,
+          "CancellationSummary": 1,
+          "Card": 1,
+          "Stack": 5,
+          "StatusTimeline": 2,
+          "Tabs": 1,
+          "Text": 2
+        },
+        "mountedExpectedComponents": [
+          "AuditTimeline",
+          "CancellationSummary",
+          "Card",
+          "Stack",
+          "StatusTimeline",
+          "Tabs",
+          "Text"
+        ],
+        "generatedCoreComponents": [
+          "Card",
+          "Stack",
+          "Tabs",
+          "Text"
+        ],
+        "generatedPortedComponents": [
+          "AuditTimeline",
+          "CancellationSummary",
+          "PriceBadge",
+          "StatusBadge",
+          "StatusTimeline"
+        ]
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "failed",
+      "logs": [
+        "gate-bites/react/hydration/logs/browser-proof.log"
+      ],
+      "reason": "subscription-detail-dark/react: hydration failed: {\"hydrationInvariant\":{\"before\":{\"rootChildren\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\"},{\"tag\":\"DIV\",\"id\":\"\",\"component\":null}],\"elements\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-header-1\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-header-2\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"ve-header-22\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SECTION\",\"id\":\"ve-header-23\",\"component\":\"CancellationSummary\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-body-10\",\"component\":\"Card\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tabs-9\",\"component\":\"Tabs\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"tablist\",\"selected\":null,\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-3\",\"component\":null,\"role\":\"tab\",\"selected\":\"true\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-5\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-7\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-14\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-16\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-18\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-20\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-3\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tab-panel-3\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-tab-0-4\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-25\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-26\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-5\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-7\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-14\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-16\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-18\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-20\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"detail-meta-11\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-metadata-12\",\"component\":\"AuditTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"group\",\"selected\":null,\"hidden\":false}]},\"after\":{\"rootChildren\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\"},{\"tag\":\"DIV\",\"id\":\"\",\"component\":null}],\"elements\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-header-1\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-header-2\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"ve-header-22\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SECTION\",\"id\":\"ve-header-23\",\"component\":\"CancellationSummary\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-body-10\",\"component\":\"Card\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tabs-9\",\"component\":\"Tabs\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"tablist\",\"selected\":null,\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-3\",\"component\":null,\"role\":\"tab\",\"selected\":\"true\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-5\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-7\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-14\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-16\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-18\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-20\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-3\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tab-panel-3\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-tab-0-4\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-25\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-26\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-5\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-7\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-14\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-16\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-18\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-20\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"detail-meta-11\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-metadata-12\",\"component\":\"AuditTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"group\",\"selected\":null,\"hidden\":false}]},\"equal\":true},\"runtimeErrors\":[]}"
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "passed",
+      "logs": [
+        "gate-bites/react/hydration/logs/css-proof.log",
+        "gate-bites/react/hydration/logs/browser-proof.log"
+      ],
+      "detail": {
+        "files": [
+          "index-7opa3Na3.css"
+        ],
+        "bytes": 293607,
+        "sha256": "sha256:00e647758179e4cd9a383cabf271ea1bc3f7564268b900066d09b1b7238c4165",
+        "core": true,
+        "ported": true,
+        "tokens": true,
+        "browser": {
+          "primaryTextToken": "oklch(0.92 0.02 92)",
+          "canvasToken": "oklch(0.18 0.05 45)"
+        }
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "unproven",
+      "logs": [],
+      "reason": "Not reached after hydration failed."
+    }
+  ],
+  "accounting": {
+    "totalGateCount": 8,
+    "provenCount": 6,
+    "namedUnprovenCount": 2,
+    "namedUnproven": [
+      {
+        "name": "hydration",
+        "status": "failed",
+        "reason": "subscription-detail-dark/react: hydration failed: {\"hydrationInvariant\":{\"before\":{\"rootChildren\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\"},{\"tag\":\"DIV\",\"id\":\"\",\"component\":null}],\"elements\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-header-1\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-header-2\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"ve-header-22\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SECTION\",\"id\":\"ve-header-23\",\"component\":\"CancellationSummary\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-body-10\",\"component\":\"Card\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tabs-9\",\"component\":\"Tabs\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"tablist\",\"selected\":null,\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-3\",\"component\":null,\"role\":\"tab\",\"selected\":\"true\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-5\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-7\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-14\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-16\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-18\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-20\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-3\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tab-panel-3\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-tab-0-4\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-25\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-26\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-5\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-7\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-14\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-16\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-18\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-20\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"detail-meta-11\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-metadata-12\",\"component\":\"AuditTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"group\",\"selected\":null,\"hidden\":false}]},\"after\":{\"rootChildren\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\"},{\"tag\":\"DIV\",\"id\":\"\",\"component\":null}],\"elements\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-header-1\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-header-2\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"ve-header-22\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SECTION\",\"id\":\"ve-header-23\",\"component\":\"CancellationSummary\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-body-10\",\"component\":\"Card\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tabs-9\",\"component\":\"Tabs\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"tablist\",\"selected\":null,\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-3\",\"component\":null,\"role\":\"tab\",\"selected\":\"true\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-5\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-7\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-14\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-16\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-18\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-20\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-3\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tab-panel-3\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-tab-0-4\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-25\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-26\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-5\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-7\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-14\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-16\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-18\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-20\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"detail-meta-11\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-metadata-12\",\"component\":\"AuditTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"group\",\"selected\":null,\"hidden\":false}]},\"equal\":true},\"runtimeErrors\":[]}"
+      },
+      {
+        "name": "interaction-evidence",
+        "status": "unproven",
+        "reason": "Not reached after hydration failed."
+      }
+    ],
+    "balanced": true
+  },
+  "reason": "subscription-detail-dark/react: hydration failed: {\"hydrationInvariant\":{\"before\":{\"rootChildren\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\"},{\"tag\":\"DIV\",\"id\":\"\",\"component\":null}],\"elements\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-header-1\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-header-2\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"ve-header-22\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SECTION\",\"id\":\"ve-header-23\",\"component\":\"CancellationSummary\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-body-10\",\"component\":\"Card\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tabs-9\",\"component\":\"Tabs\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"tablist\",\"selected\":null,\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-3\",\"component\":null,\"role\":\"tab\",\"selected\":\"true\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-5\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-7\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-14\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-16\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-18\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-20\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-3\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tab-panel-3\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-tab-0-4\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-25\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-26\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-5\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-7\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-14\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-16\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-18\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-20\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"detail-meta-11\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-metadata-12\",\"component\":\"AuditTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"group\",\"selected\":null,\"hidden\":false}]},\"after\":{\"rootChildren\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\"},{\"tag\":\"DIV\",\"id\":\"\",\"component\":null}],\"elements\":[{\"tag\":\"DIV\",\"id\":\"screen-detail-13\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-header-1\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-header-2\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"ve-header-22\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SECTION\",\"id\":\"ve-header-23\",\"component\":\"CancellationSummary\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-body-10\",\"component\":\"Card\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tabs-9\",\"component\":\"Tabs\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"tablist\",\"selected\":null,\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-3\",\"component\":null,\"role\":\"tab\",\"selected\":\"true\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-5\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-7\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-14\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-16\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-18\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"BUTTON\",\"id\":\"_R_p_-tab-detail-tab-panel-20\",\"component\":null,\"role\":\"tab\",\"selected\":\"false\",\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-3\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"detail-tab-panel-3\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-tab-0-4\",\"component\":\"StatusTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-25\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"SPAN\",\"id\":\"pg-status-timeline-26\",\"component\":\"Text\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-5\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-7\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-14\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-16\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-18\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"_R_p_-panel-detail-tab-panel-20\",\"component\":null,\"role\":\"tabpanel\",\"selected\":null,\"hidden\":true},{\"tag\":\"DIV\",\"id\":\"detail-meta-11\",\"component\":\"Stack\",\"role\":null,\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":\"slot-metadata-12\",\"component\":\"AuditTimeline\",\"role\":\"log\",\"selected\":null,\"hidden\":false},{\"tag\":\"DIV\",\"id\":null,\"component\":null,\"role\":\"group\",\"selected\":null,\"hidden\":false}]},\"equal\":true},\"runtimeErrors\":[]}",
+  "mutation": {
+    "id": "react-hydration-bite",
+    "gate": "hydration",
+    "operations": [
+      {
+        "target": "src/main.tsx",
+        "operation": "construct but do not mount the generated tree, preserving the production dependency and CSS closure while leaving the server-rendered DOM inert",
+        "replacementCount": 1,
+        "beforeSha256": "sha256:91639e66089113a738a86683c1bc97479ca34ab8dfe2ff30f9248858fdf93ea5",
+        "afterSha256": "sha256:674a361932d61e206539c58ac3d3c9d2ffdbd9ef94e0a9dbe969f9be0dab527e"
+      }
+    ]
+  },
+  "expectedFailedGate": "hydration",
+  "observedFailedGates": [
+    "hydration"
+  ],
+  "logs": [
+    "gate-bites/react/hydration/logs/install.log",
+    "gate-bites/react/hydration/logs/isolation.log",
+    "gate-bites/react/hydration/logs/typecheck.log",
+    "gate-bites/react/hydration/logs/production-build.log",
+    "gate-bites/react/hydration/logs/server-render-build.log",
+    "gate-bites/react/hydration/logs/server-render-render.log",
+    "gate-bites/react/hydration/logs/browser-proof.log",
+    "gate-bites/react/hydration/logs/css-proof.log",
+    "gate-bites/react/hydration/logs/mutation.log"
+  ]
+}

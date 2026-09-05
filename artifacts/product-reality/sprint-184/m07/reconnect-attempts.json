@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s184-m07",
+  "kind": "three-consumer-reconnect-disposition",
+  "status": "passed",
+  "recordingStatus": "passed",
+  "deliveryStatus": "completed-with-retired-consumer",
+  "criterionStatus": "passed",
+  "statusMeaning": "Passed means both active consumers received the exact Git-derived notice and the archived consumer has an explicit, machine-readable retirement disposition; no message id is fabricated.",
+  "auditHead": "cbcbce242f922c18ccfeefbe071bbb26d450dabf",
+  "implementationHead": "4f50d0b29693006261fba09ba54a353f19a2e820",
+  "plan": {
+    "path": "artifacts/product-reality/sprint-184/m07/reconnect-plan.json",
+    "revision": "4f50d0b29693006261fba09ba54a353f19a2e820",
+    "bytes": 17173,
+    "sha256": "1187af654cb50937d7469728c14b1d55e8aafa25693a69247a528178c1d68286"
+  },
+  "planFinalizationDisposition": {
+    "historicalFinalization": {
+      "noticeRecordPath": "artifacts/product-reality/sprint-184/m07/reconnect-notices.json",
+      "requiresImplementationHeadCommit": true,
+      "requiredMessageIds": 3,
+      "messageIdsMustBeNonEmptyAndUnique": true
+    },
+    "unrunCheckDispositions": [
+      {
+        "check": "The implementation head has not been committed.",
+        "resolution": "satisfied",
+        "evidence": "implementation-head-and-plan-byte-binding"
+      },
+      {
+        "check": "The three CMOS info_push requests have not been sent.",
+        "resolution": "two-active-sends-satisfied-one-retired",
+        "preservedRequiredSuccessfulDeliveries": 2,
+        "supersededRetiredDeliveryRequirements": 1
+      },
+      {
+        "check": "The three unique non-empty message IDs have not been recorded.",
+        "resolution": "two-active-message-ids-satisfied-one-retired",
+        "preservedRequiredMessageIds": 2,
+        "supersededRetiredMessageIdRequirements": 1
+      }
+    ],
+    "supersession": {
+      "authority": "product-owner",
+      "scope": "retired-destination-only",
+      "effectiveDispositionRecordPath": "artifacts/product-reality/sprint-184/m07/reconnect-attempts.json",
+      "strictThreeSuccessNoticeContractPreserved": true,
+      "retiredDestination": {
+        "targetAddress": "cmos://derek/dashboard-demos",
+        "consumerKind": "vendored",
+        "projectId": "0dc6bde8-2c52-4ffb-8a90-7cbe35eb031c"
+      },
+      "preservedActiveDestinations": [
+        {
+          "targetAddress": "cmos://derek/aquex-mcp",
+          "consumerKind": "live-mcp"
+        },
+        {
+          "targetAddress": "cmos://derek/forge-demos",
+          "consumerKind": "vendored"
+        }
+      ],
+      "supersededRequirements": {
+        "successfulDeliveryForRetiredDestination": true,
+        "messageIdForRetiredDestination": true
+      },
+      "preservedRequirements": {
+        "implementationHeadCommit": true,
+        "successfulActiveDeliveries": 2,
+        "uniqueNonEmptyActiveMessageIds": 2,
+        "activeMessageIdsMustBeNonEmptyAndUnique": true,
+        "activeRequestsMustRemainGitDerived": true
+      }
+    }
+  },
+  "derivation": {
+    "sprint183Movers": 10,
+    "sprint184TrancheMovers": 60,
+    "sprint184UniqueMovers": 48,
+    "sprint184DuplicatesRemoved": 12,
+    "crossSprintOverlap": 7,
+    "combinedUniqueMovers": 51
+  },
+  "attempts": [
+    {
+      "targetAddress": "cmos://derek/aquex-mcp",
+      "consumerKind": "live-mcp",
+      "status": "sent",
+      "attemptCount": 1,
+      "requestSha256": "0610073b5656014b88fbaf0ee2cd0ac9f378dca3dcab3da58beb9c4b996beea5",
+      "result": {
+        "success": true,
+        "messageId": "fba7014a-b7d3-46b9-89f0-9ac8afde69c3"
+      }
+    },
+    {
+      "targetAddress": "cmos://derek/dashboard-demos",
+      "consumerKind": "vendored",
+      "status": "retired",
+      "attemptCount": 2,
+      "result": {
+        "success": false,
+        "errorCode": "DASHBOARD_ERROR"
+      },
+      "failure": {
+        "classification": "archived-project",
+        "projectId": "0dc6bde8-2c52-4ffb-8a90-7cbe35eb031c",
+        "message": "Dashboard error: Project 'dashboard-demos' is archived and no longer accepts messages.",
+        "terminalDisposition": "Retired from the delivery requirement by explicit product-owner direction; no message id exists or is fabricated."
+      }
+    },
+    {
+      "targetAddress": "cmos://derek/forge-demos",
+      "consumerKind": "vendored",
+      "status": "sent",
+      "attemptCount": 1,
+      "requestSha256": "8b3aa5948955a7103f6e264805e83447bbd1c89e3ff29695e9aab5ed265cbd2e",
+      "result": {
+        "success": true,
+        "messageId": "3f764e7e-b716-41ba-beef-4b6bc2407b86"
+      }
+    }
+  ],
+  "successfulMessageIds": [
+    "fba7014a-b7d3-46b9-89f0-9ac8afde69c3",
+    "3f764e7e-b716-41ba-beef-4b6bc2407b86"
+  ],
+  "summary": {
+    "requiredDestinations": 3,
+    "attemptedDestinations": 3,
+    "dispositionedDestinations": 3,
+    "deliveryAttempts": 4,
+    "successfulDeliveries": 2,
+    "retiredDestinations": 1,
+    "failedDeliveryAttempts": 2,
+    "unresolvedDestinations": 0,
+    "recordedMessageIds": 2,
+    "allActiveDeliveriesProven": true,
+    "allRequiredConsumerObligationsDispositioned": true
+  },
+  "retirementDecision": {
+    "authority": "product-owner",
+    "targetAddress": "cmos://derek/dashboard-demos",
+    "projectId": "0dc6bde8-2c52-4ffb-8a90-7cbe35eb031c",
+    "reason": "The destination is archived, refuses messages, and is no longer an active project.",
+    "policy": "A retired destination is closed by machine-readable disposition, not by a fabricated successful delivery or message id."
+  }
+}

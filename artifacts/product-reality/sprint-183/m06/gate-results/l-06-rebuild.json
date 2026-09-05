@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s183-m06",
+  "rowId": "L-06-rebuild",
+  "evidenceId": "s183-m06-l-06-rebuild",
+  "baseSha": "ca8d84bbce165b656fd5cd83cc097c28fa774f19",
+  "reviewHead": "9a4202fe3ff8560a791cc92c114ef364739a1c45",
+  "measuredHead": "9a4202fe3ff8560a791cc92c114ef364739a1c45",
+  "headMismatchAllowed": false,
+  "detachedHead": true,
+  "cwd": "/Users/systemsystems/.codex/worktrees/s183-review2/OODS-Forge",
+  "environment": {
+    "PR_LABELS": "",
+    "TOKEN_GOV_BASE_REF": null,
+    "CHROMATIC_PROJECT_TOKEN": null
+  },
+  "literalCommands": [
+    "pnpm --filter @oods/mcp-server run build",
+    "pnpm --filter @oods/mcp-bridge run build",
+    "if test \"$PWD\" != \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge\"; then rsync -a --delete packages/mcp-server/dist/ \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-server/dist/\"; rsync -a --delete packages/mcp-bridge/dist/ \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-bridge/dist/\"; fi",
+    "pm2 restart oods-forge-bridge",
+    "for attempt in $(seq 1 30); do if curl --fail --silent http://127.0.0.1:4466/health >/dev/null; then break; fi; sleep 1; done; curl --fail --silent --show-error http://127.0.0.1:4466/health"
+  ],
+  "literalCommand": "pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-bridge run build && if test \"$PWD\" != \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge\"; then rsync -a --delete packages/mcp-server/dist/ \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-server/dist/\"; rsync -a --delete packages/mcp-bridge/dist/ \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-bridge/dist/\"; fi && pm2 restart oods-forge-bridge && for attempt in $(seq 1 30); do if curl --fail --silent http://127.0.0.1:4466/health >/dev/null; then break; fi; sleep 1; done; curl --fail --silent --show-error http://127.0.0.1:4466/health",
+  "executionCommands": [
+    "pnpm --filter @oods/mcp-server run build",
+    "pnpm --filter @oods/mcp-bridge run build",
+    "if test \"$PWD\" != \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge\"; then rsync -a --delete packages/mcp-server/dist/ \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-server/dist/\"; rsync -a --delete packages/mcp-bridge/dist/ \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-bridge/dist/\"; fi",
+    "pm2 restart oods-forge-bridge",
+    "for attempt in $(seq 1 30); do if curl --fail --silent http://127.0.0.1:4466/health >/dev/null; then break; fi; sleep 1; done; curl --fail --silent --show-error http://127.0.0.1:4466/health"
+  ],
+  "executedCommand": "pnpm --filter @oods/mcp-server run build && pnpm --filter @oods/mcp-bridge run build && if test \"$PWD\" != \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge\"; then rsync -a --delete packages/mcp-server/dist/ \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-server/dist/\"; rsync -a --delete packages/mcp-bridge/dist/ \"/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-bridge/dist/\"; fi && pm2 restart oods-forge-bridge && for attempt in $(seq 1 30); do if curl --fail --silent http://127.0.0.1:4466/health >/dev/null; then break; fi; sleep 1; done; curl --fail --silent --show-error http://127.0.0.1:4466/health",
+  "startedAt": "2026-09-05T01:32:27.115Z",
+  "endedAt": "2026-09-05T01:32:34.200Z",
+  "exitCode": 0,
+  "status": "pass",
+  "log": {
+    "path": "artifacts/product-reality/sprint-183/m06/logs/s183-m06-l-06-rebuild.log",
+    "bytes": 4182,
+    "sha256": "6acd71507d1057f6ff873990c2f17c2487c267f500decf2754dcf0f3c9cc02aa"
+  },
+  "gitStatusBefore": [
+    " M diagnostics.json",
+    "?? artifacts/tokens/closeout-brand-a-comment.md",
+    "?? artifacts/tokens/closeout-brand-a-report.json",
+    "?? artifacts/tokens/closeout-brand-b-comment.md",
+    "?? artifacts/tokens/closeout-brand-b-report.json"
+  ],
+  "gitStatusAfter": [
+    " M diagnostics.json",
+    "?? artifacts/tokens/closeout-brand-a-comment.md",
+    "?? artifacts/tokens/closeout-brand-a-report.json",
+    "?? artifacts/tokens/closeout-brand-b-comment.md",
+    "?? artifacts/tokens/closeout-brand-b-report.json"
+  ],
+  "sideEffects": [],
+  "sprintId": "sprint-183"
+}

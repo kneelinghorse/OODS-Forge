@@ -2,9 +2,35 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/code.generate.output.json",
   "title": "Code export output",
-  "description": "Generated framework-specific code from a UiSchema.",
+  "description": "Versioned generated artifact from a UiSchema. Legacy single-source fields remain as deprecated compatibility aliases.",
   "type": "object",
-  "required": ["status", "framework", "code", "fileExtension", "imports", "warnings"],
+  "required": ["status", "framework", "code", "fileExtension", "imports", "warnings", "validationReceipt"],
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "ok" } },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["artifact"],
+        "properties": {
+          "validationReceipt": {
+            "allOf": [
+              { "$ref": "#/$defs/buildChecksCompleted" },
+              {
+                "if": {
+                  "properties": { "profile": { "const": "release" } },
+                  "required": ["profile"]
+                },
+                "then": { "$ref": "#/$defs/releaseSuccessReceipt" }
+              }
+            ]
+          }
+        }
+      },
+      "else": { "not": { "required": ["artifact"] } }
+    }
+  ],
   "properties": {
     "status": {
       "type": "string",
@@ -16,23 +42,34 @@
       "enum": ["react", "vue", "html"],
       "description": "The target framework that was used."
     },
+    "artifact": {
+      "$ref": "#/$defs/generatedArtifact",
+      "description": "Primary versioned, content-addressed file-set payload. Required when status is ok."
+    },
     "code": {
       "type": "string",
-      "description": "The generated source code. Empty string on error."
+      "deprecated": true,
+      "description": "Deprecated v0 compatibility alias for artifact.files[0].contents. Empty string on error."
     },
     "fileExtension": {
       "type": "string",
-      "description": "Suggested file extension including the dot (e.g., '.tsx', '.vue', '.html')."
+      "deprecated": true,
+      "description": "Deprecated v0 compatibility alias for the primary generated file extension."
     },
     "imports": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Import statements or package names required by the generated code."
+      "deprecated": true,
+      "description": "Deprecated v0 compatibility alias. Use artifact.dependencies for exact versions and dependency kinds."
     },
     "warnings": {
       "type": "array",
       "items": { "$ref": "#/$defs/codegenIssue" },
       "description": "Non-fatal issues encountered during generation."
+    },
+    "validationReceipt": {
+      "$ref": "#/$defs/validationReceipt",
+      "description": "Mandatory disclosure of the applied profile, independent policy axes, checks performed, and checks not reached. When generation reaches an artifact, the receipt names its content hash; release receipts retain accepted caller-supplied evidence envelopes for auditability."
     },
     "errors": {
       "type": "array",
@@ -54,6 +91,439 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "generatedArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "framework", "files", "dependencies", "actions", "contentHash"],
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0",
+          "description": "Version of the generated artifact envelope contract."
+        },
+        "framework": {
+          "type": "string",
+          "enum": ["react", "vue", "html"]
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/generatedArtifactFile" },
+          "description": "Generated files in deterministic relative-path order."
+        },
+        "dependencies": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/generatedDependency" },
+          "description": "Exact install manifest in deterministic kind-and-name order."
+        },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/generatedArtifactAction" },
+          "description": "Required consumer-supplied domain actions in deterministic name order. An empty array means the generated UI needs no domain-action injection."
+        },
+        "contentHash": { "$ref": "#/$defs/contentHash" }
+      }
+    },
+    "generatedArtifactFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "contents", "contentHash"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.?(?:/|$))[^/]+(?:/[^/]+)*$",
+          "description": "Safe relative POSIX path within the generated artifact."
+        },
+        "contents": { "type": "string" },
+        "contentHash": { "$ref": "#/$defs/contentHash" }
+      }
+    },
+    "generatedDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "kind"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": {
+          "type": "string",
+          "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+          "description": "Exact semantic version; ranges, workspace aliases, and repository paths are forbidden."
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["dependency", "peerDependency"]
+        }
+      }
+    },
+    "generatedArtifactAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "parameters", "sources"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[$_\\p{ID_Start}][$_\\u200c\\u200d\\p{ID_Continue}]*$",
+          "description": "Consumer injection name shared by all compatible occurrences."
+        },
+        "parameters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/generatedArtifactActionParameter" },
+          "description": "Cross-framework parameter contract in canonical semantic call order."
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/generatedArtifactActionSource" },
+          "description": "Schema declaration sources; component sources are generated-tree events, while screen-root sources drive generated action controls. Deterministic node-event-component order."
+        }
+      }
+    },
+    "validationReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/validationReceiptPartition" },
+        { "$ref": "#/$defs/validationProfilePolicy" }
+      ],
+      "required": ["profile", "defaulted", "rationale", "axes", "checks", "notChecked", "evidence"],
+      "properties": {
+        "profile": { "type": "string", "enum": ["draft", "build", "release"] },
+        "defaulted": {
+          "type": "boolean",
+          "description": "True only when the caller omitted profile and the build default was applied."
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Why this profile has the disclosed scope and enforcement policy."
+        },
+        "axes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "enforcement", "fallback", "target"],
+          "properties": {
+            "scope": {
+              "type": "string",
+              "enum": ["structural", "generated-artifact", "release-evidence"]
+            },
+            "enforcement": { "type": "string", "enum": ["advisory", "blocking"] },
+            "fallback": { "type": "string", "enum": ["visible", "forbidden"] },
+            "target": { "$ref": "#/$defs/targetResolution" }
+          }
+        },
+        "checks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/validationCheck" },
+          "description": "Checks actually attempted before the response returned."
+        },
+        "notChecked": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/validationCheck" },
+          "description": "Profile checks not reached; an empty array means no profile check was silently skipped."
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "provided", "missing", "mismatched", "accepted", "notApplicable"],
+          "properties": {
+            "required": { "$ref": "#/$defs/evidenceClassList" },
+            "provided": { "$ref": "#/$defs/evidenceClassList" },
+            "missing": { "$ref": "#/$defs/evidenceClassList" },
+            "mismatched": { "$ref": "#/$defs/evidenceClassList" },
+            "accepted": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/acceptedReleaseEvidence" },
+              "description": "Caller-supplied release-evidence envelopes accepted for evaluation in canonical class order; references are retained for auditability, not claimed as independently executed."
+            },
+            "notApplicable": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["class", "rationale"],
+                "properties": {
+                  "class": { "$ref": "#/$defs/evidenceClass" },
+                  "rationale": { "type": "string", "minLength": 1 }
+                }
+              }
+            },
+            "artifactContentHash": { "$ref": "#/$defs/contentHash" }
+          }
+        }
+      }
+    },
+    "targetResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resolved", "source"],
+      "properties": {
+        "requested": { "type": "string", "enum": ["react", "vue", "html"] },
+        "resolved": { "type": "string", "enum": ["react", "vue", "html"] },
+        "source": {
+          "type": "string",
+          "enum": ["explicit", "options-alias", "oodsrc", "default"]
+        }
+      }
+    },
+    "validationCheck": {
+      "type": "string",
+      "enum": [
+        "schema-structure", "component-registry", "state-contract", "binding-contract",
+        "props-contract", "slots-contract", "events-contract", "target-readiness", "normalization-fidelity",
+        "dependency-closure", "fallback-policy", "rendered-evidence",
+        "interaction-evidence", "accessibility-evidence", "theme-evidence",
+        "determinism-evidence", "performance-evidence", "certification-evidence"
+      ]
+    },
+    "validationReceiptPartition": {
+      "type": "object",
+      "allOf": [
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "schema-structure" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "schema-structure" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "component-registry" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "component-registry" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "state-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "state-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "target-readiness" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "target-readiness" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "normalization-fidelity" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "normalization-fidelity" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "binding-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "binding-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "props-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "props-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "slots-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "slots-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "events-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "events-contract" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "dependency-closure" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "dependency-closure" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "fallback-policy" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "fallback-policy" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "rendered-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "rendered-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "interaction-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "interaction-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "accessibility-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "accessibility-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "theme-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "theme-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "determinism-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "determinism-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "performance-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "performance-evidence" } } } }
+        ] },
+        { "oneOf": [
+          { "properties": { "checks": { "contains": { "const": "certification-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "const": "certification-evidence" } } } }
+        ] }
+      ]
+    },
+    "validationProfilePolicy": {
+      "type": "object",
+      "allOf": [
+        {
+          "if": { "properties": { "profile": { "const": "draft" } }, "required": ["profile"] },
+          "then": {
+            "properties": {
+              "rationale": { "const": "Draft reports target and fallback gaps without claiming a runnable artifact." },
+              "axes": {
+                "properties": {
+                  "scope": { "const": "structural" },
+                  "enforcement": { "const": "advisory" },
+                  "fallback": { "const": "visible" }
+                }
+              },
+              "evidence": { "properties": { "required": { "const": [] } } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "profile": { "const": "build" } }, "required": ["profile"] },
+          "then": {
+            "properties": {
+              "rationale": { "const": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve." },
+              "axes": {
+                "properties": {
+                  "scope": { "const": "generated-artifact" },
+                  "enforcement": { "const": "blocking" },
+                  "fallback": { "const": "forbidden" }
+                }
+              },
+              "evidence": { "properties": { "required": { "const": [] } } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "profile": { "const": "release" } }, "required": ["profile"] },
+          "then": {
+            "properties": {
+              "rationale": { "const": "Release adds six hash-bound evidence classes to the build gate and records server-owned certification as not applicable for generated UI targets." },
+              "axes": {
+                "properties": {
+                  "scope": { "const": "release-evidence" },
+                  "enforcement": { "const": "blocking" },
+                  "fallback": { "const": "forbidden" }
+                }
+              },
+              "evidence": {
+                "properties": {
+                  "required": { "const": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"] }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "buildChecksCompleted": {
+      "type": "object",
+      "properties": {
+        "checks": {
+          "allOf": [
+            { "contains": { "const": "schema-structure" } },
+            { "contains": { "const": "component-registry" } },
+            { "contains": { "const": "state-contract" } },
+            { "contains": { "const": "target-readiness" } },
+            { "contains": { "const": "normalization-fidelity" } },
+            { "contains": { "const": "binding-contract" } },
+            { "contains": { "const": "props-contract" } },
+            { "contains": { "const": "slots-contract" } },
+            { "contains": { "const": "events-contract" } },
+            { "contains": { "const": "dependency-closure" } },
+            { "contains": { "const": "fallback-policy" } }
+          ]
+        }
+      }
+    },
+    "releaseSuccessReceipt": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "checks": {
+              "allOf": [
+                { "contains": { "const": "rendered-evidence" } },
+                { "contains": { "const": "interaction-evidence" } },
+                { "contains": { "const": "accessibility-evidence" } },
+                { "contains": { "const": "theme-evidence" } },
+                { "contains": { "const": "determinism-evidence" } },
+                { "contains": { "const": "performance-evidence" } },
+                { "contains": { "const": "certification-evidence" } }
+              ]
+            },
+            "evidence": {
+              "properties": {
+                "provided": { "const": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"] },
+                "missing": { "const": [] },
+                "mismatched": { "const": [] },
+                "accepted": {
+                  "minItems": 6,
+                  "maxItems": 6,
+                  "prefixItems": [
+                    { "properties": { "class": { "const": "rendered" } } },
+                    { "properties": { "class": { "const": "interaction" } } },
+                    { "properties": { "class": { "const": "accessibility" } } },
+                    { "properties": { "class": { "const": "theme" } } },
+                    { "properties": { "class": { "const": "determinism" } } },
+                    { "properties": { "class": { "const": "performance" } } }
+                  ]
+                },
+                "notApplicable": {
+                  "contains": { "properties": { "class": { "const": "certification" } } }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "evidenceClass": {
+      "type": "string",
+      "enum": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance", "certification"]
+    },
+    "evidenceClassList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/evidenceClass" }
+    },
+    "acceptedReleaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "status", "artifactContentHash", "reference"],
+      "properties": {
+        "class": {
+          "type": "string",
+          "enum": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"]
+        },
+        "status": { "const": "passed" },
+        "artifactContentHash": { "$ref": "#/$defs/contentHash" },
+        "reference": { "type": "string", "minLength": 1 }
+      }
+    },
+    "generatedArtifactActionParameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Portable TypeScript-style parameter type shared across framework targets."
+        }
+      }
+    },
+    "generatedArtifactActionSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeId", "component", "event"],
+      "properties": {
+        "nodeId": { "type": "string", "minLength": 1 },
+        "component": { "type": "string", "minLength": 1 },
+        "event": { "type": "string", "minLength": 1 }
+      }
+    },
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
     "codegenIssue": {
       "type": "object",
       "required": ["code", "message"],

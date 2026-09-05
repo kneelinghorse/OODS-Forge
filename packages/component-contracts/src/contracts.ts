@@ -1,6 +1,7 @@
 import type { ComponentContract, NucleusComponentId } from './types.js';
 
 export const COMPONENT_CONTRACT_VERSION = '1.0.0' as const;
+export const COMPONENT_CONTRACT_VERSION_1_1 = '1.1.0' as const;
 
 export const componentContracts: Readonly<Record<NucleusComponentId, ComponentContract>> = {
   Badge: {
@@ -58,17 +59,17 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     compatibility: 'Canonicalizes TextField; TextField remains a non-counting compatibility alias.',
   },
   Select: {
-    id: 'Select', version: COMPONENT_CONTRACT_VERSION,
-    props: ['id', 'label', 'value', 'defaultValue', 'required', 'disabled', 'options', 'help', 'validation'], slots: ['label', 'option', 'help', 'validation'], events: ['change', 'update'],
+    id: 'Select', version: COMPONENT_CONTRACT_VERSION_1_1,
+    props: ['id', 'label', 'value', 'defaultValue', 'placeholder', 'required', 'disabled', 'options', 'help', 'validation'], slots: ['label', 'option', 'help', 'validation'], events: ['change', 'update'],
     states: ['unselected', 'selected', 'disabled', 'invalid'], tokenRoles: ['input.background', 'input.border', 'input.text', 'input.focus', 'field.message'],
-    accessibility: ['Native select semantics', 'Label and descriptions are associated'],
+    accessibility: ['Native select semantics', 'Label and descriptions are associated', 'Placeholder is an explicit empty-value option'],
     compatibility: 'Native select only; no custom combobox claim.',
   },
   Stack: {
-    id: 'Stack', version: COMPONENT_CONTRACT_VERSION,
-    props: ['direction', 'gap', 'align', 'justify', 'wrap'], slots: ['default'], events: [],
+    id: 'Stack', version: COMPONENT_CONTRACT_VERSION_1_1,
+    props: ['direction', 'gap', 'align', 'justify', 'wrap', 'patternComponent', 'fields'], slots: ['default'], events: [],
     states: ['row', 'column', 'wrapped'], tokenRoles: ['layout.gap'], accessibility: ['Does not alter child semantics'],
-    compatibility: 'Maps saved-schema stack and inline modes to one flex primitive.',
+    compatibility: 'Maps saved-schema stack and inline modes to one flex primitive; patternComponent and fields are executed composition directives.',
   },
   Table: {
     id: 'Table', version: COMPONENT_CONTRACT_VERSION,
@@ -85,9 +86,9 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     compatibility: 'Item-driven API; overflow helper and Popover remain private.',
   },
   Text: {
-    id: 'Text', version: COMPONENT_CONTRACT_VERSION,
-    props: ['content', 'as', 'size', 'weight'], slots: ['default'], events: [],
-    states: ['body', 'muted', 'emphasized'], tokenRoles: ['text.body', 'text.muted', 'font.body'], accessibility: ['Only governed safe intrinsic elements are emitted'],
+    id: 'Text', version: COMPONENT_CONTRACT_VERSION_1_1,
+    props: ['content', 'label', 'as', 'size', 'weight'], slots: ['default'], events: [],
+    states: ['body', 'muted', 'emphasized'], tokenRoles: ['text.body', 'text.muted', 'font.body'], accessibility: ['Only governed safe intrinsic elements are emitted', 'Label is exposed as an accessible description'],
     compatibility: 'Defaults to span.',
   },
   Textarea: {

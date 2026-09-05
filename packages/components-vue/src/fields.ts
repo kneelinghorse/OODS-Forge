@@ -223,6 +223,7 @@ export const Select = defineComponent({
     modelValue: String,
     value: String,
     defaultValue: { type: String, default: '' },
+    placeholder: String,
     required: Boolean,
     disabled: Boolean,
     help: String,
@@ -255,12 +256,21 @@ export const Select = defineComponent({
       'aria-describedby': metadata.describedBy.value,
       'aria-errormessage': props.validation?.state === 'error' ? metadata.validationId.value : undefined,
       onChange: (event: Event) => selectValue(eventValue(event)),
-    }, props.options.map((option) => h('option', {
-      key: option.value,
-      value: option.value,
-      selected: option.value === currentValue.value,
-      disabled: option.disabled,
-    }, slots.option?.({ option }) ?? option.label))));
+    }, [
+      props.placeholder
+        ? h('option', {
+            value: '',
+            selected: currentValue.value === '',
+            disabled: true,
+          }, props.placeholder)
+        : null,
+      ...props.options.map((option) => h('option', {
+        key: option.value,
+        value: option.value,
+        selected: option.value === currentValue.value,
+        disabled: option.disabled,
+      }, slots.option?.({ option }) ?? option.label)),
+    ]));
   },
 });
 

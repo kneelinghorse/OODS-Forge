@@ -32,7 +32,7 @@ describe('content-strategy', () => {
     });
 
     it('maps status components to status-prop', () => {
-      const status = ['StatusBadge', 'MessageStatusBadge'];
+      const status = ['StatusBadge', 'StatusTimeline', 'MessageStatusBadge'];
       for (const name of status) {
         expect(getContentStrategy(name)).toBe('status-prop');
       }
@@ -42,6 +42,14 @@ describe('content-strategy', () => {
       expect(getContentStrategy('NonExistentWidget')).toBe('none');
       expect(getContentStrategy('')).toBe('none');
     });
+
+    it.each(['constructor', 'toString', 'valueOf', '__proto__', 'hasOwnProperty'])(
+      'does not treat inherited Object key %s as a registered strategy',
+      (name) => {
+        expect(getContentStrategy(name)).toBe('none');
+        expect(acceptsFieldContent(name)).toBe(false);
+      },
+    );
 
     it('covers all 97 catalog components', () => {
       const allComponents = [

@@ -1,0 +1,23 @@
+Sprint 184 m02 focused approval-gate verification
+
+Command:
+  pnpm --filter @oods/mcp-server exec vitest run test/product-reality/independent-review-approval.s183.spec.ts --reporter=verbose
+
+Result:
+  exitCode=0
+  testFiles=1 passed, 0 failed, 0 skipped
+  tests=39 passed, 0 failed, 0 skipped
+  duration=5.24s
+
+Coverage added by the focused file:
+  - the genuine approved record and frozen projections
+  - NFKC, default-ignorable, and Cyrillic-lookalike principal aliases
+  - fabricated, empty, missing, short, uppercase, equal, and resolution-drift heads
+  - injected resolved, not-found, unavailable, and throwing resolver branches
+  - an actual non-Git subprocess outcome
+  - resolver pass-through and the fail-closed promotion boundary
+
+Command-selection diagnostic retained:
+  pnpm exec vitest run packages/mcp-server/test/product-reality/independent-review-approval.s183.spec.ts
+  exitCode=1
+  reason=The root Vitest configuration excludes the MCP-server product-reality file, so Vitest reported "No test files found". The authoritative package-filtered command above selected and passed the file.

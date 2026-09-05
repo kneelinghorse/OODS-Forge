@@ -1,0 +1,48 @@
+Sprint 184 m03 pre-change control reconstruction
+Captured: 2026-09-05T08:21:59Z
+
+$ git worktree add --detach /private/tmp/oods-s184-m03-baseline.bTC8eB/OODS-Forge d51fb5ba
+HEAD is now at d51fb5ba s184-m02: enforce readiness evidence at emission
+exit: 0
+
+$ pnpm install --offline --frozen-lockfile --ignore-scripts
+Scope: all 22 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 947, reused 946, downloaded 0, added 947, done
+Done in 5.1s
+exit: 0
+
+$ pnpm --filter @oods/mcp-server... run build
+Scope: 11 of 22 workspace projects
+packages/component-contracts build: Done
+packages/components-react build: Done
+packages/components-vue build: Done
+packages/mcp-server build: Done
+exit: 0
+
+Note: the successful token-package build printed pre-existing Style Dictionary
+token-collision notices. They were non-fatal and unrelated to the contract probe.
+
+$ git rev-parse HEAD
+d51fb5ba80d7e67d7d4e25e16e2943e694019683
+
+$ git status --short
+[no output; detached source worktree clean]
+
+$ node --input-type=module -e '<probe imports compiled preflightTargetContracts>'
+[normalized count summary derived from the returned JSON]
+subscription-list-dark react issueCount=2
+subscription-list-dark vue issueCount=2
+subscription-detail-dark react issueCount=6
+subscription-detail-dark vue issueCount=6
+tier1-acceptance-sub-detail react issueCount=0
+tier1-acceptance-sub-detail vue issueCount=0
+exit: 0
+
+The complete returned OODS-V007 issue objects and input file digests are retained
+in baseline-red-control.json; the counts above are a lossless summary of that
+JSON, not a claim that the probe printed this line-oriented presentation.
+
+$ git worktree remove /private/tmp/oods-s184-m03-baseline.bTC8eB/OODS-Forge
+removed: /private/tmp/oods-s184-m03-baseline.bTC8eB/OODS-Forge
+exit: 0

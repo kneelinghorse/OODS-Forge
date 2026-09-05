@@ -4,7 +4,7 @@ import { handle as pipelineHandle } from '../../src/tools/pipeline.js';
 describe('pipeline compact + metrics', () => {
   it('defaults to compact render (tokenCssRef present, small response)', async () => {
     const result = await pipelineHandle({
-      intent: 'A detail view for a product',
+      intent: 'A dashboard with metrics',
       framework: 'html',
     });
 
@@ -19,7 +19,7 @@ describe('pipeline compact + metrics', () => {
 
   it('includes output.summary string', async () => {
     const result = await pipelineHandle({
-      intent: 'A detail view for a product',
+      intent: 'A dashboard with metrics',
       framework: 'html',
     });
 
@@ -43,7 +43,7 @@ describe('pipeline compact + metrics', () => {
 
   it('compact can be disabled with options.compact=false', async () => {
     const result = await pipelineHandle({
-      intent: 'A detail view',
+      intent: 'A dashboard with metrics',
       framework: 'html',
       options: { compact: false },
     });
@@ -81,7 +81,7 @@ describe('pipeline compact + metrics', () => {
   it('object-aware pipeline includes fieldsBound in metrics', async () => {
     const result = await pipelineHandle({
       object: 'Product',
-      context: 'detail',
+      context: 'card',
       framework: 'html',
     });
 
