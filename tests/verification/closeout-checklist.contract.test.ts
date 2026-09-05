@@ -257,6 +257,14 @@ describe("Sprint 177 closeout carrier", () => {
     expect(localRows).toContain("decisionCount >= 1");
     expect(localRows).toContain("http://127.0.0.1:4466/health");
     expect(localRows).toContain("after **any** advertised");
+    const rebuildRow = rows.find((row) => row.startsWith("| L-06 |"));
+    expect(rebuildRow).toContain("for attempt in $(seq 1 30)");
+    expect(rebuildRow).toContain(
+      "curl --fail --silent http://127.0.0.1:4466/health >/dev/null",
+    );
+    expect(rebuildRow).toContain(
+      "done; curl --fail --silent --show-error http://127.0.0.1:4466/health",
+    );
     expect(localRows).toContain("Sequential-only heavy-suite protocol");
     expect(rows.at(-2)).toContain(
       "| L-08 | Gitignored build-input survival — run last and again after governance |",

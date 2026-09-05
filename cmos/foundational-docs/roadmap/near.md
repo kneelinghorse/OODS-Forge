@@ -88,8 +88,9 @@ interaction test can pass. Ending that blank stub is the sprint's load-bearing p
 Forge-owned behavior which is generated for real and domain actions which become typed, declared,
 required injection points.
 
-The exit-gate schema must be one that already existed in the repository. Authoring a fresh schema
-that happens to use exactly the fourteen implemented components would prove nothing.
+The exit-gate schema must be one that already existed in Forge's saved-schema store before the
+sprint. Authoring a fresh schema that happens to use exactly the fourteen implemented components
+would prove nothing.
 
 This is deliberately separate from Sprint 182. Changing the code-generation contract while creating
 two component libraries would make the first sprint too large to review honestly.

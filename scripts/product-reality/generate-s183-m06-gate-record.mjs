@@ -23,7 +23,7 @@ const historicalCapturePath = path.join(
   "scripts/product-reality/capture-s182-m05-closeout-row.mjs",
 );
 const HISTORICAL_CAPTURE_SHA256 =
-  "e5158ba9d49558b1e865efcc99ac028ce9d2835fc7c67bcd864e11f617a20eeb";
+  "ea7a519e4d57cb49fb3d99ae1f160011acc3a3296d5aadc6903eb3cbd0c31962";
 export const SPRINT_BASE_SHA = "ca8d84bbce165b656fd5cd83cc097c28fa774f19";
 const SPRINT_MISSION_IDS = Object.freeze(
   Array.from({ length: 6 }, (_, index) => `s183-m0${index + 1}`),
@@ -77,7 +77,7 @@ const EXPECTED_BLOCKS = {
   local: {
     start: "<!-- closeout-local-rows:start -->",
     end: "<!-- closeout-local-rows:end -->",
-    sha256: "e546cac9a1fdf200c25f972673b6e6a68ac7426ff0d961e7fc4175f45357aa12",
+    sha256: "f2596223424f2b2619131fbbfb7fe6ac4ae3fa7bcec2122f3d9f2104b2f7ad40",
     ids: Array.from(
       { length: 9 },
       (_, index) => `L-${String(index + 1).padStart(2, "0")}`,
