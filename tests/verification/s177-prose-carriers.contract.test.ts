@@ -64,35 +64,41 @@ describe("Sprint 177 prose truth carriers", () => {
     const normalizedProgram = productProgram.replace(/\s+/g, " ");
     const normalizedIndex = roadmapIndex.replace(/\s+/g, " ");
 
+    // Sprint 185 m01: near.md was rewritten at the Sprint 185 lock (planning
+    // session PS-2026-09-05-005, decision #1724); the carriers below pin the
+    // current sentences with the same intent (rule #1690).
     expect(near).toContain(
-      "**Status:** ACTIVE — program decision `#1652`; Sprint-183 lock decision `#1664`",
+      "**Status:** ACTIVE — program decision `#1652`; Sprint-185 lock decision `#1724`",
     );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
     );
     expect(normalizedNear).toContain(
-      "The prior Shopify-serving roadmap and the schema-ingest version of Sprint 182 are retained in Git and CMOS as history. They no longer control this queue.",
+      "Two direction decisions from 2026-09-05 govern this queue. The Sprint 182 promotion freeze is void (`#1722`)",
     );
     expect(normalizedNear).toContain(
-      "Sprint 182 is complete, 7/7 missions, nothing descoped.",
+      "The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection follows runnable product foundations.",
     );
     expect(normalizedNear).toContain(
-      "Derek promoted `foundation-v1` the same day (decision `#1663`): all 28 cells",
+      "## Increment 1 — Sprint 182: Product Reality Foundation — CLOSED 2026-09-04",
     );
     expect(normalizedNear).toContain(
-      "Sprint-181 follow-ups remain Forge-owned maintenance debt under decision `#1651`",
+      "`foundation-v1` promoted by Derek (decision `#1663`). The 14-component nucleus is real in React and Vue with clean packed-consumer proof.",
     );
     expect(normalizedNear).toContain(
-      "Sprint 183 resolves consumer-visible defects `#1316` and `#1317`",
+      "Sprint-181 follow-ups `#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt under decision `#1651`",
     );
     expect(normalizedNear).toContain(
-      "Items `#1315` and `#1318`–`#1322` remain explicitly carried and unabsorbed",
+      "## Increment 2 — Sprint 183: Runnable Generation — CLOSED 2026-09-05",
     );
     expect(normalizedNear).toContain(
-      "Sprint 182's independent review is resolved, so this increment is numbered.",
+      "they are named at every closeout and must close before an integrated public release",
     );
     expect(normalizedNear).toContain(
-      "Number this sprint only after Sprint 183 receives independent review.",
+      "Numbered because Sprint 184 is independently reviewed and closed.",
+    );
+    expect(normalizedNear).toContain(
+      "Number this sprint only after Sprint 185 receives independent review.",
     );
 
     expect(productProgram).toContain(

@@ -434,8 +434,203 @@
         "root-core"
       ]
     },
+    "afterRetainedRedAttempt": {
+      "measuredHead": "0be09a432763e47d54c52816201b90a9831b730c",
+      "status": "failed",
+      "suiteReceipts": [
+        {
+          "run": 1,
+          "suite": "viz-core",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 24233,
+          "files": {
+            "total": 67,
+            "passed": 67,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 1390,
+            "passed": 1390,
+            "failed": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 1,
+          "suite": "viz-render",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 21334,
+          "files": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 64,
+            "passed": 64,
+            "failed": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 1,
+          "suite": "mcp-server",
+          "status": "failed",
+          "exitCode": 1,
+          "durationMs": 540404,
+          "files": {
+            "total": 270,
+            "passed": 265,
+            "failed": 5,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 5144,
+            "passed": 5116,
+            "failed": 4,
+            "skipped": 24,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 1,
+          "suite": "root-core",
+          "status": "failed",
+          "exitCode": 1,
+          "durationMs": 148197,
+          "files": {
+            "total": 518,
+            "passed": 512,
+            "failed": 6,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 5581,
+            "passed": 5557,
+            "failed": 4,
+            "skipped": 20,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 2,
+          "suite": "viz-core",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 18125,
+          "files": {
+            "total": 67,
+            "passed": 67,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 1390,
+            "passed": 1390,
+            "failed": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 2,
+          "suite": "viz-render",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 18758,
+          "files": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 64,
+            "passed": 64,
+            "failed": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 2,
+          "suite": "mcp-server",
+          "status": "failed",
+          "exitCode": 1,
+          "durationMs": 359696,
+          "files": {
+            "total": 270,
+            "passed": 265,
+            "failed": 5,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 5144,
+            "passed": 5116,
+            "failed": 4,
+            "skipped": 24,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 2,
+          "suite": "root-core",
+          "status": "failed",
+          "exitCode": 1,
+          "durationMs": 159191,
+          "files": {
+            "total": 518,
+            "passed": 512,
+            "failed": 6,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 5581,
+            "passed": 5557,
+            "failed": 4,
+            "skipped": 20,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        }
+      ],
+      "host": "Mac",
+      "retries": "none; every suite receipt is a first-attempt full-suite run",
+      "disposition": "Retained as a red receipt, excluded from acceptance; measured at 0be09a43. Two defects on this branch, both fixed in the next commit: (1) the @oods/component-contracts devDependency added to @oods/component-styles used the workspace:* protocol, which pnpm pack leaves in the packed manifest, so every packing spec (packed-consumers.s182, packed-ported-consumers.s184, m06-gate-bites.s184, live-workflow-consumers.s184, saved-schema-consumers.s183) failed 'Packed manifest for @oods/component-styles contains a workspace-only protocol' — repinned to the sibling convention '0.1.0' resolved through link-workspace-packages; (2) the planning session's Sprint 185 rewrite of near.md (committed here as b8465e57) invalidated 19 sentence pins in tests/verification/s177-prose-carriers.contract.test.ts and how-forge-works.contract.test.ts — repointed to the current sentences with the same intent (rule #1690, recorded under preExistingTestRepoints). root-core additionally lost artifact.certify.echarts-a11y-warnfirst at file level to the parallel dist-replacement hazard already disclosed."
+    },
     "after": null
   },
+  "preExistingTestRepoints": [
+    {
+      "files": [
+        "tests/verification/s177-prose-carriers.contract.test.ts",
+        "tests/verification/how-forge-works.contract.test.ts"
+      ],
+      "changedInput": "cmos/foundational-docs/roadmap/near.md",
+      "reason": "near.md was rewritten at the Sprint 185 lock by planning session PS-2026-09-05-005 (decision #1724) and carried into this worktree as b8465e57; 19 sentence pins named the Sprint 183-era roadmap. Each pin was repointed to the sentence that now carries the same fact (status line, Sprint 182 closed and promoted by #1663, the 14-nucleus packed proof, the census call #1331, the runnable-generation exit gate, maintenance debt #1315/#1318–#1322, the numbering rule for the next increment, the build-and-stop handoff rule). Sentences m05 will rewrite (Increment 4 body, the build-handoff target) were deliberately not pinned."
+    }
+  ],
   "redControl": {
     "status": "measured",
     "measuredHead": "1118f436345e160437abfedbe73a19f190a92562",
@@ -507,6 +702,23 @@
   "retentionProbe": "passed",
   "artifacts": [
     "artifacts/product-reality/sprint-185/m01/exclusive-worktree-declaration.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/four-suite-baseline.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/mcp-server.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/mcp-server.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/root-core.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/root-core.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/viz-core.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/viz-core.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/viz-render.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/viz-render.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/mcp-server.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/mcp-server.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/root-core.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/root-core.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-core.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-core.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-render.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-render.vitest.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-before-attempt-1-concurrent-load/four-suite-baseline.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-before-attempt-1-concurrent-load/run-1/mcp-server.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-before-attempt-1-concurrent-load/run-1/root-core.json",
@@ -555,6 +767,18 @@
   ],
   "logs": [
     "artifacts/product-reality/sprint-185/m01/foo.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/mcp-server.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/root-core.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/viz-core.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-1/viz-render.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/mcp-server.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/root-core.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-core.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-render.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/setup/build-packages.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/setup/build-publishable-package.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/setup/build-tokens.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/setup/install.log",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-before-attempt-1-concurrent-load/run-1/mcp-server.log",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-before-attempt-1-concurrent-load/run-1/root-core.log",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-before-attempt-1-concurrent-load/run-1/viz-core.log",

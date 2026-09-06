@@ -35,6 +35,7 @@ const beforeAttempt1 = readJson(`${missionRoot}/four-suite-baseline-before-attem
 const beforeRootCoreRetry = readJson(`${missionRoot}/four-suite-baseline-before-root-core-retry-1/four-suite-baseline.json`);
 const beforeIsolated = readJson(`${missionRoot}/four-suite-baseline-before-isolated-diagnostic/isolated.vitest.json`);
 const after = readJson(`${missionRoot}/four-suite-baseline-after/four-suite-baseline.json`);
+const afterAttempt1 = readJson(`${missionRoot}/four-suite-baseline-after-attempt-1-workspace-protocol/four-suite-baseline.json`);
 const red = readJson(`${missionRoot}/red-control/summary.json`);
 const green = readJson(`${missionRoot}/green-control/summary.json`);
 const inventory = readJson(`${missionRoot}/pin-inventory.json`);
@@ -106,8 +107,22 @@ const index = {
       acceptedSuites: ["viz-core", "viz-render", "mcp-server"],
       notAccepted: ["root-core"],
     },
+    afterRetainedRedAttempt: afterAttempt1
+      ? {
+          ...baselineSummary(afterAttempt1),
+          disposition:
+            "Retained as a red receipt, excluded from acceptance; measured at 0be09a43. Two defects on this branch, both fixed in the next commit: (1) the @oods/component-contracts devDependency added to @oods/component-styles used the workspace:* protocol, which pnpm pack leaves in the packed manifest, so every packing spec (packed-consumers.s182, packed-ported-consumers.s184, m06-gate-bites.s184, live-workflow-consumers.s184, saved-schema-consumers.s183) failed 'Packed manifest for @oods/component-styles contains a workspace-only protocol' — repinned to the sibling convention '0.1.0' resolved through link-workspace-packages; (2) the planning session's Sprint 185 rewrite of near.md (committed here as b8465e57) invalidated 19 sentence pins in tests/verification/s177-prose-carriers.contract.test.ts and how-forge-works.contract.test.ts — repointed to the current sentences with the same intent (rule #1690, recorded under preExistingTestRepoints). root-core additionally lost artifact.certify.echarts-a11y-warnfirst at file level to the parallel dist-replacement hazard already disclosed.",
+        }
+      : null,
     after: baselineSummary(after),
   },
+  preExistingTestRepoints: [
+    {
+      files: ["tests/verification/s177-prose-carriers.contract.test.ts", "tests/verification/how-forge-works.contract.test.ts"],
+      changedInput: "cmos/foundational-docs/roadmap/near.md",
+      reason: "near.md was rewritten at the Sprint 185 lock by planning session PS-2026-09-05-005 (decision #1724) and carried into this worktree as b8465e57; 19 sentence pins named the Sprint 183-era roadmap. Each pin was repointed to the sentence that now carries the same fact (status line, Sprint 182 closed and promoted by #1663, the 14-nucleus packed proof, the census call #1331, the runnable-generation exit gate, maintenance debt #1315/#1318–#1322, the numbering rule for the next increment, the build-and-stop handoff rule). Sentences m05 will rewrite (Increment 4 body, the build-handoff target) were deliberately not pinned.",
+    },
+  ],
   redControl: red ? { status: red.status, measuredHead: red.measuredHead, failuresByReason: red.failuresByReason, frozenLiteralFailures: red.frozenLiteralFailures.length, failingSites: red.failingSites } : null,
   greenControl: green ? { status: green.status, measuredHead: green.measuredHead, greenForTheRightReason: green.greenForTheRightReason, failuresByReason: green.failuresByReason, frozenLiteralFailures: green.frozenLiteralFailures.length, failingSites: green.failingSites } : null,
   pinInventory: inventory ? { sites: inventory.sites.length, countsByDisposition: inventory.countsByDisposition, differences: inventory.differences.length } : null,

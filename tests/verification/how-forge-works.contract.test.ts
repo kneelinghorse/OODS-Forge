@@ -33,6 +33,7 @@ interface CertifyOutputSchema {
 describe("how Forge works narrative truth", () => {
   const html = read("docs/how-forge-works.html");
   const nearRoadmap = read("cmos/foundational-docs/roadmap/near.md");
+  const normalizedNear = nearRoadmap.replace(/\s+/g, " ");
 
   it("derives the registered tool counts and roster split from registry.json", () => {
     const registry = JSON.parse(
@@ -211,23 +212,30 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("@oods/component-styles/css</span>");
     expect(html).toContain("OODS-N015</span> and no source payload");
 
-    expect(nearRoadmap).toContain("Sprint 182 is complete, 7/7 missions");
+    // Sprint 185 m01: near.md was rewritten at the Sprint 185 lock (planning
+    // session PS-2026-09-05-005, decision #1724); these carriers pin the
+    // current sentences with the same intent (rule #1690).
+    expect(nearRoadmap).toContain("Sprint 182: Product Reality Foundation — CLOSED 2026-09-04");
     expect(nearRoadmap).toContain("decision `#1662`");
-    expect(nearRoadmap).toContain("decision `#1663`");
-    expect(nearRoadmap).toContain("all 28 cells");
-    expect(nearRoadmap).toContain("`approvedRuntimeCensus` remains **null**");
-    expect(nearRoadmap).toContain("98-row runtime");
-    expect(nearRoadmap).toContain("versioned generated file-set artifact");
-    expect(nearRoadmap).toContain(
-      "schema installs, builds,\nrenders, hydrates, resolves shared CSS",
+    expect(normalizedNear).toContain("promoted by Derek (decision `#1663`)");
+    expect(normalizedNear).toContain(
+      "The 14-component nucleus is real in React and Vue with clean packed-consumer proof.",
     );
-    expect(nearRoadmap).toContain(
-      "Number this sprint only after Sprint 183 receives independent review",
+    expect(normalizedNear).toContain(
+      "`approvedRuntimeCensus` stops being null and the 109 denominator can move (`#1331`)",
     );
-    expect(nearRoadmap).toContain(
-      "The next fresh session is an independent Sprint-183 review",
+    expect(nearRoadmap).toContain("98-row proposed runtime census");
+    expect(nearRoadmap).toContain("Versioned file-set artifact, exact dependencies, typed actions");
+    expect(normalizedNear).toContain(
+      "installs, builds, renders, hydrates and passes interactions in clean React and Vue consumers",
     );
-    expect(nearRoadmap).toContain("Items `#1315` and `#1318`–`#1322`");
+    expect(normalizedNear).toContain(
+      "Number this sprint only after Sprint 185 receives independent review",
+    );
+    expect(normalizedNear).toContain(
+      "It records evidence and stops; a separate review session decides genuine close.",
+    );
+    expect(normalizedNear).toContain("`#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt");
     expect(nearRoadmap).not.toContain(
       "Both targets import nonexistent `@oods/components`",
     );
