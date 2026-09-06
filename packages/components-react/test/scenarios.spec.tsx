@@ -14,7 +14,7 @@ describe('@oods/components-react shared scenarios', () => {
     expect(sharedScenarios.map(scenario => scenario.oodsComponentId)).toEqual(
       NUCLEUS_COMPONENT_IDS
     );
-    expect(new Set(sharedScenarios.map(scenario => scenario.id)).size).toBe(14);
+    expect(new Set(sharedScenarios.map(scenario => scenario.id)).size).toBe(NUCLEUS_COMPONENT_IDS.length);
   });
 
   for (const scenario of sharedScenarios) {

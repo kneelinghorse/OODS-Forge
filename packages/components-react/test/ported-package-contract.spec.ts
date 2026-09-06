@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import {
+  NUCLEUS_COMPONENT_IDS,
   PORTED_COMPONENT_IDS,
   evaluateEmissionEligibility,
   portedScenarios,
@@ -112,7 +113,7 @@ describe('@oods/components-react ported package contract', () => {
     const mainReadiness = readJson(`${packageRoot}/evidence/react-readiness.v1.json`) as {
       rows: Array<{ componentId: string }>;
     };
-    expect(mainReadiness.rows).toHaveLength(14);
+    expect(mainReadiness.rows.map(row => row.componentId)).toEqual([...NUCLEUS_COMPONENT_IDS]);
     expect(mainReadiness.rows.map(row => row.componentId)).not.toEqual(
       expect.arrayContaining([...portedIds])
     );

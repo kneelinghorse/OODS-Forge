@@ -1,0 +1,18 @@
+$ pnpm --filter @oods/component-contracts run typecheck
+cwd=.
+exitCode=2
+startedAt=2026-09-06T01:02:57.142Z
+endedAt=2026-09-06T01:02:58.276Z
+durationMs=1134.582
+[stdout]
+
+> @oods/component-contracts@0.1.0 typecheck /Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/packages/component-contracts
+> tsc --noEmit --pretty false -p tsconfig.json
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+/Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/component-contracts@0.1.0 typecheck: `tsc --noEmit --pretty false -p tsconfig.json`
+Exit status 2
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?
+
+[stderr]

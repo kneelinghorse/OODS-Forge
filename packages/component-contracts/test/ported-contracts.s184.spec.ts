@@ -16,10 +16,6 @@ import {
   sharedScenarios,
 } from '../src/index.js';
 
-const EXPECTED_NUCLEUS_IDS = [
-  'Badge', 'Banner', 'Button', 'Card', 'Checkbox', 'DatePicker', 'Grid',
-  'Input', 'Select', 'Stack', 'Table', 'Tabs', 'Text', 'Textarea',
-] as const;
 const EXPECTED_PORTED_IDS = [
   'AuditTimeline',
   'CancellationSummary',
@@ -39,11 +35,10 @@ function sha256(repositoryPath: string): string {
 }
 
 describe('Sprint 184 separate ported component truth plane', () => {
-  it('keeps the foundation nucleus and scenarios exactly at the original 14 IDs', () => {
-    expect(NUCLEUS_COMPONENT_IDS).toEqual(EXPECTED_NUCLEUS_IDS);
-    expect(Object.keys(componentContracts)).toEqual(EXPECTED_NUCLEUS_IDS);
-    expect(sharedScenarios.map(({ oodsComponentId }) => oodsComponentId)).toEqual(
-      EXPECTED_NUCLEUS_IDS,
+  it('keys the nucleus contracts and scenarios exactly by NUCLEUS_COMPONENT_IDS', () => {
+    expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
+    expect(sharedScenarios.map(({ oodsComponentId }) => oodsComponentId).sort()).toEqual(
+      [...NUCLEUS_COMPONENT_IDS].sort(),
     );
     expect(componentContracts).toHaveProperty('Select.version', '1.1.0');
     expect(componentContracts).not.toHaveProperty('StatusBadge');
@@ -52,7 +47,9 @@ describe('Sprint 184 separate ported component truth plane', () => {
   it('defines exactly the disjoint, code-point-sorted eight-component port tranche', () => {
     expect(PORTED_COMPONENT_IDS).toEqual(EXPECTED_PORTED_IDS);
     expect(PORTED_COMPONENT_IDS).toEqual([...PORTED_COMPONENT_IDS].sort());
-    expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(22);
+    expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(
+      NUCLEUS_COMPONENT_IDS.length + PORTED_COMPONENT_IDS.length,
+    );
     expect(Object.keys(portedComponentContracts)).toEqual(EXPECTED_PORTED_IDS);
     expect(portedScenarios.map(({ oodsComponentId }) => oodsComponentId)).toEqual(
       EXPECTED_PORTED_IDS,

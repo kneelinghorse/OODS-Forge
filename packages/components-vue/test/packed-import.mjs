@@ -128,9 +128,11 @@ const css = readFileSync(cssPath, 'utf8');
 if (!css.includes('@import "@oods/tokens/css"') || !css.includes("[data-oods-component='Tabs']")) {
   throw new Error('Packed shared CSS closure is incomplete.');
 }
-for (const target of [import.meta.resolve('@oods/components-vue'), cssUrl, import.meta.resolve('@oods/components-vue/readiness')]) {
+const repositoryRoot = ${JSON.stringify(repositoryRoot)};
+for (const target of [import.meta.resolve('@oods/component-contracts'), import.meta.resolve('@oods/components-vue'), cssUrl, import.meta.resolve('@oods/components-vue/readiness')]) {
   const path = fileURLToPath(target);
   if (!path.startsWith(process.cwd())) throw new Error(\`Resolved outside isolated consumer: \${path}\`);
+  if (path.startsWith(repositoryRoot + '/')) throw new Error(\`Resolved repository source: \${path}\`);
   if (path.includes('/OODs-Forge/') || path.includes('/OODS-Forge/')) throw new Error(\`Resolved repository source: \${path}\`);
 }
 const html = await renderToString(createSSRApp({

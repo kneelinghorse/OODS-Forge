@@ -11,6 +11,7 @@ const defaultRepositoryRoot = path.resolve(scriptDirectory, "../..");
 const sprintRoots = [
   "artifacts/product-reality/sprint-183",
   "artifacts/product-reality/sprint-184",
+  "artifacts/product-reality/sprint-185",
 ];
 
 function evidenceIndexesUnder(repositoryRoot, repositoryPath) {
@@ -35,7 +36,7 @@ export function collectNamedLogPaths(value, output = new Set()) {
   if (typeof value === "string") {
     const normalized = value.replaceAll("\\", "/").replace(/^\.\//, "");
     if (
-      /^artifacts\/product-reality\/sprint-(?:183|184)\/.*\.log$/.test(
+      /^artifacts\/product-reality\/sprint-(?:183|184|185)\/.*\.log$/.test(
         normalized,
       )
     ) {

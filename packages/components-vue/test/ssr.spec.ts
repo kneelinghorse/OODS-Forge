@@ -58,7 +58,7 @@ const ServerShowcase = defineComponent({
 });
 
 describe('@oods/components-vue server rendering', () => {
-  it('SSR-renders all 14 canonical component families with semantic markup', async () => {
+  it('SSR-renders every nucleus component family with semantic markup', async () => {
     const html = await renderToString(h(ServerShowcase));
     for (const componentId of NUCLEUS_COMPONENT_IDS) {
       expect(html, componentId).toContain(`data-oods-component="${componentId}"`);

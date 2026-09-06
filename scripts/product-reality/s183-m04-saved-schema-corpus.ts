@@ -6,6 +6,8 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
+
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import { preflightTargetCapabilities } from '../../packages/mcp-server/src/codegen/target-readiness.js';
 import { validationReceiptIntegrityIssues } from '../../packages/mcp-server/src/codegen/validation-profile.js';
@@ -43,22 +45,8 @@ const EXIT_GATE_RECORD = {
 } as const;
 const SEPARATED_S182_SCHEMA_REF = 's182-tier1-bounded-foundation-v1';
 const TARGETS = ['react', 'vue'] as const;
-const NUCLEUS_COMPONENTS = new Set([
-  'Badge',
-  'Banner',
-  'Button',
-  'Card',
-  'Checkbox',
-  'DatePicker',
-  'Grid',
-  'Input',
-  'Select',
-  'Stack',
-  'Table',
-  'Tabs',
-  'Text',
-  'Textarea',
-]);
+// Sprint 185 m01 (#1725): nucleus membership derives from the contracts package.
+const NUCLEUS_COMPONENTS: ReadonlySet<string> = new Set(NUCLEUS_COMPONENT_IDS);
 const FORBIDDEN_GENERATED_MARKER = /data-oods-(?:fallback|placeholder)|unsupported component|TODO implementation/i;
 
 type Target = typeof TARGETS[number];

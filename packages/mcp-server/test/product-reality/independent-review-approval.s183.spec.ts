@@ -26,6 +26,13 @@ function sha256(filePath: string): string {
     .digest("hex");
 }
 
+// Sprint 185 m01 (#1722, #1725): the frozen Sprint 182 closeout generator is
+// read-only history. This spec imports its frozen constants only. The tests
+// that ran the generator against the live tree (--write-promotion, --check,
+// --check-promotion, and buildPromotionProjection over the live readiness
+// manifests) were removed; every removal and its reason is recorded in
+// artifacts/product-reality/sprint-185/m01/pin-inventory.json. The approval
+// predicate's adversarial tests are preserved verbatim.
 describe("Sprint 183 reusable independent-review approval gate", () => {
   let record: any;
   let closeoutGenerator: typeof import("../../../../scripts/product-reality/generate-s182-m05-closeout.mjs");
@@ -335,80 +342,6 @@ describe("Sprint 183 reusable independent-review approval gate", () => {
     }
   });
 
-  it("keeps unverifiable approval out of the promotion check", () => {
-    const resolveHead = () => ({
-      status: "unverifiable",
-      reason: "fixture has no Git data",
-    });
-    const projection = closeoutGenerator.buildPromotionProjection({
-      approvalRecord: record,
-      resolveHead,
-    });
-    expect(projection.closeout).toMatchObject({
-      independentReviewApproved: false,
-      independentReviewOutcome: "unverifiable",
-      summary: { foundationV1CandidateCells: 28, foundationV1Cells: 0 },
-    });
-    expect(() =>
-      closeoutGenerator.run("--check-promotion", {
-        approvalRecord: record,
-        resolveHead,
-      }),
-    ).toThrow(/approved 28-cell projection.*approval outcome: unverifiable/i);
-  });
-
-  it("discriminates approved and missing records in both ledger directions", () => {
-    const approved = closeoutGenerator.buildPromotionProjection({
-      approvalRecord: record,
-    });
-    expect(approved.closeout).toMatchObject({
-      independentReviewApproved: true,
-      independentReviewOutcome: "approved",
-      riskResolutions: {
-        "R-02":
-          "artifacts/product-reality/sprint-183/m06/r02-package-export-resolution.json",
-      },
-      summary: { foundationV1CandidateCells: 28, foundationV1Cells: 28 },
-    });
-    expect(
-      approved.closeout.foundationCells.every(
-        (cell: any) => cell.evaluation.foundationV1 === true,
-      ),
-    ).toBe(true);
-    expect(
-      approved.closeout.foundationCells.every((cell: any) => {
-        const refs = cell.evidence.packageExport.refs as string[];
-        return (
-          refs.some((ref) =>
-            ref.startsWith(
-              "artifacts/product-reality/sprint-183/m06/r02-package-export-resolution.json#",
-            ),
-          ) &&
-          refs.some((ref) =>
-            ref.startsWith(
-              "artifacts/product-reality/sprint-183/m05/submitted-packages/tarballs/",
-            ),
-          ) &&
-          refs.every(
-            (ref) =>
-              !/^packages\/components-(?:react|vue)\/dist\/index\.d\.ts/.test(
-                ref,
-              ),
-          )
-        );
-      }),
-    ).toBe(true);
-
-    const missing = closeoutGenerator.buildPromotionProjection({
-      approvalRecord: null,
-    });
-    expect(missing.closeout).toMatchObject({
-      independentReviewApproved: false,
-      independentReviewOutcome: "missing",
-      summary: { foundationV1CandidateCells: 28, foundationV1Cells: 0 },
-    });
-  });
-
   it("returns a categorical rejected outcome when an independently fixed rejection matches", () => {
     const rejectedRecord = structuredClone(record);
     const rejectedExpectation = structuredClone(expectation);
@@ -547,55 +480,6 @@ describe("Sprint 183 reusable independent-review approval gate", () => {
     expect(result.reasons.map(({ code }: any) => code)).toContain(
       expectedReason,
     );
-    expect(() =>
-      closeoutGenerator.buildPromotionProjection({ approvalRecord: mutated }),
-    ).toThrow(/independent-review approval record is invalid/i);
-  });
-
-  it("publishes approval at new projection paths while the ca8d84bb historical paths remain byte-exact", () => {
-    const immutablePaths = [
-      "artifacts/product-reality/sprint-182/m01b/mutation/mutation.patch",
-      "packages/component-contracts/registry/component-capability-closeout.s182.v1.json",
-      "artifacts/product-reality/sprint-182/m05/claim-diff.json",
-      "artifacts/product-reality/sprint-182/m05/evidence-index.json",
-      "artifacts/product-reality/sprint-182/m05/gate-record.json",
-      "artifacts/product-reality/sprint-182/m05/gate-record.md",
-    ].map((repoPath) => path.join(repositoryRoot, repoPath));
-    const before = immutablePaths.map(sha256);
-
-    closeoutGenerator.run("--write-promotion");
-    closeoutGenerator.run("--check");
-    closeoutGenerator.run("--check-promotion");
-
-    expect(immutablePaths.map(sha256)).toEqual(before);
-
-    const historical = JSON.parse(
-      fs.readFileSync(
-        path.join(
-          repositoryRoot,
-          "packages/component-contracts/registry/component-capability-closeout.s182.v1.json",
-        ),
-        "utf8",
-      ),
-    );
-    const promotion = JSON.parse(
-      fs.readFileSync(
-        path.join(
-          repositoryRoot,
-          closeoutGenerator.S182_PROMOTION_PATHS.closeout,
-        ),
-        "utf8",
-      ),
-    );
-    expect(historical).toMatchObject({
-      independentReviewApproved: false,
-      summary: { foundationV1Cells: 0 },
-    });
-    expect(promotion).toMatchObject({
-      independentReviewApproved: true,
-      independentReviewOutcome: "approved",
-      summary: { foundationV1Cells: 28 },
-    });
   });
 
   it("content-addresses the preserved snapshot, approval inputs, and discoverable supersession", () => {

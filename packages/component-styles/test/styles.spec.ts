@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
 import { describe, expect, it } from 'vitest';
 import { COMPONENT_STYLE_IDS, SUPPORTED_COMPONENT_THEME_CELLS } from '../src/index.js';
 
@@ -9,8 +10,8 @@ const repoRoot = path.resolve(packageRoot, '../..');
 const css = fs.readFileSync(path.join(packageRoot, 'src/components.css'), 'utf8');
 
 describe('Sprint 182 shared component style contract', () => {
-  it('covers the exact 14-component nucleus with token-driven CSS', () => {
-    expect(COMPONENT_STYLE_IDS).toHaveLength(14);
+  it('covers every nucleus component with token-driven CSS', () => {
+    expect([...COMPONENT_STYLE_IDS].sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
     for (const id of COMPONENT_STYLE_IDS) {
       expect(css, id).toContain(`[data-oods-component='${id}']`);
     }

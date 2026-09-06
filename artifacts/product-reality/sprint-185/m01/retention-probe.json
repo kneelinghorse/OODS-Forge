@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-185",
+  "missionId": "s185-m01",
+  "kind": "product-reality-log-retention-probe",
+  "probedAt": "2026-09-05T23:32:36Z",
+  "probePath": "artifacts/product-reality/sprint-185/m01/foo.log",
+  "commands": [
+    {
+      "command": "git check-ignore artifacts/product-reality/sprint-185/m01/foo.log",
+      "exitCode": 1,
+      "expected": 1,
+      "meaning": "not ignored in the plain form (an ignored path exits 0)"
+    },
+    {
+      "command": "git check-ignore -v artifacts/product-reality/sprint-185/m01/foo.log",
+      "output": ".gitignore:35:!/artifacts/product-reality/**/*.log artifacts/product-reality/sprint-185/m01/foo.log",
+      "meaning": "the negation !/artifacts/product-reality/**/*.log is the deciding rule, after the general *.log"
+    },
+    {
+      "command": "git add artifacts/product-reality/sprint-185/m01/foo.log && git diff --cached --name-only -- artifacts/product-reality/sprint-185/m01/foo.log",
+      "output": "artifacts/product-reality/sprint-185/m01/foo.log",
+      "meaning": "git add stages the log without --force"
+    }
+  ],
+  "status": "passed"
+}

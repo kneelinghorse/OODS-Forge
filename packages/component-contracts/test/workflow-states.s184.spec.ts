@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  NUCLEUS_COMPONENT_IDS,
   UI_WORKFLOW_STATES,
   componentContracts,
   portedComponentContracts,
@@ -12,7 +13,7 @@ describe('Sprint 184 workflow-state vocabulary', () => {
   });
 
   it('keeps workflow states separate from component-local state contracts', () => {
-    expect(Object.keys(componentContracts)).toHaveLength(14);
+    expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
     expect(Object.keys(portedComponentContracts)).toHaveLength(8);
     for (const contract of [
       ...Object.values(componentContracts),

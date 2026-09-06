@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
+import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { handle } from '../../src/tools/code.generate.js';
@@ -41,7 +42,7 @@ describe('Sprint 182 M04 packed generated consumers', () => {
       ]);
       expect(result.proof).toMatchObject({
         canonicalIds: expect.arrayContaining(['Badge', 'Textarea']),
-        readiness: { react: 14, vue: 14 },
+        readiness: { react: NUCLEUS_COMPONENT_IDS.length, vue: NUCLEUS_COMPONENT_IDS.length },
         resolvedInsideConsumer: 5,
       });
     },

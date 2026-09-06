@@ -16,10 +16,6 @@ if (artifactArgument < 0 || !process.argv[artifactArgument + 1]) {
 const artifactRoot = resolve(repositoryRoot, process.argv[artifactArgument + 1]);
 const outputRoot = resolve(artifactRoot, 'packed-import');
 const tarballRoot = resolve(outputRoot, 'tarballs');
-const canonicalIds = [
-  'Badge', 'Banner', 'Button', 'Card', 'Checkbox', 'DatePicker', 'Grid',
-  'Input', 'Select', 'Stack', 'Table', 'Tabs', 'Text', 'Textarea',
-];
 
 function run(command, args, cwd = repositoryRoot, env = process.env) {
   const result = spawnSync(command, args, {
@@ -85,11 +81,18 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
+import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
 import * as components from '@oods/components-react';
 import { getStatusPresentation } from '@oods/components-react/status';
 import * as tableFamily from '@oods/components-react/table';
 
-const canonicalIds = ${JSON.stringify(canonicalIds)};
+// Nucleus membership comes from the packed @oods/component-contracts tarball,
+// resolved per specifier and rejected if it resolves under the repository root.
+const repositoryRoot = ${JSON.stringify(repositoryRoot)};
+const contractsPath = fileURLToPath(import.meta.resolve('@oods/component-contracts'));
+if (!contractsPath.startsWith(process.cwd())) throw new Error('Contracts resolved outside the isolated consumer: ' + contractsPath);
+if (contractsPath.startsWith(repositoryRoot + '/')) throw new Error('Contracts resolved to repository source: ' + contractsPath);
+const canonicalIds = [...NUCLEUS_COMPONENT_IDS];
 const runtimeKeys = Object.keys(components).sort();
 if (JSON.stringify(runtimeKeys) !== JSON.stringify([...canonicalIds].sort())) {
   throw new Error('Packed ESM runtime export set differs: ' + JSON.stringify(runtimeKeys));
@@ -102,13 +105,13 @@ const tableKeys = Object.keys(tableFamily).sort();
 const expectedTableKeys = ['Table', 'TableBody', 'TableCaption', 'TableCell', 'TableHead', 'TableHeaderCell', 'TableRow'].sort();
 if (JSON.stringify(tableKeys) !== JSON.stringify(expectedTableKeys)) throw new Error('Packed Table family differs: ' + JSON.stringify(tableKeys));
 const readiness = JSON.parse(readFileSync(fileURLToPath(import.meta.resolve('@oods/components-react/readiness')), 'utf8'));
-if (readiness.rows.length !== 14 || readiness.rows.some((row) => row.emissionEligible !== true)) throw new Error('Packed readiness failed.');
+if (JSON.stringify(readiness.rows.map((row) => row.componentId)) !== JSON.stringify(canonicalIds) || readiness.rows.some((row) => row.emissionEligible !== true)) throw new Error('Packed readiness failed.');
 const css = readFileSync(fileURLToPath(import.meta.resolve('@oods/component-styles/css')), 'utf8');
 if (!css.includes("[data-oods-component='Tabs']") || !css.includes('@oods/tokens/css')) throw new Error('Packed CSS export failed.');
 const require = createRequire(import.meta.url);
 const commonJsKeys = Object.keys(require('@oods/components-react')).sort();
 if (JSON.stringify(commonJsKeys) !== JSON.stringify(runtimeKeys)) throw new Error('Packed CJS export set differs.');
-process.stdout.write(JSON.stringify({ runtimeKeys, html, status: presentation.label, tableKeys, readinessRows: readiness.rows.length, cssBytes: Buffer.byteLength(css), commonJsKeys }));
+process.stdout.write(JSON.stringify({ canonicalIds, contractsPath, runtimeKeys, html, status: presentation.label, tableKeys, readinessRows: readiness.rows.length, cssBytes: Buffer.byteLength(css), commonJsKeys }));
 `;
   await writeFile(resolve(tempRoot, 'verify.mjs'), consumerSource);
   const verification = run('node', ['verify.mjs'], tempRoot);
