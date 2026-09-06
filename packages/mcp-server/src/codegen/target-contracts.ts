@@ -210,6 +210,11 @@ const TONE_VALUE = enumContract([
 ]);
 const EMPHASIS_VALUE = enumContract(['subtle', 'solid']);
 const SIZE_VALUE = enumContract(['sm', 'md', 'lg']);
+const HEADING_TAG_VALUE = enumContract(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
+const HEADING_LEVEL_VALUE = valueContract(
+  'an integer from 1 to 6',
+  (value) => typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 6,
+);
 const VALIDATION_VALUE = valueContract(
   'an object with state "error", "warning", or "success" and a string message',
   (value) => {
@@ -307,6 +312,17 @@ const PROP_VALUE_CONTRACTS: Readonly<
     elevated: BOOLEAN_VALUE,
     as: enumContract(['div', 'section', 'article', 'aside']),
   },
+  CardHeader: {
+    title: STRING_VALUE,
+    label: STRING_VALUE,
+    text: STRING_VALUE,
+    supporting: STRING_VALUE,
+    supportingText: STRING_VALUE,
+    subtitle: STRING_VALUE,
+    description: STRING_VALUE,
+    level: HEADING_LEVEL_VALUE,
+    as: HEADING_TAG_VALUE,
+  },
   Checkbox: {
     id: STRING_VALUE,
     label: STRING_VALUE,
@@ -329,6 +345,25 @@ const PROP_VALUE_CONTRACTS: Readonly<
     reasonField: STRING_VALUE,
     codeField: STRING_VALUE,
   },
+  ColorSwatch: {
+    color: STRING_VALUE,
+    value: STRING_VALUE,
+    state: STRING_VALUE,
+    label: STRING_VALUE,
+  },
+  ColorizedBadge: {
+    label: STRING_VALUE,
+    text: STRING_VALUE,
+    state: STRING_VALUE,
+    value: STRING_VALUE,
+    status: STRING_VALUE,
+    color: STRING_VALUE,
+    hue: STRING_VALUE,
+    swatch: STRING_VALUE,
+    variant: STRING_VALUE,
+    tone: TONE_VALUE,
+    emphasis: EMPHASIS_VALUE,
+  },
   DatePicker: {
     id: STRING_VALUE,
     label: STRING_VALUE,
@@ -342,6 +377,18 @@ const PROP_VALUE_CONTRACTS: Readonly<
     readOnly: BOOLEAN_VALUE,
     help: STRING_VALUE,
     validation: VALIDATION_VALUE,
+  },
+  DetailHeader: {
+    title: STRING_VALUE,
+    label: STRING_VALUE,
+    text: STRING_VALUE,
+    subtitle: STRING_VALUE,
+    sublabel: STRING_VALUE,
+    description: STRING_VALUE,
+    metadata: STRING_VALUE,
+    meta: STRING_VALUE,
+    level: HEADING_LEVEL_VALUE,
+    as: HEADING_TAG_VALUE,
   },
   Grid: {
     columns: valueContract(
@@ -519,6 +566,10 @@ const PROP_VALUE_CONTRACTS: Readonly<
     readOnly: BOOLEAN_VALUE,
     help: STRING_VALUE,
     validation: VALIDATION_VALUE,
+  },
+  VizAreaPreview: {
+    width: NUMBER_VALUE,
+    height: NUMBER_VALUE,
   },
 };
 

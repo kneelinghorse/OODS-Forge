@@ -114,6 +114,14 @@ export interface UnknownBindingOccurrence extends BindingOccurrenceBase {
 export type ResolvedBindingOccurrence = LocalBindingOccurrence | DomainBindingOccurrence;
 export type BindingOccurrence = ResolvedBindingOccurrence | UnknownBindingOccurrence;
 
+/** A display reads an existing field writer; it owns neither an event nor state. */
+export interface ReadonlyFieldSubscription extends BindingOccurrenceBase {
+  readonly component: 'DetailHeader';
+  readonly event: 'onChange';
+  readonly field: string;
+  readonly writer: LocalBindingOccurrence;
+}
+
 export interface ResolvedBindingHandler {
   readonly handlerName: string;
   readonly kind: BindingKind;
@@ -128,7 +136,8 @@ export type BindingAnalysisIssueCode =
   | 'AMBIGUOUS_LOCAL_BINDING'
   | 'AMBIGUOUS_HANDLER'
   | 'INCOMPATIBLE_HANDLER'
-  | 'LOCAL_SYMBOL_COLLISION';
+  | 'LOCAL_SYMBOL_COLLISION'
+  | 'INVALID_READONLY_FIELD_SUBSCRIPTION';
 
 export interface BindingAnalysisIssue {
   readonly code: BindingAnalysisIssueCode;
@@ -145,6 +154,8 @@ export interface BindingAnalysisIssue {
 export interface BindingAnalysis {
   readonly ok: boolean;
   readonly occurrences: readonly BindingOccurrence[];
+  /** Measured display bindings, with provenance to their sole local writer. */
+  readonly readonlyFieldSubscriptions: readonly ReadonlyFieldSubscription[];
   /** Compatible bindings grouped by their generated handler identifier. */
   readonly handlers: readonly ResolvedBindingHandler[];
   readonly issues: readonly BindingAnalysisIssue[];
@@ -266,6 +277,8 @@ export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis 
   const occurrences: BindingOccurrence[] = [];
   const issues: BindingAnalysisIssue[] = [];
   const firstPathByNodeId = new Map<string, string>();
+  const nodesById = new Map<string, UiElement>();
+  const readCandidates: Array<{ node: UiElement; handlerName: string; path: string }> = [];
   const invalidLocalHandlers = new Set<string>();
 
   const visit = (node: UiElement, path: string, screenRoot: boolean): void => {
@@ -280,11 +293,19 @@ export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis 
       });
     } else {
       firstPathByNodeId.set(node.id, path);
+      nodesById.set(node.id, node);
     }
 
     const nodeOccurrences: BindingOccurrence[] = [];
     for (const [event, handlerName] of Object.entries(node.bindings ?? {})
       .sort(([left], [right]) => compareCodePoint(left, right))) {
+      // The saved plan form binds its heading to the same field/change handler
+      // as its Textarea. Resolve that read only after ordinary writer semantics
+      // have passed; a heading never acquires a fictitious change event.
+      if (node.component === 'DetailHeader' && event === 'onChange') {
+        readCandidates.push({ node, handlerName, path });
+        continue;
+      }
       const definition = findBindingDefinition(node.component, event, screenRoot);
       if (!definition) {
         const occurrence: UnknownBindingOccurrence = {
@@ -444,9 +465,57 @@ export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis 
     }
   }
 
+  const readonlyFieldSubscriptions: ReadonlyFieldSubscription[] = [];
+  for (const { node, handlerName, path } of readCandidates) {
+    const field = node.props?.field;
+    const handler = handlers.find((candidate) => candidate.handlerName === handlerName);
+    const writer = handler?.occurrences[0];
+    const writerField = writer ? nodesById.get(writer.nodeId)?.props?.field : undefined;
+    let reason: string | undefined;
+    if (typeof field !== 'string' || field.trim().length === 0) {
+      reason = 'requires a non-empty field reference';
+    } else if (node.children?.length || node.props?.children !== undefined) {
+      reason = 'cannot replace authored children with a field subscription';
+    } else if (
+      handler?.kind !== 'local'
+      || handler.occurrences.length !== 1
+      || writer?.kind !== 'local'
+      || writer.signature.parameters.length !== 1
+      || writer.signature.parameters[0]?.type !== 'string'
+    ) {
+      reason = 'requires exactly one valid string local writer with the same handler';
+    } else if (writerField !== field) {
+      reason = 'requires its writer to reference the same field';
+    }
+
+    if (reason) {
+      issues.push({
+        code: 'INVALID_READONLY_FIELD_SUBSCRIPTION',
+        message: `Read-only binding DetailHeader.onChange ${reason}.`,
+        nodeId: node.id,
+        component: node.component,
+        event: 'onChange',
+        handlerName,
+        path,
+      });
+      continue;
+    }
+
+    readonlyFieldSubscriptions.push({
+      nodeId: node.id,
+      component: 'DetailHeader',
+      event: 'onChange',
+      handlerName,
+      path,
+      field: field as string,
+      writer: writer as LocalBindingOccurrence,
+    });
+  }
+
   return {
     ok: issues.length === 0,
     occurrences,
+    readonlyFieldSubscriptions,
     handlers,
     issues,
   };

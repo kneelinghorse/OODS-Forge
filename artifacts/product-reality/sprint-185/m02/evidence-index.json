@@ -1,0 +1,82 @@
+{
+  "mission": "s185-m02",
+  "baseCommit": "8fd78b25b76088c1945be548d64d0539021fef27",
+  "worktree": "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge",
+  "branch": "codex/sprint-185-component-breadth-wave-1",
+  "implementation": [
+    "five nucleus contracts and shared scenarios",
+    "five token-driven style blocks and role resolution across six brand/theme cells",
+    "five prop-value contracts with name/type rejection",
+    "read-only DetailHeader subscription to a matching local field writer; no interactive header event"
+  ],
+  "verification": [
+    {
+      "name": "contracts package",
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "log": "contracts-tests.log"
+    },
+    {
+      "name": "styles package including browser HC/forced-colors",
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "log": "styles-tests.log"
+    },
+    {
+      "name": "new breadth and read-only validation plus binding regressions",
+      "passed": 106,
+      "failed": 0,
+      "skipped": 0,
+      "log": "validation-tests.log"
+    },
+    {
+      "name": "read-only generated source across frameworks/styling/languages",
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "log": "read-only-generation-tests.log"
+    },
+    {
+      "name": "history pins/nucleus pins/prior contract resolution",
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "log": "regression-tests.log"
+    },
+    {
+      "name": "existing action protocol/prop and binding regression",
+      "passed": 147,
+      "failed": 0,
+      "skipped": 0,
+      "log": "binding-regression-tests.log"
+    }
+  ],
+  "builds": [
+    "contracts-build.log",
+    "styles-build.log"
+  ],
+  "passedTypechecks": [
+    "contracts-typecheck.log",
+    "styles-typecheck.log",
+    "server-package-typecheck.log"
+  ],
+  "controls": [
+    "validation-baseline.json",
+    "binding-gap-baseline.json",
+    "value-mutants/mutation-manifest.json"
+  ],
+  "disclosures": [
+    "The counts above are test invocations, with overlapping regression coverage across runs.",
+    "Contract-first build-profile tests explicitly inject the existing target-readiness seam because m03 implementations do not yet exist (decision #1733). Repeat invalid-prop controls without injection after m03.",
+    "The planning pure-port premise hid a DetailHeader read-only field binding defect. Fixed with explicit, provenance-preserving state subscription; memo amended and decision #1734 captured. Saved schemas, contracts.spec.ts, and HTML component-map.ts remain unchanged.",
+    "Initial validation run was 43/45; both failures exposed the plan-form-dark reader. Preserved in validation-tests-first.log, corrected by the measured subscription lowering.",
+    "Initial server typecheck invoked root TypeScript 5.3.3 and failed on unchanged DTCG code. compiler-selection-baseline.json reproduces at m01; the correct package-scoped TypeScript 5.9.3 check passes. The first output remains in server-typecheck.log.",
+    "Per decision #1732 no four-suite baseline is repeated in m02. Framework runtime/readiness/packed checks are m03 work and no such pass is claimed here."
+  ],
+  "commitBoundaryReason": "Contract and binding baseline before framework implementations is needed for the m03 export/readiness mutation controls and reproducible isolation.",
+  "advertisedMovers": "advertised-movers.json",
+  "contractRecord": "contract-record.json",
+  "noSelfCertification": true
+}

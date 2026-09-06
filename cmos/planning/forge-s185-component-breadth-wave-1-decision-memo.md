@@ -145,3 +145,15 @@ runtime-census approval (`#1331`) stays open and does not gate this sprint.
 The fresh build session reads `agents.md`, runs `cmos_review()`, reads this memo, creates an exclusive worktree
 from `1118f436` on a new branch, and begins `s185-m01`. It builds only from this memo and the CMOS missions, records
 evidence, and stops. A separate review session decides genuine close and, when it certifies, closes the sprint itself.
+
+## Build correction — m02 binding measurement (2026-09-06, decision #1734)
+
+The planning claim of zero hidden contract defects is disproved by the m02 target-contract checks.
+`plan-form-dark/form-title-1` declares `DetailHeader.onChange=handleChange_plan_name`, shared with the
+`Textarea` for `plan_name`. Readiness returned first; the pruned probe deleted the defect. The saved
+schema remains byte-exact. m02 now includes explicit read-only field subscription lowering: the header
+reads the one valid local string writer's state for the same field and handler, without emitting an
+interactive header event or allocating a second state owner. Missing, mismatched, ambiguous, and domain
+writers stay typed errors. The header contract keeps no events. Generated-code checks run in m02; m03
+proves the textarea edit updates the real heading in both frameworks. The contracts, five-component
+slate, and twelve-cell exit gate stay unchanged.

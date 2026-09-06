@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import { chromium, type Browser } from 'playwright';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { SUPPORTED_COMPONENT_THEME_CELLS } from '../src/index.js';
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = path.resolve(packageRoot, '../..');
@@ -23,6 +24,71 @@ afterAll(async () => {
 });
 
 describe('Sprint 182 shared component-style browser corrections', () => {
+  for (const cell of SUPPORTED_COMPONENT_THEME_CELLS) {
+    for (const forcedColors of ['none', 'active'] as const) {
+      it(`s185-m02 preserves visible color labels in ${cell.brand}/${cell.theme}, forcedColors=${forcedColors}`, async () => {
+        const page = await browser.newPage({ forcedColors, viewport: { width: 640, height: 480 } });
+        await page.setContent(`<!doctype html>
+          <html data-brand="${cell.brand}" data-theme="${cell.theme}">
+            <head><style>${tokenCss}\n${componentCss}</style></head>
+            <body style="background:var(--sys-surface-canvas);color:var(--sys-text-primary)">
+              <span id="system-pair" style="color:CanvasText;background:Canvas">System pair</span>
+              <span data-oods-component="ColorSwatch" style="--oods-swatch-color:red">
+                <span data-oods-swatch-chip="true" aria-hidden="true"></span>
+                <span data-oods-swatch-label="true">Critical red</span>
+              </span>
+              ${['subtle', 'solid'].map((emphasis) => `
+                <span data-oods-component="ColorizedBadge" data-emphasis="${emphasis}" style="--oods-badge-color:red">
+                  <span class="oods-badge__icon" aria-hidden="true"><span data-oods-badge-marker="true"></span></span>
+                  <span class="oods-badge__label"><span data-oods-badge-label="true">Past due</span></span>
+                </span>`).join('')}
+            </body>
+          </html>`);
+        const proof = await page.evaluate(() => {
+          const systemPair = getComputedStyle(document.querySelector('#system-pair')!);
+          const body = getComputedStyle(document.body);
+          return {
+            system: { color: systemPair.color, background: systemPair.backgroundColor },
+            components: [...document.querySelectorAll('[data-oods-component]')].map((component) => {
+              const rootStyle = getComputedStyle(component);
+              const label = component.querySelector<HTMLElement>('[data-oods-swatch-label], [data-oods-badge-label]')!;
+              const marker = component.querySelector<HTMLElement>('[data-oods-swatch-chip], [data-oods-badge-marker]')!;
+              const style = getComputedStyle(label);
+              return {
+                text: label.innerText,
+                labelWidth: label.getBoundingClientRect().width,
+                labelHeight: label.getBoundingClientRect().height,
+                visibility: style.visibility,
+                color: style.color,
+                background: rootStyle.backgroundColor === 'rgba(0, 0, 0, 0)' ? body.backgroundColor : rootStyle.backgroundColor,
+                markerColor: getComputedStyle(marker).backgroundColor,
+                markerWidth: marker.getBoundingClientRect().width,
+                markerHeight: marker.getBoundingClientRect().height,
+              };
+            }),
+          };
+        });
+        expect(proof.components.map((component) => component.text)).toEqual(['Critical red', 'Past due', 'Past due']);
+        for (const component of proof.components) {
+          expect(component.visibility).toBe('visible');
+          expect(component.labelWidth).toBeGreaterThan(0);
+          expect(component.labelHeight).toBeGreaterThan(0);
+          expect(component.markerWidth).toBeGreaterThan(2);
+          expect(component.markerHeight).toBeGreaterThan(2);
+          expect(component.color).not.toBe(component.background);
+          if (cell.theme === 'hc' || forcedColors === 'active') {
+            expect(component.color).toBe(proof.system.color);
+            expect(component.background).toBe(proof.system.background);
+            expect(component.markerColor).toBe(proof.system.color);
+          } else {
+            expect(component.markerColor).toBe('rgb(255, 0, 0)');
+          }
+        }
+        await page.close();
+      }, 30_000);
+    }
+  }
+
   it('s182-m01b keeps the Brand B light enabled action at or above 4.5:1', async () => {
     const page = await browser.newPage({
       colorScheme: 'light',

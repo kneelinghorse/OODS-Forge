@@ -29,7 +29,14 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     id: 'Card', version: COMPONENT_CONTRACT_VERSION,
     props: ['elevated', 'as'], slots: ['default'], events: [], states: ['default', 'elevated'],
     tokenRoles: ['surface.panel', 'border.default', 'shadow.panel'], accessibility: ['Safe semantic container element', 'Preserves native attributes'],
-    compatibility: 'One container primitive; no header or footer family is introduced.',
+    compatibility: 'One container primitive; CardHeader is a separately governed heading component composed inside Card.',
+  },
+  CardHeader: {
+    id: 'CardHeader', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'text', 'supporting', 'supportingText', 'subtitle', 'description', 'level', 'as'], slots: ['default'], events: [],
+    states: ['default'], tokenRoles: ['header.title', 'header.subtitle'],
+    accessibility: ['A real heading element follows as/level with default h3', 'Supporting text remains visible beside the heading'],
+    compatibility: 'Mirrors renderCardHeader title and supporting-text aliases and headingTag(level, 3); as selects a heading element, and authored default-slot content is preserved.',
   },
   Checkbox: {
     id: 'Checkbox', version: COMPONENT_CONTRACT_VERSION,
@@ -38,12 +45,33 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Native checkbox semantics', 'Label and help/error descriptions are programmatically associated'],
     compatibility: 'Indeterminate remains unsupported until implemented and tested in both targets.',
   },
+  ColorSwatch: {
+    id: 'ColorSwatch', version: COMPONENT_CONTRACT_VERSION,
+    props: ['color', 'value', 'state', 'label'], slots: ['default'], events: [],
+    states: ['default'], tokenRoles: ['swatch.chip', 'swatch.border', 'text.body'],
+    accessibility: ['A visible text label always accompanies the decorative color chip', 'Color is never the sole carrier in high-contrast or forced-colors modes'],
+    compatibility: 'Mirrors renderColorSwatch color/value/state precedence and data-swatch-color; the visible label falls back to the resolved color.',
+  },
+  ColorizedBadge: {
+    id: 'ColorizedBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'state', 'value', 'status', 'color', 'hue', 'swatch', 'variant', 'tone', 'emphasis'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text', 'badge.icon', 'badge.color'],
+    accessibility: ['Inherits Badge inline noninteractive status label semantics', 'A visible text label always accompanies the decorative color marker', 'Color is never the sole status signal'],
+    compatibility: 'Mirrors renderColorizedBadge over renderBadgePrimitive label/status/color aliases and default variant colorized; Badge tone and emphasis retain their shared behavior.',
+  },
   DatePicker: {
     id: 'DatePicker', version: COMPONENT_CONTRACT_VERSION,
     props: ['id', 'label', 'value', 'defaultValue', 'min', 'max', 'step', 'required', 'disabled', 'readOnly', 'help', 'validation'], slots: ['label', 'help', 'validation'], events: ['input', 'change', 'update'],
     states: ['empty', 'valued', 'disabled', 'readOnly', 'invalid'], tokenRoles: ['input.background', 'input.border', 'input.text', 'input.focus', 'field.message'],
     accessibility: ['Native date input semantics', 'ISO YYYY-MM-DD values', 'Label and descriptions are associated'],
     compatibility: 'Composes canonical Input; no custom calendar claim.',
+  },
+  DetailHeader: {
+    id: 'DetailHeader', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'text', 'subtitle', 'sublabel', 'description', 'metadata', 'meta', 'level', 'as'], slots: ['default'], events: [],
+    states: ['default'], tokenRoles: ['header.title', 'header.subtitle', 'header.metadata'],
+    accessibility: ['A real heading element follows as/level with default h2', 'Subtitle and metadata remain visible beside the heading'],
+    compatibility: 'Mirrors renderDetailHeader title/subtitle/metadata aliases and headingTag(level, 2); saved-schema as selects a heading element, and authored default-slot content is preserved.',
   },
   Grid: {
     id: 'Grid', version: COMPONENT_CONTRACT_VERSION,
@@ -97,5 +125,12 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['empty', 'valued', 'disabled', 'readOnly', 'invalid'], tokenRoles: ['input.background', 'input.border', 'input.text', 'input.placeholder', 'input.focus', 'field.message'],
     accessibility: ['Native textarea semantics', 'Label and help/error descriptions are programmatically associated'],
     compatibility: 'Shares the canonical field metadata and validation contract.',
+  },
+  VizAreaPreview: {
+    id: 'VizAreaPreview', version: COMPONENT_CONTRACT_VERSION,
+    props: ['width', 'height'], slots: ['default'], events: [], states: ['placeholder', 'content'],
+    tokenRoles: ['preview.frame', 'preview.placeholder'],
+    accessibility: ['The empty frame has a visible text placeholder', 'Authored default-slot content preserves its own semantics'],
+    compatibility: 'Mirrors renderVizAreaPreview through renderVizPreview with data-viz-preview-type=area and default dimensions 640x360; the placeholder appears only without authored content. This frame is not visualization evidence and renders no chart pixels.',
   },
 };

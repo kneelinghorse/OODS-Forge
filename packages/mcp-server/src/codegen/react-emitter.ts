@@ -402,6 +402,7 @@ function emitNode(
     : null;
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
+  const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
   const controlledProp = localBinding ? reactControlledProp(localBinding) : null;
   const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
   const finish = (code: string): string => wrapReactStateNode(
@@ -614,7 +615,7 @@ function emitNode(
     const innerAttrs = innerAttrParts.length > 0 ? ` ${innerAttrParts.join(' ')}` : '';
 
     if (children.length === 0 && sectionFieldContent?.isChildren) {
-      const fieldExpression = reactFieldExpression(
+      const fieldExpression = readonlyField?.writer.localSymbols.state ?? reactFieldExpression(
         node,
         sectionFieldContent.fieldName,
         sectionFieldContent.propName,
@@ -654,7 +655,7 @@ function emitNode(
     const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
-        const fieldExpression = reactFieldExpression(
+        const fieldExpression = readonlyField?.writer.localSymbols.state ?? reactFieldExpression(
           node,
           fieldContent.fieldName,
           fieldContent.propName,

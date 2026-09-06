@@ -415,6 +415,7 @@ function emitTemplateNodeBody(
     : null;
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
+  const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
   const controlledProp = localBinding ? vueControlledProp(localBinding) : null;
   const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
   if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
@@ -649,7 +650,7 @@ function emitTemplateNodeBody(
     const innerAttrs = ` ${innerAttrParts.join(' ')}`;
 
     if (children.length === 0 && sectionFieldContent?.isChildren) {
-      const fieldExpression = vueFieldExpression(
+      const fieldExpression = readonlyField?.writer.localSymbols.state ?? vueFieldExpression(
         node,
         sectionFieldContent.fieldName,
         sectionFieldContent.propName,
@@ -689,7 +690,7 @@ function emitTemplateNodeBody(
     const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
-        const fieldExpression = vueFieldExpression(
+        const fieldExpression = readonlyField?.writer.localSymbols.state ?? vueFieldExpression(
           node,
           fieldContent.fieldName,
           fieldContent.propName,

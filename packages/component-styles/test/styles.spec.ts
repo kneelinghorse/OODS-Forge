@@ -1,13 +1,39 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
+import { componentContracts, NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
 import { describe, expect, it } from 'vitest';
 import { COMPONENT_STYLE_IDS, SUPPORTED_COMPONENT_THEME_CELLS } from '../src/index.js';
+import { SEMANTIC_BRIDGE } from '../../tokens/scripts/brand-bridge.mjs';
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = path.resolve(packageRoot, '../..');
 const css = fs.readFileSync(path.join(packageRoot, 'src/components.css'), 'utf8');
+const breadthComponents = ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview'] as const;
+
+function colorTokens(source: string): Map<string, string> {
+  const tokens = new Map<string, string>();
+  function visit(node: unknown, segments: string[]) {
+    if (!node || typeof node !== 'object' || Array.isArray(node)) return;
+    const record = node as Record<string, unknown>;
+    if (record.$type === 'color' && typeof record.$value === 'string') {
+      tokens.set(segments.join('.'), record.$value);
+      return;
+    }
+    for (const [key, value] of Object.entries(record)) {
+      if (!key.startsWith('$')) visit(value, [...segments, key]);
+    }
+  }
+  visit(JSON.parse(fs.readFileSync(source, 'utf8')), []);
+  return tokens;
+}
+
+function componentDeclarations(component: string): string {
+  return [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .filter(([, selector]) => selector.includes(`[data-oods-component='${component}']`))
+    .map(([, , declarations]) => declarations)
+    .join('\n');
+}
 
 describe('Sprint 182 shared component style contract', () => {
   it('covers every nucleus component with token-driven CSS', () => {
@@ -20,12 +46,70 @@ describe('Sprint 182 shared component style contract', () => {
   });
 
   it('binds the six declared brand/theme cells to real token sources', () => {
+    const tokenRoot = path.join(repoRoot, 'packages/tokens/src/tokens');
+    const systemTokens = new Map(
+      ['text.json', 'surface.json', 'status.json'].flatMap((file) => (
+        [...colorTokens(path.join(tokenRoot, 'base/system', file))]
+      )),
+    );
     expect(SUPPORTED_COMPONENT_THEME_CELLS).toHaveLength(6);
     for (const cell of SUPPORTED_COMPONENT_THEME_CELLS) {
       const tokenMode = cell.theme === 'light' ? 'base' : cell.theme;
-      const source = path.join(repoRoot, 'packages/tokens/src/tokens/brands', cell.brand, `${tokenMode}.json`);
+      const source = path.join(tokenRoot, 'brands', cell.brand, `${tokenMode}.json`);
       expect(fs.existsSync(source), `${cell.brand}/${cell.theme}`).toBe(true);
+      const brandTokens = colorTokens(source);
+      for (const component of breadthComponents) {
+        const declarations = componentDeclarations(component);
+        for (const role of componentContracts[component].tokenRoles) {
+          const detail = `${component}.${role} in ${cell.brand}/${cell.theme}`;
+          const variable = `--cmp-${role.replaceAll('.', '-')}`;
+          // A contract role must be consumed and bound, not merely mentioned in CSS.
+          expect(declarations, detail).toContain(`var(${variable},`);
+          const binding = declarations.match(new RegExp(`${variable}: var\\((--sys-[\\w-]+)\\);`));
+          expect(binding, `${detail}: component-to-system binding`).not.toBeNull();
+          const systemEntry = [...systemTokens].find(([name]) => `--${name.replaceAll('.', '-')}` === binding![1]);
+          expect(systemEntry, `${detail}: real system color token`).toBeDefined();
+          const reference = systemEntry![1].match(/^\{(theme\.[\w.-]+)\}$/);
+          expect(reference, `${detail}: semantic token reference`).not.toBeNull();
+          const semanticSlot = `--${reference![1].replaceAll('.', '-')}`;
+          const bridge = SEMANTIC_BRIDGE.find((entry: { slot: string }) => entry.slot === semanticSlot);
+          expect(bridge, `${detail}: active semantic bridge`).toBeDefined();
+          const value = brandTokens.get(`color.brand.${cell.brand}.${bridge!.tokenPath}`);
+          expect(value, `${detail}: resolved source value`).toBeTruthy();
+          expect(value, `${detail}: no dangling alias`).not.toMatch(/[{}]/);
+        }
+      }
     }
+  });
+
+  it('s185-m02 keeps color labels visible beside decorative markers in hc and forced colors', () => {
+    const labelSelectors = [
+      ":where([data-oods-component='ColorSwatch']) > [data-oods-swatch-label]",
+      ":where([data-oods-component='ColorizedBadge']) [data-oods-badge-label]",
+    ];
+    const labelRule = `${labelSelectors.join(',\n')} {\n  display: inline;\n  visibility: visible;\n  color: inherit;\n}`;
+    expect(css).toContain(labelRule);
+    for (const id of ['ColorSwatch', 'ColorizedBadge']) {
+      expect(css).toMatch(new RegExp(
+        `@media \\(forced-colors: active\\)[\\s\\S]*?\\[data-oods-component='${id}'\\][\\s\\S]*?forced-color-adjust: none;[\\s\\S]*?background: Canvas;[\\s\\S]*?color: CanvasText;`,
+      ));
+      expect(css).toMatch(new RegExp(
+        `\\[data-theme='hc'\\] :where\\([^{}]*?\\[data-oods-component='${id}'\\][^{}]*?\\) \\{\\s*border-color: CanvasText;\\s*background: Canvas;\\s*color: CanvasText;`,
+      ));
+    }
+    expect(css).toMatch(/\[data-oods-swatch-chip\],[\s\S]*?\[data-oods-badge-marker\] \{\s*border-color: CanvasText;\s*background: CanvasText;/);
+  });
+
+  it('s185-m02 exposes styled heading, supporting copy and a dimensioned empty preview frame', () => {
+    for (const id of ['DetailHeader', 'CardHeader']) {
+      expect(css).toContain(`[data-oods-component='${id}']) > :is(h1, h2, h3, h4, h5, h6)`);
+    }
+    for (const part of ['data-oods-subtitle', 'data-oods-metadata', 'data-oods-supporting', 'data-viz-preview-placeholder']) {
+      expect(css).toContain(`> [${part}]`);
+    }
+    const frame = componentDeclarations('VizAreaPreview');
+    expect(frame).toContain('inline-size: min(100%, var(--oods-viz-width, 640px));');
+    expect(frame).toContain('min-block-size: var(--oods-viz-height, 360px);');
   });
 
   it('s182-m01a keeps shared high-contrast controls on matching system colors', () => {

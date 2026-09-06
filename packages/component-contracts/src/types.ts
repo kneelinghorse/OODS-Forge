@@ -14,8 +14,12 @@ export const NUCLEUS_COMPONENT_IDS = [
   'Banner',
   'Button',
   'Card',
+  'CardHeader',
   'Checkbox',
+  'ColorSwatch',
+  'ColorizedBadge',
   'DatePicker',
+  'DetailHeader',
   'Grid',
   'Input',
   'Select',
@@ -24,6 +28,7 @@ export const NUCLEUS_COMPONENT_IDS = [
   'Tabs',
   'Text',
   'Textarea',
+  'VizAreaPreview',
 ] as const;
 
 export type NucleusComponentId = (typeof NUCLEUS_COMPONENT_IDS)[number];
