@@ -14,7 +14,13 @@ export const BASELINE_PATH = 'packages/component-contracts/registry/component-ca
 export const OVERLAY_PATH = 'packages/component-contracts/registry/component-capability-ported-surfaces.v1.json';
 export const FOLD_BASE = '9fb7882e01cc0067ae6e69ad27330864ad228dd4';
 const SPRINT_BASE = '1118f436345e160437abfedbe73a19f190a92562';
-const RECORD_ROOT = 'artifacts/product-reality/sprint-185/m05/baseline-fold';
+/**
+ * Sprint 185 wrote its fold record under m05. Sprint 186 folds each mission's
+ * newly reachable components as they land, so the record is sprint-wide and
+ * rewritten per mission; the frozen Sprint 185 record stays where it was.
+ */
+const RECORD_ROOT = 'artifacts/product-reality/sprint-186/baseline-fold';
+const FOLD_MISSION = 's186-m05';
 const FOUNDATION_PATH = 'packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json';
 const FOUNDATION_SHA256 = '7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71';
 const TARGETS = ['react', 'vue'];
@@ -24,7 +30,15 @@ const READINESS = {
   ported: { react: 'packages/components-react/evidence/react-ported-readiness.v1.json', vue: 'packages/components-vue/evidence/vue-readiness-ported.v1.json' },
 };
 const PORTED_PACKED_REPORT = 'artifacts/product-reality/sprint-184/m04/packed-consumers/report.json';
-const LIVE_ROOT = 'artifacts/product-reality/sprint-185/m04/live-consumers';
+/** Every live packed-consumer proof that can carry a new nucleus component's generatedConsumer evidence. */
+const LIVE_ROOTS = Object.freeze([
+  'artifacts/product-reality/sprint-185/m04/live-consumers',
+  'artifacts/product-reality/sprint-186/m01/live-consumers',
+  'artifacts/product-reality/sprint-186/m02/live-consumers',
+  'artifacts/product-reality/sprint-186/m03/live-consumers',
+  'artifacts/product-reality/sprint-186/m04/live-consumers',
+  'artifacts/product-reality/sprint-186/m05/recomposed-live-consumers',
+]);
 const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const readJson = (root, file) => JSON.parse(readFileSync(path.join(root, file), 'utf8'));
@@ -103,8 +117,9 @@ export function deriveBaselineSurfaceFold(root = DEFAULT_ROOT) {
   const oldNucleus = historicalJson(root, SPRINT_BASE, READINESS.nucleus.react).rows.map(row => row.componentId);
   const currentIds = target => documents.nucleus[target].rows.map(row => row.componentId);
   assert.deepEqual(currentIds('react'), currentIds('vue'), 'Nucleus readiness target membership differs.');
+  // Every component added to the nucleus since the Sprint 185 base; waves append, never a literal count.
   const newIds = currentIds('react').filter(id => !oldNucleus.includes(id));
-  assert.equal(newIds.length, 5, 'This fold covers the five Sprint 185 additions.');
+  assert(newIds.length > 0, 'The fold has no new nucleus components.');
   assert(oldNucleus.every(id => currentIds('react').includes(id)), 'Existing nucleus membership was removed.');
   const portedIds = documents.ported.react.rows.map(row => row.componentId);
   assert.deepEqual(portedIds, documents.ported.vue.rows.map(row => row.componentId));
@@ -119,19 +134,21 @@ export function deriveBaselineSurfaceFold(root = DEFAULT_ROOT) {
   const portedPacked = readJson(root, PORTED_PACKED_REPORT);
   assert.equal(portedPacked.status, 'passed'); assert.equal(portedPacked.failed, 0); assert.equal(portedPacked.skipped, 0);
   references.add(PORTED_PACKED_REPORT);
-  const live = readJson(root, `${LIVE_ROOT}/report.json`);
-  assert.equal(live.status, 'passed'); assert.equal(live.failed, 0); assert.equal(live.skipped, 0);
-  references.add(`${LIVE_ROOT}/report.json`);
-  const liveCells = live.cells.map(cell => {
-    const file = `${LIVE_ROOT}/${cell.report}`;
-    const content = readFileSync(path.join(root, file));
-    assert.equal(sha256(content), cell.reportSha256.replace(/^sha256:/, ''), 'Live consumer report hash differs.');
-    const report = JSON.parse(content.toString('utf8'));
-    assert.equal(report.status, 'passed');
-    assert.equal(report.gates.length, 8);
-    assert(report.gates.every(gate => gate.status === 'passed' || (gate.name === 'interaction-evidence' && gate.status === 'not-applicable')));
-    references.add(file);
-    return { file, report };
+  const liveCells = LIVE_ROOTS.flatMap(liveRoot => {
+    const live = readJson(root, `${liveRoot}/report.json`);
+    assert.equal(live.status, 'passed'); assert.equal(live.failed, 0); assert.equal(live.skipped, 0);
+    references.add(`${liveRoot}/report.json`);
+    return live.cells.map(cell => {
+      const file = `${liveRoot}/${cell.report}`;
+      const content = readFileSync(path.join(root, file));
+      assert.equal(sha256(content), cell.reportSha256.replace(/^sha256:/, ''), 'Live consumer report hash differs.');
+      const report = JSON.parse(content.toString('utf8'));
+      assert.equal(report.status, 'passed');
+      assert.equal(report.gates.length, 8);
+      assert(report.gates.every(gate => gate.status === 'passed' || (gate.name === 'interaction-evidence' && gate.status === 'not-applicable')));
+      references.add(file);
+      return { file, report };
+    });
   });
   for (const componentId of componentIds) {
     const row = baseline.rows.find(candidate => candidate.id === componentId);
@@ -162,11 +179,25 @@ export function deriveBaselineSurfaceFold(root = DEFAULT_ROOT) {
       const targets = new Set();
       for (const { file, report } of liveCells) {
         report.browser.requiredMounts.forEach((observation, index) => {
-          if (observation.component !== componentId || !observation.requiredInitially) return;
-          assert.equal(observation.passed, true); assert.equal(observation.present, true);
-          for (const label of report.browser.labelVisibility.filter(label => label.component === componentId && label.rootId === observation.nodeId))
-            assert(label.passed && label.visible, `${componentId}/${report.framework}: recorded generated label is not visible.`);
-          refs.push(`${file}#/browser/requiredMounts/${index}`); targets.add(report.framework);
+          if (observation.component !== componentId) return;
+          assert.equal(observation.passed, true);
+          if (observation.requiredInitially) {
+            assert.equal(observation.present, true);
+            for (const label of report.browser.labelVisibility.filter(label => label.component === componentId && label.rootId === observation.nodeId))
+              assert(label.passed && label.visible, `${componentId}/${report.framework}: recorded generated label is not visible.`);
+            refs.push(`${file}#/browser/requiredMounts/${index}`);
+          } else {
+            // The saved schema places this node under an inactive Tabs panel, so the
+            // generated consumer compiles, builds and hydrates it without mounting it
+            // initially. The evidence is the waived obligation plus the generated
+            // source that carries the node, never an invented mount.
+            assert(String(observation.reason ?? '').startsWith('inactive initial Tabs panel'), `${componentId}/${report.framework}: unexplained absent mount.`);
+            const liveRoot = file.slice(0, file.indexOf('/cells/'));
+            const generated = readFileSync(path.join(root, liveRoot, report.generation.sourcePath), 'utf8');
+            assert(generated.includes(`id="${observation.nodeId}" data-oods-component="${componentId}"`), `${componentId}/${report.framework}: generated source lacks the node.`);
+            refs.push(`${file}#/browser/requiredMounts/${index}`, `${file}#/generation/sourceSha256`);
+          }
+          targets.add(report.framework);
         });
       }
       assert.deepEqual([...targets].sort(), TARGETS, `${componentId}: generated evidence must cover both frameworks.`);
@@ -202,7 +233,8 @@ export function deriveBaselineSurfaceFold(root = DEFAULT_ROOT) {
       : { path: file, sha256: sha256(readFileSync(path.join(root, file))) };
   });
   return { baseline, record: {
-    schemaVersion: '1.0.0', mission: 's185-m05', kind: 'readiness-derived-baseline-surface-fold', foldBase: FOLD_BASE, sprintBase: SPRINT_BASE,
+    schemaVersion: '1.0.0', mission: FOLD_MISSION, kind: 'readiness-derived-baseline-surface-fold', foldBase: FOLD_BASE, sprintBase: SPRINT_BASE,
+    liveConsumerRoots: LIVE_ROOTS,
     denominator: baseline.rows.length, identityProjectionSha256: sha256(canonical(identityProjection(baseline))),
     identityClassificationAndReconciliationUnchanged: true, approvedRuntimeCensus: null,
     newNucleusComponents: newIds, portedComponents: portedIds, changedComponentCount: componentIds.length, changedSurfaceCellCount: changes.length,
@@ -214,7 +246,7 @@ export function deriveBaselineSurfaceFold(root = DEFAULT_ROOT) {
         { path: 'packages/component-contracts/test/ported-contracts.s184.spec.ts', disposition: 'Repoint the 24 surface checks to the eight existing baseline rows; retain the frozen foundation SHA and replace the mutable-baseline byte pin with structural invariants.' },
         { path: 'packages/mcp-server/test/product-reality/ported-workflow.s184.spec.ts', disposition: 'Read the same eight React/Vue/generatedConsumer cells in the canonical baseline; preserve live Subscription workflow and contract-defect assertions.' },
       ] },
-    limitations: ['The 96 other component rows and all non-target surfaces are unchanged, including their historical evidence states.',
+    limitations: [`The ${baseline.rows.length - componentIds.length} other component rows and all non-target surfaces are unchanged, including their historical evidence states.`,
       'This fold records implemented-evidence-complete surface evidence; it does not assert foundation-v1 review promotion or approve the runtime census.'],
     builderSelfCertified: false, separateReviewRequired: true,
   } };

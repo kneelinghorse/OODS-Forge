@@ -17,6 +17,9 @@ const dispositionPath = path.join(
   "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
 );
 const remeasurementRoot = path.join(repositoryRoot, "artifacts/product-reality/sprint-185/m04/b2");
+// Each wave remeasures the unchanged operands at its own head; the Sprint 184
+// disposition and the Sprint 185 base replay stay immutable above.
+const currentRemeasurementRoot = path.join(repositoryRoot, "artifacts/product-reality/sprint-186/m01/b2");
 
 type TypedOutcome = {
   id: string;
@@ -136,20 +139,20 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
     },
     {
       framework: "react" as const,
-      code: "OODS-N015",
-      message:
-        "Component PriceSummary is not emission-eligible for react; evidence state: unavailable.",
+      code: "OODS-V007",
+      message: 'Prop "label" is not in the canonical StatusTimeline contract.',
     },
     {
       framework: "vue" as const,
-      code: "OODS-N015",
-      message:
-        "Component PriceSummary is not emission-eligible for vue; evidence state: unavailable.",
+      code: "OODS-V007",
+      message: 'Prop "label" is not in the canonical StatusTimeline contract.',
     },
   ])(
-    // Sprint 185 ports DetailHeader; the unchanged Product/detail operand now
-    // reaches the next real unported component, PriceSummary. The Sprint 184
-    // observation remains immutable and is replayed against base below.
+    // Sprint 185 ported DetailHeader and Sprint 186 m01 ports PriceSummary,
+    // ClassificationPanel and FilterPanel; the unchanged Product/detail operand
+    // now reaches the composer-authored StatusTimeline.label prop, which the
+    // ported StatusTimeline contract does not govern (carried by name). The
+    // Sprint 184 observation remains immutable and is replayed against base below.
     "remeasures the unchanged Product/detail $framework typed gap as $code",
     async ({ framework, code, message }) => {
       const result = await pipelineHandle({
@@ -389,7 +392,7 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
     ]);
 
     const base = JSON.parse(await fs.readFile(path.join(remeasurementRoot, "base/measurement.json"), "utf8")) as B2Measurement;
-    const current = JSON.parse(await fs.readFile(path.join(remeasurementRoot, "final/measurement.json"), "utf8")) as B2Measurement;
+    const current = JSON.parse(await fs.readFile(path.join(currentRemeasurementRoot, "final/measurement.json"), "utf8")) as B2Measurement;
     const historicalSha256 = createHash("sha256").update(await fs.readFile(dispositionPath)).digest("hex");
     for (const measurement of [base, current]) {
       expect(measurement.historicalDisposition.sha256).toBe(historicalSha256);

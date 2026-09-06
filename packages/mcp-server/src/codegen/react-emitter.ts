@@ -16,6 +16,7 @@ import {
 import {
   mapFieldType,
   snakeToCamel,
+  fieldValuePropTarget,
   resolveFrameworkChildContent,
   resolveFrameworkRecipeProps,
   ownFieldSchemaEntry,
@@ -228,9 +229,17 @@ function reactControlledProp(occurrence: LocalBindingOccurrence): string | null 
     || occurrence.component === 'Input'
     || occurrence.component === 'Select'
     || occurrence.component === 'Textarea'
+    || occurrence.component === 'StatusSelector'
+    || occurrence.component === 'TagInput'
   ) return 'value';
   if (occurrence.component === 'Tabs') return 'selectedId';
   return null;
+}
+
+/** A field lowered to the node's own form value is carried by its local state; a data prop is not. */
+function fieldRepresentedByState(propName: string | undefined, controlledProp: string | null): boolean {
+  return controlledProp !== null
+    && (propName === undefined || propName === 'value' || propName === 'checked' || propName === controlledProp);
 }
 
 function reactBindingAttrs(
@@ -246,6 +255,10 @@ function reactBindingAttrs(
   if (local && controlledProp) {
     attrs.push(`${controlledProp}={${local.localSymbols.state}}`);
   }
+  // A component-scoped domain binding owns its action selector on the element
+  // itself; screen-scoped actions own theirs on the generated action surface.
+  const domain = occurrences.find((occurrence) => occurrence.scope !== 'screen' && occurrence.kind === 'domain');
+  if (domain) attrs.push(`data-oods-action="${escapeDoubleQuotedAttr(domain.handlerName)}"`);
   for (const occurrence of occurrences) {
     // Screen bindings are semantic consumer requirements, not arbitrary props
     // on the layout component used as the schema root.
@@ -600,7 +613,7 @@ function emitNode(
       const classAttr = buildReactClassAttr(staticClasses, variantExpression);
       if (classAttr) innerAttrParts.push(classAttr);
     }
-    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren && !controlledProp) {
+    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren && !fieldRepresentedByState(sectionFieldContent.propName, controlledProp)) {
       const fieldExpression = reactFieldExpression(
         node,
         sectionFieldContent.fieldName,
@@ -664,7 +677,7 @@ function emitNode(
         );
         return finish(`<${tag}${attrs}>{${fieldExpression}}</${tag}>`);
       }
-      if (controlledProp) {
+      if (fieldRepresentedByState(fieldContent.propName, controlledProp)) {
         return finish(`<${tag}${attrs} />`);
       }
       // Prop-based injection: rebuild attrs without the conflicting static prop
@@ -897,7 +910,8 @@ function reactLocalInitialExpression(
   }
 
   const field = node.props?.field;
-  if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field)) {
+  // A field lowered to a data prop (TagInput's tags) is not the control's own text.
+  if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field) && fieldValuePropTarget(occurrence.component) === undefined) {
     const fallback = occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
     const source = snakeToCamel(field);
     return occurrence.signature.parameters[0]?.type === 'boolean'
@@ -908,7 +922,7 @@ function reactLocalInitialExpression(
 }
 
 function reactElementType(component: string): string {
-  if (component === 'Select') return 'HTMLSelectElement';
+  if (component === 'Select' || component === 'StatusSelector') return 'HTMLSelectElement';
   if (component === 'Textarea') return 'HTMLTextAreaElement';
   return 'HTMLInputElement';
 }

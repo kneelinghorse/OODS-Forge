@@ -30,18 +30,26 @@ function fixture() {
 }
 
 type Fixture = ReturnType<typeof fixture>;
+const INERT_READS: Array<{ name: string; arrange: (value: Fixture) => void }> = [
+  { name: 'missing writer', arrange: ({ schema }) => { schema.screens[0]!.children!.pop(); } },
+  { name: 'different handler', arrange: ({ writer }) => { writer.bindings = { onChange: 'changeOther' }; } },
+];
 const INVALID_READS: Array<{ name: string; arrange: (value: Fixture) => void }> = [
   { name: 'missing reader field', arrange: ({ reader }) => { reader.props = {}; } },
   { name: 'empty reader field', arrange: ({ reader }) => { reader.props = { field: '' }; } },
   { name: 'blank reader field', arrange: ({ reader }) => { reader.props = { field: ' ' }; } },
-  { name: 'missing writer', arrange: ({ schema }) => { schema.screens[0]!.children!.pop(); } },
-  { name: 'different handler', arrange: ({ writer }) => { writer.bindings = { onChange: 'changeOther' }; } },
   { name: 'different field', arrange: ({ writer }) => { writer.props = { field: 'another_name' }; } },
   { name: 'missing writer field', arrange: ({ writer }) => { writer.props = {}; } },
   {
-    name: 'two state owners',
+    name: 'two owners of different fields',
     arrange: ({ schema, writer }) => {
-      schema.screens[0]!.children!.push({ ...structuredClone(writer), id: 'other-writer' });
+      schema.screens[0]!.children!.push({ ...structuredClone(writer), id: 'other-writer', props: { field: 'another_name' } });
+    },
+  },
+  {
+    name: 'second owner without a field',
+    arrange: ({ schema, writer }) => {
+      schema.screens[0]!.children!.push({ ...structuredClone(writer), id: 'other-writer', props: {} });
     },
   },
   {
@@ -134,6 +142,48 @@ describe('Sprint 185 read-only field subscription analysis', () => {
     }
   });
 
+  it.each(INERT_READS)('reports $name as an inert display read without creating a handler', ({ arrange }) => {
+    const value = fixture();
+    arrange(value);
+    const analysis = analyzeBindings(value.schema.screens);
+
+    expect(analysis.ok).toBe(true);
+    expect(analysis.issues).toEqual([]);
+    expect(analysis.readonlyFieldSubscriptions).toEqual([]);
+    expect(analysis.inertSubscriptions).toEqual([expect.objectContaining({
+      nodeId: 'plan-title', component: 'DetailHeader', event: 'onChange',
+      handlerName: 'changePlanName', field: 'plan_name',
+    })]);
+    expect(analysis.occurrences.some(({ nodeId }) => nodeId === 'plan-title')).toBe(false);
+    expect(analysis.handlers.some(({ handlerName }) => handlerName === 'changePlanName')).toBe(false);
+  });
+
+  it.each(INERT_READS.flatMap((entry) => (
+    (['react', 'vue'] as const).map((framework) => ({ ...entry, framework }))
+  )))(
+    '$framework renders $name directly and warns without inventing a reader event or state',
+    async ({ arrange, framework }) => {
+      const value = fixture();
+      arrange(value);
+      const result = await generateCode(
+        { framework, profile: 'build', schema: value.schema },
+        { targetCapabilityPreflight: () => [] },
+      );
+
+      expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+      expect(result.warnings).toContainEqual({
+        code: 'OODS-V007', component: 'DetailHeader', nodeId: 'plan-title',
+        message: 'Binding DetailHeader.onChange to changePlanName names no local writer; the display renders its field directly.',
+      });
+      const heading = result.code.match(/<DetailHeader\b([^>]*\bid="plan-title"[^>]*)>([\s\S]*?)<\/DetailHeader>/);
+      expect(heading, result.code).not.toBeNull();
+      expect(heading![1]).not.toMatch(/\bon[A-Z][A-Za-z]*\s*=|@[\w:-]+\s*=|v-on:/);
+      expect(heading![2]!.replace(/\s/g, '')).toBe(framework === 'react' ? '{planName}' : '{{planName}}');
+      expect(result.code).not.toContain('changePlanName');
+      expect((result.artifact!.actions ?? []).some(({ sources }) => sources.some(({ nodeId }) => nodeId === 'plan-title'))).toBe(false);
+    },
+  );
+
   it.each(INVALID_READS)('rejects $name rather than silently discarding the saved binding', ({ arrange }) => {
     const value = fixture();
     arrange(value);
@@ -141,6 +191,7 @@ describe('Sprint 185 read-only field subscription analysis', () => {
 
     expect(analysis.ok).toBe(false);
     expect(analysis.readonlyFieldSubscriptions).toEqual([]);
+    expect(analysis.inertSubscriptions).toEqual([]);
     expect(analysis.issues).toContainEqual(expect.objectContaining({
       code: 'INVALID_READONLY_FIELD_SUBSCRIPTION',
       nodeId: 'plan-title',
@@ -172,18 +223,43 @@ describe('Sprint 185 read-only field subscription analysis', () => {
     },
   );
 
-  it('retains the existing multiple-local-owner refusal when a read-only heading also subscribes', () => {
+  it('lets identical same-field controls share one handler while the heading remains a reader', () => {
     const { schema, writer } = fixture();
     schema.screens[0]!.children!.push({ ...structuredClone(writer), id: 'other-writer' });
     const analysis = analyzeBindings(schema.screens);
 
-    expect(analysis.handlers).toEqual([]);
-    expect(analysis.readonlyFieldSubscriptions).toEqual([]);
-    expect(analysis.issues).toContainEqual(expect.objectContaining({
-      code: 'AMBIGUOUS_HANDLER',
-      handlerName: 'changePlanName',
-      message: 'Local handler "changePlanName" is reused by multiple state owners.',
-    }));
+    expect(analysis.ok).toBe(true);
+    expect(analysis.issues).toEqual([]);
+    expect(analysis.inertSubscriptions).toEqual([]);
+    expect(analysis.handlers).toHaveLength(1);
+    expect(analysis.handlers[0]!.occurrences.map(({ nodeId }) => nodeId)).toEqual(['plan-name', 'other-writer']);
+    expect(analysis.readonlyFieldSubscriptions).toHaveLength(1);
+    expect(analysis.readonlyFieldSubscriptions[0]!.writer).toBe(analysis.handlers[0]!.occurrences[0]);
+    expect(analysis.occurrences.some(({ nodeId }) => nodeId === 'plan-title')).toBe(false);
+  });
+
+  it.each(['react', 'vue'] as const)('%s emits exactly one state for identical same-field controls and their heading', async (framework) => {
+    const { schema, writer } = fixture();
+    schema.screens[0]!.children!.push({ ...structuredClone(writer), id: 'other-writer' });
+    const result = await generateCode(
+      { framework, profile: 'build', schema },
+      { targetCapabilityPreflight: () => [] },
+    );
+
+    expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+    expect(result.code.match(/@oods-local-binding changePlanName \*\//g)).toHaveLength(1);
+    expect(result.code.match(framework === 'react'
+      ? /const \[changePlanNameState, setChangePlanNameState\]/g
+      : /const changePlanNameState = ref/g)).toHaveLength(1);
+    for (const nodeId of ['plan-name', 'other-writer']) {
+      const control = result.code.match(new RegExp(`<Textarea\\b[^>]*\\bid="${nodeId}"[^>]*>`))?.[0];
+      expect(control).toContain(framework === 'react' ? 'value={changePlanNameState}' : ':modelValue="changePlanNameState"');
+      expect(control).toContain(framework === 'react' ? 'onChange={changePlanName}' : '@change="changePlanName"');
+    }
+    const heading = result.code.match(/<DetailHeader\b([^>]*\bid="plan-title"[^>]*)>([\s\S]*?)<\/DetailHeader>/);
+    expect(heading, result.code).not.toBeNull();
+    expect(heading![1]).not.toMatch(/\bon[A-Z][A-Za-z]*\s*=|@[\w:-]+\s*=|v-on:/);
+    expect(heading![2]!.replace(/\s/g, '')).toBe(framework === 'react' ? '{changePlanNameState}' : '{{changePlanNameState}}');
   });
 
   it('keeps unsupported component/event pairs outside the measured subscription rule', () => {

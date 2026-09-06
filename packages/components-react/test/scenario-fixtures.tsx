@@ -1,23 +1,52 @@
 import type { SharedScenario } from '@oods/component-contracts';
 import type { ReactElement } from 'react';
 
+import type {
+  AddressEditorProps, AddressValidationTimelineProps, FilterPanelProps, MessageEventTimelineProps, PreferenceEditorProps,
+  PreferenceTimelineProps, RoleAssignmentFormProps, RoleBadgeListProps, StatusSelectorProps, TagInputProps, TagManagerProps,
+  TagPillsProps, TemplatePickerProps,
+} from '../src/index.js';
+
 import {
+  AddressCollectionPanel,
+  AddressEditor,
+  AddressSummaryBadge,
+  AddressValidationTimeline,
+  AuditEvent,
   Badge,
   Banner,
   Button,
   Card,
   CardHeader,
   Checkbox,
+  ClassificationPanel,
   ColorSwatch,
   ColorizedBadge,
   DatePicker,
   DetailHeader,
+  FilterPanel,
   Grid,
   Input,
+  MembershipAuditTimeline,
+  MembershipPanel,
+  MessageEventTimeline,
+  MessageStatusBadge,
+  PreferenceEditor,
+  PreferencePanel,
+  PreferenceSummaryBadge,
+  PreferenceTimeline,
+  PriceSummary,
+  RoleAssignmentForm,
+  RoleBadgeList,
   Select,
   Stack,
+  StatusSelector,
   Table,
   Tabs,
+  TagInput,
+  TagManager,
+  TagPills,
+  TemplatePicker,
   Text,
   Textarea,
   VizAreaPreview,
@@ -52,6 +81,52 @@ export function renderSharedScenario(
       return <Card elevated>Account summary</Card>;
     case 'card-header-supporting-text':
       return <CardHeader {...scenario.props} />;
+    case 'classification-panel-title-and-summary':
+      return <ClassificationPanel {...scenario.props} />;
+    case 'address-collection-panel-title-and-summary':
+      return <AddressCollectionPanel {...scenario.props} />;
+    case 'membership-panel-title-and-summary':
+      return <MembershipPanel {...scenario.props} />;
+    case 'preference-panel-title-and-summary':
+      return <PreferencePanel {...scenario.props} />;
+    case 'tag-manager-list-and-add-control':
+      return <TagManager {...(scenario.props as TagManagerProps)} />;
+    case 'address-summary-badge-role':
+      return <AddressSummaryBadge {...scenario.props} />;
+    case 'message-status-badge-delivery':
+      return <MessageStatusBadge {...scenario.props} />;
+    case 'preference-summary-badge-namespace-and-version':
+      return <PreferenceSummaryBadge {...scenario.props} />;
+    case 'role-badge-list-items':
+      return <RoleBadgeList {...(scenario.props as RoleBadgeListProps)} />;
+    case 'tag-pills-overflow-template':
+      return <TagPills {...(scenario.props as TagPillsProps)} />;
+    case 'address-validation-timeline-events':
+      return <AddressValidationTimeline {...(scenario.props as AddressValidationTimelineProps)} />;
+    case 'audit-event-type-and-timestamp':
+      return <AuditEvent {...scenario.props} />;
+    case 'membership-audit-timeline-empty':
+      return <MembershipAuditTimeline {...scenario.props} />;
+    case 'message-event-timeline-statuses':
+      return <MessageEventTimeline {...(scenario.props as MessageEventTimelineProps)} />;
+    case 'preference-timeline-changes':
+      return <PreferenceTimeline {...(scenario.props as PreferenceTimelineProps)} />;
+    case 'address-editor-fields-and-change':
+      return <AddressEditor {...(scenario.props as AddressEditorProps)} onChange={address => onEvent?.(address)} />;
+    case 'preference-editor-namespace-and-document':
+      return <PreferenceEditor {...(scenario.props as PreferenceEditorProps)} />;
+    case 'role-assignment-form-roles':
+      return <RoleAssignmentForm {...(scenario.props as RoleAssignmentFormProps)} />;
+    case 'status-selector-controlled':
+      return <StatusSelector {...(scenario.props as StatusSelectorProps)} onValueChange={value => onEvent?.(value)} />;
+    case 'tag-input-typed-text':
+      return <TagInput {...(scenario.props as TagInputProps)} onValueChange={value => onEvent?.(value)} />;
+    case 'template-picker-selects':
+      return <TemplatePicker {...(scenario.props as TemplatePickerProps)} />;
+    case 'filter-panel-batch-mode':
+      return <FilterPanel {...(scenario.props as FilterPanelProps)} />;
+    case 'price-summary-terms':
+      return <PriceSummary {...scenario.props} />;
     case 'color-swatch-label-and-chip':
       return <ColorSwatch {...scenario.props} />;
     case 'colorized-badge-color-marker':

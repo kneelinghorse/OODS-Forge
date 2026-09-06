@@ -9,11 +9,29 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const evidenceRoot = path.join(repositoryRoot, 'artifacts/product-reality/sprint-185/m03/mutation');
-const components = ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview'];
 const frameworks = ['react', 'vue'];
-const cells = frameworks.flatMap((framework) => components.map((component) => `${framework}/${component}`));
-const cellSpec = 'test/product-reality/breadth-export-cells.s185.spec.ts';
+
+/** Sprint 185 defaults; later waves pass their own component set, cell spec, output and mission. */
+export const DEFAULT_MUTATION_OPTIONS = Object.freeze({
+  evidenceRoot: path.join(repositoryRoot, 'artifacts/product-reality/sprint-185/m03/mutation'),
+  components: ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview'],
+  cellSpec: 'test/product-reality/breadth-export-cells.s185.spec.ts',
+  mission: 's185-m03',
+});
+
+function parseArguments(argv) {
+  const options = { ...DEFAULT_MUTATION_OPTIONS };
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index];
+    const value = argv[index + 1];
+    if (argument === '--components' && value) { options.components = value.split(',').filter(Boolean); index += 1; }
+    else if (argument === '--spec' && value) { options.cellSpec = value; index += 1; }
+    else if (argument === '--output' && value) { options.evidenceRoot = path.resolve(value); index += 1; }
+    else if (argument === '--mission' && value) { options.mission = value; index += 1; }
+    else throw new Error(`Unknown or incomplete argument: ${argument}`);
+  }
+  return options;
+}
 
 function invariant(condition, message) {
   if (!condition) throw new Error(message);
@@ -90,7 +108,12 @@ function directoryHash(directory) {
   return sha256(JSON.stringify(entries));
 }
 
-function observe(directory, phase, expectedRedCell = null) {
+const DEFAULT_MUTATION_OPTIONS_WITH_CELLS = Object.freeze({
+  ...DEFAULT_MUTATION_OPTIONS,
+  cells: frameworks.flatMap((framework) => DEFAULT_MUTATION_OPTIONS.components.map((component) => `${framework}/${component}`)),
+});
+
+function observe(directory, phase, expectedRedCell = null, { cells, cellSpec } = DEFAULT_MUTATION_OPTIONS_WITH_CELLS) {
   process.stdout.write(`${path.basename(directory)} ${phase}: observing all ${cells.length} cells\n`);
   const packageReportPath = path.join(directory, `${phase}-package.json`);
   const packageRun = command('pnpm', [
@@ -109,8 +132,11 @@ function observe(directory, phase, expectedRedCell = null) {
     status: assertion.status,
     failureMessages: assertion.failureMessages,
   }));
-  invariant(JSON.stringify(observations.map(({ cell }) => cell).sort()) === JSON.stringify([...cells].sort()),
-    `${phase}: package selector did not execute exactly the ten intended cells.`);
+  // The cell spec may carry every component ported so far; every intended
+  // cell must execute, and any other executed cell must stay green.
+  const executedCells = observations.map(({ cell }) => cell);
+  invariant(cells.every((cell) => executedCells.includes(cell)) && new Set(executedCells).size === executedCells.length,
+    `${phase}: package selector did not execute every one of the ${cells.length} intended cells exactly once.`);
   invariant(observations.every(({ status }) => status === 'passed' || status === 'failed'),
     `${phase}: package cells were skipped or not executed.`);
   const packageRedCells = observations.filter(({ status }) => status === 'failed').map(({ cell }) => cell).sort();
@@ -133,6 +159,7 @@ function observe(directory, phase, expectedRedCell = null) {
   }
   return {
     phase,
+    executedCellCount: executedCells.length,
     packageRun,
     readinessRun,
     packageReport: relative(packageReportPath),
@@ -168,10 +195,13 @@ function writePatch(beforePath, afterPath, sourceRelativePath, patchPath) {
 // This runner physically mutates one package root and rebuilds that framework.
 // Run only in the coordinated exclusive build window; all source restoration
 // and final green checks execute before advancing to another mutation.
-export function runExportMutationMatrix() {
+export function runExportMutationMatrix(options = DEFAULT_MUTATION_OPTIONS) {
+  const { evidenceRoot, components, cellSpec, mission } = { ...DEFAULT_MUTATION_OPTIONS, ...options };
+  const cells = frameworks.flatMap((framework) => components.map((component) => `${framework}/${component}`));
+  const observeCells = (directory, phase, expectedRedCell = null) => observe(directory, phase, expectedRedCell, { cells, cellSpec });
   mkdirSync(evidenceRoot, { recursive: true });
   const report = {
-    schemaVersion: '1.0.0', mission: 's185-m03', status: 'running',
+    schemaVersion: '1.0.0', mission, status: 'running',
     method: 'one actual source root-export deletion, selected package rebuild, all-cell package SSR plus independent readiness verification',
     components, frameworks, cells,
     mutants: [],
@@ -204,7 +234,7 @@ export function runExportMutationMatrix() {
           status: 'running',
         };
         report.mutants.push(record);
-        record.preGreen = observe(directory, 'pre-green');
+        record.preGreen = observeCells(directory, 'pre-green');
         const apply = command('git', ['apply', '--', patchPath], path.join(directory, 'patch-apply.log'));
         let failure;
         try {
@@ -212,7 +242,7 @@ export function runExportMutationMatrix() {
           invariant(readFileSync(sourcePath, 'utf8') === mutated.source,
             `${selectedCell}: applied source differs from the single-export mutation.`);
           record.deletedBuild = build(framework, directory, 'selected-red');
-          record.selectedRed = observe(directory, 'selected-red', selectedCell);
+          record.selectedRed = observeCells(directory, 'selected-red', selectedCell);
         } catch (error) {
           failure = error;
         } finally {
@@ -222,7 +252,7 @@ export function runExportMutationMatrix() {
           writeFileSync(sourcePath, original);
           record.restoredByteIdentically = readFileSync(sourcePath, 'utf8') === original;
           record.restoredBuild = build(framework, directory, 'restored-green');
-          record.restoredGreen = observe(directory, 'restored-green');
+          record.restoredGreen = observeCells(directory, 'restored-green');
           record.otherFrameworkDist = {
             framework: otherFramework, before: otherDistBefore, after: directoryHash(otherDist),
           };
@@ -233,7 +263,7 @@ export function runExportMutationMatrix() {
         record.status = 'passed';
         writeJson(path.join(directory, 'result.json'), record);
         writeJson(path.join(evidenceRoot, 'mutation-manifest.json'), report);
-        process.stdout.write(`${selectedCell}: selected cell red, other nine green, all ten restored\n`);
+        process.stdout.write(`${selectedCell}: selected cell red, other ${record.selectedRed.executedCellCount - 1} green, all ${record.restoredGreen.executedCellCount} restored\n`);
       }
     }
     report.htmlRenderer = { before: htmlBefore, after: sha256(readFileSync(htmlPath)) };
@@ -242,8 +272,8 @@ export function runExportMutationMatrix() {
       mutations: report.mutants.length,
       selectedPackageReds: report.mutants.reduce((count, entry) => count + entry.selectedRed.packageRedCells.length, 0),
       selectedReadinessReds: report.mutants.reduce((count, entry) => count + entry.selectedRed.readinessRedCells.length, 0),
-      unaffectedGreenCells: report.mutants.length * (cells.length - 1),
-      restoredGreenCells: report.mutants.length * cells.length,
+      unaffectedGreenCells: report.mutants.reduce((count, entry) => count + entry.selectedRed.executedCellCount - 1, 0),
+      restoredGreenCells: report.mutants.reduce((count, entry) => count + entry.restoredGreen.executedCellCount, 0),
     };
     report.status = 'passed';
   } catch (error) {
@@ -258,7 +288,7 @@ export function runExportMutationMatrix() {
 
 if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
   try {
-    runExportMutationMatrix();
+    runExportMutationMatrix(parseArguments(process.argv.slice(2)));
   } catch (error) {
     process.stderr.write(`${String(error)}\n`);
     process.exitCode = 1;

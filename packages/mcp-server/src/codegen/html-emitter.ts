@@ -19,11 +19,14 @@ function injectFieldPlaceholders(schema: UiSchema): UiSchema {
   const walk = (node: UiElement): void => {
     // Labelled's header fields use the HTML emitter's existing visible
     // placeholders, while framework emitters read the actual object data.
-    if (node.component === 'CardHeader') {
+    // Authored literals (DetailHeader headingLevel) stay out of the HTML
+    // renderer, which reads only its own level key.
+    if (node.component === 'CardHeader' || node.component === 'DetailHeader') {
       const recipe = resolveFrameworkRecipeProps(node, objectSchema);
       node.props = { ...node.props };
       for (const prop of recipe.consumedProps) delete node.props[prop];
-      for (const { targetProp, expression } of recipe.bindings) {
+      for (const { targetProp, expression, literal } of recipe.bindings) {
+        if (literal) continue;
         node.props[targetProp] = `[${expression}]`;
       }
     }

@@ -6,8 +6,17 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const output = path.resolve(process.argv[2] ?? path.join(root, 'artifacts/product-reality/sprint-185/m04/reachability'));
-const store = path.join(root, 'artifacts/product-reality/sprint-183/m04/saved-schema-store');
+const args = process.argv.slice(2);
+const output = path.resolve(args[0] && !args[0].startsWith('--') ? args.shift() : path.join(root, 'artifacts/product-reality/sprint-185/m04/reachability'));
+let store = path.join(root, 'artifacts/product-reality/sprint-183/m04/saved-schema-store');
+let missionId = 's185-m04';
+for (let index = 0; index < args.length; index += 2) {
+  const value = args[index + 1];
+  if (!value || value.startsWith('--')) throw new Error(`Missing value for ${args[index]}.`);
+  if (args[index] === '--store') store = path.resolve(root, value);
+  else if (args[index] === '--mission') missionId = value;
+  else throw new Error(`Unknown argument: ${args[index]}`);
+}
 const files = fs.readdirSync(store).filter(name => name.endsWith('.json') && name !== '_index.json').sort();
 const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const entry = path.join(root, 'packages/mcp-server/dist/tools/code.generate.js');
@@ -30,15 +39,15 @@ for (const file of files) {
     cells.push({ framework, status: result.status, artifactPresent: Boolean(result.artifact), issues, response: { path: rawPath, sha256: sha256(rawBytes) } });
   }
   if (!fs.readFileSync(path.join(store, file)).equals(bytes)) throw new Error(`Saved input changed: ${file}`);
-  rows.push({ schema: file.slice(0, -5), input: { path: path.relative(root, path.join(store, file)), sha256: sha256(bytes) }, reachable: cells.every(cell => cell.status === 'ok' && cell.artifactPresent), cells });
+  rows.push({ schema: file.slice(0, -5), input: { path: path.relative(root, path.join(store, file)), sha256: sha256(bytes) }, ...(record.derivation ? { derivation: record.derivation } : {}), reachable: cells.every(cell => cell.status === 'ok' && cell.artifactPresent), cells });
 }
 const report = {
-  missionId: 's185-m04', measuredAt: new Date().toISOString(),
+  missionId, schemaStore: path.relative(root, store), measuredAt: new Date().toISOString(),
   head: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
   command: process.argv, entry: { path: path.relative(root, entry), sha256: sha256(fs.readFileSync(entry)) },
   total: rows.length, reachable: rows.filter(row => row.reachable).length,
   generatedCells: rows.flatMap(row => row.cells).filter(cell => cell.status === 'ok' && cell.artifactPresent).length,
-  limitation: 'Generation reachability only. Packed-consumer runtime proof is separately recorded for eight schemas; this census does not promote the other schemas to runtime proof.',
+  limitation: 'Generation reachability only for the named schema store. Packed-consumer runtime proof is recorded separately and is not inferred from this census.',
   rows,
 };
 fs.writeFileSync(path.join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n');

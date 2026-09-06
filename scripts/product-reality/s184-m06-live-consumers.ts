@@ -17,7 +17,9 @@ import type { CodeGenerateOutput } from '../../packages/mcp-server/src/tools/typ
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
 import { extractBareImports } from './s183-m05-saved-schema-consumers.mjs';
 import {
+  EDITOR_TYPED_TEXT,
   S185_SCHEMA_NAMES,
+  S186_SCHEMA_NAMES,
   deriveActionArguments,
   deriveBoundFieldProbe,
   deriveConsumerModel,
@@ -55,7 +57,10 @@ export const GATE_NAMES = Object.freeze([
   'interaction-evidence',
 ] as const);
 
-export type S184M06SchemaName = (typeof SCHEMA_NAMES)[number] | (typeof S185_SCHEMA_NAMES)[number];
+export type S184M06SchemaName =
+  | (typeof SCHEMA_NAMES)[number]
+  | (typeof S185_SCHEMA_NAMES)[number]
+  | (typeof S186_SCHEMA_NAMES)[number];
 export type S184M06Framework = (typeof FRAMEWORKS)[number];
 export type S184M06GateName = (typeof GATE_NAMES)[number];
 
@@ -83,6 +88,7 @@ export type LiveGenerationCell = {
   mission?: string;
   schema: S184M06SchemaName;
   schemaRef: string;
+  derivation?: Record<string, unknown>;
   framework: S184M06Framework;
   status: 'passed';
   artifact: GeneratedArtifact;
@@ -149,6 +155,8 @@ type AppliedMutation = {
 };
 
 type SavedSchemaRecord = {
+  /** Present only on a derived record outside the frozen saved store. */
+  derivation?: Record<string, unknown>;
   schemaRef: string;
   name: S184M06SchemaName;
   schema: UiSchema;
@@ -491,14 +499,22 @@ function assertGeneratedOwnership(
   }
 }
 
-function savedSchema(name: S184M06SchemaName): SavedSchemaRecord {
-  const filePath = path.join(
-    REPOSITORY_ROOT,
-    `artifacts/product-reality/sprint-183/m04/saved-schema-store/${name}.json`,
-  );
+export const SAVED_SCHEMA_STORE = 'artifacts/product-reality/sprint-183/m04/saved-schema-store';
+
+/**
+ * Load a saved-schema record. A derived store (a saved schema with named nodes
+ * pruned, carrying its own `derivation` provenance) may stand in for the frozen
+ * store when a schema's remaining defects are composer-authored; every cell then
+ * reports the derivation so no derived proof reads as the saved schema's.
+ */
+function savedSchema(name: S184M06SchemaName, store: string = SAVED_SCHEMA_STORE): SavedSchemaRecord {
+  const filePath = path.join(REPOSITORY_ROOT, store, `${name}.json`);
   const record = JSON.parse(fs.readFileSync(filePath, 'utf8')) as SavedSchemaRecord;
   if (record.name !== name || typeof record.schemaRef !== 'string' || !record.schema) {
     throw new Error(`${name}: immutable saved-schema record has an invalid identity.`);
+  }
+  if (store !== SAVED_SCHEMA_STORE && !record.derivation) {
+    throw new Error(`${name}: a record outside the saved store must carry derivation provenance.`);
   }
   return record;
 }
@@ -516,9 +532,9 @@ async function mkdirAbsent(directory: string): Promise<void> {
 }
 
 function assertSchemaSelection(names: readonly S184M06SchemaName[]): void {
-  const available = new Set<string>([...SCHEMA_NAMES, ...S185_SCHEMA_NAMES]);
+  const available = new Set<string>([...SCHEMA_NAMES, ...S185_SCHEMA_NAMES, ...S186_SCHEMA_NAMES]);
   if (names.length === 0 || new Set(names).size !== names.length || names.some((name) => !available.has(name))) {
-    throw new Error('Select distinct immutable schemas from the supported eight-schema corpus.');
+    throw new Error('Select distinct immutable schemas from the supported saved-schema corpus.');
   }
 }
 
@@ -527,11 +543,13 @@ export async function runLiveGenerationOnly({
   generate = codeGenerate,
   schemaNames = SCHEMA_NAMES,
   mission = 's184-m06',
+  schemaStore = SAVED_SCHEMA_STORE,
 }: {
   artifactRoot: string;
   generate?: LiveGenerator;
   schemaNames?: readonly S184M06SchemaName[];
   mission?: string;
+  schemaStore?: string;
 }): Promise<{ report: Record<string, unknown>; cells: LiveGenerationCell[] }> {
   if (!artifactRoot) throw new Error('artifactRoot is required.');
   assertSchemaSelection(schemaNames);
@@ -541,7 +559,7 @@ export async function runLiveGenerationOnly({
   const cells: LiveGenerationCell[] = [];
 
   for (const schemaName of schemaNames) {
-    const record = savedSchema(schemaName);
+    const record = savedSchema(schemaName, schemaStore);
     for (const framework of FRAMEWORKS) {
       const startedAt = new Date().toISOString();
       const result = await generate({
@@ -593,6 +611,7 @@ export async function runLiveGenerationOnly({
         mission,
         schema: schemaName,
         schemaRef: record.schemaRef,
+        ...(record.derivation ? { derivation: record.derivation } : {}),
         framework,
         status: 'passed',
         artifact,
@@ -612,6 +631,7 @@ export async function runLiveGenerationOnly({
   const report = {
     schemaVersion: '1.0.0',
     mission,
+    schemaStore,
     kind: 'live-code-generate-fingerprint',
     status: 'passed',
     handler: 'code.generate',
@@ -655,13 +675,15 @@ export function createConsumerFiles({
   source,
   actions,
   schemaName,
-  model = deriveConsumerModel(savedSchema(schemaName).schema, MODEL),
+  schemaStore = SAVED_SCHEMA_STORE,
+  model = deriveConsumerModel(savedSchema(schemaName, schemaStore).schema, MODEL),
   mission = 's184-m06',
 }: {
   framework: S184M06Framework;
   source: string;
   actions: GeneratedArtifactAction[];
   schemaName: S184M06SchemaName;
+  schemaStore?: string;
   model?: Record<string, unknown>;
   mission?: string;
 }): Record<string, string> {
@@ -1197,9 +1219,17 @@ async function browserProof({
       const selectorEvidence = [];
       for (const action of actions) {
         const selector = selectorFor(action.name);
-        const count = await page.locator(selector).count();
-        if (count > 0) await page.locator(selector).first().click();
-        selectorEvidence.push({ action: action.name, selector, count, clicked: count > 0 });
+        const owner = page.locator(selector);
+        const count = await owner.count();
+        // A screen surface button or a Button is clicked. An editor that owns
+        // its action (AddressEditor.onChange) fires from input, so the consumer
+        // types into its first text input and the editor emits its record.
+        const mode = count > 0 && await owner.first().evaluate((element) => (
+          element.tagName !== 'BUTTON' && element.querySelector('input[type="text"]') !== null
+        )) ? 'typed' : 'clicked';
+        if (count > 0 && mode === 'typed') await owner.first().locator('input[type="text"]').first().fill(EDITOR_TYPED_TEXT);
+        else if (count > 0) await owner.first().click();
+        selectorEvidence.push({ action: action.name, selector, count, clicked: count > 0, mode });
       }
       await page.waitForTimeout(25);
       const actionCounts = await page.evaluate(() => ({
@@ -1471,15 +1501,17 @@ export async function runLiveConsumerCell({
   tarballs,
   mutation,
   mission = generation.mission ?? 's184-m06',
+  schemaStore = SAVED_SCHEMA_STORE,
 }: {
   artifactRoot: string;
   generation: LiveGenerationCell;
   tarballs: PackedPackageRecord[];
   mutation?: S184M06ConsumerGateMutation;
   mission?: string;
+  schemaStore?: string;
 }): Promise<Record<string, unknown>> {
   const { schema: schemaName, framework, artifact, source } = generation;
-  const schema = savedSchema(schemaName).schema;
+  const schema = savedSchema(schemaName, schemaStore).schema;
   const interaction = generation.interaction ?? deriveInteraction(schema, artifact.actions);
   const model = generation.model ?? deriveConsumerModel(schema, MODEL);
   const mountObligations = deriveMountObligations(schema, source);
@@ -1794,6 +1826,7 @@ export async function runLiveConsumerCell({
       reportPath: toPosix(path.join(cellRelative, 'report.json')),
       schema: schemaName,
       schemaRef: generation.schemaRef,
+    ...(generation.derivation ? { derivation: generation.derivation } : {}),
       framework,
       status: 'passed',
       selected: GATE_NAMES.length,
@@ -1838,6 +1871,7 @@ export async function runLiveConsumerCell({
       reportPath: toPosix(path.join(cellRelative, 'report.json')),
       schema: schemaName,
       schemaRef: generation.schemaRef,
+    ...(generation.derivation ? { derivation: generation.derivation } : {}),
       framework,
       status: 'failed',
       selected: GATE_NAMES.length,
@@ -1893,12 +1927,14 @@ export async function runLiveWorkflowProof({
   tarballs,
   schemaNames = SCHEMA_NAMES,
   mission = 's184-m06',
+  schemaStore = SAVED_SCHEMA_STORE,
 }: {
   artifactRoot: string;
   generate?: LiveGenerator;
   tarballs?: PackedPackageRecord[];
   schemaNames?: readonly S184M06SchemaName[];
   mission?: string;
+  schemaStore?: string;
 }): Promise<{
   report: Record<string, unknown>;
   cells: Array<Record<string, unknown>>;
@@ -1911,7 +1947,7 @@ export async function runLiveWorkflowProof({
   const submittedTarballs = tarballs ?? await packFoundationPackages(artifactRoot) as PackedPackageRecord[];
   // Packing runs each package's prepack build. Generate only after that coherent
   // build boundary so target-readiness never observes a half-written dist tree.
-  const generation = await runLiveGenerationOnly({ artifactRoot, generate, schemaNames, mission });
+  const generation = await runLiveGenerationOnly({ artifactRoot, generate, schemaNames, mission, schemaStore });
   const cellReports = [];
   for (const generationCell of generation.cells) {
     cellReports.push(await runLiveConsumerCell({
@@ -1919,6 +1955,7 @@ export async function runLiveWorkflowProof({
       generation: generationCell,
       tarballs: submittedTarballs,
       mission,
+      schemaStore,
     }));
   }
   const publicCells = cellReports.map((cell) => {
@@ -1928,6 +1965,7 @@ export async function runLiveWorkflowProof({
     return {
       schema,
       schemaRef: cell.schemaRef,
+      ...(cell.derivation ? { derivation: cell.derivation } : {}),
       framework,
       status: cell.status,
       selected: cell.selected,
@@ -1949,6 +1987,7 @@ export async function runLiveWorkflowProof({
   const report = {
     schemaVersion: '1.0.0',
     mission,
+    schemaStore,
     kind: 'live-schema-workflow-clean-consumer-proof',
     status: passed + notApplicable === selected && selected === schemaNames.length * FRAMEWORKS.length * GATE_NAMES.length
       ? 'passed'

@@ -1,8 +1,8 @@
 # Near Roadmap
 
-**Status:** ACTIVE — Sprint 185 BUILT, REVIEW PENDING; program decision `#1652`
+**Status:** ACTIVE — program decision `#1652`; Sprint-185 lock decision `#1724`
 
-**Updated:** 2026-09-06
+**Updated:** 2026-09-05
 
 **Scope:** The next three independently reviewed increments
 
@@ -24,26 +24,20 @@ ordered by how many pre-existing saved schemas each wave makes reachable.
 The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
 follows runnable product foundations.
 
-## Current measured state — Sprint 185 build evidence
+## Current measured state — at `5aa53b3a`, the Sprint 185 review head (branch `codex/sprint-185-component-breadth-wave-1`)
 
 | Claim area | Current evidence | Near-horizon obligation |
 |---|---|---|
-| Component catalog | 109 unique IDs and unchanged classifications/reconciliation states; 27 governed (19 nucleus + 8 ported on `/ported` subpaths); capability evidence cells folded into the baseline | Independent review; `approvedRuntimeCensus` remains null |
-| React | Installable package exports 19 nucleus families and 8 ported families; six new schemas and two Subscription schemas pass every applicable consumer gate | Review the recorded package and runtime evidence |
-| Vue | Same component surface and applicable gates, without React/Radix/RJSF runtime dependencies | Initial form values retain the existing Vue internal-ref API; React accepts model props |
-| Generation | Versioned artifacts, typed actions and behavioral local-state validation; HTML/Tailwind reports OODS-N018 at the declared profile instead of silently accepting the option | Combined Sprint 184/185 reconnect evidence is recorded at closeout; the build is not deployed to the served bridge |
-| Saved designs | Actual generation succeeds for 11 of 16 unchanged saved schemas in both targets; packed runtime proof covers eight schemas, 16 cells, 124/124 applicable gates with four N/A rows excluded | Breadth waves 2+ address the remaining five; generation reachability alone is not runtime proof |
+| Component catalog | 109 unique IDs; 27 governed (19 nucleus at the root + 8 ported on `/ported` subpaths); 11 of 16 saved schemas fully reachable | Wave 2 takes the remaining five, per schema |
+| React | Installable package exports the 19-family nucleus at the root and 8 ported families on a subpath; live generation of eight saved schemas passes 124 of 124 applicable consumer gates | Accessibility, theme and interaction surface cells for the five new families are still `unverified` |
+| Vue | Same surface, same gates, no React/Radix/RJSF runtime dependency | Same bar as React |
+| Generation | Versioned file-set artifact, exact dependencies, typed actions with an owned-state forwarding guard, `draft`/`build`/`release` profiles, a `loading`/`empty`/`error`/`success` state axis, `OODS-N018` for html+tailwind | Sprint 184's owed movers and Sprint 185's were sent together (`fb620639`, `a22747cf`); the served bridge still runs the pre-185 checkout |
+| Saved designs | All 16 records vendored; the 11 reachable ones generate green in both frameworks; the remaining 5 are each blocked by their own single-use components (about twenty in total) | Wave 2 picks the schema with the smallest missing set first |
 | Visualization | 13 admitted types; five complete the folded certified path | Unchanged; parked behind component breadth |
 
 Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
 is not a runtime package, an admitted chart name is not rendered output, and a preview frame is not a
 chart.
-
-The generation census and consumer receipts are retained in
-[`s185-m04`'s build record](../../../artifacts/product-reality/sprint-185/m04/build-record.json)
-at commit `9fb7882e`. The frozen execution and review heads, complete suite counts including failures
-and skips, and evidence-only relationship between those heads belong to the
-[Sprint 185 review handoff](../../../artifacts/product-reality/sprint-185/m05/closeout/review-handoff.json).
 
 ## Increment 1 — Sprint 182: Product Reality Foundation — CLOSED 2026-09-04
 
@@ -84,41 +78,40 @@ review also found that the sprint's per-mission mover accounting missed five con
 advertised movers, including the nucleus Table's zero-row output; that notice is owed and is sent in
 Sprint 185.
 
-The [additive Sprint 184 review note](../../../artifacts/product-reality/sprint-185/m05/review-carries/s184-additive-review-note.md)
-preserves the historical record while documenting the C13 identity anchor, the four inherited
-controls whose output was never captured, and the additional framework axis found by B2 rederivation.
-
-## Increment 4 — Sprint 185: Component Breadth Wave 1 — BUILT, REVIEW PENDING
+## Increment 4 — Sprint 185: Component Breadth Wave 1
 
 Numbered because Sprint 184 is independently reviewed and closed. Its build authority is
 [forge-s185-component-breadth-wave-1-decision-memo.md](../../planning/forge-s185-component-breadth-wave-1-decision-memo.md),
 locked by decision `#1724` at build base `1118f436`.
 
 It adds **DetailHeader, CardHeader, ColorSwatch, ColorizedBadge and VizAreaPreview** to the nucleus as
-real React and Vue components. All six pre-existing saved schemas pass their applicable consumer
-gates in both frameworks. Actual generation reachability increased from 5/16 to 11/16; the two
-historical Subscription schemas also retain all eight consumer gates.
+real React and Vue components and proves them by running the six pre-existing saved schemas they block
+through live generation and the consumer gates in both frameworks. Reachable saved schemas go from
+5/16 to 11/16.
 
-Planning measured twelve target cells failing with `OODS-N015` at `1118f436`, with the pruned controls
-generating successfully. The build reproduced the original 24-row capture byte for byte in an
-independently installed base checkout; two activity controls were newly measured companions, not
-part of that historical capture (`#1737`). The original “pure port” conclusion was incorrect:
-readiness had hidden a read-only header binding (`#1734`), and old-input B2 remeasurement exposed a
-CardHeader recipe-directive regression that was repaired (`#1738`). The live nucleus gates now
-derive membership. VizAreaPreview remains a sized preview frame, not a chart (`#1727`).
+Planning measured the starting point by executing the real emitter. All twelve target cells fail today
+with only `OODS-N015` on exactly those five ids, and with those nodes pruned all twelve generate green.
+Unlike Sprint 184, no contract defects hide behind the component gap — this is a pure port plus the
+retirement of the voided freeze from the live gates, which still pin the nucleus at 14 and would red
+any addition. VizAreaPreview ships honestly as a sized preview frame, not a chart (`#1727`).
 
-The Plan form proves field edits update the real heading in both targets. Its initial values follow
-the existing generated APIs: React receives model props, while Vue form mode initializes internal
-refs and uses the authored heading fallback when empty (`#1739`). No claim of identical initial form
-data is made. Dashboard pagination was verified visible, disabled and inert; its interaction row and
-the Academy's absent interaction row are explicitly N/A in both targets, never counted as passes.
+**Built and independently reviewed 2026-09-06; CERTIFIED and CLOSED** (review session
+`PS-2026-09-06-002`, determination in
+[forge-s185-review-determination.md](../../planning/forge-s185-review-determination.md)). The exit
+gate held from live generation: 124 of 124 applicable gates over 16 framework cells, four interaction
+rows not applicable and excluded; reachability 11/16; every live nucleus pin derived. The "pure port"
+inference did not survive the build — three contract defects were found and repaired in-sprint
+(`#1734`, `#1736`, `#1738`). Four-suite closeout at `f8d15098` was green with zero failures.
 
 ## Increment 5 — Component Breadth Wave 2
 
-Number this sprint only after Sprint 185 receives independent review. The remaining five unreachable
-schemas (the four `user-*` showcases and `test-tagged-schema`) each need a cluster of four to six
-components — address, membership, preference, tag, role, message and classification families. The
-Sprint 185 review determines the order, measured by the same reachability census.
+Numbered next. The reachability census at `5aa53b3a` shows the remaining five unreachable schemas
+(the four `user-*` showcases and `test-tagged-schema`) are blocked by about twenty missing components,
+each used by exactly one schema — address, membership, preference, tag, role, message and
+classification families. Wave 2 is therefore planned per schema: pick the schema(s) with the smallest
+full missing set and take every component that schema needs together, with the Wave 1 shape
+(contract-first, root export, live cell gate, one four-suite capture at close, two unions kept per
+`#1729`).
 
 ## Gates that apply to every increment
 
@@ -167,10 +160,9 @@ The following are parked until their named dependency is met:
 
 ## Build handoff
 
-The next fresh session independently reviews Sprint 185's
-[claim ledger](../../../artifacts/product-reality/sprint-185/m05/closeout/claim-ledger.json) and
-[handoff](../../../artifacts/product-reality/sprint-185/m05/closeout/review-handoff.json).
-The builder leaves the sprint Active with `builderSelfCertified:false` and
-`separateReviewRequired:true`. The review head retains the inputs and actual execution-head receipts;
-only evidence may differ between those heads (`#1741`). The primary checkout remains the served
-bridge checkout, so this build records the permitted rebuild/restart skip and remains undeployed.
+Sprint 185 is closed. The next session plans Wave 2 from the reachability census at `5aa53b3a`,
+confirms the sprint's purpose with Derek in one sentence before any workflow spend, and locks a memo.
+The build that follows runs in its own worktree, records evidence and stops; a separate review session
+decides genuine close. When the Sprint 185 branch is integrated into the checkout pm2 serves, rebuild
+`packages/mcp-bridge`, restart `oods-forge-bridge`, confirm `/health`, and tell aquex-mcp and
+forge-demos the build is live.

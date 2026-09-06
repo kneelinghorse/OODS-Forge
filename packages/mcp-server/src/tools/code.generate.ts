@@ -310,6 +310,16 @@ export async function handle(
   }
 
   const contractResult = preflightTargetContracts(schema, framework);
+  // A display's onChange that names no writer is inert: the display renders
+  // its field, and the binding is reported, never discarded silently.
+  for (const inert of contractResult.inertSubscriptions) {
+    warnings.push({
+      code: 'OODS-V007',
+      message: `Binding ${inert.component}.onChange to ${inert.handlerName} ${inert.reason}.`,
+      nodeId: inert.nodeId,
+      component: inert.component,
+    });
+  }
   validationReceipt = recordValidationChecks(
     validationReceipt,
     ...(framework === 'html' ? ['binding-contract' as const] : []),

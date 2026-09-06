@@ -8,6 +8,8 @@ import { pathToFileURL } from 'node:url';
 
 const root = path.resolve(process.argv[2]);
 const output = path.resolve(process.argv[3]);
+// Later waves remeasure the same immutable operands under their own mission id.
+const missionId = process.argv[4] ?? 's185-m04';
 const dispositionPath = 'artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json';
 const dispositionBytes = fs.readFileSync(path.join(root, dispositionPath));
 const disposition = JSON.parse(dispositionBytes);
@@ -43,7 +45,7 @@ try {
   }
   const report = {
     schemaVersion: 1,
-    missionId: 's185-m04',
+    missionId,
     measuredAt: new Date().toISOString(),
     root,
     head: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),

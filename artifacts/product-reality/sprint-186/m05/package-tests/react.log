@@ -1,0 +1,106 @@
+$ pnpm --filter @oods/components-react run typecheck
+
+> @oods/components-react@0.1.0 typecheck /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-react
+> tsc --noEmit --pretty false -p tsconfig.json
+
+$ pnpm --filter @oods/components-react test
+
+> @oods/components-react@0.1.0 test /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-react
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-react
+
+ ✓ test/ported-scenarios.spec.tsx (10 tests) 7896ms
+   ✓ @oods/components-react ported scenarios > audit-timeline-transitions renders transition evidence from the shared timeline primitive  337ms
+   ✓ @oods/components-react ported scenarios > pagination-bar-navigation reconciles totals and emits page changes  1671ms
+   ✓ @oods/components-react ported scenarios > price-badge-currency formats minor units and preserves the price marker  2011ms
+   ✓ @oods/components-react ported scenarios > search-input-clear supports immediate updates, Escape, and clear button  1518ms
+   ✓ @oods/components-react ported scenarios > search-input-clear honors debounce and minimum query length  1991ms
+ ✓ test/breadth.s185.spec.tsx (35 tests) 7555ms
+   ✓ Sprint 185 React component breadth > uses real default headings and lets as take precedence over level  1613ms
+   ✓ Sprint 185 React component breadth > renders the title heading alias without leaking it as an attribute  644ms
+   ✓ Sprint 185 React component breadth > gives scalar field content priority and retains authored heading slots  1266ms
+   ✓ Sprint 185 React component breadth > uses nonempty aliases and treats empty children as absent  440ms
+   ✓ Sprint 185 React component breadth > flattens scalar fragments and ignores empty fragments when choosing heading and preview content  396ms
+   ✓ Sprint 185 React component breadth > retains Badge emphasis and tone while keeping the colorized variant default independent  891ms
+   ✓ Sprint 185 React component breadth > renders only a preview frame and chooses authored content over the empty placeholder  628ms
+   ✓ Sprint 185 React component breadth > forwards refs and native attributes to each canonical root  545ms
+ ✓ test/interactions.spec.tsx (5 tests) 9115ms
+   ✓ @oods/components-react interactions > does not steal existing focus while hydrating Tabs  1089ms
+   ✓ @oods/components-react interactions > B-07 moves React Tabs selection and focus with ArrowRight  3317ms
+   ✓ @oods/components-react interactions > supports Tabs ArrowLeft, Home, End, pointer activation, and controlled selection  2368ms
+   ✓ @oods/components-react interactions > emits idiomatic controlled field changes and preserves native state props  888ms
+   ✓ @oods/components-react interactions > dispatches dismissal, activation, and semantic row activation once  1358ms
+ ✓ test/breadth.s186.spec.tsx (25 tests) 9843ms
+   ✓ Sprint 186 React wave-2 components > ClassificationPanel defaults its heading and keeps the content area empty without summary or children  1330ms
+   ✓ Sprint 186 React wave-2 components > ClassificationPanel resolves the heading from { name: 'By name' } in title/label/heading/name order  413ms
+   ✓ Sprint 186 React wave-2 components > ClassificationPanel resolves the heading from { heading: 'By heading', name: 'By name' } in title/label/heading/name order  514ms
+   ✓ Sprint 186 React wave-2 components > ClassificationPanel resolves subtitle and summary aliases in renderer order and lets children replace the summary  304ms
+   ✓ Sprint 186 React wave-2 components > FilterPanel renders an empty immediate region by default and passes native attributes through  392ms
+   ✓ Sprint 186 React wave-2 components > FilterPanel labels descriptors by label, then field, then Filter, and skips non-record descriptors  480ms
+   ✓ Sprint 186 React wave-2 components > FilterPanel announces the active count politely, adds Apply only in batch mode, and keeps both controls unwired  1176ms
+   ✓ Sprint 186 React wave-2 components > PreferencePanel mirrors renderPanelSection with its own marker, panel type and default title  316ms
+   ✓ Sprint 186 React wave-2 components > TagManager mirrors renderTagManager: aliases, tag normalization, the labelled add input, and an unwired submit  2691ms
+   ✓ Sprint 186 React wave-2 components > badge-family summaries resolve label and status aliases in renderer order over the Badge substrate  530ms
+ ✓ test/ported-accessibility.spec.tsx (2 tests) 6206ms
+   ✓ @oods/components-react ported accessibility > uses labels, landmarks, logs, time, and current-page semantics  3463ms
+   ✓ @oods/components-react ported accessibility > passes automated axe for all eight ported roots  2741ms
+ ✓ test/scenarios.spec.tsx (43 tests) 14995ms
+   ✓ @oods/components-react shared scenarios > address-collection-panel-title-and-summary executes the AddressCollectionPanel contract  1733ms
+   ✓ @oods/components-react shared scenarios > address-editor-fields-and-change executes the AddressEditor contract  1177ms
+   ✓ @oods/components-react shared scenarios > address-validation-timeline-events executes the AddressValidationTimeline contract  827ms
+   ✓ @oods/components-react shared scenarios > banner-dismissible executes the Banner contract  805ms
+   ✓ @oods/components-react shared scenarios > button-activate executes the Button contract  1803ms
+   ✓ @oods/components-react shared scenarios > card-elevated-content executes the Card contract  431ms
+   ✓ @oods/components-react shared scenarios > card-header-supporting-text executes the CardHeader contract  398ms
+   ✓ @oods/components-react shared scenarios > filter-panel-batch-mode executes the FilterPanel contract  372ms
+   ✓ @oods/components-react shared scenarios > membership-panel-title-and-summary executes the MembershipPanel contract  424ms
+   ✓ @oods/components-react shared scenarios > tabs-keyboard executes the Tabs contract  952ms
+   ✓ @oods/components-react shared scenarios > tag-manager-list-and-add-control executes the TagManager contract  2268ms
+   ✓ @oods/components-react shared scenarios > template-picker-selects executes the TemplatePicker contract  493ms
+   ✓ @oods/components-react shared scenarios > viz-area-preview-frame-placeholder-and-slot executes the VizAreaPreview contract  610ms
+ ✓ test/ported-ssr.spec.tsx (1 test) 661ms
+   ✓ @oods/components-react ported server rendering > server-renders every ported component without browser globals  659ms
+ ✓ test/ported-package-contract.spec.ts (4 tests) 206ms
+ ✓ test/package-contract.spec.ts (3 tests) 602ms
+   ✓ @oods/components-react package contract > B-05 exports the exact React nucleus with public declarations  305ms
+ ✓ test/badge-tone.s185.spec.tsx (4 tests) 944ms
+   ✓ Sprint 185 explicit Badge tone precedence > Badge uses the explicit warning palette over active status for subtle emphasis  504ms
+ ✓ test/table-empty.s184.spec.tsx (1 test) 497ms
+   ✓ @oods/components-react Table empty affordance > renders non-empty text spanning every declared column when rows are empty  495ms
+ ✓ test/accessibility.spec.tsx (32 tests) 23853ms
+   ✓ @oods/components-react accessibility > passes axe for the AddressCollectionPanel shared scenario with visible text semantics  2115ms
+   ✓ @oods/components-react accessibility > passes axe for the AddressEditor shared scenario with visible text semantics  482ms
+   ✓ @oods/components-react accessibility > passes axe for the AddressValidationTimeline shared scenario with visible text semantics  301ms
+   ✓ @oods/components-react accessibility > passes axe for the CardHeader shared scenario with visible text semantics  690ms
+   ✓ @oods/components-react accessibility > passes axe for the ColorSwatch shared scenario with visible text semantics  741ms
+   ✓ @oods/components-react accessibility > passes axe for the ColorizedBadge shared scenario with visible text semantics  309ms
+   ✓ @oods/components-react accessibility > passes axe for the DetailHeader shared scenario with visible text semantics  1659ms
+   ✓ @oods/components-react accessibility > passes axe for the FilterPanel shared scenario with visible text semantics  1761ms
+   ✓ @oods/components-react accessibility > passes axe for the MembershipAuditTimeline shared scenario with visible text semantics  913ms
+   ✓ @oods/components-react accessibility > passes axe for the MembershipPanel shared scenario with visible text semantics  993ms
+   ✓ @oods/components-react accessibility > passes axe for the MessageEventTimeline shared scenario with visible text semantics  1255ms
+   ✓ @oods/components-react accessibility > passes axe for the MessageStatusBadge shared scenario with visible text semantics  1426ms
+   ✓ @oods/components-react accessibility > passes axe for the PreferenceEditor shared scenario with visible text semantics  1120ms
+   ✓ @oods/components-react accessibility > passes axe for the PreferencePanel shared scenario with visible text semantics  595ms
+   ✓ @oods/components-react accessibility > passes axe for the PreferenceSummaryBadge shared scenario with visible text semantics  410ms
+   ✓ @oods/components-react accessibility > passes axe for the PreferenceTimeline shared scenario with visible text semantics  1675ms
+   ✓ @oods/components-react accessibility > passes axe for the PriceSummary shared scenario with visible text semantics  501ms
+   ✓ @oods/components-react accessibility > passes axe for the RoleAssignmentForm shared scenario with visible text semantics  575ms
+   ✓ @oods/components-react accessibility > passes axe for the TagInput shared scenario with visible text semantics  351ms
+   ✓ @oods/components-react accessibility > passes axe for the TagManager shared scenario with visible text semantics  302ms
+   ✓ @oods/components-react accessibility > passes axe for the TagPills shared scenario with visible text semantics  668ms
+   ✓ @oods/components-react accessibility > passes axe for the TemplatePicker shared scenario with visible text semantics  876ms
+   ✓ @oods/components-react accessibility > uses native action, announcement, table, and tab semantics  1279ms
+   ✓ @oods/components-react accessibility > passes automated axe for a mounted nucleus showcase  1867ms
+ ✓ test/contract-amendments.s184.spec.tsx (3 tests) 1746ms
+   ✓ Sprint 184 React contract amendments > renders Select.placeholder as the disabled empty-value choice  1666ms
+ ✓ test/ssr.spec.tsx (1 test) 738ms
+   ✓ @oods/components-react server rendering > server-renders every shared nucleus scenario without browser globals  733ms
+
+ Test Files  14 passed (14)
+      Tests  169 passed (169)
+   Start at  14:08:37
+   Duration  62.72s (transform 19.42s, setup 0ms, collect 90.32s, tests 84.86s, environment 139.57s, prepare 34.70s)
+

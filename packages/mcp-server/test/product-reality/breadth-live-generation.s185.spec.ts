@@ -32,8 +32,9 @@ describe('Sprint 185 m03 live readiness and root export generation', () => {
       for (const row of previous.rows) {
         expect(current.rows.find((candidate: { componentId: string }) => candidate.componentId === row.componentId)).toEqual(row);
       }
+      // Later waves append further rows behind the same derivation; this sprint's five must be among them.
       expect(current.rows.filter((row: { componentId: string }) => !previousIds.has(row.componentId))
-        .map((row: { componentId: string }) => row.componentId).sort()).toEqual(Object.keys(invalidProps).sort());
+        .map((row: { componentId: string }) => row.componentId)).toEqual(expect.arrayContaining(Object.keys(invalidProps)));
     }
     expect(execFileSync('git', ['diff', 'b659a6ee', '--', 'packages/mcp-server/src/render/component-map.ts'], { cwd: root, encoding: 'utf8' })).toBe('');
   });

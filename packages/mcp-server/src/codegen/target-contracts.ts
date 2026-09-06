@@ -6,6 +6,8 @@ import {
 
 import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated.js';
 import {
+  FIELD_CONSUMED_UNBOUND,
+  type BindingAnalysis,
   analyzeBindings,
   ownFieldSchemaEntry,
   resolveChildContent,
@@ -23,10 +25,46 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   // authoring metadata rather than additions to the public component API.
   CardHeader: new Set(['titleField', 'supportingField']),
   Checkbox: new Set(['name']),
+  // Sprint 186 wave-2 directives: consumed by codegen (bound or disclosed unbound), never public props.
+  ClassificationPanel: new Set(['categoriesField', 'tagsField', 'metadataField', 'modeParameter']),
   DatePicker: new Set(['name']),
+  DetailHeader: new Set(['titleField', 'subtitleField', 'headingLevel']),
+  FilterPanel: new Set(['activeField', 'modeParameter', 'collapsibleParameter']),
   Input: new Set(['name']),
+  PriceSummary: new Set(['amountField', 'currencyField', 'modelField', 'intervalField', 'taxBehaviorField']),
+  AddressCollectionPanel: new Set(['roleField', 'defaultRoleField', 'roleParameter']),
+  MembershipPanel: new Set(['membershipsField', 'hierarchyField', 'roleField', 'permissionField']),
+  PreferencePanel: new Set(['preferencesField', 'metadataField', 'namespaceField']),
+  // Trait directives the composer writes onto pattern-group Stacks; the lowering decides which travel.
+  Stack: new Set(['as', 'channelsField', 'templatesField', 'policiesField', 'conversationsField', 'historyField', 'labelField', 'showActor', 'showReason']),
+  AuditEvent: new Set(['typeField', 'timestampField', 'timezoneParameter']),
+  MessageEventTimeline: new Set(['messagesField', 'statusesField']),
+  PreferenceTimeline: new Set(['metadataField']),
+  AddressEditor: new Set(['roleParameter', 'allowDynamicParameter', 'defaultRoleField']),
+  PreferenceEditor: new Set(['namespacesField', 'documentField', 'registryNamespaceParameter']),
+  RoleAssignmentForm: new Set(['availableRolesField', 'membershipField', 'defaultRoleParameter']),
+  StatusSelector: new Set(['optionsParameter', 'initialParameter', 'allowedTransitionsField', 'requireReasonParameter']),
+  TagInput: new Set(['maxTagsParameter', 'allowCustomParameter', 'allowListParameter', 'minLengthParameter', 'maxLengthParameter', 'synonymParameter']),
+  TemplatePicker: new Set(['templatesField', 'channelsField']),
+  TagManager: new Set(['allowCustomParameter', 'allowListParameter', 'maxTagsParameter', 'moderationParameter', 'synonymParameter']),
+  MessageStatusBadge: new Set(['statusesField']),
+  PreferenceSummaryBadge: new Set(['namespacesField', 'versionField']),
+  RoleBadgeList: new Set(['rolesField', 'fallbackRoleParameter']),
+  // The composer's field description lands on TagPills as label; the renderer never reads it.
+  TagPills: new Set(['label']),
   Select: new Set(['name']),
   Textarea: new Set(['name']),
+};
+
+/** Extension directives whose values are not plain field names. */
+const EXTENSION_VALUE_CONTRACTS: Readonly<Record<string, PropValueContract>> = {
+  // Declared inline: this map sits above the shared value constants.
+  showActor: valueContract('a boolean', (value) => typeof value === 'boolean'),
+  showReason: valueContract('a boolean', (value) => typeof value === 'boolean'),
+  headingLevel: {
+    expected: 'an integer heading level from 1 to 6',
+    accepts: (value) => typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 6,
+  },
 };
 
 const REQUIRED_PROPS: Readonly<Partial<Record<GovernedComponentId, readonly string[]>>> = {
@@ -266,9 +304,120 @@ const TAB_ITEMS_VALUE = valueContract(
   )),
 );
 
+/** renderPanelSection aliases shared by every panel-family component. */
+const PANEL_SECTION_VALUES: Readonly<Record<string, PropValueContract>> = {
+  title: STRING_VALUE,
+  label: STRING_VALUE,
+  heading: STRING_VALUE,
+  name: STRING_VALUE,
+  subtitle: STRING_VALUE,
+  description: STRING_VALUE,
+  metadata: STRING_VALUE,
+  summary: STRING_VALUE,
+  text: STRING_VALUE,
+  body: STRING_VALUE,
+  emptyMessage: STRING_VALUE,
+};
+const TAG_ITEMS_VALUE = valueContract('an array of tag entries', (value) => Array.isArray(value));
+
+const BADGE_FAMILY_VALUES: Readonly<Record<string, PropValueContract>> = {
+  label: STRING_VALUE,
+  text: STRING_VALUE,
+  value: STRING_VALUE,
+  status: STRING_VALUE,
+  state: STRING_VALUE,
+  variant: STRING_VALUE,
+  tone: TONE_VALUE,
+  emphasis: EMPHASIS_VALUE,
+};
+
+const TIMELINE_TITLE_VALUES: Readonly<Record<string, PropValueContract>> = {
+  title: STRING_VALUE,
+  label: STRING_VALUE,
+  heading: STRING_VALUE,
+  name: STRING_VALUE,
+};
+
+const FORM_SHELL_VALUES: Readonly<Record<string, PropValueContract>> = {
+  title: STRING_VALUE,
+  label: STRING_VALUE,
+  heading: STRING_VALUE,
+  name: STRING_VALUE,
+  description: STRING_VALUE,
+  subtitle: STRING_VALUE,
+  hint: STRING_VALUE,
+};
+
 const PROP_VALUE_CONTRACTS: Readonly<
   Record<GovernedComponentId, Readonly<Record<string, PropValueContract>>>
 > = {
+  AddressCollectionPanel: PANEL_SECTION_VALUES,
+  AddressEditor: {
+    ...FORM_SHELL_VALUES,
+    street: STRING_VALUE, line1: STRING_VALUE, addressLine1: STRING_VALUE, city: STRING_VALUE,
+    region: STRING_VALUE, state: STRING_VALUE, postalCode: STRING_VALUE, zip: STRING_VALUE,
+  },
+  PreferenceEditor: {
+    ...FORM_SHELL_VALUES,
+    namespaces: TAG_ITEMS_VALUE, namespace: STRING_VALUE, document: STRING_VALUE, json: STRING_VALUE, value: STRING_VALUE,
+  },
+  RoleAssignmentForm: {
+    ...FORM_SHELL_VALUES,
+    roles: TAG_ITEMS_VALUE, availableRoles: TAG_ITEMS_VALUE, role: STRING_VALUE, defaultRoleId: STRING_VALUE,
+    assignee: STRING_VALUE, member: STRING_VALUE,
+  },
+  StatusSelector: {
+    label: STRING_VALUE, title: STRING_VALUE, options: TAG_ITEMS_VALUE, states: TAG_ITEMS_VALUE, value: STRING_VALUE, status: STRING_VALUE,
+  },
+  TagInput: {
+    ...FORM_SHELL_VALUES,
+    tags: TAG_ITEMS_VALUE, value: STRING_VALUE, placeholder: STRING_VALUE,
+  },
+  TemplatePicker: {
+    ...FORM_SHELL_VALUES,
+    templates: TAG_ITEMS_VALUE, options: TAG_ITEMS_VALUE, templateId: STRING_VALUE, value: STRING_VALUE,
+    channels: TAG_ITEMS_VALUE, channel: STRING_VALUE,
+  },
+  AddressValidationTimeline: { ...TIMELINE_TITLE_VALUES, events: TAG_ITEMS_VALUE, validations: TAG_ITEMS_VALUE, history: TAG_ITEMS_VALUE },
+  AuditEvent: Object.fromEntries([
+    'label', 'title', 'event', 'status', 'state', 'reason', 'text', 'timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt',
+    'detail', 'description', 'message', 'from', 'to', 'code',
+  ].map((prop) => [prop, STRING_VALUE])),
+  MembershipAuditTimeline: { ...TIMELINE_TITLE_VALUES, events: TAG_ITEMS_VALUE, memberships: TAG_ITEMS_VALUE, history: TAG_ITEMS_VALUE },
+  MessageEventTimeline: { ...TIMELINE_TITLE_VALUES, events: TAG_ITEMS_VALUE, messages: TAG_ITEMS_VALUE, statuses: TAG_ITEMS_VALUE },
+  PreferenceTimeline: { ...TIMELINE_TITLE_VALUES, events: TAG_ITEMS_VALUE, changes: TAG_ITEMS_VALUE, history: TAG_ITEMS_VALUE },
+  AddressSummaryBadge: { ...BADGE_FAMILY_VALUES, role: STRING_VALUE },
+  MessageStatusBadge: { ...BADGE_FAMILY_VALUES, delivery: STRING_VALUE },
+  PreferenceSummaryBadge: { ...BADGE_FAMILY_VALUES, namespace: STRING_VALUE, version: STRING_VALUE },
+  RoleBadgeList: {
+    roles: TAG_ITEMS_VALUE,
+    badges: TAG_ITEMS_VALUE,
+    roleLabels: TAG_ITEMS_VALUE,
+    value: TAG_ITEMS_VALUE,
+    variant: STRING_VALUE,
+    tone: STRING_VALUE,
+    label: STRING_VALUE,
+    text: STRING_VALUE,
+  },
+  TagPills: {
+    tags: TAG_ITEMS_VALUE,
+    value: TAG_ITEMS_VALUE,
+    maxVisible: STRING_OR_NUMBER_VALUE,
+    overflowLabel: STRING_VALUE,
+  },
+  MembershipPanel: PANEL_SECTION_VALUES,
+  PreferencePanel: PANEL_SECTION_VALUES,
+  TagManager: {
+    title: STRING_VALUE,
+    label: STRING_VALUE,
+    heading: STRING_VALUE,
+    name: STRING_VALUE,
+    description: STRING_VALUE,
+    subtitle: STRING_VALUE,
+    hint: STRING_VALUE,
+    tags: TAG_ITEMS_VALUE,
+    value: TAG_ITEMS_VALUE,
+  },
   AuditTimeline: {
     title: STRING_VALUE,
     events: RECORD_ARRAY_VALUE,
@@ -336,6 +485,7 @@ const PROP_VALUE_CONTRACTS: Readonly<
     help: STRING_VALUE,
     validation: VALIDATION_VALUE,
   },
+  ClassificationPanel: PANEL_SECTION_VALUES,
   CancellationSummary: {
     title: STRING_VALUE,
     label: STRING_VALUE,
@@ -392,6 +542,12 @@ const PROP_VALUE_CONTRACTS: Readonly<
     meta: STRING_VALUE,
     level: HEADING_LEVEL_VALUE,
     as: HEADING_TAG_VALUE,
+  },
+  FilterPanel: {
+    filters: RECORD_ARRAY_VALUE,
+    activeFilters: RECORD_ARRAY_VALUE,
+    mode: STRING_VALUE,
+    collapsible: BOOLEAN_VALUE,
   },
   Grid: {
     columns: valueContract(
@@ -478,6 +634,24 @@ const PROP_VALUE_CONTRACTS: Readonly<
     debounceParameter: STRING_VALUE,
     minQueryLengthParameter: STRING_VALUE,
     clearableParameter: STRING_VALUE,
+  },
+  PriceSummary: {
+    title: STRING_VALUE,
+    label: STRING_VALUE,
+    heading: STRING_VALUE,
+    name: STRING_VALUE,
+    amount: STRING_OR_NUMBER_VALUE,
+    amountCents: STRING_OR_NUMBER_VALUE,
+    unitAmountCents: STRING_OR_NUMBER_VALUE,
+    currency: STRING_VALUE,
+    currencyCode: STRING_VALUE,
+    model: STRING_VALUE,
+    pricingModel: STRING_VALUE,
+    interval: STRING_VALUE,
+    billingInterval: STRING_VALUE,
+    summary: STRING_VALUE,
+    text: STRING_VALUE,
+    description: STRING_VALUE,
   },
   Select: {
     id: STRING_VALUE,
@@ -592,7 +766,9 @@ function propValueContract(
   const extensions = Object.hasOwn(CROSS_TARGET_PROP_EXTENSIONS, component)
     ? CROSS_TARGET_PROP_EXTENSIONS[component]
     : undefined;
-  if (extensions?.has(prop)) return STRING_VALUE;
+  if (extensions?.has(prop)) {
+    return Object.hasOwn(EXTENSION_VALUE_CONTRACTS, prop) ? EXTENSION_VALUE_CONTRACTS[prop]! : STRING_VALUE;
+  }
   if (prop.startsWith('data-')) return ATTRIBUTE_VALUE;
   if (prop.startsWith('aria-') && Object.hasOwn(ARIA_VALUE_CONTRACTS, prop)) {
     return ARIA_VALUE_CONTRACTS[prop];
@@ -675,6 +851,11 @@ function acceptedFieldKinds(
   // runtime datum through a typed component prop. Existence/representation is
   // still mandatory, but the placeholder itself is always a string.
   if (framework === 'html') return ['string', 'number', 'boolean', 'object', 'array', 'unknown'];
+  // Data props a generic field lowers to are independent of any local form state on the node.
+  if (propName === 'filters' && component === 'FilterPanel') return ['array'];
+  if (propName === 'tags' && (component === 'TagManager' || component === 'TagPills' || component === 'TagInput')) return ['array'];
+  if (propName === 'role' && component === 'AddressSummaryBadge') return ['string'];
+  if (propName === 'events' && (component === 'AddressValidationTimeline' || component === 'MembershipAuditTimeline')) return ['array'];
   if (localStateType === 'boolean') return ['boolean'];
   if (localStateType === 'string') return ['string', 'number', 'boolean'];
   if (propName === 'checked') return ['boolean'];
@@ -711,6 +892,12 @@ function fieldContractIssues(
       node,
     )];
   }
+  // The field exists; this container names its collection without any
+  // renderer reading it as data, so the directive is consumed unbound.
+  if (FIELD_CONSUMED_UNBOUND.has(node.component)) return [];
+  // A pattern-group Stack's generic field restates its first `fields` entry;
+  // the composition lowering presents the fields, so the Stack reads none.
+  if (node.component === 'Stack' && node.props?.patternComponent !== undefined) return [];
 
   const resolution = framework === 'html'
     ? resolveChildContent(node, schema.objectSchema)
@@ -768,19 +955,24 @@ function compositionDirectiveIssues(node: UiElement, schema: UiSchema): CodegenI
   ));
 }
 
+const HEADER_RECIPE_FIELDS: Readonly<Record<string, readonly string[]>> = {
+  CardHeader: ['titleField', 'supportingField'],
+  DetailHeader: ['titleField', 'subtitleField'],
+};
+
 function headerRecipeFieldIssues(node: UiElement, schema: UiSchema): CodegenIssue[] {
-  if (node.component !== 'CardHeader') return [];
-  return ['titleField', 'supportingField'].flatMap((prop) => {
+  if (!Object.hasOwn(HEADER_RECIPE_FIELDS, node.component)) return [];
+  return HEADER_RECIPE_FIELDS[node.component]!.flatMap((prop) => {
     const field = node.props?.[prop];
     // The ordinary prop value check diagnoses non-string directives.
     if (typeof field !== 'string') return [];
     const entry = ownFieldSchemaEntry(schema.objectSchema, field);
     if (!entry) return [issue(
-      `Field ${JSON.stringify(field)} referenced by CardHeader.${prop} does not exist in objectSchema.`,
+      `Field ${JSON.stringify(field)} referenced by ${node.component}.${prop} does not exist in objectSchema.`,
       node,
     )];
     if (fieldValueKind(entry) !== 'string') return [issue(
-      `Field ${JSON.stringify(field)} referenced by CardHeader.${prop} must contain string data.`,
+      `Field ${JSON.stringify(field)} referenced by ${node.component}.${prop} must contain string data.`,
       node,
     )];
     return [];
@@ -795,6 +987,8 @@ export function preflightTargetContracts(
   checks: CodegenValidationCheck[];
   issues: CodegenIssue[];
   bindingSafetyIssues: CodegenIssue[];
+  /** Display onChange bindings that name no writer; advisory, never blocking. */
+  inertSubscriptions: BindingAnalysis['inertSubscriptions'];
 } {
   const normalized = normalizeSchemaForFramework(schema, framework);
   const nodes = nodesInDocumentOrder(normalized.screens);
@@ -921,5 +1115,6 @@ export function preflightTargetContracts(
     )),
     issues,
     bindingSafetyIssues,
+    inertSubscriptions: bindingAnalysis.inertSubscriptions,
   };
 }

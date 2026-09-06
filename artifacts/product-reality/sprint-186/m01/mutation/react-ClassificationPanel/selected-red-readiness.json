@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 274,
+    "classA": 230,
+    "classB": 44
+  },
+  "totals": {
+    "references": 274,
+    "classA": 230,
+    "classB": 44,
+    "resolved": 272
+  },
+  "targets": {
+    "react": {
+      "rows": 22,
+      "references": 132,
+      "classA": 110,
+      "classB": 22,
+      "resolved": 130
+    },
+    "vue": {
+      "rows": 22,
+      "references": 142,
+      "classA": 120,
+      "classB": 22,
+      "resolved": 142
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 44,
+    "targetImplementation": 44,
+    "packageExport": 44,
+    "publicDeclaration": 44,
+    "dependencyClosure": 44,
+    "frameworkScenario": 54
+  },
+  "failures": [
+    {
+      "target": "react",
+      "componentId": "ClassificationPanel",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-react/src/index.ts#ClassificationPanel",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "react",
+      "componentId": "ClassificationPanel",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-react/dist/index.d.ts#ClassificationPanel",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}

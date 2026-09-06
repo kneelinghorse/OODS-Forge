@@ -15,6 +15,15 @@ export const S185_SCHEMA_NAMES = Object.freeze([
   'the-academy-landing-v1',
 ] as const);
 
+/** Sprint 186 wave-2 subjects; each mission appends its schema once its components are root exports. */
+export const S186_SCHEMA_NAMES = Object.freeze([
+  'test-tagged-schema',
+  'user-detail-showcase',
+  'user-list-showcase',
+  'user-timeline-showcase',
+  'user-form-showcase',
+] as const);
+
 export type ConsumerInteraction =
   | { kind: 'tabs'; nodeId: string; component: 'Tabs'; selector: string }
   | { kind: 'action'; nodeId: string; component: string; selector: string; action: string }
@@ -103,17 +112,30 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
 }
 
 /** Choose behavior declared by the saved tree, never a control invented by the consumer. */
+/** Text the live consumer types into an editor-owned action's first text input. */
+export const EDITOR_TYPED_TEXT = 'generated';
+
+/** Operands an AddressEditor emits after the consumer types into its Street input. */
+export const TYPED_ADDRESS_RECORD = Object.freeze({ street: EDITOR_TYPED_TEXT, city: '', region: '', postalCode: '' });
+
 export function deriveInteraction(schema: UiSchema, actions: GeneratedArtifactAction[]): ConsumerInteraction {
   const nodes = schemaNodes(schema);
   const tabs = nodes.find((node) => node.component === 'Tabs' && node.props?.disabled !== true
     && ((node.children?.length ?? 0) > 1 || (Array.isArray(node.props?.items) && node.props.items.length > 1)));
   if (tabs) return { kind: 'tabs', nodeId: tabs.id, component: 'Tabs', selector: selectorForNode(tabs.id) };
   if (actions.length > 0) {
-    const action = actions.find((candidate) => candidate.sources.some((source) =>
-      nodes.some((node) => node.id === source.nodeId && node.props?.disabled !== true)));
+    const enabled = (source: GeneratedArtifactAction['sources'][number]) =>
+      nodes.some((node) => node.id === source.nodeId && node.props?.disabled !== true);
+    // Prefer an action the consumer can click: a screen-scoped action owns a
+    // generated surface button and a Button activation is a click. A domain
+    // binding on an editor's change event fires from input, not from a click.
+    const screenRoots = new Set(schema.screens.map((screen) => screen.id));
+    const clickable = (source: GeneratedArtifactAction['sources'][number]) =>
+      enabled(source) && (screenRoots.has(source.nodeId) || source.event === 'onActivate');
+    const action = actions.find((candidate) => candidate.sources.some(clickable))
+      ?? actions.find((candidate) => candidate.sources.some(enabled));
     if (!action) throw new Error('No declared domain action has an enabled schema source.');
-    const declaration = action.sources.find((source) =>
-      nodes.some((node) => node.id === source.nodeId && node.props?.disabled !== true))!;
+    const declaration = action.sources.find(clickable) ?? action.sources.find(enabled)!;
     return {
       kind: 'action', nodeId: declaration.nodeId, component: declaration.component,
       selector: `[data-oods-action=${JSON.stringify(action.name)}]`, action: action.name,
@@ -153,6 +175,8 @@ export function deriveActionArguments(
     if (parameter.name === 'column') return names.includes('status') ? 'status' : names[0] ?? 'column';
     if (parameter.name === 'criteria') return {};
     if (parameter.name === 'page') return 1;
+    // Sprint 186 m05: an AddressEditor's change carries the whole record after typing into Street.
+    if (parameter.name === 'address') return { ...TYPED_ADDRESS_RECORD };
     if (parameter.type === 'string') return '';
     if (parameter.type === 'number') return 0;
     if (parameter.type === 'boolean') return false;

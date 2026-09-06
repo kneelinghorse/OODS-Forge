@@ -12,7 +12,15 @@ const requireVue = createRequire(new URL('../../../components-vue/package.json',
 const { h } = requireVue('vue');
 const { renderToString: renderVue } = requireVue('@vue/server-renderer');
 
-const COMPONENTS = ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview'] as const;
+const COMPONENTS = [
+  'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
+  // Sprint 186 wave 2 extends the same computed comparison.
+  'ClassificationPanel', 'FilterPanel', 'PriceSummary',
+  'AddressCollectionPanel', 'MembershipPanel', 'PreferencePanel', 'TagManager',
+  'AddressSummaryBadge', 'MessageStatusBadge', 'PreferenceSummaryBadge', 'RoleBadgeList', 'TagPills',
+  'AddressValidationTimeline', 'AuditEvent', 'MembershipAuditTimeline', 'MessageEventTimeline', 'PreferenceTimeline',
+  'AddressEditor', 'PreferenceEditor', 'RoleAssignmentForm', 'StatusSelector', 'TagInput', 'TemplatePicker',
+] as const;
 type Component = (typeof COMPONENTS)[number];
 type Observation = {
   markers: string[];
@@ -103,6 +111,65 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
       expect(react.visibleText).toContain('Ocean blue');
     } else if (component === 'ColorizedBadge') {
       expect(react.visibleText).toContain('Approved');
+    } else if (component === 'ClassificationPanel') {
+      expect(react.headings).toEqual([{ level: 'h3', text: 'Classification' }]);
+      expect(react.visibleText).toContain('Taxonomy and tags');
+      expect(react.visibleText).toContain('Electronics > Mobile > Android');
+    } else if (component === 'FilterPanel') {
+      expect(react.headings).toEqual([]);
+      for (const text of ['1 active', 'Clear all', 'Status', 'release_channel', 'Apply']) expect(react.visibleText).toContain(text);
+    } else if (component === 'AddressCollectionPanel' || component === 'MembershipPanel' || component === 'PreferencePanel') {
+      const expected = {
+        AddressCollectionPanel: ['Addresses', 'Billing and shipping', '2 addresses on file'],
+        MembershipPanel: ['Membership', 'Roles and permissions', 'Owner of 2 workspaces'],
+        PreferencePanel: ['Preferences', 'Namespace: notifications', 'No preferences saved'],
+      }[component];
+      expect(react.headings).toEqual([{ level: 'h3', text: expected[0] }]);
+      for (const text of expected.slice(1)) expect(react.visibleText).toContain(text);
+    } else if (component === 'AddressSummaryBadge' || component === 'MessageStatusBadge' || component === 'PreferenceSummaryBadge') {
+      expect(react.headings).toEqual([]);
+      expect(react.markers).toEqual([component]);
+      expect(react.visibleText).toBe({ AddressSummaryBadge: 'Billing address', MessageStatusBadge: 'delivered', PreferenceSummaryBadge: 'notifications' }[component]);
+    } else if (component === 'RoleBadgeList') {
+      // Adjacent items carry no whitespace, exactly as the HTML renderer concatenates them.
+      expect(react.visibleText).toBe('ownerbilling-admin');
+    } else if (component === 'TagPills') {
+      expect(react.visibleText).toBe('alphabetagamma+5');
+    } else if (component === 'AddressValidationTimeline' || component === 'MembershipAuditTimeline' || component === 'MessageEventTimeline' || component === 'PreferenceTimeline') {
+      const expected = {
+        AddressValidationTimeline: ['Address checks', ['Postal code verified', '2026-09-05T12:00:00Z', 'Matched carrier database', 'Geocoded']],
+        MembershipAuditTimeline: ['Membership history', ['No events']],
+        MessageEventTimeline: ['Delivery', ['delivered', '2026-09-02T09:00:00Z']],
+        PreferenceTimeline: ['Preference changes', ['notifications.email', '2026-09-03T08:00:00Z', 'Enabled']],
+      }[component] as [string, string[]];
+      expect(react.headings).toEqual([{ level: 'h3', text: expected[0] }]);
+      for (const text of expected[1]) expect(react.visibleText).toContain(text);
+    } else if (component === 'AuditEvent') {
+      expect(react.headings).toEqual([]);
+      for (const text of ['2026-09-05T12:00:00Z', 'user.updated', 'Display name changed']) expect(react.visibleText).toContain(text);
+    } else if (component === 'AddressEditor' || component === 'PreferenceEditor' || component === 'RoleAssignmentForm') {
+      const expected = {
+        AddressEditor: ['Shipping address', ['Street', 'City', 'Region', 'Postal Code']],
+        PreferenceEditor: ['Preferences', ['Namespace', 'notifications', 'billing', 'Preference Document', '{"email":true}']],
+        RoleAssignmentForm: ['Assign role', ['Role', 'Owner', 'viewer', 'Assignee']],
+      }[component] as [string, string[]];
+      expect(react.headings).toEqual([{ level: 'h3', text: expected[0] }]);
+      for (const text of expected[1]) expect(react.visibleText).toContain(text);
+    } else if (component === 'StatusSelector' || component === 'TagInput' || component === 'TemplatePicker') {
+      // Legends and labels are visible text, never headings.
+      const expected = {
+        StatusSelector: ['Status', 'draft', 'active'],
+        TagInput: ['Tags', 'Tag', 'alpha'],
+        TemplatePicker: ['Notification template', 'Template', 'Welcome', 'Channel', 'email', 'sms'],
+      }[component];
+      expect(react.headings).toEqual([]);
+      for (const text of expected) expect(react.visibleText).toContain(text);
+    } else if (component === 'TagManager') {
+      expect(react.headings).toEqual([{ level: 'h3', text: 'Tags' }]);
+      for (const text of ['alpha', 'beta', 'Add Tag']) expect(react.visibleText).toContain(text);
+    } else if (component === 'PriceSummary') {
+      expect(react.headings).toEqual([{ level: 'h3', text: 'Price Summary' }]);
+      for (const text of ['Amount', '129900', 'Currency', 'USD', 'Model', 'recurring', 'Interval', 'month']) expect(react.visibleText).toContain(text);
     } else {
       expect(react.placeholderText).toBe(omitSlot ? 'Area preview (640 x 360)' : null);
       expect(react.visibleText).toBe(omitSlot

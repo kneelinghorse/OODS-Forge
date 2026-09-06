@@ -79,7 +79,7 @@ describe('Sprint 184 merged target readiness', () => {
     expect(() => mergeTargetReadiness(nucleusReadiness.react, {
       target: 'react',
       rows: [nucleusReadiness.react.rows[0]!],
-    })).toThrow(/duplicate react readiness row for badge/i);
+    })).toThrow(new RegExp(`duplicate react readiness row for ${nucleusReadiness.react.rows[0]!.componentId}`, 'i'));
   });
 
   it.each(['react', 'vue'] as const)(

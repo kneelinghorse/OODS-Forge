@@ -17,7 +17,7 @@ const derived = deriveBaselineSurfaceFold(root);
 const changedIds = [...derived.record.newNucleusComponents, ...derived.record.portedComponents].sort();
 
 describe('Sprint 185 baseline surface evidence preserves the identity denominator', () => {
-  it('changes only the 39 authorized surface cells and none of the 109 identity/classification/reconciliation rows', () => {
+  it('changes only the authorized surface cells and none of the 109 identity/classification/reconciliation rows', () => {
     expect(componentCapabilityBaseline.rows).toHaveLength(109);
     expect(identityProjection(componentCapabilityBaseline)).toEqual(identityProjection(before));
     expect(() => assertSurfaceOnlyDiff(before, componentCapabilityBaseline, changedIds)).not.toThrow();
@@ -25,7 +25,9 @@ describe('Sprint 185 baseline surface evidence preserves the identity denominato
       .filter(surface => JSON.stringify(row.surfaces[surface as keyof typeof row.surfaces]) !== JSON.stringify(before.rows[index].surfaces[surface]))
       .map(surface => `${row.id}/${surface}`));
     expect(actual.sort()).toEqual(changedIds.flatMap(id => SURFACES.map(surface => `${id}/${surface}`)).sort());
-    expect(actual).toHaveLength(39);
+    // Sprint 185 folded 13 components (39 cells); later waves append their own, so the count is derived.
+    expect(actual).toHaveLength(changedIds.length * SURFACES.length);
+    expect(changedIds.length).toBeGreaterThanOrEqual(13);
     expect(componentReconciliationProposal.approvedRuntimeCensus).toBeNull();
   });
 
@@ -46,9 +48,10 @@ describe('Sprint 185 baseline surface evidence preserves the identity denominato
     expect(() => assertSurfaceOnlyDiff(before, classificationEvidence, changedIds)).toThrow(/Only authorized/);
   });
 
-  it('derives the fold from the actual target readiness and resolves all 156 underlying reference occurrences', () => {
+  it('derives the fold from the actual target readiness and resolves every underlying reference occurrence', () => {
     expect(derived.baseline).toEqual(componentCapabilityBaseline);
-    expect(derived.record.readinessReferences).toHaveLength(156);
+    // Six evidence classes per target, two targets: twelve reference occurrences per folded component.
+    expect(derived.record.readinessReferences).toHaveLength(changedIds.length * 12);
     expect(derived.record.readinessReferences.every(row => row.resolved)).toBe(true);
     expect(derived.record.retainedBuildOutputs).toHaveLength(4);
     for (const output of derived.record.retainedBuildOutputs) {
@@ -75,15 +78,31 @@ describe('Sprint 185 baseline surface evidence preserves the identity denominato
     expect(() => resolveSurfaceEvidence('../outside.json#anything', root)).toThrow(/Unsafe evidence path/);
   });
 
-  it('binds every new generated-consumer cell to mounted observations in both framework targets', () => {
+  it('binds every new generated-consumer cell to observed consumer evidence in both framework targets', () => {
     for (const componentId of derived.record.newNucleusComponents) {
       const surface = derived.baseline.rows.find(row => row.id === componentId)!.surfaces.generatedConsumer;
       const targets = new Set<string>();
+      const generationRefs = new Set<string>();
       for (const ref of surface.evidence) {
-        const observation = resolveSurfaceEvidence(ref, root);
-        expect(observation).toMatchObject({ component: componentId, requiredInitially: true, present: true, passed: true });
-        targets.add(readJson(ref.split('#')[0]).framework);
+        const report = readJson(ref.split('#')[0]);
+        if (ref.endsWith('#/generation/sourceSha256')) {
+          // Companion to an inactive-tab observation: the generated source that carried the node.
+          expect(resolveSurfaceEvidence(ref, root)).toMatch(/^sha256:[0-9a-f]{64}$/);
+          generationRefs.add(ref.split('#')[0]);
+          continue;
+        }
+        const observation = resolveSurfaceEvidence(ref, root) as { component: string; requiredInitially: boolean; present: boolean; passed: boolean; reason?: string };
+        expect(observation).toMatchObject({ component: componentId, passed: true });
+        if (observation.requiredInitially) expect(observation.present).toBe(true);
+        else {
+          // Sprint 186: a node the saved schema places under an inactive Tabs panel is
+          // compiled, built and hydrated by the consumer without an initial mount.
+          expect(observation.reason).toMatch(/^inactive initial Tabs panel/);
+          expect(surface.evidence).toContain(`${ref.split('#')[0]}#/generation/sourceSha256`);
+        }
+        targets.add(report.framework);
       }
+      for (const file of generationRefs) expect(surface.evidence.some(ref => ref.startsWith(`${file}#/browser/requiredMounts/`))).toBe(true);
       expect([...targets].sort()).toEqual(['react', 'vue']);
     }
   });

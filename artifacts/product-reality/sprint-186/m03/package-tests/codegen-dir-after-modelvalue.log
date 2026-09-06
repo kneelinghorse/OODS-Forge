@@ -1,0 +1,426 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/mcp-server
+
+ ❯ test/codegen/cross-framework-parity.spec.ts (50 tests | 3 failed) 6574ms
+   ✓ cross-framework parity > nested children (3+ levels) > all frameworks emit ok 3ms
+   ✓ cross-framework parity > nested children (3+ levels) > all frameworks contain all component names 1ms
+   ✓ cross-framework parity > nested children (3+ levels) > all frameworks contain all node ids 2ms
+   ✓ cross-framework parity > sidebar layout > all frameworks emit ok 0ms
+   ✓ cross-framework parity > sidebar layout > React and Vue emit sidebar wrapper elements 0ms
+   ✓ cross-framework parity > sidebar layout > all frameworks contain all component ids 1ms
+   ✓ cross-framework parity > section layout with bindings > both frameworks wrap in section element 0ms
+   ✓ cross-framework parity > section layout with bindings > both frameworks keep semantic screen actions off the section component 0ms
+   ✓ cross-framework parity > section layout with bindings > both frameworks declare the same required action 1ms
+   ✓ cross-framework parity > field content injection > all frameworks emit ok 0ms
+   ✓ cross-framework parity > field content injection > React injects field values via JSX expressions 0ms
+   × cross-framework parity > field content injection > Vue injects field values via template syntax 14ms
+     → expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="email"'
+   ✓ cross-framework parity > field content injection > HTML injects placeholder text with data-bind 0ms
+   ✓ cross-framework parity > field content injection > React generates typed props interface 0ms
+   ✓ cross-framework parity > field content injection > Vue generates ref() bindings for form schemas (Input/Select present) 0ms
+   ✓ cross-framework parity > field content injection > React destructures field names from props 0ms
+   ✓ cross-framework parity > event binding parity > React declares onSubmit as a required semantic action 0ms
+   ✓ cross-framework parity > event binding parity > Vue declares onSubmit as a required semantic action 0ms
+   ✓ cross-framework parity > event binding parity > both omit blank handler stubs 0ms
+   ✓ cross-framework parity > prop enrichment parity > both frameworks emit placeholder for form inputs 0ms
+   ✓ cross-framework parity > prop enrichment parity > both frameworks emit type from semantic field type 0ms
+   ✓ cross-framework parity > prop enrichment parity > both frameworks emit enum options for Select 0ms
+   ✓ cross-framework parity > token overrides > React emits token overrides as CSS variable comment 0ms
+   ✓ cross-framework parity > token overrides > Vue emits token overrides as style block 0ms
+   ✓ cross-framework parity > framework metadata > React returns .tsx extension and react framework 0ms
+   ✓ cross-framework parity > framework metadata > Vue returns .vue extension and vue framework 0ms
+   ✓ cross-framework parity > framework metadata > HTML returns .html extension and html framework 0ms
+   ✓ cross-framework parity > framework metadata > React and Vue include their real framework packages and shared CSS in imports 1ms
+   ✓ cross-framework parity > framework metadata > HTML has no imports 0ms
+   ✓ Sprint 182 bounded framework normalization > emits explicit ids once through the object-field rebuild path and normalizes readOnly 1ms
+   ✓ Sprint 182 bounded framework normalization > assigns deterministic row ids without replacing supplied ids 0ms
+   ✓ Sprint 182 bounded framework normalization > normalizes legacy Tabs items, panels, and active selection 1ms
+   ✓ Sprint 182 bounded framework normalization > lowers Tabs child panel subtrees onto each target panel surface  1532ms
+   ✓ Sprint 182 bounded framework normalization > preserves normalized Card body and active state when deriving Tabs items  1558ms
+   ✓ Sprint 182 bounded framework normalization > keeps explicit Tabs items and removes mixed child panels 1ms
+   ✓ Sprint 182 bounded framework normalization > uses the normalized fallback id for an active legacy Tabs item 0ms
+   ✓ Sprint 182 bounded framework normalization > binds Badge and Button fields through their supported content prop  884ms
+   ✓ Sprint 182 bounded framework normalization > keeps normalized static Badge and Button content ahead of field binding 1ms
+   ✓ Sprint 182 bounded framework normalization > keeps Vue source imports and imports metadata in lockstep 0ms
+   ✓ Sprint 182 bounded framework normalization > escapes React scalar props, ids, styles, and comments as source data  907ms
+   ✓ Sprint 182 bounded framework normalization > escapes Vue scalar/object props, ids, styles, and style blocks as source data 34ms
+   ✓ Sprint 182 bounded framework normalization > keeps the legacy HTML Badge/Button field rendering unchanged 8ms
+   × Sprint 182 bounded framework normalization > preserves Text and Input field bindings inside section wrappers 6ms
+     → expected '<template>\n  <section data-layout="s…' to match /<Input[^>]*v-model="email"[^>]*\/>/>
+   × Sprint 182 bounded framework normalization > binds DatePicker, Textarea, and Checkbox through target-supported values 1ms
+     → expected '<template>\n  <DatePicker id="bound-d…' to match /<DatePicker[^>]*id="bound-date"[^>]*v…/
+   ✓ Sprint 182 bounded framework normalization > keeps explicit controlled values and drops undeclared field directives 1ms
+   ✓ Sprint 182 bounded framework normalization > serializes hostile Tailwind variant values without breaking either compiler  776ms
+   ✓ Sprint 182 bounded framework normalization > resolves the declared cva dependency for supported activated variants  820ms
+   ✓ Sprint 182 bounded framework normalization > emits compiler-safe Vue object props containing apostrophes 10ms
+   ✓ Sprint 182 bounded framework normalization > turns legacy Card body content into a visible child 1ms
+   ✓ Sprint 182 bounded framework normalization > uses idiomatic Vue update events for fields and Tabs 0ms
+ ✓ test/codegen/react-emitter.spec.ts (34 tests) 35ms
+ ✓ test/codegen/vue-emitter.spec.ts (29 tests) 37ms
+ ❯ test/codegen/prop-binding.spec.ts (33 tests | 1 failed) 23ms
+   ✓ codegen prop binding > Sprint 184 ported recipe bindings > turns declarative field recipes into executable 'React' props 3ms
+   ✓ codegen prop binding > Sprint 184 ported recipe bindings > turns declarative field recipes into executable 'Vue' props 1ms
+   ✓ codegen prop binding > React emitter > injects field names as JSX children for children-strategy components 0ms
+   ✓ codegen prop binding > React emitter > injects field names as status prop for status-strategy components 0ms
+   ✓ codegen prop binding > React emitter > injects field names as value prop for value-strategy components 0ms
+   ✓ codegen prop binding > React emitter > keeps self-closing for components without field binding 0ms
+   ✓ codegen prop binding > Vue emitter > injects field names as template interpolation for children-strategy 0ms
+   ✓ codegen prop binding > Vue emitter > injects field names as :status binding for status-strategy 0ms
+   × codegen prop binding > Vue emitter > injects field names as idiomatic v-model binding for value-strategy 12ms
+     → expected '<template>\n  <Stack id="detail-scree…' to contain 'v-model="sku"'
+   ✓ codegen prop binding > HTML emitter > injects data-bind attributes and placeholder text for field-bound components 1ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > returns placeholder from description for value-prop components 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > returns required for required value-prop fields 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > does not return required for optional fields 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > returns input type from semantic field type 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > returns humanized label for label-prop and status-prop components 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > does not override existing label 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > returns enum options for Select components 1ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > returns null for components with no field binding 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > resolveFieldProps unit > returns null for layout components (strategy=none) 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > React emitter enrichment > emits placeholder for form inputs 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > React emitter enrichment > emits required attribute for required form inputs 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > React emitter enrichment > emits input type from semantic field type 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > React emitter enrichment > emits enum options for Select components 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > React emitter enrichment > does not override existing labels 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > Vue emitter enrichment > emits placeholder for form inputs 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > Vue emitter enrichment > emits required attribute for required form inputs 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > Vue emitter enrichment > emits input type from semantic field type 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > Vue emitter enrichment > emits enum options for Select components 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > Vue emitter enrichment > does not override existing labels 0ms
+   ✓ codegen prop binding > prop enrichment from objectSchema metadata > HTML emitter enrichment > includes enriched prop data in HTML output 0ms
+   ✓ codegen prop binding > no regression for schemas without objectSchema > React emitter works without objectSchema 0ms
+   ✓ codegen prop binding > no regression for schemas without objectSchema > Vue emitter works without objectSchema 0ms
+   ✓ codegen prop binding > no regression for schemas without objectSchema > HTML emitter works without objectSchema 0ms
+ ✓ test/codegen/responsive-tailwind.spec.ts (20 tests) 81ms
+ ✓ test/codegen/styling-mode-coverage.spec.ts (54 tests) 11ms
+ ❯ test/codegen/vue-reactivity.spec.ts (12 tests | 4 failed) 66ms
+   ✓ vue-emitter — ref() bindings > generates ref() for each field in form schemas 32ms
+   ✓ vue-emitter — ref() bindings > uses correct default values for different field types 1ms
+   ✓ vue-emitter — ref() bindings > does NOT generate ref() for non-form display schemas 1ms
+   ✓ vue-emitter — ref() bindings > includes field descriptions as JSDoc comments 1ms
+   ✓ vue-emitter — computed() properties > generates fullName computed from firstName + lastName 1ms
+   ✓ vue-emitter — computed() properties > does NOT generate computed when no derivable fields exist 1ms
+   × vue-emitter — v-model > emits v-model on Input elements with field binding 13ms
+     → expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="name"'
+   × vue-emitter — v-model > emits v-model on Select elements with field binding 4ms
+     → expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="role"'
+   × vue-emitter — v-model > emits v-model on Textarea elements with field binding 3ms
+     → expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="description"'
+   ✓ vue-emitter — v-model > does NOT emit v-model on non-form components 1ms
+   × vue-emitter — v-model > converts snake_case field to camelCase in v-model 3ms
+     → expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="firstName"'
+   ✓ vue-emitter — typed action protocol > adapts a supported component event to a required consumer action 3ms
+ ✓ test/codegen/prop-destructuring.spec.ts (9 tests) 32ms
+ ✓ test/codegen/prop-enrichment.spec.ts (4 tests) 316ms
+ ✓ test/codegen/codegen-invalid-schema.spec.ts (2 tests) 41ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/cross-framework-parity.spec.ts > cross-framework parity > field content injection > Vue injects field values via template syntax
+AssertionError: expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="email"'
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- v-model="email"[39m
+[31m+ <template>[39m
+[31m+   <Stack id="form-root" data-oods-component="Stack" data-layout="stack" style="display: flex; flex-direction: column">[39m
+[31m+       <Text id="name-text" data-oods-component="Text">{{ name }}</Text>[39m
+[31m+       <StatusBadge id="status-badge" data-oods-component="StatusBadge" label="Status" :status="status" />[39m
+[31m+       <Input id="email-input" data-oods-component="Input" label="Email" placeholder="Contact email" type="email" :modelValue="email" />[39m
+[31m+       <Text id="price-text" data-oods-component="Text">{{ price }}</Text>[39m
+[31m+       <Select id="category-select" data-oods-component="Select" label="Status" :options="[{'label':'Active','value':'active'},{'label':'Inactive','value':'inactive'}]" required :modelValue="status" />[39m
+[31m+     </Stack>[39m
+[31m+   <div role="group" aria-label="Screen actions" data-oods-screen-actions="form-root">[39m
+[31m+     <button type="button" data-oods-action="handleSubmit" @click="handleSubmit()">Submit</button>[39m
+[31m+   </div>[39m
+[31m+ </template>[39m
+[31m+[39m
+[31m+ <script setup lang="ts">[39m
+[31m+ import { ref } from 'vue';[39m
+[31m+ import { Input, Select, Stack, Text } from '@oods/components-vue';[39m
+[31m+ import { StatusBadge } from '@oods/components-vue/ported';[39m
+[31m+ import '@oods/component-styles/css';[39m
+[31m+ import '@oods/component-styles/css-ported';[39m
+[31m+[39m
+[31m+ interface GeneratedUIActions {[39m
+[31m+   /* @oods-domain-action handleSubmit sha256:b35b31916a806c5e5acafdbff15742403a7cb9a3a4a1afd4f649c9d0e33419b9 */[39m
+[31m+   /* @oods-domain-source sha256:48014cf6d48e495ca21828961a3750ac532e4d5e4ecf9440df0fd64ee46d9369 */[39m
+[31m+   handleSubmit: () => void;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ /** Contact email */[39m
+[31m+ const email = ref<string>('');[39m
+[31m+ /** Product name */[39m
+[31m+ const name = ref<string>('');[39m
+[31m+ const price = ref<number>(0);[39m
+[31m+ const status = ref<'active' | 'inactive'>('active');[39m
+[31m+[39m
+[31m+ const { actions } = defineProps<{ actions: GeneratedUIActions }>();[39m
+[31m+[39m
+[31m+ if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSubmit') || typeof actions.handleSubmit !== 'function') { throw new Error('GeneratedUI requires actions.handleSubmit.'); }[39m
+[31m+[39m
+[31m+ /* @oods-domain-binding handleSubmit */ const handleSubmit = () => { actions.handleSubmit(); };[39m
+[31m+ </script>[39m
+[31m+[39m
+
+ ❯ test/codegen/cross-framework-parity.spec.ts:285:24
+    283|       expect(vue.code).toContain('{{ name }}');        // children str…
+    284|       expect(vue.code).toContain(':status="status"');  // status-prop …
+    285|       expect(vue.code).toContain('v-model="email"');   // idiomatic tw…
+       |                        ^
+    286|     });
+    287| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  test/codegen/cross-framework-parity.spec.ts > Sprint 182 bounded framework normalization > preserves Text and Input field bindings inside section wrappers
+AssertionError: expected '<template>\n  <section data-layout="s…' to match /<Input[^>]*v-model="email"[^>]*\/>/>
+
+[32m- Expected:[39m 
+/<Input[^>]*v-model="email"[^>]*\/>/
+
+[31m+ Received:[39m 
+"<template>
+  <section data-layout=\"section\" data-layout-node-id=\"section-heading\" style=\"display: block\">
+      <Text id=\"section-heading\" data-oods-component=\"Text\">{{ heading }}</Text>
+    </section>
+  <section data-layout=\"section\" data-layout-node-id=\"section-email\" style=\"display: block\">
+      <Input id=\"section-email\" data-oods-component=\"Input\" label=\"Email\" required type=\"email\" :modelValue=\"email\" />
+    </section>
+</template>
+
+<script setup lang=\"ts\">
+import { ref } from 'vue';
+import { Input, Text } from '@oods/components-vue';
+import '@oods/component-styles/css';
+
+const email = ref<string>('');
+const heading = ref<string>('');
+</script>
+"
+
+ ❯ test/codegen/cross-framework-parity.spec.ts:817:29
+    815|     expect(sectionReact.code).toMatch(/<Input[^>]*value=\{email\}[^>]*…
+    816|     expect(sectionVue.code).toMatch(/<Text[^>]*>{{ heading }}<\/Text>/…
+    817|     expect(sectionVue.code).toMatch(/<Input[^>]*v-model="email"[^>]*\/…
+       |                             ^
+    818|     expect(reactSemanticErrors(sectionReact.code)).toEqual([]);
+    819| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  test/codegen/cross-framework-parity.spec.ts > Sprint 182 bounded framework normalization > binds DatePicker, Textarea, and Checkbox through target-supported values
+AssertionError: expected '<template>\n  <DatePicker id="bound-d…' to match /<DatePicker[^>]*id="bound-date"[^>]*v…/
+
+[32m- Expected:[39m 
+/<DatePicker[^>]*id="bound-date"[^>]*v-model="birthday"/
+
+[31m+ Received:[39m 
+"<template>
+  <DatePicker id=\"bound-date\" data-oods-component=\"DatePicker\" label=\"Birthday\" :modelValue=\"birthday\" />
+  <Textarea id=\"bound-notes\" data-oods-component=\"Textarea\" label=\"Notes\" :modelValue=\"notes\" />
+  <Checkbox id=\"bound-checkbox\" data-oods-component=\"Checkbox\" label=\"Accepted\" :modelValue=\"accepted\" />
+  <DatePicker id=\"explicit-date\" data-oods-component=\"DatePicker\" label=\"Birthday\" value=\"2026-09-03\" />
+  <Checkbox id=\"explicit-checkbox\" data-oods-component=\"Checkbox\" :checked=\"false\" label=\"Accepted\" />
+  <Input id=\"missing-field\" data-oods-component=\"Input\" label=\"Missing&quot; @Click=&quot;Global This.Pwned=True\" />
+</template>
+
+<script setup lang=\"ts\">
+import { ref } from 'vue';
+import { Checkbox, DatePicker, Input, Textarea } from '@oods/components-vue';
+import '@oods/component-styles/css';
+
+const accepted = ref<boolean>(false);
+const birthday = ref<string>('');
+const notes = ref<string>('');
+</script>
+"
+
+ ❯ test/codegen/cross-framework-parity.spec.ts:834:29
+    832|     expect(nucleusReact.code).toMatch(/<Textarea[^>]*id="bound-notes"[…
+    833|     expect(nucleusReact.code).toMatch(/<Checkbox[^>]*id="bound-checkbo…
+    834|     expect(nucleusVue.code).toMatch(/<DatePicker[^>]*id="bound-date"[^…
+       |                             ^
+    835|     expect(nucleusVue.code).toMatch(/<Textarea[^>]*id="bound-notes"[^>…
+    836|     expect(nucleusVue.code).toMatch(/<Checkbox[^>]*id="bound-checkbox"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  test/codegen/prop-binding.spec.ts > codegen prop binding > Vue emitter > injects field names as idiomatic v-model binding for value-strategy
+AssertionError: expected '<template>\n  <Stack id="detail-scree…' to contain 'v-model="sku"'
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- v-model="sku"[39m
+[31m+ <template>[39m
+[31m+   <Stack id="detail-screen" data-oods-component="Stack" data-layout="stack" style="display: flex; flex-direction: column">[39m
+[31m+       <Text id="name-text" data-oods-component="Text">{{ name }}</Text>[39m
+[31m+       <Text id="price-text" data-oods-component="Text">{{ price }}</Text>[39m
+[31m+       <StatusBadge id="status-badge" data-oods-component="StatusBadge" label="Status" :status="status" />[39m
+[31m+       <Input id="sku-input" data-oods-component="Input" label="Sku" :modelValue="sku" />[39m
+[31m+       <Button id="no-field" data-oods-component="Button" content="Save" />[39m
+[31m+     </Stack>[39m
+[31m+ </template>[39m
+[31m+[39m
+[31m+ <script setup lang="ts">[39m
+[31m+ import { ref } from 'vue';[39m
+[31m+ import { Button, Input, Stack, Text } from '@oods/components-vue';[39m
+[31m+ import { StatusBadge } from '@oods/components-vue/ported';[39m
+[31m+ import '@oods/component-styles/css';[39m
+[31m+ import '@oods/component-styles/css-ported';[39m
+[31m+[39m
+[31m+ /** Product name */[39m
+[31m+ const name = ref<string>('');[39m
+[31m+ const price = ref<number>(0);[39m
+[31m+ const sku = ref<string>('');[39m
+[31m+ const status = ref<'active' | 'inactive' | 'draft'>('active');[39m
+[31m+ </script>[39m
+[31m+[39m
+
+ ❯ test/codegen/prop-binding.spec.ts:225:27
+    223|     it('injects field names as idiomatic v-model binding for value-str…
+    224|       const result = vueEmit(schema, defaultOptions);
+    225|       expect(result.code).toContain('v-model="sku"');
+       |                           ^
+    226|     });
+    227|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  test/codegen/vue-reactivity.spec.ts > vue-emitter — v-model > emits v-model on Input elements with field binding
+AssertionError: expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="name"'
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- v-model="name"[39m
+[31m+ <template>[39m
+[31m+   <Stack id="form-root" data-oods-component="Stack" data-layout="stack" style="display: flex; flex-direction: column">[39m
+[31m+       <Input id="inp-name" data-oods-component="Input" label="Name" required :modelValue="name" />[39m
+[31m+     </Stack>[39m
+[31m+ </template>[39m
+[31m+[39m
+[31m+ <script setup lang="ts">[39m
+[31m+ import { ref } from 'vue';[39m
+[31m+ import { Input, Stack } from '@oods/components-vue';[39m
+[31m+ import '@oods/component-styles/css';[39m
+[31m+[39m
+[31m+ const name = ref<string>('');[39m
+[31m+ </script>[39m
+[31m+[39m
+
+ ❯ test/codegen/vue-reactivity.spec.ts:176:25
+    174|     );
+    175|     const result = emit(schema, { typescript: true, styling: 'inline' …
+    176|     expect(result.code).toContain('v-model="name"');
+       |                         ^
+    177|   });
+    178| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  test/codegen/vue-reactivity.spec.ts > vue-emitter — v-model > emits v-model on Select elements with field binding
+AssertionError: expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="role"'
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- v-model="role"[39m
+[31m+ <template>[39m
+[31m+   <Stack id="form-root" data-oods-component="Stack" data-layout="stack" style="display: flex; flex-direction: column">[39m
+[31m+       <Select id="sel-role" data-oods-component="Select" label="Role" :options="[{'label':'Admin','value':'admin'},{'label':'User','value':'user'}]" required :modelValue="role" />[39m
+[31m+     </Stack>[39m
+[31m+ </template>[39m
+[31m+[39m
+[31m+ <script setup lang="ts">[39m
+[31m+ import { ref } from 'vue';[39m
+[31m+ import { Select, Stack } from '@oods/components-vue';[39m
+[31m+ import '@oods/component-styles/css';[39m
+[31m+[39m
+[31m+ const role = ref<'admin' | 'user'>('admin');[39m
+[31m+ </script>[39m
+[31m+[39m
+
+ ❯ test/codegen/vue-reactivity.spec.ts:189:25
+    187|     );
+    188|     const result = emit(schema, { typescript: true, styling: 'inline' …
+    189|     expect(result.code).toContain('v-model="role"');
+       |                         ^
+    190|   });
+    191| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  test/codegen/vue-reactivity.spec.ts > vue-emitter — v-model > emits v-model on Textarea elements with field binding
+AssertionError: expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="description"'
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- v-model="description"[39m
+[31m+ <template>[39m
+[31m+   <Stack id="form-root" data-oods-component="Stack" data-layout="stack" style="display: flex; flex-direction: column">[39m
+[31m+       <Textarea id="ta-desc" data-oods-component="Textarea" label="Description" :modelValue="description" />[39m
+[31m+     </Stack>[39m
+[31m+ </template>[39m
+[31m+[39m
+[31m+ <script setup lang="ts">[39m
+[31m+ import { ref } from 'vue';[39m
+[31m+ import { Stack, Textarea } from '@oods/components-vue';[39m
+[31m+ import '@oods/component-styles/css';[39m
+[31m+[39m
+[31m+ const description = ref<string>('');[39m
+[31m+ </script>[39m
+[31m+[39m
+
+ ❯ test/codegen/vue-reactivity.spec.ts:202:25
+    200|     );
+    201|     const result = emit(schema, { typescript: true, styling: 'inline' …
+    202|     expect(result.code).toContain('v-model="description"');
+       |                         ^
+    203|   });
+    204| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  test/codegen/vue-reactivity.spec.ts > vue-emitter — v-model > converts snake_case field to camelCase in v-model
+AssertionError: expected '<template>\n  <Stack id="form-root" d…' to contain 'v-model="firstName"'
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- v-model="firstName"[39m
+[31m+ <template>[39m
+[31m+   <Stack id="form-root" data-oods-component="Stack" data-layout="stack" style="display: flex; flex-direction: column">[39m
+[31m+       <Input id="inp-fn" data-oods-component="Input" label="First Name" required :modelValue="firstName" />[39m
+[31m+     </Stack>[39m
+[31m+ </template>[39m
+[31m+[39m
+[31m+ <script setup lang="ts">[39m
+[31m+ import { ref } from 'vue';[39m
+[31m+ import { Input, Stack } from '@oods/components-vue';[39m
+[31m+ import '@oods/component-styles/css';[39m
+[31m+[39m
+[31m+ const firstName = ref<string>('');[39m
+[31m+ </script>[39m
+[31m+[39m
+
+ ❯ test/codegen/vue-reactivity.spec.ts:231:25
+    229|     );
+    230|     const result = emit(schema, { typescript: true, styling: 'inline' …
+    231|     expect(result.code).toContain('v-model="firstName"');
+       |                         ^
+    232|   });
+    233| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  3 failed | 7 passed (10)
+      Tests  8 failed | 239 passed (247)
+   Start at  11:23:46
+   Duration  16.32s (transform 1.32s, setup 116ms, collect 5.09s, tests 7.22s, environment 2ms, prepare 1.30s)
+

@@ -1,0 +1,69 @@
+started=2026-09-06T16:51:50.580Z
+command=["/opt/homebrew/Cellar/node/24.6.0/bin/node","scripts/product-reality/verify-readiness-refs.mjs","--output","/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/artifacts/product-reality/sprint-186/m04/mutation/vue-AuditEvent/selected-red-readiness.json"]
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 442,
+    "classA": 370,
+    "classB": 72
+  },
+  "totals": {
+    "references": 442,
+    "classA": 370,
+    "classB": 72,
+    "resolved": 440
+  },
+  "targets": {
+    "react": {
+      "rows": 36,
+      "references": 216,
+      "classA": 180,
+      "classB": 36,
+      "resolved": 216
+    },
+    "vue": {
+      "rows": 36,
+      "references": 226,
+      "classA": 190,
+      "classB": 36,
+      "resolved": 224
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 72,
+    "targetImplementation": 72,
+    "packageExport": 72,
+    "publicDeclaration": 72,
+    "dependencyClosure": 72,
+    "frameworkScenario": 82
+  },
+  "failures": [
+    {
+      "target": "vue",
+      "componentId": "AuditEvent",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-vue/src/index.ts#AuditEvent",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "vue",
+      "componentId": "AuditEvent",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-vue/dist/index.d.ts#AuditEvent",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}
+
+
+
+exit=1 signal=none

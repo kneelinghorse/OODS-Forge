@@ -7,7 +7,7 @@ import type { UiSchema } from '../../src/schemas/generated.js';
 import type { GeneratedArtifactAction } from '../../src/codegen/types.js';
 import {
   S185_SCHEMA_NAMES, deriveActionArguments, deriveBoundFieldProbe, deriveConsumerModel,
-  deriveInteraction, inspectFrameworkAttachment, summarizeGateAccounting,
+  EDITOR_TYPED_TEXT, deriveInteraction, inspectFrameworkAttachment, summarizeGateAccounting,
   deriveMountObligations, observeMountObligations,
 } from '../../../../scripts/product-reality/s185-m04-consumer-contract.js';
 import {
@@ -45,6 +45,25 @@ describe('Sprint 185 saved-schema consumer contract', () => {
     expect(deriveInteraction(schema, [action('handleChange', schema.screens[0]!.id)])).toMatchObject({ kind: 'action', action: 'handleChange' });
     expect(deriveBoundFieldProbe(schema)).toEqual({ field: 'plan_name', writerId: 'slot-field-0-3', readerId: 'form-title-1' });
     expect(deriveBoundFieldProbe(saved('pt-shop-parts-entry-router-v1'))).toBeNull();
+  });
+
+  it('prefers a clickable screen action over an editor change binding, and falls back to the editor when nothing is clickable', () => {
+    // Sprint 186 m05: AddressEditor.onChange is a component-scoped domain action that fires from input, not a click.
+    const schema = saved('user-form-showcase');
+    const editor: GeneratedArtifactAction = {
+      name: 'handleChange_addresses', parameters: [{ name: 'address', type: 'Record<string, unknown>' }],
+      sources: [{ nodeId: 've-title-28', component: 'AddressEditor', event: 'onChange' }],
+    };
+    const submit: GeneratedArtifactAction = {
+      name: 'handleSubmit', parameters: [], sources: [{ nodeId: schema.screens[0]!.id, component: 'Stack', event: 'onSubmit' }],
+    };
+    expect(deriveInteraction(schema, [editor, submit])).toMatchObject({ kind: 'action', action: 'handleSubmit', nodeId: schema.screens[0]!.id });
+    expect(deriveInteraction(schema, [editor])).toMatchObject({ kind: 'action', action: 'handleChange_addresses', nodeId: 've-title-28', component: 'AddressEditor' });
+    // The editor's operand is the record it emits after the consumer types into Street.
+    expect(deriveActionArguments(schema, [editor, submit], {})).toEqual({
+      handleChange_addresses: [[{ street: EDITOR_TYPED_TEXT, city: '', region: '', postalCode: '' }]],
+      handleSubmit: [[]],
+    });
   });
 
   it('selects an existing PT SearchInput without inventing a schema binding', () => {

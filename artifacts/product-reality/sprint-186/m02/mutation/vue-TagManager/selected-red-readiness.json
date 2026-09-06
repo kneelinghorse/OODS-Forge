@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 322,
+    "classA": 270,
+    "classB": 52
+  },
+  "totals": {
+    "references": 322,
+    "classA": 270,
+    "classB": 52,
+    "resolved": 320
+  },
+  "targets": {
+    "react": {
+      "rows": 26,
+      "references": 156,
+      "classA": 130,
+      "classB": 26,
+      "resolved": 156
+    },
+    "vue": {
+      "rows": 26,
+      "references": 166,
+      "classA": 140,
+      "classB": 26,
+      "resolved": 164
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 52,
+    "targetImplementation": 52,
+    "packageExport": 52,
+    "publicDeclaration": 52,
+    "dependencyClosure": 52,
+    "frameworkScenario": 62
+  },
+  "failures": [
+    {
+      "target": "vue",
+      "componentId": "TagManager",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-vue/src/index.ts#TagManager",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "vue",
+      "componentId": "TagManager",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-vue/dist/index.d.ts#TagManager",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}

@@ -28,7 +28,12 @@ afterEach(cleanup);
 
 describe('@oods/components-react accessibility', () => {
   for (const scenario of sharedScenarios.filter(({ oodsComponentId }) => (
-    ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview'].includes(oodsComponentId)
+    ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
+      'ClassificationPanel', 'FilterPanel', 'PriceSummary',
+      'AddressCollectionPanel', 'MembershipPanel', 'PreferencePanel', 'TagManager',
+      'AddressSummaryBadge', 'MessageStatusBadge', 'PreferenceSummaryBadge', 'RoleBadgeList', 'TagPills',
+      'AddressValidationTimeline', 'AuditEvent', 'MembershipAuditTimeline', 'MessageEventTimeline', 'PreferenceTimeline',
+      'AddressEditor', 'PreferenceEditor', 'RoleAssignmentForm', 'StatusSelector', 'TagInput', 'TemplatePicker'].includes(oodsComponentId)
   ))) {
     it(`passes axe for the ${scenario.oodsComponentId} shared scenario with visible text semantics`, async () => {
       const { container } = render(<main>{renderSharedScenario(scenario)}</main>);

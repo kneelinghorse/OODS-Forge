@@ -786,7 +786,7 @@ function applyBoundFieldProps(
 
   if (node.component === 'Select' && fieldEntry.enum && fieldEntry.enum.length > 0) {
     if (!nextProps.options) {
-      nextProps.options = fieldEntry.enum;
+      nextProps.options = fieldEntry.enum.map(value => ({ value, label: value }));
     }
   }
 

@@ -111,3 +111,169 @@ export type VizAreaPreviewProps = {
   width?: number;
   height?: number;
 };
+
+/** renderPanelSection aliases shared by every panel-family component. */
+export type PanelSectionProps = {
+  title?: string;
+  label?: string;
+  heading?: string;
+  name?: string;
+  subtitle?: string;
+  description?: string;
+  metadata?: string;
+  summary?: string;
+  text?: string;
+  body?: string;
+  emptyMessage?: string;
+};
+
+export type ClassificationPanelProps = PanelSectionProps;
+export type AddressCollectionPanelProps = PanelSectionProps;
+export type MembershipPanelProps = PanelSectionProps;
+export type PreferencePanelProps = PanelSectionProps;
+
+export type TagManagerProps = {
+  title?: string;
+  label?: string;
+  heading?: string;
+  name?: string;
+  description?: string;
+  subtitle?: string;
+  hint?: string;
+  /** Tag entries as the HTML renderer reads them: records use label/name/role/value/id, scalars render as text. */
+  tags?: readonly unknown[];
+  value?: readonly unknown[];
+};
+
+/** Shared shape of the badge-family summaries over the Badge substrate. */
+type BadgeFamilyProps = {
+  label?: string;
+  text?: string;
+  value?: string;
+  status?: string;
+  state?: string;
+  variant?: string;
+  tone?: ComponentTone;
+  emphasis?: ComponentEmphasis;
+};
+
+/** role is the address role that names the status; never an ARIA role. */
+export type AddressSummaryBadgeProps = BadgeFamilyProps & { role?: string };
+export type MessageStatusBadgeProps = BadgeFamilyProps & { delivery?: string };
+export type PreferenceSummaryBadgeProps = BadgeFamilyProps & { namespace?: string; version?: string };
+
+export type RoleBadgeListProps = {
+  roles?: readonly unknown[];
+  badges?: readonly unknown[];
+  roleLabels?: readonly unknown[];
+  value?: readonly unknown[];
+  variant?: string;
+  tone?: string;
+  label?: string;
+  text?: string;
+};
+
+export type TagPillsProps = {
+  tags?: readonly unknown[];
+  value?: readonly unknown[];
+  maxVisible?: number | string;
+  overflowLabel?: string;
+};
+
+/** Timeline-family logs over renderTimelineContainer semantics; the event keys differ per family. */
+type TimelineFamilyProps = {
+  title?: string;
+  label?: string;
+  heading?: string;
+  name?: string;
+  events?: readonly unknown[];
+};
+
+export type AddressValidationTimelineProps = TimelineFamilyProps & { validations?: readonly unknown[]; history?: readonly unknown[] };
+export type MembershipAuditTimelineProps = TimelineFamilyProps & { memberships?: readonly unknown[]; history?: readonly unknown[] };
+export type MessageEventTimelineProps = TimelineFamilyProps & { messages?: readonly unknown[]; statuses?: readonly unknown[] };
+export type PreferenceTimelineProps = TimelineFamilyProps & { changes?: readonly unknown[]; history?: readonly unknown[] };
+
+export type AuditEventProps = {
+  label?: string;
+  title?: string;
+  event?: string;
+  status?: string;
+  state?: string;
+  reason?: string;
+  text?: string;
+  timestamp?: string;
+  datetime?: string;
+  time?: string;
+  at?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  detail?: string;
+  description?: string;
+  message?: string;
+  from?: string;
+  to?: string;
+  code?: string;
+};
+
+/** renderFormContainer aliases shared by every form-family component. */
+type FormShellProps = {
+  title?: string;
+  label?: string;
+  heading?: string;
+  name?: string;
+  description?: string;
+  subtitle?: string;
+  hint?: string;
+};
+
+/** The record an AddressEditor hands its consumer on every edit. */
+export type AddressEditorValue = { street: string; city: string; region: string; postalCode: string };
+
+export type AddressEditorProps = FormShellProps & {
+  street?: string; line1?: string; addressLine1?: string; city?: string; region?: string; state?: string; postalCode?: string; zip?: string;
+};
+export type PreferenceEditorProps = FormShellProps & {
+  namespaces?: readonly unknown[]; namespace?: string; document?: string; json?: string; value?: string;
+};
+export type RoleAssignmentFormProps = FormShellProps & {
+  roles?: readonly unknown[]; availableRoles?: readonly unknown[]; role?: string; defaultRoleId?: string; assignee?: string; member?: string;
+};
+export type StatusSelectorProps = {
+  label?: string; title?: string; options?: readonly unknown[]; states?: readonly unknown[]; value?: string; status?: string; modelValue?: string;
+};
+export type TagInputProps = FormShellProps & {
+  tags?: readonly unknown[]; value?: string; placeholder?: string; modelValue?: string;
+};
+export type TemplatePickerProps = FormShellProps & {
+  templates?: readonly unknown[]; options?: readonly unknown[]; templateId?: string; value?: string; channels?: readonly unknown[]; channel?: string;
+};
+
+/** A saved-schema filter descriptor; the renderer reads label and field, exactly as the HTML renderer does. */
+export type FilterDescriptor = Readonly<Record<string, unknown>>;
+
+export type FilterPanelProps = {
+  filters?: readonly FilterDescriptor[];
+  activeFilters?: readonly FilterDescriptor[];
+  mode?: string;
+  collapsible?: boolean;
+};
+
+export type PriceSummaryProps = {
+  title?: string;
+  label?: string;
+  heading?: string;
+  name?: string;
+  amount?: string | number;
+  amountCents?: string | number;
+  unitAmountCents?: string | number;
+  currency?: string;
+  currencyCode?: string;
+  model?: string;
+  pricingModel?: string;
+  interval?: string;
+  billingInterval?: string;
+  summary?: string;
+  text?: string;
+  description?: string;
+};

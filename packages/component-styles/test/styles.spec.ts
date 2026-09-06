@@ -9,7 +9,14 @@ import { SEMANTIC_BRIDGE } from '../../tokens/scripts/brand-bridge.mjs';
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = path.resolve(packageRoot, '../..');
 const css = fs.readFileSync(path.join(packageRoot, 'src/components.css'), 'utf8');
-const breadthComponents = ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview'] as const;
+const breadthComponents = [
+  'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
+  'ClassificationPanel', 'FilterPanel', 'PriceSummary',
+  'AddressCollectionPanel', 'MembershipPanel', 'PreferencePanel', 'TagManager',
+  'AddressSummaryBadge', 'MessageStatusBadge', 'PreferenceSummaryBadge', 'RoleBadgeList', 'TagPills',
+  'AddressValidationTimeline', 'AuditEvent', 'MembershipAuditTimeline', 'MessageEventTimeline', 'PreferenceTimeline',
+  'AddressEditor', 'PreferenceEditor', 'RoleAssignmentForm', 'StatusSelector', 'TagInput', 'TemplatePicker',
+] as const;
 
 function colorTokens(source: string): Map<string, string> {
   const tokens = new Map<string, string>();

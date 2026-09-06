@@ -1,0 +1,62 @@
+
+> @oods/component-contracts@0.1.0 test /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/component-contracts
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/component-contracts
+
+ ✓ test/ported-contracts.s184.spec.ts (4 tests) 17ms
+ ✓ test/workflow-states.s184.spec.ts (2 tests) 17ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 14ms
+ ✓ test/breadth-contracts.s185.spec.ts (15 tests) 23ms
+ ✓ test/contracts.spec.ts (7 tests) 28ms
+ ✓ test/breadth-contracts.s186.spec.ts (16 tests) 36ms
+ ❯ test/baseline-fold.s185.spec.ts (8 tests | 1 failed) 385ms
+   ✓ Sprint 185 baseline surface evidence preserves the identity denominator > changes only the authorized surface cells and none of the 109 identity/classification/reconciliation rows 11ms
+   ✓ Sprint 185 baseline surface evidence preserves the identity denominator > rejects a renamed id, a promoted classification, or changed reconciliation state 20ms
+   ✓ Sprint 185 baseline surface evidence preserves the identity denominator > rejects an unrelated component surface or a non-target surface change 25ms
+   ✓ Sprint 185 baseline surface evidence preserves the identity denominator > derives the fold from the actual target readiness and resolves every underlying reference occurrence 198ms
+   ✓ Sprint 185 baseline surface evidence preserves the identity denominator > cannot advertise evidence-complete merely because a readiness flag is true 2ms
+   ✓ Sprint 185 baseline surface evidence preserves the identity denominator > requires an actual JSON anchor instead of accepting a file with an invented fragment 2ms
+   × Sprint 185 baseline surface evidence preserves the identity denominator > binds every new generated-consumer cell to mounted observations in both framework targets 4ms
+     → expected { nodeId: 'slot-tab-2-8', …(5) } to match object { …(4) }
+(2 matching properties omitted from actual)
+   ✓ Sprint 185 baseline surface evidence preserves the identity denominator > removes the temporary overlay file and package subpath while preserving both component unions 123ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/baseline-fold.s185.spec.ts > Sprint 185 baseline surface evidence preserves the identity denominator > binds every new generated-consumer cell to mounted observations in both framework targets
+AssertionError: expected { nodeId: 'slot-tab-2-8', …(5) } to match object { …(4) }
+(2 matching properties omitted from actual)
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "component": "AddressCollectionPanel",[22m
+[2m    "passed": true,[22m
+[32m-   "present": true,[39m
+[32m-   "requiredInitially": true,[39m
+[31m+   "present": false,[39m
+[31m+   "requiredInitially": false,[39m
+[2m  }[22m
+
+ ❯ test/baseline-fold.s185.spec.ts:87:29
+     85|       for (const ref of surface.evidence) {
+     86|         const observation = resolveSurfaceEvidence(ref, root);
+     87|         expect(observation).toMatchObject({ component: componentId, re…
+       |                             ^
+     88|         targets.add(readJson(ref.split('#')[0]).framework);
+     89|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  1 failed | 53 passed (54)
+   Start at  10:58:49
+   Duration  2.15s (transform 584ms, setup 0ms, collect 2.93s, tests 521ms, environment 1ms, prepare 2.35s)
+
+/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/component-contracts@0.1.0 test: `vitest run --config vitest.config.ts`
+Exit status 1

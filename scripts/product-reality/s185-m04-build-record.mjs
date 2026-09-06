@@ -11,6 +11,12 @@ const evidencePath = 'artifacts/product-reality/sprint-185/m04';
 const schemaDirectory = 'artifacts/product-reality/sprint-183/m04/saved-schema-store';
 const baseCommit = '1118f436345e160437abfedbe73a19f190a92562';
 const implementationBase = '2069481c91c6c8cb70417dc17b8bc5c37cfa2bd2';
+/**
+ * The Sprint 185 execution head whose sources the mutation controls restored.
+ * Later waves edit the same files, so restoration hashes are verified against
+ * this frozen blob, never against whatever the live tree currently holds.
+ */
+const executionHead = 'f8d15098ba3bfd47231d489d7659027b5c9f50e3';
 export const NEW_SCHEMAS = Object.freeze(['cmos-messages-redesign', 'plan-form-dark', 'pt-shop-parts-entry-router-v1',
   'user-card-showcase', 'cmos-dashboard-redesign', 'the-academy-landing-v1']);
 const REGRESSION_SCHEMAS = ['subscription-list-dark', 'subscription-detail-dark'];
@@ -95,6 +101,14 @@ export function buildRecords({ root = repositoryRoot, checkTracked = false } = {
   const verifyHash = (ref, expected, base) => {
     const content = bytes(ref, base);
     invariant(hash(content) === digest(expected), `${resolveRef(ref, base)}: SHA-256 mismatch.`);
+    return content;
+  };
+  /** A mutated-then-restored source is verified as the frozen execution-head blob it was restored to. */
+  const verifyRestoredSourceHash = (ref, expected) => {
+    const resolved = resolveRef(ref);
+    const content = execFileSync('git', ['show', `${executionHead}:${resolved}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 });
+    invariant(hash(content) === digest(expected), `${resolved}@${executionHead.slice(0, 8)}: SHA-256 mismatch.`);
+    inputs.set(resolved, { path: resolved, bytes: content.length, sha256: hash(content) });
     return content;
   };
   const logRefs = (logs, base) => {
@@ -313,7 +327,7 @@ export function buildRecords({ root = repositoryRoot, checkTracked = false } = {
   logRefs(differential.logs);
   for (const [phase, exit] of [['pre-green', 0], ['selected-red', 1], ['restored-green', 0]])
     invariant(read(`controls/differential/${phase}-source-equality.log`).includes(`exit=${exit} signal=none`), 'Differential equality control exit is wrong.');
-  verifyHash(differential.mutation.file, differential.mutation.restoredSha256);
+  verifyRestoredSourceHash(differential.mutation.file, differential.mutation.restoredSha256);
   invariant(differential.mutation.beforeSha256 === differential.mutation.restoredSha256
     && differential.mutation.beforeSha256 !== differential.mutation.deletedSha256, 'Differential source was not restored.');
   bytes(differential.mutation.patch); bytes(differential.mutation.reversePatch);
@@ -353,7 +367,7 @@ export function buildRecords({ root = repositoryRoot, checkTracked = false } = {
     }
     invariant(control.sources.length === 2 && control.patches.length === 2, 'Header implementation and export must both be physically removed.');
     for (const source of control.sources) {
-      verifyHash(source.path, source.restoredSha256);
+      verifyRestoredSourceHash(source.path, source.restoredSha256);
       invariant(source.beforeSha256 === source.restoredSha256 && source.beforeSha256 !== source.deletedSha256, 'Header source deletion/restoration hash failed.');
     }
     control.patches.forEach(ref => bytes(ref)); logRefs(control.logs);

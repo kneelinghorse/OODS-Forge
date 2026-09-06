@@ -1,7 +1,7 @@
 /* @vitest-environment jsdom */
 
 import { NUCLEUS_COMPONENT_IDS, sharedScenarios } from '@oods/component-contracts';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, createEvent, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -62,6 +62,214 @@ describe('@oods/components-react shared scenarios', () => {
           expect(component?.tagName).toBe('HEADER');
           expect(screen.getByRole('heading', { level: 3, name: 'Account summary' })).toBeTruthy();
           expect(component?.querySelector('[data-oods-supporting]')?.textContent).toBe('Current subscription');
+          break;
+        }
+        case 'classification-panel-title-and-summary': {
+          expect(component?.tagName).toBe('SECTION');
+          expect(component?.getAttribute('data-panel-type')).toBe('classification');
+          expect(screen.getByRole('heading', { level: 3, name: 'Classification' })).toBeTruthy();
+          expect(component?.querySelector('[data-panel-header] > [data-panel-subtitle]')?.textContent).toBe('Taxonomy and tags');
+          expect(component?.querySelector('[data-panel-content] > [data-panel-summary]')?.textContent).toBe('Electronics > Mobile > Android');
+          expect(component?.querySelector('button, a, input')).toBeNull();
+          break;
+        }
+        case 'address-collection-panel-title-and-summary':
+        case 'membership-panel-title-and-summary':
+        case 'preference-panel-title-and-summary': {
+          const expected = {
+            'address-collection-panel-title-and-summary': { type: 'address', title: 'Addresses', subtitle: 'Billing and shipping', summary: '2 addresses on file' },
+            'membership-panel-title-and-summary': { type: 'membership', title: 'Membership', subtitle: 'Roles and permissions', summary: 'Owner of 2 workspaces' },
+            'preference-panel-title-and-summary': { type: 'preference', title: 'Preferences', subtitle: 'Namespace: notifications', summary: 'No preferences saved' },
+          }[scenario.id];
+          expect(component?.tagName).toBe('SECTION');
+          expect(component?.getAttribute('data-panel-type')).toBe(expected.type);
+          expect(screen.getByRole('heading', { level: 3, name: expected.title })).toBeTruthy();
+          expect(component?.querySelector('[data-panel-header] > [data-panel-subtitle]')?.textContent).toBe(expected.subtitle);
+          expect(component?.querySelector('[data-panel-content] > [data-panel-summary]')?.textContent).toBe(expected.summary);
+          expect(component?.querySelector('button, a, input')).toBeNull();
+          break;
+        }
+        case 'tag-manager-list-and-add-control': {
+          expect(component?.tagName).toBe('FORM');
+          expect(component?.getAttribute('data-form-type')).toBe('tag-manager');
+          expect(screen.getByRole('heading', { level: 3, name: 'Tags' })).toBeTruthy();
+          expect([...component!.querySelectorAll('[data-tag-list] > [data-tag-item]')].map(item => item.textContent)).toEqual(['alpha', 'beta']);
+          const input = screen.getByRole('textbox', { name: 'Add Tag' }) as HTMLInputElement;
+          expect(input.name).toBe('newTag');
+          expect(input.placeholder).toBe('Type a tag');
+          await user.type(input, 'gamma{Enter}');
+          expect(input.value).toBe('gamma');
+          expect(component!.querySelectorAll('[data-tag-item]')).toHaveLength(2);
+          break;
+        }
+        case 'address-summary-badge-role':
+        case 'message-status-badge-delivery':
+        case 'preference-summary-badge-namespace-and-version': {
+          const expected = {
+            'address-summary-badge-role': { label: 'Billing address', status: 'billing', variant: 'address' },
+            'message-status-badge-delivery': { label: 'delivered', status: 'delivered', variant: 'message' },
+            'preference-summary-badge-namespace-and-version': { label: 'notifications', status: 'v3', variant: 'preference' },
+          }[scenario.id];
+          expect(component?.classList.contains('oods-badge')).toBe(true);
+          expect(component?.querySelector('[data-oods-badge-label]')?.textContent).toBe(expected.label);
+          expect(component?.getAttribute('data-badge-status')).toBe(expected.status);
+          expect(component?.getAttribute('data-badge-variant')).toBe(expected.variant);
+          expect(component?.getAttribute('data-status')).toBe(expected.status);
+          expect(component?.hasAttribute('role')).toBe(false);
+          expect(component?.querySelector('button, a, input')).toBeNull();
+          break;
+        }
+        case 'role-badge-list-items': {
+          expect(component?.tagName).toBe('SPAN');
+          expect(component?.getAttribute('data-badge-variant')).toBe('session');
+          expect([...component!.querySelectorAll('[data-role-badge]')].map(item => item.textContent)).toEqual(['owner', 'billing-admin']);
+          expect(component?.querySelector('button, a, input')).toBeNull();
+          break;
+        }
+        case 'tag-pills-overflow-template': {
+          expect(component?.tagName).toBe('DIV');
+          expect(component?.getAttribute('data-summary-type')).toBe('tag-pills');
+          expect([...component!.querySelectorAll('[data-tag-pill]')].map(item => item.textContent)).toEqual(['alpha', 'beta', 'gamma']);
+          // The template is substituted with the total tag count, exactly as renderTagPills does.
+          expect(component?.querySelector('[data-tag-overflow]')?.textContent).toBe('+5');
+          expect(component?.textContent).not.toContain('{{');
+          break;
+        }
+        case 'address-validation-timeline-events': {
+          expect(screen.getByRole('log', { name: 'Address checks' })).toBe(component);
+          expect(component?.getAttribute('data-timeline-type')).toBe('address-validation');
+          expect(screen.getByRole('heading', { level: 3, name: 'Address checks' })).toBeTruthy();
+          const items = [...component!.querySelectorAll('[data-timeline-events] > li')];
+          expect(items).toHaveLength(2);
+          expect(items[0]!.querySelector('[data-timeline-label]')?.textContent).toBe('Postal code verified');
+          expect(items[0]!.querySelector('time[data-timeline-time]')?.getAttribute('datetime')).toBe('2026-09-05T12:00:00Z');
+          expect(items[0]!.querySelector('[data-timeline-detail]')?.textContent).toBe('Matched carrier database');
+          expect(items[1]!.querySelector('[data-timeline-label]')?.textContent).toBe('Geocoded');
+          expect(component?.querySelector('[data-timeline-empty]')).toBeNull();
+          break;
+        }
+        case 'audit-event-type-and-timestamp': {
+          expect(component?.tagName).toBe('ARTICLE');
+          expect(component?.getAttribute('data-event-type')).toBe('audit');
+          expect(component?.querySelector('time[data-event-time]')?.getAttribute('datetime')).toBe('2026-09-05T12:00:00Z');
+          expect(component?.querySelector('[data-event-label]')?.textContent).toBe('user.updated');
+          expect(component?.querySelector('[data-event-detail]')?.textContent).toBe('Display name changed');
+          break;
+        }
+        case 'membership-audit-timeline-empty': {
+          expect(screen.getByRole('log', { name: 'Membership history' })).toBe(component);
+          expect(component?.getAttribute('data-timeline-type')).toBe('membership');
+          expect(component?.querySelectorAll('[data-timeline-events] > li')).toHaveLength(1);
+          expect(component?.querySelector('[data-timeline-empty]')?.textContent).toBe('No events');
+          break;
+        }
+        case 'message-event-timeline-statuses': {
+          expect(screen.getByRole('log', { name: 'Delivery' })).toBe(component);
+          expect(component?.getAttribute('data-timeline-type')).toBe('message');
+          expect(component?.querySelector('[data-timeline-label]')?.textContent).toBe('delivered');
+          expect(component?.querySelector('time[data-timeline-time]')?.getAttribute('datetime')).toBe('2026-09-02T09:00:00Z');
+          break;
+        }
+        case 'preference-timeline-changes': {
+          expect(screen.getByRole('log', { name: 'Preference changes' })).toBe(component);
+          expect(component?.getAttribute('data-timeline-type')).toBe('preference');
+          expect(component?.querySelector('[data-timeline-label]')?.textContent).toBe('notifications.email');
+          expect(component?.querySelector('time[data-timeline-time]')?.getAttribute('datetime')).toBe('2026-09-03T08:00:00Z');
+          expect(component?.querySelector('[data-timeline-detail]')?.textContent).toBe('Enabled');
+          break;
+        }
+        case 'address-editor-fields-and-change': {
+          expect(component?.tagName).toBe('FORM');
+          expect(component?.getAttribute('data-form-type')).toBe('address-editor');
+          expect(screen.getByRole('heading', { level: 3, name: 'Shipping address' })).toBeTruthy();
+          expect((screen.getByLabelText('Street') as HTMLInputElement).value).toBe('1 Main St');
+          expect((screen.getByLabelText('Region') as HTMLInputElement).value).toBe('IL');
+          expect((screen.getByLabelText('Postal Code') as HTMLInputElement).value).toBe('62701');
+          fireEvent.change(screen.getByLabelText('City'), { target: { value: 'Shelbyville' } });
+          expect(onEvent).toHaveBeenCalledTimes(1);
+          expect(onEvent).toHaveBeenCalledWith({ street: '1 Main St', city: 'Shelbyville', region: 'IL', postalCode: '62701' });
+          const submit = createEvent.submit(component!);
+          fireEvent(component!, submit);
+          expect(submit.defaultPrevented).toBe(true);
+          break;
+        }
+        case 'preference-editor-namespace-and-document': {
+          expect(component?.tagName).toBe('FORM');
+          expect(component?.getAttribute('data-form-type')).toBe('preference-editor');
+          expect(screen.getByRole('heading', { level: 3, name: 'Preferences' })).toBeTruthy();
+          const namespace = screen.getByLabelText('Namespace') as HTMLSelectElement;
+          expect([...namespace.options].map(option => option.textContent)).toEqual(['notifications', 'billing']);
+          expect(namespace.value).toBe('billing');
+          expect((screen.getByLabelText('Preference Document') as HTMLTextAreaElement).value).toBe('{"email":true}');
+          expect(component?.querySelector('button')).toBeNull();
+          break;
+        }
+        case 'role-assignment-form-roles': {
+          expect(component?.tagName).toBe('FORM');
+          expect(component?.getAttribute('data-form-type')).toBe('role-assignment');
+          expect(screen.getByRole('heading', { level: 3, name: 'Assign role' })).toBeTruthy();
+          const role = screen.getByLabelText('Role') as HTMLSelectElement;
+          expect([...role.options].map(option => [option.value, option.textContent])).toEqual([['owner', 'Owner'], ['viewer', 'viewer']]);
+          expect(role.value).toBe('viewer');
+          expect((screen.getByLabelText('Assignee') as HTMLInputElement).value).toBe('ada@example.test');
+          break;
+        }
+        case 'status-selector-controlled': {
+          expect(component?.getAttribute('data-summary-type')).toBe('status-selector');
+          const select = screen.getByLabelText('Status') as HTMLSelectElement;
+          expect(select.name).toBe('status');
+          expect([...select.options].map(option => option.value)).toEqual(['draft', 'active']);
+          expect(select.value).toBe('active');
+          await user.selectOptions(select, 'draft');
+          expect(onEvent).toHaveBeenCalledTimes(1);
+          expect(onEvent).toHaveBeenCalledWith('draft');
+          break;
+        }
+        case 'tag-input-typed-text': {
+          expect(component?.tagName).toBe('FIELDSET');
+          expect(component?.getAttribute('data-form-type')).toBe('tag-input');
+          expect(component?.querySelector('legend')?.textContent).toBe('Tags');
+          const input = screen.getByLabelText('Tag') as HTMLInputElement;
+          expect(input.value).toBe('be');
+          expect(input.placeholder).toBe('Add a tag');
+          expect([...component!.querySelectorAll('[data-tag-item]')].map(item => item.textContent)).toEqual(['alpha']);
+          fireEvent.change(input, { target: { value: 'beta' } });
+          expect(onEvent).toHaveBeenCalledTimes(1);
+          expect(onEvent).toHaveBeenCalledWith('beta');
+          break;
+        }
+        case 'template-picker-selects': {
+          expect(component?.tagName).toBe('FIELDSET');
+          expect(component?.getAttribute('data-form-type')).toBe('template-picker');
+          expect(component?.querySelector('legend')?.textContent).toBe('Notification template');
+          const template = screen.getByLabelText('Template') as HTMLSelectElement;
+          expect([...template.options].map(option => [option.value, option.textContent])).toEqual([['welcome', 'Welcome']]);
+          expect(template.value).toBe('welcome');
+          const channel = screen.getByLabelText('Channel') as HTMLSelectElement;
+          expect([...channel.options].map(option => option.value)).toEqual(['email', 'sms']);
+          expect(channel.value).toBe('sms');
+          break;
+        }
+        case 'filter-panel-batch-mode': {
+          expect(screen.getByRole('region', { name: 'Filters' })).toBe(component);
+          expect(component?.getAttribute('data-filter-mode')).toBe('batch');
+          expect([...component!.querySelectorAll('legend')].map(legend => legend.textContent)).toEqual(['Status', 'release_channel']);
+          expect(component?.querySelectorAll('fieldset[data-collapsible="true"]')).toHaveLength(2);
+          const live = component?.querySelector('[data-active-filters]');
+          expect(live?.getAttribute('aria-live')).toBe('polite');
+          expect(live?.querySelector('[data-filter-count]')?.textContent).toBe('1 active');
+          expect(screen.getByRole('button', { name: 'Clear all' }).getAttribute('type')).toBe('button');
+          expect(screen.getByRole('button', { name: 'Apply' }).getAttribute('type')).toBe('button');
+          break;
+        }
+        case 'price-summary-terms': {
+          expect(component?.tagName).toBe('SECTION');
+          expect(component?.getAttribute('data-summary-type')).toBe('price');
+          expect(screen.getByRole('heading', { level: 3, name: 'Price Summary' })).toBeTruthy();
+          expect([...component!.querySelectorAll('[data-summary-item]')].map(item => (
+            [item.querySelector('dt')?.textContent, item.querySelector('dd')?.textContent]
+          ))).toEqual([['Amount', '129900'], ['Currency', 'USD'], ['Model', 'recurring'], ['Interval', 'month']]);
+          expect(component?.querySelector('button, a, input')).toBeNull();
           break;
         }
         case 'detail-header-heading-level': {

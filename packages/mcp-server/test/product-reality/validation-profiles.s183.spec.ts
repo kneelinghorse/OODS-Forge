@@ -1,3 +1,4 @@
+import { NUCLEUS_COMPONENT_IDS, PORTED_COMPONENT_IDS } from '@oods/component-contracts';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
@@ -76,11 +77,14 @@ const SUPPORTED_SCHEMA: UiSchema = {
 
 // Present in the 109-row registry, but deliberately absent from both runnable
 // foundation targets. Emitting it would create an unresolved package import.
+// Sprint 186 ported the original fixture (AddressCollectionPanel); the gap now
+// lives on a recipe row outside the wave-2 slate, guarded below.
+const TARGET_GAP_COMPONENT = 'CommunicationDetailPanel';
 const TARGET_GAP_SCHEMA: UiSchema = {
   version: '1.0',
   screens: [{
     id: 'target-gap',
-    component: 'AddressCollectionPanel',
+    component: TARGET_GAP_COMPONENT,
     props: {},
   }],
 };
@@ -237,6 +241,12 @@ describe('Sprint 183 M03 validation profiles', () => {
     expect(result.validationReceipt.notChecked).toEqual([...RELEASE_CHECKS]);
   });
 
+  it('keeps the target-gap fixture on a registry row that neither runnable target governs', () => {
+    // When a wave ports this component, move the fixture to the next ungoverned recipe row.
+    expect(NUCLEUS_COMPONENT_IDS).not.toContain(TARGET_GAP_COMPONENT);
+    expect(PORTED_COMPONENT_IDS).not.toContain(TARGET_GAP_COMPONENT);
+  });
+
   it('lets the same target gap proceed only under draft, with the gap visible', async () => {
     const draft = await generateCode({
       framework: 'react',
@@ -251,15 +261,15 @@ describe('Sprint 183 M03 validation profiles', () => {
 
     expect(draft.status, JSON.stringify(draft.errors ?? [])).toBe('ok');
     expect(draft.warnings).toEqual(expect.arrayContaining([
-      expect.objectContaining({ code: 'OODS-N015', component: 'AddressCollectionPanel' }),
+      expect.objectContaining({ code: 'OODS-N015', component: TARGET_GAP_COMPONENT }),
     ]));
-    expect(draft.code).toContain('AddressCollectionPanel');
+    expect(draft.code).toContain(TARGET_GAP_COMPONENT);
     expectDisclosure(draft.validationReceipt, 'draft', 'react', { requested: 'react' });
 
     expect(build.status).toBe('error');
     expect(build.artifact).toBeUndefined();
     expect(build.errors).toEqual(expect.arrayContaining([
-      expect.objectContaining({ code: 'OODS-N015', component: 'AddressCollectionPanel' }),
+      expect.objectContaining({ code: 'OODS-N015', component: TARGET_GAP_COMPONENT }),
     ]));
     expectDisclosure(build.validationReceipt, 'build', 'react', { requested: 'react' });
   });
@@ -291,7 +301,7 @@ describe('Sprint 183 M03 validation profiles', () => {
       expect(result.artifact).toBeUndefined();
       expect(result.code).toBe('');
       expect(result.errors).toEqual(expect.arrayContaining([
-        expect.objectContaining({ code: 'OODS-N015', component: 'AddressCollectionPanel' }),
+        expect.objectContaining({ code: 'OODS-N015', component: TARGET_GAP_COMPONENT }),
       ]));
       expectDisclosure(result.validationReceipt, profile, framework, { requested: framework });
       expect(result.validationReceipt.axes.fallback).toBe('forbidden');
@@ -881,7 +891,7 @@ describe('Sprint 183 M03 validation profiles', () => {
       code: 'OODS-N015',
       message: 'A generated target import is unresolved.',
       nodeId: 'target-gap',
-      component: 'AddressCollectionPanel',
+      component: TARGET_GAP_COMPONENT,
     };
     const buildReceipt = createValidationReceipt('build', 'react');
     const weakenedMutant: CodegenValidationReceipt = {
