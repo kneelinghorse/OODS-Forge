@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import {
-  CANONICAL_ADVERTISED_SCOPE, PUBLIC_RUNTIME_SCOPE, ROOT, S184_BASE, S185_BASE, TABLE_PATHS,
+  CANONICAL_ADVERTISED_SCOPE, PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, ROOT, S184_BASE, S185_BASE, TABLE_PATHS,
   compareDeclaredPaths, deriveMovers, deriveRange, replayTableOmission,
 } from '../../../../scripts/product-reality/s185-sprint-wide-movers.mjs';
 
@@ -44,11 +44,19 @@ describe('Sprint-wide accounting includes runtime behavior omitted by per-missio
 
   it('uses the locked Sprint 186 range once and rejects omissions without inheriting the old two-sprint ceremony', () => {
     const options = { sprintId: 'sprint-186', missionId: 's186-m06', base: '5aa53b3a' };
-    const range = deriveRange(options.base, 'HEAD');
+    const range = deriveRange(options.base, 'HEAD', ROOT, S186_PUBLIC_RUNTIME_SCOPE);
     const declaration = { s186: range };
     const result = deriveMovers('HEAD', declaration, ROOT, options);
     expect(result).toMatchObject({ status: 'passed', missionId: 's186-m06', s186: range });
     expect(result).not.toHaveProperty('s184'); expect(result).not.toHaveProperty('tableControl');
+    expect(result.publicScope).toEqual(S186_PUBLIC_RUNTIME_SCOPE);
+    for (const composer of ['packages/mcp-server/src/compose/object-slot-filler.ts', 'packages/mcp-server/src/tools/design.compose.ts']) {
+      expect(range.publicPaths).toContain(composer);
+      expect(deriveRange(options.base, 'HEAD').publicPaths).not.toContain(composer);
+      const omitted = structuredClone(declaration);
+      omitted.s186.publicPaths = omitted.s186.publicPaths.filter((file: string) => file !== composer);
+      expect(() => deriveMovers('HEAD', omitted, ROOT, options)).toThrow(/declared mover union differs/);
+    }
     const changed = structuredClone(declaration); changed.s186.publicPaths.push('invented-runtime.ts');
     expect(() => deriveMovers('HEAD', changed, ROOT, options)).toThrow(/declared mover union differs/);
     expect(() => deriveMovers('HEAD', declaration, ROOT, { ...options, base: S185_BASE })).toThrow(/locked build base/);

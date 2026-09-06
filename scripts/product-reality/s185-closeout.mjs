@@ -6,7 +6,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { deriveSuiteAccounting } from './s185-suite-accounting.mjs';
-import { PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
+import { PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
 import { isTestPath } from './s184-m07-reconnect.mjs';
 
 export const OUTPUT_ROOT = 'artifacts/product-reality/sprint-185/m05/closeout';
@@ -38,15 +38,16 @@ function safePath(file) {
 }
 
 /** Compare actual public bytes using the mover derivation's test exclusions. */
-export function derivePublicHeadEquivalence({ root, implementationHead, executionHead }) {
+export function derivePublicHeadEquivalence({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {
   assert(fullHead(implementationHead) && fullHead(executionHead), 'Public comparison requires full actual commit SHAs.');
+  const scope = sprintId === 'sprint-186' ? S186_PUBLIC_RUNTIME_SCOPE : PUBLIC_RUNTIME_SCOPE;
   execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
   // Disable rename folding so moving runtime source into a test path still
   // exposes the removed runtime path before test-only changes are excluded.
   const scopedChangedPaths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z',
-    implementationHead, executionHead, '--', ...PUBLIC_RUNTIME_SCOPE], { cwd: root, encoding: 'utf8' })
+    implementationHead, executionHead, '--', ...scope], { cwd: root, encoding: 'utf8' })
     .split('\0').filter(Boolean).sort();
-  return { implementationHead, executionHead, ancestor: true, scope: PUBLIC_RUNTIME_SCOPE, excludeTests: true,
+  return { implementationHead, executionHead, ancestor: true, scope, excludeTests: true,
     scopedChangedPaths, changedPaths: scopedChangedPaths.filter(file => !isTestPath(file)),
     excludedTestPaths: scopedChangedPaths.filter(isTestPath) };
 }
@@ -206,7 +207,7 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
     const movers = documents.movers; const declaration = documents.moversDeclaration;
     const samePublicHead = implementationHead === executionHead || (publicHeadEquivalence?.implementationHead === implementationHead
       && publicHeadEquivalence.executionHead === executionHead && publicHeadEquivalence.ancestor === true
-      && equal(publicHeadEquivalence.scope, PUBLIC_RUNTIME_SCOPE) && publicHeadEquivalence.excludeTests === true
+      && equal(publicHeadEquivalence.scope, S186_PUBLIC_RUNTIME_SCOPE) && publicHeadEquivalence.excludeTests === true
       && Array.isArray(publicHeadEquivalence.scopedChangedPaths)
       && equal(publicHeadEquivalence.changedPaths, publicHeadEquivalence.scopedChangedPaths.filter(file => !isTestPath(file)))
       && equal(publicHeadEquivalence.excludedTestPaths, publicHeadEquivalence.scopedChangedPaths.filter(isTestPath))
@@ -402,7 +403,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     ...(attributionPath ? { attributions: JSON.parse(readFrozen(attributionPath).toString('utf8')) } : {}),
     ...(failurePath ? { failureDispositions: JSON.parse(readFrozen(failurePath).toString('utf8')) } : {}) });
   const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan).toString('utf8')).implementationHead;
-  const publicHeadEquivalence = derivePublicHeadEquivalence({ root, implementationHead, executionHead });
+  const publicHeadEquivalence = derivePublicHeadEquivalence({ root, implementationHead, executionHead,
+    sprintId: manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
   const auditPath = argument('--final-audit');
   const outputs = deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence,
     ...(auditPath ? { finalAudit: JSON.parse(fs.readFileSync(path.resolve(auditPath), 'utf8')) } : {}) });

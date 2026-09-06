@@ -26,14 +26,17 @@ const publicScope = [
   'packages/components-vue/package.json', 'packages/components-vue/src', 'packages/components-vue/evidence', 'packages/components-vue/tsup.config.ts', 'packages/components-vue/tsup.ported.config.ts',
   'packages/mcp-server/src/codegen', 'packages/mcp-server/src/render', 'packages/mcp-server/src/errors/registry.ts', 'packages/mcp-server/src/tools/code.generate.ts',
 ];
+const publicScope186 = [...publicScope,
+  'packages/mcp-server/src/compose', 'packages/mcp-server/src/tools/design.compose.ts'];
 const testPath = file => /(^|\/)(?:__tests__|test|tests)\//.test(file) || /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file);
 
-export function auditPublicRuntimeBytes({ root, implementationHead, executionHead }) {
+export function auditPublicRuntimeBytes({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {
   assert(fullHead(implementationHead) && fullHead(executionHead));
+  const scope = sprintId === 'sprint-186' ? publicScope186 : publicScope;
   execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
-  const scopedChangedPaths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', `${implementationHead}..${executionHead}`, '--', ...publicScope], { cwd: root, encoding: 'utf8' })
+  const scopedChangedPaths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', `${implementationHead}..${executionHead}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
     .split('\0').filter(Boolean).sort();
-  return { implementationHead, executionHead, ancestor: true, scope: publicScope, excludeTests: true,
+  return { implementationHead, executionHead, ancestor: true, scope, excludeTests: true,
     scopedChangedPaths, changedPaths: scopedChangedPaths.filter(file => !testPath(file)), excludedTestPaths: scopedChangedPaths.filter(testPath) };
 }
 
@@ -44,7 +47,7 @@ export function auditSprintRange({ root, base, head }) {
   const canonical = ['configs/agent/policy.json', 'docs/api', 'packages/mcp-adapter/tool-descriptions.json',
     'packages/mcp-server/src/schemas', 'packages/mcp-server/src/schemas/generated.ts',
     'packages/mcp-server/src/security/policy.json', 'packages/mcp-server/src/tools/registry.json'];
-  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(publicScope) };
+  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(publicScope186) };
 }
 const sourceKeys = [
   ['baselineFold'], ['movers'], ['movers', 'noticePlan', 'deliveries'],
@@ -112,7 +115,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
   if (implementationHead !== executionHead) {
     assert.equal(publicGitEvidence?.implementationHead, implementationHead);
     assert.equal(publicGitEvidence.executionHead, executionHead); assert.equal(publicGitEvidence.ancestor, true);
-    assert.equal(publicGitEvidence.excludeTests, true); assert.deepEqual(publicGitEvidence.scope, publicScope);
+    assert.equal(publicGitEvidence.excludeTests, true); assert.deepEqual(publicGitEvidence.scope, wave2 ? publicScope186 : publicScope);
     assert.deepEqual(publicGitEvidence.excludedTestPaths, publicGitEvidence.scopedChangedPaths.filter(testPath));
     assert.deepEqual(publicGitEvidence.changedPaths, publicGitEvidence.scopedChangedPaths.filter(file => !testPath(file)));
     assert.deepEqual(publicGitEvidence.changedPaths, [], 'Advertised public runtime bytes changed after the notice implementation head.');
@@ -379,7 +382,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const manifestPath = argument('--manifest') ?? defaultManifest;
     const manifest = JSON.parse(readFrozen(manifestPath));
     const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan)).implementationHead;
-    const publicGitEvidence = auditPublicRuntimeBytes({ root, implementationHead, executionHead });
+    const publicGitEvidence = auditPublicRuntimeBytes({ root, implementationHead, executionHead,
+      sprintId: manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
     const rangeGitEvidence = manifest.missionId === 's186-m06'
       ? auditSprintRange({ root, base: '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2', head: implementationHead }) : undefined;
     const report = auditFinalCloseout({ executionHead, reviewHead,

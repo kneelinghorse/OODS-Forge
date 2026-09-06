@@ -17,6 +17,12 @@ export const PUBLIC_RUNTIME_SCOPE = Object.freeze([
   'packages/components-vue/package.json', 'packages/components-vue/src', 'packages/components-vue/evidence', 'packages/components-vue/tsup.config.ts', 'packages/components-vue/tsup.ported.config.ts',
   'packages/mcp-server/src/codegen', 'packages/mcp-server/src/render', 'packages/mcp-server/src/errors/registry.ts', 'packages/mcp-server/src/tools/code.generate.ts',
 ]);
+// Sprint 186's form repair changes composition before code generation. Keep the
+// historical s185 scope stable while covering both newly advertised operands.
+export const S186_PUBLIC_RUNTIME_SCOPE = Object.freeze([
+  ...PUBLIC_RUNTIME_SCOPE,
+  'packages/mcp-server/src/compose', 'packages/mcp-server/src/tools/design.compose.ts',
+]);
 export const TABLE_PATHS = Object.freeze(['packages/components-react/src/table.tsx', 'packages/components-vue/src/table.ts']);
 const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
@@ -27,15 +33,15 @@ export function compareDeclaredPaths(observed, declared) {
     extraInDeclaration: declared.filter(file => !observed.includes(file)) };
 }
 
-export function deriveRange(base, head, root = ROOT) {
+export function deriveRange(base, head, root = ROOT, publicScope = PUBLIC_RUNTIME_SCOPE) {
   const resolvedBase = resolveCommit(base, root);
   const resolvedHead = resolveCommit(head, root);
   const canonicalPaths = gitDiffPaths(resolvedBase, resolvedHead, [...CANONICAL_ADVERTISED_SCOPE], { repositoryRoot: root, excludeTests: true });
-  const publicPaths = gitDiffPaths(resolvedBase, resolvedHead, [...PUBLIC_RUNTIME_SCOPE], { repositoryRoot: root, excludeTests: true });
+  const publicPaths = gitDiffPaths(resolvedBase, resolvedHead, [...publicScope], { repositoryRoot: root, excludeTests: true });
   assert(canonicalPaths.every(file => publicPaths.includes(file)), 'Public scope lost a canonical path.');
   return { base: resolvedBase, head: resolvedHead,
     canonicalCommand: ['git', 'diff', '--name-only', `${resolvedBase}..${resolvedHead}`, '--', ...CANONICAL_ADVERTISED_SCOPE],
-    publicCommand: ['git', 'diff', '--name-only', `${resolvedBase}..${resolvedHead}`, '--', ...PUBLIC_RUNTIME_SCOPE],
+    publicCommand: ['git', 'diff', '--name-only', `${resolvedBase}..${resolvedHead}`, '--', ...publicScope],
     excluded: 'Test files only; all commands use the single sprint range, never per-mission ranges.',
     canonicalPaths, publicPaths, supplementalRuntimePaths: publicPaths.filter(file => !canonicalPaths.includes(file)) };
 }
@@ -68,7 +74,7 @@ export function replayTableOmission(root = ROOT) {
 export function deriveMovers(head, declaration, root = ROOT, options = {}) {
   if (options.sprintId === 'sprint-186') {
     assert(options.missionId === 's186-m06' && options.base, 'Sprint 186 requires its mission and explicit build base.');
-    const s186 = deriveRange(options.base, head, root);
+    const s186 = deriveRange(options.base, head, root, S186_PUBLIC_RUNTIME_SCOPE);
     assert(s186.base === resolveCommit('5aa53b3a', root), 'Sprint 186 mover base differs from the locked build base.');
     const comparison = { s186: {} };
     for (const surface of ['canonicalPaths', 'publicPaths']) {
@@ -79,7 +85,7 @@ export function deriveMovers(head, declaration, root = ROOT, options = {}) {
       comparison.s186[surface] = result;
     }
     return { missionId: options.missionId, sprintId: options.sprintId, status: 'passed',
-      canonicalScope: CANONICAL_ADVERTISED_SCOPE, publicScope: PUBLIC_RUNTIME_SCOPE, s186, comparison };
+      canonicalScope: CANONICAL_ADVERTISED_SCOPE, publicScope: S186_PUBLIC_RUNTIME_SCOPE, s186, comparison };
   }
   const s184 = deriveRange(S184_BASE, S185_BASE, root);
   const s185 = deriveRange(S185_BASE, head, root);
@@ -110,7 +116,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     assert(!fs.existsSync(declarationPath), 'Refusing to replace an existing mover declaration. Review differences explicitly.');
     const declaration = { missionId: options.missionId, declarationHead: head,
       method: 'One reviewed declaration per sprint range; later checks independently re-run both Git diffs and reject additions or omissions.',
-      ...(options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head) }
+      ...(options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head, ROOT, S186_PUBLIC_RUNTIME_SCOPE) }
         : { s184: deriveRange(S184_BASE, S185_BASE), s185: deriveRange(S185_BASE, head) }) };
     fs.writeFileSync(declarationPath, canonical(declaration));
   }

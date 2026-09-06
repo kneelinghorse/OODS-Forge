@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { derivePublicHeadEquivalence } from '../../../../scripts/product-reality/s185-closeout.mjs';
+import { auditPublicRuntimeBytes, auditSprintRange } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
 
 describe('Notice implementation heads retain actual public bytes across test-only corrections', () => {
   let root: string;
@@ -85,4 +86,22 @@ describe('Notice implementation heads retain actual public bytes across test-onl
 
     expect(() => derivePublicHeadEquivalence({ root, implementationHead: later, executionHead: earlier })).toThrow();
   });
+
+  it.each(['packages/mcp-server/src/compose/object-slot-filler.ts', 'packages/mcp-server/src/tools/design.compose.ts'])(
+    'Sprint 186 independently catches a changed composer operand: %s', file => {
+      write(file, 'export const control = "untyped";\n');
+      const implementationHead = commit('composer implementation');
+      write(file, 'export const control = "field-kind-aware";\n');
+      const executionHead = commit('composer correction');
+      const options = { root, implementationHead, executionHead, sprintId: 'sprint-186' };
+      const produced = derivePublicHeadEquivalence(options);
+      const audited = auditPublicRuntimeBytes(options);
+      expect(produced.changedPaths).toEqual([file]);
+      expect(audited).toEqual(produced);
+      expect(auditSprintRange({ root, base: implementationHead, head: executionHead }).publicPaths).toEqual([file]);
+      // Historical s185 evidence retains its original reviewed scope.
+      expect(derivePublicHeadEquivalence({ root, implementationHead, executionHead }).changedPaths).toEqual([]);
+      expect(auditPublicRuntimeBytes({ root, implementationHead, executionHead }).changedPaths).toEqual([]);
+    },
+  );
 });
