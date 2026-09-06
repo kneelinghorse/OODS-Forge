@@ -1,0 +1,402 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/code.generate-golden.spec.ts (6 tests | 2 failed) 43ms
+   × code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for dashboard-page 34ms
+     → expected { status: 'ok', …(8) } to deeply equal { status: 'error', …(8) }
+   × code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for dashboard-page 5ms
+     → expected { Object (status, framework, ...) } to deeply equal { status: 'error', …(8) }
+   ✓ code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for form-page 1ms
+   ✓ code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for form-page 1ms
+   ✓ code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for detail-page 2ms
+   ✓ code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for detail-page 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/code.generate-golden.spec.ts > code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for dashboard-page
+AssertionError: expected { status: 'ok', …(8) } to deeply equal { status: 'error', …(8) }
+
+- Expected
++ Received
+
+@@ -1,23 +1,140 @@
+  {
+-   "code": "",
+-   "errors": [
++   "artifact": {
++     "actions": [],
++     "contentHash": "sha256:19925041d247ff6f62df932a449cbb71c2f2fcae73daa90ec11a2f8a07120568",
++     "dependencies": [
++       {
++         "kind": "dependency",
++         "name": "@oods/component-styles",
++         "version": "0.1.0",
++       },
++       {
++         "kind": "dependency",
++         "name": "@oods/components-react",
++         "version": "0.1.0",
++       },
++       {
++         "kind": "peerDependency",
++         "name": "react",
++         "version": "19.2.0",
++       },
+        {
+-       "code": "OODS-N015",
+-       "component": "RoleBadgeList",
+-       "message": "Component RoleBadgeList is not emission-eligible for react; evidence state: unavailable.",
+-       "nodeId": "dashboard-insights-role",
++         "kind": "peerDependency",
++         "name": "react-dom",
++         "version": "19.2.0",
+        },
+      ],
+-   "fileExtension": "",
++     "files": [
++       {
++         "contentHash": "sha256:c347497d507520506d78c6a9da5713890725f87d753a946ef38499e4296b6eb0",
++         "contents": "import React from 'react';
++ import { Badge, Banner, Button, Card, CardHeader, Input, RoleBadgeList, Select, Stack, Table, Tabs, Text } from '@oods/components-react';
++ import '@oods/component-styles/css';
++
++ type BadgeProps = React.ComponentPropsWithoutRef<typeof Badge>;
++ type BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;
++ type ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;
++ type CardProps = React.ComponentPropsWithoutRef<typeof Card>;
++ type CardHeaderProps = React.ComponentPropsWithoutRef<typeof CardHeader>;
++ type InputProps = React.ComponentPropsWithoutRef<typeof Input>;
++ type RoleBadgeListProps = React.ComponentPropsWithoutRef<typeof RoleBadgeList>;
++ type SelectProps = React.ComponentPropsWithoutRef<typeof Select>;
++ type StackProps = React.ComponentPropsWithoutRef<typeof Stack>;
++ type TableProps = React.ComponentPropsWithoutRef<typeof Table>;
++ type TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;
++ type TextProps = React.ComponentPropsWithoutRef<typeof Text>;
++
++ export const GeneratedUI: React.FC = () => {
++   return (
++     <>
++       <Stack id=\"dashboard-screen\" data-oods-component=\"Stack\">
++             <Card id=\"dashboard-overview-card\" data-oods-component=\"Card\">
++                     <CardHeader id=\"dashboard-overview-header\" data-oods-component=\"CardHeader\" supporting=\"Live KPI\" title=\"Overview\" />
++                     <Badge id=\"dashboard-overview-status\" data-oods-component=\"Badge\" content=\"Stable\" />
++                     <Text id=\"dashboard-overview-text\" data-oods-component=\"Text\" content=\"Revenue up 12%\" />
++                     <Button id=\"dashboard-overview-action\" data-oods-component=\"Button\" content=\"View details\" />
++                   </Card>
++             <Card id=\"dashboard-activity-card\" data-oods-component=\"Card\">
++                     <CardHeader id=\"dashboard-activity-header\" data-oods-component=\"CardHeader\" title=\"Activity\" />
++                     <Table id=\"dashboard-activity-table\" data-oods-component=\"Table\" columns={[{\"key\":\"event\",\"label\":\"Event\"},{\"key\":\"time\",\"label\":\"Time\"}]} rows={[{\"event\":\"Invoice paid\",\"time\":\"2m ago\",\"id\":\"dashboard-activity-table-row-1\"},{\"event\":\"Seat added\",\"time\":\"10m ago\",\"id\":\"dashboard-activity-table-row-2\"}]} />
++                     <Banner id=\"dashboard-activity-banner\" data-oods-component=\"Banner\" content=\"No alerts\" />
++                     <Tabs id=\"dashboard-activity-tabs\" data-oods-component=\"Tabs\" defaultSelectedId=\"recent\" items={[{\"id\":\"recent\",\"label\":\"Recent\",\"panel\":\"24 events\"},{\"id\":\"all\",\"label\":\"All\",\"panel\":\"128 events\"}]} />
++                   </Card>
++             <Card id=\"dashboard-insights-card\" data-oods-component=\"Card\">
++                     <CardHeader id=\"dashboard-insights-header\" data-oods-component=\"CardHeader\" title=\"Insights\" />
++                     <Input id=\"dashboard-insights-input\" data-oods-component=\"Input\" label=\"Query\" name=\"query\" placeholder=\"Search insights\" />
++                     <Select id=\"dashboard-insights-select\" data-oods-component=\"Select\" label=\"Range\" name=\"range\" options={[{\"value\":\"24h\",\"label\":\"Last 24h\"},{\"value\":\"7d\",\"label\":\"Last 7d\"}]} value=\"7d\" />
++                     <RoleBadgeList id=\"dashboard-insights-role\" data-oods-component=\"RoleBadgeList\" roles={[\"analyst\",\"owner\"]} />
++                   </Card>
++           </Stack>
++     </>
++   );
++ };
++ ",
++         "path": "src/GeneratedUI.tsx",
++       },
++     ],
+      "framework": "react",
+-   "imports": [],
++     "schemaVersion": "1.0.0",
++   },
++   "code": "import React from 'react';
++ import { Badge, Banner, Button, Card, CardHeader, Input, RoleBadgeList, Select, Stack, Table, Tabs, Text } from '@oods/components-react';
++ import '@oods/component-styles/css';
++
++ type BadgeProps = React.ComponentPropsWithoutRef<typeof Badge>;
++ type BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;
++ type ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;
++ type CardProps = React.ComponentPropsWithoutRef<typeof Card>;
++ type CardHeaderProps = React.ComponentPropsWithoutRef<typeof CardHeader>;
++ type InputProps = React.ComponentPropsWithoutRef<typeof Input>;
++ type RoleBadgeListProps = React.ComponentPropsWithoutRef<typeof RoleBadgeList>;
++ type SelectProps = React.ComponentPropsWithoutRef<typeof Select>;
++ type StackProps = React.ComponentPropsWithoutRef<typeof Stack>;
++ type TableProps = React.ComponentPropsWithoutRef<typeof Table>;
++ type TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;
++ type TextProps = React.ComponentPropsWithoutRef<typeof Text>;
++
++ export const GeneratedUI: React.FC = () => {
++   return (
++     <>
++       <Stack id=\"dashboard-screen\" data-oods-component=\"Stack\">
++             <Card id=\"dashboard-overview-card\" data-oods-component=\"Card\">
++                     <CardHeader id=\"dashboard-overview-header\" data-oods-component=\"CardHeader\" supporting=\"Live KPI\" title=\"Overview\" />
++                     <Badge id=\"dashboard-overview-status\" data-oods-component=\"Badge\" content=\"Stable\" />
++                     <Text id=\"dashboard-overview-text\" data-oods-component=\"Text\" content=\"Revenue up 12%\" />
++                     <Button id=\"dashboard-overview-action\" data-oods-component=\"Button\" content=\"View details\" />
++                   </Card>
++             <Card id=\"dashboard-activity-card\" data-oods-component=\"Card\">
++                     <CardHeader id=\"dashboard-activity-header\" data-oods-component=\"CardHeader\" title=\"Activity\" />
++                     <Table id=\"dashboard-activity-table\" data-oods-component=\"Table\" columns={[{\"key\":\"event\",\"label\":\"Event\"},{\"key\":\"time\",\"label\":\"Time\"}]} rows={[{\"event\":\"Invoice paid\",\"time\":\"2m ago\",\"id\":\"dashboard-activity-table-row-1\"},{\"event\":\"Seat added\",\"time\":\"10m ago\",\"id\":\"dashboard-activity-table-row-2\"}]} />
++                     <Banner id=\"dashboard-activity-banner\" data-oods-component=\"Banner\" content=\"No alerts\" />
++                     <Tabs id=\"dashboard-activity-tabs\" data-oods-component=\"Tabs\" defaultSelectedId=\"recent\" items={[{\"id\":\"recent\",\"label\":\"Recent\",\"panel\":\"24 events\"},{\"id\":\"all\",\"label\":\"All\",\"panel\":\"128 events\"}]} />
++                   </Card>
++             <Card id=\"dashboard-insights-card\" data-oods-component=\"Card\">
++                     <CardHeader id=\"dashboard-insights-header\" data-oods-component=\"CardHeader\" title=\"Insights\" />
++                     <Input id=\"dashboard-insights-input\" data-oods-component=\"Input\" label=\"Query\" name=\"query\" placeholder=\"Search insights\" />
++                     <Select id=\"dashboard-insights-select\" data-oods-component=\"Select\" label=\"Range\" name=\"range\" options={[{\"value\":\"24h\",\"label\":\"Last 24h\"},{\"value\":\"7d\",\"label\":\"Last 7d\"}]} value=\"7d\" />
++                     <RoleBadgeList id=\"dashboard-insights-role\" data-oods-component=\"RoleBadgeList\" roles={[\"analyst\",\"owner\"]} />
++                   </Card>
++           </Stack>
++     </>
++   );
++ };
++ ",
++   "fileExtension": ".tsx",
++   "framework": "react",
++   "imports": [
++     "react",
++     "@oods/components-react",
++     "@oods/component-styles/css",
++   ],
+    "meta": {
+      "componentCount": 12,
+      "nodeCount": 16,
+    },
+-   "status": "error",
++   "status": "ok",
+    "validationReceipt": {
+      "axes": {
+        "enforcement": "blocking",
+        "fallback": "forbidden",
+        "scope": "generated-artifact",
+@@ -30,28 +147,29 @@
+      "checks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
++       "normalization-fidelity",
++       "binding-contract",
++       "props-contract",
++       "slots-contract",
++       "events-contract",
++       "dependency-closure",
++       "fallback-policy",
+      ],
+      "defaulted": true,
+      "evidence": {
+        "accepted": [],
++       "artifactContentHash": "sha256:19925041d247ff6f62df932a449cbb71c2f2fcae73daa90ec11a2f8a07120568",
+        "mismatched": [],
+        "missing": [],
+        "notApplicable": [],
+        "provided": [],
+        "required": [],
+      },
+      "notChecked": [
+-       "normalization-fidelity",
+-       "binding-contract",
+-       "props-contract",
+-       "slots-contract",
+-       "events-contract",
+-       "dependency-closure",
+-       "fallback-policy",
+        "rendered-evidence",
+        "interaction-evidence",
+        "accessibility-evidence",
+        "theme-evidence",
+        "determinism-evidence",
+
+ ❯ test/contracts/code.generate-golden.spec.ts:76:24
+     74|         }
+     75| 
+     76|         expect(result).toEqual({
+       |                        ^
+     77|           status: 'error',
+     78|           framework,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/contracts/code.generate-golden.spec.ts > code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for dashboard-page
+AssertionError: expected { Object (status, framework, ...) } to deeply equal { status: 'error', …(8) }
+
+- Expected
++ Received
+
+@@ -1,23 +1,110 @@
+  {
+-   "code": "",
+-   "errors": [
++   "artifact": {
++     "actions": [],
++     "contentHash": "sha256:e882207c9413126adf2e1e5c4e403d2634d87ae17ddad2097c62e977e592d446",
++     "dependencies": [
++       {
++         "kind": "dependency",
++         "name": "@oods/component-styles",
++         "version": "0.1.0",
++       },
+        {
+-       "code": "OODS-N015",
+-       "component": "RoleBadgeList",
+-       "message": "Component RoleBadgeList is not emission-eligible for vue; evidence state: unavailable.",
+-       "nodeId": "dashboard-insights-role",
++         "kind": "dependency",
++         "name": "@oods/components-vue",
++         "version": "0.1.0",
++       },
++       {
++         "kind": "peerDependency",
++         "name": "vue",
++         "version": "3.5.42",
+        },
+      ],
+-   "fileExtension": "",
++     "files": [
++       {
++         "contentHash": "sha256:a2cd7be8fb3dfea132edde0f1b3a437009e46e448f381ed44bc3a2e077c0e030",
++         "contents": "<template>
++   <Stack id=\"dashboard-screen\" data-oods-component=\"Stack\">
++       <Card id=\"dashboard-overview-card\" data-oods-component=\"Card\">
++             <CardHeader id=\"dashboard-overview-header\" data-oods-component=\"CardHeader\" supporting=\"Live KPI\" title=\"Overview\" />
++             <Badge id=\"dashboard-overview-status\" data-oods-component=\"Badge\" content=\"Stable\" />
++             <Text id=\"dashboard-overview-text\" data-oods-component=\"Text\" content=\"Revenue up 12%\" />
++             <Button id=\"dashboard-overview-action\" data-oods-component=\"Button\" content=\"View details\" />
++           </Card>
++       <Card id=\"dashboard-activity-card\" data-oods-component=\"Card\">
++             <CardHeader id=\"dashboard-activity-header\" data-oods-component=\"CardHeader\" title=\"Activity\" />
++             <Table id=\"dashboard-activity-table\" data-oods-component=\"Table\" :columns=\"[{'key':'event','label':'Event'},{'key':'time','label':'Time'}]\" :rows=\"[{'event':'Invoice paid','time':'2m ago','id':'dashboard-activity-table-row-1'},{'event':'Seat added','time':'10m ago','id':'dashboard-activity-table-row-2'}]\" />
++             <Banner id=\"dashboard-activity-banner\" data-oods-component=\"Banner\" content=\"No alerts\" />
++             <Tabs id=\"dashboard-activity-tabs\" data-oods-component=\"Tabs\" defaultSelectedId=\"recent\" :items=\"[{'id':'recent','label':'Recent','panel':'24 events'},{'id':'all','label':'All','panel':'128 events'}]\" />
++           </Card>
++       <Card id=\"dashboard-insights-card\" data-oods-component=\"Card\">
++             <CardHeader id=\"dashboard-insights-header\" data-oods-component=\"CardHeader\" title=\"Insights\" />
++             <Input id=\"dashboard-insights-input\" data-oods-component=\"Input\" label=\"Query\" name=\"query\" placeholder=\"Search insights\" />
++             <Select id=\"dashboard-insights-select\" data-oods-component=\"Select\" label=\"Range\" name=\"range\" :options=\"[{'value':'24h','label':'Last 24h'},{'value':'7d','label':'Last 7d'}]\" value=\"7d\" />
++             <RoleBadgeList id=\"dashboard-insights-role\" data-oods-component=\"RoleBadgeList\" :roles=\"['analyst','owner']\" />
++           </Card>
++     </Stack>
++ </template>
++
++ <script setup lang=\"ts\">
++ import { Badge, Banner, Button, Card, CardHeader, Input, RoleBadgeList, Select, Stack, Table, Tabs, Text } from '@oods/components-vue';
++ import '@oods/component-styles/css';
++
++ defineProps<{
++   // Props can be extended here
++ }>();
++ </script>
++ ",
++         "path": "src/GeneratedUI.vue",
++       },
++     ],
+      "framework": "vue",
+-   "imports": [],
++     "schemaVersion": "1.0.0",
++   },
++   "code": "<template>
++   <Stack id=\"dashboard-screen\" data-oods-component=\"Stack\">
++       <Card id=\"dashboard-overview-card\" data-oods-component=\"Card\">
++             <CardHeader id=\"dashboard-overview-header\" data-oods-component=\"CardHeader\" supporting=\"Live KPI\" title=\"Overview\" />
++             <Badge id=\"dashboard-overview-status\" data-oods-component=\"Badge\" content=\"Stable\" />
++             <Text id=\"dashboard-overview-text\" data-oods-component=\"Text\" content=\"Revenue up 12%\" />
++             <Button id=\"dashboard-overview-action\" data-oods-component=\"Button\" content=\"View details\" />
++           </Card>
++       <Card id=\"dashboard-activity-card\" data-oods-component=\"Card\">
++             <CardHeader id=\"dashboard-activity-header\" data-oods-component=\"CardHeader\" title=\"Activity\" />
++             <Table id=\"dashboard-activity-table\" data-oods-component=\"Table\" :columns=\"[{'key':'event','label':'Event'},{'key':'time','label':'Time'}]\" :rows=\"[{'event':'Invoice paid','time':'2m ago','id':'dashboard-activity-table-row-1'},{'event':'Seat added','time':'10m ago','id':'dashboard-activity-table-row-2'}]\" />
++             <Banner id=\"dashboard-activity-banner\" data-oods-component=\"Banner\" content=\"No alerts\" />
++             <Tabs id=\"dashboard-activity-tabs\" data-oods-component=\"Tabs\" defaultSelectedId=\"recent\" :items=\"[{'id':'recent','label':'Recent','panel':'24 events'},{'id':'all','label':'All','panel':'128 events'}]\" />
++           </Card>
++       <Card id=\"dashboard-insights-card\" data-oods-component=\"Card\">
++             <CardHeader id=\"dashboard-insights-header\" data-oods-component=\"CardHeader\" title=\"Insights\" />
++             <Input id=\"dashboard-insights-input\" data-oods-component=\"Input\" label=\"Query\" name=\"query\" placeholder=\"Search insights\" />
++             <Select id=\"dashboard-insights-select\" data-oods-component=\"Select\" label=\"Range\" name=\"range\" :options=\"[{'value':'24h','label':'Last 24h'},{'value':'7d','label':'Last 7d'}]\" value=\"7d\" />
++             <RoleBadgeList id=\"dashboard-insights-role\" data-oods-component=\"RoleBadgeList\" :roles=\"['analyst','owner']\" />
++           </Card>
++     </Stack>
++ </template>
++
++ <script setup lang=\"ts\">
++ import { Badge, Banner, Button, Card, CardHeader, Input, RoleBadgeList, Select, Stack, Table, Tabs, Text } from '@oods/components-vue';
++ import '@oods/component-styles/css';
++
++ defineProps<{
++   // Props can be extended here
++ }>();
++ </script>
++ ",
++   "fileExtension": ".vue",
++   "framework": "vue",
++   "imports": [
++     "@oods/components-vue",
++     "@oods/component-styles/css",
++   ],
+    "meta": {
+      "componentCount": 12,
+      "nodeCount": 16,
+    },
+-   "status": "error",
++   "status": "ok",
+    "validationReceipt": {
+      "axes": {
+        "enforcement": "blocking",
+        "fallback": "forbidden",
+        "scope": "generated-artifact",
+@@ -30,28 +117,29 @@
+      "checks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
++       "normalization-fidelity",
++       "binding-contract",
++       "props-contract",
++       "slots-contract",
++       "events-contract",
++       "dependency-closure",
++       "fallback-policy",
+      ],
+      "defaulted": true,
+      "evidence": {
+        "accepted": [],
++       "artifactContentHash": "sha256:e882207c9413126adf2e1e5c4e403d2634d87ae17ddad2097c62e977e592d446",
+        "mismatched": [],
+        "missing": [],
+        "notApplicable": [],
+        "provided": [],
+        "required": [],
+      },
+      "notChecked": [
+-       "normalization-fidelity",
+-       "binding-contract",
+-       "props-contract",
+-       "slots-contract",
+-       "events-contract",
+-       "dependency-closure",
+-       "fallback-policy",
+        "rendered-evidence",
+        "interaction-evidence",
+        "accessibility-evidence",
+        "theme-evidence",
+        "determinism-evidence",
+
+ ❯ test/contracts/code.generate-golden.spec.ts:76:24
+     74|         }
+     75| 
+     76|         expect(result).toEqual({
+       |                        ^
+     77|           status: 'error',
+     78|           framework,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  15:51:14
+   Duration  1.05s (transform 404ms, setup 24ms, collect 683ms, tests 43ms, environment 0ms, prepare 144ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/code.generate-golden.spec.ts

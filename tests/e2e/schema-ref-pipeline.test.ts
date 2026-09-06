@@ -40,12 +40,13 @@ describe('schemaRef E2E pipeline', () => {
     expect(codegen.status, JSON.stringify(codegen.errors ?? [])).toBe('ok');
     expect(codegen.fileExtension).toBe('.tsx');
     expect(codegen.imports).toEqual(expect.arrayContaining([
-      '@oods/components-react', '@oods/components-react/ported',
-      '@oods/component-styles/css', '@oods/component-styles/css-ported',
+      '@oods/components-react', '@oods/component-styles/css',
     ]));
+    expect(codegen.imports).not.toContain('@oods/components-react/ported');
+    expect(codegen.imports).not.toContain('@oods/component-styles/css-ported');
     expect(codegen.warnings).toEqual([]);
     expect(codegen.errors).toBeUndefined();
-    // The unchanged schemaRef now spans real nucleus and ported components.
+    // The unchanged schemaRef now spans the unified root component surface.
     // Preserve every composed node, including the formerly unavailable header.
     expect(codegen.code).toContain('<DetailHeader ');
     expect(codegen.code).toContain('id="slot-header-2"');

@@ -1,0 +1,65 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/mcp-server
+
+ ❯ src/tools/__tests__/code.generate.test.ts (14 tests | 1 failed) 102ms
+   ✓ code.generate tool > falls back to capability-baseline membership when the structured registry is empty 1ms
+   ✓ code.generate tool > emits Vue script comments safely when descriptions contain closing script tags 41ms
+   ✓ code.generate tool > accepts tailwind styling in input schema 1ms
+   ✓ code.generate tool > preserves profile omission through input validation so the receipt names the build default 2ms
+   ✓ code.generate tool > emits Tailwind classes for React and Vue when styling=tailwind 18ms
+   ✓ code.generate tool > defaults to tokens styling when options are omitted 1ms
+   ✓ code.generate tool > rejects valid-schema keys and identifiers that cannot be emitted safely 2ms
+   ✓ code.generate tool > preserves identifier, data-*, and aria-* prop keys 1ms
+   ✓ code.generate tool > rejects generated-name collisions for each target 0ms
+   ✓ code.generate tool > rejects emitter-owned and duplicate attributes before emission 0ms
+   ✓ code.generate tool > rejects handlers that shadow imported components 0ms
+   ✓ code.generate tool > checks known target readiness before emitted-syntax safety 0ms
+   × code.generate tool > B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible 26ms
+     → expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+   ✓ code.generate tool > B-14 emits byte-identical governed source and evidence on repeated runs 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tools/__tests__/code.generate.test.ts > code.generate tool > B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible
+AssertionError: expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+
+- Expected
++ Received
+
+@@ -5,16 +5,10 @@
+        "code": "OODS-N015",
+        "component": "ArchiveSummary",
+        "message": "Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.",
+        "nodeId": "archive-summary",
+      },
+-     {
+-       "code": "OODS-N015",
+-       "component": "TagInput",
+-       "message": "Component TagInput is not emission-eligible for react; evidence state: implemented-unverified.",
+-       "nodeId": "tag-input",
+-     },
+    ],
+    "fileExtension": "",
+    "framework": "react",
+    "imports": [],
+    "meta": {
+
+ ❯ src/tools/__tests__/code.generate.test.ts:573:20
+    571|     });
+    572| 
+    573|     expect(result).toEqual({
+       |                    ^
+    574|       status: 'error',
+    575|       framework: 'react',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  15:51:18
+   Duration  1.22s (transform 399ms, setup 20ms, collect 752ms, tests 102ms, environment 0ms, prepare 114ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/tools/__tests__/code.generate.test.ts

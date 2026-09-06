@@ -171,6 +171,13 @@ describe('Sprint 182 shared component-style browser corrections', () => {
           <span id="badge-solid" class="oods-badge" data-oods-component="Badge" data-tone="critical" data-emphasis="solid" style="${statusStyle}">Solid</span>
           <section id="banner-subtle" class="oods-banner" data-oods-component="Banner" data-tone="critical" data-emphasis="subtle" style="${bannerStyle}">Subtle</section>
           <section id="banner-solid" class="oods-banner" data-oods-component="Banner" data-tone="critical" data-emphasis="solid" style="${bannerStyle}">Solid</section>
+          <section id="banner-react" class="oods-banner statusable-banner" data-oods-component="Banner">
+            <div class="oods-banner__content statusable-banner__content"><strong class="oods-banner__title statusable-banner__title">Payment failed</strong></div>
+          </section>
+          <section id="banner-vue" class="oods-banner" data-oods-component="Banner">
+            <div class="oods-banner-content"><strong class="oods-banner-title">Payment failed</strong></div>
+          </section>
+          <section id="banner-generic" class="statusable-banner"><strong class="statusable-banner__title">Generic status title</strong></section>
 
           ${['neutral', 'primary', 'secondary', 'success', 'warning', 'danger']
             .map((intent) => `<button id="button-${intent}" class="oods-button" data-oods-component="Button" data-intent="${intent}" data-size="md">${intent}</button>`)
@@ -232,6 +239,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
         badgeSolid: colors('#badge-solid'),
         bannerSubtle: colors('#banner-subtle'),
         bannerSolid: colors('#banner-solid'),
+        bannerTitleWeights: ['react', 'vue', 'generic'].map((variant) => text(`#banner-${variant} strong`).fontWeight),
         intents: Object.fromEntries(
           ['neutral', 'primary', 'secondary', 'success', 'warning', 'danger']
             .map((intent) => [intent, button(`#button-${intent}`)]),
@@ -263,6 +271,8 @@ describe('Sprint 182 shared component-style browser corrections', () => {
       border: proof.bannerSubtle.color,
       color: proof.bannerSubtle.background,
     });
+    // Folding statusables into root CSS preserves OODS title emphasis without changing generic statusables.
+    expect(proof.bannerTitleWeights).toEqual(['700', '700', '600']);
     expect(new Set(Object.values(proof.intents).map((intent) => intent.background))).toHaveLength(6);
     expect(proof.intents.primary).toMatchObject({
       boxSizing: 'border-box', minHeight: '40px', fontSize: '16px',

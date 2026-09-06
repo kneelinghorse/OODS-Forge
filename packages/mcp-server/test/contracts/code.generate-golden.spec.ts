@@ -5,6 +5,7 @@ import path from 'node:path';
 import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 import type { UiSchema } from '../../src/schemas/generated.js';
 import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
+import { validateGeneratedArtifact } from '../../src/codegen/artifact-envelope.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +17,7 @@ const FIXTURES = [
   {
     name: 'dashboard-page',
     schemaFile: 'dashboard-page.ui-schema.json',
-    expectedFile: 'dashboard-page.n015.json',
+    expectedFile: 'dashboard-page.ready.json',
   },
   {
     name: 'form-page',
@@ -38,14 +39,22 @@ function loadSchema(fileName: string): UiSchema {
 }
 
 type UnreadyGolden = {
+  status?: 'error';
   meta: { nodeCount: number; componentCount: number };
   affectedNodes: Array<{ nodeId: string; component: string; state: string }>;
   portedReadyComponents?: string[];
 };
 
-function loadGolden(fileName: string): UnreadyGolden {
+type ReadyGolden = {
+  status: 'ok';
+  meta: { nodeCount: number; componentCount: number };
+  newlyReadyNodes: Array<{ nodeId: string; component: string }>;
+  historicalReadinessGolden: string;
+};
+
+function loadGolden(fileName: string): UnreadyGolden | ReadyGolden {
   const filePath = path.join(GOLDEN_DIR, fileName);
-  return JSON.parse(readFileSync(filePath, 'utf8')) as UnreadyGolden;
+  return JSON.parse(readFileSync(filePath, 'utf8')) as UnreadyGolden | ReadyGolden;
 }
 
 function expectedTargetReadinessReceipt(framework: 'react' | 'vue') {
@@ -61,10 +70,43 @@ function expectedTargetReadinessReceipt(framework: 'react' | 'vue') {
 describe('code.generate golden readiness outcomes', () => {
   for (const fixture of FIXTURES) {
     for (const framework of ['react', 'vue'] as const) {
-      it(`matches ${framework} OODS-N015 golden outcome for ${fixture.name}`, async () => {
+      it(`matches the ${framework} golden readiness outcome for ${fixture.name}`, async () => {
         const schema = loadSchema(fixture.schemaFile);
         const expected = loadGolden(fixture.expectedFile);
         const result = await codegenHandle({ schema, framework, options });
+
+        if (expected.status === 'ok') {
+          expect(result).toMatchObject({
+            status: 'ok', framework, warnings: [], meta: expected.meta,
+            fileExtension: framework === 'react' ? '.tsx' : '.vue',
+          });
+          expect(result.errors).toBeUndefined();
+          expect(result.imports).toEqual([
+            ...(framework === 'react' ? ['react'] : []),
+            `@oods/components-${framework}`, '@oods/component-styles/css',
+          ]);
+          expect(result.artifact).toBeDefined();
+          expect(validateGeneratedArtifact(result.artifact!)).toEqual([]);
+          expect(result.artifact!.files).toHaveLength(1);
+          expect(result.artifact!.files[0]!.contents).toBe(result.code);
+          expect(result.artifact!.actions).toEqual([]);
+          expect(result.code.match(/data-oods-component=/g)).toHaveLength(expected.meta.nodeCount);
+          const nodes = [...schema.screens];
+          while (nodes.length > 0) {
+            const node = nodes.shift()!;
+            expect(result.code).toContain(`id="${node.id}" data-oods-component="${node.component}"`);
+            nodes.push(...(node.children ?? []));
+          }
+          const historical = loadGolden(expected.historicalReadinessGolden) as UnreadyGolden;
+          expect(historical.affectedNodes.map(({ nodeId, component }) => ({ nodeId, component })))
+            .toEqual(expected.newlyReadyNodes);
+          expect(result.validationReceipt.checks).toEqual([
+            'schema-structure', 'component-registry', 'state-contract', 'target-readiness',
+            'normalization-fidelity', 'binding-contract', 'props-contract', 'slots-contract',
+            'events-contract', 'dependency-closure', 'fallback-policy',
+          ]);
+          return;
+        }
 
         for (const component of expected.portedReadyComponents ?? []) {
           expect(

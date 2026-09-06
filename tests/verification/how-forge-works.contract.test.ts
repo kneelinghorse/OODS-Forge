@@ -229,9 +229,8 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("@oods/component-styles/css</span>");
     expect(html).toContain("OODS-N015</span> and no source payload");
 
-    // Sprint 185 m01: near.md was rewritten at the Sprint 185 lock (planning
-    // session PS-2026-09-05-005, decision #1724); these carriers pin the
-    // current sentences with the same intent (rule #1690).
+    // Sprint 186: retain the historical foundation authority while the current
+    // breadth build remains pending independent review (rule #1690).
     expect(nearRoadmap).toContain("Sprint 182: Product Reality Foundation — CLOSED 2026-09-04");
     expect(nearRoadmap).toContain("decision `#1662`");
     expect(normalizedNear).toContain("promoted by Derek (decision `#1663`)");
@@ -247,7 +246,7 @@ describe("how Forge works narrative truth", () => {
       "installs, builds, renders, hydrates and passes interactions in clean React and Vue consumers",
     );
     expect(normalizedNear).toContain(
-      "Number this sprint only after Sprint 185 receives independent review",
+      "## Increment 5 — Sprint 186: Component Breadth Wave 2 — BUILT, REVIEW PENDING",
     );
     expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",

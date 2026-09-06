@@ -522,25 +522,21 @@ describe('Sprint 183 M02 typed action protocol', () => {
     expect(complete.status).toBe(0);
   }, 120_000);
 
-  it('Vue TypeScript rejects each individually omitted domain action', async () => {
+  // The preceding complete-actions case proves the consumer compiles. Give
+  // each omission its own deadline: the s186 capture spent 222.67s across the
+  // grouped compilers, exceeding the shared 180s deadline despite valid results.
+  // Each child remains capped at 120s, with time to report its own diagnostics.
+  it.each(requiredActionNames)('Vue TypeScript rejects each individually omitted domain action: %s', async (omittedAction) => {
     const result = await handle({
       framework: 'vue',
       schema: FOUNDATION_V1_SHOWCASE_SCHEMA,
       options: { styling: 'tokens', typescript: true },
     });
 
-    const complete = await vueConsumerResult(result.code, true, true);
-    expect(complete.output).toBe('');
-    expect(complete.status).toBe(0);
-    for (const omittedAction of requiredActionNames) {
-      const missing = await vueConsumerResult(result.code, true, true, omittedAction);
-      expect(missing.status, omittedAction).not.toBe(0);
-      expect(missing.output, omittedAction).toContain(omittedAction);
-    }
-  // The first s185 closeout measured 123.84s for these four compiler calls.
-  // Keep each child capped at 120s; allow the grouped test to report its actual
-  // diagnostics instead of Vitest masking them at the same 120s boundary.
-  }, 180_000);
+    const missing = await vueConsumerResult(result.code, true, true, omittedAction);
+    expect(missing.status, omittedAction).not.toBe(0);
+    expect(missing.output, omittedAction).toContain(omittedAction);
+  }, 150_000);
 
   it('Vue JavaScript rejects each omitted action at runtime', async () => {
     const result = await handle({

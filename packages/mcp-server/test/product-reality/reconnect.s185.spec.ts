@@ -53,6 +53,8 @@ describe('Combined reconnect requires real unique deliveries of the exact review
         expect(notice.request.body).toContain('their one-sprint retirement horizon is Sprint 187');
         expect(notice.request.body).toContain('disclosed-successor-store');
         expect(notice.request.body).toContain('No live bridge rebuild/restart was performed');
+        expect(notice.request.body).toContain('supersedes the earlier Sprint 186 notice');
+        expect(notice.request.body).toContain('the two original sent requests remain retained');
         expect(notice.requestSha256).toBe(requestHash(notice.request));
         expect(notice).not.toHaveProperty('messageId');
       }

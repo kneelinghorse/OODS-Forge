@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -21,6 +22,16 @@ const requiredLiveCompiled = [
   'tier1-acceptance-sub-detail',
   'subscription-detail-dark',
   'subscription-list-dark',
+] as const;
+
+// The frozen form's five composer-authored field-kind defects remain refusals,
+// even though every component in the original corpus now has target readiness.
+const frozenFormGaps = [
+  { nodeId: 'slot-field-3-13', component: 'Input', field: 'address_roles', kind: 'array' },
+  { nodeId: 'slot-field-5-17', component: 'Input', field: 'preference_document', kind: 'unknown' },
+  { nodeId: 'slot-field-6-19', component: 'DatePicker', field: 'state_history', kind: 'array' },
+  { nodeId: 'slot-field-8-23', component: 'Input', field: 'tags', kind: 'array' },
+  { nodeId: 'slot-field-9-25', component: 'Input', field: 'tag_metadata', kind: 'array' },
 ] as const;
 
 type Target = typeof targets[number];
@@ -127,14 +138,20 @@ describe('Sprint 183 M04 saved-schema compiler', () => {
 
       compiledByTarget.set(target, compiled);
       expect(compiled).toEqual(expect.arrayContaining(requiredLiveCompiled));
+      expect(compiled).toEqual(corpusIndex.schemas.filter(({ name }) => name !== 'user-form-showcase').map(({ name }) => name));
+      expect(typedGap).toEqual(['user-form-showcase']);
       expect(compiled.length).toBeGreaterThan(
         historicalReport.summary.schemaDispositions.compiledBothTargets.length,
       );
       for (const name of typedGap) {
         const result = liveResults.get(`${name}/${target}`)!;
         expect(result.artifact, `${name}/${target}`).toBeUndefined();
-        expect(result.errors?.length, `${name}/${target}`).toBeGreaterThan(0);
-        expect(result.errors?.every(({ code }) => code === 'OODS-N015'), `${name}/${target}`).toBe(true);
+        expect(result.code, `${name}/${target}`).toBe('');
+        expect(result.imports, `${name}/${target}`).toEqual([]);
+        expect(result.errors, `${name}/${target}`).toEqual(frozenFormGaps.map(({ nodeId, component, field, kind }) => ({
+          code: 'OODS-V007', nodeId, component,
+          message: `Field "${field}" has ${kind} data, which cannot bind to ${component}.value on the ${target} target; accepted field kinds: string, number, boolean.`,
+        })));
       }
     }
     expect(compiledByTarget.get('react')).toEqual(compiledByTarget.get('vue'));
@@ -185,18 +202,39 @@ describe('Sprint 183 M04 saved-schema compiler', () => {
     }
   });
 
-  it('turns a fallback-for-a-current-typed-gap mutation red', async () => {
+  it('turns a fallback-for-an-unready-component mutation red without changing the saved corpus', async () => {
+    const mutationRoot = mkdtempSync(path.join(tmpdir(), 'oods-corpus-readiness-mutation-'));
+    const mutationCorpus = path.join(mutationRoot, 'saved-schema-store');
+    const recordName = corpusIndex.schemas.find(({ name }) => name !== 'tier1-acceptance-sub-detail')!.name;
+    const originalPath = path.join(corpusRoot, `${recordName}.json`);
+    const originalSha256 = sha256(originalPath);
+    const originalExitGateSha256 = sha256(path.join(corpusRoot, 'tier1-acceptance-sub-detail.json'));
     let mutatedTypedGaps = 0;
-    await expect(buildSavedSchemaCorpusEvidence({
-      generator: async (input) => {
-        const result = await codeGenerate(input);
-        if (result.errors?.some(({ code }) => code === 'OODS-N015')) {
-          mutatedTypedGaps += 1;
-          return { ...result, status: 'ok' };
-        }
-        return result;
-      },
-    })).rejects.toThrow(/returned a generated artifact.*typed gap required/i);
-    expect(mutatedTypedGaps).toBeGreaterThan(0);
+    try {
+      cpSync(corpusRoot, mutationCorpus, { recursive: true });
+      const recordPath = path.join(mutationCorpus, `${recordName}.json`);
+      const record = readJson<{ schema: UiSchema }>(recordPath);
+      record.schema.screens.push({ id: 'readiness-mutation-only', component: 'ArchiveSummary' });
+      writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`);
+      expect(sha256(path.join(mutationCorpus, 'tier1-acceptance-sub-detail.json'))).toBe(originalExitGateSha256);
+
+      await expect(buildSavedSchemaCorpusEvidence({
+        corpusDirectory: mutationCorpus,
+        generator: async (input) => {
+          const result = await codeGenerate(input);
+          if (result.errors?.some(({ code, nodeId }) => code === 'OODS-N015' && nodeId === 'readiness-mutation-only')) {
+            mutatedTypedGaps += 1;
+            return { ...result, status: 'ok' };
+          }
+          return result;
+        },
+      })).rejects.toThrow(/returned a generated artifact for unsupported ArchiveSummary; typed gap required/i);
+      // The compiler repeats the selected target before checking its gap disposition.
+      expect(mutatedTypedGaps).toBe(2);
+      expect(sha256(originalPath)).toBe(originalSha256);
+      expect(sha256(path.join(corpusRoot, 'tier1-acceptance-sub-detail.json'))).toBe(originalExitGateSha256);
+    } finally {
+      rmSync(mutationRoot, { recursive: true, force: true });
+    }
   });
 });

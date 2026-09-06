@@ -1,0 +1,60 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/saved-schema-compiler.s183.spec.ts (4 tests | 2 failed) 146ms
+   ✓ Sprint 183 M04 saved-schema compiler > keeps the immutable Sprint 183 baseline at its genuine 2 compiled and 30 typed-gap cells 3ms
+   × Sprint 183 M04 saved-schema compiler > measures current live readiness separately from the frozen Sprint 183 baseline 5ms
+     → user-form-showcase/react: expected false to be true // Object.is equality
+   ✓ Sprint 183 M04 saved-schema compiler > retains the archived complete artifacts and keeps the live exit-gate result deterministic 5ms
+   × Sprint 183 M04 saved-schema compiler > turns a fallback-for-a-current-typed-gap mutation red 57ms
+     → expected [Function] to throw error matching /returned a generated artifact.*typed…/i but got 'react generation failed: [{"code":"OO…'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/saved-schema-compiler.s183.spec.ts > Sprint 183 M04 saved-schema compiler > measures current live readiness separately from the frozen Sprint 183 baseline
+AssertionError: user-form-showcase/react: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/product-reality/saved-schema-compiler.s183.spec.ts:137:95
+    135|         expect(result.artifact, `${name}/${target}`).toBeUndefined();
+    136|         expect(result.errors?.length, `${name}/${target}`).toBeGreater…
+    137|         expect(result.errors?.every(({ code }) => code === 'OODS-N015'…
+       |                                                                                               ^
+    138|       }
+    139|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/product-reality/saved-schema-compiler.s183.spec.ts > Sprint 183 M04 saved-schema compiler > turns a fallback-for-a-current-typed-gap mutation red
+AssertionError: expected [Function] to throw error matching /returned a generated artifact.*typed…/i but got 'react generation failed: [{"code":"OO…'
+
+- Expected: 
+/returned a generated artifact.*typed gap required/i
+
++ Received: 
+"react generation failed: [{\"code\":\"OODS-V007\",\"message\":\"Field \\\"address_roles\\\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-3-13\",\"component\":\"Input\"},{\"code\":\"OODS-V007\",\"message\":\"Field \\\"preference_document\\\" has unknown data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-5-17\",\"component\":\"Input\"},{\"code\":\"OODS-V007\",\"message\":\"Field \\\"state_history\\\" has array data, which cannot bind to DatePicker.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-6-19\",\"component\":\"DatePicker\"},{\"code\":\"OODS-V007\",\"message\":\"Field \\\"tags\\\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-8-23\",\"component\":\"Input\"},{\"code\":\"OODS-V007\",\"message\":\"Field \\\"tag_metadata\\\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.\",\"nodeId\":\"slot-field-9-25\",\"component\":\"Input\"}]"
+
+ ❯ test/product-reality/saved-schema-compiler.s183.spec.ts:190:5
+    188|   it('turns a fallback-for-a-current-typed-gap mutation red', async ()…
+    189|     let mutatedTypedGaps = 0;
+    190|     await expect(buildSavedSchemaCorpusEvidence({
+       |     ^
+    191|       generator: async (input) => {
+    192|         const result = await codeGenerate(input);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  15:51:16
+   Duration  1.10s (transform 415ms, setup 18ms, collect 698ms, tests 146ms, environment 0ms, prepare 78ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/saved-schema-compiler.s183.spec.ts

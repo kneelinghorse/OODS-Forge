@@ -552,7 +552,7 @@ describe('code.generate tool', () => {
     });
   });
 
-  it('B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible', async () => {
+  it('B-11 returns exact OODS-N015 only for the unready component while retaining the now-ready TagInput input', async () => {
     const result = await handle({
       framework: 'react',
       schema: {
@@ -589,12 +589,6 @@ describe('code.generate tool', () => {
           message: 'Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.',
           nodeId: 'archive-summary',
           component: 'ArchiveSummary',
-        },
-        {
-          code: 'OODS-N015',
-          message: 'Component TagInput is not emission-eligible for react; evidence state: implemented-unverified.',
-          nodeId: 'tag-input',
-          component: 'TagInput',
         },
       ],
       meta: {

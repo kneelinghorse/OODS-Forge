@@ -64,16 +64,16 @@ describe("Sprint 177 prose truth carriers", () => {
     const normalizedProgram = productProgram.replace(/\s+/g, " ");
     const normalizedIndex = roadmapIndex.replace(/\s+/g, " ");
 
-    // Sprint 185's build handoff keeps the program Active and preserves its
-    // lock authority while requiring a separate review (rule #1690).
+    // Sprint 186 keeps the program Active, retains the independently reviewed
+    // Sprint 185 history, and requires its own review (rule #1690).
     expect(near).toContain(
-      "**Status:** ACTIVE — Sprint 185 BUILT, REVIEW PENDING; program decision `#1652`",
+      "**Status:** ACTIVE — program decision `#1652`; Sprint 186 build closeout in progress; independent review pending",
     );
     expect(normalizedNear).toContain(
       "locked by decision `#1724` at build base `1118f436`",
     );
     expect(normalizedNear).toContain(
-      "The builder leaves the sprint Active with `builderSelfCertified:false` and `separateReviewRequired:true`.",
+      "The sprint remains Active and `builderSelfCertified` remains false. An independent review decides certification and sprint closure.",
     );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
@@ -103,7 +103,7 @@ describe("Sprint 177 prose truth carriers", () => {
       "Numbered because Sprint 184 is independently reviewed and closed.",
     );
     expect(normalizedNear).toContain(
-      "Number this sprint only after Sprint 185 receives independent review.",
+      "**Built and independently reviewed 2026-09-06; CERTIFIED and CLOSED**",
     );
 
     expect(productProgram).toContain(

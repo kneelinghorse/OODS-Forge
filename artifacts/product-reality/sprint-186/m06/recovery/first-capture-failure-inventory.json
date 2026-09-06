@@ -1,0 +1,806 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s186-m06",
+  "kind": "first-capture-failure-inventory",
+  "measuredHead": "9018fd1201d9065e635b468752bbe7f0e889e1c2",
+  "status": "recorded",
+  "durationField": "Values copied unchanged from each raw assertion duration field (milliseconds).",
+  "sources": [
+    {
+      "suite": "mcp-server",
+      "measuredHead": "9018fd1201d9065e635b468752bbe7f0e889e1c2",
+      "suiteReceipt": "artifacts/product-reality/sprint-186/m06/four-suite-closeout-attempt-1/run-1/mcp-server.json",
+      "rawVitest": "artifacts/product-reality/sprint-186/m06/four-suite-closeout-attempt-1/run-1/mcp-server.vitest.json",
+      "rawLog": "artifacts/product-reality/sprint-186/m06/four-suite-closeout-attempt-1/run-1/mcp-server.log",
+      "rawVitestSha256": "854b31783814e0179f11179452d56b1f3123029557de3681776652120c57eb9b",
+      "originalExternalRawVitest": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s186-closeout-ne52plgt/four-suite-closeout/run-1/mcp-server.vitest.json",
+      "retainedBytesMatchOriginal": true,
+      "exitCode": 1,
+      "literalCommand": "pnpm --filter @oods/mcp-server exec vitest run",
+      "reportedCounts": {
+        "numTotalTestSuites": 1307,
+        "numPassedTestSuites": 1297,
+        "numFailedTestSuites": 10,
+        "numPendingTestSuites": 0,
+        "numTotalTests": 5754,
+        "numPassedTests": 5731,
+        "numFailedTests": 7,
+        "numPendingTests": 16,
+        "numTodoTests": 0
+      },
+      "observedAssertionCounts": {
+        "failed": 7,
+        "passed": 5731,
+        "skipped": 16
+      }
+    },
+    {
+      "suite": "root-core",
+      "measuredHead": "9018fd1201d9065e635b468752bbe7f0e889e1c2",
+      "suiteReceipt": "artifacts/product-reality/sprint-186/m06/four-suite-closeout-attempt-1/run-1/root-core.json",
+      "rawVitest": "artifacts/product-reality/sprint-186/m06/four-suite-closeout-attempt-1/run-1/root-core.vitest.json",
+      "rawLog": "artifacts/product-reality/sprint-186/m06/four-suite-closeout-attempt-1/run-1/root-core.log",
+      "rawVitestSha256": "88f2fcb8196fb99b217411f024095564ef95e45ada2bd6c5ae305d6ac794e7b1",
+      "originalExternalRawVitest": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s186-closeout-ne52plgt/four-suite-closeout/run-1/root-core.vitest.json",
+      "retainedBytesMatchOriginal": true,
+      "exitCode": 1,
+      "literalCommand": "pnpm exec vitest run --project core",
+      "reportedCounts": {
+        "numTotalTestSuites": 2000,
+        "numPassedTestSuites": 1980,
+        "numFailedTestSuites": 20,
+        "numPendingTestSuites": 0,
+        "numTotalTests": 6097,
+        "numPassedTests": 6067,
+        "numFailedTests": 14,
+        "numPendingTests": 16,
+        "numTodoTests": 0
+      },
+      "observedAssertionCounts": {
+        "failed": 14,
+        "passed": 6067,
+        "skipped": 16
+      }
+    }
+  ],
+  "summary": {
+    "nativeFailures": 7,
+    "rootFailures": 14,
+    "failingAssertionsAcrossBothRuns": 21,
+    "pairedRootDeadlineFiles": 5,
+    "pairedAssertions": 32,
+    "pairedNativePassed": 32,
+    "pairedRootPassed": 25,
+    "pairedRootFailed": 7
+  },
+  "failingAssertions": [
+    {
+      "suite": "mcp-server",
+      "file": "packages/mcp-server/test/contracts/code.generate-golden.spec.ts",
+      "test": "code.generate golden readiness outcomes matches react OODS-N015 golden outcome for dashboard-page",
+      "status": "failed",
+      "duration": 46.99691599999994,
+      "failureSummary": [
+        "AssertionError: expected { status: 'ok', …(8) } to deeply equal { status: 'error', …(8) }"
+      ],
+      "rawAssertionPointer": "/testResults/136/assertionResults/0"
+    },
+    {
+      "suite": "mcp-server",
+      "file": "packages/mcp-server/test/contracts/code.generate-golden.spec.ts",
+      "test": "code.generate golden readiness outcomes matches vue OODS-N015 golden outcome for dashboard-page",
+      "status": "failed",
+      "duration": 6.904084000000012,
+      "failureSummary": [
+        "AssertionError: expected { Object (status, framework, ...) } to deeply equal { status: 'error', …(8) }"
+      ],
+      "rawAssertionPointer": "/testResults/136/assertionResults/1"
+    },
+    {
+      "suite": "mcp-server",
+      "file": "packages/mcp-server/test/product-reality/packed-consumers.s182.spec.ts",
+      "test": "Sprint 182 M04 packed generated consumers B-13 resolves declared dependencies and shared CSS in a clean production build",
+      "status": "failed",
+      "duration": 62399.235625,
+      "failureSummary": [
+        "Error: react showcase structure differs: [{\"surface\":\"bannerTitle\",\"property\":\"text/fontWeight\",\"expected\":{\"text\":\"Payment failed\",\"fontWeight\":\"700\"},\"received\":{\"text\":\"Payment failed\",\"fontWeight\":\"600\"}}]"
+      ],
+      "rawAssertionPointer": "/testResults/226/assertionResults/1"
+    },
+    {
+      "suite": "mcp-server",
+      "file": "packages/mcp-server/test/product-reality/saved-schema-compiler.s183.spec.ts",
+      "test": "Sprint 183 M04 saved-schema compiler measures current live readiness separately from the frozen Sprint 183 baseline",
+      "status": "failed",
+      "duration": 7.346082999999908,
+      "failureSummary": [
+        "AssertionError: user-form-showcase/react: expected false to be true // Object.is equality"
+      ],
+      "rawAssertionPointer": "/testResults/242/assertionResults/1"
+    },
+    {
+      "suite": "mcp-server",
+      "file": "packages/mcp-server/test/product-reality/saved-schema-compiler.s183.spec.ts",
+      "test": "Sprint 183 M04 saved-schema compiler turns a fallback-for-a-current-typed-gap mutation red",
+      "status": "failed",
+      "duration": 99.61295900000005,
+      "failureSummary": [
+        "AssertionError: expected [Function] to throw error matching /returned a generated artifact.*typed…/i but got 'react generation failed: [{\"code\":\"OO…'"
+      ],
+      "rawAssertionPointer": "/testResults/242/assertionResults/3"
+    },
+    {
+      "suite": "mcp-server",
+      "file": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+      "test": "Sprint 183 M02 typed action protocol Vue TypeScript rejects each individually omitted domain action",
+      "status": "failed",
+      "duration": 180362.612583,
+      "failureSummary": [
+        "Error: STACK_TRACE_ERROR"
+      ],
+      "rawAssertionPointer": "/testResults/249/assertionResults/29"
+    },
+    {
+      "suite": "mcp-server",
+      "file": "packages/mcp-server/src/tools/__tests__/code.generate.test.ts",
+      "test": "code.generate tool B-11 returns exact OODS-N015 with no source for a known target that is not emission-eligible",
+      "status": "failed",
+      "duration": 10.633041999999932,
+      "failureSummary": [
+        "AssertionError: expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }"
+      ],
+      "rawAssertionPointer": "/testResults/287/assertionResults/12"
+    },
+    {
+      "suite": "root-core",
+      "file": "tests/e2e/schema-ref-pipeline.test.ts",
+      "test": "schemaRef E2E pipeline compose → validate → render accepts schemaRef and code.generate preserves target readiness",
+      "status": "failed",
+      "duration": 553.3525840000002,
+      "failureSummary": [
+        "AssertionError: expected [ 'react', …(2) ] to deeply equal ArrayContaining{…}"
+      ],
+      "rawAssertionPointer": "/testResults/75/assertionResults/0"
+    },
+    {
+      "suite": "root-core",
+      "file": "tests/verification/how-forge-works.contract.test.ts",
+      "test": "how Forge works narrative truth keeps Sprint-182 product-reality claims evidence-scoped and review-gated",
+      "status": "failed",
+      "duration": 453.80404199999975,
+      "failureSummary": [
+        "AssertionError: expected '# Near Roadmap\\n\\n**Status:** ACTIVE …' to contain 'Versioned artifacts, typed actions an…'"
+      ],
+      "rawAssertionPointer": "/testResults/152/assertionResults/4"
+    },
+    {
+      "suite": "root-core",
+      "file": "tests/verification/s177-prose-carriers.contract.test.ts",
+      "test": "Sprint 177 prose truth carriers keeps current roadmap authority separate from frozen history and sibling execution",
+      "status": "failed",
+      "duration": 331.6250829999999,
+      "failureSummary": [
+        "AssertionError: expected '# Near Roadmap\\n\\n**Status:** ACTIVE …' to contain '**Status:** ACTIVE — Sprint 185 BUILT…'"
+      ],
+      "rawAssertionPointer": "/testResults/156/assertionResults/3"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+      "test": "brand.intake s181 advertised dry-run contract spawns dist/index.js, returns the full inline receipt, and leaves the review-kit tree byte-identical",
+      "status": "failed",
+      "duration": 15642.685916999999,
+      "failureSummary": [
+        "Error: Timed out waiting for brand.intake stdio responses. stderr="
+      ],
+      "rawAssertionPointer": "/testResults/361/assertionResults/4"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+      "test": "brand.intake s181 advertised dry-run contract B-09 rejects apply:true and consumer-local paths at index-level AJV before the handler",
+      "status": "failed",
+      "duration": 15458.510958000003,
+      "failureSummary": [
+        "Error: Timed out waiting for brand.intake stdio responses. stderr="
+      ],
+      "rawAssertionPointer": "/testResults/361/assertionResults/5"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/contracts/code.generate-golden.spec.ts",
+      "test": "code.generate golden readiness outcomes matches react OODS-N015 golden outcome for dashboard-page",
+      "status": "failed",
+      "duration": 196.14766700000018,
+      "failureSummary": [
+        "AssertionError: expected { status: 'ok', …(8) } to deeply equal { status: 'error', …(8) }"
+      ],
+      "rawAssertionPointer": "/testResults/363/assertionResults/0"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/contracts/code.generate-golden.spec.ts",
+      "test": "code.generate golden readiness outcomes matches vue OODS-N015 golden outcome for dashboard-page",
+      "status": "failed",
+      "duration": 14.154042000000118,
+      "failureSummary": [
+        "AssertionError: expected { Object (status, framework, ...) } to deeply equal { status: 'error', …(8) }"
+      ],
+      "rawAssertionPointer": "/testResults/363/assertionResults/1"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+      "test": "s181 portable-runtime publish boundary B-12 starts from dist plus package metadata only and answers degraded health without planning data",
+      "status": "failed",
+      "duration": 21517.742667000002,
+      "failureSummary": [
+        "Error: Timed out waiting for staged health response. stderr="
+      ],
+      "rawAssertionPointer": "/testResults/382/assertionResults/1"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+      "test": "s181 portable-runtime publish boundary B-12 proves the relocated schema is load-bearing by deleting it from the staged dist",
+      "status": "failed",
+      "duration": 29496.071167000002,
+      "failureSummary": [
+        "AssertionError: expected null to be 1 // Object.is equality"
+      ],
+      "rawAssertionPointer": "/testResults/382/assertionResults/2"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts",
+      "test": "Sprint 185 live generated plan heading updates mounts real generated react and updates the read-only heading through its existing Textarea writer",
+      "status": "failed",
+      "duration": 22420.290541,
+      "failureSummary": [
+        "Error: STACK_TRACE_ERROR"
+      ],
+      "rawAssertionPointer": "/testResults/439/assertionResults/0"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+      "test": "Sprint 184 M07 reconnect derivation and receipt validation retains a machine-checked disposition for two sends and the explicitly retired archived consumer",
+      "status": "failed",
+      "duration": 38190.087958000004,
+      "failureSummary": [
+        "Error: STACK_TRACE_ERROR"
+      ],
+      "rawAssertionPointer": "/testResults/455/assertionResults/4"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/product-reality/saved-schema-compiler.s183.spec.ts",
+      "test": "Sprint 183 M04 saved-schema compiler measures current live readiness separately from the frozen Sprint 183 baseline",
+      "status": "failed",
+      "duration": 387.7988749999986,
+      "failureSummary": [
+        "AssertionError: user-form-showcase/react: expected false to be true // Object.is equality"
+      ],
+      "rawAssertionPointer": "/testResults/460/assertionResults/1"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/product-reality/saved-schema-compiler.s183.spec.ts",
+      "test": "Sprint 183 M04 saved-schema compiler turns a fallback-for-a-current-typed-gap mutation red",
+      "status": "failed",
+      "duration": 3113.777167,
+      "failureSummary": [
+        "AssertionError: expected [Function] to throw error matching /returned a generated artifact.*typed…/i but got 'react generation failed: [{\"code\":\"OO…'"
+      ],
+      "rawAssertionPointer": "/testResults/460/assertionResults/3"
+    },
+    {
+      "suite": "root-core",
+      "file": "packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts",
+      "test": "dashboard.render Shape-B identity lifts (s180 m02) R-C: lifted cartesian and ECharts IR certify with the required operand shape and preserve contentHash parity",
+      "status": "failed",
+      "duration": 20368.703416,
+      "failureSummary": [
+        "Error: STACK_TRACE_ERROR"
+      ],
+      "rawAssertionPointer": "/testResults/490/assertionResults/2"
+    }
+  ],
+  "rootDeadlineCohort": {
+    "pairingKey": [
+      "repository-relative file",
+      "raw assertion fullName"
+    ],
+    "files": [
+      {
+        "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+        "assertions": 6,
+        "nativePassed": 6,
+        "rootPassed": 4,
+        "rootFailed": 2
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+        "assertions": 7,
+        "nativePassed": 7,
+        "rootPassed": 5,
+        "rootFailed": 2
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts",
+        "assertions": 2,
+        "nativePassed": 2,
+        "rootPassed": 1,
+        "rootFailed": 1
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "assertions": 13,
+        "nativePassed": 13,
+        "rootPassed": 12,
+        "rootFailed": 1
+      },
+      {
+        "file": "packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts",
+        "assertions": 4,
+        "nativePassed": 4,
+        "rootPassed": 3,
+        "rootFailed": 1
+      }
+    ],
+    "assertions": [
+      {
+        "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+        "test": "brand.intake s181 advertised dry-run contract B-07 keeps the engine request schema reference-identical to the input wire JSON",
+        "native": {
+          "status": "passed",
+          "duration": 0.8515840000000026,
+          "rawAssertionPointer": "/testResults/134/assertionResults/0"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 19.067667000000256,
+          "rawAssertionPointer": "/testResults/361/assertionResults/0"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+        "test": "brand.intake s181 advertised dry-run contract publishes a wire-valid dry-run example in the generated API reference",
+        "native": {
+          "status": "passed",
+          "duration": 51.262833,
+          "rawAssertionPointer": "/testResults/134/assertionResults/1"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 2144.7645840000005,
+          "rawAssertionPointer": "/testResults/361/assertionResults/1"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+        "test": "brand.intake s181 advertised dry-run contract receipts inline acceptance as preview-only, unapplied, uncreated, and memberful without filesystem writes",
+        "native": {
+          "status": "passed",
+          "duration": 16.37233299999997,
+          "rawAssertionPointer": "/testResults/134/assertionResults/2"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 363.7749589999985,
+          "rawAssertionPointer": "/testResults/361/assertionResults/2"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+        "test": "brand.intake s181 advertised dry-run contract returns a typed unresolved-content-reference outcome and one reason per submitted member",
+        "native": {
+          "status": "passed",
+          "duration": 12.312999999999988,
+          "rawAssertionPointer": "/testResults/134/assertionResults/3"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 320.4835000000003,
+          "rawAssertionPointer": "/testResults/361/assertionResults/3"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+        "test": "brand.intake s181 advertised dry-run contract spawns dist/index.js, returns the full inline receipt, and leaves the review-kit tree byte-identical",
+        "native": {
+          "status": "passed",
+          "duration": 899.7528750000001,
+          "rawAssertionPointer": "/testResults/134/assertionResults/4"
+        },
+        "root": {
+          "status": "failed",
+          "duration": 15642.685916999999,
+          "rawAssertionPointer": "/testResults/361/assertionResults/4"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/brand.intake.s181.spec.ts",
+        "test": "brand.intake s181 advertised dry-run contract B-09 rejects apply:true and consumer-local paths at index-level AJV before the handler",
+        "native": {
+          "status": "passed",
+          "duration": 768.136667,
+          "rawAssertionPointer": "/testResults/134/assertionResults/5"
+        },
+        "root": {
+          "status": "failed",
+          "duration": 15458.510958000003,
+          "rawAssertionPointer": "/testResults/361/assertionResults/5"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+        "test": "s181 portable-runtime publish boundary keeps the runtime component schema byte-identical to the planning producer output",
+        "native": {
+          "status": "passed",
+          "duration": 4.021542000000011,
+          "rawAssertionPointer": "/testResults/155/assertionResults/0"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 53.78966700000001,
+          "rawAssertionPointer": "/testResults/382/assertionResults/0"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+        "test": "s181 portable-runtime publish boundary B-12 starts from dist plus package metadata only and answers degraded health without planning data",
+        "native": {
+          "status": "passed",
+          "duration": 1392.147875,
+          "rawAssertionPointer": "/testResults/155/assertionResults/1"
+        },
+        "root": {
+          "status": "failed",
+          "duration": 21517.742667000002,
+          "rawAssertionPointer": "/testResults/382/assertionResults/1"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+        "test": "s181 portable-runtime publish boundary B-12 proves the relocated schema is load-bearing by deleting it from the staged dist",
+        "native": {
+          "status": "passed",
+          "duration": 1071.9449169999998,
+          "rawAssertionPointer": "/testResults/155/assertionResults/2"
+        },
+        "root": {
+          "status": "failed",
+          "duration": 29496.071167000002,
+          "rawAssertionPointer": "/testResults/382/assertionResults/2"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+        "test": "s181 portable-runtime publish boundary allows declared-data provenance but forbids quoted cmos path segments in executable dist JavaScript",
+        "native": {
+          "status": "passed",
+          "duration": 39.148083999999926,
+          "rawAssertionPointer": "/testResults/155/assertionResults/3"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 826.5172089999978,
+          "rawAssertionPointer": "/testResults/382/assertionResults/3"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+        "test": "s181 portable-runtime publish boundary pins the Sprint-182 manifest-present structuredData, map, and registry products deterministically",
+        "native": {
+          "status": "passed",
+          "duration": 28.228207999999995,
+          "rawAssertionPointer": "/testResults/155/assertionResults/4"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 812.2784170000014,
+          "rawAssertionPointer": "/testResults/382/assertionResults/4"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+        "test": "s181 portable-runtime publish boundary B-19 keeps the runtime data schema out of generated.ts",
+        "native": {
+          "status": "passed",
+          "duration": 3.1544589999998607,
+          "rawAssertionPointer": "/testResults/155/assertionResults/5"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 117.68074999999953,
+          "rawAssertionPointer": "/testResults/382/assertionResults/5"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts",
+        "test": "s181 portable-runtime publish boundary derives the adapter wire version from package.json and no longer stages planning files for fresh installs",
+        "native": {
+          "status": "passed",
+          "duration": 325.291792,
+          "rawAssertionPointer": "/testResults/155/assertionResults/6"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 3374.801625,
+          "rawAssertionPointer": "/testResults/382/assertionResults/6"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts",
+        "test": "Sprint 185 live generated plan heading updates mounts real generated react and updates the read-only heading through its existing Textarea writer",
+        "native": {
+          "status": "passed",
+          "duration": 1011.892208,
+          "rawAssertionPointer": "/testResults/214/assertionResults/0"
+        },
+        "root": {
+          "status": "failed",
+          "duration": 22420.290541,
+          "rawAssertionPointer": "/testResults/439/assertionResults/0"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts",
+        "test": "Sprint 185 live generated plan heading updates mounts real generated vue and updates the read-only heading through its existing Textarea writer",
+        "native": {
+          "status": "passed",
+          "duration": 855.206083,
+          "rawAssertionPointer": "/testResults/214/assertionResults/1"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 15919.630665999997,
+          "rawAssertionPointer": "/testResults/439/assertionResults/1"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation re-derives all ten Sprint 183 advertised movers and exposes the catalog schema omitted from the prior notice",
+        "native": {
+          "status": "passed",
+          "duration": 1442.9118330000001,
+          "rawAssertionPointer": "/testResults/237/assertionResults/0"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 7522.079500000001,
+          "rawAssertionPointer": "/testResults/455/assertionResults/0"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation independently compares the M03, M04, and M05 records with their committed operands and recorded scopes",
+        "native": {
+          "status": "passed",
+          "duration": 377.83970899999986,
+          "rawAssertionPointer": "/testResults/237/assertionResults/1"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 4748.134666,
+          "rawAssertionPointer": "/testResults/455/assertionResults/1"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation derives the eight M06 movers and the 48-path Sprint 184 union from execution",
+        "native": {
+          "status": "passed",
+          "duration": 266.77508400000033,
+          "rawAssertionPointer": "/testResults/237/assertionResults/2"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 2977.0190409999996,
+          "rawAssertionPointer": "/testResults/455/assertionResults/2"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation builds exactly three complete request bodies and rejects missing, duplicate, or rewritten receipts",
+        "native": {
+          "status": "passed",
+          "duration": 3.2772500000000946,
+          "rawAssertionPointer": "/testResults/237/assertionResults/3"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 68.31224999999904,
+          "rawAssertionPointer": "/testResults/455/assertionResults/3"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation retains a machine-checked disposition for two sends and the explicitly retired archived consumer",
+        "native": {
+          "status": "passed",
+          "duration": 2436.937,
+          "rawAssertionPointer": "/testResults/237/assertionResults/4"
+        },
+        "root": {
+          "status": "failed",
+          "duration": 38190.087958000004,
+          "rawAssertionPointer": "/testResults/455/assertionResults/4"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation rejects reordered consumers, invalid delivery IDs, and a fabricated retired-consumer ID",
+        "native": {
+          "status": "passed",
+          "duration": 11.990249999999833,
+          "rawAssertionPointer": "/testResults/237/assertionResults/5"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 45.31654100000014,
+          "rawAssertionPointer": "/testResults/455/assertionResults/5"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation rejects request hashes that do not bind each active destination to its exact generated body",
+        "native": {
+          "status": "passed",
+          "duration": 2.6087500000003274,
+          "rawAssertionPointer": "/testResults/237/assertionResults/6"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 36.46308300000237,
+          "rawAssertionPointer": "/testResults/455/assertionResults/6"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation rejects a rewritten retirement, derivation, summary, or implementation-head plan binding",
+        "native": {
+          "status": "passed",
+          "duration": 1275.4764169999999,
+          "rawAssertionPointer": "/testResults/237/assertionResults/7"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 18170.472167,
+          "rawAssertionPointer": "/testResults/455/assertionResults/7"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation rejects drift from the immutable plan or a supersession broader than the retired destination",
+        "native": {
+          "status": "passed",
+          "duration": 3.460624999999709,
+          "rawAssertionPointer": "/testResults/237/assertionResults/8"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 29.89716700000281,
+          "rawAssertionPointer": "/testResults/455/assertionResults/8"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation derives two failed delivery attempts without leaving an unresolved destination",
+        "native": {
+          "status": "passed",
+          "duration": 1.4712499999995998,
+          "rawAssertionPointer": "/testResults/237/assertionResults/9"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 7.169042000008631,
+          "rawAssertionPointer": "/testResults/455/assertionResults/9"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation derives the summary from exact attempt semantics and rejects legacy or surplus evidence fields",
+        "native": {
+          "status": "passed",
+          "duration": 1.5520839999999225,
+          "rawAssertionPointer": "/testResults/237/assertionResults/10"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 26.10945800000627,
+          "rawAssertionPointer": "/testResults/455/assertionResults/10"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation rejects stale blocked semantics after the product-owner retirement decision",
+        "native": {
+          "status": "passed",
+          "duration": 0.4345419999999649,
+          "rawAssertionPointer": "/testResults/237/assertionResults/11"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 2.0874580000090646,
+          "rawAssertionPointer": "/testResults/455/assertionResults/11"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/product-reality/reconnect.s184.spec.ts",
+        "test": "Sprint 184 M07 reconnect derivation and receipt validation validates the committed implementation-head notice record once the sends are recorded",
+        "native": {
+          "status": "passed",
+          "duration": 1.2214999999996508,
+          "rawAssertionPointer": "/testResults/237/assertionResults/12"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 0.7222080000065034,
+          "rawAssertionPointer": "/testResults/455/assertionResults/12"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts",
+        "test": "dashboard.render Shape-B identity lifts (s180 m02) R-A: the call-level flag emits one viz.render identity per successful chart and opt-out emits neither lift",
+        "native": {
+          "status": "passed",
+          "duration": 23.717874999999935,
+          "rawAssertionPointer": "/testResults/274/assertionResults/0"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 692.5818339999969,
+          "rawAssertionPointer": "/testResults/490/assertionResults/0"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts",
+        "test": "dashboard.render Shape-B identity lifts (s180 m02) R-A mutant: changing one dataset moves only its panel identity and the dashboard identity",
+        "native": {
+          "status": "passed",
+          "duration": 2.405834000000027,
+          "rawAssertionPointer": "/testResults/274/assertionResults/1"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 86.43924999999945,
+          "rawAssertionPointer": "/testResults/490/assertionResults/1"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts",
+        "test": "dashboard.render Shape-B identity lifts (s180 m02) R-C: lifted cartesian and ECharts IR certify with the required operand shape and preserve contentHash parity",
+        "native": {
+          "status": "passed",
+          "duration": 759.5097920000001,
+          "rawAssertionPointer": "/testResults/274/assertionResults/2"
+        },
+        "root": {
+          "status": "failed",
+          "duration": 20368.703416,
+          "rawAssertionPointer": "/testResults/490/assertionResults/2"
+        }
+      },
+      {
+        "file": "packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts",
+        "test": "dashboard.render Shape-B identity lifts (s180 m02) R-C projected-paint mutant: changing the lifted IR breaks certify hash parity",
+        "native": {
+          "status": "passed",
+          "duration": 52.594957999999906,
+          "rawAssertionPointer": "/testResults/274/assertionResults/3"
+        },
+        "root": {
+          "status": "passed",
+          "duration": 681.0324580000015,
+          "rawAssertionPointer": "/testResults/490/assertionResults/3"
+        }
+      }
+    ],
+    "interpretation": "These are paired observations at the same captured source head; native passes do not replace the root failures or establish their cause.",
+    "nativeSourceSuite": "mcp-server",
+    "rootSourceSuite": "root-core"
+  },
+  "sourceLinking": "Resolve each assertion pointer against sources[matching suite].rawVitest; paired cohort native/root suite keys are recorded on rootDeadlineCohort."
+}

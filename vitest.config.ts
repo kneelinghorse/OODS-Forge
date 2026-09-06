@@ -135,6 +135,14 @@ export default defineConfig({
           'packages/mcp-server/test/product-reality/state-axis.s184.spec.ts',
           'packages/mcp-server/test/product-reality/closeout.s184.spec.ts',
           'packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts',
+          // s186 recovery: all 32 assertions passed natively and in individual
+          // root runs; parallel root deadlines are retained in m06/recovery/
+          // root-isolation.json. Keep these unchanged proofs in serial coverage.
+          'packages/mcp-server/test/contracts/brand.intake.s181.spec.ts',
+          'packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts',
+          'packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts',
+          'packages/mcp-server/test/product-reality/reconnect.s184.spec.ts',
+          'packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts',
         ],
         environment: 'node'
       }
