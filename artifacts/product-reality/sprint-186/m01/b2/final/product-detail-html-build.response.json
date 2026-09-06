@@ -1,0 +1,96 @@
+{
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": true,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "html",
+        "resolved": "html",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity"
+    ],
+    "notChecked": [
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy",
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": []
+    }
+  },
+  "compose": {
+    "object": "Product",
+    "context": "detail",
+    "layout": "detail",
+    "componentCount": 10
+  },
+  "pipeline": {
+    "steps": [
+      "compose",
+      "validate",
+      "render",
+      "codegen"
+    ],
+    "duration": 276,
+    "stepLatency": {
+      "compose": 246,
+      "validate": 19,
+      "render": 8,
+      "codegen": 1
+    }
+  },
+  "schemaRef": "compose-17e09b28",
+  "schemaRefCreatedAt": "2026-09-06T15:36:23.133Z",
+  "schemaRefExpiresAt": "2026-09-06T16:06:23.133Z",
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "render": {
+    "html": "<!DOCTYPE html>\n<html lang=\"en\" data-theme=\"light\" data-brand=\"default\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>OODS Preview</title>\n  <!-- tokens.css omitted (compact mode) — use tokens.build to obtain -->\n  <style data-source=\"components\">\n#oods-preview-root {\n  margin: 0;\n  padding: var(--ref-space-inset-default, 24px);\n  min-height: 100dvh;\n  box-sizing: border-box;\n  background: var(--sys-surface-canvas, var(--ref-color-neutral-50, #f8fafc));\n  color: var(--sys-text-primary, var(--ref-color-neutral-900, #0f172a));\n  font-family: var(--ref-typography-families-sans, Inter, \"Helvetica Neue\", Arial, sans-serif);\n}\n[data-oods-component] {\n  box-sizing: border-box;\n}\n[data-oods-component=\"Button\"] {\n  border: var(--ref-border-width-hairline, 1px) solid var(--sys-surface-interactive-primary-default, var(--ref-color-primary-500, #4f46e5));\n  border-radius: var(--ref-border-radius-md, 12px);\n  background: var(--sys-surface-interactive-primary-default, var(--ref-color-primary-500, #4f46e5));\n  color: var(--sys-text-on-interactive, var(--ref-color-neutral-0, #ffffff));\n  font-family: inherit;\n  padding: var(--oods-size-spacing-sm, 0.5rem) var(--oods-size-spacing-md, 0.875rem);\n  font-size: var(--oods-size-font-md, 16px);\n}\n[data-oods-component=\"Card\"] {\n  border: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  border-radius: var(--ref-border-radius-md, 12px);\n  background: var(--sys-surface-raised, var(--ref-color-neutral-0, #ffffff));\n  padding: var(--ref-space-inset-compact, 8px);\n}\n[data-oods-component=\"Badge\"] {\n  display: inline-flex;\n  border-radius: var(--ref-border-radius-pill, 999px);\n  padding: 0.125rem 0.5rem;\n  background: var(--sys-status-info-surface, var(--ref-color-info-100, #eef2ff));\n}\n[data-oods-component=\"Banner\"] {\n  border-radius: var(--ref-border-radius-md, 12px);\n  border-left: 4px solid var(--sys-status-info-border, var(--ref-color-info-700, #2563eb));\n  padding: var(--ref-space-inset-compact, 8px);\n  background: var(--sys-status-info-surface, var(--ref-color-info-100, #eff6ff));\n}\n[data-oods-component=\"Table\"] {\n  width: 100%;\n  border-collapse: collapse;\n}\n[data-oods-component=\"Table\"] th,\n[data-oods-component=\"Table\"] td {\n  border-bottom: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  text-align: left;\n  padding: 0.5rem;\n}\n[data-oods-component=\"Tabs\"] [role=\"tablist\"] {\n  display: flex;\n  gap: 0.5rem;\n  margin-bottom: 0.5rem;\n}\n[data-sidebar-aside=\"true\"] {\n  border-left: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  padding-left: var(--ref-space-inset-compact, 8px);\n}\n[data-oods-surface=\"inverse\"] {\n  background: var(--sys-surface-inverse, var(--ref-color-neutral-900, #0f172a));\n  color: var(--sys-text-inverse, var(--ref-color-neutral-0, #ffffff));\n}\n  </style>\n</head>\n<body data-theme=\"light\" data-brand=\"default\">\n  <main id=\"oods-preview-root\"><div id=\"screen-detail-13\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"screen-detail-13\" data-layout=\"stack\"><div id=\"detail-header-1\" style=\"display:flex;flex-direction:row;justify-content:space-between;padding:var(--sys-space-inset-default, var(--ref-space-inset-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-header-1\" data-layout=\"inline\"><div id=\"slot-header-2\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-header-2\" data-layout=\"stack\" data-oods-label=\"header\"><header id=\"ve-header-24\" data-oods-component=\"DetailHeader\" data-oods-node-id=\"ve-header-24\" data-prop-title-field=\"label\" data-prop-subtitle-field=\"description\" data-prop-heading-level=\"1\"><h2>Details</h2></header><div id=\"ve-header-25\" role=\"log\" data-oods-component=\"StatusTimeline\" data-oods-node-id=\"ve-header-25\" data-timeline-type=\"status\" data-prop-field=\"status\" data-prop-history-field=\"state_history\" data-prop-states-parameter=\"states\" data-prop-show-actor-id=\"true\" data-prop-show-reason=\"true\"><h3 data-timeline-title=\"true\">Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity&#39;s current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n</h3><ol data-timeline-events=\"true\"><li data-timeline-empty=\"true\">No events</li></ol></div><div id=\"ve-header-27\" data-oods-component=\"SearchInput\" data-oods-node-id=\"ve-header-27\" data-behavioral=\"search\" data-prop-placeholder-parameter=\"placeholder\" data-prop-clearable-parameter=\"clearable\" data-prop-label=\"The current search query string entered by the user.\" role=\"search\"><input type=\"search\" placeholder=\"Enter searchQuery\" value=\"\" aria-label=\"Enter searchQuery\" /></div><section id=\"ve-header-29\" data-oods-component=\"PriceSummary\" data-oods-node-id=\"ve-header-29\" data-summary-type=\"price\" data-prop-amount-field=\"unit_amount_cents\" data-prop-currency-field=\"currency\" data-prop-model-field=\"pricing_model\" data-prop-interval-field=\"billing_interval\" data-prop-tax-behavior-field=\"tax_behavior\"><h3 data-summary-title=\"true\">Price Summary</h3><dl><div data-summary-item=\"true\"><dt>Amount</dt><dd>unit_amount_cents</dd></div><div data-summary-item=\"true\"><dt>Currency</dt><dd>currency</dd></div><div data-summary-item=\"true\"><dt>Model</dt><dd>pricing_model</dd></div><div data-summary-item=\"true\"><dt>Interval</dt><dd>billing_interval</dd></div></dl></section></div></div><article id=\"detail-body-10\" style=\"align-items:start;display:grid;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default));grid-template-columns:minmax(0, 1fr) minmax(16rem, 24rem)\" data-oods-component=\"Card\" data-oods-node-id=\"detail-body-10\" data-layout=\"sidebar\"><div data-sidebar-main=\"true\"><section id=\"detail-tabs-9\" data-oods-component=\"Tabs\" data-oods-node-id=\"detail-tabs-9\"><div id=\"detail-tab-panel-3\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-3\" data-layout=\"stack\" data-prop-label=\"Content\"><div id=\"slot-tab-0-4\" role=\"log\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-tight, var(--ref-space-cluster-tight))\" data-oods-component=\"StatusTimeline\" data-oods-node-id=\"slot-tab-0-4\" data-layout=\"stack\" data-oods-label=\"tab-0\" data-timeline-type=\"status\"><h3 data-timeline-title=\"true\">tab-0</h3><ol data-timeline-events=\"true\"><p id=\"pg-status-timeline-31\" aria-description=\"Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity&#39;s current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\" data-bind=\"status\" data-oods-component=\"Text\" data-oods-node-id=\"pg-status-timeline-31\" data-prop-field=\"status\">[status]</p><p id=\"pg-status-timeline-32\" aria-description=\"Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n\" data-bind=\"allowedTransitions\" data-oods-component=\"Text\" data-oods-node-id=\"pg-status-timeline-32\" data-prop-field=\"allowed_transitions\">[allowedTransitions]</p></ol></div></div><div id=\"detail-tab-panel-5\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-5\" data-layout=\"stack\" data-prop-label=\"Status &amp; History\"><article id=\"slot-tab-1-6\" data-oods-component=\"Card\" data-oods-node-id=\"slot-tab-1-6\" data-oods-label=\"tab-1\"></article></div><div id=\"detail-tab-panel-7\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-7\" data-layout=\"stack\" data-prop-label=\"Overview\"><p id=\"slot-tab-2-8\" aria-description=\"Timestamp recording when the entity was first created.\" data-oods-component=\"Text\" data-oods-node-id=\"slot-tab-2-8\" data-oods-label=\"tab-2\" data-prop-field=\"created_at\">tab-2</p></div><div id=\"detail-tab-panel-14\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-14\" data-layout=\"stack\" data-prop-label=\"Behavior\"><article id=\"slot-tab-3-15\" data-oods-component=\"Card\" data-oods-node-id=\"slot-tab-3-15\" data-oods-label=\"tab-3\"></article></div><div id=\"detail-tab-panel-16\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-16\" data-layout=\"stack\" data-prop-label=\"Billing\"><div id=\"slot-tab-4-17\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-tab-4-17\" data-oods-label=\"tab-4\" data-layout=\"stack\"></div></div><div id=\"detail-tab-panel-18\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-18\" data-layout=\"stack\" data-prop-label=\"Settings\"><div id=\"slot-tab-5-19\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-tab-5-19\" data-oods-label=\"tab-5\" data-layout=\"stack\"></div></div><div id=\"detail-tab-panel-20\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-20\" data-layout=\"stack\" data-prop-label=\"Pricing\"><article id=\"slot-tab-6-21\" data-oods-component=\"Card\" data-oods-node-id=\"slot-tab-6-21\" data-oods-label=\"tab-6\"></article></div><div id=\"detail-tab-panel-22\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-22\" data-layout=\"stack\" data-prop-label=\"Details\"><article id=\"slot-tab-7-23\" data-oods-component=\"Card\" data-oods-node-id=\"slot-tab-7-23\" data-oods-label=\"tab-7\"></article></div></section></div><aside data-sidebar-aside=\"true\"><div id=\"detail-meta-11\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-tight, var(--ref-space-cluster-tight));padding:var(--sys-space-inset-default, var(--ref-space-inset-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-meta-11\" data-layout=\"stack\"><div id=\"slot-metadata-12\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-metadata-12\" data-layout=\"stack\" data-oods-label=\"metadata\"><section id=\"ve-metadata-26\" data-oods-component=\"ClassificationPanel\" data-oods-node-id=\"ve-metadata-26\" data-panel-type=\"classification\" data-prop-categories-field=\"categories\" data-prop-tags-field=\"tags\" data-prop-metadata-field=\"classification_metadata\" data-prop-mode-parameter=\"classification_mode\"><header data-panel-header=\"true\"><h3>Classification</h3></header><div data-panel-content=\"true\"></div></section><aside id=\"ve-metadata-28\" data-oods-component=\"FilterPanel\" data-oods-node-id=\"ve-metadata-28\" data-behavioral=\"filter\" data-filter-mode=\"immediate\" data-prop-field=\"filters\" data-prop-active-field=\"activeFilters\" data-prop-mode-parameter=\"filterMode\" data-prop-collapsible-parameter=\"collapsible\" role=\"region\" aria-label=\"Filters\"></aside></div></div></aside></article></div></main>\n</body>\n</html>",
+    "tokenCssRef": "tokens.build",
+    "meta": {
+      "status": "ok",
+      "warnings": 0,
+      "errors": 0,
+      "format": "document",
+      "strict": false,
+      "validationMeta": {
+        "screenCount": 1,
+        "nodeCount": 31
+      }
+    }
+  },
+  "error": {
+    "step": "codegen",
+    "code": "OODS-V007",
+    "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+  }
+}

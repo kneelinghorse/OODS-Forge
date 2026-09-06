@@ -82,6 +82,15 @@ describe('Error Registry', () => {
     });
   });
 
+  it('registers unavailable HTML Tailwind output as a non-retryable target gap', () => {
+    expect(getDefinition('OODS-N018')).toEqual({
+      code: 'OODS-N018',
+      category: 'not_found',
+      message: 'HTML Tailwind styling unavailable',
+      retryable: false,
+    });
+  });
+
   // ── isRetryable ────────────────────────────────────────────────────────
   it('returns true for retryable codes', () => {
     expect(isRetryable('OODS-R001')).toBe(true);   // rate limit

@@ -1,0 +1,69 @@
+started=2026-09-06T17:50:31.507Z
+command=["/opt/homebrew/Cellar/node/24.6.0/bin/node","scripts/product-reality/verify-readiness-refs.mjs","--output","/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/artifacts/product-reality/sprint-186/m05/mutation/vue-TemplatePicker/selected-red-readiness.json"]
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 514,
+    "classA": 430,
+    "classB": 84
+  },
+  "totals": {
+    "references": 514,
+    "classA": 430,
+    "classB": 84,
+    "resolved": 512
+  },
+  "targets": {
+    "react": {
+      "rows": 42,
+      "references": 252,
+      "classA": 210,
+      "classB": 42,
+      "resolved": 252
+    },
+    "vue": {
+      "rows": 42,
+      "references": 262,
+      "classA": 220,
+      "classB": 42,
+      "resolved": 260
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 84,
+    "targetImplementation": 84,
+    "packageExport": 84,
+    "publicDeclaration": 84,
+    "dependencyClosure": 84,
+    "frameworkScenario": 94
+  },
+  "failures": [
+    {
+      "target": "vue",
+      "componentId": "TemplatePicker",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-vue/src/index.ts#TemplatePicker",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "vue",
+      "componentId": "TemplatePicker",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-vue/dist/index.d.ts#TemplatePicker",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}
+
+
+
+exit=1 signal=none

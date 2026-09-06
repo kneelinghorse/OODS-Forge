@@ -1,5 +1,6 @@
 import { canonicalize, sha256 } from '@oods/artifacts';
 
+import { localSetterSymbol, localStateSymbol } from './binding-utils.js';
 import type {
   CodegenFramework,
   GeneratedArtifact,
@@ -75,6 +76,67 @@ const EXACT_VERSION = /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[0-9A-
 const PACKAGE_NAME = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
 const CONTENT_HASH = /^sha256:[a-f0-9]{64}$/;
 const JAVASCRIPT_IDENTIFIER = /^[$_\p{ID_Start}][$_\u200c\u200d\p{ID_Continue}]*$/u;
+
+function escapePattern(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Validate the emitter's small local-state protocol, not arbitrary JavaScript.
+ * Nonempty bodies alone cannot prove a binding: the input must reach its own
+ * state, including Vue's intermediate setter. Dismissal is the zero-input case.
+ */
+function localHandlerWritesOwnState(
+  framework: CodegenFramework,
+  name: string,
+  line: string,
+  body: string,
+  source: string,
+): boolean {
+  const parameters = line.match(new RegExp(
+    `^\\s*const\\s+${escapePattern(name)}\\s*=\\s*\\(([^()]*)\\)\\s*=>`,
+    'u',
+  ))?.[1]?.trim();
+  if (parameters === undefined) return false;
+  const parameter = parameters.split(':', 1)[0]!.trim();
+  if (parameter && !JAVASCRIPT_IDENTIFIER.test(parameter)) return false;
+  const state = escapePattern(localStateSymbol(name));
+  const setter = escapePattern(localSetterSymbol(name));
+  const input = escapePattern(parameter);
+
+  if (framework === 'react') {
+    const declaration = source.match(new RegExp(
+      `^\\s*const \\[${state},\\s*${setter}\\] = React\\.useState(?:<[^>\\n]+>)?\\((.*)\\);\\s*$`,
+      'mu',
+    ));
+    if (!declaration) return false;
+    if (!parameter) {
+      return declaration[1] === 'true' && new RegExp(`^${setter}\\(false\\);?$`, 'u').test(body);
+    }
+    return new RegExp(
+      `^${setter}\\(${input}(?:\\.currentTarget\\.(?:value|checked))?\\);?$`,
+      'u',
+    ).test(body);
+  }
+  if (framework !== 'vue') return false;
+  const declaration = source.match(new RegExp(
+    `^\\s*const ${state} = ref(?:<[^>\\n]+>)?\\((.*)\\);\\s*$`,
+    'mu',
+  ));
+  if (!declaration) return false;
+  if (!parameter) {
+    return declaration[1] === 'true' && new RegExp(`^${state}\\.value = false;?$`, 'u').test(body);
+  }
+  if (!new RegExp(`^${setter}\\(${input}\\);?$`, 'u').test(body)) return false;
+  const setterDeclaration = source.match(new RegExp(
+    `^\\s*const ${setter} = \\(([^()]*)\\) => \\{\\s*(.*?)\\s*\\};\\s*$`,
+    'mu',
+  ));
+  const setterParameter = setterDeclaration?.[1]?.split(':', 1)[0]?.trim();
+  return !!setterParameter && JAVASCRIPT_IDENTIFIER.test(setterParameter)
+    && new RegExp(`^${state}\\.value = ${escapePattern(setterParameter)};?$`, 'u')
+      .test(setterDeclaration![2]!);
+}
 
 function compareCodePoint(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0;
@@ -409,8 +471,10 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
         issues.push(
           `Generated domain binding handler '${name}' must forward to actions.${name}.`,
         );
-      } else if (kind === 'local' && (!body || /\bTODO\b/i.test(body))) {
-        issues.push(`Generated binding handler '${name}' must contain executable behavior.`);
+      } else if (kind === 'local' && !localHandlerWritesOwnState(
+        artifact.framework, name, line, body, file.contents,
+      )) {
+        issues.push(`Generated local binding handler '${name}' must update its own state from its input or dismiss it.`);
       }
     }
   }

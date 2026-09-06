@@ -1,0 +1,144 @@
+$ pnpm --filter @oods/components-react exec vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-red-Kv67Vz/test-components-react.json
+cwd=.
+exitCode=1
+startedAt=2026-09-06T01:03:11.921Z
+endedAt=2026-09-06T01:03:16.334Z
+durationMs=4412.860
+[stdout]
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/packages/components-react
+
+ ✓ test/ported-package-contract.spec.ts (4 tests) 22ms
+ ❯ test/package-contract.spec.ts (3 tests | 2 failed) 24ms
+   × @oods/components-react package contract > B-05 exports the exact React nucleus with public declarations 17ms
+     → expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+   ✓ @oods/components-react package contract > pins the declared React and shared-style dependency closure 3ms
+   × @oods/components-react package contract > publishes 14 independently derived React emission-eligibility rows 3ms
+     → expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+ ✓ test/ported-scenarios.spec.tsx (10 tests) 393ms
+ ❯ test/scenarios.spec.tsx (15 tests | 1 failed) 406ms
+   × @oods/components-react shared scenarios > maps exactly one frozen nondegenerate scenario to every canonical component 9ms
+     → expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+   ✓ @oods/components-react shared scenarios > badge-status executes the Badge contract 28ms
+   ✓ @oods/components-react shared scenarios > banner-dismissible executes the Banner contract 104ms
+   ✓ @oods/components-react shared scenarios > button-activate executes the Button contract 52ms
+   ✓ @oods/components-react shared scenarios > card-elevated-content executes the Card contract 30ms
+   ✓ @oods/components-react shared scenarios > checkbox-controlled executes the Checkbox contract 52ms
+   ✓ @oods/components-react shared scenarios > date-picker-bounded executes the DatePicker contract 7ms
+   ✓ @oods/components-react shared scenarios > grid-responsive executes the Grid contract 3ms
+   ✓ @oods/components-react shared scenarios > input-invalid executes the Input contract 18ms
+   ✓ @oods/components-react shared scenarios > select-controlled executes the Select contract 25ms
+   ✓ @oods/components-react shared scenarios > stack-wrapped-row executes the Stack contract 3ms
+   ✓ @oods/components-react shared scenarios > table-selectable-row executes the Table contract 34ms
+   ✓ @oods/components-react shared scenarios > tabs-keyboard executes the Tabs contract 35ms
+   ✓ @oods/components-react shared scenarios > text-semantic executes the Text contract 2ms
+   ✓ @oods/components-react shared scenarios > textarea-controlled executes the Textarea contract 5ms
+ ✓ test/interactions.spec.tsx (5 tests) 402ms
+ ✓ test/ported-accessibility.spec.tsx (2 tests) 292ms
+ ✓ test/accessibility.spec.tsx (4 tests) 253ms
+ ✓ test/ported-ssr.spec.tsx (1 test) 39ms
+ ✓ test/ssr.spec.tsx (1 test) 15ms
+ ✓ test/table-empty.s184.spec.tsx (1 test) 26ms
+ ✓ test/contract-amendments.s184.spec.tsx (3 tests) 88ms
+
+ Test Files  2 failed | 9 passed (11)
+      Tests  3 failed | 46 passed (49)
+   Start at  20:03:12
+   Duration  3.37s (transform 1.14s, setup 0ms, collect 5.05s, tests 1.96s, environment 6.63s, prepare 1.79s)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-red-Kv67Vz/test-components-react.json
+undefined
+/Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/packages/components-react:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-red-Kv67Vz/test-components-react.json
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-react package contract > B-05 exports the exact React nucleus with public declarations
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+
+ ❯ test/package-contract.spec.ts:71:46
+     69| describe('@oods/components-react package contract', () => {
+     70|   it('B-05 exports the exact React nucleus with public declarations', …
+     71|     expect(Object.keys(reactPackage).sort()).toEqual([...canonicalIds]…
+       |                                              ^
+     72| 
+     73|     const declarations = readFileSync(`${packageRoot}/dist/index.d.ts`…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-react package contract > publishes 14 independently derived React emission-eligibility rows
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+
+ ❯ test/package-contract.spec.ts:166:56
+    164|     };
+    165|     expect(readiness.target).toBe('react');
+    166|     expect(readiness.rows.map(row => row.componentId)).toEqual(canonic…
+       |                                                        ^
+    167|     const scenarioSource = readFileSync(
+    168|       `${packageRoot}/test/scenarios.spec.tsx`,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/scenarios.spec.tsx > @oods/components-react shared scenarios > maps exactly one frozen nondegenerate scenario to every canonical component
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+
+ ❯ test/scenarios.spec.tsx:14:71
+     12| describe('@oods/components-react shared scenarios', () => {
+     13|   it('maps exactly one frozen nondegenerate scenario to every canonica…
+     14|     expect(sharedScenarios.map(scenario => scenario.oodsComponentId)).…
+       |                                                                       ^
+     15|       NUCLEUS_COMPONENT_IDS
+     16|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

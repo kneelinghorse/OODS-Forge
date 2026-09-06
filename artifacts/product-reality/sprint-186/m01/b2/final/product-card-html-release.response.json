@@ -1,0 +1,115 @@
+{
+  "validationReceipt": {
+    "profile": "release",
+    "defaulted": false,
+    "rationale": "Release adds six hash-bound evidence classes to the build gate and records server-owned certification as not applicable for generated UI targets.",
+    "axes": {
+      "scope": "release-evidence",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "html",
+        "resolved": "html",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy",
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "notChecked": [],
+    "evidence": {
+      "required": [
+        "rendered",
+        "interaction",
+        "accessibility",
+        "theme",
+        "determinism",
+        "performance"
+      ],
+      "provided": [],
+      "missing": [
+        "rendered",
+        "interaction",
+        "accessibility",
+        "theme",
+        "determinism",
+        "performance"
+      ],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [
+        {
+          "class": "certification",
+          "rationale": "No artifact certification adapter applies to generated UI code targets."
+        }
+      ],
+      "artifactContentHash": "sha256:15820f523626bb740e365cea23bb73ab577649f2db66867486368603875f9602"
+    }
+  },
+  "compose": {
+    "object": "Product",
+    "context": "card",
+    "layout": "card",
+    "componentCount": 6
+  },
+  "pipeline": {
+    "steps": [
+      "compose",
+      "validate",
+      "render",
+      "codegen"
+    ],
+    "duration": 25,
+    "stepLatency": {
+      "compose": 11,
+      "validate": 0,
+      "render": 2,
+      "codegen": 11
+    }
+  },
+  "schemaRef": "compose-1d74a34c",
+  "schemaRefCreatedAt": "2026-09-06T15:36:23.312Z",
+  "schemaRefExpiresAt": "2026-09-06T16:06:23.312Z",
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "render": {
+    "html": "<!DOCTYPE html>\n<html lang=\"en\" data-theme=\"light\" data-brand=\"default\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>OODS Preview</title>\n  <!-- tokens.css omitted (compact mode) — use tokens.build to obtain -->\n  <style data-source=\"components\">\n#oods-preview-root {\n  margin: 0;\n  padding: var(--ref-space-inset-default, 24px);\n  min-height: 100dvh;\n  box-sizing: border-box;\n  background: var(--sys-surface-canvas, var(--ref-color-neutral-50, #f8fafc));\n  color: var(--sys-text-primary, var(--ref-color-neutral-900, #0f172a));\n  font-family: var(--ref-typography-families-sans, Inter, \"Helvetica Neue\", Arial, sans-serif);\n}\n[data-oods-component] {\n  box-sizing: border-box;\n}\n[data-oods-component=\"Button\"] {\n  border: var(--ref-border-width-hairline, 1px) solid var(--sys-surface-interactive-primary-default, var(--ref-color-primary-500, #4f46e5));\n  border-radius: var(--ref-border-radius-md, 12px);\n  background: var(--sys-surface-interactive-primary-default, var(--ref-color-primary-500, #4f46e5));\n  color: var(--sys-text-on-interactive, var(--ref-color-neutral-0, #ffffff));\n  font-family: inherit;\n  padding: var(--oods-size-spacing-sm, 0.5rem) var(--oods-size-spacing-md, 0.875rem);\n  font-size: var(--oods-size-font-md, 16px);\n}\n[data-oods-component=\"Card\"] {\n  border: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  border-radius: var(--ref-border-radius-md, 12px);\n  background: var(--sys-surface-raised, var(--ref-color-neutral-0, #ffffff));\n  padding: var(--ref-space-inset-compact, 8px);\n}\n[data-oods-component=\"Badge\"] {\n  display: inline-flex;\n  border-radius: var(--ref-border-radius-pill, 999px);\n  padding: 0.125rem 0.5rem;\n  background: var(--sys-status-info-surface, var(--ref-color-info-100, #eef2ff));\n}\n[data-oods-component=\"Banner\"] {\n  border-radius: var(--ref-border-radius-md, 12px);\n  border-left: 4px solid var(--sys-status-info-border, var(--ref-color-info-700, #2563eb));\n  padding: var(--ref-space-inset-compact, 8px);\n  background: var(--sys-status-info-surface, var(--ref-color-info-100, #eff6ff));\n}\n[data-oods-component=\"Table\"] {\n  width: 100%;\n  border-collapse: collapse;\n}\n[data-oods-component=\"Table\"] th,\n[data-oods-component=\"Table\"] td {\n  border-bottom: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  text-align: left;\n  padding: 0.5rem;\n}\n[data-oods-component=\"Tabs\"] [role=\"tablist\"] {\n  display: flex;\n  gap: 0.5rem;\n  margin-bottom: 0.5rem;\n}\n[data-sidebar-aside=\"true\"] {\n  border-left: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  padding-left: var(--ref-space-inset-compact, 8px);\n}\n[data-oods-surface=\"inverse\"] {\n  background: var(--sys-surface-inverse, var(--ref-color-neutral-900, #0f172a));\n  color: var(--sys-text-inverse, var(--ref-color-neutral-0, #ffffff));\n}\n  </style>\n</head>\n<body data-theme=\"light\" data-brand=\"default\">\n  <main id=\"oods-preview-root\"><article id=\"screen-card-7\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Card\" data-oods-node-id=\"screen-card-7\" data-layout=\"stack\"><div id=\"card-header-1\" style=\"display:flex;flex-direction:row;justify-content:space-between;padding:var(--sys-space-inset-squish, var(--ref-space-inset-squish))\" data-oods-component=\"Stack\" data-oods-node-id=\"card-header-1\" data-layout=\"inline\"><div id=\"slot-header-2\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-header-2\" data-layout=\"stack\" data-oods-label=\"header\"><header id=\"ve-header-8\" data-oods-component=\"CardHeader\" data-oods-node-id=\"ve-header-8\" data-prop-title-field=\"label\" data-prop-supporting-field=\"description\"><h3>Card</h3></header><span id=\"ve-header-9\" data-oods-component=\"StatusBadge\" data-oods-node-id=\"ve-header-9\" data-badge-variant=\"subtle\" data-prop-field=\"status\">Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity&#39;s current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n</span></div></div><div id=\"card-body-3\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-tight, var(--ref-space-cluster-tight));padding:var(--sys-space-inset-default, var(--ref-space-inset-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"card-body-3\" data-layout=\"stack\"><article id=\"slot-body-4\" data-oods-component=\"Card\" data-oods-node-id=\"slot-body-4\" data-oods-label=\"body\"></article></div><div id=\"card-footer-5\" style=\"display:flex;flex-direction:row;justify-content:flex-end;padding:var(--sys-space-inset-squish, var(--ref-space-inset-squish))\" data-oods-component=\"Stack\" data-oods-node-id=\"card-footer-5\" data-layout=\"inline\"><div id=\"slot-footer-6\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-footer-6\" data-layout=\"stack\" data-oods-label=\"footer\"><button id=\"primary-footer-11\" type=\"button\" data-oods-component=\"Button\" data-oods-node-id=\"primary-footer-11\">Button</button><div id=\"ve-footer-10\" data-oods-component=\"PriceCardMeta\" data-oods-node-id=\"ve-footer-10\" data-meta-type=\"price\" data-prop-model-field=\"pricing_model\" data-prop-interval-field=\"billing_interval\"><span data-meta-title=\"true\">Price</span><span data-meta-item=\"true\"><strong>Model:</strong> pricing_model</span><span data-meta-item=\"true\"><strong>Interval:</strong> billing_interval</span></div></div></div></article></main>\n</body>\n</html>",
+    "tokenCssRef": "tokens.build",
+    "meta": {
+      "status": "ok",
+      "warnings": 0,
+      "errors": 0,
+      "format": "document",
+      "strict": false,
+      "validationMeta": {
+        "screenCount": 1,
+        "nodeCount": 11
+      }
+    }
+  },
+  "error": {
+    "step": "codegen",
+    "code": "OODS-V162",
+    "message": "Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance."
+  }
+}

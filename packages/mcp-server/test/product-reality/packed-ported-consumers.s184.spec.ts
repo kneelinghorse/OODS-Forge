@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
+import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
 
 import {
   PORTED_COMPONENT_IDS,
@@ -19,7 +20,7 @@ afterEach(async () => {
 
 describe('Sprint 184 m04 packed ported consumers', () => {
   it(
-    'installs only built OODS tarballs in fresh React and Vue consumers and resolves every new subpath externally',
+    'installs built tarballs externally and preserves the historical cohort through aliases of the canonical roots',
     async () => {
       const root = await fs.mkdtemp(path.join(os.tmpdir(), 'oods-s184-m04-packed-proof-'));
       temporaryRoots.push(root);
@@ -28,13 +29,13 @@ describe('Sprint 184 m04 packed ported consumers', () => {
 
       expect(report).toMatchObject({
         status: 'passed',
-        selected: 16,
-        passed: 16,
+        selected: PORTED_COMPONENT_IDS.length * 2,
+        passed: PORTED_COMPONENT_IDS.length * 2,
         failed: 0,
         skipped: 0,
         targetCount: 2,
-        componentCount: 8,
-        surfaceCellCount: 16,
+        componentCount: PORTED_COMPONENT_IDS.length,
+        surfaceCellCount: PORTED_COMPONENT_IDS.length * 2,
       });
       expect(report.components.map(({ componentId }) => componentId)).toEqual(
         PORTED_COMPONENT_IDS,
@@ -52,8 +53,8 @@ describe('Sprint 184 m04 packed ported consumers', () => {
       for (const target of targetReports) {
         expect(target).toMatchObject({
           status: 'passed',
-          selected: 8,
-          passed: 8,
+          selected: PORTED_COMPONENT_IDS.length,
+          passed: PORTED_COMPONENT_IDS.length,
           failed: 0,
           skipped: 0,
           isolation: {
@@ -75,14 +76,20 @@ describe('Sprint 184 m04 packed ported consumers', () => {
           `@oods/components-${target.target}`,
         ]);
         expect(target.proof.componentIds).toEqual(PORTED_COMPONENT_IDS);
-        expect(target.proof.runtimeIds).toEqual(PORTED_COMPONENT_IDS);
-        expect(target.proof.commonJsIds).toEqual(PORTED_COMPONENT_IDS);
-        expect(target.proof.readinessIds).toEqual(PORTED_COMPONENT_IDS);
+        expect(target.proof.governedIds).toEqual(NUCLEUS_COMPONENT_IDS);
+        expect(target.proof.runtimeIds).toEqual(target.proof.rootRuntimeIds);
+        expect(target.proof.commonJsIds).toEqual(target.proof.rootRuntimeIds);
+        expect(target.proof.rootRuntimeIds).toEqual(expect.arrayContaining([...NUCLEUS_COMPONENT_IDS]));
+        expect(target.proof.readinessIds).toEqual(NUCLEUS_COMPONENT_IDS);
         expect(target.proof.cssComponentIds).toEqual(PORTED_COMPONENT_IDS);
+        expect(target.proof.aliasEquivalence).toEqual({ esm: true, cjs: true, readiness: true, css: true });
         expect(target.proof.resolutions.map(({ specifier }) => specifier)).toEqual([
           '@oods/component-contracts',
+          `@oods/components-${target.target}`,
           `@oods/components-${target.target}/ported`,
+          `@oods/components-${target.target}/readiness`,
           `@oods/components-${target.target}/readiness-ported`,
+          '@oods/component-styles/css',
           '@oods/component-styles/css-ported',
         ]);
         expect(target.proof.resolutions.every(({ consumerRelative }) => (
@@ -107,7 +114,9 @@ describe('Sprint 184 m04 packed ported consumers', () => {
 
       for (const target of ['react', 'vue'] as const) {
         const source = await fs.readFile(path.join(root, target, 'consumer.mjs'), 'utf8');
+        expect(source).toContain(`from '@oods/components-${target}'`);
         expect(source).toContain(`from '@oods/components-${target}/ported'`);
+        expect(source).toContain(`from '@oods/components-${target}/readiness'`);
         expect(source).toContain(`from '@oods/components-${target}/readiness-ported'`);
         expect(source).toContain("import.meta.resolve('@oods/component-styles/css-ported')");
         expect(source).not.toContain('/OODS-Forge/');

@@ -1,0 +1,2984 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s186-m01",
+  "kind": "live-schema-workflow-clean-consumer-proof",
+  "status": "passed",
+  "selected": 16,
+  "passed": 16,
+  "notApplicable": 0,
+  "applicable": 16,
+  "failed": 0,
+  "skipped": 0,
+  "schemaCount": 1,
+  "frameworkCount": 2,
+  "cellCount": 2,
+  "expectedCellCount": 2,
+  "equalityRule": "Every selected immutable saved schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.",
+  "generationPolicy": "code.generate is invoked live once per schema/framework cell and only that in-run artifact is consumed.",
+  "consumerPolicy": "Consumers are outside the workspace, begin without node_modules, use empty npm configs, and install OODS packages only from exact tarballs produced by npm pack after each package prepack build.",
+  "logPathPolicy": "Every gate log path is relative to this report artifact root, including paths repeated in nested cell reports.",
+  "cells": [
+    {
+      "schema": "test-tagged-schema",
+      "schemaRef": "compose-16584a1c",
+      "framework": "react",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/react/logs/install.log",
+            "cells/test-tagged-schema/react/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/component-styles/css-ported",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "@oods/components-react/ported",
+                "consumerRelative": "node_modules/@oods/components-react/dist/ported.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/react/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/react/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/react/logs/server-render-build.log",
+            "cells/test-tagged-schema/react/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 10243,
+            "sha256": "sha256:38239a703bccd0a09960fcc7d6a10b0680a171c138d1e5404107ee47d23585ff",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-detail-13",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-header-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-header-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-24",
+                "component": "DetailHeader",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-25",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-27",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-29",
+                "component": "PriceSummary",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-body-10",
+                "component": "Card",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "pg-status-timeline-31",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "pg-status-timeline-32",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-5",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-5 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-1-6",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-5 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-7",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-2-8",
+                "component": "Text",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-14",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-14 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-3-15",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-14 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-16",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-16 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-4-17",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-16 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-18",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-18 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-5-19",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-18 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-20",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-20 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-6-21",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-20 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-22",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-22 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-7-23",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-22 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-meta-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-metadata-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-26",
+                "component": "ClassificationPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-28",
+                "component": "FilterPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-detail-13",
+            "componentCounts": {
+              "Card": 1,
+              "ClassificationPanel": 1,
+              "DetailHeader": 1,
+              "FilterPanel": 1,
+              "PriceSummary": 1,
+              "SearchInput": 2,
+              "Stack": 6,
+              "StatusTimeline": 2,
+              "Tabs": 1,
+              "Text": 2
+            },
+            "mountedExpectedComponents": [
+              "Card",
+              "ClassificationPanel",
+              "DetailHeader",
+              "FilterPanel",
+              "PriceSummary",
+              "SearchInput",
+              "Stack",
+              "StatusTimeline",
+              "Tabs",
+              "Text"
+            ],
+            "generatedCoreComponents": [
+              "Card",
+              "ClassificationPanel",
+              "DetailHeader",
+              "FilterPanel",
+              "PriceSummary",
+              "Stack",
+              "Tabs",
+              "Text"
+            ],
+            "generatedPortedComponents": [
+              "SearchInput",
+              "StatusTimeline"
+            ],
+            "labelVisibility": [
+              {
+                "component": "DetailHeader",
+                "rootId": "ve-header-24",
+                "text": "Consumer label",
+                "visible": true,
+                "passed": true
+              }
+            ],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-detail-13",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-header-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-header-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-24",
+                "component": "DetailHeader",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-25",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-27",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-29",
+                "component": "PriceSummary",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-body-10",
+                "component": "Card",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "pg-status-timeline-31",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "pg-status-timeline-32",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-5",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-5 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-1-6",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-5 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-7",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-2-8",
+                "component": "Text",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-14",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-14 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-3-15",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-14 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-16",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-16 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-4-17",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-16 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-18",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-18 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-5-19",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-18 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-20",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-20 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-6-21",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-20 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-22",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-22 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-7-23",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-22 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-meta-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-metadata-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-26",
+                "component": "ClassificationPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-28",
+                "component": "FilterPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack"
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-header-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-header-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "HEADER",
+                    "id": "ve-header-24",
+                    "component": "DetailHeader",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-header-25",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-header-27",
+                    "component": "SearchInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-header-29",
+                    "component": "PriceSummary",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-body-10",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tabs-9",
+                    "component": "Tabs",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "tablist",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "true",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-5",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-14",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-16",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-18",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-20",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-22",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-0-4",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "pg-status-timeline-31",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "pg-status-timeline-32",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-5",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-14",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-16",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-18",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-20",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-22",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-meta-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-metadata-26",
+                    "component": "ClassificationPanel",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "ASIDE",
+                    "id": "ve-metadata-28",
+                    "component": "FilterPanel",
+                    "role": "region",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack"
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-header-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-header-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "HEADER",
+                    "id": "ve-header-24",
+                    "component": "DetailHeader",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-header-25",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-header-27",
+                    "component": "SearchInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-header-29",
+                    "component": "PriceSummary",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-body-10",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tabs-9",
+                    "component": "Tabs",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "tablist",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "true",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-5",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-14",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-16",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-18",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-20",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_6_-tab-detail-tab-panel-22",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-0-4",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "pg-status-timeline-31",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "pg-status-timeline-32",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-5",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-14",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-16",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-18",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-20",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_6_-panel-detail-tab-panel-22",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-meta-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-metadata-26",
+                    "component": "ClassificationPanel",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "ASIDE",
+                    "id": "ve-metadata-28",
+                    "component": "FilterPanel",
+                    "role": "region",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/react/logs/css-proof.log",
+            "cells/test-tagged-schema/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-B85FFnYa.css"
+            ],
+            "bytes": 303658,
+            "sha256": "sha256:fd2051e831ea6bd96d8c0b90465980a2dcc32ec1de250fa4e768415db7e27ec4",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/react/logs/browser-proof.log",
+            "cells/test-tagged-schema/react/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "tabs",
+              "nodeId": "detail-tabs-9",
+              "component": "Tabs",
+              "selector": "[id=\"detail-tabs-9\"]",
+              "status": "passed",
+              "before": "_R_6_-tab-detail-tab-panel-3",
+              "after": "_R_6_-tab-detail-tab-panel-5",
+              "panelId": "_R_6_-panel-detail-tab-panel-5",
+              "panelVisible": true,
+              "selectedCount": 1
+            },
+            "selectorEvidence": [],
+            "actionCounts": {},
+            "actionArgs": {},
+            "expectedArguments": {},
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.tsx",
+              "bindingMarkerCount": 0,
+              "actionSelectors": [],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.tsx",
+                "src/ssr.tsx",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "tabs",
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "selector": "[id=\"detail-tabs-9\"]"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/test-tagged-schema/react/GeneratedUI.tsx",
+        "sourceSha256": "sha256:6ee8b1cf3c5d57f165b2d905c9274d749f3f0a8faa0a4896b380ed1d1794f716",
+        "artifactContentHash": "sha256:d08a8b633aa3ddc0e47a5cb90be5fa18c9662b78fcd27da1823387e5eb99e555",
+        "generationLog": "live-generation/test-tagged-schema/react/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:d08a8b633aa3ddc0e47a5cb90be5fa18c9662b78fcd27da1823387e5eb99e555",
+          "generatedAt": "2026-09-06T15:31:09.247Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.tsx",
+        "bindingMarkerCount": 0,
+        "actionSelectors": [],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.tsx",
+          "src/ssr.tsx",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "tabs",
+          "nodeId": "detail-tabs-9",
+          "component": "Tabs",
+          "selector": "[id=\"detail-tabs-9\"]"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/test-tagged-schema/react/report.json",
+      "reportSha256": "sha256:2e6d7d7aedd81dd4e7dc4822a2c0324a15a5f760104e1a8f37435d9c47f74b66"
+    },
+    {
+      "schema": "test-tagged-schema",
+      "schemaRef": "compose-16584a1c",
+      "framework": "vue",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/vue/logs/install.log",
+            "cells/test-tagged-schema/vue/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/component-styles/css-ported",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@oods/components-vue/ported",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/ported.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/vue/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/vue/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/vue/logs/server-render-build.log",
+            "cells/test-tagged-schema/vue/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 13539,
+            "sha256": "sha256:622173ed45a0945bb774509bf6f7a1f80c58129e81a3810b4e77d4f35af16a34",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-detail-13",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-header-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-header-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-24",
+                "component": "DetailHeader",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-25",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-27",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-29",
+                "component": "PriceSummary",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-body-10",
+                "component": "Card",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "pg-status-timeline-31",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "pg-status-timeline-32",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-5",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-5 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-1-6",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-5 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-7",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-2-8",
+                "component": "Text",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-14",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-14 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-3-15",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-14 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-16",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-16 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-4-17",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-16 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-18",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-18 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-5-19",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-18 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-20",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-20 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-6-21",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-20 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-22",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-22 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-7-23",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-22 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-meta-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-metadata-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-26",
+                "component": "ClassificationPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-28",
+                "component": "FilterPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-detail-13",
+            "componentCounts": {
+              "Card": 5,
+              "ClassificationPanel": 1,
+              "DetailHeader": 1,
+              "FilterPanel": 1,
+              "PriceSummary": 1,
+              "SearchInput": 1,
+              "Stack": 15,
+              "StatusTimeline": 2,
+              "Tabs": 1,
+              "Text": 3
+            },
+            "mountedExpectedComponents": [
+              "Card",
+              "ClassificationPanel",
+              "DetailHeader",
+              "FilterPanel",
+              "PriceSummary",
+              "SearchInput",
+              "Stack",
+              "StatusTimeline",
+              "Tabs",
+              "Text"
+            ],
+            "generatedCoreComponents": [
+              "Card",
+              "ClassificationPanel",
+              "DetailHeader",
+              "FilterPanel",
+              "PriceSummary",
+              "Stack",
+              "Tabs",
+              "Text"
+            ],
+            "generatedPortedComponents": [
+              "SearchInput",
+              "StatusTimeline"
+            ],
+            "labelVisibility": [
+              {
+                "component": "DetailHeader",
+                "rootId": "ve-header-24",
+                "text": "Consumer label",
+                "visible": true,
+                "passed": true
+              }
+            ],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-detail-13",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-header-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-header-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-24",
+                "component": "DetailHeader",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-25",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-27",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-29",
+                "component": "PriceSummary",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-body-10",
+                "component": "Card",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "pg-status-timeline-31",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "pg-status-timeline-32",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-5",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-5 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-1-6",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-5 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-7",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-2-8",
+                "component": "Text",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-14",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-14 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-3-15",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-14 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-16",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-16 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-4-17",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-16 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-18",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-18 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-5-19",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-18 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-20",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-20 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-6-21",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-20 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-22",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-22 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-7-23",
+                "component": "Card",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-22 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-meta-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-metadata-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-26",
+                "component": "ClassificationPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-28",
+                "component": "FilterPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack"
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-header-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-header-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "HEADER",
+                    "id": "ve-header-24",
+                    "component": "DetailHeader",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-header-25",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-header-27",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-header-29",
+                    "component": "PriceSummary",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-body-10",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tabs-9",
+                    "component": "Tabs",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "tablist",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "true",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-5",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-14",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-16",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-18",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-20",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-22",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-0-4",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "pg-status-timeline-31",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "pg-status-timeline-32",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-5",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-5",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-1-6",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "slot-tab-2-8",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-14",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-14",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-3-15",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-16",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-16",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-4-17",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-18",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-18",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-5-19",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-20",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-20",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-6-21",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-22",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-22",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-7-23",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-meta-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-metadata-26",
+                    "component": "ClassificationPanel",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "ASIDE",
+                    "id": "ve-metadata-28",
+                    "component": "FilterPanel",
+                    "role": "region",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack"
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-header-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-header-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "HEADER",
+                    "id": "ve-header-24",
+                    "component": "DetailHeader",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-header-25",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-header-27",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-header-29",
+                    "component": "PriceSummary",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-body-10",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tabs-9",
+                    "component": "Tabs",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "tablist",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "true",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-5",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-14",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-16",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-18",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-20",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-1-tab-detail-tab-panel-22",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-0-4",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "pg-status-timeline-31",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "pg-status-timeline-32",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-5",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-5",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-1-6",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "slot-tab-2-8",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-14",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-14",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-3-15",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-16",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-16",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-4-17",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-18",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-18",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-5-19",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-20",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-20",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-6-21",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-1-panel-detail-tab-panel-22",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-22",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-tab-7-23",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-meta-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-metadata-26",
+                    "component": "ClassificationPanel",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "ASIDE",
+                    "id": "ve-metadata-28",
+                    "component": "FilterPanel",
+                    "role": "region",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/vue/logs/css-proof.log",
+            "cells/test-tagged-schema/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-CLLJ6XAu.css"
+            ],
+            "bytes": 303770,
+            "sha256": "sha256:941b890fffde5bafe8a42845c56174ad9a7293883a9bdf11cb20d7d5537b0b50",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/test-tagged-schema/vue/logs/browser-proof.log",
+            "cells/test-tagged-schema/vue/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "tabs",
+              "nodeId": "detail-tabs-9",
+              "component": "Tabs",
+              "selector": "[id=\"detail-tabs-9\"]",
+              "status": "passed",
+              "before": "oods-v-1-tab-detail-tab-panel-3",
+              "after": "oods-v-1-tab-detail-tab-panel-5",
+              "panelId": "oods-v-1-panel-detail-tab-panel-5",
+              "panelVisible": true,
+              "selectedCount": 1
+            },
+            "selectorEvidence": [],
+            "actionCounts": {},
+            "actionArgs": {},
+            "expectedArguments": {},
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.vue",
+              "bindingMarkerCount": 0,
+              "actionSelectors": [],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.ts",
+                "src/ssr.ts",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "tabs",
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "selector": "[id=\"detail-tabs-9\"]"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/test-tagged-schema/vue/GeneratedUI.vue",
+        "sourceSha256": "sha256:11536781cb093eec6436c8e8a09c74a6d3a894c4afa5e90e40928dfb7d21c8a8",
+        "artifactContentHash": "sha256:6bc497dd5fa67b88ddd46e1af388fc998081922c3142fbc092cbf3808c595425",
+        "generationLog": "live-generation/test-tagged-schema/vue/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:6bc497dd5fa67b88ddd46e1af388fc998081922c3142fbc092cbf3808c595425",
+          "generatedAt": "2026-09-06T15:31:09.302Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.vue",
+        "bindingMarkerCount": 0,
+        "actionSelectors": [],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.ts",
+          "src/ssr.ts",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "tabs",
+          "nodeId": "detail-tabs-9",
+          "component": "Tabs",
+          "selector": "[id=\"detail-tabs-9\"]"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/test-tagged-schema/vue/report.json",
+      "reportSha256": "sha256:bab6e10c1cc42587e37a3fe5a37f052c0fc725ee43f7fd677cd2930e8869d688"
+    }
+  ]
+}

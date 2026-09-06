@@ -4,30 +4,102 @@ import { defineComponent, h } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  AuditTimeline,
+  CancellationSummary,
+  PaginationBar,
+  PriceBadge,
+  RelativeTimestamp,
+  SearchInput,
+  StatusBadge,
+  StatusTimeline,
+  AddressCollectionPanel,
+  AddressEditor,
+  AddressSummaryBadge,
+  AddressValidationTimeline,
+  AuditEvent,
   Badge,
   Banner,
   Button,
   Card,
+  CardHeader,
   Checkbox,
+  ClassificationPanel,
+  ColorSwatch,
+  ColorizedBadge,
   DatePicker,
+  DetailHeader,
+  FilterPanel,
   Grid,
   Input,
+  MembershipAuditTimeline,
+  MembershipPanel,
+  MessageEventTimeline,
+  MessageStatusBadge,
+  PreferenceEditor,
+  PreferencePanel,
+  PreferenceSummaryBadge,
+  PreferenceTimeline,
+  PriceSummary,
+  RoleAssignmentForm,
+  RoleBadgeList,
   Select,
   Stack,
+  StatusSelector,
   Table,
   Tabs,
+  TagInput,
+  TagManager,
+  TagPills,
+  TemplatePicker,
   Text,
   Textarea,
+  VizAreaPreview,
 } from '../src/index.js';
 
 const ServerShowcase = defineComponent({
   name: 'ServerShowcase',
   setup() {
     return () => h('main', [
+      h(AuditTimeline, { events: [{ label: 'Subscription created', timestamp: '2026-09-05T12:00:00Z' }] }),
+      h(CancellationSummary, { cancelAtPeriodEnd: true }),
+      h(PaginationBar, { page: 2, pageSize: 25, totalItems: 80 }),
+      h(PriceBadge, { amountCents: 2500, currency: 'usd' }),
+      h(RelativeTimestamp, { datetime: '2026-09-05T12:00:00Z', relative: '2 hours ago' }),
+      h(SearchInput, { value: 'past due' }),
+      h(StatusBadge, { status: 'past_due' }),
+      h(StatusTimeline, { status: 'active', allowedTransitions: ['past_due', 'cancelled'] }),
       h(Badge, { content: 'Past due', tone: 'critical' }),
       h(Banner, { title: 'Payment failed', tone: 'critical' }),
       h(Button, { content: 'Save changes' }),
       h(Card, {}, { default: () => 'Account summary' }),
+      h(CardHeader, { title: 'Account summary', supporting: 'Current subscription' }),
+      h(ColorSwatch, { color: '#2563eb', label: 'Ocean blue' }),
+      h(ColorizedBadge, { label: 'Active', status: 'active', color: '#15803d' }),
+      h(DetailHeader, { title: 'Subscription details', as: 'h1', subtitle: 'Pro plan' }),
+      h(VizAreaPreview, { width: 320, height: 180 }),
+      h(ClassificationPanel, { title: 'Classification', summary: 'Electronics > Mobile' }),
+      h(FilterPanel, { filters: [{ field: 'status', label: 'Status' }], mode: 'batch' }),
+      h(PriceSummary, { amount: 2500, currency: 'USD' }),
+      h(AddressCollectionPanel, { summary: '2 addresses on file' }),
+      h(MembershipPanel, { summary: 'Owner of 2 workspaces' }),
+      h(PreferencePanel, { summary: 'No preferences saved' }),
+      h(TagManager, { tags: ['alpha'] }),
+      h(AddressSummaryBadge, { label: 'Billing address', role: 'billing' }),
+      h(MessageStatusBadge, { delivery: 'delivered' }),
+      h(PreferenceSummaryBadge, { namespace: 'notifications', version: 'v3' }),
+      h(RoleBadgeList, { roles: ['owner'] }),
+      h(TagPills, { tags: ['alpha', 'beta'], maxVisible: 1, overflowLabel: '+{{ tag_count }}' }),
+      h(AddressValidationTimeline, { validations: ['Geocoded'] }),
+      h(AuditEvent, { event: 'user.updated' }),
+      h(MembershipAuditTimeline, {}),
+      h(MessageEventTimeline, { statuses: [{ status: 'delivered' }] }),
+      h(PreferenceTimeline, { changes: [{ event: 'notifications.email' }] }),
+      h(AddressEditor, { street: '1 Main St', city: 'Springfield' }),
+      h(PreferenceEditor, { namespaces: ['default'], document: '{}' }),
+      h(RoleAssignmentForm, { roles: ['owner'], role: 'owner' }),
+      h(StatusSelector, { value: 'active' }),
+      h(TagInput, { tags: ['alpha'], placeholder: 'Add a tag' }),
+      h(TemplatePicker, { templates: ['welcome'], templateId: 'welcome' }),
       h(Checkbox, { id: 'marketing', label: 'Product updates' }),
       h(DatePicker, { id: 'renewal', label: 'Renewal date', value: '2026-09-30' }),
       h(Grid, {}, { default: () => [h('span', 'First'), h('span', 'Second')] }),
@@ -58,7 +130,7 @@ const ServerShowcase = defineComponent({
 });
 
 describe('@oods/components-vue server rendering', () => {
-  it('SSR-renders all 14 canonical component families with semantic markup', async () => {
+  it('SSR-renders every nucleus component family with semantic markup', async () => {
     const html = await renderToString(h(ServerShowcase));
     for (const componentId of NUCLEUS_COMPONENT_IDS) {
       expect(html, componentId).toContain(`data-oods-component="${componentId}"`);
@@ -68,5 +140,8 @@ describe('@oods/components-vue server rendering', () => {
     expect(html).toContain('role="tablist"');
     expect(html).toContain('type="button"');
     expect(html).toContain('<option value="pro" selected>Pro</option>');
+    expect(html).toContain('data-form-type="address-editor"');
+    expect(html).toContain('<option value="active" selected>active</option>');
+    expect(html).toContain('placeholder="Add a tag"');
   });
 });

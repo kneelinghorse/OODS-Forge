@@ -1,0 +1,44 @@
+
+> @oods/component-contracts@0.1.0 typecheck /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/component-contracts
+> tsc --noEmit --pretty false -p tsconfig.json
+
+
+> @oods/component-contracts@0.1.0 test /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/component-contracts
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/component-contracts
+
+ ✓ test/workflow-states.s184.spec.ts (2 tests) 5ms
+ ✓ test/contracts.spec.ts (7 tests) 8ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 7ms
+ ✓ test/breadth-contracts.s185.spec.ts (15 tests) 8ms
+ ✓ test/ported-contracts.s184.spec.ts (4 tests) 7ms
+ ✓ test/breadth-contracts.s186.spec.ts (36 tests) 14ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/baseline-fold.s185.spec.ts [ test/baseline-fold.s185.spec.ts ]
+Error: ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/artifacts/product-reality/sprint-186/m04/live-consumers/report.json'
+ ❯ readJson ../../scripts/product-reality/s185-baseline-surfaces.mjs:43:57
+     41| const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
+     42| const sha256 = bytes => createHash('sha256').update(bytes).digest('hex…
+     43| const readJson = (root, file) => JSON.parse(readFileSync(path.join(roo…
+       |                                                         ^
+     44| const historicalJson = (root, commit, file) => JSON.parse(execFileSync…
+     45| 
+ ❯ ../../scripts/product-reality/s185-baseline-surfaces.mjs:137:18
+ ❯ deriveBaselineSurfaceFold ../../scripts/product-reality/s185-baseline-surfaces.mjs:136:32
+ ❯ test/baseline-fold.s185.spec.ts:16:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  66 passed (66)
+   Start at  11:45:26
+   Duration  736ms (transform 310ms, setup 0ms, collect 1.11s, tests 47ms, environment 1ms, prepare 755ms)
+
+/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/component-contracts@0.1.0 test: `vitest run --config vitest.config.ts`
+Exit status 1

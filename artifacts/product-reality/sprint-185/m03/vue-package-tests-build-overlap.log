@@ -1,0 +1,97 @@
+
+> @oods/components-vue@0.1.0 test /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/components-vue
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/components-vue
+
+ ✓ test/ported-scenarios.spec.ts (10 tests) 1319ms
+   ✓ @oods/components-vue shared ported scenarios > audit-timeline-transitions executes the AuditTimeline contract  456ms
+ ✓ test/interactions.spec.ts (7 tests) 1868ms
+   ✓ @oods/components-vue interactions > B-09 emits Vue update:modelValue and change for controlled fields  432ms
+   ✓ @oods/components-vue interactions > uses native field controls with idiomatic update and change events  485ms
+ ✓ test/breadth.s185.spec.ts (26 tests) 2158ms
+   ✓ Sprint 185 Vue component breadth > ColorizedBadge hydrates its shared SSR scenario without changing heading or label semantics  371ms
+ ✓ test/scenarios.spec.ts (20 tests) 2059ms
+   ✓ @oods/components-vue shared scenarios > date-picker-bounded executes the DatePicker contract  447ms
+ ❯ test/package-contract.spec.ts (3 tests | 2 failed) 760ms
+   × @oods/components-vue package contract > B-08 exports the exact Vue nucleus with public declarations 474ms
+     → ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/components-vue/dist/index.d.ts'
+   × @oods/components-vue package contract > declares only Vue and the two frozen package dependencies at runtime 14ms
+     → ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/components-vue/dist/index.d.ts'
+   ✓ @oods/components-vue package contract > publishes one independently derived Vue emission-eligibility row per nucleus id 110ms
+ ✓ test/ported-accessibility.spec.ts (3 tests) 4368ms
+   ✓ @oods/components-vue ported accessibility outcomes > names search, pagination, status, and timeline semantics without color-only signals  1035ms
+   ✓ @oods/components-vue ported accessibility outcomes > has no automated axe violations for the nondegenerate showcase  3281ms
+ ✓ test/accessibility.spec.ts (4 tests) 5072ms
+   ✓ @oods/components-vue accessibility outcomes > associates field labels, help, validation, and invalid state  301ms
+   ✓ @oods/components-vue accessibility outcomes > associates labels, help, and errors for every native field family  731ms
+   ✓ @oods/components-vue accessibility outcomes > uses required announcement, button, tabs, and table semantics  1088ms
+   ✓ @oods/components-vue accessibility outcomes > has no automated axe violations for the nondegenerate showcase  2931ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 542ms
+ ✓ test/ported-ssr.spec.ts (1 test) 670ms
+   ✓ @oods/components-vue ported server rendering > SSR-renders all eight ported components from the shared nondegenerate scenarios  665ms
+ ✓ test/table-empty.s184.spec.ts (1 test) 1095ms
+   ✓ @oods/components-vue Table empty affordance > renders non-empty text spanning every declared column when rows are empty  1091ms
+ ✓ test/ssr.spec.ts (1 test) 614ms
+   ✓ @oods/components-vue server rendering > SSR-renders every nucleus component family with semantic markup  597ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/ported-package-contract.spec.ts [ test/ported-package-contract.spec.ts ]
+Error: Failed to resolve import "../dist/ported.js" from "test/ported-package-contract.spec.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/components-vue/test/ported-package-contract.spec.ts:14:29
+  9  |  import ts from "typescript";
+  10 |  import { describe, expect, it } from "vitest";
+  11 |  import * as builtPorted from "../dist/ported.js";
+     |                                ^
+  12 |  import * as sourcePorted from "../src/ported.js";
+  13 |  const packageRoot = process.cwd();
+ ❯ TransformPluginContext._formatLog ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:42528:41
+ ❯ TransformPluginContext.error ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:42525:16
+ ❯ normalizeUrl ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:40504:23
+ ❯ ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:40623:37
+ ❯ TransformPluginContext.transform ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:40550:7
+ ❯ EnvironmentPluginContainer.transform ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:42323:18
+ ❯ loadAndTransform ../../node_modules/.pnpm/vite@6.4.1_@types+node@20.19.21_jiti@1.21.7_tsx@4.20.6_yaml@2.8.1/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:35739:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-vue package contract > B-08 exports the exact Vue nucleus with public declarations
+Error: ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/components-vue/dist/index.d.ts'
+ ❯ test/package-contract.spec.ts:62:50
+     60|     expect(runtimeCanonical).toEqual(canonicalIds);
+     61| 
+     62|     const declarations = declarationValueExports(readFileSync(`${packa…
+       |                                                  ^
+     63|     const declaredCanonical = canonicalIds.filter((name) => declaratio…
+     64|     expect(declaredCanonical).toEqual(canonicalIds);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-vue package contract > declares only Vue and the two frozen package dependencies at runtime
+Error: ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/components-vue/dist/index.d.ts'
+ ❯ test/package-contract.spec.ts:91:21
+     89|       'dist/index.d.ts',
+     90|       'package.json',
+     91|     ].map((path) => readFileSync(`${packageRoot}/${path}`, 'utf8')).jo…
+       |                     ^
+     92|     expect(distributableText).not.toMatch(/(?:from|require\()\s*["'](?…
+     93|     expect(distributableText).not.toMatch(/\b(?:workspace|file|link):/…
+ ❯ test/package-contract.spec.ts:91:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 10 passed (12)
+      Tests  2 failed | 76 passed (78)
+   Start at  22:31:11
+   Duration  28.23s (transform 5.98s, setup 0ms, collect 46.68s, tests 20.53s, environment 65.19s, prepare 12.34s)
+
+/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/components-vue:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/components-vue@0.1.0 test: `vitest run --config vitest.config.ts`
+Exit status 1

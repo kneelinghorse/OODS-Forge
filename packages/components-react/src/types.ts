@@ -66,6 +66,290 @@ export interface CardProps extends React.HTMLAttributes<HTMLElement> {
   readonly as?: SafeContainerElement;
 }
 
+export type HeaderElement = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+export type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface DetailHeaderProps extends React.HTMLAttributes<HTMLElement> {
+  readonly title?: string;
+  readonly label?: string;
+  readonly text?: string;
+  readonly subtitle?: string;
+  readonly sublabel?: string;
+  readonly description?: string;
+  readonly metadata?: string;
+  readonly meta?: string;
+  readonly level?: HeaderLevel;
+  readonly as?: HeaderElement;
+}
+
+export interface CardHeaderProps extends React.HTMLAttributes<HTMLElement> {
+  readonly title?: string;
+  readonly label?: string;
+  readonly text?: string;
+  readonly supporting?: string;
+  readonly supportingText?: string;
+  readonly subtitle?: string;
+  readonly description?: string;
+  readonly level?: HeaderLevel;
+  readonly as?: HeaderElement;
+}
+
+export interface ColorSwatchProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly color?: string;
+  readonly value?: string;
+  readonly state?: string;
+  readonly label?: string;
+}
+
+export interface ColorizedBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly label?: string;
+  readonly text?: string;
+  readonly state?: string;
+  readonly value?: string;
+  readonly status?: string;
+  readonly color?: string;
+  readonly hue?: string;
+  readonly swatch?: string;
+  readonly variant?: string;
+  readonly tone?: ComponentTone;
+  readonly emphasis?: ComponentEmphasis;
+}
+
+export interface VizAreaPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
+  readonly width?: number;
+  readonly height?: number;
+}
+
+/** renderPanelSection aliases shared by every panel-family component. */
+export interface PanelSectionProps extends React.HTMLAttributes<HTMLElement> {
+  readonly title?: string;
+  readonly label?: string;
+  readonly heading?: string;
+  readonly name?: string;
+  readonly subtitle?: string;
+  readonly description?: string;
+  readonly metadata?: string;
+  readonly summary?: string;
+  readonly text?: string;
+  readonly body?: string;
+  readonly emptyMessage?: string;
+}
+
+export type ClassificationPanelProps = PanelSectionProps;
+export type AddressCollectionPanelProps = PanelSectionProps;
+export type MembershipPanelProps = PanelSectionProps;
+export type PreferencePanelProps = PanelSectionProps;
+
+export interface TagManagerProps extends React.FormHTMLAttributes<HTMLFormElement> {
+  readonly title?: string;
+  readonly label?: string;
+  readonly heading?: string;
+  readonly name?: string;
+  readonly description?: string;
+  readonly subtitle?: string;
+  readonly hint?: string;
+  /** Tag entries as the HTML renderer reads them: records use label/name/role/value/id, scalars render as text. */
+  readonly tags?: readonly unknown[];
+  readonly value?: readonly unknown[];
+}
+
+/** Shared shape of the badge-family summaries over the Badge substrate. */
+interface BadgeFamilyProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'role'> {
+  readonly label?: string;
+  readonly text?: string;
+  readonly value?: string;
+  readonly status?: string;
+  readonly state?: string;
+  readonly variant?: string;
+  readonly tone?: ComponentTone;
+  readonly emphasis?: ComponentEmphasis;
+}
+
+export interface AddressSummaryBadgeProps extends BadgeFamilyProps {
+  /** The address role that names the status; never an ARIA role. */
+  readonly role?: string;
+}
+
+export interface MessageStatusBadgeProps extends BadgeFamilyProps {
+  readonly delivery?: string;
+}
+
+export interface PreferenceSummaryBadgeProps extends BadgeFamilyProps {
+  readonly namespace?: string;
+  readonly version?: string;
+}
+
+export interface RoleBadgeListProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly roles?: readonly unknown[];
+  readonly badges?: readonly unknown[];
+  readonly roleLabels?: readonly unknown[];
+  readonly value?: readonly unknown[];
+  readonly variant?: string;
+  readonly tone?: string;
+  readonly label?: string;
+  readonly text?: string;
+}
+
+export interface TagPillsProps extends React.HTMLAttributes<HTMLDivElement> {
+  readonly tags?: readonly unknown[];
+  readonly value?: readonly unknown[];
+  readonly maxVisible?: number | string;
+  readonly overflowLabel?: string;
+}
+
+/** Timeline-family logs over renderTimelineContainer semantics; the event keys differ per family. */
+interface TimelineFamilyProps extends React.HTMLAttributes<HTMLDivElement> {
+  readonly title?: string;
+  readonly label?: string;
+  readonly heading?: string;
+  readonly name?: string;
+  readonly events?: readonly unknown[];
+}
+
+export interface AddressValidationTimelineProps extends TimelineFamilyProps {
+  readonly validations?: readonly unknown[];
+  readonly history?: readonly unknown[];
+}
+
+export interface MembershipAuditTimelineProps extends TimelineFamilyProps {
+  readonly memberships?: readonly unknown[];
+  readonly history?: readonly unknown[];
+}
+
+export interface MessageEventTimelineProps extends TimelineFamilyProps {
+  readonly messages?: readonly unknown[];
+  readonly statuses?: readonly unknown[];
+}
+
+export interface PreferenceTimelineProps extends TimelineFamilyProps {
+  readonly changes?: readonly unknown[];
+  readonly history?: readonly unknown[];
+}
+
+export interface AuditEventProps extends React.HTMLAttributes<HTMLElement> {
+  readonly label?: string;
+  readonly title?: string;
+  readonly event?: string;
+  readonly status?: string;
+  readonly state?: string;
+  readonly reason?: string;
+  readonly text?: string;
+  readonly timestamp?: string;
+  readonly datetime?: string;
+  readonly time?: string;
+  readonly at?: string;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  readonly detail?: string;
+  readonly description?: string;
+  readonly message?: string;
+  readonly from?: string;
+  readonly to?: string;
+  readonly code?: string;
+}
+
+/** renderFormContainer aliases shared by every form-family component. */
+interface FormShellProps {
+  readonly title?: string;
+  readonly label?: string;
+  readonly heading?: string;
+  readonly name?: string;
+  readonly description?: string;
+  readonly subtitle?: string;
+  readonly hint?: string;
+}
+
+/** The record an AddressEditor hands its consumer on every edit. */
+export type AddressEditorValue = { street: string; city: string; region: string; postalCode: string };
+
+export interface AddressEditorProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onChange' | 'title' | 'name'>, FormShellProps {
+  readonly street?: string;
+  readonly line1?: string;
+  readonly addressLine1?: string;
+  readonly city?: string;
+  readonly region?: string;
+  readonly state?: string;
+  readonly postalCode?: string;
+  readonly zip?: string;
+  readonly onChange?: (address: AddressEditorValue) => void;
+}
+
+export interface PreferenceEditorProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'title' | 'name'>, FormShellProps {
+  readonly namespaces?: readonly unknown[];
+  readonly namespace?: string;
+  readonly document?: string;
+  readonly json?: string;
+  readonly value?: string;
+}
+
+export interface RoleAssignmentFormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'title' | 'name'>, FormShellProps {
+  readonly roles?: readonly unknown[];
+  readonly availableRoles?: readonly unknown[];
+  readonly role?: string;
+  readonly defaultRoleId?: string;
+  readonly assignee?: string;
+  readonly member?: string;
+}
+
+export interface StatusSelectorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'title'> {
+  readonly label?: string;
+  readonly title?: string;
+  readonly options?: readonly unknown[];
+  readonly states?: readonly unknown[];
+  readonly value?: string;
+  readonly status?: string;
+  readonly onChange?: React.ChangeEventHandler<HTMLSelectElement>;
+  readonly onValueChange?: (value: string) => void;
+  readonly onUpdate?: (value: string) => void;
+}
+
+export interface TagInputProps extends Omit<React.FieldsetHTMLAttributes<HTMLFieldSetElement>, 'onChange' | 'title' | 'name'>, FormShellProps {
+  readonly tags?: readonly unknown[];
+  readonly value?: string;
+  readonly placeholder?: string;
+  readonly onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  readonly onValueChange?: (value: string) => void;
+  readonly onUpdate?: (value: string) => void;
+}
+
+export interface TemplatePickerProps extends Omit<React.FieldsetHTMLAttributes<HTMLFieldSetElement>, 'title' | 'name'>, FormShellProps {
+  readonly templates?: readonly unknown[];
+  readonly options?: readonly unknown[];
+  readonly templateId?: string;
+  readonly value?: string;
+  readonly channels?: readonly unknown[];
+  readonly channel?: string;
+}
+
+/** A saved-schema filter descriptor; the renderer reads label and field, exactly as the HTML renderer does. */
+export type FilterDescriptor = Readonly<Record<string, unknown>>;
+
+export interface FilterPanelProps extends React.HTMLAttributes<HTMLElement> {
+  readonly filters?: readonly FilterDescriptor[];
+  readonly activeFilters?: readonly FilterDescriptor[];
+  readonly mode?: string;
+  readonly collapsible?: boolean;
+}
+
+export interface PriceSummaryProps extends React.HTMLAttributes<HTMLElement> {
+  readonly title?: string;
+  readonly label?: string;
+  readonly heading?: string;
+  readonly name?: string;
+  readonly amount?: string | number;
+  readonly amountCents?: string | number;
+  readonly unitAmountCents?: string | number;
+  readonly currency?: string;
+  readonly currencyCode?: string;
+  readonly model?: string;
+  readonly pricingModel?: string;
+  readonly interval?: string;
+  readonly billingInterval?: string;
+  readonly summary?: string;
+  readonly text?: string;
+  readonly description?: string;
+}
+
 export interface CommonFieldProps {
   readonly id: string;
   readonly label: React.ReactNode;

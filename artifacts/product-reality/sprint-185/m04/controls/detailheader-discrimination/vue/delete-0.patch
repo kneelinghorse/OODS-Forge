@@ -1,0 +1,37 @@
+diff --git a/packages/components-vue/src/breadth.ts b/packages/components-vue/src/breadth.ts
+index b22e660e..7512c499 100644
+--- a/packages/components-vue/src/breadth.ts
++++ b/packages/components-vue/src/breadth.ts
+@@ -47,31 +47,7 @@ function scalarContent(content: readonly VNodeChild[]): string | undefined {
+   return content.map((child) => String(isVNode(child) ? child.children : child)).join('');
+ }
+ 
+-export const DetailHeader = defineComponent({
+-  name: 'OodsDetailHeader',
+-  props: {
+-    title: String, label: String, text: String,
+-    subtitle: String, sublabel: String, description: String,
+-    metadata: String, meta: String,
+-    as: String as PropType<HeaderElement>,
+-    level: Number as PropType<HeaderLevel>,
+-  },
+-  setup(props, { slots }) {
+-    return () => {
+-      const content = authoredContent(slots.default?.());
+-      const scalar = scalarContent(content);
+-      const title = scalar ?? firstText(props.title, props.label, props.text) ?? 'Details';
+-      const subtitle = firstText(props.subtitle, props.sublabel, props.description);
+-      const metadata = firstText(props.metadata, props.meta);
+-      return h('header', { class: 'oods-detail-header', 'data-oods-component': 'DetailHeader' },
+-        content.length && scalar === undefined ? content : [
+-          h(headingElement(props.as, props.level, 2), title),
+-          subtitle ? h('span', { 'data-oods-subtitle': 'true' }, subtitle) : null,
+-          metadata ? h('span', { 'data-oods-metadata': 'true' }, metadata) : null,
+-        ]);
+-    };
+-  },
+-});
++
+ 
+ export const CardHeader = defineComponent({
+   name: 'OodsCardHeader',

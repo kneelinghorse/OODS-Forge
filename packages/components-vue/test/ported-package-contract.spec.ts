@@ -50,7 +50,7 @@ function declarationValueExports(source: string): Set<string> {
 }
 
 describe('@oods/components-vue ported package contract', () => {
-  it('publishes exactly the separately governed eight on the ported runtime and declaration', () => {
+  it('publishes exactly the historical eight implementation exports on the ported runtime and declaration', () => {
     expect(Object.keys(sourcePorted).sort()).toEqual([...portedIds].sort());
     expect(Object.keys(builtPorted).sort()).toEqual([...portedIds].sort());
 
@@ -68,11 +68,11 @@ describe('@oods/components-vue ported package contract', () => {
     };
     expect(manifest.exports).toMatchObject({
       './ported': {
-        types: './dist/ported.d.ts',
-        import: './dist/ported.js',
-        require: './dist/ported.cjs',
+        types: './dist/index.d.ts',
+        import: './dist/index.js',
+        require: './dist/index.cjs',
       },
-      './readiness-ported': { default: './evidence/vue-readiness-ported.v1.json' },
+      './readiness-ported': { default: './evidence/vue-readiness.v1.json' },
     });
     expect(manifest.dependencies).toEqual({
       '@oods/component-contracts': '0.1.0',
@@ -84,7 +84,7 @@ describe('@oods/components-vue ported package contract', () => {
       exports: Record<string, unknown>;
     };
     expect(stylesManifest.exports[`./${portedCssSpecifier.split('/').at(-1)}`]).toEqual({
-      default: './dist/components-ported.css',
+      default: './dist/components.css',
     });
 
     const distributableText = [
@@ -98,7 +98,7 @@ describe('@oods/components-vue ported package contract', () => {
     expect(distributableText).not.toContain(packageRoot);
   });
 
-  it('publishes eight independently derived readiness rows on the additive manifest', () => {
+  it('publishes historical readiness rows alongside the root alias', () => {
     const readiness = readJson(`${packageRoot}/evidence/vue-readiness-ported.v1.json`) as {
       target: string;
       rows: Array<{

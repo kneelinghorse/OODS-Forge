@@ -39,9 +39,11 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   ) => {
     const presentation = status ? getStatusPresentation(domain, status) : undefined;
     const tone = toneOverride ?? presentation?.tone ?? 'neutral';
-    const tokenSet = emphasis === 'solid'
-      ? presentation?.badge.solid ?? getToneTokenSet(tone)
-      : presentation?.badge.subtle ?? getToneTokenSet(tone);
+    const tokenSet = toneOverride !== undefined
+      ? getToneTokenSet(tone)
+      : emphasis === 'solid'
+        ? presentation?.badge.solid ?? getToneTokenSet(tone)
+        : presentation?.badge.subtle ?? getToneTokenSet(tone);
     const resolvedContent = children ?? content ?? presentation?.label ?? status;
     const resolvedIcon = icon ?? resolveStatusGlyph(presentation?.iconName);
     const resolvedShowIcon = showIcon ?? resolvedIcon !== undefined;

@@ -1,0 +1,135 @@
+import * as React from 'react';
+
+import { Badge } from './presentational.js';
+import type {
+  CardHeaderProps,
+  ColorSwatchProps,
+  ColorizedBadgeProps,
+  HeaderElement,
+  HeaderLevel,
+  VizAreaPreviewProps,
+} from './types.js';
+
+const classes = (...values: Array<string | false | null | undefined>): string =>
+  values.filter(Boolean).join(' ');
+
+const firstText = (...values: Array<string | undefined>): string | undefined =>
+  values.find(value => typeof value === 'string' && value.trim().length > 0);
+
+function childContent(children: React.ReactNode): { scalar?: string; authored: boolean } {
+  const flatten = (value: React.ReactNode): React.ReactNode[] => React.Children.toArray(value).flatMap(node => {
+    if (React.isValidElement<{ children?: React.ReactNode }>(node) && node.type === React.Fragment) {
+      return flatten(node.props.children);
+    }
+    return [node];
+  });
+  const nodes = flatten(children);
+  if (nodes.every(node => typeof node === 'string' || typeof node === 'number')) {
+    const scalar = nodes.join('');
+    return { scalar: scalar.trim().length > 0 ? scalar : undefined, authored: false };
+  }
+  return { authored: nodes.length > 0 };
+}
+
+function headingElement(as: HeaderElement | undefined, level: HeaderLevel | undefined, fallback: HeaderLevel): HeaderElement {
+  if (as && /^h[1-6]$/.test(as)) return as;
+  const bounded = Number.isFinite(level) ? Math.max(1, Math.min(6, Math.trunc(level!))) : fallback;
+  return `h${bounded}` as HeaderElement;
+}
+
+
+
+
+export const CardHeader = React.forwardRef<HTMLElement, CardHeaderProps>(
+  ({ title, label, text, supporting, supportingText, subtitle, description, level, as, children, className, ...rest }, ref) => {
+    const Heading = headingElement(as, level, 3);
+    const content = childContent(children);
+    const heading = content.scalar ?? firstText(title, label, text) ?? 'Card';
+    const supportingLabel = firstText(supporting, supportingText, subtitle, description);
+    return (
+      <header ref={ref} className={classes('oods-card-header', className)} data-oods-component="CardHeader" {...rest}>
+        {content.authored ? children : <>
+          <Heading>{heading}</Heading>
+          {supportingLabel ? <span data-oods-supporting="true">{supportingLabel}</span> : null}
+        </>}
+      </header>
+    );
+  }
+);
+CardHeader.displayName = 'OODS.CardHeader';
+
+export const ColorSwatch = React.forwardRef<HTMLSpanElement, ColorSwatchProps>(
+  ({ color, value, state, label, children, className, style, ...rest }, ref) => {
+    const resolvedColor = firstText(color, value, state);
+    const content = childContent(children);
+    const resolvedLabel = content.scalar ?? firstText(label) ?? resolvedColor ?? 'default';
+    return (
+      <span
+        ref={ref}
+        className={classes('oods-color-swatch', className)}
+        data-oods-component="ColorSwatch"
+        data-summary-type="color-swatch"
+        data-swatch-color={resolvedColor ?? 'default'}
+        style={{ '--oods-swatch-color': resolvedColor === 'default' ? undefined : resolvedColor, ...style } as React.CSSProperties}
+        {...rest}
+      >
+        <span data-oods-swatch-chip="true" aria-hidden="true" />
+        <span data-oods-swatch-label="true">{resolvedLabel}</span>
+        {content.authored ? children : null}
+      </span>
+    );
+  }
+);
+ColorSwatch.displayName = 'OODS.ColorSwatch';
+
+export const ColorizedBadge = React.forwardRef<HTMLSpanElement, ColorizedBadgeProps>(
+  ({ label, text, state, value, status, color, hue, swatch, variant, tone, emphasis, children, className, style, ...rest }, ref) => {
+    const content = childContent(children);
+    const resolvedLabel = content.scalar ?? firstText(label, text, state, value) ?? 'Color';
+    const resolvedColor = firstText(color, hue, swatch, state);
+    const resolvedStatus = firstText(status, state, value);
+    return (
+      <Badge
+        ref={ref}
+        status={resolvedStatus}
+        tone={tone}
+        emphasis={emphasis}
+        className={classes('oods-colorized-badge', className)}
+        data-oods-component="ColorizedBadge"
+        data-badge-status={resolvedStatus}
+        data-badge-color={resolvedColor}
+        data-badge-variant={firstText(variant) ?? 'colorized'}
+        icon={<span data-oods-badge-marker="true" aria-hidden="true" />}
+        style={{ '--oods-badge-color': resolvedColor, ...style } as React.CSSProperties}
+        {...rest}
+      >
+        <span data-oods-badge-label="true">{resolvedLabel}</span>
+        {content.authored ? children : null}
+      </Badge>
+    );
+  }
+);
+ColorizedBadge.displayName = 'OODS.ColorizedBadge';
+
+export const VizAreaPreview = React.forwardRef<HTMLDivElement, VizAreaPreviewProps>(
+  ({ width = 640, height = 360, children, className, style, ...rest }, ref) => {
+    const content = childContent(children);
+    return (
+      <div
+        ref={ref}
+        className={classes('oods-viz-area-preview', className)}
+        data-oods-component="VizAreaPreview"
+        data-viz-preview-type="area"
+        data-viz-width={width}
+        data-viz-height={height}
+        style={{ '--oods-viz-width': `${width}px`, '--oods-viz-height': `${height}px`, ...style } as React.CSSProperties}
+        {...rest}
+      >
+        {content.authored || content.scalar !== undefined
+          ? children
+          : <div data-viz-preview-placeholder="true">Area preview ({width} x {height})</div>}
+      </div>
+    );
+  }
+);
+VizAreaPreview.displayName = 'OODS.VizAreaPreview';

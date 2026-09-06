@@ -12,6 +12,8 @@ import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
 import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
+import { validateGeneratedArtifact } from '../../src/codegen/artifact-envelope.js';
+import { preflightTargetCapabilities } from '../../src/codegen/target-readiness.js';
 
 type Framework = 'react' | 'vue';
 type AffectedNode = readonly [nodeId: string, component: string];
@@ -20,21 +22,21 @@ const SUBSCRIPTION_DETAIL_UNREADY: readonly AffectedNode[] = [
   ['ve-header-26', 'ArchiveSummary'],
 ];
 
-const USER_DETAIL_UNREADY: readonly AffectedNode[] = [
+const USER_DETAIL_NEWLY_READY: readonly AffectedNode[] = [
   ['ve-header-29', 'TagManager'],
   ['slot-tab-1-6', 'MembershipPanel'],
   ['slot-tab-2-8', 'AddressCollectionPanel'],
   ['slot-tab-3-15', 'PreferencePanel'],
 ];
 
-const DASHBOARD_UNREADY: readonly AffectedNode[] = [
+const DASHBOARD_NEWLY_READY: readonly AffectedNode[] = [
   ['slot-header-2', 'DetailHeader'],
   ['slot-main-content-6', 'VizAreaPreview'],
 ];
 
 function countNodes(schema: UiSchema): number {
   let count = 0;
-  const visit = (nodes: UiSchema['screens']): void => {
+  const visit = (nodes: ReadonlyArray<UiSchema['screens'][number]>): void => {
     for (const node of nodes) {
       count += 1;
       if (node.children) visit(node.children);
@@ -46,7 +48,7 @@ function countNodes(schema: UiSchema): number {
 
 function countComponents(schema: UiSchema): number {
   const ids = new Set<string>();
-  const visit = (nodes: UiSchema['screens']): void => {
+  const visit = (nodes: ReadonlyArray<UiSchema['screens'][number]>): void => {
     for (const node of nodes) {
       ids.add(node.component);
       if (node.children) visit(node.children);
@@ -121,12 +123,14 @@ async function expectTargetGenerated(
   });
   expect(result.errors).toBeUndefined();
   expect(result.code.length).toBeGreaterThan(0);
-  expect(result.code).toContain(`from '@oods/components-${framework}/ported'`);
-  expect(result.code).toContain("import '@oods/component-styles/css-ported';");
+  expect(result.code).toContain(`from '@oods/components-${framework}'`);
+  expect(result.code).toContain("import '@oods/component-styles/css';");
   expect(result.imports).toEqual(expect.arrayContaining([
-    `@oods/components-${framework}/ported`,
-    '@oods/component-styles/css-ported',
+    `@oods/components-${framework}`,
+    '@oods/component-styles/css',
   ]));
+  expect(result.imports).not.toContain(`@oods/components-${framework}/ported`);
+  expect(result.imports).not.toContain('@oods/component-styles/css-ported');
   expect(result.artifact?.files).toHaveLength(1);
   expect(result.artifact?.files[0]?.contents.length).toBeGreaterThan(0);
   expect(result.validationReceipt.checks).toEqual(expect.arrayContaining([
@@ -166,7 +170,7 @@ async function composeAndCheck(
   expect(render.status).toBe('ok');
   expect(render.html).toContain('<!DOCTYPE html>');
   expect(render.html).toContain('data-oods-component=');
-  expect(render.html.match(/data-oods-component=/g)?.length ?? 0).toBeGreaterThan(1);
+  expect(render.html!.match(/data-oods-component=/g)?.length ?? 0).toBeGreaterThan(1);
 
   for (const framework of ['react', 'vue'] as const) {
     if (affectedNodes.length > 0) {
@@ -186,8 +190,38 @@ describe('E2E object codegen target readiness', () => {
     await composeAndCheck('Subscription', 'list');
   });
 
-  it('keeps User detail composition/rendering and returns exact target unavailability', async () => {
-    await composeAndCheck('User', 'detail', USER_DETAIL_UNREADY);
+  it('keeps User detail composition/rendering, resolves its former readiness gaps, and reports the remaining composer contract defect', async () => {
+    const compose = await composeHandle({ object: 'User', context: 'detail' });
+    expect(compose.status).toBe('ok');
+    expect(compose.schemaRef).toBeTruthy();
+    expect(compose.objectUsed?.name).toBe('User');
+    expect(compose.schema.objectSchema).toBeDefined();
+    expect(compose.schema.screens[0].bindings).toMatchObject({ onEdit: 'handleEdit', onDelete: 'handleDelete' });
+    const schemaRef = compose.schemaRef!;
+    expect((await validateHandle({ mode: 'full', schemaRef })).status).toBe('ok');
+    const render = await renderHandle({ mode: 'full', schemaRef, apply: true });
+    expect(render.status).toBe('ok');
+    expect(render.html).toContain('<!DOCTYPE html>');
+    for (const [nodeId, component] of USER_DETAIL_NEWLY_READY) {
+      expect(render.html).toContain(`id="${nodeId}"`);
+      expect(render.html).toContain(`data-oods-component="${component}"`);
+    }
+
+    for (const framework of ['react', 'vue'] as const) {
+      expect(preflightTargetCapabilities(compose.schema.screens, framework)).toEqual([]);
+      const result = await codegenHandle({ schemaRef, framework, options: { typescript: true, styling: 'tokens' } });
+      expect(result).toMatchObject({
+        status: 'error', framework, code: '', imports: [], warnings: [],
+        meta: { nodeCount: countNodes(compose.schema), componentCount: countComponents(compose.schema) },
+      });
+      expect(result.artifact).toBeUndefined();
+      expect(result.errors).toEqual([{
+        code: 'OODS-V007', component: 'StatusTimeline', nodeId: 've-header-28',
+        message: 'Prop "label" is not in the canonical StatusTimeline contract.',
+      }]);
+      expect(result.validationReceipt.checks).toEqual(expect.arrayContaining(['target-readiness', 'props-contract', 'slots-contract', 'events-contract']));
+      expect(result.validationReceipt.notChecked).toContain('dependency-closure');
+    }
   });
 
   it('keeps objectSchema field metadata even when framework emission is blocked', async () => {
@@ -207,16 +241,45 @@ describe('E2E object codegen target readiness', () => {
     );
   });
 
-  it('classifies intent-only dashboard framework output instead of treating it as a success', async () => {
+  it('builds the unchanged intent-only dashboard through both root component packages', async () => {
     const compose = await composeHandle({ intent: 'dashboard with metrics' });
     expect(compose.status).toBe('ok');
+    expect(compose.schemaRef).toBeTruthy();
     expect(compose.schema.objectSchema).toBeUndefined();
 
-    await expectTargetUnavailable(
-      compose.schemaRef!,
-      compose.schema,
-      'react',
-      DASHBOARD_UNREADY,
-    );
+    // DetailHeader and VizAreaPreview now have real root exports. Keep the
+    // original intent and prove the full composed tree survives generation.
+    for (const framework of ['react', 'vue'] as const) {
+      const result = await codegenHandle({
+        schemaRef: compose.schemaRef!,
+        framework,
+        options: { typescript: true, styling: 'tokens' },
+      });
+      expect(result, JSON.stringify(result.errors ?? [])).toMatchObject({
+        status: 'ok', framework, warnings: [],
+        meta: { nodeCount: countNodes(compose.schema), componentCount: countComponents(compose.schema) },
+      });
+      expect(result.errors).toBeUndefined();
+      expect(result.imports).toEqual(expect.arrayContaining([
+        `@oods/components-${framework}`, '@oods/component-styles/css',
+      ]));
+      expect(result.imports).not.toContain(`@oods/components-${framework}/ported`);
+      expect(result.code).toContain(`from '@oods/components-${framework}'`);
+      expect(result.code).toContain("import '@oods/component-styles/css';");
+      expect(result.code.match(/data-oods-component=/g)).toHaveLength(countNodes(compose.schema));
+      for (const [nodeId, component] of DASHBOARD_NEWLY_READY) {
+        expect(result.code).toContain(`<${component} `);
+        expect(result.code).toContain(`id="${nodeId}"`);
+        expect(result.code).toContain(`data-oods-component="${component}"`);
+      }
+      expect(result.artifact).toBeDefined();
+      expect(result.artifact!.files).toHaveLength(1);
+      expect(result.artifact!.files[0]!.contents).toBe(result.code);
+      expect(result.artifact!.actions).toEqual([]);
+      expect(validateGeneratedArtifact(result.artifact!)).toEqual([]);
+      expect(result.validationReceipt.checks).toEqual(expect.arrayContaining([
+        'target-readiness', 'normalization-fidelity', 'props-contract', 'dependency-closure',
+      ]));
+    }
   });
 });

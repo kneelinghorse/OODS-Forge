@@ -6,13 +6,15 @@ import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import ts from "typescript";
+import { NUCLEUS_COMPONENT_IDS } from "../../packages/component-contracts/dist/index.js";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_REPOSITORY_ROOT = path.resolve(scriptDirectory, "../..");
 export const EXPECTED_REFERENCE_TOTALS = Object.freeze({
-  references: 178,
-  classA: 150,
-  classB: 28,
+  // Six refs per row/target, plus ten historical Vue scenario refs.
+  references: NUCLEUS_COMPONENT_IDS.length * 12 + 10,
+  classA: NUCLEUS_COMPONENT_IDS.length * 10 + 10,
+  classB: NUCLEUS_COMPONENT_IDS.length * 2,
 });
 
 export const READINESS_DOCUMENTS = Object.freeze({
@@ -44,10 +46,11 @@ function parseArguments(argv) {
   const result = { repositoryRoot: DEFAULT_REPOSITORY_ROOT };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
-    if (argument === "--repository-root" || argument === "--output") {
+    if (argument === "--repository-root" || argument === "--output" || argument === "--mission-id") {
       const value = argv[index + 1];
       if (!value) throw new Error(`Missing value for ${argument}.`);
-      result[argument === "--output" ? "output" : "repositoryRoot"] = path.resolve(value);
+      if (argument === "--mission-id") result.missionId = value;
+      else result[argument === "--output" ? "output" : "repositoryRoot"] = path.resolve(value);
       index += 1;
       continue;
     }
@@ -169,7 +172,7 @@ function resolveSymbol(evidenceClass, symbol, sourceFile) {
  * Independent repository oracle for the readiness documents. Every ref
  * occurrence is counted; repeated scenario refs are evidence, not deduplicated.
  */
-export function verifyReadinessRefs(repositoryRoot = DEFAULT_REPOSITORY_ROOT) {
+export function verifyReadinessRefs(repositoryRoot = DEFAULT_REPOSITORY_ROOT, missionId = "s185-m03") {
   const root = path.resolve(repositoryRoot);
   const failures = [];
   const references = [];
@@ -262,7 +265,7 @@ export function verifyReadinessRefs(repositoryRoot = DEFAULT_REPOSITORY_ROOT) {
 
   return {
     schemaVersion: "1.0.0",
-    missionId: "s184-m02",
+    missionId,
     kind: "readiness-reference-verification",
     classification: {
       classA: "repository source, package export, dependency closure, or framework scenario",
@@ -286,10 +289,10 @@ if (invokedPath === import.meta.url) {
   if (args.help) {
     process.stdout.write(
       "Usage: node scripts/product-reality/verify-readiness-refs.mjs "
-      + "[--repository-root <directory>] [--output <file>]\n",
+      + "[--repository-root <directory>] [--output <file>] [--mission-id <id>]\n",
     );
   } else {
-    const report = verifyReadinessRefs(args.repositoryRoot);
+    const report = verifyReadinessRefs(args.repositoryRoot, args.missionId);
     const serialized = `${JSON.stringify(report, null, 2)}\n`;
     if (args.output) {
       fs.mkdirSync(path.dirname(args.output), { recursive: true });

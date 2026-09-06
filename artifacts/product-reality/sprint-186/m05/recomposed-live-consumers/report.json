@@ -1,0 +1,3045 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s186-m05",
+  "schemaStore": "artifacts/product-reality/sprint-186/m05/recomposed-store",
+  "kind": "live-schema-workflow-clean-consumer-proof",
+  "status": "passed",
+  "selected": 16,
+  "passed": 16,
+  "notApplicable": 0,
+  "applicable": 16,
+  "failed": 0,
+  "skipped": 0,
+  "schemaCount": 1,
+  "frameworkCount": 2,
+  "cellCount": 2,
+  "expectedCellCount": 2,
+  "equalityRule": "Every selected immutable saved schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.",
+  "generationPolicy": "code.generate is invoked live once per schema/framework cell and only that in-run artifact is consumed.",
+  "consumerPolicy": "Consumers are outside the workspace, begin without node_modules, use empty npm configs, and install OODS packages only from exact tarballs produced by npm pack after each package prepack build.",
+  "logPathPolicy": "Every gate log path is relative to this report artifact root, including paths repeated in nested cell reports.",
+  "cells": [
+    {
+      "schema": "user-form-showcase",
+      "schemaRef": "compose-99f9995e",
+      "derivation": {
+        "kind": "composer-recomposed-saved-schema",
+        "mission": "s186-m05",
+        "derivedFrom": {
+          "store": "artifacts/product-reality/sprint-183/m04/saved-schema-store",
+          "name": "user-form-showcase",
+          "schemaRef": "compose-ad97c118",
+          "version": 1,
+          "sha256": "d25d9ce30988cd5e26b390a5b43ce005f2055b765b8bc3abadc263571a848bb2"
+        },
+        "compose": {
+          "input": {
+            "object": "User",
+            "context": "form"
+          },
+          "schemaRef": "compose-99f9995e",
+          "response": "artifacts/product-reality/sprint-186/m05/recomposition-compose-response.json",
+          "sourceHashes": {
+            "packages/mcp-server/src/tools/design.compose.ts": "beaf9fb9bd1fe93c7a6ae96f26fe8018b603bc3889468c3d2910cf1d58608881",
+            "packages/mcp-server/src/compose/object-slot-filler.ts": "93ee4ddb1a44af2516ede2d0123131a6c0bc02d0cb7a5d9576e3690030af7e98"
+          }
+        },
+        "save": {
+          "input": {
+            "name": "user-form-showcase",
+            "schemaRef": "compose-99f9995e",
+            "object": "User",
+            "author": "Codex",
+            "tags": []
+          },
+          "receipt": "artifacts/product-reality/sprint-186/m05/recomposition-save-receipt.json",
+          "version": 2
+        },
+        "reason": "Re-compose the reproducible User form after fixing generic scalar-field eligibility, specialized-editor container binding, and enum option record generation. The original frozen record remains unchanged; this successor is authored by design.compose and persisted by schema.save, without pruning or hand-editing schema nodes."
+      },
+      "framework": "react",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/react/logs/install.log",
+            "cells/user-form-showcase/react/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/react/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/react/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/react/logs/server-render-build.log",
+            "cells/user-form-showcase/react/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 14757,
+            "sha256": "sha256:98ecd68f8b1017a229fc0e3acf8cd8acf9c282b0ebfad07dd05eba0d22b12c7f",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-form-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-title-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-26",
+                "component": "StatusSelector",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-27",
+                "component": "TagInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-28",
+                "component": "AddressEditor",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-fields-8",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-0-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-29",
+                "component": "PreferenceEditor",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-30",
+                "component": "RoleAssignmentForm",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-31",
+                "component": "TemplatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-1-5",
+                "component": "DatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-6",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-2-7",
+                "component": "DatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-3-13",
+                "component": "Select",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-14",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-4-15",
+                "component": "Textarea",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-16",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-5-17",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-18",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-6-19",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-20",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-7-21",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-22",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-8-23",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-24",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-9-25",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-actions-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-submit-10",
+                "component": "Button",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-form-11",
+            "componentCounts": {
+              "AddressEditor": 1,
+              "Button": 1,
+              "DatePicker": 2,
+              "Input": 5,
+              "PreferenceEditor": 1,
+              "RoleAssignmentForm": 1,
+              "Select": 1,
+              "Stack": 15,
+              "StatusSelector": 1,
+              "TagInput": 1,
+              "TemplatePicker": 1,
+              "Textarea": 1
+            },
+            "mountedExpectedComponents": [
+              "AddressEditor",
+              "Button",
+              "DatePicker",
+              "Input",
+              "PreferenceEditor",
+              "RoleAssignmentForm",
+              "Select",
+              "Stack",
+              "StatusSelector",
+              "TagInput",
+              "TemplatePicker",
+              "Textarea"
+            ],
+            "generatedCoreComponents": [
+              "AddressEditor",
+              "Button",
+              "DatePicker",
+              "Input",
+              "PreferenceEditor",
+              "RoleAssignmentForm",
+              "Select",
+              "Stack",
+              "StatusSelector",
+              "TagInput",
+              "TemplatePicker",
+              "Textarea"
+            ],
+            "generatedPortedComponents": [],
+            "labelVisibility": [],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-form-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-title-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-26",
+                "component": "StatusSelector",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-27",
+                "component": "TagInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-28",
+                "component": "AddressEditor",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-fields-8",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-0-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-29",
+                "component": "PreferenceEditor",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-30",
+                "component": "RoleAssignmentForm",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-31",
+                "component": "TemplatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-1-5",
+                "component": "DatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-6",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-2-7",
+                "component": "DatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-3-13",
+                "component": "Select",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-14",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-4-15",
+                "component": "Textarea",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-16",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-5-17",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-18",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-6-19",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-20",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-7-21",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-22",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-8-23",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-24",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-9-25",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-actions-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-submit-10",
+                "component": "Button",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-form-11",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-form-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-title-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-title-26",
+                    "component": "StatusSelector",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FIELDSET",
+                    "id": "ve-title-27",
+                    "component": "TagInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-title-28",
+                    "component": "AddressEditor",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-fields-8",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-field-0-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-field-0-29",
+                    "component": "PreferenceEditor",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-field-0-30",
+                    "component": "RoleAssignmentForm",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FIELDSET",
+                    "id": "ve-field-0-31",
+                    "component": "TemplatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-1-5",
+                    "component": "DatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-6",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-2-7",
+                    "component": "DatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-field-3-13",
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-14",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TEXTAREA",
+                    "id": "slot-field-4-15",
+                    "component": "Textarea",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-16",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-5-17",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-18",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-6-19",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-20",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-7-21",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-22",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-8-23",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-24",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-9-25",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-actions-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "form-submit-10",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-form-11",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-form-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-title-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-title-26",
+                    "component": "StatusSelector",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FIELDSET",
+                    "id": "ve-title-27",
+                    "component": "TagInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-title-28",
+                    "component": "AddressEditor",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-fields-8",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-field-0-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-field-0-29",
+                    "component": "PreferenceEditor",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-field-0-30",
+                    "component": "RoleAssignmentForm",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FIELDSET",
+                    "id": "ve-field-0-31",
+                    "component": "TemplatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-1-5",
+                    "component": "DatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-6",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-2-7",
+                    "component": "DatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-field-3-13",
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-14",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TEXTAREA",
+                    "id": "slot-field-4-15",
+                    "component": "Textarea",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-16",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-5-17",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-18",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-6-19",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-20",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-7-21",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-22",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-8-23",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-24",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-9-25",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-actions-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "form-submit-10",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/react/logs/css-proof.log",
+            "cells/user-form-showcase/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-gVjJ3oJ8.css"
+            ],
+            "bytes": 174924,
+            "sha256": "sha256:fd01693b2cbcb1fb773caa04fc2cbdc2030f366b6aefeb8b136317b325c61e19",
+            "core": true,
+            "ported": true,
+            "requiresPorted": false,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/react/logs/browser-proof.log",
+            "cells/user-form-showcase/react/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "action",
+              "nodeId": "screen-form-11",
+              "component": "Stack",
+              "selector": "[data-oods-action=\"handleChange\"]",
+              "action": "handleChange",
+              "status": "passed"
+            },
+            "selectorEvidence": [
+              {
+                "action": "handleChange",
+                "selector": "[data-oods-action=\"handleChange\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleChange_addresses",
+                "selector": "[data-oods-action=\"handleChange_addresses\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "typed"
+              },
+              {
+                "action": "handleSubmit",
+                "selector": "[data-oods-action=\"handleSubmit\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              }
+            ],
+            "actionCounts": {
+              "handleChange": 1,
+              "handleChange_addresses": 1,
+              "handleSubmit": 1
+            },
+            "actionArgs": {
+              "handleChange": [
+                []
+              ],
+              "handleChange_addresses": [
+                [
+                  {
+                    "street": "generated",
+                    "city": "",
+                    "region": "",
+                    "postalCode": ""
+                  }
+                ]
+              ],
+              "handleSubmit": [
+                []
+              ]
+            },
+            "expectedArguments": {
+              "handleChange": [
+                []
+              ],
+              "handleChange_addresses": [
+                [
+                  {
+                    "street": "generated",
+                    "city": "",
+                    "region": "",
+                    "postalCode": ""
+                  }
+                ]
+              ],
+              "handleSubmit": [
+                []
+              ]
+            },
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.tsx",
+              "bindingMarkerCount": 14,
+              "actionSelectors": [
+                {
+                  "action": "handleChange",
+                  "selector": "[data-oods-action=\"handleChange\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleChange_addresses",
+                  "selector": "[data-oods-action=\"handleChange_addresses\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleSubmit",
+                  "selector": "[data-oods-action=\"handleSubmit\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                }
+              ],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.tsx",
+                "src/ssr.tsx",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "action",
+                "nodeId": "screen-form-11",
+                "component": "Stack",
+                "selector": "[data-oods-action=\"handleChange\"]",
+                "action": "handleChange"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/user-form-showcase/react/GeneratedUI.tsx",
+        "sourceSha256": "sha256:75a9e332a5fdbfedae6ee991530bb0141eb3a0fde8f9170664adeb4e220a0b0b",
+        "artifactContentHash": "sha256:fb4b64fb9f0c291d17aebc25d589ff5a167e8b99bd6736bfaac335ef91d3ccfd",
+        "generationLog": "live-generation/user-form-showcase/react/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:fb4b64fb9f0c291d17aebc25d589ff5a167e8b99bd6736bfaac335ef91d3ccfd",
+          "generatedAt": "2026-09-06T19:25:09.246Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.tsx",
+        "bindingMarkerCount": 14,
+        "actionSelectors": [
+          {
+            "action": "handleChange",
+            "selector": "[data-oods-action=\"handleChange\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleChange_addresses",
+            "selector": "[data-oods-action=\"handleChange_addresses\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleSubmit",
+            "selector": "[data-oods-action=\"handleSubmit\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          }
+        ],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.tsx",
+          "src/ssr.tsx",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "action",
+          "nodeId": "screen-form-11",
+          "component": "Stack",
+          "selector": "[data-oods-action=\"handleChange\"]",
+          "action": "handleChange"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/user-form-showcase/react/report.json",
+      "reportSha256": "sha256:9092635cacfcdd8ab96b38b3218d92f0790953983bb406cf5327fc969d1086cf"
+    },
+    {
+      "schema": "user-form-showcase",
+      "schemaRef": "compose-99f9995e",
+      "derivation": {
+        "kind": "composer-recomposed-saved-schema",
+        "mission": "s186-m05",
+        "derivedFrom": {
+          "store": "artifacts/product-reality/sprint-183/m04/saved-schema-store",
+          "name": "user-form-showcase",
+          "schemaRef": "compose-ad97c118",
+          "version": 1,
+          "sha256": "d25d9ce30988cd5e26b390a5b43ce005f2055b765b8bc3abadc263571a848bb2"
+        },
+        "compose": {
+          "input": {
+            "object": "User",
+            "context": "form"
+          },
+          "schemaRef": "compose-99f9995e",
+          "response": "artifacts/product-reality/sprint-186/m05/recomposition-compose-response.json",
+          "sourceHashes": {
+            "packages/mcp-server/src/tools/design.compose.ts": "beaf9fb9bd1fe93c7a6ae96f26fe8018b603bc3889468c3d2910cf1d58608881",
+            "packages/mcp-server/src/compose/object-slot-filler.ts": "93ee4ddb1a44af2516ede2d0123131a6c0bc02d0cb7a5d9576e3690030af7e98"
+          }
+        },
+        "save": {
+          "input": {
+            "name": "user-form-showcase",
+            "schemaRef": "compose-99f9995e",
+            "object": "User",
+            "author": "Codex",
+            "tags": []
+          },
+          "receipt": "artifacts/product-reality/sprint-186/m05/recomposition-save-receipt.json",
+          "version": 2
+        },
+        "reason": "Re-compose the reproducible User form after fixing generic scalar-field eligibility, specialized-editor container binding, and enum option record generation. The original frozen record remains unchanged; this successor is authored by design.compose and persisted by schema.save, without pruning or hand-editing schema nodes."
+      },
+      "framework": "vue",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/vue/logs/install.log",
+            "cells/user-form-showcase/vue/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/vue/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/vue/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/vue/logs/server-render-build.log",
+            "cells/user-form-showcase/vue/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 12782,
+            "sha256": "sha256:fd02407423994ddb0214d6c2e685141bb74fb7825cadb58c525e9080d73f6ea8",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-form-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-title-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-26",
+                "component": "StatusSelector",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-27",
+                "component": "TagInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-28",
+                "component": "AddressEditor",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-fields-8",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-0-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-29",
+                "component": "PreferenceEditor",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-30",
+                "component": "RoleAssignmentForm",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-31",
+                "component": "TemplatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-1-5",
+                "component": "DatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-6",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-2-7",
+                "component": "DatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-3-13",
+                "component": "Select",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-14",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-4-15",
+                "component": "Textarea",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-16",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-5-17",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-18",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-6-19",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-20",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-7-21",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-22",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-8-23",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-24",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-9-25",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-actions-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-submit-10",
+                "component": "Button",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-form-11",
+            "componentCounts": {
+              "AddressEditor": 1,
+              "Button": 1,
+              "DatePicker": 2,
+              "Input": 7,
+              "PreferenceEditor": 1,
+              "RoleAssignmentForm": 1,
+              "Select": 1,
+              "Stack": 15,
+              "StatusSelector": 1,
+              "TagInput": 1,
+              "TemplatePicker": 1,
+              "Textarea": 1
+            },
+            "mountedExpectedComponents": [
+              "AddressEditor",
+              "Button",
+              "DatePicker",
+              "Input",
+              "PreferenceEditor",
+              "RoleAssignmentForm",
+              "Select",
+              "Stack",
+              "StatusSelector",
+              "TagInput",
+              "TemplatePicker",
+              "Textarea"
+            ],
+            "generatedCoreComponents": [
+              "AddressEditor",
+              "Button",
+              "DatePicker",
+              "Input",
+              "PreferenceEditor",
+              "RoleAssignmentForm",
+              "Select",
+              "Stack",
+              "StatusSelector",
+              "TagInput",
+              "TemplatePicker",
+              "Textarea"
+            ],
+            "generatedPortedComponents": [],
+            "labelVisibility": [],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-form-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-title-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-26",
+                "component": "StatusSelector",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-27",
+                "component": "TagInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-title-28",
+                "component": "AddressEditor",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-fields-8",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-0-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-29",
+                "component": "PreferenceEditor",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-30",
+                "component": "RoleAssignmentForm",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-field-0-31",
+                "component": "TemplatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-1-5",
+                "component": "DatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-6",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-2-7",
+                "component": "DatePicker",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-3-13",
+                "component": "Select",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-14",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-4-15",
+                "component": "Textarea",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-16",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-5-17",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-18",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-6-19",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-20",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-7-21",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-22",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-8-23",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-field-group-24",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-field-9-25",
+                "component": "Input",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-actions-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "form-submit-10",
+                "component": "Button",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-form-11",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-form-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-title-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-title-26",
+                    "component": "StatusSelector",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FIELDSET",
+                    "id": "ve-title-27",
+                    "component": "TagInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-title-28",
+                    "component": "AddressEditor",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-fields-8",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-field-0-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-field-0-29",
+                    "component": "PreferenceEditor",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-field-0-30",
+                    "component": "RoleAssignmentForm",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FIELDSET",
+                    "id": "ve-field-0-31",
+                    "component": "TemplatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "DatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-1-5",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-6",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "DatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-2-7",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-field-3-13",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-14",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Textarea",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TEXTAREA",
+                    "id": "slot-field-4-15",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-16",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-5-17",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-18",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-6-19",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-20",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-7-21",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-22",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-8-23",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-24",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-9-25",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-actions-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "form-submit-10",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-form-11",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-form-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-title-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-title-26",
+                    "component": "StatusSelector",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FIELDSET",
+                    "id": "ve-title-27",
+                    "component": "TagInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-title-28",
+                    "component": "AddressEditor",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-fields-8",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-field-0-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-field-0-29",
+                    "component": "PreferenceEditor",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": "ve-field-0-30",
+                    "component": "RoleAssignmentForm",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FIELDSET",
+                    "id": "ve-field-0-31",
+                    "component": "TemplatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "DatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-1-5",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-6",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "DatePicker",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-2-7",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-field-3-13",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-14",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Textarea",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TEXTAREA",
+                    "id": "slot-field-4-15",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-16",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-5-17",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-18",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-6-19",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-20",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-7-21",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-22",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-8-23",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-field-group-24",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "slot-field-9-25",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "form-actions-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "form-submit-10",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/vue/logs/css-proof.log",
+            "cells/user-form-showcase/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-C1K5R-13.css"
+            ],
+            "bytes": 175036,
+            "sha256": "sha256:427f89048a110ed7a59b0dfce3ceb6db2fc7d09004501e7a875ee2f6204fec5c",
+            "core": true,
+            "ported": true,
+            "requiresPorted": false,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/user-form-showcase/vue/logs/browser-proof.log",
+            "cells/user-form-showcase/vue/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "action",
+              "nodeId": "screen-form-11",
+              "component": "Stack",
+              "selector": "[data-oods-action=\"handleChange\"]",
+              "action": "handleChange",
+              "status": "passed"
+            },
+            "selectorEvidence": [
+              {
+                "action": "handleChange",
+                "selector": "[data-oods-action=\"handleChange\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleChange_addresses",
+                "selector": "[data-oods-action=\"handleChange_addresses\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "typed"
+              },
+              {
+                "action": "handleSubmit",
+                "selector": "[data-oods-action=\"handleSubmit\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              }
+            ],
+            "actionCounts": {
+              "handleChange": 1,
+              "handleChange_addresses": 1,
+              "handleSubmit": 1
+            },
+            "actionArgs": {
+              "handleChange": [
+                []
+              ],
+              "handleChange_addresses": [
+                [
+                  {
+                    "street": "generated",
+                    "city": "",
+                    "region": "",
+                    "postalCode": ""
+                  }
+                ]
+              ],
+              "handleSubmit": [
+                []
+              ]
+            },
+            "expectedArguments": {
+              "handleChange": [
+                []
+              ],
+              "handleChange_addresses": [
+                [
+                  {
+                    "street": "generated",
+                    "city": "",
+                    "region": "",
+                    "postalCode": ""
+                  }
+                ]
+              ],
+              "handleSubmit": [
+                []
+              ]
+            },
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.vue",
+              "bindingMarkerCount": 14,
+              "actionSelectors": [
+                {
+                  "action": "handleChange",
+                  "selector": "[data-oods-action=\"handleChange\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleChange_addresses",
+                  "selector": "[data-oods-action=\"handleChange_addresses\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleSubmit",
+                  "selector": "[data-oods-action=\"handleSubmit\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                }
+              ],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.ts",
+                "src/ssr.ts",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "action",
+                "nodeId": "screen-form-11",
+                "component": "Stack",
+                "selector": "[data-oods-action=\"handleChange\"]",
+                "action": "handleChange"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/user-form-showcase/vue/GeneratedUI.vue",
+        "sourceSha256": "sha256:2445a2d20f26881cb26ef3fe611568dbfd5937f239ffa9d0fae41dda7fe9675f",
+        "artifactContentHash": "sha256:3ff3bbdba1a9cc66904e242374f544eeb009ea7da5ea3b9fed1116302b4e66f0",
+        "generationLog": "live-generation/user-form-showcase/vue/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:3ff3bbdba1a9cc66904e242374f544eeb009ea7da5ea3b9fed1116302b4e66f0",
+          "generatedAt": "2026-09-06T19:25:09.412Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.vue",
+        "bindingMarkerCount": 14,
+        "actionSelectors": [
+          {
+            "action": "handleChange",
+            "selector": "[data-oods-action=\"handleChange\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleChange_addresses",
+            "selector": "[data-oods-action=\"handleChange_addresses\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleSubmit",
+            "selector": "[data-oods-action=\"handleSubmit\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          }
+        ],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.ts",
+          "src/ssr.ts",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "action",
+          "nodeId": "screen-form-11",
+          "component": "Stack",
+          "selector": "[data-oods-action=\"handleChange\"]",
+          "action": "handleChange"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/user-form-showcase/vue/report.json",
+      "reportSha256": "sha256:6bd37bf5db18bfb29e8e335844a943e8cbfa949005815790b61315c32b461383"
+    }
+  ]
+}

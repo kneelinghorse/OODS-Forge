@@ -8,7 +8,9 @@
   "engines": {
     "node": ">=20.11.1"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs",
     "clean": "rimraf dist",
@@ -31,18 +33,21 @@
       "default": "./dist/components.css"
     },
     "./css-ported": {
-      "default": "./dist/components-ported.css"
+      "default": "./dist/components.css"
     },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "dependencies": {
     "@oods/tokens": "0.1.0"
   },
   "devDependencies": {
+    "@oods/component-contracts": "0.1.0",
     "playwright": "^1.56.1"
   },
   "packageManager": "pnpm@9.12.2"

@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
-import { componentContracts } from '@oods/component-contracts';
+import { componentContracts, NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
 
 import {
   createTargetCapabilityPreflight,
@@ -168,29 +168,31 @@ describe('s184-m02 readiness reference enforcement', () => {
     });
   });
 
-  it('independently verifies the exact 178/150/28 readiness-ref inventory', () => {
+  it('independently verifies the derived nucleus readiness-ref inventory', () => {
+    // m03 adds rows; the ten extra historical Vue scenario refs are retained.
+    const n = NUCLEUS_COMPONENT_IDS.length;
     const report = verifyReadinessRefs(REPOSITORY_ROOT);
     expect(report).toMatchObject({
       status: 'passed',
-      totals: { references: 178, resolved: 178, classA: 150, classB: 28 },
+      totals: { references: n * 12 + 10, resolved: n * 12 + 10, classA: n * 10 + 10, classB: n * 2 },
       targets: {
-        react: { rows: 14, references: 84, resolved: 84, classA: 70, classB: 14 },
-        vue: { rows: 14, references: 94, resolved: 94, classA: 80, classB: 14 },
+        react: { rows: n, references: n * 6, resolved: n * 6, classA: n * 5, classB: n },
+        vue: { rows: n, references: n * 6 + 10, resolved: n * 6 + 10, classA: n * 5 + 10, classB: n },
       },
       evidenceClasses: {
-        versionedContract: 28,
-        targetImplementation: 28,
-        packageExport: 28,
-        publicDeclaration: 28,
-        dependencyClosure: 28,
-        frameworkScenario: 38,
+        versionedContract: n * 2,
+        targetImplementation: n * 2,
+        packageExport: n * 2,
+        publicDeclaration: n * 2,
+        dependencyClosure: n * 2,
+        frameworkScenario: n * 2 + 10,
       },
       failures: [],
     });
   });
 
   it.each(['react', 'vue'] as const)(
-    'accepts all 14 %s rows when declarations and Class A refs resolve',
+    'accepts all fixture %s rows when declarations and Class A refs resolve',
     (framework) => {
       expect(preflightTargetCapabilities(shallowNodes(), framework)).toEqual([]);
     },

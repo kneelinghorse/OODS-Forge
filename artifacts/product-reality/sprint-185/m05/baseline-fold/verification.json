@@ -1,0 +1,52 @@
+{
+  "mission": "s185-m05",
+  "kind": "baseline-fold-focused-verification",
+  "executions": [
+    {
+      "id": "baseline-fold-contracts-retained-declarations",
+      "cwd": "packages/component-contracts",
+      "command": "pnpm exec vitest run test/ported-contracts.s184.spec.ts test/baseline-fold.s185.spec.ts --reporter=verbose",
+      "exitCode": 0,
+      "files": 2,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "log": "artifacts/product-reality/sprint-185/m05/baseline-fold/contracts-tests-with-retained-declarations.log",
+      "reason": "Repeat after adding byte-exact retained public declarations and assertions that frozen source hashes point at those archives."
+    },
+    {
+      "id": "baseline-fold-contracts",
+      "cwd": "packages/component-contracts",
+      "command": "pnpm exec vitest run test/ported-contracts.s184.spec.ts test/baseline-fold.s185.spec.ts --reporter=verbose",
+      "exitCode": 0,
+      "files": 2,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "log": "artifacts/product-reality/sprint-185/m05/baseline-fold/contracts-tests.log"
+    },
+    {
+      "id": "baseline-fold-live-ported-workflow",
+      "cwd": "packages/mcp-server",
+      "command": "pnpm exec vitest run test/product-reality/ported-workflow.s184.spec.ts --reporter=verbose",
+      "exitCode": 0,
+      "files": 1,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "log": "artifacts/product-reality/sprint-185/m05/baseline-fold/workflow-tests.log"
+    },
+    {
+      "id": "baseline-fold-contracts-typecheck",
+      "cwd": "packages/component-contracts",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "log": "artifacts/product-reality/sprint-185/m05/baseline-fold/contracts-typecheck.log"
+    }
+  ],
+  "notes": [
+    "The two repointed readers retain all prior behavioral checks; their overlay assertions now address existing baseline rows.",
+    "The new structural spec includes negative controls for identity/classification/reconciliation drift, unrelated surface changes, fabricated reference anchors, and incomplete readiness evidence.",
+    "The dependency resolver uses the current built server helper, matching code generation's readiness reference contract; no package builds occurred during these focused checks."
+  ]
+}

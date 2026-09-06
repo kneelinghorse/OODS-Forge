@@ -1,0 +1,335 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s186-m06",
+  "status": "passed",
+  "issue": "Root CSS union imported generic statusable Banner title weight600, overriding React Banner strong title emphasis700.",
+  "correction": "Explicit OODS React/Vue title selectors use the existing bold token with700 fallback; generic statusable Banner title remains600.",
+  "executionHead": "ad39048e0cbeb4c22401e5ba97a4fb5b5e27adcd",
+  "sourceState": "worktree",
+  "originalCss": {
+    "path": "packages/component-styles/src/components.css",
+    "commit": "ad39048e0cbeb4c22401e5ba97a4fb5b5e27adcd",
+    "sha256": "768771b1d2896e8545d046cfbc5140eb1599759176e7c1572cb6001c36e3f1fb"
+  },
+  "correctedSources": [
+    {
+      "path": "packages/component-styles/src/components.css",
+      "sha256": "2995a613e5c7d9dbb3057a3f55c8a32f84e9bf7cf4e5f2d4c09225de877a195b",
+      "bytes": 47384
+    },
+    {
+      "path": "packages/component-styles/test/high-contrast.browser.spec.ts",
+      "sha256": "c850e2c0b7dff357f43c701e12505d9b53efe059f35c69b55c50cff27fd3126a",
+      "bytes": 24318
+    }
+  ],
+  "unchangedVerifierSources": [
+    {
+      "path": "packages/mcp-server/test/product-reality/packed-consumers.s182.spec.ts",
+      "sha256": "7ee2bfaa5c52484feb47c2ed76b0a01934e1fa8f0ec0583eff73bd12fe32a9ca",
+      "bytes": 4322
+    },
+    {
+      "path": "scripts/product-reality/s182-m04-consumer-harness.mjs",
+      "sha256": "a28abd5f4e3c453072790864c2b30b2b89fbc17e7a820d2baeff7554025dfbbc",
+      "bytes": 86249
+    },
+    {
+      "path": "src/styles/statusables.css",
+      "sha256": "f0da6a44edf0141b155f0ceb66ccc3f25d609b49db90b6cc95737cf0c4814cfd",
+      "bytes": 6329
+    }
+  ],
+  "executions": [
+    {
+      "id": "original-packed",
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/packed-consumers.s182.spec.ts --reporter=default --reporter=json --outputFile=/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/artifacts/product-reality/sprint-186/m06/package-tests/banner-original-packed.vitest.json > artifacts/product-reality/sprint-186/m06/package-tests/banner-original-packed.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s186/OODS-Forge",
+      "executionHead": "ad39048e0cbeb4c22401e5ba97a4fb5b5e27adcd",
+      "sourceState": "worktree",
+      "exitCode": 1,
+      "startedAt": "2026-09-06T20:53:02.070000+00:00",
+      "selected": 2,
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "Sprint 182 M04 packed generated consumers B-12 installs and imports every required tarball and root export in isolation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 M04 packed generated consumers B-13 resolves declared dependencies and shared CSS in a clean production build",
+          "status": "failed",
+          "failureMessages": [
+            "Error: react showcase structure differs: [{\"surface\":\"bannerTitle\",\"property\":\"text/fontWeight\",\"expected\":{\"text\":\"Payment failed\",\"fontWeight\":\"700\"},\"received\":{\"text\":\"Payment failed\",\"fontWeight\":\"600\"}}]\n    at runFrameworkConsumer (/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/scripts/product-reality/s182-m04-consumer-harness.mjs:1911:11)\n    at runGeneratedConsumerProof (/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/scripts/product-reality/s182-m04-consumer-harness.mjs:1925:18)\n    at /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/mcp-server/test/product-reality/packed-consumers.s182.spec.ts:68:44\n    at file:///Users/systemsystems/.codex/worktrees/s186/OODS-Forge/node_modules/.pnpm/@vitest+runner@3.2.4/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20"
+          ]
+        }
+      ],
+      "log": {
+        "path": "artifacts/product-reality/sprint-186/m06/package-tests/banner-original-packed.log",
+        "sha256": "23b102b74ad9f46ba370caf72ceb5f8812c2af562e8433817c9b918d612088f5",
+        "bytes": 2437
+      },
+      "rawReport": {
+        "path": "artifacts/product-reality/sprint-186/m06/package-tests/banner-original-packed.vitest.json",
+        "sha256": "9b979b74bbf2c87a869057d22477df20a94e5168399f92c671d215ab2ac0923e",
+        "bytes": 2287
+      }
+    },
+    {
+      "id": "styles-browser",
+      "command": "pnpm --filter @oods/component-styles exec vitest run --config vitest.config.ts test/high-contrast.browser.spec.ts --reporter=default --reporter=json --outputFile=/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/artifacts/product-reality/sprint-186/m06/package-tests/banner-styles-browser.vitest.json > artifacts/product-reality/sprint-186/m06/package-tests/banner-styles-browser.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s186/OODS-Forge",
+      "executionHead": "ad39048e0cbeb4c22401e5ba97a4fb5b5e27adcd",
+      "sourceState": "worktree",
+      "exitCode": 0,
+      "startedAt": "2026-09-06T20:59:58.217000+00:00",
+      "selected": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in A/light, forcedColors=none",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in A/light, forcedColors=active",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in A/dark, forcedColors=none",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in A/dark, forcedColors=active",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in A/hc, forcedColors=none",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in A/hc, forcedColors=active",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in B/light, forcedColors=none",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in B/light, forcedColors=active",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in B/dark, forcedColors=none",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in B/dark, forcedColors=active",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in B/hc, forcedColors=none",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s185-m02 preserves visible color labels in B/hc, forcedColors=active",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections s182-m01b keeps the Brand B light enabled action at or above 4.5:1",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections makes every locked style state observable without utility CSS",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections styles classed and raw native fields without boxing Vue-shaped wrappers",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections A light/dark keeps the default disabled label distinct from its surface",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections A/hc keeps status, validation, disabled, and dismiss controls legible with forcedColors=none",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections A/hc keeps status, validation, disabled, and dismiss controls legible with forcedColors=active",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections B light/dark keeps the default disabled label distinct from its surface",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections B/hc keeps status, validation, disabled, and dismiss controls legible with forcedColors=none",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 shared component-style browser corrections B/hc keeps status, validation, disabled, and dismiss controls legible with forcedColors=active",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ],
+      "log": {
+        "path": "artifacts/product-reality/sprint-186/m06/package-tests/banner-styles-browser.log",
+        "sha256": "8a14935bfeec9218809f7ad3f66e6e6c3f339e5ed4611cba0c9ce797c13268c8",
+        "bytes": 1925
+      },
+      "rawReport": {
+        "path": "artifacts/product-reality/sprint-186/m06/package-tests/banner-styles-browser.vitest.json",
+        "sha256": "093cef61de622138794cf91653a9be8ea6ac63c0744a5f86d7086587b6f4aa4d",
+        "bytes": 8706
+      }
+    },
+    {
+      "id": "final-packed",
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/packed-consumers.s182.spec.ts --reporter=default --reporter=json --outputFile=/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/artifacts/product-reality/sprint-186/m06/package-tests/banner-final-packed.vitest.json > artifacts/product-reality/sprint-186/m06/package-tests/banner-final-packed.log 2>&1",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s186/OODS-Forge",
+      "executionHead": "ad39048e0cbeb4c22401e5ba97a4fb5b5e27adcd",
+      "sourceState": "worktree",
+      "exitCode": 0,
+      "startedAt": "2026-09-06T21:00:36.462000+00:00",
+      "selected": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "name": "Sprint 182 M04 packed generated consumers B-12 installs and imports every required tarball and root export in isolation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "name": "Sprint 182 M04 packed generated consumers B-13 resolves declared dependencies and shared CSS in a clean production build",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ],
+      "log": {
+        "path": "artifacts/product-reality/sprint-186/m06/package-tests/banner-final-packed.log",
+        "sha256": "64e071c58609fbefba0bb5048f6fb7636daacb04ccf7e779b11b3b88b514eb55",
+        "bytes": 797
+      },
+      "rawReport": {
+        "path": "artifacts/product-reality/sprint-186/m06/package-tests/banner-final-packed.vitest.json",
+        "sha256": "2e7d203b9af912b5b5b1a5bb7b37b38f551772be0da883930179ce6fd639eab2",
+        "bytes": 1451
+      }
+    }
+  ],
+  "assertions": {
+    "stylesBrowserTitleWeights": {
+      "react": "700",
+      "vue": "700",
+      "genericStatusable": "600"
+    },
+    "packedB13Frameworks": [
+      "react",
+      "vue"
+    ],
+    "packedBannerGoldenRetained": "700"
+  },
+  "limitations": [
+    "The exact packed spec performs actual fresh tarball builds and isolated consumers, then deletes its temporary tarballs and detailed consumer reports in afterEach. Retained stdout and raw Vitest JSON record the actual completed run.",
+    "Earlier m06 packed root/compatibility reports predate this title-only CSS correction and are not represented as current CSS tarballs. They remain evidence for unchanged eight export targets and aliases."
+  ],
+  "retainedPriorAliasReports": [
+    {
+      "framework": "react",
+      "path": "artifacts/product-reality/sprint-186/m06/packed-react/packed-import/report.json",
+      "sha256": "b0dd1acf293ba2df3f3a503a1f6be36e7e21e71b21f28ced84703ea383cb0b8d",
+      "status": "passed",
+      "rootRuntimeIds": [
+        "AuditTimeline",
+        "CancellationSummary",
+        "PaginationBar",
+        "PriceBadge",
+        "RelativeTimestamp",
+        "SearchInput",
+        "StatusBadge",
+        "StatusTimeline"
+      ],
+      "aliasRuntimeIds": [
+        "AuditTimeline",
+        "CancellationSummary",
+        "PaginationBar",
+        "PriceBadge",
+        "RelativeTimestamp",
+        "SearchInput",
+        "StatusBadge",
+        "StatusTimeline"
+      ],
+      "scope": "Retained earlier packed proof of the former eight root/alias runtime exports, ESM/CJS/SSR identity, strict declaration compatibility and alias resolution. It predates the Banner title-only CSS correction and does not prove the corrected CSS tarball bytes."
+    },
+    {
+      "framework": "vue",
+      "path": "artifacts/product-reality/sprint-186/m06/packed-vue/report.json",
+      "sha256": "bdf74485750e2f1580ecd7ab7fe7ba083db2ef2455cf2155be8445a9b842c154",
+      "status": "passed",
+      "rootRuntimeIds": [
+        "AuditTimeline",
+        "CancellationSummary",
+        "PaginationBar",
+        "PriceBadge",
+        "RelativeTimestamp",
+        "SearchInput",
+        "StatusBadge",
+        "StatusTimeline"
+      ],
+      "aliasRuntimeIds": [
+        "AuditTimeline",
+        "CancellationSummary",
+        "PaginationBar",
+        "PriceBadge",
+        "RelativeTimestamp",
+        "SearchInput",
+        "StatusBadge",
+        "StatusTimeline"
+      ],
+      "scope": "Retained earlier packed proof of the former eight root/alias runtime exports, ESM/CJS/SSR identity, strict declaration compatibility and alias resolution. It predates the Banner title-only CSS correction and does not prove the corrected CSS tarball bytes."
+    }
+  ],
+  "sourceScope": {
+    "changedRuntimeFile": "packages/component-styles/src/components.css",
+    "changedBehavior": "OODS Banner title weight only; React and Vue title selectors now retain700.",
+    "unchangedScope": [
+      "React and Vue component implementations and root/ported runtime export targets",
+      "React and Vue root/readiness-ported export targets",
+      "component-styles css/css-ported canonical file target",
+      "generic src/styles/statusables.css rules",
+      "B13 packed-consumer assertion requiring Banner title700"
+    ],
+    "currentCssVerification": [
+      "styles-browser:21passed, computedReact700/Vue700/generic600",
+      "final-packed:B12+B13 bothpassed; B13 actually built and ran React/Vue consumers against newly packed correctedCSS"
+    ],
+    "historicalTarballLimit": "Earlier native root/alias report tarballs are historical evidence, not current CSS tarballs."
+  }
+}

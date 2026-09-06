@@ -10,25 +10,61 @@ export const COMPONENT_CLASSIFICATIONS = [
 export type ComponentClassification = (typeof COMPONENT_CLASSIFICATIONS)[number];
 
 export const NUCLEUS_COMPONENT_IDS = [
+  'AddressCollectionPanel',
+  'AddressEditor',
+  'AddressSummaryBadge',
+  'AddressValidationTimeline',
+  'AuditEvent',
+  'AuditTimeline',
   'Badge',
   'Banner',
   'Button',
+  'CancellationSummary',
   'Card',
+  'CardHeader',
   'Checkbox',
+  'ClassificationPanel',
+  'ColorSwatch',
+  'ColorizedBadge',
   'DatePicker',
+  'DetailHeader',
+  'FilterPanel',
   'Grid',
   'Input',
+  'MembershipAuditTimeline',
+  'MembershipPanel',
+  'MessageEventTimeline',
+  'MessageStatusBadge',
+  'PaginationBar',
+  'PreferenceEditor',
+  'PreferencePanel',
+  'PreferenceSummaryBadge',
+  'PreferenceTimeline',
+  'PriceBadge',
+  'PriceSummary',
+  'RelativeTimestamp',
+  'RoleAssignmentForm',
+  'RoleBadgeList',
+  'SearchInput',
   'Select',
   'Stack',
+  'StatusBadge',
+  'StatusSelector',
+  'StatusTimeline',
   'Table',
   'Tabs',
+  'TagInput',
+  'TagManager',
+  'TagPills',
+  'TemplatePicker',
   'Text',
   'Textarea',
+  'VizAreaPreview',
 ] as const;
 
 export type NucleusComponentId = (typeof NUCLEUS_COMPONENT_IDS)[number];
 
-export const PORTED_COMPONENT_IDS = [
+const HISTORICAL_PORTED_COMPONENT_IDS = [
   'AuditTimeline',
   'CancellationSummary',
   'PaginationBar',
@@ -37,10 +73,17 @@ export const PORTED_COMPONENT_IDS = [
   'SearchInput',
   'StatusBadge',
   'StatusTimeline',
-] as const;
+] as const satisfies readonly NucleusComponentId[];
 
-export type PortedComponentId = (typeof PORTED_COMPONENT_IDS)[number];
-export type GovernedComponentId = NucleusComponentId | PortedComponentId;
+/** @deprecated Historical compatibility cohort; all members belong to NucleusComponentId. */
+export type PortedComponentId = (typeof HISTORICAL_PORTED_COMPONENT_IDS)[number];
+
+/** @deprecated Compatibility subset derived from the canonical nucleus, not a second governed union. */
+export const PORTED_COMPONENT_IDS: readonly PortedComponentId[] = NUCLEUS_COMPONENT_IDS.filter(
+  (id): id is PortedComponentId => HISTORICAL_PORTED_COMPONENT_IDS.some((componentId) => componentId === id),
+);
+
+export type GovernedComponentId = NucleusComponentId;
 
 /**
  * Cross-component workflow states understood by generated UI branches.

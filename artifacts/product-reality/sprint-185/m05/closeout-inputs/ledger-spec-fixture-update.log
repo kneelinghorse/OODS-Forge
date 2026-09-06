@@ -1,0 +1,109 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/closeout-ledger.s185.spec.ts (39 tests | 2 failed) 144ms
+   × Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > copies exact CMOS text and independently checks every output/input hash and review flag 20ms
+     → expected { total: 8, proven: 7, unproven: 1 } to deeply equal { total: 8, proven: 8, unproven: +0 }
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects manifest-supplied claims instead of using it as an oracle 3ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects manifest-supplied criteria instead of using it as an oracle 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects a binding override of criterion 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects a binding override of status 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > reads edited literal CMOS bytes only when their input hash is honestly resealed 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects changed-hash in the evidence graph 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects missing-file in the evidence graph 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects output-input in the evidence graph 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects unknown-execution in the evidence graph 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects duplicate-execution in the evidence graph 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects empty-binding in the evidence graph 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects missing-required-source in the evidence graph 3ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects duplicate-criterion in the evidence graph 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects missing-derivation-rules in the evidence graph 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects relabeled-head in suite accounting 54ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects duplicate-suite-raw in suite accounting 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > unknown suite ID cannot prove a four-suite capture 3ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > duplicate suite ID cannot prove a four-suite capture 9ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > baseline denominator remains unproven even with correctly resealed evidence 2ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > runtime census approval remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > mover omission remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > duplicate delivery remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > historical control promoted remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > maintenance silently absorbed remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > served checkout equals build worktree remains unproven even with correctly resealed evidence 2ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > self-certified build remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > sprint incorrectly closed remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > a failed command cannot be the only execution proving a claim 2ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > an unrelated successful command cannot be borrowed to prove a claim 1ms
+   × Independent final-output audit checks actual bytes without the producer checker > audits all eight exact criteria and keeps audit output outside its own stable input graph 5ms
+     → Claim remains unproven.
++ actual - expected
+
++ 'unproven'
+- 'passed'
+
+   ✓ Independent final-output audit checks actual bytes without the producer checker > rejects criterion after output production 2ms
+   ✓ Independent final-output audit checks actual bytes without the producer checker > rejects frozen-hash after output production 9ms
+   ✓ Independent final-output audit checks actual bytes without the producer checker > rejects relabel after output production 3ms
+   ✓ Independent final-output audit checks actual bytes without the producer checker > rejects invented-execution after output production 2ms
+   ✓ Independent final-output audit checks actual bytes without the producer checker > rejects missing-dependency after output production 3ms
+   ✓ Independent final-output audit checks actual bytes without the producer checker > rejects self-certified after output production 2ms
+   ✓ Independent final-output audit checks actual bytes without the producer checker > rejects source-change after output production 1ms
+   ✓ Independent final-output audit checks actual bytes without the producer checker > rejects rewritten-log after output production 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/closeout-ledger.s185.spec.ts > Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > copies exact CMOS text and independently checks every output/input hash and review flag
+AssertionError: expected { total: 8, proven: 7, unproven: 1 } to deeply equal { total: 8, proven: 8, unproven: +0 }
+
+- Expected
++ Received
+
+  {
+-   "proven": 8,
++   "proven": 7,
+    "total": 8,
+-   "unproven": 0,
++   "unproven": 1,
+  }
+
+ ❯ test/product-reality/closeout-ledger.s185.spec.ts:92:29
+     90|     const ledger = outputs[`${prefix}/claim-ledger.json`];
+     91|     expect(ledger.claims.map((row: any) => row.criterion)).toEqual(lit…
+     92|     expect(ledger.headline).toEqual({ total: 8, proven: 8, unproven: 0…
+       |                             ^
+     93|     expect(ledger).toMatchObject({ executionHead, reviewHead, builderS…
+     94|     const executions = new Map(ledger.executions.map((row: any) => [ro…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/product-reality/closeout-ledger.s185.spec.ts > Independent final-output audit checks actual bytes without the producer checker > audits all eight exact criteria and keeps audit output outside its own stable input graph
+AssertionError: Claim remains unproven.
++ actual - expected
+
++ 'unproven'
+- 'passed'
+
+
+Expected: "passed"
+Received: "unproven"
+
+ ❯ auditFinalCloseout ../../scripts/product-reality/s185-audit-closeout.mjs:158:12
+    156|         && [...row.inputs, ...(row.outputs ?? [])].some(ref => require…
+    157|     } else assert(bound.some(row => row.evidenceKind === 'suite-receip…
+    158|     assert.equal(claim.status, 'passed', 'Claim remains unproven.'); a…
+       |            ^
+    159|     assert(claim.observations.length > 0 && claim.observations.every(r…
+    160|   }
+ ❯ Object.audit test/product-reality/closeout-ledger.s185.spec.ts:185:25
+ ❯ test/product-reality/closeout-ledger.s185.spec.ts:190:49
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 37 passed (39)
+   Start at  00:04:53
+   Duration  393ms (transform 69ms, setup 12ms, collect 76ms, tests 144ms, environment 0ms, prepare 41ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/closeout-ledger.s185.spec.ts

@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "missionId": "s185-m04",
+  "kind": "B2-legacy-input-remeasurement",
+  "historicalDispositionUntouched": true,
+  "historicalDisposition": {
+    "path": "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
+    "sha256": "94909a77260bec081448de0fe18900ea614bc98e8533cd2d8642b5a41058299f"
+  },
+  "observations": [
+    {
+      "label": "base",
+      "path": "artifacts/product-reality/sprint-185/m04/b2/base/measurement.json",
+      "sha256": "7b87a07a1cf3e4a2fe6f260a63750124c1c460906a09e7723ab1fb321bed16b2"
+    },
+    {
+      "label": "current",
+      "path": "artifacts/product-reality/sprint-185/m04/b2/current/measurement.json",
+      "sha256": "09fa11d43988a78f29591dc56439a991ed6c0f8282de090099e3d1642676a847"
+    },
+    {
+      "label": "final",
+      "path": "artifacts/product-reality/sprint-185/m04/b2/final/measurement.json",
+      "sha256": "a5743a3c6865bedddf0641814dd495ee19ae4c2da1c327e9faab69cd6b2864df"
+    }
+  ],
+  "rows": [
+    {
+      "id": "product-detail-html-build",
+      "input": {
+        "object": "Product",
+        "context": "detail",
+        "framework": "html"
+      },
+      "baseError": {
+        "step": "codegen",
+        "code": "OODS-V007",
+        "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+      },
+      "preFixError": {
+        "step": "codegen",
+        "code": "OODS-V007",
+        "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+      },
+      "finalError": {
+        "step": "codegen",
+        "code": "OODS-V007",
+        "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+      },
+      "reason": "The existing HTML lossy-normalization typed gap remains unchanged.",
+      "sourceInputUnchanged": true
+    },
+    {
+      "id": "product-detail-react-build",
+      "input": {
+        "object": "Product",
+        "context": "detail",
+        "framework": "react"
+      },
+      "baseError": {
+        "step": "codegen",
+        "code": "OODS-N015",
+        "message": "Component DetailHeader is not emission-eligible for react; evidence state: unavailable."
+      },
+      "preFixError": {
+        "step": "codegen",
+        "code": "OODS-N015",
+        "message": "Component PriceSummary is not emission-eligible for react; evidence state: unavailable."
+      },
+      "finalError": {
+        "step": "codegen",
+        "code": "OODS-N015",
+        "message": "Component PriceSummary is not emission-eligible for react; evidence state: unavailable."
+      },
+      "reason": "DetailHeader is implemented; the unchanged Product/detail input reaches the next unported component, PriceSummary.",
+      "sourceInputUnchanged": true
+    },
+    {
+      "id": "product-detail-vue-build",
+      "input": {
+        "object": "Product",
+        "context": "detail",
+        "framework": "vue"
+      },
+      "baseError": {
+        "step": "codegen",
+        "code": "OODS-N015",
+        "message": "Component DetailHeader is not emission-eligible for vue; evidence state: unavailable."
+      },
+      "preFixError": {
+        "step": "codegen",
+        "code": "OODS-N015",
+        "message": "Component PriceSummary is not emission-eligible for vue; evidence state: unavailable."
+      },
+      "finalError": {
+        "step": "codegen",
+        "code": "OODS-N015",
+        "message": "Component PriceSummary is not emission-eligible for vue; evidence state: unavailable."
+      },
+      "reason": "DetailHeader is implemented; the unchanged Product/detail input reaches the next unported component, PriceSummary.",
+      "sourceInputUnchanged": true
+    },
+    {
+      "id": "product-card-html-release",
+      "input": {
+        "object": "Product",
+        "context": "card",
+        "framework": "html",
+        "profile": "release"
+      },
+      "baseError": {
+        "step": "codegen",
+        "code": "OODS-V162",
+        "message": "Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance."
+      },
+      "preFixError": {
+        "step": "codegen",
+        "code": "OODS-V007",
+        "message": "Prop \"supportingField\" is not in the canonical CardHeader contract."
+      },
+      "finalError": {
+        "step": "codegen",
+        "code": "OODS-V162",
+        "message": "Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance."
+      },
+      "reason": "The CardHeader contract exposed existing Labelled titleField/supportingField metadata. A bounded recipe lowering restores the original missing-release-evidence boundary without changing the operand.",
+      "sourceInputUnchanged": true
+    },
+    {
+      "id": "product-no-context-html-build-save",
+      "input": {
+        "object": "Product",
+        "framework": "html",
+        "save": "s184-b2-no-context"
+      },
+      "baseError": {
+        "step": "codegen",
+        "code": "OODS-V007",
+        "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+      },
+      "preFixError": {
+        "step": "codegen",
+        "code": "OODS-V007",
+        "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+      },
+      "finalError": {
+        "step": "codegen",
+        "code": "OODS-V007",
+        "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+      },
+      "reason": "The existing HTML lossy-normalization typed gap remains unchanged.",
+      "sourceInputUnchanged": true
+    }
+  ],
+  "surfacesAdded": [],
+  "runtimeApiShapeChanged": false,
+  "changes": "Existing CardHeader recipe directives lower to existing title/supporting runtime props. HTML uses established visible camelCase field placeholders. React/Vue Product/detail remains unavailable on PriceSummary; no additional component port is claimed.",
+  "status": "passed"
+}

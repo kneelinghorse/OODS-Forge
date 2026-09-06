@@ -1,0 +1,16 @@
+$ pnpm typecheck
+cwd=.
+exitCode=2
+startedAt=2026-09-06T01:02:43.150Z
+endedAt=2026-09-06T01:02:57.138Z
+durationMs=13988.097
+[stdout]
+
+> @oods/foundry-mcp@0.1.0 typecheck /Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge
+> tsc --noEmit --pretty false
+
+packages/component-contracts/src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Text" | "DatePicker" | "Input" | "Checkbox" | "Select" | "Textarea" | "Grid" | "Stack" | "Table" | "Tabs" | "DetailHeader", ComponentContract>>'.
+packages/mcp-server/src/codegen/target-contracts.ts(261,7): error TS2741: Property 'DetailHeader' is missing in type '{ AuditTimeline: { title: PropValueContract; events: PropValueContract; history: PropValueContract; entries: PropValueContract; ... 10 more ...; showReason: PropValueContract; }; ... 20 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<GovernedComponentId, Readonly<Record<string, PropValueContract>>>>'.
+ ELIFECYCLE  Command failed with exit code 2.
+
+[stderr]

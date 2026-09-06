@@ -64,35 +64,46 @@ describe("Sprint 177 prose truth carriers", () => {
     const normalizedProgram = productProgram.replace(/\s+/g, " ");
     const normalizedIndex = roadmapIndex.replace(/\s+/g, " ");
 
+    // Sprint 186 keeps the program Active, retains the independently reviewed
+    // Sprint 185 history, and requires its own review (rule #1690).
     expect(near).toContain(
-      "**Status:** ACTIVE — program decision `#1652`; Sprint-183 lock decision `#1664`",
+      "**Status:** ACTIVE — program decision `#1652`; Sprint 186 build closeout in progress; independent review pending",
+    );
+    expect(normalizedNear).toContain(
+      "locked by decision `#1724` at build base `1118f436`",
+    );
+    expect(normalizedNear).toContain(
+      "The sprint remains Active and `builderSelfCertified` remains false. An independent review decides certification and sprint closure.",
     );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
     );
     expect(normalizedNear).toContain(
-      "The prior Shopify-serving roadmap and the schema-ingest version of Sprint 182 are retained in Git and CMOS as history. They no longer control this queue.",
+      "Two direction decisions from 2026-09-05 govern this queue. The Sprint 182 promotion freeze is void (`#1722`)",
     );
     expect(normalizedNear).toContain(
-      "Sprint 182 is complete, 7/7 missions, nothing descoped.",
+      "The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection follows runnable product foundations.",
     );
     expect(normalizedNear).toContain(
-      "Derek promoted `foundation-v1` the same day (decision `#1663`): all 28 cells",
+      "## Increment 1 — Sprint 182: Product Reality Foundation — CLOSED 2026-09-04",
     );
     expect(normalizedNear).toContain(
-      "Sprint-181 follow-ups remain Forge-owned maintenance debt under decision `#1651`",
+      "`foundation-v1` promoted by Derek (decision `#1663`). The 14-component nucleus is real in React and Vue with clean packed-consumer proof.",
     );
     expect(normalizedNear).toContain(
-      "Sprint 183 resolves consumer-visible defects `#1316` and `#1317`",
+      "Sprint-181 follow-ups `#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt under decision `#1651`",
     );
     expect(normalizedNear).toContain(
-      "Items `#1315` and `#1318`–`#1322` remain explicitly carried and unabsorbed",
+      "## Increment 2 — Sprint 183: Runnable Generation — CLOSED 2026-09-05",
     );
     expect(normalizedNear).toContain(
-      "Sprint 182's independent review is resolved, so this increment is numbered.",
+      "they are named at every closeout and must close before an integrated public release",
     );
     expect(normalizedNear).toContain(
-      "Number this sprint only after Sprint 183 receives independent review.",
+      "Numbered because Sprint 184 is independently reviewed and closed.",
+    );
+    expect(normalizedNear).toContain(
+      "**Built and independently reviewed 2026-09-06; CERTIFIED and CLOSED**",
     );
 
     expect(productProgram).toContain(

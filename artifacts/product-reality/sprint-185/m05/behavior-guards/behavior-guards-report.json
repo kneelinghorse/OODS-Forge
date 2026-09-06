@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s185-m05",
+  "scope": "Canonical generated local-state behavior and explicit HTML Tailwind target gap",
+  "changes": [
+    "Local markers require input-driven writes to their own React state tuple or Vue ref through its own setter. Zero-input dismissals must write false to state initialized true.",
+    "The obsolete empty/TODO-local predicate is removed. Every local handler now goes through the own-state behavioral protocol check. The domain-forwarding guard is unchanged.",
+    "HTML Tailwind emits OODS-N018 after explicit/.oodsrc/default option resolution: draft warning; default build, explicit build, and release errors with no artifact."
+  ],
+  "validation": {
+    "focusedInitial": {
+      "passed": 103,
+      "failed": 0,
+      "skipped": 0,
+      "log": "focused-tests-initial.log",
+      "supersededBy": "focusedFinal"
+    },
+    "focusedExpandedProtocol": {
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "log": "focused-tests-protocol.log",
+      "note": "Includes 4 mutation tests already present in initial run; the added positive matrix covers 16 local event definitions across 12 framework/styling/language cells.",
+      "supersededBy": "focusedFinal"
+    },
+    "hashResealedBites": {
+      "passed": 34,
+      "failed": 0,
+      "artifact": "hash-resealed-bites.json"
+    },
+    "sourceTypecheck": {
+      "exitCode": 0,
+      "log": "typecheck-final.log",
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit --pretty false -p tsconfig.json"
+    },
+    "focusedTestTypecheck": {
+      "exitCode": 0,
+      "log": "focused-test-typecheck.log",
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit --pretty false -p ../../artifacts/product-reality/sprint-185/m05/behavior-guards/focused-test-typecheck-config.json"
+    },
+    "schemaGeneration": {
+      "exitCode": 0,
+      "command": "pnpm --filter @oods/schemas-tools generate",
+      "log": "generate-mcp-schema-types.log"
+    },
+    "apiGeneration": {
+      "exitCode": 0,
+      "command": "pnpm docs:api",
+      "log": "generate-api-reference.log"
+    },
+    "foundrySchemaGeneration": {
+      "exitCode": 0,
+      "command": "pnpm generate:schema-types",
+      "log": "generate-schema-types.log",
+      "note": "Separate Foundry trait generator; all generated files unchanged; documented hand-authored viz schemas skipped by the generator."
+    },
+    "focusedFinal": {
+      "passed": 133,
+      "failed": 0,
+      "skipped": 0,
+      "log": "focused-tests-final.log"
+    },
+    "emptyLocalRegression": {
+      "passed": 2,
+      "failed": 0,
+      "filteredOut": 29,
+      "log": "empty-local-regression.log",
+      "note": "Only the two historical empty-local assertions were selected; the other 29 tests were filtered by test name, not counted as passing."
+    }
+  },
+  "boundedClaim": "Validates the canonical source forms emitted by the owned generators; not an arbitrary JavaScript behavioral analysis. No runtime parser dependency added.",
+  "files": [
+    {
+      "path": "packages/mcp-server/src/codegen/artifact-envelope.ts",
+      "sha256": "aa63b05ea7eaeac0b5a876122de8a653ae635216e89fb323ee84efb64755d3dd"
+    },
+    {
+      "path": "packages/mcp-server/src/tools/code.generate.ts",
+      "sha256": "882d74d4cd1b8519c362856191a7a4a10d8cfd8706b4216314bc9abb690f2a7d"
+    },
+    {
+      "path": "packages/mcp-server/src/errors/registry.ts",
+      "sha256": "a29e16f82ea1ec80a3400e719aedb80c45d267b9276d08bbc158b5c3dbc79847"
+    },
+    {
+      "path": "packages/mcp-server/src/errors/registry.test.ts",
+      "sha256": "6f39564b9d3ce81bc393c83e0a00ee050e1768fca5914faac48e47ead38bcd74"
+    },
+    {
+      "path": "packages/mcp-server/src/schemas/code.generate.input.json",
+      "sha256": "5716ec49ee5a9da4e8423d408aa8645bf515dcbc9c825df4812950e31cdacc5c"
+    },
+    {
+      "path": "packages/mcp-server/src/schemas/generated.ts",
+      "sha256": "eb463e0c5ffe6f8a9edd3a726438005a6f714b5b61787af01fa905b988d29bf8"
+    },
+    {
+      "path": "docs/api/code-generate.md",
+      "sha256": "027951230d47630881b41c34f4d5d64c8d48cc4937dc5efc48eb9dfa7d0c7c93"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/local-behavior-guards.s185.spec.ts",
+      "sha256": "00ddfebd57b455f370c00564fc64ff453906419e15c9234e11c98cadb12df14b"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/html-tailwind-gap.s185.spec.ts",
+      "sha256": "888ee02eb984bfbe8576d4aabe69cf5ced76b793a6de01baaeee4f877d76392b"
+    },
+    {
+      "path": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+      "sha256": "b631279754f894bc52c1790677647be3c0ee89cc20eae6a8bedc0b4b011274ad"
+    }
+  ]
+}

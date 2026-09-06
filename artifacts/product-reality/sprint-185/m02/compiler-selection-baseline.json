@@ -1,0 +1,93 @@
+{
+  "capturedAt": "2026-09-06T02:56:47.847648+00:00",
+  "baselineCommit": "8fd78b25b76088c1945be548d64d0539021fef27",
+  "probeDirectory": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/s185-m02-typescript-baseline-kzbdb82k",
+  "scope": "Isolated m01-source DTCG intake dependency closure; all sources copied verbatim from git. Compiler config includes only index.ts; inherited options unchanged. No workspace source or dist files modified.",
+  "files": [
+    {
+      "path": "tsconfig.json",
+      "baselineSha256": "567267361cedd9034f48fb8890866f44e3ba62182e3589de076205a7edf1594e",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "package.json",
+      "baselineSha256": "07e988611fa4ed29a8e414fc2b8abd37c4c24d7168ccea1464e15ac8258466f2",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "packages/mcp-server/package.json",
+      "baselineSha256": "7e4600ec306ea4d36828a752b818aaf8db0142945504c3b5e899609bb1d4c804",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "packages/mcp-server/tsconfig.json",
+      "baselineSha256": "4e6ce34502cf91f917c7450ee04019eda55f3b1f356da7824777ed16fbed102b",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "packages/mcp-server/src/lib/dtcg-intake/index.ts",
+      "baselineSha256": "67a883397ada3acbc2ee8f2031754f4f0262c044a62abb069a93e62d7a8fa8f4",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "packages/mcp-server/src/lib/dtcg-intake/grammar.ts",
+      "baselineSha256": "b625ee069b2e137cbe6d7fd609702547ae641dd035e5a5b992711d5c98ac3eff",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "packages/mcp-server/src/lib/dtcg-intake/schema.ts",
+      "baselineSha256": "2acc8736ca44db6b3f02c08dfbc360289153379fd01ec79388cd6042750e9cd1",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "packages/mcp-server/src/lib/dtcg-intake/types.ts",
+      "baselineSha256": "41e96a78e381b58b4fbc8785ebef35b1c556cb22acf1655c907e8c4c8c2b0aa0",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "packages/mcp-server/src/lib/ajv.ts",
+      "baselineSha256": "5d926e03afddd1fb9c742147cbf5a7ae16c228276fd1d3701f3165d637826856",
+      "currentMatchesBaseline": true
+    },
+    {
+      "path": "packages/mcp-server/src/schemas/brand.intake.input.json",
+      "baselineSha256": "987e16449041abb797e17295517887cd01ca5babc8024bc4fcc7ebba9c26e472",
+      "currentMatchesBaseline": true
+    }
+  ],
+  "results": [
+    {
+      "compiler": "node_modules/typescript/bin/tsc",
+      "version": "Version 5.3.3",
+      "command": [
+        "node",
+        "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "-p",
+        "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/s185-m02-typescript-baseline-kzbdb82k/packages/mcp-server/tsconfig.json"
+      ],
+      "exitCode": 2,
+      "stdout": "../../../../../../../var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/s185-m02-typescript-baseline-kzbdb82k/packages/mcp-server/src/lib/dtcg-intake/index.ts(110,3): error TS2322: Type 'unknown' is not assignable to type 'string | null'.\n../../../../../../../var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/s185-m02-typescript-baseline-kzbdb82k/packages/mcp-server/src/lib/dtcg-intake/index.ts(235,64): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.\n",
+      "stderr": ""
+    },
+    {
+      "compiler": "packages/mcp-server/node_modules/typescript/bin/tsc",
+      "version": "Version 5.9.3",
+      "command": [
+        "node",
+        "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server/node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "-p",
+        "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/s185-m02-typescript-baseline-kzbdb82k/packages/mcp-server/tsconfig.json"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "interpretation": "The unchanged source fails with root TypeScript 5.3.3 but passes package TypeScript 5.9.3. Use pnpm --filter @oods/mcp-server exec tsc --noEmit --pretty false -p tsconfig.json for the package gate, consistent with m01 evidence. This isolated proof is not a full-project typecheck claim."
+}

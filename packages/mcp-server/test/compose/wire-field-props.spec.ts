@@ -166,6 +166,31 @@ describe('wireFieldProps', () => {
     expect(badge.props?.tone).toBe('info');
   });
 
+  it('turns enum values into Select option records while preserving explicitly authored choices', () => {
+    const authoredOptions = [{ value: 'admin', label: 'Administrator', disabled: true }];
+    const schema = makeSchema([{
+      id: 'form',
+      component: 'Stack',
+      children: [
+        { id: 'generated-role', component: 'Select', props: { field: 'role' } },
+        { id: 'authored-role', component: 'Select', props: { field: 'role', options: authoredOptions } },
+      ],
+    }], {
+      role: { type: 'string', required: true, enum: ['end_user', 'admin'] },
+    });
+
+    wireFieldProps(schema);
+
+    const choices = findAllElements(schema, node => node.component === 'Select');
+    // Select's runtime contract consumes labeled records, so a bare enum array
+    // cannot become the options prop even though its values are valid strings.
+    expect(choices[0].props?.options).toEqual([
+      { value: 'end_user', label: 'end_user' },
+      { value: 'admin', label: 'admin' },
+    ]);
+    expect(choices[1].props?.options).toEqual(authoredOptions);
+  });
+
   it('sets email input type when binding an email field to Input', () => {
     const schema = makeSchema(
       [{

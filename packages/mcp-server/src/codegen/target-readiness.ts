@@ -89,14 +89,8 @@ export function mergeTargetReadiness(
 }
 
 const defaultReadiness: Readonly<Record<TargetFramework, TargetReadiness>> = {
-  react: mergeTargetReadiness(
-    require('@oods/components-react/readiness') as TargetReadiness,
-    require('@oods/components-react/readiness-ported') as TargetReadiness,
-  ),
-  vue: mergeTargetReadiness(
-    require('@oods/components-vue/readiness') as TargetReadiness,
-    require('@oods/components-vue/readiness-ported') as TargetReadiness,
-  ),
+  react: require('@oods/components-react/readiness') as TargetReadiness,
+  vue: require('@oods/components-vue/readiness') as TargetReadiness,
 };
 
 // This relative shape is identical in source and built package layouts:

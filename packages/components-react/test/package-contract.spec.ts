@@ -150,7 +150,7 @@ describe('@oods/components-react package contract', () => {
     });
   });
 
-  it('publishes 14 independently derived React emission-eligibility rows', () => {
+  it('publishes one independently derived React emission-eligibility row per nucleus id', () => {
     const readiness = readJson(
       `${packageRoot}/evidence/react-readiness.v1.json`
     ) as {

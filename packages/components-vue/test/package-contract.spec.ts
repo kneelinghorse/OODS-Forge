@@ -99,7 +99,7 @@ describe('@oods/components-vue package contract', () => {
     });
   });
 
-  it('publishes 14 independently derived Vue emission-eligibility rows', () => {
+  it('publishes one independently derived Vue emission-eligibility row per nucleus id', () => {
     const manifest = readJson(`${packageRoot}/package.json`);
     expect(manifest.files).toContain('evidence');
     expect(manifest.exports).toMatchObject({

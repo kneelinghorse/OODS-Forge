@@ -1,0 +1,2225 @@
+$ pnpm exec vitest run --project core --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-baseline-77kZ63/run-1-root-core.json
+exitCode=1
+startedAt=2026-09-06T05:57:03.734Z
+endedAt=2026-09-06T06:07:24.553Z
+durationMs=620812.170
+[stdout]
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185/OODS-Forge
+
+ ✓ |core| packages/mcp-server/test/contracts/dtcg-intake.s180.spec.ts (21 tests) 1454ms
+   ✓ FORGE-SCALAR-DTCG-1 acceptance grammar > grammar description discloses the $type:"content" brace carve-out and its 18-of-1,359 dependence  660ms
+ ✓ |core| packages/mcp-server/test/contracts/repl.tools.spec.ts (39 tests) 1354ms
+   ✓ Agentic REPL validate handler > returns ok for valid DSL trees  348ms
+ ✓ |core| packages/mcp-server/test/contracts/mapping.spec.ts (65 tests) 6461ms
+   ✓ map.list pagination > keeps cursor paging stable across concurrent map.create mutations  368ms
+   ✓ map.list pagination > benchmarks paginated reads p99 within a relative warmup budget at 1000 mappings  824ms
+   ✓ map.create duplicate detection > allows same component name from different systems  340ms
+   ✓ map.update handler > updates confidence from manual to auto  431ms
+   ✓ map.delete handler > returns error for double-delete  369ms
+ ✓ |core| packages/mcp-server/test/contracts/stage1-integration.spec.ts (32 tests) 3789ms
+   ✓ Stage1 integration contract > map.create — ORCA e-commerce payloads > creates ProductCard mapping from ORCA object  354ms
+   ✓ Stage1 integration contract > map.create — ORCA e-commerce payloads > creates CartSummary mapping from ORCA object  679ms
+   ✓ Stage1 integration contract > design.compose — Stage1 intent generation > composes from Stage1-derived intent string  1397ms
+   ✓ Stage1 integration contract > ORCA v2.1.0 inferred props compatibility > creates mapping from v2.1.0 inferred props with derived coercions  595ms
+ ✓ |core| packages/mcp-server/test/product-reality/validation-profiles.s183.spec.ts (72 tests) 3798ms
+   ✓ Sprint 183 M03 validation profiles > preserves pipeline profile omission through AJV so build is disclosed as a runtime default  1647ms
+ ✓ |core| packages/mcp-server/test/product-reality/closeout.s183.spec.ts (7 tests) 20654ms
+   ✓ Sprint 183 M06 deterministic closeout > rejects a vacuous sprint base and preserves the exact L-09 safety transform  1698ms
+   ✓ Sprint 183 M06 deterministic closeout > reconciles the exact 38 CMOS criteria and writes an acyclic review handoff  6292ms
+   ✓ Sprint 183 M06 deterministic closeout > turns a missing gate result and a tampered gate log red  4239ms
+   ✓ Sprint 183 M06 deterministic closeout > rejects a direct content-addressed evidence mismatch  2601ms
+   ✓ Sprint 183 M06 deterministic closeout > rejects CMOS contract drift and a duplicated R-02 target/component cell  5724ms
+ ✓ |core| packages/mcp-server/test/render/fragment-edge-cases.spec.ts (48 tests) 264ms
+ ✓ |core| packages/mcp-server/test/render/xss-security.spec.ts (51 tests) 619ms
+ ✓ |core| packages/mcp-server/test/a11y/a11y.contract.spec.ts (20 tests) 2326ms
+   ✓ validateContrast — failing contrast combinations > surfaces A11Y_CONTRAST issues for near-identical foreground/background  479ms
+ ✓ |core| packages/mcp-server/test/compose/field-patterns.spec.ts (31 tests) 141ms
+ ✓ |core| tests/domain/billing/states.spec.ts (61 tests) 222ms
+ ✓ |core| packages/mcp-server/test/tools/certify-contrast.spec.ts (26 tests) 17355ms
+   ✓ certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > a single-series chart (no color encoding) -> pass on categorical-01 (baked mark.color, rendered) vs the canvas  5924ms
+   ✓ certify-contrast — role-C (WCAG mark-vs-canvas) + default palette > the re-spaced OODS categorical palette (6 series) -> clean pass, at/above the >=10 target (s146 F1, memo §3a)  564ms
+   ✓ certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guardrail) > a low-chroma (reads-as-gray) config.tokens override -> fail on the chroma floor, before the ΔE check  382ms
+   ✓ certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guardrail) > the re-chromatized default palette is ABOVE the chroma floor -> the guardrail fires on nothing (zero-flip)  424ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > a GRAY 2-color agent range -> contrast FAIL on the chroma floor (Fork B: a gray "absent" slot reads as gray)  589ms
+   ✓ certify-contrast — F5 explicit agent color range (sprint-147, honest-fail, no certify edit) > under-cardinality caveat (critic amendment 4): 1 distinct value masks the gray-absent fail -> PASS on color[0] only  449ms
+   ✓ certify-contrast — honesty + determinism > a non-color override on a palette slot is IGNORED — the slot renders the OODS default, which certify grades (rendered-reality)  386ms
+   ✓ certify-contrast — honesty + determinism > is a pure function of the IR — identical verdict across repeated calls (the render is deterministic)  1498ms
+   ✓ certify-contrast — s140 multi-mark union grading > C1 repro: a passing decorative mark.color on the first layer + a role-C-failing color palette on a later layer -> fail (was a false pass)  873ms
+   ✓ certify-contrast — s140 multi-mark union grading > companion regression: the color-bearing mark is NOT the first layer -> pass (was a false unchecked)  418ms
+   ✓ certify-contrast — s140 multi-mark union grading > a faint author annotation line + a passing color-encoded data layer -> pass (the decoration is skipped, not failed)  494ms
+   ✓ certify-contrast — s140 multi-mark union grading > a gradient (exempt) layer + a categorical (pass) layer -> pass — a graded categorical dominates a gradient  690ms
+   ✓ certify-contrast — s140 multi-mark union grading > facet-of-layer: the walker descends facet.spec.layer and grades every unit  1479ms
+   ✓ certify-contrast — s140 multi-mark union grading > concat: the walker grades every section (both hconcat units), not just the first  557ms
+   ✓ certify-contrast — s176 render-backed assignment grading > ten series over the six-slot default palette -> role-A ΔE00=0 fail (the recycled assignment reaches the grader)  373ms
+   ✓ certify-contrast — s176 render-backed assignment grading > an author decoration painted in a PALETTE hex cannot fake a ΔE00=0 collision (D2 — the rejected multiset reading)  595ms
+   ✓ certify-contrast — s176 render-backed assignment grading > an empty sample renders no marks -> 'unchecked' (a series unit with nothing rendered is not graded, D6)  466ms
+ ✓ |core| tests/traits/viz/spatial/geocodable.test.ts (79 tests) 408ms
+ ✓ |core| tests/viz/mark-options-schema-validity-s167.test.ts (49 tests) 23293ms
+   ✓ s167 m03 — OODS-only mark.options keys stay out of the Vega-Lite mark def (FF#22) > the prescribed id-keyed ordering pattern emits a SCHEMA-VALID spec  644ms
+   ✓ s168 m02 — allowlist + translation table (FF#22 corrective) > every committed mark-bearing fixture emits schema-valid mark defs  19680ms
+   ✓ s177 m06 — whole-spec fixture validity reconciliation > leaves zero unannotated whole-spec failures across the exact 42-fixture corpus  2608ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.spec.ts (72 tests) 22391ms
+   ✓ artifact.certify — conformance verdict (cartesian) > a conformant cartesian IR → certified, conformant:true, no findings, stable contentHash  5624ms
+   ✓ artifact.certify — conformance verdict (cartesian) > a non-conformant IR (encoding field absent from rows → R-12) → conformant:false + OODS-A11Y-A11Y-R-12  1195ms
+   ✓ artifact.certify — coverage-honest routing > an ECharts-primary IR (MarkSankey) → uncertified, conformant:null, no determinism  589ms
+   ✓ artifact.certify — determinism (contentHash) > same input → identical contentHash across two calls (pure verdict)  2052ms
+   ✓ artifact.certify — determinism (contentHash) > a one-field mutation → different contentHash  1452ms
+   ✓ artifact.certify — contrast pillar (s137/s138/s140) > a default cartesian IR → pillars all pass + a rendered-contrast contrastNote  822ms
+   ✓ artifact.certify — contrast pillar (s137/s138/s140) > [B] the primary conformant-rollup lock — a low-contrast config.tokens override → contrast:fail PULLS conformant false, while a11yEquivalence stays DECOUPLED at pass  532ms
+   ✓ artifact.certify — fall-through routing (review #1004 item 2) > MarkHeatmap → an HONEST certified verdict via the MarkRect alias — NOT the opaque V127 it used to be  813ms
+   ✓ artifact.certify — cross-tool contentHash identity with viz.render (s138 m03) > viz.render.contentHash === certify.contentHash on viz.render's RETURNED normalizedSpec (multi-series, baked scale.range)  379ms
+   ✓ artifact.certify — cross-tool contentHash identity with viz.render (s138 m03) > F5 (s147): an explicit agent color range hashes in lockstep — viz.render.contentHash === certify.contentHash  795ms
+   ✓ artifact.certify — cross-tool contentHash identity with viz.render (s138 m03) > #853c (s149): a provably-failing gray agent range → certify HONEST-FAIL (conformant:false, contrast:'fail') on viz.render's own normalizedSpec  449ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > legit categorical twin (EncodingColor, palette baked) → contrast:pass — unchanged  329ms
+   ✓ artifact.certify — contrast grades the rendered bytes (s139) > invariance — a divergence IR shares conformant/a11yEquivalence/determinism with its EncodingColor twin; only contrast moves  372ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > 'R2 dual axis' → pillars.accuracy fail + 'OODS-V151' in findings + conformant false + the FAIL path still validates  680ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > 'R3 area encodes linear' → pillars.accuracy fail + 'OODS-V152' in findings + conformant false + the FAIL path still validates  616ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > each red is keyed to its OWN rule — no red trips a rule it does not name  1153ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > every accuracy code a red emits is a REGISTERED code  774ms
+   ✓ artifact.certify — accuracy pillar (s170 m02) > 'unchecked' (nothing to grade) does NOT pull the rollup — only 'fail' and 'ungradeable' do (s175 m04 closed #781)  1181ms
+ ✓ |core| packages/mcp-server/test/compose/design-compose.spec.ts (48 tests) 4163ms
+   ✓ design.compose — core contracts > handler is callable  1305ms
+   ✓ design.compose — dashboard intent > respects metricColumns preference  373ms
+ ✓ |core| packages/mcp-server/test/contracts/map-apply.spec.ts (18 tests) 476ms
+ ✓ |core| tests/validation/error-context-enrichment.test.ts (16 tests) 170ms
+ ✓ |core| packages/mcp-server/test/codegen/react-emitter.spec.ts (34 tests) 87ms
+ ✓ |core| packages/mcp-server/test/compose/object-slot-filler.spec.ts (25 tests) 1442ms
+   ✓ fillSlotsWithObject — core placement > returns schema, placements, and warnings  342ms
+ ✓ |core| packages/mcp-server/test/product-reality/closeout-ledger.s185.spec.ts (44 tests) 764ms
+ ✓ |core| tests/integration/network-flow-full.test.ts (21 tests) 150ms
+ ✓ |core| tests/schemas/spatial-spec.test.ts (24 tests) 408ms
+ ✓ |core| packages/mcp-server/test/contracts/catalog.list.spec.ts (28 tests) 15161ms
+   ✓ catalog.list > validates schema contracts  957ms
+   ✓ catalog.list > should allow explicit full detail without default pagination  1504ms
+   ✓ catalog.list > should include component properties  360ms
+   ✓ catalog.list > should filter by category  664ms
+   ✓ catalog.list > includes filteredCount in stats when filters are active  387ms
+   ✓ catalog.list > should filter by trait  546ms
+   ✓ catalog.list > suggests traits when a trait filter returns zero results  516ms
+   ✓ catalog.list > should filter by context  565ms
+   ✓ catalog.list > should return totalCount matching filtered results  1004ms
+   ✓ catalog.list > deduplicates trait names per component  632ms
+   ✓ catalog.list > filters by status=stable  1652ms
+   ✓ catalog.list > keeps the legacy status census scoped to the 98 mapped / 11 fallback HTML surface  4641ms
+ ✓ |core| packages/mcp-server/test/compose/templates.spec.ts (68 tests) 1010ms
+   ✓ dashboardTemplate > renders in document mode  426ms
+ ✓ |core| tests/viz/adapters/echarts/sankey-adapter.test.ts (43 tests) 209ms
+ ✓ |core| tests/core/dependency-graph.test.ts (40 tests) 176ms
+ ✓ |core| packages/mcp-server/test/codegen/vue-emitter.spec.ts (29 tests) 133ms
+ ✓ |core| packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts (12 tests | 9 skipped) 1257ms
+   ✓ E2E — Stage1 BridgeSummary → pipeline → design.compose > reconciles synthetic lifecycle action_mappings against composed Subscription  1116ms
+ ✓ |core| tests/codegen/code-generate.contract.test.ts (24 tests) 1455ms
+   ✓ code.generate contracts — React > generates structurally valid TSX from simple schema  411ms
+ ✓ |core| tests/dashboard/network-cross-filter.test.ts (36 tests) 523ms
+ ✓ |core| tests/tokens/mobile-output.test.ts (25 tests) 355ms
+ ✓ |core| packages/mcp-server/test/product-reality/reconnect.s184.spec.ts (13 tests) 43009ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > re-derives all ten Sprint 183 advertised movers and exposes the catalog schema omitted from the prior notice  13991ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > independently compares the M03, M04, and M05 records with their committed operands and recorded scopes  2290ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > derives the eight M06 movers and the 48-path Sprint 184 union from execution  2361ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > retains a machine-checked disposition for two sends and the explicitly retired archived consumer  14492ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > rejects a rewritten retirement, derivation, summary, or implementation-head plan binding  9584ms
+ ✓ |core| tests/tokens/bridged-slot-specificity-census.test.ts (5 tests) 801ms
+   ✓ s169 m02 — repo-wide bridged-slot specificity census > (c) the oracle is discriminating — a seeded (0,2,0) declaration outside the bridge is reported  308ms
+   ✓ s169 m02 — repo-wide bridged-slot specificity census > (c) a seed that copies the bridge SELECTOR but not its file is still reported  477ms
+ ✓ |core| tests/core/compositor.test.ts (21 tests) 317ms
+ ✓ |core| packages/mcp-server/test/compose/viz-compose.spec.ts (53 tests) 1872ms
+   ✓ viz.compose handler > error handling > returns error for unknown object  594ms
+   ✓ viz.compose handler > schema output > object-backed viz output validates against the live registry  515ms
+ ✓ |core| packages/mcp-server/test/product-reality/contract-resolution.s184.spec.ts (9 tests) 10584ms
+   ✓ Sprint 184 m03 contract-resolution closeout > derives the exact advertised implementation movers in both directions for m07  585ms
+   ✓ Sprint 184 m03 contract-resolution closeout > preserves the historical readiness manifests while every current nucleus ref resolves  9588ms
+ ✓ |core| tests/generators/composer.test.ts (24 tests) 141ms
+ ✓ |core| packages/mcp-server/test/compose/component-selector.spec.ts (56 tests) 3379ms
+stdout | tests/tokens/brand-root-and-containment.test.ts > s168 m06 — :root value audit + the two discriminating brand-axis oracles > (d) every non-base cell genuinely differs from :root — the blocks are not no-ops
+A/base: 0/44 differ from :root
+A/dark: 43/44 differ from :root
+A/hc: 44/44 differ from :root
+B/base: 0/44 differ from :root
+B/dark: 44/44 differ from :root
+B/hc: 44/44 differ from :root
+
+ ✓ |core| tests/tokens/brand-root-and-containment.test.ts (9 tests) 418ms
+ ✓ |core| packages/mcp-server/test/sprint68-behavioral-traits.spec.ts (62 tests) 17116ms
+   ✓ behavioral trait loading > all 4 behavioral traits are discoverable  746ms
+   ✓ behavioral trait loading > Filterable loads with category=behavioral  514ms
+   ✓ behavioral trait loading > Searchable has view_extensions for list context  313ms
+   ✓ behavioral trait loading > Pageable has view_extensions for list context  493ms
+   ✓ behavioral trait loading > Sortable has view_extensions for list context  343ms
+   ✓ behavioral trait loading > Searchable has parameters (propSchema)  899ms
+   ✓ behavioral trait loading > Filterable has parameters (propSchema)  411ms
+   ✓ behavioral trait loading > Pageable has parameters (propSchema)  435ms
+   ✓ behavioral trait loading > Searchable has semantic mappings  445ms
+   ✓ behavioral trait loading > Pageable has page, pageSize, totalItems, totalPages schema fields  426ms
+   ✓ behavioral trait loading > Sortable has sortField, sortDirection, sortActive schema fields  436ms
+   ✓ behavioral trait loading > Searchable places SearchInput in header position  342ms
+   ✓ behavioral trait loading > Pageable places PaginationBar in footer position  509ms
+   ✓ list layout behavioral trait integration > Product with behavioral traits places SearchInput in search slot  1889ms
+   ✓ list layout behavioral trait integration > Product with behavioral traits places FilterPanel in filters slot  563ms
+   ✓ list layout behavioral trait integration > Product with behavioral traits places PaginationBar in pagination slot  840ms
+   ✓ list layout behavioral trait integration > objectUsed includes behavioral traits  497ms
+   ✓ list layout behavioral trait integration > view_extension collector returns behavioral entries for list context  320ms
+   ✓ backward compatibility > compose without object still works  822ms
+   ✓ maturity surfacing > object_show returns null maturity when not set  497ms
+   ✓ maturity surfacing > design_compose warns for beta object maturity  364ms
+   ✓ maturity surfacing > design_compose meta.warnings includes maturity message for beta objects  459ms
+ ✓ |core| packages/mcp-server/test/codegen/prop-binding.spec.ts (33 tests) 353ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.echarts-determinism.spec.ts (45 tests) 32738ms
+   ✓ artifact.certify — live cross-tool contentHash parity, same (spec, data) (s172 m02) > treemap: certify.determinism.contentHash === viz.render.contentHash  11112ms
+   ✓ artifact.certify — live cross-tool contentHash parity, same (spec, data) (s172 m02) > chord: certify.determinism.contentHash === viz.render.contentHash  800ms
+   ✓ artifact.certify — live cross-tool contentHash parity, same (spec, data) (s172 m02) > force_graph: certify.determinism.contentHash === viz.render.contentHash  645ms
+   ✓ artifact.certify — live cross-tool contentHash parity, same (spec, data) (s172 m02) > the parity assertion is not vacuous: a one-value change to the operand moves BOTH hashes together  565ms
+   ✓ artifact.certify — live cross-tool contentHash parity, same (spec, data) (s172 m02) > the hash is a pure function of (spec, data): two certify calls agree byte-for-byte  1311ms
+   ✓ artifact.certify — the ECharts determinism verdict SHAPE (s172 m02) > sankey: pillars deep-equal the s141 Design-A shape with determinism now REAL; coverage/conformant unmoved  524ms
+   ✓ artifact.certify — the ECharts determinism verdict SHAPE (s172 m02) > force_graph: pillars deep-equal the s141 Design-A shape with determinism now REAL; coverage/conformant unmoved  1068ms
+   ✓ artifact.certify — the ECharts determinism verdict SHAPE (s172 m02) > choropleth: pillars deep-equal the s141 Design-A shape with determinism now REAL; coverage/conformant unmoved  734ms
+   ✓ artifact.certify — the ECharts determinism verdict SHAPE (s172 m02) > bubble_map: pillars deep-equal the s141 Design-A shape with determinism now REAL; coverage/conformant unmoved  626ms
+   ✓ artifact.certify — the render-backed determinism note scopes the claim (s179 m05) > treemap: the scope note binds both identities to independent projections and the certified matrix  363ms
+   ✓ artifact.certify — the render-backed determinism note scopes the claim (s179 m05) > choropleth: the scope note binds both identities to independent projections and the certified matrix  345ms
+   ✓ artifact.certify — the render-backed determinism note scopes the claim (s179 m05) > bubble_map: the scope note binds both identities to independent projections and the certified matrix  982ms
+   ✓ artifact.certify — the render-backed determinism note scopes the claim (s179 m05) > retires the option-only force-physics caveat now that force participates in the rendered proof  3109ms
+   ✓ artifact.certify — the cartesian determinism path is untouched (s172 m02) > a cartesian IR still proves determinism through the Vega-Lite compile, with no operand involved  6860ms
+ ✓ |core| packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts (7 tests) 8715ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > remeasures the unchanged Product/detail 'html' typed gap as 'OODS-V007'  1591ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > remeasures the unchanged Product/detail 'react' typed gap as 'OODS-N015'  426ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > remeasures the unchanged Product/detail 'vue' typed gap as 'OODS-N015'  428ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > returns a typed OODS-V007 error on the no-context Product/HTML save path  412ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > binds all 13 retained repoints to a source selector and a non-empty reason  4004ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > binds historical B2 outcomes to their base replay and current remeasurement without changing operands  1743ms
+ ✓ |core| packages/mcp-adapter/sanitize-schema.test.js (27 tests) 33ms
+ ↓ |core| packages/mcp-server/test/e2e/stage1-rollups.e2e.spec.ts (7 tests | 7 skipped)
+ ✓ |core| packages/mcp-server/test/e2e/a2ui-runtime-q3.e2e.spec.ts (98 tests) 1202ms
+ ✓ |core| tests/viz/adapters/echarts/sankey-adapter-edge-cases.test.ts (21 tests) 682ms
+ ✓ |core| packages/mcp-server/test/compose/object-aware-compose.spec.ts (26 tests) 6755ms
+   ✓ object-aware compose — trait-driven components > Subscription detail produces objectUsed with traits and fields  3394ms
+   ✓ object-aware compose — backward compatibility > intent-only path still works (no object param)  346ms
+   ✓ object-aware compose — backward compatibility > form intent still works  458ms
+   ✓ object-aware compose — backward compatibility > list intent still works  302ms
+   ✓ object-aware compose — backward compatibility > validation works on both paths  374ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.echarts-a11y-warnfirst.spec.ts (88 tests) 61474ms
+   ✓ artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01) > treemap: WITH the operand, findings[] carries exactly the matrix-derived a11y set at native severity  9525ms
+   ✓ artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01) > chord: WITH the operand, findings[] carries exactly the matrix-derived a11y set at native severity  1070ms
+   ✓ artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01) > force_graph: WITH the operand, findings[] carries exactly the matrix-derived a11y set at native severity  1199ms
+   ✓ artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01) > choropleth: WITH the operand, findings[] carries exactly the matrix-derived a11y set at native severity  2800ms
+   ✓ artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01) > bubble_map: WITH the operand, findings[] carries exactly the matrix-derived a11y set at native severity  449ms
+   ✓ artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01) > treemap: the PILLAR does not move — a11yEquivalence stays unchecked, conformant stays null, coverage stays uncertified  576ms
+   ✓ artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01) > force_graph: the PILLAR does not move — a11yEquivalence stays unchecked, conformant stays null, coverage stays uncertified  675ms
+   ✓ artifact.certify — a11y-equivalence WARN-FIRST on the ECharts-primary path (s174 m01) > choropleth: the PILLAR does not move — a11yEquivalence stays unchecked, conformant stays null, coverage stays uncertified  605ms
+   ✓ artifact.certify — NATIVE severity, no remap (s174 m01) > treemap: a terse unnamed IR surfaces ERROR-severity a11y findings and STILL does not block  352ms
+   ✓ artifact.certify — NATIVE severity, no remap (s174 m01) > bubble_map: a terse unnamed IR surfaces ERROR-severity a11y findings and STILL does not block  506ms
+   ✓ artifact.certify — NATIVE severity, no remap (s174 m01) > flow_map: a terse unnamed IR surfaces ERROR-severity a11y findings and STILL does not block  480ms
+   ✓ artifact.certify — warn-first is a READER (s174 m01) > the CARTESIAN path is untouched: a11yEquivalence still carries a real pass/fail verdict there  12651ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > treemap: WITH the operand, a11yNotApplicable[] is the FIXTURE-derived NA set in rule order, each naming its absent precondition  1084ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > sunburst: WITH the operand, a11yNotApplicable[] is the FIXTURE-derived NA set in rule order, each naming its absent precondition  439ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > sankey: WITH the operand, a11yNotApplicable[] is the FIXTURE-derived NA set in rule order, each naming its absent precondition  306ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > force_graph: WITH the operand, a11yNotApplicable[] is the FIXTURE-derived NA set in rule order, each naming its absent precondition  339ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > choropleth: WITH the operand, a11yNotApplicable[] is the FIXTURE-derived NA set in rule order, each naming its absent precondition  881ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > bubble_map: WITH the operand, a11yNotApplicable[] is the FIXTURE-derived NA set in rule order, each naming its absent precondition  557ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > chord: NA ids and findings[] a11y ids are DISJOINT — a not-applicable rule is never a failure  477ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > force_graph: NA ids and findings[] a11y ids are DISJOINT — a not-applicable rule is never a failure  380ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > choropleth: NA ids and findings[] a11y ids are DISJOINT — a not-applicable rule is never a failure  619ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > bubble_map: NA ids and findings[] a11y ids are DISJOINT — a not-applicable rule is never a failure  536ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > sunburst: the terse IR reports the SAME NA set — the preconditions are structural, not prose  325ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > bubble_map: the terse IR reports the SAME NA set — the preconditions are structural, not prose  859ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > sunburst: WITHOUT the operand the key is ABSENT — not [], absent  614ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > chord: WITHOUT the operand the key is ABSENT — not [], absent  325ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > force_graph: WITHOUT the operand the key is ABSENT — not [], absent  507ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > the CARTESIAN path has no key either (decision 8: cartesian NA exposure is out of scope)  549ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > when the engine THROWS the key is ABSENT (the partial list is discarded) and the note says so  14293ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > the schema CONSTRAINS the channel: an entry with an extra key or an empty precondition is rejected  1320ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > the note names the channel and keeps the s174 substrings (a declared reword, same slot)  307ms
+ ✓ |core| packages/mcp-server/test/product-reality/readiness-ref-enforcement.s184.spec.ts (21 tests) 3636ms
+   ✓ s184-m02 readiness reference enforcement > independently verifies the derived nucleus readiness-ref inventory  2029ms
+   ✓ s184-m02 readiness reference enforcement > rejects a truthy appended row whose physical export does not exist  316ms
+   ✓ s184-m02 readiness reference enforcement > makes exactly Badge red and leaves the other 13 react generations green when its export vanishes  337ms
+ ✓ |core| tests/codegen/react-emitter.test.ts (26 tests) 196ms
+ ✓ |core| tests/tokens/brand-semantic-bridge.test.ts (14 tests) 167ms
+ ✓ |core| packages/mcp-server/test/contracts/registry-v14-roundtrip.spec.ts (13 tests) 2825ms
+   ✓ G3 — round-trip preserves all 4 v1.4.0 fields losslessly > map.create persists top-level arrays on apply=true and registry.snapshot surfaces them  1270ms
+   ✓ G3 — round-trip preserves all 4 v1.4.0 fields losslessly > multiple map.create calls APPEND to the top-level arrays (not replace)  801ms
+ ✓ |core| packages/mcp-server/test/compose/intent-object-resolver.spec.ts (38 tests) 7288ms
+   ✓ design.compose — hybrid mode (intent + object) > intent drives layout, object drives objectUsed  2663ms
+   ✓ design.compose — object only (no intent) > object + context generates synthetic intent and succeeds  647ms
+   ✓ design.compose — object only (no intent) > object only (no context) defaults to detail  560ms
+   ✓ design.compose — intent auto-detection > recognizes context in intent and auto-detects  334ms
+   ✓ design.compose — intent auto-detection > keeps explicit Product references working for object attachment  327ms
+   ✓ design.compose — backward compatibility (intent-only) > intent-only path still works exactly as before  535ms
+ ✓ |core| tests/viz/adapters/echarts/graph-adapter.test.ts (35 tests) 90ms
+ ✓ |core| tests/codegen/vue-emitter.test.ts (31 tests) 421ms
+ ✓ |core| tests/accounts/metadata-policy.spec.ts (23 tests) 222ms
+ ✓ |core| tests/verification/closeout-checklist.contract.test.ts (8 tests) 89ms
+ ✓ |core| tests/compliance/rbac.spec.ts (11 tests) 145ms
+ ✓ |core| packages/mcp-server/test/contracts/schema.contract.spec.ts (24 tests) 646ms
+   ✓ schema contracts > rejects patch payloads when delta is not an array  345ms
+ ✓ |core| packages/mcp-server/test/e2e/review-q3.e2e.spec.ts (62 tests) 1367ms
+   ✓ Q3 — review-emitter real-data E2E gate > variant-aware slot rendering (D2 v2, s100-m03) > omitting variant falls back to canonical render slots (matches desktop)  476ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.spec-only-bytes.spec.ts (32 tests) 13493ms
+   ✓ artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkBar: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe  9789ms
+   ✓ artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkLine: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe  422ms
+   ✓ artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkArea: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe  354ms
+   ✓ artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkPoint: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe  732ms
+   ✓ artifact.certify — {spec}-only byte compatibility, cartesian half (baseline 85004fe) > MarkRect: the {spec}-only response moves only by the declared set vs pristine HEAD 85004fe  409ms
+   ✓ artifact.certify — {spec}-only byte compatibility, ECharts half (baseline 85004fe) > MarkChord: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD 85004fe  341ms
+   ✓ artifact.certify — the control can discriminate > a single mutated byte in the baseline reds the cartesian comparison  421ms
+ ✓ |core| tests/e2e/network-dashboard.test.ts (14 tests) 32ms
+ ✓ |core| tests/tokens-governance/token-map-and-diff.test.ts (14 tests) 52ms
+ ✓ |core| tests/compliance/integration.spec.ts (7 tests) 668ms
+   ✓ Compliance Integration > Subscription Pause Flow > should allow contributor to pause subscription with audit trail  624ms
+ ✓ |core| tests/time/temporal-hygiene.spec.ts (34 tests) 240ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.data-operand.spec.ts (33 tests) 10113ms
+   ✓ artifact.certify — the operand is validated by the RENDER path validators (s172 m01) > MarkTreemap: a VALID operand is accepted (status ok, schema-valid)  6614ms
+   ✓ artifact.certify — the operand is validated by the RENDER path validators (s172 m01) > MarkChord: a VALID operand is accepted (status ok, schema-valid)  771ms
+   ✓ artifact.certify — the operand is validated by the RENDER path validators (s172 m01) > MarkGraph: a VALID operand is accepted (status ok, schema-valid)  526ms
+   ✓ artifact.certify — the operand is validated by the RENDER path validators (s172 m01) > MarkChoropleth: a VALID operand is accepted (status ok, schema-valid)  1382ms
+ ✓ |core| tests/generators/type-generator.test.ts (26 tests) 210ms
+ ✓ |core| tests/parsers/object-parser.test.ts (13 tests) 418ms
+ ✓ |core| packages/mcp-server/test/e2e/apply-summary-q3.e2e.spec.ts (94 tests) 416ms
+
+[s184-m05] state parity differences=0; allowlist=0
+[s184-m05:parity] {"states":["loading","empty","error","success"],"react":{"loading":{"markersInDocumentOrder":["loading"],"visibleText":"Loading subscriptions."},"empty":{"markersInDocumentOrder":["empty"],"visibleText":"No subscriptions found."},"error":{"markersInDocumentOrder":["error"],"visibleText":"Subscriptions could not be loaded."},"success":{"markersInDocumentOrder":["success"],"visibleText":"Subscriptions loaded."}},"vue":{"loading":{"markersInDocumentOrder":["loading"],"visibleText":"Loading subscriptions."},"empty":{"markersInDocumentOrder":["empty"],"visibleText":"No subscriptions found."},"error":{"markersInDocumentOrder":["error"],"visibleText":"Subscriptions could not be loaded."},"success":{"markersInDocumentOrder":["success"],"visibleText":"Subscriptions loaded."}},"computedDifferences":[],"allowlist":[]}
+[s184-m05:mutation] target=react removed=loading red=react/loading green=7
+[s184-m05:mutation] target=react removed=empty red=react/empty green=7
+[s184-m05:mutation] target=react removed=error red=react/error green=7
+[s184-m05:mutation] target=react removed=success red=react/success green=7
+[s184-m05:mutation] target=vue removed=loading red=vue/loading green=7
+[s184-m05:mutation] target=vue removed=empty red=vue/empty green=7
+[s184-m05:mutation] target=vue removed=error red=vue/error green=7
+[s184-m05:mutation] target=vue removed=success red=vue/success green=7
+[s184-m05:restore] target=react source=sha256:8b17d59119e49b4bb2c2a03be0b08c3d8771cef91df1addb6d45483983ff2879 green=4
+ ❯ |core| packages/mcp-server/test/contracts/brand.intake.s181.spec.ts (6 tests | 1 failed) 28081ms
+   ✓ brand.intake s181 advertised dry-run contract > B-07 keeps the engine request schema reference-identical to the input wire JSON 1ms
+   ✓ brand.intake s181 advertised dry-run contract > publishes a wire-valid dry-run example in the generated API reference  375ms
+   ✓ brand.intake s181 advertised dry-run contract > receipts inline acceptance as preview-only, unapplied, uncreated, and memberful without filesystem writes 97ms
+   ✓ brand.intake s181 advertised dry-run contract > returns a typed unresolved-content-reference outcome and one reason per submitted member 32ms
+   ✓ brand.intake s181 advertised dry-run contract > spawns dist/index.js, returns the full inline receipt, and leaves the review-kit tree byte-identical  12176ms
+   × brand.intake s181 advertised dry-run contract > B-09 rejects apply:true and consumer-local paths at index-level AJV before the handler 15380ms
+     → Timed out waiting for brand.intake stdio responses. stderr=
+[s184-m05:restore] target=vue source=sha256:d341604855e0542712bf34d9722596ab9d403b25793cbc55fa4cb31d5a457198 green=4
+ ❯ |core| packages/mcp-server/test/product-reality/state-axis.s184.spec.ts (22 tests | 1 failed) 144016ms
+   ✓ Sprint 184 m05 workflow state axis > 'react' builds a non-empty 'loading' artifact at build confidence 20ms
+   ✓ Sprint 184 m05 workflow state axis > 'vue' builds a non-empty 'loading' artifact at build confidence 2ms
+   ✓ Sprint 184 m05 workflow state axis > 'react' builds a non-empty 'empty' artifact at build confidence 0ms
+   ✓ Sprint 184 m05 workflow state axis > 'vue' builds a non-empty 'empty' artifact at build confidence 0ms
+   ✓ Sprint 184 m05 workflow state axis > 'react' builds a non-empty 'error' artifact at build confidence 0ms
+   ✓ Sprint 184 m05 workflow state axis > 'vue' builds a non-empty 'error' artifact at build confidence 0ms
+   ✓ Sprint 184 m05 workflow state axis > 'react' builds a non-empty 'success' artifact at build confidence 1ms
+   ✓ Sprint 184 m05 workflow state axis > 'vue' builds a non-empty 'success' artifact at build confidence 0ms
+   ✓ Sprint 184 m05 workflow state axis > react emits exactly one ordered branch per declaration 4ms
+   ✓ Sprint 184 m05 workflow state axis > vue emits exactly one ordered branch per declaration 0ms
+   ✓ Sprint 184 m05 workflow state axis > computes zero cross-target marker or visible-text differences 2ms
+   ✓ Sprint 184 m05 workflow state axis > 'react'/'loading' mutation reds exactly its selected target-state cell 0ms
+   ✓ Sprint 184 m05 workflow state axis > 'react'/'empty' mutation reds exactly its selected target-state cell 0ms
+   ✓ Sprint 184 m05 workflow state axis > 'react'/'error' mutation reds exactly its selected target-state cell 2ms
+   ✓ Sprint 184 m05 workflow state axis > 'react'/'success' mutation reds exactly its selected target-state cell 1ms
+   ✓ Sprint 184 m05 workflow state axis > 'vue'/'loading' mutation reds exactly its selected target-state cell 2ms
+   ✓ Sprint 184 m05 workflow state axis > 'vue'/'empty' mutation reds exactly its selected target-state cell 1ms
+   ✓ Sprint 184 m05 workflow state axis > 'vue'/'error' mutation reds exactly its selected target-state cell 2ms
+   ✓ Sprint 184 m05 workflow state axis > 'vue'/'success' mutation reds exactly its selected target-state cell 4ms
+   × Sprint 184 m05 workflow state axis > restores the exact emitted bytes and all eight runtime cells after the mutation matrix 23016ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ Sprint 184 m05 workflow state axis > react preserves both measured red/inert controls 120ms
+   ✓ Sprint 184 m05 workflow state axis > vue preserves both measured red/inert controls 20ms
+ ✓ |core| packages/mcp-server/test/render/renderer-edge-cases.spec.ts (25 tests) 471ms
+ ❯ |core| packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts (7 tests | 1 failed) 44861ms
+   ✓ s181 portable-runtime publish boundary > keeps the runtime component schema byte-identical to the planning producer output 14ms
+   ✓ s181 portable-runtime publish boundary > B-12 starts from dist plus package metadata only and answers degraded health without planning data  15785ms
+   × s181 portable-runtime publish boundary > B-12 proves the relocated schema is load-bearing by deleting it from the staged dist 22854ms
+     → expected null to be 1 // Object.is equality
+   ✓ s181 portable-runtime publish boundary > allows declared-data provenance but forbids quoted cmos path segments in executable dist JavaScript  1044ms
+   ✓ s181 portable-runtime publish boundary > pins the Sprint-182 manifest-present structuredData, map, and registry products deterministically 270ms
+   ✓ s181 portable-runtime publish boundary > B-19 keeps the runtime data schema out of generated.ts 15ms
+   ✓ s181 portable-runtime publish boundary > derives the adapter wire version from package.json and no longer stages planning files for fresh installs  4849ms
+ ❯ |core| packages/mcp-server/test/product-reality/closeout.s184.spec.ts (10 tests | 5 failed) 241453ms
+   × Sprint 184 M07 closeout accounting > accounts for added and removed suite files and independently audits every claim 25827ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × Sprint 184 M07 closeout accounting > rejects CMOS text drift and any frozen evidence path that is missing 23581ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ Sprint 184 M07 closeout accounting > rejects a handoff whose frozen CMOS source does not leave the sprint Active  2958ms
+   ✓ Sprint 184 M07 closeout accounting > rejects an execution rolled up under two rows  12276ms
+   × Sprint 184 M07 closeout accounting > rejects malformed frozen reconnect evidence despite a passed criterion 7 manifest status 26870ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ Sprint 184 M07 closeout accounting > rejects criterion 7 when its execution does not bind the frozen reconnect inputs  16995ms
+   ✓ Sprint 184 M07 closeout accounting > counts only proven claim rows in the headline  19086ms
+   × Sprint 184 M07 closeout accounting > accepts collection-only populations only when they reconcile to executed historical totals 48416ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ Sprint 184 M07 closeout accounting > attributes historical added and removed rows to Sprint 183 missions  19494ms
+   × Sprint 184 M07 closeout accounting > uses frozen commit bytes rather than mutable working-tree bytes 45936ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ✓ |core| tests/tokens/brand-theme-matrix.test.ts (10 tests) 309ms
+ ✓ |core| tests/accounts/account-archetypes.spec.ts (12 tests) 939ms
+   ✓ Account Archetypes > AccountPerson (B2C) > should create a valid person account  317ms
+ ✓ |core| packages/mcp-server/test/tools/viz-a11y-equivalence-emission.spec.ts (14 tests) 1426ms
+   ✓ a11y equivalence engine over BUILDER-produced specs (conformant by construction, m02) > A11Y-R-05 PASSES on a default cartesian bar — the builder now synthesizes axis titles (was FALSE pre-s135)  335ms
+ ✓ |core| tests/compose/compose-integration.contract.test.ts (44 tests) 13060ms
+   ✓ contract: all templates produce renderable schemas > dashboard template validates successfully  1041ms
+   ✓ contract: component selector accuracy for 10+ standard intents > "data-list": Stack or Table in candidates  417ms
+   ✓ contract: compose → validate → render E2E pipeline > "dashboard with metrics and sidebar" → compose → validate → render document  1172ms
+   ✓ contract: compose → validate → render E2E pipeline > "user registration form" → compose → validate → render document  442ms
+   ✓ contract: compose → validate → render E2E pipeline > "product detail page with tabs" → compose → validate → render document  420ms
+   ✓ contract: compose → validate → render E2E pipeline > "searchable inventory list" → compose → validate → render document  345ms
+   ✓ contract: compose → validate → render E2E pipeline > "searchable inventory list" → compose → render fragments  355ms
+   ✓ contract: edge cases > empty intent returns error-free result with warning  336ms
+   ✓ contract: edge cases > validation can be skipped  407ms
+   ✓ contract: edge cases > all 4 explicit layouts work  908ms
+   ✓ contract: edge cases > compose with topN option limits candidates  412ms
+   ✓ contract: composed schemas in fragment render mode > form composed schema renders fragments  309ms
+   ✓ contract: composed schemas in fragment render mode > detail composed schema renders fragments  649ms
+ ✓ |core| packages/mcp-server/test/product-reality/consumer-contract.s185.spec.ts (18 tests) 5684ms
+   ✓ Sprint 185 saved-schema consumer contract > fills every real Plan/User field with a type-compatible shape and retains established Subscription values  466ms
+   ✓ Sprint 185 saved-schema consumer contract > rejects a component omitted from both SSR and mounted HTML using obligations retained from generated source  3404ms
+   ✓ Sprint 185 saved-schema consumer contract > names inactive initial Tabs panel obligations without relaxing the active panel or its content  353ms
+   ✓ Sprint 185 saved-schema consumer contract > react attachment does not accept inert SSR or a consumer-authored hydrated flag  669ms
+   ✓ Sprint 185 saved-schema consumer contract > vue attachment does not accept inert SSR or a consumer-authored hydrated flag  336ms
+ ✓ |core| packages/mcp-server/test/compose/intent-synonyms.spec.ts (35 tests) 4654ms
+   ✓ selectComponent — paraphrase equivalence > "show subscriptions in a table" and "data-table" produce same top-3  334ms
+ ✓ |core| tests/billing/usage-aggregate.spec.ts (16 tests) 857ms
+   ✓ Usage Aggregator > Event Recording > should record a valid usage event  338ms
+ ✓ |core| tests/viz/spatial/geo-data-resolver.test.ts (15 tests) 536ms
+ ✓ |core| packages/mcp-server/test/compose/design-compose-object.spec.ts (27 tests) 14716ms
+   ✓ design.compose — object-aware path > accepts object param and returns objectUsed  4372ms
+   ✓ design.compose — object-aware path > Subscription traits include lifecycle/Stateful  592ms
+   ✓ design.compose — object-aware path > works with User object  332ms
+   ✓ design.compose — context layout inference > context=detail infers detail layout  524ms
+   ✓ design.compose — context layout inference > context=form infers form layout  703ms
+   ✓ design.compose — context layout inference > context=inline maps to list layout  560ms
+   ✓ design.compose — context layout inference > explicit layout overrides context inference  863ms
+   ✓ design.compose — context layout inference > context without object falls through to intent detection  331ms
+   ✓ design.compose — backward compatibility > intent-only path still works (no object param)  432ms
+   ✓ design.compose — backward compatibility > validation can be skipped on object-aware path  350ms
+   ✓ design.compose — objectSchema bridge > object-aware compose populates objectSchema on the UiSchema  427ms
+   ✓ design.compose — objectSchema bridge > each objectSchema entry has type and required  552ms
+   ✓ design.compose — objectSchema bridge > intent-only path has no objectSchema (backward compatible)  481ms
+   ✓ design.compose — context bindings > detail context adds onEdit and onDelete bindings  766ms
+   ✓ design.compose — context bindings > list context adds onRowClick, onSort, onFilter  472ms
+   ✓ design.compose — context bindings > form context adds onSubmit and onChange  729ms
+ ✓ |core| tests/validation/boundary-conditions.test.ts (17 tests) 405ms
+   ✓ boundary conditions: empty and minimal schemas > empty composed object passes validation  356ms
+ ✓ |core| packages/mcp-server/test/e2e/boxes-arrows-q3.e2e.spec.ts (44 tests) 1462ms
+   ✓ Q3 — variant-aware slot rendering (D2 v2, s100-m03) > unknown variant falls back to canonical render slots  569ms
+ ❯ |core| packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts (5 tests | 5 failed) 166901ms
+   × Sprint 184 M07 tracked mutation patch disposition > classifies the exact 38-patch frozen population and binds every row to immutable bytes and a source-derived baseline 43505ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × Sprint 184 M07 tracked mutation patch disposition > executes the s183-m06-sc02 replacement over every tracked patch, with only the five invalid archives taking an explicit machine-readable non-apply path 30667ms
+     → Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × Sprint 184 M07 tracked mutation patch disposition > preserves all five Class 1 archives, proves the M03 canonical twins at two real commits, and uses the Sprint 183 M01b repair 30150ms
+     → Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × Sprint 184 M07 tracked mutation patch disposition > replays the three Class 2 patches at the receipt baseline and confirms their context drift at the frozen audit head 32444ms
+     → Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × Sprint 184 M07 tracked mutation patch disposition > keeps all four Class 3 patches scoped to their generated consumer roots 30061ms
+     → Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ✓ |core| tests/tokens/breakpoint-keep-in-step.test.ts (15 tests) 1536ms
+   ✓ breakpoint keep-in-step — the matcher (s173 m02, stage 1) > accepts every token value, in px or rem — so any of the five may be authored either way  798ms
+ ✓ |core| tests/viz/adapters/echarts/graph-adapter-interaction.test.ts (24 tests) 72ms
+ ✓ |core| packages/mcp-server/test/e2e/map-apply.test.ts (1 test) 2192ms
+   ✓ map.apply e2e > supports dry-run, apply, conflict artifacts, and idempotent re-apply on a 20-verdict report  2042ms
+ ❯ |core| packages/mcp-server/test/tools/artifact.certify.echarts-accuracy.spec.ts (28 tests | 1 failed) 34701ms
+   × artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > treemap: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran 20250ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > sunburst: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran  562ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > sankey: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran 141ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > chord: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran 245ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > force_graph: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran  633ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > choropleth: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran  361ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > bubble_map: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran 256ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > flow_map: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran 269ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > force_graph offers NO rule: rulesEvaluated 0, failing 0, and a note that says the offered SET is empty  361ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > bubble_map offers NO rule: rulesEvaluated 0, failing 0, and a note that says the offered SET is empty 286ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > flow_map offers NO rule: rulesEvaluated 0, failing 0, and a note that says the offered SET is empty 98ms
+   ✓ artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > the two flavours of unchecked are DISTINGUISHABLE: no operand vs nothing offered  531ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V154 fires end-to-end: accuracy:fail, an error-severity finding under the registered code, schema-valid 51ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V155 fires end-to-end: accuracy:fail, an error-severity finding under the registered code, schema-valid 32ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V156 fires end-to-end: accuracy:fail, an error-severity finding under the registered code, schema-valid 15ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V157 fires end-to-end: accuracy:fail, an error-severity finding under the registered code, schema-valid 38ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V158 fires end-to-end: accuracy:fail, an error-severity finding under the registered code, schema-valid 21ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V159 fires end-to-end: accuracy:fail, an error-severity finding under the registered code, schema-valid 164ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V154 is a REGISTERED code, not an ad-hoc string 0ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V155 is a REGISTERED code, not an ad-hoc string 0ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V156 is a REGISTERED code, not an ad-hoc string 0ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V157 is a REGISTERED code, not an ad-hoc string 0ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V158 is a REGISTERED code, not an ad-hoc string 0ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > OODS-V159 is a REGISTERED code, not an ad-hoc string 0ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > the ECharts findings are ERROR severity even where the render path is silent or only warns (V158) 100ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > conformant STAYS null on an accuracy fail — the uncertified path makes no folded claim (s141 Design A) 16ms
+   ✓ artifact.certify — a firing ECharts accuracy rule reaches the agent (s172 m03) > an accuracy fail does NOT disturb the determinism proof — the rules are readers (#110) 206ms
+   ✓ artifact.certify — the cartesian accuracy path is untouched (s172 m03) > a cartesian IR still reports the FOUR cartesian rules, with the s170 summary shape  10048ms
+ ✓ |core| packages/mcp-server/test/e2e/branded-mockup-q3.e2e.spec.ts (66 tests) 901ms
+ ✓ |core| tests/tools/stage1-dtcg-adapter.test.ts (11 tests) 2365ms
+   ✓ stage1-dtcg adapter — committed Parts Town artifact conformance > every leaf is a $type/$value DTCG token of a v0-scope type  350ms
+   ✓ stage1-dtcg adapter — SD ingest (the tokens.build machinery accepts the output) > style-dictionary + tokens-studio preprocessor builds css/variables from the base set without error  1943ms
+ ✓ |core| tests/validation/composition-validator.test.ts (6 tests) 161ms
+ ✓ |core| tests/dashboard/network-widgets.test.ts (28 tests) 42ms
+ ✓ |core| tests/contracts/upstream-trait-sync.contract.test.ts (20 tests) 4954ms
+   ✓ contract: Taggable v2 enriched params visible in catalog > catalog.list returns components with Taggable trait  3156ms
+   ✓ contract: Colorized v2 tones reflected in validation > accepts the v2 canonical tone set including accent and critical  426ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.geo-id-parity.spec.ts (26 tests) 9230ms
+   ✓ geo identity parity — viz.render and artifact.certify emit the SAME option (s173 m01) > choropleth with id absent: the certify VERDICT agrees with the render hash (live, both handlers)  6534ms
+   ✓ geo identity parity — viz.render and artifact.certify emit the SAME option (s173 m01) > choropleth with id a caller-supplied id: the certify VERDICT agrees with the render hash (live, both handlers)  391ms
+   ✓ geo identity parity — viz.render and artifact.certify emit the SAME option (s173 m01) > bubble_map with id absent: the certify VERDICT agrees with the render hash (live, both handlers)  704ms
+   ✓ geo identity parity — viz.render and artifact.certify emit the SAME option (s173 m01) > bubble_map with id empty string (''): the certify VERDICT agrees with the render hash (live, both handlers)  344ms
+   ✓ geo identity parity — viz.render and artifact.certify emit the SAME option (s173 m01) > bubble_map with id a caller-supplied id: the certify VERDICT agrees with the render hash (live, both handlers)  344ms
+ ✓ |core| packages/mcp-server/test/product-reality/breadth-contracts.s185.spec.ts (45 tests) 371ms
+ ✓ |core| packages/mcp-server/test/product-reality/review-carries.s185.spec.ts (14 tests) 5688ms
+   ✓ Sprint 185 additive review carries preserve history and expose omitted axes > rederives 13 historical invocations and 14 axes from the record's comparisonFields  1950ms
+   ✓ Sprint 185 additive review carries preserve history and expose omitted axes > keeps all referenced Sprint-183/184 artifact bytes at the completed m04 commit  3277ms
+   ✓ Sprint 185 additive review carries preserve history and expose omitted axes > C13 cites the tracked pre-sprint index and exact matching identities, not body pre-existence  390ms
+ ✓ |core| packages/mcp-server/test/contracts/contract-alignment.spec.ts (20 tests) 1969ms
+   ✓ pipeline — nested options aliases contract > handler reads styling from options when not at top level  533ms
+   ✓ pipeline — nested options aliases contract > pipeline save accepts { name, tags } object  783ms
+   ✓ pipeline — nested options aliases contract > pipeline save object persists tags through schema load/list  376ms
+ ✓ |core| tests/governance-gates/state-assessment-tokens-red-paths.test.ts (11 tests) 10199ms
+   ✓ runTokenGovernanceCheck — the red paths (s175 m02, C3) > U1 fail-closed: a supplied base ref the diff cannot satisfy → failClosed=true, RED, no report  1600ms
+   ✓ runTokenGovernanceCheck — the red paths (s175 m02, C3) > U1 positive control: a supplied ref the diff satisfies → failClosed=false, both reports, measuredPrDelta=true  1452ms
+   ✓ runTokenGovernanceCheck — the red paths (s175 m02, C3) > U2 named SKIP, variant "nothing was diffed": no ref and no report → the SKIP note, measuredPrDelta=false  951ms
+   ✓ runTokenGovernanceCheck — the red paths (s175 m02, C3) > U2 named SKIP, variant "measured NO PR DELTA": no ref but the tool fell back → the fell-back note naming the base  857ms
+   ✓ runTokenGovernanceCheck — the red paths (s175 m02, C3) > discriminator: the SAME failing diff is fail-closed with a ref and a named skip without one — only env.TOKEN_GOV_BASE_REF differs  1631ms
+   ✓ runTokenGovernanceCheck — the red paths (s175 m02, C3) > the env seam is the injected context, not process.env (a stray TOKEN_GOV_BASE_REF in the parent cannot turn a skip into a fail-closed)  1239ms
+ ✓ |core| packages/mcp-server/test/contracts/stage1-v14-stubs.spec.ts (4 tests) 387ms
+ ✓ |core| tests/cli/network-scaffold.test.ts (24 tests) 18ms
+ ✓ |core| packages/mcp-server/test/codegen/responsive-tailwind.spec.ts (20 tests) 193ms
+ ✓ |core| packages/mcp-server/test/contracts/error-observability.contract.spec.ts (19 tests) 730ms
+ ✓ |core| packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts (4 tests) 11617ms
+   ✓ dashboard.render Shape-B identity lifts (s180 m02) > R-C: lifted cartesian and ECharts IR certify with the required operand shape and preserve contentHash parity  11102ms
+ ✓ |core| tests/validation/error-code-coverage.test.ts (20 tests) 2195ms
+   ✓ error code coverage: TE-03XX composition errors > TE-0301 PROPERTY_COLLISION: triggered by collision metadata  1373ms
+ ✓ |core| packages/mcp-server/test/compose/selection-tree-bridge.spec.ts (9 tests) 3326ms
+   ✓ selection→tree bridge — list footer > User list compose: pagination slot component differs from template default  1910ms
+   ✓ selection→tree bridge — list footer > User list compose: all slots with selections appear filled in tree  637ms
+   ✓ selection→tree bridge — detail view > Product detail: tree nodes are not all default placeholders  359ms
+ ❯ |core| tests/verification/how-forge-works.contract.test.ts (5 tests | 1 failed) 90ms
+   ✓ how Forge works narrative truth > derives the registered tool counts and roster split from registry.json 13ms
+   ✓ how Forge works narrative truth > names all four certification pillars, including accuracy 7ms
+   ✓ how Forge works narrative truth > derives the published token, bridge, and brand-contrast counts 16ms
+   ✓ how Forge works narrative truth > records that the narrative base has been tracked since 4f64bcf 9ms
+   × how Forge works narrative truth > keeps Sprint-182 product-reality claims evidence-scoped and review-gated 38ms
+     → expected [ …(19) ] to have a length of 14 but got 19
+ ✓ |core| packages/mcp-server/test/codegen/styling-mode-coverage.spec.ts (54 tests) 38ms
+ ❯ |core| packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts (26 tests | 2 failed) 219936ms
+   ✓ Sprint 184 m03 target contract and emitter movement > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on react 102ms
+   ✓ Sprint 184 m03 target contract and emitter movement > clears every nucleus contract issue in both immutable Subscription schemas and the tier-1 control on vue 10ms
+   ✓ Sprint 184 m03 target contract and emitter movement > accepts only the declared boolean Select and array Text bindings on react 2ms
+   ✓ Sprint 184 m03 target contract and emitter movement > accepts only the declared boolean Select and array Text bindings on vue 1ms
+   × Sprint 184 m03 target contract and emitter movement > emits explicit React coercion and joining expressions that strict-check against the built package 94967ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × Sprint 184 m03 target contract and emitter movement > emits readonly-safe Vue coercion and joining expressions that strict-check against the built package 121749ms
+     → expected { status: null, output: '' } to deeply equal { status: +0, output: '' }
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps both HTML field bindings visible without stringifying an array object 80ms
+   ✓ Sprint 184 m03 target contract and emitter movement > executes the fields directive as an actual StatusTimeline on react even without authored children 28ms
+   ✓ Sprint 184 m03 target contract and emitter movement > executes the fields directive as an actual StatusTimeline on vue even without authored children 57ms
+   ✓ Sprint 184 m03 target contract and emitter movement > executes the fields directive as an actual StatusTimeline on html even without authored children 32ms
+   ✓ Sprint 184 m03 target contract and emitter movement > lowers the saved directive to the exact named pattern and authored field order 17ms
+   ✓ Sprint 184 m03 target contract and emitter movement > executes the directive through the direct tree renderer and repl.render document path 239ms
+   ✓ Sprint 184 m03 target contract and emitter movement > preserves the saved directive node and its two visible field bindings on react 106ms
+   ✓ Sprint 184 m03 target contract and emitter movement > preserves the saved directive node and its two visible field bindings on vue 57ms
+   ✓ Sprint 184 m03 target contract and emitter movement > preserves the saved directive node and its two visible field bindings on html 21ms
+   ✓ Sprint 184 m03 target contract and emitter movement > pins the invalid-prop companion matrix at four cases for each target 2ms
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps react Select invalid input blocked after the bounded widening 48ms
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps react Stack invalid input blocked after the bounded widening 37ms
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps react Text invalid input blocked after the bounded widening  2137ms
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps react Select invalid input blocked after the bounded widening 18ms
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps vue Select invalid input blocked after the bounded widening 32ms
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps vue Stack invalid input blocked after the bounded widening 4ms
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps vue Text invalid input blocked after the bounded widening 13ms
+   ✓ Sprint 184 m03 target contract and emitter movement > keeps vue Select invalid input blocked after the bounded widening 1ms
+   ✓ Sprint 184 m03 target contract and emitter movement > fails a react directive closed when a named composition field is absent 75ms
+   ✓ Sprint 184 m03 target contract and emitter movement > fails a vue directive closed when a named composition field is absent 27ms
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should route queries to tenant-specific schema
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Schema Isolation > should prevent cross-schema data access
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] BEGIN in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should maintain schema context across transaction
+[SchemaPerTenant] COMMIT in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] BEGIN in tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Execute in tenant_tenant_alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Transaction Isolation > should not leak data across schema transactions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Concurrent Access > should handle multiple tenants querying simultaneously
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+[SchemaPerTenant] Using schema: tenant_tenant_charlie
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+[SchemaPerTenant] Query in tenant_tenant_charlie: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Using schema: tenant_tenant_alice
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Query in tenant_tenant_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Using schema: tenant_tenant_bob
+
+stdout | tests/tenancy/isolated.spec.ts > Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions
+[SchemaPerTenant] Query in tenant_tenant_bob: SELECT * FROM subscriptions
+
+ ✓ |core| tests/services/billing/usage-invoice-builder.spec.ts (2 tests) 477ms
+   ✓ UsageInvoiceBuilder > attaches metered usage line items and updates invoice totals  437ms
+ ✓ |core| tests/tenancy/isolated.spec.ts (10 tests) 335ms
+   ✓ Schema-Per-Tenant Isolation > Per-Tenant Migrations > should support independent schema versions  309ms
+ ✓ |core| packages/mcp-server/test/compose/view-extension-collector.spec.ts (16 tests) 1189ms
+   ✓ collectViewExtensions — core contracts > returns a plan array and warnings array  1127ms
+ ✓ |core| tests/traits/viz/spatial/layered-overlay.test.ts (25 tests) 186ms
+ ✓ |core| tests/styles/view-context-collapse.test.ts (13 tests) 253ms
+ ✓ |core| packages/mcp-server/test/codegen/vue-reactivity.spec.ts (12 tests) 457ms
+   ✓ vue-emitter — ref() bindings > generates ref() for each field in form schemas  305ms
+ ✓ |core| packages/mcp-server/test/e2e/wireframe-q3.e2e.spec.ts (40 tests) 1349ms
+   ✓ Q3 — variant-aware slot rendering (D2 v2, s100-m03) > omitting variant falls back to canonical oods.render.slots (3 slots, matches desktop)  384ms
+ ✓ |core| tests/database/communication-migrations.test.ts (4 tests) 2013ms
+   ✓ Communication migrations > applies and rolls back migrations using pg-mem  1826ms
+ ✓ |core| tests/governance-gates/enforce-preserves-build-inputs.test.ts (4 tests) 1577ms
+   ✓ governance gates preserve the built tokens JSON (s175 m01, C1) > enforce.mjs leaves the stand-in tokens.json in place, passes, and never touches the real one  636ms
+   ✓ governance gates preserve the built tokens JSON (s175 m01, C1) > triage.mjs (non --apply) leaves the stand-in tokens.json in place and completes  754ms
+ ✓ |core| tests/integrations/billing/stripe.spec.ts (9 tests) 396ms
+ ✓ |core| tests/tokens/viz-map.test.ts (20 tests) 59ms
+ ✓ |core| packages/mcp-server/test/contracts/versioning.spec.ts (22 tests) 2114ms
+   ✓ backward compatibility: no version = latest > ETag matching still works without version  385ms
+   ✓ ETag stability for versioned responses > computes stable ETag for versioned artifact  359ms
+   ✓ ETag stability for versioned responses > different versions produce different ETags  338ms
+ ✓ |core| packages/mcp-server/test/tools/echarts-role-a-assignment.s179.spec.ts (14 tests) 352ms
+ ✓ |core| packages/mcp-server/test/e2e/review-resolve-q3.e2e.spec.ts (25 tests) 632ms
+ ✓ |core| packages/mcp-server/test/e2e/a2ui-image-q3.e2e.spec.ts (24 tests) 435ms
+ ✓ |core| tests/viz/spatial/geo-format-parser.test.ts (22 tests) 45ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.echarts-render-grading.s179.spec.ts (13 tests) 11734ms
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > 'treemap': keeps option identity and adds a stable first-render hash  8553ms
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > 'sankey': keeps option identity and adds a stable first-render hash  301ms
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > 'force_graph': keeps option identity and adds a stable first-render hash  908ms
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > 'choropleth': keeps option identity and adds a stable first-render hash  705ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.echarts-s179-baseline.spec.ts (10 tests) 7586ms
+   ✓ artifact.certify — s179 operand-backed baseline at 1be93f8 > treemap: projected option hash, render hash, and the bounded full-response delta stay pinned  5517ms
+   ✓ artifact.certify — s179 operand-backed baseline at 1be93f8 > sunburst: projected option hash, render hash, and the bounded full-response delta stay pinned  390ms
+   ✓ artifact.certify — s179 operand-backed baseline at 1be93f8 > force_graph: projected option hash, render hash, and the bounded full-response delta stay pinned  324ms
+   ✓ artifact.certify — s179 operand-backed baseline at 1be93f8 > choropleth: projected option hash, render hash, and the bounded full-response delta stay pinned  748ms
+ ✓ |core| packages/mcp-server/test/e2e/conflict-detail-q3.e2e.spec.ts (83 tests) 393ms
+ ✓ |core| tests/components/stepper.test.tsx (19 tests) 270ms
+ ✓ |core| packages/mcp-server/test/product-reality/suite-accounting.s185.spec.ts (10 tests) 6100ms
+   ✓ Sprint 185 four-suite accounting counts executions and explains population movement > preserves the actual m01-after root-core reds and 38 skips instead of describing that baseline as green  703ms
+   ✓ Sprint 185 four-suite accounting counts executions and explains population movement > cannot reuse an old baseline execution as the newly measured closeout run  5239ms
+ ✓ |core| packages/mcp-server/test/product-reality/m06-evidence-controls.s184.spec.ts (6 tests) 1910ms
+   ✓ Sprint 184 m06 evidence controls > acquires current code.generate output while the Sprint-183 harness still acquires committed artifacts  657ms
+   ✓ Sprint 184 m06 evidence controls > finds every JSON-referenced raw log that is absent from git ls-files  1030ms
+ ✓ |core| packages/mcp-server/test/render/confidence-affordance.spec.ts (15 tests) 198ms
+ ✓ |core| tests/tokens/collision-guard.test.ts (6 tests) 3374ms
+   ✓ s167 m01 — the token collision guard > exits ZERO on the real, de-collided source tree  646ms
+   ✓ s167 m01 — the token collision guard > exits ZERO on an untouched copy of that tree (the sandbox is a faithful baseline)  936ms
+   ✓ s167 m01 — the token collision guard > exits NON-ZERO on a seeded duplicate whose value differs  829ms
+   ✓ s167 m01 — the token collision guard > exits NON-ZERO when a duplicate leaks a brand path OUT of that brand directory  641ms
+ ✓ |core| packages/mcp-server/test/scale/viz-determinism.spec.ts (42 tests) 1892ms
+   ✓ viz network/hierarchy scale-tier option determinism > tier=1000: sankey option is byte-identical for the same seed  340ms
+ ✓ |core| packages/mcp-server/test/contracts/registry-gaps.contract.spec.ts (10 tests) 108ms
+ ✓ |core| tests/services/classification/hybrid-term-adapter.spec.ts (2 tests) 2227ms
+   ✓ HybridTermAdapter > shares canonical terms between taxonomy and tags  1967ms
+ ✓ |core| packages/mcp-server/test/tools/dashboard-a11y-equivalence-emission.spec.ts (9 tests) 541ms
+   ✓ dashboard.render a11yEquivalence GATE + fold (default-ON, m04) > default-ON: conformant cartesian panels render with NO error panels, NO a11y warnings, a contentHash  389ms
+ ✓ |core| packages/mcp-server/test/contracts/upstream-trait-sync.contract.spec.ts (10 tests) 1474ms
+   ✓ Versioned structured data returns updated trait metadata > returns nearest-available versioned artifact with enriched trait surface  380ms
+   ✓ catalog.list reflects enriched trait surface > returns components with trait data  529ms
+ ✓ |core| packages/mcp-server/test/e2e/review-queue-q3.e2e.spec.ts (66 tests) 731ms
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant
+[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should isolate queries to current tenant
+[SharedSchema] Query for tenant tenant-bob: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-bob'
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Tenant Isolation > should prevent cross-tenant data access
+[SharedSchema] Query for tenant tenant-alice: SELECT * FROM subscriptions WHERE tenant_id = 'tenant-alice'
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] BEGIN for tenant tenant-alice
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] Execute for tenant tenant-alice: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should maintain tenant context across transaction
+[SharedSchema] COMMIT for tenant tenant-alice
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] BEGIN for tenant tenant-bob
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] Execute for tenant tenant-bob: INSERT INTO subscriptions (id, status) VALUES (?, ?)
+
+stdout | tests/tenancy/shared.spec.ts > Shared-Schema Tenancy > Transaction Isolation > should restore context after rollback
+[SharedSchema] ROLLBACK for tenant tenant-bob
+
+ ✓ |core| tests/tenancy/shared.spec.ts (11 tests) 58ms
+ ✓ |core| tests/e2e/code-generate.test.ts (7 tests) 765ms
+   ✓ code.generate E2E — round-trip pipeline > validate → render → code.generate (React) is consistent  663ms
+ ✓ |core| tests/viz/spatial/geo-data-joiner.test.ts (13 tests) 20ms
+ ✓ |core| packages/mcp-server/test/product-reality/recipe-header-fields.s185.spec.ts (19 tests) 8868ms
+   ✓ Sprint 185 legacy CardHeader recipe fields retain their data meaning > retains the original Labelled trait directives in the Product/card producer  2463ms
+   ✓ Sprint 185 legacy CardHeader recipe fields retain their data meaning > restores the unchanged Product/card/HTML release carrier to its missing-evidence boundary  810ms
+   ✓ Sprint 185 legacy CardHeader recipe fields retain their data meaning > react compiles and server-renders actual object data through existing header props  1510ms
+   ✓ Sprint 185 legacy CardHeader recipe fields retain their data meaning > vue compiles and server-renders actual object data through existing header props  2500ms
+   ✓ Sprint 185 legacy CardHeader recipe fields retain their data meaning > HTML visibly identifies both fields using its existing placeholder convention  368ms
+   ✓ Sprint 185 legacy CardHeader recipe fields retain their data meaning > vue preserves explicit runtime title/supporting before recipe directives  532ms
+ ✓ |core| tests/services/classification/ltree-query-service.spec.ts (4 tests) 781ms
+   ✓ LtreeQueryService > normalizes arbitrary segments into ltree paths  318ms
+   ✓ LtreeQueryService > reparents a branch and maintains child counts  300ms
+ ✓ |core| packages/mcp-server/test/product-reality/saved-schema-compiler.s183.spec.ts (4 tests) 1631ms
+   ✓ Sprint 183 M04 saved-schema compiler > turns a fallback-for-a-current-typed-gap mutation red  651ms
+ ✓ |core| packages/mcp-server/test/product-reality/m06-evidence.s184.spec.ts (4 tests) 1719ms
+   ✓ Sprint 184 m06 retained live workflow evidence > retains the exact live matrix, sixteen real gate bites, and honest partial claim  721ms
+   ✓ Sprint 184 m06 retained live workflow evidence > covers every retained file with checksums and every raw log with the tracked-log audit  953ms
+ ❯ |core| tests/verification/s177-prose-carriers.contract.test.ts (6 tests | 1 failed) 85ms
+   ✓ Sprint 177 prose truth carriers > documents the caller-owned wrapper required by brand-relative presets 4ms
+   ✓ Sprint 177 prose truth carriers > routes token-helper consumers through the public viz-core export 3ms
+   ✓ Sprint 177 prose truth carriers > records the shipped BUILD_STALE fix without reviving its workaround 2ms
+   × Sprint 177 prose truth carriers > keeps current roadmap authority separate from frozen history and sibling execution 61ms
+     → expected '# Near Roadmap\n\n**Status:** ACTIVE …' to contain '**Status:** ACTIVE — program decision…'
+   ✓ Sprint 177 prose truth carriers > closes the historical Sprint 41 plan header 5ms
+   ✓ Sprint 177 prose truth carriers > keeps the open-arcs ledger aligned with the atomic Viz flagship closure 7ms
+ ✓ |core| packages/mcp-server/test/compose/slot-content-distributor.spec.ts (7 tests) 2533ms
+   ✓ slot content distribution — compose integration > Product detail with many fields: expanded tabs have varied components  2265ms
+ ✓ |core| packages/mcp-server/test/contracts/s90-registration-audit.spec.ts (35 tests) 173ms
+ ✓ |core| packages/mcp-server/test/contracts/fragment-anchor-contract.spec.ts (3 tests) 4489ms
+   ✓ fragment-anchor contract: both anchors present on fragments output > emits data-oods-node-id AND data-oods-label on every labeled fragment node  435ms
+   ✓ fragment-anchor contract: data-oods-label durable, data-oods-node-id best-effort > is deterministic — identical input yields identical label->node-id map  3349ms
+   ✓ fragment-anchor contract: data-oods-label durable, data-oods-node-id best-effort > a surviving slot keeps its data-oods-label while data-oods-node-id may shift  700ms
+ ✓ |core| packages/mcp-server/test/e2e/mapping-versioning.e2e.spec.ts (3 tests) 13718ms
+   ✓ mapping + versioning bridge E2E > map.create → map.list → map.resolve round-trip via bridge (multi-system)  9427ms
+ ✓ |core| tests/compliance/audit-log.spec.ts (15 tests) 183ms
+ ✓ |core| packages/mcp-server/test/contracts/registry-snapshot.spec.ts (5 tests) 7581ms
+   ✓ registry.snapshot handler > returns maps, traits, objects, etag, and generatedAt in one call  382ms
+   ✓ registry.snapshot handler > keeps the etag stable across unchanged registry state  741ms
+   ✓ registry.snapshot handler > benchmarks the snapshot p99 within a relative warmup budget at 100, 500, and 1000 mappings  6310ms
+ ✓ |core| packages/mcp-server/test/product-reality/history-pins.s185.spec.ts (13 tests) 4116ms
+   ✓ Sprint 182/184 promotion history — read-only under #1722/#1725, hashed and never executed > 'artifacts/product-reality/sprint-182/…' is tracked and byte-exact ('Sprint 182 promotion binding (content…')  385ms
+   ✓ Sprint 182/184 promotion history — read-only under #1722/#1725, hashed and never executed > 'artifacts/product-reality/sprint-182/…' is tracked and byte-exact ('Sprint 182 m05 gate record')  405ms
+   ✓ Sprint 182/184 promotion history — read-only under #1722/#1725, hashed and never executed > keeps both frozen closeout generators tracked  339ms
+   ✓ Sprint 182/184 promotion history — read-only under #1722/#1725, hashed and never executed > no live test or script invokes a frozen generator with --check, --check-promotion or --write-promotion  1288ms
+   ✓ Sprint 182/184 promotion history — read-only under #1722/#1725, hashed and never executed > no live test or script executes a frozen consumer.mjs; they are only read and hashed  626ms
+ ✓ |core| tests/traits/viz/spatial/spatial-composition.test.ts (15 tests) 23ms
+ ✓ |core| packages/mcp-server/test/objects/trait-composer.spec.ts (14 tests) 2014ms
+   ✓ trait-composer > merges semantics from traits and object  469ms
+ ✓ |core| packages/mcp-server/test/presets/brand-presets.spec.ts (29 tests) 497ms
+   ✓ brand presets > corporate-blue.json > all color tokens use oklch format  325ms
+ ✓ |core| tests/components/progress.test.tsx (18 tests) 203ms
+ ✓ |core| packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts (2 tests) 19901ms
+   ✓ Sprint 185 live generated plan heading updates > mounts real generated react and updates the read-only heading through its existing Textarea writer  9684ms
+   ✓ Sprint 185 live generated plan heading updates > mounts real generated vue and updates the read-only heading through its existing Textarea writer  10207ms
+ ✓ |core| packages/mcp-server/test/tools/certify-echarts-role-c.spec.ts (16 tests) 8695ms
+   ✓ ECharts Role-C structural paint extraction > 'treemap': extracts only visible chart carriers from the exact served option  7476ms
+   ✓ ECharts Role-C structural paint extraction > 'bubble_map': extracts only visible chart carriers from the exact served option  581ms
+ ✓ |core| packages/mcp-server/test/product-reality/m04-controls.s185.spec.ts (13 tests) 2991ms
+   ✓ Sprint 185 m04 controls verify their intended failure boundary > react removes the complete DetailHeader body and preserves the other four implementations  1063ms
+ ✓ |core| packages/mcp-server/test/product-reality/parity.s185.spec.ts (15 tests) 689ms
+ ❯ |core| packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts (5 tests | 1 failed) 2502ms
+   ✓ E2E object codegen target readiness > keeps Subscription detail blocked only by the remaining unavailable component  704ms
+   ✓ E2E object codegen target readiness > builds the fully ported Subscription list for both framework targets  699ms
+   ✓ E2E object codegen target readiness > keeps User detail composition/rendering and returns exact target unavailability  502ms
+   ✓ E2E object codegen target readiness > keeps objectSchema field metadata even when framework emission is blocked  325ms
+   × E2E object codegen target readiness > classifies intent-only dashboard framework output instead of treating it as a success 242ms
+     → expected { status: 'ok', …(8) } to deeply equal { status: 'error', …(8) }
+ ✓ |core| tests/traits/viz/spatial/has-projection.test.ts (19 tests) 29ms
+ ✓ |core| packages/mcp-server/test/compose/label-generator.spec.ts (13 tests) 625ms
+   ✓ generateLabels — category mapping > generates labels from trait categories  310ms
+ ✓ |core| tests/registry/resolver.test.ts (5 tests) 139ms
+ ✓ |core| packages/mcp-server/test/tools/certify-echarts-render-contrast.s179.spec.ts (13 tests) 8370ms
+   ✓ ECharts rendered categorical contrast (s179 m04) > 'treemap': composes actual carriers with the family semantic assignment  6949ms
+ ✓ |core| tests/integrations/billing/chargebee.spec.ts (7 tests) 278ms
+ ✓ |core| packages/mcp-server/test/product-reality/read-only-field-binding.s185.spec.ts (13 tests) 2726ms
+   ✓ Sprint 185 measured read-only DetailHeader field subscription > 'react'/'inline'/typescript=false reads the writer state without creating a heading event (m02 readiness fixture)  705ms
+   ✓ Sprint 185 measured read-only DetailHeader field subscription > 'vue'/'inline'/typescript=false reads the writer state without creating a heading event (m02 readiness fixture)  373ms
+ ✓ |core| packages/mcp-server/test/compose/token-injection.spec.ts (11 tests) 2025ms
+   ✓ code.generate — tokenOverrides > React emitter includes token override comments  1674ms
+ ✓ |core| tests/integrations/billing/zuora.spec.ts (7 tests) 315ms
+ ✓ |core| tests/tokens/tailwind-screens.test.ts (7 tests) 582ms
+   ✓ tailwind screens — generated from sys.breakpoint.* (s173 m02) > the ROOT config loads through Tailwind's own loader and its screens equal the built tokens  531ms
+ ✓ |core| packages/mcp-server/test/e2e/registry-gaps.e2e.spec.ts (3 tests) 9019ms
+   ✓ registry gaps e2e verification > Workbench S44 fixture with Grid + known components renders all fragments via bridge  6554ms
+ ✓ |core| tests/contexts/context-templates.test.tsx (16 tests) 286ms
+ ✓ |core| tests/verification/s178-viz-twin-retirement.contract.test.ts (3 tests) 17722ms
+   ✓ Sprint 178 viz twin retirement rung 1 > rejects external import/export/require/vi.mock references to retired paths  17459ms
+ ✓ |core| packages/mcp-server/test/product-reality/nucleus-pins.s185.spec.ts (4 tests) 1399ms
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > no live test or script compares nucleus membership to a literal count  1198ms
+ ✓ |core| packages/mcp-server/test/codegen/prop-destructuring.spec.ts (9 tests) 179ms
+ ✓ |core| tests/parsers/yaml-parser.test.ts (12 tests) 303ms
+ ✓ |core| packages/mcp-server/test/compose/confidence-scoring.spec.ts (12 tests) 2413ms
+   ✓ design.compose — composition confidence metadata > includes compositionConfidence in intelligence metadata  399ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.unchecked-tristate.spec.ts (6 tests) 5740ms
+   ✓ artifact.certify — contrast tri-state: 'ungradeable' (tried and failed) vs 'unchecked' (nothing to grade) > poisoned canvas — grading was attempted on a colour-bearing unit and could not resolve the canvas > pillars.contrast is 'ungradeable' (not 'unchecked') on the certified path  4926ms
+   ✓ artifact.certify — contrast tri-state: 'ungradeable' (tried and failed) vs 'unchecked' (nothing to grade) > poisoned canvas — grading was attempted on a colour-bearing unit and could not resolve the canvas > conformant is false — a tried-and-failed grade pulls the fold  312ms
+ ✓ |core| tests/view/compositor/composeExtensions.test.ts (6 tests) 26ms
+ ✓ |core| packages/mcp-server/test/product-reality/s183-m06-replay-r02.spec.ts (4 tests) 7799ms
+   ✓ Sprint 183 M06 mutation replay and R-02 resolution > replays exactly four M05 patches plus the repaired M01b patch from committed baselines  6821ms
+   ✓ Sprint 183 M06 mutation replay and R-02 resolution > replaces R-02 workspace-dist references with hashes for two tracked tarball declarations  881ms
+ ✓ |core| tests/validation/pipeline.test.ts (7 tests) 321ms
+ ✓ |core| tests/database/communication-seeds.test.ts (1 test) 1013ms
+   ✓ Communication seed scripts > populate canonical sample data and support downstream inserts  1011ms
+ ✓ |core| packages/mcp-server/test/schema-store/schema-store.spec.ts (6 tests) 804ms
+   ✓ schema-store infrastructure > list reads from index, applies filters, and sorts by updatedAt desc  513ms
+ ✓ |core| packages/mcp-server/test/compose/wire-field-props.spec.ts (9 tests) 294ms
+ ✓ |core| packages/mcp-server/test/e2e/fragment-integration.e2e.spec.ts (9 tests) 8908ms
+   ✓ fragment integration e2e > { name: 'dashboard', file: 'dashboard-page.ui-schema.json', minFragments: 3, minComponentCount: 15 } bridge transport returns fragment output equivalent to direct handler  5856ms
+ ✓ |core| tests/verification/agent-docs-registry.contract.test.ts (5 tests) 43ms
+ ✓ |core| packages/mcp-server/test/contracts/security.model.spec.ts (17 tests) 449ms
+ ✓ |core| packages/mcp-server/test/compose/viz-auto-binding.spec.ts (10 tests) 294ms
+ ✓ |core| packages/mcp-server/test/a2ui-host-conformance/host-conformance-emitter.spec.ts (32 tests) 12ms
+ ✓ |core| packages/mcp-server/test/product-reality/runnable-artifact.s183.spec.ts (28 tests) 3291ms
+   ✓ Sprint 183 M01 runnable artifact contract > emits a well-formed artifact for 'react'/'inline'/typescript=false  621ms
+   ✓ Sprint 183 M01 runnable artifact contract > re-emits byte-identical artifacts for 'react'/'inline'/typescript=false  373ms
+   ✓ Sprint 183 M01 runnable artifact contract > re-emits byte-identical artifacts for 'react'/'inline'/typescript=true  379ms
+ ✓ |core| packages/mcp-server/test/product-reality/evidence-retention.s184.spec.ts (10 tests) 1291ms
+   ✓ Sprint 184 m01 — evidence survives and frozen surfaces stay classified > requires every log named by Sprint 183/184 evidence indexes to be tracked  573ms
+   ✓ Sprint 184 m01 — evidence survives and frozen surfaces stay classified > makes the Vue packed runner require an explicit artifact root  429ms
+ ✓ |core| packages/mcp-server/test/contracts/schema-pattern-anchoring.spec.ts (8 tests) 48ms
+ ✓ |core| tests/viz/spatial/geo-fetch.test.ts (9 tests) 402ms
+ ✓ |core| packages/mcp-server/test/product-reality/local-behavior-guards.s185.spec.ts (16 tests) 921ms
+ ✓ |core| packages/mcp-server/test/objects/loaders.spec.ts (24 tests) 1644ms
+ ✓ |core| tests/governance-gates/storycap-lightdark-compare.test.ts (7 tests) 4195ms
+   ✓ light/dark capture byte comparator > keeps the exact three #1469 flickers out of the 149-image stable set  742ms
+   ✓ light/dark capture byte comparator > BITE: removing one carrier entry makes that unchanged-tree flicker attributable again  672ms
+   ✓ light/dark capture byte comparator > fails before comparison when the two PNG inventories differ  555ms
+   ✓ light/dark capture byte comparator > pins 152 images even when two undersized inventories agree  440ms
+   ✓ light/dark capture byte comparator > pins 76 images per mode even when the total corpus still equals 152  404ms
+   ✓ light/dark capture byte comparator > fails loudly when a carrier path is stale or absent  719ms
+   ✓ light/dark capture byte comparator > makes the CLI nonzero for a stable-set byte difference  660ms
+ ✓ |core| packages/mcp-server/test/contracts/s71-fixes.spec.ts (10 tests) 1597ms
+   ✓ Sprint 71 fixes > catalog.list availableCategories > returns same availableCategories regardless of filter  1159ms
+ ✓ |core| tests/registry/registry.test.ts (3 tests) 303ms
+ ✓ |core| packages/mcp-server/test/contracts/emitter-data-attr-parity.spec.ts (6 tests) 168ms
+ ✓ |core| packages/mcp-server/test/objects/object.show.spec.ts (14 tests) 4602ms
+   ✓ object.show > returns full object definition for User  401ms
+   ✓ object.show > context filter narrows viewExtensions  307ms
+   ✓ object.show > context filter with non-matching context returns empty viewExtensions  307ms
+   ✓ object.show > output validates for all known objects  2445ms
+ ✓ |core| packages/mcp-server/test/bridge/fragment-parity.spec.ts (1 test) 9778ms
+   ✓ bridge fragment parity > supports fragment mode via bridge /run and matches direct MCP transport semantics  7847ms
+ ✓ |core| packages/mcp-server/test/product-reality/breadth-live-generation.s185.spec.ts (33 tests) 2379ms
+   ✓ Sprint 185 m03 live readiness and root export generation > preserves every predecessor readiness row while adding only the measured five  680ms
+   ✓ Sprint 185 m03 live readiness and root export generation > vue/cmos-messages-redesign generates unchanged and every emitted component import resolves  784ms
+ ✓ |core| packages/mcp-server/test/contracts/fragment-api.contract.spec.ts (5 tests) 278ms
+ ✓ |core| packages/mcp-server/test/contracts/api-docs-generator.spec.ts (7 tests) 14023ms
+   ✓ API reference generator > regeneration is idempotent  13899ms
+ ✓ |core| packages/mcp-server/test/objects/trait-loader.spec.ts (17 tests) 1557ms
+   ✓ trait-loader > discovers traits from disk  321ms
+ ✓ |core| tests/verification/compositor.contract.test.ts (4 tests) 19ms
+ ✓ |core| packages/mcp-server/test/tools/repl.render.compact.spec.ts (8 tests) 74ms
+ ✓ |core| tests/compositor/composeExtensions.test.ts (4 tests) 55ms
+ ✓ |core| packages/mcp-server/test/compose/design-compose-actions.spec.ts (7 tests) 362ms
+   ✓ design.compose — actionMappings input integration > empty or absent actionMappings is a no-op  329ms
+ ✓ |core| packages/mcp-server/test/contracts/brand.apply.cross-brand-delta.spec.ts (7 tests) 31ms
+ ✓ |core| packages/mcp-server/test/product-reality/evidence-accounting.s185.spec.ts (10 tests) 1540ms
+   ✓ Sprint 185 evidence accounting preserves the actual proof denominator > independently rederives retained evidence without running builds, consumers, or mutations  1527ms
+ ✓ |core| tests/viz/adapters/spatial/vega-lite-spatial-adapter.test.ts (3 tests) 151ms
+ ✓ |core| packages/mcp-server/test/contracts/structuredData.fetch.spec.ts (11 tests) 84ms
+ ✓ |core| packages/mcp-server/test/product-reality/state-evidence.s184.spec.ts (2 tests) 30ms
+ ✓ |core| tests/governance-gates/state-assessment-exit.test.ts (2 tests) 2554ms
+   ✓ state-assessment.mjs main() carries deriveProcessExit into the process exit (s175 m02) > a base ref the diff cannot satisfy → exit 1 and the FAIL-CLOSED line on stderr  1373ms
+   ✓ state-assessment.mjs main() carries deriveProcessExit into the process exit (s175 m02) > a resolvable stub ref → exit 0, a GREEN overall status, both brand reports under the scratch root  1177ms
+ ✓ |core| tests/domain/billing/state-set-convergence.spec.ts (7 tests) 46ms
+ ✓ |core| tests/services/billing/event-ingestion.spec.ts (3 tests) 18ms
+ ✓ |core| tests/system-protocols/semantic-protocol.test.ts (3 tests) 33ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.contrast-fault.spec.ts (3 tests) 1440ms
+   ✓ artifact.certify — contrast engine fault degrades, never errors > disarmed control — both routes grade contrast:'pass' through the same import graph (the forced throw is the only difference)  1315ms
+ ✓ |core| packages/mcp-server/test/product-reality/ported-mutation-matrix.s184.spec.ts (5 tests) 693ms
+ ✓ |core| packages/mcp-server/test/contracts/repl.e2e.integration.spec.ts (4 tests) 25ms
+ ✓ |core| tests/viz/echarts-adapter.test.ts (8 tests) 8ms
+ ✓ |core| tests/integration/universal-quintet-objects.integration.test.ts (6 tests) 335ms
+ ✓ |core| packages/mcp-server/test/contracts/object.show.spec.ts (12 tests) 779ms
+   ✓ object.show contract > output validates for every known object  338ms
+ ✓ |core| tests/viz/a11y-equivalence.test.ts (12 tests) 23ms
+ ❯ |core| packages/mcp-server/test/product-reality/ported-workflow.s184.spec.ts (5 tests | 1 failed) 288595ms
+   ✓ Sprint 184 m04 ported Subscription workflow > retains the four-cell m04 proof while current live outputs remain green 277ms
+   × Sprint 184 m04 ported Subscription workflow > strict-checks every generated React and Vue artifact against the built packages 287750ms
+     → Test timed out in 120000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ Sprint 184 m04 ported Subscription workflow > resolves every emitted named import from its actual built package subpath 179ms
+   ✓ Sprint 184 m04 ported Subscription workflow > records an empty current tier-three census after enumerating the pre-fix facts 13ms
+   ✓ Sprint 184 m04 ported Subscription workflow > reads all 24 ported surface cells from the unchanged 109-row baseline denominator 3ms
+ ✓ |core| packages/mcp-server/test/contracts/pragmatic-role-ia.spec.ts (4 tests) 179ms
+ ✓ |core| packages/mcp-server/test/compose/landing-template.spec.ts (10 tests) 385ms
+ ✓ |core| tests/contracts/public-api.contract.test.ts (3 tests) 120ms
+ ✓ |core| packages/mcp-server/test/contracts/brand.apply.rfc6902-wording.spec.ts (2 tests) 51ms
+ ✓ |core| tests/tokens/brand-css-no-tie.test.ts (6 tests) 56ms
+ ✓ |core| tests/traits/communication/delivery-service.test.ts (4 tests) 38ms
+ ✓ |core| tests/components/RenderObject.test.tsx (3 tests) 84ms
+ ✓ |core| tests/integration/communicable-composition.test.ts (3 tests) 269ms
+ ✓ |core| packages/mcp-server/test/objects/object-loader.spec.ts (14 tests) 139ms
+ ✓ |core| packages/mcp-server/test/contracts/object.schema.contract.spec.ts (11 tests) 492ms
+ ✓ |core| tests/integration/object-registry.test.ts (3 tests) 307ms
+ ✓ |core| packages/mcp-server/test/contracts/object.list.spec.ts (13 tests) 124ms
+ ✓ |core| tests/components/subscription.render-object.test.tsx (5 tests) 201ms
+ ✓ |core| tests/traits/classifiable/tag-governance.test.ts (3 tests) 132ms
+ ✓ |core| packages/mcp-server/test/contracts/schema-ref.workflow.spec.ts (4 tests) 683ms
+   ✓ schemaRef workflow > design.compose returns a bounded Card schemaRef that downstream tools accept  617ms
+ ✓ |core| tests/integration/type-generation.test.ts (2 tests) 4018ms
+   ✓ Object type generation integration > generates TypeScript definitions that are directly importable  3916ms
+ ✓ |core| packages/mcp-server/test/contracts/code.generate-parity.spec.ts (2 tests) 112ms
+ ✓ |core| tests/traits/addressable/validation.test.ts (3 tests) 18ms
+ ✓ |core| tests/governance-gates/enforce-report-floor.test.ts (6 tests) 113ms
+ ✓ |core| tests/tools/stage1-dtcg-cli-containment.test.ts (5 tests) 12782ms
+   ✓ stage1-dtcg CLI --out containment (s169 m05) > the ORIGINAL escape is rejected with exit 2 and writes nothing outside --out  2320ms
+   ✓ stage1-dtcg CLI --out containment (s169 m05) > rejects every ESCAPING --name shape, not just the one that was reported  4680ms
+   ✓ stage1-dtcg CLI --out containment (s169 m05) > a LEADING SLASH is not an escape, and the guard correctly allows it  1288ms
+   ✓ stage1-dtcg CLI --out containment (s169 m05) > a legitimate --name still writes all its files, in --out  2602ms
+   ✓ stage1-dtcg CLI --out containment (s169 m05) > a --name that traverses but RESOLVES back inside --out is allowed  1880ms
+ ✓ |core| packages/mcp-server/test/render/fragment-errors.spec.ts (5 tests) 76ms
+ ✓ |core| packages/mcp-server/test/contracts/schema.list-delete.spec.ts (2 tests) 163ms
+ ✓ |core| tests/viz/adapters/spatial/echarts-spatial-adapter.test.ts (3 tests) 111ms
+ ✓ |core| tests/engine/contributions.registry.spec.ts (3 tests) 7ms
+ ✓ |core| packages/mcp-server/test/scale/map.apply.scale.spec.ts (5 tests) 10971ms
+   ✓ map.apply at scale (dry-run) > tier=100: dry-run handler returns, diff totals match, registry unchanged  324ms
+   ✓ map.apply at scale (dry-run) > tier=500: dry-run handler returns, diff totals match, registry unchanged  2892ms
+   ✓ map.apply at scale (dry-run) > tier=1000: dry-run handler returns, diff totals match, registry unchanged  6937ms
+   ✓ map.apply at scale (apply=true at 100-tier only) > apply=true persists the create count; snapshot reflects the mutation  348ms
+   ✓ map.apply determinism across runs > tier=100: two consecutive dry-runs with the same seed produce identical diff summaries  469ms
+ ✓ |core| tests/integration/communication-authable-integration.test.ts (1 test) 64ms
+ ✓ |core| tests/verification/purity.contract.test.ts (4 tests) 1038ms
+   ✓ B3.3 — Purity Harness > enforces the oods/no-hooks-in-modifiers ESLint rule for modifier modules  1015ms
+ ✓ |core| packages/mcp-server/test/objects/object.list.spec.ts (10 tests) 154ms
+ ✓ |core| tests/registry/composition-integration.test.ts (1 test) 49ms
+ ✓ |core| packages/mcp-server/test/tools/repl.render.fragment.spec.ts (4 tests) 38ms
+ ✓ |core| tests/traits/addressable.test.ts (6 tests) 104ms
+ ✓ |core| tests/traits/addressable/validation-lifecycle.test.ts (4 tests) 36ms
+ ✓ |core| packages/mcp-server/test/e2e/tier1-acceptance.e2e.spec.ts (4 tests) 236ms
+ ✓ |core| packages/mcp-server/test/e2e/a11y-pipeline.e2e.spec.ts (3 tests) 1222ms
+   ✓ a11y pipeline e2e > validate with checkA11y=true returns a11y warnings through bridge  859ms
+ ✓ |core| tests/compose/compose-semantic-guardrails.test.ts (5 tests) 247ms
+ ✓ |core| packages/mcp-server/test/product-reality/screen-action-surface.s184.spec.ts (6 tests) 106ms
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Tenant Alice Corp (tenant-alice) → alice.db.internal:5432/oods_alice
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Query in oods_alice: SELECT * FROM subscriptions
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Tenant Bob Industries (tenant-bob) → bob.db.internal:5432/oods_bob
+
+stdout | tests/tenancy/external.spec.ts > External Adapter Tenancy > Isolation > should route queries to dedicated databases
+[ExternalAdapter] Query in oods_bob: SELECT * FROM subscriptions
+
+ ✓ |core| tests/tenancy/external.spec.ts (3 tests) 10ms
+ ✓ |core| tests/integration/classifiable-composition.test.ts (3 tests) 156ms
+ ✓ |core| tests/traits/preferenceable.test.ts (5 tests) 251ms
+ ✓ |core| tests/traits/authable.test.ts (4 tests) 308ms
+ ✓ |core| tests/database/authz-migrations.test.ts (6 tests) 5ms
+ ✓ |core| tests/validation/parameter-validator.test.ts (6 tests) 491ms
+ ✓ |core| packages/mcp-server/test/product-reality/html-tailwind-gap.s185.spec.ts (9 tests) 100ms
+ ✓ |core| tests/compositor/withStatusBadge.modifier.test.ts (6 tests) 12ms
+ ✓ |core| tests/integration/communication-preferenceable-integration.test.ts (1 test) 83ms
+ ✓ |core| tests/traits/preferenceable/cache.test.ts (4 tests) 52ms
+ ✓ |core| tests/traits/authz/entitlement.test.ts (4 tests) 111ms
+ ✓ |core| packages/mcp-server/test/codegen/prop-enrichment.spec.ts (4 tests) 294ms
+ ✓ |core| tests/validation/formatter.test.ts (5 tests) 63ms
+ ✓ |core| tests/contracts/schema-types.contract.test.ts (2 tests) 8ms
+ ✓ |core| tests/traits/preferenceable/performance.test.ts (4 tests) 32ms
+ ✓ |core| packages/mcp-server/test/contracts/viz-compose.contract.spec.ts (10 tests) 7ms
+ ✓ |core| tests/components/RenderObject.edge-cases.test.tsx (4 tests) 23ms
+ ✓ |core| tests/integration/failure-scenarios.integration.test.ts (4 tests) 91ms
+ ✓ |core| tests/governance-gates/build-stories-ratchet.test.ts (4 tests) 1316ms
+   ✓ build:stories exact-pin ratchet > accepts an exact diagnostic count even though tsc reports a nonzero status  361ms
+   ✓ build:stories exact-pin ratchet > rejects a count above the pin as a regression  375ms
+   ✓ build:stories exact-pin ratchet > rejects a count below the pin so headroom cannot accumulate  323ms
+ ✓ |core| packages/mcp-server/test/contracts/schema.load.spec.ts (3 tests) 180ms
+ ✓ |core| tests/traits/addressable/international-formatting.test.ts (5 tests) 160ms
+ ✓ |core| packages/mcp-server/test/contracts/artifact-certify-render-prose.s179.spec.ts (13 tests) 5ms
+ ✓ |core| tests/governance-gates/import-side-effect-guard.test.ts (3 tests) 487ms
+   ✓ importing a governance script runs no CLI (s175 m02) > scripts/state-assessment.mjs: exports main/runTokenGovernanceCheck/deriveProcessExit; no check ran; nothing tracked moved  415ms
+ ✓ |core| packages/mcp-server/test/product-reality/breadth-export-cells.s185.spec.ts (10 tests) 232ms
+ ✓ |core| tests/viz/normalized-viz-spec.test.ts (6 tests) 14ms
+ ✓ |core| packages/mcp-server/test/e2e/design-compose.e2e.spec.ts (3 tests) 2215ms
+   ✓ design.compose bridge E2E > compose via bridge produces valid schema with selections  1684ms
+ ✓ |core| tests/traits/preferenceable/notification-routing.test.ts (4 tests) 8ms
+ ✓ |core| tests/viz/adapters/spatial/echarts-visual-regression.test.ts (2 tests) 100ms
+ ❯ |core| packages/mcp-server/test/contracts/code.generate-golden.spec.ts (6 tests | 6 failed) 67ms
+   × code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for dashboard-page 53ms
+     → expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+   × code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for dashboard-page 4ms
+     → expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+   × code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for form-page 3ms
+     → expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+   × code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for form-page 1ms
+     → expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+   × code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for detail-page 2ms
+     → expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+   × code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for detail-page 1ms
+     → expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+ ✓ |core| tests/verification/contexts.contract.test.tsx (16 tests) 118ms
+ ✓ |core| packages/mcp-server/test/contracts/schema.save.spec.ts (3 tests) 16ms
+ ✓ |core| tests/parsers/ts-parser.test.ts (7 tests) 15ms
+ ❯ |core| tests/e2e/schema-ref-pipeline.test.ts (2 tests | 1 failed) 178ms
+   × schemaRef E2E pipeline > compose → validate → render accepts schemaRef and code.generate preserves target readiness 149ms
+     → expected 'ok' to be 'error' // Object.is equality
+   ✓ schemaRef E2E pipeline > schemaRef payloads are substantially smaller than schema passthrough 24ms
+ ✓ |core| tests/view/extensions.test.ts (6 tests) 7ms
+ ✓ |core| packages/mcp-server/test/tools/pipeline.compact.spec.ts (6 tests) 525ms
+   ✓ pipeline compact + metrics > defaults to compact render (tokenCssRef present, small response)  334ms
+ ✓ |core| tests/contracts/tokens-governance-entry-guard.spec.ts (2 tests) 2781ms
+   ✓ tokens-governance entry guard (s176 m04 realpath fold, #1250) > direct invocation runs main(): the usage surface prints and the exit code is 1  1288ms
+   ✓ tokens-governance entry guard (s176 m04 realpath fold, #1250) > SYMLINKED invocation runs main() too — the pre-s176 guard silently no-opped here — and its usage surface is byte-identical to the direct one  1491ms
+ ✓ |core| tests/components/user.render-object.test.tsx (2 tests) 139ms
+ ✓ |core| packages/mcp-server/test/contracts/layout-single-source.spec.ts (5 tests) 346ms
+   ✓ layout single-source (s107-m02) > pipeline(layout="landing") routes to the landing template, matching design.compose  330ms
+ ✓ |core| tests/viz/adapters/echarts/treemap-adapter.test.ts (2 tests) 5ms
+ ✓ |core| tests/traits/authz/sod-policy.test.ts (5 tests) 43ms
+ ✓ |core| tests/traits/authz/sod-validator.test.ts (5 tests) 30ms
+ ✓ |core| tests/generators/object-type-generator.test.ts (2 tests) 36ms
+ ✓ |core| packages/mcp-server/test/tools/cvd-machado.spec.ts (8 tests) 9ms
+ ✓ |core| tests/viz/adapters/spatial/vega-lite-visual-regression.test.ts (2 tests) 183ms
+ ✓ |core| tests/traits/communication/communication-trait.test.ts (3 tests) 88ms
+ ✓ |core| tests/integration/preferenceable-composition.test.ts (2 tests) 198ms
+ ✓ |core| packages/mcp-server/test/contracts/preview.compaction.spec.ts (3 tests) 19ms
+ ✓ |core| tests/integration/authable-composition.test.ts (4 tests) 300ms
+ ✓ |core| tests/schemas/authz.test.ts (8 tests) 41ms
+ ✓ |core| tests/viz/adapters/echarts/hierarchy-utils.test.ts (3 tests) 37ms
+ ✓ |core| tests/schemas/classification.test.ts (5 tests) 15ms
+ ✓ |core| tests/traits/Statusable.test.ts (6 tests) 226ms
+ ✓ |core| tests/viz/integration/renderer-selection-spatial.test.ts (5 tests) 54ms
+ ✓ |core| packages/mcp-server/test/product-reality/reconnect.s185.spec.ts (8 tests) 9ms
+ ✓ |core| tests/governance-gates/triage-resolve-base-ref.test.ts (3 tests) 875ms
+   ✓ resolveBaseRef (U4, s175 m02) > the masking, documented: once refs/remotes/origin/OODS-pro exists a bad ref resolves to origin/OODS-pro  404ms
+ ✓ |core| tests/viz/integration/spatial-crossfilter.test.ts (5 tests) 5ms
+ ✓ |core| tests/lint/no-account-unsafe-metadata.spec.ts (4 tests) 994ms
+   ✓ no-account-unsafe-metadata > flags direct metadata writes with no validation  921ms
+ ✓ |core| packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts (2 tests) 62ms
+ ✓ |core| packages/mcp-server/test/contracts/layout-align.spec.ts (8 tests) 46ms
+ ✓ |core| tests/view/compositor/modifierPurity.test.ts (5 tests) 5ms
+ ✓ |core| tests/schemas/preferences.test.ts (4 tests) 137ms
+ ✓ |core| tests/traits/preferenceable/read-repair.test.ts (3 tests) 137ms
+ ✓ |core| packages/mcp-server/test/tools/echarts-render-worker.startup.spec.ts (1 test) 2817ms
+   ✓ MCP startup ECharts render boundary > registers the server without importing ECharts or evaluating the render worker  2815ms
+ ✓ |core| tests/schemas/address.test.ts (4 tests) 27ms
+ ✓ |core| tests/schemas/viz/transform-outputs.test.ts (4 tests) 131ms
+ ✓ |core| tests/schemas/viz/hierarchy-input.test.ts (5 tests) 127ms
+ ✓ |core| tests/validation/cli.test.ts (4 tests) 22ms
+ ✓ |core| packages/mcp-server/test/contracts/doc-retirement-gate.spec.ts (1 test) 274ms
+ ✓ |core| packages/mcp-server/test/tools/artifact.certify.echarts-option-stability.s179.spec.ts (2 tests) 1620ms
+   ✓ artifact.certify — option stability remains load-bearing (s179 m05) > fails the combined proof when emissions differ even though both renders agree  1569ms
+ ✓ |core| packages/mcp-server/test/product-reality/sprint-wide-movers.s185.spec.ts (4 tests) 5737ms
+   ✓ Sprint-wide accounting includes runtime behavior omitted by per-mission scopes > replays the actual Table omission without pretending the narrow canonical scope catches it  1528ms
+   ✓ Sprint-wide accounting includes runtime behavior omitted by per-mission scopes > independently compares the exact canonical command and the public runtime supplement  385ms
+   ✓ Sprint-wide accounting includes runtime behavior omitted by per-mission scopes > turns a reproduced Table omission into a failing completed mover record  3820ms
+ ✓ |core| tests/integration/universal-quintet.integration.test.ts (5 tests) 632ms
+   ✓ Universal Quintet integration pipeline > composes and validates the Universal Quintet — User stack  416ms
+ ✓ |core| tests/traits/communication/throttling-enforcer.test.ts (3 tests) 59ms
+ ✓ |core| tests/database/authz-seeds.test.ts (3 tests) 4ms
+ ✓ |core| tests/tokens/transform.test.ts (3 tests) 73ms
+ ✓ |core| tests/mcp/bridge-policy-and-tool-names.test.ts (3 tests) 6ms
+ ✓ |core| packages/mcp-server/test/compose/slot-vocabulary-unification.spec.ts (2 tests) 220ms
+ ✓ |core| tests/traits/communication/sla-monitor.test.ts (2 tests) 36ms
+ ✓ |core| tests/traits/communication/channel-resolver.test.ts (3 tests) 5ms
+ ✓ |core| tests/integration/addressable-composition.test.ts (2 tests) 203ms
+ ✓ |core| tests/traits/preferenceable/schema-registry.test.ts (5 tests) 462ms
+   ✓ preference schema registry > generates TypeScript types per schema version  350ms
+ ✓ |core| tests/traits/Stateful.test.ts (4 tests) 180ms
+ ✓ |core| tests/traits/Auditable.test.ts (5 tests) 166ms
+ ✓ |core| tests/viz/patterns/suggest-chart.test.ts (4 tests) 21ms
+ ✓ |core| packages/mcp-server/test/compose/form-field-differentiation.spec.ts (2 tests) 326ms
+ ✓ |core| tests/viz/adapters/echarts/sunburst-adapter.test.ts (2 tests) 6ms
+ ✓ |core| tests/traits/preferenceable/dual-write-migration.test.ts (2 tests) 16ms
+ ✓ |core| tests/traits/addressable/multi-role.test.ts (2 tests) 66ms
+ ✓ |core| tests/viz/adapters/layout-adapter.test.ts (2 tests) 41ms
+ ✓ |core| packages/mcp-server/test/product-reality/advertised-movers.s184.spec.ts (1 test) 205ms
+ ✓ |core| tests/traits/communication/schema-validator.test.ts (4 tests) 68ms
+ ✓ |core| tests/tokens/viz-scales.test.ts (2 tests) 24ms
+ ✓ |core| packages/mcp-server/test/contracts/dsl-version.spec.ts (9 tests) 64ms
+ ✓ |core| tests/schemas/authz-registry.test.ts (5 tests) 215ms
+ ✓ |core| tests/schemas/viz/network-input.test.ts (4 tests) 86ms
+ ✓ |core| tests/verification/standing-rules.contract.test.ts (3 tests) 10ms
+ ✓ |core| tests/components/dashboard-context.integration.test.tsx (5 tests) 602ms
+ ✓ |core| tests/verification/regions.contract.test.ts (3 tests) 8ms
+ ✓ |core| tests/viz/integration/spatial-dashboard.test.tsx (2 tests) 14ms
+ ✓ |core| tests/traits/viz/scale-temporal.test.ts (4 tests) 375ms
+ ✓ |core| tests/traits/Cancellable.test.ts (4 tests) 460ms
+ ✓ |core| tests/lint/no-unsafe-tenancy-override.spec.ts (3 tests) 1901ms
+   ✓ no-unsafe-tenancy-override > flags TenancyContext.setCurrentTenant in application code  1838ms
+ ✓ |core| tests/traits/viz/mark-bar.test.ts (4 tests) 648ms
+   ✓ MarkBar trait > accepts valid parameter payloads  327ms
+ ✓ |core| tests/traits/Archivable.test.ts (4 tests) 253ms
+ ✓ |core| tests/traits/viz/encoding-color.test.ts (4 tests) 264ms
+ ✓ |core| tests/traits/Colorized.test.ts (4 tests) 192ms
+ ✓ |core| tests/cli/spatial-detection.test.ts (4 tests) 7ms
+ ✓ |core| tests/cli/refresh-data.test.ts (4 tests) 18ms
+ ✓ |core| tests/verification/ci-token-governance-event.contract.test.ts (2 tests) 6ms
+ ✓ |core| tests/validation/reporters.test.ts (3 tests) 4ms
+ ✓ |core| tests/traits/Taggable.test.ts (4 tests) 130ms
+ ✓ |core| tests/traits/classifiable/spam-detection.test.ts (3 tests) 47ms
+ ✓ |core| tests/integration/entitlement-export.test.ts (4 tests) 81ms
+ ✓ |core| tests/traits/viz/encoding-position-y.test.ts (4 tests) 246ms
+ ✓ |core| tests/schemas/viz/sankey-input.test.ts (3 tests) 259ms
+ ✓ |core| tests/traits/viz/encoding-position-x.test.ts (4 tests) 351ms
+ ✓ |core| packages/mcp-server/test/render/css-extractor.spec.ts (3 tests) 5ms
+ ✓ |core| tests/view/context.test.ts (2 tests) 2ms
+ ✓ |core| tests/traits/authz/role-graph.test.ts (3 tests) 27ms
+ ✓ |core| tests/parsers/index.test.ts (5 tests) 11ms
+ ✓ |core| tests/traits/Labelled.test.ts (4 tests) 82ms
+ ✓ |core| tests/traits/communication/policy-builder.test.ts (3 tests) 6ms
+ ✓ |core| tests/traits/viz/encoding-size.test.ts (4 tests) 81ms
+ ✓ |core| tests/traits/viz/layout-facet.test.ts (3 tests) 54ms
+ ✓ |core| tests/traits/addressable/default-management.test.ts (3 tests) 77ms
+ ✓ |core| tests/traits/viz/scale-linear.test.ts (4 tests) 134ms
+ ✓ |core| tests/traits/viz/mark-line.test.ts (4 tests) 147ms
+ ✓ |core| tests/integration/communication-export.test.ts (3 tests) 33ms
+ ✓ |core| tests/traits/viz/mark-point.test.ts (4 tests) 86ms
+ ✓ |core| tests/compose/compose-intent-sections.test.ts (2 tests) 159ms
+ ✓ |core| packages/mcp-server/test/product-reality/input-validation-state.s184.spec.ts (4 tests) 37ms
+ ✓ |core| tests/traits/viz/mark-area.test.ts (4 tests) 59ms
+ ✓ |core| tests/traits/addressable/format-templates.test.ts (4 tests) 9ms
+ ✓ |core| tests/traits/viz/interaction-highlight.test.ts (3 tests) 127ms
+ ✓ |core| tests/traits/communication/retry-scheduler.test.ts (3 tests) 30ms
+ ✓ |core| packages/mcp-server/test/codegen/codegen-invalid-schema.spec.ts (2 tests) 15ms
+ ✓ |core| tests/base/table.test.tsx (2 tests) 11ms
+ ✓ |core| tests/traits/viz/layout-concat.test.ts (3 tests) 51ms
+ ✓ |core| tests/traits/viz/layout-layer.test.ts (3 tests) 70ms
+ ✓ |core| tests/traits/communication/schema-registry.test.ts (3 tests) 11ms
+ ✓ |core| tests/traits/viz/interaction-tooltip.test.ts (3 tests) 74ms
+ ✓ |core| tests/viz/layout/keyboard-nav.test.ts (3 tests) 6ms
+ ✓ |core| packages/mcp-server/test/contracts/brand.apply.patch.spec.ts (1 test) 10ms
+ ✓ |core| packages/mcp-server/test/scale/determinism.spec.ts (9 tests) 135ms
+ ✓ |core| tests/components/page-header.test.tsx (1 test) 9ms
+ ✓ |core| tests/integration/communication-throttling-integration.test.ts (1 test) 26ms
+ ✓ |core| tests/cli/spatial-scaffold.test.ts (2 tests) 5ms
+ ✓ |core| packages/mcp-server/test/render/render-preview-messaging.spec.ts (2 tests) 103ms
+ ✓ |core| tests/base/button.test.tsx (3 tests) 35ms
+ ✓ |core| tests/base/text-field.test.tsx (2 tests) 12ms
+ ✓ |core| tests/viz/patterns/suggest-chart-v2.test.ts (2 tests) 3ms
+ ✓ |core| tests/integration/communication-audit.test.ts (2 tests) 69ms
+ ✓ |core| tests/base/select.test.tsx (2 tests) 9ms
+ ✓ |core| tests/verification/pkg-compat-workflow.contract.test.ts (2 tests) 3ms
+ ✓ |core| packages/mcp-server/test/compose/position-affinity.spec.ts (5 tests) 4ms
+ ✓ |core| packages/mcp-server/test/contracts/tokens.build.apply.spec.ts (1 test) 5832ms
+   ✓ tokens.build apply > writes all token artifacts with compiled content  5831ms
+ ✓ |core| tests/base/date-picker.test.tsx (2 tests) 25ms
+ ✓ |core| tests/base/textarea.test.tsx (2 tests) 17ms
+ ✓ |core| packages/mcp-server/test/contracts/tool.registry.spec.ts (3 tests) 7ms
+ ✓ |core| packages/mcp-server/test/contracts/repl.registry.contract.spec.ts (2 tests) 19ms
+ ✓ |core| tests/base/checkbox.test.tsx (2 tests) 24ms
+ ✓ |core| tests/traits/preferenceable/migration-logger.test.ts (1 test) 6ms
+ ✓ |core| tests/viz/patterns/scaffold-generator.test.ts (1 test) 43ms
+ ✓ |core| tests/verification/docs.contract.test.ts (2 tests) 10ms
+ ✓ |core| tests/base/banner.test.tsx (2 tests) 13ms
+ ✓ |core| tests/utils/format.test.ts (2 tests) 102ms
+ ✓ |core| tests/base/badge.test.tsx (2 tests) 12ms
+ ✓ |core| packages/mcp-server/test/contracts/diag.snapshot-counts.spec.ts (1 test) 176ms
+ ✓ |core| tests/components/viz/spatial/ChoroplethMap.test.tsx (15 tests) 890ms
+ ✓ |core| tests/components/pagination.spec.tsx (33 tests) 1176ms
+   ✓ Pagination component > accessibility > should pass axe accessibility checks  338ms
+ ✓ |core| tests/components/breadcrumbs.spec.tsx (32 tests) 1659ms
+   ✓ Breadcrumbs component > accessibility > should pass axe accessibility checks  393ms
+ ✓ |core| tests/components/tabs.spec.tsx (24 tests) 1607ms
+ ✓ |core| tests/components/viz/spatial/ChoroplethMap.a11y.test.tsx (11 tests) 659ms
+   ✓ ChoroplethMap a11y > should have no axe violations  376ms
+ ✓ |core| tests/components/context-panel-drawer.test.tsx (5 tests) 205ms
+ ✓ |core| tests/components/toast.spec.tsx (17 tests) 538ms
+   ✓ ToastPortal > removes toasts after dismissal  337ms
+ ✓ |core| tests/viz/spatial/adapter-parity.test.ts (2 tests) 107ms
+ ✓ |core| tests/components/empty-state.spec.tsx (12 tests) 407ms
+ ✓ |core| tests/viz/spatial/e2e-spatial.test.tsx (3 tests) 543ms
+   ✓ Spatial E2E flows > renders choropleth regions and propagates hover/click events  339ms
+ ✓ |core| tests/viz/spatial/a11y-integration.test.tsx (4 tests) 627ms
+ ✓ |core| tests/components/viz/spatial/BubbleMap.test.tsx (6 tests) 249ms
+ ✓ |core| tests/traits/SaaSBilling.payable.spec.tsx (4 tests) 129ms
+ ✓ |core| tests/components/viz/spatial/spatial-integration.test.tsx (2 tests) 334ms
+ ✓ |core| tests/viz/spatial/performance.test.tsx (3 tests) 1781ms
+   ✓ Spatial Performance Benchmarks > meets choropleth render budgets  515ms
+   ✓ Spatial Performance Benchmarks > meets bubble render budgets  1093ms
+ ✓ |core| tests/apps/playground.app.test.tsx (2 tests) 980ms
+   ✓ playground app > switches to the Stage1 mode and reloads when the fixture changes  765ms
+ ✓ |core| tests/components/viz/spatial/SpatialContainer.test.tsx (7 tests) 244ms
+ ✓ |core| tests/overlays/manager.edges.spec.tsx (4 tests) 124ms
+ ✓ |core| tests/components/classification/CategoryTree.test.tsx (4 tests) 438ms
+ ✓ |core| tests/components/viz/spatial/SpatialContainer.a11y.test.tsx (6 tests) 500ms
+   ✓ SpatialContainer a11y > should have no axe violations  361ms
+ ✓ |core| tests/components/viz/Sankey.test.tsx (12 tests) 1027ms
+   ✓ Sankey > rendering > renders with custom dimensions  309ms
+   ✓ Sankey > accessibility fallback > renders accessible flow tables  304ms
+ ✓ |core| tests/viz/hooks/useSpatialSpec.test.ts (5 tests) 523ms
+ ✓ |core| tests/components/viz/AreaChart.test.tsx (3 tests) 828ms
+   ✓ AreaChart > renders Vega-Lite surface with stacked encoding and accessibility fallbacks  611ms
+ ✓ |core| tests/components/viz/spatial/layer-utils.test.ts (10 tests) 5ms
+ ✓ |core| tests/components/viz/spatial/projection-utils.test.ts (9 tests) 21ms
+ ✓ |core| tests/components/viz/a11y/a11y-fallbacks.test.tsx (5 tests) 263ms
+ ✓ |core| tests/components/viz/ForceGraph.test.tsx (10 tests) 443ms
+ ✓ |core| tests/components/viz/spatial/BubbleMap.renderers.test.tsx (2 tests) 93ms
+ ✓ |core| tests/components/viz/LineChart.test.tsx (3 tests) 515ms
+   ✓ LineChart > renders the chart container, narrative, and table fallback  324ms
+ ✓ |core| tests/components/viz/Treemap.test.tsx (9 tests) 220ms
+ ✓ |core| tests/components/classification/CategoryPicker.test.tsx (4 tests) 906ms
+   ✓ CategoryPicker > exposes hidden inputs for form integration  388ms
+ ✓ |core| tests/components/viz/spatial/BubbleMap.a11y.test.tsx (3 tests) 562ms
+   ✓ BubbleMap accessibility > has no axe violations  540ms
+ ✓ |core| tests/components/viz/Sunburst.test.tsx (7 tests) 302ms
+ ✓ |core| tests/components/viz/Heatmap.visualmap-dimension-s166.test.tsx (2 tests) 292ms
+ ✓ |core| tests/components/addresses/address-form.test.tsx (4 tests) 647ms
+   ✓ AddressForm > emits updated address when fields change  403ms
+ ✓ |core| tests/components/classification/TagInput.test.tsx (4 tests) 732ms
+ ✓ |core| tests/components/viz/Heatmap.test.tsx (3 tests) 706ms
+   ✓ Heatmap > renders Vega-Lite heatmap with legend and matrix fallback  529ms
+ ✓ |core| tests/viz/hooks/useSpatialProjection.test.ts (6 tests) 43ms
+ ✓ |core| tests/components/viz/LineChart.a11y.test.tsx (1 test) 1143ms
+   ✓ LineChart accessibility > has no axe violations  1139ms
+ ✓ |core| tests/components/communication/ConversationThread.test.tsx (2 tests) 358ms
+ ✓ |core| tests/components/viz/VizFacetGrid.test.tsx (3 tests) 1278ms
+   ✓ VizFacetGrid > lazy-renders fallback tables when there are many panels  946ms
+ ✓ |core| tests/components/preferences/PreferenceForm.test.tsx (4 tests) 3731ms
+   ✓ PreferenceForm > emits document changes when schema-driven fields update  1795ms
+   ✓ PreferenceForm > reports validation issues for invalid inputs via onValidationChange  671ms
+   ✓ PreferenceForm > applies form context attributes to the RJSF form element  529ms
+   ✓ PreferenceForm > marks SMS phone number as required when the SMS channel is enabled (conditional schema logic)  734ms
+ ✓ |core| tests/components/viz/spatial/keyboard-nav.test.tsx (3 tests) 143ms
+ ✓ |core| tests/traits/SaaSBilling.refundable.spec.tsx (2 tests) 84ms
+ ✓ |core| tests/components/viz/spatial/AccessibleMapFallback.test.tsx (3 tests) 368ms
+   ✓ AccessibleMapFallback > renders table with data and caption  301ms
+ ✓ |core| tests/components/viz/spatial/MapLegend.test.tsx (3 tests) 223ms
+ ✓ |core| tests/components/viz/ScatterChart.test.tsx (2 tests) 1384ms
+   ✓ ScatterChart > selects the ECharts renderer for dense datasets and wires interactions  1088ms
+ ✓ |core| tests/hooks/useConversations.test.tsx (1 test) 118ms
+ ✓ |core| tests/components/authz/RolePermissionMatrix.test.tsx (3 tests) 295ms
+ ✓ |core| tests/panel/diff-viewer.test.tsx (3 tests) 404ms
+ ✓ |core| tests/components/authz/MembershipManager.a11y.test.tsx (2 tests) 493ms
+   ✓ MembershipManager accessibility > has no axe violations  331ms
+ ✓ |core| tests/views/view-profiles.spec.tsx (2 tests) 91ms
+ ✓ |core| tests/viz/hooks.test.tsx (5 tests) 67ms
+ ✓ |core| tests/components/preferences/NotificationMatrix.test.tsx (3 tests) 401ms
+ ✓ |core| tests/components/communication/MessageTimeline.test.tsx (3 tests) 245ms
+ ✓ |core| tests/components/addresses/address-display.test.tsx (3 tests) 165ms
+ ✓ |core| tests/components/classification/CategoryTree.a11y.test.tsx (1 test) 217ms
+ ✓ |core| tests/panel/artifact-list.test.tsx (2 tests) 252ms
+ ✓ |core| tests/components/communication/ChannelPlanEditor.test.tsx (2 tests) 177ms
+ ✓ |core| tests/components/viz/AreaChart.a11y.test.tsx (1 test) 556ms
+   ✓ AreaChart accessibility > has no axe violations  555ms
+ ✓ |core| tests/components/viz/ScatterChart.a11y.test.tsx (1 test) 2041ms
+   ✓ ScatterChart accessibility > has no axe violations  2038ms
+ ✓ |core| tests/components/viz/spatial/MapControls.test.tsx (3 tests) 139ms
+ ✓ |core| tests/components/viz/Heatmap.a11y.test.tsx (1 test) 450ms
+   ✓ Heatmap accessibility > has no axe violations  449ms
+ ✓ |core| tests/components/viz/spatial/BubbleMapClustering.test.tsx (3 tests) 47ms
+ ✓ |core| tests/components/viz/VizLayeredView.a11y.test.tsx (1 test) 808ms
+   ✓ VizLayeredView accessibility > has no axe violations  805ms
+ ✓ |core| tests/components/viz/VizFacetGrid.a11y.test.tsx (1 test) 562ms
+   ✓ VizFacetGrid accessibility > has no axe violations  561ms
+ ✓ |core| tests/components/addresses/address-form.a11y.test.tsx (1 test) 445ms
+   ✓ AddressForm accessibility > has no axe violations  443ms
+ ✓ |core| tests/components/classification/TagInput.a11y.test.tsx (1 test) 463ms
+   ✓ TagInput accessibility > has no axe violations  461ms
+ ✓ |core| packages/mcp-server/test/product-reality/packed-ported-consumers.s184.spec.ts (1 test) 100119ms
+   ✓ Sprint 184 m04 packed ported consumers > installs only built OODS tarballs in fresh React and Vue consumers and resolves every new subpath externally  100118ms
+ ✓ |core| tests/base/toast.test.tsx (3 tests) 458ms
+   ✓ OODS.Toast > exposes a polite live region when open  407ms
+ ✓ |core| tests/components/viz/BarChart.a11y.test.tsx (1 test) 650ms
+   ✓ BarChart accessibility > has no axe violations  647ms
+ ✓ |core| tests/hooks/useMessages.test.tsx (1 test) 149ms
+ ✓ |core| tests/components/viz/BarChart.test.tsx (2 tests) 569ms
+   ✓ BarChart > renders the chart container with accessible fallbacks  472ms
+ ✓ |core| tests/traits/preferenceable/rjsf-integration.test.tsx (2 tests) 1945ms
+   ✓ PreferenceForm (RJSF integration) > renders schema-driven inputs for older versions  1304ms
+   ✓ PreferenceForm (RJSF integration) > defaults to the latest schema when version is omitted  636ms
+ ✓ |core| tests/components/communication/DeliveryHealthWidget.test.tsx (1 test) 175ms
+ ✓ |core| tests/hooks/useDeliveryStatus.test.tsx (1 test) 61ms
+ ✓ |core| tests/components/viz/SharedLegend.test.tsx (2 tests) 37ms
+ ✓ |core| tests/components/viz/VizLayeredView.test.tsx (2 tests) 190ms
+ ✓ |core| packages/mcp-server/test/a2ui-host-conformance/host-conformance-render.spec.ts (51 tests) 231ms
+ ✓ |core| tests/components/preferences/PreferenceForm.a11y.test.tsx (1 test) 1081ms
+   ✓ PreferenceForm accessibility > renders without axe violations  1076ms
+ ❯ |core| packages/mcp-server/test/product-reality/m06-gate-bites.s184.spec.ts (1 test | 1 failed) 82949ms
+   × Sprint 184 m06 real consumer gate bites > executes one unique red mutation for every gate on both framework targets 82943ms
+     → subscription-list-dark/react: live code.generate failed: [{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"screen-list-9","component":"Stack"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"list-toolbar-4","component":"Stack"},{"code":"OODS-N015","message":"Component SearchInput is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-search-1","component":"SearchInput"},{"code":"OODS-N015","message":"Component Select is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-filters-2","component":"Select"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-toolbar-actions-3","component":"Stack"},{"code":"OODS-N015","message":"Component Button is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"primary-toolbar-actions-13","component":"Button"},{"code":"OODS-N015","message":"Component PriceBadge is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"ve-toolbar-actions-12","component":"PriceBadge"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"list-items-5","component":"Stack"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-items-6","component":"Stack"},{"code":"OODS-N015","message":"Component StatusBadge is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"ve-items-10","component":"StatusBadge"},{"code":"OODS-N015","message":"Component RelativeTimestamp is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"ve-items-11","component":"RelativeTimestamp"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"list-pagination-7","component":"Stack"},{"code":"OODS-N015","message":"Component PaginationBar is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-pagination-8","component":"PaginationBar"}]
+ ❯ |core| packages/mcp-server/test/product-reality/live-workflow-consumers.s184.spec.ts (4 tests | 4 skipped) 166143ms
+   ↓ Sprint 184 m06 live Subscription workflow consumers > invokes code.generate live once for every immutable schema/target cell and consumes that output
+   ↓ Sprint 184 m06 live Subscription workflow consumers > holds all four cells to the same eight named gates and retains every raw log
+   ↓ Sprint 184 m06 live Subscription workflow consumers > makes the generated component the sole owner of every clicked selector and action callsite
+   ↓ Sprint 184 m06 live Subscription workflow consumers > clicks generated controls with the exact schema-derived runtime operands
+
+ Test Files  34 failed | 500 passed | 1 skipped (535)
+      Tests  28 failed | 5818 passed | 20 skipped (5866)
+     Errors  3 errors
+   Start at  00:57:07
+   Duration  616.98s (transform 146.45s, setup 0ms, collect 1041.57s, tests 2368.30s, environment 74.25s, prepare 235.93s)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-baseline-77kZ63/run-1-root-core.json
+
+[stderr]
+stderr | tests/viz/mark-options-schema-validity-s167.test.ts
+unknown format "color-hex" ignored in schema at path "#/definitions/HexColor"
+unknown format "color-hex" ignored in schema at path "#/definitions/HexColor"
+unknown format "color-hex" ignored in schema at path "#/definitions/HexColor"
+unknown format "color-hex" ignored in schema at path "#/definitions/HexColor"
+
+stderr | tests/viz/adapters/spatial/vega-lite-spatial-adapter.test.ts
+unknown format "color-hex" ignored in schema at path "#/definitions/HexColor"
+unknown format "color-hex" ignored in schema at path "#/definitions/HexColor"
+
+stderr | tests/components/toast.spec.tsx > toast service > subscriptions and helpers > exposes useToastQueue hook to subscribers
+An update to HookProbe inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/components/toast.spec.tsx > ToastPortal > renders role=status toasts from the queue
+An update to OODS.ToastPortal inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/components/toast.spec.tsx > ToastPortal > stacks multiple toasts without exceeding maxVisible
+An update to OODS.ToastPortal inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/components/toast.spec.tsx > ToastPortal > applies position modifiers for placement
+An update to OODS.ToastPortal inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/components/toast.spec.tsx > ToastPortal > removes toasts after dismissal
+An update to OODS.ToastPortal inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/components/toast.spec.tsx > ToastPortal > renders action buttons when provided
+An update to OODS.ToastPortal inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/components/toast.spec.tsx > ToastPortal > supports focus shortcut to highlight latest toast
+An update to OODS.ToastPortal inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | packages/mcp-server/test/a2ui-host-conformance/host-conformance-render.spec.ts
+Lit is in dev mode. Not recommended for production! See https://lit.dev/msg/dev-mode for more information.
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 20 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/governance-gates/tracked-report-hermeticity.test.ts [ tests/governance-gates/tracked-report-hermeticity.test.ts ]
+Error: Cannot find module '/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/@oods/tokens/dist/tailwind/tokens.json'
+ ❯ tools/a11y/index.mjs:17:30
+     15| const require = createRequire(import.meta.url);
+     16| 
+     17| const TOKEN_SOURCE = require.resolve('@oods/tokens/tailwind');
+       |                              ^
+     18| const REPORT_PATH = path.resolve(__dirname, './reports/a11y-report.jso…
+     19| const BASELINE_PATH = path.resolve(__dirname, './baseline/a11y-baselin…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/48]⎯
+
+ FAIL  |core| tests/viz/echarts-interactions.test.ts [ tests/viz/echarts-interactions.test.ts ]
+ FAIL  |core| tests/viz/renderer-selector.test.ts [ tests/viz/renderer-selector.test.ts ]
+ FAIL  |core| tests/viz/stack-transform.test.ts [ tests/viz/stack-transform.test.ts ]
+ FAIL  |core| tests/viz/vega-lite-adapter.test.ts [ tests/viz/vega-lite-adapter.test.ts ]
+ FAIL  |core| tests/viz/a11y/facet-table-generator.test.ts [ tests/viz/a11y/facet-table-generator.test.ts ]
+ FAIL  |core| tests/viz/adapters/layout-parity.test.ts [ tests/viz/adapters/layout-parity.test.ts ]
+ FAIL  |core| tests/viz/patterns/pattern-library-v2.test.ts [ tests/viz/patterns/pattern-library-v2.test.ts ]
+ FAIL  |core| tests/viz/resolver/network-flow-resolver.test.ts [ tests/viz/resolver/network-flow-resolver.test.ts ]
+ FAIL  |core| packages/mcp-server/test/contracts/dashboard.render.duplicate-panel-id.s181.spec.ts [ packages/mcp-server/test/contracts/dashboard.render.duplicate-panel-id.s181.spec.ts ]
+ FAIL  |core| packages/mcp-server/test/scale/dashboard-determinism.spec.ts [ packages/mcp-server/test/scale/dashboard-determinism.spec.ts ]
+ FAIL  |core| packages/mcp-server/test/tools/artifact.certify.render-determinism.spec.ts [ packages/mcp-server/test/tools/artifact.certify.render-determinism.spec.ts ]
+ FAIL  |core| packages/mcp-server/test/tools/artifact.certify.ten-series-collision.spec.ts [ packages/mcp-server/test/tools/artifact.certify.ten-series-collision.spec.ts ]
+ FAIL  |core| packages/mcp-server/test/tools/certify-contrast.echarts-caveat-pin.spec.ts [ packages/mcp-server/test/tools/certify-contrast.echarts-caveat-pin.spec.ts ]
+ FAIL  |core| packages/mcp-server/test/tools/certify-echarts-projected-render-s179.spec.ts [ packages/mcp-server/test/tools/certify-echarts-projected-render-s179.spec.ts ]
+ FAIL  |core| packages/mcp-server/test/tools/dashboard-contrast-alpha-s170.spec.ts [ packages/mcp-server/test/tools/dashboard-contrast-alpha-s170.spec.ts ]
+ FAIL  |core| packages/mcp-server/test/tools/dashboard-token-css-ref-honor.s179.spec.ts [ packages/mcp-server/test/tools/dashboard-token-css-ref-honor.s179.spec.ts ]
+ FAIL  |core| packages/mcp-server/test/tools/viz.render.bubble-symbolsize-s172.spec.ts [ packages/mcp-server/test/tools/viz.render.bubble-symbolsize-s172.spec.ts ]
+Error: Cannot find module './tailwind/tokens.json'
+Require stack:
+- /packages/tokens/dist/index.cjs
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/live-workflow-consumers.s184.spec.ts > Sprint 184 m06 live Subscription workflow consumers
+Error: resolve clean-consumer imports failed (1)
+node:fs:2776
+      const stats = binding.lstat(base, true, undefined, true /* throwIfNoEntry */);
+                            ^
+
+Error: ENOENT: no such file or directory, lstat '/private<consumer-root>/node_modules/@oods/components-vue/dist/ported.js'
+    at realpathSync (node:fs:2776:29)
+    at file:///private<consumer-root>/resolve.mjs:7:20
+    at Array.map (<anonymous>)
+    at file:///private<consumer-root>/resolve.mjs:6:25
+    at ModuleJob.run (node:internal/modules/esm/module_job:371:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:669:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'lstat',
+  path: '/private<consumer-root>/node_modules/@oods/components-vue/dist/ported.js'
+}
+
+Node.js v24.6.0
+
+ ❯ ../../../../../../private<consumer-root>/resolve.mjs:7:20
+ ❯ ../../../../../../private<consumer-root>/resolve.mjs:6:25
+ ❯ runLiveConsumerCell scripts/product-reality/s184-m06-live-consumers.ts:1884:11
+    1882|     }
+    1883|     await writeJson(path.join(outputRoot, 'report.json'), report);
+    1884|     throw new Error(reason);
+       |           ^
+    1885|   } finally {
+    1886|     await fsp.rm(consumerRoot, { recursive: true, force: true });
+ ❯ runLiveWorkflowProof scripts/product-reality/s184-m06-live-consumers.ts:1917:22
+ ❯ packages/mcp-server/test/product-reality/live-workflow-consumers.s184.spec.ts:27:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/tools/artifact.certify.accuracy-fault.spec.ts [ packages/mcp-server/test/tools/artifact.certify.accuracy-fault.spec.ts ]
+Error: [vitest] There was an error when mocking a module. If you are using "vi.mock" factory, make sure there are no top level variables inside, since this call is hoisted to top of the file. Read more: https://vitest.dev/api/vi.html#vi-mock
+ ❯ packages/mcp-server/test/tools/artifact.certify.accuracy-fault.spec.ts:29:1
+     27| });
+     28| 
+     29| import { buildVizSpecFromRows } from '@oods/viz-core';
+       | ^
+     30| import { getAjv } from '../../src/lib/ajv.js';
+     31| import { handle } from '../../src/tools/artifact.certify.js';
+
+Caused by: Error: Cannot find module './tailwind/tokens.json'
+Require stack:
+- /packages/tokens/dist/index.cjs
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/packages/tokens/dist/index.cjs' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/48]⎯
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 28 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/e2e/schema-ref-pipeline.test.ts > schemaRef E2E pipeline > compose → validate → render accepts schemaRef and code.generate preserves target readiness
+AssertionError: expected 'ok' to be 'error' // Object.is equality
+
+Expected: "error"
+Received: "ok"
+
+ ❯ tests/e2e/schema-ref-pipeline.test.ts:39:28
+     37| 
+     38|     const codegen = await codegenHandle({ schemaRef, framework: 'react…
+     39|     expect(codegen.status).toBe('error');
+       |                            ^
+     40|     expect(codegen.code).toBe('');
+     41|     expect(codegen.fileExtension).toBe('');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/48]⎯
+
+ FAIL  |core| tests/verification/how-forge-works.contract.test.ts > how Forge works narrative truth > keeps Sprint-182 product-reality claims evidence-scoped and review-gated
+AssertionError: expected [ …(19) ] to have a length of 14 but got 19
+
+- Expected
++ Received
+
+- 14
++ 19
+
+ ❯ tests/verification/how-forge-works.contract.test.ts:199:33
+    197|       ),
+    198|     ).toBe(true);
+    199|     expect(reactReadiness.rows).toHaveLength(14);
+       |                                 ^
+    200|     expect(vueReadiness.rows).toHaveLength(14);
+    201| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/48]⎯
+
+ FAIL  |core| tests/verification/s177-prose-carriers.contract.test.ts > Sprint 177 prose truth carriers > keeps current roadmap authority separate from frozen history and sibling execution
+AssertionError: expected '# Near Roadmap\n\n**Status:** ACTIVE …' to contain '**Status:** ACTIVE — program decision…'
+
+- Expected
++ Received
+
+- **Status:** ACTIVE — program decision `#1652`; Sprint-185 lock decision `#1724`
++ # Near Roadmap
++
++ **Status:** ACTIVE — Sprint 185 BUILT, REVIEW PENDING; program decision `#1652`
++
++ **Updated:** 2026-09-06
++
++ **Scope:** The next three independently reviewed increments
++
++ **Program authority:** [Forge Product Reality Program](product-reality-program.md)
++
++ ## Direction
++
++ OODS Foundry and Forge must function as one usable design system and agent toolchain Derek can use to
++ build real work. Greenfield output is a first-class requirement. Mapping into an existing company
++ system remains valuable, but it cannot substitute for Forge-owned components, runtime artifacts, or
++ working generation.
++
++ Two direction decisions from 2026-09-05 govern this queue. The Sprint 182 promotion freeze is void
++ (`#1722`): it was self-imposed, nothing outside our own scripts depends on it, and it is never cited
++ as a constraint again — new components go straight into the nucleus. The binding constraint on the
++ program is component breadth (`#1723`), so the increments after Runnable Generation are breadth waves
++ ordered by how many pre-existing saved schemas each wave makes reachable.
++
++ The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
++ follows runnable product foundations.
++
++ ## Current measured state — Sprint 185 build evidence
++
++ | Claim area | Current evidence | Near-horizon obligation |
++ |---|---|---|
++ | Component catalog | 109 unique IDs and unchanged classifications/reconciliation states; 27 governed (19 nucleus + 8 ported on `/ported` subpaths); capability evidence cells folded into the baseline | Independent review; `approvedRuntimeCensus` remains null |
++ | React | Installable package exports 19 nucleus families and 8 ported families; six new schemas and two Subscription schemas pass every applicable consumer gate | Review the recorded package and runtime evidence |
++ | Vue | Same component surface and applicable gates, without React/Radix/RJSF runtime dependencies | Initial form values retain the existing Vue internal-ref API; React accepts model props |
++ | Generation | Versioned artifacts, typed actions and behavioral local-state validation; HTML/Tailwind reports OODS-N018 at the declared profile instead of silently accepting the option | Combined Sprint 184/185 reconnect evidence is recorded at closeout; the build is not deployed to the served bridge |
++ | Saved designs | Actual generation succeeds for 11 of 16 unchanged saved schemas in both targets; packed runtime proof covers eight schemas, 16 cells, 124/124 applicable gates with four N/A rows excluded | Breadth waves 2+ address the remaining five; generation reachability alone is not runtime proof |
++ | Visualization | 13 admitted types; five complete the folded certified path | Unchanged; parked behind component breadth |
++
++ Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
++ is not a runtime package, an admitted chart name is not rendered output, and a preview frame is not a
++ chart.
++
++ The generation census and consumer receipts are retained in
++ [`s185-m04`'s build record](../../../artifacts/product-reality/sprint-185/m04/build-record.json)
++ at commit `9fb7882e`. The frozen execution and review heads, complete suite counts including failures
++ and skips, and evidence-only relationship between those heads belong to the
++ [Sprint 185 review handoff](../../../artifacts/product-reality/sprint-185/m05/closeout/review-handoff.json).
++
++ ## Increment 1 — Sprint 182: Product Reality Foundation — CLOSED 2026-09-04
++
++ Reviewed by `PS-2026-09-04-004` (decision `#1662`); `foundation-v1` promoted by Derek (decision
++ `#1663`). The 14-component nucleus is real in React and Vue with clean packed-consumer proof. Its build
++ authority was
++ [forge-s182-product-reality-foundation-decision-memo.md](../../planning/forge-s182-product-reality-foundation-decision-memo.md).
++
++ ## Increment 2 — Sprint 183: Runnable Generation — CLOSED 2026-09-05
++
++ Built by `PS-2026-09-04-007` at frozen head `9a4202fe` and independently reviewed by `PS-2026-09-05-001`
++ (decision `#1689`, determination in
++ [forge-s183-review-determination.md](../../planning/forge-s183-review-determination.md)). The exit gate
++ was genuinely met: the six-month-old schema `compose-7d860337` installs, builds, renders, hydrates and
++ passes interactions in clean React and Vue consumers. Two record defects blocked certification — a
++ `passed` claim that five archived mutation patches could not support, and an undisclosed loss of HTML
++ generation for Forge's own detail template absorbed by repointing tests. Both were repaired in
++ `s184-m07`, and the sprint was closed on 2026-09-05.
++
++ ## Increment 3 — Sprint 184: First Greenfield Workflow — CLOSED 2026-09-05, PARTIAL BY DESIGN
++
++ Built from `ab0d712d` and reviewed by `PS-2026-09-05-004`; closed by Derek the same day. Its build
++ authority was
++ [forge-s184-greenfield-workflow-decision-memo.md](../../planning/forge-s184-greenfield-workflow-decision-memo.md).
++
++ It ported the eight components the two March-2026 Subscription schemas needed, resolved six
++ off-contract facts by moving contracts rather than schemas, added the workflow state axis to the
++ schema language and both emitters, reversed the screen-scope binding rule so generated call sites
++ exist, replaced the textual stub guard with a forwarding check, and proved the list → detail slice
++ from live generation in both frameworks.
++
++ **Increment 3 is recorded as partial, in those words.** The four workflow states are proven on a
++ schema the sprint's own script builds; the real Subscription schemas are proven state-neutral. No
++ single artifact demonstrates the program sentence "the same semantic workflow is usable in both
++ frameworks with loading, empty, error, and success states." Edit/cancel and timeline have no
++ pre-existing schema, and authoring one would be the circularity the increment exists to avoid. The
++ review also found that the sprint's per-mission mover accounting missed five consumer-relevant
++ advertised movers, including the nucleus Table's zero-row output; that notice is owed and is sent in
++ Sprint 185.
++
++ The [additive Sprint 184 review note](../../../artifacts/product-reality/sprint-185/m05/review-carries/s184-additive-review-note.md)
++ preserves the historical record while documenting the C13 identity anchor, the four inherited
++ controls whose output was never captured, and the additional framework axis found by B2 rederivation.
++
++ ## Increment 4 — Sprint 185: Component Breadth Wave 1 — BUILT, REVIEW PENDING
++
++ Numbered because Sprint 184 is independently reviewed and closed. Its build authority is
++ [forge-s185-component-breadth-wave-1-decision-memo.md](../../planning/forge-s185-component-breadth-wave-1-decision-memo.md),
++ locked by decision `#1724` at build base `1118f436`.
++
++ It adds **DetailHeader, CardHeader, ColorSwatch, ColorizedBadge and VizAreaPreview** to the nucleus as
++ real React and Vue components. All six pre-existing saved schemas pass their applicable consumer
++ gates in both frameworks. Actual generation reachability increased from 5/16 to 11/16; the two
++ historical Subscription schemas also retain all eight consumer gates.
++
++ Planning measured twelve target cells failing with `OODS-N015` at `1118f436`, with the pruned controls
++ generating successfully. The build reproduced the original 24-row capture byte for byte in an
++ independently installed base checkout; two activity controls were newly measured companions, not
++ part of that historical capture (`#1737`). The original “pure port” conclusion was incorrect:
++ readiness had hidden a read-only header binding (`#1734`), and old-input B2 remeasurement exposed a
++ CardHeader recipe-directive regression that was repaired (`#1738`). The live nucleus gates now
++ derive membership. VizAreaPreview remains a sized preview frame, not a chart (`#1727`).
++
++ The Plan form proves field edits update the real heading in both targets. Its initial values follow
++ the existing generated APIs: React receives model props, while Vue form mode initializes internal
++ refs and uses the authored heading fallback when empty (`#1739`). No claim of identical initial form
++ data is made. Dashboard pagination was verified visible, disabled and inert; its interaction row and
++ the Academy's absent interaction row are explicitly N/A in both targets, never counted as passes.
++
++ ## Increment 5 — Component Breadth Wave 2
++
++ Number this sprint only after Sprint 185 receives independent review. The remaining five unreachable
++ schemas (the four `user-*` showcases and `test-tagged-schema`) each need a cluster of four to six
++ components — address, membership, preference, tag, role, message and classification families. The
++ Sprint 185 review determines the order, measured by the same reachability census.
++
++ ## Gates that apply to every increment
++
++ - Claims come from executable evidence, never catalog prose or research conclusions.
++ - React and Vue are equal targets; framework-specific behavior stays idiomatic.
++ - Packed-consumer tests use no workspace alias, repository source import, existing `node_modules`, or
++   user registry configuration.
++ - An unsupported target fails with a typed gap; warning-only fallback is not success.
++ - Exploratory work may use advisory validation. Production/release artifacts must pass the declared
++   enforced profile.
++ - Every significant failure mode receives a negative test or mutation bite capable of proving the
++   gate is discriminating, and a bite for a behavioral promise removes the behavior, not a string.
++ - A pre-existing test whose input changes during a sprint carries a stated reason in the closeout.
++ - A claim quantified with "every" is measured against the full tracked population at the review head.
++ - Advertised-surface movement is computed once, sprint-wide, from the final diff — never assembled
++   from per-mission scopes.
++ - Automated snapshots prove stability, not design quality; an independent review inspects responsive
++   craft and interaction states before a greenfield artifact is called usable.
++ - A build session records evidence and stops. A separate review session decides genuine close, and
++   scopes its verification to findings that could flip the determination.
++ - Public publishing, hosting, and paid external API use require explicit later decisions.
++
++ ## Parallel obligations and parks
++
++ Sprint-181 follow-ups `#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt under decision
++ `#1651`; they are named at every closeout and must close before an integrated public release.
++
++ Derek's open call, untouched by any sprint: approve or revise the 98-row proposed runtime census so
++ `approvedRuntimeCensus` stops being null and the 109 denominator can move (`#1331`). Surface-cell
++ edits in the capability baseline are evidence updates and do not move that denominator (`#1726`).
++
++ The following are parked until their named dependency is met:
++
++ - folding the eight ported components into the root export — the next sprint that already moves the
++   root export surface for another reason (`#1729`);
++ - closure of all current visualization recipes, and making VizAreaPreview a real chart — after
++   component breadth, unless independent staffing permits parallel work;
++ - visualization breadth beyond the current 13 — after the public render and certification path is
++   coherent;
++ - Figma, Penpot, MCP Apps, or another design-surface adapter — after Forge artifacts are runnable and
++   the adapter's capabilities, costs, auth, and write semantics can be evaluated honestly;
++ - public package publication or hosted Forge delivery — after licensing, distribution, and operating
++   cost decisions; and
++ - `schema.ingest` — historically shelved by `#1649`; decision `#1652` retains the shelving result
++   while superseding its incorrect surface claim.
++
++ ## Build handoff
++
++ The next fresh session independently reviews Sprint 185's
++ [claim ledger](../../../artifacts/product-reality/sprint-185/m05/closeout/claim-ledger.json) and
++ [handoff](../../../artifacts/product-reality/sprint-185/m05/closeout/review-handoff.json).
++ The builder leaves the sprint Active with `builderSelfCertified:false` and
++ `separateReviewRequired:true`. The review head retains the inputs and actual execution-head receipts;
++ only evidence may differ between those heads (`#1741`). The primary checkout remains the served
++ bridge checkout, so this build records the permitted rebuild/restart skip and remains undeployed.
++
+
+ ❯ tests/verification/s177-prose-carriers.contract.test.ts:70:18
+     68|     // session PS-2026-09-05-005, decision #1724); the carriers below …
+     69|     // current sentences with the same intent (rule #1690).
+     70|     expect(near).toContain(
+       |                  ^
+     71|       "**Status:** ACTIVE — program decision `#1652`; Sprint-185 lock …
+     72|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts > E2E object codegen target readiness > classifies intent-only dashboard framework output instead of treating it as a success
+AssertionError: expected { status: 'ok', …(8) } to deeply equal { status: 'error', …(8) }
+
+- Expected
++ Received
+
+@@ -1,29 +1,126 @@
+  {
+-   "code": "",
+-   "errors": [
++   "artifact": {
++     "actions": [],
++     "contentHash": "sha256:1e0f699efa6a223473e3ee0103478663090d3c4e7432913b139522269bfbe38d",
++     "dependencies": [
+        {
+-       "code": "OODS-N015",
+-       "component": "DetailHeader",
+-       "message": "Component DetailHeader is not emission-eligible for react; evidence state: unavailable.",
+-       "nodeId": "slot-header-2",
++         "kind": "dependency",
++         "name": "@oods/component-styles",
++         "version": "0.1.0",
+        },
+        {
+-       "code": "OODS-N015",
+-       "component": "VizAreaPreview",
+-       "message": "Component VizAreaPreview is not emission-eligible for react; evidence state: unavailable.",
+-       "nodeId": "slot-main-content-6",
++         "kind": "dependency",
++         "name": "@oods/components-react",
++         "version": "0.1.0",
++       },
++       {
++         "kind": "peerDependency",
++         "name": "react",
++         "version": "19.2.0",
++       },
++       {
++         "kind": "peerDependency",
++         "name": "react-dom",
++         "version": "19.2.0",
+        },
+      ],
+-   "fileExtension": "",
++     "files": [
++       {
++         "contentHash": "sha256:ad91ddee6ecf200b4a544617d979fbb983353cf1b74e000c85ba0ef7bdcf0175",
++         "contents": "import React from 'react';
++ import { Card, DetailHeader, Grid, Stack, VizAreaPreview } from '@oods/components-react';
++ import '@oods/component-styles/css';
++
++ type CardProps = React.ComponentPropsWithoutRef<typeof Card>;
++ type DetailHeaderProps = React.ComponentPropsWithoutRef<typeof DetailHeader>;
++ type GridProps = React.ComponentPropsWithoutRef<typeof Grid>;
++ type StackProps = React.ComponentPropsWithoutRef<typeof Stack>;
++ type VizAreaPreviewProps = React.ComponentPropsWithoutRef<typeof VizAreaPreview>;
++
++ export const GeneratedUI: React.FC = () => {
++   return (
++     <>
++       <Stack id=\"screen-dashboard-10\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>
++             <Stack id=\"dashboard-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>
++                     <DetailHeader id=\"slot-header-2\" data-oods-component=\"DetailHeader\" />
++                   </Stack>
++             <Grid id=\"dashboard-metrics-3\" data-oods-component=\"Grid\" columns={4} gap=\"cluster-default\">
++                     <Card id=\"slot-metrics-4\" data-oods-component=\"Card\" />
++                   </Grid>
++             <Card id=\"dashboard-body-7\" data-oods-component=\"Card\" data-layout=\"sidebar\" style={{ alignItems: 'start', display: 'grid', gap: 'var(--ref-space-cluster-default)', gridTemplateColumns: 'minmax(0, 1fr) minmax(16rem, 24rem)' }}>
++                     <div data-sidebar-main>
++                       <Stack id=\"dashboard-main-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>
++                                   <VizAreaPreview id=\"slot-main-content-6\" data-oods-component=\"VizAreaPreview\" />
++                                 </Stack>
++                     </div>
++                     <aside data-sidebar-aside>
++                       <Stack id=\"dashboard-sidebar-8\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)', padding: 'var(--ref-space-inset-default)' }}>
++                                   <Stack id=\"slot-sidebar-9\" data-oods-component=\"Stack\" />
++                                 </Stack>
++                     </aside>
++                   </Card>
++           </Stack>
++     </>
++   );
++ };
++ ",
++         "path": "src/GeneratedUI.tsx",
++       },
++     ],
+      "framework": "react",
+-   "imports": [],
++     "schemaVersion": "1.0.0",
++   },
++   "code": "import React from 'react';
++ import { Card, DetailHeader, Grid, Stack, VizAreaPreview } from '@oods/components-react';
++ import '@oods/component-styles/css';
++
++ type CardProps = React.ComponentPropsWithoutRef<typeof Card>;
++ type DetailHeaderProps = React.ComponentPropsWithoutRef<typeof DetailHeader>;
++ type GridProps = React.ComponentPropsWithoutRef<typeof Grid>;
++ type StackProps = React.ComponentPropsWithoutRef<typeof Stack>;
++ type VizAreaPreviewProps = React.ComponentPropsWithoutRef<typeof VizAreaPreview>;
++
++ export const GeneratedUI: React.FC = () => {
++   return (
++     <>
++       <Stack id=\"screen-dashboard-10\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>
++             <Stack id=\"dashboard-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>
++                     <DetailHeader id=\"slot-header-2\" data-oods-component=\"DetailHeader\" />
++                   </Stack>
++             <Grid id=\"dashboard-metrics-3\" data-oods-component=\"Grid\" columns={4} gap=\"cluster-default\">
++                     <Card id=\"slot-metrics-4\" data-oods-component=\"Card\" />
++                   </Grid>
++             <Card id=\"dashboard-body-7\" data-oods-component=\"Card\" data-layout=\"sidebar\" style={{ alignItems: 'start', display: 'grid', gap: 'var(--ref-space-cluster-default)', gridTemplateColumns: 'minmax(0, 1fr) minmax(16rem, 24rem)' }}>
++                     <div data-sidebar-main>
++                       <Stack id=\"dashboard-main-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>
++                                   <VizAreaPreview id=\"slot-main-content-6\" data-oods-component=\"VizAreaPreview\" />
++                                 </Stack>
++                     </div>
++                     <aside data-sidebar-aside>
++                       <Stack id=\"dashboard-sidebar-8\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)', padding: 'var(--ref-space-inset-default)' }}>
++                                   <Stack id=\"slot-sidebar-9\" data-oods-component=\"Stack\" />
++                                 </Stack>
++                     </aside>
++                   </Card>
++           </Stack>
++     </>
++   );
++ };
++ ",
++   "fileExtension": ".tsx",
++   "framework": "react",
++   "imports": [
++     "react",
++     "@oods/components-react",
++     "@oods/component-styles/css",
++   ],
+    "meta": {
+      "componentCount": 5,
+      "nodeCount": 10,
+    },
+-   "status": "error",
++   "status": "ok",
+    "validationReceipt": {
+      "axes": {
+        "enforcement": "blocking",
+        "fallback": "forbidden",
+        "scope": "generated-artifact",
+@@ -36,28 +133,29 @@
+      "checks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
++       "normalization-fidelity",
++       "binding-contract",
++       "props-contract",
++       "slots-contract",
++       "events-contract",
++       "dependency-closure",
++       "fallback-policy",
+      ],
+      "defaulted": true,
+      "evidence": {
+        "accepted": [],
++       "artifactContentHash": "sha256:1e0f699efa6a223473e3ee0103478663090d3c4e7432913b139522269bfbe38d",
+        "mismatched": [],
+        "missing": [],
+        "notApplicable": [],
+        "provided": [],
+        "required": [],
+      },
+      "notChecked": [
+-       "normalization-fidelity",
+-       "binding-contract",
+-       "props-contract",
+-       "slots-contract",
+-       "events-contract",
+-       "dependency-closure",
+-       "fallback-policy",
+        "rendered-evidence",
+        "interaction-evidence",
+        "accessibility-evidence",
+        "theme-evidence",
+        "determinism-evidence",
+
+ ❯ expectTargetUnavailable packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts:81:18
+     79|   });
+     80| 
+     81|   expect(result).toEqual({
+       |                  ^
+     82|     status: 'error',
+     83|     framework,
+ ❯ packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts:215:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/contracts/brand.intake.s181.spec.ts > brand.intake s181 advertised dry-run contract > B-09 rejects apply:true and consumer-local paths at index-level AJV before the handler
+Error: Timed out waiting for brand.intake stdio responses. stderr=
+ ❯ Timeout._onTimeout packages/mcp-server/test/contracts/brand.intake.s181.spec.ts:160:9
+    158|     const timeout = setTimeout(() => {
+    159|       reject(
+    160|         new Error(
+       |         ^
+    161|           `Timed out waiting for brand.intake stdio responses. stderr=…
+    162|         ),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/contracts/code.generate-golden.spec.ts > code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for dashboard-page
+ FAIL  |core| packages/mcp-server/test/contracts/code.generate-golden.spec.ts > code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for dashboard-page
+ FAIL  |core| packages/mcp-server/test/contracts/code.generate-golden.spec.ts > code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for form-page
+ FAIL  |core| packages/mcp-server/test/contracts/code.generate-golden.spec.ts > code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for form-page
+ FAIL  |core| packages/mcp-server/test/contracts/code.generate-golden.spec.ts > code.generate golden readiness outcomes > matches react OODS-N015 golden outcome for detail-page
+ FAIL  |core| packages/mcp-server/test/contracts/code.generate-golden.spec.ts > code.generate golden readiness outcomes > matches vue OODS-N015 golden outcome for detail-page
+AssertionError: expected { status: 'error', …(8) } to deeply equal { status: 'error', …(8) }
+
+- Expected
++ Received
+
+@@ -1,28 +1,10 @@
+  {
+    "code": "",
+    "errors": [
+      {
+        "code": "OODS-N015",
+-       "component": "CardHeader",
+-       "message": "Component CardHeader is not emission-eligible for react; evidence state: unavailable.",
+-       "nodeId": "dashboard-overview-header",
+-     },
+-     {
+-       "code": "OODS-N015",
+-       "component": "CardHeader",
+-       "message": "Component CardHeader is not emission-eligible for react; evidence state: unavailable.",
+-       "nodeId": "dashboard-activity-header",
+-     },
+-     {
+-       "code": "OODS-N015",
+-       "component": "CardHeader",
+-       "message": "Component CardHeader is not emission-eligible for react; evidence state: unavailable.",
+-       "nodeId": "dashboard-insights-header",
+-     },
+-     {
+-       "code": "OODS-N015",
+        "component": "RoleBadgeList",
+        "message": "Component RoleBadgeList is not emission-eligible for react; evidence state: unavailable.",
+        "nodeId": "dashboard-insights-role",
+      },
+    ],
+
+ ❯ packages/mcp-server/test/contracts/code.generate-golden.spec.ts:76:24
+     74|         }
+     75| 
+     76|         expect(result).toEqual({
+       |                        ^
+     77|           status: 'error',
+     78|           framework,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts > s181 portable-runtime publish boundary > B-12 proves the relocated schema is load-bearing by deleting it from the staged dist
+AssertionError: expected null to be 1 // Object.is equality
+
+- Expected: 
+1
+
++ Received: 
+null
+
+ ❯ packages/mcp-server/test/contracts/portable-boundary.s181.spec.ts:238:25
+    236| 
+    237|     const exited = await waitForStartupExit(stagedServer);
+    238|     expect(exited.code).toBe(1);
+       |                         ^
+    239|     expect(exited.stderr).toContain('ENOENT');
+    240|     expect(exited.stderr).toContain('component-schema.json');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/closeout.s184.spec.ts > Sprint 184 M07 closeout accounting > accounts for added and removed suite files and independently audits every claim
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/closeout.s184.spec.ts:787:3
+    785| 
+    786| describe("Sprint 184 M07 closeout accounting", () => {
+    787|   it("accounts for added and removed suite files and independently aud…
+       |   ^
+    788|     const fixture = createFixture();
+    789|     const artifacts = build(fixture);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/closeout.s184.spec.ts > Sprint 184 M07 closeout accounting > rejects CMOS text drift and any frozen evidence path that is missing
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/closeout.s184.spec.ts:888:3
+    886|   });
+    887| 
+    888|   it("rejects CMOS text drift and any frozen evidence path that is mis…
+       |   ^
+    889|     const drift = createFixture();
+    890|     updateJsonAtHead(drift, INPUT_PATHS.cmosMissionContract, (source) …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/closeout.s184.spec.ts > Sprint 184 M07 closeout accounting > rejects malformed frozen reconnect evidence despite a passed criterion 7 manifest status
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/closeout.s184.spec.ts:921:3
+    919|   });
+    920| 
+    921|   it("rejects malformed frozen reconnect evidence despite a passed cri…
+       |   ^
+    922|     const fixture = createFixture();
+    923|     updateJsonAtHead(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/closeout.s184.spec.ts > Sprint 184 M07 closeout accounting > accepts collection-only populations only when they reconcile to executed historical totals
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/closeout.s184.spec.ts:979:3
+    977|   });
+    978| 
+    979|   it("accepts collection-only populations only when they reconcile to …
+       |   ^
+    980|     const fixture = createFixture();
+    981|     for (const repositoryPath of [
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/closeout.s184.spec.ts > Sprint 184 M07 closeout accounting > uses frozen commit bytes rather than mutable working-tree bytes
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/closeout.s184.spec.ts:1041:3
+    1039|   });
+    1040| 
+    1041|   it("uses frozen commit bytes rather than mutable working-tree bytes"…
+       |   ^
+    1042|     const fixture = createFixture();
+    1043|     const before =
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts > Sprint 184 m03 target contract and emitter movement > emits explicit React coercion and joining expressions that strict-check against the built package
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts:209:3
+    207|   );
+    208| 
+    209|   it('emits explicit React coercion and joining expressions that stric…
+       |   ^
+    210|     const result = reactEmit(bindingKindSchema, options);
+    211| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts > Sprint 184 m03 target contract and emitter movement > emits readonly-safe Vue coercion and joining expressions that strict-check against the built package
+AssertionError: expected { status: null, output: '' } to deeply equal { status: +0, output: '' }
+
+- Expected
++ Received
+
+  {
+    "output": "",
+-   "status": 0,
++   "status": null,
+  }
+
+ ❯ packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts:234:42
+    232|     expect(result.code).not.toContain('ref<unknown>');
+    233|     expect(result.code).not.toContain('[object Object]');
+    234|     expect(vueStrictResult(result.code)).toEqual({ status: 0, output: …
+       |                                          ^
+    235|   });
+    236| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/m06-gate-bites.s184.spec.ts > Sprint 184 m06 real consumer gate bites > executes one unique red mutation for every gate on both framework targets
+Error: subscription-list-dark/react: live code.generate failed: [{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"screen-list-9","component":"Stack"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"list-toolbar-4","component":"Stack"},{"code":"OODS-N015","message":"Component SearchInput is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-search-1","component":"SearchInput"},{"code":"OODS-N015","message":"Component Select is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-filters-2","component":"Select"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-toolbar-actions-3","component":"Stack"},{"code":"OODS-N015","message":"Component Button is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"primary-toolbar-actions-13","component":"Button"},{"code":"OODS-N015","message":"Component PriceBadge is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"ve-toolbar-actions-12","component":"PriceBadge"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"list-items-5","component":"Stack"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-items-6","component":"Stack"},{"code":"OODS-N015","message":"Component StatusBadge is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"ve-items-10","component":"StatusBadge"},{"code":"OODS-N015","message":"Component RelativeTimestamp is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"ve-items-11","component":"RelativeTimestamp"},{"code":"OODS-N015","message":"Component Stack is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"list-pagination-7","component":"Stack"},{"code":"OODS-N015","message":"Component PaginationBar is not emission-eligible for react; evidence state: declaration-unbuilt.","nodeId":"slot-pagination-8","component":"PaginationBar"}]
+ ❯ validateArtifact scripts/product-reality/s184-m06-live-consumers.ts:393:11
+    391| ): { artifact: GeneratedArtifact; source: string } {
+    392|   if (result.status !== 'ok') {
+    393|     throw new Error(`${schema}/${framework}: live code.generate failed…
+       |           ^
+    394|   }
+    395|   const artifact = result.artifact;
+ ❯ runLiveGenerationOnly scripts/product-reality/s184-m06-live-consumers.ts:553:36
+ ❯ packages/mcp-server/test/product-reality/m06-gate-bites.s184.spec.ts:26:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts > Sprint 184 M07 tracked mutation patch disposition > classifies the exact 38-patch frozen population and binds every row to immutable bytes and a source-derived baseline
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts:39:3
+     37| 
+     38| describe("Sprint 184 M07 tracked mutation patch disposition", () => {
+     39|   it("classifies the exact 38-patch frozen population and binds every …
+       |   ^
+     40|     expect(repositoryRoot).toBe(REPOSITORY_ROOT);
+     41|     expect(record).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts > Sprint 184 M07 tracked mutation patch disposition > executes the s183-m06-sc02 replacement over every tracked patch, with only the five invalid archives taking an explicit machine-readable non-apply path
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts:144:3
+    142|   });
+    143| 
+    144|   it("executes the s183-m06-sc02 replacement over every tracked patch,…
+       |   ^
+    145|     const covered: string[] = [];
+    146|     for (const entry of record.patches) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts > Sprint 184 M07 tracked mutation patch disposition > preserves all five Class 1 archives, proves the M03 canonical twins at two real commits, and uses the Sprint 183 M01b repair
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts:192:3
+    190|   }, 30_000);
+    191| 
+    192|   it("preserves all five Class 1 archives, proves the M03 canonical tw…
+       |   ^
+    193|     const classOne = entriesFor("class-1");
+    194|     expect(classOne.map(({ path: repoPath }: any) => repoPath)).toEqua…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts > Sprint 184 M07 tracked mutation patch disposition > replays the three Class 2 patches at the receipt baseline and confirms their context drift at the frozen audit head
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts:321:3
+    319|   }, 30_000);
+    320| 
+    321|   it("replays the three Class 2 patches at the receipt baseline and co…
+       |   ^
+    322|     const classTwo = entriesFor("class-2");
+    323|     expect(classTwo.map(({ path: repoPath }: any) => repoPath)).toEqua…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts > Sprint 184 M07 tracked mutation patch disposition > keeps all four Class 3 patches scoped to their generated consumer roots
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts:357:3
+    355|   }, 30_000);
+    356| 
+    357|   it("keeps all four Class 3 patches scoped to their generated consume…
+       |   ^
+    358|     const classThree = entriesFor("class-3");
+    359|     expect(classThree).toHaveLength(4);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/ported-workflow.s184.spec.ts > Sprint 184 m04 ported Subscription workflow > strict-checks every generated React and Vue artifact against the built packages
+Error: Test timed out in 120000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/ported-workflow.s184.spec.ts:204:3
+    202|   });
+    203| 
+    204|   it('strict-checks every generated React and Vue artifact against the…
+       |   ^
+    205|     for (const schemaName of SCHEMA_NAMES) {
+    206|       expect(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/state-axis.s184.spec.ts > Sprint 184 m05 workflow state axis > restores the exact emitted bytes and all eight runtime cells after the mutation matrix
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/product-reality/state-axis.s184.spec.ts:419:3
+    417|   );
+    418| 
+    419|   it('restores the exact emitted bytes and all eight runtime cells aft…
+       |   ^
+    420|     for (const framework of FRAMEWORKS) {
+    421|       const source = aggregateResults.get(framework)!.code;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/48]⎯
+
+ FAIL  |core| packages/mcp-server/test/tools/artifact.certify.echarts-accuracy.spec.ts > artifact.certify — the ECharts accuracy pillar is wired (s172 m03) > treemap: a clean operand yields no findings, and accuracy:pass EXACTLY when a rule actually ran
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/mcp-server/test/tools/artifact.certify.echarts-accuracy.spec.ts:28:70
+     26| 
+     27| describe('artifact.certify — the ECharts accuracy pillar is wired (s17…
+     28|   it.each(ECHARTS_OPERAND_CASES.map((c) => [c.chartType, c] as const))(
+       |                                                                      ^
+     29|     '%s: a clean operand yields no findings, and accuracy:pass EXACTLY…
+     30|     async (_label, operand) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/48]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 3 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-worker]: Timeout calling "onTaskUpdate"
+ ❯ Object.onTimeoutError node_modules/.pnpm/vitest@3.2.4_@types+node@20.19.21_@vitest+browser@3.2.4_happy-dom@15.11.7_jiti@1.21.7_jsdom@24.1.3_tsx@4.20.6_yaml@2.8.1/node_modules/vitest/dist/chunks/rpc.-pEldfrD.js:53:10
+ ❯ Timeout._onTimeout node_modules/.pnpm/vitest@3.2.4_@types+node@20.19.21_@vitest+browser@3.2.4_happy-dom@15.11.7_jiti@1.21.7_jsdom@24.1.3_tsx@4.20.6_yaml@2.8.1/node_modules/vitest/dist/chunks/index.B521nVV-.js:59:62
+ ❯ listOnTimeout node:internal/timers:608:17
+ ❯ processTimers node:internal/timers:543:7
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-worker]: Timeout calling "onTaskUpdate"
+ ❯ Object.onTimeoutError node_modules/.pnpm/vitest@3.2.4_@types+node@20.19.21_@vitest+browser@3.2.4_happy-dom@15.11.7_jiti@1.21.7_jsdom@24.1.3_tsx@4.20.6_yaml@2.8.1/node_modules/vitest/dist/chunks/rpc.-pEldfrD.js:53:10
+ ❯ Timeout._onTimeout node_modules/.pnpm/vitest@3.2.4_@types+node@20.19.21_@vitest+browser@3.2.4_happy-dom@15.11.7_jiti@1.21.7_jsdom@24.1.3_tsx@4.20.6_yaml@2.8.1/node_modules/vitest/dist/chunks/index.B521nVV-.js:59:62
+ ❯ listOnTimeout node:internal/timers:608:17
+ ❯ processTimers node:internal/timers:543:7
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-worker]: Timeout calling "onTaskUpdate"
+ ❯ Object.onTimeoutError node_modules/.pnpm/vitest@3.2.4_@types+node@20.19.21_@vitest+browser@3.2.4_happy-dom@15.11.7_jiti@1.21.7_jsdom@24.1.3_tsx@4.20.6_yaml@2.8.1/node_modules/vitest/dist/chunks/rpc.-pEldfrD.js:53:10
+ ❯ Timeout._onTimeout node_modules/.pnpm/vitest@3.2.4_@types+node@20.19.21_@vitest+browser@3.2.4_happy-dom@15.11.7_jiti@1.21.7_jsdom@24.1.3_tsx@4.20.6_yaml@2.8.1/node_modules/vitest/dist/chunks/index.B521nVV-.js:59:62
+ ❯ listOnTimeout node:internal/timers:608:17
+ ❯ processTimers node:internal/timers:543:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+

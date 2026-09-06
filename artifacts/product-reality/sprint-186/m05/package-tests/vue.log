@@ -1,0 +1,58 @@
+$ pnpm --filter @oods/components-vue run typecheck
+
+> @oods/components-vue@0.1.0 typecheck /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-vue
+> vue-tsc --noEmit --pretty false -p tsconfig.json
+
+$ pnpm --filter @oods/components-vue test
+
+> @oods/components-vue@0.1.0 test /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-vue
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-vue
+
+ ✓ test/interactions.spec.ts (7 tests) 1578ms
+   ✓ @oods/components-vue interactions > B-10 moves Vue Tabs selection and focus with ArrowRight  698ms
+   ✓ @oods/components-vue interactions > supports Tabs ArrowLeft, Home, End, pointer activation, and controlled updates  421ms
+ ✓ test/ported-scenarios.spec.ts (10 tests) 1893ms
+   ✓ @oods/components-vue shared ported scenarios > cancellation-summary-boolean executes the CancellationSummary contract  352ms
+   ✓ @oods/components-vue shared ported scenarios > pagination-bar-navigation executes the PaginationBar contract  380ms
+   ✓ @oods/components-vue shared ported scenarios > price-badge-currency executes the PriceBadge contract  477ms
+ ✓ test/breadth.s185.spec.ts (26 tests) 2678ms
+   ✓ Sprint 185 Vue component breadth > Details defaults to a real heading and applies as before bounded level  1261ms
+   ✓ Sprint 185 Vue component breadth > CardHeader hydrates its shared SSR scenario without changing heading or label semantics  345ms
+ ✓ test/breadth.s186.spec.ts (17 tests) 4778ms
+   ✓ Sprint 186 Vue wave-2 components > ClassificationPanel defaults its heading, resolves aliases in renderer order, and lets the slot replace the summary  752ms
+   ✓ Sprint 186 Vue wave-2 components > ClassificationPanel renders authored slot content in the content area instead of the summary  414ms
+   ✓ Sprint 186 Vue wave-2 components > TagPills substitutes {{ tag_count }} with the total count, limits visible pills, and falls back to +hidden without a template  360ms
+   ✓ Sprint 186 Vue wave-2 components > badge-family summaries resolve label and status aliases in renderer order over the Badge substrate  675ms
+   ✓ Sprint 186 Vue wave-2 components > AuditEvent mirrors renderEventArticle alias orders, with a lone reason as both label and detail  414ms
+   ✓ Sprint 186 Vue wave-2 components > PriceSummary reads each term from its aliases in renderer order, shows zero, and falls back to a paragraph or an empty list  328ms
+   ✓ Sprint 186 Vue wave-2 components > StatusSelector defaults its label and options, honours status, and emits the chosen value with modelValue  318ms
+   ✓ Sprint 186 Vue wave-2 components > PreferenceEditor, RoleAssignmentForm and TemplatePicker default their titles and options and let the slot replace the body  383ms
+ ✓ test/scenarios.spec.ts (43 tests) 4116ms
+   ✓ @oods/components-vue shared scenarios > address-editor-fields-and-change executes the AddressEditor contract  533ms
+   ✓ @oods/components-vue shared scenarios > address-summary-badge-role executes the AddressSummaryBadge contract  407ms
+   ✓ @oods/components-vue shared scenarios > date-picker-bounded executes the DatePicker contract  412ms
+   ✓ @oods/components-vue shared scenarios > tabs-keyboard executes the Tabs contract  327ms
+ ✓ test/ported-accessibility.spec.ts (3 tests) 5376ms
+   ✓ @oods/components-vue ported accessibility outcomes > names search, pagination, status, and timeline semantics without color-only signals  1525ms
+   ✓ @oods/components-vue ported accessibility outcomes > has no automated axe violations for the nondegenerate showcase  3726ms
+ ✓ test/accessibility.spec.ts (4 tests) 5969ms
+   ✓ @oods/components-vue accessibility outcomes > associates field labels, help, validation, and invalid state  336ms
+   ✓ @oods/components-vue accessibility outcomes > associates labels, help, and errors for every native field family  822ms
+   ✓ @oods/components-vue accessibility outcomes > uses required announcement, button, tabs, and table semantics  538ms
+   ✓ @oods/components-vue accessibility outcomes > has no automated axe violations for the nondegenerate showcase  4244ms
+ ✓ test/table-empty.s184.spec.ts (1 test) 540ms
+   ✓ @oods/components-vue Table empty affordance > renders non-empty text spanning every declared column when rows are empty  533ms
+ ✓ test/ported-ssr.spec.ts (1 test) 256ms
+ ✓ test/ssr.spec.ts (1 test) 81ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 332ms
+ ✓ test/package-contract.spec.ts (3 tests) 312ms
+ ✓ test/ported-package-contract.spec.ts (3 tests) 62ms
+
+ Test Files  13 passed (13)
+      Tests  121 passed (121)
+   Start at  14:09:04
+   Duration  48.94s (transform 20.52s, setup 0ms, collect 84.06s, tests 27.97s, environment 129.72s, prepare 30.30s)
+

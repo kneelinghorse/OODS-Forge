@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 274,
+    "classA": 230,
+    "classB": 44
+  },
+  "totals": {
+    "references": 274,
+    "classA": 230,
+    "classB": 44,
+    "resolved": 272
+  },
+  "targets": {
+    "react": {
+      "rows": 22,
+      "references": 132,
+      "classA": 110,
+      "classB": 22,
+      "resolved": 132
+    },
+    "vue": {
+      "rows": 22,
+      "references": 142,
+      "classA": 120,
+      "classB": 22,
+      "resolved": 140
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 44,
+    "targetImplementation": 44,
+    "packageExport": 44,
+    "publicDeclaration": 44,
+    "dependencyClosure": 44,
+    "frameworkScenario": 54
+  },
+  "failures": [
+    {
+      "target": "vue",
+      "componentId": "PriceSummary",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-vue/src/index.ts#PriceSummary",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "vue",
+      "componentId": "PriceSummary",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-vue/dist/index.d.ts#PriceSummary",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}

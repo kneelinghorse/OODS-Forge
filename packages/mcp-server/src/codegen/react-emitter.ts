@@ -1,5 +1,4 @@
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
-import { PORTED_COMPONENT_IDS } from '@oods/component-contracts';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
 import type {
   BindingAnalysis,
@@ -16,6 +15,7 @@ import {
 import {
   mapFieldType,
   snakeToCamel,
+  fieldValuePropTarget,
   resolveFrameworkChildContent,
   resolveFrameworkRecipeProps,
   ownFieldSchemaEntry,
@@ -228,9 +228,17 @@ function reactControlledProp(occurrence: LocalBindingOccurrence): string | null 
     || occurrence.component === 'Input'
     || occurrence.component === 'Select'
     || occurrence.component === 'Textarea'
+    || occurrence.component === 'StatusSelector'
+    || occurrence.component === 'TagInput'
   ) return 'value';
   if (occurrence.component === 'Tabs') return 'selectedId';
   return null;
+}
+
+/** A field lowered to the node's own form value is carried by its local state; a data prop is not. */
+function fieldRepresentedByState(propName: string | undefined, controlledProp: string | null): boolean {
+  return controlledProp !== null
+    && (propName === undefined || propName === 'value' || propName === 'checked' || propName === controlledProp);
 }
 
 function reactBindingAttrs(
@@ -246,6 +254,10 @@ function reactBindingAttrs(
   if (local && controlledProp) {
     attrs.push(`${controlledProp}={${local.localSymbols.state}}`);
   }
+  // A component-scoped domain binding owns its action selector on the element
+  // itself; screen-scoped actions own theirs on the generated action surface.
+  const domain = occurrences.find((occurrence) => occurrence.scope !== 'screen' && occurrence.kind === 'domain');
+  if (domain) attrs.push(`data-oods-action="${escapeDoubleQuotedAttr(domain.handlerName)}"`);
   for (const occurrence of occurrences) {
     // Screen bindings are semantic consumer requirements, not arbitrary props
     // on the layout component used as the schema root.
@@ -402,6 +414,7 @@ function emitNode(
     : null;
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
+  const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
   const controlledProp = localBinding ? reactControlledProp(localBinding) : null;
   const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
   const finish = (code: string): string => wrapReactStateNode(
@@ -599,7 +612,7 @@ function emitNode(
       const classAttr = buildReactClassAttr(staticClasses, variantExpression);
       if (classAttr) innerAttrParts.push(classAttr);
     }
-    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren && !controlledProp) {
+    if (sectionFieldContent?.propName && !sectionFieldContent.isChildren && !fieldRepresentedByState(sectionFieldContent.propName, controlledProp)) {
       const fieldExpression = reactFieldExpression(
         node,
         sectionFieldContent.fieldName,
@@ -614,7 +627,7 @@ function emitNode(
     const innerAttrs = innerAttrParts.length > 0 ? ` ${innerAttrParts.join(' ')}` : '';
 
     if (children.length === 0 && sectionFieldContent?.isChildren) {
-      const fieldExpression = reactFieldExpression(
+      const fieldExpression = readonlyField?.writer.localSymbols.state ?? reactFieldExpression(
         node,
         sectionFieldContent.fieldName,
         sectionFieldContent.propName,
@@ -654,7 +667,7 @@ function emitNode(
     const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
-        const fieldExpression = reactFieldExpression(
+        const fieldExpression = readonlyField?.writer.localSymbols.state ?? reactFieldExpression(
           node,
           fieldContent.fieldName,
           fieldContent.propName,
@@ -663,7 +676,7 @@ function emitNode(
         );
         return finish(`<${tag}${attrs}>{${fieldExpression}}</${tag}>`);
       }
-      if (controlledProp) {
+      if (fieldRepresentedByState(fieldContent.propName, controlledProp)) {
         return finish(`<${tag}${attrs} />`);
       }
       // Prop-based injection: rebuild attrs without the conflicting static prop
@@ -896,7 +909,8 @@ function reactLocalInitialExpression(
   }
 
   const field = node.props?.field;
-  if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field)) {
+  // A field lowered to a data prop (TagInput's tags) is not the control's own text.
+  if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field) && fieldValuePropTarget(occurrence.component) === undefined) {
     const fallback = occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
     const source = snakeToCamel(field);
     return occurrence.signature.parameters[0]?.type === 'boolean'
@@ -907,7 +921,7 @@ function reactLocalInitialExpression(
 }
 
 function reactElementType(component: string): string {
-  if (component === 'Select') return 'HTMLSelectElement';
+  if (component === 'Select' || component === 'StatusSelector') return 'HTMLSelectElement';
   if (component === 'Textarea') return 'HTMLTextAreaElement';
   return 'HTMLInputElement';
 }
@@ -1005,31 +1019,13 @@ function generateReactActionGuards(analysis: BindingAnalysis): string {
 // Top-level code assembly
 // ---------------------------------------------------------------------------
 
-const PORTED_COMPONENT_ID_SET: ReadonlySet<string> = new Set(PORTED_COMPONENT_IDS);
-
-function splitComponentImports(components: Set<string>): {
-  nucleus: string[];
-  ported: string[];
-} {
-  const nucleus: string[] = [];
-  const ported: string[] = [];
-  for (const component of Array.from(components).sort()) {
-    (PORTED_COMPONENT_ID_SET.has(component) ? ported : nucleus).push(component);
-  }
-  return { nucleus, ported };
-}
-
 function buildImportBlock(components: Set<string>, includeCva: boolean): string {
-  const { nucleus, ported } = splitComponentImports(components);
+  const nucleus = Array.from(components).sort();
   const lines: string[] = [`import React from 'react';`];
   if (nucleus.length > 0) {
     lines.push(`import { ${nucleus.join(', ')} } from '@oods/components-react';`);
   }
-  if (ported.length > 0) {
-    lines.push(`import { ${ported.join(', ')} } from '@oods/components-react/ported';`);
-  }
   if (nucleus.length > 0) lines.push(`import '@oods/component-styles/css';`);
-  if (ported.length > 0) lines.push(`import '@oods/component-styles/css-ported';`);
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
   }
@@ -1037,13 +1033,9 @@ function buildImportBlock(components: Set<string>, includeCva: boolean): string 
 }
 
 function buildImportList(components: Set<string>, includeCva: boolean): string[] {
-  const { nucleus, ported } = splitComponentImports(components);
   return [
     'react',
-    ...(nucleus.length > 0 ? ['@oods/components-react', '@oods/component-styles/css'] : []),
-    ...(ported.length > 0
-      ? ['@oods/components-react/ported', '@oods/component-styles/css-ported']
-      : []),
+    ...(components.size > 0 ? ['@oods/components-react', '@oods/component-styles/css'] : []),
     ...(includeCva ? ['class-variance-authority'] : []),
   ];
 }

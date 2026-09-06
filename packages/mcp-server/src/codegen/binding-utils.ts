@@ -114,6 +114,25 @@ export interface UnknownBindingOccurrence extends BindingOccurrenceBase {
 export type ResolvedBindingOccurrence = LocalBindingOccurrence | DomainBindingOccurrence;
 export type BindingOccurrence = ResolvedBindingOccurrence | UnknownBindingOccurrence;
 
+/** A display reads an existing field writer; it owns neither an event nor state. */
+export interface ReadonlyFieldSubscription extends BindingOccurrenceBase {
+  readonly component: 'DetailHeader' | 'Text' | 'Stack';
+  readonly event: 'onChange';
+  readonly field: string;
+  readonly writer: LocalBindingOccurrence;
+}
+
+/**
+ * A display's onChange naming a handler no writer declares. The display keeps
+ * rendering its field; there is no state or event to bind, so the binding is
+ * inert and reported as an advisory warning rather than discarded silently.
+ */
+export interface InertFieldSubscription extends BindingOccurrenceBase {
+  readonly event: 'onChange';
+  readonly field: string;
+  readonly reason: string;
+}
+
 export interface ResolvedBindingHandler {
   readonly handlerName: string;
   readonly kind: BindingKind;
@@ -128,7 +147,8 @@ export type BindingAnalysisIssueCode =
   | 'AMBIGUOUS_LOCAL_BINDING'
   | 'AMBIGUOUS_HANDLER'
   | 'INCOMPATIBLE_HANDLER'
-  | 'LOCAL_SYMBOL_COLLISION';
+  | 'LOCAL_SYMBOL_COLLISION'
+  | 'INVALID_READONLY_FIELD_SUBSCRIPTION';
 
 export interface BindingAnalysisIssue {
   readonly code: BindingAnalysisIssueCode;
@@ -145,6 +165,10 @@ export interface BindingAnalysisIssue {
 export interface BindingAnalysis {
   readonly ok: boolean;
   readonly occurrences: readonly BindingOccurrence[];
+  /** Measured display bindings, with provenance to their local writer. */
+  readonly readonlyFieldSubscriptions: readonly ReadonlyFieldSubscription[];
+  /** Display bindings whose handler no writer declares; rendered as plain field reads. */
+  readonly inertSubscriptions: readonly InertFieldSubscription[];
   /** Compatible bindings grouped by their generated handler identifier. */
   readonly handlers: readonly ResolvedBindingHandler[];
   readonly issues: readonly BindingAnalysisIssue[];
@@ -172,6 +196,9 @@ const PAGE_NUMBER: BindingSemanticSignature = {
 const FILTER_CRITERIA: BindingSemanticSignature = {
   parameters: [{ name: 'criteria', type: 'Record<string, unknown>' }],
 };
+const ADDRESS_RECORD: BindingSemanticSignature = {
+  parameters: [{ name: 'address', type: 'Record<string, unknown>' }],
+};
 
 /**
  * The finite binding vocabulary code generation can normalize identically in
@@ -198,6 +225,11 @@ export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[
   { id: 'component:Textarea.onChange', scope: 'component', component: 'Textarea', event: 'onChange', kind: 'local', signature: STRING_VALUE },
   { id: 'component:Textarea.onInput', scope: 'component', component: 'Textarea', event: 'onInput', kind: 'local', signature: STRING_VALUE },
   { id: 'component:Textarea.onUpdate', scope: 'component', component: 'Textarea', event: 'onUpdate', kind: 'local', signature: STRING_VALUE },
+  // Sprint 186 wave-2 form controls measured on user-form-showcase.
+  { id: 'component:StatusSelector.onChange', scope: 'component', component: 'StatusSelector', event: 'onChange', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:TagInput.onChange', scope: 'component', component: 'TagInput', event: 'onChange', kind: 'local', signature: STRING_VALUE },
+  // The editor hands the consumer the edited address record; the form owns no local state for it.
+  { id: 'component:AddressEditor.onChange', scope: 'component', component: 'AddressEditor', event: 'onChange', kind: 'domain', signature: ADDRESS_RECORD },
   { id: 'screen:onChange', scope: 'screen', component: '$screen', event: 'onChange', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'screen:onDelete', scope: 'screen', component: '$screen', event: 'onDelete', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'screen:onEdit', scope: 'screen', component: '$screen', event: 'onEdit', kind: 'domain', signature: NO_PARAMETERS },
@@ -210,6 +242,15 @@ export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[
 
 function compareCodePoint(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0;
+}
+
+/** Display components whose saved onChange subscribes to a same-field local writer. */
+const READONLY_FIELD_SUBSCRIBERS: ReadonlySet<string> = new Set(['DetailHeader', 'Text']);
+
+function isReadonlyFieldSubscriber(node: UiElement): boolean {
+  if (READONLY_FIELD_SUBSCRIBERS.has(node.component)) return true;
+  // A pattern-group Stack lowers into its pattern component; its onChange is the pattern's read.
+  return node.component === 'Stack' && node.props?.patternComponent !== undefined;
 }
 
 /** Identifier reserved for state owned by a local binding handler. */
@@ -266,6 +307,8 @@ export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis 
   const occurrences: BindingOccurrence[] = [];
   const issues: BindingAnalysisIssue[] = [];
   const firstPathByNodeId = new Map<string, string>();
+  const nodesById = new Map<string, UiElement>();
+  const readCandidates: Array<{ node: UiElement; handlerName: string; path: string }> = [];
   const invalidLocalHandlers = new Set<string>();
 
   const visit = (node: UiElement, path: string, screenRoot: boolean): void => {
@@ -280,11 +323,20 @@ export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis 
       });
     } else {
       firstPathByNodeId.set(node.id, path);
+      nodesById.set(node.id, node);
     }
 
     const nodeOccurrences: BindingOccurrence[] = [];
     for (const [event, handlerName] of Object.entries(node.bindings ?? {})
       .sort(([left], [right]) => compareCodePoint(left, right))) {
+      // Saved forms bind display nodes (a heading, a Text, a pattern-group
+      // Stack) to the same field/change handler as a writer. Resolve those
+      // reads only after ordinary writer semantics have passed; a display
+      // never acquires a fictitious change event.
+      if (event === 'onChange' && isReadonlyFieldSubscriber(node)) {
+        readCandidates.push({ node, handlerName, path });
+        continue;
+      }
       const definition = findBindingDefinition(node.component, event, screenRoot);
       if (!definition) {
         const occurrence: UnknownBindingOccurrence = {
@@ -388,7 +440,17 @@ export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis 
       continue;
     }
 
-    if (grouped.some((occurrence) => (
+    // Several controls may write one local state when they all edit the same
+    // field with the same signature (a TagInput beside a plain Input for tags);
+    // owners of different or unstated fields stay ambiguous, as do handlers
+    // shared across binding kinds or across unrelated definitions.
+    const sharedField = first.kind === 'local' && grouped.every((occurrence) => {
+      const field = nodesById.get(occurrence.nodeId)?.props?.field;
+      return occurrence.kind === 'local'
+        && typeof field === 'string' && field.trim().length > 0
+        && field === nodesById.get(first.nodeId)?.props?.field;
+    });
+    if (!sharedField && grouped.some((occurrence) => (
       occurrence.kind !== first.kind || occurrence.definitionId !== first.definitionId
     ))) {
       issues.push({
@@ -400,7 +462,7 @@ export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis 
       continue;
     }
 
-    if (first.kind === 'local' && grouped.length > 1) {
+    if (first.kind === 'local' && grouped.length > 1 && !sharedField) {
       issues.push({
         code: 'AMBIGUOUS_HANDLER',
         message: `Local handler ${JSON.stringify(handlerName)} is reused by multiple state owners.`,
@@ -444,9 +506,74 @@ export function analyzeBindings(screens: readonly UiElement[]): BindingAnalysis 
     }
   }
 
+  const readonlyFieldSubscriptions: ReadonlyFieldSubscription[] = [];
+  const inertSubscriptions: InertFieldSubscription[] = [];
+  for (const { node, handlerName, path } of readCandidates) {
+    const field = node.props?.field;
+    const handler = handlers.find((candidate) => candidate.handlerName === handlerName);
+    const writer = handler?.occurrences[0];
+    // A pattern-group Stack's children are the pattern's own field nodes, not authored content.
+    const patternGroup = node.component === 'Stack' && node.props?.patternComponent !== undefined;
+    const validWriters = handler?.kind === 'local' && handler.occurrences.every((occurrence) => (
+      occurrence.kind === 'local'
+      && occurrence.signature.parameters.length === 1
+      && occurrence.signature.parameters[0]?.type === 'string'
+      && nodesById.get(occurrence.nodeId)?.props?.field === field
+    ));
+    let reason: string | undefined;
+    if (typeof field !== 'string' || field.trim().length === 0) {
+      reason = 'requires a non-empty field reference';
+    } else if (!patternGroup && (node.children?.length || node.props?.children !== undefined)) {
+      reason = 'cannot replace authored children with a field subscription';
+    } else if (!occurrences.some((occurrence) => occurrence.handlerName === handlerName)) {
+      // Only an absent declaration is inert; an unknown event still declares
+      // an invalid writer and must not become a plain read by being unresolved.
+      inertSubscriptions.push({
+        nodeId: node.id,
+        component: node.component,
+        event: 'onChange',
+        handlerName,
+        path,
+        field,
+        reason: 'names no local writer; the display renders its field directly',
+      });
+      continue;
+    } else if (handler?.kind !== 'local' || writer?.kind !== 'local' || !validWriters) {
+      reason = handler?.occurrences.length === 1 && handler.kind === 'local' && writer?.kind === 'local'
+        && nodesById.get(writer.nodeId)?.props?.field !== field
+        ? 'requires its writer to reference the same field'
+        : 'requires exactly one valid string local writer with the same handler';
+    }
+
+    if (reason) {
+      issues.push({
+        code: 'INVALID_READONLY_FIELD_SUBSCRIPTION',
+        message: `Read-only binding ${node.component}.onChange ${reason}.`,
+        nodeId: node.id,
+        component: node.component,
+        event: 'onChange',
+        handlerName,
+        path,
+      });
+      continue;
+    }
+
+    readonlyFieldSubscriptions.push({
+      nodeId: node.id,
+      component: node.component as ReadonlyFieldSubscription['component'],
+      event: 'onChange',
+      handlerName,
+      path,
+      field: field as string,
+      writer: writer as LocalBindingOccurrence,
+    });
+  }
+
   return {
     ok: issues.length === 0,
     occurrences,
+    readonlyFieldSubscriptions,
+    inertSubscriptions,
     handlers,
     issues,
   };
@@ -657,6 +784,42 @@ export function resolveFieldProps(
 // Field → component content resolution for codegen prop binding
 // ---------------------------------------------------------------------------
 
+/**
+ * Components whose generic `field` directive lowers to a named data prop
+ * rather than to content or a form value. FilterPanel's HTML renderer reads
+ * `filters`, so the bound field becomes that prop on every target.
+ */
+/**
+ * Pattern-group Stack directives that lowering drops before the pattern
+ * component sees them; historyField and showReason travel with the lowering
+ * because the StatusTimeline contract governs them.
+ */
+export const PATTERN_GROUP_DROPPED_DIRECTIVES: readonly string[] = [
+  'channelsField', 'templatesField', 'policiesField', 'conversationsField', 'labelField', 'showActor',
+];
+
+const FIELD_VALUE_PROP_TARGETS: Readonly<Record<string, string>> = {
+  AddressSummaryBadge: 'role',
+  AddressValidationTimeline: 'events',
+  MembershipAuditTimeline: 'events',
+  FilterPanel: 'filters',
+  TagInput: 'tags',
+  TagManager: 'tags',
+  TagPills: 'tags',
+};
+
+/** The data prop a component's generic field lowers to, when it is not its content or form value. */
+export function fieldValuePropTarget(component: string): string | undefined {
+  return Object.hasOwn(FIELD_VALUE_PROP_TARGETS, component) ? FIELD_VALUE_PROP_TARGETS[component] : undefined;
+}
+
+/**
+ * Components whose generic field names the collection they present or edit
+ * while no renderer reads it as data: the field must exist, and the directive
+ * is consumed without a binding on every target.
+ */
+export const FIELD_CONSUMED_UNBOUND: ReadonlySet<string> = new Set(['AddressCollectionPanel', 'AddressEditor']);
+
 export type FieldContentResolution = {
   /** The content strategy used */
   strategy: ContentStrategy;
@@ -680,11 +843,17 @@ export function resolveChildContent(
   if (typeof fieldProp !== 'string' || !fieldProp) return null;
   if (!ownFieldSchemaEntry(objectSchema, fieldProp)) return null;
 
-  const strategy = getContentStrategy(node.component);
-  if (strategy === 'none') return null;
-
   const fieldName = snakeToCamel(fieldProp);
   const existing = (node.props as Record<string, unknown>) ?? {};
+  if (Object.hasOwn(FIELD_VALUE_PROP_TARGETS, node.component)) {
+    const propName = FIELD_VALUE_PROP_TARGETS[node.component]!;
+    // Don't override an explicitly set data prop
+    if (existing[propName] !== undefined) return null;
+    return { strategy: 'value-prop', fieldName, propName, isChildren: false };
+  }
+
+  const strategy = getContentStrategy(node.component);
+  if (strategy === 'none') return null;
 
   switch (strategy) {
     case 'children':
@@ -718,6 +887,7 @@ export function resolveFrameworkChildContent(
   node: UiElement,
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): FieldContentResolution | null {
+  if (FIELD_CONSUMED_UNBOUND.has(node.component)) return null;
   const sourceField = node.props?.field;
   if (
     node.component === 'RelativeTimestamp'
@@ -795,6 +965,8 @@ export type FrameworkRecipePropBinding = {
   targetProp: string;
   /** Camel-cased object field expression used by both JSX and Vue templates. */
   expression: string;
+  /** True when the expression is an authored literal rather than an object field. */
+  literal?: boolean;
 };
 
 export type FrameworkRecipePropResolution = {
@@ -803,6 +975,10 @@ export type FrameworkRecipePropResolution = {
 };
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  AuditEvent: {
+    typeField: 'event',
+    timestampField: 'timestamp',
+  },
   AuditTimeline: {
     auditLogField: 'auditLog',
   },
@@ -811,6 +987,17 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
     requestedAtField: 'requestedAt',
     reasonField: 'reason',
     codeField: 'code',
+  },
+  CardHeader: {
+    titleField: 'title',
+    supportingField: 'supporting',
+  },
+  DetailHeader: {
+    titleField: 'title',
+    subtitleField: 'subtitle',
+  },
+  FilterPanel: {
+    activeField: 'activeFilters',
   },
   PaginationBar: {
     pageField: 'page',
@@ -823,6 +1010,32 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
     currencyField: 'currency',
     intervalField: 'data-interval',
   },
+  MessageEventTimeline: {
+    messagesField: 'messages',
+    statusesField: 'statuses',
+  },
+  PreferenceEditor: {
+    namespacesField: 'namespaces',
+  },
+  PreferenceSummaryBadge: {
+    versionField: 'version',
+  },
+  RoleAssignmentForm: {
+    availableRolesField: 'availableRoles',
+  },
+  TemplatePicker: {
+    templatesField: 'templates',
+    channelsField: 'channels',
+  },
+  PriceSummary: {
+    amountField: 'amount',
+    currencyField: 'currency',
+    modelField: 'model',
+    intervalField: 'interval',
+  },
+  RoleBadgeList: {
+    rolesField: 'roles',
+  },
   StatusBadge: {
     statusField: 'status',
     domainField: 'domain',
@@ -833,19 +1046,61 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
 };
 
 const RECIPE_PARAMETER_PROPS = new Set([
+  'allowCustomParameter',
+  'allowDynamicParameter',
+  'allowListParameter',
   'clearableParameter',
+  'collapsibleParameter',
   'debounceParameter',
+  'defaultRoleParameter',
   'eventOptionsParameter',
+  'fallbackRoleParameter',
+  'initialParameter',
   'minorUnitsParameter',
+  'maxLengthParameter',
+  'maxTagsParameter',
+  'minLengthParameter',
   'minQueryLengthParameter',
+  'modeParameter',
+  'moderationParameter',
+  'optionsParameter',
   'pageSizeOptionsParameter',
   'placeholderParameter',
+  'registryNamespaceParameter',
+  'requireReasonParameter',
+  'roleParameter',
   'showGotoPageParameter',
   'showItemRangeParameter',
   'showPageSizeSelectorParameter',
   'statesParameter',
+  'synonymParameter',
   'timezoneParameter',
 ]);
+
+/**
+ * Recipe field directives consumed without a runtime binding. The HTML
+ * renderer reads none of their targets as component data, so lowering them
+ * would invent a prop; each is named in the component's contract record.
+ */
+export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
+  AddressCollectionPanel: ['roleField', 'defaultRoleField'],
+  AddressEditor: ['defaultRoleField'],
+  ClassificationPanel: ['categoriesField', 'tagsField', 'metadataField'],
+  MembershipPanel: ['membershipsField', 'hierarchyField', 'roleField', 'permissionField'],
+  MessageStatusBadge: ['statusesField'],
+  PreferenceEditor: ['documentField'],
+  PreferencePanel: ['preferencesField', 'metadataField', 'namespaceField'],
+  PreferenceSummaryBadge: ['namespacesField'],
+  RoleAssignmentForm: ['membershipField'],
+  StatusSelector: ['allowedTransitionsField'],
+  PreferenceTimeline: ['metadataField'],
+  PriceSummary: ['taxBehaviorField'],
+  // The composer's field description lands on TagPills as label; renderTagPills never reads it.
+  TagPills: ['label'],
+  // A layout container reads no data; the composer still writes trait directives onto pattern-group Stacks.
+  // `as` reaches a Stack when the form composer expands a heading title slot into several components.
+  Stack: ['as', 'channelsField', 'templatesField', 'policiesField', 'conversationsField', 'historyField', 'labelField', 'showActor', 'showReason'],
+};
 
 /**
  * Convert object recipe metadata (`amountField`, `historyField`, etc.) into
@@ -886,6 +1141,12 @@ export function resolveFrameworkRecipeProps(
   for (const parameterProp of RECIPE_PARAMETER_PROPS) {
     if (Object.hasOwn(props, parameterProp)) consumedProps.add(parameterProp);
   }
+  const unboundDirectives = Object.hasOwn(RECIPE_UNBOUND_DIRECTIVES, node.component)
+    ? RECIPE_UNBOUND_DIRECTIVES[node.component]!
+    : [];
+  for (const directive of unboundDirectives) {
+    if (Object.hasOwn(props, directive)) consumedProps.add(directive);
+  }
 
   // The historical recipe calls the source `states`, while the materialized
   // object field is the semantically narrower list of valid next transitions.
@@ -900,6 +1161,21 @@ export function resolveFrameworkRecipeProps(
       targetProp: 'allowedTransitions',
       expression: 'allowedTransitions',
     });
+  }
+
+  // Saved detail headers author their heading level as `headingLevel`; the
+  // runtime prop is `level`. Only an in-range integer lowers; anything else is
+  // left for the build-profile prop check to reject.
+  if (node.component === 'DetailHeader' && Object.hasOwn(props, 'headingLevel')) {
+    consumedProps.add('headingLevel');
+    const level = props.headingLevel;
+    if (
+      typeof level === 'number' && Number.isInteger(level) && level >= 1 && level <= 6
+      && props.level === undefined && !boundTargets.has('level')
+    ) {
+      bindings.push({ sourceProp: 'headingLevel', targetProp: 'level', expression: String(level), literal: true });
+      boundTargets.add('level');
+    }
   }
 
   // RelativeTimestamp's fallback participates in its primary `datetime`

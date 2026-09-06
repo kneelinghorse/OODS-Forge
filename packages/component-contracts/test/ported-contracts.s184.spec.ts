@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import portedCapabilityOverlay from '../registry/component-capability-ported-surfaces.v1.json';
 import {
   NUCLEUS_COMPONENT_IDS,
   PORTED_COMPONENT_IDS,
@@ -16,10 +15,6 @@ import {
   sharedScenarios,
 } from '../src/index.js';
 
-const EXPECTED_NUCLEUS_IDS = [
-  'Badge', 'Banner', 'Button', 'Card', 'Checkbox', 'DatePicker', 'Grid',
-  'Input', 'Select', 'Stack', 'Table', 'Tabs', 'Text', 'Textarea',
-] as const;
 const EXPECTED_PORTED_IDS = [
   'AuditTimeline',
   'CancellationSummary',
@@ -38,21 +33,22 @@ function sha256(repositoryPath: string): string {
   return createHash('sha256').update(contents).digest('hex');
 }
 
-describe('Sprint 184 separate ported component truth plane', () => {
-  it('keeps the foundation nucleus and scenarios exactly at the original 14 IDs', () => {
-    expect(NUCLEUS_COMPONENT_IDS).toEqual(EXPECTED_NUCLEUS_IDS);
-    expect(Object.keys(componentContracts)).toEqual(EXPECTED_NUCLEUS_IDS);
-    expect(sharedScenarios.map(({ oodsComponentId }) => oodsComponentId)).toEqual(
-      EXPECTED_NUCLEUS_IDS,
+describe('Sprint 184 historical port compatibility within the canonical nucleus', () => {
+  it('keys the nucleus contracts and scenarios exactly by NUCLEUS_COMPONENT_IDS', () => {
+    expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
+    expect(sharedScenarios.map(({ oodsComponentId }) => oodsComponentId).sort()).toEqual(
+      [...NUCLEUS_COMPONENT_IDS].sort(),
     );
     expect(componentContracts).toHaveProperty('Select.version', '1.1.0');
-    expect(componentContracts).not.toHaveProperty('StatusBadge');
+    expect(componentContracts.StatusBadge).toBe(portedComponentContracts.StatusBadge);
   });
 
-  it('defines exactly the disjoint, code-point-sorted eight-component port tranche', () => {
+  it('derives the historical eight-component compatibility views from the canonical nucleus', () => {
     expect(PORTED_COMPONENT_IDS).toEqual(EXPECTED_PORTED_IDS);
     expect(PORTED_COMPONENT_IDS).toEqual([...PORTED_COMPONENT_IDS].sort());
-    expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(22);
+    expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(
+      NUCLEUS_COMPONENT_IDS.length,
+    );
     expect(Object.keys(portedComponentContracts)).toEqual(EXPECTED_PORTED_IDS);
     expect(portedScenarios.map(({ oodsComponentId }) => oodsComponentId)).toEqual(
       EXPECTED_PORTED_IDS,
@@ -61,6 +57,9 @@ describe('Sprint 184 separate ported component truth plane', () => {
     for (const componentId of PORTED_COMPONENT_IDS) {
       const contract = portedComponentContracts[componentId];
       const scenario = portedScenarios.find((entry) => entry.oodsComponentId === componentId);
+      expect(NUCLEUS_COMPONENT_IDS).toContain(componentId);
+      expect(contract).toBe(componentContracts[componentId]);
+      expect(scenario).toBe(sharedScenarios.find((entry) => entry.oodsComponentId === componentId));
       expect(contract.id).toBe(componentId);
       expect(new Set(contract.props).size).toBe(contract.props.length);
       expect(contract.accessibility.length).toBeGreaterThan(0);
@@ -70,26 +69,24 @@ describe('Sprint 184 separate ported component truth plane', () => {
     }
   });
 
-  it('carries exactly 24 separate surface cells without moving the 109-row denominator', () => {
+  it('preserves the historical cohort surface evidence on its existing baseline identities', () => {
+    // Decision 1726: surface evidence belongs to existing identities, not a second overlay.
     expect(componentCapabilityBaseline.rows).toHaveLength(109);
     expect(componentCapabilityBaseline.controllingObligationDenominator).toBe(109);
-    expect(portedCapabilityOverlay.controllingObligationDenominator).toBe(109);
-    expect(portedCapabilityOverlay.nucleusDisposition).toBe(
-      'separate-overlay-no-foundation-v1-promotion',
-    );
-    expect(portedCapabilityOverlay.rows.map(({ id }) => id)).toEqual(EXPECTED_PORTED_IDS);
-    expect(portedCapabilityOverlay.rows.flatMap(({ surfaces }) => Object.keys(surfaces))).toHaveLength(24);
-    for (const row of portedCapabilityOverlay.rows) {
-      expect(Object.keys(row.surfaces)).toEqual(['react', 'vue', 'generatedConsumer']);
-      expect(Object.values(row.surfaces).every(({ state }) => (
+    const portedRows = componentCapabilityBaseline.rows.filter(({ id }) => EXPECTED_PORTED_IDS.includes(id as typeof EXPECTED_PORTED_IDS[number]));
+    expect(portedRows.map(({ id }) => id)).toEqual(EXPECTED_PORTED_IDS);
+    const surfaces = ['react', 'vue', 'generatedConsumer'] as const;
+    expect(portedRows.flatMap(row => surfaces.map(surface => row.surfaces[surface])))
+      .toHaveLength(EXPECTED_PORTED_IDS.length * surfaces.length);
+    for (const row of portedRows) {
+      expect(surfaces.map(surface => row.surfaces[surface]).every(({ state }) => (
         state === 'implemented-evidence-complete'
       ))).toBe(true);
     }
   });
 
-  it('leaves the frozen capability and foundation-v1 projections byte-identical', () => {
-    expect(sha256('packages/component-contracts/registry/component-capability-baseline.v1.json'))
-      .toBe('c4d237cff92448f224d5ec7717816fb85418781e397955ed66536ffaf9ac142f');
+  it('leaves the historical foundation-v1 projection byte-identical', () => {
+    // baseline-fold.s185.spec.ts asserts the mutable baseline's structural boundary.
     expect(sha256('packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json'))
       .toBe('7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71');
   });

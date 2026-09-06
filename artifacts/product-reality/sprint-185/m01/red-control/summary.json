@@ -1,0 +1,920 @@
+{
+  "schemaVersion": "1.0.0",
+  "sprintId": "sprint-185",
+  "missionId": "s185-m01",
+  "kind": "nucleus-pin-control-red",
+  "mode": "red",
+  "workspace": "/Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge",
+  "measuredHead": "1118f436345e160437abfedbe73a19f190a92562",
+  "mutation": {
+    "patch": "../../s185/OODS-Forge/artifacts/product-reality/sprint-185/m01/red-control/mutation.patch",
+    "sha256": "3538d1fec9a495acaf9f2bd884b0577f95662774d66c7c74bc2a455f899f2738"
+  },
+  "host": {
+    "hostname": "Mac",
+    "platform": "darwin",
+    "release": "25.3.0",
+    "architecture": "arm64",
+    "cpuModel": "Apple M2",
+    "cpuCount": 8,
+    "node": "v24.6.0"
+  },
+  "cleanBefore": {
+    "porcelain": [],
+    "forbiddenLeaks": [],
+    "clean": true,
+    "ownOutputEntries": 0
+  },
+  "subset": null,
+  "allowDirty": false,
+  "steps": [
+    {
+      "id": "git-apply-check",
+      "command": "git apply --check /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/artifacts/product-reality/sprint-185/m01/red-control/mutation.patch",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:38.416Z",
+      "endedAt": "2026-09-06T01:02:38.433Z",
+      "durationMs": 16.527209,
+      "loadAverage": [
+        6.73583984375,
+        7.2392578125,
+        11.97265625
+      ],
+      "log": {
+        "path": "logs/git-apply-check.log",
+        "bytes": 264,
+        "sha256": "371653271656972c8a7a2bd51cd5962f99c601af00e1b771984aaa9433f3f53f"
+      }
+    },
+    {
+      "id": "git-apply",
+      "command": "git apply /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/artifacts/product-reality/sprint-185/m01/red-control/mutation.patch",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:38.433Z",
+      "endedAt": "2026-09-06T01:02:38.446Z",
+      "durationMs": 12.887542,
+      "loadAverage": [
+        6.73583984375,
+        7.2392578125,
+        11.97265625
+      ],
+      "log": {
+        "path": "logs/git-apply.log",
+        "bytes": 256,
+        "sha256": "ffb84cf9af874ccf44766dfc67dab0eec53a0cb3c626f021ceff9ca014a4011d"
+      }
+    },
+    {
+      "id": "build-component-contracts",
+      "command": "pnpm --filter @oods/component-contracts run build",
+      "cwd": ".",
+      "exitCode": 1,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:38.465Z",
+      "endedAt": "2026-09-06T01:02:40.363Z",
+      "durationMs": 1898.24625,
+      "loadAverage": [
+        6.73583984375,
+        7.2392578125,
+        11.97265625
+      ],
+      "log": {
+        "path": "logs/build-component-contracts.log",
+        "bytes": 2248,
+        "sha256": "e0a472224d7ed7d9f8e8b8ef8954f4841a6fd9a3caca4ae05399080a37847cdc"
+      }
+    },
+    {
+      "id": "build-component-contracts-js-only",
+      "command": "pnpm --filter @oods/component-contracts exec tsup --config tsup.config.ts --no-dts",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:40.364Z",
+      "endedAt": "2026-09-06T01:02:41.043Z",
+      "durationMs": 679.678833,
+      "loadAverage": [
+        6.73583984375,
+        7.2392578125,
+        11.97265625
+      ],
+      "log": {
+        "path": "logs/build-component-contracts-js-only.log",
+        "bytes": 621,
+        "sha256": "2dde3c868037ce126d6f005ce6f86dc31b12356a1d45de658fae074d0a552d28"
+      }
+    },
+    {
+      "id": "build-component-contracts-declarations",
+      "command": "pnpm --filter @oods/component-contracts exec tsc -p tsconfig.json --declaration --emitDeclarationOnly --noEmitOnError false --outDir dist --pretty false",
+      "cwd": ".",
+      "exitCode": 1,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:41.044Z",
+      "endedAt": "2026-09-06T01:02:43.148Z",
+      "durationMs": 2104.327458,
+      "loadAverage": [
+        8.6787109375,
+        7.63330078125,
+        12.083984375
+      ],
+      "log": {
+        "path": "logs/build-component-contracts-declarations.log",
+        "bytes": 1177,
+        "sha256": "9bedbab9de80665d813cee85e5371f24ad9bdf325c23a47caeac1594091e85a6"
+      }
+    },
+    {
+      "id": "typecheck-root",
+      "command": "pnpm typecheck",
+      "cwd": ".",
+      "exitCode": 2,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:43.150Z",
+      "endedAt": "2026-09-06T01:02:57.138Z",
+      "durationMs": 13988.096833,
+      "loadAverage": [
+        8.57373046875,
+        7.64501953125,
+        12.03564453125
+      ],
+      "log": {
+        "path": "logs/typecheck-root.log",
+        "bytes": 1409,
+        "sha256": "5d56d0c6c2d32dc71a44867fec0243829a5100f8f60ac56aaf245deecd7c73cb"
+      }
+    },
+    {
+      "id": "typecheck-component-contracts",
+      "command": "pnpm --filter @oods/component-contracts run typecheck",
+      "cwd": ".",
+      "exitCode": 2,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:57.142Z",
+      "endedAt": "2026-09-06T01:02:58.276Z",
+      "durationMs": 1134.58225,
+      "loadAverage": [
+        9.80859375,
+        7.91650390625,
+        12.10546875
+      ],
+      "log": {
+        "path": "logs/typecheck-component-contracts.log",
+        "bytes": 1302,
+        "sha256": "2977ac40bf1db89babe70fd344ed5cf2c79968af9fffb0115ae572ec42772b4f"
+      }
+    },
+    {
+      "id": "typecheck-components-react",
+      "command": "pnpm --filter @oods/components-react run typecheck",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:58.278Z",
+      "endedAt": "2026-09-06T01:02:59.654Z",
+      "durationMs": 1375.636584,
+      "loadAverage": [
+        9.80859375,
+        7.91650390625,
+        12.10546875
+      ],
+      "log": {
+        "path": "logs/typecheck-components-react.log",
+        "bytes": 353,
+        "sha256": "a2510916a96ef386451231f56a3aa729dafd0189cf8f8613e3790f9a8a8ea907"
+      }
+    },
+    {
+      "id": "typecheck-components-vue",
+      "command": "pnpm --filter @oods/components-vue run typecheck",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:02:59.654Z",
+      "endedAt": "2026-09-06T01:03:02.527Z",
+      "durationMs": 2872.818292,
+      "loadAverage": [
+        9.80859375,
+        7.91650390625,
+        12.10546875
+      ],
+      "log": {
+        "path": "logs/typecheck-components-vue.log",
+        "bytes": 351,
+        "sha256": "2044c09c5304f7d6e3dcb007ab9e16a0c7a9f4ea235fd16e899c97ecc200cefe"
+      }
+    },
+    {
+      "id": "typecheck-component-styles",
+      "command": "pnpm --filter @oods/component-styles run typecheck",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:03:02.528Z",
+      "endedAt": "2026-09-06T01:03:04.117Z",
+      "durationMs": 1589.001958,
+      "loadAverage": [
+        9.18310546875,
+        7.81787109375,
+        12.0458984375
+      ],
+      "log": {
+        "path": "logs/typecheck-component-styles.log",
+        "bytes": 353,
+        "sha256": "3022e4c8c9d4645229433c7443bcc9d03ec49ddad990cf2a6dcdd3f25739010f"
+      }
+    },
+    {
+      "id": "typecheck-mcp-server",
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit --pretty false -p tsconfig.json",
+      "cwd": ".",
+      "exitCode": 1,
+      "signal": null,
+      "startedAt": "2026-09-06T01:03:04.119Z",
+      "endedAt": "2026-09-06T01:03:09.473Z",
+      "durationMs": 5354.485917,
+      "loadAverage": [
+        8.927734375,
+        7.78759765625,
+        12.01025390625
+      ],
+      "log": {
+        "path": "logs/typecheck-mcp-server.log",
+        "bytes": 841,
+        "sha256": "be89beff3a0e35264039461063e2b73b5fe705b82613fc60960f175420c8d37f"
+      }
+    },
+    {
+      "id": "test-component-contracts",
+      "command": "pnpm --filter @oods/component-contracts exec vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-red-Kv67Vz/test-component-contracts.json",
+      "cwd": ".",
+      "exitCode": 1,
+      "signal": null,
+      "startedAt": "2026-09-06T01:03:09.475Z",
+      "endedAt": "2026-09-06T01:03:11.917Z",
+      "durationMs": 2442.647083,
+      "loadAverage": [
+        8.927734375,
+        7.78759765625,
+        12.01025390625
+      ],
+      "log": {
+        "path": "logs/test-component-contracts.log",
+        "bytes": 6133,
+        "sha256": "9ca373b970a82433af5bd7ceea8c3ad7f20f16687096694d3db40e731ccf07a9"
+      }
+    },
+    {
+      "id": "test-components-react",
+      "command": "pnpm --filter @oods/components-react exec vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-red-Kv67Vz/test-components-react.json",
+      "cwd": ".",
+      "exitCode": 1,
+      "signal": null,
+      "startedAt": "2026-09-06T01:03:11.921Z",
+      "endedAt": "2026-09-06T01:03:16.334Z",
+      "durationMs": 4412.86,
+      "loadAverage": [
+        8.61279296875,
+        7.7412109375,
+        11.96875
+      ],
+      "log": {
+        "path": "logs/test-components-react.log",
+        "bytes": 6863,
+        "sha256": "b775ea13ea9b5fb8965abc83e2b422886ed1078e19871e6ddfd6fe3505dd7d6d"
+      }
+    },
+    {
+      "id": "test-components-vue",
+      "command": "pnpm --filter @oods/components-vue exec vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-red-Kv67Vz/test-components-vue.json",
+      "cwd": ".",
+      "exitCode": 1,
+      "signal": null,
+      "startedAt": "2026-09-06T01:03:16.337Z",
+      "endedAt": "2026-09-06T01:03:22.813Z",
+      "durationMs": 6475.891542,
+      "loadAverage": [
+        14.04638671875,
+        8.93408203125,
+        12.3427734375
+      ],
+      "log": {
+        "path": "logs/test-components-vue.log",
+        "bytes": 12195,
+        "sha256": "e4c7c4704fc9975016cd5b08929d7ae77eab39749a9bbac0206f2ea662788b8d"
+      }
+    },
+    {
+      "id": "test-component-styles",
+      "command": "pnpm --filter @oods/component-styles exec vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-red-Kv67Vz/test-component-styles.json",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:03:22.819Z",
+      "endedAt": "2026-09-06T01:03:27.439Z",
+      "durationMs": 4620.254334,
+      "loadAverage": [
+        14.04638671875,
+        8.93408203125,
+        12.3427734375
+      ],
+      "log": {
+        "path": "logs/test-component-styles.log",
+        "bytes": 1044,
+        "sha256": "b7c3320502f54517832013450c8324c46dad4ac396432d5280855645e5d4a4d0"
+      }
+    },
+    {
+      "id": "test-mcp-server-product-reality",
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-red-Kv67Vz/test-mcp-server-product-reality.json",
+      "cwd": ".",
+      "exitCode": 1,
+      "signal": null,
+      "startedAt": "2026-09-06T01:03:27.440Z",
+      "endedAt": "2026-09-06T01:09:19.993Z",
+      "durationMs": 352548.999042,
+      "loadAverage": [
+        25.6015625,
+        14.3330078125,
+        13.4384765625
+      ],
+      "log": {
+        "path": "logs/test-mcp-server-product-reality.log",
+        "bytes": 50747,
+        "sha256": "c3833d14b134a09a0a355def5ab3ea1ada01fa8048be4272620719d91cd29cf5"
+      }
+    },
+    {
+      "id": "git-apply-reverse",
+      "command": "git apply -R /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/artifacts/product-reality/sprint-185/m01/red-control/mutation.patch",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:09:20.028Z",
+      "endedAt": "2026-09-06T01:09:20.071Z",
+      "durationMs": 43.299542,
+      "loadAverage": [
+        25.6015625,
+        14.3330078125,
+        13.4384765625
+      ],
+      "log": {
+        "path": "logs/git-apply-reverse.log",
+        "bytes": 259,
+        "sha256": "d6ef448686b8cb68135d49e933542b861f07519aec170464f406945ab585a34f"
+      }
+    },
+    {
+      "id": "rebuild-component-contracts",
+      "command": "pnpm --filter @oods/component-contracts run build",
+      "cwd": ".",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-09-06T01:09:20.072Z",
+      "endedAt": "2026-09-06T01:09:24.858Z",
+      "durationMs": 4786.079709,
+      "loadAverage": [
+        26.51416015625,
+        14.708984375,
+        13.576171875
+      ],
+      "log": {
+        "path": "logs/rebuild-component-contracts.log",
+        "bytes": 875,
+        "sha256": "0860525b837aa09a1bd6ddf7cf87a16fce2023d6d503f52b13732c1689176d3b"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "typecheck-root",
+      "kind": "typecheck",
+      "exitCode": 2,
+      "errorCount": 2,
+      "log": {
+        "path": "logs/typecheck-root.log",
+        "bytes": 1409,
+        "sha256": "5d56d0c6c2d32dc71a44867fec0243829a5100f8f60ac56aaf245deecd7c73cb"
+      }
+    },
+    {
+      "id": "typecheck-component-contracts",
+      "kind": "typecheck",
+      "exitCode": 2,
+      "errorCount": 1,
+      "log": {
+        "path": "logs/typecheck-component-contracts.log",
+        "bytes": 1302,
+        "sha256": "2977ac40bf1db89babe70fd344ed5cf2c79968af9fffb0115ae572ec42772b4f"
+      }
+    },
+    {
+      "id": "typecheck-components-react",
+      "kind": "typecheck",
+      "exitCode": 0,
+      "errorCount": 0,
+      "log": {
+        "path": "logs/typecheck-components-react.log",
+        "bytes": 353,
+        "sha256": "a2510916a96ef386451231f56a3aa729dafd0189cf8f8613e3790f9a8a8ea907"
+      }
+    },
+    {
+      "id": "typecheck-components-vue",
+      "kind": "typecheck",
+      "exitCode": 0,
+      "errorCount": 0,
+      "log": {
+        "path": "logs/typecheck-components-vue.log",
+        "bytes": 351,
+        "sha256": "2044c09c5304f7d6e3dcb007ab9e16a0c7a9f4ea235fd16e899c97ecc200cefe"
+      }
+    },
+    {
+      "id": "typecheck-component-styles",
+      "kind": "typecheck",
+      "exitCode": 0,
+      "errorCount": 0,
+      "log": {
+        "path": "logs/typecheck-component-styles.log",
+        "bytes": 353,
+        "sha256": "3022e4c8c9d4645229433c7443bcc9d03ec49ddad990cf2a6dcdd3f25739010f"
+      }
+    },
+    {
+      "id": "typecheck-mcp-server",
+      "kind": "typecheck",
+      "exitCode": 1,
+      "errorCount": 1,
+      "log": {
+        "path": "logs/typecheck-mcp-server.log",
+        "bytes": 841,
+        "sha256": "be89beff3a0e35264039461063e2b73b5fe705b82613fc60960f175420c8d37f"
+      }
+    },
+    {
+      "id": "test-component-contracts",
+      "kind": "vitest",
+      "exitCode": 1,
+      "files": {
+        "total": 4,
+        "failed": 2
+      },
+      "tests": {
+        "total": 15,
+        "passed": 12,
+        "failed": 3,
+        "skipped": 0
+      },
+      "failureCount": 3,
+      "reportError": null,
+      "log": {
+        "path": "logs/test-component-contracts.log",
+        "bytes": 6133,
+        "sha256": "9ca373b970a82433af5bd7ceea8c3ad7f20f16687096694d3db40e731ccf07a9"
+      }
+    },
+    {
+      "id": "test-components-react",
+      "kind": "vitest",
+      "exitCode": 1,
+      "files": {
+        "total": 11,
+        "failed": 2
+      },
+      "tests": {
+        "total": 49,
+        "passed": 46,
+        "failed": 3,
+        "skipped": 0
+      },
+      "failureCount": 3,
+      "reportError": null,
+      "log": {
+        "path": "logs/test-components-react.log",
+        "bytes": 6863,
+        "sha256": "b775ea13ea9b5fb8965abc83e2b422886ed1078e19871e6ddfd6fe3505dd7d6d"
+      }
+    },
+    {
+      "id": "test-components-vue",
+      "kind": "vitest",
+      "exitCode": 1,
+      "files": {
+        "total": 11,
+        "failed": 3
+      },
+      "tests": {
+        "total": 50,
+        "passed": 46,
+        "failed": 4,
+        "skipped": 0
+      },
+      "failureCount": 4,
+      "reportError": null,
+      "log": {
+        "path": "logs/test-components-vue.log",
+        "bytes": 12195,
+        "sha256": "e4c7c4704fc9975016cd5b08929d7ae77eab39749a9bbac0206f2ea662788b8d"
+      }
+    },
+    {
+      "id": "test-component-styles",
+      "kind": "vitest",
+      "exitCode": 0,
+      "files": {
+        "total": 3,
+        "failed": 0
+      },
+      "tests": {
+        "total": 18,
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0
+      },
+      "failureCount": 0,
+      "reportError": null,
+      "log": {
+        "path": "logs/test-component-styles.log",
+        "bytes": 1044,
+        "sha256": "b7c3320502f54517832013450c8324c46dad4ac396432d5280855645e5d4a4d0"
+      }
+    },
+    {
+      "id": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "exitCode": 1,
+      "files": {
+        "total": 31,
+        "failed": 8
+      },
+      "tests": {
+        "total": 370,
+        "passed": 316,
+        "failed": 7,
+        "skipped": 47
+      },
+      "failureCount": 7,
+      "reportError": null,
+      "log": {
+        "path": "logs/test-mcp-server-product-reality.log",
+        "bytes": 50747,
+        "sha256": "c3833d14b134a09a0a355def5ab3ea1ada01fa8048be4272620719d91cd29cf5"
+      }
+    }
+  ],
+  "failures": [
+    {
+      "check": "typecheck-root",
+      "kind": "typescript",
+      "file": "packages/component-contracts/src/contracts.ts",
+      "line": 6,
+      "code": "TS2741",
+      "message": "Property 'DetailHeader' is missing in type '{ Badge: { id: \"Badge\"; version: \"1.0.0\"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: \"Banner\"; version: \"1.0.0\"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<\"Badge\" | \"Banner\" | \"Button\" | \"Card\" | \"Text\" | \"DatePicker\" | \"Input\" | \"Checkbox\" | \"Select\" | \"Textarea\" | \"Grid\" | \"Stack\" | \"Table\" | \"Tabs\" | \"DetailHeader\", ComponentContract>>'.",
+      "reason": "typescript-totality",
+      "forbiddenHits": [],
+      "source": "export const componentContracts: Readonly<Record<NucleusComponentId, ComponentContract>> = {"
+    },
+    {
+      "check": "typecheck-root",
+      "kind": "typescript",
+      "file": "packages/mcp-server/src/codegen/target-contracts.ts",
+      "line": 261,
+      "code": "TS2741",
+      "message": "Property 'DetailHeader' is missing in type '{ AuditTimeline: { title: PropValueContract; events: PropValueContract; history: PropValueContract; entries: PropValueContract; ... 10 more ...; showReason: PropValueContract; }; ... 20 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<GovernedComponentId, Readonly<Record<string, PropValueContract>>>>'.",
+      "reason": "typescript-totality",
+      "forbiddenHits": [],
+      "source": "const PROP_VALUE_CONTRACTS: Readonly<"
+    },
+    {
+      "check": "typecheck-component-contracts",
+      "kind": "typescript",
+      "file": "packages/component-contracts/src/contracts.ts",
+      "line": 6,
+      "code": "TS2741",
+      "message": "Property 'DetailHeader' is missing in type '{ Badge: { id: \"Badge\"; version: \"1.0.0\"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: \"Banner\"; version: \"1.0.0\"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<\"Badge\" | \"Banner\" | \"Button\" | \"Card\" | \"Checkbox\" | \"DatePicker\" | \"DetailHeader\" | \"Grid\" | \"Input\" | \"Select\" | \"Stack\" | \"Table\" | \"Tabs\" | \"Text\" | \"Textarea\", ComponentContract>>'.",
+      "reason": "typescript-totality",
+      "forbiddenHits": [],
+      "source": "export const componentContracts: Readonly<Record<NucleusComponentId, ComponentContract>> = {"
+    },
+    {
+      "check": "typecheck-mcp-server",
+      "kind": "typescript",
+      "file": "packages/mcp-server/src/codegen/target-contracts.ts",
+      "line": 261,
+      "code": "TS2741",
+      "message": "Property 'DetailHeader' is missing in type '{ AuditTimeline: { title: PropValueContract; events: PropValueContract; history: PropValueContract; entries: PropValueContract; ... 10 more ...; showReason: PropValueContract; }; ... 20 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<GovernedComponentId, Readonly<Record<string, PropValueContract>>>>'.",
+      "reason": "typescript-totality",
+      "forbiddenHits": [],
+      "source": "const PROP_VALUE_CONTRACTS: Readonly<"
+    },
+    {
+      "check": "test-component-contracts",
+      "kind": "vitest",
+      "file": "packages/component-contracts/test/contracts.spec.ts",
+      "line": 69,
+      "test": "Sprint 182 canonical component truth plane versions exactly the locked 14 contracts and explicit nondegenerate scenarios",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());"
+    },
+    {
+      "check": "test-component-contracts",
+      "kind": "vitest",
+      "file": "packages/component-contracts/test/ported-contracts.s184.spec.ts",
+      "line": 43,
+      "test": "Sprint 184 separate ported component truth plane keeps the foundation nucleus and scenarios exactly at the original 14 IDs",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(12) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(11) ]",
+      "reason": "frozen-literal",
+      "forbiddenHits": [
+        "source:hand-written-id-list"
+      ],
+      "source": "    expect(NUCLEUS_COMPONENT_IDS).toEqual(EXPECTED_NUCLEUS_IDS);"
+    },
+    {
+      "check": "test-component-contracts",
+      "kind": "vitest",
+      "file": "packages/component-contracts/test/ported-contracts.s184.spec.ts",
+      "line": 55,
+      "test": "Sprint 184 separate ported component truth plane defines exactly the disjoint, code-point-sorted eight-component port tranche",
+      "message": "AssertionError: expected 23 to be 22 // Object.is equality",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(22);"
+    },
+    {
+      "check": "test-components-react",
+      "kind": "vitest",
+      "file": "packages/components-react/test/package-contract.spec.ts",
+      "line": 71,
+      "test": "@oods/components-react package contract B-05 exports the exact React nucleus with public declarations",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(Object.keys(reactPackage).sort()).toEqual([...canonicalIds].sort());"
+    },
+    {
+      "check": "test-components-react",
+      "kind": "vitest",
+      "file": "packages/components-react/test/package-contract.spec.ts",
+      "line": 166,
+      "test": "@oods/components-react package contract publishes 14 independently derived React emission-eligibility rows",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(readiness.rows.map(row => row.componentId)).toEqual(canonicalIds);"
+    },
+    {
+      "check": "test-components-react",
+      "kind": "vitest",
+      "file": "packages/components-react/test/scenarios.spec.tsx",
+      "line": 14,
+      "test": "@oods/components-react shared scenarios maps exactly one frozen nondegenerate scenario to every canonical component",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(sharedScenarios.map(scenario => scenario.oodsComponentId)).toEqual("
+    },
+    {
+      "check": "test-components-vue",
+      "kind": "vitest",
+      "file": "packages/components-vue/test/package-contract.spec.ts",
+      "line": 60,
+      "test": "@oods/components-vue package contract B-08 exports the exact Vue nucleus with public declarations",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(runtimeCanonical).toEqual(canonicalIds);"
+    },
+    {
+      "check": "test-components-vue",
+      "kind": "vitest",
+      "file": "packages/components-vue/test/package-contract.spec.ts",
+      "line": 119,
+      "test": "@oods/components-vue package contract publishes 14 independently derived Vue emission-eligibility rows",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(readiness.rows.map((row) => row.componentId)).toEqual(canonicalIds);"
+    },
+    {
+      "check": "test-components-vue",
+      "kind": "vitest",
+      "file": "packages/components-vue/test/scenarios.spec.ts",
+      "line": 51,
+      "test": "@oods/components-vue shared scenarios maps exactly one frozen nondegenerate scenario to every canonical component",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(sharedScenarios.map((scenario) => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);"
+    },
+    {
+      "check": "test-components-vue",
+      "kind": "vitest",
+      "file": "packages/components-vue/test/ssr.spec.ts",
+      "line": 64,
+      "test": "@oods/components-vue server rendering SSR-renders all 14 canonical component families with semantic markup",
+      "message": "AssertionError: DetailHeader: expected '<main><span class=\"oods-badge\" data-o…' to contain 'data-oods-component=\"DetailHeader\"'",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "      expect(html, componentId).toContain(`data-oods-component=\"${componentId}\"`);"
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "packages/mcp-server/test/product-reality/contract-resolution.s184.spec.ts",
+      "line": 193,
+      "test": "Sprint 184 m03 contract-resolution closeout versions exactly Select, Stack, and Text at 1.1.0 without moving the nucleus key set",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]",
+      "reason": "derived-coverage",
+      "forbiddenHits": [],
+      "source": "    expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());"
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "src/contracts.ts",
+      "line": 6,
+      "test": "Sprint 184 m06 real consumer gate bites executes one unique red mutation for every gate on both framework targets",
+      "message": "Error: pack @oods/component-contracts failed (1)\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.\n\n> @oods/component-contracts@0.1.0 prepack\n> pnpm run build\n\nsrc/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: \"Badge\"; version: \"1.0.0\"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: \"Banner\"; version: \"1.0.0\"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<\"Badge\" | \"Banner\" | \"Button\" | \"Card\" | \"Checkbox\" | \"DatePicker\" | \"DetailHeader\" | \"Grid\" | \"Input\" | \"Select\" | \"Stack\" | \"Table\" | \"Tabs\" | \"Text\" | \"Textarea\", ComponentContract>>'.\n\nError: error occurred in dts build\nDTS Build error\nnpm error code 1\nnpm error path /Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/packages/component-contracts\nnpm error command failed\nnpm error command sh -c pnpm run build\nnpm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/<timestamp>_03_36_882Z-debug-0.log\n",
+      "reason": "typescript-totality",
+      "forbiddenHits": [],
+      "source": null
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "src/contracts.ts",
+      "line": 6,
+      "test": "Sprint 182 M04 packed generated consumers B-12 installs and imports every required tarball and root export in isolation",
+      "message": "Error: pack @oods/component-contracts failed (1)\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.\n\n> @oods/component-contracts@0.1.0 prepack\n> pnpm run build\n\nsrc/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: \"Badge\"; version: \"1.0.0\"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: \"Banner\"; version: \"1.0.0\"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<\"Badge\" | \"Banner\" | \"Button\" | \"Card\" | \"Checkbox\" | \"DatePicker\" | \"DetailHeader\" | \"Grid\" | \"Input\" | \"Select\" | \"Stack\" | \"Table\" | \"Tabs\" | \"Text\" | \"Textarea\", ComponentContract>>'.\n\nError: error occurred in dts build\nDTS Build error\nnpm error code 1\nnpm error path /Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/packages/component-contracts\nnpm error command failed\nnpm error command sh -c pnpm run build\nnpm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/<timestamp>_04_05_378Z-debug-0.log\n",
+      "reason": "typescript-totality",
+      "forbiddenHits": [],
+      "source": null
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "src/contracts.ts",
+      "line": 6,
+      "test": "Sprint 182 M04 packed generated consumers B-13 resolves declared dependencies and shared CSS in a clean production build",
+      "message": "Error: pack @oods/component-contracts failed (1)\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.\n\n> @oods/component-contracts@0.1.0 prepack\n> pnpm run build\n\nsrc/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: \"Badge\"; version: \"1.0.0\"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: \"Banner\"; version: \"1.0.0\"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<\"Badge\" | \"Banner\" | \"Button\" | \"Card\" | \"Checkbox\" | \"DatePicker\" | \"DetailHeader\" | \"Grid\" | \"Input\" | \"Select\" | \"Stack\" | \"Table\" | \"Tabs\" | \"Text\" | \"Textarea\", ComponentContract>>'.\n\nError: error occurred in dts build\nDTS Build error\nnpm error code 1\nnpm error path /Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/packages/component-contracts\nnpm error command failed\nnpm error command sh -c pnpm run build\nnpm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/<timestamp>_04_13_726Z-debug-0.log\n",
+      "reason": "typescript-totality",
+      "forbiddenHits": [],
+      "source": null
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "src/contracts.ts",
+      "line": 6,
+      "test": "Sprint 184 m04 packed ported consumers installs only built OODS tarballs in fresh React and Vue consumers and resolves every new subpath externally",
+      "message": "Error: pack @oods/component-contracts failed (1)\nnpm warn Unknown project config \"link-workspace-packages\". This will stop working in the next major version of npm.\n\n> @oods/component-contracts@0.1.0 prepack\n> pnpm run build\n\nsrc/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: \"Badge\"; version: \"1.0.0\"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: \"Banner\"; version: \"1.0.0\"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<\"Badge\" | \"Banner\" | \"Button\" | \"Card\" | \"Checkbox\" | \"DatePicker\" | \"DetailHeader\" | \"Grid\" | \"Input\" | \"Select\" | \"Stack\" | \"Table\" | \"Tabs\" | \"Text\" | \"Textarea\", ComponentContract>>'.\n\nError: error occurred in dts build\nDTS Build error\nnpm error code 1\nnpm error path /Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/packages/component-contracts\nnpm error command failed\nnpm error command sh -c pnpm run build\nnpm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/<timestamp>_06_46_771Z-debug-0.log\n",
+      "reason": "typescript-totality",
+      "forbiddenHits": [],
+      "source": null
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts",
+      "line": 125,
+      "test": "Sprint 184 m04 frozen-surface accounting leaves foundation-v1 at 14 components and 28 promoted cells without a new approval call",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(12) ] to have a length of 14 but got 15",
+      "reason": "frozen-literal",
+      "forbiddenHits": [
+        "message:14",
+        "source:14"
+      ],
+      "source": "    expect(NUCLEUS_COMPONENT_IDS).toHaveLength(14);"
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts",
+      "line": 156,
+      "test": "Sprint 184 m04 frozen-surface accounting keeps the capability baseline structurally byte-exact and check-promotion clean with no writes",
+      "message": "AssertionError: \nfile:///Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/scripts/product-reality/generate-s182-m05-closeout.mjs:413\n  if (!condition) throw new Error(message);\n                        ^\n\nError: Public nucleus differs from the locked 14 IDs\n\nNode.js v24.6.0\n: expected 1 to be +0 // Object.is equality",
+      "reason": "frozen-literal",
+      "forbiddenHits": [
+        "message:14"
+      ],
+      "source": "    expect(check.status, `${check.stdout}\\n${check.stderr}`).toBe(0);"
+    }
+  ],
+  "status": "measured",
+  "mutationDiff": "packages/component-contracts/src/types.ts | 1 +\n 1 file changed, 1 insertion(+)",
+  "contractsBuild": {
+    "primaryExitCode": 1,
+    "typescriptErrors": [
+      {
+        "file": "packages/component-contracts/src/contracts.ts",
+        "line": 6,
+        "column": 14,
+        "code": "TS2741",
+        "message": "Property 'DetailHeader' is missing in type '{ Badge: { id: \"Badge\"; version: \"1.0.0\"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: \"Banner\"; version: \"1.0.0\"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<\"Badge\" | \"Banner\" | \"Button\" | \"Card\" | \"Checkbox\" | \"DatePicker\" | \"DetailHeader\" | \"Grid\" | \"Input\" | \"Select\" | \"Stack\" | \"Table\" | \"Tabs\" | \"Text\" | \"Textarea\", ComponentContract>>'."
+      }
+    ],
+    "fallbackUsed": true,
+    "fallback": {
+      "jsOnlyExitCode": 0,
+      "declarationsExitCode": 1,
+      "declarationTypescriptErrors": [
+        {
+          "file": "packages/component-contracts/src/contracts.ts",
+          "line": 6,
+          "column": 14,
+          "code": "TS2741",
+          "message": "Property 'DetailHeader' is missing in type '{ Badge: { id: \"Badge\"; version: \"1.0.0\"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: \"Banner\"; version: \"1.0.0\"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<\"Badge\" | \"Banner\" | \"Button\" | \"Card\" | \"Checkbox\" | \"DatePicker\" | \"DetailHeader\" | \"Grid\" | \"Input\" | \"Select\" | \"Stack\" | \"Table\" | \"Tabs\" | \"Text\" | \"Textarea\", ComponentContract>>'."
+        }
+      ],
+      "shims": [
+        "dist/index.d.ts",
+        "dist/index.d.cts"
+      ]
+    },
+    "distReflectsMutation": true
+  },
+  "revertExitCode": 0,
+  "rebuildExitCode": 0,
+  "cleanAfter": {
+    "porcelain": [],
+    "forbiddenLeaks": [],
+    "clean": true,
+    "ownOutputEntries": 0
+  },
+  "workspaceRestored": true,
+  "failuresByReason": {
+    "typescript-totality": 8,
+    "derived-coverage": 10,
+    "frozen-literal": 3
+  },
+  "frozenLiteralFailures": [
+    {
+      "check": "test-component-contracts",
+      "kind": "vitest",
+      "file": "packages/component-contracts/test/ported-contracts.s184.spec.ts",
+      "line": 43,
+      "test": "Sprint 184 separate ported component truth plane keeps the foundation nucleus and scenarios exactly at the original 14 IDs",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(12) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(11) ]",
+      "reason": "frozen-literal",
+      "forbiddenHits": [
+        "source:hand-written-id-list"
+      ],
+      "source": "    expect(NUCLEUS_COMPONENT_IDS).toEqual(EXPECTED_NUCLEUS_IDS);"
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts",
+      "line": 125,
+      "test": "Sprint 184 m04 frozen-surface accounting leaves foundation-v1 at 14 components and 28 promoted cells without a new approval call",
+      "message": "AssertionError: expected [ 'Badge', 'Banner', 'Button', …(12) ] to have a length of 14 but got 15",
+      "reason": "frozen-literal",
+      "forbiddenHits": [
+        "message:14",
+        "source:14"
+      ],
+      "source": "    expect(NUCLEUS_COMPONENT_IDS).toHaveLength(14);"
+    },
+    {
+      "check": "test-mcp-server-product-reality",
+      "kind": "vitest",
+      "file": "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts",
+      "line": 156,
+      "test": "Sprint 184 m04 frozen-surface accounting keeps the capability baseline structurally byte-exact and check-promotion clean with no writes",
+      "message": "AssertionError: \nfile:///Users/systemsystems/.codex/worktrees/s185-proof/OODS-Forge/scripts/product-reality/generate-s182-m05-closeout.mjs:413\n  if (!condition) throw new Error(message);\n                        ^\n\nError: Public nucleus differs from the locked 14 IDs\n\nNode.js v24.6.0\n: expected 1 to be +0 // Object.is equality",
+      "reason": "frozen-literal",
+      "forbiddenHits": [
+        "message:14"
+      ],
+      "source": "    expect(check.status, `${check.stdout}\\n${check.stderr}`).toBe(0);"
+    }
+  ],
+  "failingSites": [
+    "packages/component-contracts/src/contracts.ts:6",
+    "packages/component-contracts/test/contracts.spec.ts:69",
+    "packages/component-contracts/test/ported-contracts.s184.spec.ts:43",
+    "packages/component-contracts/test/ported-contracts.s184.spec.ts:55",
+    "packages/components-react/test/package-contract.spec.ts:166",
+    "packages/components-react/test/package-contract.spec.ts:71",
+    "packages/components-react/test/scenarios.spec.tsx:14",
+    "packages/components-vue/test/package-contract.spec.ts:119",
+    "packages/components-vue/test/package-contract.spec.ts:60",
+    "packages/components-vue/test/scenarios.spec.ts:51",
+    "packages/components-vue/test/ssr.spec.ts:64",
+    "packages/mcp-server/src/codegen/target-contracts.ts:261",
+    "packages/mcp-server/test/product-reality/contract-resolution.s184.spec.ts:193",
+    "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts:125",
+    "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts:156",
+    "src/contracts.ts:6"
+  ],
+  "greenForTheRightReason": false,
+  "classifierVersion": 3,
+  "reclassifiedAt": "2026-09-06T01:18:27.423Z"
+}

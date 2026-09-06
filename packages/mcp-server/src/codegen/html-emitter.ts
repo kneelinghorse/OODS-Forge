@@ -2,7 +2,7 @@ import { renderTree } from '../render/tree-renderer.js';
 import { renderDocument } from '../render/document.js';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions, CodegenResult } from './types.js';
-import { resolveChildContent, resolveFieldProps } from './binding-utils.js';
+import { resolveChildContent, resolveFieldProps, resolveFrameworkRecipeProps } from './binding-utils.js';
 import { runPreEmit } from './pre-emit.js';
 import { normalizeSchemaForFramework } from './framework-normalization.js';
 import { executeCompositionDirectives } from './composition-directives.js';
@@ -17,6 +17,19 @@ function injectFieldPlaceholders(schema: UiSchema): UiSchema {
 
   const cloned = structuredClone(schema);
   const walk = (node: UiElement): void => {
+    // Labelled's header fields use the HTML emitter's existing visible
+    // placeholders, while framework emitters read the actual object data.
+    // Authored literals (DetailHeader headingLevel) stay out of the HTML
+    // renderer, which reads only its own level key.
+    if (node.component === 'CardHeader' || node.component === 'DetailHeader') {
+      const recipe = resolveFrameworkRecipeProps(node, objectSchema);
+      node.props = { ...node.props };
+      for (const prop of recipe.consumedProps) delete node.props[prop];
+      for (const { targetProp, expression, literal } of recipe.bindings) {
+        if (literal) continue;
+        node.props[targetProp] = `[${expression}]`;
+      }
+    }
     // Enrich props from objectSchema metadata (labels, placeholders, required, options, type)
     const enriched = resolveFieldProps(node, objectSchema);
     if (enriched) {
@@ -34,7 +47,13 @@ function injectFieldPlaceholders(schema: UiSchema): UiSchema {
       if (content) {
         if (content.isChildren) {
           // Use data-bind attribute + human-readable placeholder text
-          node.props = { ...node.props, text: `[${content.fieldName}]`, 'data-bind': content.fieldName };
+          node.props = {
+            ...node.props,
+            // CardHeader scalar field content overrides its title aliases in
+            // React/Vue too, including a title supplied by recipe metadata.
+            [node.component === 'CardHeader' ? 'title' : 'text']: `[${content.fieldName}]`,
+            'data-bind': content.fieldName,
+          };
         } else if (content.propName) {
           node.props = { ...node.props, [content.propName]: `[${content.fieldName}]`, 'data-bind': `${content.propName}:${content.fieldName}` };
         }

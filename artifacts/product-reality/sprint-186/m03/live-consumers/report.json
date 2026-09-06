@@ -1,0 +1,2074 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s186-m03",
+  "kind": "live-schema-workflow-clean-consumer-proof",
+  "status": "passed",
+  "selected": 16,
+  "passed": 16,
+  "notApplicable": 0,
+  "applicable": 16,
+  "failed": 0,
+  "skipped": 0,
+  "schemaCount": 1,
+  "frameworkCount": 2,
+  "cellCount": 2,
+  "expectedCellCount": 2,
+  "equalityRule": "Every selected immutable saved schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.",
+  "generationPolicy": "code.generate is invoked live once per schema/framework cell and only that in-run artifact is consumed.",
+  "consumerPolicy": "Consumers are outside the workspace, begin without node_modules, use empty npm configs, and install OODS packages only from exact tarballs produced by npm pack after each package prepack build.",
+  "logPathPolicy": "Every gate log path is relative to this report artifact root, including paths repeated in nested cell reports.",
+  "cells": [
+    {
+      "schema": "user-list-showcase",
+      "schemaRef": "compose-26fd640d",
+      "framework": "react",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/react/logs/install.log",
+            "cells/user-list-showcase/react/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/component-styles/css-ported",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "@oods/components-react/ported",
+                "consumerRelative": "node_modules/@oods/components-react/dist/ported.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/react/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/react/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/react/logs/server-render-build.log",
+            "cells/user-list-showcase/react/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 9858,
+            "sha256": "sha256:45d9ac1c6f30df54e03fbc45318f8a69b6ddadd98b37c000ba25f4f53f609741",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-toolbar-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-search-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "primary-search-17",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-search-10",
+                "component": "MessageStatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-filters-2",
+                "component": "Select",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-toolbar-actions-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "primary-toolbar-actions-18",
+                "component": "Button",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-14",
+                "component": "AddressSummaryBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-15",
+                "component": "PreferenceSummaryBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-16",
+                "component": "RoleBadgeList",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-items-6",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-11",
+                "component": "StatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-12",
+                "component": "RelativeTimestamp",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-13",
+                "component": "TagPills",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-pagination-7",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-pagination-8",
+                "component": "PaginationBar",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-list-9",
+            "componentCounts": {
+              "AddressSummaryBadge": 1,
+              "Button": 1,
+              "MessageStatusBadge": 1,
+              "PaginationBar": 1,
+              "PreferenceSummaryBadge": 1,
+              "RelativeTimestamp": 1,
+              "RoleBadgeList": 1,
+              "SearchInput": 2,
+              "Select": 1,
+              "Stack": 7,
+              "StatusBadge": 1,
+              "TagPills": 1
+            },
+            "mountedExpectedComponents": [
+              "AddressSummaryBadge",
+              "Button",
+              "MessageStatusBadge",
+              "PaginationBar",
+              "PreferenceSummaryBadge",
+              "RelativeTimestamp",
+              "RoleBadgeList",
+              "SearchInput",
+              "Select",
+              "Stack",
+              "StatusBadge",
+              "TagPills"
+            ],
+            "generatedCoreComponents": [
+              "AddressSummaryBadge",
+              "Button",
+              "MessageStatusBadge",
+              "PreferenceSummaryBadge",
+              "RoleBadgeList",
+              "Select",
+              "Stack",
+              "TagPills"
+            ],
+            "generatedPortedComponents": [
+              "PaginationBar",
+              "RelativeTimestamp",
+              "SearchInput",
+              "StatusBadge"
+            ],
+            "labelVisibility": [],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-toolbar-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-search-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "primary-search-17",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-search-10",
+                "component": "MessageStatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-filters-2",
+                "component": "Select",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-toolbar-actions-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "primary-toolbar-actions-18",
+                "component": "Button",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-14",
+                "component": "AddressSummaryBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-15",
+                "component": "PreferenceSummaryBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-16",
+                "component": "RoleBadgeList",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-items-6",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-11",
+                "component": "StatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-12",
+                "component": "RelativeTimestamp",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-13",
+                "component": "TagPills",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-pagination-7",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-pagination-8",
+                "component": "PaginationBar",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-toolbar-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-search-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "primary-search-17",
+                    "component": "SearchInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-search-10",
+                    "component": "MessageStatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-filters-2",
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-toolbar-actions-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "primary-toolbar-actions-18",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-14",
+                    "component": "AddressSummaryBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-15",
+                    "component": "PreferenceSummaryBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-16",
+                    "component": "RoleBadgeList",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-items-5",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-items-6",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-11",
+                    "component": "StatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TIME",
+                    "id": "ve-items-12",
+                    "component": "RelativeTimestamp",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-items-13",
+                    "component": "TagPills",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-pagination-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "NAV",
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-toolbar-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-search-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "primary-search-17",
+                    "component": "SearchInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-search-10",
+                    "component": "MessageStatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-filters-2",
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-toolbar-actions-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "primary-toolbar-actions-18",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-14",
+                    "component": "AddressSummaryBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-15",
+                    "component": "PreferenceSummaryBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-16",
+                    "component": "RoleBadgeList",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-items-5",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-items-6",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-11",
+                    "component": "StatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TIME",
+                    "id": "ve-items-12",
+                    "component": "RelativeTimestamp",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-items-13",
+                    "component": "TagPills",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-pagination-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "NAV",
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/react/logs/css-proof.log",
+            "cells/user-list-showcase/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-CdJ9xGmU.css"
+            ],
+            "bytes": 309598,
+            "sha256": "sha256:32ea1a90ac9ce8de98d3e5d5d8fe3969a7d5a0c5bf68f107a4cc4a06554b8df6",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/react/logs/browser-proof.log",
+            "cells/user-list-showcase/react/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "action",
+              "nodeId": "screen-list-9",
+              "component": "Stack",
+              "selector": "[data-oods-action=\"handleFilter\"]",
+              "action": "handleFilter",
+              "status": "passed"
+            },
+            "selectorEvidence": [
+              {
+                "action": "handleFilter",
+                "selector": "[data-oods-action=\"handleFilter\"]",
+                "count": 1,
+                "clicked": true
+              },
+              {
+                "action": "handleRowClick",
+                "selector": "[data-oods-action=\"handleRowClick\"]",
+                "count": 1,
+                "clicked": true
+              },
+              {
+                "action": "handleSort",
+                "selector": "[data-oods-action=\"handleSort\"]",
+                "count": 1,
+                "clicked": true
+              }
+            ],
+            "actionCounts": {
+              "handleFilter": 1,
+              "handleRowClick": 1,
+              "handleSort": 1
+            },
+            "actionArgs": {
+              "handleFilter": [
+                [
+                  {}
+                ]
+              ],
+              "handleRowClick": [
+                [
+                  "consumer-user-id"
+                ]
+              ],
+              "handleSort": [
+                [
+                  "status"
+                ]
+              ]
+            },
+            "expectedArguments": {
+              "handleFilter": [
+                [
+                  {}
+                ]
+              ],
+              "handleRowClick": [
+                [
+                  "consumer-user-id"
+                ]
+              ],
+              "handleSort": [
+                [
+                  "status"
+                ]
+              ]
+            },
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.tsx",
+              "bindingMarkerCount": 3,
+              "actionSelectors": [
+                {
+                  "action": "handleFilter",
+                  "selector": "[data-oods-action=\"handleFilter\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleRowClick",
+                  "selector": "[data-oods-action=\"handleRowClick\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleSort",
+                  "selector": "[data-oods-action=\"handleSort\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                }
+              ],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.tsx",
+                "src/ssr.tsx",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "action",
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "selector": "[data-oods-action=\"handleFilter\"]",
+                "action": "handleFilter"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/user-list-showcase/react/GeneratedUI.tsx",
+        "sourceSha256": "sha256:b0632f9159c6d9bca3ffeef83dd43e55e1cd588e2f684d1c94d418aa277754b8",
+        "artifactContentHash": "sha256:d9fe45d0dc1a3a270e80571b687032d15d35e46919e1a3322373415faf20a889",
+        "generationLog": "live-generation/user-list-showcase/react/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:d9fe45d0dc1a3a270e80571b687032d15d35e46919e1a3322373415faf20a889",
+          "generatedAt": "2026-09-06T16:29:46.724Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.tsx",
+        "bindingMarkerCount": 3,
+        "actionSelectors": [
+          {
+            "action": "handleFilter",
+            "selector": "[data-oods-action=\"handleFilter\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleRowClick",
+            "selector": "[data-oods-action=\"handleRowClick\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleSort",
+            "selector": "[data-oods-action=\"handleSort\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          }
+        ],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.tsx",
+          "src/ssr.tsx",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "action",
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "selector": "[data-oods-action=\"handleFilter\"]",
+          "action": "handleFilter"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/user-list-showcase/react/report.json",
+      "reportSha256": "sha256:b9146ef0557d26918d5942e9b355ae279b4597e48acaa739a294bbda4b9cd00e"
+    },
+    {
+      "schema": "user-list-showcase",
+      "schemaRef": "compose-26fd640d",
+      "framework": "vue",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/vue/logs/install.log",
+            "cells/user-list-showcase/vue/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/component-styles/css-ported",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components-ported.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@oods/components-vue/ported",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/ported.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/vue/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/vue/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/vue/logs/server-render-build.log",
+            "cells/user-list-showcase/vue/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 7815,
+            "sha256": "sha256:4777195d96fd1632cd83f82baec9e3aa865d7cdd75b417b46285d9add6d19bf7",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-toolbar-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-search-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "primary-search-17",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-search-10",
+                "component": "MessageStatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-filters-2",
+                "component": "Select",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-toolbar-actions-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "primary-toolbar-actions-18",
+                "component": "Button",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-14",
+                "component": "AddressSummaryBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-15",
+                "component": "PreferenceSummaryBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-16",
+                "component": "RoleBadgeList",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-items-6",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-11",
+                "component": "StatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-12",
+                "component": "RelativeTimestamp",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-13",
+                "component": "TagPills",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-pagination-7",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-pagination-8",
+                "component": "PaginationBar",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-list-9",
+            "componentCounts": {
+              "AddressSummaryBadge": 1,
+              "Button": 1,
+              "MessageStatusBadge": 1,
+              "PaginationBar": 1,
+              "PreferenceSummaryBadge": 1,
+              "RelativeTimestamp": 1,
+              "RoleBadgeList": 1,
+              "SearchInput": 1,
+              "Select": 1,
+              "Stack": 7,
+              "StatusBadge": 1,
+              "TagPills": 1
+            },
+            "mountedExpectedComponents": [
+              "AddressSummaryBadge",
+              "Button",
+              "MessageStatusBadge",
+              "PaginationBar",
+              "PreferenceSummaryBadge",
+              "RelativeTimestamp",
+              "RoleBadgeList",
+              "SearchInput",
+              "Select",
+              "Stack",
+              "StatusBadge",
+              "TagPills"
+            ],
+            "generatedCoreComponents": [
+              "AddressSummaryBadge",
+              "Button",
+              "MessageStatusBadge",
+              "PreferenceSummaryBadge",
+              "RoleBadgeList",
+              "Select",
+              "Stack",
+              "TagPills"
+            ],
+            "generatedPortedComponents": [
+              "PaginationBar",
+              "RelativeTimestamp",
+              "SearchInput",
+              "StatusBadge"
+            ],
+            "labelVisibility": [],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-toolbar-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-search-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "primary-search-17",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-search-10",
+                "component": "MessageStatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-filters-2",
+                "component": "Select",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-toolbar-actions-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "primary-toolbar-actions-18",
+                "component": "Button",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-14",
+                "component": "AddressSummaryBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-15",
+                "component": "PreferenceSummaryBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-16",
+                "component": "RoleBadgeList",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-items-6",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-11",
+                "component": "StatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-12",
+                "component": "RelativeTimestamp",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-13",
+                "component": "TagPills",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-pagination-7",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-pagination-8",
+                "component": "PaginationBar",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-toolbar-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-search-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "primary-search-17",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-search-10",
+                    "component": "MessageStatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-filters-2",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-toolbar-actions-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "primary-toolbar-actions-18",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-14",
+                    "component": "AddressSummaryBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-15",
+                    "component": "PreferenceSummaryBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-16",
+                    "component": "RoleBadgeList",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-items-5",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-items-6",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-11",
+                    "component": "StatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TIME",
+                    "id": "ve-items-12",
+                    "component": "RelativeTimestamp",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-items-13",
+                    "component": "TagPills",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-pagination-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "NAV",
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-toolbar-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-search-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "primary-search-17",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-search-10",
+                    "component": "MessageStatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-filters-2",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-toolbar-actions-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "primary-toolbar-actions-18",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-14",
+                    "component": "AddressSummaryBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-15",
+                    "component": "PreferenceSummaryBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-16",
+                    "component": "RoleBadgeList",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-items-5",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-items-6",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-11",
+                    "component": "StatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TIME",
+                    "id": "ve-items-12",
+                    "component": "RelativeTimestamp",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-items-13",
+                    "component": "TagPills",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-pagination-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "NAV",
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/vue/logs/css-proof.log",
+            "cells/user-list-showcase/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-BiD5eNCM.css"
+            ],
+            "bytes": 309710,
+            "sha256": "sha256:608ffaa50a37910d4316935c7bc5d64fd4c5e62c6b3bae42258d181e72bcb375",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/user-list-showcase/vue/logs/browser-proof.log",
+            "cells/user-list-showcase/vue/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "action",
+              "nodeId": "screen-list-9",
+              "component": "Stack",
+              "selector": "[data-oods-action=\"handleFilter\"]",
+              "action": "handleFilter",
+              "status": "passed"
+            },
+            "selectorEvidence": [
+              {
+                "action": "handleFilter",
+                "selector": "[data-oods-action=\"handleFilter\"]",
+                "count": 1,
+                "clicked": true
+              },
+              {
+                "action": "handleRowClick",
+                "selector": "[data-oods-action=\"handleRowClick\"]",
+                "count": 1,
+                "clicked": true
+              },
+              {
+                "action": "handleSort",
+                "selector": "[data-oods-action=\"handleSort\"]",
+                "count": 1,
+                "clicked": true
+              }
+            ],
+            "actionCounts": {
+              "handleFilter": 1,
+              "handleRowClick": 1,
+              "handleSort": 1
+            },
+            "actionArgs": {
+              "handleFilter": [
+                [
+                  {}
+                ]
+              ],
+              "handleRowClick": [
+                [
+                  "consumer-user-id"
+                ]
+              ],
+              "handleSort": [
+                [
+                  "status"
+                ]
+              ]
+            },
+            "expectedArguments": {
+              "handleFilter": [
+                [
+                  {}
+                ]
+              ],
+              "handleRowClick": [
+                [
+                  "consumer-user-id"
+                ]
+              ],
+              "handleSort": [
+                [
+                  "status"
+                ]
+              ]
+            },
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.vue",
+              "bindingMarkerCount": 3,
+              "actionSelectors": [
+                {
+                  "action": "handleFilter",
+                  "selector": "[data-oods-action=\"handleFilter\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleRowClick",
+                  "selector": "[data-oods-action=\"handleRowClick\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleSort",
+                  "selector": "[data-oods-action=\"handleSort\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                }
+              ],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.ts",
+                "src/ssr.ts",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "action",
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "selector": "[data-oods-action=\"handleFilter\"]",
+                "action": "handleFilter"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/user-list-showcase/vue/GeneratedUI.vue",
+        "sourceSha256": "sha256:ec84eb2d09b3be38852a926a4a973df54a014b48ab609aa669ec4031ddec0d2c",
+        "artifactContentHash": "sha256:c146c09c5796a62d3f295d77eff800b8e7fd1c8c258d515d69220711278495d3",
+        "generationLog": "live-generation/user-list-showcase/vue/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:c146c09c5796a62d3f295d77eff800b8e7fd1c8c258d515d69220711278495d3",
+          "generatedAt": "2026-09-06T16:29:46.803Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.vue",
+        "bindingMarkerCount": 3,
+        "actionSelectors": [
+          {
+            "action": "handleFilter",
+            "selector": "[data-oods-action=\"handleFilter\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleRowClick",
+            "selector": "[data-oods-action=\"handleRowClick\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleSort",
+            "selector": "[data-oods-action=\"handleSort\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          }
+        ],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.ts",
+          "src/ssr.ts",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "action",
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "selector": "[data-oods-action=\"handleFilter\"]",
+          "action": "handleFilter"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/user-list-showcase/vue/report.json",
+      "reportSha256": "sha256:b17f0b82860e3fba7349504a3191657ac7cba3bc8216a778a1b1db7ccc4c25d1"
+    }
+  ]
+}

@@ -1,5 +1,4 @@
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
-import { PORTED_COMPONENT_IDS } from '@oods/component-contracts';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
 import type {
   BindingAnalysis,
@@ -16,6 +15,7 @@ import {
 import {
   mapFieldType,
   snakeToCamel,
+  fieldValuePropTarget,
   resolveFrameworkChildContent,
   resolveFrameworkRecipeProps,
   ownFieldSchemaEntry,
@@ -242,9 +242,17 @@ function vueControlledProp(occurrence: LocalBindingOccurrence): string | null {
     || occurrence.component === 'Input'
     || occurrence.component === 'Select'
     || occurrence.component === 'Textarea'
+    || occurrence.component === 'StatusSelector'
+    || occurrence.component === 'TagInput'
   ) return 'modelValue';
   if (occurrence.component === 'Tabs') return 'selectedId';
   return null;
+}
+
+/** A field lowered to the node's own form value is carried by its local state; a data prop is not. */
+function fieldRepresentedByState(propName: string | undefined, controlledProp: string | null): boolean {
+  return controlledProp !== null
+    && (propName === undefined || propName === 'value' || propName === 'checked' || propName === controlledProp);
 }
 
 function vueControlledUpdateEvent(controlledProp: string): string {
@@ -269,6 +277,10 @@ function vueBindingAttrs(node: UiElement, analysis: BindingAnalysis): string[] {
       attrs.push(`@${updateEvent}="${local.localSymbols.setter}"`);
     }
   }
+  // A component-scoped domain binding owns its action selector on the element
+  // itself; screen-scoped actions own theirs on the generated action surface.
+  const domain = occurrences.find((occurrence) => occurrence.scope !== 'screen' && occurrence.kind === 'domain');
+  if (domain) attrs.push(`data-oods-action="${escapeDoubleQuotedAttr(domain.handlerName)}"`);
   for (const occurrence of occurrences) {
     if (occurrence.scope === 'screen') continue;
     const event = vueEventName(node.component, occurrence.event);
@@ -376,6 +388,7 @@ function emitTemplateNode(
   tailwindVariants: Map<string, TailwindVariantDefinition>,
   bindingAnalysis: BindingAnalysis,
   objectSchema?: Record<string, FieldSchemaEntry>,
+  formMode = false,
 ): string {
   const nodeBody = emitTemplateNodeBody(
     node,
@@ -385,6 +398,7 @@ function emitTemplateNode(
     tailwindVariants,
     bindingAnalysis,
     objectSchema,
+    formMode,
   );
   const actionSurface = vueScreenActionSurface(node, bindingAnalysis, objectSchema);
   const code = actionSurface ? `${nodeBody}\n${actionSurface}` : nodeBody;
@@ -403,6 +417,8 @@ function emitTemplateNodeBody(
   tailwindVariants: Map<string, TailwindVariantDefinition>,
   bindingAnalysis: BindingAnalysis,
   objectSchema?: Record<string, FieldSchemaEntry>,
+  /** Form-mode fields are writable refs; list/display fields are read-only props. */
+  formMode = false,
 ): string {
   const tag = node.component;
   const children = Array.isArray(node.children) ? node.children : [];
@@ -415,6 +431,7 @@ function emitTemplateNodeBody(
     : null;
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
+  const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
   const controlledProp = localBinding ? vueControlledProp(localBinding) : null;
   const recipeProps = resolveFrameworkRecipeProps(node, objectSchema);
   if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
@@ -491,11 +508,12 @@ function emitTemplateNodeBody(
     `:${targetProp}="${expression}"`
   )));
 
-  // v-model for form input components when bound to a field
+  // A field-bound form input with no local writer reads its generated prop
+  // one-way, mirroring React's value={field}; v-model on a prop is invalid Vue.
   if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
     attrParts.push(coercedSelectField
       ? `:modelValue="${coercedSelectField}"`
-      : `v-model="${boundFieldName}"`);
+      : (formMode ? `v-model="${boundFieldName}"` : `:modelValue="${boundFieldName}"`));
   }
 
   attrParts.push(...vueBindingAttrs(node, bindingAnalysis));
@@ -538,6 +556,7 @@ function emitTemplateNodeBody(
         tailwindVariants,
         bindingAnalysis,
         objectSchema,
+        formMode,
       );
       return [
         `<template v-if="${condition}">`,
@@ -556,9 +575,9 @@ function emitTemplateNodeBody(
   // Sidebar layout
   if (node.layout?.type === 'sidebar' && children.length > 0) {
     const [mainChild, ...asideChildren] = children;
-    const mainTemplate = mainChild ? emitTemplateNode(mainChild, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema) : '';
+    const mainTemplate = mainChild ? emitTemplateNode(mainChild, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema, formMode) : '';
     const asideTemplates = asideChildren
-      .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema));
+      .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema, formMode));
 
     const inner = [
       `<div data-sidebar-main>`,
@@ -591,7 +610,7 @@ function emitTemplateNodeBody(
         : '';
     }
     const innerChildren = children
-      .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema))
+      .map((c) => emitTemplateNode(c, depth + 2, warnings, options, tailwindVariants, bindingAnalysis, objectSchema, formMode))
       .join('\n');
     const sectionFieldContent = children.length === 0
       ? resolveFrameworkChildContent(node, objectSchema)
@@ -619,7 +638,7 @@ function emitTemplateNodeBody(
     if (sectionUsesFieldBinding) {
       innerAttrParts.push(coercedSelectField
         ? `:modelValue="${coercedSelectField}"`
-        : `v-model="${boundFieldName}"`);
+        : (formMode ? `v-model="${boundFieldName}"` : `:modelValue="${boundFieldName}"`));
     }
     // Event bindings belong on the component, not the section wrapper
     innerAttrParts.push(...vueBindingAttrs(node, bindingAnalysis));
@@ -635,7 +654,7 @@ function emitTemplateNodeBody(
       sectionFieldContent?.propName
       && !sectionFieldContent.isChildren
       && !sectionUsesFieldBinding
-      && !controlledProp
+      && !fieldRepresentedByState(sectionFieldContent.propName, controlledProp)
     ) {
       const fieldExpression = vueFieldExpression(
         node,
@@ -649,7 +668,7 @@ function emitTemplateNodeBody(
     const innerAttrs = ` ${innerAttrParts.join(' ')}`;
 
     if (children.length === 0 && sectionFieldContent?.isChildren) {
-      const fieldExpression = vueFieldExpression(
+      const fieldExpression = readonlyField?.writer.localSymbols.state ?? vueFieldExpression(
         node,
         sectionFieldContent.fieldName,
         sectionFieldContent.propName,
@@ -689,7 +708,7 @@ function emitTemplateNodeBody(
     const fieldContent = resolveFrameworkChildContent(node, objectSchema);
     if (fieldContent) {
       if (fieldContent.isChildren) {
-        const fieldExpression = vueFieldExpression(
+        const fieldExpression = readonlyField?.writer.localSymbols.state ?? vueFieldExpression(
           node,
           fieldContent.fieldName,
           fieldContent.propName,
@@ -703,7 +722,7 @@ function emitTemplateNodeBody(
       if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
         return `<${tag}${attrs} />`;
       }
-      if (controlledProp) {
+      if (fieldRepresentedByState(fieldContent.propName, controlledProp)) {
         return `<${tag}${attrs} />`;
       }
       let cleanAttrs = attrs;
@@ -726,7 +745,7 @@ function emitTemplateNodeBody(
         if (FORM_INPUT_COMPONENTS.has(tag) && boundFieldName) {
           rebuiltAttrParts.push(coercedSelectField
             ? `:modelValue="${coercedSelectField}"`
-            : `v-model="${boundFieldName}"`);
+            : (formMode ? `v-model="${boundFieldName}"` : `:modelValue="${boundFieldName}"`));
         }
         rebuiltAttrParts.push(...vueBindingAttrs(node, bindingAnalysis));
         if (options.styling === 'tailwind') {
@@ -761,7 +780,7 @@ function emitTemplateNodeBody(
   }
 
   const childrenTemplate = children
-    .map((c) => emitTemplateNode(c, depth + 1, warnings, options, tailwindVariants, bindingAnalysis, objectSchema))
+    .map((c) => emitTemplateNode(c, depth + 1, warnings, options, tailwindVariants, bindingAnalysis, objectSchema, formMode))
     .join('\n');
   return `<${tag}${attrs}>\n${ind(childrenTemplate, depth + 1)}\n${'  '.repeat(depth)}</${tag}>`;
 }
@@ -920,7 +939,8 @@ function vueLocalInitialExpression(
     return javascriptSingleQuotedString(String(explicit));
   }
   const field = node.props?.field;
-  if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field)) {
+  // A field lowered to a data prop (TagInput's tags) is not the control's own text.
+  if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field) && fieldValuePropTarget(occurrence.component) === undefined) {
     const fallback = occurrence.signature.parameters[0]?.type === 'boolean' ? 'false' : "''";
     const source = formMode ? `${snakeToCamel(field)}.value` : snakeToCamel(field);
     return occurrence.signature.parameters[0]?.type === 'boolean'
@@ -1053,20 +1073,6 @@ function detectComputedProperties(
 // Script setup block
 // ---------------------------------------------------------------------------
 
-const PORTED_COMPONENT_ID_SET: ReadonlySet<string> = new Set(PORTED_COMPONENT_IDS);
-
-function splitComponentImports(components: Set<string>): {
-  nucleus: string[];
-  ported: string[];
-} {
-  const nucleus: string[] = [];
-  const ported: string[] = [];
-  for (const component of Array.from(components).sort()) {
-    (PORTED_COMPONENT_ID_SET.has(component) ? ported : nucleus).push(component);
-  }
-  return { nucleus, ported };
-}
-
 function buildScriptSetup(
   ctx: PreEmitContext,
 ): string {
@@ -1078,7 +1084,7 @@ function buildScriptSetup(
     objectSchema,
     tree: screens,
   } = ctx;
-  const { nucleus, ported } = splitComponentImports(components);
+  const nucleus = Array.from(components).sort();
   const lines: string[] = [];
   const hasObjectSchema = objectSchema && Object.keys(objectSchema).length > 0;
   const hasDomainActions = bindingAnalysis.handlers.some((handler) => handler.kind === 'domain');
@@ -1106,11 +1112,7 @@ function buildScriptSetup(
   if (nucleus.length > 0) {
     lines.push(`import { ${nucleus.join(', ')} } from '@oods/components-vue';`);
   }
-  if (ported.length > 0) {
-    lines.push(`import { ${ported.join(', ')} } from '@oods/components-vue/ported';`);
-  }
   if (nucleus.length > 0) lines.push(`import '@oods/component-styles/css';`);
-  if (ported.length > 0) lines.push(`import '@oods/component-styles/css-ported';`);
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
   }
@@ -1333,6 +1335,9 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   const ctx = runPreEmit(normalizedSchema, { options });
   const tailwindVariants = ctx.tailwindVariants;
 
+  // Form-mode fields are writable refs (v-model); list/display fields are props (:modelValue).
+  const formMode = Boolean(ctx.objectSchema && Object.keys(ctx.objectSchema).length > 0 && isFormSchema(ctx.tree));
+
   // Build template block
   const screenTemplates = ctx.tree
     .map((screen) => emitTemplateNode(
@@ -1343,6 +1348,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
       tailwindVariants,
       ctx.bindingAnalysis,
       ctx.objectSchema,
+      formMode,
     ))
     .join('\n');
 
@@ -1381,13 +1387,9 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   blocks.push('');
 
   const code = blocks.join('\n');
-  const { nucleus, ported } = splitComponentImports(ctx.components);
   const imports = [
     ...(shouldImportVueRuntime(ctx.objectSchema, ctx.tree, ctx.bindingAnalysis) ? ['vue'] : []),
-    ...(nucleus.length > 0 ? ['@oods/components-vue', '@oods/component-styles/css'] : []),
-    ...(ported.length > 0
-      ? ['@oods/components-vue/ported', '@oods/component-styles/css-ported']
-      : []),
+    ...(ctx.components.size > 0 ? ['@oods/components-vue', '@oods/component-styles/css'] : []),
     ...(tailwindVariants.size > 0 ? ['class-variance-authority'] : []),
   ];
 

@@ -289,7 +289,7 @@ export async function runPackedExportProof({ artifactRoot, tarballs }) {
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-const expectedIds = ${JSON.stringify(FOUNDATION_V1_IDS)};
+const repositoryRoot = ${JSON.stringify(REPOSITORY_ROOT)};
 const roots = {
   tokens: await import('@oods/tokens'),
   contracts: await import('@oods/component-contracts'),
@@ -297,6 +297,11 @@ const roots = {
   react: await import('@oods/components-react'),
   vue: await import('@oods/components-vue'),
 };
+// Nucleus membership comes from the packed @oods/component-contracts tarball,
+// resolved per specifier and rejected if it resolves under the repository root.
+const contractsPath = fileURLToPath(import.meta.resolve('@oods/component-contracts'));
+if (contractsPath.startsWith(repositoryRoot + '/')) throw new Error('Contracts resolved to repository source: ' + contractsPath);
+const expectedIds = [...roots.contracts.NUCLEUS_COMPONENT_IDS];
 for (const [name, namespace] of Object.entries(roots)) {
   if (!namespace || Object.keys(namespace).length === 0) throw new Error('Empty root export: ' + name);
 }
@@ -318,7 +323,8 @@ for (const target of ['react', 'vue']) {
   const readinessPath = fileURLToPath(import.meta.resolve(packageName + '/readiness'));
   readinessPaths.push(readinessPath);
   const document = JSON.parse(readFileSync(readinessPath, 'utf8'));
-  if (document.rows.length !== 14 || document.rows.some((row) => row.emissionEligible !== true)) {
+  const readinessIds = document.rows.map((row) => row.componentId);
+  if (JSON.stringify(readinessIds) !== JSON.stringify(expectedIds) || document.rows.some((row) => row.emissionEligible !== true)) {
     throw new Error(target + ' readiness root is incomplete.');
   }
   readiness[target] = document.rows.length;
@@ -332,6 +338,7 @@ const resolved = [
 ].map((specifier) => fileURLToPath(import.meta.resolve(specifier)));
 for (const target of [...resolved, cssPath, ...readinessPaths]) {
   if (!target.startsWith(process.cwd())) throw new Error('Resolved outside isolated consumer: ' + target);
+  if (target.startsWith(repositoryRoot + '/')) throw new Error('Resolved repository source: ' + target);
   if (target.includes('/OODS-Forge/') || target.includes('/OODs-Forge/')) {
     throw new Error('Resolved repository source: ' + target);
   }
@@ -2016,10 +2023,10 @@ export async function writeCodegenUsableLedger({ artifactRoot, matrixReport, con
     predicate: 'codegenUsable',
     status: 'derived',
     controllingComponentDenominator: 109,
-    selectedComponents: 14,
+    selectedComponents: FOUNDATION_V1_IDS.length,
     selectedTargets: 2,
-    selectedCells: 28,
-    codegenUsableCells: 28,
+    selectedCells: FOUNDATION_V1_IDS.length * 2,
+    codegenUsableCells: FOUNDATION_V1_IDS.length * 2,
     derivedPredicates: ['codegenUsable'],
     withheldPredicates: ['foundation-v1-candidate', 'foundation-v1'],
     foundationV1Candidate: false,

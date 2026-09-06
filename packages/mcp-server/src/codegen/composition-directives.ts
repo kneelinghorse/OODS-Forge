@@ -1,4 +1,5 @@
 import type { UiElement, UiSchema } from '../schemas/generated.js';
+import { PATTERN_GROUP_DROPPED_DIRECTIVES } from './binding-utils.js';
 
 function executeNode(node: UiElement): UiElement {
   const children = node.children?.map(executeNode);
@@ -23,6 +24,11 @@ function executeNode(node: UiElement): UiElement {
   const requestedFields = props.fields as string[];
   delete props.patternComponent;
   delete props.fields;
+  // Trait directives the composer wrote onto the pattern-group Stack are
+  // consumed unbound there; lowering must not resurrect them on the pattern
+  // component, whose contract never governed them. historyField and
+  // showReason stay because the StatusTimeline contract governs them.
+  for (const directive of PATTERN_GROUP_DROPPED_DIRECTIVES) delete props[directive];
 
   const unusedChildren = [...(children ?? [])];
   const fieldChildren = requestedFields.map((field, index) => {

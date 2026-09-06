@@ -1,8 +1,16 @@
 export const COMPONENT_STYLE_VERSION = '1.0.0' as const;
 
 export const COMPONENT_STYLE_IDS = [
-  'Badge', 'Banner', 'Button', 'Card', 'Checkbox', 'DatePicker', 'Grid',
-  'Input', 'Select', 'Stack', 'Table', 'Tabs', 'Text', 'Textarea',
+  'AddressCollectionPanel', 'AddressEditor', 'AddressSummaryBadge', 'AddressValidationTimeline', 'AuditEvent',
+  'AuditTimeline', 'Badge', 'Banner', 'Button', 'CancellationSummary',
+  'Card', 'CardHeader', 'Checkbox', 'ClassificationPanel', 'ColorSwatch',
+  'ColorizedBadge', 'DatePicker', 'DetailHeader', 'FilterPanel', 'Grid',
+  'Input', 'MembershipAuditTimeline', 'MembershipPanel', 'MessageEventTimeline', 'MessageStatusBadge',
+  'PaginationBar', 'PreferenceEditor', 'PreferencePanel', 'PreferenceSummaryBadge', 'PreferenceTimeline',
+  'PriceBadge', 'PriceSummary', 'RelativeTimestamp', 'RoleAssignmentForm', 'RoleBadgeList',
+  'SearchInput', 'Select', 'Stack', 'StatusBadge', 'StatusSelector',
+  'StatusTimeline', 'Table', 'Tabs', 'TagInput', 'TagManager',
+  'TagPills', 'TemplatePicker', 'Text', 'Textarea', 'VizAreaPreview',
 ] as const;
 
 export const SUPPORTED_COMPONENT_THEME_CELLS = [

@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { BRAND_CONTRAST_PAIRS, BRAND_CONTRAST_RULES } from "@oods/a11y-tools";
+import { NUCLEUS_COMPONENT_IDS } from "@oods/component-contracts";
 
 const projectRoot = fileURLToPath(new URL("../../", import.meta.url));
 const read = (path: string) => readFileSync(resolve(projectRoot, path), "utf8");
@@ -33,6 +34,7 @@ interface CertifyOutputSchema {
 describe("how Forge works narrative truth", () => {
   const html = read("docs/how-forge-works.html");
   const nearRoadmap = read("cmos/foundational-docs/roadmap/near.md");
+  const normalizedNear = nearRoadmap.replace(/\s+/g, " ");
 
   it("derives the registered tool counts and roster split from registry.json", () => {
     const registry = JSON.parse(
@@ -138,6 +140,7 @@ describe("how Forge works narrative truth", () => {
         reconciliationState: string;
       }>;
       foundationCells: Array<{
+        componentId: string;
         target: "react" | "vue";
         evaluation: { candidate: boolean; foundationV1: boolean };
       }>;
@@ -155,10 +158,10 @@ describe("how Forge works narrative truth", () => {
     );
     const reactReadiness = JSON.parse(
       read("packages/components-react/evidence/react-readiness.v1.json"),
-    ) as { rows: unknown[] };
+    ) as { rows: Array<{ componentId: string }> };
     const vueReadiness = JSON.parse(
       read("packages/components-vue/evidence/vue-readiness.v1.json"),
-    ) as { rows: unknown[] };
+    ) as { rows: Array<{ componentId: string }> };
 
     expect(capabilityCloseout.controllingObligationDenominator).toBe(109);
     expect(capabilityCloseout.rows).toHaveLength(109);
@@ -195,8 +198,23 @@ describe("how Forge works narrative truth", () => {
         (cell) => cell.evaluation.foundationV1 === true,
       ),
     ).toBe(true);
-    expect(reactReadiness.rows).toHaveLength(14);
-    expect(vueReadiness.rows).toHaveLength(14);
+    // The approved Sprint-182 membership remains historical evidence. Current
+    // readiness follows the live nucleus, whose expansion is not an approval
+    // of additional Sprint-182 foundation cells or the runtime census.
+    for (const [target, readiness] of [
+      ["react", reactReadiness],
+      ["vue", vueReadiness],
+    ] as const) {
+      const approvedIds = promotedFoundation.foundationCells
+        .filter((cell) => cell.target === target)
+        .map((cell) => cell.componentId);
+      const currentIds = readiness.rows.map((row) => row.componentId).sort();
+
+      expect(approvedIds).toHaveLength(14);
+      expect(new Set(approvedIds).size).toBe(approvedIds.length);
+      expect(currentIds).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
+      expect(currentIds).toEqual(expect.arrayContaining(approvedIds));
+    }
 
     expect(html).toContain("109 unique component claims");
     expect(html).toContain("98 as runtime component rows");
@@ -211,23 +229,29 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("@oods/component-styles/css</span>");
     expect(html).toContain("OODS-N015</span> and no source payload");
 
-    expect(nearRoadmap).toContain("Sprint 182 is complete, 7/7 missions");
+    // Sprint 186: retain the historical foundation authority while the current
+    // breadth build remains pending independent review (rule #1690).
+    expect(nearRoadmap).toContain("Sprint 182: Product Reality Foundation — CLOSED 2026-09-04");
     expect(nearRoadmap).toContain("decision `#1662`");
-    expect(nearRoadmap).toContain("decision `#1663`");
-    expect(nearRoadmap).toContain("all 28 cells");
-    expect(nearRoadmap).toContain("`approvedRuntimeCensus` remains **null**");
-    expect(nearRoadmap).toContain("98-row runtime");
-    expect(nearRoadmap).toContain("versioned generated file-set artifact");
-    expect(nearRoadmap).toContain(
-      "schema installs, builds,\nrenders, hydrates, resolves shared CSS",
+    expect(normalizedNear).toContain("promoted by Derek (decision `#1663`)");
+    expect(normalizedNear).toContain(
+      "The 14-component nucleus is real in React and Vue with clean packed-consumer proof.",
     );
-    expect(nearRoadmap).toContain(
-      "Number this sprint only after Sprint 183 receives independent review",
+    expect(normalizedNear).toContain(
+      "`approvedRuntimeCensus` stops being null and the 109 denominator can move (`#1331`)",
     );
-    expect(nearRoadmap).toContain(
-      "The next fresh session is an independent Sprint-183 review",
+    expect(nearRoadmap).toContain("98-row proposed runtime census");
+    expect(nearRoadmap).toContain("Versioned artifacts, typed actions and behavioral local-state validation");
+    expect(normalizedNear).toContain(
+      "installs, builds, renders, hydrates and passes interactions in clean React and Vue consumers",
     );
-    expect(nearRoadmap).toContain("Items `#1315` and `#1318`–`#1322`");
+    expect(normalizedNear).toContain(
+      "## Increment 5 — Sprint 186: Component Breadth Wave 2 — BUILT, REVIEW PENDING",
+    );
+    expect(normalizedNear).toContain(
+      "A build session records evidence and stops. A separate review session decides genuine close",
+    );
+    expect(normalizedNear).toContain("`#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt");
     expect(nearRoadmap).not.toContain(
       "Both targets import nonexistent `@oods/components`",
     );

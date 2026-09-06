@@ -26,19 +26,15 @@ const nucleusReadiness: Readonly<Record<'react' | 'vue', TargetReadiness>> = {
   vue: readJson('packages/components-vue/evidence/vue-readiness.v1.json'),
 };
 const portedReadiness: Readonly<Record<'react' | 'vue', TargetReadiness>> = {
-  react: readJson('packages/components-react/evidence/react-ported-readiness.v1.json'),
-  vue: readJson('packages/components-vue/evidence/vue-readiness-ported.v1.json'),
-};
-const mergedReadiness: Readonly<Record<'react' | 'vue', TargetReadiness>> = {
-  react: mergeTargetReadiness(nucleusReadiness.react, portedReadiness.react),
-  vue: mergeTargetReadiness(nucleusReadiness.vue, portedReadiness.vue),
+  react: { target: 'react', rows: nucleusReadiness.react.rows.filter(row => (PORTED_COMPONENT_IDS as readonly string[]).includes(row.componentId)) },
+  vue: { target: 'vue', rows: nucleusReadiness.vue.rows.filter(row => (PORTED_COMPONENT_IDS as readonly string[]).includes(row.componentId)) },
 };
 
 const PORTED_NODES = PORTED_COMPONENT_IDS.map((component, index) => ({
   id: `ported-readiness-${index}`,
   component,
 }));
-const ALL_GOVERNED_NODES = [...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]
+const ALL_GOVERNED_NODES = NUCLEUS_COMPONENT_IDS
   .map((component, index) => ({ id: `governed-readiness-${index}`, component }));
 
 const IMPLEMENTATION_SOURCE: Readonly<Record<'react' | 'vue', string>> = {
@@ -53,9 +49,9 @@ function removeNamedDeclaration(source: string, symbol: string): string {
   );
 }
 
-describe('Sprint 184 merged target readiness', () => {
+describe('Historical ported cohort in unified root target readiness', () => {
   it.each(['react', 'vue'] as const)(
-    'merges the frozen 14-row %s manifest with the separate sorted eight-row manifest',
+    'contains the historical eight exactly once in the unified %s manifest',
     (framework) => {
       expect(nucleusReadiness[framework].rows.map(({ componentId }) => componentId)).toEqual(
         NUCLEUS_COMPONENT_IDS,
@@ -63,11 +59,7 @@ describe('Sprint 184 merged target readiness', () => {
       expect(portedReadiness[framework].rows.map(({ componentId }) => componentId)).toEqual(
         PORTED_COMPONENT_IDS,
       );
-      expect(mergedReadiness[framework].rows.map(({ componentId }) => componentId)).toEqual([
-        ...NUCLEUS_COMPONENT_IDS,
-        ...PORTED_COMPONENT_IDS,
-      ]);
-      expect(mergedReadiness[framework].rows).toHaveLength(22);
+      expect(new Set(nucleusReadiness[framework].rows.map(row => row.componentId)).size).toBe(NUCLEUS_COMPONENT_IDS.length);
     },
   );
 
@@ -77,7 +69,7 @@ describe('Sprint 184 merged target readiness', () => {
     expect(() => mergeTargetReadiness(nucleusReadiness.react, {
       target: 'react',
       rows: [nucleusReadiness.react.rows[0]!],
-    })).toThrow(/duplicate react readiness row for badge/i);
+    })).toThrow(new RegExp(`duplicate react readiness row for ${nucleusReadiness.react.rows[0]!.componentId}`, 'i'));
   });
 
   it.each(['react', 'vue'] as const)(
@@ -93,7 +85,7 @@ describe('Sprint 184 merged target readiness', () => {
   );
 
   it.each(['react', 'vue'] as const)(
-    'keeps all 22 governed %s capability outcomes green through the production preflight',
+    'keeps every governed %s capability outcome green through the production preflight',
     (framework) => {
       expect(preflightTargetCapabilities(ALL_GOVERNED_NODES, framework)).toEqual([]);
     },
@@ -105,7 +97,7 @@ describe('Sprint 184 merged target readiness', () => {
       for (const component of PORTED_COMPONENT_IDS) {
         const preflight = createTargetCapabilityPreflight({
           repositoryRoot: REPOSITORY_ROOT,
-          readiness: mergedReadiness,
+          readiness: nucleusReadiness,
           readFile: (absolutePath) => {
             const source = readFileSync(absolutePath, 'utf8');
             return absolutePath === IMPLEMENTATION_SOURCE[framework]

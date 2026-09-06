@@ -1,0 +1,222 @@
+{
+  "mission": "s186-m05",
+  "kind": "current-source-generation-versus-retained-live-source",
+  "measuredAt": "2026-09-06T19:15:15.822Z",
+  "head": "5aa53b3ae92cdb70b1577b56a72debf10e58a5b2",
+  "invocation": "node --import tsx --input-type=module; in-process source handle (no dist build)",
+  "handler": {
+    "path": "packages/mcp-server/src/tools/code.generate.ts",
+    "sha256": "sha256:84bfd879da69f9c387da96ccdcc216de1d7c3d2eac6bf8582a0eb36eaf77ec4d"
+  },
+  "changedDependency": {
+    "path": "packages/mcp-server/src/codegen/binding-utils.ts",
+    "sha256": "sha256:f195435d536f0de6d5f00c9d74542bafe7e181a608d68b74b461917d6acda1db"
+  },
+  "generationOptions": {
+    "profile": "build",
+    "options": {
+      "styling": "tokens",
+      "typescript": true
+    }
+  },
+  "frozen": {
+    "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/user-form-showcase.json",
+    "schemaRef": "compose-ad97c118",
+    "sha256": "sha256:d25d9ce30988cd5e26b390a5b43ce005f2055b765b8bc3abadc263571a848bb2"
+  },
+  "derived": {
+    "path": "artifacts/product-reality/sprint-186/m05/derived-store/user-form-showcase.json",
+    "schemaRef": "compose-ad97c118#pruned-composer-field-kind-defects",
+    "sha256": "sha256:58422d9dd376ef4afc8f0d2dfc1b1e44fec4badaedcfe6acd668e522dafb94e8",
+    "derivation": {
+      "kind": "saved-schema-pruned-of-carried-composer-defects",
+      "mission": "s186-m05",
+      "derivedFrom": {
+        "store": "artifacts/product-reality/sprint-183/m04/saved-schema-store",
+        "name": "user-form-showcase",
+        "schemaRef": "compose-ad97c118",
+        "sha256": "d25d9ce30988cd5e26b390a5b43ce005f2055b765b8bc3abadc263571a848bb2"
+      },
+      "prunedNodeIds": [
+        "slot-field-3-13",
+        "slot-field-5-17",
+        "slot-field-6-19",
+        "slot-field-8-23",
+        "slot-field-9-25"
+      ],
+      "prunedNodes": [
+        {
+          "nodeId": "slot-field-3-13",
+          "component": "Input",
+          "field": "address_roles",
+          "kind": "array"
+        },
+        {
+          "nodeId": "slot-field-5-17",
+          "component": "Input",
+          "field": "preference_document",
+          "kind": "unknown"
+        },
+        {
+          "nodeId": "slot-field-6-19",
+          "component": "DatePicker",
+          "field": "state_history",
+          "kind": "array"
+        },
+        {
+          "nodeId": "slot-field-8-23",
+          "component": "Input",
+          "field": "tags",
+          "kind": "array"
+        },
+        {
+          "nodeId": "slot-field-9-25",
+          "component": "Input",
+          "field": "tag_metadata",
+          "kind": "array"
+        }
+      ],
+      "reason": "The composer bound plain Input and DatePicker controls to array and object fields; code.generate refuses those five nodes with OODS-V007 field-kind errors that no component port can repair. The derivation proves the six ported components live in the same form; it is not evidence that the saved schema generates.",
+      "derivedBy": "scripts/product-reality/s186-m05-derive-form-schema.mjs"
+    }
+  },
+  "cells": [
+    {
+      "framework": "react",
+      "derivedStatus": "ok",
+      "derivedErrors": [],
+      "retainedSourcePath": "artifacts/product-reality/sprint-186/m05/live-consumers/live-generation/user-form-showcase/react/GeneratedUI.tsx",
+      "retainedSourceBytes": 17896,
+      "currentSourceBytes": 17896,
+      "retainedSourceSha256": "sha256:37882c6843abba646ac227ff388b6b12e01881fd9d8546246360c25a22c21df4",
+      "currentSourceSha256": "sha256:37882c6843abba646ac227ff388b6b12e01881fd9d8546246360c25a22c21df4",
+      "retainedReportSourceSha256": "sha256:37882c6843abba646ac227ff388b6b12e01881fd9d8546246360c25a22c21df4",
+      "sourceBytesIdentical": true,
+      "compatibilityCodeMatchesArtifact": true,
+      "retainedArtifactContentHash": "sha256:64586a538cb0e1eb7d87a6f52136aeb8f32f1381dae0acc78a5a5f58682b9d71",
+      "currentArtifactContentHash": "sha256:64586a538cb0e1eb7d87a6f52136aeb8f32f1381dae0acc78a5a5f58682b9d71",
+      "artifactContentHashIdentical": true,
+      "frozenStatus": "error",
+      "frozenCodeBytes": 0,
+      "frozenArtifactPresent": false,
+      "frozenIssues": [
+        {
+          "code": "OODS-V007",
+          "message": "Field \"address_roles\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-3-13",
+          "component": "Input"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Field \"preference_document\" has unknown data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-5-17",
+          "component": "Input"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Field \"state_history\" has array data, which cannot bind to DatePicker.value on the react target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-6-19",
+          "component": "DatePicker"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Field \"tags\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-8-23",
+          "component": "Input"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Field \"tag_metadata\" has array data, which cannot bind to Input.value on the react target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-9-25",
+          "component": "Input"
+        }
+      ],
+      "frozenIssuesIdenticalToRetained": true,
+      "exactlyFiveCarriedFieldKindNodes": true,
+      "validationChecks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
+        "normalization-fidelity",
+        "binding-contract",
+        "props-contract",
+        "slots-contract",
+        "events-contract",
+        "dependency-closure",
+        "fallback-policy"
+      ],
+      "passed": true
+    },
+    {
+      "framework": "vue",
+      "derivedStatus": "ok",
+      "derivedErrors": [],
+      "retainedSourcePath": "artifacts/product-reality/sprint-186/m05/live-consumers/live-generation/user-form-showcase/vue/GeneratedUI.vue",
+      "retainedSourceBytes": 16701,
+      "currentSourceBytes": 16701,
+      "retainedSourceSha256": "sha256:4c2d8e79f990df65ca380251a7cf244068a06a0daf229842d8117c30e40eff07",
+      "currentSourceSha256": "sha256:4c2d8e79f990df65ca380251a7cf244068a06a0daf229842d8117c30e40eff07",
+      "retainedReportSourceSha256": "sha256:4c2d8e79f990df65ca380251a7cf244068a06a0daf229842d8117c30e40eff07",
+      "sourceBytesIdentical": true,
+      "compatibilityCodeMatchesArtifact": true,
+      "retainedArtifactContentHash": "sha256:3eb1865904493dfc64c6d5ce4f3aa16f956da3f4859834dc2fa74c2162d26915",
+      "currentArtifactContentHash": "sha256:3eb1865904493dfc64c6d5ce4f3aa16f956da3f4859834dc2fa74c2162d26915",
+      "artifactContentHashIdentical": true,
+      "frozenStatus": "error",
+      "frozenCodeBytes": 0,
+      "frozenArtifactPresent": false,
+      "frozenIssues": [
+        {
+          "code": "OODS-V007",
+          "message": "Field \"address_roles\" has array data, which cannot bind to Input.value on the vue target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-3-13",
+          "component": "Input"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Field \"preference_document\" has unknown data, which cannot bind to Input.value on the vue target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-5-17",
+          "component": "Input"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Field \"state_history\" has array data, which cannot bind to DatePicker.value on the vue target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-6-19",
+          "component": "DatePicker"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Field \"tags\" has array data, which cannot bind to Input.value on the vue target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-8-23",
+          "component": "Input"
+        },
+        {
+          "code": "OODS-V007",
+          "message": "Field \"tag_metadata\" has array data, which cannot bind to Input.value on the vue target; accepted field kinds: string, number, boolean.",
+          "nodeId": "slot-field-9-25",
+          "component": "Input"
+        }
+      ],
+      "frozenIssuesIdenticalToRetained": true,
+      "exactlyFiveCarriedFieldKindNodes": true,
+      "validationChecks": [
+        "schema-structure",
+        "component-registry",
+        "state-contract",
+        "target-readiness",
+        "normalization-fidelity",
+        "binding-contract",
+        "props-contract",
+        "slots-contract",
+        "events-contract",
+        "dependency-closure",
+        "fallback-policy"
+      ],
+      "passed": true
+    }
+  ],
+  "inputsUnchanged": true,
+  "status": "passed",
+  "limitation": "This verifies current source generation preserves retained source bytes and artifact identity for the disclosed derivation. It does not re-run packed consumers or claim the frozen schema generates."
+}

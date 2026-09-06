@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 514,
+    "classA": 430,
+    "classB": 84
+  },
+  "totals": {
+    "references": 514,
+    "classA": 430,
+    "classB": 84,
+    "resolved": 512
+  },
+  "targets": {
+    "react": {
+      "rows": 42,
+      "references": 252,
+      "classA": 210,
+      "classB": 42,
+      "resolved": 250
+    },
+    "vue": {
+      "rows": 42,
+      "references": 262,
+      "classA": 220,
+      "classB": 42,
+      "resolved": 262
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 84,
+    "targetImplementation": 84,
+    "packageExport": 84,
+    "publicDeclaration": 84,
+    "dependencyClosure": 84,
+    "frameworkScenario": 94
+  },
+  "failures": [
+    {
+      "target": "react",
+      "componentId": "TemplatePicker",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-react/src/index.ts#TemplatePicker",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "react",
+      "componentId": "TemplatePicker",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-react/dist/index.d.ts#TemplatePicker",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}

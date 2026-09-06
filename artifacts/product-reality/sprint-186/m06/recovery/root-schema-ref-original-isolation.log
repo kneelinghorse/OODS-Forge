@@ -1,0 +1,41 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge
+
+ ❯ |core| tests/e2e/schema-ref-pipeline.test.ts (2 tests | 1 failed) 151ms
+   × schemaRef E2E pipeline > compose → validate → render accepts schemaRef and code.generate preserves target readiness 143ms
+     → expected [ 'react', …(2) ] to deeply equal ArrayContaining{…}
+   ✓ schemaRef E2E pipeline > schemaRef payloads are substantially smaller than schema passthrough 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/e2e/schema-ref-pipeline.test.ts > schemaRef E2E pipeline > compose → validate → render accepts schemaRef and code.generate preserves target readiness
+AssertionError: expected [ 'react', …(2) ] to deeply equal ArrayContaining{…}
+
+- Expected
++ Received
+
+- ArrayContaining [
++ [
++   "react",
+    "@oods/components-react",
+-   "@oods/components-react/ported",
+    "@oods/component-styles/css",
+-   "@oods/component-styles/css-ported",
+  ]
+
+ ❯ tests/e2e/schema-ref-pipeline.test.ts:42:29
+     40|     expect(codegen.status, JSON.stringify(codegen.errors ?? [])).toBe(…
+     41|     expect(codegen.fileExtension).toBe('.tsx');
+     42|     expect(codegen.imports).toEqual(expect.arrayContaining([
+       |                             ^
+     43|       '@oods/components-react', '@oods/components-react/ported',
+     44|       '@oods/component-styles/css', '@oods/component-styles/css-ported…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  15:51:20
+   Duration  1.84s (transform 755ms, setup 0ms, collect 1.14s, tests 151ms, environment 0ms, prepare 126ms)
+

@@ -47,15 +47,15 @@ describe('schemaRef workflow', () => {
     });
     expect(codegen.errors).toBeUndefined();
     expect(codegen.code.length).toBeGreaterThan(0);
-    expect(codegen.code).toContain(
-      "import { PaginationBar, SearchInput } from '@oods/components-react/ported';",
-    );
-    expect(codegen.code).toContain("import '@oods/component-styles/css-ported';");
+    expect(codegen.code).toMatch(/import \{ [^}]*PaginationBar, SearchInput[^}]* \} from '@oods\/components-react';/);
+    expect(codegen.code).toContain("import '@oods/component-styles/css';");
     expect(codegen.code).toContain('<Table id="slot-items-6"');
     expect(codegen.imports).toEqual(expect.arrayContaining([
-      '@oods/components-react/ported',
-      '@oods/component-styles/css-ported',
+      '@oods/components-react',
+      '@oods/component-styles/css',
     ]));
+    expect(codegen.imports).not.toContain('@oods/components-react/ported');
+    expect(codegen.imports).not.toContain('@oods/component-styles/css-ported');
     expect(codegen.artifact?.files).toHaveLength(1);
     expect(codegen.artifact?.files[0]?.contents.length).toBeGreaterThan(0);
     expect(codegen.validationReceipt.checks).toEqual(expect.arrayContaining([

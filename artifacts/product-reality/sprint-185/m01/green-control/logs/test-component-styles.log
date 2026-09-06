@@ -1,0 +1,67 @@
+$ pnpm --filter @oods/component-styles exec vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-component-styles.json
+cwd=.
+exitCode=1
+startedAt=2026-09-06T01:12:19.551Z
+endedAt=2026-09-06T01:12:25.569Z
+durationMs=6018.732
+[stdout]
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-styles
+
+ ✓ test/ported-styles.spec.ts (3 tests) 6ms
+ ❯ test/styles.spec.ts (6 tests | 1 failed) 24ms
+   × Sprint 182 shared component style contract > covers every nucleus component with token-driven CSS 16ms
+     → expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+   ✓ Sprint 182 shared component style contract > binds the six declared brand/theme cells to real token sources 2ms
+   ✓ Sprint 182 shared component style contract > s182-m01a keeps shared high-contrast controls on matching system colors 2ms
+   ✓ Sprint 182 shared component style contract > s182-m01b binds the measured Brand B light action foreground to pure white 0ms
+   ✓ Sprint 182 shared component style contract > encodes the locked visual state vocabulary without consumer utility scanning 2ms
+   ✓ Sprint 182 shared component style contract > styles field controls without treating framework wrappers as native controls 1ms
+ ✓ test/high-contrast.browser.spec.ts (9 tests) 2787ms
+   ✓ Sprint 182 shared component-style browser corrections > s182-m01b keeps the Brand B light enabled action at or above 4.5:1  663ms
+   ✓ Sprint 182 shared component-style browser corrections > A light/dark keeps the default disabled label distinct from its surface  396ms
+   ✓ Sprint 182 shared component-style browser corrections > B light/dark keeps the default disabled label distinct from its surface  336ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 17 passed (18)
+   Start at  20:12:20
+   Duration  4.31s (transform 246ms, setup 0ms, collect 1.09s, tests 2.82s, environment 1ms, prepare 614ms)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-component-styles.json
+undefined
+/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-styles:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-component-styles.json
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/styles.spec.ts > Sprint 182 shared component style contract > covers every nucleus component with token-driven CSS
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+
+ ❯ test/styles.spec.ts:14:45
+     12| describe('Sprint 182 shared component style contract', () => {
+     13|   it('covers every nucleus component with token-driven CSS', () => {
+     14|     expect([...COMPONENT_STYLE_IDS].sort()).toEqual([...NUCLEUS_COMPON…
+       |                                             ^
+     15|     for (const id of COMPONENT_STYLE_IDS) {
+     16|       expect(css, id).toContain(`[data-oods-component='${id}']`);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

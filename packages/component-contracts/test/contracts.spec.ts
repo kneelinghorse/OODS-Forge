@@ -65,7 +65,7 @@ describe('Sprint 182 canonical component truth plane', () => {
     }
   });
 
-  it('versions exactly the locked 14 contracts and explicit nondegenerate scenarios', () => {
+  it('versions every canonical nucleus contract and explicit nondegenerate scenario', () => {
     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
     expect(sharedScenarios.map((scenario) => scenario.oodsComponentId).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
     for (const scenario of sharedScenarios) {

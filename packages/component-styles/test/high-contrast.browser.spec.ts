@@ -4,12 +4,14 @@ import { fileURLToPath } from 'node:url';
 
 import { chromium, type Browser } from 'playwright';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { SUPPORTED_COMPONENT_THEME_CELLS } from '../src/index.js';
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = path.resolve(packageRoot, '../..');
 const componentCss = fs
   .readFileSync(path.join(packageRoot, 'src/components.css'), 'utf8')
-  .replace(/^@import[^\n]+\n/u, '');
+  .replace(/^@import[^\n]+\n/gmu, '');
+const statusableCss = fs.readFileSync(path.join(repoRoot, 'src/styles/statusables.css'), 'utf8');
 const tokenCss = fs.readFileSync(path.join(repoRoot, 'packages/tokens/dist/css/tokens.css'), 'utf8');
 
 let browser: Browser;
@@ -23,6 +25,71 @@ afterAll(async () => {
 });
 
 describe('Sprint 182 shared component-style browser corrections', () => {
+  for (const cell of SUPPORTED_COMPONENT_THEME_CELLS) {
+    for (const forcedColors of ['none', 'active'] as const) {
+      it(`s185-m02 preserves visible color labels in ${cell.brand}/${cell.theme}, forcedColors=${forcedColors}`, async () => {
+        const page = await browser.newPage({ forcedColors, viewport: { width: 640, height: 480 } });
+        await page.setContent(`<!doctype html>
+          <html data-brand="${cell.brand}" data-theme="${cell.theme}">
+            <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
+            <body style="background:var(--sys-surface-canvas);color:var(--sys-text-primary)">
+              <span id="system-pair" style="color:CanvasText;background:Canvas">System pair</span>
+              <span data-oods-component="ColorSwatch" style="--oods-swatch-color:red">
+                <span data-oods-swatch-chip="true" aria-hidden="true"></span>
+                <span data-oods-swatch-label="true">Critical red</span>
+              </span>
+              ${['subtle', 'solid'].map((emphasis) => `
+                <span data-oods-component="ColorizedBadge" data-emphasis="${emphasis}" style="--oods-badge-color:red">
+                  <span class="oods-badge__icon" aria-hidden="true"><span data-oods-badge-marker="true"></span></span>
+                  <span class="oods-badge__label"><span data-oods-badge-label="true">Past due</span></span>
+                </span>`).join('')}
+            </body>
+          </html>`);
+        const proof = await page.evaluate(() => {
+          const systemPair = getComputedStyle(document.querySelector('#system-pair')!);
+          const body = getComputedStyle(document.body);
+          return {
+            system: { color: systemPair.color, background: systemPair.backgroundColor },
+            components: [...document.querySelectorAll('[data-oods-component]')].map((component) => {
+              const rootStyle = getComputedStyle(component);
+              const label = component.querySelector<HTMLElement>('[data-oods-swatch-label], [data-oods-badge-label]')!;
+              const marker = component.querySelector<HTMLElement>('[data-oods-swatch-chip], [data-oods-badge-marker]')!;
+              const style = getComputedStyle(label);
+              return {
+                text: label.innerText,
+                labelWidth: label.getBoundingClientRect().width,
+                labelHeight: label.getBoundingClientRect().height,
+                visibility: style.visibility,
+                color: style.color,
+                background: rootStyle.backgroundColor === 'rgba(0, 0, 0, 0)' ? body.backgroundColor : rootStyle.backgroundColor,
+                markerColor: getComputedStyle(marker).backgroundColor,
+                markerWidth: marker.getBoundingClientRect().width,
+                markerHeight: marker.getBoundingClientRect().height,
+              };
+            }),
+          };
+        });
+        expect(proof.components.map((component) => component.text)).toEqual(['Critical red', 'Past due', 'Past due']);
+        for (const component of proof.components) {
+          expect(component.visibility).toBe('visible');
+          expect(component.labelWidth).toBeGreaterThan(0);
+          expect(component.labelHeight).toBeGreaterThan(0);
+          expect(component.markerWidth).toBeGreaterThan(2);
+          expect(component.markerHeight).toBeGreaterThan(2);
+          expect(component.color).not.toBe(component.background);
+          if (cell.theme === 'hc' || forcedColors === 'active') {
+            expect(component.color).toBe(proof.system.color);
+            expect(component.background).toBe(proof.system.background);
+            expect(component.markerColor).toBe(proof.system.color);
+          } else {
+            expect(component.markerColor).toBe('rgb(255, 0, 0)');
+          }
+        }
+        await page.close();
+      }, 30_000);
+    }
+  }
+
   it('s182-m01b keeps the Brand B light enabled action at or above 4.5:1', async () => {
     const page = await browser.newPage({
       colorScheme: 'light',
@@ -31,7 +98,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
     });
     await page.setContent(`<!doctype html>
       <html data-brand="B" data-theme="light">
-        <head><style>${tokenCss}\n${componentCss}</style></head>
+        <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
         <body>
           <button class="oods-button" data-oods-component="Button" data-intent="primary" type="button"
             style="--cmp-button-background:var(--sys-surface-interactive-primary-default);--cmp-button-text:var(--sys-text-on-interactive)">Update card</button>
@@ -96,7 +163,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
     await page.setContent(`<!doctype html>
       <html data-brand="A" data-theme="light">
         <head>
-          <style>${tokenCss}\n${componentCss}</style>
+          <style>${tokenCss}\n${statusableCss}\n${componentCss}</style>
           <style>button, input, select, textarea { font: inherit; }</style>
         </head>
         <body>
@@ -104,6 +171,13 @@ describe('Sprint 182 shared component-style browser corrections', () => {
           <span id="badge-solid" class="oods-badge" data-oods-component="Badge" data-tone="critical" data-emphasis="solid" style="${statusStyle}">Solid</span>
           <section id="banner-subtle" class="oods-banner" data-oods-component="Banner" data-tone="critical" data-emphasis="subtle" style="${bannerStyle}">Subtle</section>
           <section id="banner-solid" class="oods-banner" data-oods-component="Banner" data-tone="critical" data-emphasis="solid" style="${bannerStyle}">Solid</section>
+          <section id="banner-react" class="oods-banner statusable-banner" data-oods-component="Banner">
+            <div class="oods-banner__content statusable-banner__content"><strong class="oods-banner__title statusable-banner__title">Payment failed</strong></div>
+          </section>
+          <section id="banner-vue" class="oods-banner" data-oods-component="Banner">
+            <div class="oods-banner-content"><strong class="oods-banner-title">Payment failed</strong></div>
+          </section>
+          <section id="banner-generic" class="statusable-banner"><strong class="statusable-banner__title">Generic status title</strong></section>
 
           ${['neutral', 'primary', 'secondary', 'success', 'warning', 'danger']
             .map((intent) => `<button id="button-${intent}" class="oods-button" data-oods-component="Button" data-intent="${intent}" data-size="md">${intent}</button>`)
@@ -165,6 +239,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
         badgeSolid: colors('#badge-solid'),
         bannerSubtle: colors('#banner-subtle'),
         bannerSolid: colors('#banner-solid'),
+        bannerTitleWeights: ['react', 'vue', 'generic'].map((variant) => text(`#banner-${variant} strong`).fontWeight),
         intents: Object.fromEntries(
           ['neutral', 'primary', 'secondary', 'success', 'warning', 'danger']
             .map((intent) => [intent, button(`#button-${intent}`)]),
@@ -196,6 +271,8 @@ describe('Sprint 182 shared component-style browser corrections', () => {
       border: proof.bannerSubtle.color,
       color: proof.bannerSubtle.background,
     });
+    // Folding statusables into root CSS preserves OODS title emphasis without changing generic statusables.
+    expect(proof.bannerTitleWeights).toEqual(['700', '700', '600']);
     expect(new Set(Object.values(proof.intents).map((intent) => intent.background))).toHaveLength(6);
     expect(proof.intents.primary).toMatchObject({
       boxSizing: 'border-box', minHeight: '40px', fontSize: '16px',
@@ -234,7 +311,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
     });
     await page.setContent(`<!doctype html>
       <html data-brand="A" data-theme="light">
-        <head><style>${tokenCss}\n${componentCss}</style></head>
+        <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
         <body>
           <div id="vue-input-wrapper" class="oods-field" data-oods-component="Input">
             <label for="vue-input">Email</label>
@@ -323,7 +400,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
         });
         await page.setContent(`<!doctype html>
           <html data-brand="${brand}" data-theme="${theme}">
-            <head><style>${tokenCss}\n${componentCss}</style></head>
+            <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
             <body><button class="oods-button" data-oods-component="Button" type="button" disabled>Unavailable</button></body>
           </html>`);
         const proof = await page.locator('.oods-button').evaluate((element) => {
@@ -349,7 +426,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
         });
         await page.setContent(`<!doctype html>
           <html data-brand="${brand}" data-theme="hc">
-            <head><style>${tokenCss}\n${componentCss}</style></head>
+            <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
             <body>
               <span class="oods-badge" data-oods-component="Badge" data-tone="critical" data-emphasis="solid"
                 style="--cmp-badge-background:var(--sys-status-critical-surface);--cmp-badge-border:var(--sys-status-critical-border);--cmp-badge-text:var(--sys-status-critical-text)">Past due</span>

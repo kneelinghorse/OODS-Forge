@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { renderSharedScenario } from './scenario-fixtures.js';
 
 describe('@oods/components-react server rendering', () => {
-  it('server-renders all 14 frozen scenarios without browser globals', () => {
+  it('server-renders every shared nucleus scenario without browser globals', () => {
     for (const scenario of sharedScenarios) {
       const html = renderToString(renderSharedScenario(scenario));
       expect(html).toContain(`data-oods-component="${scenario.oodsComponentId}"`);

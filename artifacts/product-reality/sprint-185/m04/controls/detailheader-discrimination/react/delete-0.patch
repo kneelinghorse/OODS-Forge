@@ -1,0 +1,40 @@
+diff --git a/packages/components-react/src/breadth.tsx b/packages/components-react/src/breadth.tsx
+index f212d081..5cca0b4c 100644
+--- a/packages/components-react/src/breadth.tsx
++++ b/packages/components-react/src/breadth.tsx
+@@ -5,7 +5,6 @@ import type {
+   CardHeaderProps,
+   ColorSwatchProps,
+   ColorizedBadgeProps,
+-  DetailHeaderProps,
+   HeaderElement,
+   HeaderLevel,
+   VizAreaPreviewProps,
+@@ -38,25 +37,8 @@ function headingElement(as: HeaderElement | undefined, level: HeaderLevel | unde
+   return `h${bounded}` as HeaderElement;
+ }
+ 
+-export const DetailHeader = React.forwardRef<HTMLElement, DetailHeaderProps>(
+-  ({ title, label, text, subtitle, sublabel, description, metadata, meta, level, as, children, className, ...rest }, ref) => {
+-    const Heading = headingElement(as, level, 2);
+-    const content = childContent(children);
+-    const heading = content.scalar ?? firstText(title, label, text) ?? 'Details';
+-    const supporting = firstText(subtitle, sublabel, description);
+-    const metadataText = firstText(metadata, meta);
+-    return (
+-      <header ref={ref} className={classes('oods-detail-header', className)} data-oods-component="DetailHeader" {...rest}>
+-        {content.authored ? children : <>
+-          <Heading>{heading}</Heading>
+-          {supporting ? <span data-oods-subtitle="true">{supporting}</span> : null}
+-          {metadataText ? <span data-oods-metadata="true">{metadataText}</span> : null}
+-        </>}
+-      </header>
+-    );
+-  }
+-);
+-DetailHeader.displayName = 'OODS.DetailHeader';
++
++
+ 
+ export const CardHeader = React.forwardRef<HTMLElement, CardHeaderProps>(
+   ({ title, label, text, supporting, supportingText, subtitle, description, level, as, children, className, ...rest }, ref) => {

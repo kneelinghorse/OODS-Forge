@@ -1071,7 +1071,9 @@ function applyFormFieldBindingsFromGroups(
   const walk = (node: UiElement): void => {
     const slotName = getSlotName(node);
     const fieldName = slotName ? fieldBySlot.get(slotName) : undefined;
-    if (fieldName && typeof node.props?.field !== 'string') {
+    // A slot can host several trait editors. Its container owns no field value;
+    // each editor keeps its explicit field directives instead.
+    if (fieldName && typeof node.props?.field !== 'string' && !node.children?.length) {
       node.props = {
         ...(node.props ?? {}),
         field: fieldName,
@@ -1471,6 +1473,16 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     }
   }
 
+  // Generic form controls edit scalar values. Collections and structured
+  // documents remain in the complete object schema and its trait editors, but
+  // must not influence generic control selection or its primary field binding.
+  const formFields = composed && layoutType === 'form'
+    ? Object.fromEntries(Object.entries(composed.schema).filter(([, field]) => (
+      Boolean(field.validation?.enum?.length)
+      || ['string', 'datetime', 'email', 'date', 'url', 'uuid', 'integer', 'number', 'boolean'].includes(field.type)
+    )))
+    : undefined;
+
   // 2. Select layout template
   let template = selectTemplate(
     layoutType,
@@ -1479,7 +1491,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     layoutType === 'form' && composed
       ? buildFormFieldSlots(
         input.preferences?.fieldGroups ?? 3,
-        composed.schema,
+        formFields ?? composed.schema,
         composed.semantics,
         semanticTypes,
       )
@@ -1493,7 +1505,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   if (composed) {
     const expCtx: ExpansionContext = {
       layout: layoutType,
-      fields: composed.schema,
+      fields: formFields ?? composed.schema,
       semanticTypes,
     };
     expansionResult = expandSlots(template, expCtx);

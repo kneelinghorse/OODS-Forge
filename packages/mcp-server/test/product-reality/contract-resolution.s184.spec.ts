@@ -186,10 +186,11 @@ describe('Sprint 184 m03 contract-resolution closeout', () => {
     const version11 = entries.filter(([, contract]) => contract.version === '1.1.0');
     const version10 = entries.filter(([, contract]) => contract.version === '1.0.0');
 
-    expect(entries).toHaveLength(14);
     expect(version11.map(([id]) => id).sort()).toEqual(['Select', 'Stack', 'Text']);
-    expect(version11).toHaveLength(3);
-    expect(version10).toHaveLength(11);
+    expect(version10.map(([id]) => id).sort()).toEqual(
+      [...NUCLEUS_COMPONENT_IDS].filter((id) => !['Select', 'Stack', 'Text'].includes(id)).sort(),
+    );
+    expect(entries).toHaveLength(version11.length + version10.length);
     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
   });
 
@@ -216,8 +217,9 @@ describe('Sprint 184 m03 contract-resolution closeout', () => {
     expect(record.movers).toEqual(actual);
   });
 
-  it('preserves the historical readiness manifests while all 178 live refs resolve', () => {
+  it('preserves the historical readiness manifests while every current nucleus ref resolves', () => {
     const closeout = readJson<{
+      measuredImplementationCommit: string;
       readinessManifestDisposition: {
         stranded: boolean;
         files: Array<FrozenFile & {
@@ -230,12 +232,23 @@ describe('Sprint 184 m03 contract-resolution closeout', () => {
       };
     }>('artifacts/product-reality/sprint-184/m03/closeout-report.json');
 
+    // Sprint 185 m01 (#1722/#1725): the Sprint 184 m03 record is history. Its
+    // measured digests are checked against the manifests AS THEY WERE at the
+    // measured implementation commit, not against the live manifests, so the
+    // live readiness surface is free to grow with the nucleus.
     expect(closeout.readinessManifestDisposition.stranded).toBe(false);
     for (const file of closeout.readinessManifestDisposition.files) {
+      const historical = spawnSync(
+        'git',
+        ['show', `${closeout.measuredImplementationCommit}:${file.path}`],
+        { cwd: repositoryRoot, encoding: null, maxBuffer: 32 * 1024 * 1024 },
+      );
+      expect(historical.status, file.path).toBe(0);
+      const historicalRows = (JSON.parse(historical.stdout.toString('utf8')) as { rows: unknown[] }).rows;
       expect(file.contractVersion).toBe('1.0.0');
-      expect(file.rowCount).toBe(14);
+      expect(historicalRows).toHaveLength(file.rowCount);
       expect(file.m01Sha256).toBe(file.measuredSha256);
-      expect(file.measuredSha256).toBe(sha256(file.path));
+      expect(createHash('sha256').update(historical.stdout).digest('hex')).toBe(file.measuredSha256);
       expect(file.byteFreezeAssertion).toBe('passed');
     }
 
@@ -250,7 +263,7 @@ describe('Sprint 184 m03 contract-resolution closeout', () => {
       failures: unknown[];
       status: string;
     };
-    expect(report.totals).toEqual(expect.objectContaining({ references: 178, resolved: 178 }));
+    expect(report.totals).toEqual(expect.objectContaining({ references: NUCLEUS_COMPONENT_IDS.length * 12 + 10, resolved: NUCLEUS_COMPONENT_IDS.length * 12 + 10 }));
     expect(report.failures).toEqual([]);
     expect(report.status).toBe('passed');
   });

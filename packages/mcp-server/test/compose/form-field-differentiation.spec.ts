@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { handle } from '../../src/tools/design.compose.js';
+import { handle as generate } from '../../src/tools/code.generate.js';
+import { loadObject } from '../../src/objects/object-loader.js';
+import { composeObject } from '../../src/objects/trait-composer.js';
 import type { UiElement, UiSchema } from '../../src/schemas/generated.js';
 
 function collectNodes(schema: UiSchema, predicate: (node: UiElement) => boolean): UiElement[] {
@@ -62,5 +65,57 @@ describe('design.compose — form field differentiation', () => {
 
     expect(emailInputs.length).toBeGreaterThan(0);
     expect(emailInputs[0].props?.type).toBe('email');
+  });
+
+  it.each(['react', 'vue'] as const)('generates User form on %s without scalar controls consuming collection fields', async (framework) => {
+    const result = await handle({ object: 'User', context: 'form' });
+    expect(result.status).toBe('ok');
+    const nodes = collectNodes(result.schema, () => true);
+    const editors = ['AddressEditor', 'PreferenceEditor', 'RoleAssignmentForm', 'StatusSelector', 'TagInput', 'TemplatePicker'];
+    expect(nodes.map(node => node.component)).toEqual(expect.arrayContaining(editors));
+
+    // Planning generic inputs must leave the full object available to trait
+    // editors; deleting collection fields would conceal the binding defect.
+    const object = composeObject(loadObject('User'));
+    expect(Object.keys(result.schema.objectSchema ?? {}).sort()).toEqual(Object.keys(object.schema).sort());
+    for (const [field, definition] of Object.entries(object.schema)) {
+      expect(result.schema.objectSchema?.[field].type).toBe(definition.type);
+    }
+    expect(nodes.find(node => node.component === 'TagInput')?.props?.field).toBe('tags');
+    expect(nodes.find(node => node.component === 'AddressEditor')?.props?.field).toBe('addresses');
+    expect(nodes.find(node => node.component === 'PreferenceEditor')?.props?.documentField).toBe('preference_document');
+
+    const scalarControls = nodes.filter(node => (
+      ['Input', 'Select', 'Textarea', 'DatePicker', 'Toggle', 'Checkbox', 'Switch'].includes(node.component)
+      && typeof node.props?.field === 'string'
+    ));
+    expect(scalarControls.length).toBeGreaterThan(0);
+    for (const node of scalarControls) {
+      const field = result.schema.objectSchema![node.props!.field as string];
+      expect(field, `${node.id} must retain a real object field`).toBeDefined();
+      expect(field.enum?.length || ['string', 'datetime', 'email', 'date', 'url', 'uuid', 'integer', 'number', 'boolean'].includes(field.type),
+        `${node.component} must not bind ${field.type} field ${node.props!.field}`).toBeTruthy();
+    }
+
+    const editorContainers = nodes.filter(node => node.children?.some(child => editors.includes(child.component)));
+    expect(editorContainers.length).toBeGreaterThan(0);
+    for (const container of editorContainers) {
+      expect(container.props?.field).toBeUndefined();
+      expect(container.bindings?.onChange).toBeUndefined();
+    }
+
+    const role = nodes.find(node => node.component === 'Select' && node.props?.field === 'role');
+    expect(role?.props?.options).toEqual(result.schema.objectSchema!.role.enum!.map(value => ({ value, label: value })));
+
+    const generated = await generate({
+      framework,
+      profile: 'build',
+      schema: result.schema,
+      options: { styling: 'tokens', typescript: true },
+    });
+    expect(generated.errors).toBeUndefined();
+    expect(generated.status).toBe('ok');
+    expect(generated.artifact).toBeDefined();
+    expect(generated.code.length).toBeGreaterThan(0);
   });
 });
