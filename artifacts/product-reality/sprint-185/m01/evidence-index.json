@@ -619,7 +619,190 @@
       "retries": "none; every suite receipt is a first-attempt full-suite run",
       "disposition": "Retained as a red receipt, excluded from acceptance; measured at 0be09a43. Two defects on this branch, both fixed in the next commit: (1) the @oods/component-contracts devDependency added to @oods/component-styles used the workspace:* protocol, which pnpm pack leaves in the packed manifest, so every packing spec (packed-consumers.s182, packed-ported-consumers.s184, m06-gate-bites.s184, live-workflow-consumers.s184, saved-schema-consumers.s183) failed 'Packed manifest for @oods/component-styles contains a workspace-only protocol' — repinned to the sibling convention '0.1.0' resolved through link-workspace-packages; (2) the planning session's Sprint 185 rewrite of near.md (committed here as b8465e57) invalidated 19 sentence pins in tests/verification/s177-prose-carriers.contract.test.ts and how-forge-works.contract.test.ts — repointed to the current sentences with the same intent (rule #1690, recorded under preExistingTestRepoints). root-core additionally lost artifact.certify.echarts-a11y-warnfirst at file level to the parallel dist-replacement hazard already disclosed."
     },
-    "after": null
+    "after": {
+      "measuredHead": "40a9fe2085259a9160125a36fb39a976bedef982",
+      "status": "failed",
+      "suiteReceipts": [
+        {
+          "run": 1,
+          "suite": "viz-core",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 30910,
+          "files": {
+            "total": 67,
+            "passed": 67,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 1390,
+            "passed": 1390,
+            "failed": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 1,
+          "suite": "viz-render",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 25044,
+          "files": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 64,
+            "passed": 64,
+            "failed": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 1,
+          "suite": "mcp-server",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 1107592,
+          "files": {
+            "total": 270,
+            "passed": 270,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 5144,
+            "passed": 5128,
+            "failed": 0,
+            "skipped": 16,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 1,
+          "suite": "root-core",
+          "status": "failed",
+          "exitCode": 1,
+          "durationMs": 570703,
+          "files": {
+            "total": 518,
+            "passed": 512,
+            "failed": 6,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 5581,
+            "passed": 5538,
+            "failed": 5,
+            "skipped": 38,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 2,
+          "suite": "viz-core",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 21047,
+          "files": {
+            "total": 67,
+            "passed": 67,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 1390,
+            "passed": 1390,
+            "failed": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 2,
+          "suite": "viz-render",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 12033,
+          "files": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 64,
+            "passed": 64,
+            "failed": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 2,
+          "suite": "mcp-server",
+          "status": "passed",
+          "exitCode": 0,
+          "durationMs": 1063300,
+          "files": {
+            "total": 270,
+            "passed": 270,
+            "failed": 0,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 5144,
+            "passed": 5128,
+            "failed": 0,
+            "skipped": 16,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        },
+        {
+          "run": 2,
+          "suite": "root-core",
+          "status": "failed",
+          "exitCode": 1,
+          "durationMs": 483951,
+          "files": {
+            "total": 518,
+            "passed": 515,
+            "failed": 3,
+            "skipped": 0
+          },
+          "tests": {
+            "total": 5669,
+            "passed": 5629,
+            "failed": 2,
+            "skipped": 38,
+            "todo": 0
+          },
+          "cleanBefore": true,
+          "cleanAfter": true
+        }
+      ],
+      "host": "Mac",
+      "retries": "none; every suite receipt is a first-attempt full-suite run"
+    }
   },
   "preExistingTestRepoints": [
     {
@@ -719,6 +902,7 @@
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-core.vitest.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-render.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after-attempt-1-workspace-protocol/run-2/viz-render.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/four-suite-baseline.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-1/mcp-server.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-1/mcp-server.vitest.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-1/root-core.json",
@@ -729,6 +913,8 @@
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-1/viz-render.vitest.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/mcp-server.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/mcp-server.vitest.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/root-core.json",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/root-core.vitest.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/viz-core.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/viz-core.vitest.json",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/viz-render.json",
@@ -798,6 +984,7 @@
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-1/viz-core.log",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-1/viz-render.log",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/mcp-server.log",
+    "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/root-core.log",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/viz-core.log",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/run-2/viz-render.log",
     "artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/setup/build-packages.log",
@@ -871,5 +1058,5 @@
     "artifacts/product-reality/sprint-185/m01/red-control/logs/typecheck-mcp-server.log",
     "artifacts/product-reality/sprint-185/m01/red-control/logs/typecheck-root.log"
   ],
-  "status": "incomplete"
+  "status": "passed-with-root-core-disclosed"
 }
