@@ -16,6 +16,21 @@ import { handle as codeGenerate } from '../../packages/mcp-server/src/tools/code
 import type { CodeGenerateOutput } from '../../packages/mcp-server/src/tools/types.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
 import { extractBareImports } from './s183-m05-saved-schema-consumers.mjs';
+import {
+  S185_SCHEMA_NAMES,
+  deriveActionArguments,
+  deriveBoundFieldProbe,
+  deriveConsumerModel,
+  deriveInteraction,
+  deriveMountObligations,
+  inspectFrameworkAttachment,
+  observeMountObligations,
+  selectorForNode,
+  summarizeGateAccounting,
+  type ConsumerInteraction,
+  type BoundFieldProbe,
+  type MountObligation,
+} from './s185-m04-consumer-contract.js';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const REPOSITORY_ROOT = path.resolve(scriptDirectory, '../..');
@@ -40,7 +55,7 @@ export const GATE_NAMES = Object.freeze([
   'interaction-evidence',
 ] as const);
 
-export type S184M06SchemaName = (typeof SCHEMA_NAMES)[number];
+export type S184M06SchemaName = (typeof SCHEMA_NAMES)[number] | (typeof S185_SCHEMA_NAMES)[number];
 export type S184M06Framework = (typeof FRAMEWORKS)[number];
 export type S184M06GateName = (typeof GATE_NAMES)[number];
 
@@ -65,6 +80,7 @@ export type PackedPackageRecord = {
 };
 
 export type LiveGenerationCell = {
+  mission?: string;
   schema: S184M06SchemaName;
   schemaRef: string;
   framework: S184M06Framework;
@@ -83,6 +99,8 @@ export type LiveGenerationCell = {
     generatedAt: string;
   };
   sourceOwnership: SourceOwnership;
+  interaction?: ConsumerInteraction;
+  model?: Record<string, unknown>;
 };
 
 type SourceOwnership = {
@@ -99,11 +117,13 @@ type SourceOwnership = {
   consumerEntryFiles: string[];
   selectorOccurrencesInConsumerEntries: number;
   consumerComponentDeclarations: string[];
+  interaction?: ConsumerInteraction;
+  generatedInteractionNodeOccurrences: number;
 };
 
 type GateRow = {
   name: S184M06GateName;
-  status: 'passed' | 'failed' | 'unproven';
+  status: 'passed' | 'failed' | 'unproven' | 'not-applicable';
   logs: string[];
   reason?: string;
   detail?: Record<string, unknown>;
@@ -230,6 +250,7 @@ window.__OODS_CAPTURE_FINGERPRINT__ = () => ({
 window.__OODS_SSR_FINGERPRINT__ = window.__OODS_CAPTURE_FINGERPRINT__();
 window.__OODS_SSR_ROOT_NODE__ = document.querySelector('#app > [data-oods-component]');
 window.__OODS_SSR_ACTION_NODE__ = document.querySelector('[data-oods-screen-actions] button');
+window.__OODS_SSR_NODES__ = [...document.querySelectorAll('#app *')];
 `.trim();
 
 const compareCodePoint = (left: string, right: string): number => (
@@ -398,6 +419,7 @@ function sourceOwnership(
   generatedPath: string,
   actions: GeneratedArtifactAction[],
   consumerFiles: Record<string, string> = {},
+  interaction?: ConsumerInteraction,
 ): SourceOwnership {
   const actionSelectors = actions.map((action) => {
     const escaped = escapeRegExp(action.name);
@@ -429,15 +451,17 @@ function sourceOwnership(
     generatedFile: generatedPath,
     bindingMarkerCount: occurrenceCount(source, /@oods-(?:domain|local)-binding\b/g),
     actionSelectors,
-    generatedOwnsEverySelector: actionSelectors.length > 0
-      && actionSelectors.every((record) => record.generatedSourceOccurrences >= 1),
-    generatedForwardsEveryAction: actionSelectors.length > 0
-      && actionSelectors.every((record) => record.generatedRenderCallOccurrences >= 1),
+    generatedOwnsEverySelector: actionSelectors.every((record) => record.generatedSourceOccurrences >= 1),
+    generatedForwardsEveryAction: actionSelectors.every((record) => record.generatedRenderCallOccurrences >= 1),
     consumerEntryFiles: entries.map(([filePath]) => filePath),
     selectorOccurrencesInConsumerEntries: entries.reduce((sum, [, contents]) => (
       sum + occurrenceCount(contents, /data-oods-action/g)
     ), 0),
     consumerComponentDeclarations,
+    interaction,
+    generatedInteractionNodeOccurrences: interaction && interaction.kind !== 'none'
+      ? occurrenceCount(source, new RegExp(`\\bid=["']${escapeRegExp(interaction.nodeId)}["']`, 'g'))
+      : 0,
   };
 }
 
@@ -446,11 +470,15 @@ function assertGeneratedOwnership(
   schema: S184M06SchemaName,
   framework: S184M06Framework,
 ): void {
-  if (ownership.bindingMarkerCount < 1) {
+  if (ownership.actionSelectors.length > 0 && ownership.bindingMarkerCount < 1) {
     throw new Error(`${schema}/${framework}: generated source has no domain/local binding marker.`);
   }
   if (!ownership.generatedOwnsEverySelector || !ownership.generatedForwardsEveryAction) {
     throw new Error(`${schema}/${framework}: generated source does not own and forward every action selector.`);
+  }
+  if (ownership.interaction && ownership.interaction.kind !== 'none'
+    && ownership.generatedInteractionNodeOccurrences < 1) {
+    throw new Error(`${schema}/${framework}: the selected interaction node is not owned by the generated source.`);
   }
   if (ownership.selectorOccurrencesInConsumerEntries !== 0) {
     throw new Error(`${schema}/${framework}: a consumer entry file owns a generated interaction selector.`);
@@ -487,20 +515,32 @@ async function mkdirAbsent(directory: string): Promise<void> {
   }
 }
 
+function assertSchemaSelection(names: readonly S184M06SchemaName[]): void {
+  const available = new Set<string>([...SCHEMA_NAMES, ...S185_SCHEMA_NAMES]);
+  if (names.length === 0 || new Set(names).size !== names.length || names.some((name) => !available.has(name))) {
+    throw new Error('Select distinct immutable schemas from the supported eight-schema corpus.');
+  }
+}
+
 export async function runLiveGenerationOnly({
   artifactRoot,
   generate = codeGenerate,
+  schemaNames = SCHEMA_NAMES,
+  mission = 's184-m06',
 }: {
   artifactRoot: string;
   generate?: LiveGenerator;
+  schemaNames?: readonly S184M06SchemaName[];
+  mission?: string;
 }): Promise<{ report: Record<string, unknown>; cells: LiveGenerationCell[] }> {
   if (!artifactRoot) throw new Error('artifactRoot is required.');
+  assertSchemaSelection(schemaNames);
   await fsp.mkdir(artifactRoot, { recursive: true });
   const outputRoot = path.join(artifactRoot, 'live-generation');
   await mkdirAbsent(outputRoot);
   const cells: LiveGenerationCell[] = [];
 
-  for (const schemaName of SCHEMA_NAMES) {
+  for (const schemaName of schemaNames) {
     const record = savedSchema(schemaName);
     for (const framework of FRAMEWORKS) {
       const startedAt = new Date().toISOString();
@@ -530,7 +570,9 @@ export async function runLiveGenerationOnly({
         artifactContentHash: artifact.contentHash,
         generatedAt: startedAt,
       };
-      const ownership = sourceOwnership(source, file.path, artifact.actions);
+      const interaction = deriveInteraction(record.schema, artifact.actions);
+      const model = deriveConsumerModel(record.schema, MODEL);
+      const ownership = sourceOwnership(source, file.path, artifact.actions, {}, interaction);
       assertGeneratedOwnership(ownership, schemaName, framework);
       await writeLog(path.join(artifactRoot, generationLog), [
         'handler=code.generate',
@@ -548,6 +590,7 @@ export async function runLiveGenerationOnly({
         `validationChecks=${result.validationReceipt.checks.join(',')}`,
       ].join('\n'));
       cells.push({
+        mission,
         schema: schemaName,
         schemaRef: record.schemaRef,
         framework,
@@ -559,6 +602,8 @@ export async function runLiveGenerationOnly({
         generationLog,
         generationFingerprint: fingerprint,
         sourceOwnership: ownership,
+        interaction,
+        model,
       });
     }
   }
@@ -566,7 +611,7 @@ export async function runLiveGenerationOnly({
   const publicCells = cells.map(({ artifact: _artifact, source: _source, ...cell }) => cell);
   const report = {
     schemaVersion: '1.0.0',
-    mission: 's184-m06',
+    mission,
     kind: 'live-code-generate-fingerprint',
     status: 'passed',
     handler: 'code.generate',
@@ -578,12 +623,13 @@ export async function runLiveGenerationOnly({
   return { report, cells };
 }
 
-function consumerDataSource(framework: S184M06Framework): string {
-  const typePreamble = framework === 'react'
+function consumerDataSource(framework: S184M06Framework, source: string, model: Record<string, unknown>): string {
+  const hasPageProps = framework === 'react' && source.includes('export interface PageProps {');
+  const typePreamble = hasPageProps
     ? "import type { PageProps } from './GeneratedUI.js';\n\n"
     : '';
-  const typeAnnotation = framework === 'react' ? ": Omit<PageProps, 'actions'>" : '';
-  return `${typePreamble}export const model${typeAnnotation} = ${JSON.stringify(MODEL, null, 2)};\n`;
+  const typeAnnotation = hasPageProps ? ": Omit<PageProps, 'actions'>" : '';
+  return `${typePreamble}export const model${typeAnnotation} = ${JSON.stringify(model, null, 2)};\n`;
 }
 
 function actionObjectSource(
@@ -591,7 +637,7 @@ function actionObjectSource(
   mode: 'browser' | 'server',
   framework: S184M06Framework,
 ): string {
-  const typePrefix = framework === 'react' ? ': GeneratedUIActions' : '';
+  const typePrefix = framework === 'react' && actions.length > 0 ? ': GeneratedUIActions' : '';
   const rows = actions.map((action) => {
     if (mode === 'server') return `  ${action.name}: (..._args: unknown[]) => undefined,`;
     return [
@@ -609,24 +655,32 @@ export function createConsumerFiles({
   source,
   actions,
   schemaName,
+  model = deriveConsumerModel(savedSchema(schemaName).schema, MODEL),
+  mission = 's184-m06',
 }: {
   framework: S184M06Framework;
   source: string;
   actions: GeneratedArtifactAction[];
   schemaName: S184M06SchemaName;
+  model?: Record<string, unknown>;
+  mission?: string;
 }): Record<string, string> {
   const actionCounts = Object.fromEntries(actions.map(({ name }) => [name, 0]));
   const actionArgs = Object.fromEntries(actions.map(({ name }) => [name, []]));
-  const title = `S184 ${schemaName} ${framework} live consumer`;
+  const title = `${mission} ${schemaName} ${framework} live consumer`;
+  const acceptsModel = framework === 'react' ? source.includes('export interface PageProps {') : source.includes('interface Props {');
+  const suppliedModel = acceptsModel ? model : {};
+  const propsExpression = actions.length > 0 ? '{ ...model, actions }' : '{ ...model }';
+  const actionTypeImport = actions.length > 0 ? ', type GeneratedUIActions' : '';
   const windowTypes = `interface Window {\n  __OODS_ACTIONS_FROZEN__?: boolean;\n  __OODS_ACTION_COUNTS__: Record<string, number>;\n  __OODS_ACTION_ARGS__: Record<string, unknown[][]>;\n  __OODS_CAPTURE_FINGERPRINT__: () => unknown;\n  __OODS_SSR_FINGERPRINT__: unknown;\n  __OODS_SSR_ROOT_NODE__: Element | null;\n  __OODS_SSR_ACTION_NODE__: Element | null;\n}\n`;
   if (framework === 'react') {
     return {
       'src/GeneratedUI.tsx': source,
-      'src/consumer-data.ts': consumerDataSource(framework),
+      'src/consumer-data.ts': consumerDataSource(framework, source, suppliedModel),
       'src/main.tsx': `
 import React from 'react';
 import { hydrateRoot } from 'react-dom/client';
-import { GeneratedUI, type GeneratedUIActions } from './GeneratedUI.js';
+import { GeneratedUI${actionTypeImport} } from './GeneratedUI.js';
 import { model } from './consumer-data.js';
 import './consumer.css';
 
@@ -636,16 +690,16 @@ window.__OODS_ACTION_COUNTS__ = ${JSON.stringify(actionCounts)};
 window.__OODS_ACTION_ARGS__ = ${JSON.stringify(actionArgs)};
 ${actionObjectSource(actions, 'browser', framework)}
 window.__OODS_ACTIONS_FROZEN__ = Object.isFrozen(actions);
-hydrateRoot(root, React.createElement(GeneratedUI, { ...model, actions }));
+hydrateRoot(root, React.createElement(GeneratedUI, ${propsExpression}));
 `.trimStart(),
       'src/ssr.tsx': `
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { GeneratedUI, type GeneratedUIActions } from './GeneratedUI.js';
+import { GeneratedUI${actionTypeImport} } from './GeneratedUI.js';
 import { model } from './consumer-data.js';
 
 ${actionObjectSource(actions, 'server', framework)}
-const html = renderToString(React.createElement(GeneratedUI, { ...model, actions }));
+const html = renderToString(React.createElement(GeneratedUI, ${propsExpression}));
 process.stdout.write(JSON.stringify({ html }));
 `.trimStart(),
       'src/consumer.css': CONSUMER_CSS,
@@ -672,7 +726,7 @@ process.stdout.write(JSON.stringify({ html }));
   }
   return {
     'src/GeneratedUI.vue': source,
-    'src/consumer-data.ts': consumerDataSource(framework),
+    'src/consumer-data.ts': consumerDataSource(framework, source, suppliedModel),
     'src/main.ts': `
 import { createSSRApp } from 'vue';
 import GeneratedUI from './GeneratedUI.vue';
@@ -683,7 +737,7 @@ window.__OODS_ACTION_COUNTS__ = ${JSON.stringify(actionCounts)};
 window.__OODS_ACTION_ARGS__ = ${JSON.stringify(actionArgs)};
 ${actionObjectSource(actions, 'browser', framework)}
 window.__OODS_ACTIONS_FROZEN__ = Object.isFrozen(actions);
-createSSRApp(GeneratedUI, { ...model, actions }).mount('#app');
+createSSRApp(GeneratedUI, ${propsExpression}).mount('#app');
 `.trimStart(),
     'src/ssr.ts': `
 import { renderToString } from '@vue/server-renderer';
@@ -693,7 +747,7 @@ import { model } from './consumer-data.js';
 
 ${actionObjectSource(actions, 'server', framework)}
 async function main() {
-  const html = await renderToString(createSSRApp(GeneratedUI, { ...model, actions }));
+  const html = await renderToString(createSSRApp(GeneratedUI, ${propsExpression}));
   process.stdout.write(JSON.stringify({ html }));
 }
 void main();
@@ -973,6 +1027,9 @@ async function browserProof({
   distRoot,
   actions,
   expectedComponents,
+  interaction,
+  boundFieldProbe,
+  mountObligations,
 }: {
   framework: S184M06Framework;
   schemaName: S184M06SchemaName;
@@ -980,6 +1037,9 @@ async function browserProof({
   distRoot: string;
   actions: GeneratedArtifactAction[];
   expectedComponents: string[];
+  interaction: ConsumerInteraction;
+  boundFieldProbe: BoundFieldProbe | null;
+  mountObligations: MountObligation[];
 }): Promise<Record<string, unknown>> {
   const { chromium } = await import('playwright');
   const browser = await chromium.launch({ headless: true });
@@ -993,6 +1053,7 @@ async function browserProof({
       });
       await page.goto(url, { waitUntil: 'networkidle' });
       const rootCount = await page.locator(`#${rootId}`).count();
+      const requiredMounts = observeMountObligations(mountObligations, await page.locator('#app').innerHTML());
       const componentCounts = await page.evaluate((ids) => Object.fromEntries(
         ids.map((id) => [id, document.querySelectorAll(`[data-oods-component="${id}"]`).length]),
       ), expectedComponents);
@@ -1005,29 +1066,119 @@ async function browserProof({
         const after = proofWindow.__OODS_CAPTURE_FINGERPRINT__();
         return { before, after, equal: JSON.stringify(before) === JSON.stringify(after) };
       });
-      const firstAction = actions[0]!;
-      const hydrationSelector = selectorFor(firstAction.name);
-      const hydrationSelectorCount = await page.locator(hydrationSelector).count();
-      if (hydrationSelectorCount > 0) await page.locator(hydrationSelector).first().click();
-      const eventHandlerAttached = hydrationSelectorCount > 0 && await page.waitForFunction(
-        (actionName) => (
-          (window as unknown as Window & {
-            __OODS_ACTION_COUNTS__?: Record<string, number>;
-          }).__OODS_ACTION_COUNTS__?.[actionName] === 1
-        ),
-        firstAction.name,
-        { timeout: 2_000 },
-      ).then(() => true, () => false);
+      const attachment = await page.evaluate(inspectFrameworkAttachment, framework);
       const reusedServerNodes = await page.evaluate(() => {
         const proofWindow = window as unknown as Window & {
           __OODS_SSR_ROOT_NODE__: Element | null;
           __OODS_SSR_ACTION_NODE__: Element | null;
+          __OODS_SSR_NODES__: Element[];
         };
         return {
           root: proofWindow.__OODS_SSR_ROOT_NODE__ === document.querySelector('#app > [data-oods-component]'),
           action: proofWindow.__OODS_SSR_ACTION_NODE__ === document.querySelector('[data-oods-screen-actions] button'),
+          everyCapturedNode: proofWindow.__OODS_SSR_NODES__.every((node) => document.getElementById('app')!.contains(node)),
         };
       });
+      const interactionEvidence: Record<string, unknown> = { ...interaction, status: 'unproven' };
+      let selectedSelector: string | null = interaction.kind === 'none' ? null : interaction.selector;
+      let selectorCount = 0;
+      let eventHandlerAttached = false;
+      try {
+        if (interaction.kind === 'tabs') {
+          const owner = page.locator(interaction.selector);
+          const target = owner.locator('[role="tab"]:not([aria-selected="true"]):not([disabled])').first();
+          const before = await owner.locator('[role="tab"][aria-selected="true"]').getAttribute('id');
+          const targetId = await target.getAttribute('id');
+          const panelId = await target.getAttribute('aria-controls');
+          selectedSelector = targetId ? selectorForNode(targetId) : interaction.selector;
+          selectorCount = await target.count();
+          await target.click();
+          const selected = await page.waitForFunction((id) => id !== null
+            && document.getElementById(id)?.getAttribute('aria-selected') === 'true', targetId, { timeout: 2_000 })
+            .then(() => true, () => false);
+          const panelVisible = !!panelId && await page.locator(selectorForNode(panelId)).isVisible();
+          const selectedCount = await owner.locator('[role="tab"][aria-selected="true"]').count();
+          eventHandlerAttached = selected && before !== targetId && panelVisible && selectedCount === 1;
+          Object.assign(interactionEvidence, { before, after: targetId, panelId, panelVisible, selectedCount });
+        } else if (interaction.kind === 'action') {
+          const control = page.locator(interaction.selector).first();
+          selectorCount = await control.count();
+          await control.click();
+          eventHandlerAttached = await page.waitForFunction((name) => (
+            (window as unknown as { __OODS_ACTION_COUNTS__: Record<string, number> }).__OODS_ACTION_COUNTS__[name] === 1
+          ), interaction.action, { timeout: 2_000 }).then(() => true, () => false);
+        } else if (interaction.kind === 'field') {
+          const control = page.locator(interaction.selector);
+          selectorCount = await control.count();
+          const before = await control.inputValue();
+          const value = interaction.inputType === 'number' ? '7'
+            : interaction.inputType === 'date' ? '2026-10-02' : 'Consumer interaction proof';
+          if (interaction.component === 'Checkbox') {
+            const checked = await control.isChecked();
+            await control.setChecked(!checked);
+            eventHandlerAttached = await control.isChecked() !== checked;
+          } else if (interaction.component === 'Select') {
+            const choices = await control.locator('option:not([disabled])').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value));
+            const next = choices.find((choice) => choice !== before);
+            if (next === undefined) throw new Error('No distinct enabled select choice.');
+            await control.selectOption(next);
+            eventHandlerAttached = await control.inputValue() === next;
+          } else {
+            await control.fill(value);
+            eventHandlerAttached = await control.inputValue() === value && value !== before;
+            if (interaction.component === 'SearchInput') {
+              const owner = control.locator('xpath=ancestor::*[@data-oods-component="SearchInput"][1]');
+              const clearVisible = await owner.locator('button[aria-label="Clear search"]').isVisible();
+              await control.press('Escape');
+              const cleared = await control.inputValue() === '';
+              eventHandlerAttached = eventHandlerAttached && clearVisible && cleared;
+              Object.assign(interactionEvidence, { clearVisible, cleared });
+            }
+          }
+          Object.assign(interactionEvidence, {
+            before, attemptedValue: value, after: await control.inputValue(),
+            scope: 'native/component control state only; no generated application filtering or domain state is asserted',
+          });
+        } else {
+          const disabledControls = [];
+          for (const nodeId of interaction.disabledPaginationNodeIds) {
+            const owner = page.locator(selectorForNode(nodeId));
+            const buttons = owner.locator('button');
+            const count = await buttons.count();
+            const before = await owner.textContent();
+            const observations = [];
+            for (let index = 0; index < count; index += 1) {
+              const button = buttons.nth(index);
+              observations.push({ visible: await button.isVisible(), disabled: await button.isDisabled() });
+              await button.evaluate((element) => (element as HTMLButtonElement).click());
+            }
+            const unchanged = before === await owner.textContent();
+            const passed = count === 2 && observations.every((entry) => entry.visible && entry.disabled) && unchanged;
+            disabledControls.push({ nodeId, count, observations, unchanged, passed });
+          }
+          Object.assign(interactionEvidence, { disabledControls });
+          if (disabledControls.some(({ passed }) => !passed)) throw new Error('Declared empty pagination controls were not visible, disabled, and inert.');
+          interactionEvidence.status = 'not-applicable';
+        }
+        if (boundFieldProbe) {
+          const control = page.locator(selectorForNode(boundFieldProbe.writerId));
+          const heading = page.locator(selectorForNode(boundFieldProbe.readerId)).locator('h1,h2,h3,h4,h5,h6');
+          const before = { value: await control.inputValue(), heading: await heading.textContent() };
+          const next = 'Consumer updated bound field';
+          await control.fill(next);
+          const stateUpdated = await page.waitForFunction(({ readerId, expected }) =>
+            document.getElementById(readerId)?.querySelector('h1,h2,h3,h4,h5,h6')?.textContent === expected,
+          { readerId: boundFieldProbe.readerId, expected: next }, { timeout: 2_000 }).then(() => true, () => false);
+          const after = { value: await control.inputValue(), heading: await heading.textContent() };
+          const passed = stateUpdated && after.value === next && before.heading !== after.heading;
+          Object.assign(interactionEvidence, { boundField: { ...boundFieldProbe, before, after, passed, scope: 'generated local writer state observed by the bound real heading' } });
+          eventHandlerAttached = eventHandlerAttached && passed;
+        }
+        if (interaction.kind !== 'none') interactionEvidence.status = eventHandlerAttached ? 'passed' : 'failed';
+      } catch (error) {
+        interactionEvidence.status = 'failed';
+        interactionEvidence.reason = error instanceof Error ? error.message : String(error);
+      }
       await page.evaluate(() => {
         const proofWindow = window as unknown as Window & {
           __OODS_ACTION_COUNTS__: Record<string, number>;
@@ -1038,12 +1189,10 @@ async function browserProof({
           proofWindow.__OODS_ACTION_ARGS__[name] = [];
         }
       });
-      const hydrated = eventHandlerAttached && reusedServerNodes.root && reusedServerNodes.action;
+      const hydrated = attachment.attached && reusedServerNodes.root && reusedServerNodes.everyCapturedNode
+        && (interaction.kind === 'none' || eventHandlerAttached);
       const hydrationProbe = {
-        selector: hydrationSelector,
-        selectorCount: hydrationSelectorCount,
-        eventHandlerAttached,
-        reusedServerNodes,
+        selector: selectedSelector, selectorCount, eventHandlerAttached, reusedServerNodes, attachment,
       };
       const selectorEvidence = [];
       for (const action of actions) {
@@ -1062,6 +1211,23 @@ async function browserProof({
       const actionsFrozen = await page.evaluate(() => (
         (window as Window & { __OODS_ACTIONS_FROZEN__?: boolean }).__OODS_ACTIONS_FROZEN__ === true
       ));
+      const labelVisibility = await page.evaluate(() => {
+        const selectors: Record<string, string> = {
+          DetailHeader: 'h1,h2,h3,h4,h5,h6', CardHeader: 'h1,h2,h3,h4,h5,h6',
+          ColorSwatch: '[data-oods-swatch-label]', ColorizedBadge: '[data-oods-badge-label]',
+        };
+        return Object.entries(selectors).flatMap(([component, selector]) =>
+          Array.from(document.querySelectorAll(`[data-oods-component="${component}"]`)).map((root) => {
+            const label = root.querySelector<HTMLElement>(selector);
+            const text = label?.textContent?.trim() ?? '';
+            const style = label ? getComputedStyle(label) : null;
+            const bounds = label?.getBoundingClientRect();
+            const visible = !!label && !!bounds && bounds.width > 0 && bounds.height > 0
+              && style?.display !== 'none' && style?.visibility !== 'hidden' && style?.opacity !== '0'
+              && label.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true });
+            return { component, rootId: root.id, text, visible, passed: text.length > 0 && visible };
+          }));
+      });
       const css = await page.evaluate(() => ({
         primaryTextToken: getComputedStyle(document.documentElement).getPropertyValue('--sys-text-primary').trim() || null,
         canvasToken: getComputedStyle(document.documentElement).getPropertyValue('--sys-surface-canvas').trim() || null,
@@ -1076,8 +1242,11 @@ async function browserProof({
         hydration: hydrated ? 'passed' : 'failed',
         hydrationProbe,
         hydrationInvariant,
+        interactionEvidence,
+        labelVisibility,
         runtimeErrors,
         componentCounts,
+        requiredMounts,
         selectorEvidence,
         actionCounts,
         actionArgs,
@@ -1097,7 +1266,7 @@ async function injectSsrMarkup(distRoot: string, html: string): Promise<void> {
   await fsp.writeFile(indexPath, contents.replace('<!--SSR_MARKUP-->', html));
 }
 
-async function cssProof(distRoot: string): Promise<Record<string, unknown>> {
+async function cssProof(distRoot: string, requiresPorted: boolean): Promise<Record<string, unknown>> {
   const assetRoot = path.join(distRoot, 'assets');
   const files = (await fsp.readdir(assetRoot)).filter((name) => name.endsWith('.css')).sort(compareCodePoint);
   if (files.length === 0) throw new Error('Production build emitted no CSS asset.');
@@ -1105,10 +1274,10 @@ async function cssProof(distRoot: string): Promise<Record<string, unknown>> {
   const core = contents.includes('data-oods-component') && contents.includes('Stack');
   const ported = PORTED_COMPONENT_IDS.some((name) => contents.includes(name));
   const tokens = contents.includes('--sys-text-primary');
-  if (!core || !ported || !tokens) {
+  if (!core || (requiresPorted && !ported) || !tokens) {
     throw new Error(`Production CSS closure is incomplete: ${JSON.stringify({ core, ported, tokens })}`);
   }
-  return { files, bytes: Buffer.byteLength(contents), sha256: sha256Urn(contents), core, ported, tokens };
+  return { files, bytes: Buffer.byteLength(contents), sha256: sha256Urn(contents), core, ported, requiresPorted, tokens };
 }
 
 function gateRows(logPrefix: string): GateRow[] {
@@ -1144,17 +1313,7 @@ function failGate(rows: GateRow[], name: S184M06GateName, reason: string): void 
 }
 
 function accounting(rows: GateRow[]): Record<string, unknown> {
-  const provenCount = rows.filter(({ status }) => status === 'passed').length;
-  const namedUnproven = rows
-    .filter(({ status }) => status !== 'passed')
-    .map(({ name, status, reason }) => ({ name, status, reason: reason ?? 'No reason recorded.' }));
-  return {
-    totalGateCount: GATE_NAMES.length,
-    provenCount,
-    namedUnprovenCount: namedUnproven.length,
-    namedUnproven,
-    balanced: provenCount + namedUnproven.length === GATE_NAMES.length,
-  };
+  return summarizeGateAccounting(rows);
 }
 
 function replacementCount(source: string, needle: string): number {
@@ -1272,20 +1431,6 @@ async function retainActualGateLogs(
   }
 }
 
-function expectedActionArguments(schemaName: S184M06SchemaName): Record<string, unknown[][]> {
-  if (schemaName === 'subscription-list-dark') {
-    return {
-      handleFilter: [[{}]],
-      handleRowClick: [['sub-s184-001']],
-      handleSort: [['status']],
-    };
-  }
-  return {
-    handleDelete: [[]],
-    handleEdit: [[]],
-  };
-}
-
 async function runSsr({
   framework,
   consumerRoot,
@@ -1325,15 +1470,21 @@ export async function runLiveConsumerCell({
   generation,
   tarballs,
   mutation,
+  mission = generation.mission ?? 's184-m06',
 }: {
   artifactRoot: string;
   generation: LiveGenerationCell;
   tarballs: PackedPackageRecord[];
   mutation?: S184M06ConsumerGateMutation;
+  mission?: string;
 }): Promise<Record<string, unknown>> {
   const { schema: schemaName, framework, artifact, source } = generation;
+  const schema = savedSchema(schemaName).schema;
+  const interaction = generation.interaction ?? deriveInteraction(schema, artifact.actions);
+  const model = generation.model ?? deriveConsumerModel(schema, MODEL);
+  const mountObligations = deriveMountObligations(schema, source);
   const cellRelative = mutation
-    ? toPosix(path.join('gate-bites', framework, mutation.gate))
+    ? toPosix(path.join('gate-bites', ...(mission === 's184-m06' ? [] : [schemaName]), framework, mutation.gate))
     : toPosix(path.join('cells', schemaName, framework));
   const outputRoot = path.join(artifactRoot, cellRelative);
   await mkdirAbsent(outputRoot);
@@ -1355,9 +1506,9 @@ export async function runLiveConsumerCell({
     if (fs.existsSync(path.join(consumerRoot, 'node_modules'))) {
       throw new Error(`${schemaName}/${framework}: consumer unexpectedly began with node_modules.`);
     }
-    const files = createConsumerFiles({ framework, source, actions: artifact.actions, schemaName });
+    const files = createConsumerFiles({ framework, source, actions: artifact.actions, schemaName, model, mission });
     const generatedPath = framework === 'react' ? 'src/GeneratedUI.tsx' : 'src/GeneratedUI.vue';
-    const ownership = sourceOwnership(source, generatedPath, artifact.actions, files);
+    const ownership = sourceOwnership(source, generatedPath, artifact.actions, files, interaction);
     assertGeneratedOwnership(ownership, schemaName, framework);
     await writeLog(path.join(logRoot, 'source-ownership.log'), canonicalJson(ownership));
     await writeFiles(consumerRoot, files);
@@ -1442,12 +1593,12 @@ export async function runLiveConsumerCell({
     }
     if (mutation?.gate === 'hydration') {
       const mainPath = framework === 'react' ? 'src/main.tsx' : 'src/main.ts';
-      const hydrationCall = framework === 'react'
-        ? 'hydrateRoot(root, React.createElement(GeneratedUI, { ...model, actions }));'
-        : "createSSRApp(GeneratedUI, { ...model, actions }).mount('#app');";
+      const hydrationCall = files[mainPath]!.split('\n').find((line) => framework === 'react'
+        ? line.startsWith('hydrateRoot(root, ') : line.startsWith('createSSRApp(GeneratedUI, '));
+      if (!hydrationCall) throw new Error('The consumer entry has no canonical hydration call to mutate.');
       const unmountedTree = framework === 'react'
-        ? 'React.createElement(GeneratedUI, { ...model, actions })'
-        : 'createSSRApp(GeneratedUI, { ...model, actions })';
+        ? hydrationCall.slice('hydrateRoot(root, '.length, -2)
+        : hydrationCall.replace(/\.mount\('#app'\);$/, '');
       await mutateExistingFile({
         consumerRoot,
         recorder: appliedMutation!,
@@ -1455,6 +1606,9 @@ export async function runLiveConsumerCell({
         needle: hydrationCall,
         replacement: `(window as unknown as { __OODS_UNMOUNTED_TREE__: unknown }).__OODS_UNMOUNTED_TREE__ = ${unmountedTree};`,
         operation: 'construct but do not mount the generated tree, preserving the production dependency and CSS closure while leaving the server-rendered DOM inert',
+      });
+      await writeFiles(path.join(outputRoot, 'mutation-source'), {
+        [mainPath]: await fsp.readFile(path.join(consumerRoot, mainPath), 'utf8'),
       });
     }
     const productionBuild = commandResult('npm', [
@@ -1479,7 +1633,12 @@ export async function runLiveConsumerCell({
       });
     }
     const ssr = await runSsr({ framework, consumerRoot, environment, logRoot, replacements });
-    const rootId = savedSchema(schemaName).schema.screens[0]!.id;
+    const requiredSsrNodes = observeMountObligations(mountObligations, ssr.html);
+    const missingSsrNodes = requiredSsrNodes.filter(({ passed }) => !passed);
+    if (missingSsrNodes.length > 0) {
+      throw new Error(`${schemaName}/${framework}: server render omitted source-owned nodes: ${JSON.stringify(missingSsrNodes)}.`);
+    }
+    const rootId = schema.screens[0]!.id;
     if (!ssr.html.includes(`id=\\"${rootId}\\"`) && !ssr.html.includes(`id="${rootId}"`)) {
       throw new Error(`${schemaName}/${framework}: server render omitted saved-schema root ${rootId}.`);
     }
@@ -1489,7 +1648,7 @@ export async function runLiveConsumerCell({
         throw new Error(`${schemaName}/${framework}: server render omitted generated selector ${action.name}.`);
       }
     }
-    passGate(rows, activeGate, { bytes: Buffer.byteLength(ssr.html), sha256: sha256Urn(ssr.html) });
+    passGate(rows, activeGate, { bytes: Buffer.byteLength(ssr.html), sha256: sha256Urn(ssr.html), requiredSsrNodes });
     const distRoot = path.join(consumerRoot, 'dist');
     let browserHtml = ssr.html;
     if (mutation?.gate === 'mount') {
@@ -1531,7 +1690,8 @@ export async function runLiveConsumerCell({
     await injectSsrMarkup(distRoot, browserHtml);
 
     activeGate = 'shared-css-resolution';
-    const css = await cssProof(distRoot);
+    const requiresPorted = source.includes('@oods/component-styles/css-ported');
+    const css = await cssProof(distRoot, requiresPorted);
     await writeLog(path.join(logRoot, 'css-proof.log'), canonicalJson(css));
 
     const expectedComponents = [...new Set(
@@ -1542,8 +1702,8 @@ export async function runLiveConsumerCell({
     )].sort(compareCodePoint);
     const coreComponents = expectedComponents.filter((name) => !PORTED_COMPONENT_IDS.includes(name));
     const portedComponents = expectedComponents.filter((name) => PORTED_COMPONENT_IDS.includes(name));
-    if (coreComponents.length === 0 || portedComponents.length === 0) {
-      throw new Error(`${schemaName}/${framework}: generated source does not exercise nucleus and ported subpaths.`);
+    if (coreComponents.length === 0 || (requiresPorted && portedComponents.length === 0)) {
+      throw new Error(`${schemaName}/${framework}: generated source does not exercise its declared component subpaths.`);
     }
     const browser = await browserProof({
       framework,
@@ -1552,6 +1712,9 @@ export async function runLiveConsumerCell({
       distRoot,
       actions: artifact.actions,
       expectedComponents: mountedExpectedComponents,
+      interaction,
+      boundFieldProbe: deriveBoundFieldProbe(schema),
+      mountObligations,
     });
     await writeLog(path.join(logRoot, 'browser-proof.log'), canonicalJson(browser));
     const browserCss = browser.css as { primaryTextToken?: unknown; canvasToken?: unknown };
@@ -1563,7 +1726,10 @@ export async function runLiveConsumerCell({
     activeGate = 'mount';
     const componentCounts = browser.componentCounts as Record<string, number>;
     const missingComponents = mountedExpectedComponents.filter((name) => (componentCounts[name] ?? 0) < 1);
-    if (browser.mount !== 'passed' || missingComponents.length > 0) {
+    const labelVisibility = browser.labelVisibility as Array<{ passed: boolean }>;
+    const requiredMounts = browser.requiredMounts as Array<{ passed: boolean }>;
+    if (browser.mount !== 'passed' || missingComponents.length > 0 || labelVisibility.some(({ passed }) => !passed)
+      || requiredMounts.some(({ passed }) => !passed)) {
       throw new Error(`${schemaName}/${framework}: mount failed or omitted ${missingComponents.join(', ')}.`);
     }
     passGate(rows, activeGate, {
@@ -1572,6 +1738,8 @@ export async function runLiveConsumerCell({
       mountedExpectedComponents,
       generatedCoreComponents: coreComponents,
       generatedPortedComponents: portedComponents,
+      labelVisibility,
+      requiredMounts,
     });
 
     activeGate = 'hydration';
@@ -1586,23 +1754,32 @@ export async function runLiveConsumerCell({
     const selectorEvidence = browser.selectorEvidence as Array<{ action: string; count: number; clicked: boolean }>;
     const actionCounts = browser.actionCounts as Record<string, number>;
     const actionArgs = browser.actionArgs as Record<string, unknown[][]>;
-    const expectedArguments = expectedActionArguments(schemaName);
+    const expectedArguments = deriveActionArguments(schema, artifact.actions, model);
+    const interactionEvidence = browser.interactionEvidence as { status: string; reason?: string };
     if (browser.actionsFrozen !== true
       || selectorEvidence.some(({ count, clicked }) => count < 1 || !clicked)
       || artifact.actions.some(({ name }) => actionCounts[name] !== 1)
-      || canonicalize(actionArgs) !== canonicalize(expectedArguments)) {
+      || canonicalize(actionArgs) !== canonicalize(expectedArguments)
+      || interactionEvidence.status !== (interaction.kind === 'none' ? 'not-applicable' : 'passed')) {
       throw new Error(
         `${schemaName}/${framework}: generated interactions did not invoke each exact action once `
         + `with its schema-derived operands: ${JSON.stringify({ actionCounts, actionArgs, expectedArguments })}.`,
       );
     }
-    passGate(rows, activeGate, {
+    const interactionDetail = {
+      interactionEvidence,
       selectorEvidence,
       actionCounts,
       actionArgs,
       expectedArguments,
       sourceOwnership: ownership,
-    });
+    };
+    if (interaction.kind === 'none') {
+      const row = rows.find(({ name }) => name === activeGate)!;
+      row.status = 'not-applicable';
+      row.reason = interaction.reason;
+      row.detail = interactionDetail;
+    } else passGate(rows, activeGate, interactionDetail);
 
     const gateAccounting = accounting(rows);
     const build = {
@@ -1612,13 +1789,16 @@ export async function runLiveConsumerCell({
     await writeJson(path.join(outputRoot, 'build-inventory.json'), build);
     const report = {
       schemaVersion: '1.0.0',
-      mission: 's184-m06',
+      mission,
+      cellRelative,
+      reportPath: toPosix(path.join(cellRelative, 'report.json')),
       schema: schemaName,
       schemaRef: generation.schemaRef,
       framework,
       status: 'passed',
       selected: GATE_NAMES.length,
-      passed: GATE_NAMES.length,
+      passed: rows.filter(({ status }) => status === 'passed').length,
+      notApplicable: rows.filter(({ status }) => status === 'not-applicable').length,
       failed: 0,
       skipped: 0,
       logPathBase: 'artifact-root',
@@ -1653,13 +1833,16 @@ export async function runLiveConsumerCell({
     }
     const report = {
       schemaVersion: '1.0.0',
-      mission: 's184-m06',
+      mission,
+      cellRelative,
+      reportPath: toPosix(path.join(cellRelative, 'report.json')),
       schema: schemaName,
       schemaRef: generation.schemaRef,
       framework,
       status: 'failed',
       selected: GATE_NAMES.length,
       passed: rows.filter(({ status }) => status === 'passed').length,
+      notApplicable: rows.filter(({ status }) => status === 'not-applicable').length,
       failed: rows.filter(({ status }) => status === 'failed').length,
       skipped: 0,
       logPathBase: 'artifact-root',
@@ -1708,10 +1891,14 @@ export async function runLiveWorkflowProof({
   artifactRoot,
   generate = codeGenerate,
   tarballs,
+  schemaNames = SCHEMA_NAMES,
+  mission = 's184-m06',
 }: {
   artifactRoot: string;
   generate?: LiveGenerator;
   tarballs?: PackedPackageRecord[];
+  schemaNames?: readonly S184M06SchemaName[];
+  mission?: string;
 }): Promise<{
   report: Record<string, unknown>;
   cells: Array<Record<string, unknown>>;
@@ -1719,17 +1906,19 @@ export async function runLiveWorkflowProof({
   tarballs: PackedPackageRecord[];
 }> {
   if (!artifactRoot) throw new Error('artifactRoot is required.');
+  assertSchemaSelection(schemaNames);
   await mkdirAbsent(artifactRoot);
   const submittedTarballs = tarballs ?? await packFoundationPackages(artifactRoot) as PackedPackageRecord[];
   // Packing runs each package's prepack build. Generate only after that coherent
   // build boundary so target-readiness never observes a half-written dist tree.
-  const generation = await runLiveGenerationOnly({ artifactRoot, generate });
+  const generation = await runLiveGenerationOnly({ artifactRoot, generate, schemaNames, mission });
   const cellReports = [];
   for (const generationCell of generation.cells) {
     cellReports.push(await runLiveConsumerCell({
       artifactRoot,
       generation: generationCell,
       tarballs: submittedTarballs,
+      mission,
     }));
   }
   const publicCells = cellReports.map((cell) => {
@@ -1743,6 +1932,7 @@ export async function runLiveWorkflowProof({
       status: cell.status,
       selected: cell.selected,
       passed: cell.passed,
+      notApplicable: cell.notApplicable,
       failed: cell.failed,
       skipped: cell.skipped,
       gates: cell.gates,
@@ -1755,22 +1945,25 @@ export async function runLiveWorkflowProof({
   });
   const selected = publicCells.reduce((sum, cell) => sum + Number(cell.selected), 0);
   const passed = publicCells.reduce((sum, cell) => sum + Number(cell.passed), 0);
+  const notApplicable = publicCells.reduce((sum, cell) => sum + Number(cell.notApplicable), 0);
   const report = {
     schemaVersion: '1.0.0',
-    mission: 's184-m06',
-    kind: 'live-subscription-workflow-clean-consumer-proof',
-    status: passed === selected && selected === SCHEMA_NAMES.length * FRAMEWORKS.length * GATE_NAMES.length
+    mission,
+    kind: 'live-schema-workflow-clean-consumer-proof',
+    status: passed + notApplicable === selected && selected === schemaNames.length * FRAMEWORKS.length * GATE_NAMES.length
       ? 'passed'
       : 'failed',
     selected,
     passed,
-    failed: selected - passed,
+    notApplicable,
+    applicable: selected - notApplicable,
+    failed: selected - passed - notApplicable,
     skipped: 0,
-    schemaCount: SCHEMA_NAMES.length,
+    schemaCount: schemaNames.length,
     frameworkCount: FRAMEWORKS.length,
     cellCount: publicCells.length,
-    expectedCellCount: SCHEMA_NAMES.length * FRAMEWORKS.length,
-    equalityRule: 'Both immutable saved schemas run the same eight named gates in React and Vue without waivers.',
+    expectedCellCount: schemaNames.length * FRAMEWORKS.length,
+    equalityRule: 'Every selected immutable saved schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.',
     generationPolicy: 'code.generate is invoked live once per schema/framework cell and only that in-run artifact is consumed.',
     consumerPolicy: 'Consumers are outside the workspace, begin without node_modules, use empty npm configs, and install OODS packages only from exact tarballs produced by npm pack after each package prepack build.',
     logPathPolicy: 'Every gate log path is relative to this report artifact root, including paths repeated in nested cell reports.',

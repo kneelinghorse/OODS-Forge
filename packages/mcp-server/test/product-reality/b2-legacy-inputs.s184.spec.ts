@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs";
+import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
@@ -15,6 +16,7 @@ const dispositionPath = path.join(
   repositoryRoot,
   "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
 );
+const remeasurementRoot = path.join(repositoryRoot, "artifacts/product-reality/sprint-185/m04/b2");
 
 type TypedOutcome = {
   id: string;
@@ -69,6 +71,20 @@ type B2Disposition = {
     reason: string;
   }>;
   status: string;
+};
+
+type B2Measurement = {
+  historicalDisposition: { path: string; sha256: string };
+  inputsUnchanged: boolean;
+  savedStoreEntries: string[];
+  rows: Array<{
+    id: string;
+    input: TypedOutcome["input"];
+    profile: TypedOutcome["profile"];
+    error: { step: string; code: string; message: string } | null;
+    codePresent: boolean;
+    savedPresent: boolean;
+  }>;
 };
 
 async function readDisposition(): Promise<B2Disposition> {
@@ -165,16 +181,19 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
       framework: "react" as const,
       code: "OODS-N015",
       message:
-        "Component DetailHeader is not emission-eligible for react; evidence state: unavailable.",
+        "Component PriceSummary is not emission-eligible for react; evidence state: unavailable.",
     },
     {
       framework: "vue" as const,
       code: "OODS-N015",
       message:
-        "Component DetailHeader is not emission-eligible for vue; evidence state: unavailable.",
+        "Component PriceSummary is not emission-eligible for vue; evidence state: unavailable.",
     },
   ])(
-    "retains the Product/detail $framework typed gap as $code",
+    // Sprint 185 ports DetailHeader; the unchanged Product/detail operand now
+    // reaches the next real unported component, PriceSummary. The Sprint 184
+    // observation remains immutable and is replayed against base below.
+    "remeasures the unchanged Product/detail $framework typed gap as $code",
     async ({ framework, code, message }) => {
       const result = await pipelineHandle({
         object: "Product",
@@ -432,7 +451,7 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
     ]);
   });
 
-  it("binds the machine-readable typed outcomes to the live historical operands", async () => {
+  it("binds historical B2 outcomes to their base replay and current remeasurement without changing operands", async () => {
     const disposition = await readDisposition();
     expect(
       disposition.typedOutcomes.map(({ id, code }) => ({ id, code })),
@@ -444,6 +463,22 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
       { id: "product-no-context-html-build-save", code: "OODS-V007" },
     ]);
 
+    const base = JSON.parse(await fs.readFile(path.join(remeasurementRoot, "base/measurement.json"), "utf8")) as B2Measurement;
+    const current = JSON.parse(await fs.readFile(path.join(remeasurementRoot, "final/measurement.json"), "utf8")) as B2Measurement;
+    const historicalSha256 = createHash("sha256").update(await fs.readFile(dispositionPath)).digest("hex");
+    for (const measurement of [base, current]) {
+      expect(measurement.historicalDisposition.sha256).toBe(historicalSha256);
+      expect(measurement.inputsUnchanged).toBe(true);
+      expect(measurement.savedStoreEntries).toEqual([]);
+      expect(measurement.rows.map(({ id, input }) => ({ id, input })))
+        .toEqual(disposition.typedOutcomes.map(({ id, input }) => ({ id, input })));
+    }
+    for (const outcome of disposition.typedOutcomes) {
+      expect(base.rows.find(({ id }) => id === outcome.id)?.error).toEqual({
+        step: outcome.step, code: outcome.code, message: outcome.message,
+      });
+    }
+
     const tempRoot = await fs.mkdtemp(
       path.join(os.tmpdir(), "oods-s184-b2-bindings-"),
     );
@@ -454,17 +489,16 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
 
     try {
       for (const outcome of disposition.typedOutcomes) {
+        const expected = current.rows.find(({ id }) => id === outcome.id)!;
         const result = await pipelineHandle(outcome.input);
-        expect(result.error, outcome.id).toEqual({
-          step: outcome.step,
-          code: outcome.code,
-          message: outcome.message,
-        });
+        expect(result.error, outcome.id).toEqual(expected.error);
         expect(result.validationReceipt.profile, outcome.id).toBe(
           outcome.profile,
         );
         expect(result.code, outcome.id).toBeUndefined();
         expect(result.saved, outcome.id).toBeUndefined();
+        expect(expected.codePresent, outcome.id).toBe(false);
+        expect(expected.savedPresent, outcome.id).toBe(false);
       }
       expect(await fs.readdir(tempRoot)).toEqual([]);
     } finally {

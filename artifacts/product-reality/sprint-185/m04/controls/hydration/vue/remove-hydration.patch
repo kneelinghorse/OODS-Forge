@@ -1,0 +1,10 @@
+diff --git a/src/main.ts b/src/main.ts
+index 07126f4e..ec3fc128 100644
+--- a/src/main.ts
++++ b/src/main.ts
+@@ -16,4 +16,4 @@ const actions = Object.freeze({
+   },
+ });
+ window.__OODS_ACTIONS_FROZEN__ = Object.isFrozen(actions);
+-createSSRApp(GeneratedUI, { ...model, actions }).mount('#app');
++(window as unknown as { __OODS_UNMOUNTED_TREE__: unknown }).__OODS_UNMOUNTED_TREE__ = createSSRApp(GeneratedUI, { ...model, actions });

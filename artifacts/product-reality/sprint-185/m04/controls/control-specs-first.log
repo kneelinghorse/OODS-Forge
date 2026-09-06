@@ -1,0 +1,173 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/m04-controls.s185.spec.ts (13 tests | 9 failed) 233ms
+   × Sprint 185 m04 controls verify their intended failure boundary > observes all twelve current live build cells without any readiness injection 14ms
+     → expected [Function] to not throw an error but 'TypeError: Cannot read properties of …' was thrown
+   ✓ Sprint 185 m04 controls verify their intended failure boundary > react removes the complete DetailHeader body and preserves the other four implementations 57ms
+   × Sprint 185 m04 controls verify their intended failure boundary > react accepts exactly five measured selected-target reds and seven unaffected greens 2ms
+     → expected [Function] to not throw an error but 'TypeError: Cannot read properties of …' was thrown
+   × Sprint 185 m04 controls verify their intended failure boundary > react cannot claim discrimination while the implementation deletion stays green 1ms
+     → expected [Function] to throw error matching /wrong side/ but got 'Cannot read properties of undefined (…'
+   ✓ Sprint 185 m04 controls verify their intended failure boundary > vue removes the complete DetailHeader body and preserves the other four implementations 41ms
+   × Sprint 185 m04 controls verify their intended failure boundary > vue accepts exactly five measured selected-target reds and seven unaffected greens 2ms
+     → expected [Function] to not throw an error but 'TypeError: Cannot read properties of …' was thrown
+   × Sprint 185 m04 controls verify their intended failure boundary > vue cannot claim discrimination while the implementation deletion stays green 2ms
+     → expected [Function] to throw error matching /wrong side/ but got 'Cannot read properties of undefined (…'
+   × Sprint 185 m04 controls verify their intended failure boundary > rejects a counterpart-target red even when all five selected cells failed 1ms
+     → expected [Function] to throw error matching /wrong side/ but got 'Cannot read properties of undefined (…'
+   × Sprint 185 m04 controls verify their intended failure boundary > keeps user-card green because its saved input contains CardHeader but no DetailHeader 1ms
+     → expected [Function] to throw error matching /wrong side/ but got 'Cannot read properties of undefined (…'
+   × Sprint 185 m04 controls verify their intended failure boundary > rejects a wrong red gate, an artifact on the red side, and a missing green artifact 1ms
+     → expected [Function] to throw error matching /wrong failed gate/ but got 'Cannot read properties of undefined (…'
+   × Sprint 185 m04 controls verify their intended failure boundary > rejects a duplicated cell and input substitutions instead of trusting the headline 1ms
+     → expected [Function] to throw error matching /immutable input/ but got 'Cannot read properties of undefined (…'
+   ✓ Sprint 185 m04 controls verify their intended failure boundary > requires the current React emitter to move while Vue and the frozen s183 loader stay inert 1ms
+   ✓ Sprint 185 m04 controls verify their intended failure boundary > requires a unique hydration failure after install, typecheck, build, SSR and mount passed 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > observes all twelve current live build cells without any readiness injection
+AssertionError: expected [Function] to not throw an error but 'TypeError: Cannot read properties of …' was thrown
+
+- Expected: 
+undefined
+
++ Received: 
+"TypeError: Cannot read properties of undefined (reading 'headerNodes')"
+
+ ❯ test/product-reality/m04-controls.s185.spec.ts:47:61
+     45| describe('Sprint 185 m04 controls verify their intended failure bounda…
+     46|   it('observes all twelve current live build cells without any readine…
+     47|     expect(() => assertS185HeaderCells(baseline, null)).not.toThrow();
+       |                                                             ^
+     48|     expect(baseline.filter(cell => cell.headerNodes.length)).toHaveLen…
+     49|     expect(baseline.filter(cell => !cell.headerNodes.length).map(cell …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > react accepts exactly five measured selected-target reds and seven unaffected greens
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > vue accepts exactly five measured selected-target reds and seven unaffected greens
+AssertionError: expected [Function] to not throw an error but 'TypeError: Cannot read properties of …' was thrown
+
+- Expected: 
+undefined
+
++ Received: 
+"TypeError: Cannot read properties of undefined (reading 'headerNodes')"
+
+ ❯ test/product-reality/m04-controls.s185.spec.ts:72:65
+     70|     it(`${framework} accepts exactly five measured selected-target red…
+     71|       const cells = expectedHeaderRed(framework);
+     72|       expect(() => assertS185HeaderCells(cells, framework)).not.toThro…
+       |                                                                 ^
+     73|       expect(cells.filter(cell => cell.status === 'red')).toHaveLength…
+     74|       expect(cells.filter(cell => cell.status === 'green')).toHaveLeng…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > react cannot claim discrimination while the implementation deletion stays green
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > vue cannot claim discrimination while the implementation deletion stays green
+AssertionError: expected [Function] to throw error matching /wrong side/ but got 'Cannot read properties of undefined (…'
+
+- Expected: 
+/wrong side/
+
++ Received: 
+"Cannot read properties of undefined (reading 'headerNodes')"
+
+ ❯ test/product-reality/m04-controls.s185.spec.ts:78:64
+     76| 
+     77|     it(`${framework} cannot claim discrimination while the implementat…
+     78|       expect(() => assertS185HeaderCells(baseline, framework)).toThrow…
+       |                                                                ^
+     79|     });
+     80|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > rejects a counterpart-target red even when all five selected cells failed
+AssertionError: expected [Function] to throw error matching /wrong side/ but got 'Cannot read properties of undefined (…'
+
+- Expected: 
+/wrong side/
+
++ Received: 
+"Cannot read properties of undefined (reading 'headerNodes')"
+
+ ❯ test/product-reality/m04-controls.s185.spec.ts:85:57
+     83|     const cells = expectedHeaderRed('react');
+     84|     cells.find(cell => cell.framework === 'vue')!.status = 'red';
+     85|     expect(() => assertS185HeaderCells(cells, 'react')).toThrow(/wrong…
+       |                                                         ^
+     86|   });
+     87| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > keeps user-card green because its saved input contains CardHeader but no DetailHeader
+AssertionError: expected [Function] to throw error matching /wrong side/ but got 'Cannot read properties of undefined (…'
+
+- Expected: 
+/wrong side/
+
++ Received: 
+"Cannot read properties of undefined (reading 'headerNodes')"
+
+ ❯ test/product-reality/m04-controls.s185.spec.ts:91:55
+     89|     const cells = expectedHeaderRed('vue');
+     90|     cells.find(cell => cell.schema === 'user-card-showcase' && cell.fr…
+     91|     expect(() => assertS185HeaderCells(cells, 'vue')).toThrow(/wrong s…
+       |                                                       ^
+     92|   });
+     93| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > rejects a wrong red gate, an artifact on the red side, and a missing green artifact
+AssertionError: expected [Function] to throw error matching /wrong failed gate/ but got 'Cannot read properties of undefined (…'
+
+- Expected: 
+/wrong failed gate/
+
++ Received: 
+"Cannot read properties of undefined (reading 'headerNodes')"
+
+ ❯ test/product-reality/m04-controls.s185.spec.ts:97:61
+     95|     const wrongGate = expectedHeaderRed('react');
+     96|     wrongGate.find(cell => cell.status === 'red')!.errorCodes = ['OODS…
+     97|     expect(() => assertS185HeaderCells(wrongGate, 'react')).toThrow(/w…
+       |                                                             ^
+     98|     const emitted = expectedHeaderRed('react');
+     99|     emitted.find(cell => cell.status === 'red')!.artifactNonempty = tr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  test/product-reality/m04-controls.s185.spec.ts > Sprint 185 m04 controls verify their intended failure boundary > rejects a duplicated cell and input substitutions instead of trusting the headline
+AssertionError: expected [Function] to throw error matching /immutable input/ but got 'Cannot read properties of undefined (…'
+
+- Expected: 
+/immutable input/
+
++ Received: 
+"Cannot read properties of undefined (reading 'headerNodes')"
+
+ ❯ test/product-reality/m04-controls.s185.spec.ts:108:54
+    106|     expect(() => assertS185HeaderCells([...baseline.slice(1), baseline…
+    107|     const cells = structuredClone(baseline); cells[0]!.schemaSha256 = …
+    108|     expect(() => assertS185HeaderCells(cells, null)).toThrow(/immutabl…
+       |                                                      ^
+    109|   });
+    110| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 4 passed (13)
+   Start at  23:02:36
+   Duration  2.66s (transform 626ms, setup 27ms, collect 1.88s, tests 233ms, environment 0ms, prepare 64ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/m04-controls.s185.spec.ts

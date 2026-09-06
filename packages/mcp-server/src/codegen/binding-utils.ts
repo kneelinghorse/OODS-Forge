@@ -881,6 +881,10 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
     reasonField: 'reason',
     codeField: 'code',
   },
+  CardHeader: {
+    titleField: 'title',
+    supportingField: 'supporting',
+  },
   PaginationBar: {
     pageField: 'page',
     pageSizeField: 'pageSize',

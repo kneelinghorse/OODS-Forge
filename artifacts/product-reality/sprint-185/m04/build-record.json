@@ -1,0 +1,205 @@
+{
+  "mission": "s185-m04",
+  "implementationBase": "2069481c91c6c8cb70417dc17b8bc5c37cfa2bd2",
+  "status": "passed",
+  "criteria": [
+    {
+      "number": 1,
+      "criterion": "RED CONTROL VENDORED AND REPLAYED: the original four planning files are committed byte-for-byte under artifacts/product-reality/sprint-185/m04/controls/ and their census and generation stdout are re-executed against sprint base 1118f436 in an independently installed detached worktree at mission start. The 24-row generation table matches the original capture exactly: 12 error cells with only OODS-N015 (1/1/1/1/2/3 per schema per framework) and 12 pruned cells ok. The two cmos-activity-redesign control cells are separately measured at the same base and labeled as new companion measurements, because they were absent from the original generation capture.",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/controls/base-replay.json",
+        "artifacts/product-reality/sprint-185/m04/controls/vendor-provenance.json",
+        "artifacts/product-reality/sprint-185/m04/controls/base-resolution.json",
+        "artifacts/product-reality/sprint-185/m04/controls/activity-companion.stdout.json"
+      ]
+    },
+    {
+      "number": 2,
+      "criterion": "TWELVE CELLS GREEN ON EVERY APPLICABLE GATE: for each schema x framework, fresh-exact-tarball-install, strict-typecheck, production-build, server-render, mount, hydration and shared-css-resolution pass. Interaction-evidence passes where the schema declares an enabled interaction; the-academy-landing-v1 reports not-applicable with reason 'no interactive element declared', and cmos-dashboard-redesign reports not-applicable with reason 'no enabled interaction declared; unbound PaginationBar defaults to zero items'. Dashboard pagination controls are separately verified visible and disabled with no state transition. The headline states 'N of M applicable' per cell; no not-applicable row is counted as pass.",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/gate-accounting.json",
+        "artifacts/product-reality/sprint-185/m04/live-consumers/report.json"
+      ]
+    },
+    {
+      "number": 3,
+      "criterion": "INTERACTION IS DERIVED FROM THE SCHEMA, NOT THE SCHEMA NAME: the harness selects the first Tabs node (tab switch), else the first declared action (its native control), else the first field (typed input reflected in state); the per-schema-name branch at s184-m06-live-consumers.ts:1276 is gone; the s184 cells' expected action arguments are now derived and match the s184 recorded values",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/gate-accounting.json",
+        "artifacts/product-reality/sprint-185/m04/regression-comparison.json"
+      ]
+    },
+    {
+      "number": 4,
+      "criterion": "REGRESSION: the four Sprint 184 cells (subscription-list-dark and subscription-detail-dark x react/vue) still pass all eight gates through the generalized harness, with results byte-comparable to the s184 rows except for run-specific fields",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/regression-comparison.json"
+      ]
+    },
+    {
+      "number": 5,
+      "criterion": "THE HARNESS IS LIVE: zero reads of committed artifact JSON; the s184-m06 differential control (mutating an emitter source changes the harness output while the s183 committed-artifact harness is unchanged) is re-run on one of the new schemas and archived",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/controls/differential/report.json"
+      ]
+    },
+    {
+      "number": 6,
+      "criterion": "HYDRATION DISCRIMINATES: pre/post-hydration DOM fingerprint equality with zero runtime errors per cell, plus one hydration bite per target on a NEW schema cell shown red then restored",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/live-consumers/report.json",
+        "artifacts/product-reality/sprint-185/m04/controls/hydration/report.json"
+      ]
+    },
+    {
+      "number": 7,
+      "criterion": "CROSS-FRAMEWORK DISCRIMINATION ON THE FIVE: physically deleting DetailHeader's implementation declaration and named root export in one target, then rebuilding only that target, reds exactly the five target-schema cells containing DetailHeader while user-card-showcase and all six opposite-target cells stay green. Reverse direction is measured for React and Vue, then source is restored byte-for-byte and all twelve cells return green. Affected cells are derived from immutable schema content, not a literal assumption that all six use DetailHeader. Per-component bites for the other four reference m03's matrix rather than duplicating it.",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/controls/detailheader-discrimination/report.json"
+      ]
+    },
+    {
+      "number": 8,
+      "criterion": "B2 RE-MEASURED WITH A STATED REASON: b2-legacy-inputs.s184.spec.ts pins 'Component DetailHeader is not emission-eligible for react/vue' at the old detail input; that expectation is replaced by the measured truth at the same OLD input — whatever it is — with the reason recorded in the closeout (rule #1690). If Forge's object-aware detail context now generates on react and vue at build, that is recorded as a consumer-visible advertised move and a positive test at the old input is added",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/b2/remeasurement-disposition.json"
+      ]
+    },
+    {
+      "number": 9,
+      "criterion": "EVERY RAW LOG TRACKED: every log path named in the m04 cell rows is returned by git ls-files; the evidence-retention assertion is extended to sprint-185",
+      "status": "passed",
+      "evidence": [
+        "artifacts/product-reality/sprint-185/m04/evidence-index.json"
+      ]
+    }
+  ],
+  "accounting": {
+    "report": "artifacts/product-reality/sprint-185/m04/gate-accounting.json",
+    "total": 128,
+    "applicable": 124,
+    "proven": 124,
+    "notApplicable": 4,
+    "unproven": 0,
+    "failed": 0
+  },
+  "controls": {
+    "base": {
+      "report": "artifacts/product-reality/sprint-185/m04/controls/base-replay.json",
+      "baseCommit": "1118f436345e160437abfedbe73a19f190a92562",
+      "byteIdenticalReplayRows": 24,
+      "newlyMeasuredActivityCells": 2,
+      "originalActivityRows": 0,
+      "originalPlanningFiles": [
+        "artifacts/product-reality/sprint-185/m04/controls/generation-probe.mjs",
+        "artifacts/product-reality/sprint-185/m04/controls/reachability-census.mjs",
+        "artifacts/product-reality/sprint-185/m04/controls/output.md",
+        "artifacts/product-reality/sprint-185/m04/controls/measured-at.txt"
+      ]
+    },
+    "differential": {
+      "report": "artifacts/product-reality/sprint-185/m04/controls/differential/report.json",
+      "liveChangedAndRestored": true,
+      "frozenLegacyUnchanged": true
+    },
+    "header": {
+      "report": "artifacts/product-reality/sprint-185/m04/controls/detailheader-discrimination/report.json",
+      "cases": [
+        {
+          "framework": "react",
+          "selectedRed": 5,
+          "unaffectedGreen": 7,
+          "restoredGreen": 12
+        },
+        {
+          "framework": "vue",
+          "selectedRed": 5,
+          "unaffectedGreen": 7,
+          "restoredGreen": 12
+        }
+      ],
+      "otherFourComponentMutations": "artifacts/product-reality/sprint-185/m03/mutation/mutation-manifest.json"
+    },
+    "hydration": {
+      "report": "artifacts/product-reality/sprint-185/m04/controls/hydration/report.json",
+      "detected": 2,
+      "sixPrerequisiteGatesPassed": true
+    }
+  },
+  "regressionComparison": "artifacts/product-reality/sprint-185/m04/regression-comparison.json",
+  "evidenceIndex": "artifacts/product-reality/sprint-185/m04/evidence-index.json",
+  "b2": {
+    "report": "artifacts/product-reality/sprint-185/m04/b2/remeasurement-disposition.json",
+    "rows": [
+      {
+        "id": "product-detail-html-build",
+        "finalError": {
+          "step": "codegen",
+          "code": "OODS-V007",
+          "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+        },
+        "reason": "The existing HTML lossy-normalization typed gap remains unchanged."
+      },
+      {
+        "id": "product-detail-react-build",
+        "finalError": {
+          "step": "codegen",
+          "code": "OODS-N015",
+          "message": "Component PriceSummary is not emission-eligible for react; evidence state: unavailable."
+        },
+        "reason": "DetailHeader is implemented; the unchanged Product/detail input reaches the next unported component, PriceSummary."
+      },
+      {
+        "id": "product-detail-vue-build",
+        "finalError": {
+          "step": "codegen",
+          "code": "OODS-N015",
+          "message": "Component PriceSummary is not emission-eligible for vue; evidence state: unavailable."
+        },
+        "reason": "DetailHeader is implemented; the unchanged Product/detail input reaches the next unported component, PriceSummary."
+      },
+      {
+        "id": "product-card-html-release",
+        "finalError": {
+          "step": "codegen",
+          "code": "OODS-V162",
+          "message": "Release profile is missing required evidence: rendered, interaction, accessibility, theme, determinism, performance."
+        },
+        "reason": "The CardHeader contract exposed existing Labelled titleField/supportingField metadata. A bounded recipe lowering restores the original missing-release-evidence boundary without changing the operand."
+      },
+      {
+        "id": "product-no-context-html-build-save",
+        "finalError": {
+          "step": "codegen",
+          "code": "OODS-V007",
+          "message": "Nested content under Tabs child \"detail-tab-panel-3\" cannot be preserved when the child is normalized into a scalar item record."
+        },
+        "reason": "The existing HTML lossy-normalization typed gap remains unchanged."
+      }
+    ]
+  },
+  "generationCensus": {
+    "report": "artifacts/product-reality/sprint-185/m04/reachability-final/report.json",
+    "reachable": 11,
+    "total": 16,
+    "generatedCells": 22,
+    "limitation": "Generation reachability only. Packed-consumer runtime proof is separately recorded for eight schemas; this census does not promote the other schemas to runtime proof."
+  },
+  "formDataLimitation": {
+    "decision": 1739,
+    "initialFormDataParityClaimed": false,
+    "reason": "Existing generated framework APIs differ: React accepts seeded PageProps; Vue form mode initializes internal defaults. Both actual edits update the real heading. Initial observations remain in the cell reports.",
+    "source": "packages/mcp-server/src/codegen/vue-emitter.ts",
+    "inheritedFrom": "1118f436345e160437abfedbe73a19f190a92562"
+  },
+  "builderSelfCertified": false,
+  "separateReviewRequired": true
+}

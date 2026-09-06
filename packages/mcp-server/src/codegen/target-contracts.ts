@@ -19,6 +19,9 @@ const GENERIC_PROPS = new Set(['field', 'id']);
 const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   Partial<Record<GovernedComponentId, ReadonlySet<string>>>
 > = {
+  // Labelled trait recipe directives lower into title/supporting; they are
+  // authoring metadata rather than additions to the public component API.
+  CardHeader: new Set(['titleField', 'supportingField']),
   Checkbox: new Set(['name']),
   DatePicker: new Set(['name']),
   Input: new Set(['name']),
@@ -765,6 +768,25 @@ function compositionDirectiveIssues(node: UiElement, schema: UiSchema): CodegenI
   ));
 }
 
+function headerRecipeFieldIssues(node: UiElement, schema: UiSchema): CodegenIssue[] {
+  if (node.component !== 'CardHeader') return [];
+  return ['titleField', 'supportingField'].flatMap((prop) => {
+    const field = node.props?.[prop];
+    // The ordinary prop value check diagnoses non-string directives.
+    if (typeof field !== 'string') return [];
+    const entry = ownFieldSchemaEntry(schema.objectSchema, field);
+    if (!entry) return [issue(
+      `Field ${JSON.stringify(field)} referenced by CardHeader.${prop} does not exist in objectSchema.`,
+      node,
+    )];
+    if (fieldValueKind(entry) !== 'string') return [issue(
+      `Field ${JSON.stringify(field)} referenced by CardHeader.${prop} must contain string data.`,
+      node,
+    )];
+    return [];
+  });
+}
+
 /** Validate governed props, default-slot use, and supported event mappings. */
 export function preflightTargetContracts(
   schema: UiSchema,
@@ -788,6 +810,7 @@ export function preflightTargetContracts(
     ))?.signature?.parameters[0]?.type;
     issues.push(...fieldContractIssues(node, normalized, framework, localStateType));
     issues.push(...compositionDirectiveIssues(node, normalized));
+    issues.push(...headerRecipeFieldIssues(node, normalized));
     const enrichedProps = resolveFieldProps(node, schema.objectSchema);
     const props: Record<string, unknown> = {
       ...(node.props ?? {}),

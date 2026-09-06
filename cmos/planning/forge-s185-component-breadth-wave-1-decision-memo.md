@@ -157,3 +157,38 @@ interactive header event or allocating a second state owner. Missing, mismatched
 writers stay typed errors. The header contract keeps no events. Generated-code checks run in m02; m03
 proves the textarea edit updates the real heading in both frameworks. The contracts, five-component
 slate, and twelve-cell exit gate stay unchanged.
+
+## Build correction — m04 control and interaction accounting (2026-09-06, decision #1737)
+
+The independently installed detached `1118f436` checkout reproduces both original planning scripts'
+stdout byte-for-byte. The original generation table contains **24** rows: twelve full-schema errors and
+twelve pruned successes. It does not contain the two activity-control rows claimed in section 8; m04
+measures those separately at the same base and labels them companion measurements. The four original
+planning files remain byte-exact under `artifacts/product-reality/sprint-185/m04/controls/`.
+
+The saved `cmos-dashboard-redesign` has an unbound `PaginationBar` with no props, bindings or actions.
+Its default zero-item state disables both navigation controls, so no page change can be demonstrated
+without changing the input. Its interaction gate is **not applicable**, with the disabled controls
+verified separately for visibility, disabled state and absence of a transition. Academy retains its
+existing no-interactive-element disposition. Neither case contributes an interaction pass. This gives
+four interaction N/A rows across the twelve target cells; the harness derives all applicable counts
+from the actual gate rows. The four Subscription regression cells retain all eight applicable gates.
+
+Within the six target schemas, five use `DetailHeader`; `user-card-showcase` uses `CardHeader` instead.
+The bidirectional header-removal control derives its affected cells from the immutable schemas and
+must leave that CardHeader-only cell and every opposite-target cell green. This does not change the
+all-corpus DetailHeader frequency reported in section 2. The CMOS m04 criteria now state these measured
+operands and accounting rules explicitly. All saved inputs remain unchanged.
+
+## Build correction — m04 existing CardHeader recipe (2026-09-06, decision #1738)
+
+The B2 replay found that the new CardHeader contract rejected `supportingField` on the pre-existing
+Labelled trait's Product/card recipe. At the base, Product/card/HTML release reached the missing-evidence
+error `OODS-V162`; the new rejection stopped earlier at `OODS-V007`. The correction treats the trait's
+`titleField` and `supportingField` as authoring directives and lowers them through the existing recipe
+resolver into the header's `title` and `supporting` values. Referenced fields must be own string fields.
+React/Vue emit actual data bindings; HTML uses its established camelCase visible placeholders. Explicit
+runtime values keep precedence, and a generic scalar `field` remains heading content. The public
+component props, versions, saved inputs and HTML component-map source do not change. Focused compile/SSR
+tests restore the old release carrier and prove the directive behavior across targets; this additional
+emitter change belongs in the sprint-wide consumer notice.
