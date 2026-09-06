@@ -122,6 +122,19 @@ export default defineConfig({
           'packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts',
           'packages/mcp-server/test/product-reality/saved-schema-consumers.s183.spec.ts',
           'packages/mcp-server/test/product-reality/independent-review-approval.s183.spec.ts',
+          // s185 recovery: these three proofs run npm pack/prepack against the
+          // shared workspace dist trees. Retain them in serial test:coverage.
+          'packages/mcp-server/test/product-reality/live-workflow-consumers.s184.spec.ts',
+          'packages/mcp-server/test/product-reality/m06-gate-bites.s184.spec.ts',
+          'packages/mcp-server/test/product-reality/packed-ported-consumers.s184.spec.ts',
+          // These compiler/runtime and frozen-Git proofs passed natively but
+          // timed out under root concurrency. Per-file attribution is retained
+          // in sprint-185/m05/recovery/root-isolation.json (74 native tests).
+          'packages/mcp-server/test/product-reality/emitter-directives.s184.spec.ts',
+          'packages/mcp-server/test/product-reality/ported-workflow.s184.spec.ts',
+          'packages/mcp-server/test/product-reality/state-axis.s184.spec.ts',
+          'packages/mcp-server/test/product-reality/closeout.s184.spec.ts',
+          'packages/mcp-server/test/product-reality/patch-disposition.s184.spec.ts',
         ],
         environment: 'node'
       }

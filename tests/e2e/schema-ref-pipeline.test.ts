@@ -6,8 +6,9 @@ import { handle as composeHandle } from '../../packages/mcp-server/src/tools/des
 import { handle as validateHandle } from '../../packages/mcp-server/src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../packages/mcp-server/src/tools/repl.render.js';
 import { handle as codegenHandle } from '../../packages/mcp-server/src/tools/code.generate.js';
+import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 
-const COMPOSE_INPUT = {
+const COMPOSE_INPUT: Parameters<typeof composeHandle>[0] = {
   intent: 'Account detail view with tabs for Overview, Billing, Activity, Settings.',
   layout: 'detail',
   preferences: {
@@ -15,7 +16,7 @@ const COMPOSE_INPUT = {
     tabLabels: ['Overview', 'Billing', 'Activity', 'Settings'],
   },
   options: { topN: 1 },
-} as const;
+};
 
 function payloadBytes(payload: unknown): number {
   return Buffer.byteLength(JSON.stringify(payload), 'utf8');
@@ -36,21 +37,28 @@ describe('schemaRef E2E pipeline', () => {
     expect(render.html).toContain('<!DOCTYPE html>');
 
     const codegen = await codegenHandle({ schemaRef, framework: 'react' });
-    expect(codegen.status).toBe('error');
-    expect(codegen.code).toBe('');
-    expect(codegen.fileExtension).toBe('');
-    expect(codegen.imports).toEqual([]);
+    expect(codegen.status, JSON.stringify(codegen.errors ?? [])).toBe('ok');
+    expect(codegen.fileExtension).toBe('.tsx');
+    expect(codegen.imports).toEqual(expect.arrayContaining([
+      '@oods/components-react', '@oods/components-react/ported',
+      '@oods/component-styles/css', '@oods/component-styles/css-ported',
+    ]));
     expect(codegen.warnings).toEqual([]);
-    // Sprint 184 ported PriceBadge and AuditTimeline. DetailHeader remains
-    // outside the eligible React surfaces, so it is the sole typed gap.
-    expect(codegen.errors).toEqual([
-      {
-        code: 'OODS-N015',
-        message: 'Component DetailHeader is not emission-eligible for react; evidence state: unavailable.',
-        nodeId: 'slot-header-2',
-        component: 'DetailHeader',
-      },
-    ]);
+    expect(codegen.errors).toBeUndefined();
+    // The unchanged schemaRef now spans real nucleus and ported components.
+    // Preserve every composed node, including the formerly unavailable header.
+    expect(codegen.code).toContain('<DetailHeader ');
+    expect(codegen.code).toContain('id="slot-header-2"');
+    expect(codegen.code).toContain('<PriceBadge ');
+    expect(codegen.code).toContain('<AuditTimeline ');
+    expect(codegen.code.match(/data-oods-component=/g)).toHaveLength(15);
+    expect(codegen.artifact).toBeDefined();
+    expect(codegen.artifact!.files).toHaveLength(1);
+    expect(codegen.artifact!.files[0]!.contents).toBe(codegen.code);
+    expect(validateGeneratedArtifact(codegen.artifact!)).toEqual([]);
+    expect(codegen.validationReceipt.checks).toEqual(expect.arrayContaining([
+      'target-readiness', 'normalization-fidelity', 'props-contract', 'dependency-closure',
+    ]));
     expect(codegen.meta).toEqual({ nodeCount: 15, componentCount: 6 });
   });
 

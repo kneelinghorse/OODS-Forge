@@ -55,7 +55,7 @@ function removeNamedDeclaration(source: string, symbol: string): string {
 
 describe('Sprint 184 merged target readiness', () => {
   it.each(['react', 'vue'] as const)(
-    'merges the frozen 14-row %s manifest with the separate sorted eight-row manifest',
+    'merges the nucleus %s manifest with the separate sorted ported manifest',
     (framework) => {
       expect(nucleusReadiness[framework].rows.map(({ componentId }) => componentId)).toEqual(
         NUCLEUS_COMPONENT_IDS,
@@ -67,7 +67,9 @@ describe('Sprint 184 merged target readiness', () => {
         ...NUCLEUS_COMPONENT_IDS,
         ...PORTED_COMPONENT_IDS,
       ]);
-      expect(mergedReadiness[framework].rows).toHaveLength(22);
+      expect(mergedReadiness[framework].rows).toHaveLength(
+        NUCLEUS_COMPONENT_IDS.length + PORTED_COMPONENT_IDS.length,
+      );
     },
   );
 
@@ -93,7 +95,7 @@ describe('Sprint 184 merged target readiness', () => {
   );
 
   it.each(['react', 'vue'] as const)(
-    'keeps all 22 governed %s capability outcomes green through the production preflight',
+    'keeps every governed %s capability outcome green through the production preflight',
     (framework) => {
       expect(preflightTargetCapabilities(ALL_GOVERNED_NODES, framework)).toEqual([]);
     },

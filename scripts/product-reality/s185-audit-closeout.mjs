@@ -14,13 +14,35 @@ const defaultManifest = 'artifacts/product-reality/sprint-185/m05/closeout-input
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 const bare = value => String(value).replace(/^sha256:/, '');
 const fullHead = value => typeof value === 'string' && /^[a-f0-9]{40}$/.test(value);
+// Independent copy of the reviewed public byte scope; do not import the
+// producer's predicate or accept its equivalence boolean as audit evidence.
+const publicScope = [
+  'configs/agent/policy.json', 'docs/api', 'packages/mcp-adapter/tool-descriptions.json',
+  'packages/mcp-server/src/schemas', 'packages/mcp-server/src/schemas/generated.ts',
+  'packages/mcp-server/src/security/policy.json', 'packages/mcp-server/src/tools/registry.json',
+  'packages/component-contracts/package.json', 'packages/component-contracts/src', 'packages/component-contracts/registry',
+  'packages/component-styles/package.json', 'packages/component-styles/src', 'packages/component-styles/scripts', 'packages/component-styles/tsup.config.ts',
+  'packages/components-react/package.json', 'packages/components-react/src', 'packages/components-react/evidence', 'packages/components-react/tsup.config.ts',
+  'packages/components-vue/package.json', 'packages/components-vue/src', 'packages/components-vue/evidence', 'packages/components-vue/tsup.config.ts', 'packages/components-vue/tsup.ported.config.ts',
+  'packages/mcp-server/src/codegen', 'packages/mcp-server/src/render', 'packages/mcp-server/src/errors/registry.ts', 'packages/mcp-server/src/tools/code.generate.ts',
+];
+const testPath = file => /(^|\/)(?:__tests__|test|tests)\//.test(file) || /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file);
+
+export function auditPublicRuntimeBytes({ root, implementationHead, executionHead }) {
+  assert(fullHead(implementationHead) && fullHead(executionHead));
+  execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
+  const scopedChangedPaths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', `${implementationHead}..${executionHead}`, '--', ...publicScope], { cwd: root, encoding: 'utf8' })
+    .split('\0').filter(Boolean).sort();
+  return { implementationHead, executionHead, ancestor: true, scope: publicScope, excludeTests: true,
+    scopedChangedPaths, changedPaths: scopedChangedPaths.filter(file => !testPath(file)), excludedTestPaths: scopedChangedPaths.filter(testPath) };
+}
 const sourceKeys = [
   ['baselineFold'], ['movers'], ['movers', 'noticePlan', 'deliveries'],
   ['reviewCarries', 'behaviorBites', 'near'], ['reviewCarries'], ['bridge'], [],
   ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near', 'm04BuildRecord'],
 ];
 
-export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, gitEvidence, manifestPath = defaultManifest }) {
+export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, gitEvidence, publicGitEvidence, manifestPath = defaultManifest }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Audit requires actual full execution and review SHAs.');
   assert.equal(gitEvidence?.ancestor, true, 'Review head must descend from the actual execution head.');
   // Decision 1741 allows new capture records, not rewritten fixtures or code.
@@ -65,6 +87,16 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
   assert.equal(manifest.missionId, 's185-m05');
   assert(Array.isArray(manifest.sources.derivationInputs) && manifest.sources.derivationInputs.length > 0, 'Derivation rules must be frozen inputs.');
   for (const file of manifest.sources.derivationInputs) frozen(file);
+  const implementationHead = parseFrozen(manifest.sources.noticePlan).implementationHead;
+  if (implementationHead !== executionHead) {
+    assert.equal(publicGitEvidence?.implementationHead, implementationHead);
+    assert.equal(publicGitEvidence.executionHead, executionHead); assert.equal(publicGitEvidence.ancestor, true);
+    assert.equal(publicGitEvidence.excludeTests, true); assert.deepEqual(publicGitEvidence.scope, publicScope);
+    assert.deepEqual(publicGitEvidence.excludedTestPaths, publicGitEvidence.scopedChangedPaths.filter(testPath));
+    assert.deepEqual(publicGitEvidence.changedPaths, publicGitEvidence.scopedChangedPaths.filter(file => !testPath(file)));
+    assert.deepEqual(publicGitEvidence.changedPaths, [], 'Advertised public runtime bytes changed after the notice implementation head.');
+    assert.deepEqual(ledger.publicHeadEquivalence, publicGitEvidence, 'Producer public equivalence differs from independent Git evidence.');
+  }
   const mission = parseFrozen(manifest.sources.cmosMission).rawResponse.structuredContent.data;
   const original = parseFrozen(manifest.sources.cmosOriginalMission).rawResponse.structuredContent.data;
   const sprint = parseFrozen(manifest.sources.cmosSprint).rawResponse.structuredContent.data;
@@ -176,6 +208,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
   return { schemaVersion: '1.0.0', status: 'passed', executionHead, reviewHead,
     ledgerSha256: digest(outputBytes.get('claim-ledger')), accountingSha256: digest(outputBytes.get('suite-accounting')),
     checkedCriteria: 8, checkedExecutions: executions.size, checkedFrozenPaths: checked.size, gitEvidence,
+    publicHeadEquivalence: implementationHead === executionHead ? { implementationHead, executionHead, identicalHead: true } : publicGitEvidence,
     auditedInputs: [...checked.values()].map(({ path: file, sha256 }) => ({ path: file, sha256 })).sort((a, b) => a.path.localeCompare(b.path)),
     builderSelfCertified: false, separateReviewRequired: true,
     limitation: 'This audit verifies the actual build evidence graph and does not certify the sprint. Handoff flags are checked; handoff bytes are excluded because the handoff subsequently binds this audit.' };
@@ -193,11 +226,15 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     execFileSync('git', ['merge-base', '--is-ancestor', executionHead, reviewHead], { cwd: root });
     const changes = execFileSync('git', ['diff', '--name-status', '--no-renames', `${executionHead}..${reviewHead}`], { cwd: root, encoding: 'utf8' })
       .trim().split('\n').filter(Boolean).map(line => { const [status, file] = line.split('\t'); return { status, path: file }; });
+    const readFrozen = file => execFileSync('git', ['show', `${reviewHead}:${file}`], { cwd: root, maxBuffer: 128 * 1024 * 1024 });
+    const manifestPath = argument('--manifest') ?? defaultManifest;
+    const manifest = JSON.parse(readFrozen(manifestPath));
+    const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan)).implementationHead;
+    const publicGitEvidence = auditPublicRuntimeBytes({ root, implementationHead, executionHead });
     const report = auditFinalCloseout({ executionHead, reviewHead,
-      gitEvidence: { ancestor: true, changes },
-      manifestPath: argument('--manifest') ?? defaultManifest,
+      gitEvidence: { ancestor: true, changes }, publicGitEvidence, manifestPath,
       readOutput: file => readFileSync(path.join(artifactsRoot, file)),
-      readFrozen: file => execFileSync('git', ['show', `${reviewHead}:${file}`], { cwd: root, maxBuffer: 128 * 1024 * 1024 }),
+      readFrozen,
     });
     const stdout = `Independent actual-output audit passed: ${report.checkedCriteria} literal criteria, ${report.checkedExecutions} executions, ${report.checkedFrozenPaths} frozen paths.\n`;
     writeFileSync(path.join(outputRoot, 'audit.json'), `${JSON.stringify({ ...report, exitCode: 0, command, host: os.hostname(), stdout }, null, 2)}\n`);

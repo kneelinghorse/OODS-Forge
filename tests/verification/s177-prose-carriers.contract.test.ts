@@ -64,11 +64,16 @@ describe("Sprint 177 prose truth carriers", () => {
     const normalizedProgram = productProgram.replace(/\s+/g, " ");
     const normalizedIndex = roadmapIndex.replace(/\s+/g, " ");
 
-    // Sprint 185 m01: near.md was rewritten at the Sprint 185 lock (planning
-    // session PS-2026-09-05-005, decision #1724); the carriers below pin the
-    // current sentences with the same intent (rule #1690).
+    // Sprint 185's build handoff keeps the program Active and preserves its
+    // lock authority while requiring a separate review (rule #1690).
     expect(near).toContain(
-      "**Status:** ACTIVE — program decision `#1652`; Sprint-185 lock decision `#1724`",
+      "**Status:** ACTIVE — Sprint 185 BUILT, REVIEW PENDING; program decision `#1652`",
+    );
+    expect(normalizedNear).toContain(
+      "locked by decision `#1724` at build base `1118f436`",
+    );
+    expect(normalizedNear).toContain(
+      "The builder leaves the sprint Active with `builderSelfCertified:false` and `separateReviewRequired:true`.",
     );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",

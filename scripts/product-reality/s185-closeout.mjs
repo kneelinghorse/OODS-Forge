@@ -7,6 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { deriveSuiteAccounting } from './s185-suite-accounting.mjs';
 import { PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
+import { isTestPath } from './s184-m07-reconnect.mjs';
 
 export const OUTPUT_ROOT = 'artifacts/product-reality/sprint-185/m05/closeout';
 export const MANIFEST_PATH = 'artifacts/product-reality/sprint-185/m05/closeout-inputs/manifest.json';
@@ -34,6 +35,20 @@ function safePath(file) {
     && !file.split('/').some(part => ['', '.', '..'].includes(part)), `Unsafe frozen path: ${file}`);
   assert(!file.startsWith(`${OUTPUT_ROOT}/`), `Generated output cannot be a frozen input: ${file}`);
   return file;
+}
+
+/** Compare actual public bytes using the mover derivation's test exclusions. */
+export function derivePublicHeadEquivalence({ root, implementationHead, executionHead }) {
+  assert(fullHead(implementationHead) && fullHead(executionHead), 'Public comparison requires full actual commit SHAs.');
+  execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
+  // Disable rename folding so moving runtime source into a test path still
+  // exposes the removed runtime path before test-only changes are excluded.
+  const scopedChangedPaths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z',
+    implementationHead, executionHead, '--', ...PUBLIC_RUNTIME_SCOPE], { cwd: root, encoding: 'utf8' })
+    .split('\0').filter(Boolean).sort();
+  return { implementationHead, executionHead, ancestor: true, scope: PUBLIC_RUNTIME_SCOPE, excludeTests: true,
+    scopedChangedPaths, changedPaths: scopedChangedPaths.filter(file => !isTestPath(file)),
+    excludedTestPaths: scopedChangedPaths.filter(isTestPath) };
 }
 
 /** Pure derivation over explicitly supplied frozen bytes; no working-tree fallback. */
@@ -127,7 +142,11 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   const implementationHead = documents.noticePlan.implementationHead;
   const samePublicHead = implementationHead === executionHead || (publicHeadEquivalence?.implementationHead === implementationHead
     && publicHeadEquivalence.executionHead === executionHead && publicHeadEquivalence.ancestor === true
-    && equal(publicHeadEquivalence.scope, PUBLIC_RUNTIME_SCOPE) && publicHeadEquivalence.changedPaths?.length === 0);
+    && equal(publicHeadEquivalence.scope, PUBLIC_RUNTIME_SCOPE) && publicHeadEquivalence.excludeTests === true
+    && Array.isArray(publicHeadEquivalence.scopedChangedPaths)
+    && equal(publicHeadEquivalence.changedPaths, publicHeadEquivalence.scopedChangedPaths.filter(file => !isTestPath(file)))
+    && equal(publicHeadEquivalence.excludedTestPaths, publicHeadEquivalence.scopedChangedPaths.filter(isTestPath))
+    && publicHeadEquivalence.changedPaths.length === 0);
   check(1, movers.status === 'passed' && movers.s185?.head === implementationHead && samePublicHead
     && Object.values(movers.comparison ?? {}).length === 2
     && Object.values(movers.comparison).every(scope => Object.values(scope).every(row =>
@@ -270,10 +289,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     ...(attributionPath ? { attributions: JSON.parse(readFrozen(attributionPath).toString('utf8')) } : {}),
     ...(failurePath ? { failureDispositions: JSON.parse(readFrozen(failurePath).toString('utf8')) } : {}) });
   const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan).toString('utf8')).implementationHead;
-  assert(fullHead(implementationHead), 'Notice must retain its full actual implementation head.');
-  execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
-  const changedPaths = execFileSync('git', ['diff', '--name-only', implementationHead, executionHead, '--', ...PUBLIC_RUNTIME_SCOPE], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(Boolean);
-  const publicHeadEquivalence = { implementationHead, executionHead, ancestor: true, changedPaths, scope: PUBLIC_RUNTIME_SCOPE };
+  const publicHeadEquivalence = derivePublicHeadEquivalence({ root, implementationHead, executionHead });
   const auditPath = argument('--final-audit');
   const outputs = deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, suiteAccounting, publicHeadEquivalence,
     ...(auditPath ? { finalAudit: JSON.parse(fs.readFileSync(path.resolve(auditPath), 'utf8')) } : {}) });

@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import {
   mkdirSync,
   mkdtempSync,
@@ -67,12 +67,6 @@ function actionObjectSource(
   ].filter((line): line is string => line !== null).join('\n');
 }
 
-// vue-tsc remains synchronous so its diagnostics stay exact; yielding between
-// invocations lets Vitest flush task-result RPC traffic.
-async function yieldToVitestRpc(): Promise<void> {
-  await new Promise<void>((resolve) => setImmediate(resolve));
-}
-
 function reactConsumerErrors(
   code: string,
   typescript: boolean,
@@ -121,7 +115,6 @@ async function vueConsumerResult(
   supplyActions: boolean,
   omittedAction?: RequiredActionName,
 ): Promise<{ status: number | null; output: string }> {
-  await yieldToVitestRpc();
   const root = mkdtempSync(path.join(tmpdir(), 'oods-s183-vue-actions-'));
   try {
     mkdirSync(path.join(root, 'node_modules'));
@@ -165,12 +158,43 @@ ${actionObjectSource(omittedAction)}
       },
       include: ['./GeneratedUI.vue', './Consumer.vue'],
     }, null, 2)}\n`);
-    const result = spawnSync(
-      process.execPath,
-      [vueRequire.resolve('vue-tsc/bin/vue-tsc.js'), '--noEmit', '--pretty', 'false', '-p', path.join(root, 'tsconfig.json')],
-      { cwd: mcpServerRoot, encoding: 'utf8', timeout: 120_000 },
-    );
-    return { status: result.status, output: `${result.stdout}\n${result.stderr}`.trim() };
+    const startedAt = performance.now();
+    // Keep the worker event loop responsive while each real compiler runs.
+    // Vitest's task-update RPC has its own 60s timer, independent of this test.
+    const result = await new Promise<{
+      status: number | null; signal: NodeJS.Signals | null; error: Error | null;
+      stdout: string; stderr: string;
+    }>((resolve) => {
+      const child = spawn(
+        process.execPath,
+        [vueRequire.resolve('vue-tsc/bin/vue-tsc.js'), '--noEmit', '--pretty', 'false', '-p', path.join(root, 'tsconfig.json')],
+        { cwd: mcpServerRoot, stdio: ['ignore', 'pipe', 'pipe'], timeout: 120_000 },
+      );
+      let stdout = '';
+      let stderr = '';
+      let error: Error | null = null;
+      child.stdout.setEncoding('utf8');
+      child.stderr.setEncoding('utf8');
+      child.stdout.on('data', (chunk: string) => { stdout += chunk; });
+      child.stderr.on('data', (chunk: string) => { stderr += chunk; });
+      child.on('error', (cause) => { error = cause; });
+      child.on('close', (status, signal) => resolve({ status, signal, error, stdout, stderr }));
+    });
+    const measurement = {
+      typescript, supplyActions, omittedAction: omittedAction ?? null,
+      durationMs: Number((performance.now() - startedAt).toFixed(1)),
+      status: result.status, signal: result.signal,
+      error: result.error ? {
+        name: result.error.name, message: result.error.message,
+        code: (result.error as NodeJS.ErrnoException).code,
+      } : null,
+    };
+    console.info('[s183 vue-tsc action contract]', JSON.stringify(measurement));
+    const output = `${result.stdout ?? ''}\n${result.stderr ?? ''}`.trim();
+    if (result.error || result.status === null) {
+      throw new Error(`vue-tsc did not finish: ${JSON.stringify(measurement)}\n${output}`);
+    }
+    return { status: result.status, output };
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -513,7 +537,10 @@ describe('Sprint 183 M02 typed action protocol', () => {
       expect(missing.status, omittedAction).not.toBe(0);
       expect(missing.output, omittedAction).toContain(omittedAction);
     }
-  }, 120_000);
+  // The first s185 closeout measured 123.84s for these four compiler calls.
+  // Keep each child capped at 120s; allow the grouped test to report its actual
+  // diagnostics instead of Vitest masking them at the same 120s boundary.
+  }, 180_000);
 
   it('Vue JavaScript rejects each omitted action at runtime', async () => {
     const result = await handle({

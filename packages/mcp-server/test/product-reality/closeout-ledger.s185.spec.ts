@@ -1,7 +1,11 @@
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, mkdirSync, writeFileSync, renameSync, rmSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { deriveCloseout } from '../../../../scripts/product-reality/s185-closeout.mjs';
-import { auditFinalCloseout } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
+import { auditFinalCloseout, auditPublicRuntimeBytes } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
 
 // Independent hand-built source bytes, not producer outputs or checker helpers.
 // These tests test derivation integrity; they are not the real sprint capture.
@@ -204,7 +208,7 @@ describe('Independent final-output audit checks actual bytes without the produce
   function auditFixture() {
     const f = fixture(); const outputs = f.derive();
     const gitEvidence = { ancestor: true, changes: [] as { status: string; path: string }[] };
-    const audit = () => auditFinalCloseout({ executionHead, reviewHead, gitEvidence, readFrozen: f.readFrozen,
+    const audit = () => auditFinalCloseout({ executionHead, reviewHead, gitEvidence, publicGitEvidence: undefined, readFrozen: f.readFrozen,
       readOutput: (file: string) => Buffer.from(`${JSON.stringify(outputs[file], null, 2)}\n`) });
     return { ...f, outputs, gitEvidence, audit };
   }
@@ -219,7 +223,7 @@ describe('Independent final-output audit checks actual bytes without the produce
     const f = fixture(); f.manifest.claimBindings[6].executionIds = [];
     f.manifest.claimBindings[6].suiteBindings = ['viz-core', 'viz-render', 'mcp-server', 'root-core'];
     const outputs = f.derive();
-    const audit = auditFinalCloseout({ executionHead, reviewHead, gitEvidence: { ancestor: true, changes: [] }, readFrozen: f.readFrozen,
+    const audit = auditFinalCloseout({ executionHead, reviewHead, gitEvidence: { ancestor: true, changes: [] }, publicGitEvidence: undefined, readFrozen: f.readFrozen,
       readOutput: (file: string) => Buffer.from(`${JSON.stringify(outputs[file], null, 2)}\n`) });
     expect(audit.status).toBe('passed');
   });
@@ -238,5 +242,30 @@ describe('Independent final-output audit checks actual bytes without the produce
     const indexed = f.outputs[`${prefix}/evidence-index.json`].generatedOutputs.find((row: any) => row.path === `${prefix}/claim-ledger.json`);
     indexed.sha256 = hash(`${JSON.stringify(ledger, null, 2)}\n`);
     expect(f.audit).toThrow();
+  });
+});
+
+describe('Independent public runtime equality uses actual Git bytes and disclosed test exclusions', () => {
+  it.each(['test-only', 'runtime-change', 'runtime-renamed-to-test'] as const)('%s preserves the reviewed runtime boundary', kind => {
+    const root = mkdtempSync(path.join(os.tmpdir(), 'oods-s185-audit-git-'));
+    const git = (...args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
+    const commit = () => { git('add', '.'); git('-c', 'user.name=Audit fixture', '-c', 'user.email=audit@example.invalid', 'commit', '-qm', 'fixture'); return git('rev-parse', 'HEAD'); };
+    try {
+      git('init', '-q');
+      const directory = path.join(root, 'packages/mcp-server/src/codegen'); mkdirSync(directory, { recursive: true });
+      writeFileSync(path.join(directory, 'runtime.ts'), 'export const runtime = 1;\n');
+      writeFileSync(path.join(directory, 'readiness.test.ts'), 'expect(rows).toHaveLength(14);\n');
+      const implementationHead = commit();
+      if (kind === 'test-only') writeFileSync(path.join(directory, 'readiness.test.ts'), 'expect(rows).toHaveLength(nucleus.length);\n');
+      if (kind === 'runtime-change') writeFileSync(path.join(directory, 'runtime.ts'), 'export const runtime = 2;\n');
+      if (kind === 'runtime-renamed-to-test') renameSync(path.join(directory, 'runtime.ts'), path.join(directory, 'runtime.test.ts'));
+      const proof = auditPublicRuntimeBytes({ root, implementationHead, executionHead: commit() });
+      expect(proof.excludeTests).toBe(true);
+      if (kind === 'test-only') {
+        expect(proof.changedPaths).toEqual([]);
+        expect(proof.excludedTestPaths).toEqual(['packages/mcp-server/src/codegen/readiness.test.ts']);
+      } else expect(proof.changedPaths).toEqual(['packages/mcp-server/src/codegen/runtime.ts']);
+      if (kind === 'runtime-renamed-to-test') expect(proof.excludedTestPaths).toEqual(['packages/mcp-server/src/codegen/runtime.test.ts']);
+    } finally { rmSync(root, { recursive: true, force: true }); }
   });
 });

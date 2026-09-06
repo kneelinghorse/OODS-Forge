@@ -50,7 +50,7 @@ const FORBIDDEN_SHAPES: Array<{ name: string; pattern: RegExp }> = [
   { name: 'sharedScenarios id set compared to a literal size', pattern: /sharedScenarios[^\n]*\)\.size\)\.toBe\(\d+\)/ },
   // The 109-row controlling denominator (#1726) is a different number and is allowed.
   { name: 'readiness rows compared to a literal count in a packed consumer', pattern: /(?:readiness|document)\.rows\.length !== (?!109\b)\d+/ },
-  { name: 'readiness rows compared to a literal length', pattern: /(?:mainReadiness|readiness)\.rows\)\.toHaveLength\(\d+\)/ },
+  { name: 'readiness rows compared to a literal length', pattern: /\b\w*[Rr]eadiness(?:\[[^\]\n]+\])?\.rows\)\.toHaveLength\(\s*\d+\s*,?\s*\)/ },
   { name: 'packed readiness proof compared to literal counts', pattern: /readiness: \{ react: \d+, vue: \d+ \}/ },
   { name: 'a hand-written EXPECTED_NUCLEUS_IDS list', pattern: /EXPECTED_NUCLEUS_IDS/ },
   { name: 'the frozen generator nucleus constant', pattern: /FROZEN_NUCLEUS/ },
@@ -78,7 +78,16 @@ function liveScopeFiles(): string[] {
     } catch {
       // no test directory
     }
+    const sourceTests: string[] = [];
+    const sourceRoot = path.join(packagesRoot, packageName, 'src');
+    try {
+      if (statSync(sourceRoot).isDirectory()) walk(sourceRoot, sourceTests);
+      files.push(...sourceTests.filter(file => /\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file)));
+    } catch {
+      // no source directory
+    }
   }
+  walk(path.join(repositoryRoot, 'tests'), files);
   walk(path.join(repositoryRoot, 'scripts', 'product-reality'), files);
   return files
     .map((file) => path.relative(repositoryRoot, file))
@@ -124,6 +133,16 @@ describe('Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONE
       }
     }
     expect(offenders).toEqual([]);
+  });
+
+  it('includes source and root tests and rejects indexed readiness counts while allowing derived membership', () => {
+    const files = liveScopeFiles();
+    expect(files).toContain('packages/mcp-server/src/codegen/ported-target-readiness.s184.test.ts');
+    expect(files).toContain('tests/verification/how-forge-works.contract.test.ts');
+    const shape = FORBIDDEN_SHAPES.find(row => row.name === 'readiness rows compared to a literal length')!;
+    expect(shape.pattern.test('expect(mergedReadiness[framework].rows).toHaveLength(22)')).toBe(true);
+    expect(shape.pattern.test('expect(mergedReadiness[framework].rows).toHaveLength(\n  22,\n)')).toBe(true);
+    expect(shape.pattern.test('expect(mergedReadiness[framework].rows).toHaveLength(NUCLEUS_COMPONENT_IDS.length + PORTED_COMPONENT_IDS.length)')).toBe(false);
   });
 
   it('the hand-written 14-family list survives only in declared showcase fixtures and history scripts', () => {
