@@ -1,0 +1,767 @@
+{
+  "missionId": "s185-m05",
+  "sources": {
+    "cmosMission": "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-mission-contract-source.json",
+    "cmosOriginalMission": "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-mission-contract-original-source.json",
+    "cmosSprint": "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-sprint-status-source.json",
+    "baselineFold": "artifacts/product-reality/sprint-185/m05/baseline-fold/report.json",
+    "movers": "artifacts/product-reality/sprint-185/m05/movers/sprint-wide-movers.json",
+    "noticePlan": "artifacts/product-reality/sprint-185/m05/reconnect/notice-plan.json",
+    "deliveries": "artifacts/product-reality/sprint-185/m05/reconnect/deliveries.json",
+    "reviewCarries": "artifacts/product-reality/sprint-185/m05/review-carries/s184-additive-review-record.json",
+    "behaviorBites": "artifacts/product-reality/sprint-185/m05/behavior-guards/hash-resealed-bites.json",
+    "bridge": "artifacts/product-reality/sprint-185/m05/bridge/disposition.json",
+    "m04BuildRecord": "artifacts/product-reality/sprint-185/m04/build-record.json",
+    "near": "cmos/foundational-docs/roadmap/near.md",
+    "derivationInputs": [
+      "scripts/product-reality/s185-closeout.mjs",
+      "packages/mcp-server/test/product-reality/closeout-ledger.s185.spec.ts",
+      "scripts/product-reality/s185-suite-accounting.mjs",
+      "packages/mcp-server/test/product-reality/suite-accounting.s185.spec.ts",
+      "scripts/product-reality/s185-verify-build-state.mjs",
+      "scripts/product-reality/s185-audit-closeout.mjs"
+    ]
+  },
+  "executions": [
+    {
+      "id": "baseline-fold-recheck",
+      "command": "node scripts/product-reality/s185-baseline-surfaces.mjs --check",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge",
+      "host": "Mac",
+      "exitCode": 0,
+      "executionHead": "e2621b7ab981d35da4b5bc2c03fdd9f148890252",
+      "sourceState": "committed",
+      "startedAt": "2026-09-06T05:12:13.750546+00:00",
+      "endedAt": "2026-09-06T05:12:14.797865+00:00",
+      "inputs": [
+        {
+          "path": "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json",
+          "sha256": "287afda9764c62aa286b8e2705e53599379bef8b20d70dacf0f1cd9a9415dcaa"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-dashboard-redesign/react/report.json",
+          "sha256": "4eeb96ea03ead2082259dec16662781c3c36e16269c67a205b9b0c767701853f"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-dashboard-redesign/vue/report.json",
+          "sha256": "0a0a73271d97380bcbfec860d14347386f990f324a004c32e074cd18fd4c743d"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-messages-redesign/react/report.json",
+          "sha256": "fdd25ea45ec58ee3d8b73619832a423ab54bdd5c01a1baff36788a51a1e7e176"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-messages-redesign/vue/report.json",
+          "sha256": "cf9248072d44a4724e6ee255430f00ef5a374ccb93b086294579bfbcbff267fe"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/plan-form-dark/react/report.json",
+          "sha256": "2005231b7a87ccc852a6d75c544ac9fafcdf6c1122c7698a7a775c7361ae2bc2"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/plan-form-dark/vue/report.json",
+          "sha256": "139d0a989282905de4e3e556057546a18f669b26af44c343a1c0d0f0349b45db"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/pt-shop-parts-entry-router-v1/react/report.json",
+          "sha256": "636cc4be3799bc23a610cc30b818f4285e560dd684fb177fbc388bc8dc7d6ea5"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/pt-shop-parts-entry-router-v1/vue/report.json",
+          "sha256": "5573820738bb44e5cfbe442d09bb3c065fe4a8caa5dc093e094b29bfacbda38c"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/subscription-detail-dark/react/report.json",
+          "sha256": "38c647d42cf232027b1dbacab2b218b08e8d516d9237ede2dca5d1f3d31031c0"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/subscription-detail-dark/vue/report.json",
+          "sha256": "f1779f808a8aa7ceb5f198029b1dbe1929cd1b98f3ee38e519dd1de5b83bb55b"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/subscription-list-dark/react/report.json",
+          "sha256": "bd911a001d76c32a217ce11dab98b408635ed856da9511d15bf4128a93e18d23"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/subscription-list-dark/vue/report.json",
+          "sha256": "efa1bcae79f947e6553426dfcec6a0d835018a48a15310b479ab7f1aa6e789a9"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/the-academy-landing-v1/react/report.json",
+          "sha256": "12cfe83f8e0a4a2e66acceca427ded0aa43055fbf6a9d62955c9bf40934e69d3"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/the-academy-landing-v1/vue/report.json",
+          "sha256": "995eab236b4047ab7f7531e54d1d81d17a2013c855d017451c1f200fabee2aa1"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/user-card-showcase/react/report.json",
+          "sha256": "ecea1ce2169c411d6869ae314987c1a3f83aca4a63669f4ad3182a689251c974"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/cells/user-card-showcase/vue/report.json",
+          "sha256": "002d25fa09be2236afdbe677dcf877544d297a7fc75f1ebe383a0fe5525f153e"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/live-consumers/report.json",
+          "sha256": "a9eee0d2a3ae57918034a4688751752ce7b4baf078fafbb3cd170e0d7598d1f0"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/baseline-fold/build-outputs/packages/components-react/dist/index.d.ts",
+          "sha256": "cdc7d06b947fbc729511bccb8e555bc698bcc364bb8f1a425207f68796add9df"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/baseline-fold/build-outputs/packages/components-react/dist/ported.d.ts",
+          "sha256": "9061c569c47aa40c7b247fdd5c33edcc4d0335a8dee668e862385c3a4dc6fdbc"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/baseline-fold/build-outputs/packages/components-vue/dist/index.d.ts",
+          "sha256": "70a2b8224e0836ef01e87291c404270726c1c6574115197dade0c71f8f79eee1"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/baseline-fold/build-outputs/packages/components-vue/dist/ported.d.ts",
+          "sha256": "07c4e9868fc05e81942e74ae829fbe852f99f490aef26ec476306eb581adafeb"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/baseline-fold/report.json",
+          "sha256": "0f94891556f25cebb4aefd5d815ab0ea50cc1c77a4a62687aa2b7af93afb0d65"
+        },
+        {
+          "path": "packages/component-contracts/package.json",
+          "sha256": "2de78b3fd5238c1245700b4bf1ad764a3ef8ac47c97971c9baca652fe0d73dde"
+        },
+        {
+          "path": "packages/component-contracts/registry/component-capability-baseline.v1.json",
+          "sha256": "d61ba5db61db0b237f93acd93c87d3d75fa2ade4ca909ba71c69cd64f8dddf6c"
+        },
+        {
+          "path": "packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json",
+          "sha256": "7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71"
+        },
+        {
+          "path": "packages/component-contracts/registry/component-reconciliation.proposed.v1.json",
+          "sha256": "04243a3215eb877d02425a7e6aa43600868802e9f05371cf3ad57007a6e64e0d"
+        },
+        {
+          "path": "packages/component-contracts/src/contracts.ts",
+          "sha256": "fe4d0e2f3fb43380fd2aa546591b231b9be0427f3e3ecbb6c85d90cce9d077f6"
+        },
+        {
+          "path": "packages/component-contracts/src/foundation-v1.ts",
+          "sha256": "7f4c9ae5e2863880859c312a2587254322a36f194f5a66eb25c34a993ba4194f"
+        },
+        {
+          "path": "packages/component-contracts/src/ported-contracts.ts",
+          "sha256": "82cc01c9598c5e3671560d5e91860d45424de146a3371f8c6c9fdcd9f26cb031"
+        },
+        {
+          "path": "packages/component-contracts/test/baseline-fold.s185.spec.ts",
+          "sha256": "54aae45930264b5c539e0fad40af73e96511f5729080751b83e833e1c15d3e93"
+        },
+        {
+          "path": "packages/component-contracts/test/ported-contracts.s184.spec.ts",
+          "sha256": "c779b59cb438b424407797f9e78be21afd0c695ba07645b72cdf22ae2dcc5738"
+        },
+        {
+          "path": "packages/components-react/evidence/react-ported-readiness.v1.json",
+          "sha256": "a860a341735d1037ba5071204fc14c15c0c06f2732a221685dc231746e90e406"
+        },
+        {
+          "path": "packages/components-react/evidence/react-readiness.v1.json",
+          "sha256": "62d7f225646cc86be0bfae2c6e56febf781fa47fe25e9aa5c3ae53b72cc5cf82"
+        },
+        {
+          "path": "packages/components-react/src/breadth.tsx",
+          "sha256": "006e9da481f0e95200bffbc40c43ea402ebc9a53accbb13e00359ca9a44dfb86"
+        },
+        {
+          "path": "packages/components-react/src/index.ts",
+          "sha256": "13a75aab6329c76964f05a8f5e2b221891ee69de1f807728c6bfaa327adf19a3"
+        },
+        {
+          "path": "packages/components-react/src/ported.tsx",
+          "sha256": "c1e65586e42ee619077ba57b20f9047c5e4c367ba79802f9a4bb66e1e40d5b9e"
+        },
+        {
+          "path": "packages/components-react/test/package-contract.spec.ts",
+          "sha256": "fbbb43f56ea31f2d81b4edac944a4962979b79cea5cb466f9ebec5a82a90576e"
+        },
+        {
+          "path": "packages/components-react/test/ported-package-contract.spec.ts",
+          "sha256": "dd7e96936f2ba39861b5fb68045028d4694b921bc2e2fa5574794aeb7e65ad1f"
+        },
+        {
+          "path": "packages/components-react/test/ported-scenarios.spec.tsx",
+          "sha256": "ac53c0ac1832bd4cba3a2d0de48e4de41e8465b0bbcff08ffccd81d8c2ab0ce5"
+        },
+        {
+          "path": "packages/components-react/test/scenarios.spec.tsx",
+          "sha256": "471007ea3f7520623bee30fd32a8783072d6932dc743d8d2625b66c5ba7592c0"
+        },
+        {
+          "path": "packages/components-vue/evidence/vue-readiness-ported.v1.json",
+          "sha256": "cc1934c25cac21ba74c149007078737a9d981493ea8a06257eceb38521cb4556"
+        },
+        {
+          "path": "packages/components-vue/evidence/vue-readiness.v1.json",
+          "sha256": "2dc960b90df4208d20c57e9ed2c2659adf10c4278c2d14d12163207da4c536d0"
+        },
+        {
+          "path": "packages/components-vue/src/breadth.ts",
+          "sha256": "3347ab1566d0754c412444bf7b1f0c401709c1538516eba04fe8643c79416760"
+        },
+        {
+          "path": "packages/components-vue/src/index.ts",
+          "sha256": "9834f52d86166da54ce5345b8d0e6cb7bed451370450526a6dbab4d0034c67b8"
+        },
+        {
+          "path": "packages/components-vue/src/ported.ts",
+          "sha256": "6139d93d3371072f815dc8d57939c69d02bc8d904bec571f7f3e11fecfd06086"
+        },
+        {
+          "path": "packages/components-vue/test/package-contract.spec.ts",
+          "sha256": "3d5d2f6909ebd5544096c235fd853e16f528cc1b48bcecd5de8c53e4e1d7748a"
+        },
+        {
+          "path": "packages/components-vue/test/ported-package-contract.spec.ts",
+          "sha256": "e9c9e45c71d8d34ce0ee22f3773852d5bbb9797d064d18b74d20ca739a548380"
+        },
+        {
+          "path": "packages/components-vue/test/ported-scenarios.spec.ts",
+          "sha256": "348a205c9b3664577fcdb3497ba3329f5b94bdde625c86d4b4daa43f1748c5f4"
+        },
+        {
+          "path": "packages/components-vue/test/scenarios.spec.ts",
+          "sha256": "31c66910255d21d95df0d06f3463854aa8791f4a9c3548e6c807bf33c1536d27"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/target-readiness.ts",
+          "sha256": "90dc2187758fa66a0ad1b4a355e2f2eec3e09b39b2d50eafd29367917b8c74b7"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/ported-workflow.s184.spec.ts",
+          "sha256": "340755141ad3567c7f4e3efe9430dba4b7d241c1bf7603f2af6f09d6d86078b5"
+        },
+        {
+          "path": "scripts/product-reality/s185-baseline-surfaces.mjs",
+          "sha256": "f6655ca7980b0f1b310ea56dcaaa2310c4cd720f53e656d806356d2c8a8104b1"
+        }
+      ],
+      "outputs": [],
+      "logs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/closeout-inputs/baseline-fold-recheck.log",
+          "sha256": "681abb187e27c99af982984f6a45c7c768f8537730e487af740d18a1d50250a9"
+        }
+      ]
+    },
+    {
+      "id": "sprint-movers-recheck",
+      "command": "node scripts/product-reality/s185-sprint-wide-movers.mjs --head e2621b7ab981d35da4b5bc2c03fdd9f148890252 --check",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge",
+      "host": "Mac",
+      "exitCode": 0,
+      "executionHead": "e2621b7ab981d35da4b5bc2c03fdd9f148890252",
+      "sourceState": "worktree",
+      "startedAt": "2026-09-06T05:12:14.894530+00:00",
+      "endedAt": "2026-09-06T05:12:19.262344+00:00",
+      "inputs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/movers/declared-movers.json",
+          "sha256": "8325baee9e2cf41873df2487e33217443ca04b9b017b58a5ac6094ee91feb8c0"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/movers/sprint-wide-movers.json",
+          "sha256": "067f9182d218abc2cb3b28c7a88e522b9e888a7b6f55d48738b81c1d44526090"
+        },
+        {
+          "path": "scripts/product-reality/s184-m07-reconnect.mjs",
+          "sha256": "aa640a0da3a03caa4f6a4ddc9c7d9b0826490b46eb6d334110edd48c5116e5aa"
+        },
+        {
+          "path": "scripts/product-reality/s185-sprint-wide-movers.mjs",
+          "sha256": "0fccc1d25802ee454f20463480106bd29d1752b29ea5a532f3b9a691926b1729"
+        }
+      ],
+      "outputs": [],
+      "logs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/closeout-inputs/sprint-movers-recheck.log",
+          "sha256": "4cd6bcf4234fb84e590f43a6acbeb654db001c98cabdca57630ad75c37b270e1"
+        }
+      ]
+    },
+    {
+      "id": "reconnect-delivery-recheck",
+      "command": "node scripts/product-reality/s185-reconnect.mjs --check --deliveries",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge",
+      "host": "Mac",
+      "exitCode": 0,
+      "executionHead": "e2621b7ab981d35da4b5bc2c03fdd9f148890252",
+      "sourceState": "worktree",
+      "startedAt": "2026-09-06T05:12:19.324485+00:00",
+      "endedAt": "2026-09-06T05:12:24.331275+00:00",
+      "inputs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/movers/declared-movers.json",
+          "sha256": "8325baee9e2cf41873df2487e33217443ca04b9b017b58a5ac6094ee91feb8c0"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/movers/sprint-wide-movers.json",
+          "sha256": "067f9182d218abc2cb3b28c7a88e522b9e888a7b6f55d48738b81c1d44526090"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/reconnect/aquex-send-source.json",
+          "sha256": "f155e7e7625b09db4702cf690f7d2242f417c8f1540ba4bfc3f1eaf472696c20"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/reconnect/deliveries.json",
+          "sha256": "62e0b1b32dc8d383b4bf606e24cb19d6e131a7ce3ab5d73f3c8c7865b93f3d06"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/reconnect/forge-demos-send-source.json",
+          "sha256": "5a370506fc8614f4d745f24ecf1c4735b8730ecc6193d7f781b7e5ebcc34672f"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/reconnect/notice-plan.json",
+          "sha256": "c3f5cbbf75ed0f819fc474426a85d90c7da430f45c7c0fe4b6f2b305ee40c8ea"
+        },
+        {
+          "path": "scripts/product-reality/s184-m07-reconnect.mjs",
+          "sha256": "aa640a0da3a03caa4f6a4ddc9c7d9b0826490b46eb6d334110edd48c5116e5aa"
+        },
+        {
+          "path": "scripts/product-reality/s185-reconnect.mjs",
+          "sha256": "259b3f9d5dbb4fb8bf31cc8f0b381a4c4c892dd0081586c9b8fdc76885f0076a"
+        },
+        {
+          "path": "scripts/product-reality/s185-sprint-wide-movers.mjs",
+          "sha256": "0fccc1d25802ee454f20463480106bd29d1752b29ea5a532f3b9a691926b1729"
+        }
+      ],
+      "outputs": [],
+      "logs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/closeout-inputs/reconnect-delivery-recheck.log",
+          "sha256": "0d429f6fff4376cf74555c5f974f781bd8c8e81f468e506488742c8e8f7809e2"
+        }
+      ]
+    },
+    {
+      "id": "build-state-recheck",
+      "command": "node scripts/product-reality/s185-verify-build-state.mjs",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge",
+      "host": "Mac",
+      "exitCode": 0,
+      "executionHead": "e2621b7ab981d35da4b5bc2c03fdd9f148890252",
+      "sourceState": "committed",
+      "startedAt": "2026-09-06T05:12:24.899066+00:00",
+      "endedAt": "2026-09-06T05:12:25.046533+00:00",
+      "inputs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/build-record.json",
+          "sha256": "c3cf14e274413e67628c3b6df23d1324f4b7c23aee88e34c00e87afbebd7d7fd"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/bridge/disposition.json",
+          "sha256": "7accff9e3af59eff449e46dc03f08b8dbd41da86c3a9cecb0210a900669d18a7"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-mission-contract-original-source.json",
+          "sha256": "ed048420e177789dc1c3a902e5e35490243b4e8f16f53292e7c9f6913b685ec8"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-mission-contract-source.json",
+          "sha256": "8b1b5e8b03a12bb2b85740597bd1c7b561b31c0e14df73874c9270084d83bfd8"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-sprint-status-source.json",
+          "sha256": "8bac3c8adee75d86923779ac776dd34cd526ebf355d3559739d3dc1df23cad29"
+        },
+        {
+          "path": "cmos/foundational-docs/roadmap/near.md",
+          "sha256": "119fc516211c85b0b7dcb384e9af46dc0dee2647ef233c78960d8e7118f2df97"
+        },
+        {
+          "path": "scripts/product-reality/s185-verify-build-state.mjs",
+          "sha256": "4211c1db5d38bfa1361a5ed697e0568a00d895ba0dafc5c73d2a5611558e15c0"
+        }
+      ],
+      "outputs": [],
+      "logs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/closeout-inputs/build-state-recheck.log",
+          "sha256": "12e9790884aa09e33ea920e244b61d2297d34f05e709e6582363aa8329c7548f"
+        }
+      ]
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "missionId": "s185-m05",
+      "id": "s185-m05-behavior-final-133",
+      "command": "OODS_BEHAVIOR_GUARD_EVIDENCE_DIR=/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/artifacts/product-reality/sprint-185/m05/behavior-guards pnpm --filter @oods/mcp-server exec vitest run test/product-reality/local-behavior-guards.s185.spec.ts test/product-reality/html-tailwind-gap.s185.spec.ts src/codegen/artifact-envelope.test.ts src/errors/registry.test.ts src/codegen/readonly-field-binding.s185.test.ts src/tools/__tests__/code.generate.test.ts src/codegen/binding-analysis-integration.s183.test.ts",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge",
+      "host": "Mac",
+      "exitCode": 0,
+      "executionHead": "9fb7882e01cc0067ae6e69ad27330864ad228dd4",
+      "sourceState": "worktree",
+      "toolSessionId": 43361,
+      "inputs": [
+        {
+          "path": "packages/mcp-server/src/codegen/artifact-envelope.test.ts",
+          "sha256": "ca2a2a781b8be1b0c879b2dea5eaa41e1fbe2371cb5e6b4815b4b844d5e7dd5f"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/artifact-envelope.ts",
+          "sha256": "aa63b05ea7eaeac0b5a876122de8a653ae635216e89fb323ee84efb64755d3dd"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/binding-analysis-integration.s183.test.ts",
+          "sha256": "2f9542ab6f2eb188d0c5204c1c43b1abde2332c4fae1a110ede73073bfec4063"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/binding-utils.ts",
+          "sha256": "040193491db11f1d14f6ae5b45cf5cc87ef158220fa71ef13bc973820e08bb0e"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/react-emitter.ts",
+          "sha256": "98cac8e13f96fb4fe332c9859405175e87cd2443012fa5ae926cb464d12edc3e"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/readonly-field-binding.s185.test.ts",
+          "sha256": "00f614b588b4476c835db8b7ea3e16c286c35b42b2a36ef26d55cbde14d91b8c"
+        },
+        {
+          "path": "packages/mcp-server/src/codegen/vue-emitter.ts",
+          "sha256": "cc08dcf9bc45785f91ce5e9024f955a8cfd58daf30c06f90924dda61ca05a5f6"
+        },
+        {
+          "path": "packages/mcp-server/src/errors/registry.test.ts",
+          "sha256": "6f39564b9d3ce81bc393c83e0a00ee050e1768fca5914faac48e47ead38bcd74"
+        },
+        {
+          "path": "packages/mcp-server/src/errors/registry.ts",
+          "sha256": "a29e16f82ea1ec80a3400e719aedb80c45d267b9276d08bbc158b5c3dbc79847"
+        },
+        {
+          "path": "packages/mcp-server/src/schemas/code.generate.input.json",
+          "sha256": "5716ec49ee5a9da4e8423d408aa8645bf515dcbc9c825df4812950e31cdacc5c"
+        },
+        {
+          "path": "packages/mcp-server/src/schemas/generated.ts",
+          "sha256": "eb463e0c5ffe6f8a9edd3a726438005a6f714b5b61787af01fa905b988d29bf8"
+        },
+        {
+          "path": "packages/mcp-server/src/tools/__tests__/code.generate.test.ts",
+          "sha256": "839cd59e77bed9c5b4a92286da8a4ef5d81fc5d164502d33eef42a28df5a4f0e"
+        },
+        {
+          "path": "packages/mcp-server/src/tools/code.generate.ts",
+          "sha256": "882d74d4cd1b8519c362856191a7a4a10d8cfd8706b4216314bc9abb690f2a7d"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/foundation-fixture.s182.ts",
+          "sha256": "2e6e4337ed6683fd7d9d4b6e4738e2e73dec8e73156eb59fc3d39b58e61f37cc"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/html-tailwind-gap.s185.spec.ts",
+          "sha256": "888ee02eb984bfbe8576d4aabe69cf5ced76b793a6de01baaeee4f877d76392b"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/local-behavior-guards.s185.spec.ts",
+          "sha256": "00ddfebd57b455f370c00564fc64ff453906419e15c9234e11c98cadb12df14b"
+        },
+        {
+          "path": "packages/mcp-server/test/product-reality/typed-action-protocol.s183.spec.ts",
+          "sha256": "b631279754f894bc52c1790677647be3c0ee89cc20eae6a8bedc0b4b011274ad"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/behavior-guards/hash-resealed-bites.json",
+          "sha256": "024ab91373dd92f97f4b3e3d241a284fa98d89e90c6f62ff655d52b7b76ccc5a"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/behavior-guards/behavior-guards-report.json",
+          "sha256": "19f51c58d218390d6e4a3afb58d9fb5d427adf0decaaa67900e96addc535c807"
+        }
+      ],
+      "logs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/behavior-guards/focused-tests-final.log",
+          "sha256": "933730ddfcf5504a6c4166dc58619fa48a376b813fb338eab5550a799609b6f8"
+        }
+      ],
+      "observedCounts": {
+        "files": 7,
+        "passed": 133,
+        "failed": 0,
+        "skipped": 0
+      },
+      "outputProvenance": {
+        "hash-resealed-bites.json": "Written by afterAll in the executed spec under the explicit evidence directory environment variable.",
+        "behavior-guards-report.json": "Post-execution evidence sidecar derived from retained command results; not stdout or a direct output of Vitest."
+      },
+      "inputStateProvenance": "The actual execution ran with uncommitted m05 changes based on 9fb7882e; it is not represented as a later committed-head execution. Hashes identify the retained implementation/test/fixture inputs relevant to this focused command; this is not a claim to a complete transitive runtime package closure."
+    },
+    {
+      "id": "review-carries-rederivation",
+      "command": "pnpm --filter @oods/mcp-server exec tsx ../../scripts/product-reality/s185-review-carries.ts",
+      "cwd": "/Users/systemsystems/.codex/worktrees/s185/OODS-Forge",
+      "host": "Mac",
+      "exitCode": 0,
+      "executionHead": "9fb7882e01cc0067ae6e69ad27330864ad228dd4",
+      "sourceState": "worktree",
+      "inputs": [
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/subscription-detail-dark.json",
+          "sha256": "7d4e9b9fec2d666309fcd7b4e83a8e3b7c98c82afeb52dbed90e48730943a7cd"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m04/saved-schema-store/subscription-list-dark.json",
+          "sha256": "805165020b91ced845db98f0144d29ebcca732ea744aa5940dec9fd56c407a64"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/report.json",
+          "sha256": "c500e918fe398f15aab46612a0038b54c27e6fb7bf7ac63cde468badffcf1663"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s183-m05-react-domain-action-handle-edit-inert/report.json",
+          "sha256": "c4cc7d616b0b29f0b43377ee71316a9a488995e3278a02ea2b0cbdcc36f944fa"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s183-m05-react-tabs-selection-behavior-removed/report.json",
+          "sha256": "b8eb8291ff19d272976ff71dc0b959375f67525daa47d6f039c8be0e170f3648"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s183-m05-vue-domain-action-handle-edit-inert/report.json",
+          "sha256": "ec401085c1144734ab544ee38bb4acee05e88d6183efb7458132cd9152b165f2"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-183/m06/mutation-replay/s183-m05-vue-tabs-selection-behavior-removed/report.json",
+          "sha256": "1561579ad4dc2c39592fa434add01e33d639412f78428ded342fb5fd4f5ab07c"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-184/m05/parity-report.json",
+          "sha256": "83aa2177cd4723cc9c80628de2b886056c2bbf5af5d84109e99d32334e9727f9"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-184/m06/closeout-report.json",
+          "sha256": "2b6fd91705e014116c1df3f2c6a41388a089c343fd8adbb8c881c2ed6c8c198d"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
+          "sha256": "94909a77260bec081448de0fe18900ea614bc98e8533cd2d8642b5a41058299f"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m04/b2/remeasurement-disposition.json",
+          "sha256": "bf1bcffbb47e1082299bcc33d521dc719265524bb2bfd4bc0a5dbb6d7c10ab93"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/review-carries/cmos-next-steps-source.json",
+          "sha256": "52331ebafc55249cd9f67bbb9a31e2968af0e962b9454e012471e7591bfaccff"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/review-carries/stage1-forward-source.json",
+          "sha256": "1eeee8c6c0f684338dc71dcb068a513a9c29c9d77255bf7d8804e21dd3108f3c"
+        },
+        {
+          "path": "scripts/product-reality/s184-m05-state-evidence.ts",
+          "sha256": "db91c69ff39f1a525e1f5b131a0fc8a16cc99f856d457c83448ca07b98587665"
+        },
+        {
+          "path": "scripts/product-reality/s185-review-carries.ts",
+          "sha256": "fc784e60396168eeab9a8d72d63d64d96ae4d76b281f04aeb9cbed917ba91a77"
+        }
+      ],
+      "gitInputs": [
+        {
+          "commit": "ed1568407fa3e1894d1b40fc4cca05f51e46f89b",
+          "path": "packages/mcp-server/test/tools/pipeline.compact.spec.ts",
+          "sha256": "888e6462c5275f3e6960bd785e1a8c850120254628396623b70508118de4f17d",
+          "blob": "07cb6da9f65e56a92103f9f5b288d9608f47bc0b"
+        },
+        {
+          "commit": "ed1568407fa3e1894d1b40fc4cca05f51e46f89b",
+          "path": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "sha256": "e034b7b23081bf3aeea232d8d08434a03cb21da9b461f1150acb2293f618f42b",
+          "blob": "753d1a0ce1db0c2e5b4da51f9a1ad0fbc1c1c568"
+        },
+        {
+          "commit": "ed1568407fa3e1894d1b40fc4cca05f51e46f89b",
+          "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
+          "sha256": "04519965d8b828c18648b875dcb240f616b9cda4deaf221455d07e0c1e08ffa8",
+          "blob": "f777e194768d08f2a4c8051516cd186d4d4ce23f"
+        },
+        {
+          "commit": "ed1568407fa3e1894d1b40fc4cca05f51e46f89b",
+          "path": "packages/mcp-server/test/e2e/tier1-acceptance.e2e.spec.ts",
+          "sha256": "8e892eac8bca3025ddceadc24566b577dfe43549ee81dd30bc887c2c5911a0d8",
+          "blob": "025f60e2ea85e2732a47c1a7aa52552f8bb8d39c"
+        },
+        {
+          "commit": "3993c2b6dbe875ec8ea202c803b5e52bfda59be6",
+          "path": "packages/mcp-server/test/tools/pipeline.compact.spec.ts",
+          "sha256": "49156f1f8b86ff54df3fa3f49f9a33381a9ba224bfba38eea8dda7d33483aeaa",
+          "blob": "6482d149798940edbfbec63c1d6ebb6f23ce512e"
+        },
+        {
+          "commit": "3993c2b6dbe875ec8ea202c803b5e52bfda59be6",
+          "path": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+          "sha256": "1419d385aaea8c044e0a0b3fbb2e99bd6e32b39a2ad7650479d2ac2e7646a447",
+          "blob": "02d764c7dc9adc2be36db900de8b5bba49a0ca61"
+        },
+        {
+          "commit": "3993c2b6dbe875ec8ea202c803b5e52bfda59be6",
+          "path": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
+          "sha256": "4c7d7e23673ced1ab92ac226e0b42bea47bf03974c29f0a495b8834e641e984f",
+          "blob": "bd3c3a83372326b8fae3d032f73310bc231eb829"
+        },
+        {
+          "commit": "3993c2b6dbe875ec8ea202c803b5e52bfda59be6",
+          "path": "packages/mcp-server/test/e2e/tier1-acceptance.e2e.spec.ts",
+          "sha256": "ad9de25bb1203bbbf5213d78d0642d89fbb3edada343507d49479e03872623a2",
+          "blob": "8c0ffd88e8a244d32db99c5d45451c21339d2403"
+        },
+        {
+          "commit": "9cd02da94bd342e269a1d68faa7a9a82c8c2f6f1",
+          "path": "packages/mcp-server/.oods/schemas/_index.json",
+          "sha256": "7bfcebee77052c8c3daedfb53d06cb5ffa2b609226f183676e36bfb3e46fd84d",
+          "blob": "e6fbf2c626a145948d508cd13a2515ce9967e533"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/review-carries/b2-repoint-disposition.v2.json",
+          "sha256": "c5ff3ce7a0344c1ee79f55603a95dad795294567ee62202f9880732813d260d3"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/review-carries/c13-index-9cd02da9.json",
+          "sha256": "7bfcebee77052c8c3daedfb53d06cb5ffa2b609226f183676e36bfb3e46fd84d"
+        },
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/review-carries/s184-additive-review-record.json",
+          "sha256": "b157f38a9237e93202e747c13264a5d27861c91a165ccb632ef17c687c3fcd66"
+        }
+      ],
+      "logs": [
+        {
+          "path": "artifacts/product-reality/sprint-185/m05/review-carries/rederivation.log",
+          "sha256": "eb23a00fb27b96fbe6d21a0a05322ad92a074ef16a2323fd48fd6fcd0e2d965e"
+        }
+      ],
+      "disclosure": "Receipt recorded after the actual successful command; source executed as uncommitted worktree bytes at 9fb7882e. Command was not rerun for this receipt. Pinned git operands are recorded separately because their parent-commit bytes are not current worktree paths."
+    }
+  ],
+  "claimBindings": [
+    {
+      "criterionIndex": 0,
+      "executionIds": [
+        "baseline-fold-recheck"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-185/m05/baseline-fold/report.json",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/baseline-fold-recheck.log"
+      ]
+    },
+    {
+      "criterionIndex": 1,
+      "executionIds": [
+        "sprint-movers-recheck"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-185/m05/movers/sprint-wide-movers.json",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/sprint-movers-recheck.log"
+      ]
+    },
+    {
+      "criterionIndex": 2,
+      "executionIds": [
+        "sprint-movers-recheck",
+        "reconnect-delivery-recheck"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-185/m05/movers/sprint-wide-movers.json",
+        "artifacts/product-reality/sprint-185/m05/reconnect/notice-plan.json",
+        "artifacts/product-reality/sprint-185/m05/reconnect/deliveries.json",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/sprint-movers-recheck.log",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/reconnect-delivery-recheck.log"
+      ]
+    },
+    {
+      "criterionIndex": 3,
+      "executionIds": [
+        "s185-m05-behavior-final-133",
+        "review-carries-rederivation",
+        "build-state-recheck"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-185/m05/review-carries/s184-additive-review-record.json",
+        "artifacts/product-reality/sprint-185/m05/behavior-guards/hash-resealed-bites.json",
+        "cmos/foundational-docs/roadmap/near.md",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/build-state-recheck.log",
+        "artifacts/product-reality/sprint-185/m05/behavior-guards/focused-tests-final.log",
+        "artifacts/product-reality/sprint-185/m05/review-carries/rederivation.log"
+      ]
+    },
+    {
+      "criterionIndex": 4,
+      "executionIds": [
+        "review-carries-rederivation"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-185/m05/review-carries/s184-additive-review-record.json",
+        "artifacts/product-reality/sprint-185/m05/review-carries/rederivation.log"
+      ]
+    },
+    {
+      "criterionIndex": 5,
+      "executionIds": [
+        "build-state-recheck"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-185/m05/bridge/disposition.json",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/build-state-recheck.log"
+      ]
+    },
+    {
+      "criterionIndex": 6,
+      "executionIds": [],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/viz-core.json",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/viz-core.vitest.json",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/viz-core.log",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/viz-render.json",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/viz-render.vitest.json",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/viz-render.log",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/mcp-server.json",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/mcp-server.vitest.json",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/mcp-server.log",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/root-core.json",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/root-core.vitest.json",
+        "artifacts/product-reality/sprint-185/m05/four-suite-closeout/run-1/root-core.log"
+      ],
+      "suiteBindings": [
+        "viz-core",
+        "viz-render",
+        "mcp-server",
+        "root-core"
+      ]
+    },
+    {
+      "criterionIndex": 7,
+      "executionIds": [
+        "build-state-recheck"
+      ],
+      "evidencePaths": [
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-mission-contract-source.json",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-mission-contract-original-source.json",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/cmos-sprint-status-source.json",
+        "cmos/foundational-docs/roadmap/near.md",
+        "artifacts/product-reality/sprint-185/m04/build-record.json",
+        "artifacts/product-reality/sprint-185/m05/closeout-inputs/build-state-recheck.log"
+      ]
+    }
+  ],
+  "bindingDisclosure": "Frozen suite names resolve to actual capture receipt IDs after execution. Earlier focused commands retain their original worktree head and exact input hashes. The public implementation notice names e2621b7a; later type-only fixture changes precede the actual full-suite execution head."
+}

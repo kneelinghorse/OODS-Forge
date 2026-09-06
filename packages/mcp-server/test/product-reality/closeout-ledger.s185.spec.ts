@@ -73,9 +73,9 @@ function fixture() {
   manifest.sources.derivationInputs = [put('frozen/producer.mjs', 'export const rule = 1;'), put('frozen/independent.spec.ts', 'assert(rule);')];
   manifest.manifestPath = 'artifacts/product-reality/sprint-185/m05/closeout-inputs/manifest.json';
   const readFrozen = (file: string): Buffer => { const bytes = files.get(file); if (!bytes) throw new Error(`Missing frozen byte source: ${file}`); return bytes; };
-  const derive = () => {
+  const derive = (): Record<string, any> => {
     put(manifest.manifestPath, manifest);
-    return deriveCloseout({ executionHead, reviewHead, manifest, suiteAccounting, readFrozen });
+    return deriveCloseout({ executionHead, reviewHead, manifest, suiteAccounting, readFrozen, publicHeadEquivalence: undefined, finalAudit: undefined });
   };
   const replaceSource = (name: string, value: any): void => {
     put(sources[name]!, value);
