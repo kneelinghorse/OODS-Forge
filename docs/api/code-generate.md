@@ -22,7 +22,7 @@
 | `releaseEvidence.performance` | _ref_ | No |  |  |
 | `options` | object | No | `{}` |  |
 | `options.typescript` | boolean | No | `true` | When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML. |
-| `options.styling` | `inline` \| `tokens` \| `tailwind` | No | `"tokens"` | Styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. |
+| `options.styling` | `inline` \| `tokens` \| `tailwind` | No | `"tokens"` | React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error. |
 
 ## Output Shape
 

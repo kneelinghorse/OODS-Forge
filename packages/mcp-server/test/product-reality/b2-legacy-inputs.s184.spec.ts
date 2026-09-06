@@ -5,10 +5,10 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
 import { handle as pipelineHandle } from "../../src/tools/pipeline.js";
+import { deriveRepoints, type Repoint } from "../../../../scripts/product-reality/s185-review-carries.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(testDirectory, "../../../..");
@@ -33,13 +33,15 @@ type TypedOutcome = {
   message: string;
 };
 
-type CallSiteDisposition = {
+// Frozen v1 history retains its scalar shape. The current additive record uses
+// Repoint.changedField: string[] and supplies the comparison field list below.
+type HistoricalV1CallSiteDisposition = {
   id: string;
   file: string;
   selector: string;
   invocation: "pipelineHandle";
   pipelineInvocationOrdinal: number;
-  changedField: "intent" | "context";
+  changedField: string;
   historicalValue: string | null;
   currentValue: string;
   disposition: "retained-repoint";
@@ -64,7 +66,7 @@ type B2Disposition = {
   };
   fileCounts: Record<string, number>;
   typedOutcomes: TypedOutcome[];
-  callSites: CallSiteDisposition[];
+  callSites: HistoricalV1CallSiteDisposition[];
   excludedNeighboringChanges: Array<{
     invocation: string;
     selector: string;
@@ -122,51 +124,6 @@ function gitCommand(args: string[], label: string): string {
   });
   expect(result.status, `${label}\n${result.stderr}`).toBe(0);
   return result.stdout.trim();
-}
-
-function pipelineOperands(
-  source: string,
-  fileName: string,
-): Array<{ intent: string | null; context: string | null }> {
-  const sourceFile = ts.createSourceFile(
-    fileName,
-    source,
-    ts.ScriptTarget.Latest,
-    true,
-    ts.ScriptKind.TS,
-  );
-  const operands: Array<{ intent: string | null; context: string | null }> = [];
-
-  const visit = (node: ts.Node): void => {
-    if (
-      ts.isCallExpression(node) &&
-      ts.isIdentifier(node.expression) &&
-      node.expression.text === "pipelineHandle"
-    ) {
-      const input = node.arguments[0];
-      expect(ts.isObjectLiteralExpression(input), fileName).toBe(true);
-      const values = new Map<string, string>();
-      if (input && ts.isObjectLiteralExpression(input)) {
-        for (const property of input.properties) {
-          if (
-            ts.isPropertyAssignment(property) &&
-            (ts.isIdentifier(property.name) ||
-              ts.isStringLiteral(property.name)) &&
-            ts.isStringLiteral(property.initializer)
-          ) {
-            values.set(property.name.text, property.initializer.text);
-          }
-        }
-      }
-      operands.push({
-        intent: values.get("intent") ?? null,
-        context: values.get("context") ?? null,
-      });
-    }
-    ts.forEachChild(node, visit);
-  };
-  visit(sourceFile);
-  return operands;
 }
 
 describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
@@ -385,62 +342,30 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
       }
     }
 
-    const rederivedRepoints: Array<{
-      file: string;
-      pipelineInvocationOrdinal: number;
-      changedField: "intent" | "context";
-      historicalValue: string | null;
-      currentValue: string;
-    }> = [];
-    for (const file of Object.keys(disposition.fileCounts)) {
-      const before = pipelineOperands(
-        gitShow(disposition.repointParent, file),
-        file,
-      );
-      const after = pipelineOperands(
-        gitShow(disposition.repointCommit, file),
-        file,
-      );
-      expect(after.length, file).toBe(before.length);
-      for (const [index, current] of after.entries()) {
-        const historical = before[index];
-        expect(
-          historical,
-          `${file} pipelineHandle #${index + 1}`,
-        ).toBeDefined();
-        for (const changedField of ["intent", "context"] as const) {
-          if (historical?.[changedField] === current[changedField]) continue;
-          expect(
-            current[changedField],
-            `${file} ${changedField}`,
-          ).not.toBeNull();
-          rederivedRepoints.push({
-            file,
-            pipelineInvocationOrdinal: index + 1,
-            changedField,
-            historicalValue: historical?.[changedField] ?? null,
-            currentValue: current[changedField]!,
-          });
-        }
-      }
+    // The immutable v1 record only named intent/context. The additive current
+    // record supplies the actual field list and exposes multi-axis repoints.
+    const current = JSON.parse(await fs.readFile(path.join(
+      repositoryRoot, "artifacts/product-reality/sprint-185/m05/review-carries/b2-repoint-disposition.v2.json",
+    ), "utf8")) as { comparisonFields: string[]; callSites: Repoint[] };
+    const rederivedRepoints = Object.keys(disposition.fileCounts).flatMap((file) => deriveRepoints(
+      file,
+      gitShow(disposition.repointParent, file),
+      gitShow(disposition.repointCommit, file),
+      current.comparisonFields,
+    ));
+    expect(rederivedRepoints).toEqual(current.callSites.map(({
+      file, pipelineInvocationOrdinal, changedField, historicalValue, currentValue,
+    }) => ({ file, pipelineInvocationOrdinal, changedField, historicalValue, currentValue })));
+    // Retain agreement with every historical axis, without hiding the newly
+    // disclosed absent -> html framework axis on actions-stripe-vocabulary.
+    for (const old of disposition.callSites) {
+      const row = rederivedRepoints.find((candidate) => candidate.file === old.file &&
+        candidate.pipelineInvocationOrdinal === old.pipelineInvocationOrdinal)!;
+      expect(row.changedField).toContain(old.changedField);
+      expect(row.historicalValue[old.changedField]).toEqual(old.historicalValue === null
+        ? { kind: "absent" } : { kind: "literal", value: old.historicalValue });
+      expect(row.currentValue[old.changedField]).toEqual({ kind: "literal", value: old.currentValue });
     }
-    expect(rederivedRepoints).toEqual(
-      disposition.callSites.map(
-        ({
-          file,
-          pipelineInvocationOrdinal,
-          changedField,
-          historicalValue,
-          currentValue,
-        }) => ({
-          file,
-          pipelineInvocationOrdinal,
-          changedField,
-          historicalValue,
-          currentValue,
-        }),
-      ),
-    );
 
     expect(disposition.excludedNeighboringChanges).toEqual([
       expect.objectContaining({

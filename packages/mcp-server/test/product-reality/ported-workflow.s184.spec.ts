@@ -275,20 +275,19 @@ describe('Sprint 184 m04 ported Subscription workflow', () => {
     expect(evidence.resizeDecision.decision).toMatch(/do not resize m05/i);
   });
 
-  it('keeps the 109-row baseline separate from the exact eight-row, 24-cell overlay', () => {
+  it('reads all 24 ported surface cells from the unchanged 109-row baseline denominator', () => {
+    // Decision 1726 folds evidence onto existing rows; the live workflow proof above remains in force.
     const baseline = JSON.parse(readFileSync(path.join(
       repositoryRoot,
       'packages/component-contracts/registry/component-capability-baseline.v1.json',
-    ), 'utf8')) as { rows: unknown[] };
-    const overlay = JSON.parse(readFileSync(path.join(
-      repositoryRoot,
-      'packages/component-contracts/registry/component-capability-ported-surfaces.v1.json',
-    ), 'utf8')) as { controllingObligationDenominator: number; rows: Array<{ id: string; surfaces: object }> };
+    ), 'utf8')) as { controllingObligationDenominator: number; rows: Array<{ id: string; surfaces: Record<string, { state: string; evidence: string[] }> }> };
 
     expect(baseline.rows).toHaveLength(109);
-    expect(overlay.controllingObligationDenominator).toBe(109);
-    expect(overlay.rows.map(({ id }) => id)).toEqual(PORTED_COMPONENT_IDS);
-    expect(overlay.rows).toHaveLength(8);
-    expect(overlay.rows.reduce((count, row) => count + Object.keys(row.surfaces).length, 0)).toBe(24);
+    expect(baseline.controllingObligationDenominator).toBe(109);
+    const rows = baseline.rows.filter(({ id }) => PORTED_COMPONENT_IDS.includes(id as typeof PORTED_COMPONENT_IDS[number]));
+    expect(rows.map(({ id }) => id)).toEqual(PORTED_COMPONENT_IDS);
+    const cells = rows.flatMap(row => ['react', 'vue', 'generatedConsumer'].map(surface => row.surfaces[surface]));
+    expect(cells).toHaveLength(24);
+    expect(cells.every(cell => cell.state === 'implemented-evidence-complete' && cell.evidence.length > 0)).toBe(true);
   });
 });

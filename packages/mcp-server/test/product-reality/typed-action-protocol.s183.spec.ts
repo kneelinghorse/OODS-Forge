@@ -350,7 +350,7 @@ describe('Sprint 183 M02 typed action protocol', () => {
     rehash(mutated);
 
     expect(validateGeneratedArtifact(mutated)).toContain(
-      "Generated binding handler 'handleTabChange' must contain executable behavior.",
+      "Generated local binding handler 'handleTabChange' must update its own state from its input or dismiss it.",
     );
   });
 

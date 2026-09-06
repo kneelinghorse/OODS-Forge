@@ -1,0 +1,41 @@
+{
+  "scope": "Review-carry correction only; no runtime builds or historical pipelines rerun",
+  "checks": [
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsx ../../scripts/product-reality/s185-review-carries.ts",
+      "exitCode": 0,
+      "log": "rederivation.log",
+      "result": "13 historical invocation repoints, 14 changed axes; two identity anchors; four explicit historical-output dispositions"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/review-carries.s185.spec.ts",
+      "exitCode": 0,
+      "log": "tests.log",
+      "passed": 14,
+      "skipped": 0
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec vitest run test/product-reality/b2-legacy-inputs.s184.spec.ts -t 'binds all 13 retained repoints'",
+      "exitCode": 0,
+      "log": "b2-source-selector-test.log",
+      "passed": 1,
+      "skipped": 6,
+      "scope": "Deliberate name filter selects source-rederivation only; six historical pipeline/measurement tests not rerun by this command"
+    },
+    {
+      "command": "pnpm --filter @oods/mcp-server exec tsc --noEmit --pretty false -p ../../artifacts/product-reality/sprint-185/m05/review-carries/typecheck-config.json",
+      "exitCode": 0,
+      "log": "typecheck.log",
+      "result": "New script and review-carry spec compile"
+    }
+  ],
+  "initialFailures": [
+    {
+      "log": "rederivation-first-missing-axis.log",
+      "reason": "Strict equality to v1 failed when the new field list discovered the omitted framework axis; additive v2 discloses it and preserves all historical v1 axes"
+    },
+    {
+      "reason": "Initial tsx invocation used ../../../scripts from package cwd and failed module resolution before executing any task code; corrected to ../../scripts"
+    }
+  ]
+}

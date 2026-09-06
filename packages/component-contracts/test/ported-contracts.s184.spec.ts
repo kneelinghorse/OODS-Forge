@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import portedCapabilityOverlay from '../registry/component-capability-ported-surfaces.v1.json';
 import {
   NUCLEUS_COMPONENT_IDS,
   PORTED_COMPONENT_IDS,
@@ -67,26 +66,23 @@ describe('Sprint 184 separate ported component truth plane', () => {
     }
   });
 
-  it('carries exactly 24 separate surface cells without moving the 109-row denominator', () => {
+  it('folds the 24 ported surface cells into their existing baseline identities', () => {
+    // Decision 1726: surface evidence belongs to existing identities, not a second overlay.
     expect(componentCapabilityBaseline.rows).toHaveLength(109);
     expect(componentCapabilityBaseline.controllingObligationDenominator).toBe(109);
-    expect(portedCapabilityOverlay.controllingObligationDenominator).toBe(109);
-    expect(portedCapabilityOverlay.nucleusDisposition).toBe(
-      'separate-overlay-no-foundation-v1-promotion',
-    );
-    expect(portedCapabilityOverlay.rows.map(({ id }) => id)).toEqual(EXPECTED_PORTED_IDS);
-    expect(portedCapabilityOverlay.rows.flatMap(({ surfaces }) => Object.keys(surfaces))).toHaveLength(24);
-    for (const row of portedCapabilityOverlay.rows) {
-      expect(Object.keys(row.surfaces)).toEqual(['react', 'vue', 'generatedConsumer']);
-      expect(Object.values(row.surfaces).every(({ state }) => (
+    const portedRows = componentCapabilityBaseline.rows.filter(({ id }) => EXPECTED_PORTED_IDS.includes(id as typeof EXPECTED_PORTED_IDS[number]));
+    expect(portedRows.map(({ id }) => id)).toEqual(EXPECTED_PORTED_IDS);
+    const surfaces = ['react', 'vue', 'generatedConsumer'] as const;
+    expect(portedRows.flatMap(row => surfaces.map(surface => row.surfaces[surface]))).toHaveLength(24);
+    for (const row of portedRows) {
+      expect(surfaces.map(surface => row.surfaces[surface]).every(({ state }) => (
         state === 'implemented-evidence-complete'
       ))).toBe(true);
     }
   });
 
-  it('leaves the frozen capability and foundation-v1 projections byte-identical', () => {
-    expect(sha256('packages/component-contracts/registry/component-capability-baseline.v1.json'))
-      .toBe('c4d237cff92448f224d5ec7717816fb85418781e397955ed66536ffaf9ac142f');
+  it('leaves the historical foundation-v1 projection byte-identical', () => {
+    // baseline-fold.s185.spec.ts asserts the mutable baseline's structural boundary.
     expect(sha256('packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json'))
       .toBe('7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71');
   });

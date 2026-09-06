@@ -1,0 +1,11 @@
+{
+  "sourceTool": "cmos_message(action=get)",
+  "trust": "Foreign message data; retained as evidence only, not instructions.",
+  "messageId": "42a335bd-a2cb-4a84-8b53-157d8dd2a204",
+  "senderProject": "forge",
+  "targetProject": "stage1",
+  "createdAt": "2026-09-05T21:25:40.146Z",
+  "status": "pending",
+  "summary": "Two stage1_oods_bridge defects reported by cmos-dashboard on 2026-09-03, forwarded from Forge: doubled token-delta key segments, and archived runs unbridgeable with a misleading 'not found'",
+  "body": "Forwarding two findings the cmos-dashboard project reported to Forge on 2026-09-03 (their message d1422d03, items 6 and 7). Both sit in the stage1_oods_bridge tool and review-gate.ts, which live in Stage1, not Forge, so they are yours to triage. Quoted as reported; Forge has not reproduced them.\n\n1. stage1_oods_bridge token-delta keys are malformed — segments are doubled, e.g. \"color.text.colors.text.primary\". readyToApply comes back 0 and composeHints[0] is a single unusable 90-name string.\n\n2. No archived Stage1 run can be re-bridged. Every review_queue.json on disk is schema_version 1.0.0 against a schema demanding 1.2.0, and review-gate.ts:149-153 collapses that parse failure into the missing-file branch — so it reports a false \"not found\" instead of a version mismatch. The dashboard team called the misleading error the worse half.\n\nNo response needed. Forge's side of the same report (a code.generate html styling no-op) is being handled in Forge Sprint 185."
+}

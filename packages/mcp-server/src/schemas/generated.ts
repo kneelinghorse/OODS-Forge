@@ -1138,7 +1138,7 @@ export namespace CodeGenerateInputSchema {
        */
       typescript?: boolean;
       /**
-       * Styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes.
+       * React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error.
        */
       styling?: 'inline' | 'tokens' | 'tailwind';
     };

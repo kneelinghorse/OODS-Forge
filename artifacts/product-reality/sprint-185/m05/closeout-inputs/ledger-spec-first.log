@@ -1,0 +1,62 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/closeout-ledger.s185.spec.ts (29 tests | 1 failed) 34ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > copies exact CMOS text and independently checks every output/input hash and review flag 13ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects manifest-supplied claims instead of using it as an oracle 4ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects manifest-supplied criteria instead of using it as an oracle 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects a binding override of criterion 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects a binding override of status 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > reads edited literal CMOS bytes only when their input hash is honestly resealed 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects changed-hash in the evidence graph 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects missing-file in the evidence graph 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects output-input in the evidence graph 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects unknown-execution in the evidence graph 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects duplicate-execution in the evidence graph 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects empty-binding in the evidence graph 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects missing-required-source in the evidence graph 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects duplicate-criterion in the evidence graph 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects relabeled-head in suite accounting 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > rejects duplicate-suite-raw in suite accounting 0ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > unknown suite ID cannot prove a four-suite capture 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > duplicate suite ID cannot prove a four-suite capture 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > baseline denominator remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > runtime census approval remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > mover omission remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > duplicate delivery remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > historical control promoted remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > maintenance silently absorbed remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > served checkout equals build worktree remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > self-certified build remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > sprint incorrectly closed remains unproven even with correctly resealed evidence 1ms
+   ✓ Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > a failed command cannot be the only execution proving a claim 1ms
+   × Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > an unrelated successful command cannot be borrowed to prove a claim 3ms
+     → expected 'passed' to be 'unproven' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/closeout-ledger.s185.spec.ts > Sprint 185 claim ledger derives from literal frozen sources and real execution bindings > an unrelated successful command cannot be borrowed to prove a claim
+AssertionError: expected 'passed' to be 'unproven' // Object.is equality
+
+Expected: "unproven"
+Received: "passed"
+
+ ❯ test/product-reality/closeout-ledger.s185.spec.ts:168:72
+    166|     const f = fixture();
+    167|     f.manifest.executions[0].inputs = [f.ref(f.put('frozen/unrelated-i…
+    168|     expect(f.derive()[`${prefix}/claim-ledger.json`].claims[0].status)…
+       |                                                                        ^
+    169|   });
+    170| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 28 passed (29)
+   Start at  23:56:45
+   Duration  286ms (transform 60ms, setup 15ms, collect 60ms, tests 34ms, environment 0ms, prepare 62ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/closeout-ledger.s185.spec.ts

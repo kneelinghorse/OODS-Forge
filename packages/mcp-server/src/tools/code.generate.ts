@@ -243,6 +243,27 @@ export async function handle(
     styling: input.options?.styling ?? rc.styling ?? 'tokens',
   };
 
+  if (framework === 'html' && options.styling === 'tailwind') {
+    const profiled = enforceValidationProfile(validationReceipt, [{
+      code: 'OODS-N018',
+      message: 'HTML Tailwind styling is unavailable; the HTML target emits document CSS. Use tokens or inline, or choose React or Vue for Tailwind output.',
+    }]);
+    warnings.push(...profiled.warnings);
+    if (profiled.errors.length > 0) {
+      return {
+        status: 'error',
+        framework,
+        code: '',
+        fileExtension: '',
+        imports: [],
+        warnings,
+        validationReceipt,
+        errors: profiled.errors,
+        meta,
+      };
+    }
+  }
+
   const normalizationErrors = preflightNormalizationSafety(schema.screens, framework);
   validationReceipt = recordValidationChecks(validationReceipt, 'normalization-fidelity');
   if (normalizationErrors.length > 0) {

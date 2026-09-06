@@ -1,0 +1,366 @@
+{
+  "schemaVersion": 2,
+  "missionId": "s185-m05",
+  "nextStepId": 1364,
+  "historicalSource": {
+    "path": "artifacts/product-reality/sprint-184/m07/b2-repoint-disposition.json",
+    "sha256": "94909a77260bec081448de0fe18900ea614bc98e8533cd2d8642b5a41058299f"
+  },
+  "scope": "Additive representation and rederivation of the same historical repoint commit; historical reasons and outcomes are not current capability claims.",
+  "reviewedSourceHead": "9a4202fe3ff8560a791cc92c114ef364739a1c45",
+  "repointCommit": "3993c2b6dbe875ec8ea202c803b5e52bfda59be6",
+  "repointParent": "ed1568407fa3e1894d1b40fc4cca05f51e46f89b",
+  "comparisonFields": [
+    "intent",
+    "context",
+    "framework",
+    "profile",
+    "save"
+  ],
+  "comparisonRule": "Read every field named in comparisonFields; group all changed axes for one pipelineHandle invocation in changedField. Absent operands differ from explicit null. Expressions are compared as parsed, printed source without evaluation.",
+  "summary": {
+    "invocations": 13,
+    "changedAxes": 14
+  },
+  "additionalAxisDisposition": "The actions-stripe-vocabulary invocation also adds framework: html where the operand was absent. The historical intent/context-only comparison omitted this axis. The additive record discloses the explicit target selection without rewriting historical reasons or measurements.",
+  "callSites": [
+    {
+      "id": "pipeline-compact-default",
+      "selector": "defaults to compact render (tokenCssRef present, small response)",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/tools/pipeline.compact.spec.ts",
+      "pipelineInvocationOrdinal": 1,
+      "changedField": [
+        "intent"
+      ],
+      "historicalValue": {
+        "intent": {
+          "kind": "literal",
+          "value": "A detail view for a product"
+        }
+      },
+      "currentValue": {
+        "intent": {
+          "kind": "literal",
+          "value": "A dashboard with metrics"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The compact-render assertion needs a successful render payload; the historical detail intent now returns the intentional OODS-V007 build gap before compactness can be measured.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "pipeline-summary",
+      "selector": "includes output.summary string",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/tools/pipeline.compact.spec.ts",
+      "pipelineInvocationOrdinal": 2,
+      "changedField": [
+        "intent"
+      ],
+      "historicalValue": {
+        "intent": {
+          "kind": "literal",
+          "value": "A detail view for a product"
+        }
+      },
+      "currentValue": {
+        "intent": {
+          "kind": "literal",
+          "value": "A dashboard with metrics"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The summary assertion needs a successful pipeline carrier; the historical detail intent is now covered as the explicit OODS-V007 typed gap.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "pipeline-compact-opt-out",
+      "selector": "compact can be disabled with options.compact=false",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/tools/pipeline.compact.spec.ts",
+      "pipelineInvocationOrdinal": 4,
+      "changedField": [
+        "intent"
+      ],
+      "historicalValue": {
+        "intent": {
+          "kind": "literal",
+          "value": "A detail view"
+        }
+      },
+      "currentValue": {
+        "intent": {
+          "kind": "literal",
+          "value": "A dashboard with metrics"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The opt-out assertion must reach a successful full render; the historical detail intent now stops at the intended OODS-V007 build boundary.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "pipeline-object-fields",
+      "selector": "object-aware pipeline includes fieldsBound in metrics",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/tools/pipeline.compact.spec.ts",
+      "pipelineInvocationOrdinal": 6,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "literal",
+          "value": "detail"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The fieldsBound metric assertion needs a successful Product artifact; Product/detail/HTML now reports the intentional OODS-V007 build gap.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "actions-synthetic-lifecycle",
+      "selector": "reconciles synthetic lifecycle action_mappings against composed Subscription",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+      "pipelineInvocationOrdinal": 1,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "literal",
+          "value": "detail"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "This test isolates action-mapping reconciliation and must reach a successful pipeline result; Subscription/detail/HTML instead terminates at OODS-V007.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "actions-empty-mappings",
+      "selector": "empty action_mappings is a safe no-op through the pipeline",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+      "pipelineInvocationOrdinal": 2,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "literal",
+          "value": "detail"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The no-op assertion is about actionMappings, not detail generation; card keeps that control successful while the old detail path is pinned separately as OODS-V007.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "actions-absent-mappings",
+      "selector": "absent action_mappings preserves pre-Sprint-88 pipeline output shape",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+      "pipelineInvocationOrdinal": 3,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "literal",
+          "value": "detail"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The compatibility assertion requires a successful pipeline shape; detail now exits with OODS-V007 before the actionMappings shape can be compared.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "actions-stage1-aliases",
+      "selector": "accepts Stage1 alias fields (orcaVerb, suggestedAction) without crashing",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+      "pipelineInvocationOrdinal": 4,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "literal",
+          "value": "detail"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The test is a Stage1 alias-ingestion carrier and needs to pass code generation; the old detail carrier has an unrelated OODS-V007 typed gap.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "actions-stage1-slot-actions",
+      "selector": "merging real actionInstances with a synthetic vocabulary that includes Subscription traits produces per-slot actions",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+      "pipelineInvocationOrdinal": 5,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "literal",
+          "value": "detail"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The assertion measures resolved per-slot actions and needs a successful carrier; detail generation now reports OODS-V007 before that output can be asserted.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "actions-stripe-vocabulary",
+      "selector": "stripe cross-target action vocabulary (submit/navigate/open) passes through without crashing and respects trait filtering",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
+      "pipelineInvocationOrdinal": 6,
+      "changedField": [
+        "context",
+        "framework"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "literal",
+          "value": "detail"
+        },
+        "framework": {
+          "kind": "absent"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        },
+        "framework": {
+          "kind": "literal",
+          "value": "html"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The test measures cross-target vocabulary filtering, not detail generation; card preserves that successful carrier and the old detail failure is explicitly retained elsewhere.",
+      "additionallyDisclosedFields": [
+        "framework"
+      ]
+    },
+    {
+      "id": "contract-save-name-tags",
+      "selector": "pipeline save accepts { name, tags } object",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
+      "pipelineInvocationOrdinal": 5,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "absent"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "With context omitted, Product/HTML defaults through detail and returns OODS-V007, so it cannot test save-object acceptance; the no-context typed result is now pinned directly.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "contract-save-tags-roundtrip",
+      "selector": "pipeline save object persists tags through schema load/list",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/contracts/contract-alignment.spec.ts",
+      "pipelineInvocationOrdinal": 6,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "absent"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "The round-trip assertion requires persistence to execute; the no-context Product/HTML input reports OODS-V007 before save and is covered by the replacement test.",
+      "additionallyDisclosedFields": []
+    },
+    {
+      "id": "tier1-html-save-load-health",
+      "selector": "keeps a build-safe Subscription HTML save, load, and health path",
+      "invocation": "pipelineHandle",
+      "file": "packages/mcp-server/test/e2e/tier1-acceptance.e2e.spec.ts",
+      "pipelineInvocationOrdinal": 2,
+      "changedField": [
+        "context"
+      ],
+      "historicalValue": {
+        "context": {
+          "kind": "literal",
+          "value": "detail"
+        }
+      },
+      "currentValue": {
+        "context": {
+          "kind": "literal",
+          "value": "card"
+        }
+      },
+      "disposition": "retained-repoint",
+      "reason": "This carrier deliberately proves save/load/health on a build-safe context; Subscription/detail/HTML now reports OODS-V007 and cannot reach those steps.",
+      "additionallyDisclosedFields": []
+    }
+  ],
+  "currentTypedOutcomeDisposition": {
+    "path": "artifacts/product-reality/sprint-185/m04/b2/remeasurement-disposition.json",
+    "sha256": "bf1bcffbb47e1082299bcc33d521dc719265524bb2bfd4bc0a5dbb6d7c10ab93"
+  },
+  "status": "rederived"
+}
