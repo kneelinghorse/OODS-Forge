@@ -1,0 +1,24 @@
+{
+  "mission": "s185-m03",
+  "baseCommit": "b659a6eeabc762b8d6d1f489f206445f433a12fd",
+  "comparison": "m02 head to m03 working tree",
+  "canonicalAdvertisedScope": [
+    "configs/agent/policy.json",
+    "docs/api",
+    "packages/mcp-adapter/tool-descriptions.json",
+    "packages/mcp-server/src/schemas",
+    "packages/mcp-server/src/schemas/generated.ts",
+    "packages/mcp-server/src/security/policy.json",
+    "packages/mcp-server/src/tools/registry.json"
+  ],
+  "paths": [],
+  "additionalPublicBehavior": [
+    {
+      "path": "packages/components-react/src/presentational.tsx",
+      "component": "Badge",
+      "reason": "Explicit tone now controls rendered color tokens even when status has a registry presentation; ColorizedBadge inherits the corrected precedence.",
+      "decision": 1736
+    }
+  ],
+  "purpose": "Input to m05 only; recompute the sprint-wide canonical diff and additionally account for component/codegen public behavior."
+}

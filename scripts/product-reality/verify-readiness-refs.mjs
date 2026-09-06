@@ -6,13 +6,15 @@ import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import ts from "typescript";
+import { NUCLEUS_COMPONENT_IDS } from "../../packages/component-contracts/dist/index.js";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_REPOSITORY_ROOT = path.resolve(scriptDirectory, "../..");
 export const EXPECTED_REFERENCE_TOTALS = Object.freeze({
-  references: 178,
-  classA: 150,
-  classB: 28,
+  // Six refs per row/target, plus ten historical Vue scenario refs.
+  references: NUCLEUS_COMPONENT_IDS.length * 12 + 10,
+  classA: NUCLEUS_COMPONENT_IDS.length * 10 + 10,
+  classB: NUCLEUS_COMPONENT_IDS.length * 2,
 });
 
 export const READINESS_DOCUMENTS = Object.freeze({
@@ -262,7 +264,7 @@ export function verifyReadinessRefs(repositoryRoot = DEFAULT_REPOSITORY_ROOT) {
 
   return {
     schemaVersion: "1.0.0",
-    missionId: "s184-m02",
+    missionId: "s185-m03",
     kind: "readiness-reference-verification",
     classification: {
       classA: "repository source, package export, dependency closure, or framework scenario",

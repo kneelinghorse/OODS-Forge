@@ -3,6 +3,9 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { afterEach, describe, expect, it } from 'vitest';
+import { sharedScenarios } from '@oods/component-contracts';
+
+import { renderSharedScenario } from './scenario-fixtures.js';
 
 import {
   Badge,
@@ -24,6 +27,19 @@ import {
 afterEach(cleanup);
 
 describe('@oods/components-react accessibility', () => {
+  for (const scenario of sharedScenarios.filter(({ oodsComponentId }) => (
+    ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview'].includes(oodsComponentId)
+  ))) {
+    it(`passes axe for the ${scenario.oodsComponentId} shared scenario with visible text semantics`, async () => {
+      const { container } = render(<main>{renderSharedScenario(scenario)}</main>);
+      // JSDOM does not compute token contrast; browser theme evidence checks
+      // contrast separately while these scenarios verify semantic accessibility.
+      const result = await axe(container, { rules: { 'color-contrast': { enabled: false } } });
+      expect(result.violations).toEqual([]);
+      expect(container.textContent?.trim().length).toBeGreaterThan(0);
+    });
+  }
+
   it('B-06 preserves React field label and error associations', () => {
     render(
       <Input

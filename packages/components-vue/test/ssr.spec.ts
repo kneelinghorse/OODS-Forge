@@ -8,8 +8,12 @@ import {
   Banner,
   Button,
   Card,
+  CardHeader,
   Checkbox,
+  ColorSwatch,
+  ColorizedBadge,
   DatePicker,
+  DetailHeader,
   Grid,
   Input,
   Select,
@@ -18,6 +22,7 @@ import {
   Tabs,
   Text,
   Textarea,
+  VizAreaPreview,
 } from '../src/index.js';
 
 const ServerShowcase = defineComponent({
@@ -28,6 +33,11 @@ const ServerShowcase = defineComponent({
       h(Banner, { title: 'Payment failed', tone: 'critical' }),
       h(Button, { content: 'Save changes' }),
       h(Card, {}, { default: () => 'Account summary' }),
+      h(CardHeader, { title: 'Account summary', supporting: 'Current subscription' }),
+      h(ColorSwatch, { color: '#2563eb', label: 'Ocean blue' }),
+      h(ColorizedBadge, { label: 'Active', status: 'active', color: '#15803d' }),
+      h(DetailHeader, { title: 'Subscription details', as: 'h1', subtitle: 'Pro plan' }),
+      h(VizAreaPreview, { width: 320, height: 180 }),
       h(Checkbox, { id: 'marketing', label: 'Product updates' }),
       h(DatePicker, { id: 'renewal', label: 'Renewal date', value: '2026-09-30' }),
       h(Grid, {}, { default: () => [h('span', 'First'), h('span', 'Second')] }),

@@ -6,8 +6,12 @@ import {
   Banner,
   Button,
   Card,
+  CardHeader,
   Checkbox,
+  ColorSwatch,
+  ColorizedBadge,
   DatePicker,
+  DetailHeader,
   Grid,
   Input,
   Select,
@@ -16,6 +20,7 @@ import {
   Tabs,
   Text,
   Textarea,
+  VizAreaPreview,
 } from '../src/index.js';
 
 export type SharedScenarioHandlers = {
@@ -45,6 +50,16 @@ export function renderSharedScenario(
       return <Button onActivate={event => onEvent?.(event)}>Save changes</Button>;
     case 'card-elevated-content':
       return <Card elevated>Account summary</Card>;
+    case 'card-header-supporting-text':
+      return <CardHeader {...scenario.props} />;
+    case 'color-swatch-label-and-chip':
+      return <ColorSwatch {...scenario.props} />;
+    case 'colorized-badge-color-marker':
+      return <ColorizedBadge {...scenario.props} />;
+    case 'detail-header-heading-level':
+      return <DetailHeader {...scenario.props} />;
+    case 'viz-area-preview-frame-placeholder-and-slot':
+      return <VizAreaPreview {...scenario.props}>{String(scenario.slots.default)}</VizAreaPreview>;
     case 'checkbox-controlled':
       return (
         <Checkbox

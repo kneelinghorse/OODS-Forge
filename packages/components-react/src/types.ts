@@ -66,6 +66,60 @@ export interface CardProps extends React.HTMLAttributes<HTMLElement> {
   readonly as?: SafeContainerElement;
 }
 
+export type HeaderElement = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+export type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface DetailHeaderProps extends React.HTMLAttributes<HTMLElement> {
+  readonly title?: string;
+  readonly label?: string;
+  readonly text?: string;
+  readonly subtitle?: string;
+  readonly sublabel?: string;
+  readonly description?: string;
+  readonly metadata?: string;
+  readonly meta?: string;
+  readonly level?: HeaderLevel;
+  readonly as?: HeaderElement;
+}
+
+export interface CardHeaderProps extends React.HTMLAttributes<HTMLElement> {
+  readonly title?: string;
+  readonly label?: string;
+  readonly text?: string;
+  readonly supporting?: string;
+  readonly supportingText?: string;
+  readonly subtitle?: string;
+  readonly description?: string;
+  readonly level?: HeaderLevel;
+  readonly as?: HeaderElement;
+}
+
+export interface ColorSwatchProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly color?: string;
+  readonly value?: string;
+  readonly state?: string;
+  readonly label?: string;
+}
+
+export interface ColorizedBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly label?: string;
+  readonly text?: string;
+  readonly state?: string;
+  readonly value?: string;
+  readonly status?: string;
+  readonly color?: string;
+  readonly hue?: string;
+  readonly swatch?: string;
+  readonly variant?: string;
+  readonly tone?: ComponentTone;
+  readonly emphasis?: ComponentEmphasis;
+}
+
+export interface VizAreaPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
+  readonly width?: number;
+  readonly height?: number;
+}
+
 export interface CommonFieldProps {
   readonly id: string;
   readonly label: React.ReactNode;

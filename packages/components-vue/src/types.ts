@@ -57,3 +57,57 @@ export type TextElement =
   | 'h4'
   | 'h5'
   | 'h6';
+
+export type HeaderElement = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+export type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+export type DetailHeaderProps = {
+  title?: string;
+  label?: string;
+  text?: string;
+  subtitle?: string;
+  sublabel?: string;
+  description?: string;
+  metadata?: string;
+  meta?: string;
+  level?: HeaderLevel;
+  as?: HeaderElement;
+};
+
+export type CardHeaderProps = {
+  title?: string;
+  label?: string;
+  text?: string;
+  supporting?: string;
+  supportingText?: string;
+  subtitle?: string;
+  description?: string;
+  level?: HeaderLevel;
+  as?: HeaderElement;
+};
+
+export type ColorSwatchProps = {
+  color?: string;
+  value?: string;
+  state?: string;
+  label?: string;
+};
+
+export type ColorizedBadgeProps = {
+  label?: string;
+  text?: string;
+  state?: string;
+  value?: string;
+  status?: string;
+  color?: string;
+  hue?: string;
+  swatch?: string;
+  variant?: string;
+  tone?: ComponentTone;
+  emphasis?: ComponentEmphasis;
+};
+
+export type VizAreaPreviewProps = {
+  width?: number;
+  height?: number;
+};

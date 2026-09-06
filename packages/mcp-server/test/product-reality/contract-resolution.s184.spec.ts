@@ -217,7 +217,7 @@ describe('Sprint 184 m03 contract-resolution closeout', () => {
     expect(record.movers).toEqual(actual);
   });
 
-  it('preserves the historical readiness manifests while all 178 live refs resolve', () => {
+  it('preserves the historical readiness manifests while every current nucleus ref resolves', () => {
     const closeout = readJson<{
       measuredImplementationCommit: string;
       readinessManifestDisposition: {
@@ -263,7 +263,7 @@ describe('Sprint 184 m03 contract-resolution closeout', () => {
       failures: unknown[];
       status: string;
     };
-    expect(report.totals).toEqual(expect.objectContaining({ references: 178, resolved: 178 }));
+    expect(report.totals).toEqual(expect.objectContaining({ references: NUCLEUS_COMPONENT_IDS.length * 12 + 10, resolved: NUCLEUS_COMPONENT_IDS.length * 12 + 10 }));
     expect(report.failures).toEqual([]);
     expect(report.status).toBe('passed');
   });

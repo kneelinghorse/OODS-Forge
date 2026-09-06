@@ -8,8 +8,12 @@ import {
   Banner,
   Button,
   Card,
+  CardHeader,
   Checkbox,
+  ColorSwatch,
+  ColorizedBadge,
   DatePicker,
+  DetailHeader,
   Grid,
   Input,
   Select,
@@ -18,6 +22,7 @@ import {
   Tabs,
   Text,
   Textarea,
+  VizAreaPreview,
 } from '../src/index.js';
 
 const implementations: Readonly<Record<string, Component>> = {
@@ -25,8 +30,12 @@ const implementations: Readonly<Record<string, Component>> = {
   Banner,
   Button,
   Card,
+  CardHeader,
   Checkbox,
+  ColorSwatch,
+  ColorizedBadge,
   DatePicker,
+  DetailHeader,
   Grid,
   Input,
   Select,
@@ -35,6 +44,7 @@ const implementations: Readonly<Record<string, Component>> = {
   Tabs,
   Text,
   Textarea,
+  VizAreaPreview,
 };
 
 function scenarioSlots(values: Readonly<Record<string, unknown>>): Record<string, Slot> {
@@ -97,6 +107,54 @@ describe('@oods/components-vue shared scenarios', () => {
             expect(component.element.tagName).toBe('DIV');
             expect(component.attributes('data-elevated')).toBe('true');
             expect(component.text()).toBe('Account summary');
+            break;
+          }
+          case 'card-header-supporting-text': {
+            expect(component.element.tagName).toBe('HEADER');
+            expect(component.get('h3').text()).toBe('Account summary');
+            expect(component.get('[data-oods-supporting]').text()).toBe('Current subscription');
+            break;
+          }
+          case 'detail-header-heading-level': {
+            expect(component.element.tagName).toBe('HEADER');
+            expect(component.get('h1').text()).toBe('Subscription details');
+            expect(component.find('h2').exists()).toBe(false);
+            expect(component.get('[data-oods-subtitle]').text()).toBe('Pro plan');
+            expect(component.get('[data-oods-metadata]').text()).toBe('Renews monthly');
+            break;
+          }
+          case 'color-swatch-label-and-chip': {
+            expect(component.attributes('data-swatch-color')).toBe('#2563eb');
+            expect(component.attributes('style')).toContain('--oods-swatch-color: #2563eb');
+            expect(component.get('[data-oods-swatch-label]').text()).toBe('Ocean blue');
+            expect(component.get('[data-oods-swatch-label]').attributes('aria-hidden')).toBeUndefined();
+            expect(component.get('[data-oods-swatch-chip]').attributes('aria-hidden')).toBe('true');
+            break;
+          }
+          case 'colorized-badge-color-marker': {
+            expect(component.attributes('data-badge-color')).toBe('#15803d');
+            expect(component.attributes('data-badge-variant')).toBe('colorized');
+            expect(component.attributes('data-tone')).toBe('success');
+            expect(component.classes()).toContain('oods-badge');
+            expect(component.get('[data-oods-badge-label]').text()).toBe('Approved');
+            expect(component.get('[data-oods-badge-label]').attributes('aria-hidden')).toBeUndefined();
+            expect(component.get('[data-oods-badge-marker]').attributes('aria-hidden')).toBe('true');
+            expect(component.find('button, a, input').exists()).toBe(false);
+            break;
+          }
+          case 'viz-area-preview-frame-placeholder-and-slot': {
+            expect(component.attributes()).toMatchObject({
+              'data-viz-preview-type': 'area', 'data-viz-width': '640', 'data-viz-height': '360',
+            });
+            expect(component.text()).toBe('Authored area preview content');
+            expect(component.find('[data-viz-preview-placeholder]').exists()).toBe(false);
+            const empty = mount(VizAreaPreview, { props: scenario.props });
+            try {
+              expect(empty.get('[data-viz-preview-placeholder]').text()).toBe('Area preview (640 x 360)');
+              expect(empty.find('svg, canvas').exists()).toBe(false);
+            } finally {
+              empty.unmount();
+            }
             break;
           }
           case 'checkbox-controlled': {

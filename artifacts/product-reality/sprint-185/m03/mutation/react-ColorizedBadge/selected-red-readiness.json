@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 238,
+    "classA": 200,
+    "classB": 38
+  },
+  "totals": {
+    "references": 238,
+    "classA": 200,
+    "classB": 38,
+    "resolved": 236
+  },
+  "targets": {
+    "react": {
+      "rows": 19,
+      "references": 114,
+      "classA": 95,
+      "classB": 19,
+      "resolved": 112
+    },
+    "vue": {
+      "rows": 19,
+      "references": 124,
+      "classA": 105,
+      "classB": 19,
+      "resolved": 124
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 38,
+    "targetImplementation": 38,
+    "packageExport": 38,
+    "publicDeclaration": 38,
+    "dependencyClosure": 38,
+    "frameworkScenario": 48
+  },
+  "failures": [
+    {
+      "target": "react",
+      "componentId": "ColorizedBadge",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-react/src/index.ts#ColorizedBadge",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "react",
+      "componentId": "ColorizedBadge",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-react/dist/index.d.ts#ColorizedBadge",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}

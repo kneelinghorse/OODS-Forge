@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { renderSharedScenario } from './scenario-fixtures.js';
+import { VizAreaPreview } from '../src/index.js';
 
 afterEach(cleanup);
 
@@ -21,7 +22,7 @@ describe('@oods/components-react shared scenarios', () => {
     it(`${scenario.id} executes the ${scenario.oodsComponentId} contract`, async () => {
       const user = userEvent.setup();
       const onEvent = vi.fn();
-      const { container } = render(renderSharedScenario(scenario, { onEvent }));
+      const { container, rerender } = render(renderSharedScenario(scenario, { onEvent }));
       const component = container.querySelector(
         `[data-oods-component="${scenario.oodsComponentId}"]`
       );
@@ -55,6 +56,53 @@ describe('@oods/components-react shared scenarios', () => {
           expect(component?.tagName).toBe('DIV');
           expect(component?.getAttribute('data-elevated')).toBe('true');
           expect(component?.textContent).toBe('Account summary');
+          break;
+        }
+        case 'card-header-supporting-text': {
+          expect(component?.tagName).toBe('HEADER');
+          expect(screen.getByRole('heading', { level: 3, name: 'Account summary' })).toBeTruthy();
+          expect(component?.querySelector('[data-oods-supporting]')?.textContent).toBe('Current subscription');
+          break;
+        }
+        case 'detail-header-heading-level': {
+          expect(component?.tagName).toBe('HEADER');
+          expect(screen.getByRole('heading', { level: 1, name: 'Subscription details' })).toBeTruthy();
+          expect(component?.querySelector('[data-oods-subtitle]')?.textContent).toBe('Pro plan');
+          expect(component?.querySelector('[data-oods-metadata]')?.textContent).toBe('Renews monthly');
+          break;
+        }
+        case 'color-swatch-label-and-chip': {
+          expect(component?.getAttribute('data-swatch-color')).toBe('#2563eb');
+          expect((component as HTMLElement).style.getPropertyValue('--oods-swatch-color')).toBe('#2563eb');
+          expect(component?.querySelector('[data-oods-swatch-chip]')?.getAttribute('aria-hidden')).toBe('true');
+          expect(component?.querySelector('[data-oods-swatch-label]')?.textContent).toBe('Ocean blue');
+          expect(component?.querySelector('button, a, input')).toBeNull();
+          break;
+        }
+        case 'colorized-badge-color-marker': {
+          expect(component?.classList.contains('oods-badge')).toBe(true);
+          expect(component?.getAttribute('data-badge-color')).toBe('#15803d');
+          expect(component?.getAttribute('data-badge-status')).toBe('active');
+          expect(component?.getAttribute('data-badge-variant')).toBe('colorized');
+          expect(component?.getAttribute('data-tone')).toBe('success');
+          expect((component as HTMLElement).style.getPropertyValue('--oods-badge-color')).toBe('#15803d');
+          expect(component?.querySelector('[data-oods-badge-marker]')?.getAttribute('aria-hidden')).toBe('true');
+          expect(component?.querySelector('[data-oods-badge-label]')?.textContent).toBe('Approved');
+          expect(component?.querySelector('button, a, input')).toBeNull();
+          break;
+        }
+        case 'viz-area-preview-frame-placeholder-and-slot': {
+          expect(component?.getAttribute('data-viz-preview-type')).toBe('area');
+          expect(component?.getAttribute('data-viz-width')).toBe('640');
+          expect(component?.getAttribute('data-viz-height')).toBe('360');
+          expect(component?.textContent).toBe('Authored area preview content');
+          expect(component?.querySelector('[data-viz-preview-placeholder]')).toBeNull();
+          rerender(<VizAreaPreview {...scenario.props} />);
+          expect(container.querySelector('[data-viz-preview-placeholder]')?.textContent).toBe('Area preview (640 x 360)');
+          rerender(renderSharedScenario(scenario));
+          expect(container.querySelector('[data-viz-preview-placeholder]')).toBeNull();
+          expect(container.textContent).toBe('Authored area preview content');
+          expect(container.querySelector('svg, canvas')).toBeNull();
           break;
         }
         case 'checkbox-controlled': {

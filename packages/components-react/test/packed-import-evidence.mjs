@@ -8,6 +8,8 @@ import { spawnSync } from 'node:child_process';
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const repositoryRoot = resolve(packageRoot, '../..');
 const artifactArgument = process.argv.indexOf('--artifact-root');
+const missionArgument = process.argv.indexOf('--mission');
+const mission = missionArgument >= 0 ? process.argv[missionArgument + 1] : 's182-m02';
 
 if (artifactArgument < 0 || !process.argv[artifactArgument + 1]) {
   throw new Error('Usage: node test/packed-import-evidence.mjs --artifact-root <directory>');
@@ -82,6 +84,7 @@ import { fileURLToPath } from 'node:url';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
+import { sharedScenarios } from '@oods/component-contracts';
 import * as components from '@oods/components-react';
 import { getStatusPresentation } from '@oods/components-react/status';
 import * as tableFamily from '@oods/components-react/table';
@@ -92,6 +95,11 @@ const repositoryRoot = ${JSON.stringify(repositoryRoot)};
 const contractsPath = fileURLToPath(import.meta.resolve('@oods/component-contracts'));
 if (!contractsPath.startsWith(process.cwd())) throw new Error('Contracts resolved outside the isolated consumer: ' + contractsPath);
 if (contractsPath.startsWith(repositoryRoot + '/')) throw new Error('Contracts resolved to repository source: ' + contractsPath);
+const resolvedSpecifiers = Object.fromEntries(['@oods/component-contracts', '@oods/components-react', '@oods/components-react/status', '@oods/components-react/table', '@oods/component-styles/css', '@oods/tokens/css', 'react', 'react-dom/server'].map((specifier) => {
+  const resolved = fileURLToPath(import.meta.resolve(specifier));
+  if (!resolved.startsWith(process.cwd() + '/') || resolved.startsWith(repositoryRoot + '/')) throw new Error('Specifier escaped isolated consumer: ' + specifier);
+  return [specifier, resolved];
+}));
 const canonicalIds = [...NUCLEUS_COMPONENT_IDS];
 const runtimeKeys = Object.keys(components).sort();
 if (JSON.stringify(runtimeKeys) !== JSON.stringify([...canonicalIds].sort())) {
@@ -99,6 +107,24 @@ if (JSON.stringify(runtimeKeys) !== JSON.stringify([...canonicalIds].sort())) {
 }
 const html = renderToString(React.createElement(components.Button, null, 'Packed action'));
 if (!html.includes('type="button"') || !html.includes('Packed action')) throw new Error('Packed SSR failed.');
+
+const breadthIds = ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview'];
+const breadthProof = [];
+for (const id of breadthIds) {
+  const scenario = sharedScenarios.find((item) => item.oodsComponentId === id);
+  if (!scenario) throw new Error('Missing installed shared scenario: ' + id);
+  const markup = renderToString(React.createElement(components[id], scenario.props, scenario.slots.default));
+  if (!markup.includes('data-oods-component="' + id + '"')) throw new Error('Missing packed marker: ' + id);
+  if (id === 'DetailHeader' && (!markup.includes('<h1') || !markup.includes(scenario.props.title) || !markup.includes(scenario.props.subtitle) || !markup.includes(scenario.props.metadata))) throw new Error('Packed DetailHeader lost heading/text semantics.');
+  if (id === 'CardHeader' && (!markup.includes('<h3') || !markup.includes(scenario.props.supportingText))) throw new Error('Packed CardHeader lost heading/supporting text.');
+  if (id === 'ColorSwatch' && (!markup.includes('data-oods-swatch-chip') || !markup.includes(scenario.props.label) || !markup.includes('--oods-swatch-color') || !markup.includes('data-swatch-color="' + scenario.props.color + '"'))) throw new Error('Packed ColorSwatch lost label/chip semantics.');
+  if (id === 'ColorizedBadge' && (!markup.includes('data-oods-badge-marker') || !markup.includes(scenario.props.label) || !markup.includes('data-badge-color="' + scenario.props.color + '"'))) throw new Error('Packed ColorizedBadge lost color/text semantics.');
+  if (id === 'VizAreaPreview' && (!markup.includes('data-viz-preview-type="area"') || !markup.includes('data-viz-width="640"') || !markup.includes('data-viz-height="360"') || !markup.includes(String(scenario.slots.default)) || markup.includes('data-viz-preview-placeholder'))) throw new Error('Packed preview lost frame/slot semantics.');
+  breadthProof.push({ componentId: id, markup });
+}
+const emptyPreview = renderToString(React.createElement(components.VizAreaPreview));
+if (!emptyPreview.includes('data-viz-preview-placeholder') || !emptyPreview.replace(/<!--.*?-->/g, '').includes('Area preview (640 x 360)')) throw new Error('Packed empty preview placeholder missing.');
+
 const presentation = getStatusPresentation('subscription', 'past_due');
 if (presentation.tone !== 'critical' || presentation.label !== 'Past Due') throw new Error('Packed status registry failed.');
 const tableKeys = Object.keys(tableFamily).sort();
@@ -111,9 +137,10 @@ if (!css.includes("[data-oods-component='Tabs']") || !css.includes('@oods/tokens
 const require = createRequire(import.meta.url);
 const commonJsKeys = Object.keys(require('@oods/components-react')).sort();
 if (JSON.stringify(commonJsKeys) !== JSON.stringify(runtimeKeys)) throw new Error('Packed CJS export set differs.');
-process.stdout.write(JSON.stringify({ canonicalIds, contractsPath, runtimeKeys, html, status: presentation.label, tableKeys, readinessRows: readiness.rows.length, cssBytes: Buffer.byteLength(css), commonJsKeys }));
+process.stdout.write(JSON.stringify({ canonicalIds, contractsPath, resolvedSpecifiers, breadthProof, emptyPreview, runtimeKeys, html, status: presentation.label, tableKeys, readinessRows: readiness.rows.length, cssBytes: Buffer.byteLength(css), commonJsKeys }));
 `;
   await writeFile(resolve(tempRoot, 'verify.mjs'), consumerSource);
+  await writeFile(resolve(outputRoot, 'consumer.mjs'), consumerSource);
   const verification = run('node', ['verify.mjs'], tempRoot);
   const proof = JSON.parse(verification.stdout);
 
@@ -136,7 +163,7 @@ process.stdout.write(JSON.stringify({ canonicalIds, contractsPath, runtimeKeys, 
 
   report = {
     schemaVersion: '1.0.0',
-    mission: 's182-m02',
+    mission,
     target: 'react',
     status: 'passed',
     selected: 1,
@@ -155,7 +182,7 @@ process.stdout.write(JSON.stringify({ canonicalIds, contractsPath, runtimeKeys, 
 } catch (error) {
   report = {
     schemaVersion: '1.0.0',
-    mission: 's182-m02',
+    mission,
     target: 'react',
     status: 'failed',
     selected: 1,
