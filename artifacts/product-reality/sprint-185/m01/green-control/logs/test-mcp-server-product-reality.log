@@ -1,0 +1,558 @@
+$ pnpm --filter @oods/mcp-server exec vitest run test/product-reality --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-mcp-server-product-reality.json
+cwd=.
+exitCode=1
+startedAt=2026-09-06T01:12:25.572Z
+endedAt=2026-09-06T01:17:48.731Z
+durationMs=323156.173
+[stdout]
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server
+
+ ✓ test/product-reality/validation-profiles.s183.spec.ts (72 tests) 312ms
+ ✓ test/product-reality/closeout.s184.spec.ts (10 tests) 25323ms
+   ✓ Sprint 184 M07 closeout accounting > accounts for added and removed suite files and independently audits every claim  3008ms
+   ✓ Sprint 184 M07 closeout accounting > rejects CMOS text drift and any frozen evidence path that is missing  2364ms
+   ✓ Sprint 184 M07 closeout accounting > rejects a handoff whose frozen CMOS source does not leave the sprint Active  592ms
+   ✓ Sprint 184 M07 closeout accounting > rejects an execution rolled up under two rows  1409ms
+   ✓ Sprint 184 M07 closeout accounting > rejects malformed frozen reconnect evidence despite a passed criterion 7 manifest status  2686ms
+   ✓ Sprint 184 M07 closeout accounting > rejects criterion 7 when its execution does not bind the frozen reconnect inputs  1759ms
+   ✓ Sprint 184 M07 closeout accounting > counts only proven claim rows in the headline  2694ms
+   ✓ Sprint 184 M07 closeout accounting > accepts collection-only populations only when they reconcile to executed historical totals  4564ms
+   ✓ Sprint 184 M07 closeout accounting > attributes historical added and removed rows to Sprint 183 missions  2484ms
+   ✓ Sprint 184 M07 closeout accounting > uses frozen commit bytes rather than mutable working-tree bytes  3760ms
+ ✓ test/product-reality/closeout.s183.spec.ts (7 tests) 2168ms
+   ✓ Sprint 183 M06 deterministic closeout > reconciles the exact 38 CMOS criteria and writes an acyclic review handoff  455ms
+   ✓ Sprint 183 M06 deterministic closeout > turns a missing gate result and a tampered gate log red  729ms
+   ✓ Sprint 183 M06 deterministic closeout > rejects CMOS contract drift and a duplicated R-02 target/component cell  546ms
+ ✓ test/product-reality/reconnect.s184.spec.ts (13 tests) 6104ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > re-derives all ten Sprint 183 advertised movers and exposes the catalog schema omitted from the prior notice  1420ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > independently compares the M03, M04, and M05 records with their committed operands and recorded scopes  303ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > retains a machine-checked disposition for two sends and the explicitly retired archived consumer  2821ms
+   ✓ Sprint 184 M07 reconnect derivation and receipt validation > rejects a rewritten retirement, derivation, summary, or implementation-head plan binding  1243ms
+ ✓ test/product-reality/typed-action-protocol.s183.spec.ts (31 tests) 69877ms
+   ✓ Sprint 183 M02 typed action protocol > coerces numeric object fields before initializing string-semantic local state  6348ms
+   ✓ Sprint 183 M02 typed action protocol > React typescript=$typescript requires every injected action  1983ms
+   ✓ Sprint 183 M02 typed action protocol > React typescript=$typescript requires every injected action  2357ms
+   ✓ Sprint 183 M02 typed action protocol > React TypeScript rejects each individually omitted domain action  3461ms
+   ✓ Sprint 183 M02 typed action protocol > Vue typescript=$typescript requires every injected action  12347ms
+   ✓ Sprint 183 M02 typed action protocol > Vue typescript=$typescript requires every injected action  14485ms
+   ✓ Sprint 183 M02 typed action protocol > Vue TypeScript rejects each individually omitted domain action  24576ms
+   ✓ Sprint 183 M02 typed action protocol > Vue JavaScript rejects each omitted action at runtime  4244ms
+ ❯ test/product-reality/independent-review-approval.s183.spec.ts (36 tests | 36 skipped) 4897ms
+   ↓ Sprint 183 reusable independent-review approval gate > reconstructs the three-session approval with the exact heads, 28 cells, and 11 review rows
+   ↓ Sprint 183 reusable independent-review approval gate > rejects the approval bypass using zero-width and Cyrillic principal spellings
+   ↓ Sprint 183 reusable independent-review approval gate > rejects the approval bypass using fabricated full-length heads
+   ↓ Sprint 183 reusable independent-review approval gate > rejects the approval bypass using empty heads
+   ↓ Sprint 183 reusable independent-review approval gate > rejects the approval bypass using a review head equal to its derivation head
+   ↓ Sprint 183 reusable independent-review approval gate > collapses NFKC compatibility spelling to the same principal
+   ↓ Sprint 183 reusable independent-review approval gate > collapses a zero-width insertion to the same principal
+   ↓ Sprint 183 reusable independent-review approval gate > collapses a Cyrillic lookalike to the same principal
+   ↓ Sprint 183 reusable independent-review approval gate > uses an injected resolver for both independently fixed commit heads
+   ↓ Sprint 183 reusable independent-review approval gate > fails a well-formed head that the injected resolver cannot find
+   ↓ Sprint 183 reusable independent-review approval gate > rejects a resolver result that aliases a head to another commit
+   ↓ Sprint 183 reusable independent-review approval gate > rejects a malformed head (empty) before invoking the resolver
+   ↓ Sprint 183 reusable independent-review approval gate > rejects a malformed head (missing) before invoking the resolver
+   ↓ Sprint 183 reusable independent-review approval gate > rejects a malformed head (short) before invoking the resolver
+   ↓ Sprint 183 reusable independent-review approval gate > rejects a malformed head (uppercase) before invoking the resolver
+   ↓ Sprint 183 reusable independent-review approval gate > returns unverifiable when the injected resolver reports unavailability
+   ↓ Sprint 183 reusable independent-review approval gate > returns unverifiable when the injected resolver throws
+   ↓ Sprint 183 reusable independent-review approval gate > returns unverifiable with a named reason outside a Git repository
+   ↓ Sprint 183 reusable independent-review approval gate > returns a categorical rejected outcome when an independently fixed rejection matches
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for producer self-review under distinct sessions
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for reviewer self-authorization under distinct sessions
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for producer self-review
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for producer self-authorization
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for review session drift
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for authorization session drift
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for authorization disposition drift
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for missing review timestamp
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for authorization predating review
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for derivation head drift
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for reviewed head drift
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for scope drift
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for verification drift
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for legacy raw boolean
+   ↓ Sprint 183 reusable independent-review approval gate > returns invalid for approval-alias raw boolean
+   ↓ Sprint 183 reusable independent-review approval gate > content-addresses the preserved snapshot, approval inputs, and discoverable supersession
+   ↓ Sprint 183 reusable independent-review approval gate > publishes the approved projection through the canonical component-contracts package surface
+
+[s184-m05] state parity differences=0; allowlist=0
+[s184-m05:parity] {"states":["loading","empty","error","success"],"react":{"loading":{"markersInDocumentOrder":["loading"],"visibleText":"Loading subscriptions."},"empty":{"markersInDocumentOrder":["empty"],"visibleText":"No subscriptions found."},"error":{"markersInDocumentOrder":["error"],"visibleText":"Subscriptions could not be loaded."},"success":{"markersInDocumentOrder":["success"],"visibleText":"Subscriptions loaded."}},"vue":{"loading":{"markersInDocumentOrder":["loading"],"visibleText":"Loading subscriptions."},"empty":{"markersInDocumentOrder":["empty"],"visibleText":"No subscriptions found."},"error":{"markersInDocumentOrder":["error"],"visibleText":"Subscriptions could not be loaded."},"success":{"markersInDocumentOrder":["success"],"visibleText":"Subscriptions loaded."}},"computedDifferences":[],"allowlist":[]}
+[s184-m05:mutation] target=react removed=loading red=react/loading green=7
+[s184-m05:mutation] target=react removed=empty red=react/empty green=7
+[s184-m05:mutation] target=react removed=error red=react/error green=7
+[s184-m05:mutation] target=react removed=success red=react/success green=7
+[s184-m05:mutation] target=vue removed=loading red=vue/loading green=7
+[s184-m05:mutation] target=vue removed=empty red=vue/empty green=7
+[s184-m05:mutation] target=vue removed=error red=vue/error green=7
+[s184-m05:mutation] target=vue removed=success red=vue/success green=7
+[s184-m05:restore] target=react source=sha256:8b17d59119e49b4bb2c2a03be0b08c3d8771cef91df1addb6d45483983ff2879 green=4
+[s184-m05:restore] target=vue source=sha256:d341604855e0542712bf34d9722596ab9d403b25793cbc55fa4cb31d5a457198 green=4
+ ✓ test/product-reality/state-axis.s184.spec.ts (22 tests) 8890ms
+   ✓ Sprint 184 m05 workflow state axis > restores the exact emitted bytes and all eight runtime cells after the mutation matrix  1274ms
+ ❯ test/product-reality/contract-resolution.s184.spec.ts (9 tests | 1 failed) 788ms
+   ✓ Sprint 184 m03 contract-resolution closeout > retains the exact independently reconstructed 2/6/0 red control 4ms
+   ✓ Sprint 184 m03 contract-resolution closeout > holds all six live target/schema cells at zero issues 8ms
+   ✓ Sprint 184 m03 contract-resolution closeout > keeps all three saved-schema operands byte-exact and absent from the sprint diff 50ms
+   × Sprint 184 m03 contract-resolution closeout > versions exactly Select, Stack, and Text at 1.1.0 without moving the nucleus key set 9ms
+     → expected [ 'Badge', 'Banner', 'Button', …(8) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(9) ]
+   ✓ Sprint 184 m03 contract-resolution closeout > derives the exact advertised implementation movers in both directions for m07 32ms
+   ✓ Sprint 184 m03 contract-resolution closeout > preserves the historical readiness manifests while all 178 live refs resolve  681ms
+   ✓ Sprint 184 m03 contract-resolution closeout > retains seven discriminating and byte-restored mutation controls 2ms
+   ✓ Sprint 184 m03 contract-resolution closeout > summarizes every m03 gate as passed with no silently omitted check 1ms
+   ✓ Sprint 184 m03 contract-resolution closeout > publishes the closeout records from the retained evidence directory 0ms
+ ✓ test/product-reality/b2-legacy-inputs.s184.spec.ts (7 tests) 626ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > binds all 13 retained repoints to a source selector and a non-empty reason  382ms
+ ✓ test/product-reality/readiness-ref-enforcement.s184.spec.ts (21 tests) 195ms
+ ✓ test/product-reality/emitter-directives.s184.spec.ts (26 tests) 16177ms
+   ✓ Sprint 184 m03 target contract and emitter movement > emits explicit React coercion and joining expressions that strict-check against the built package  6592ms
+   ✓ Sprint 184 m03 target contract and emitter movement > emits readonly-safe Vue coercion and joining expressions that strict-check against the built package  9494ms
+ ✓ test/product-reality/patch-disposition.s184.spec.ts (5 tests) 14944ms
+   ✓ Sprint 184 M07 tracked mutation patch disposition > classifies the exact 38-patch frozen population and binds every row to immutable bytes and a source-derived baseline  4264ms
+   ✓ Sprint 184 M07 tracked mutation patch disposition > executes the s183-m06-sc02 replacement over every tracked patch, with only the five invalid archives taking an explicit machine-readable non-apply path  6310ms
+   ✓ Sprint 184 M07 tracked mutation patch disposition > preserves all five Class 1 archives, proves the M03 canonical twins at two real commits, and uses the Sprint 183 M01b repair  2046ms
+   ✓ Sprint 184 M07 tracked mutation patch disposition > replays the three Class 2 patches at the receipt baseline and confirms their context drift at the frozen audit head  1235ms
+   ✓ Sprint 184 M07 tracked mutation patch disposition > keeps all four Class 3 patches scoped to their generated consumer roots  1085ms
+ ✓ test/product-reality/ported-workflow.s184.spec.ts (5 tests) 17982ms
+   ✓ Sprint 184 m04 ported Subscription workflow > strict-checks every generated React and Vue artifact against the built packages  17842ms
+ ❯ test/product-reality/saved-schema-consumers.s183.spec.ts (4 tests | 4 skipped) 12384ms
+   ↓ Sprint 183 M05 genuine saved-schema consumers > installs exactly the versioned runtime closure derived from each artifact manifest
+   ↓ Sprint 183 M05 genuine saved-schema consumers > rejects a missing or versionless artifact dependency before an install can start
+   ↓ Sprint 183 M05 genuine saved-schema consumers > holds React and Vue to the same eight clean-consumer gates with no skipped check
+   ↓ Sprint 183 M05 genuine saved-schema consumers > turns both behavioral mutations red at the gate whose behavior they remove
+ ✓ test/product-reality/m06-evidence-controls.s184.spec.ts (6 tests) 296ms
+ ✓ test/product-reality/m06-evidence.s184.spec.ts (4 tests) 271ms
+ ✓ test/product-reality/history-pins.s185.spec.ts (13 tests) 472ms
+ ✓ test/product-reality/saved-schema-compiler.s183.spec.ts (4 tests) 83ms
+ ❯ test/product-reality/live-workflow-consumers.s184.spec.ts (4 tests | 4 skipped) 10604ms
+   ↓ Sprint 184 m06 live Subscription workflow consumers > invokes code.generate live once for every immutable schema/target cell and consumes that output
+   ↓ Sprint 184 m06 live Subscription workflow consumers > holds all four cells to the same eight named gates and retains every raw log
+   ↓ Sprint 184 m06 live Subscription workflow consumers > makes the generated component the sole owner of every clicked selector and action callsite
+   ↓ Sprint 184 m06 live Subscription workflow consumers > clicks generated controls with the exact schema-derived runtime operands
+ ✓ test/product-reality/s183-m06-replay-r02.spec.ts (4 tests) 1181ms
+   ✓ Sprint 183 M06 mutation replay and R-02 resolution > replays exactly four M05 patches plus the repaired M01b patch from committed baselines  1074ms
+ ✓ test/product-reality/nucleus-pins.s185.spec.ts (4 tests) 109ms
+ ✓ test/product-reality/runnable-artifact.s183.spec.ts (28 tests) 314ms
+ ✓ test/product-reality/evidence-retention.s184.spec.ts (10 tests) 211ms
+ ✓ test/product-reality/state-evidence.s184.spec.ts (2 tests) 10ms
+ ✓ test/product-reality/ported-mutation-matrix.s184.spec.ts (5 tests) 256ms
+ ❯ test/product-reality/packed-ported-consumers.s184.spec.ts (1 test | 1 failed) 10861ms
+   × Sprint 184 m04 packed ported consumers > installs only built OODS tarballs in fresh React and Vue consumers and resolves every new subpath externally 10860ms
+     → pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_16_04_091Z-debug-0.log
+
+ ❯ test/product-reality/packed-consumers.s182.spec.ts (2 tests | 2 failed) 28844ms
+   × Sprint 182 M04 packed generated consumers > B-12 installs and imports every required tarball and root export in isolation 16881ms
+     → pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_16_18_470Z-debug-0.log
+
+   × Sprint 182 M04 packed generated consumers > B-13 resolves declared dependencies and shared CSS in a clean production build 11961ms
+     → pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_16_33_031Z-debug-0.log
+
+ ✓ test/product-reality/screen-action-surface.s184.spec.ts (6 tests) 42ms
+ ✓ test/product-reality/codegen-matrix.s182.spec.ts (13 tests) 56876ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'react'/'inline'/typescript=false  1708ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'react'/'inline'/typescript=true  871ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'react'/'tokens'/typescript=false  775ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'react'/'tokens'/typescript=true  630ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'react'/'tailwind'/typescript=false  787ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'react'/'tailwind'/typescript=true  887ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'vue'/'inline'/typescript=false  8061ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'vue'/'inline'/typescript=true  5751ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'vue'/'tokens'/typescript=false  14789ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'vue'/'tokens'/typescript=true  6189ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'vue'/'tailwind'/typescript=false  5956ms
+   ✓ Sprint 182 M04 public codegen matrix > compiles and closes dependencies for 'vue'/'tailwind'/typescript=true  10462ms
+ ✓ test/product-reality/ported-freeze.s184.spec.ts (2 tests) 147ms
+ ❯ test/product-reality/m06-gate-bites.s184.spec.ts (1 test | 1 failed) 11272ms
+   × Sprint 184 m06 real consumer gate bites > executes one unique red mutation for every gate on both framework targets 11270ms
+     → pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+RollupError: [plugin dts] src/contracts.ts: Failed to compile. Check the logs above.
+    at getRollupError (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/parseAst.js:285:41)
+    at Object.error (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/parseAst.js:281:42)
+    at Object.error (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:913:32)
+    at Object.error (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:22391:42)
+    at generateDtsFromTs (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6376:22)
+    at /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6383:59
+    at _nullishCoalesce (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:1:472)
+    at Object.transform (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6383:18)
+    at /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:3392:40
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_17_43_545Z-debug-0.log
+
+ ✓ test/product-reality/advertised-movers.s184.spec.ts (1 test) 33ms
+ ✓ test/product-reality/input-validation-state.s184.spec.ts (4 tests) 34ms
+
+ Test Files  7 failed | 26 passed (33)
+      Tests  5 failed | 333 passed | 44 skipped (382)
+   Start at  20:12:26
+   Duration  321.87s (transform 1.70s, setup 196ms, collect 10.73s, tests 302.58s, environment 4ms, prepare 2.62s)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-mcp-server-product-reality.json
+undefined
+/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-mcp-server-product-reality.json
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/independent-review-approval.s183.spec.ts > Sprint 183 reusable independent-review approval gate
+Error: Command failed: pnpm --filter @oods/component-contracts run build
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+
+ ❯ Worker.<anonymous> ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26
+ ❯ test/product-reality/independent-review-approval.s183.spec.ts:42:18
+     40| 
+     41|   beforeAll(async () => {
+     42|     childProcess.execFileSync(
+       |                  ^
+     43|       "pnpm",
+     44|       ["--filter", "@oods/component-contracts", "run", "build"],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  test/product-reality/live-workflow-consumers.s184.spec.ts > Sprint 184 m06 live Subscription workflow consumers
+Error: pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_15_48_574Z-debug-0.log
+
+ ❯ Worker.<anonymous> ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26
+ ❯ requireGreen ../../scripts/product-reality/s182-m04-consumer-harness.mjs:123:11
+    121| function requireGreen(result, label) {
+    122|   if (result.exitCode !== 0) {
+    123|     throw new Error(
+       |           ^
+    124|       `${label} failed (${result.exitCode}${result.signal ? `, ${resul…
+    125|       `${result.stderr || result.stdout || result.error || 'no command…
+ ❯ packFoundationPackages ../../scripts/product-reality/s182-m04-consumer-harness.mjs:197:5
+ ❯ runLiveWorkflowProof ../../scripts/product-reality/s184-m06-live-consumers.ts:1723:41
+ ❯ test/product-reality/live-workflow-consumers.s184.spec.ts:27:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  test/product-reality/saved-schema-consumers.s183.spec.ts > Sprint 183 M05 genuine saved-schema consumers
+Error: pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_15_34_012Z-debug-0.log
+
+ ❯ Worker.<anonymous> ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26
+ ❯ requireGreen ../../scripts/product-reality/s182-m04-consumer-harness.mjs:123:11
+    121| function requireGreen(result, label) {
+    122|   if (result.exitCode !== 0) {
+    123|     throw new Error(
+       |           ^
+    124|       `${label} failed (${result.exitCode}${result.signal ? `, ${resul…
+    125|       `${result.stderr || result.stdout || result.error || 'no command…
+ ❯ packFoundationPackages ../../scripts/product-reality/s182-m04-consumer-harness.mjs:197:5
+ ❯ runSavedSchemaConsumerProof ../../scripts/product-reality/s183-m05-saved-schema-consumers.mjs:1300:41
+ ❯ test/product-reality/saved-schema-consumers.s183.spec.ts:102:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/contract-resolution.s184.spec.ts > Sprint 184 m03 contract-resolution closeout > versions exactly Select, Stack, and Text at 1.1.0 without moving the nucleus key set
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(8) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(9) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Table",
+    "Tabs",
+    "Textarea",
+
+ ❯ test/product-reality/contract-resolution.s184.spec.ts:190:48
+    188| 
+    189|     expect(version11.map(([id]) => id).sort()).toEqual(['Select', 'Sta…
+    190|     expect(version10.map(([id]) => id).sort()).toEqual(
+       |                                                ^
+    191|       [...NUCLEUS_COMPONENT_IDS].filter((id) => !['Select', 'Stack', '…
+    192|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  test/product-reality/m06-gate-bites.s184.spec.ts > Sprint 184 m06 real consumer gate bites > executes one unique red mutation for every gate on both framework targets
+Error: pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+RollupError: [plugin dts] src/contracts.ts: Failed to compile. Check the logs above.
+    at getRollupError (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/parseAst.js:285:41)
+    at Object.error (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/parseAst.js:281:42)
+    at Object.error (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:913:32)
+    at Object.error (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:22391:42)
+    at generateDtsFromTs (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6376:22)
+    at /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6383:59
+    at _nullishCoalesce (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:1:472)
+    at Object.transform (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6383:18)
+    at /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:3392:40
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_17_43_545Z-debug-0.log
+
+ ❯ Worker.<anonymous> ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26
+ ❯ getRollupError ../../node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/parseAst.js:285:41
+ ❯ Object.error ../../node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/parseAst.js:281:42
+ ❯ Object.error ../../node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:913:32
+ ❯ Object.error ../../node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:22391:42
+ ❯ generateDtsFromTs ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6376:22
+ ❯ ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6383:59
+ ❯ _nullishCoalesce ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:1:472
+ ❯ Object.transform ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/rollup.js:6383:18
+ ❯ ../../node_modules/.pnpm/rollup@4.52.4/node_modules/rollup/dist/shared/rollup.js:3392:40
+ ❯ requireGreen ../../scripts/product-reality/s182-m04-consumer-harness.mjs:123:11
+    121| function requireGreen(result, label) {
+    122|   if (result.exitCode !== 0) {
+    123|     throw new Error(
+       |           ^
+    124|       `${label} failed (${result.exitCode}${result.signal ? `, ${resul…
+    125|       `${result.stderr || result.stdout || result.error || 'no command…
+ ❯ packFoundationPackages ../../scripts/product-reality/s182-m04-consumer-harness.mjs:197:5
+ ❯ test/product-reality/m06-gate-bites.s184.spec.ts:25:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  test/product-reality/packed-consumers.s182.spec.ts > Sprint 182 M04 packed generated consumers > B-12 installs and imports every required tarball and root export in isolation
+Error: pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_16_18_470Z-debug-0.log
+
+ ❯ Worker.<anonymous> ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26
+ ❯ requireGreen ../../scripts/product-reality/s182-m04-consumer-harness.mjs:123:11
+    121| function requireGreen(result, label) {
+    122|   if (result.exitCode !== 0) {
+    123|     throw new Error(
+       |           ^
+    124|       `${label} failed (${result.exitCode}${result.signal ? `, ${resul…
+    125|       `${result.stderr || result.stdout || result.error || 'no command…
+ ❯ packFoundationPackages ../../scripts/product-reality/s182-m04-consumer-harness.mjs:197:5
+ ❯ test/product-reality/packed-consumers.s182.spec.ts:32:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  test/product-reality/packed-consumers.s182.spec.ts > Sprint 182 M04 packed generated consumers > B-13 resolves declared dependencies and shared CSS in a clean production build
+Error: pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_16_33_031Z-debug-0.log
+
+ ❯ Worker.<anonymous> ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26
+ ❯ requireGreen ../../scripts/product-reality/s182-m04-consumer-harness.mjs:123:11
+    121| function requireGreen(result, label) {
+    122|   if (result.exitCode !== 0) {
+    123|     throw new Error(
+       |           ^
+    124|       `${label} failed (${result.exitCode}${result.signal ? `, ${resul…
+    125|       `${result.stderr || result.stdout || result.error || 'no command…
+ ❯ packFoundationPackages ../../scripts/product-reality/s182-m04-consumer-harness.mjs:197:5
+ ❯ test/product-reality/packed-consumers.s182.spec.ts:67:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  test/product-reality/packed-ported-consumers.s184.spec.ts > Sprint 184 m04 packed ported consumers > installs only built OODS tarballs in fresh React and Vue consumers and resolves every new subpath externally
+Error: pack @oods/component-contracts failed (1)
+npm warn Unknown project config "link-workspace-packages". This will stop working in the next major version of npm.
+
+> @oods/component-contracts@0.1.0 prepack
+> pnpm run build
+
+src/contracts.ts(6,14): error TS2741: Property 'DetailHeader' is missing in type '{ Badge: { id: "Badge"; version: "1.0.0"; props: string[]; slots: string[]; events: never[]; states: string[]; tokenRoles: string[]; accessibility: string[]; compatibility: string; }; Banner: { id: "Banner"; version: "1.0.0"; ... 6 more ...; compatibility: string; }; ... 11 more ...; Textarea: { ...; }; }' but required in type 'Readonly<Record<"Badge" | "Banner" | "Button" | "Card" | "Checkbox" | "DatePicker" | "DetailHeader" | "Grid" | "Input" | "Select" | "Stack" | "Table" | "Tabs" | "Text" | "Textarea", ComponentContract>>'.
+
+Error: error occurred in dts build
+    at Worker.<anonymous> (/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26)
+    at Worker.emit (node:events:508:28)
+    at MessagePort.<anonymous> (node:internal/worker:271:53)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:827:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+DTS Build error
+npm error code 1
+npm error path /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+npm error command failed
+npm error command sh -c pnpm run build
+npm error A complete log of this run can be found in: /Users/systemsystems/.npm/_logs/2026-09-06T01_16_04_091Z-debug-0.log
+
+ ❯ Worker.<anonymous> ../../node_modules/.pnpm/tsup@8.5.0_jiti@1.21.7_postcss@8.5.28_tsx@4.20.6_typescript@5.3.3_yaml@2.8.1/node_modules/tsup/dist/index.js:1545:26
+ ❯ requireGreen ../../scripts/product-reality/s182-m04-consumer-harness.mjs:123:11
+    121| function requireGreen(result, label) {
+    122|   if (result.exitCode !== 0) {
+    123|     throw new Error(
+       |           ^
+    124|       `${label} failed (${result.exitCode}${result.signal ? `, ${resul…
+    125|       `${result.stderr || result.stdout || result.error || 'no command…
+ ❯ packFoundationPackages ../../scripts/product-reality/s182-m04-consumer-harness.mjs:197:5
+ ❯ runS184M04PackedConsumers ../../scripts/product-reality/s184-m04-packed-consumers.mjs:371:20
+ ❯ test/product-reality/packed-ported-consumers.s184.spec.ts:27:41
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+

@@ -36,7 +36,7 @@ const allowDirty = args.includes("--allow-dirty");
 // --reclassify: re-run only the classifier over an existing summary.json in
 // --output-root (messages and sites are kept; reasons are recomputed).
 const reclassify = args.includes("--reclassify");
-const CLASSIFIER_VERSION = 2;
+const CLASSIFIER_VERSION = 3;
 
 if (!argument("--workspace") || !argument("--output-root") || !["red", "green"].includes(mode) || !argument("--patch")) {
   throw new Error(
@@ -139,13 +139,19 @@ function forbiddenLeaks() {
   return matches.sort();
 }
 
+// The runner's own output root may live inside the workspace (the green
+// control writes into the build worktree); its files are receipts, not dirt.
+const outputRootInWorkspace = path.relative(workspace, outputRoot);
+const ownOutput = (entry) => !outputRootInWorkspace.startsWith("..") && entry.slice(3).startsWith(`${outputRootInWorkspace}/`);
+
 function cleanliness() {
   const status = git("status", "--porcelain=v1", "--untracked-files=all");
   const leaks = forbiddenLeaks();
   return {
-    porcelain: status.stdout.split(/\r?\n/).filter(Boolean),
+    porcelain: status.stdout.split(/\r?\n/).filter(Boolean).filter((entry) => !ownOutput(entry)),
+    ownOutputEntries: status.stdout.split(/\r?\n/).filter(Boolean).filter(ownOutput).length,
     forbiddenLeaks: leaks,
-    clean: status.exitCode === 0 && status.stdout.trim() === "" && leaks.length === 0,
+    clean: status.exitCode === 0 && status.stdout.split(/\r?\n/).filter(Boolean).every(ownOutput) && leaks.length === 0,
   };
 }
 
@@ -186,10 +192,11 @@ function scrubMessage(message) {
 
 const TOTALITY_TEXT = /TS2741|is missing in type|missing the following properties/;
 
-function sourceWindow(relativeFile, line, before = 3) {
+function sourceWindow(relativeFile, line, before = 3, after = 3) {
   try {
     const lines = fs.readFileSync(path.join(workspace, relativeFile), "utf8").split(/\r?\n/);
-    return lines.slice(Math.max(0, line - 1 - before), line).join("\n");
+    // A multi-line expect() carries its derivation on the following lines.
+    return lines.slice(Math.max(0, line - 1 - before), line + after).join("\n");
   } catch {
     return "";
   }
@@ -308,6 +315,17 @@ if (reclassify) {
     const classified = classify({ file: failure.file, line: failure.line, message: failure.message, kind: failure.kind });
     return { ...failure, reason: classified.reason, forbiddenHits: classified.forbiddenHits, source: classified.source ?? failure.source };
   });
+  for (const key of ["cleanBefore", "cleanAfter"]) {
+    const record = existing[key];
+    if (!record) continue;
+    const own = record.porcelain.filter(ownOutput).length;
+    record.porcelain = record.porcelain.filter((entry) => !ownOutput(entry));
+    record.ownOutputEntries = (record.ownOutputEntries ?? 0) + own;
+    record.clean = record.porcelain.length === 0 && record.forbiddenLeaks.length === 0;
+  }
+  existing.workspaceRestored = existing.allowDirty
+    ? JSON.stringify(existing.cleanAfter.porcelain) === JSON.stringify(existing.cleanBefore.porcelain)
+    : existing.cleanAfter.clean;
   const byReason = finalize(existing);
   existing.reclassifiedAt = new Date().toISOString();
   fs.writeFileSync(summaryPath, `${JSON.stringify(existing, null, 2)}\n`);

@@ -1,0 +1,164 @@
+$ pnpm --filter @oods/component-contracts exec vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-component-contracts.json
+cwd=.
+exitCode=1
+startedAt=2026-09-06T01:11:59.286Z
+endedAt=2026-09-06T01:12:00.910Z
+durationMs=1624.847
+[stdout]
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts
+
+ ❯ test/contract-amendments.s184.spec.ts (2 tests | 1 failed) 10ms
+   × Sprint 184 nucleus contract amendments > versions only the three contracts whose saved-schema semantics changed 8ms
+     → expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+   ✓ Sprint 184 nucleus contract amendments > recognizes every new render prop and composition directive explicitly 1ms
+ ❯ test/workflow-states.s184.spec.ts (2 tests | 1 failed) 9ms
+   ✓ Sprint 184 workflow-state vocabulary > exports the exact ordered cross-component vocabulary 1ms
+   × Sprint 184 workflow-state vocabulary > keeps workflow states separate from component-local state contracts 6ms
+     → expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+ ❯ test/ported-contracts.s184.spec.ts (4 tests | 1 failed) 12ms
+   × Sprint 184 separate ported component truth plane > keys the nucleus contracts and scenarios exactly by NUCLEUS_COMPONENT_IDS 8ms
+     → expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+   ✓ Sprint 184 separate ported component truth plane > defines exactly the disjoint, code-point-sorted eight-component port tranche 1ms
+   ✓ Sprint 184 separate ported component truth plane > carries exactly 24 separate surface cells without moving the 109-row denominator 1ms
+   ✓ Sprint 184 separate ported component truth plane > leaves the frozen capability and foundation-v1 projections byte-identical 1ms
+ ❯ test/contracts.spec.ts (7 tests | 1 failed) 17ms
+   ✓ Sprint 182 canonical component truth plane > derives the controlling 109-row denominator from unique sorted membership 3ms
+   ✓ Sprint 182 canonical component truth plane > B-01 reds when one intake ID is dropped or duplicated 1ms
+   ✓ Sprint 182 canonical component truth plane > B-02 rejects a restored independent 101 count instead of trusting it 0ms
+   ✓ Sprint 182 canonical component truth plane > classifies and reports target-specific evidence for every starting row without approving it 4ms
+   × Sprint 182 canonical component truth plane > versions exactly the locked 14 contracts and explicit nondegenerate scenarios 7ms
+     → expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+   ✓ Sprint 182 canonical component truth plane > B-03 blocks foundation-v1 independently for each of the nine evidence classes 1ms
+   ✓ Sprint 182 canonical component truth plane > B-03 blocks emission eligibility independently for incomplete target evidence 0ms
+
+ Test Files  4 failed (4)
+      Tests  4 failed | 11 passed (15)
+   Start at  20:11:59
+   Duration  668ms (transform 229ms, setup 0ms, collect 513ms, tests 47ms, environment 2ms, prepare 721ms)
+
+JSON report written to /var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-component-contracts.json
+undefined
+/Users/systemsystems/.codex/worktrees/s185/OODS-Forge/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config vitest.config.ts --reporter=default --reporter=json --outputFile=/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s185-m01-green-NSaDEf/test-component-contracts.json
+
+[stderr]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contract-amendments.s184.spec.ts > Sprint 184 nucleus contract amendments > versions only the three contracts whose saved-schema semantics changed
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+
+ ❯ test/contract-amendments.s184.spec.ts:24:52
+     22| 
+     23|     expect(supportedVersions).toEqual(['1.0.0', '1.1.0']);
+     24|     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS…
+       |                                                    ^
+     25|     expect(version11Ids).toEqual(['Select', 'Stack', 'Text']);
+     26|     expect(version10Ids).toEqual(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  test/contracts.spec.ts > Sprint 182 canonical component truth plane > versions exactly the locked 14 contracts and explicit nondegenerate scenarios
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+
+ ❯ test/contracts.spec.ts:69:52
+     67| 
+     68|   it('versions exactly the locked 14 contracts and explicit nondegener…
+     69|     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS…
+       |                                                    ^
+     70|     expect(sharedScenarios.map((scenario) => scenario.oodsComponentId)…
+     71|     for (const scenario of sharedScenarios) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  test/ported-contracts.s184.spec.ts > Sprint 184 separate ported component truth plane > keys the nucleus contracts and scenarios exactly by NUCLEUS_COMPONENT_IDS
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+
+ ❯ test/ported-contracts.s184.spec.ts:39:52
+     37| describe('Sprint 184 separate ported component truth plane', () => {
+     38|   it('keys the nucleus contracts and scenarios exactly by NUCLEUS_COMP…
+     39|     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS…
+       |                                                    ^
+     40|     expect(sharedScenarios.map(({ oodsComponentId }) => oodsComponentI…
+     41|       [...NUCLEUS_COMPONENT_IDS].sort(),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  test/workflow-states.s184.spec.ts > Sprint 184 workflow-state vocabulary > keeps workflow states separate from component-local state contracts
+AssertionError: expected [ 'Badge', 'Banner', 'Button', …(11) ] to deeply equal [ 'Badge', 'Banner', 'Button', …(12) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,10 @@
+    "Banner",
+    "Button",
+    "Card",
+    "Checkbox",
+    "DatePicker",
+-   "DetailHeader",
+    "Grid",
+    "Input",
+    "Select",
+    "Stack",
+    "Table",
+
+ ❯ test/workflow-states.s184.spec.ts:16:52
+     14| 
+     15|   it('keeps workflow states separate from component-local state contra…
+     16|     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS…
+       |                                                    ^
+     17|     expect(Object.keys(portedComponentContracts)).toHaveLength(8);
+     18|     for (const contract of [
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

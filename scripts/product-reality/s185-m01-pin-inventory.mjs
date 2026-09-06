@@ -131,6 +131,9 @@ const SITES = [
     reason: "The disjoint-union size was the literal 22; it now derives from both id unions (disjointness is the property under test)." },
 
   // --- packed consumers and the s182-m04 harness -> derive from the packed @oods/component-contracts tarball
+  { id: "react-packed-list-const", base: "packages/components-react/test/packed-import-evidence.mjs:19", disposition: "derive", oldSourceIsLiteral: false,
+    working: "const canonicalIds = [...NUCLEUS_COMPONENT_IDS];",
+    reason: "Named by #1725: the declaration line of the hand-written canonicalIds list (the literal itself starts on :20, recorded as react-packed-list)." },
   { id: "react-packed-list", base: "packages/components-react/test/packed-import-evidence.mjs:20", disposition: "derive",
     working: "const canonicalIds = [...NUCLEUS_COMPONENT_IDS];",
     reason: "The hand-written canonicalIds list moved into the isolated consumer as [...NUCLEUS_COMPONENT_IDS] imported from the packed @oods/component-contracts tarball, resolved per specifier and rejected if it resolves under the repository root." },
@@ -172,6 +175,8 @@ const SITES = [
     reason: "foundationV1Cells 28 is a property of the frozen Sprint 182 projection, which history-pins.s185.spec.ts now pins byte-exactly; it is not a live gate." },
   { id: "ported-freeze-check-promotion", base: "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts:149", disposition: "retire", working: null,
     reason: "Ran generate-s182-m05-closeout.mjs --check-promotion against the live tree; the generator asserts the frozen 14-id nucleus and cannot run at 19 (#1725)." },
+  { id: "ported-freeze-check-promotion-assert", base: "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts:156", disposition: "retire", working: null,
+    reason: "The assertion line of the same --check-promotion test (the red control reports the failure at the expect, the #1725 inventory names the flag argument at :149); the generator answered 'Public nucleus differs from the locked 14 IDs'." },
   { id: "ported-freeze-byte-pins-158a34bf", base: "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts:106", disposition: "retire", working: null,
     reason: "Byte-pinned 8 live surfaces and 11 id-list files against the m04 base 158a34bf — a freeze on live source (#1722)." },
   { id: "ported-freeze-inventory-rehash", base: "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts:66", disposition: "convert-to-history",

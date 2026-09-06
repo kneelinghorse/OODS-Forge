@@ -93,10 +93,39 @@
       "distReflectsMutation": true
     }
   },
-  "greenControl": null,
+  "greenControl": {
+    "summary": "artifacts/product-reality/sprint-185/m01/green-control/summary.json",
+    "measuredHead": "e6cc54edcc55fc78e3255d49f948f7e933521548",
+    "status": "passed",
+    "greenForTheRightReason": true,
+    "failuresByReason": {
+      "typescript-totality": 8,
+      "derived-coverage": 14
+    },
+    "frozenLiteralFailures": [],
+    "failingSites": [
+      "packages/component-contracts/src/contracts.ts:6",
+      "packages/component-contracts/test/contract-amendments.s184.spec.ts:24",
+      "packages/component-contracts/test/contracts.spec.ts:69",
+      "packages/component-contracts/test/ported-contracts.s184.spec.ts:39",
+      "packages/component-contracts/test/workflow-states.s184.spec.ts:16",
+      "packages/component-styles/test/styles.spec.ts:14",
+      "packages/components-react/test/package-contract.spec.ts:166",
+      "packages/components-react/test/package-contract.spec.ts:71",
+      "packages/components-react/test/ported-package-contract.spec.ts:116",
+      "packages/components-react/test/scenarios.spec.tsx:14",
+      "packages/components-vue/test/package-contract.spec.ts:119",
+      "packages/components-vue/test/package-contract.spec.ts:60",
+      "packages/components-vue/test/scenarios.spec.ts:51",
+      "packages/components-vue/test/ssr.spec.ts:64",
+      "packages/mcp-server/src/codegen/target-contracts.ts:261",
+      "packages/mcp-server/test/product-reality/contract-resolution.s184.spec.ts:190",
+      "src/contracts.ts:6"
+    ]
+  },
   "countsByDisposition": {
-    "derive": 24,
-    "retire": 11,
+    "derive": 25,
+    "retire": 12,
     "keep-as-showcase-fixture": 4,
     "convert-to-history": 2,
     "keep-as-read-only": 7
@@ -321,6 +350,21 @@
       "reason": "The disjoint-union size was the literal 22; it now derives from both id unions (disjointness is the property under test)."
     },
     {
+      "id": "react-packed-list-const",
+      "file": "packages/components-react/test/packed-import-evidence.mjs",
+      "baseLine": 19,
+      "expectedByDecision1725": true,
+      "measuredInRedControl": false,
+      "measuredReasons": [],
+      "measuredTests": [],
+      "oldSource": null,
+      "baseSourceText": "const canonicalIds = [",
+      "disposition": "derive",
+      "newSource": "const canonicalIds = [...NUCLEUS_COMPONENT_IDS];",
+      "newLine": 95,
+      "reason": "Named by #1725: the declaration line of the hand-written canonicalIds list (the literal itself starts on :20, recorded as react-packed-list)."
+    },
+    {
       "id": "react-packed-list",
       "file": "packages/components-react/test/packed-import-evidence.mjs",
       "baseLine": 20,
@@ -522,6 +566,24 @@
       "newSource": null,
       "newLine": null,
       "reason": "Ran generate-s182-m05-closeout.mjs --check-promotion against the live tree; the generator asserts the frozen 14-id nucleus and cannot run at 19 (#1725)."
+    },
+    {
+      "id": "ported-freeze-check-promotion-assert",
+      "file": "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts",
+      "baseLine": 156,
+      "expectedByDecision1725": false,
+      "measuredInRedControl": true,
+      "measuredReasons": [
+        "frozen-literal"
+      ],
+      "measuredTests": [
+        "Sprint 184 m04 frozen-surface accounting keeps the capability baseline structurally byte-exact and check-promotion clean with no writes"
+      ],
+      "oldSource": "    expect(check.status, `${check.stdout}\\n${check.stderr}`).toBe(0);",
+      "disposition": "retire",
+      "newSource": null,
+      "newLine": null,
+      "reason": "The assertion line of the same --check-promotion test (the red control reports the failure at the expect, the #1725 inventory names the flag argument at :149); the generator answered 'Public nucleus differs from the locked 14 IDs'."
     },
     {
       "id": "ported-freeze-byte-pins-158a34bf",
@@ -928,14 +990,6 @@
       "note": "A right-reason failure: the mutation adds an id with no contract, scenario, style or readiness row. Not a pin."
     },
     {
-      "kind": "measured-not-expected",
-      "site": "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts:156",
-      "reason": "frozen-literal",
-      "check": "test-mcp-server-product-reality",
-      "test": "Sprint 184 m04 frozen-surface accounting keeps the capability baseline structurally byte-exact and check-promotion clean with no writes",
-      "note": "Unexpected failure at the base; disposition recorded below in redControlUnexpected."
-    },
-    {
       "kind": "expected-not-measured",
       "site": "packages/component-contracts/test/workflow-states.s184.spec.ts:15",
       "disposition": "derive",
@@ -974,8 +1028,8 @@
     {
       "kind": "expected-not-measured",
       "site": "packages/components-react/test/packed-import-evidence.mjs:19",
-      "disposition": null,
-      "note": "Named by #1725 and not dispositioned — MUST NOT HAPPEN."
+      "disposition": "derive",
+      "note": "Named by #1725 but not reached by the +DetailHeader mutation: the literal pins the OLD size on a surface the mutation does not move (readiness rows, root exports, packed scripts and generators are not executed by the suites, or the site is not an assertion). Retired by derivation regardless."
     },
     {
       "kind": "expected-not-measured",
@@ -1144,6 +1198,12 @@
       "site": "packages/mcp-server/test/product-reality/packed-consumers.s182.spec.ts:44",
       "disposition": "derive",
       "measuredInRedControl": false
+    },
+    {
+      "kind": "grep-found-beyond-1725",
+      "site": "packages/mcp-server/test/product-reality/ported-freeze.s184.spec.ts:156",
+      "disposition": "retire",
+      "measuredInRedControl": true
     },
     {
       "kind": "grep-found-beyond-1725",
