@@ -17,6 +17,10 @@ const literalCriteria = Array.from({ length: 8 }, (_, index) => `CMOS criterion 
 
 function fixture() {
   const files = new Map<string, Buffer>();
+  const historical = new Map<string, Buffer>();
+  const readHistorical = (_commit: string, file: string): Buffer => {
+    const bytes = historical.get(file); if (!bytes) throw new Error(`Missing historical source: ${file}`); return bytes;
+  };
   const put = (file: string, value: unknown) => {
     files.set(file, Buffer.from(typeof value === 'string' ? value : JSON.stringify(value)));
     return file;
@@ -79,7 +83,7 @@ function fixture() {
   const readFrozen = (file: string): Buffer => { const bytes = files.get(file); if (!bytes) throw new Error(`Missing frozen byte source: ${file}`); return bytes; };
   const derive = (): Record<string, any> => {
     put(manifest.manifestPath, manifest);
-    return deriveCloseout({ executionHead, reviewHead, manifest, suiteAccounting, readFrozen, publicHeadEquivalence: undefined, finalAudit: undefined });
+    return deriveCloseout({ executionHead, reviewHead, manifest, suiteAccounting, readFrozen, readHistorical, publicHeadEquivalence: undefined, finalAudit: undefined });
   };
   const replaceSource = (name: string, value: any): void => {
     put(sources[name]!, value);
@@ -87,8 +91,139 @@ function fixture() {
     // actual predicate, not be masked by an earlier hash mismatch.
     for (const input of manifest.executions[0].inputs) if (input.path === sources[name]) input.sha256 = hash(files.get(input.path)!);
   };
-  return { files, put, ref, snapshots, manifest, suiteAccounting, derive, replaceSource, readFrozen };
+  return { files, put, ref, snapshots, manifest, suiteAccounting, derive, replaceSource, readFrozen, historical, readHistorical };
 }
+
+function wave2Fixture() {
+  const f = fixture();
+  const outputPrefix = 'artifacts/product-reality/sprint-186/m06/closeout';
+  const base = '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2';
+  const oldNucleus = Array.from({ length: 19 }, (_, index) => `Base${index}`);
+  const formerPorted = Array.from({ length: 8 }, (_, index) => `Former${index}`);
+  const added = Array.from({ length: 23 }, (_, index) => `Added${index}`).sort();
+  const nucleus = [...oldNucleus, ...formerPorted, ...added].sort();
+  const declaration = (name: string, ids: string[]) => `export const ${name} = [${ids.map(id => `'${id}'`).join(', ')}] as const;`;
+  const typesPath = 'packages/component-contracts/src/types.ts';
+  f.put(typesPath, `${declaration('NUCLEUS_COMPONENT_IDS', nucleus)}\nexport type GovernedComponentId = NucleusComponentId;`);
+  f.historical.set(typesPath, Buffer.from(`${declaration('NUCLEUS_COMPONENT_IDS', oldNucleus)}\n${declaration('PORTED_COMPONENT_IDS', formerPorted)}`));
+  const proofPath = f.put('frozen/surface-proof.json', { rows: added.map(componentId => ({ componentId, passed: true })) });
+  const before = { rows: [...nucleus, ...Array.from({ length: 59 }, (_, index) => `Other${index}`)].map(id => ({
+    id, proposedClassification: 'recipe', reconciliationState: 'unchanged',
+    surfaces: Object.fromEntries(['react', 'vue', 'generatedConsumer'].map(surface => [surface, { state: 'unavailable', evidence: [] }])),
+  })) };
+  const baseline = structuredClone(before);
+  for (const row of baseline.rows.filter(row => added.includes(row.id))) for (const surface of Object.keys(row.surfaces))
+    row.surfaces[surface] = { state: 'implemented-evidence-complete', evidence: [`${proofPath}#${row.id}`] } as never;
+  const baselinePath = f.put('packages/component-contracts/registry/component-capability-baseline.v1.json', baseline);
+  f.historical.set(baselinePath, Buffer.from(JSON.stringify(before)));
+  f.put('packages/component-contracts/registry/component-reconciliation.proposed.v1.json', { approvedRuntimeCensus: null });
+  f.replaceSource('baselineFold', { sourceHashes: [f.ref(baselinePath)], readinessReferences: [{ resolved: true }] });
+  const packedConsumers = Object.fromEntries(['react', 'vue'].map(framework => [framework, f.put(`frozen/${framework}-packed.json`, {
+    status: 'passed', strictCompatibilityCompile: { status: 'passed', skipLibCheck: false },
+    [framework === 'react' ? 'proof' : 'packedProof']: { rootRuntimeIds: formerPorted, aliasRuntimeIds: formerPorted,
+      compatibilitySpecifiers: { root: `/consumer/node_modules/@oods/components-${framework}/dist/index.js`, alias: `/consumer/node_modules/@oods/components-${framework}/dist/index.js` },
+      compatibilityResolution: { runtimeSame: true, readinessSame: true, cssSame: true },
+      resolvedSpecifiers: { [`@oods/components-${framework}`]: `/consumer/node_modules/@oods/components-${framework}/dist/index.js`,
+        [`@oods/components-${framework}/ported`]: `/consumer/node_modules/@oods/components-${framework}/dist/index.js`,
+        [`@oods/components-${framework}/readiness-ported`]: `/consumer/node_modules/@oods/components-${framework}/evidence/readiness.json`,
+        '@oods/component-styles/css': '/consumer/node_modules/@oods/component-styles/dist/components.css',
+        '@oods/component-styles/css-ported': '/consumer/node_modules/@oods/component-styles/dist/components.css' },
+      compatibilityProof: formerPorted.map(componentId => ({ componentId, esmSame: true, cjsSame: true, ssrSame: true,
+        rootMarkup: `<div data-oods-component="${componentId}"></div>`, aliasMarkup: `<div data-oods-component="${componentId}"></div>` })) },
+  })]));
+  f.manifest.sources.unionFold = f.put('frozen/unionFold.json', { nucleusComponents: nucleus, formerPortedComponents: formerPorted,
+    aliasHorizon: 'sprint-187', readers: [{ path: 'emitter.ts', disposition: 'Root imports replace the former cohort split.' }], packedConsumers });
+  const range = { base, head: executionHead, canonicalPaths: ['canonical.ts'], publicPaths: ['canonical.ts', 'root.ts'] };
+  f.replaceSource('movers', { status: 'passed', s186: range, comparison: { s186: Object.fromEntries(['canonicalPaths', 'publicPaths']
+    .map(key => [key, { missingFromDeclaration: [], extraInDeclaration: [] }])) } });
+  f.manifest.sources.moversDeclaration = f.put('frozen/moversDeclaration.json', { s186: range });
+  const notices = ['cmos://derek/aquex-mcp', 'cmos://derek/forge-demos'].map(targetAddress => {
+    const request = { targetAddress, body: [...added, ...formerPorted, 'Union fold', '/ported', '/readiness-ported', '/css-ported', 'Sprint 187', 'Emitter movers:', 'Deployment:'].join(' ') };
+    return { request, requestSha256: hash(JSON.stringify(request)) };
+  });
+  f.replaceSource('noticePlan', { implementationHead: executionHead, addedNucleus: added, formerPorted, aliasHorizon: 'sprint-187', notices });
+  f.replaceSource('deliveries', notices.map((notice, index) => ({ targetAddress: notice.request.targetAddress,
+    requestSha256: notice.requestSha256, status: 'sent', messageId: `00000000-0000-4000-8000-00000000000${index + 1}` })));
+  f.replaceSource('cmosMission', { id: 's186-m06', successCriteria: literalCriteria.slice(0, 6) });
+  f.replaceSource('cmosOriginalMission', { id: 's186-m06', successCriteria: literalCriteria.slice(0, 6) });
+  f.replaceSource('cmosSprint', { id: 'sprint-186', status: 'Active' });
+  f.replaceSource('near', 'Sprint 186: BUILT, REVIEW PENDING.');
+  f.manifest.missionId = 's186-m06'; f.manifest.manifestPath = 'artifacts/product-reality/sprint-186/m06/closeout-inputs/manifest.json';
+  const currentRows = f.suiteAccounting.executions.map((row: any, index: number) => {
+    const counts = { ...row.counts, todo: 0 };
+    const raw = { testResults: [{ name: `/captured/tests/${row.suite}.spec.ts`, status: 'passed', assertionResults:
+      Array.from({ length: counts.total }, (_, n) => ({ fullName: `assertion ${n}`, status: 'passed' })) }] };
+    const rawReport = f.ref(f.put(`frozen/${row.suite}-current-raw.json`, { ...raw, startedAt: `current-${index}` }));
+    const receipt = f.ref(f.put(`frozen/${row.suite}-current-receipt.json`, { suite: row.suite, measuredHead: executionHead, exitCode: 0,
+      cleanBefore: { clean: true }, cleanAfter: { clean: true }, vitest: { tests: counts } }));
+    return { ...row, counts, rawReport, receipt, raw };
+  });
+  const baselineRows = currentRows.map((row: any, index: number) => ({ ...row, id: `baseline-${row.id}`, cohort: 'sprint185Closeout', measuredHead: base,
+    rawReport: f.ref(f.put(`frozen/${row.suite}-baseline-raw.json`, { ...row.raw, startedAt: `baseline-${index}` })),
+    receipt: f.ref(f.put(`frozen/${row.suite}-baseline-receipt.json`, { suite: row.suite, measuredHead: base, exitCode: 0,
+      cleanBefore: { clean: true }, cleanAfter: { clean: true }, vitest: { tests: row.counts } })),
+  }));
+  f.suiteAccounting.executions = [...baselineRows, ...currentRows];
+  f.suiteAccounting.baselines = { sprint185Closeout: { aggregate: f.ref(f.put('frozen/baseline-aggregate.json', { workspace: '/captured' })),
+    runs: [{ suiteExecutionIds: baselineRows.map((row: any) => row.id) }] } };
+  f.suiteAccounting.closeout.aggregate = f.ref(f.put('frozen/current-aggregate.json', { workspace: '/captured' }));
+  f.suiteAccounting.comparisons = currentRows.map((row: any, index: number) => ({ beforeExecutionId: baselineRows[index].id, afterExecutionId: row.id, fileDeltas: [] }));
+  f.suiteAccounting.closeoutFailures = [];
+  f.manifest.claimBindings = literalCriteria.slice(0, 6).map((_, criterionIndex) => ({ criterionIndex,
+    executionIds: criterionIndex === 4 ? [] : ['supplemental-proof'],
+    ...(criterionIndex === 4 ? { suiteBindings: currentRows.map((row: any) => row.suite) } : {}),
+    evidencePaths: [...Object.values(f.manifest.sources).filter(value => typeof value === 'string'), 'frozen/supplemental.log', ...currentRows.map((row: any) => row.log.path)],
+  }));
+  for (const file of [f.manifest.sources.unionFold, f.manifest.sources.moversDeclaration]) f.manifest.executions[0].inputs.push(f.ref(file));
+  const audit = (outputs: Record<string, any>) => auditFinalCloseout({ executionHead, reviewHead,
+    manifestPath: f.manifest.manifestPath, readFrozen: f.readFrozen, readHistorical: f.readHistorical,
+    readOutput: (file: string) => Buffer.from(`${JSON.stringify(outputs[file], null, 2)}\n`),
+    gitEvidence: { ancestor: true, changes: [] }, publicGitEvidence: undefined, rangeGitEvidence: range });
+  return { ...f, outputPrefix, added, baselinePath, packedConsumers, range, audit };
+}
+
+describe('Sprint 186 uses the existing ledger and independently audits six current claims', () => {
+  it('derives six claims from plain CMOS snapshots without inherited review-carry requirements', () => {
+    const f = wave2Fixture(); const outputs = f.derive();
+    expect(outputs[`${f.outputPrefix}/claim-ledger.json`].headline).toEqual({ total: 6, proven: 6, unproven: 0 });
+    expect(f.audit(outputs)).toMatchObject({ status: 'passed', checkedCriteria: 6, builderSelfCertified: false });
+  });
+
+  it.each(['boolean', 'markup', 'specifier'] as const)('rejects a root alias %s mismatch even when packed status flags and producer observations remain green', mismatch => {
+    const f = wave2Fixture(); const outputs = f.derive();
+    const file = f.packedConsumers.react; const packed = JSON.parse(f.files.get(file)!.toString());
+    if (mismatch === 'boolean') packed.proof.compatibilityProof[0].esmSame = false;
+    if (mismatch === 'markup') packed.proof.compatibilityProof[0].aliasMarkup = '<div>different content</div>';
+    if (mismatch === 'specifier') packed.proof.compatibilitySpecifiers.alias = '/consumer/node_modules/@oods/components-react/dist/other.js';
+    f.put(file, packed);
+    const ledger = f.derive()[`${f.outputPrefix}/claim-ledger.json`];
+    expect(ledger.claims[0].status).toBe('unproven');
+    // Reseal the output index so this audit must inspect semantics, not only a stale hash.
+    const index = outputs[`${f.outputPrefix}/evidence-index.json`];
+    index.frozenInputs.find((row: any) => row.path === file).sha256 = hash(f.files.get(file)!);
+    expect(() => f.audit(outputs)).toThrow(/Packed aliases differ|alias markup differs|alias resolves to another file/);
+  });
+
+  it('rejects fabricated census-free baseline identity promotion and actual mover omissions', () => {
+    const f = wave2Fixture(); const outputs = f.derive();
+    f.range.publicPaths.push('omitted-runtime.ts');
+    expect(() => f.audit(outputs)).toThrow(/independent Git diff/);
+    const second = wave2Fixture();
+    const baseline = JSON.parse(second.files.get(second.baselinePath)!.toString()); baseline.rows[0].proposedClassification = 'native';
+    second.put(second.baselinePath, baseline);
+    second.replaceSource('baselineFold', { sourceHashes: [second.ref(second.baselinePath)], readinessReferences: [{ resolved: true }] });
+    expect(second.derive()[`${second.outputPrefix}/claim-ledger.json`].claims[1].status).toBe('unproven');
+  });
+
+  it('independently rejects a missing comparison and changed raw assertion counts', () => {
+    const f = wave2Fixture(); f.suiteAccounting.comparisons.pop();
+    expect(() => f.audit(f.derive())).toThrow(/comparison is absent/);
+    const second = wave2Fixture(); const row = second.suiteAccounting.executions.at(-1);
+    const raw = JSON.parse(second.files.get(row.rawReport.path)!.toString()); raw.testResults[0].assertionResults.pop();
+    second.put(row.rawReport.path, raw); row.rawReport.sha256 = hash(second.files.get(row.rawReport.path)!);
+    expect(() => second.audit(second.derive())).toThrow(/actual raw assertion rows/);
+  });
+});
 
 describe('Sprint 185 claim ledger derives from literal frozen sources and real execution bindings', () => {
   it('copies exact CMOS text and independently checks every output/input hash and review flag', () => {

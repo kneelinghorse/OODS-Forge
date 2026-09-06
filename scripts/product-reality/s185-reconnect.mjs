@@ -18,8 +18,51 @@ const array = (text, name) => {
   return [...body.matchAll(/'([^']+)'/g)].map(match => match[1]);
 };
 
-export function buildNotices(movers, root = ROOT) {
+export function buildNotices(movers, root = ROOT, options = {}) {
   assert(movers.status === 'passed', 'A checked Git-derived mover record is required.');
+  if (movers.missionId === 's186-m06') {
+    const head = movers.s186.head;
+    const types = 'packages/component-contracts/src/types.ts';
+    const nucleus = array(source(head, types, root), 'NUCLEUS_COMPONENT_IDS');
+    const priorNucleus = array(source(movers.s186.base, types, root), 'NUCLEUS_COMPONENT_IDS');
+    const formerPorted = array(source(movers.s186.base, types, root), 'PORTED_COMPONENT_IDS');
+    const added = nucleus.filter(id => !priorNucleus.includes(id) && !formerPorted.includes(id));
+    assert(nucleus.length === 50 && new Set(nucleus).size === nucleus.length && added.length === 23
+      && formerPorted.every(id => nucleus.includes(id)) && priorNucleus.every(id => nucleus.includes(id)), 'Unified component membership differs from the sprint scope.');
+    const styleIds = array(source(head, 'packages/component-styles/src/index.ts', root), 'COMPONENT_STYLE_IDS');
+    assert(JSON.stringify([...nucleus].sort()) === JSON.stringify([...styleIds].sort()), 'Style surface differs from nucleus.');
+    for (const framework of ['react', 'vue']) {
+      const readiness = JSON.parse(source(head, `packages/components-${framework}/evidence/${framework}-readiness.v1.json`, root));
+      assert(JSON.stringify(readiness.rows.map(row => row.componentId).sort()) === JSON.stringify([...nucleus].sort())
+        && readiness.rows.every(row => row.emissionEligible), 'Root readiness differs from the unified component set.');
+      const exports = JSON.parse(source(head, `packages/components-${framework}/package.json`, root)).exports;
+      assert(exports['./ported'] && exports['./readiness-ported'], 'Compatibility subpaths were removed before their horizon.');
+    }
+    assert(JSON.parse(source(head, 'packages/component-styles/package.json', root)).exports['./css-ported'], 'CSS compatibility alias was removed.');
+    const censusPath = options.censusPath ?? 'artifacts/product-reality/sprint-186/m05/recomposed-reachability/report.json';
+    const census = JSON.parse(source(head, censusPath, root));
+    assert(census.total === 16 && census.reachable === 16 && census.generatedCells === 32
+      && census.rows.length === census.total && census.rows.every(row => row.reachable && row.cells.length === 2
+        && ['react', 'vue'].every(framework => row.cells.some(cell => cell.framework === framework && cell.status === 'ok' && cell.artifactPresent))), 'The disclosed successor store census is incomplete.');
+    const body = [
+      `Forge Sprint 186 is built for independent review at ${head}. Sprint range: ${movers.s186.base}..${head}.`,
+      `New root component families (${added.length}): ${added.join(', ')}.`,
+      `Union fold: all ${nucleus.length} governed components now share NUCLEUS_COMPONENT_IDS, root contracts, root readiness and root CSS. The eight former ported families are additive root exports: ${formerPorted.join(', ')}. The /ported, /readiness-ported and /css-ported import paths remain compatibility aliases through Sprint 186; their one-sprint retirement horizon is Sprint 187.`,
+      'Emitter movers: React and Vue generation now imports governed components and shared CSS from package roots. Recipe directives lower to the existing runtime props. The User form composer selects controls whose field kinds match their contracts; the successor User form is authentically recomposed, with the frozen defective fixture and its 15/16 census retained as historical evidence.',
+      `Reachability: ${census.reachable}/${census.total} schemas and ${census.generatedCells} React/Vue generation cells pass for the disclosed successor store ${census.schemaStore}; evidence: ${censusPath}. Generation is distinct from the retained per-schema packed-consumer runtime proofs. The capability baseline keeps 109 identities/classifications/reconciliation states and approvedRuntimeCensus remains null.`,
+      'Deployment: the Sprint 186 worktree is not the checkout PM2 serves. No live bridge rebuild/restart was performed. Review or vendor the named implementation commit; refresh the MCP connection after that build is integrated into the served checkout.',
+      `Sprint 186 canonical schema/tool movers (${movers.s186.canonicalPaths.length}):\n${movers.s186.canonicalPaths.map(file => `- ${file}`).join('\n')}`,
+      `Sprint 186 additional public runtime movers (${movers.s186.supplementalRuntimePaths.length}):\n${movers.s186.supplementalRuntimePaths.map(file => `- ${file}`).join('\n')}`,
+      'Dashboard Demos remains retired under decision #1719. This is builder evidence; the sprint remains Active and a separate reviewer decides close.',
+    ].join('\n\n');
+    return { missionId: 's186-m06', implementationHead: head, addedNucleus: added, nucleusCount: nucleus.length,
+      formerPorted, aliasHorizon: 'sprint-187', censusPath,
+      retired: { targetAddress: 'cmos://derek/dashboard-demos', decisionId: 1719, disposition: 'retired; not sent', messageId: null },
+      notices: DESTINATIONS.map(targetAddress => {
+        const request = { type: 'info_push', targetAddress, summary: `Forge Sprint 186 build ${head}; unified root components and reconnect after serving the build`, body };
+        return { request, requestSha256: requestHash(request) };
+      }) };
+  }
   const head = movers.s185.head;
   const types = 'packages/component-contracts/src/types.ts';
   const nucleus = array(source(head, types, root), 'NUCLEUS_COMPONENT_IDS');
@@ -77,12 +120,17 @@ export function verifyDeliveries(plan, deliveries) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const movers = JSON.parse(fs.readFileSync(path.join(ROOT, MOVERS_OUTPUT, 'sprint-wide-movers.json'), 'utf8'));
-  const declaration = JSON.parse(fs.readFileSync(path.join(ROOT, MOVERS_OUTPUT, 'declared-movers.json'), 'utf8'));
-  const rederived = deriveMovers(movers.s185.head, declaration);
+  const argument = name => { const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1]; };
+  const sprintId = argument('--sprint') ?? 'sprint-185';
+  const moversPath = path.resolve(ROOT, argument('--movers') ?? `${sprintId === 'sprint-186' ? 'artifacts/product-reality/sprint-186/m06/movers' : MOVERS_OUTPUT}/sprint-wide-movers.json`);
+  const movers = JSON.parse(fs.readFileSync(moversPath, 'utf8'));
+  const declaration = JSON.parse(fs.readFileSync(path.resolve(ROOT, argument('--declaration') ?? path.join(path.dirname(moversPath), 'declared-movers.json')), 'utf8'));
+  const rederived = sprintId === 'sprint-186'
+    ? deriveMovers(movers.s186.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's186-m06', base: movers.s186.base })
+    : deriveMovers(movers.s185.head, declaration);
   assert(canonical(movers) === canonical(rederived), 'Mover input is stale.');
-  const directory = path.join(ROOT, OUTPUT); fs.mkdirSync(directory, { recursive: true });
-  const plan = buildNotices(movers);
+  const directory = path.resolve(ROOT, argument('--output') ?? (sprintId === 'sprint-186' ? 'artifacts/product-reality/sprint-186/m06/reconnect' : OUTPUT)); fs.mkdirSync(directory, { recursive: true });
+  const plan = buildNotices(movers, ROOT, { censusPath: argument('--census') });
   const output = path.join(directory, 'notice-plan.json');
   if (process.argv.includes('--check')) assert(fs.readFileSync(output, 'utf8') === canonical(plan), 'Notice plan is stale.');
   else fs.writeFileSync(output, canonical(plan));

@@ -31,7 +31,7 @@ function readJson(path: string): Record<string, unknown> {
 }
 
 describe('@oods/components-react ported package contract', () => {
-  it('exports exactly the eight non-nucleus components with public declarations', () => {
+  it('exports the historical eight implementation exports with public declarations', () => {
     expect(portedIds).toEqual(expectedPortedIds);
     expect(Object.keys(portedPackage).sort()).toEqual([...portedIds]);
 
@@ -49,12 +49,12 @@ describe('@oods/components-react ported package contract', () => {
     };
     expect(manifest.exports).toMatchObject({
       './ported': {
-        types: './dist/ported.d.ts',
-        import: './dist/ported.js',
-        require: './dist/ported.cjs',
+        types: './dist/index.d.ts',
+        import: './dist/index.js',
+        require: './dist/index.cjs',
       },
       './readiness-ported': {
-        default: './evidence/react-ported-readiness.v1.json',
+        default: './evidence/react-readiness.v1.json',
       },
     });
 
@@ -62,11 +62,11 @@ describe('@oods/components-react ported package contract', () => {
       `${repositoryRoot}/packages/component-styles/package.json`
     ) as { exports?: Record<string, unknown> };
     expect(stylesManifest.exports).toMatchObject({
-      './css-ported': { default: './dist/components-ported.css' },
+      './css-ported': { default: './dist/components.css' },
     });
   });
 
-  it('publishes exactly eight independently derived ported readiness rows', () => {
+  it('publishes exactly eight historical ported readiness rows', () => {
     const readiness = readJson(
       `${packageRoot}/evidence/react-ported-readiness.v1.json`
     ) as {
@@ -104,17 +104,17 @@ describe('@oods/components-react ported package contract', () => {
     }
   });
 
-  it('keeps the root package export and main readiness document nucleus-only', () => {
+  it('includes every compatibility family in the root export and root readiness', () => {
     const rootSource = readFileSync(`${packageRoot}/src/index.ts`, 'utf8');
     for (const componentId of portedIds) {
-      expect(rootSource).not.toMatch(new RegExp(`\\b${componentId}\\b`));
+      expect(rootSource).toMatch(new RegExp(`\\b${componentId}\\b`));
     }
 
     const mainReadiness = readJson(`${packageRoot}/evidence/react-readiness.v1.json`) as {
       rows: Array<{ componentId: string }>;
     };
     expect(mainReadiness.rows.map(row => row.componentId)).toEqual([...NUCLEUS_COMPONENT_IDS]);
-    expect(mainReadiness.rows.map(row => row.componentId)).not.toEqual(
+    expect(mainReadiness.rows.map(row => row.componentId)).toEqual(
       expect.arrayContaining([...portedIds])
     );
   });

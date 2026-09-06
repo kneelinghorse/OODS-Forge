@@ -1,6 +1,5 @@
 import {
   componentContracts,
-  portedComponentContracts,
   type GovernedComponentId,
 } from '@oods/component-contracts';
 
@@ -807,9 +806,7 @@ function contractFor(component: string) {
   if (Object.hasOwn(componentContracts, component)) {
     return componentContracts[component as keyof typeof componentContracts];
   }
-  return Object.hasOwn(portedComponentContracts, component)
-    ? portedComponentContracts[component as keyof typeof portedComponentContracts]
-    : undefined;
+  return undefined;
 }
 
 function semanticEventName(bindingEvent: string): string {

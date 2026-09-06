@@ -4,6 +4,14 @@ import { defineComponent, h } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  AuditTimeline,
+  CancellationSummary,
+  PaginationBar,
+  PriceBadge,
+  RelativeTimestamp,
+  SearchInput,
+  StatusBadge,
+  StatusTimeline,
   AddressCollectionPanel,
   AddressEditor,
   AddressSummaryBadge,
@@ -52,6 +60,14 @@ const ServerShowcase = defineComponent({
   name: 'ServerShowcase',
   setup() {
     return () => h('main', [
+      h(AuditTimeline, { events: [{ label: 'Subscription created', timestamp: '2026-09-05T12:00:00Z' }] }),
+      h(CancellationSummary, { cancelAtPeriodEnd: true }),
+      h(PaginationBar, { page: 2, pageSize: 25, totalItems: 80 }),
+      h(PriceBadge, { amountCents: 2500, currency: 'usd' }),
+      h(RelativeTimestamp, { datetime: '2026-09-05T12:00:00Z', relative: '2 hours ago' }),
+      h(SearchInput, { value: 'past due' }),
+      h(StatusBadge, { status: 'past_due' }),
+      h(StatusTimeline, { status: 'active', allowedTransitions: ['past_due', 'cancelled'] }),
       h(Badge, { content: 'Past due', tone: 'critical' }),
       h(Banner, { title: 'Payment failed', tone: 'critical' }),
       h(Button, { content: 'Save changes' }),

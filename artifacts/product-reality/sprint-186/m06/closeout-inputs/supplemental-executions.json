@@ -1,0 +1,155 @@
+[
+  {
+    "id": "union-packed-final",
+    "command": "node -e 'const fs=require('\"'\"'fs'\"'\"'),assert=require('\"'\"'node:assert/strict'\"'\"');const base='\"'\"'artifacts/product-reality/sprint-186/m06/'\"'\"';const union=JSON.parse(fs.readFileSync(base+'\"'\"'union-fold.json'\"'\"'));const types=fs.readFileSync('\"'\"'packages/component-contracts/src/types.ts'\"'\"','\"'\"'utf8'\"'\"');const ids=[...types.match(/export const NUCLEUS_COMPONENT_IDS = \\[([\\s\\S]*?)\\] as const/)[1].matchAll(/'\"'\"'([^'\"'\"']+)'\"'\"'/g)].map(m=>m[1]);assert.deepEqual(union.nucleusComponents,ids);assert.equal(ids.length,50);assert.equal(new Set(ids).size,50);assert.equal(union.formerPortedComponents.length,8);assert(union.formerPortedComponents.every(id=>ids.includes(id)));assert.equal(union.aliasHorizon,'\"'\"'sprint-187'\"'\"');for(const reader of union.readers){assert(fs.existsSync(reader.path));assert(reader.disposition.length>0)}for(const framework of ['\"'\"'react'\"'\"','\"'\"'vue'\"'\"']){const p=JSON.parse(fs.readFileSync(union.packedConsumers[framework]));const proof=p.proof??p.packedProof;assert.equal(p.status,'\"'\"'passed'\"'\"');assert.equal(p.strictCompatibilityCompile.status,'\"'\"'passed'\"'\"');assert.equal(p.strictCompatibilityCompile.skipLibCheck,false);assert.deepEqual(proof.compatibilityProof.map(x=>x.componentId).sort(),[...union.formerPortedComponents].sort());for(const row of proof.compatibilityProof){assert(row.esmSame&&row.cjsSame&&row.ssrSame);assert.equal(row.rootMarkup,row.aliasMarkup);assert(row.rootMarkup.includes('\"'\"'data-oods-component=\"'\"'\"'+row.componentId+'\"'\"'\"'\"'\"'))}assert.equal(proof.compatibilitySpecifiers.root,proof.compatibilitySpecifiers.alias);assert.deepEqual(proof.compatibilityResolution,{runtimeSame:true,readinessSame:true,cssSame:true});const spec='\"'\"'@oods/components-'\"'\"'+framework;assert.equal(proof.resolvedSpecifiers[spec],proof.resolvedSpecifiers[spec+'\"'\"'/ported'\"'\"']);assert.equal(proof.resolvedSpecifiers['\"'\"'@oods/component-styles/css'\"'\"'],proof.resolvedSpecifiers['\"'\"'@oods/component-styles/css-ported'\"'\"']);}console.log(JSON.stringify({status:'\"'\"'passed'\"'\"',rootComponents:ids.length,formerPorted:8,readerDispositions:union.readers.length,frameworks:['\"'\"'react'\"'\"','\"'\"'vue'\"'\"'],strictTypes:true,observedAliasEquality:true}));'",
+    "cwd": "/Users/systemsystems/.codex/worktrees/s186/OODS-Forge",
+    "host": "Mac",
+    "exitCode": 0,
+    "executionHead": "6d927e568f773503c094ded92632645e98d1b354",
+    "sourceState": "worktree",
+    "startedAt": "2026-09-06T19:51:46.344216+00:00",
+    "endedAt": "2026-09-06T19:51:46.467918+00:00",
+    "inputs": [
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/union-fold.json",
+        "sha256": "0a689c4848ab045efea31e8b4bf1bd1425d90cd46873f9cd6649e46e26f0c245"
+      },
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/contracts-union.json",
+        "sha256": "93d06ad71d0a16dec1804b15f1fd7662e45b3a83b35dcad92b764a0ff218a698"
+      },
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/packed-react/packed-import/report.json",
+        "sha256": "b0dd1acf293ba2df3f3a503a1f6be36e7e21e71b21f28ced84703ea383cb0b8d"
+      },
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/packed-vue/report.json",
+        "sha256": "bdf74485750e2f1580ecd7ab7fe7ba083db2ef2455cf2155be8445a9b842c154"
+      },
+      {
+        "path": "packages/component-contracts/src/types.ts",
+        "sha256": "f96a08630d43a4eed55f08b144acd48e19fb4f9fbdb6aaa291aec493c29c1e5c"
+      },
+      {
+        "path": "packages/components-react/test/packed-import-evidence.mjs",
+        "sha256": "3b21cd548ba4eafdddb616d6e78ec06fdfd5beb5d9a49ac988e6c2b0ae211ae1"
+      },
+      {
+        "path": "packages/components-vue/test/packed-import.mjs",
+        "sha256": "7598b3ccca71416431c57ef042521359aeccc6630d498e5ab98448ecf11291e3"
+      }
+    ],
+    "outputs": [],
+    "logs": [
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/closeout-inputs/union-packed-final.log",
+        "sha256": "ffbee0973631d21756e025931424e0a2817669c05360cedd958d4fdd450230c3"
+      }
+    ]
+  },
+  {
+    "id": "baseline-final-check",
+    "command": "node scripts/product-reality/s185-baseline-surfaces.mjs --check",
+    "cwd": "/Users/systemsystems/.codex/worktrees/s186/OODS-Forge",
+    "host": "Mac",
+    "exitCode": 0,
+    "executionHead": "6d927e568f773503c094ded92632645e98d1b354",
+    "sourceState": "worktree",
+    "startedAt": "2026-09-06T19:51:46.468265+00:00",
+    "endedAt": "2026-09-06T19:51:46.794131+00:00",
+    "inputs": [
+      {
+        "path": "scripts/product-reality/s185-baseline-surfaces.mjs",
+        "sha256": "cab5c5980759a7f3e8f7be583eeba271a3d674a4ba842a3f5b113bd974c3e606"
+      },
+      {
+        "path": "artifacts/product-reality/sprint-186/baseline-fold/report.json",
+        "sha256": "777296cb597f4fde1656b38cf2897d498f83d1f6d9bedcffb1e83c2c250f9b6c"
+      },
+      {
+        "path": "packages/component-contracts/registry/component-capability-baseline.v1.json",
+        "sha256": "355f478bfff197628a336f671caed4a0636637c6b81ff5036fb8e5b74ecd2f38"
+      }
+    ],
+    "outputs": [],
+    "logs": [
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/closeout-inputs/baseline-final-check.log",
+        "sha256": "2fc23eab58e55aa18b0be3f3fb15eaa2b7e75e7df5e369ccea2b28aafb380f66"
+      }
+    ]
+  },
+  {
+    "id": "readiness-final-check",
+    "command": "node scripts/product-reality/verify-readiness-refs.mjs --mission-id s186-m06 --output artifacts/product-reality/sprint-186/m06/closeout-inputs/readiness-final.json",
+    "cwd": "/Users/systemsystems/.codex/worktrees/s186/OODS-Forge",
+    "host": "Mac",
+    "exitCode": 0,
+    "executionHead": "6d927e568f773503c094ded92632645e98d1b354",
+    "sourceState": "worktree",
+    "startedAt": "2026-09-06T19:51:46.794574+00:00",
+    "endedAt": "2026-09-06T19:51:47.280921+00:00",
+    "inputs": [
+      {
+        "path": "scripts/product-reality/verify-readiness-refs.mjs",
+        "sha256": "e0afe2d7b9701fc81c54dd8a34654560cc1ac9670e430d0bd3e6890653fa0a53"
+      },
+      {
+        "path": "packages/components-react/evidence/react-readiness.v1.json",
+        "sha256": "146264bc826794b454f1cc75ea1d68a52d4eba1396d97517a3883e7a5e3cc214"
+      },
+      {
+        "path": "packages/components-vue/evidence/vue-readiness.v1.json",
+        "sha256": "89a2a2ad0711b0aff15a279c2dcf2737869c642cbaf3596141eecb016d55532f"
+      }
+    ],
+    "outputs": [
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/closeout-inputs/readiness-final.json",
+        "sha256": "4263a2874b3473696b8a8777e1c7e2ddbbbddebbc6d75c84f4f210dbb0c1b0b7"
+      }
+    ],
+    "logs": [
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/closeout-inputs/readiness-final-check.log",
+        "sha256": "70fdfa0386fa84299dddecf6c8397769c45f36024795d83583bfe66fa5a89140"
+      }
+    ]
+  },
+  {
+    "id": "handoff-source-verification",
+    "command": "node -e 'const fs=require('\"'\"'fs'\"'\"'),assert=require('\"'\"'node:assert/strict'\"'\"');const b='\"'\"'artifacts/product-reality/sprint-186/m06/'\"'\"';const mission=JSON.parse(fs.readFileSync(b+'\"'\"'cmos-mission.json'\"'\"'));const original=JSON.parse(fs.readFileSync(b+'\"'\"'cmos-original-mission.json'\"'\"'));const sprint=JSON.parse(fs.readFileSync(b+'\"'\"'cmos-sprint.json'\"'\"'));assert.equal(mission.id,'\"'\"'s186-m06'\"'\"');assert.equal(original.id,mission.id);assert.equal(mission.successCriteria.length,6);assert.equal(sprint.id,'\"'\"'sprint-186'\"'\"');assert.equal(sprint.status,'\"'\"'Active'\"'\"');const near=fs.readFileSync('\"'\"'cmos/foundational-docs/roadmap/near.md'\"'\"','\"'\"'utf8'\"'\"');assert(near.includes('\"'\"'BUILT, REVIEW PENDING'\"'\"'));assert(near.includes('\"'\"'independent review'\"'\"'));assert(near.includes('\"'\"'StatusTimeline.label'\"'\"'));console.log(JSON.stringify({status:'\"'\"'passed'\"'\"',missionId:mission.id,criteria:6,sprintStatus:sprint.status,builderSelfCertified:false,independentReviewPending:true,originalCriteriaRetained:true,knownFreshComposerGapDisclosed:true}));'",
+    "cwd": "/Users/systemsystems/.codex/worktrees/s186/OODS-Forge",
+    "host": "Mac",
+    "exitCode": 0,
+    "executionHead": "6d927e568f773503c094ded92632645e98d1b354",
+    "sourceState": "worktree",
+    "startedAt": "2026-09-06T19:51:47.281384+00:00",
+    "endedAt": "2026-09-06T19:51:47.331788+00:00",
+    "inputs": [
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/cmos-mission.json",
+        "sha256": "87bbbd225031ff85e75c37568e458e367bfc32b96312c64d8be2782dc6b0a8d1"
+      },
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/cmos-original-mission.json",
+        "sha256": "fb40f5f47a63b3eb3051081a892c23e6ee2aa253ba5efa4d24fdbc236af5fc6f"
+      },
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/cmos-sprint.json",
+        "sha256": "a7465a6c919bc41b3fb916e0657fa198dd9904e8dc65f18a3ccf44a9a86c8e47"
+      },
+      {
+        "path": "cmos/foundational-docs/roadmap/near.md",
+        "sha256": "01b17c0c7d427763a35f6ae41297ac21a1418597d408245177b83bc065811cfe"
+      }
+    ],
+    "outputs": [],
+    "logs": [
+      {
+        "path": "artifacts/product-reality/sprint-186/m06/closeout-inputs/handoff-source-verification.log",
+        "sha256": "7a392f920e6c8b747c8d3353db4931ed07b02fc8ad580fddab7812d836feec76"
+      }
+    ]
+  }
+]

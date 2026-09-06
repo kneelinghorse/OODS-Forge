@@ -1,6 +1,5 @@
 import {
   NUCLEUS_COMPONENT_IDS,
-  PORTED_COMPONENT_IDS,
   UI_WORKFLOW_STATES,
 } from '@oods/component-contracts';
 import { describe, expect, it } from 'vitest';
@@ -56,7 +55,7 @@ describe('Sprint 184 UI workflow-state contract', () => {
   });
 
   it.each((['react', 'vue'] as const).flatMap((framework) => (
-    [...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS].map((component, index) => ({
+    NUCLEUS_COMPONENT_IDS.map((component, index) => ({
       framework,
       component,
       state: UI_WORKFLOW_STATES[index % UI_WORKFLOW_STATES.length]!,

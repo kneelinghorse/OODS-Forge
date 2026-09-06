@@ -164,7 +164,9 @@ type SavedSchemaRecord = {
 
 type LiveGenerator = typeof codeGenerate;
 
-const PORTED_COMPONENT_IDS = Object.freeze([
+// Historical CSS cohort, retained for replaying older artifacts that import
+// compatibility subpaths. Current generation imports the single root union.
+const HISTORICAL_PORTED_COMPONENT_IDS = Object.freeze([
   'StatusBadge',
   'PriceBadge',
   'StatusTimeline',
@@ -1302,7 +1304,7 @@ async function cssProof(distRoot: string, requiresPorted: boolean): Promise<Reco
   if (files.length === 0) throw new Error('Production build emitted no CSS asset.');
   const contents = (await Promise.all(files.map((name) => fsp.readFile(path.join(assetRoot, name), 'utf8')))).join('\n');
   const core = contents.includes('data-oods-component') && contents.includes('Stack');
-  const ported = PORTED_COMPONENT_IDS.some((name) => contents.includes(name));
+  const ported = HISTORICAL_PORTED_COMPONENT_IDS.some((name) => contents.includes(name));
   const tokens = contents.includes('--sys-text-primary');
   if (!core || (requiresPorted && !ported) || !tokens) {
     throw new Error(`Production CSS closure is incomplete: ${JSON.stringify({ core, ported, tokens })}`);
@@ -1732,8 +1734,12 @@ export async function runLiveConsumerCell({
     const mountedExpectedComponents = [...new Set(
       [...ssr.html.matchAll(/data-oods-component=["']([^"']+)["']/g)].map((match) => match[1]!),
     )].sort(compareCodePoint);
-    const coreComponents = expectedComponents.filter((name) => !PORTED_COMPONENT_IDS.includes(name));
-    const portedComponents = expectedComponents.filter((name) => PORTED_COMPONENT_IDS.includes(name));
+    const coreComponents = requiresPorted
+      ? expectedComponents.filter((name) => !HISTORICAL_PORTED_COMPONENT_IDS.includes(name))
+      : expectedComponents;
+    const portedComponents = requiresPorted
+      ? expectedComponents.filter((name) => HISTORICAL_PORTED_COMPONENT_IDS.includes(name))
+      : [];
     if (coreComponents.length === 0 || (requiresPorted && portedComponents.length === 0)) {
       throw new Error(`${schemaName}/${framework}: generated source does not exercise its declared component subpaths.`);
     }

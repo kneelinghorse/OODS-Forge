@@ -1,5 +1,4 @@
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
-import { PORTED_COMPONENT_IDS } from '@oods/component-contracts';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
 import type {
   BindingAnalysis,
@@ -1020,31 +1019,13 @@ function generateReactActionGuards(analysis: BindingAnalysis): string {
 // Top-level code assembly
 // ---------------------------------------------------------------------------
 
-const PORTED_COMPONENT_ID_SET: ReadonlySet<string> = new Set(PORTED_COMPONENT_IDS);
-
-function splitComponentImports(components: Set<string>): {
-  nucleus: string[];
-  ported: string[];
-} {
-  const nucleus: string[] = [];
-  const ported: string[] = [];
-  for (const component of Array.from(components).sort()) {
-    (PORTED_COMPONENT_ID_SET.has(component) ? ported : nucleus).push(component);
-  }
-  return { nucleus, ported };
-}
-
 function buildImportBlock(components: Set<string>, includeCva: boolean): string {
-  const { nucleus, ported } = splitComponentImports(components);
+  const nucleus = Array.from(components).sort();
   const lines: string[] = [`import React from 'react';`];
   if (nucleus.length > 0) {
     lines.push(`import { ${nucleus.join(', ')} } from '@oods/components-react';`);
   }
-  if (ported.length > 0) {
-    lines.push(`import { ${ported.join(', ')} } from '@oods/components-react/ported';`);
-  }
   if (nucleus.length > 0) lines.push(`import '@oods/component-styles/css';`);
-  if (ported.length > 0) lines.push(`import '@oods/component-styles/css-ported';`);
   if (includeCva) {
     lines.push(`import { cva } from 'class-variance-authority';`);
   }
@@ -1052,13 +1033,9 @@ function buildImportBlock(components: Set<string>, includeCva: boolean): string 
 }
 
 function buildImportList(components: Set<string>, includeCva: boolean): string[] {
-  const { nucleus, ported } = splitComponentImports(components);
   return [
     'react',
-    ...(nucleus.length > 0 ? ['@oods/components-react', '@oods/component-styles/css'] : []),
-    ...(ported.length > 0
-      ? ['@oods/components-react/ported', '@oods/component-styles/css-ported']
-      : []),
+    ...(components.size > 0 ? ['@oods/components-react', '@oods/component-styles/css'] : []),
     ...(includeCva ? ['class-variance-authority'] : []),
   ];
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BadgeProps, ComponentTone, ComponentEmphasis } from './types.js';
+import { ComponentEmphasis, BadgeProps, ComponentTone } from './types.js';
 
 interface StatusBadgeProps extends Omit<BadgeProps, 'children' | 'content' | 'status' | 'tone'> {
     readonly children?: React.ReactNode;

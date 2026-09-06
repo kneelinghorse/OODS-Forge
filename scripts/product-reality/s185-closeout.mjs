@@ -52,14 +52,26 @@ export function derivePublicHeadEquivalence({ root, implementationHead, executio
 }
 
 /** Pure derivation over explicitly supplied frozen bytes; no working-tree fallback. */
-export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, suiteAccounting, publicHeadEquivalence, finalAudit }) {
+export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence, finalAudit }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Both full execution and review commit SHAs are required.');
-  assert.equal(manifest.missionId, 's185-m05');
+  const wave2 = manifest.missionId === 's186-m06';
+  const missionId = wave2 ? 's186-m06' : 's185-m05';
+  const sprintId = wave2 ? 'sprint-186' : 'sprint-185';
+  const criterionCount = wave2 ? 6 : 8;
+  const suiteCriterion = wave2 ? 4 : 6;
+  const outputPaths = Object.fromEntries(Object.entries(OUTPUT_PATHS).map(([key, file]) => [key,
+    wave2 ? file.replace('sprint-185/m05', 'sprint-186/m06') : file]));
+  const requiredSources = wave2 ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'unionFold', 'baselineFold', 'movers',
+    'moversDeclaration', 'noticePlan', 'deliveries', 'near'] : mandatorySources;
+  const requiredByCriterion = wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
+    ['movers', 'noticePlan', 'deliveries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : criterionSources;
+  assert.equal(manifest.missionId, missionId);
   assert(!Object.hasOwn(manifest, 'criteria') && !Object.hasOwn(manifest, 'claims'), 'Criterion text and outcomes cannot be supplied by the manifest.');
   const frozen = new Map();
   const frozenBytes = new Map();
   function reference(file, expectedHash) {
     safePath(file);
+    assert(!file.startsWith(`${path.posix.dirname(outputPaths.ledger)}/`), 'Generated output cannot justify a claim.');
     if (!frozen.has(file)) {
       const bytes = Buffer.from(readFrozen(file));
       frozenBytes.set(file, bytes);
@@ -71,24 +83,25 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   }
   const text = file => { reference(file); return frozenBytes.get(file).toString('utf8'); };
   const json = file => JSON.parse(text(file));
-  for (const key of mandatorySources) assert(nonempty(manifest.sources?.[key]), `Missing source: ${key}`);
+  for (const key of requiredSources) assert(nonempty(manifest.sources?.[key]), `Missing source: ${key}`);
   assert(Array.isArray(manifest.sources.derivationInputs) && manifest.sources.derivationInputs.length > 0,
     'Derivation source and independent verification inputs must be frozen.');
   for (const file of manifest.sources.derivationInputs) reference(file);
   if (manifest.manifestPath) reference(manifest.manifestPath);
-  const documents = Object.fromEntries(mandatorySources.filter(key => key !== 'near')
+  const documents = Object.fromEntries(requiredSources.filter(key => key !== 'near')
     .map(key => [key, json(manifest.sources[key])]));
   const near = text(manifest.sources.near);
-  const mission = documents.cmosMission.rawResponse?.structuredContent?.data;
-  const originalMission = documents.cmosOriginalMission.rawResponse?.structuredContent?.data;
-  const sprint = documents.cmosSprint.rawResponse?.structuredContent?.data;
-  assert.equal(mission?.id, 's185-m05');
-  assert.equal(originalMission?.id, 's185-m05');
-  assert.equal(sprint?.id, 'sprint-185');
-  assert(Array.isArray(mission.successCriteria) && mission.successCriteria.length === 8
-    && mission.successCriteria.every(nonempty), 'All eight literal CMOS criteria are required.');
-  assert(Array.isArray(manifest.claimBindings) && manifest.claimBindings.length === 8, 'Exactly eight claim bindings required.');
-  assert.equal(new Set(manifest.claimBindings.map(row => row.criterionIndex)).size, 8, 'Duplicate criterion binding.');
+  const unwrap = document => document.rawResponse?.structuredContent?.data ?? document;
+  const mission = unwrap(documents.cmosMission);
+  const originalMission = unwrap(documents.cmosOriginalMission);
+  const sprint = unwrap(documents.cmosSprint);
+  assert.equal(mission?.id, missionId);
+  assert.equal(originalMission?.id, missionId);
+  assert.equal(sprint?.id, sprintId);
+  assert(Array.isArray(mission.successCriteria) && mission.successCriteria.length === criterionCount
+    && mission.successCriteria.every(nonempty), 'All literal CMOS criteria are required.');
+  assert(Array.isArray(manifest.claimBindings) && manifest.claimBindings.length === criterionCount, 'Exactly one binding per criterion required.');
+  assert.equal(new Set(manifest.claimBindings.map(row => row.criterionIndex)).size, criterionCount, 'Duplicate criterion binding.');
 
   assert.equal(suiteAccounting.executionHead, executionHead, 'Accounting execution head was relabeled.');
   assert.equal(suiteAccounting.reviewHead, reviewHead, 'Accounting review head differs.');
@@ -129,8 +142,105 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   }
   assert(executions.size > 0, 'No actual execution receipts supplied.');
 
-  const checks = Array.from({ length: 8 }, () => []);
+  const checks = Array.from({ length: criterionCount }, () => []);
   const check = (index, condition, detail) => checks[index].push({ detail, passed: !!condition });
+  const implementationHead = documents.noticePlan.implementationHead;
+  const captureIds = suiteAccounting.closeout?.runs?.[0]?.suiteExecutionIds ?? [];
+  const captureRows = captureIds.map(id => executions.get(id));
+  if (wave2) {
+    assert.equal(typeof readHistorical, 'function', 'Sprint 186 requires actual locked-base Git sources.');
+    const base = '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2';
+    const typesPath = 'packages/component-contracts/src/types.ts';
+    const ids = (source, name) => [...(source.match(new RegExp(`export const ${name} = \\[([\\s\\S]*?)\\] as const`))?.[1] ?? '').matchAll(/'([^']+)'/g)].map(match => match[1]);
+    const currentTypes = text(typesPath);
+    const priorTypes = Buffer.from(readHistorical(base, typesPath)).toString('utf8');
+    const nucleus = ids(currentTypes, 'NUCLEUS_COMPONENT_IDS');
+    const formerPorted = ids(priorTypes, 'PORTED_COMPONENT_IDS');
+    const priorNucleus = ids(priorTypes, 'NUCLEUS_COMPONENT_IDS');
+    const added = nucleus.filter(id => !formerPorted.includes(id) && !priorNucleus.includes(id));
+    const union = documents.unionFold;
+    check(0, nucleus.length === 50 && new Set(nucleus).size === nucleus.length && added.length === 23
+      && formerPorted.length === 8 && formerPorted.every(id => nucleus.includes(id))
+      && priorNucleus.every(id => nucleus.includes(id)) && /export type GovernedComponentId = NucleusComponentId;/.test(currentTypes)
+      && equal(union.nucleusComponents, nucleus) && equal(union.formerPortedComponents, formerPorted), 'One root union is derived from current and locked-base source bytes.');
+    check(0, union.aliasHorizon === 'sprint-187' && union.readers?.length > 0
+      && union.readers.every(row => nonempty(row.path) && nonempty(row.disposition)), 'Former ported readers have named dispositions and the one-sprint compatibility horizon.');
+    for (const framework of ['react', 'vue']) {
+      const packed = json(union.packedConsumers?.[framework]);
+      const proof = packed.proof ?? packed.packedProof;
+      check(0, packed.status === 'passed' && packed.strictCompatibilityCompile?.status === 'passed'
+        && packed.strictCompatibilityCompile.skipLibCheck === false
+        && formerPorted.every(id => proof?.rootRuntimeIds?.includes(id) && proof?.aliasRuntimeIds?.includes(id))
+        && equal(proof.compatibilityProof?.map(row => row.componentId).sort(), [...formerPorted].sort())
+        && proof.compatibilityProof.every(row => row.esmSame && row.cjsSame && row.ssrSame && row.rootMarkup === row.aliasMarkup
+          && row.rootMarkup?.includes(`data-oods-component="${row.componentId}"`))
+        && ['runtimeSame', 'readinessSame', 'cssSame'].every(key => proof.compatibilityResolution?.[key] === true)
+        && proof.compatibilitySpecifiers?.root === proof.compatibilitySpecifiers?.alias
+        && proof.resolvedSpecifiers?.[`@oods/components-${framework}`] === proof.resolvedSpecifiers?.[`@oods/components-${framework}/ported`]
+        && proof.resolvedSpecifiers?.['@oods/component-styles/css'] === proof.resolvedSpecifiers?.['@oods/component-styles/css-ported'], `${framework} actually imports the eight root and compatibility exports from packed packages and strictly compiles their types.`);
+    }
+    const baseline = documents.baselineFold;
+    const baselinePath = 'packages/component-contracts/registry/component-capability-baseline.v1.json';
+    const currentBaseline = json(baselinePath);
+    const priorBaseline = JSON.parse(Buffer.from(readHistorical(base, baselinePath)).toString('utf8'));
+    const identity = document => document.rows.map(({ id, proposedClassification, reconciliationState }) => ({ id, proposedClassification, reconciliationState }));
+    check(1, currentBaseline.rows.length === 109 && equal(identity(currentBaseline), identity(priorBaseline))
+      && json('packages/component-contracts/registry/component-reconciliation.proposed.v1.json').approvedRuntimeCensus === null,
+    'All 109 baseline identities/classifications/reconciliation states match locked-base Git bytes; runtime census remains unapproved.');
+    const anchored = ref => {
+      const split = ref.indexOf('#'); assert(split > 0, 'Surface evidence lacks an anchor.');
+      const file = ref.slice(0, split); const anchor = ref.slice(split + 1); const document = json(file);
+      if (anchor.startsWith('/')) return anchor.slice(1).split('/').reduce((value, key) => {
+        const decoded = key.replaceAll('~1', '/').replaceAll('~0', '~');
+        assert(value != null && Object.hasOwn(value, decoded), `Unresolved surface evidence: ${ref}`); return value[decoded];
+      }, document);
+      const rows = [...(document.rows ?? []), ...(document.components ?? [])].filter(row => (row.componentId ?? row.id) === anchor);
+      assert.equal(rows.length, 1, `Surface anchor is absent or ambiguous: ${ref}`); return rows[0];
+    };
+    check(1, added.every(component => ['react', 'vue', 'generatedConsumer'].every(surface => {
+      const row = currentBaseline.rows.find(candidate => candidate.id === component)?.surfaces?.[surface];
+      return row?.state === 'implemented-evidence-complete' && row.evidence?.length > 0 && row.evidence.every(ref => anchored(ref) != null);
+    })), 'All 23 families have three evidence-complete surface cells with actual resolvable frozen anchors.');
+    for (const ref of baseline.sourceHashes ?? []) reference(ref.path, ref.sha256);
+    check(1, baseline.readinessReferences?.length > 0 && baseline.readinessReferences.every(row => row.resolved === true), 'Fold inputs retain their observed hashes and resolved readiness references.');
+    const movers = documents.movers; const declaration = documents.moversDeclaration;
+    const samePublicHead = implementationHead === executionHead || (publicHeadEquivalence?.implementationHead === implementationHead
+      && publicHeadEquivalence.executionHead === executionHead && publicHeadEquivalence.ancestor === true
+      && equal(publicHeadEquivalence.scope, PUBLIC_RUNTIME_SCOPE) && publicHeadEquivalence.excludeTests === true
+      && Array.isArray(publicHeadEquivalence.scopedChangedPaths)
+      && equal(publicHeadEquivalence.changedPaths, publicHeadEquivalence.scopedChangedPaths.filter(file => !isTestPath(file)))
+      && equal(publicHeadEquivalence.excludedTestPaths, publicHeadEquivalence.scopedChangedPaths.filter(isTestPath))
+      && publicHeadEquivalence.changedPaths.length === 0);
+    check(2, movers.status === 'passed' && movers.s186?.base === base && movers.s186.head === implementationHead && samePublicHead
+      && ['canonicalPaths', 'publicPaths'].every(key => equal(movers.s186[key], declaration.s186?.[key])
+        && new Set(movers.s186[key]).size === movers.s186[key].length
+        && movers.comparison?.s186?.[key]?.missingFromDeclaration?.length === 0
+        && movers.comparison.s186[key].extraInDeclaration?.length === 0), 'The single locked sprint range matches its declaration in both scopes and its advertised public bytes match the execution head.');
+    const plan = documents.noticePlan;
+    check(3, samePublicHead && equal(plan.addedNucleus, added) && equal(plan.formerPorted, formerPorted)
+      && plan.aliasHorizon === 'sprint-187' && plan.notices?.length === 2
+      && ['cmos://derek/aquex-mcp', 'cmos://derek/forge-demos'].every(destination => {
+        const notice = plan.notices.find(row => row.request?.targetAddress === destination);
+        const body = notice?.request?.body ?? '';
+        const deliveries = documents.deliveries.filter(row => row.targetAddress === destination);
+        return notice && sha256(JSON.stringify(notice.request)) === notice.requestSha256
+          && added.every(id => body.includes(id)) && formerPorted.every(id => body.includes(id))
+          && ['Union fold', '/ported', '/readiness-ported', '/css-ported', 'Sprint 187', 'Emitter movers:', 'Deployment:'].every(term => body.includes(term))
+          && deliveries.length === 1 && deliveries[0].status === 'sent'
+          && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(deliveries[0].messageId)
+          && deliveries[0].requestSha256 === notice.requestSha256;
+      }) && documents.deliveries.length === 2 && new Set(documents.deliveries.map(row => row.messageId)).size === 2,
+    'Two exact reconnect requests disclose families, union, aliases, emitters and deployment and retain unique real message IDs.');
+    check(4, suiteAccounting.status === 'passed' && suiteAccounting.validationIssues?.length === 0
+      && suiteAccounting.unattributedDeltas?.length === 0 && Object.keys(suiteAccounting.baselines ?? {}).length === 1
+      && suiteAccounting.baselines.sprint185Closeout && suiteAccounting.headRelation?.ancestor === true
+      && suiteAccounting.headRelation.executableInputsUnchanged === true, 'Four-suite accounting compares the Sprint 185 closeout and attributes every observed delta and failure.');
+    check(4, suiteAccounting.closeout?.runs?.length === 1 && captureIds.length === 4 && new Set(captureIds).size === 4
+      && captureRows.every(row => row?.evidenceKind === 'suite-receipt' && row.cohort === 'closeout' && row.measuredHead === executionHead
+        && row.cleanBefore === true && row.cleanAfter === true)
+      && equal(captureRows.map(row => row.suite).sort(), ['mcp-server', 'root-core', 'viz-core', 'viz-render']), 'One clean frozen capture retains all four actual suite receipts, including their failures and skips.');
+    check(5, sprint.status === 'Active' && near.includes('BUILT, REVIEW PENDING'), 'Frozen CMOS leaves the sprint Active and the handoff remains builder evidence pending independent review.');
+  } else {
   const baseline = documents.baselineFold;
   check(0, baseline.denominator === 109 && baseline.identityClassificationAndReconciliationUnchanged === true
     && baseline.approvedRuntimeCensus === null, '109 identities/classifications/reconciliation states preserved; runtime census remains unapproved.');
@@ -198,13 +308,14 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   check(7, sprint.status === 'Active' && near.includes('BUILT, REVIEW PENDING'), 'Frozen CMOS sprint remains Active and near.md says BUILT, REVIEW PENDING.');
   check(7, documents.m04BuildRecord.status === 'passed' && documents.m04BuildRecord.builderSelfCertified === false
     && documents.m04BuildRecord.separateReviewRequired === true, 'Live m04 build evidence is retained as builder evidence.');
+  }
 
   const claims = mission.successCriteria.map((criterion, criterionIndex) => {
     const binding = manifest.claimBindings.find(row => row.criterionIndex === criterionIndex);
     assert(binding && !Object.hasOwn(binding, 'criterion') && !Object.hasOwn(binding, 'status'), 'Bindings cannot override literal criterion text or derived outcome.');
     const executionIds = [...(binding.executionIds ?? [])];
     if (binding.suiteBindings !== undefined) {
-      assert.equal(criterionIndex, 6, 'Suite selectors are reserved for the four-suite claim.');
+      assert.equal(criterionIndex, suiteCriterion, 'Suite selectors are reserved for the four-suite claim.');
       assert(equal([...binding.suiteBindings].sort(), ['mcp-server', 'root-core', 'viz-core', 'viz-render']),
         'Suite selectors must name the four suites exactly once.');
       for (const suite of binding.suiteBindings) {
@@ -216,41 +327,41 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
     assert(executionIds.length > 0 && binding.evidencePaths?.length > 0, `Criterion ${criterionIndex} lacks execution/evidence bindings.`);
     assert.equal(new Set(executionIds).size, executionIds.length, 'Duplicate execution within a claim.');
     for (const id of executionIds) assert(executions.has(id), `Claim cites unknown execution: ${id}`);
-    const required = criterionSources[criterionIndex].map(key => manifest.sources[key]);
+    const required = requiredByCriterion[criterionIndex].map(key => manifest.sources[key]);
     assert(required.every(file => binding.evidencePaths.includes(file)), `Criterion ${criterionIndex} omits required source evidence.`);
     const evidence = binding.evidencePaths.map(file => reference(file));
     const boundExecutions = executionIds.map(id => executions.get(id));
-    if (criterionIndex === 6) check(criterionIndex, captureIds.every(id => executionIds.includes(id)),
+    if (criterionIndex === suiteCriterion) check(criterionIndex, captureIds.every(id => executionIds.includes(id)),
       'The four-suite claim binds each actual closeout suite execution.');
     check(criterionIndex, boundExecutions.some(row => {
       const logs = row.evidenceKind === 'suite-receipt' ? [row.log, row.receipt] : row.logs;
       return logs.some(ref => binding.evidencePaths.includes(ref.path));
     }), 'At least one cited execution output is included in this claim evidence.');
-    if (criterionIndex !== 6) check(criterionIndex, boundExecutions.some(row => row.exitCode === 0
+    if (criterionIndex !== suiteCriterion) check(criterionIndex, boundExecutions.some(row => row.exitCode === 0
       && row.evidenceKind === 'retained-command' && row.logs.some(ref => binding.evidencePaths.includes(ref.path))
       && [...row.inputs, ...row.outputs].some(ref => required.includes(ref.path))),
       'A successful cited command consumes or produces required claim evidence; unrelated successes and failed executions cannot prove it.');
     const unproven = checks[criterionIndex].filter(row => !row.passed).map(row => row.detail);
-    return { claimId: `s185-m05-sc${String(criterionIndex + 1).padStart(2, '0')}`, criterionIndex, criterion,
+    return { claimId: `${missionId}-sc${String(criterionIndex + 1).padStart(2, '0')}`, criterionIndex, criterion,
       status: unproven.length ? 'unproven' : 'passed', executionIds, evidence,
       ...(binding.suiteBindings ? { suiteBindings: binding.suiteBindings } : {}),
       observations: checks[criterionIndex], unproven };
   });
   const unproven = claims.filter(row => row.status !== 'passed').map(row => ({ claimId: row.claimId, reasons: row.unproven }));
-  const ledger = { schemaVersion: '1.0.0', missionId: 's185-m05', implementationHead, executionHead, reviewHead,
+  const ledger = { schemaVersion: '1.0.0', missionId, implementationHead, executionHead, reviewHead,
     publicHeadEquivalence: implementationHead === executionHead ? { implementationHead, executionHead, identicalHead: true } : publicHeadEquivalence,
     criterionSource: reference(manifest.sources.cmosMission), originalCriterionSource: reference(manifest.sources.cmosOriginalMission),
     executions: [...executions.values()], claims, headline: { total: claims.length, proven: claims.length - unproven.length, unproven: unproven.length },
     unproven, status: unproven.length ? 'incomplete' : 'ready-for-independent-review', builderSelfCertified: false, separateReviewRequired: true,
     validationBoundary: 'Producer consistency checks are not independent review. A separate output-layer audit must rederive the final ledger bytes, literal claims, execution references and frozen hashes.' };
-  const handoff = { schemaVersion: '1.0.0', missionId: 's185-m05', sprintId: 'sprint-185', executionHead, reviewHead,
+  const handoff = { schemaVersion: '1.0.0', missionId, sprintId, executionHead, reviewHead,
     sprintStatus: sprint.status, sprintStatusSource: reference(manifest.sources.cmosSprint),
     builderSelfCertified: false, separateReviewRequired: true, approvalStatus: 'pending-independent-review',
     buildStatus: 'BUILT, REVIEW PENDING', unproven,
     executionDisclosure: 'Tests ran at executionHead. reviewHead retains their evidence and may be a verified evidence-only descendant. No execution is relabeled.',
     reviewerObligation: 'Independently rederive each claim from frozen inputs, inspect failed/skipped suite observations and unresolved carries, and decide whether to close the Active sprint.' };
-  const outputs = { [OUTPUT_PATHS.accounting]: suiteAccounting, [OUTPUT_PATHS.ledger]: ledger, [OUTPUT_PATHS.handoff]: handoff };
-  handoff.outputAudit = { status: 'pending-output-layer-audit', path: OUTPUT_PATHS.audit };
+  const outputs = { [outputPaths.accounting]: suiteAccounting, [outputPaths.ledger]: ledger, [outputPaths.handoff]: handoff };
+  handoff.outputAudit = { status: 'pending-output-layer-audit', path: outputPaths.audit };
   if (finalAudit) {
     assert.equal(finalAudit.executionHead, executionHead); assert.equal(finalAudit.reviewHead, reviewHead);
     assert.equal(finalAudit.status, 'passed'); assert.equal(finalAudit.exitCode, 0);
@@ -258,12 +369,12 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
     assert.equal(digest(finalAudit.ledgerSha256), sha256(canonicalJson(ledger)), 'Final audit targets different ledger bytes.');
     assert.equal(digest(finalAudit.accountingSha256), sha256(canonicalJson(suiteAccounting)), 'Final audit targets different accounting bytes.');
     const { stdout, ...audit } = finalAudit;
-    outputs[OUTPUT_PATHS.auditLog] = stdout;
-    outputs[OUTPUT_PATHS.audit] = { ...audit, stdout: { path: OUTPUT_PATHS.auditLog, sha256: sha256(stdout), bytes: Buffer.byteLength(stdout) },
+    outputs[outputPaths.auditLog] = stdout;
+    outputs[outputPaths.audit] = { ...audit, stdout: { path: outputPaths.auditLog, sha256: sha256(stdout), bytes: Buffer.byteLength(stdout) },
       scope: 'Audits ledger/accounting and their frozen inputs; excludes this report and the handoff/index that depend on it.' };
-    handoff.outputAudit = { status: 'passed', path: OUTPUT_PATHS.audit, sha256: sha256(canonicalJson(outputs[OUTPUT_PATHS.audit])) };
+    handoff.outputAudit = { status: 'passed', path: outputPaths.audit, sha256: sha256(canonicalJson(outputs[outputPaths.audit])) };
   }
-  outputs[OUTPUT_PATHS.index] = { schemaVersion: '1.0.0', missionId: 's185-m05', executionHead, reviewHead,
+  outputs[outputPaths.index] = { schemaVersion: '1.0.0', missionId, executionHead, reviewHead,
     frozenInputs: [...frozen.values()].sort((a, b) => a.path.localeCompare(b.path)),
     generatedOutputs: Object.entries(outputs).map(([file, value]) => {
       const bytes = typeof value === 'string' ? value : canonicalJson(value);
@@ -283,20 +394,23 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const readFrozen = file => execFileSync('git', ['show', `${reviewHead}:${safePath(file)}`], { cwd: root, maxBuffer: 128 * 1024 * 1024 });
   const manifest = JSON.parse(readFrozen(manifestPath).toString('utf8'));
   manifest.manifestPath = manifestPath;
+  const readHistorical = (commit, file) => execFileSync('git', ['show', `${commit}:${safePath(file)}`], { cwd: root, maxBuffer: 128 * 1024 * 1024 });
   const attributionPath = argument('--attributions');
   const failurePath = argument('--failures');
   const suiteAccounting = deriveSuiteAccounting({ root, executionHead, reviewHead,
+    ...(manifest.missionId === 's186-m06' ? { sprintId: 'sprint-186', missionId: manifest.missionId, ...manifest.accounting } : {}),
     ...(attributionPath ? { attributions: JSON.parse(readFrozen(attributionPath).toString('utf8')) } : {}),
     ...(failurePath ? { failureDispositions: JSON.parse(readFrozen(failurePath).toString('utf8')) } : {}) });
   const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan).toString('utf8')).implementationHead;
   const publicHeadEquivalence = derivePublicHeadEquivalence({ root, implementationHead, executionHead });
   const auditPath = argument('--final-audit');
-  const outputs = deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, suiteAccounting, publicHeadEquivalence,
+  const outputs = deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence,
     ...(auditPath ? { finalAudit: JSON.parse(fs.readFileSync(path.resolve(auditPath), 'utf8')) } : {}) });
   for (const [file, value] of Object.entries(outputs)) {
     const target = path.join(outputRoot, file); const serialized = typeof value === 'string' ? value : canonicalJson(value);
     if (process.argv.includes('--check')) assert.equal(fs.readFileSync(target, 'utf8'), serialized, `Derived output differs: ${file}`);
     else { fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, serialized); }
   }
-  process.stdout.write(canonicalJson(outputs[OUTPUT_PATHS.ledger].headline));
+  const ledger = Object.values(outputs).find(value => value?.headline && value?.claims);
+  process.stdout.write(canonicalJson(ledger.headline));
 }

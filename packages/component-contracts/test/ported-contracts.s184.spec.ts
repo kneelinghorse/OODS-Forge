@@ -33,21 +33,21 @@ function sha256(repositoryPath: string): string {
   return createHash('sha256').update(contents).digest('hex');
 }
 
-describe('Sprint 184 separate ported component truth plane', () => {
+describe('Sprint 184 historical port compatibility within the canonical nucleus', () => {
   it('keys the nucleus contracts and scenarios exactly by NUCLEUS_COMPONENT_IDS', () => {
     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
     expect(sharedScenarios.map(({ oodsComponentId }) => oodsComponentId).sort()).toEqual(
       [...NUCLEUS_COMPONENT_IDS].sort(),
     );
     expect(componentContracts).toHaveProperty('Select.version', '1.1.0');
-    expect(componentContracts).not.toHaveProperty('StatusBadge');
+    expect(componentContracts.StatusBadge).toBe(portedComponentContracts.StatusBadge);
   });
 
-  it('defines exactly the disjoint, code-point-sorted eight-component port tranche', () => {
+  it('derives the historical eight-component compatibility views from the canonical nucleus', () => {
     expect(PORTED_COMPONENT_IDS).toEqual(EXPECTED_PORTED_IDS);
     expect(PORTED_COMPONENT_IDS).toEqual([...PORTED_COMPONENT_IDS].sort());
     expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(
-      NUCLEUS_COMPONENT_IDS.length + PORTED_COMPONENT_IDS.length,
+      NUCLEUS_COMPONENT_IDS.length,
     );
     expect(Object.keys(portedComponentContracts)).toEqual(EXPECTED_PORTED_IDS);
     expect(portedScenarios.map(({ oodsComponentId }) => oodsComponentId)).toEqual(
@@ -57,6 +57,9 @@ describe('Sprint 184 separate ported component truth plane', () => {
     for (const componentId of PORTED_COMPONENT_IDS) {
       const contract = portedComponentContracts[componentId];
       const scenario = portedScenarios.find((entry) => entry.oodsComponentId === componentId);
+      expect(NUCLEUS_COMPONENT_IDS).toContain(componentId);
+      expect(contract).toBe(componentContracts[componentId]);
+      expect(scenario).toBe(sharedScenarios.find((entry) => entry.oodsComponentId === componentId));
       expect(contract.id).toBe(componentId);
       expect(new Set(contract.props).size).toBe(contract.props.length);
       expect(contract.accessibility.length).toBeGreaterThan(0);
@@ -66,14 +69,15 @@ describe('Sprint 184 separate ported component truth plane', () => {
     }
   });
 
-  it('folds the 24 ported surface cells into their existing baseline identities', () => {
+  it('preserves the historical cohort surface evidence on its existing baseline identities', () => {
     // Decision 1726: surface evidence belongs to existing identities, not a second overlay.
     expect(componentCapabilityBaseline.rows).toHaveLength(109);
     expect(componentCapabilityBaseline.controllingObligationDenominator).toBe(109);
     const portedRows = componentCapabilityBaseline.rows.filter(({ id }) => EXPECTED_PORTED_IDS.includes(id as typeof EXPECTED_PORTED_IDS[number]));
     expect(portedRows.map(({ id }) => id)).toEqual(EXPECTED_PORTED_IDS);
     const surfaces = ['react', 'vue', 'generatedConsumer'] as const;
-    expect(portedRows.flatMap(row => surfaces.map(surface => row.surfaces[surface]))).toHaveLength(24);
+    expect(portedRows.flatMap(row => surfaces.map(surface => row.surfaces[surface])))
+      .toHaveLength(EXPECTED_PORTED_IDS.length * surfaces.length);
     for (const row of portedRows) {
       expect(surfaces.map(surface => row.surfaces[surface]).every(({ state }) => (
         state === 'implemented-evidence-complete'

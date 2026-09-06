@@ -111,9 +111,8 @@ describe('codegen prop binding', () => {
       {
         framework: 'React',
         emit: reactEmit,
-        rootImport: "import { Stack } from '@oods/components-react';",
-        portedImport: "from '@oods/components-react/ported';",
-        styleImport: "import '@oods/component-styles/css-ported';",
+        rootImport: "import { CancellationSummary, PriceBadge, RelativeTimestamp, Stack, StatusTimeline } from '@oods/components-react';",
+        styleImport: "import '@oods/component-styles/css';",
         expectedBindings: [
           'amountCents={amount}',
           'currency={currency}',
@@ -132,9 +131,8 @@ describe('codegen prop binding', () => {
       {
         framework: 'Vue',
         emit: vueEmit,
-        rootImport: "import { Stack } from '@oods/components-vue';",
-        portedImport: "from '@oods/components-vue/ported';",
-        styleImport: "import '@oods/component-styles/css-ported';",
+        rootImport: "import { CancellationSummary, PriceBadge, RelativeTimestamp, Stack, StatusTimeline } from '@oods/components-vue';",
+        styleImport: "import '@oods/component-styles/css';",
         expectedBindings: [
           ':amountCents="amount"',
           ':currency="currency"',
@@ -153,14 +151,14 @@ describe('codegen prop binding', () => {
     ])('turns declarative field recipes into executable $framework props', ({
       emit,
       rootImport,
-      portedImport,
       styleImport,
       expectedBindings,
     }) => {
       const result = emit(portedSchema, defaultOptions);
       expect(result.status).toBe('ok');
       expect(result.code).toContain(rootImport);
-      expect(result.code).toContain(portedImport);
+      expect(result.code).not.toContain('/ported');
+      expect(result.code).not.toContain('/css-ported');
       expect(result.code).toContain(styleImport);
       for (const binding of expectedBindings) expect(result.code, binding).toContain(binding);
       for (const directive of [

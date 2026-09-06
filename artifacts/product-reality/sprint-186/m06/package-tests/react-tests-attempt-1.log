@@ -1,0 +1,164 @@
+
+> @oods/components-react@0.1.0 test /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-react
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-react
+
+ ✓ test/ported-scenarios.spec.tsx (10 tests) 2304ms
+   ✓ @oods/components-react ported scenarios > audit-timeline-transitions renders transition evidence from the shared timeline primitive  558ms
+   ✓ @oods/components-react ported scenarios > pagination-bar-navigation reconciles totals and emits page changes  603ms
+   ✓ @oods/components-react ported scenarios > price-badge-currency formats minor units and preserves the price marker  534ms
+   ✓ @oods/components-react ported scenarios > search-input-clear supports immediate updates, Escape, and clear button  331ms
+ ✓ test/breadth.s185.spec.tsx (35 tests) 2103ms
+   ✓ Sprint 185 React component breadth > uses real default headings and lets as take precedence over level  825ms
+ ✓ test/interactions.spec.tsx (5 tests) 2422ms
+   ✓ @oods/components-react interactions > does not steal existing focus while hydrating Tabs  396ms
+   ✓ @oods/components-react interactions > B-07 moves React Tabs selection and focus with ArrowRight  876ms
+   ✓ @oods/components-react interactions > supports Tabs ArrowLeft, Home, End, pointer activation, and controlled selection  658ms
+   ✓ @oods/components-react interactions > dispatches dismissal, activation, and semantic row activation once  428ms
+ ✓ test/ported-accessibility.spec.tsx (2 tests) 1981ms
+   ✓ @oods/components-react ported accessibility > uses labels, landmarks, logs, time, and current-page semantics  845ms
+   ✓ @oods/components-react ported accessibility > passes automated axe for all eight ported roots  1135ms
+ ✓ test/breadth.s186.spec.tsx (25 tests) 3657ms
+   ✓ Sprint 186 React wave-2 components > ClassificationPanel defaults its heading and keeps the content area empty without summary or children  363ms
+   ✓ Sprint 186 React wave-2 components > FilterPanel announces the active count politely, adds Apply only in batch mode, and keeps both controls unwired  454ms
+   ✓ Sprint 186 React wave-2 components > TagManager mirrors renderTagManager: aliases, tag normalization, the labelled add input, and an unwired submit  339ms
+   ✓ Sprint 186 React wave-2 components > TagInput resolves its legend from title/label/heading/name, lists normalized tags, and forwards typed text  305ms
+   ✓ Sprint 186 React wave-2 components > PreferenceEditor, RoleAssignmentForm and TemplatePicker default their titles and options and let children replace the body  308ms
+ ❯ test/scenarios.spec.tsx (51 tests | 3 failed) 6336ms
+   ✓ @oods/components-react shared scenarios > maps exactly one frozen nondegenerate scenario to every canonical component 3ms
+   ✓ @oods/components-react shared scenarios > address-collection-panel-title-and-summary executes the AddressCollectionPanel contract  839ms
+   ✓ @oods/components-react shared scenarios > address-editor-fields-and-change executes the AddressEditor contract 199ms
+   ✓ @oods/components-react shared scenarios > address-summary-badge-role executes the AddressSummaryBadge contract 19ms
+   ✓ @oods/components-react shared scenarios > address-validation-timeline-events executes the AddressValidationTimeline contract 119ms
+   ✓ @oods/components-react shared scenarios > audit-event-type-and-timestamp executes the AuditEvent contract 91ms
+   × @oods/components-react shared scenarios > audit-timeline-transitions executes the AuditTimeline contract 75ms
+     → expected undefined to be 'Subscription created' // Object.is equality
+   ✓ @oods/components-react shared scenarios > badge-status executes the Badge contract 7ms
+   ✓ @oods/components-react shared scenarios > banner-dismissible executes the Banner contract  352ms
+   ✓ @oods/components-react shared scenarios > button-activate executes the Button contract 213ms
+   ✓ @oods/components-react shared scenarios > cancellation-summary-boolean executes the CancellationSummary contract 11ms
+   ✓ @oods/components-react shared scenarios > card-elevated-content executes the Card contract 2ms
+   ✓ @oods/components-react shared scenarios > card-header-supporting-text executes the CardHeader contract 12ms
+   ✓ @oods/components-react shared scenarios > checkbox-controlled executes the Checkbox contract  448ms
+   ✓ @oods/components-react shared scenarios > classification-panel-title-and-summary executes the ClassificationPanel contract 12ms
+   ✓ @oods/components-react shared scenarios > color-swatch-label-and-chip executes the ColorSwatch contract 65ms
+   ✓ @oods/components-react shared scenarios > colorized-badge-color-marker executes the ColorizedBadge contract 25ms
+   ✓ @oods/components-react shared scenarios > date-picker-bounded executes the DatePicker contract 6ms
+   ✓ @oods/components-react shared scenarios > detail-header-heading-level executes the DetailHeader contract 9ms
+   ✓ @oods/components-react shared scenarios > filter-panel-batch-mode executes the FilterPanel contract 209ms
+   ✓ @oods/components-react shared scenarios > grid-responsive executes the Grid contract 3ms
+   ✓ @oods/components-react shared scenarios > input-invalid executes the Input contract 47ms
+   ✓ @oods/components-react shared scenarios > membership-audit-timeline-empty executes the MembershipAuditTimeline contract 23ms
+   ✓ @oods/components-react shared scenarios > membership-panel-title-and-summary executes the MembershipPanel contract 10ms
+   ✓ @oods/components-react shared scenarios > message-event-timeline-statuses executes the MessageEventTimeline contract 201ms
+   ✓ @oods/components-react shared scenarios > message-status-badge-delivery executes the MessageStatusBadge contract 3ms
+   ✓ @oods/components-react shared scenarios > pagination-bar-navigation executes the PaginationBar contract 39ms
+   ✓ @oods/components-react shared scenarios > preference-editor-namespace-and-document executes the PreferenceEditor contract 21ms
+   ✓ @oods/components-react shared scenarios > preference-panel-title-and-summary executes the PreferencePanel contract 7ms
+   ✓ @oods/components-react shared scenarios > preference-summary-badge-namespace-and-version executes the PreferenceSummaryBadge contract 5ms
+   ✓ @oods/components-react shared scenarios > preference-timeline-changes executes the PreferenceTimeline contract 199ms
+   ✓ @oods/components-react shared scenarios > price-badge-currency executes the PriceBadge contract 253ms
+   ✓ @oods/components-react shared scenarios > price-summary-terms executes the PriceSummary contract 190ms
+   × @oods/components-react shared scenarios > relative-timestamp-fixed executes the RelativeTimestamp contract 52ms
+     → expected '2026-09-05T12:00:00.000Z' to be '2026-09-05T12:00:00Z' // Object.is equality
+   ✓ @oods/components-react shared scenarios > role-assignment-form-roles executes the RoleAssignmentForm contract 22ms
+   ✓ @oods/components-react shared scenarios > role-badge-list-items executes the RoleBadgeList contract 13ms
+   ✓ @oods/components-react shared scenarios > search-input-clear executes the SearchInput contract 254ms
+   ✓ @oods/components-react shared scenarios > select-controlled executes the Select contract 36ms
+   ✓ @oods/components-react shared scenarios > stack-wrapped-row executes the Stack contract 123ms
+   ✓ @oods/components-react shared scenarios > status-badge-mapped executes the StatusBadge contract 105ms
+   ✓ @oods/components-react shared scenarios > status-selector-controlled executes the StatusSelector contract 106ms
+   × @oods/components-react shared scenarios > status-timeline-history executes the StatusTimeline contract 103ms
+     → the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+   ✓ @oods/components-react shared scenarios > table-selectable-row executes the Table contract  466ms
+   ✓ @oods/components-react shared scenarios > tabs-keyboard executes the Tabs contract 117ms
+   ✓ @oods/components-react shared scenarios > tag-input-typed-text executes the TagInput contract 56ms
+   ✓ @oods/components-react shared scenarios > tag-manager-list-and-add-control executes the TagManager contract  510ms
+   ✓ @oods/components-react shared scenarios > tag-pills-overflow-template executes the TagPills contract 4ms
+   ✓ @oods/components-react shared scenarios > template-picker-selects executes the TemplatePicker contract 7ms
+   ✓ @oods/components-react shared scenarios > text-semantic executes the Text contract 5ms
+   ✓ @oods/components-react shared scenarios > textarea-controlled executes the Textarea contract 23ms
+   ✓ @oods/components-react shared scenarios > viz-area-preview-frame-placeholder-and-slot executes the VizAreaPreview contract  595ms
+ ✓ test/accessibility.spec.tsx (32 tests) 9046ms
+   ✓ @oods/components-react accessibility > passes axe for the AddressCollectionPanel shared scenario with visible text semantics  1058ms
+   ✓ @oods/components-react accessibility > passes axe for the AddressEditor shared scenario with visible text semantics  479ms
+   ✓ @oods/components-react accessibility > passes axe for the AuditEvent shared scenario with visible text semantics  603ms
+   ✓ @oods/components-react accessibility > passes axe for the ClassificationPanel shared scenario with visible text semantics  347ms
+   ✓ @oods/components-react accessibility > passes axe for the MembershipAuditTimeline shared scenario with visible text semantics  326ms
+   ✓ @oods/components-react accessibility > passes axe for the MembershipPanel shared scenario with visible text semantics  312ms
+   ✓ @oods/components-react accessibility > passes axe for the MessageEventTimeline shared scenario with visible text semantics  430ms
+   ✓ @oods/components-react accessibility > passes axe for the PreferenceEditor shared scenario with visible text semantics  322ms
+   ✓ @oods/components-react accessibility > passes axe for the PreferenceTimeline shared scenario with visible text semantics  346ms
+   ✓ @oods/components-react accessibility > passes axe for the RoleAssignmentForm shared scenario with visible text semantics  839ms
+   ✓ @oods/components-react accessibility > passes axe for the StatusSelector shared scenario with visible text semantics  490ms
+   ✓ @oods/components-react accessibility > passes automated axe for a mounted nucleus showcase  749ms
+ ✓ test/package-contract.spec.ts (3 tests) 272ms
+ ✓ test/table-empty.s184.spec.tsx (1 test) 274ms
+ ✓ test/contract-amendments.s184.spec.tsx (3 tests) 806ms
+   ✓ Sprint 184 React contract amendments > renders Select.placeholder as the disabled empty-value choice  778ms
+ ✓ test/ported-package-contract.spec.ts (4 tests) 29ms
+ ✓ test/badge-tone.s185.spec.tsx (4 tests) 424ms
+ ✓ test/ssr.spec.tsx (1 test) 648ms
+   ✓ @oods/components-react server rendering > server-renders every shared nucleus scenario without browser globals  636ms
+ ✓ test/ported-ssr.spec.tsx (1 test) 283ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/scenarios.spec.tsx > @oods/components-react shared scenarios > audit-timeline-transitions executes the AuditTimeline contract
+AssertionError: expected undefined to be 'Subscription created' // Object.is equality
+
+- Expected: 
+"Subscription created"
+
++ Received: 
+undefined
+
+ ❯ test/scenarios.spec.tsx:444:82
+    442|           expect(component?.getAttribute('role')).toBe('log');
+    443|           expect(component?.querySelector('time')?.getAttribute('datet…
+    444|           expect(component?.querySelector('[data-timeline-label]')?.te…
+       |                                                                                  ^
+    445|           break;
+    446|         }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  test/scenarios.spec.tsx > @oods/components-react shared scenarios > relative-timestamp-fixed executes the RelativeTimestamp contract
+AssertionError: expected '2026-09-05T12:00:00.000Z' to be '2026-09-05T12:00:00Z' // Object.is equality
+
+Expected: "2026-09-05T12:00:00Z"
+Received: "2026-09-05T12:00:00.000Z"
+
+ ❯ test/scenarios.spec.tsx:470:55
+    468|         case 'relative-timestamp-fixed': {
+    469|           expect(component?.tagName).toBe('TIME');
+    470|           expect(component?.getAttribute('datetime')).toBe('2026-09-05…
+       |                                                       ^
+    471|           expect(component?.textContent).toBe('2 hours ago');
+    472|           break;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/scenarios.spec.tsx > @oods/components-react shared scenarios > status-timeline-history executes the StatusTimeline contract
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ test/scenarios.spec.tsx:488:88
+    486|         case 'status-timeline-history': {
+    487|           expect(component?.querySelector('[data-timeline-current]')?.…
+    488|           expect(component?.querySelector('[data-timeline-transitions]…
+       |                                                                                        ^
+    489|           expect(component?.querySelector('[data-timeline-empty]')?.te…
+    490|           break;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed | 13 passed (14)
+      Tests  3 failed | 174 passed (177)
+   Start at  14:42:28
+   Duration  25.53s (transform 7.62s, setup 0ms, collect 51.21s, tests 30.58s, environment 54.93s, prepare 9.47s)
+
+/Users/systemsystems/.codex/worktrees/s186/OODS-Forge/packages/components-react:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/components-react@0.1.0 test: `vitest run --config vitest.config.ts`
+Exit status 1

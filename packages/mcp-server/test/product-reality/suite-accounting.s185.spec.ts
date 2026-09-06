@@ -283,6 +283,27 @@ describe('Sprint 185 four-suite accounting counts executions and explains popula
       expect(initial).toHaveLength(SUITES.length);
       expect(initial.every((row: { log: { path: string }; rawReport: { path: string } }) => row.log.path.includes('/four-suite-closeout-attempt-1/') && row.rawReport.path.includes('/four-suite-closeout-attempt-1/'))).toBe(true);
       expect(initial.filter((row: { status: string }) => row.status === 'failed')).toHaveLength(1);
+
+      // Reuse the same executed-receipt fixture protocol for the next sprint.
+      // A clean first s186 capture must not borrow or invent s185's failed attempt.
+      const wave2Execution = reviewHead;
+      const wave2Directory = 'artifacts/product-reality/sprint-186/m06/four-suite-closeout';
+      capture(wave2Directory, 's186-final', wave2Execution);
+      const aggregatePath = `${wave2Directory}/four-suite-baseline.json`;
+      const aggregate = JSON.parse(readFileSync(path.join(fixture, aggregatePath), 'utf8'));
+      json(aggregatePath, { ...aggregate, sprintId: 'sprint-186', missionId: 's186-m06' });
+      git('add', '.'); git('commit', '--quiet', '-m', 'Synthetic Sprint 186 final capture evidence');
+      const wave2Review = git('rev-parse', 'HEAD');
+      const wave2 = deriveSuiteAccounting({ root: fixture, executionHead: wave2Execution, reviewHead: wave2Review,
+        sprintId: 'sprint-186', missionId: 's186-m06' });
+      expect(wave2).toMatchObject({ status: 'passed', mission: 's186-m06', closeoutAttempts: [], historicalAttempts: [],
+        validationIssues: [], unattributedDeltas: [] });
+      expect(Object.keys(wave2.baselines)).toEqual(['sprint185Closeout']);
+      expect(wave2.executions).toHaveLength(SUITES.length * 2);
+      expect(wave2.comparisons).toHaveLength(SUITES.length);
+      expect(() => deriveSuiteAccounting({ root: fixture, executionHead: wave2Execution, reviewHead: wave2Review,
+        sprintId: 'sprint-186', missionId: 's186-m06', capturePath: `${evidence}/m05/four-suite-closeout/four-suite-baseline.json` }))
+        .toThrow(/another sprint/);
     } finally {
       rmSync(fixture, { recursive: true, force: true });
     }

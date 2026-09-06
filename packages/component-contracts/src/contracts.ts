@@ -39,6 +39,18 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['One article per event with visible label text', 'A timestamp is a time element with a machine-readable datetime'],
     compatibility: 'Mirrors renderAuditEvent over renderEventArticle with data-event-type=audit: the label reads label/title/event/status/state/reason/text (default Audit Event), the timestamp reads timestamp/datetime/time/at/createdAt/updatedAt, and the detail reads detail/description/reason/message/from/to/code, so a lone reason is both label and detail exactly as the HTML renderer shows it; authored children replace the generated article body. typeField lowers to event and timestampField to timestamp; timezoneParameter is consumed.',
   },
+  AuditTimeline: {
+    id: 'AuditTimeline', version: COMPONENT_CONTRACT_VERSION,
+    props: [
+      'title', 'events', 'history', 'entries', 'auditLog', 'auditLogField',
+      'createdField', 'updatedField', 'eventField', 'eventTimestampField',
+      'eventOptionsParameter', 'maxVisible', 'showFromState', 'showActorId', 'showReason',
+    ],
+    slots: ['default'], events: [], states: ['populated', 'empty'],
+    tokenRoles: ['timeline.background', 'timeline.border', 'timeline.text', 'timeline.marker'],
+    accessibility: ['Ordered audit events retain chronological semantics', 'Empty history is named'],
+    compatibility: 'Configures the shared timeline primitive with audit semantics.',
+  },
   Badge: {
     id: 'Badge', version: COMPONENT_CONTRACT_VERSION,
     props: ['content', 'status', 'domain', 'tone', 'emphasis', 'icon'], slots: ['default'], events: [],
@@ -59,6 +71,17 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['default', 'hover', 'focus', 'pressed', 'disabled'], tokenRoles: ['button.background', 'button.border', 'button.text', 'button.focus'],
     accessibility: ['Native button semantics', 'Defaults to type=button'],
     compatibility: 'React asChild remains an extension and is not a Vue parity requirement.',
+  },
+  CancellationSummary: {
+    id: 'CancellationSummary', version: COMPONENT_CONTRACT_VERSION,
+    props: [
+      'title', 'label', 'cancelAtPeriodEnd', 'requestedAt', 'reason', 'code',
+      'cancelAtPeriodEndField', 'requestedAtField', 'reasonField', 'codeField',
+    ],
+    slots: ['default'], events: [], states: ['scheduled', 'not-scheduled'],
+    tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
+    accessibility: ['Summary terms and values preserve description-list relationships'],
+    compatibility: 'Boolean cancellation state renders a declared label, never a raw boolean literal.',
   },
   Card: {
     id: 'Card', version: COMPONENT_CONTRACT_VERSION,
@@ -163,6 +186,21 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Inherits Badge inline noninteractive status label semantics', 'The resolved label is always visible text'],
     compatibility: 'Mirrors renderMessageStatusBadge over renderBadgePrimitive with default variant message and default label Message: the label reads label/text/status/delivery/value in that order, the status reads status/state/delivery/value, and both are exposed as data-badge-status and data-badge-variant on the governed Badge substrate; tone and emphasis retain their shared Badge behaviour. The saved-schema directive statusesField is consumed and left unbound: the HTML renderer reads no statuses collection.',
   },
+  PaginationBar: {
+    id: 'PaginationBar', version: COMPONENT_CONTRACT_VERSION,
+    props: [
+      'page', 'pageSize', 'totalItems', 'totalPages', 'pageSizeOptions',
+      'showPageSizeSelector', 'showGotoPage', 'showItemRange',
+      'pageField', 'pageSizeField', 'totalItemsField', 'totalPagesField',
+      'pageSizeOptionsParameter', 'showPageSizeSelectorParameter',
+      'showGotoPageParameter', 'showItemRangeParameter',
+    ],
+    slots: [], events: ['pageChange', 'pageSizeChange', 'change', 'update'],
+    states: ['first-page', 'middle-page', 'last-page', 'empty'],
+    tokenRoles: ['pagination.background', 'pagination.border', 'pagination.text', 'pagination.focus'],
+    accessibility: ['Navigation is named', 'Current page is exposed with aria-current'],
+    compatibility: 'Uses page/pageSize/totalItems while preserving the legacy page/count headless behavior.',
+  },
   PreferenceEditor: {
     id: 'PreferenceEditor', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'namespaces', 'namespace', 'document', 'json', 'value'], slots: ['default'], events: [],
@@ -191,12 +229,35 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['A log region named by its title, which is also a real h3 heading', 'Events are an ordered list with machine-readable timestamps', 'An empty timeline is named No events'],
     compatibility: 'Mirrors renderPreferenceTimeline over renderTimelineContainer with data-timeline-type=preference and role=log: title aliases title/label/heading/name (default Preference Timeline); the first array among events/changes/history supplies the events, each rendered as label, time and detail exactly as normalizeTimelineItems reads them (records use label/title/event/status/state/text/name, timestamp/datetime/time/at/createdAt/updatedAt and detail/description/reason/message/from/to; scalars render as text); no events renders the named empty item; authored children replace the list. metadataField is consumed and left unbound because the renderer reads no metadata.',
   },
+  PriceBadge: {
+    id: 'PriceBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: [
+      'amountCents', 'unitAmountCents', 'amount', 'unitAmount', 'currency', 'currencyCode',
+      'label', 'value', 'emphasis', 'amountField', 'currencyField', 'intervalField',
+      'minorUnitsParameter',
+    ],
+    slots: ['default'], events: [], states: ['priced', 'missing-price'],
+    tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['Formatted amount and currency remain visible text'],
+    compatibility: 'Currency is formatted content; the emitted badge variant remains price.',
+  },
   PriceSummary: {
     id: 'PriceSummary', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'amount', 'amountCents', 'unitAmountCents', 'currency', 'currencyCode', 'model', 'pricingModel', 'interval', 'billingInterval', 'summary', 'text', 'description'], slots: ['default'], events: [],
     states: ['priced', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
     accessibility: ['A real h3 heading names the summary section', 'Summary terms and values preserve description-list relationships', 'Amounts are visible text without currency formatting, exactly as the HTML renderer emits them'],
     compatibility: 'Mirrors renderPriceSummary over renderSummarySection with data-summary-type=price: title aliases title/label/heading/name (default Price Summary); Amount reads amount/amountCents/unitAmountCents, Currency currency/currencyCode, Model model/pricingModel, Interval interval/billingInterval; summary/text/description is the fallback paragraph when no term resolves. amountField, currencyField, modelField and intervalField lower to amount, currency, model and interval; taxBehaviorField is consumed and left unbound because the HTML renderer emits no tax-behavior term.',
+  },
+  RelativeTimestamp: {
+    id: 'RelativeTimestamp', version: COMPONENT_CONTRACT_VERSION,
+    props: [
+      'datetime', 'timestamp', 'value', 'updatedAt', 'createdAt', 'relative', 'label', 'text',
+      'timezone', 'now', 'fallbackField', 'timezoneParameter',
+    ],
+    slots: ['default'], events: [], states: ['relative', 'absolute', 'empty'],
+    tokenRoles: ['text.body', 'text.muted'],
+    accessibility: ['Machine-readable datetime accompanies visible relative text'],
+    compatibility: 'Falls back from the primary timestamp field without changing document order.',
   },
   RoleAssignmentForm: {
     id: 'RoleAssignmentForm', version: COMPONENT_CONTRACT_VERSION,
@@ -212,6 +273,19 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Each role is visible text inside one inline noninteractive group', 'An empty list falls back to a visible label'],
     compatibility: 'Mirrors renderRoleBadgeList: roles, then badges, roleLabels or value (records read label/name/role/value/id, scalars render as text) render one data-role-badge item each inside a span carrying data-badge-variant from variant, then tone, then roles; with no items the label, then text, then Roles is the visible fallback; authored children replace the list. rolesField lowers to roles and fallbackRoleParameter is consumed.',
   },
+  SearchInput: {
+    id: 'SearchInput', version: COMPONENT_CONTRACT_VERSION,
+    props: [
+      'id', 'label', 'value', 'defaultValue', 'placeholder', 'clearable', 'debounceMs',
+      'debounce', 'minQueryLength', 'disabled', 'placeholderParameter', 'debounceParameter',
+      'minQueryLengthParameter', 'clearableParameter',
+    ],
+    slots: [], events: ['valueChange', 'update', 'search', 'clear'],
+    states: ['empty', 'valued', 'disabled'],
+    tokenRoles: ['input.background', 'input.border', 'input.text', 'input.placeholder', 'input.focus'],
+    accessibility: ['Native search input semantics', 'Clear control has an accessible label'],
+    compatibility: 'Debounce and minimum-query settings preserve value updates across both targets.',
+  },
   Select: {
     id: 'Select', version: COMPONENT_CONTRACT_VERSION_1_1,
     props: ['id', 'label', 'value', 'defaultValue', 'placeholder', 'required', 'disabled', 'options', 'help', 'validation'], slots: ['label', 'option', 'help', 'validation'], events: ['change', 'update'],
@@ -225,12 +299,34 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['row', 'column', 'wrapped'], tokenRoles: ['layout.gap'], accessibility: ['Does not alter child semantics'],
     compatibility: 'Maps saved-schema stack and inline modes to one flex primitive; patternComponent and fields are executed composition directives. Trait recipe directives authored on pattern-group Stacks are consumed by codegen: channelsField, templatesField, policiesField, conversationsField, labelField and showActor are left unbound (a layout container reads no data and the lowered StatusTimeline never governed them), while historyField and showReason travel with the lowering to the StatusTimeline whose contract governs them. Two more authoring leftovers are consumed unbound: the form composer leaves as on a Stack when it expands a heading title slot into several components, and a pattern-group Stack restates its first fields entry as a generic field; a layout container renders neither.',
   },
+  StatusBadge: {
+    id: 'StatusBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: [
+      'status', 'value', 'label', 'content', 'domain', 'tone', 'emphasis', 'showIcon', 'variant',
+      'statusField', 'domainField', 'readOnly', 'compact',
+    ],
+    slots: ['default'], events: [], states: ['subtle', 'solid'],
+    tokenRoles: ['badge.background', 'badge.border', 'badge.text', 'badge.icon'],
+    accessibility: ['Status label is visible', 'Color is not the sole status signal'],
+    compatibility: 'Both targets share the lifecycle status-to-tone table.',
+  },
   StatusSelector: {
     id: 'StatusSelector', version: COMPONENT_CONTRACT_VERSION,
     props: ['label', 'title', 'options', 'states', 'value', 'status'], slots: ['default'], events: ['change', 'update'],
     states: ['selected', 'unselected'], tokenRoles: ['input.background', 'input.border', 'input.text', 'input.focus'],
     accessibility: ['Native select semantics inside a wrapper carrying data-summary-type=status-selector', 'The label targets the select'],
     compatibility: 'Mirrors renderStatusSelector: a labelled select named status whose label reads label/title (default Status), whose options read options, then states (default draft/active/inactive; records read value/id/label, scalars render as text) and whose selection reads value, then status; authored children replace the control. The generic field lowers to value; a saved onChange binding owns a local string state in the React and Vue targets, so the select is controlled. optionsParameter, initialParameter and requireReasonParameter are consumed; allowedTransitionsField is consumed unbound because the renderer reads no transitions.',
+  },
+  StatusTimeline: {
+    id: 'StatusTimeline', version: COMPONENT_CONTRACT_VERSION,
+    props: [
+      'title', 'events', 'history', 'entries', 'stateHistory', 'status', 'allowedTransitions',
+      'historyField', 'statesParameter', 'showActorId', 'showReason', 'maxVisible',
+    ],
+    slots: ['default'], events: [], states: ['populated', 'empty'],
+    tokenRoles: ['timeline.background', 'timeline.border', 'timeline.text', 'timeline.marker'],
+    accessibility: ['Ordered status events retain chronological semantics', 'Current state is named'],
+    compatibility: 'Configures the shared timeline primitive with status-transition semantics.',
   },
   Table: {
     id: 'Table', version: COMPONENT_CONTRACT_VERSION,

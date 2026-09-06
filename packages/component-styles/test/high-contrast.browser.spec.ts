@@ -10,7 +10,8 @@ const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const repoRoot = path.resolve(packageRoot, '../..');
 const componentCss = fs
   .readFileSync(path.join(packageRoot, 'src/components.css'), 'utf8')
-  .replace(/^@import[^\n]+\n/u, '');
+  .replace(/^@import[^\n]+\n/gmu, '');
+const statusableCss = fs.readFileSync(path.join(repoRoot, 'src/styles/statusables.css'), 'utf8');
 const tokenCss = fs.readFileSync(path.join(repoRoot, 'packages/tokens/dist/css/tokens.css'), 'utf8');
 
 let browser: Browser;
@@ -30,7 +31,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
         const page = await browser.newPage({ forcedColors, viewport: { width: 640, height: 480 } });
         await page.setContent(`<!doctype html>
           <html data-brand="${cell.brand}" data-theme="${cell.theme}">
-            <head><style>${tokenCss}\n${componentCss}</style></head>
+            <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
             <body style="background:var(--sys-surface-canvas);color:var(--sys-text-primary)">
               <span id="system-pair" style="color:CanvasText;background:Canvas">System pair</span>
               <span data-oods-component="ColorSwatch" style="--oods-swatch-color:red">
@@ -97,7 +98,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
     });
     await page.setContent(`<!doctype html>
       <html data-brand="B" data-theme="light">
-        <head><style>${tokenCss}\n${componentCss}</style></head>
+        <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
         <body>
           <button class="oods-button" data-oods-component="Button" data-intent="primary" type="button"
             style="--cmp-button-background:var(--sys-surface-interactive-primary-default);--cmp-button-text:var(--sys-text-on-interactive)">Update card</button>
@@ -162,7 +163,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
     await page.setContent(`<!doctype html>
       <html data-brand="A" data-theme="light">
         <head>
-          <style>${tokenCss}\n${componentCss}</style>
+          <style>${tokenCss}\n${statusableCss}\n${componentCss}</style>
           <style>button, input, select, textarea { font: inherit; }</style>
         </head>
         <body>
@@ -300,7 +301,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
     });
     await page.setContent(`<!doctype html>
       <html data-brand="A" data-theme="light">
-        <head><style>${tokenCss}\n${componentCss}</style></head>
+        <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
         <body>
           <div id="vue-input-wrapper" class="oods-field" data-oods-component="Input">
             <label for="vue-input">Email</label>
@@ -389,7 +390,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
         });
         await page.setContent(`<!doctype html>
           <html data-brand="${brand}" data-theme="${theme}">
-            <head><style>${tokenCss}\n${componentCss}</style></head>
+            <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
             <body><button class="oods-button" data-oods-component="Button" type="button" disabled>Unavailable</button></body>
           </html>`);
         const proof = await page.locator('.oods-button').evaluate((element) => {
@@ -415,7 +416,7 @@ describe('Sprint 182 shared component-style browser corrections', () => {
         });
         await page.setContent(`<!doctype html>
           <html data-brand="${brand}" data-theme="hc">
-            <head><style>${tokenCss}\n${componentCss}</style></head>
+            <head><style>${tokenCss}\n${statusableCss}\n${componentCss}</style></head>
             <body>
               <span class="oods-badge" data-oods-component="Badge" data-tone="critical" data-emphasis="solid"
                 style="--cmp-badge-background:var(--sys-status-critical-surface);--cmp-badge-border:var(--sys-status-critical-border);--cmp-badge-text:var(--sys-status-critical-text)">Past due</span>

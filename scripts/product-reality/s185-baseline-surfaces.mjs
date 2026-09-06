@@ -20,7 +20,7 @@ const SPRINT_BASE = '1118f436345e160437abfedbe73a19f190a92562';
  * rewritten per mission; the frozen Sprint 185 record stays where it was.
  */
 const RECORD_ROOT = 'artifacts/product-reality/sprint-186/baseline-fold';
-const FOLD_MISSION = 's186-m05';
+const FOLD_MISSION = 's186-m06';
 const FOUNDATION_PATH = 'packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json';
 const FOUNDATION_SHA256 = '7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71';
 const TARGETS = ['react', 'vue'];
@@ -117,16 +117,17 @@ export function deriveBaselineSurfaceFold(root = DEFAULT_ROOT) {
   const oldNucleus = historicalJson(root, SPRINT_BASE, READINESS.nucleus.react).rows.map(row => row.componentId);
   const currentIds = target => documents.nucleus[target].rows.map(row => row.componentId);
   assert.deepEqual(currentIds('react'), currentIds('vue'), 'Nucleus readiness target membership differs.');
-  // Every component added to the nucleus since the Sprint 185 base; waves append, never a literal count.
-  const newIds = currentIds('react').filter(id => !oldNucleus.includes(id));
-  assert(newIds.length > 0, 'The fold has no new nucleus components.');
   assert(oldNucleus.every(id => currentIds('react').includes(id)), 'Existing nucleus membership was removed.');
   const portedIds = documents.ported.react.rows.map(row => row.componentId);
   assert.deepEqual(portedIds, documents.ported.vue.rows.map(row => row.componentId));
   assert.deepEqual(portedIds, originalOverlay.rows.map(row => row.id), 'Ported membership differs from the historical overlay.');
   assert.equal(portedIds.length, 8);
+  // These are evidence cohorts, not separate governance unions. The historical
+  // eight now belong to the nucleus but keep their original consumer receipts.
+  const newIds = currentIds('react').filter(id => !oldNucleus.includes(id) && !portedIds.includes(id));
+  assert(newIds.length > 0, 'The fold has no new nucleus components.');
   const componentIds = [...newIds, ...portedIds].sort();
-  assert.equal(new Set(componentIds).size, componentIds.length, 'The two component unions overlap.');
+  assert.equal(new Set(componentIds).size, componentIds.length, 'The evidence cohorts overlap.');
   const baseline = structuredClone(before);
   const changes = [];
   const references = new Set([BASELINE_PATH, FOUNDATION_PATH, 'packages/component-contracts/registry/component-reconciliation.proposed.v1.json']);
@@ -155,8 +156,9 @@ export function deriveBaselineSurfaceFold(root = DEFAULT_ROOT) {
     assert(row, `Existing baseline row is missing: ${componentId}`);
     const cohort = newIds.includes(componentId) ? 'nucleus' : 'ported';
     for (const target of TARGETS) {
-      const documentPath = READINESS[cohort][target];
-      const readiness = documents[cohort][target].rows.find(candidate => candidate.componentId === componentId);
+      const currentRow = documents.nucleus[target].rows.find(candidate => candidate.componentId === componentId);
+      const documentPath = READINESS[currentRow ? 'nucleus' : cohort][target];
+      const readiness = currentRow ?? documents[cohort][target].rows.find(candidate => candidate.componentId === componentId);
       assert(readiness, `Readiness row missing: ${componentId}/${target}`);
       row.surfaces[target] = deriveReadinessSurface(readiness, documentPath, root);
       references.add(documentPath);

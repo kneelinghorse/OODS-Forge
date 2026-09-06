@@ -53,7 +53,10 @@ describe('Sprint 185 baseline surface evidence preserves the identity denominato
     // Six evidence classes per target, two targets: twelve reference occurrences per folded component.
     expect(derived.record.readinessReferences).toHaveLength(changedIds.length * 12);
     expect(derived.record.readinessReferences.every(row => row.resolved)).toBe(true);
-    expect(derived.record.retainedBuildOutputs).toHaveLength(4);
+    const declarationPaths = [...new Set(derived.record.readinessReferences
+      .map(({ ref }) => ref.split('#')[0])
+      .filter(file => file.includes('/dist/')))].sort();
+    expect(derived.record.retainedBuildOutputs.map(({ originalSourcePath }) => originalSourcePath)).toEqual(declarationPaths);
     for (const output of derived.record.retainedBuildOutputs) {
       expect(readFileSync(path.join(root, output.retainedPath))).toEqual(readFileSync(path.join(root, output.originalSourcePath)));
       expect(derived.record.sourceHashes.some(row => row.path === output.originalSourcePath)).toBe(false);
@@ -63,11 +66,11 @@ describe('Sprint 185 baseline surface evidence preserves the identity denominato
   });
 
   it('cannot advertise evidence-complete merely because a readiness flag is true', () => {
-    const file = 'packages/components-react/evidence/react-ported-readiness.v1.json';
-    const row = structuredClone(readJson(file).rows[0]);
-    row.evidence.publicDeclaration.refs = ['packages/components-react/dist/ported.d.ts#InventedComponent'];
+    const file = 'packages/components-react/evidence/react-readiness.v1.json';
+    const row = structuredClone(readJson(file).rows.find(row => row.componentId === 'AuditTimeline'));
+    row.evidence.publicDeclaration.refs = ['packages/components-react/dist/index.d.ts#InventedComponent'];
     expect(() => deriveReadinessSurface(row, file, root)).toThrow(/references do not resolve/);
-    const incomplete = structuredClone(readJson(file).rows[0]);
+    const incomplete = structuredClone(readJson(file).rows.find(row => row.componentId === 'AuditTimeline'));
     incomplete.evidence.frameworkScenario.status = 'missing';
     expect(() => deriveReadinessSurface(incomplete, file, root)).toThrow(/evidence is incomplete/);
   });
@@ -107,13 +110,14 @@ describe('Sprint 185 baseline surface evidence preserves the identity denominato
     }
   });
 
-  it('removes the temporary overlay file and package subpath while preserving both component unions', () => {
+  it('removes the temporary overlay file and package subpath while preserving the historical cohort inside the nucleus', () => {
     expect(existsSync(path.join(root, OVERLAY_PATH))).toBe(false);
     const require = createRequire(path.join(root, 'packages/component-contracts/package.json'));
     expect(() => require.resolve('@oods/component-contracts/registry/capabilities/ported')).toThrow(/not defined by "exports"/);
     expect(derived.record.portedComponents).toEqual(PORTED_COMPONENT_IDS);
     expect(derived.record.newNucleusComponents.every(id => NUCLEUS_COMPONENT_IDS.includes(id))).toBe(true);
-    expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(NUCLEUS_COMPONENT_IDS.length + PORTED_COMPONENT_IDS.length);
+    expect(PORTED_COMPONENT_IDS.every(id => NUCLEUS_COMPONENT_IDS.includes(id))).toBe(true);
+    expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(NUCLEUS_COMPONENT_IDS.length);
     expect(() => verifyBaselineSurfaceFold(root)).not.toThrow();
   });
 });

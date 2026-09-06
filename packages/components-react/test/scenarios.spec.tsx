@@ -438,6 +438,57 @@ describe('@oods/components-react shared scenarios', () => {
           expect(onEvent).toHaveBeenCalledWith(nextValue);
           break;
         }
+        case 'audit-timeline-transitions': {
+          expect(component?.getAttribute('role')).toBe('log');
+          expect(component?.querySelector('time')?.getAttribute('datetime')).toBe('2026-09-05T12:00:00Z');
+          expect(component?.querySelector('.oods-timeline__label')?.textContent).toBe('Subscription created');
+          break;
+        }
+        case 'cancellation-summary-boolean': {
+          expect(component?.querySelector('dt')?.textContent).toBe('Cancel at period end');
+          expect(component?.querySelector('dd')?.textContent).toBe('Yes');
+          expect(component?.textContent).not.toContain('true');
+          break;
+        }
+        case 'pagination-bar-navigation': {
+          expect(component?.getAttribute('aria-label')).toBe('Pagination');
+          expect(component?.querySelector('[aria-current="page"]')?.textContent).toBe('2');
+          expect(component?.querySelector('[data-pagination-range]')?.textContent).toBe('Showing 26–50 of 80');
+          await user.click(screen.getByRole('button', { name: 'Next page' }));
+          expect(onEvent).toHaveBeenCalledExactlyOnceWith(3);
+          break;
+        }
+        case 'price-badge-currency': {
+          expect(component?.getAttribute('data-price')).toBe('true');
+          expect(component?.getAttribute('data-badge-variant')).toBe('price');
+          expect(component?.getAttribute('data-currency')).toBe('USD');
+          expect(component?.textContent).toMatch(/\$25\.00|US\$25\.00/);
+          break;
+        }
+        case 'relative-timestamp-fixed': {
+          expect(component?.tagName).toBe('TIME');
+          expect(component?.getAttribute('datetime')).toBe('2026-09-05T12:00:00.000Z');
+          expect(component?.textContent).toBe('2 hours ago');
+          break;
+        }
+        case 'search-input-clear': {
+          expect((screen.getByRole('searchbox') as HTMLInputElement).value).toBe('past due');
+          await user.click(screen.getByRole('button', { name: 'Clear search' }));
+          expect(onEvent).toHaveBeenCalledExactlyOnceWith('');
+          break;
+        }
+        case 'status-badge-mapped': {
+          expect(component?.textContent).toContain('Past Due');
+          expect(component?.getAttribute('data-tone')).toBe('critical');
+          expect(component?.getAttribute('title')).toContain('Renewal payment failed');
+          break;
+        }
+        case 'status-timeline-history': {
+          expect(component?.querySelector('[data-timeline-current]')?.textContent).toContain('Current status: Active');
+          expect(component?.querySelector('[data-timeline-current]')?.textContent).toContain('2 transitions available.');
+          expect(component?.querySelector('[data-timeline-empty]')?.textContent).toBe('No events');
+          break;
+        }
         default:
           throw new Error(`Missing executable React assertion for ${scenario.id}`);
       }

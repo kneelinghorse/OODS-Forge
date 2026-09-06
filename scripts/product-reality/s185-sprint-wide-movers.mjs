@@ -65,7 +65,22 @@ export function replayTableOmission(root = ROOT) {
     limitation: 'The legacy canonical schema/tool scope excludes Table. The explicit public runtime supplement is necessary; changing the sprint range alone cannot repair an incomplete scope.' };
 }
 
-export function deriveMovers(head, declaration, root = ROOT) {
+export function deriveMovers(head, declaration, root = ROOT, options = {}) {
+  if (options.sprintId === 'sprint-186') {
+    assert(options.missionId === 's186-m06' && options.base, 'Sprint 186 requires its mission and explicit build base.');
+    const s186 = deriveRange(options.base, head, root);
+    assert(s186.base === resolveCommit('5aa53b3a', root), 'Sprint 186 mover base differs from the locked build base.');
+    const comparison = { s186: {} };
+    for (const surface of ['canonicalPaths', 'publicPaths']) {
+      assert(Array.isArray(declaration?.s186?.[surface]), `Missing s186/${surface} declaration.`);
+      const result = compareDeclaredPaths(s186[surface], declaration.s186[surface]);
+      assert(result.missingFromDeclaration.length === 0 && result.extraInDeclaration.length === 0,
+        `s186/${surface}: declared mover union differs: ${canonical(result)}`);
+      comparison.s186[surface] = result;
+    }
+    return { missionId: options.missionId, sprintId: options.sprintId, status: 'passed',
+      canonicalScope: CANONICAL_ADVERTISED_SCOPE, publicScope: PUBLIC_RUNTIME_SCOPE, s186, comparison };
+  }
   const s184 = deriveRange(S184_BASE, S185_BASE, root);
   const s185 = deriveRange(S185_BASE, head, root);
   const comparison = {};
@@ -84,21 +99,27 @@ export function deriveMovers(head, declaration, root = ROOT) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const argument = name => { const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1]; };
+  const options = { sprintId: argument('--sprint') ?? 'sprint-185', missionId: argument('--mission') ?? 's185-m05', base: argument('--base') };
+  assert(['sprint-185', 'sprint-186'].includes(options.sprintId), 'Unsupported sprint.');
   const headIndex = process.argv.indexOf('--head');
   const head = resolveCommit(headIndex >= 0 ? process.argv[headIndex + 1] : 'HEAD', ROOT);
-  const directory = path.join(ROOT, OUTPUT); fs.mkdirSync(directory, { recursive: true });
+  const directory = path.resolve(ROOT, argument('--output') ?? (options.sprintId === 'sprint-186' ? 'artifacts/product-reality/sprint-186/m06/movers' : OUTPUT)); fs.mkdirSync(directory, { recursive: true });
   const declarationPath = path.join(directory, 'declared-movers.json');
   if (process.argv.includes('--declare')) {
     assert(!fs.existsSync(declarationPath), 'Refusing to replace an existing mover declaration. Review differences explicitly.');
-    const declaration = { missionId: 's185-m05', declarationHead: head,
+    const declaration = { missionId: options.missionId, declarationHead: head,
       method: 'One reviewed declaration per sprint range; later checks independently re-run both Git diffs and reject additions or omissions.',
-      s184: deriveRange(S184_BASE, S185_BASE), s185: deriveRange(S185_BASE, head) };
+      ...(options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head) }
+        : { s184: deriveRange(S184_BASE, S185_BASE), s185: deriveRange(S185_BASE, head) }) };
     fs.writeFileSync(declarationPath, canonical(declaration));
   }
-  const report = deriveMovers(head, JSON.parse(fs.readFileSync(declarationPath, 'utf8')));
+  const report = deriveMovers(head, JSON.parse(fs.readFileSync(declarationPath, 'utf8')), ROOT, options);
   const outputPath = path.join(directory, 'sprint-wide-movers.json');
   if (process.argv.includes('--check')) assert(fs.readFileSync(outputPath, 'utf8') === canonical(report), 'Mover report is stale.');
   else fs.writeFileSync(outputPath, canonical(report));
-  process.stdout.write(canonical({ head, s184: { canonical: report.s184.canonicalPaths.length, public: report.s184.publicPaths.length },
+  process.stdout.write(canonical(options.sprintId === 'sprint-186' ? { head,
+    s186: { canonical: report.s186.canonicalPaths.length, public: report.s186.publicPaths.length } }
+    : { head, s184: { canonical: report.s184.canonicalPaths.length, public: report.s184.publicPaths.length },
     s185: { canonical: report.s185.canonicalPaths.length, public: report.s185.publicPaths.length }, tableControl: report.tableControl.status }));
 }

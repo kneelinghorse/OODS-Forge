@@ -220,13 +220,15 @@ describe('Sprint 184 m04 ported Subscription workflow', () => {
         const source = generated.get(`${schemaName}/${framework}`)!.code;
         const packageImports = namedImports(source).filter(({ specifier }) => specifier.startsWith('@oods/'));
         for (const { specifier, names } of packageImports) {
+          expect(specifier).toBe(`@oods/components-${framework}`);
           const exports = rootRequire(specifier) as Record<string, unknown>;
           expect(rootRequire.resolve(specifier), specifier).toContain('/dist/');
           for (const name of names) expect(exports[name], `${specifier}#${name}`).toBeDefined();
         }
-        const stylesSpecifier = '@oods/component-styles/css-ported';
+        const stylesSpecifier = '@oods/component-styles/css';
         expect(source).toContain(`import '${stylesSpecifier}';`);
-        expect(rootRequire.resolve(stylesSpecifier)).toMatch(/\/dist\/components-ported\.css$/);
+        expect(rootRequire.resolve(stylesSpecifier)).toMatch(/\/dist\/components\.css$/);
+        expect(rootRequire.resolve('@oods/component-styles/css-ported')).toBe(rootRequire.resolve(stylesSpecifier));
       }
     }
   });

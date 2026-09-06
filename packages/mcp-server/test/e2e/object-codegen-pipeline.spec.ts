@@ -13,6 +13,7 @@ import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
 import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
 import { validateGeneratedArtifact } from '../../src/codegen/artifact-envelope.js';
+import { preflightTargetCapabilities } from '../../src/codegen/target-readiness.js';
 
 type Framework = 'react' | 'vue';
 type AffectedNode = readonly [nodeId: string, component: string];
@@ -21,7 +22,7 @@ const SUBSCRIPTION_DETAIL_UNREADY: readonly AffectedNode[] = [
   ['ve-header-26', 'ArchiveSummary'],
 ];
 
-const USER_DETAIL_UNREADY: readonly AffectedNode[] = [
+const USER_DETAIL_NEWLY_READY: readonly AffectedNode[] = [
   ['ve-header-29', 'TagManager'],
   ['slot-tab-1-6', 'MembershipPanel'],
   ['slot-tab-2-8', 'AddressCollectionPanel'],
@@ -122,12 +123,14 @@ async function expectTargetGenerated(
   });
   expect(result.errors).toBeUndefined();
   expect(result.code.length).toBeGreaterThan(0);
-  expect(result.code).toContain(`from '@oods/components-${framework}/ported'`);
-  expect(result.code).toContain("import '@oods/component-styles/css-ported';");
+  expect(result.code).toContain(`from '@oods/components-${framework}'`);
+  expect(result.code).toContain("import '@oods/component-styles/css';");
   expect(result.imports).toEqual(expect.arrayContaining([
-    `@oods/components-${framework}/ported`,
-    '@oods/component-styles/css-ported',
+    `@oods/components-${framework}`,
+    '@oods/component-styles/css',
   ]));
+  expect(result.imports).not.toContain(`@oods/components-${framework}/ported`);
+  expect(result.imports).not.toContain('@oods/component-styles/css-ported');
   expect(result.artifact?.files).toHaveLength(1);
   expect(result.artifact?.files[0]?.contents.length).toBeGreaterThan(0);
   expect(result.validationReceipt.checks).toEqual(expect.arrayContaining([
@@ -187,8 +190,38 @@ describe('E2E object codegen target readiness', () => {
     await composeAndCheck('Subscription', 'list');
   });
 
-  it('keeps User detail composition/rendering and returns exact target unavailability', async () => {
-    await composeAndCheck('User', 'detail', USER_DETAIL_UNREADY);
+  it('keeps User detail composition/rendering, resolves its former readiness gaps, and reports the remaining composer contract defect', async () => {
+    const compose = await composeHandle({ object: 'User', context: 'detail' });
+    expect(compose.status).toBe('ok');
+    expect(compose.schemaRef).toBeTruthy();
+    expect(compose.objectUsed?.name).toBe('User');
+    expect(compose.schema.objectSchema).toBeDefined();
+    expect(compose.schema.screens[0].bindings).toMatchObject({ onEdit: 'handleEdit', onDelete: 'handleDelete' });
+    const schemaRef = compose.schemaRef!;
+    expect((await validateHandle({ mode: 'full', schemaRef })).status).toBe('ok');
+    const render = await renderHandle({ mode: 'full', schemaRef, apply: true });
+    expect(render.status).toBe('ok');
+    expect(render.html).toContain('<!DOCTYPE html>');
+    for (const [nodeId, component] of USER_DETAIL_NEWLY_READY) {
+      expect(render.html).toContain(`id="${nodeId}"`);
+      expect(render.html).toContain(`data-oods-component="${component}"`);
+    }
+
+    for (const framework of ['react', 'vue'] as const) {
+      expect(preflightTargetCapabilities(compose.schema.screens, framework)).toEqual([]);
+      const result = await codegenHandle({ schemaRef, framework, options: { typescript: true, styling: 'tokens' } });
+      expect(result).toMatchObject({
+        status: 'error', framework, code: '', imports: [], warnings: [],
+        meta: { nodeCount: countNodes(compose.schema), componentCount: countComponents(compose.schema) },
+      });
+      expect(result.artifact).toBeUndefined();
+      expect(result.errors).toEqual([{
+        code: 'OODS-V007', component: 'StatusTimeline', nodeId: 've-header-28',
+        message: 'Prop "label" is not in the canonical StatusTimeline contract.',
+      }]);
+      expect(result.validationReceipt.checks).toEqual(expect.arrayContaining(['target-readiness', 'props-contract', 'slots-contract', 'events-contract']));
+      expect(result.validationReceipt.notChecked).toContain('dependency-closure');
+    }
   });
 
   it('keeps objectSchema field metadata even when framework emission is blocked', async () => {

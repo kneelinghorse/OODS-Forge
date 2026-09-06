@@ -72,6 +72,7 @@ try {
       ...tarballs,
       'react@19.2.0',
       'react-dom@19.2.0',
+      'typescript@5.9.3', '@types/react@19.2.2', '@types/react-dom@19.2.1',
     ],
     tempRoot,
     { ...process.env, npm_config_cache: resolve(tempRoot, 'npm-cache') }
@@ -86,6 +87,7 @@ import { renderToString } from 'react-dom/server';
 import { NUCLEUS_COMPONENT_IDS } from '@oods/component-contracts';
 import { sharedScenarios } from '@oods/component-contracts';
 import * as components from '@oods/components-react';
+import * as compatibility from '@oods/components-react/ported';
 import { getStatusPresentation } from '@oods/components-react/status';
 import * as tableFamily from '@oods/components-react/table';
 
@@ -95,7 +97,7 @@ const repositoryRoot = ${JSON.stringify(repositoryRoot)};
 const contractsPath = fileURLToPath(import.meta.resolve('@oods/component-contracts'));
 if (!contractsPath.startsWith(process.cwd())) throw new Error('Contracts resolved outside the isolated consumer: ' + contractsPath);
 if (contractsPath.startsWith(repositoryRoot + '/')) throw new Error('Contracts resolved to repository source: ' + contractsPath);
-const resolvedSpecifiers = Object.fromEntries(['@oods/component-contracts', '@oods/components-react', '@oods/components-react/status', '@oods/components-react/table', '@oods/component-styles/css', '@oods/tokens/css', 'react', 'react-dom/server'].map((specifier) => {
+const resolvedSpecifiers = Object.fromEntries(['@oods/component-contracts', '@oods/components-react', '@oods/components-react/ported', '@oods/components-react/readiness-ported', '@oods/component-styles/css-ported', '@oods/components-react/status', '@oods/components-react/table', '@oods/component-styles/css', '@oods/tokens/css', 'react', 'react-dom/server'].map((specifier) => {
   const resolved = fileURLToPath(import.meta.resolve(specifier));
   if (!resolved.startsWith(process.cwd() + '/') || resolved.startsWith(repositoryRoot + '/')) throw new Error('Specifier escaped isolated consumer: ' + specifier);
   return [specifier, resolved];
@@ -120,7 +122,7 @@ for (const id of breadthIds) {
   if (id === 'ColorSwatch' && (!markup.includes('data-oods-swatch-chip') || !markup.includes(scenario.props.label) || !markup.includes('--oods-swatch-color') || !markup.includes('data-swatch-color="' + scenario.props.color + '"'))) throw new Error('Packed ColorSwatch lost label/chip semantics.');
   if (id === 'ColorizedBadge' && (!markup.includes('data-oods-badge-marker') || !markup.includes(scenario.props.label) || !markup.includes('data-badge-color="' + scenario.props.color + '"'))) throw new Error('Packed ColorizedBadge lost color/text semantics.');
   if (id === 'VizAreaPreview' && (!markup.includes('data-viz-preview-type="area"') || !markup.includes('data-viz-width="640"') || !markup.includes('data-viz-height="360"') || !markup.includes(String(scenario.slots.default)) || markup.includes('data-viz-preview-placeholder'))) throw new Error('Packed preview lost frame/slot semantics.');
-  if (id === 'ClassificationPanel' && (!markup.includes('data-panel-type="classification"') || !markup.includes('<h3>Classification</h3>') || !markup.includes(scenario.props.summary))) throw new Error('Packed ClassificationPanel lost heading/summary semantics.');
+  if (id === 'ClassificationPanel' && (!markup.includes('data-panel-type="classification"') || !markup.includes('<h3>Classification</h3>') || !markup.includes(String(scenario.props.summary).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')))) throw new Error('Packed ClassificationPanel lost heading/summary semantics.');
   if (id === 'FilterPanel' && (!markup.includes('aria-label="Filters"') || !markup.includes('data-filter-mode="batch"') || !markup.includes('<legend>Status</legend>') || !markup.includes('data-filter-apply'))) throw new Error('Packed FilterPanel lost region/legend/apply semantics.');
   if (['AddressCollectionPanel', 'MembershipPanel', 'PreferencePanel'].includes(id) && (!markup.includes('data-panel-type=') || !markup.includes('<h3>') || !markup.includes('data-panel-summary'))) throw new Error('Packed ' + id + ' lost heading/summary semantics.');
   if (['AddressSummaryBadge', 'MessageStatusBadge', 'PreferenceSummaryBadge'].includes(id) && (!markup.includes('data-badge-variant=') || !markup.includes('data-badge-status=') || !markup.includes('data-oods-badge-label'))) throw new Error('Packed ' + id + ' lost badge semantics.');
@@ -151,12 +153,42 @@ if (JSON.stringify(readiness.rows.map((row) => row.componentId)) !== JSON.string
 const css = readFileSync(fileURLToPath(import.meta.resolve('@oods/component-styles/css')), 'utf8');
 if (!css.includes("[data-oods-component='Tabs']") || !css.includes('@oods/tokens/css')) throw new Error('Packed CSS export failed.');
 const require = createRequire(import.meta.url);
+const compatibilityIds = ['AuditTimeline', 'CancellationSummary', 'PaginationBar', 'PriceBadge', 'RelativeTimestamp', 'SearchInput', 'StatusBadge', 'StatusTimeline'];
+const commonJsRoot = require('@oods/components-react');
+const commonJsCompatibility = require('@oods/components-react/ported');
+const compatibilityProof = [];
+for (const id of compatibilityIds) {
+  const scenario = sharedScenarios.find(item => item.oodsComponentId === id);
+  if (!scenario) throw new Error('Missing canonical scenario for compatibility family: ' + id);
+  const rootMarkup = renderToString(React.createElement(components[id], scenario.props));
+  const aliasMarkup = renderToString(React.createElement(compatibility[id], scenario.props));
+  const result = { componentId: id, esmSame: components[id] === compatibility[id], cjsSame: commonJsRoot[id] === commonJsCompatibility[id], ssrSame: rootMarkup === aliasMarkup, rootMarkup, aliasMarkup };
+  if (!result.esmSame || !result.cjsSame || !result.ssrSame || !rootMarkup.includes('data-oods-component="' + id + '"')) throw new Error('Compatibility alias changed ' + id);
+  compatibilityProof.push(result);
+}
+const rootRuntimeIds = compatibilityIds.filter(id => id in components);
+const aliasRuntimeIds = compatibilityIds.filter(id => id in compatibility);
+const compatibilitySpecifiers = {
+  root: fileURLToPath(import.meta.resolve('@oods/components-react')),
+  alias: fileURLToPath(import.meta.resolve('@oods/components-react/ported')),
+};
+const compatibilityResolution = {
+  runtimeSame: import.meta.resolve('@oods/components-react') === import.meta.resolve('@oods/components-react/ported'),
+  readinessSame: import.meta.resolve('@oods/components-react/readiness') === import.meta.resolve('@oods/components-react/readiness-ported'),
+  cssSame: import.meta.resolve('@oods/component-styles/css') === import.meta.resolve('@oods/component-styles/css-ported'),
+};
+if (Object.values(compatibilityResolution).some(value => value !== true)) throw new Error('Compatibility subpaths must resolve to the root artifacts.');
 const commonJsKeys = Object.keys(require('@oods/components-react')).sort();
 if (JSON.stringify(commonJsKeys) !== JSON.stringify(runtimeKeys)) throw new Error('Packed CJS export set differs.');
-process.stdout.write(JSON.stringify({ canonicalIds, contractsPath, resolvedSpecifiers, breadthProof, emptyPreview, runtimeKeys, html, status: presentation.label, tableKeys, readinessRows: readiness.rows.length, cssBytes: Buffer.byteLength(css), commonJsKeys }));
+process.stdout.write(JSON.stringify({ compatibilityProof, compatibilityResolution, rootRuntimeIds, aliasRuntimeIds, compatibilitySpecifiers, canonicalIds, contractsPath, resolvedSpecifiers, breadthProof, emptyPreview, runtimeKeys, html, status: presentation.label, tableKeys, readinessRows: readiness.rows.length, cssBytes: Buffer.byteLength(css), commonJsKeys }));
 `;
   await writeFile(resolve(tempRoot, 'verify.mjs'), consumerSource);
   await writeFile(resolve(outputRoot, 'consumer.mjs'), consumerSource);
+  const typeSource = `import * as root from '@oods/components-react';\nimport * as compatibility from '@oods/components-react/ported';\n`
+    + ['AuditTimeline', 'CancellationSummary', 'PaginationBar', 'PriceBadge', 'RelativeTimestamp', 'SearchInput', 'StatusBadge', 'StatusTimeline'].map(id => `const ${id}: typeof root.${id} = compatibility.${id};`).join('\n') + '\n';
+  await writeFile(resolve(tempRoot, 'compatibility-types.ts'), typeSource);
+  await writeFile(resolve(outputRoot, 'compatibility-types.ts'), typeSource);
+  const compile = run(process.execPath, ['node_modules/typescript/bin/tsc', '--noEmit', '--strict', '--skipLibCheck', 'false', '--module', 'NodeNext', '--moduleResolution', 'NodeNext', '--target', 'ES2022', '--lib', 'ES2022,DOM', 'compatibility-types.ts'], tempRoot);
   const verification = run('node', ['verify.mjs'], tempRoot);
   const proof = JSON.parse(verification.stdout);
 
@@ -193,6 +225,7 @@ process.stdout.write(JSON.stringify({ canonicalIds, contractsPath, resolvedSpeci
     },
     tarballs: tarballEvidence,
     proof,
+    strictCompatibilityCompile: { status: 'passed', skipLibCheck: false, stdout: compile.stdout.trim() },
     installStdout: install.stdout.trim(),
   };
 } catch (error) {

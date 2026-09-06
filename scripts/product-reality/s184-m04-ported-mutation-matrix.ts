@@ -11,7 +11,6 @@ import {
 
 import {
   createTargetCapabilityPreflight,
-  mergeTargetReadiness,
   type TargetReadiness,
 } from '../../packages/mcp-server/src/codegen/target-readiness.js';
 import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
@@ -132,16 +131,8 @@ const NUCLEUS_READINESS: Readonly<Record<Framework, TargetReadiness>> = {
   vue: readJson('packages/components-vue/evidence/vue-readiness.v1.json'),
 };
 
-const PORTED_READINESS: Readonly<Record<Framework, TargetReadiness>> = {
-  react: readJson('packages/components-react/evidence/react-ported-readiness.v1.json'),
-  vue: readJson('packages/components-vue/evidence/vue-readiness-ported.v1.json'),
-};
-
-const MERGED_READINESS: Readonly<Record<Framework, TargetReadiness>> = {
-  react: mergeTargetReadiness(NUCLEUS_READINESS.react, PORTED_READINESS.react),
-  vue: mergeTargetReadiness(NUCLEUS_READINESS.vue, PORTED_READINESS.vue),
-};
-
+// The mutation population remains the historical eight; governance and
+// physical export readiness now come from the single root manifest.
 const SCENARIO_PROPS = new Map(
   portedScenarios.map((scenario) => [scenario.oodsComponentId, scenario.props] as const),
 );
@@ -272,7 +263,7 @@ export async function createPortedMutationMatrixReport(): Promise<PortedMutation
 
       const targetCapabilityPreflight = createTargetCapabilityPreflight({
         repositoryRoot: REPOSITORY_ROOT,
-        readiness: MERGED_READINESS,
+        readiness: NUCLEUS_READINESS,
         readFile: (absolutePath) => (
           absolutePath === IMPLEMENTATION_SOURCE[targetFramework]
             ? transformed.source
@@ -322,7 +313,7 @@ export async function createPortedMutationMatrixReport(): Promise<PortedMutation
 
   const restoredPreflight = createTargetCapabilityPreflight({
     repositoryRoot: REPOSITORY_ROOT,
-    readiness: MERGED_READINESS,
+    readiness: NUCLEUS_READINESS,
   });
   const restoredObservations = await observeCells(restoredPreflight);
   const restoredRedCells = restoredObservations

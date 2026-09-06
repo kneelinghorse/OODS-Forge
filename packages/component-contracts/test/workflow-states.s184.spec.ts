@@ -4,7 +4,6 @@ import {
   NUCLEUS_COMPONENT_IDS,
   UI_WORKFLOW_STATES,
   componentContracts,
-  portedComponentContracts,
 } from '../src/index.js';
 
 describe('Sprint 184 workflow-state vocabulary', () => {
@@ -14,11 +13,7 @@ describe('Sprint 184 workflow-state vocabulary', () => {
 
   it('keeps workflow states separate from component-local state contracts', () => {
     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
-    expect(Object.keys(portedComponentContracts)).toHaveLength(8);
-    for (const contract of [
-      ...Object.values(componentContracts),
-      ...Object.values(portedComponentContracts),
-    ]) {
+    for (const contract of Object.values(componentContracts)) {
       expect(contract).not.toHaveProperty('workflowStates');
     }
   });

@@ -8,6 +8,14 @@ import type {
 } from '../src/index.js';
 
 import {
+  AuditTimeline,
+  CancellationSummary,
+  PaginationBar,
+  PriceBadge,
+  RelativeTimestamp,
+  SearchInput,
+  StatusBadge,
+  StatusTimeline,
   AddressCollectionPanel,
   AddressEditor,
   AddressSummaryBadge,
@@ -224,6 +232,22 @@ export function renderSharedScenario(
           help="Visible to account managers"
         />
       );
+    case 'audit-timeline-transitions':
+      return <AuditTimeline {...scenario.props} />;
+    case 'cancellation-summary-boolean':
+      return <CancellationSummary {...scenario.props} />;
+    case 'pagination-bar-navigation':
+      return <PaginationBar {...scenario.props} onPageChange={page => onEvent?.(page)} />;
+    case 'price-badge-currency':
+      return <PriceBadge {...scenario.props} />;
+    case 'relative-timestamp-fixed':
+      return <RelativeTimestamp {...scenario.props} />;
+    case 'search-input-clear':
+      return <SearchInput {...scenario.props} onUpdate={value => onEvent?.(value)} />;
+    case 'status-badge-mapped':
+      return <StatusBadge {...scenario.props} />;
+    case 'status-timeline-history':
+      return <StatusTimeline {...scenario.props} />;
     default:
       throw new Error(`Unimplemented shared React scenario: ${scenario.id}`);
   }

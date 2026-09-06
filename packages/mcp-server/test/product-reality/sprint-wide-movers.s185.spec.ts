@@ -41,4 +41,16 @@ describe('Sprint-wide accounting includes runtime behavior omitted by per-missio
     omitted.s184.publicPaths = omitted.s184.publicPaths.filter((file: string) => file !== TABLE_PATHS[0]);
     expect(() => deriveMovers('HEAD', omitted)).toThrow('declared mover union differs');
   });
+
+  it('uses the locked Sprint 186 range once and rejects omissions without inheriting the old two-sprint ceremony', () => {
+    const options = { sprintId: 'sprint-186', missionId: 's186-m06', base: '5aa53b3a' };
+    const range = deriveRange(options.base, 'HEAD');
+    const declaration = { s186: range };
+    const result = deriveMovers('HEAD', declaration, ROOT, options);
+    expect(result).toMatchObject({ status: 'passed', missionId: 's186-m06', s186: range });
+    expect(result).not.toHaveProperty('s184'); expect(result).not.toHaveProperty('tableControl');
+    const changed = structuredClone(declaration); changed.s186.publicPaths.push('invented-runtime.ts');
+    expect(() => deriveMovers('HEAD', changed, ROOT, options)).toThrow(/declared mover union differs/);
+    expect(() => deriveMovers('HEAD', declaration, ROOT, { ...options, base: S185_BASE })).toThrow(/locked build base/);
+  });
 });

@@ -127,8 +127,8 @@ function consumerSource(framework) {
     ? `import React from 'react';\nimport { renderToString } from 'react-dom/server';`
     : `import { renderToString } from '@vue/server-renderer';\nimport { h } from 'vue';`;
   const renderExpression = framework === 'react'
-    ? `renderToString(React.createElement(ported.PriceBadge, { amountCents: 2599, currency: 'USD' }))`
-    : `await renderToString(h(ported.PriceBadge, { amountCents: 2599, currency: 'USD' }))`;
+    ? `renderToString(React.createElement(components.PriceBadge, { amountCents: 2599, currency: 'USD' }))`
+    : `await renderToString(h(components.PriceBadge, { amountCents: 2599, currency: 'USD' }))`;
 
   return `
 import { lstatSync, readFileSync, realpathSync } from 'node:fs';
@@ -136,9 +136,11 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { PORTED_COMPONENT_IDS } from '@oods/component-contracts';
+import { NUCLEUS_COMPONENT_IDS, PORTED_COMPONENT_IDS } from '@oods/component-contracts';
+import * as components from '${config.componentPackage}';
 import * as ported from '${componentSpecifier}';
-import readiness from '${readinessSpecifier}' with { type: 'json' };
+import readiness from '${config.componentPackage}/readiness' with { type: 'json' };
+import portedReadiness from '${readinessSpecifier}' with { type: 'json' };
 ${frameworkImports}
 
 const expectedIds = ${JSON.stringify(PORTED_COMPONENT_IDS)};
@@ -147,29 +149,44 @@ const forbiddenRoot = realpathSync(process.env.OODS_FORBIDDEN_REPOSITORY_ROOT);
 const require = createRequire(import.meta.url);
 
 if (JSON.stringify(PORTED_COMPONENT_IDS) !== JSON.stringify(expectedIds)) {
-  throw new Error('Installed ported ID union differs from the frozen eight.');
+  throw new Error('Installed compatibility cohort differs from the historical eight.');
 }
 const runtimeIds = Object.keys(ported).sort();
-if (JSON.stringify(runtimeIds) !== JSON.stringify(expectedIds)) {
-  throw new Error('ESM ported export set differs: ' + JSON.stringify(runtimeIds));
+const rootRuntimeIds = Object.keys(components).sort();
+if (
+  JSON.stringify(runtimeIds) !== JSON.stringify(rootRuntimeIds)
+  || NUCLEUS_COMPONENT_IDS.some((id) => components[id] === undefined)
+  || runtimeIds.some((id) => ported[id] !== components[id])
+) {
+  throw new Error('ESM compatibility alias differs from the canonical component root.');
 }
-const commonJsIds = Object.keys(require('${componentSpecifier}')).sort();
-if (JSON.stringify(commonJsIds) !== JSON.stringify(expectedIds)) {
-  throw new Error('CJS ported export set differs: ' + JSON.stringify(commonJsIds));
+const commonJs = require('${componentSpecifier}');
+const rootCommonJs = require('${config.componentPackage}');
+const commonJsIds = Object.keys(commonJs).sort();
+if (
+  JSON.stringify(commonJsIds) !== JSON.stringify(Object.keys(rootCommonJs).sort())
+  || NUCLEUS_COMPONENT_IDS.some((id) => rootCommonJs[id] === undefined)
+  || commonJsIds.some((id) => commonJs[id] !== rootCommonJs[id])
+) {
+  throw new Error('CJS compatibility alias differs from the canonical component root.');
 }
 const readinessIds = readiness.rows.map((row) => row.componentId);
 if (
   readiness.target !== '${framework}'
-  || JSON.stringify(readinessIds) !== JSON.stringify(expectedIds)
+  || JSON.stringify(readinessIds) !== JSON.stringify(NUCLEUS_COMPONENT_IDS)
   || readiness.rows.some((row) => row.emissionEligible !== true)
+  || JSON.stringify(portedReadiness) !== JSON.stringify(readiness)
 ) {
-  throw new Error('Ported readiness export is incomplete.');
+  throw new Error('Canonical readiness is incomplete or its compatibility alias differs.');
 }
 
 const specifiers = [
   '@oods/component-contracts',
+  '${config.componentPackage}',
   '${componentSpecifier}',
+  '${config.componentPackage}/readiness',
   '${readinessSpecifier}',
+  '@oods/component-styles/css',
   '@oods/component-styles/css-ported',
 ];
 const resolutions = specifiers.map((specifier) => {
@@ -197,6 +214,10 @@ for (const packageName of ${JSON.stringify([...LOCAL_PACKAGE_NAMES, config.compo
 }
 
 const cssPath = fileURLToPath(import.meta.resolve('@oods/component-styles/css-ported'));
+const rootCssPath = fileURLToPath(import.meta.resolve('@oods/component-styles/css'));
+if (realpathSync(cssPath) !== realpathSync(rootCssPath)) {
+  throw new Error('CSS compatibility alias differs from the canonical stylesheet.');
+}
 const css = readFileSync(cssPath, 'utf8');
 for (const componentId of expectedIds) {
   if (!css.includes("[data-oods-component='" + componentId + "']")) {
@@ -219,11 +240,14 @@ if (!html.includes('data-badge-variant="price"') || html.includes('data-badge-va
 process.stdout.write(JSON.stringify({
   target: '${framework}',
   componentIds: expectedIds,
+  governedIds: NUCLEUS_COMPONENT_IDS,
+  rootRuntimeIds,
   runtimeIds,
   commonJsIds,
   readinessIds,
   cssBytes: Buffer.byteLength(css),
   cssComponentIds: expectedIds,
+  aliasEquivalence: { esm: true, cjs: true, readiness: true, css: true },
   resolutions,
   ssr: { componentId: 'PriceBadge', html },
 }));
@@ -392,8 +416,8 @@ export async function runS184M04PackedConsumers(artifactRoot = DEFAULT_ARTIFACT_
     mission: 's184-m04',
     kind: 'ported-subpath-packed-consumer-proof',
     status: 'passed',
-    selected: 16,
-    passed: 16,
+    selected: components.length * targetReports.length,
+    passed: components.length * targetReports.length,
     failed: 0,
     skipped: 0,
     targetCount: targetReports.length,

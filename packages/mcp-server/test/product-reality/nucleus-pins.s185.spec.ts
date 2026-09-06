@@ -119,7 +119,13 @@ describe('Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONE
         continue; // a retired file may be gone entirely
       }
       if (site.oldSource && text.includes(site.oldSource.trim())) problems.push(`${site.id}: old literal still present`);
-      if (site.newSource && !text.includes(site.newSource.trim())) problems.push(`${site.id}: derivation missing`);
+      // Sprint 186 folds the historical subset into the root. Its union-size
+      // assertion still derives from the nucleus, now without double counting
+      // the compatibility alias; the historical inventory stays immutable.
+      const currentDerivation = site.id === 'ported-contracts-union-22'
+        ? 'expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(\n      NUCLEUS_COMPONENT_IDS.length,'
+        : site.newSource;
+      if (currentDerivation && !text.includes(currentDerivation.trim())) problems.push(`${site.id}: derivation missing`);
     }
     expect(problems).toEqual([]);
   });
