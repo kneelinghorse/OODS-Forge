@@ -1,8 +1,8 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 build closeout in progress; independent review pending
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 locked by `#1787`–`#1789` and ready for build
 
-**Updated:** 2026-09-06
+**Updated:** 2026-09-06 — planning session `PS-2026-09-06-007`
 
 **Scope:** The next three independently reviewed increments
 
@@ -19,21 +19,23 @@ Two direction decisions from 2026-09-05 govern this queue. The Sprint 182 promot
 (`#1722`): it was self-imposed, nothing outside our own scripts depends on it, and it is never cited
 as a constraint again — new components go straight into the nucleus. The binding constraint on the
 program is component breadth (`#1723`), so the increments after Runnable Generation are breadth waves
-ordered by how many pre-existing saved schemas each wave makes reachable.
+ordered by how many pre-existing saved schemas each wave makes reachable. Sprint 186 reached the
+disclosed successor corpus's 16/16 boundary. The next locked breadth metric is fresh composition
+through the existing public object/context inputs; saved-corpus success does not establish that coverage.
 
 The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
 follows runnable product foundations.
 
-## Current measured state — Sprint 186 builder evidence, independent review pending
+## Current measured state — certified Sprint 186; fresh-composition probe at `87a7933b`
 
 | Claim area | Current evidence | Near-horizon obligation |
 |---|---|---|
-| Component catalog | 109 unique IDs; 50 governed in one root union, including 23 Wave 2 additions and the former eight ported families; baseline identity and reconciliation unchanged | Independent review assesses the build and evidence; approvedRuntimeCensus remains null |
-| React | Root runtime and readiness cover 50 families; the five Wave 2 schemas have retained live packed-consumer proof | Root/subpath packed compatibility and the frozen four-suite closeout are recorded in m06 |
-| Vue | Same 50-family surface, with framework-specific runtime and equal consumer gates | Same review bar as React |
-| Generation | Versioned artifacts, typed actions and behavioral local-state validation remain built. Former ported imports now use package roots and root CSS; form composition excludes array/object fields from generic scalar controls, and enum options match the Select contract | Reconnect discloses emitter/composer movers; the served bridge remains on its separate checkout and this build does not deploy it |
-| Saved designs | The named 16-record successor store generates 32 green framework cells; user-form-showcase v2 was actually recomposed and saved, with the other 15 records unchanged | Preserve original frozen evidence: its user-form-showcase stays red on the five invalid composer-authored controls; do not describe the successor as an unchanged fixture |
-| Visualization | 13 admitted types; five complete the folded certified path | Unchanged; parked behind component breadth |
+| Component catalog | 109 obligation IDs; 50 governed components in one root union; the former eight ported families also resolve through compatibility aliases | Add fourteen families; review alias retirement; retain all 109 obligations under #1788 and review the eleven disputed classifications |
+| React and Vue | Sprint 186 added 23 families; ten live consumer cells pass 80/80 applicable gates; packed root/alias imports work in both frameworks | Accessibility, theme and interaction baseline cells for the 23 added families remain `unverified`; generation evidence does not promote those surfaces |
+| Fresh composition | All 11 objects returned by `object.list` × six public contexts were executed: 27/66 schemas generate in both frameworks, 58/132 individual cells pass | Fourteen missing components block 30 schemas; three binding-contract issue groups block nine more; see the locked Sprint 187 plan below |
+| Saved designs | Successor store: 16/16 and 32 green framework cells; original historical store: 15/16. Fresh User/form equals the saved version-2 successor | Preserve historical negative evidence; adoption into another store is explicit delivery work, not a retroactive repair of the original corpus |
+| Delivery and discovery | PR #83 merged; its 15 executed CI checks succeeded and echarts-render-soak was skipped. PM2 serves the primary checkout; `/health` is ready. Component metadata still dates to 2026-03-06; legacy catalog `status` describes HTML mapping | Verify served build identity and schema adoption; refresh discovery from current sources and make status meaning clear (#1371) |
+| Visualization | Program baseline: 13 admitted types, five complete the folded certified path. That population was not remeasured in this planning pass | Current public-render closure is still owed; remeasure before locking a chart increment, then expand breadth |
 
 Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
 is not a runtime package, an admitted chart name is not rendered output, and a preview frame is not a
@@ -89,11 +91,10 @@ real React and Vue components and proves them by running the six pre-existing sa
 through live generation and the consumer gates in both frameworks. Reachable saved schemas go from
 5/16 to 11/16.
 
-Planning measured the starting point by executing the real emitter. All twelve target cells fail today
-with only `OODS-N015` on exactly those five ids, and with those nodes pruned all twelve generate green.
-Unlike Sprint 184, no contract defects hide behind the component gap — this is a pure port plus the
-retirement of the voided freeze from the live gates, which still pin the nucleus at 14 and would red
-any addition. VizAreaPreview ships honestly as a sized preview frame, not a chart (`#1727`).
+Planning measured twelve target cells failing with `OODS-N015` on those five IDs and twelve green
+pruned controls. It incorrectly inferred a pure port; the build found the hidden defects described
+below. The sprint also retired the voided literal nucleus freeze. VizAreaPreview ships honestly as a
+sized preview frame, not a chart (`#1727`).
 
 **Built and independently reviewed 2026-09-06; CERTIFIED and CLOSED** (review session
 `PS-2026-09-06-002`, determination in
@@ -103,31 +104,59 @@ rows not applicable and excluded; reachability 11/16; every live nucleus pin der
 inference did not survive the build — three contract defects were found and repaired in-sprint
 (`#1734`, `#1736`, `#1738`). Four-suite closeout at `f8d15098` was green with zero failures.
 
-## Increment 5 — Sprint 186: Component Breadth Wave 2 — BUILT, REVIEW PENDING
+## Increment 5 — Sprint 186: Component Breadth Wave 2 — CERTIFIED AND CLOSED
 
-Build authority is
-[forge-s186-component-breadth-wave-2-decision-memo.md](../../planning/forge-s186-component-breadth-wave-2-decision-memo.md),
-from `5aa53b3a` in the dedicated `codex/sprint-186-component-breadth-wave-2` worktree.
+Locked 2026-09-06 on Derek's confirmation. Build authority was
+[forge-s186-component-breadth-wave-2-decision-memo.md](../../planning/forge-s186-component-breadth-wave-2-decision-memo.md)
+at build base `5aa53b3a`. The starting census showed the remaining five unreachable schemas blocked by
+exactly 23 components, all with executing HTML renderers. Six missions, one per schema in
+smallest-cluster-first order (test-tagged 3, user-detail 4, user-list 5, user-timeline 5, user-form 6)
+and a sixth that folded the eight ported families into the root. Existing Sprint 185 tooling was
+reused with explicit narrow adaptations (#1780), rather than literal unchanged execution.
 
-The five schema missions added 23 real components across contracts, styles, React, Vue and readiness.
-Each mission retains its own live consumer gates and deletion-export controls. The final form schema
-also exposed a composer defect: five generic scalar controls were bound to array/object fields.
-The field-kind contract remains enforced. The composer was repaired and its actual output saved as
-user-form-showcase v2; the original record and negative controls remain evidence. The resulting named
-successor store is 16/16 reachable in both frameworks.
+Independent review `PS-2026-09-06-006` closed the sprint under decision #1785. Governed components
+grew 27 → 50; the five newly reachable schemas passed 80/80 applicable consumer gates in both
+frameworks. **The 16/16 result applies to the authentic recomposed successor store.** The original
+historical corpus remains 15/16 on five invalid User-form field bindings per framework. Decisions
+#1776–#1779 record the scope adjustment; the program's original-input obligation is not silently
+removed. See [review determination](../../planning/forge-s186-review-determination.md).
 
-A separate fresh User/detail composition remains blocked by the unsupported `StatusTimeline.label`
-prop (`OODS-V007` at `ve-header-28`), now explicitly tested in both targets. That follow-up composer
-defect does not acquire a green claim from the saved-store census (learning `#503`).
+Pace rule from Derek, in force from this sprint on: appreciable progress every sprint, not a little work
+and a lot of measuring. No per-mission four-suite captures, no new closeout apparatus, no critic
+workflow. The per-component evidence bar from Wave 1 is unchanged.
 
-The closeout folds the former eight ported families into the 50-member root union. `/ported`,
-`/readiness-ported` and `/css-ported` remain compatibility aliases during Sprint 186; Sprint 187 is the
-named retirement horizon and requires a deliberate follow-up. Historical evidence cohorts remain
-explicit subsets of the union. Existing Sprint 185 closeout scripts have narrow Sprint 186 input and
-criterion adaptations (decision `#1780`); no new script or spec family is introduced.
+## Increment 6 — Sprint 187: Fresh Composition Coverage — LOCKED, READY FOR BUILD
 
-Builder evidence lives under `artifacts/product-reality/sprint-186/`. The sprint remains Active and
-`builderSelfCertified` remains false. An independent review decides certification and sprint closure.
+**LOCKED** by decisions `#1787`–`#1789`, planning session `PS-2026-09-06-007`.
+The [decision memo](../../planning/forge-s187-fresh-composition-decision-memo.md) is the build authority.
+Six serial CMOS missions exist: `s187-m01` is Current; `s187-m02`–`s187-m06` are Queued. Build has not started.
+The [planning census](../../planning/forge-s187-planning-probe/fresh-composition-census.json) executed
+all 66 default object/context combinations at the reviewed code: no component overrides, pruned
+schemas, or rewritten saved inputs. It measures generation only, not consumer runtime or usability.
+
+Locked outcome: make the existing object composer produce supported React and Vue output for
+all 11 advertised objects and six public contexts. The target is 66/66 fresh schemas and
+132/132 generation cells, plus 14 named fresh paths in both frameworks (28 packed-consumer cells).
+The cohort covers all fourteen added families and the three measured binding issue groups.
+Readiness failures can mask further contract defects; the 14 ports alone are not a promise of closure.
+
+| Locked work | Measured reason |
+|---|---|
+| Naming/classification: LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor | Shared blockers across Article, Media, Product, Organization and Relationship |
+| Ownership/summary: OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary | Unblocks ownership views and the remaining User card gap |
+| Lifecycle/financial: ArchiveSummary, ArchivePill, CancellationForm, CancellationBadge, PriceCardMeta | Blocks fresh Subscription/Transaction detail, form and card, plus Product card |
+| Repair composition and binding contracts | StatusTimeline.label breaks four already-governed detail schemas; numeric Select bindings fail four Vue cells; boolean Text binding fails Transaction/timeline |
+| Discovery, census and delivery preparation | Refresh metadata and surface-specific status; disposition the eleven disputed census rows while retaining 109; assess aliases and prepare isolated rollout/adoption proof |
+
+All fourteen components have executing HTML renderers. Use the existing port/contract/readiness and
+consumer patterns. Keep the one final four-suite capture and bounded independent review. The locked
+memo defines binding repair, three port clusters, discovery/delivery preparation, then closeout.
+The existing saved-schema consumer runner needs a bounded fresh-input extension in `s187-m01`.
+
+After this increment, the strongest follow-on candidates are the still-partial **complete greenfield
+workflow** and **current visualization public-render closure**. Neither is automatically numbered or
+locked here. A green 66-schema generation matrix would not prove navigation, edit/cancel, state
+transitions, responsive craft, remaining catalog breadth, or chart pixels.
 
 ## Gates that apply to every increment
 
@@ -155,14 +184,19 @@ Builder evidence lives under `artifacts/product-reality/sprint-186/`. The sprint
 Sprint-181 follow-ups `#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt under decision
 `#1651`; they are named at every closeout and must close before an integrated public release.
 
-Derek's open call, untouched by any sprint: approve or revise the 98-row proposed runtime census so
-`approvedRuntimeCensus` stops being null and the 109 denominator can move (`#1331`). Surface-cell
-edits in the capability baseline are evidence updates and do not move that denominator (`#1726`).
+Derek resolved the census choice (#1331) by accepting the recommendation to **retain all 109
+obligations** (#1788). The old 98-runtime split is not approved. Its generator assigns `authoring-only`
+when a root React export or HTML renderer is absent, although the excluded traits describe runtime
+behavior. Missing implementation cannot by itself remove an obligation. Sprint 187 m05 will review
+those eleven rows for implementation, explicit alias/merge, actual authoring-only use or deliberate
+retirement, with evidence and remaining work stated per row. This adds no eleven-port commitment.
+The historical `approvedRuntimeCensus` stays null while that old proposal is unapproved; live discovery
+must explain the accepted retain-109 ruling. Surface-cell evidence updates do not move scope (#1726).
 
 The following are parked until their named dependency is met:
 
-- retiring the compatibility subpaths — Sprint 187 horizon after the Sprint 186 root fold, with
-  downstream reconnect and a deliberate removal decision;
+- the eight-family root fold is complete; `/ported`, `/readiness-ported` and `/css-ported` alias
+  retirement is a Sprint-187 review item (#1382), not another root-fold mission;
 - closure of all current visualization recipes, and making VizAreaPreview a real chart — after
   component breadth, unless independent staffing permits parallel work;
 - visualization breadth beyond the current 13 — after the public render and certification path is
@@ -174,11 +208,16 @@ The following are parked until their named dependency is met:
 - `schema.ingest` — historically shelved by `#1649`; decision `#1652` retains the shelving result
   while superseding its incorrect surface claim.
 
-## Build handoff
+## Planning handoff
 
-Sprint 186 is being closed out by the builder in its dedicated worktree. The review session should use
-m06's frozen capture, claim ledger, output audit and review handoff, and distinguish the original frozen
-store from the authentic recomposed successor. It decides genuine close; the builder leaves the sprint
-Active. No public package publication or bridge deployment is included. After a separately authorized
-integration into the checkout pm2 serves, rebuild `packages/mcp-bridge`, restart `oods-forge-bridge`,
-confirm `/health`, and tell aquex-mcp and forge-demos the build is live.
+Start the fresh build using [forge-s187-build-handoff.md](../../planning/forge-s187-build-handoff.md).
+The prepared worktree is `/Users/systemsystems/.codex/worktrees/s187/OODS-Forge`, branch
+`codex/sprint-187-fresh-composition`, based on merged PR #83 (`21c7c319`) plus review and planning
+records. Dependencies and build prerequisites pass; the fresh census reproduces 27/66 and 58/132.
+Use the primary checkout only as the canonical CMOS projectRoot; its source is on an older branch
+with pre-existing changes. Run `s187-m01` through `s187-m06` in dependency order.
+
+Deployment carries #1374/#1379 remain open. PM2's healthy process is not proof of the served source
+version; integration, build identity and authenticated successor-store adoption must be verified.
+PR #83 CI follow-up #1386 is resolved: coverage and viz-determinism succeeded; the soak skip remains
+disclosed. Planning is locked; build records evidence and leaves Sprint 187 Active for separate review.
