@@ -25,6 +25,8 @@ import {
   deriveActionArguments,
   deriveBoundFieldProbe,
   deriveValueProbes,
+  deriveSharedNativeFieldProbes,
+  type SharedNativeFieldProbe,
   type ValueProbe,
   deriveConsumerModel,
   deriveInteraction,
@@ -1113,6 +1115,7 @@ async function browserProof({
   interaction,
   boundFieldProbe,
   valueProbes = [],
+  sharedNativeFields = [],
   viewport = { width: 1280, height: 800 },
   mountObligations,
 }: {
@@ -1125,6 +1128,7 @@ async function browserProof({
   interaction: ConsumerInteraction;
   boundFieldProbe: BoundFieldProbe | null;
   valueProbes?: ValueProbe[];
+  sharedNativeFields?: SharedNativeFieldProbe[];
   viewport?: { width: number; height: number };
   mountObligations: MountObligation[];
 }): Promise<Record<string, unknown>> {
@@ -1170,8 +1174,9 @@ async function browserProof({
       for (const probe of valueProbes) {
         const owner = page.locator(selectorForNode(probe.nodeId));
         const visible = await owner.isVisible();
-        const actual = probe.kind === 'numeric-input' ? await owner.inputValue()
-          : probe.kind === 'status' ? await owner.locator('[data-timeline-current]').textContent() : await owner.textContent();
+        const target = probe.selector ? owner.locator(probe.selector) : owner;
+        const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' ? await target.inputValue()
+          : probe.kind === 'status' ? await owner.locator('[data-timeline-current]').textContent() : await target.textContent();
         boundValues.push({ ...probe, actual, visible, passed: visible && actual?.trim() === probe.expected });
       }
       const interactionEvidence: Record<string, unknown> = { ...interaction, status: 'unproven' };
@@ -1269,6 +1274,29 @@ async function browserProof({
         if (numericUpdates.length) {
           Object.assign(interactionEvidence, { numericUpdates, numericScope: 'generated local numeric editor state; no application filtering is claimed' });
           eventHandlerAttached = eventHandlerAttached && numericUpdates.every(({ passed }) => passed);
+        }
+        const sharedNativeUpdates = [];
+        for (const probe of sharedNativeFields) {
+          const input = page.locator(selectorForNode(probe.inputId));
+          const owner = page.locator(selectorForNode(probe.selectId));
+          const select = probe.selectContainer ? owner.locator('select') : owner;
+          const choices = await select.locator('option:not([disabled])').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value));
+          if (choices.length < 2) throw new Error(`Shared field ${probe.field} needs two real choices for its two-writer proof.`);
+          await input.fill(choices[0]!);
+          const inputToSelect = await page.waitForFunction(({ selectId, selectContainer, expected }) => {
+            const owner = document.getElementById(selectId);
+            const control = selectContainer ? owner?.querySelector('select') : owner;
+            return (control as HTMLSelectElement)?.value === expected;
+          }, { selectId: probe.selectId, selectContainer: probe.selectContainer, expected: choices[0]! }, { timeout: 2_000 }).then(() => true, () => false);
+          await select.selectOption(choices[1]!);
+          const passed = await page.waitForFunction(({ inputId, expected }) =>
+            (document.getElementById(inputId) as HTMLInputElement)?.value === expected,
+          { inputId: probe.inputId, expected: choices[1]! }, { timeout: 2_000 }).then(() => true, () => false);
+          sharedNativeUpdates.push({ ...probe, choices: choices.slice(0, 2), input: await input.inputValue(), select: await select.inputValue(), inputToSelect, selectToInput: passed, passed: inputToSelect && passed });
+        }
+        if (sharedNativeUpdates.length) {
+          Object.assign(interactionEvidence, { sharedNativeUpdates, sharedNativeScope: 'two native writers of generated local field state; no persistence is claimed' });
+          eventHandlerAttached = eventHandlerAttached && sharedNativeUpdates.every(({ passed }) => passed);
         }
         if (boundFieldProbe) {
           const control = page.locator(selectorForNode(boundFieldProbe.writerId));
@@ -1840,6 +1868,7 @@ export async function runLiveConsumerCell({
       expectedComponents: mountedExpectedComponents,
       interaction,
       boundFieldProbe: deriveBoundFieldProbe(schema),
+      sharedNativeFields: generation.composition ? deriveSharedNativeFieldProbes(schema) : [],
       valueProbes: generation.composition ? deriveValueProbes(schema, model) : [],
       // Fresh User/detail has eight tabs. At 1280px the intentional overflow
       // effect removes tab buttons after attachment, outside this strict stable

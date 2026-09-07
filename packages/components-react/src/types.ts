@@ -561,3 +561,25 @@ export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'chil
   readonly weight?: 'regular' | 'medium' | 'semibold';
   readonly as?: SafeTextElement;
 }
+
+export interface InlineLabelProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly label?: string; readonly text?: string; readonly value?: string; readonly maxLength?: number | string;
+}
+export interface LabelCellProps extends InlineLabelProps {
+  readonly description?: string; readonly subtitle?: string; readonly sublabel?: string; readonly supporting?: string;
+  readonly truncate?: boolean;
+}
+export interface FormLabelGroupProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  readonly label?: string; readonly text?: string; readonly title?: string;
+  readonly placeholder?: string; readonly hint?: string; readonly description?: string;
+  readonly for?: string; readonly inputId?: string;
+}
+export interface ClassificationBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly label?: string; readonly text?: string; readonly category?: string; readonly value?: string;
+  readonly status?: string; readonly state?: string; readonly mode?: string; readonly variant?: string;
+  readonly tone?: ComponentTone; readonly emphasis?: ComponentEmphasis;
+}
+export interface ClassificationEditorProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'title' | 'name'>, FormShellProps {
+  readonly category?: string; readonly primaryCategory?: string; readonly tags?: string | readonly unknown[];
+  readonly modes?: readonly unknown[]; readonly mode?: string; readonly classificationMode?: string;
+}

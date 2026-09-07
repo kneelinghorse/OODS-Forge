@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
   PaginationBar,
@@ -60,6 +61,11 @@ const ServerShowcase = defineComponent({
   name: 'ServerShowcase',
   setup() {
     return () => h('main', [
+      h(LabelCell, { label: 'Product name', description: 'Supporting text' }),
+      h(InlineLabel, { label: 'Product name' }),
+      h(FormLabelGroup, { label: 'Product name', inputId: 'product-label' }),
+      h(ClassificationBadge, { category: 'Electronics', mode: 'strict' }),
+      h(ClassificationEditor, { category: 'Electronics', tags: ['alpha'] }),
       h(AuditTimeline, { events: [{ label: 'Subscription created', timestamp: '2026-09-05T12:00:00Z' }] }),
       h(CancellationSummary, { cancelAtPeriodEnd: true }),
       h(PaginationBar, { page: 2, pageSize: 25, totalItems: 80 }),

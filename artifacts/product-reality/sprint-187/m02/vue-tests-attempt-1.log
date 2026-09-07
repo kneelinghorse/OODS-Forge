@@ -1,0 +1,196 @@
+
+> @oods/components-vue@0.1.0 test /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue
+
+ ✓ test/ported-scenarios.spec.ts (10 tests) 1979ms
+   ✓ @oods/components-vue shared ported scenarios > audit-timeline-transitions executes the AuditTimeline contract  355ms
+   ✓ @oods/components-vue shared ported scenarios > price-badge-currency executes the PriceBadge contract  988ms
+ ❯ test/ssr.spec.ts (1 test | 1 failed) 1866ms
+   × @oods/components-vue server rendering > SSR-renders every nucleus component family with semantic markup 1845ms
+     → ClassificationBadge: expected '<main><div class="oods-timeline" role…' to contain 'data-oods-component="ClassificationBa…'
+ ✓ test/interactions.spec.ts (7 tests) 3236ms
+   ✓ @oods/components-vue interactions > B-09 emits Vue update:modelValue and change for controlled fields  541ms
+   ✓ @oods/components-vue interactions > B-10 moves Vue Tabs selection and focus with ArrowRight  1078ms
+   ✓ @oods/components-vue interactions > uses native field controls with idiomatic update and change events  1077ms
+ ✓ test/breadth.s185.spec.ts (26 tests) 3305ms
+   ✓ Sprint 185 Vue component breadth > Details defaults to a real heading and applies as before bounded level  1211ms
+   ✓ Sprint 185 Vue component breadth > Details renders reactive scalar bound content as the heading instead of the static alias  310ms
+ ✓ test/breadth.s186.spec.ts (17 tests) 6364ms
+   ✓ Sprint 186 Vue wave-2 components > ClassificationPanel defaults its heading, resolves aliases in renderer order, and lets the slot replace the summary  1542ms
+   ✓ Sprint 186 Vue wave-2 components > AddressCollectionPanel mirrors renderPanelSection with its own marker, panel type and default title  496ms
+   ✓ Sprint 186 Vue wave-2 components > PreferencePanel mirrors renderPanelSection with its own marker, panel type and default title  337ms
+   ✓ Sprint 186 Vue wave-2 components > badge-family summaries resolve label and status aliases in renderer order over the Badge substrate  719ms
+   ✓ Sprint 186 Vue wave-2 components > timeline-family logs mirror renderTimelineContainer: title aliases, first-array event keys, item aliases, empty state and authored children  488ms
+   ✓ Sprint 186 Vue wave-2 components > PriceSummary reads each term from its aliases in renderer order, shows zero, and falls back to a paragraph or an empty list  474ms
+   ✓ Sprint 186 Vue wave-2 components > StatusSelector defaults its label and options, honours status, and emits the chosen value with modelValue  520ms
+   ✓ Sprint 186 Vue wave-2 components > TagInput resolves its legend from title/label/heading/name, lists normalized tags, and forwards typed text  324ms
+   ✓ Sprint 186 Vue wave-2 components > PreferenceEditor, RoleAssignmentForm and TemplatePicker default their titles and options and let the slot replace the body  347ms
+ ✓ test/scenarios.spec.ts (56 tests) 11688ms
+   ✓ @oods/components-vue shared scenarios > address-collection-panel-title-and-summary executes the AddressCollectionPanel contract  1014ms
+   ✓ @oods/components-vue shared scenarios > address-editor-fields-and-change executes the AddressEditor contract  543ms
+   ✓ @oods/components-vue shared scenarios > address-summary-badge-role executes the AddressSummaryBadge contract  380ms
+   ✓ @oods/components-vue shared scenarios > audit-timeline-transitions executes the AuditTimeline contract  368ms
+   ✓ @oods/components-vue shared scenarios > classification-badge-category executes the ClassificationBadge contract  642ms
+   ✓ @oods/components-vue shared scenarios > date-picker-bounded executes the DatePicker contract  369ms
+   ✓ @oods/components-vue shared scenarios > input-invalid executes the Input contract  634ms
+   ✓ @oods/components-vue shared scenarios > message-status-badge-delivery executes the MessageStatusBadge contract  375ms
+   ✓ @oods/components-vue shared scenarios > pagination-bar-navigation executes the PaginationBar contract  350ms
+   ✓ @oods/components-vue shared scenarios > preference-timeline-changes executes the PreferenceTimeline contract  395ms
+   ✓ @oods/components-vue shared scenarios > price-badge-currency executes the PriceBadge contract  523ms
+   ✓ @oods/components-vue shared scenarios > role-assignment-form-roles executes the RoleAssignmentForm contract  431ms
+   ✓ @oods/components-vue shared scenarios > status-timeline-history executes the StatusTimeline contract  752ms
+   ✓ @oods/components-vue shared scenarios > tabs-keyboard executes the Tabs contract  902ms
+ ❯ test/accessibility.spec.ts (4 tests | 1 failed) 8308ms
+   ✓ @oods/components-vue accessibility outcomes > associates field labels, help, validation, and invalid state 148ms
+   ✓ @oods/components-vue accessibility outcomes > associates labels, help, and errors for every native field family  1335ms
+   ✓ @oods/components-vue accessibility outcomes > uses required announcement, button, tabs, and table semantics  845ms
+   × @oods/components-vue accessibility outcomes > has no automated axe violations for the nondegenerate showcase 5966ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ✓ test/ported-ssr.spec.ts (1 test) 984ms
+   ✓ @oods/components-vue ported server rendering > SSR-renders all eight ported components from the shared nondegenerate scenarios  980ms
+ ✓ test/breadth.s187.spec.ts (6 tests) 2526ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell preserves alias precedence, truncation edge cases and authored override  1499ms
+   ✓ Sprint 187 naming and classification semantics > InlineLabel preserves alias precedence, truncation edge cases and authored override  314ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationBadge exposes classification status and honors authored labels  305ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 1637ms
+   ✓ Sprint 184 Vue contract amendments > renders Select.placeholder as the disabled empty-value choice  1553ms
+ ✓ test/ported-package-contract.spec.ts (3 tests) 403ms
+   ✓ @oods/components-vue ported package contract > publishes exactly the historical eight implementation exports on the ported runtime and declaration  375ms
+ ❯ test/package-contract.spec.ts (3 tests | 2 failed) 757ms
+   × @oods/components-vue package contract > B-08 exports the exact Vue nucleus with public declarations 726ms
+     → expected [ 'AddressCollectionPanel', …(49) ] to deeply equal [ 'AddressCollectionPanel', …(54) ]
+   ✓ @oods/components-vue package contract > declares only Vue and the two frozen package dependencies at runtime 14ms
+   × @oods/components-vue package contract > publishes one independently derived Vue emission-eligibility row per nucleus id 8ms
+     → expected [ 'AddressCollectionPanel', …(49) ] to deeply equal [ 'AddressCollectionPanel', …(54) ]
+ ✓ test/table-empty.s184.spec.ts (1 test) 323ms
+   ✓ @oods/components-vue Table empty affordance > renders non-empty text spanning every declared column when rows are empty  322ms
+ ✓ test/ported-accessibility.spec.ts (3 tests) 4696ms
+   ✓ @oods/components-vue ported accessibility outcomes > names search, pagination, status, and timeline semantics without color-only signals  1728ms
+   ✓ @oods/components-vue ported accessibility outcomes > has no automated axe violations for the nondegenerate showcase  2798ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/accessibility.spec.ts > @oods/components-vue accessibility outcomes > has no automated axe violations for the nondegenerate showcase
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/accessibility.spec.ts:145:3
+    143|   });
+    144| 
+    145|   it('has no automated axe violations for the nondegenerate showcase',…
+       |   ^
+    146|     const wrapper = mount(AccessibilityShowcase, { attachTo: document.…
+    147|     const result = await axe(wrapper.element, {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-vue package contract > B-08 exports the exact Vue nucleus with public declarations
+AssertionError: expected [ 'AddressCollectionPanel', …(49) ] to deeply equal [ 'AddressCollectionPanel', …(54) ]
+
+- Expected
++ Received
+
+@@ -10,23 +10,18 @@
+    "Button",
+    "CancellationSummary",
+    "Card",
+    "CardHeader",
+    "Checkbox",
+-   "ClassificationBadge",
+-   "ClassificationEditor",
+    "ClassificationPanel",
+    "ColorSwatch",
+    "ColorizedBadge",
+    "DatePicker",
+    "DetailHeader",
+    "FilterPanel",
+-   "FormLabelGroup",
+    "Grid",
+-   "InlineLabel",
+    "Input",
+-   "LabelCell",
+    "MembershipAuditTimeline",
+    "MembershipPanel",
+    "MessageEventTimeline",
+    "MessageStatusBadge",
+    "PaginationBar",
+
+ ❯ test/package-contract.spec.ts:64:31
+     62|     const declarations = declarationValueExports(readFileSync(`${packa…
+     63|     const declaredCanonical = canonicalIds.filter((name) => declaratio…
+     64|     expect(declaredCanonical).toEqual(canonicalIds);
+       |                               ^
+     65| 
+     66|     expect(tableSubparts.every((name) => name in vuePackage)).toBe(tru…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-vue package contract > publishes one independently derived Vue emission-eligibility row per nucleus id
+AssertionError: expected [ 'AddressCollectionPanel', …(49) ] to deeply equal [ 'AddressCollectionPanel', …(54) ]
+
+- Expected
++ Received
+
+@@ -10,23 +10,18 @@
+    "Button",
+    "CancellationSummary",
+    "Card",
+    "CardHeader",
+    "Checkbox",
+-   "ClassificationBadge",
+-   "ClassificationEditor",
+    "ClassificationPanel",
+    "ColorSwatch",
+    "ColorizedBadge",
+    "DatePicker",
+    "DetailHeader",
+    "FilterPanel",
+-   "FormLabelGroup",
+    "Grid",
+-   "InlineLabel",
+    "Input",
+-   "LabelCell",
+    "MembershipAuditTimeline",
+    "MembershipPanel",
+    "MessageEventTimeline",
+    "MessageStatusBadge",
+    "PaginationBar",
+
+ ❯ test/package-contract.spec.ts:119:58
+    117|     };
+    118|     expect(readiness.target).toBe('vue');
+    119|     expect(readiness.rows.map((row) => row.componentId)).toEqual(canon…
+       |                                                          ^
+    120|     for (const row of readiness.rows) {
+    121|       expect(row.state).toBe('implemented-evidence-complete');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  test/ssr.spec.ts > @oods/components-vue server rendering > SSR-renders every nucleus component family with semantic markup
+AssertionError: ClassificationBadge: expected '<main><div class="oods-timeline" role…' to contain 'data-oods-component="ClassificationBa…'
+
+Expected: "data-oods-component="ClassificationBadge""
+Received: "<main><div class="oods-timeline" role="log" aria-label="Audit Timeline" data-oods-component="AuditTimeline" data-timeline-type="audit"><h3 data-timeline-title="true">Audit Timeline</h3><!----><!----><ol data-timeline-events="true"><li><article data-timeline-event="true"><p data-timeline-label="true">Subscription created</p><time data-timeline-time="true" datetime="2026-09-05T12:00:00Z">2026-09-05T12:00:00Z</time><!----><!----><!----></article></li></ol></div><section class="oods-cancellation-summary" data-oods-component="CancellationSummary" data-summary-type="cancellation" data-cancellation-state="true"><h3 data-summary-title="true">Cancellation Summary</h3><dl><div data-summary-item="true"><dt>Cancel at period end</dt><dd>Yes</dd></div></dl></section><nav class="oods-pagination-bar" aria-label="Pagination" data-oods-component="PaginationBar" data-behavioral="pagination"><span data-pagination-range="true">Showing 26–50 of 80</span><ul class="oods-pagination-items"><li><button type="button" data-pagination-prev="true" aria-label="Previous page">‹</button></li><li><button type="button" data-pagination-page="1" aria-label="Page 1">1</button></li><li><button type="button" data-pagination-page="2" aria-label="Page 2" aria-current="page">2</button></li><li><button type="button" data-pagination-page="3" aria-label="Page 3">3</button></li><li><button type="button" data-pagination-page="4" aria-label="Page 4">4</button></li><li><button type="button" data-pagination-next="true" aria-label="Next page">›</button></li></ul><span data-pagination-current="true">2</span><span data-pagination-total="true"> / 4</span><!----><!----></nav><span class="oods-badge oods-price-badge" data-oods-component="PriceBadge" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-price="true" data-badge-variant="price" data-currency="USD"><!---->$25.00</span><time class="oods-relative-timestamp" datetime="2026-09-05T12:00:00Z" title="2026-09-05T12:00:00Z" data-oods-component="RelativeTimestamp">2 hours ago</time><form class="oods-search-input" role="search" aria-label="Search…" data-oods-component="SearchInput" data-behavioral="search"><!----><input id="oods-search-v-1" type="search" value="past due" placeholder="Search…" aria-label="Search…"><button type="button" data-search-clear="true" aria-label="Clear search">×</button></form><span class="oods-badge oods-status-badge" data-oods-component="StatusBadge" data-status="past_due" data-domain="subscription" data-tone="critical" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-critical-surface);--cmp-badge-border:var(--sys-status-critical-border);--cmp-badge-text:var(--sys-status-critical-text);" title="Renewal payment failed; smart retries ongoing and access retained during the grace window." aria-label="Status: Past Due"><span class="oods-badge-icon" aria-hidden="true">⚠︎</span>Past Due</span><div class="oods-timeline" role="log" aria-label="Status Timeline" data-oods-component="StatusTimeline" data-timeline-type="status"><h3 data-timeline-title="true">Status Timeline</h3><p data-timeline-current="true">Current status: Active</p><p data-timeline-transitions="true">Allowed transitions: past_due, cancelled</p><ol data-timeline-events="true"><li data-timeline-empty="true">No events</li></ol></div><span class="oods-badge" data-oods-component="Badge" data-domain="subscription" data-tone="critical" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-critical-surface);--cmp-badge-border:var(--sys-status-critical-border);--cmp-badge-text:var(--sys-status-critical-text);"><!---->Past due</span><section class="oods-banner" data-oods-component="Banner" data-domain="subscription" data-tone="critical" data-emphasis="subtle" role="alert" aria-live="assertive" style="--cmp-banner-background:var(--sys-status-critical-surface);--cmp-banner-border:var(--sys-status-critical-border);--cmp-banner-text:var(--sys-status-critical-text);"><div class="oods-banner-content"><strong class="oods-banner-title">Payment failed</strong><!----><!----><!----></div><!----></section><button type="button" class="oods-button" data-oods-component="Button" data-intent="neutral" data-size="md" style="--cmp-button-background:var(--sys-surface-interactive-primary-default);--cmp-button-background-hover:var(--sys-surface-interactive-primary-hover);--cmp-button-background-disabled:var(--sys-surface-disabled);--cmp-button-border:var(--sys-border-subtle);--cmp-button-text:var(--sys-text-on-interactive);--cmp-button-text-disabled:var(--sys-text-disabled);--cmp-button-focus-width:var(--sys-focus-width, 2px);--cmp-button-focus-outer:var(--sys-focus-ring-outer, Highlight);">Save changes</button><div class="oods-card" data-oods-component="Card" data-elevated="false">Account summary</div><header class="oods-card-header" data-oods-component="CardHeader"><h3>Account summary</h3><span data-oods-supporting="true">Current subscription</span></header><span class="oods-color-swatch" data-oods-component="ColorSwatch" data-summary-type="color-swatch" data-swatch-color="#2563eb" style="--oods-swatch-color:#2563eb;"><span data-oods-swatch-chip="true" aria-hidden="true"></span><span data-oods-swatch-label="true">Ocean blue</span></span><span class="oods-badge" data-oods-component="ColorizedBadge" data-status="active" data-domain="subscription" data-tone="success" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-success-surface);--cmp-badge-border:var(--sys-status-success-border);--cmp-badge-text:var(--sys-status-success-text);--oods-badge-color:#15803d;" data-badge-status="active" data-badge-color="#15803d" data-badge-variant="colorized"><span class="oods-badge-icon" aria-hidden="true"><!--[--><span data-oods-badge-marker="true" aria-hidden="true"></span><!--]--></span><!--[--><span data-oods-badge-label="true">Active</span><!--]--></span><header class="oods-detail-header" data-oods-component="DetailHeader"><h1>Subscription details</h1><span data-oods-subtitle="true">Pro plan</span><!----></header><div class="oods-viz-area-preview" data-oods-component="VizAreaPreview" data-viz-preview-type="area" data-viz-width="320" data-viz-height="180" style="--oods-viz-width:320px;--oods-viz-height:180px;"><div data-viz-preview-placeholder="true">Area preview (320 x 180)</div></div><section class="oods-classification-panel" data-oods-component="ClassificationPanel" data-panel-type="classification"><header data-panel-header="true"><h3>Classification</h3><!----></header><div data-panel-content="true"><span data-panel-summary="true">Electronics &gt; Mobile</span></div></section><aside class="oods-filter-panel" data-oods-component="FilterPanel" data-behavioral="filter" data-filter-mode="batch" role="region" aria-label="Filters"><!----><fieldset data-filter-section="true" data-collapsible="true"><legend>Status</legend></fieldset><button type="button" data-filter-apply="true">Apply</button></aside><section class="oods-price-summary" data-oods-component="PriceSummary" data-summary-type="price"><h3 data-summary-title="true">Price Summary</h3><dl><div data-summary-item="true"><dt>Amount</dt><dd>2500</dd></div><div data-summary-item="true"><dt>Currency</dt><dd>USD</dd></div></dl></section><section class="oods-address-collection-panel" data-oods-component="AddressCollectionPanel" data-panel-type="address"><header data-panel-header="true"><h3>Addresses</h3><!----></header><div data-panel-content="true"><span data-panel-summary="true">2 addresses on file</span></div></section><section class="oods-membership-panel" data-oods-component="MembershipPanel" data-panel-type="membership"><header data-panel-header="true"><h3>Membership</h3><!----></header><div data-panel-content="true"><span data-panel-summary="true">Owner of 2 workspaces</span></div></section><section class="oods-preference-panel" data-oods-component="PreferencePanel" data-panel-type="preference"><header data-panel-header="true"><h3>Preferences</h3><!----></header><div data-panel-content="true"><span data-panel-summary="true">No preferences saved</span></div></section><form class="oods-tag-manager" data-oods-component="TagManager" data-form-type="tag-manager"><header data-form-header="true"><h3>Tag Manager</h3><!----></header><div data-form-content="true"><div data-tag-list="true"><span data-tag-item="true">alpha</span></div><label data-form-control="input"><span>Add Tag</span><input type="text" name="newTag" placeholder="Type a tag"></label></div></form><span class="oods-badge oods-address-summary-badge" data-oods-component="AddressSummaryBadge" data-status="billing" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="billing" data-badge-variant="address"><!----><!--[--><span data-oods-badge-label="true">Billing address</span><!--]--></span><span class="oods-badge oods-message-status-badge" data-oods-component="MessageStatusBadge" data-status="delivered" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="delivered" data-badge-variant="message"><!----><!--[--><span data-oods-badge-label="true">delivered</span><!--]--></span><span class="oods-badge oods-preference-summary-badge" data-oods-component="PreferenceSummaryBadge" data-status="v3" data-domain="subscription" data-tone="neutral" data-emphasis="subtle" style="--cmp-badge-background:var(--sys-status-neutral-surface);--cmp-badge-border:var(--sys-status-neutral-border);--cmp-badge-text:var(--sys-status-neutral-text);" data-badge-status="v3" data-badge-variant="preference"><!----><!--[--><span data-oods-badge-label="true">notifications</span><!--]--></span><span class="oods-role-badge-list" data-oods-component="RoleBadgeList" data-badge-variant="roles"><span data-role-badge="true">owner</span></span><div class="oods-tag-pills" data-oods-component="TagPills" data-summary-type="tag-pills"><span data-tag-pill="true">alpha</span><span data-tag-overflow="true">+2</span></div><div class="oods-address-validation-timeline" data-oods-component="AddressValidationTimeline" data-timeline-type="address-validation" role="log" aria-label="Address Validation Timeline"><h3 data-timeline-title="true">Address Validation Timeline</h3><ol data-timeline-events="true"><li><article data-timeline-event="true"><p data-timeline-label="true">Geocoded</p><!----><!----></article></li></ol></div><article class="oods-audit-event" data-oods-component="AuditEvent" data-event-type="audit"><!----><p data-event-label="true">user.updated</p><!----></article><div class="oods-membership-audit-timeline" data-oods-component="MembershipAuditTimeline" data-timeline-type="membership" role="log" aria-label="Membership Timeline"><h3 data-timeline-title="true">Membership Timeline</h3><ol data-timeline-events="true"><li data-timeline-empty="true">No events</li></ol></div><div class="oods-message-event-timeline" data-oods-component="MessageEventTimeline" data-timeline-type="message" role="log" aria-label="Message Timeline"><h3 data-timeline-title="true">Message Timeline</h3><ol data-timeline-events="true"><li><article data-timeline-event="true"><p data-timeline-label="true">delivered</p><!----><!----></article></li></ol></div><div class="oods-preference-timeline" data-oods-component="PreferenceTimeline" data-timeline-type="preference" role="log" aria-label="Preference Timeline"><h3 data-timeline-title="true">Preference Timeline</h3><ol data-timeline-events="true"><li><article data-timeline-event="true"><p data-timeline-label="true">notifications.email</p><!----><!----></article></li></ol></div><form class="oods-address-editor" data-oods-component="AddressEditor" data-form-type="address-editor"><header data-form-header="true"><h3>Address Editor</h3><!----></header><div data-form-content="true"><label data-form-control="input"><span>Street</span><input type="text" name="street" value="1 Main St"></label><label data-form-control="input"><span>City</span><input type="text" name="city" value="Springfield"></label><label data-form-control="input"><span>Region</span><input type="text" name="region"></label><label data-form-control="input"><span>Postal Code</span><input type="text" name="postalCode"></label></div></form><form class="oods-preference-editor" data-oods-component="PreferenceEditor" data-form-type="preference-editor"><header data-form-header="true"><h3>Preference Editor</h3><!----></header><div data-form-content="true"><label data-form-control="select"><span>Namespace</span><select name="namespace"><option value="default">default</option></select></label><label data-form-control="textarea"><span>Preference Document</span><textarea name="preferenceDocument">{}</textarea></label></div></form><form class="oods-role-assignment-form" data-oods-component="RoleAssignmentForm" data-form-type="role-assignment"><header data-form-header="true"><h3>Role Assignment</h3><!----></header><div data-form-content="true"><label data-form-control="select"><span>Role</span><select name="role" value="owner"><option value="owner" selected>owner</option></select></label><label data-form-control="input"><span>Assignee</span><input type="text" name="assignee"></label></div></form><div class="oods-status-selector" data-oods-component="StatusSelector" data-summary-type="status-selector"><label data-form-control="select"><span>Status</span><select name="status" value="active"><option value="draft">draft</option><option value="active" selected>active</option><option value="inactive">inactive</option></select></label></div><fieldset class="oods-tag-input" data-oods-component="TagInput" data-form-type="tag-input"><legend>Tag Input</legend><!----><div data-form-content="true"><label data-form-control="input"><span>Tag</span><input type="text" name="tag" placeholder="Add a tag"></label><div data-tag-list="true"><span data-tag-item="true">alpha</span></div></div></fieldset><fieldset class="oods-template-picker" data-oods-component="TemplatePicker" data-form-type="template-picker"><legend>Template Picker</legend><!----><div data-form-content="true"><label data-form-control="select"><span>Template</span><select name="template" value="welcome"><option value="welcome" selected>welcome</option></select></label><label data-form-control="select"><span>Channel</span><select name="channel"><option value="email">email</option><option value="sms">sms</option><option value="in_app">in_app</option></select></label></div></fieldset><div class="oods-field" data-oods-component="Checkbox" style=""><label class="oods-checkbox" for="marketing"><input id="marketing" type="checkbox"><span class="oods-field-label">Product updates<!----></span></label><!----><!----></div><div class="oods-date-picker" data-oods-component="DatePicker"><div class="oods-field" data-oods-component="Input" style=""><label class="oods-field-label" for="renewal">Renewal date</label><input id="renewal" class="oods-field-control" type="date" value="2026-09-30"><!----><!----></div></div><div class="oods-grid" data-oods-component="Grid" style="--oods-grid-columns:auto-fit;--oods-grid-min-column:16rem;--oods-layout-gap:var(--cmp-spacing-stack-default, 1rem);--oods-layout-align:stretch;--oods-layout-justify:normal;"><span>First</span><span>Second</span></div><div class="oods-field" data-oods-component="Input" style=""><label class="oods-field-label" for="email">Email</label><input id="email" class="oods-field-control" type="text" value="owner@example.com"><!----><!----></div><div class="oods-field" data-oods-component="Select" style=""><label class="oods-field-label" for="plan">Plan</label><select id="plan" class="oods-field-control" value="pro"><!----><option value="basic">Basic</option><option value="pro" selected>Pro</option></select><!----><!----></div><div class="oods-stack" data-oods-component="Stack" style="--oods-stack-direction:column;--oods-stack-wrap:nowrap;--oods-layout-gap:var(--cmp-spacing-stack-default, 1rem);--oods-layout-align:stretch;--oods-layout-justify:flex-start;">Stack content</div><table class="oods-table" data-oods-component="Table" data-density="default"><caption>Subscriptions</caption><thead><tr><th scope="col">Name</th></tr></thead><tbody><tr><td>Acme</td></tr></tbody></table><div class="oods-tabs" data-oods-component="Tabs" data-size="md"><div class="oods-tab-list" role="tablist" aria-label="Account sections"><button id="oods-v-6-tab-overview" class="oods-tab" type="button" role="tab" tabindex="0" aria-selected="true" aria-controls="oods-v-6-panel-overview" data-tab-id="overview">Overview</button><!----></div><div id="oods-v-6-panel-overview" class="oods-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="oods-v-6-tab-overview">Summary</div></div><strong class="oods-text" data-oods-component="Text" data-size="md" data-weight="normal">Account owner</strong><div class="oods-field" data-oods-component="Textarea" style=""><label class="oods-field-label" for="notes">Notes</label><textarea id="notes" class="oods-field-control" rows="3">Call before renewal</textarea><!----><!----></div></main>"
+
+ ❯ test/ssr.spec.ts:136:33
+    134|     const html = await renderToString(h(ServerShowcase));
+    135|     for (const componentId of NUCLEUS_COMPONENT_IDS) {
+    136|       expect(html, componentId).toContain(`data-oods-component="${comp…
+       |                                 ^
+    137|     }
+    138|     expect(html).toContain('<table');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  3 failed | 11 passed (14)
+      Tests  4 failed | 136 passed (140)
+   Start at  19:47:37
+   Duration  66.62s (transform 19.11s, setup 0ms, collect 122.81s, tests 48.07s, environment 182.28s, prepare 28.66s)
+
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/components-vue@0.1.0 test: `vitest run --config vitest.config.ts`
+Exit status 1

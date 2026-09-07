@@ -853,3 +853,78 @@ export const TemplatePicker = defineComponent({
     };
   },
 });
+
+const truncateLabel = (value: string, maxLength: number | string | undefined): string => {
+  const limit = typeof maxLength === 'number' ? maxLength : Number(maxLength);
+  return !Number.isFinite(limit) || limit <= 0 || value.length <= limit
+    ? value : `${value.slice(0, Math.max(0, limit - 1)).trimEnd()}...`;
+};
+
+export const InlineLabel = defineComponent({
+  name: 'OodsInlineLabel', props: { label: String, text: String, value: String, maxLength: [Number, String] },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      return h('span', { class: 'oods-inline-label', 'data-oods-component': 'InlineLabel' },
+        content.length ? content : truncateLabel(firstText(props.label, props.text, props.value) ?? '', props.maxLength));
+    };
+  },
+});
+
+export const LabelCell = defineComponent({
+  name: 'OodsLabelCell', props: { label: String, text: String, value: String, description: String, subtitle: String, sublabel: String, supporting: String, truncate: Boolean, maxLength: [Number, String] },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      const limit = props.truncate ? props.maxLength ?? 40 : props.maxLength;
+      const description = firstText(props.description, props.subtitle, props.sublabel, props.supporting);
+      return h('span', { class: 'oods-label-cell', 'data-oods-component': 'LabelCell' },
+        content.length ? content : [
+          h('span', { 'data-oods-label-cell-primary': 'true' }, truncateLabel(firstText(props.label, props.text, props.value) ?? '', limit)),
+          description ? h('span', { 'data-oods-label-cell-description': 'true' }, truncateLabel(description, limit)) : null,
+        ]);
+    };
+  },
+});
+
+export const FormLabelGroup = defineComponent({
+  name: 'OodsFormLabelGroup', props: { label: String, text: String, title: String, placeholder: String, hint: String, description: String, htmlFor: String, for: String, inputId: String },
+  setup(props, { slots }) {
+    return () => {
+      const hint = firstText(props.placeholder, props.hint, props.description);
+      return h('label', { class: 'oods-form-label-group', 'data-oods-component': 'FormLabelGroup', for: props.htmlFor ?? props.for ?? props.inputId }, [
+        h('span', { 'data-oods-form-label': 'true' }, firstText(props.label, props.text, props.title) ?? 'Label'),
+        ...authoredContent(slots.default?.()),
+        hint ? h('span', { 'data-oods-form-hint': 'true' }, hint) : null,
+      ]);
+    };
+  },
+});
+
+export const ClassificationBadge = createBadgeFamily({
+  component: 'ClassificationBadge', className: 'oods-classification-badge', defaultLabel: 'Classification', defaultVariant: 'classification',
+  labelKeys: ['label', 'text', 'category', 'value'], statusKeys: ['status', 'state', 'mode'], extraProps: ['category', 'mode'],
+});
+
+export const ClassificationEditor = defineComponent({
+  name: 'OodsClassificationEditor', props: {
+    title: String, label: String, heading: String, name: String, description: String, subtitle: String, hint: String,
+    category: String, primaryCategory: String, tags: [String, Array] as PropType<string | readonly unknown[]>,
+    modes: Array as PropType<readonly unknown[]>, mode: String, classificationMode: String,
+  },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      const tagText = typeof props.tags === 'string' ? props.tags : props.tags === undefined ? '' : JSON.stringify(props.tags);
+      const choices = normalizeSelectOptions(Array.isArray(props.modes) ? props.modes : ['strict', 'flexible']);
+      return h('form', { class: 'oods-classification-editor', 'data-oods-component': 'ClassificationEditor', 'data-form-type': 'classification-editor', onSubmit: (event: Event) => event.preventDefault() }, [
+        formHeader(firstText(props.title, props.label, props.heading, props.name) ?? 'Classification Editor', firstText(props.description, props.subtitle, props.hint)),
+        h('div', { 'data-form-content': 'true' }, content.length ? content : [
+          h('label', { 'data-form-control': 'input' }, [h('span', 'Category'), h('input', { type: 'text', name: 'category', value: firstText(props.category, props.primaryCategory) ?? '' })]),
+          h('label', { 'data-form-control': 'input' }, [h('span', 'Tags'), h('input', { type: 'text', name: 'tags', placeholder: 'tag-1, tag-2', value: tagText })]),
+          h('label', { 'data-form-control': 'select' }, [h('span', 'Mode'), h('select', { name: 'mode', value: firstText(props.mode, props.classificationMode) }, selectOptionNodes(choices, firstText(props.mode, props.classificationMode)))]),
+        ]),
+      ]);
+    };
+  },
+});

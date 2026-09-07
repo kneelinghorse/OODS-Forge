@@ -277,3 +277,14 @@ export type PriceSummaryProps = {
   text?: string;
   description?: string;
 };
+
+export type InlineLabelProps = { label?: string; text?: string; value?: string; maxLength?: number | string };
+export type LabelCellProps = InlineLabelProps & {
+  description?: string; subtitle?: string; sublabel?: string; supporting?: string; truncate?: boolean;
+};
+export type FormLabelGroupProps = { label?: string; text?: string; title?: string; placeholder?: string; hint?: string; description?: string; htmlFor?: string; for?: string; inputId?: string };
+export type ClassificationBadgeProps = { label?: string; text?: string; category?: string; value?: string; status?: string; state?: string; mode?: string; variant?: string; tone?: ComponentTone; emphasis?: ComponentEmphasis };
+export type ClassificationEditorProps = {
+  title?: string; label?: string; heading?: string; name?: string; description?: string; subtitle?: string; hint?: string;
+  category?: string; primaryCategory?: string; tags?: string | readonly unknown[]; modes?: readonly unknown[]; mode?: string; classificationMode?: string;
+};

@@ -42,6 +42,41 @@ describe('Sprint 187 fresh composition binding intent', () => {
     }
   });
 
+  it.each(['list', 'form', 'inline'] as const)('Product/%s keeps naming data and honest controls after the ports', async (context) => {
+    const schema = (await compose({ object: 'Product', context })).schema!;
+    const nodes = schemaNodes(schema);
+    if (context === 'list') {
+      expect(nodes.find((node) => node.component === 'LabelCell')?.props).toMatchObject({ field: 'label', descriptionField: 'description' });
+      expect(nodes.find((node) => node.component === 'FilterPanel')?.props?.maxActiveParameter).toBe('maxActiveFilters');
+    } else if (context === 'form') {
+      const editor = nodes.find((node) => node.component === 'ClassificationEditor')!;
+      expect(editor.props?.field).toBe('description');
+      expect(editor.bindings?.onChange).toBeUndefined();
+    } else {
+      expect(nodes.find((node) => node.component === 'SearchInput')?.props?.field).toBe('searchQuery');
+      expect(schema.objectSchema?.searchActive.type).toBe('boolean');
+    }
+    for (const framework of ['react', 'vue'] as const) {
+      const generated = await generate({ schema, framework, profile: 'build' });
+      expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
+      if (context === 'form') {
+        expect(generated.code).toMatch(/description=\{description\}|:description="description"/);
+        if (framework === 'react') expect(generated.code).toContain('React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>');
+      }
+    }
+  });
+
+  it('does not treat search-active booleans as editable search query text', () => {
+    const schema: UiSchema = { version: '2026.02', objectSchema: {
+      searchActive: { type: 'boolean', required: true, semanticType: 'state.search.active' },
+      searchQuery: { type: 'string', required: false, semanticType: 'input.search.query' },
+    }, screens: [{ id: 'query', component: 'SearchInput' }] };
+    wireFieldProps(schema);
+    expect(schema.screens[0]!.props?.field).toBe('searchQuery');
+    expect(schema.screens[0]!.bindings).toEqual({ onUpdate: 'handleUpdate_searchQuery' });
+    expect(schema.objectSchema?.searchActive.type).toBe('boolean');
+  });
+
   it('keeps authored choices and enum semantics, converting only continuous empty Selects', () => {
     const choices = [{ value: '0', label: 'Zero' }, { value: '7', label: 'Seven' }];
     const schema: UiSchema = { version: '2026.02', objectSchema: {
@@ -79,7 +114,7 @@ describe('Sprint 187 fresh composition binding intent', () => {
           external: ['react', 'react-dom', 'vue', '@oods/components-react', '@oods/components-react/*', '@oods/components-vue', '@oods/components-vue/*'],
         });
         const models = [deriveConsumerModel(schema), deriveConsumerModel(schema)];
-        for (const probe of deriveValueProbes(schema, models[1]!)) {
+        for (const probe of deriveValueProbes(schema, models[1]!).filter((probe) => probe.kind === 'numeric-input' || probe.kind === 'boolean-text')) {
           const key = probe.field.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
           models[1]![key] = probe.kind === 'boolean-text' ? true : 7;
         }
@@ -107,7 +142,9 @@ const actionNames = ${JSON.stringify(result.artifact!.actions.map(({ name }) => 
     for (const probe of probes[i]) {
       const node = document.querySelector('[id=' + JSON.stringify(probe.nodeId) + ']');
       assert.ok(node, probe.nodeId);
-      const actual = probe.kind === 'numeric-input' ? node.getAttribute('value') : node.textContent.trim();
+      const target = probe.selector ? node.querySelector(probe.selector) : node;
+      assert.ok(target, probe.selector);
+      const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' ? target.getAttribute('value') : target.textContent.trim();
       assert.equal(actual, probe.expected, probe.field + ' must preserve its typed value');
     }
   }

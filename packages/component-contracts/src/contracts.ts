@@ -103,6 +103,22 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Native checkbox semantics', 'Label and help/error descriptions are programmatically associated'],
     compatibility: 'Indeterminate remains unsupported until implemented and tested in both targets.',
   },
+  ClassificationBadge: {
+    id: 'ClassificationBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'category', 'value', 'status', 'state', 'mode', 'variant', 'tone', 'emphasis'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['category is visible', 'mode is the status metadata', 'noninteractive badge'],
+    compatibility: 'Mirrors renderClassificationBadge over Badge: label/text/category/value precedence, status/state/mode precedence and classification variant. primaryCategoryField binds category; tagPreviewField is consumed unbound because the HTML badge reads no tag preview. Noninteractive.',
+  },
+
+  ClassificationEditor: {
+    id: 'ClassificationEditor', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'category', 'primaryCategory', 'tags', 'modes', 'mode', 'classificationMode'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
+    accessibility: ['labelled native inputs retain their values', 'mode selection is flexible', 'submit does not navigate or save'],
+    compatibility: 'Mirrors renderClassificationEditor: form header aliases, Category input from category/primaryCategory, serialized Tags input and Mode select from modes or strict/flexible, with mode/classificationMode selection. Children replace the generated controls. modeParameter, tagPolicyParameter and maxTagsParameter are consumed unbound. The generic field binds the visible description subtitle without an invented onChange. Presentational native controls only: submit is prevented; no classification change, persistence or save event is promised.',
+  },
+
   ClassificationPanel: {
     id: 'ClassificationPanel', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'subtitle', 'description', 'metadata', 'summary', 'text', 'body', 'emptyMessage'], slots: ['default'], events: [],
@@ -143,14 +159,30 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     props: ['filters', 'activeFilters', 'mode', 'collapsible'], slots: ['default'], events: [],
     states: ['immediate', 'batch', 'active', 'empty'], tokenRoles: ['filter.background', 'filter.border', 'filter.text', 'filter.legend'],
     accessibility: ['A named region (aria-label Filters) wraps the panel', 'Each filter descriptor is a fieldset with a visible legend', 'The active-filter count is a polite live region'],
-    compatibility: 'Mirrors renderFilterPanel with data-behavioral=filter and data-filter-mode (default immediate): filters renders one fieldset per record descriptor labelled by label, then field, then Filter; activeFilters renders the polite count with a Clear all control; mode=batch adds an Apply control; collapsible (default true) marks each fieldset data-collapsible. The generic field lowers to filters and activeField to activeFilters; modeParameter and collapsibleParameter are consumed. The Clear all and Apply controls are unwired in the HTML renderer and stay unwired here: the contract declares no events.',
+    compatibility: 'Mirrors renderFilterPanel with data-behavioral=filter and data-filter-mode (default immediate): filters renders one fieldset per record descriptor labelled by label, then field, then Filter; activeFilters renders the polite count with a Clear all control; mode=batch adds an Apply control; collapsible (default true) marks each fieldset data-collapsible. The generic field lowers to filters and activeField to activeFilters; modeParameter, collapsibleParameter and maxActiveParameter are consumed. The Clear all and Apply controls are unwired in the HTML renderer and stay unwired here: the contract declares no events.',
   },
+  FormLabelGroup: {
+    id: 'FormLabelGroup', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'title', 'placeholder', 'hint', 'description', 'htmlFor', 'for', 'inputId'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['text.primary', 'text.secondary'],
+    accessibility: ['for targets the authored input id', 'hint is visible'],
+    compatibility: 'Mirrors renderFormLabelGroup: a label with htmlFor/for/inputId association, label/text/title precedence and placeholder/hint/description hint precedence. Children sit between the label and hint. labelField, descriptionField and placeholderField bind consumed runtime keys. maxLabelLengthParameter, maxDescriptionLengthParameter and requireDescriptionParameter are consumed without runtime values; this label alone does not implement an editor.',
+  },
+
   Grid: {
     id: 'Grid', version: COMPONENT_CONTRACT_VERSION,
     props: ['columns', 'minColumnWidth', 'gap', 'align', 'justify'], slots: ['default'], events: [],
     states: ['fixed-columns', 'auto-fit'], tokenRoles: ['layout.gap', 'layout.breakpoint'], accessibility: ['Does not alter child semantics'],
     compatibility: 'CSS-grid layout with responsive behavior defined by the shared CSS contract.',
   },
+  InlineLabel: {
+    id: 'InlineLabel', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'value', 'maxLength'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['text.primary'],
+    accessibility: ['label is truncated with the HTML suffix', 'noninteractive span'],
+    compatibility: 'Mirrors renderInlineLabel with label/text/value precedence, numeric maxLength truncation and authored children replacing the label. The generic field binds label so its datum retains truncation semantics instead of becoming authored children.',
+  },
+
   Input: {
     id: 'Input', version: COMPONENT_CONTRACT_VERSION,
     props: ['id', 'label', 'type', 'value', 'defaultValue', 'placeholder', 'required', 'disabled', 'readOnly', 'help', 'validation'], slots: ['label', 'help', 'validation'], events: ['input', 'change', 'update'],
@@ -158,6 +190,14 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Native input semantics', 'Label and help/error descriptions are programmatically associated'],
     compatibility: 'Canonicalizes TextField; TextField remains a non-counting compatibility alias.',
   },
+  LabelCell: {
+    id: 'LabelCell', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'value', 'description', 'subtitle', 'sublabel', 'supporting', 'truncate', 'maxLength'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['text.primary', 'text.secondary'],
+    accessibility: ['primary and description are truncated with the HTML suffix', 'no editor is implied'],
+    compatibility: 'Mirrors renderLabelCell: label/text/value precedence, description/subtitle/sublabel/supporting precedence, truncate defaults the limit to 40, and maxLength accepts a number or numeric string. Truncation uses the HTML three-dot suffix. Authored children replace the entire body. field binds label and descriptionField binds description; maxLengthParameter is consumed without a runtime value.',
+  },
+
   MembershipAuditTimeline: {
     id: 'MembershipAuditTimeline', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'events', 'memberships', 'history'], slots: ['default'], events: [],

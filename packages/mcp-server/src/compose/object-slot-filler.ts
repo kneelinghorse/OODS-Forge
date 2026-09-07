@@ -536,7 +536,8 @@ function populateFormFieldBindings(el: UiElement, fieldNames: string[]): void {
   const walk = (node: UiElement): void => {
     // If this element has a `field` prop matching a known field, add onChange binding
     const fieldProp = node.props?.field;
-    if (typeof fieldProp === 'string' && fieldSet.has(fieldProp)) {
+    // ClassificationEditor exposes presentational native controls, not a generic field edit.
+    if (node.component !== 'ClassificationEditor' && !node.bindings?.onUpdate && typeof fieldProp === 'string' && fieldSet.has(fieldProp)) {
       node.bindings = {
         ...node.bindings,
         onChange: `handleChange_${fieldProp}`,
@@ -660,9 +661,10 @@ function isSearchField(fieldName: string, fieldEntry: FieldSchemaEntry): boolean
   const semantic = fieldEntry.semanticType?.toLowerCase() ?? '';
   const lowerName = fieldName.toLowerCase();
 
-  return semantic.includes('search')
+  // Active/focused state is not query text, even when its semantic name contains search.
+  return fieldEntry.type === 'string' && (semantic.includes('search')
     || lowerName.includes('search')
-    || lowerName.endsWith('query');
+    || lowerName.endsWith('query'));
 }
 
 function isTagField(fieldName: string, fieldEntry: FieldSchemaEntry): boolean {
@@ -756,6 +758,11 @@ function applyBoundFieldProps(
     node.component = 'Input';
     node.props = { ...node.props, type: 'number' };
     node.bindings = { ...node.bindings, onChange: node.bindings?.onChange ?? `handleChange_${fieldName}` };
+  }
+  // A composed, bound search needs a local value update for typing and clear.
+  // The component's semantic update covers both; a native change alone misses clear.
+  if (node.component === 'SearchInput' && fieldEntry.type === 'string' && !Object.keys(node.bindings ?? {}).length) {
+    node.bindings = { onUpdate: `handleUpdate_${fieldName}` };
   }
   const nextProps: Record<string, unknown> = {
     ...(node.props ?? {}),

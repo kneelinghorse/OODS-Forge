@@ -56,11 +56,31 @@ export function schemaNodes(schema: UiSchema): UiElement[] {
 export const selectorForNode = (id: string): string => `[id=${JSON.stringify(id)}]`;
 const camel = (name: string) => name.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
 
-export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status'; expected: string; editable: boolean };
+export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status' | 'query-input' | 'family-text'; selector?: string; expected: string; editable: boolean };
 
 /** Repaired bindings must visibly represent the supplied datum, including zero and false. */
 export function deriveValueProbes(schema: UiSchema, model: Record<string, unknown>): ValueProbe[] {
   return schemaNodes(schema).flatMap((node): ValueProbe[] => {
+    const textProbe = (field: unknown, selector?: string, truncate = false): ValueProbe[] => {
+      if (typeof field !== 'string' || !schema.objectSchema?.[field]) return [];
+      let expected = String(model[camel(field)] ?? '');
+      if (truncate) {
+        const limit = Number(node.props?.maxLength ?? (node.props?.truncate ? 40 : NaN));
+        if (Number.isFinite(limit) && limit > 0 && expected.length > limit) expected = expected.slice(0, Math.max(0, limit - 1)).trimEnd() + '...';
+      }
+      return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
+    };
+    if (node.component === 'LabelCell') return [
+      ...textProbe(node.props?.field, '[data-oods-label-cell-primary]', true),
+      ...textProbe(node.props?.descriptionField, '[data-oods-label-cell-description]', true),
+    ];
+    if (node.component === 'InlineLabel') return textProbe(node.props?.field, undefined, true);
+    if (node.component === 'FormLabelGroup') return [
+      ...textProbe(node.props?.labelField, '[data-oods-form-label]'),
+      ...textProbe(node.props?.placeholderField ?? node.props?.descriptionField, '[data-oods-form-hint]'),
+    ];
+    if (node.component === 'ClassificationBadge') return textProbe(node.props?.primaryCategoryField, '[data-oods-badge-label]');
+    if (node.component === 'ClassificationEditor') return textProbe(node.props?.field, '[data-form-subtitle]');
     const field = node.props?.field;
     if (typeof field !== 'string') return [];
     const entry = schema.objectSchema?.[field];
@@ -69,6 +89,7 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
     if (node.component === 'Input' && node.props?.type === 'number' && ['integer', 'number'].includes(entry?.type ?? '')) {
       return [{ ...base, kind: 'numeric-input', expected: String(value ?? ''), editable: !!node.bindings?.onChange }];
     }
+    if (node.component === 'SearchInput' && entry?.type === 'string') return [{ ...base, kind: 'query-input', expected: String(value ?? '') }];
     if (node.component === 'Text' && entry?.type === 'boolean') {
       return [{ ...base, kind: 'boolean-text', expected: value == null ? '' : value ? 'Yes' : 'No' }];
     }
@@ -77,6 +98,21 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
       return [{ ...base, kind: 'status', expected: `Current status: ${label}` }];
     }
     return [];
+  });
+}
+
+export type SharedNativeFieldProbe = { field: string; inputId: string; selectId: string; selectContainer: boolean };
+
+/** Exercise both native writers when an authentic schema shares one local field handler. */
+export function deriveSharedNativeFieldProbes(schema: UiSchema): SharedNativeFieldProbe[] {
+  const nodes = schemaNodes(schema);
+  return nodes.flatMap((select): SharedNativeFieldProbe[] => {
+    if (!['Select', 'StatusSelector'].includes(select.component) || !select.bindings?.onChange) return [];
+    const field = select.props?.field;
+    if (typeof field !== 'string' || schema.objectSchema?.[field]?.type !== 'string') return [];
+    const input = nodes.find((node) => node.component === 'Input' && node.props?.field === field
+      && node.bindings?.onChange === select.bindings?.onChange);
+    return input ? [{ field, inputId: input.id, selectId: select.id, selectContainer: select.component === 'StatusSelector' }] : [];
   });
 }
 

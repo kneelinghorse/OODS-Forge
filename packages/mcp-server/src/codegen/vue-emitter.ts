@@ -240,6 +240,7 @@ function vueControlledProp(occurrence: LocalBindingOccurrence): string | null {
   if (
     occurrence.component === 'DatePicker'
     || occurrence.component === 'Input'
+    || occurrence.component === 'SearchInput'
     || occurrence.component === 'Select'
     || occurrence.component === 'Textarea'
     || occurrence.component === 'StatusSelector'

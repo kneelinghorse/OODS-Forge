@@ -10,6 +10,7 @@ const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const repoRoot = path.resolve(packageRoot, '../..');
 const css = fs.readFileSync(path.join(packageRoot, 'src/components.css'), 'utf8');
 const breadthComponents = [
+  'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
   'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
   'ClassificationPanel', 'FilterPanel', 'PriceSummary',
   'AddressCollectionPanel', 'MembershipPanel', 'PreferencePanel', 'TagManager',

@@ -356,7 +356,7 @@
 }
 
 /* Badge-family summaries reuse the governed Badge substrate; the pill groups mirror their plain-span HTML renderers. */
-:where([data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
+:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
   --cmp-badge-background: var(--sys-status-neutral-surface);
   --cmp-badge-border: var(--sys-status-neutral-border);
   --cmp-badge-text: var(--sys-status-neutral-text);
@@ -372,13 +372,13 @@
   font-weight: var(--cmp-badge-font-weight, 600);
 }
 
-:where([data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
+:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
   border-color: var(--cmp-badge-text, CanvasText);
   background: var(--cmp-badge-text, CanvasText);
   color: var(--cmp-badge-background, Canvas);
 }
 
-:where([data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
+:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
   display: inline;
   visibility: visible;
   color: inherit;
@@ -488,7 +488,7 @@
   font: inherit;
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) {
   --cmp-form-background: var(--sys-surface-raised);
   --cmp-form-border: var(--sys-border-subtle);
   --cmp-form-text: var(--sys-text-primary);
@@ -503,12 +503,12 @@
   color: var(--cmp-form-text, CanvasText);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] {
   display: grid;
   gap: var(--sys-spacing-stack-compact, 0.25rem);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > h3 {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > h3 {
   margin: 0;
   color: var(--cmp-form-text, CanvasText);
   font-size: var(--sys-text-size-lg, 1.25rem);
@@ -516,34 +516,34 @@
   line-height: var(--sys-text-line-height-standard, 1.4);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > [data-form-subtitle] {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > [data-form-subtitle] {
   color: var(--cmp-form-hint, CanvasText);
   font-size: var(--sys-text-size-sm, 0.875rem);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-list] {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-list] {
   display: flex;
   flex-wrap: wrap;
   gap: var(--cmp-spacing-inline-xs, 0.5rem);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-item] {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-item] {
   padding: 0.125rem 0.5rem;
   border: 1px solid var(--cmp-form-border, CanvasText);
   border-radius: 999px;
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] {
   display: grid;
   gap: 0.25rem;
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] > span {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] > span {
   color: var(--cmp-form-hint, CanvasText);
   font-size: var(--sys-text-size-sm, 0.875rem);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) input {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) input {
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--cmp-form-border, CanvasText);
   border-radius: var(--cmp-input-radius, 0.375rem);
@@ -552,34 +552,34 @@
   font: inherit;
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > legend {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > legend {
   padding-inline: 0.25rem;
   font-size: var(--sys-text-size-lg, 1.25rem);
   font-weight: var(--ref-typography-weights-semibold, 600);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-subtitle] {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-subtitle] {
   color: var(--cmp-form-hint, CanvasText);
   font-size: var(--sys-text-size-sm, 0.875rem);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-content] {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-content] {
   display: grid;
   gap: var(--cmp-spacing-stack-sm, 0.75rem);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] {
   display: grid;
   gap: 0.25rem;
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] > span {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] > span {
   color: var(--cmp-form-hint, CanvasText);
   font-size: var(--sys-text-size-sm, 0.875rem);
 }
 
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) select,
-:where([data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) textarea {
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) select,
+:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) textarea {
   padding: 0.375rem 0.5rem;
   border: 1px solid var(--cmp-form-border, CanvasText);
   border-radius: var(--cmp-input-radius, 0.375rem);
@@ -839,7 +839,7 @@
     forced-color-adjust: none;
   }
 
-  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
     forced-color-adjust: none;
     border-color: CanvasText;
     background: Canvas;
@@ -853,7 +853,7 @@
   }
 }
 
-[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
   border-color: CanvasText;
   background: Canvas;
   color: CanvasText;
@@ -898,7 +898,7 @@
 }
 
 @media (forced-colors: active) {
-  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
     forced-color-adjust: none;
     border-color: CanvasText;
     background: Canvas;
@@ -906,7 +906,7 @@
   }
 }
 
-[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
   border-color: CanvasText;
   background: Canvas;
   color: CanvasText;
@@ -1076,4 +1076,26 @@
     background: Canvas;
     color: CanvasText;
   }
+}
+
+/* Fresh composition naming families share the same semantic token cascade. */
+:where([data-oods-component='LabelCell'], [data-oods-component='InlineLabel'], [data-oods-component='FormLabelGroup']) {
+  --cmp-text-primary: var(--sys-text-primary);
+  color: var(--cmp-text-primary, CanvasText);
+  font: inherit;
+}
+:where([data-oods-component='LabelCell'], [data-oods-component='FormLabelGroup']) {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-stack-compact, 0.25rem);
+}
+:where([data-oods-component='LabelCell']) [data-oods-label-cell-description],
+:where([data-oods-component='FormLabelGroup']) [data-oods-form-hint] {
+  color: var(--cmp-text-secondary, GrayText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+:where([data-oods-form-label]) { font-weight: var(--ref-typography-weights-medium, 500); }
+
+:where([data-oods-component='LabelCell'], [data-oods-component='FormLabelGroup']) {
+  --cmp-text-secondary: var(--sys-text-secondary);
 }

@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
   PaginationBar,
@@ -57,6 +58,7 @@ import {
 } from '../src/index.js';
 
 const implementations: Readonly<Record<string, Component>> = {
+  LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
   PaginationBar,
@@ -627,6 +629,34 @@ describe('@oods/components-vue shared scenarios', () => {
             expect(component.get('[data-timeline-empty="true"]').text()).toBe('No events');
             break;
           }
+        case 'label-cell-truncation-and-description': {
+          expect(component.element?.querySelector('[data-oods-label-cell-primary]')?.textContent).toBe('Long pr...');
+          expect(component.element?.querySelector('[data-oods-label-cell-description]')?.textContent).toBe('Long su...');
+          break;
+        }
+        case 'inline-label-truncation': {
+          expect(component.element?.textContent).toBe('Long in...');
+          break;
+        }
+        case 'form-label-group-association': {
+          expect(component.element?.getAttribute('for')).toBe('product-name');
+          expect(component.element?.querySelector('[data-oods-form-label]')?.textContent).toBe('Product name');
+          expect(component.element?.querySelector('[data-oods-form-hint]')?.textContent).toBe('Name shown to customers');
+          break;
+        }
+        case 'classification-badge-category': {
+          expect(component.element?.querySelector('[data-oods-badge-label]')?.textContent).toBe('Electronics');
+          expect(component.element?.getAttribute('data-badge-status')).toBe('strict');
+          expect(component.element?.getAttribute('data-badge-variant')).toBe('classification');
+          break;
+        }
+        case 'classification-editor-presentational-controls': {
+          expect(component.element?.querySelector('h3')?.textContent).toBe('Product classification');
+          expect((component.element?.querySelector('[name="category"]') as HTMLInputElement).value).toBe('Electronics');
+          expect((component.element?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
+          expect((component.element?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
+          break;
+        }
           default:
             throw new Error(`Missing executable Vue assertion for ${scenario.id}`);
         }

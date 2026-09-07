@@ -23,12 +23,16 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   // Labelled trait recipe directives lower into title/supporting; they are
   // authoring metadata rather than additions to the public component API.
   CardHeader: new Set(['titleField', 'supportingField']),
+  LabelCell: new Set(['descriptionField', 'maxLengthParameter']),
+  FormLabelGroup: new Set(['labelField', 'descriptionField', 'placeholderField', 'maxLabelLengthParameter', 'maxDescriptionLengthParameter', 'requireDescriptionParameter']),
+  ClassificationBadge: new Set(['primaryCategoryField', 'tagPreviewField']),
+  ClassificationEditor: new Set(['modeParameter', 'tagPolicyParameter', 'maxTagsParameter']),
   Checkbox: new Set(['name']),
   // Sprint 186 wave-2 directives: consumed by codegen (bound or disclosed unbound), never public props.
   ClassificationPanel: new Set(['categoriesField', 'tagsField', 'metadataField', 'modeParameter']),
   DatePicker: new Set(['name']),
   DetailHeader: new Set(['titleField', 'subtitleField', 'headingLevel']),
-  FilterPanel: new Set(['activeField', 'modeParameter', 'collapsibleParameter']),
+  FilterPanel: new Set(['activeField', 'modeParameter', 'collapsibleParameter', 'maxActiveParameter']),
   Input: new Set(['name']),
   PriceSummary: new Set(['amountField', 'currencyField', 'modelField', 'intervalField', 'taxBehaviorField']),
   AddressCollectionPanel: new Set(['roleField', 'defaultRoleField', 'roleParameter']),
@@ -463,6 +467,11 @@ const PROP_VALUE_CONTRACTS: Readonly<
     elevated: BOOLEAN_VALUE,
     as: enumContract(['div', 'section', 'article', 'aside']),
   },
+  LabelCell: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, sublabel: STRING_VALUE, supporting: STRING_VALUE, truncate: BOOLEAN_VALUE, maxLength: STRING_OR_NUMBER_VALUE },
+  InlineLabel: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, maxLength: STRING_OR_NUMBER_VALUE },
+  FormLabelGroup: { label: STRING_VALUE, text: STRING_VALUE, title: STRING_VALUE, placeholder: STRING_VALUE, hint: STRING_VALUE, description: STRING_VALUE, htmlFor: STRING_VALUE, for: STRING_VALUE, inputId: STRING_VALUE },
+  ClassificationBadge: { label: STRING_VALUE, text: STRING_VALUE, category: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, mode: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
+  ClassificationEditor: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, hint: STRING_VALUE, category: STRING_VALUE, primaryCategory: STRING_VALUE, tags: valueContract('a string or array', (value) => typeof value === 'string' || Array.isArray(value)), modes: valueContract('an array of mode choices', Array.isArray), mode: STRING_VALUE, classificationMode: STRING_VALUE },
   CardHeader: {
     title: STRING_VALUE,
     label: STRING_VALUE,
@@ -865,6 +874,8 @@ function acceptedFieldKinds(
     return framework === 'vue' ? ['string'] : ['string', 'number'];
   }
   if (propName === 'content') return ['string', 'number'];
+  if (propName === 'description' && component === 'ClassificationEditor') return ['string'];
+  if (propName === 'label' && ['LabelCell', 'InlineLabel', 'FormLabelGroup'].includes(component)) return ['string'];
   if (propName === 'label' && component === 'PriceBadge') return ['string', 'number'];
   if (propName === 'datetime' && component === 'RelativeTimestamp') return ['string'];
   if (propName === 'status') return ['string'];

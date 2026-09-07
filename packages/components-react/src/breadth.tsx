@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Badge } from './presentational.js';
 import type { ComponentEmphasis, ComponentTone } from './types.js';
 import type {
+  LabelCellProps, InlineLabelProps, FormLabelGroupProps, ClassificationBadgeProps, ClassificationEditorProps,
   AddressEditorProps,
   AddressEditorValue,
   AddressSummaryBadgeProps,
@@ -923,3 +924,70 @@ export const TemplatePicker = React.forwardRef<HTMLFieldSetElement, TemplatePick
   }
 );
 TemplatePicker.displayName = 'OODS.TemplatePicker';
+
+// Matches truncateText in the HTML authority, including its three-dot suffix.
+const truncateLabel = (value: string, maxLength: number | string | undefined): string => {
+  const limit = typeof maxLength === 'number' ? maxLength : Number(maxLength);
+  return !Number.isFinite(limit) || limit <= 0 || value.length <= limit
+    ? value : `${value.slice(0, Math.max(0, limit - 1)).trimEnd()}...`;
+};
+
+export const InlineLabel = React.forwardRef<HTMLSpanElement, InlineLabelProps>(
+  ({ label, text, value, maxLength, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    return <span ref={ref} className={classes('oods-inline-label', className)} data-oods-component="InlineLabel" {...rest}>
+      {content.authored || content.scalar !== undefined ? children : truncateLabel(firstText(label, text, value) ?? '', maxLength)}
+    </span>;
+  }
+);
+InlineLabel.displayName = 'OODS.InlineLabel';
+
+export const LabelCell = React.forwardRef<HTMLSpanElement, LabelCellProps>(
+  ({ label, text, value, description, subtitle, sublabel, supporting, truncate, maxLength, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const limit = truncate ? maxLength ?? 40 : maxLength;
+    const primary = truncateLabel(firstText(label, text, value) ?? '', limit);
+    const detail = firstText(description, subtitle, sublabel, supporting);
+    return <span ref={ref} className={classes('oods-label-cell', className)} data-oods-component="LabelCell" {...rest}>
+      {content.authored || content.scalar !== undefined ? children : <>
+        <span data-oods-label-cell-primary="true">{primary}</span>
+        {detail ? <span data-oods-label-cell-description="true">{truncateLabel(detail, limit)}</span> : null}
+      </>}
+    </span>;
+  }
+);
+LabelCell.displayName = 'OODS.LabelCell';
+
+export const FormLabelGroup = React.forwardRef<HTMLLabelElement, FormLabelGroupProps>(
+  ({ label, text, title, placeholder, hint, description, htmlFor, for: forId, inputId, children, className, ...rest }, ref) => {
+    const detail = firstText(placeholder, hint, description);
+    return <label ref={ref} className={classes('oods-form-label-group', className)} data-oods-component="FormLabelGroup" htmlFor={htmlFor ?? forId ?? inputId} {...rest}>
+      <span data-oods-form-label="true">{firstText(label, text, title) ?? 'Label'}</span>
+      {children}
+      {detail ? <span data-oods-form-hint="true">{detail}</span> : null}
+    </label>;
+  }
+);
+FormLabelGroup.displayName = 'OODS.FormLabelGroup';
+
+export const ClassificationBadge = createBadgeFamily<ClassificationBadgeProps>({
+  component: 'ClassificationBadge', className: 'oods-classification-badge', defaultLabel: 'Classification', defaultVariant: 'classification',
+  labelKeys: ['label', 'text', 'category', 'value'], statusKeys: ['status', 'state', 'mode'],
+});
+
+export const ClassificationEditor = React.forwardRef<HTMLFormElement, ClassificationEditorProps>(
+  ({ title, label, heading, name, description, subtitle, hint, category, primaryCategory, tags, modes, mode, classificationMode, children, className, onSubmit, ...rest }, ref) => {
+    const content = childContent(children);
+    const tagText = typeof tags === 'string' ? tags : tags === undefined ? '' : JSON.stringify(tags);
+    return <form ref={ref} className={classes('oods-classification-editor', className)} data-oods-component="ClassificationEditor" data-form-type="classification-editor"
+      onSubmit={(event) => { preventSubmit(event); onSubmit?.(event); }} {...rest}>
+      {formHeader(firstText(title, label, heading, name) ?? 'Classification Editor', firstText(description, subtitle, hint))}
+      <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
+        <label data-form-control="input"><span>Category</span><input type="text" name="category" defaultValue={firstText(category, primaryCategory) ?? ''} /></label>
+        <label data-form-control="input"><span>Tags</span><input type="text" name="tags" placeholder="tag-1, tag-2" defaultValue={tagText} /></label>
+        <label data-form-control="select"><span>Mode</span><select name="mode" defaultValue={firstText(mode, classificationMode)}>{selectOptionsMarkup(normalizeSelectOptions(Array.isArray(modes) ? modes : ['strict', 'flexible']))}</select></label>
+      </>}</div>
+    </form>;
+  }
+);
+ClassificationEditor.displayName = 'OODS.ClassificationEditor';

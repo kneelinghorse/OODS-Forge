@@ -1,0 +1,53 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/component-contracts
+
+ ✓ test/breadth-contracts.s185.spec.ts (15 tests) 14ms
+ ✓ test/breadth-contracts.s186.spec.ts (48 tests) 44ms
+ ✓ test/contracts.spec.ts (7 tests) 16ms
+ ✓ test/ported-contracts.s184.spec.ts (4 tests) 7ms
+ ✓ test/workflow-states.s184.spec.ts (2 tests) 4ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 3ms
+ ✓ test/breadth-contracts.s187.spec.ts (6 tests) 4ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/baseline-fold.s185.spec.ts [ test/baseline-fold.s185.spec.ts ]
+AssertionError: ClassificationBadge: generated evidence must cover both frameworks.
++ actual - expected
+
++ []
+- [
+-   'react',
+-   'vue'
+- ]
+
+
+- Expected
++ Received
+
+- [
+-   "react",
+-   "vue",
+- ]
++ []
+
+ ❯ deriveBaselineSurfaceFold ../../scripts/product-reality/s185-baseline-surfaces.mjs:205:14
+    203|         });
+    204|       }
+    205|       assert.deepEqual([...targets].sort(), TARGETS, `${componentId}: …
+       |              ^
+    206|       row.surfaces.generatedConsumer = { state: row.surfaces.react.sta…
+    207|     }
+ ❯ test/baseline-fold.s185.spec.ts:16:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  84 passed (84)
+   Start at  19:53:51
+   Duration  1.77s (transform 257ms, setup 0ms, collect 529ms, tests 91ms, environment 1ms, prepare 582ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config vitest.config.ts --maxWorkers=2

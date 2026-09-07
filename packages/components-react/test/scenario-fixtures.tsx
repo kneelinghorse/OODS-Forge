@@ -8,6 +8,7 @@ import type {
 } from '../src/index.js';
 
 import {
+  LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
   PaginationBar,
@@ -248,6 +249,16 @@ export function renderSharedScenario(
       return <StatusBadge {...scenario.props} />;
     case 'status-timeline-history':
       return <StatusTimeline {...scenario.props} />;
+    case 'label-cell-truncation-and-description':
+      return <LabelCell {...scenario.props} />;
+    case 'inline-label-truncation':
+      return <InlineLabel {...scenario.props} />;
+    case 'form-label-group-association':
+      return <FormLabelGroup {...scenario.props} />;
+    case 'classification-badge-category':
+      return <ClassificationBadge {...scenario.props} />;
+    case 'classification-editor-presentational-controls':
+      return <ClassificationEditor {...scenario.props} />;
     default:
       throw new Error(`Unimplemented shared React scenario: ${scenario.id}`);
   }
