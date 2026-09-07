@@ -356,7 +356,7 @@
 }
 
 /* Badge-family summaries reuse the governed Badge substrate; the pill groups mirror their plain-span HTML renderers. */
-:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
+:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
   --cmp-badge-background: var(--sys-status-neutral-surface);
   --cmp-badge-border: var(--sys-status-neutral-border);
   --cmp-badge-text: var(--sys-status-neutral-text);
@@ -372,13 +372,13 @@
   font-weight: var(--cmp-badge-font-weight, 600);
 }
 
-:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
+:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
   border-color: var(--cmp-badge-text, CanvasText);
   background: var(--cmp-badge-text, CanvasText);
   color: var(--cmp-badge-background, Canvas);
 }
 
-:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
+:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
   display: inline;
   visibility: visible;
   color: inherit;
@@ -617,7 +617,7 @@
   outline-offset: 2px;
 }
 
-:where([data-oods-component='PriceSummary']) {
+:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) {
   --cmp-summary-background: var(--sys-surface-raised);
   --cmp-summary-border: var(--sys-border-subtle);
   --cmp-summary-text: var(--sys-text-primary);
@@ -631,34 +631,34 @@
   color: var(--cmp-summary-text, CanvasText);
 }
 
-:where([data-oods-component='PriceSummary']) > [data-summary-title] {
+:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-title] {
   margin: 0;
   font-size: var(--sys-text-size-lg, 1.25rem);
   font-weight: var(--ref-typography-weights-semibold, 600);
   line-height: var(--sys-text-line-height-standard, 1.4);
 }
 
-:where([data-oods-component='PriceSummary']) > dl {
+:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > dl {
   display: grid;
   grid-template-columns: minmax(max-content, 1fr) minmax(0, 2fr);
   gap: var(--cmp-spacing-stack-xs, 0.5rem) var(--cmp-spacing-inline-md, 1rem);
   margin: 0;
 }
 
-:where([data-oods-component='PriceSummary']) [data-summary-item] {
+:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) [data-summary-item] {
   display: contents;
 }
 
-:where([data-oods-component='PriceSummary']) dt {
+:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dt {
   color: var(--cmp-summary-label, CanvasText);
   font-weight: var(--ref-typography-weights-semibold, 600);
 }
 
-:where([data-oods-component='PriceSummary']) dd {
+:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dd {
   margin: 0;
 }
 
-:where([data-oods-component='PriceSummary']) > [data-summary-fallback] {
+:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-fallback] {
   margin: 0;
   color: var(--cmp-summary-label, CanvasText);
 }
@@ -839,7 +839,7 @@
     forced-color-adjust: none;
   }
 
-  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
     forced-color-adjust: none;
     border-color: CanvasText;
     background: Canvas;
@@ -853,7 +853,7 @@
   }
 }
 
-[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
   border-color: CanvasText;
   background: Canvas;
   color: CanvasText;
@@ -898,7 +898,7 @@
 }
 
 @media (forced-colors: active) {
-  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
     forced-color-adjust: none;
     border-color: CanvasText;
     background: Canvas;
@@ -906,7 +906,7 @@
   }
 }
 
-[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
   border-color: CanvasText;
   background: Canvas;
   color: CanvasText;
@@ -1098,4 +1098,18 @@
 
 :where([data-oods-component='LabelCell'], [data-oods-component='FormLabelGroup']) {
   --cmp-text-secondary: var(--sys-text-secondary);
+}
+
+:where([data-oods-component='OwnershipMeta']) {
+  --cmp-meta-text: var(--sys-text-primary);
+  --cmp-meta-label: var(--sys-text-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  color: var(--cmp-meta-text, CanvasText);
+}
+:where([data-oods-component='OwnershipMeta']) [data-meta-title],
+:where([data-oods-component='OwnershipMeta']) strong {
+  color: var(--cmp-meta-label, CanvasText);
+  font-weight: var(--ref-typography-weights-semibold, 600);
 }

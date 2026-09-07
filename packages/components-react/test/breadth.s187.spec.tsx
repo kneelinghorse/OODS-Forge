@@ -65,3 +65,45 @@ describe('Sprint 187 naming and classification semantics', () => {
     expect(authored.querySelector('[data-form-content]')?.textContent).toBe('Custom controls');
   });
 });
+
+describe('Sprint 187 ownership and summary semantics', () => {
+  const values = (root: HTMLElement) => [...root.querySelectorAll('dd')].map((node) => node.textContent);
+  it('OwnerBadge preserves principal aliases, status metadata and authored precedence', () => {
+    const root = mountFamily('OwnerBadge', { owner: 'user-7', ownerType: 'person', value: 'fallback', status: 'active', state: 'inactive' });
+    expect(root.textContent).toBe('user-7');
+    expect(root.getAttribute('data-badge-status')).toBe('active');
+    expect(mountFamily('OwnerBadge', { ownerType: 'person' }).textContent).toBe('person');
+    expect(mountFamily('OwnerBadge').textContent).toBe('Owner');
+    expect(mountFamily('OwnerBadge', { label: 'Label', owner: 'user-7' }, 'Authored').textContent).toBe('Authored');
+  });
+  it('OwnershipSummary associates owner data with terms and consumes role as data, not ARIA', () => {
+    const root = mountFamily('OwnershipSummary', { name: 'By name', owner_id: 'legacy-id', ownerId: 'current-id', owner_type: 'team', ownerType: 'person', ownershipRole: 'legacy-role', role: 'custodian' });
+    expect(root.querySelector('h3')?.textContent).toBe('By name');
+    expect(values(root)).toEqual(['current-id', 'person', 'custodian']);
+    expect(root.hasAttribute('role')).toBe(false);
+    expect(values(mountFamily('OwnershipSummary', { owner_id: 'legacy', owner_type: 'team', ownershipRole: 'steward' }))).toEqual(['legacy', 'team', 'steward']);
+    expect(mountFamily('OwnershipSummary', { text: 'Fallback', description: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
+    expect(mountFamily('OwnershipSummary').querySelector('dl')?.childNodes).toHaveLength(0);
+    const authored = mountFamily('OwnershipSummary', { title: 'Owner', ownerId: 'Hidden' }, 'Authored');
+    expect(authored.querySelector('h3')?.textContent).toBe('Owner');
+    expect(authored.querySelector('dl')).toBeNull();
+    expect(authored.textContent).toBe('OwnerAuthored');
+  });
+  it('OwnershipMeta keeps literal term separators and lets authored children replace its entire body', () => {
+    const root = mountFamily('OwnershipMeta', { label: 'Principal', owner_type: 'team', ownershipRole: 'steward' });
+    expect(root.querySelector('[data-meta-title]')?.textContent).toBe('Principal');
+    expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: team', 'Role: steward']);
+    expect(root.hasAttribute('role')).toBe(false);
+    expect(mountFamily('OwnershipMeta').textContent).toBe('Ownership');
+    expect(mountFamily('OwnershipMeta', { title: 'Hidden', role: 'Hidden' }, 'Authored').textContent).toBe('Authored');
+  });
+  it('TagSummary preserves zero counts and scalar text, and shows the trait array using existing tag normalization', () => {
+    expect(values(mountFamily('TagSummary', { tagCount: 0, count: 9, tags: 'alpha, beta' }))).toEqual(['0', 'alpha, beta']);
+    expect(values(mountFamily('TagSummary', { count: '2', tags: ['alpha', { label: 'Beta', name: 'Ignored' }, { name: 'Gamma' }, null, 0] }))).toEqual(['2', 'alpha, Beta, Gamma, 0']);
+    expect(values(mountFamily('TagSummary', { tagCount: 0, tags: [] }))).toEqual(['0']);
+    expect(mountFamily('TagSummary', { tags: [], summary: 'No tags' }).querySelector('[data-summary-fallback]')?.textContent).toBe('No tags');
+    const authored = mountFamily('TagSummary', { title: 'Tags', tags: ['Hidden'] }, 'Authored');
+    expect(authored.textContent).toBe('TagsAuthored');
+    expect(authored.querySelector('dl')).toBeNull();
+  });
+});

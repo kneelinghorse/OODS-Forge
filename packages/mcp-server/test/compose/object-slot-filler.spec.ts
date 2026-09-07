@@ -19,6 +19,7 @@ import { detailTemplate } from '../../src/compose/templates/detail.js';
 import { listTemplate } from '../../src/compose/templates/list.js';
 import { dashboardTemplate } from '../../src/compose/templates/dashboard.js';
 import { formTemplate } from '../../src/compose/templates/form.js';
+import { cardTemplate } from '../../src/compose/templates/card.js';
 import { resetIdCounter, type TemplateResult } from '../../src/compose/templates/types.js';
 import { loadCatalog } from '../../src/compose/component-selector.js';
 import type { ComponentCatalogSummary } from '../../src/tools/types.js';
@@ -233,6 +234,24 @@ describe('fillSlotsWithObject — catalog validation', () => {
 /* ------------------------------------------------------------------ */
 
 describe('fillSlotsWithObject — fallback', () => {
+  it('keeps a populated optional card footer as metadata without inventing an action', () => {
+    const organization = composeObject(loadObject('Organization'));
+    const { plan } = collectViewExtensions(organization, 'card');
+    const result = fillSlotsWithObject(cardTemplate({}), plan, catalog);
+    expect(result.placements.find((entry) => entry.slotName === 'footer')?.components)
+      .toEqual(['OwnershipMeta', 'TagSummary']);
+    expect(findAllElements(result, (element) => element.component === 'Button')).toEqual([]);
+  });
+
+  it('preserves an explicitly authored action in an optional footer', () => {
+    const result = fillSlotsWithObject(cardTemplate({}), [{
+      component: 'Button', sourceTrait: 'test/Action', position: 'bottom', priority: 10,
+      props: { label: 'Open owner' },
+    }], catalog);
+    expect(findAllElements(result, (element) => element.component === 'Button'))
+      .toEqual([expect.objectContaining({ props: { label: 'Open owner' } })]);
+  });
+
   it('unfilled required slots fall back to selectComponent', () => {
     const template = getDetailTemplate();
     // Empty plan — no view extensions

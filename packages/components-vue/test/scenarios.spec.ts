@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
@@ -58,6 +59,7 @@ import {
 } from '../src/index.js';
 
 const implementations: Readonly<Record<string, Component>> = {
+  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
@@ -655,6 +657,27 @@ describe('@oods/components-vue shared scenarios', () => {
           expect((component.element?.querySelector('[name="category"]') as HTMLInputElement).value).toBe('Electronics');
           expect((component.element?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
           expect((component.element?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
+          break;
+        }
+        case 'owner-badge-principal': {
+          expect(component.element?.textContent).toBe('user-7');
+          expect(component.element?.getAttribute('data-badge-variant')).toBe('owner');
+          break;
+        }
+        case 'ownership-summary-terms': {
+          expect(component.element?.querySelector('h3')?.textContent).toBe('Ownership Summary');
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
+          expect(component.element?.hasAttribute('role')).toBe(false);
+          break;
+        }
+        case 'ownership-meta-inline-terms': {
+          expect(component.element?.querySelector('[data-meta-title]')?.textContent).toBe('Ownership');
+          expect([...component.element!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
+          expect(component.element?.hasAttribute('role')).toBe(false);
+          break;
+        }
+        case 'tag-summary-zero-and-tags': {
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
           break;
         }
           default:

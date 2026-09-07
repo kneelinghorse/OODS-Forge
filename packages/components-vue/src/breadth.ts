@@ -928,3 +928,57 @@ export const ClassificationEditor = defineComponent({
     };
   },
 });
+
+export const OwnerBadge = createBadgeFamily({
+  component: 'OwnerBadge', className: 'oods-owner-badge', defaultLabel: 'Owner', defaultVariant: 'owner',
+  labelKeys: ['label', 'text', 'owner', 'ownerType', 'value'], statusKeys: ['status', 'state'], extraProps: ['owner', 'ownerType'],
+});
+
+export const OwnershipSummary = defineComponent({
+  name: 'OodsOwnershipSummary', props: { title: String, label: String, heading: String, name: String, ownerId: String, owner_id: String, ownerType: String, owner_type: String, role: String, ownershipRole: String, summary: String, text: String, description: String },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      const terms = ([['Owner ID', firstScalar(props.ownerId, props.owner_id)], ['Owner Type', firstScalar(props.ownerType, props.owner_type)], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+      const fallback = firstText(props.summary, props.text, props.description);
+      return h('section', { class: 'oods-ownership-summary', 'data-oods-component': 'OwnershipSummary', 'data-summary-type': 'ownership' }, [
+        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Ownership Summary'),
+        ...(content.length ? content : terms.length
+          ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
+          : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
+      ]);
+    };
+  },
+});
+
+export const TagSummary = defineComponent({
+  name: 'OodsTagSummary', props: { title: String, label: String, heading: String, name: String, tagCount: [Number, String], count: [Number, String], tags: [String, Array] as PropType<string | readonly unknown[]>, summary: String, text: String, description: String },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      const tagText = Array.isArray(props.tags) ? normalizeTagItems(props.tags).join(', ') || undefined : firstText(props.tags);
+      const terms = ([['Tag Count', firstScalar(props.tagCount, props.count)], ['Tags', tagText]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+      const fallback = firstText(props.summary, props.text, props.description);
+      return h('section', { class: 'oods-tags-summary', 'data-oods-component': 'TagSummary', 'data-summary-type': 'tags' }, [
+        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Tag Summary'),
+        ...(content.length ? content : terms.length
+          ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
+          : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
+      ]);
+    };
+  },
+});
+
+export const OwnershipMeta = defineComponent({
+  name: 'OodsOwnershipMeta', props: { title: String, label: String, heading: String, name: String, ownerType: String, owner_type: String, role: String, ownershipRole: String },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      const terms = ([['Owner Type', firstScalar(props.ownerType, props.owner_type)], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+      return h('div', { class: 'oods-ownership-meta', 'data-oods-component': 'OwnershipMeta', 'data-meta-type': 'ownership' }, content.length ? content : [
+        h('span', { 'data-meta-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Ownership'),
+        ...terms.map(([term, value]) => h('span', { key: term, 'data-meta-item': 'true' }, [h('strong', `${term}:`), ` ${value}`])),
+      ]);
+    };
+  },
+});

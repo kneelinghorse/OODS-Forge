@@ -1,0 +1,1391 @@
+diff --git a/packages/component-contracts/src/contracts.ts b/packages/component-contracts/src/contracts.ts
+index 6550079e..828c9ce7 100644
+--- a/packages/component-contracts/src/contracts.ts
++++ b/packages/component-contracts/src/contracts.ts
+@@ -226,6 +226,27 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
+     accessibility: ['Inherits Badge inline noninteractive status label semantics', 'The resolved label is always visible text'],
+     compatibility: 'Mirrors renderMessageStatusBadge over renderBadgePrimitive with default variant message and default label Message: the label reads label/text/status/delivery/value in that order, the status reads status/state/delivery/value, and both are exposed as data-badge-status and data-badge-variant on the governed Badge substrate; tone and emphasis retain their shared Badge behaviour. The saved-schema directive statusesField is consumed and left unbound: the HTML renderer reads no statuses collection.',
+   },
++  OwnerBadge: {
++    id: 'OwnerBadge', version: COMPONENT_CONTRACT_VERSION,
++    props: ['label', 'text', 'owner', 'ownerType', 'value', 'status', 'state', 'variant', 'tone', 'emphasis'], slots: ['default'], events: [],
++    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
++    accessibility: ['owner identity is visible', 'owner is the badge variant'],
++    compatibility: 'Mirrors renderOwnerBadge over renderBadgePrimitive: label/text/owner/ownerType/value precedence, status/state metadata, owner variant and Owner fallback. ownerIdField lowers to owner and ownerTypeField to ownerType. The badge is noninteractive; no ownership change is implied.',
++  },
++  OwnershipMeta: {
++    id: 'OwnershipMeta', version: COMPONENT_CONTRACT_VERSION,
++    props: ['title', 'label', 'heading', 'name', 'ownerType', 'owner_type', 'role', 'ownershipRole'], slots: ['default'], events: [],
++    states: ['populated', 'empty'], tokenRoles: ['meta.text', 'meta.label'],
++    accessibility: ['metadata has inline term labels', 'role is visible text not an ARIA role'],
++    compatibility: 'Mirrors renderOwnershipMeta over renderMetaInline: title/label/heading/name (default Ownership), Owner Type ownerType/owner_type, Role role/ownershipRole. Each value is an inline span with a strong term and separator; children replace the entire body including its title. ownerTypeField and roleField lower to their consumed keys. role is displayed data, never an ARIA role. Noninteractive.',
++  },
++  OwnershipSummary: {
++    id: 'OwnershipSummary', version: COMPONENT_CONTRACT_VERSION,
++    props: ['title', 'label', 'heading', 'name', 'ownerId', 'owner_id', 'ownerType', 'owner_type', 'role', 'ownershipRole', 'summary', 'text', 'description'], slots: ['default'], events: [],
++    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
++    accessibility: ['a real h3 names the description list', 'owner id, type and role remain associated terms'],
++    compatibility: 'Mirrors renderOwnershipSummary over renderSummarySection: title/label/heading/name (default Ownership Summary); Owner ID reads ownerId/owner_id, Owner Type ownerType/owner_type, Role role/ownershipRole; summary/text/description is a fallback when no term resolves. Children replace the body but retain the h3 heading. ownerIdField, ownerTypeField and roleField lower to their runtime keys. transferredAtField and allowTransferParameter are consumed unbound; no transfer term or action is implemented. role is displayed data, never an ARIA role.',
++  },
+   PaginationBar: {
+     id: 'PaginationBar', version: COMPONENT_CONTRACT_VERSION,
+     props: [
+@@ -403,6 +424,13 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
+     accessibility: ['Each visible tag is text inside one noninteractive group', 'The overflow label is visible text'],
+     compatibility: 'Mirrors renderTagPills with data-summary-type=tag-pills: tags, then value (records read label/name/role/value/id, scalars render as text) render one data-tag-pill each up to maxVisible (a number or numeric string; default every tag); when tags remain, overflowLabel replaces {{ tag_count }} with the total tag count exactly as the HTML renderer does, or +N with the hidden count without a template; authored children replace the pills. The generic field lowers to tags; the saved-schema label is consumed and left unbound because the renderer never reads it.',
+   },
++  TagSummary: {
++    id: 'TagSummary', version: COMPONENT_CONTRACT_VERSION,
++    props: ['title', 'label', 'heading', 'name', 'tagCount', 'count', 'tags', 'summary', 'text', 'description'], slots: ['default'], events: [],
++    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
++    accessibility: ['zero count remains visible', 'typed tag entries render normalized visible names'],
++    compatibility: 'Preserves renderTagSummary scalar summary semantics: title/label/heading/name (default Tag Summary), Tag Count tagCount/count, Tags tags; summary/text/description fallback; children replace the description-list body but keep the h3. field lowers to tags and countField to tagCount. Adds typed array presentation required by Taggable: the existing tag normalizer resolves label/name/role/value/id and joins visible names with comma-space, unlike the HTML scalar reader which ignores arrays. Empty arrays omit the Tags term; numeric zero count remains visible. Noninteractive; no tagging action is implied.',
++  },
+   TemplatePicker: {
+     id: 'TemplatePicker', version: COMPONENT_CONTRACT_VERSION,
+     props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'templates', 'options', 'templateId', 'value', 'channels', 'channel'], slots: ['default'], events: [],
+diff --git a/packages/component-contracts/src/scenarios.ts b/packages/component-contracts/src/scenarios.ts
+index 2b2230d2..966937f1 100644
+--- a/packages/component-contracts/src/scenarios.ts
++++ b/packages/component-contracts/src/scenarios.ts
+@@ -43,6 +43,9 @@ export const sharedScenarios: readonly SharedScenario[] = [
+   { id: 'membership-panel-title-and-summary', oodsComponentId: 'MembershipPanel', props: { heading: 'Membership', description: 'Roles and permissions', body: 'Owner of 2 workspaces' }, slots: {}, initialState: { content: 'summary' }, event: { name: 'render', trigger: 'mount without authored children', expected: 'h3 heading from the heading alias, visible description and the body text inside the content area' }, assertions: ['title is a real h3 heading', 'data-panel-type is membership', 'summary text is visible', 'panel is noninteractive'] },
+   { id: 'message-event-timeline-statuses', oodsComponentId: 'MessageEventTimeline', props: { heading: 'Delivery', statuses: [{ status: 'delivered', at: '2026-09-02T09:00:00Z' }] }, slots: {}, initialState: { events: 1 }, event: { name: 'render', trigger: 'mount with statuses only', expected: 'statuses supply the events when messages are absent, in the message timeline type' }, assertions: ['region has role log and an h3 title', 'status doubles as the event label', 'data-timeline-type is message'] },
+   { id: 'message-status-badge-delivery', oodsComponentId: 'MessageStatusBadge', props: { delivery: 'delivered' }, slots: {}, initialState: { status: 'delivered' }, event: { name: 'render', trigger: 'mount', expected: 'delivery doubles as the visible label and the status in the message variant' }, assertions: ['label is visible text', 'data-badge-status is delivered', 'data-badge-variant is message', 'badge is noninteractive'] },
++  { id: 'owner-badge-principal', oodsComponentId: 'OwnerBadge', props: {'owner': 'user-7', 'ownerType': 'person', 'status': 'active'}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'owner identity is visible; owner is the badge variant' }, assertions: ['owner identity is visible', 'owner is the badge variant'] },
++  { id: 'ownership-meta-inline-terms', oodsComponentId: 'OwnershipMeta', props: {'ownerType': 'organization', 'role': 'custodian'}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'metadata has inline term labels; role is visible text not an ARIA role' }, assertions: ['metadata has inline term labels', 'role is visible text not an ARIA role'] },
++  { id: 'ownership-summary-terms', oodsComponentId: 'OwnershipSummary', props: {'ownerId': 'user-7', 'ownerType': 'person', 'role': 'administrator'}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'a real h3 names the description list; owner id, type and role remain associated terms' }, assertions: ['a real h3 names the description list', 'owner id, type and role remain associated terms'] },
+   {
+     id: 'pagination-bar-navigation', oodsComponentId: 'PaginationBar',
+     props: { page: 2, pageSize: 25, totalItems: 80, showItemRange: true },
+@@ -100,6 +103,7 @@ export const sharedScenarios: readonly SharedScenario[] = [
+   { id: 'tag-input-typed-text', oodsComponentId: 'TagInput', props: { title: 'Tags', tags: ['alpha'], value: 'be', placeholder: 'Add a tag' }, slots: {}, initialState: { value: 'be' }, event: { name: 'change', trigger: 'type into the Tag input', expected: 'the typed text emitted' }, assertions: ['legend is the title', 'the Tag input is labelled and shows the value', 'existing tags are visible', 'change carries the typed text'] },
+   { id: 'tag-manager-list-and-add-control', oodsComponentId: 'TagManager', props: { title: 'Tags', tags: ['alpha', { label: 'beta' }] }, slots: {}, initialState: { tags: 2 }, event: { name: 'render', trigger: 'mount', expected: 'h3 heading, two visible tag items and an unwired Add Tag text input' }, assertions: ['title is a real h3 heading', 'data-form-type is tag-manager', 'each tag is visible text', 'the add control is a labelled text input', 'controls are declared unwired'] },
+   { id: 'tag-pills-overflow-template', oodsComponentId: 'TagPills', props: { tags: ['alpha', 'beta', 'gamma', 'delta', 'epsilon'], maxVisible: 3, overflowLabel: '+{{ tag_count }}' }, slots: {}, initialState: { visible: 3, overflow: 2 }, event: { name: 'render', trigger: 'mount', expected: 'three visible pills and the overflow label +5, the template substituted with the total tag count as in the HTML renderer' }, assertions: ['visible pills are limited by maxVisible', 'overflow label substitutes {{ tag_count }} with the total tag count', 'group is noninteractive'] },
++  { id: 'tag-summary-zero-and-tags', oodsComponentId: 'TagSummary', props: {'tagCount': 0, 'tags': ['alpha', {'name': 'beta'}]}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'zero count remains visible; typed tag entries render normalized visible names' }, assertions: ['zero count remains visible', 'typed tag entries render normalized visible names'] },
+   { id: 'template-picker-selects', oodsComponentId: 'TemplatePicker', props: { title: 'Notification template', templates: [{ id: 'welcome', label: 'Welcome' }], templateId: 'welcome', channels: ['email', 'sms'], channel: 'sms' }, slots: {}, initialState: { templateId: 'welcome', channel: 'sms' }, event: { name: 'render', trigger: 'mount', expected: 'Template and Channel selects with welcome and sms selected' }, assertions: ['legend is the title', 'template select lists records', 'channel select lists scalars', 'controls are unwired'] },
+   { id: 'text-semantic', oodsComponentId: 'Text', props: { content: 'Account owner', as: 'strong', size: 'md', weight: 'semibold' }, slots: { default: 'Account owner' }, initialState: { element: 'strong' }, event: { name: 'render', trigger: 'mount', expected: 'safe intrinsic element with visible text' }, assertions: ['content is not empty', 'strong element is emitted'] },
+   { id: 'textarea-controlled', oodsComponentId: 'Textarea', props: { id: 'notes', label: 'Notes', value: 'Call before renewal', rows: 4, help: 'Visible to account managers' }, slots: {}, initialState: { value: 'Call before renewal' }, event: { name: 'input', trigger: 'append a sentence', expected: 'updated text emitted' }, assertions: ['label targets textarea', 'help describes textarea'] },
+diff --git a/packages/component-contracts/src/types.ts b/packages/component-contracts/src/types.ts
+index ca8032dd..adc63aa2 100644
+--- a/packages/component-contracts/src/types.ts
++++ b/packages/component-contracts/src/types.ts
+@@ -10,61 +10,18 @@ export const COMPONENT_CLASSIFICATIONS = [
+ export type ComponentClassification = (typeof COMPONENT_CLASSIFICATIONS)[number];
+ 
+ export const NUCLEUS_COMPONENT_IDS = [
+-  'AddressCollectionPanel',
+-  'AddressEditor',
+-  'AddressSummaryBadge',
+-  'AddressValidationTimeline',
+-  'AuditEvent',
+-  'AuditTimeline',
+-  'Badge',
+-  'Banner',
+-  'Button',
+-  'CancellationSummary',
+-  'Card',
+-  'CardHeader',
+-  'Checkbox',
+-  'ClassificationBadge',
+-  'ClassificationEditor',
+-  'ClassificationPanel',
+-  'ColorSwatch',
+-  'ColorizedBadge',
+-  'DatePicker',
+-  'DetailHeader',
+-  'FilterPanel',
+-  'FormLabelGroup',
+-  'Grid',
+-  'InlineLabel',
+-  'Input',
+-  'LabelCell',
+-  'MembershipAuditTimeline',
+-  'MembershipPanel',
+-  'MessageEventTimeline',
+-  'MessageStatusBadge',
+-  'PaginationBar',
+-  'PreferenceEditor',
+-  'PreferencePanel',
+-  'PreferenceSummaryBadge',
+-  'PreferenceTimeline',
+-  'PriceBadge',
+-  'PriceSummary',
+-  'RelativeTimestamp',
+-  'RoleAssignmentForm',
+-  'RoleBadgeList',
+-  'SearchInput',
+-  'Select',
+-  'Stack',
+-  'StatusBadge',
+-  'StatusSelector',
+-  'StatusTimeline',
+-  'Table',
+-  'Tabs',
+-  'TagInput',
+-  'TagManager',
+-  'TagPills',
+-  'TemplatePicker',
+-  'Text',
+-  'Textarea',
+-  'VizAreaPreview',
++  'AddressCollectionPanel', 'AddressEditor', 'AddressSummaryBadge', 'AddressValidationTimeline', 'AuditEvent',
++  'AuditTimeline', 'Badge', 'Banner', 'Button', 'CancellationSummary',
++  'Card', 'CardHeader', 'Checkbox', 'ClassificationBadge', 'ClassificationEditor',
++  'ClassificationPanel', 'ColorSwatch', 'ColorizedBadge', 'DatePicker', 'DetailHeader',
++  'FilterPanel', 'FormLabelGroup', 'Grid', 'InlineLabel', 'Input',
++  'LabelCell', 'MembershipAuditTimeline', 'MembershipPanel', 'MessageEventTimeline', 'MessageStatusBadge',
++  'OwnerBadge', 'OwnershipMeta', 'OwnershipSummary', 'PaginationBar', 'PreferenceEditor',
++  'PreferencePanel', 'PreferenceSummaryBadge', 'PreferenceTimeline', 'PriceBadge', 'PriceSummary',
++  'RelativeTimestamp', 'RoleAssignmentForm', 'RoleBadgeList', 'SearchInput', 'Select',
++  'Stack', 'StatusBadge', 'StatusSelector', 'StatusTimeline', 'Table',
++  'Tabs', 'TagInput', 'TagManager', 'TagPills', 'TagSummary',
++  'TemplatePicker', 'Text', 'Textarea', 'VizAreaPreview',
+ ] as const;
+ 
+ export type NucleusComponentId = (typeof NUCLEUS_COMPONENT_IDS)[number];
+diff --git a/packages/component-contracts/test/breadth-contracts.s187.spec.ts b/packages/component-contracts/test/breadth-contracts.s187.spec.ts
+index d64b2a97..01e56635 100644
+--- a/packages/component-contracts/test/breadth-contracts.s187.spec.ts
++++ b/packages/component-contracts/test/breadth-contracts.s187.spec.ts
+@@ -1,7 +1,8 @@
+ import { describe, expect, it } from 'vitest';
+ import { componentContracts, NUCLEUS_COMPONENT_IDS, sharedScenarios } from '../src/index.js';
+ 
+-const FAMILIES = ['LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor'] as const;
++const FAMILIES = [
++  'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary','LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor'] as const;
+ describe('Sprint 187 fresh composition contracts', () => {
+   it.each(FAMILIES)('%s has one governed contract and scenario without invented edit events', (id) => {
+     expect(NUCLEUS_COMPONENT_IDS.filter((entry) => entry === id)).toEqual([id]);
+diff --git a/packages/component-styles/src/components.css b/packages/component-styles/src/components.css
+index 5c287b75..cc19a55b 100644
+--- a/packages/component-styles/src/components.css
++++ b/packages/component-styles/src/components.css
+@@ -356,7 +356,7 @@
+ }
+ 
+ /* Badge-family summaries reuse the governed Badge substrate; the pill groups mirror their plain-span HTML renderers. */
+-:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
++:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
+   --cmp-badge-background: var(--sys-status-neutral-surface);
+   --cmp-badge-border: var(--sys-status-neutral-border);
+   --cmp-badge-text: var(--sys-status-neutral-text);
+@@ -372,13 +372,13 @@
+   font-weight: var(--cmp-badge-font-weight, 600);
+ }
+ 
+-:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
++:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
+   border-color: var(--cmp-badge-text, CanvasText);
+   background: var(--cmp-badge-text, CanvasText);
+   color: var(--cmp-badge-background, Canvas);
+ }
+ 
+-:where([data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
++:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
+   display: inline;
+   visibility: visible;
+   color: inherit;
+@@ -617,7 +617,7 @@
+   outline-offset: 2px;
+ }
+ 
+-:where([data-oods-component='PriceSummary']) {
++:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) {
+   --cmp-summary-background: var(--sys-surface-raised);
+   --cmp-summary-border: var(--sys-border-subtle);
+   --cmp-summary-text: var(--sys-text-primary);
+@@ -631,34 +631,34 @@
+   color: var(--cmp-summary-text, CanvasText);
+ }
+ 
+-:where([data-oods-component='PriceSummary']) > [data-summary-title] {
++:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-title] {
+   margin: 0;
+   font-size: var(--sys-text-size-lg, 1.25rem);
+   font-weight: var(--ref-typography-weights-semibold, 600);
+   line-height: var(--sys-text-line-height-standard, 1.4);
+ }
+ 
+-:where([data-oods-component='PriceSummary']) > dl {
++:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > dl {
+   display: grid;
+   grid-template-columns: minmax(max-content, 1fr) minmax(0, 2fr);
+   gap: var(--cmp-spacing-stack-xs, 0.5rem) var(--cmp-spacing-inline-md, 1rem);
+   margin: 0;
+ }
+ 
+-:where([data-oods-component='PriceSummary']) [data-summary-item] {
++:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) [data-summary-item] {
+   display: contents;
+ }
+ 
+-:where([data-oods-component='PriceSummary']) dt {
++:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dt {
+   color: var(--cmp-summary-label, CanvasText);
+   font-weight: var(--ref-typography-weights-semibold, 600);
+ }
+ 
+-:where([data-oods-component='PriceSummary']) dd {
++:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dd {
+   margin: 0;
+ }
+ 
+-:where([data-oods-component='PriceSummary']) > [data-summary-fallback] {
++:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-fallback] {
+   margin: 0;
+   color: var(--cmp-summary-label, CanvasText);
+ }
+@@ -839,7 +839,7 @@
+     forced-color-adjust: none;
+   }
+ 
+-  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
++  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+     forced-color-adjust: none;
+     border-color: CanvasText;
+     background: Canvas;
+@@ -853,7 +853,7 @@
+   }
+ }
+ 
+-[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
++[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+   border-color: CanvasText;
+   background: Canvas;
+   color: CanvasText;
+@@ -898,7 +898,7 @@
+ }
+ 
+ @media (forced-colors: active) {
+-  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
++  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+     forced-color-adjust: none;
+     border-color: CanvasText;
+     background: Canvas;
+@@ -906,7 +906,7 @@
+   }
+ }
+ 
+-[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
++[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+   border-color: CanvasText;
+   background: Canvas;
+   color: CanvasText;
+@@ -1099,3 +1099,17 @@
+ :where([data-oods-component='LabelCell'], [data-oods-component='FormLabelGroup']) {
+   --cmp-text-secondary: var(--sys-text-secondary);
+ }
++
++:where([data-oods-component='OwnershipMeta']) {
++  --cmp-meta-text: var(--sys-text-primary);
++  --cmp-meta-label: var(--sys-text-secondary);
++  display: flex;
++  flex-wrap: wrap;
++  gap: var(--cmp-spacing-inline-sm, 0.75rem);
++  color: var(--cmp-meta-text, CanvasText);
++}
++:where([data-oods-component='OwnershipMeta']) [data-meta-title],
++:where([data-oods-component='OwnershipMeta']) strong {
++  color: var(--cmp-meta-label, CanvasText);
++  font-weight: var(--ref-typography-weights-semibold, 600);
++}
+diff --git a/packages/component-styles/src/index.ts b/packages/component-styles/src/index.ts
+index f50769ff..eccba18a 100644
+--- a/packages/component-styles/src/index.ts
++++ b/packages/component-styles/src/index.ts
+@@ -7,11 +7,12 @@ export const COMPONENT_STYLE_IDS = [
+   'ClassificationPanel', 'ColorSwatch', 'ColorizedBadge', 'DatePicker', 'DetailHeader',
+   'FilterPanel', 'FormLabelGroup', 'Grid', 'InlineLabel', 'Input',
+   'LabelCell', 'MembershipAuditTimeline', 'MembershipPanel', 'MessageEventTimeline', 'MessageStatusBadge',
+-  'PaginationBar', 'PreferenceEditor', 'PreferencePanel', 'PreferenceSummaryBadge', 'PreferenceTimeline',
+-  'PriceBadge', 'PriceSummary', 'RelativeTimestamp', 'RoleAssignmentForm', 'RoleBadgeList',
+-  'SearchInput', 'Select', 'Stack', 'StatusBadge', 'StatusSelector',
+-  'StatusTimeline', 'Table', 'Tabs', 'TagInput', 'TagManager',
+-  'TagPills', 'TemplatePicker', 'Text', 'Textarea', 'VizAreaPreview',
++  'OwnerBadge', 'OwnershipMeta', 'OwnershipSummary', 'PaginationBar', 'PreferenceEditor',
++  'PreferencePanel', 'PreferenceSummaryBadge', 'PreferenceTimeline', 'PriceBadge', 'PriceSummary',
++  'RelativeTimestamp', 'RoleAssignmentForm', 'RoleBadgeList', 'SearchInput', 'Select',
++  'Stack', 'StatusBadge', 'StatusSelector', 'StatusTimeline', 'Table',
++  'Tabs', 'TagInput', 'TagManager', 'TagPills', 'TagSummary',
++  'TemplatePicker', 'Text', 'Textarea', 'VizAreaPreview',
+ ] as const;
+ 
+ export const SUPPORTED_COMPONENT_THEME_CELLS = [
+diff --git a/packages/component-styles/test/styles.spec.ts b/packages/component-styles/test/styles.spec.ts
+index d712b44e..aa47eca9 100644
+--- a/packages/component-styles/test/styles.spec.ts
++++ b/packages/component-styles/test/styles.spec.ts
+@@ -10,6 +10,7 @@ const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
+ const repoRoot = path.resolve(packageRoot, '../..');
+ const css = fs.readFileSync(path.join(packageRoot, 'src/components.css'), 'utf8');
+ const breadthComponents = [
++  'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
+   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
+   'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
+   'ClassificationPanel', 'FilterPanel', 'PriceSummary',
+diff --git a/packages/components-react/evidence/react-readiness.v1.json b/packages/components-react/evidence/react-readiness.v1.json
+index 4e550f05..858343d8 100644
+--- a/packages/components-react/evidence/react-readiness.v1.json
++++ b/packages/components-react/evidence/react-readiness.v1.json
+@@ -1,9 +1,9 @@
+ {
+   "schemaVersion": "1.0.0",
+-  "mission": "s187-m02",
++  "mission": "s187-m03",
+   "target": "react",
+   "contractVersion": "1.0.0",
+-  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 additions have built public declarations and passing shared scenarios, breadth, server-render and accessibility tests; prior nucleus row evidence is preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed.",
++  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 additions have built public declarations and passing shared scenarios, breadth, server-render and accessibility tests; prior nucleus row evidence is preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed. Sprint 187 m03 adds OwnerBadge, OwnershipSummary, OwnershipMeta and TagSummary with the same six reference classes and explicit scalar/trait-array semantics. No ownership transfer or tagging action is claimed.",
+   "rows": [
+     {
+       "componentId": "AddressCollectionPanel",
+@@ -1295,6 +1295,135 @@
+         }
+       }
+     },
++    {
++      "componentId": "OwnerBadge",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#OwnerBadge"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#OwnerBadge"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#OwnerBadge"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#OwnerBadge"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#owner-badge-principal"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "OwnershipMeta",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#OwnershipMeta"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#OwnershipMeta"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#OwnershipMeta"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#OwnershipMeta"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#ownership-meta-inline-terms"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "OwnershipSummary",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#OwnershipSummary"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#OwnershipSummary"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#OwnershipSummary"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#OwnershipSummary"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#ownership-summary-terms"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "PaginationBar",
+       "state": "implemented-evidence-complete",
+@@ -2198,6 +2327,49 @@
+         }
+       }
+     },
++    {
++      "componentId": "TagSummary",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#TagSummary"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#TagSummary"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#TagSummary"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#TagSummary"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#tag-summary-zero-and-tags"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "TemplatePicker",
+       "state": "implemented-evidence-complete",
+diff --git a/packages/components-react/src/breadth.tsx b/packages/components-react/src/breadth.tsx
+index e671d14f..5a565d1b 100644
+--- a/packages/components-react/src/breadth.tsx
++++ b/packages/components-react/src/breadth.tsx
+@@ -3,6 +3,7 @@ import * as React from 'react';
+ import { Badge } from './presentational.js';
+ import type { ComponentEmphasis, ComponentTone } from './types.js';
+ import type {
++  OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps,
+   LabelCellProps, InlineLabelProps, FormLabelGroupProps, ClassificationBadgeProps, ClassificationEditorProps,
+   AddressEditorProps,
+   AddressEditorValue,
+@@ -421,6 +422,7 @@ function createBadgeFamily<Props extends object>(options: BadgeFamilyOptions) {
+       <Badge
+         ref={ref}
+         status={status}
++        showIcon={false}
+         tone={tone}
+         emphasis={emphasis}
+         className={classes(options.className, className)}
+@@ -991,3 +993,53 @@ export const ClassificationEditor = React.forwardRef<HTMLFormElement, Classifica
+   }
+ );
+ ClassificationEditor.displayName = 'OODS.ClassificationEditor';
++
++export const OwnerBadge = createBadgeFamily<OwnerBadgeProps>({
++  component: 'OwnerBadge', className: 'oods-owner-badge', defaultLabel: 'Owner', defaultVariant: 'owner',
++  labelKeys: ['label', 'text', 'owner', 'ownerType', 'value'], statusKeys: ['status', 'state'],
++});
++
++export const OwnershipSummary = React.forwardRef<HTMLElement, OwnershipSummaryProps>(
++  ({ title, label, heading, name, ownerId, owner_id, ownerType, owner_type, role, ownershipRole, summary, text, description, children, className, ...rest }, ref) => {
++    const content = childContent(children);
++    const terms = ([['Owner ID', firstScalar(ownerId, owner_id)], ['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++    const fallback = firstText(summary, text, description);
++    return <section ref={ref} className={classes('oods-ownership-summary', className)} data-oods-component="OwnershipSummary" data-summary-type="ownership" {...rest}>
++      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Ownership Summary'}</h3>
++      {content.authored || content.scalar !== undefined ? children : terms.length
++        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
++        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
++    </section>;
++  }
++);
++OwnershipSummary.displayName = 'OODS.OwnershipSummary';
++
++export const TagSummary = React.forwardRef<HTMLElement, TagSummaryProps>(
++  ({ title, label, heading, name, tagCount, count, tags, summary, text, description, children, className, ...rest }, ref) => {
++    const content = childContent(children);
++    const tagText = Array.isArray(tags) ? normalizeTagItems(tags).join(', ') || undefined : firstText(tags as string | undefined);
++    const terms = ([['Tag Count', firstScalar(tagCount, count)], ['Tags', tagText]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++    const fallback = firstText(summary, text, description);
++    return <section ref={ref} className={classes('oods-tags-summary', className)} data-oods-component="TagSummary" data-summary-type="tags" {...rest}>
++      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Tag Summary'}</h3>
++      {content.authored || content.scalar !== undefined ? children : terms.length
++        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
++        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
++    </section>;
++  }
++);
++TagSummary.displayName = 'OODS.TagSummary';
++
++export const OwnershipMeta = React.forwardRef<HTMLDivElement, OwnershipMetaProps>(
++  ({ title, label, heading, name, ownerType, owner_type, role, ownershipRole, children, className, ...rest }, ref) => {
++    const content = childContent(children);
++    const terms = ([['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++    return <div ref={ref} className={classes('oods-ownership-meta', className)} data-oods-component="OwnershipMeta" data-meta-type="ownership" {...rest}>
++      {content.authored || content.scalar !== undefined ? children : <>
++        <span data-meta-title="true">{firstText(title, label, heading, name) ?? 'Ownership'}</span>
++        {terms.map(([term, value]) => <span key={term} data-meta-item="true"><strong>{term}:</strong> {value}</span>)}
++      </>}
++    </div>;
++  }
++);
++OwnershipMeta.displayName = 'OODS.OwnershipMeta';
+diff --git a/packages/components-react/src/index.ts b/packages/components-react/src/index.ts
+index 2e4496d0..3caba355 100644
+--- a/packages/components-react/src/index.ts
++++ b/packages/components-react/src/index.ts
+@@ -90,3 +90,6 @@ export type {
+   VizAreaPreviewProps,
+   LabelCellProps, InlineLabelProps, FormLabelGroupProps, ClassificationBadgeProps, ClassificationEditorProps,
+ } from './types.js';
++
++export { OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary } from './breadth.js';
++export type { OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps } from './types.js';
+diff --git a/packages/components-react/src/types.ts b/packages/components-react/src/types.ts
+index 50545901..194e89d4 100644
+--- a/packages/components-react/src/types.ts
++++ b/packages/components-react/src/types.ts
+@@ -583,3 +583,21 @@ export interface ClassificationEditorProps extends Omit<React.FormHTMLAttributes
+   readonly category?: string; readonly primaryCategory?: string; readonly tags?: string | readonly unknown[];
+   readonly modes?: readonly unknown[]; readonly mode?: string; readonly classificationMode?: string;
+ }
++
++export interface OwnerBadgeProps extends Omit<ClassificationBadgeProps, 'category' | 'mode'> {
++  readonly owner?: string; readonly ownerType?: string;
++}
++export interface OwnershipSummaryProps extends Omit<React.HTMLAttributes<HTMLElement>, 'role'> {
++  readonly label?: string; readonly heading?: string; readonly name?: string;
++  readonly ownerId?: string; readonly owner_id?: string; readonly ownerType?: string; readonly owner_type?: string;
++  readonly role?: string; readonly ownershipRole?: string; readonly summary?: string; readonly text?: string; readonly description?: string;
++}
++export interface OwnershipMetaProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {
++  readonly label?: string; readonly heading?: string; readonly name?: string;
++  readonly ownerType?: string; readonly owner_type?: string; readonly role?: string; readonly ownershipRole?: string;
++}
++export interface TagSummaryProps extends React.HTMLAttributes<HTMLElement> {
++  readonly label?: string; readonly heading?: string; readonly name?: string;
++  readonly tagCount?: number | string; readonly count?: number | string; readonly tags?: string | readonly unknown[];
++  readonly summary?: string; readonly text?: string; readonly description?: string;
++}
+diff --git a/packages/components-react/test/breadth.s187.spec.tsx b/packages/components-react/test/breadth.s187.spec.tsx
+index 05fdb5ba..74d28aa7 100644
+--- a/packages/components-react/test/breadth.s187.spec.tsx
++++ b/packages/components-react/test/breadth.s187.spec.tsx
+@@ -65,3 +65,45 @@ describe('Sprint 187 naming and classification semantics', () => {
+     expect(authored.querySelector('[data-form-content]')?.textContent).toBe('Custom controls');
+   });
+ });
++
++describe('Sprint 187 ownership and summary semantics', () => {
++  const values = (root: HTMLElement) => [...root.querySelectorAll('dd')].map((node) => node.textContent);
++  it('OwnerBadge preserves principal aliases, status metadata and authored precedence', () => {
++    const root = mountFamily('OwnerBadge', { owner: 'user-7', ownerType: 'person', value: 'fallback', status: 'active', state: 'inactive' });
++    expect(root.textContent).toBe('user-7');
++    expect(root.getAttribute('data-badge-status')).toBe('active');
++    expect(mountFamily('OwnerBadge', { ownerType: 'person' }).textContent).toBe('person');
++    expect(mountFamily('OwnerBadge').textContent).toBe('Owner');
++    expect(mountFamily('OwnerBadge', { label: 'Label', owner: 'user-7' }, 'Authored').textContent).toBe('Authored');
++  });
++  it('OwnershipSummary associates owner data with terms and consumes role as data, not ARIA', () => {
++    const root = mountFamily('OwnershipSummary', { name: 'By name', owner_id: 'legacy-id', ownerId: 'current-id', owner_type: 'team', ownerType: 'person', ownershipRole: 'legacy-role', role: 'custodian' });
++    expect(root.querySelector('h3')?.textContent).toBe('By name');
++    expect(values(root)).toEqual(['current-id', 'person', 'custodian']);
++    expect(root.hasAttribute('role')).toBe(false);
++    expect(values(mountFamily('OwnershipSummary', { owner_id: 'legacy', owner_type: 'team', ownershipRole: 'steward' }))).toEqual(['legacy', 'team', 'steward']);
++    expect(mountFamily('OwnershipSummary', { text: 'Fallback', description: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
++    expect(mountFamily('OwnershipSummary').querySelector('dl')?.childNodes).toHaveLength(0);
++    const authored = mountFamily('OwnershipSummary', { title: 'Owner', ownerId: 'Hidden' }, 'Authored');
++    expect(authored.querySelector('h3')?.textContent).toBe('Owner');
++    expect(authored.querySelector('dl')).toBeNull();
++    expect(authored.textContent).toBe('OwnerAuthored');
++  });
++  it('OwnershipMeta keeps literal term separators and lets authored children replace its entire body', () => {
++    const root = mountFamily('OwnershipMeta', { label: 'Principal', owner_type: 'team', ownershipRole: 'steward' });
++    expect(root.querySelector('[data-meta-title]')?.textContent).toBe('Principal');
++    expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: team', 'Role: steward']);
++    expect(root.hasAttribute('role')).toBe(false);
++    expect(mountFamily('OwnershipMeta').textContent).toBe('Ownership');
++    expect(mountFamily('OwnershipMeta', { title: 'Hidden', role: 'Hidden' }, 'Authored').textContent).toBe('Authored');
++  });
++  it('TagSummary preserves zero counts and scalar text, and shows the trait array using existing tag normalization', () => {
++    expect(values(mountFamily('TagSummary', { tagCount: 0, count: 9, tags: 'alpha, beta' }))).toEqual(['0', 'alpha, beta']);
++    expect(values(mountFamily('TagSummary', { count: '2', tags: ['alpha', { label: 'Beta', name: 'Ignored' }, { name: 'Gamma' }, null, 0] }))).toEqual(['2', 'alpha, Beta, Gamma, 0']);
++    expect(values(mountFamily('TagSummary', { tagCount: 0, tags: [] }))).toEqual(['0']);
++    expect(mountFamily('TagSummary', { tags: [], summary: 'No tags' }).querySelector('[data-summary-fallback]')?.textContent).toBe('No tags');
++    const authored = mountFamily('TagSummary', { title: 'Tags', tags: ['Hidden'] }, 'Authored');
++    expect(authored.textContent).toBe('TagsAuthored');
++    expect(authored.querySelector('dl')).toBeNull();
++  });
++});
+diff --git a/packages/components-react/test/scenario-fixtures.tsx b/packages/components-react/test/scenario-fixtures.tsx
+index 28ace8e5..cb05c5d0 100644
+--- a/packages/components-react/test/scenario-fixtures.tsx
++++ b/packages/components-react/test/scenario-fixtures.tsx
+@@ -8,6 +8,7 @@ import type {
+ } from '../src/index.js';
+ 
+ import {
++  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+   AuditTimeline,
+   CancellationSummary,
+@@ -259,6 +260,10 @@ export function renderSharedScenario(
+       return <ClassificationBadge {...scenario.props} />;
+     case 'classification-editor-presentational-controls':
+       return <ClassificationEditor {...scenario.props} />;
++    case 'owner-badge-principal': return <OwnerBadge {...scenario.props} />;
++    case 'ownership-summary-terms': return <OwnershipSummary {...scenario.props} />;
++    case 'ownership-meta-inline-terms': return <OwnershipMeta {...scenario.props} />;
++    case 'tag-summary-zero-and-tags': return <TagSummary {...scenario.props} />;
+     default:
+       throw new Error(`Unimplemented shared React scenario: ${scenario.id}`);
+   }
+diff --git a/packages/components-react/test/scenarios.spec.tsx b/packages/components-react/test/scenarios.spec.tsx
+index 5b50e5be..11f47d5d 100644
+--- a/packages/components-react/test/scenarios.spec.tsx
++++ b/packages/components-react/test/scenarios.spec.tsx
+@@ -517,6 +517,27 @@ describe('@oods/components-react shared scenarios', () => {
+           expect((component?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
+           break;
+         }
++        case 'owner-badge-principal': {
++          expect(component?.textContent).toBe('user-7');
++          expect(component?.getAttribute('data-badge-variant')).toBe('owner');
++          break;
++        }
++        case 'ownership-summary-terms': {
++          expect(component?.querySelector('h3')?.textContent).toBe('Ownership Summary');
++          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
++          expect(component?.hasAttribute('role')).toBe(false);
++          break;
++        }
++        case 'ownership-meta-inline-terms': {
++          expect(component?.querySelector('[data-meta-title]')?.textContent).toBe('Ownership');
++          expect([...component!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
++          expect(component?.hasAttribute('role')).toBe(false);
++          break;
++        }
++        case 'tag-summary-zero-and-tags': {
++          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
++          break;
++        }
+         default:
+           throw new Error(`Missing executable React assertion for ${scenario.id}`);
+       }
+diff --git a/packages/components-vue/evidence/vue-readiness.v1.json b/packages/components-vue/evidence/vue-readiness.v1.json
+index 29f68431..8ea6ff81 100644
+--- a/packages/components-vue/evidence/vue-readiness.v1.json
++++ b/packages/components-vue/evidence/vue-readiness.v1.json
+@@ -1,9 +1,9 @@
+ {
+   "schemaVersion": "1.0.0",
+-  "mission": "s187-m02",
++  "mission": "s187-m03",
+   "target": "vue",
+   "contractVersion": "1.0.0",
+-  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 adds five root exports; the original Sprint 182 row objects are preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed.",
++  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 adds five root exports; the original Sprint 182 row objects are preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed. Sprint 187 m03 adds OwnerBadge, OwnershipSummary, OwnershipMeta and TagSummary with the same six reference classes and explicit scalar/trait-array semantics. No ownership transfer or tagging action is claimed.",
+   "rows": [
+     {
+       "componentId": "AddressCollectionPanel",
+@@ -1301,6 +1301,135 @@
+         }
+       }
+     },
++    {
++      "componentId": "OwnerBadge",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#OwnerBadge"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#OwnerBadge"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#OwnerBadge"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#OwnerBadge"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#owner-badge-principal"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "OwnershipMeta",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#OwnershipMeta"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#OwnershipMeta"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#OwnershipMeta"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#OwnershipMeta"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#ownership-meta-inline-terms"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "OwnershipSummary",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#OwnershipSummary"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#OwnershipSummary"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#OwnershipSummary"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#OwnershipSummary"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#ownership-summary-terms"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "PaginationBar",
+       "state": "implemented-evidence-complete",
+@@ -2207,6 +2336,49 @@
+         }
+       }
+     },
++    {
++      "componentId": "TagSummary",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#TagSummary"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#TagSummary"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#TagSummary"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#TagSummary"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#tag-summary-zero-and-tags"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "TemplatePicker",
+       "state": "implemented-evidence-complete",
+diff --git a/packages/components-vue/src/breadth.ts b/packages/components-vue/src/breadth.ts
+index 21d5215a..d2fec8e9 100644
+--- a/packages/components-vue/src/breadth.ts
++++ b/packages/components-vue/src/breadth.ts
+@@ -928,3 +928,57 @@ export const ClassificationEditor = defineComponent({
+     };
+   },
+ });
++
++export const OwnerBadge = createBadgeFamily({
++  component: 'OwnerBadge', className: 'oods-owner-badge', defaultLabel: 'Owner', defaultVariant: 'owner',
++  labelKeys: ['label', 'text', 'owner', 'ownerType', 'value'], statusKeys: ['status', 'state'], extraProps: ['owner', 'ownerType'],
++});
++
++export const OwnershipSummary = defineComponent({
++  name: 'OodsOwnershipSummary', props: { title: String, label: String, heading: String, name: String, ownerId: String, owner_id: String, ownerType: String, owner_type: String, role: String, ownershipRole: String, summary: String, text: String, description: String },
++  setup(props, { slots }) {
++    return () => {
++      const content = authoredContent(slots.default?.());
++      const terms = ([['Owner ID', firstScalar(props.ownerId, props.owner_id)], ['Owner Type', firstScalar(props.ownerType, props.owner_type)], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++      const fallback = firstText(props.summary, props.text, props.description);
++      return h('section', { class: 'oods-ownership-summary', 'data-oods-component': 'OwnershipSummary', 'data-summary-type': 'ownership' }, [
++        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Ownership Summary'),
++        ...(content.length ? content : terms.length
++          ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
++          : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
++      ]);
++    };
++  },
++});
++
++export const TagSummary = defineComponent({
++  name: 'OodsTagSummary', props: { title: String, label: String, heading: String, name: String, tagCount: [Number, String], count: [Number, String], tags: [String, Array] as PropType<string | readonly unknown[]>, summary: String, text: String, description: String },
++  setup(props, { slots }) {
++    return () => {
++      const content = authoredContent(slots.default?.());
++      const tagText = Array.isArray(props.tags) ? normalizeTagItems(props.tags).join(', ') || undefined : firstText(props.tags);
++      const terms = ([['Tag Count', firstScalar(props.tagCount, props.count)], ['Tags', tagText]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++      const fallback = firstText(props.summary, props.text, props.description);
++      return h('section', { class: 'oods-tags-summary', 'data-oods-component': 'TagSummary', 'data-summary-type': 'tags' }, [
++        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Tag Summary'),
++        ...(content.length ? content : terms.length
++          ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
++          : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
++      ]);
++    };
++  },
++});
++
++export const OwnershipMeta = defineComponent({
++  name: 'OodsOwnershipMeta', props: { title: String, label: String, heading: String, name: String, ownerType: String, owner_type: String, role: String, ownershipRole: String },
++  setup(props, { slots }) {
++    return () => {
++      const content = authoredContent(slots.default?.());
++      const terms = ([['Owner Type', firstScalar(props.ownerType, props.owner_type)], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++      return h('div', { class: 'oods-ownership-meta', 'data-oods-component': 'OwnershipMeta', 'data-meta-type': 'ownership' }, content.length ? content : [
++        h('span', { 'data-meta-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Ownership'),
++        ...terms.map(([term, value]) => h('span', { key: term, 'data-meta-item': 'true' }, [h('strong', `${term}:`), ` ${value}`])),
++      ]);
++    };
++  },
++});
+diff --git a/packages/components-vue/src/index.ts b/packages/components-vue/src/index.ts
+index 3df7a047..7f3c0e4e 100644
+--- a/packages/components-vue/src/index.ts
++++ b/packages/components-vue/src/index.ts
+@@ -73,3 +73,6 @@ export type {
+   VizAreaPreviewProps,
+   LabelCellProps, InlineLabelProps, FormLabelGroupProps, ClassificationBadgeProps, ClassificationEditorProps,
+ } from './types.js';
++
++export { OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary } from './breadth.js';
++export type { OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps } from './types.js';
+diff --git a/packages/components-vue/src/types.ts b/packages/components-vue/src/types.ts
+index dc64b41e..30481a3c 100644
+--- a/packages/components-vue/src/types.ts
++++ b/packages/components-vue/src/types.ts
+@@ -288,3 +288,19 @@ export type ClassificationEditorProps = {
+   title?: string; label?: string; heading?: string; name?: string; description?: string; subtitle?: string; hint?: string;
+   category?: string; primaryCategory?: string; tags?: string | readonly unknown[]; modes?: readonly unknown[]; mode?: string; classificationMode?: string;
+ };
++
++export type OwnerBadgeProps = Omit<ClassificationBadgeProps, 'category' | 'mode'> & { owner?: string; ownerType?: string };
++export type OwnershipSummaryProps = {
++  title?: string; label?: string; heading?: string; name?: string;
++  ownerId?: string; owner_id?: string; ownerType?: string; owner_type?: string; role?: string; ownershipRole?: string;
++  summary?: string; text?: string; description?: string;
++};
++export type OwnershipMetaProps = {
++  title?: string; label?: string; heading?: string; name?: string;
++  ownerType?: string; owner_type?: string; role?: string; ownershipRole?: string;
++};
++export type TagSummaryProps = {
++  title?: string; label?: string; heading?: string; name?: string;
++  tagCount?: number | string; count?: number | string; tags?: string | readonly unknown[];
++  summary?: string; text?: string; description?: string;
++};
+diff --git a/packages/components-vue/test/breadth.s187.spec.ts b/packages/components-vue/test/breadth.s187.spec.ts
+index ffef9895..98fb14c2 100644
+--- a/packages/components-vue/test/breadth.s187.spec.ts
++++ b/packages/components-vue/test/breadth.s187.spec.ts
+@@ -65,3 +65,45 @@ describe('Sprint 187 naming and classification semantics', () => {
+     expect(authored.querySelector('[data-form-content]')?.textContent).toBe('Custom controls');
+   });
+ });
++
++describe('Sprint 187 ownership and summary semantics', () => {
++  const values = (root: HTMLElement) => [...root.querySelectorAll('dd')].map((node) => node.textContent);
++  it('OwnerBadge preserves principal aliases, status metadata and authored precedence', () => {
++    const root = mountFamily('OwnerBadge', { owner: 'user-7', ownerType: 'person', value: 'fallback', status: 'active', state: 'inactive' });
++    expect(root.textContent).toBe('user-7');
++    expect(root.getAttribute('data-badge-status')).toBe('active');
++    expect(mountFamily('OwnerBadge', { ownerType: 'person' }).textContent).toBe('person');
++    expect(mountFamily('OwnerBadge').textContent).toBe('Owner');
++    expect(mountFamily('OwnerBadge', { label: 'Label', owner: 'user-7' }, 'Authored').textContent).toBe('Authored');
++  });
++  it('OwnershipSummary associates owner data with terms and consumes role as data, not ARIA', () => {
++    const root = mountFamily('OwnershipSummary', { name: 'By name', owner_id: 'legacy-id', ownerId: 'current-id', owner_type: 'team', ownerType: 'person', ownershipRole: 'legacy-role', role: 'custodian' });
++    expect(root.querySelector('h3')?.textContent).toBe('By name');
++    expect(values(root)).toEqual(['current-id', 'person', 'custodian']);
++    expect(root.hasAttribute('role')).toBe(false);
++    expect(values(mountFamily('OwnershipSummary', { owner_id: 'legacy', owner_type: 'team', ownershipRole: 'steward' }))).toEqual(['legacy', 'team', 'steward']);
++    expect(mountFamily('OwnershipSummary', { text: 'Fallback', description: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
++    expect(mountFamily('OwnershipSummary').querySelector('dl')?.childNodes).toHaveLength(0);
++    const authored = mountFamily('OwnershipSummary', { title: 'Owner', ownerId: 'Hidden' }, 'Authored');
++    expect(authored.querySelector('h3')?.textContent).toBe('Owner');
++    expect(authored.querySelector('dl')).toBeNull();
++    expect(authored.textContent).toBe('OwnerAuthored');
++  });
++  it('OwnershipMeta keeps literal term separators and lets authored children replace its entire body', () => {
++    const root = mountFamily('OwnershipMeta', { label: 'Principal', owner_type: 'team', ownershipRole: 'steward' });
++    expect(root.querySelector('[data-meta-title]')?.textContent).toBe('Principal');
++    expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: team', 'Role: steward']);
++    expect(root.hasAttribute('role')).toBe(false);
++    expect(mountFamily('OwnershipMeta').textContent).toBe('Ownership');
++    expect(mountFamily('OwnershipMeta', { title: 'Hidden', role: 'Hidden' }, 'Authored').textContent).toBe('Authored');
++  });
++  it('TagSummary preserves zero counts and scalar text, and shows the trait array using existing tag normalization', () => {
++    expect(values(mountFamily('TagSummary', { tagCount: 0, count: 9, tags: 'alpha, beta' }))).toEqual(['0', 'alpha, beta']);
++    expect(values(mountFamily('TagSummary', { count: '2', tags: ['alpha', { label: 'Beta', name: 'Ignored' }, { name: 'Gamma' }, null, 0] }))).toEqual(['2', 'alpha, Beta, Gamma, 0']);
++    expect(values(mountFamily('TagSummary', { tagCount: 0, tags: [] }))).toEqual(['0']);
++    expect(mountFamily('TagSummary', { tags: [], summary: 'No tags' }).querySelector('[data-summary-fallback]')?.textContent).toBe('No tags');
++    const authored = mountFamily('TagSummary', { title: 'Tags', tags: ['Hidden'] }, 'Authored');
++    expect(authored.textContent).toBe('TagsAuthored');
++    expect(authored.querySelector('dl')).toBeNull();
++  });
++});
+diff --git a/packages/components-vue/test/scenarios.spec.ts b/packages/components-vue/test/scenarios.spec.ts
+index 07e34113..44a54a4c 100644
+--- a/packages/components-vue/test/scenarios.spec.ts
++++ b/packages/components-vue/test/scenarios.spec.ts
+@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
+ import { describe, expect, it } from 'vitest';
+ 
+ import {
++  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+   AuditTimeline,
+   CancellationSummary,
+@@ -58,6 +59,7 @@ import {
+ } from '../src/index.js';
+ 
+ const implementations: Readonly<Record<string, Component>> = {
++  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+   AuditTimeline,
+   CancellationSummary,
+@@ -656,6 +658,27 @@ describe('@oods/components-vue shared scenarios', () => {
+           expect((component.element?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
+           expect((component.element?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
+           break;
++        }
++        case 'owner-badge-principal': {
++          expect(component.element?.textContent).toBe('user-7');
++          expect(component.element?.getAttribute('data-badge-variant')).toBe('owner');
++          break;
++        }
++        case 'ownership-summary-terms': {
++          expect(component.element?.querySelector('h3')?.textContent).toBe('Ownership Summary');
++          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
++          expect(component.element?.hasAttribute('role')).toBe(false);
++          break;
++        }
++        case 'ownership-meta-inline-terms': {
++          expect(component.element?.querySelector('[data-meta-title]')?.textContent).toBe('Ownership');
++          expect([...component.element!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
++          expect(component.element?.hasAttribute('role')).toBe(false);
++          break;
++        }
++        case 'tag-summary-zero-and-tags': {
++          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
++          break;
+         }
+           default:
+             throw new Error(`Missing executable Vue assertion for ${scenario.id}`);
+diff --git a/packages/components-vue/test/ssr.spec.ts b/packages/components-vue/test/ssr.spec.ts
+index b2920964..f4d6a3e1 100644
+--- a/packages/components-vue/test/ssr.spec.ts
++++ b/packages/components-vue/test/ssr.spec.ts
+@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue';
+ import { describe, expect, it } from 'vitest';
+ 
+ import {
++  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+   AuditTimeline,
+   CancellationSummary,
+@@ -61,6 +62,10 @@ const ServerShowcase = defineComponent({
+   name: 'ServerShowcase',
+   setup() {
+     return () => h('main', [
++      h(OwnerBadge, { owner: 'user-7' }),
++      h(OwnershipSummary, { ownerId: 'user-7', role: 'administrator' }),
++      h(OwnershipMeta, { ownerType: 'organization', role: 'custodian' }),
++      h(TagSummary, { tagCount: 0, tags: ['alpha'] }),
+       h(LabelCell, { label: 'Product name', description: 'Supporting text' }),
+       h(InlineLabel, { label: 'Product name' }),
+       h(FormLabelGroup, { label: 'Product name', inputId: 'product-label' }),
+diff --git a/packages/mcp-server/src/codegen/binding-utils.ts b/packages/mcp-server/src/codegen/binding-utils.ts
+index ba58fec6..11b854ae 100644
+--- a/packages/mcp-server/src/codegen/binding-utils.ts
++++ b/packages/mcp-server/src/codegen/binding-utils.ts
+@@ -807,6 +807,7 @@ const FIELD_VALUE_PROP_TARGETS: Readonly<Record<string, string>> = {
+   TagInput: 'tags',
+   TagManager: 'tags',
+   TagPills: 'tags',
++  TagSummary: 'tags',
+ };
+ 
+ /** The data prop a component's generic field lowers to, when it is not its content or form value. */
+@@ -989,6 +990,10 @@ export type FrameworkRecipePropResolution = {
+ };
+ 
+ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
++  OwnerBadge: { ownerIdField: 'owner', ownerTypeField: 'ownerType' },
++  OwnershipSummary: { ownerIdField: 'ownerId', ownerTypeField: 'ownerType', roleField: 'role' },
++  OwnershipMeta: { ownerTypeField: 'ownerType', roleField: 'role' },
++  TagSummary: { countField: 'tagCount' },
+   LabelCell: { descriptionField: 'description' },
+   FormLabelGroup: { labelField: 'label', descriptionField: 'description', placeholderField: 'placeholder' },
+   ClassificationBadge: { primaryCategoryField: 'category' },
+@@ -1074,6 +1079,7 @@ const RECIPE_PARAMETER_PROPS = new Set([
+   'fallbackRoleParameter',
+   'initialParameter',
+   'minorUnitsParameter',
++  'allowTransferParameter',
+   'maxActiveParameter',
+   'maxLengthParameter',
+   'maxLabelLengthParameter',
+@@ -1105,6 +1111,7 @@ const RECIPE_PARAMETER_PROPS = new Set([
+  * would invent a prop; each is named in the component's contract record.
+  */
+ export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
++  OwnershipSummary: ['transferredAtField'],
+   AddressCollectionPanel: ['roleField', 'defaultRoleField'],
+   AddressEditor: ['defaultRoleField'],
+   ClassificationBadge: ['tagPreviewField'],
+diff --git a/packages/mcp-server/src/codegen/target-contracts.ts b/packages/mcp-server/src/codegen/target-contracts.ts
+index b3497d77..6660033f 100644
+--- a/packages/mcp-server/src/codegen/target-contracts.ts
++++ b/packages/mcp-server/src/codegen/target-contracts.ts
+@@ -23,6 +23,10 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
+   // Labelled trait recipe directives lower into title/supporting; they are
+   // authoring metadata rather than additions to the public component API.
+   CardHeader: new Set(['titleField', 'supportingField']),
++  OwnerBadge: new Set(['ownerIdField', 'ownerTypeField']),
++  OwnershipSummary: new Set(['ownerIdField', 'ownerTypeField', 'roleField', 'transferredAtField', 'allowTransferParameter']),
++  OwnershipMeta: new Set(['ownerTypeField', 'roleField']),
++  TagSummary: new Set(['countField']),
+   LabelCell: new Set(['descriptionField', 'maxLengthParameter']),
+   FormLabelGroup: new Set(['labelField', 'descriptionField', 'placeholderField', 'maxLabelLengthParameter', 'maxDescriptionLengthParameter', 'requireDescriptionParameter']),
+   ClassificationBadge: new Set(['primaryCategoryField', 'tagPreviewField']),
+@@ -467,6 +471,10 @@ const PROP_VALUE_CONTRACTS: Readonly<
+     elevated: BOOLEAN_VALUE,
+     as: enumContract(['div', 'section', 'article', 'aside']),
+   },
++  OwnerBadge: { label: STRING_VALUE, text: STRING_VALUE, owner: STRING_VALUE, ownerType: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
++  OwnershipSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerId: STRING_VALUE, owner_id: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
++  OwnershipMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE },
++  TagSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, tagCount: STRING_OR_NUMBER_VALUE, count: STRING_OR_NUMBER_VALUE, tags: valueContract('a string or tag array', (value) => typeof value === 'string' || Array.isArray(value)), summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
+   LabelCell: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, sublabel: STRING_VALUE, supporting: STRING_VALUE, truncate: BOOLEAN_VALUE, maxLength: STRING_OR_NUMBER_VALUE },
+   InlineLabel: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, maxLength: STRING_OR_NUMBER_VALUE },
+   FormLabelGroup: { label: STRING_VALUE, text: STRING_VALUE, title: STRING_VALUE, placeholder: STRING_VALUE, hint: STRING_VALUE, description: STRING_VALUE, htmlFor: STRING_VALUE, for: STRING_VALUE, inputId: STRING_VALUE },
+@@ -858,6 +866,7 @@ function acceptedFieldKinds(
+   // still mandatory, but the placeholder itself is always a string.
+   if (framework === 'html') return ['string', 'number', 'boolean', 'object', 'array', 'unknown'];
+   // Data props a generic field lowers to are independent of any local form state on the node.
++  if (propName === 'tags' && component === 'TagSummary') return ['string', 'array'];
+   if (propName === 'filters' && component === 'FilterPanel') return ['array'];
+   if (propName === 'tags' && (component === 'TagManager' || component === 'TagPills' || component === 'TagInput')) return ['array'];
+   if (propName === 'role' && component === 'AddressSummaryBadge') return ['string'];
+diff --git a/packages/mcp-server/test/product-reality/breadth-export-cells.s187.spec.ts b/packages/mcp-server/test/product-reality/breadth-export-cells.s187.spec.ts
+index 264a1b63..31a3e381 100644
+--- a/packages/mcp-server/test/product-reality/breadth-export-cells.s187.spec.ts
++++ b/packages/mcp-server/test/product-reality/breadth-export-cells.s187.spec.ts
+@@ -12,6 +12,7 @@ const requireVue = createRequire(new URL('../../../components-vue/package.json',
+ const { h } = requireVue('vue');
+ const { renderToString: renderVue } = requireVue('@vue/server-renderer');
+ export const S187_COMPONENTS = [
++  'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
+   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
+ ] as const;
+ const CELLS = (['react', 'vue'] as const).flatMap((framework) => (
+@@ -49,6 +50,18 @@ describe('Sprint 187 built package export cells', () => {
+       expect(root.querySelector('input[name="tags"]')?.getAttribute('value')).toBe('["alpha","beta"]');
+       expect(root.querySelector('option[selected]')?.textContent).toBe('flexible');
+     }
++    if (component === 'OwnerBadge') {
++      expect(root.textContent).toBe('user-7');
++      expect(root.getAttribute('data-badge-variant')).toBe('owner');
++    } else if (component === 'OwnershipSummary') {
++      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
++      expect(root.getAttribute('role')).toBeNull();
++    } else if (component === 'OwnershipMeta') {
++      expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
++      expect(root.getAttribute('role')).toBeNull();
++    } else if (component === 'TagSummary') {
++      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
++    }
+     expect(preflightTargetCapabilities([{ id: `export-${component}`, component, props: { ...scenario.props } }], framework)).toEqual([]);
+   });
+ });
+diff --git a/packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts b/packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts
+index 764557c9..7d455793 100644
+--- a/packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts
++++ b/packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts
+@@ -66,6 +66,22 @@ describe('Sprint 187 fresh composition binding intent', () => {
+     }
+   });
+ 
++  it.each(['list', 'detail', 'card'] as const)('Organization/%s preserves its ownership and tag data through both generators', async (context) => {
++    const schema = (await compose({ object: 'Organization', context })).schema!;
++    const nodes = schemaNodes(schema);
++    if (context === 'list') expect(nodes.find((node) => node.component === 'OwnerBadge')?.props).toMatchObject({ ownerIdField: 'owner_id', ownerTypeField: 'owner_type' });
++    if (context === 'detail') expect(nodes.find((node) => node.component === 'OwnershipSummary')?.props).toMatchObject({ transferredAtField: 'ownership_transferred_at', allowTransferParameter: 'allowTransfer' });
++    if (context === 'card') {
++      expect(nodes.find((node) => node.component === 'TagSummary')?.props).toMatchObject({ field: 'tags', countField: 'tag_count' });
++      expect(deriveConsumerModel(schema).tags).toEqual(['Consumer tag']);
++    }
++    for (const framework of ['react', 'vue'] as const) {
++      const generated = await generate({ schema, framework, profile: 'build' });
++      expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
++      if (context === 'card') expect(generated.code).toMatch(/tags=\{tags\}|:tags="tags"/);
++    }
++  });
++
+   it('does not treat search-active booleans as editable search query text', () => {
+     const schema: UiSchema = { version: '2026.02', objectSchema: {
+       searchActive: { type: 'boolean', required: true, semanticType: 'state.search.active' },
+diff --git a/packages/mcp-server/test/product-reality/parity.s185.spec.ts b/packages/mcp-server/test/product-reality/parity.s185.spec.ts
+index 23ce728a..fe83ee5e 100644
+--- a/packages/mcp-server/test/product-reality/parity.s185.spec.ts
++++ b/packages/mcp-server/test/product-reality/parity.s185.spec.ts
+@@ -13,6 +13,7 @@ const { h } = requireVue('vue');
+ const { renderToString: renderVue } = requireVue('@vue/server-renderer');
+ 
+ const COMPONENTS = [
++  'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
+   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
+   'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
+   // Sprint 186 wave 2 extends the same computed comparison.
+@@ -170,6 +171,8 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
+       for (const text of ['alpha', 'beta', 'Add Tag']) expect(react.visibleText).toContain(text);
+     } else if (component === 'LabelCell' || component === 'InlineLabel' || component === 'FormLabelGroup' || component === 'ClassificationBadge' || component === 'ClassificationEditor') {
+       expect(react.markers).toContain(component);
++    } else if (['OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary'].includes(component)) {
++      expect(react.markers).toContain(component);
+     } else if (component === 'PriceSummary') {
+       expect(react.headings).toEqual([{ level: 'h3', text: 'Price Summary' }]);
+       for (const text of ['Amount', '129900', 'Currency', 'USD', 'Model', 'recurring', 'Interval', 'month']) expect(react.visibleText).toContain(text);
+@@ -181,6 +184,14 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
+     }
+   });
+ 
++  it.each(['OwnerBadge', 'ClassificationBadge', 'AddressSummaryBadge', 'MessageStatusBadge', 'PreferenceSummaryBadge'] as const)(
++    '%s keeps the HTML text-only badge semantics even for a known active status', async (component) => {
++      const { react, vue } = await renderPair(component, { label: 'Principal', status: 'active' });
++      expect(differences(react, vue), JSON.stringify({ react, vue })).toEqual([]);
++      expect(react.visibleText).toBe('Principal');
++    },
++  );
++
+   it.each(['DetailHeader', 'CardHeader'] as const)('preserves scalar whitespace separators in %s headings', async (component) => {
+     const { react, vue } = await renderPair(component, {}, ['Alpha', ' ', 'Beta'], ['Alpha', ' ', 'Beta']);
+     expect(differences(react, vue), JSON.stringify({ react, vue })).toEqual([]);
+diff --git a/scripts/product-reality/s185-baseline-surfaces.mjs b/scripts/product-reality/s185-baseline-surfaces.mjs
+index 2172f3a6..1ef0c502 100644
+--- a/scripts/product-reality/s185-baseline-surfaces.mjs
++++ b/scripts/product-reality/s185-baseline-surfaces.mjs
+@@ -20,7 +20,7 @@ const SPRINT_BASE = '1118f436345e160437abfedbe73a19f190a92562';
+  * per-mission fold under its own record root; frozen prior records stay intact.
+  */
+ const RECORD_ROOT = 'artifacts/product-reality/sprint-187/baseline-fold';
+-const FOLD_MISSION = 's187-m02';
++const FOLD_MISSION = 's187-m03';
+ const FOUNDATION_PATH = 'packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json';
+ const FOUNDATION_SHA256 = '7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71';
+ const TARGETS = ['react', 'vue'];
+@@ -32,6 +32,7 @@ const READINESS = {
+ const PORTED_PACKED_REPORT = 'artifacts/product-reality/sprint-184/m04/packed-consumers/report.json';
+ /** Every live packed-consumer proof that can carry a new nucleus component's generatedConsumer evidence. */
+ const LIVE_ROOTS = Object.freeze([
++  'artifacts/product-reality/sprint-187/m03/live-attempt-1',
+   'artifacts/product-reality/sprint-187/m02/live-attempt-3',
+   'artifacts/product-reality/sprint-185/m04/live-consumers',
+   'artifacts/product-reality/sprint-186/m01/live-consumers',
+diff --git a/scripts/product-reality/s185-m04-consumer-contract.ts b/scripts/product-reality/s185-m04-consumer-contract.ts
+index 05bc6dee..182a8208 100644
+--- a/scripts/product-reality/s185-m04-consumer-contract.ts
++++ b/scripts/product-reality/s185-m04-consumer-contract.ts
+@@ -70,6 +70,21 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
+       }
+       return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
+     };
++    if (node.component === 'OwnerBadge') return textProbe(node.props?.ownerIdField ?? node.props?.ownerTypeField, '[data-oods-badge-label]');
++    if (node.component === 'OwnershipSummary') return ['ownerIdField', 'ownerTypeField', 'roleField'].flatMap((key, index) =>
++      textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
++    if (node.component === 'OwnershipMeta') return ['ownerTypeField', 'roleField'].flatMap((key, index) => {
++      const probes = textProbe(node.props?.[key], `[data-meta-item]:nth-of-type(${index + 2})`);
++      return probes.map((probe) => ({ ...probe, expected: `${index === 0 ? 'Owner Type' : 'Role'}: ${probe.expected}` }));
++    });
++    if (node.component === 'TagSummary') {
++      const probes = textProbe(node.props?.countField, 'dl > [data-summary-item]:first-child > dd');
++      const field = node.props?.field;
++      if (typeof field === 'string' && Array.isArray(model[camel(field)]) && (model[camel(field)] as unknown[]).length) {
++        probes.push({ nodeId: node.id, field, kind: 'family-text', selector: 'dl > [data-summary-item]:last-child > dd', expected: (model[camel(field)] as string[]).join(', '), editable: false });
++      }
++      return probes;
++    }
+     if (node.component === 'LabelCell') return [
+       ...textProbe(node.props?.field, '[data-oods-label-cell-primary]', true),
+       ...textProbe(node.props?.descriptionField, '[data-oods-label-cell-description]', true),
+@@ -158,7 +173,10 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
+     let value: unknown;
+     if (field.enum?.length) value = field.enum.includes(previous as string) ? previous : field.enum[0];
+     else if (Object.hasOwn(established, key)) value = previous;
+-    else if (field.type === 'array' || field.type.endsWith('[]')) value = [];
++    else if (field.type === 'array' || field.type.endsWith('[]')) {
++      // The fresh summary cohort must exercise a real, nonempty tag datum.
++      value = schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
++    }
+     else if (field.type === 'object' || field.type.startsWith('Record<')) value = {};
+     else if (field.type === 'integer' || field.type === 'number') value = 0;
+     else if (field.type === 'boolean') value = false;

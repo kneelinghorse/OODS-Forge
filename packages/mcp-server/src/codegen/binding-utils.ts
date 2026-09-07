@@ -807,6 +807,7 @@ const FIELD_VALUE_PROP_TARGETS: Readonly<Record<string, string>> = {
   TagInput: 'tags',
   TagManager: 'tags',
   TagPills: 'tags',
+  TagSummary: 'tags',
 };
 
 /** The data prop a component's generic field lowers to, when it is not its content or form value. */
@@ -989,6 +990,10 @@ export type FrameworkRecipePropResolution = {
 };
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  OwnerBadge: { ownerIdField: 'owner', ownerTypeField: 'ownerType' },
+  OwnershipSummary: { ownerIdField: 'ownerId', ownerTypeField: 'ownerType', roleField: 'role' },
+  OwnershipMeta: { ownerTypeField: 'ownerType', roleField: 'role' },
+  TagSummary: { countField: 'tagCount' },
   LabelCell: { descriptionField: 'description' },
   FormLabelGroup: { labelField: 'label', descriptionField: 'description', placeholderField: 'placeholder' },
   ClassificationBadge: { primaryCategoryField: 'category' },
@@ -1074,6 +1079,7 @@ const RECIPE_PARAMETER_PROPS = new Set([
   'fallbackRoleParameter',
   'initialParameter',
   'minorUnitsParameter',
+  'allowTransferParameter',
   'maxActiveParameter',
   'maxLengthParameter',
   'maxLabelLengthParameter',
@@ -1105,6 +1111,7 @@ const RECIPE_PARAMETER_PROPS = new Set([
  * would invent a prop; each is named in the component's contract record.
  */
 export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
+  OwnershipSummary: ['transferredAtField'],
   AddressCollectionPanel: ['roleField', 'defaultRoleField'],
   AddressEditor: ['defaultRoleField'],
   ClassificationBadge: ['tagPreviewField'],

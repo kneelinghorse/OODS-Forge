@@ -1,9 +1,9 @@
 {
   "schemaVersion": "1.0.0",
-  "mission": "s187-m02",
+  "mission": "s187-m03",
   "target": "vue",
   "contractVersion": "1.0.0",
-  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 adds five root exports; the original Sprint 182 row objects are preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed.",
+  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 adds five root exports; the original Sprint 182 row objects are preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed. Sprint 187 m03 adds OwnerBadge, OwnershipSummary, OwnershipMeta and TagSummary with the same six reference classes and explicit scalar/trait-array semantics. No ownership transfer or tagging action is claimed.",
   "rows": [
     {
       "componentId": "AddressCollectionPanel",
@@ -1302,6 +1302,135 @@
       }
     },
     {
+      "componentId": "OwnerBadge",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": {
+          "status": "passed",
+          "refs": [
+            "packages/component-contracts/src/contracts.ts#OwnerBadge"
+          ]
+        },
+        "targetImplementation": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/src/breadth.ts#OwnerBadge"
+          ]
+        },
+        "packageExport": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/src/index.ts#OwnerBadge"
+          ]
+        },
+        "publicDeclaration": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/dist/index.d.ts#OwnerBadge"
+          ]
+        },
+        "dependencyClosure": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
+          ]
+        },
+        "frameworkScenario": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/test/scenarios.spec.ts#owner-badge-principal"
+          ]
+        }
+      }
+    },
+    {
+      "componentId": "OwnershipMeta",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": {
+          "status": "passed",
+          "refs": [
+            "packages/component-contracts/src/contracts.ts#OwnershipMeta"
+          ]
+        },
+        "targetImplementation": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/src/breadth.ts#OwnershipMeta"
+          ]
+        },
+        "packageExport": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/src/index.ts#OwnershipMeta"
+          ]
+        },
+        "publicDeclaration": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/dist/index.d.ts#OwnershipMeta"
+          ]
+        },
+        "dependencyClosure": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
+          ]
+        },
+        "frameworkScenario": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/test/scenarios.spec.ts#ownership-meta-inline-terms"
+          ]
+        }
+      }
+    },
+    {
+      "componentId": "OwnershipSummary",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": {
+          "status": "passed",
+          "refs": [
+            "packages/component-contracts/src/contracts.ts#OwnershipSummary"
+          ]
+        },
+        "targetImplementation": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/src/breadth.ts#OwnershipSummary"
+          ]
+        },
+        "packageExport": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/src/index.ts#OwnershipSummary"
+          ]
+        },
+        "publicDeclaration": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/dist/index.d.ts#OwnershipSummary"
+          ]
+        },
+        "dependencyClosure": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
+          ]
+        },
+        "frameworkScenario": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/test/scenarios.spec.ts#ownership-summary-terms"
+          ]
+        }
+      }
+    },
+    {
       "componentId": "PaginationBar",
       "state": "implemented-evidence-complete",
       "emissionEligible": true,
@@ -2203,6 +2332,49 @@
           "status": "passed",
           "refs": [
             "packages/components-vue/test/scenarios.spec.ts#tag-pills-overflow-template"
+          ]
+        }
+      }
+    },
+    {
+      "componentId": "TagSummary",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": {
+          "status": "passed",
+          "refs": [
+            "packages/component-contracts/src/contracts.ts#TagSummary"
+          ]
+        },
+        "targetImplementation": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/src/breadth.ts#TagSummary"
+          ]
+        },
+        "packageExport": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/src/index.ts#TagSummary"
+          ]
+        },
+        "publicDeclaration": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/dist/index.d.ts#TagSummary"
+          ]
+        },
+        "dependencyClosure": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
+          ]
+        },
+        "frameworkScenario": {
+          "status": "passed",
+          "refs": [
+            "packages/components-vue/test/scenarios.spec.ts#tag-summary-zero-and-tags"
           ]
         }
       }

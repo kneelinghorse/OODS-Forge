@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
@@ -61,6 +62,10 @@ const ServerShowcase = defineComponent({
   name: 'ServerShowcase',
   setup() {
     return () => h('main', [
+      h(OwnerBadge, { owner: 'user-7' }),
+      h(OwnershipSummary, { ownerId: 'user-7', role: 'administrator' }),
+      h(OwnershipMeta, { ownerType: 'organization', role: 'custodian' }),
+      h(TagSummary, { tagCount: 0, tags: ['alpha'] }),
       h(LabelCell, { label: 'Product name', description: 'Supporting text' }),
       h(InlineLabel, { label: 'Product name' }),
       h(FormLabelGroup, { label: 'Product name', inputId: 'product-label' }),

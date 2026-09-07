@@ -7,11 +7,12 @@ export const COMPONENT_STYLE_IDS = [
   'ClassificationPanel', 'ColorSwatch', 'ColorizedBadge', 'DatePicker', 'DetailHeader',
   'FilterPanel', 'FormLabelGroup', 'Grid', 'InlineLabel', 'Input',
   'LabelCell', 'MembershipAuditTimeline', 'MembershipPanel', 'MessageEventTimeline', 'MessageStatusBadge',
-  'PaginationBar', 'PreferenceEditor', 'PreferencePanel', 'PreferenceSummaryBadge', 'PreferenceTimeline',
-  'PriceBadge', 'PriceSummary', 'RelativeTimestamp', 'RoleAssignmentForm', 'RoleBadgeList',
-  'SearchInput', 'Select', 'Stack', 'StatusBadge', 'StatusSelector',
-  'StatusTimeline', 'Table', 'Tabs', 'TagInput', 'TagManager',
-  'TagPills', 'TemplatePicker', 'Text', 'Textarea', 'VizAreaPreview',
+  'OwnerBadge', 'OwnershipMeta', 'OwnershipSummary', 'PaginationBar', 'PreferenceEditor',
+  'PreferencePanel', 'PreferenceSummaryBadge', 'PreferenceTimeline', 'PriceBadge', 'PriceSummary',
+  'RelativeTimestamp', 'RoleAssignmentForm', 'RoleBadgeList', 'SearchInput', 'Select',
+  'Stack', 'StatusBadge', 'StatusSelector', 'StatusTimeline', 'Table',
+  'Tabs', 'TagInput', 'TagManager', 'TagPills', 'TagSummary',
+  'TemplatePicker', 'Text', 'Textarea', 'VizAreaPreview',
 ] as const;
 
 export const SUPPORTED_COMPONENT_THEME_CELLS = [

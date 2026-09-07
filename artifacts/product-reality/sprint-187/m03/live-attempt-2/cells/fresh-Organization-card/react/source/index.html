@@ -1,0 +1,20 @@
+<!doctype html><html data-brand="A" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>s187-m03 fresh-Organization-card react live consumer</title></head><body><div id="app"><!--SSR_MARKUP--></div><script>window.__OODS_CAPTURE_FINGERPRINT__ = () => ({
+  rootChildren: [...document.querySelectorAll('#app > *')].map((element) => ({
+    tag: element.tagName,
+    id: element.id,
+    component: element.getAttribute('data-oods-component'),
+  })),
+  elements: [...document.querySelectorAll('#app [id], #app [data-oods-component], #app [role]')]
+    .map((element) => ({
+      tag: element.tagName,
+      id: element.id || null,
+      component: element.getAttribute('data-oods-component'),
+      role: element.getAttribute('role'),
+      selected: element.getAttribute('aria-selected'),
+      hidden: element.hasAttribute('hidden'),
+    })),
+});
+window.__OODS_SSR_FINGERPRINT__ = window.__OODS_CAPTURE_FINGERPRINT__();
+window.__OODS_SSR_ROOT_NODE__ = document.querySelector('#app > [data-oods-component]');
+window.__OODS_SSR_ACTION_NODE__ = document.querySelector('[data-oods-screen-actions] button');
+window.__OODS_SSR_NODES__ = [...document.querySelectorAll('#app *')];</script><script type="module" src="/src/main.tsx"></script></body></html>

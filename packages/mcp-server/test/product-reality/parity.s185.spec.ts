@@ -13,6 +13,7 @@ const { h } = requireVue('vue');
 const { renderToString: renderVue } = requireVue('@vue/server-renderer');
 
 const COMPONENTS = [
+  'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
   'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
   // Sprint 186 wave 2 extends the same computed comparison.
@@ -170,6 +171,8 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
       for (const text of ['alpha', 'beta', 'Add Tag']) expect(react.visibleText).toContain(text);
     } else if (component === 'LabelCell' || component === 'InlineLabel' || component === 'FormLabelGroup' || component === 'ClassificationBadge' || component === 'ClassificationEditor') {
       expect(react.markers).toContain(component);
+    } else if (['OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary'].includes(component)) {
+      expect(react.markers).toContain(component);
     } else if (component === 'PriceSummary') {
       expect(react.headings).toEqual([{ level: 'h3', text: 'Price Summary' }]);
       for (const text of ['Amount', '129900', 'Currency', 'USD', 'Model', 'recurring', 'Interval', 'month']) expect(react.visibleText).toContain(text);
@@ -180,6 +183,14 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
         : 'Authored area preview content');
     }
   });
+
+  it.each(['OwnerBadge', 'ClassificationBadge', 'AddressSummaryBadge', 'MessageStatusBadge', 'PreferenceSummaryBadge'] as const)(
+    '%s keeps the HTML text-only badge semantics even for a known active status', async (component) => {
+      const { react, vue } = await renderPair(component, { label: 'Principal', status: 'active' });
+      expect(differences(react, vue), JSON.stringify({ react, vue })).toEqual([]);
+      expect(react.visibleText).toBe('Principal');
+    },
+  );
 
   it.each(['DetailHeader', 'CardHeader'] as const)('preserves scalar whitespace separators in %s headings', async (component) => {
     const { react, vue } = await renderPair(component, {}, ['Alpha', ' ', 'Beta'], ['Alpha', ' ', 'Beta']);

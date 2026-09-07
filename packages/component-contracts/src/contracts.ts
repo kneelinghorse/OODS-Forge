@@ -226,6 +226,27 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Inherits Badge inline noninteractive status label semantics', 'The resolved label is always visible text'],
     compatibility: 'Mirrors renderMessageStatusBadge over renderBadgePrimitive with default variant message and default label Message: the label reads label/text/status/delivery/value in that order, the status reads status/state/delivery/value, and both are exposed as data-badge-status and data-badge-variant on the governed Badge substrate; tone and emphasis retain their shared Badge behaviour. The saved-schema directive statusesField is consumed and left unbound: the HTML renderer reads no statuses collection.',
   },
+  OwnerBadge: {
+    id: 'OwnerBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'owner', 'ownerType', 'value', 'status', 'state', 'variant', 'tone', 'emphasis'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['owner identity is visible', 'owner is the badge variant'],
+    compatibility: 'Mirrors renderOwnerBadge over renderBadgePrimitive: label/text/owner/ownerType/value precedence, status/state metadata, owner variant and Owner fallback. ownerIdField lowers to owner and ownerTypeField to ownerType. The badge is noninteractive; no ownership change is implied.',
+  },
+  OwnershipMeta: {
+    id: 'OwnershipMeta', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'ownerType', 'owner_type', 'role', 'ownershipRole'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['meta.text', 'meta.label'],
+    accessibility: ['metadata has inline term labels', 'role is visible text not an ARIA role'],
+    compatibility: 'Mirrors renderOwnershipMeta over renderMetaInline: title/label/heading/name (default Ownership), Owner Type ownerType/owner_type, Role role/ownershipRole. Each value is an inline span with a strong term and separator; children replace the entire body including its title. ownerTypeField and roleField lower to their consumed keys. role is displayed data, never an ARIA role. Noninteractive.',
+  },
+  OwnershipSummary: {
+    id: 'OwnershipSummary', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'ownerId', 'owner_id', 'ownerType', 'owner_type', 'role', 'ownershipRole', 'summary', 'text', 'description'], slots: ['default'], events: [],
+    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
+    accessibility: ['a real h3 names the description list', 'owner id, type and role remain associated terms'],
+    compatibility: 'Mirrors renderOwnershipSummary over renderSummarySection: title/label/heading/name (default Ownership Summary); Owner ID reads ownerId/owner_id, Owner Type ownerType/owner_type, Role role/ownershipRole; summary/text/description is a fallback when no term resolves. Children replace the body but retain the h3 heading. ownerIdField, ownerTypeField and roleField lower to their runtime keys. transferredAtField and allowTransferParameter are consumed unbound; no transfer term or action is implemented. role is displayed data, never an ARIA role.',
+  },
   PaginationBar: {
     id: 'PaginationBar', version: COMPONENT_CONTRACT_VERSION,
     props: [
@@ -402,6 +423,13 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['populated', 'overflow', 'empty'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
     accessibility: ['Each visible tag is text inside one noninteractive group', 'The overflow label is visible text'],
     compatibility: 'Mirrors renderTagPills with data-summary-type=tag-pills: tags, then value (records read label/name/role/value/id, scalars render as text) render one data-tag-pill each up to maxVisible (a number or numeric string; default every tag); when tags remain, overflowLabel replaces {{ tag_count }} with the total tag count exactly as the HTML renderer does, or +N with the hidden count without a template; authored children replace the pills. The generic field lowers to tags; the saved-schema label is consumed and left unbound because the renderer never reads it.',
+  },
+  TagSummary: {
+    id: 'TagSummary', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'tagCount', 'count', 'tags', 'summary', 'text', 'description'], slots: ['default'], events: [],
+    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
+    accessibility: ['zero count remains visible', 'typed tag entries render normalized visible names'],
+    compatibility: 'Preserves renderTagSummary scalar summary semantics: title/label/heading/name (default Tag Summary), Tag Count tagCount/count, Tags tags; summary/text/description fallback; children replace the description-list body but keep the h3. field lowers to tags and countField to tagCount. Adds typed array presentation required by Taggable: the existing tag normalizer resolves label/name/role/value/id and joins visible names with comma-space, unlike the HTML scalar reader which ignores arrays. Empty arrays omit the Tags term; numeric zero count remains visible. Noninteractive; no tagging action is implied.',
   },
   TemplatePicker: {
     id: 'TemplatePicker', version: COMPONENT_CONTRACT_VERSION,

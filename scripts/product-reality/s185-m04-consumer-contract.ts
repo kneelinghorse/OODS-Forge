@@ -70,6 +70,21 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
       }
       return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
     };
+    if (node.component === 'OwnerBadge') return textProbe(node.props?.ownerIdField ?? node.props?.ownerTypeField, '[data-oods-badge-label]');
+    if (node.component === 'OwnershipSummary') return ['ownerIdField', 'ownerTypeField', 'roleField'].flatMap((key, index) =>
+      textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
+    if (node.component === 'OwnershipMeta') return ['ownerTypeField', 'roleField'].flatMap((key, index) => {
+      const probes = textProbe(node.props?.[key], `[data-meta-item]:nth-of-type(${index + 2})`);
+      return probes.map((probe) => ({ ...probe, expected: `${index === 0 ? 'Owner Type' : 'Role'}: ${probe.expected}` }));
+    });
+    if (node.component === 'TagSummary') {
+      const probes = textProbe(node.props?.countField, 'dl > [data-summary-item]:first-child > dd');
+      const field = node.props?.field;
+      if (typeof field === 'string' && Array.isArray(model[camel(field)]) && (model[camel(field)] as unknown[]).length) {
+        probes.push({ nodeId: node.id, field, kind: 'family-text', selector: 'dl > [data-summary-item]:last-child > dd', expected: (model[camel(field)] as string[]).join(', '), editable: false });
+      }
+      return probes;
+    }
     if (node.component === 'LabelCell') return [
       ...textProbe(node.props?.field, '[data-oods-label-cell-primary]', true),
       ...textProbe(node.props?.descriptionField, '[data-oods-label-cell-description]', true),
@@ -158,7 +173,10 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
     let value: unknown;
     if (field.enum?.length) value = field.enum.includes(previous as string) ? previous : field.enum[0];
     else if (Object.hasOwn(established, key)) value = previous;
-    else if (field.type === 'array' || field.type.endsWith('[]')) value = [];
+    else if (field.type === 'array' || field.type.endsWith('[]')) {
+      // The fresh summary cohort must exercise a real, nonempty tag datum.
+      value = schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
+    }
     else if (field.type === 'object' || field.type.startsWith('Record<')) value = {};
     else if (field.type === 'integer' || field.type === 'number') value = 0;
     else if (field.type === 'boolean') value = false;

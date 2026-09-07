@@ -8,6 +8,7 @@ import type {
 } from '../src/index.js';
 
 import {
+  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
@@ -259,6 +260,10 @@ export function renderSharedScenario(
       return <ClassificationBadge {...scenario.props} />;
     case 'classification-editor-presentational-controls':
       return <ClassificationEditor {...scenario.props} />;
+    case 'owner-badge-principal': return <OwnerBadge {...scenario.props} />;
+    case 'ownership-summary-terms': return <OwnershipSummary {...scenario.props} />;
+    case 'ownership-meta-inline-terms': return <OwnershipMeta {...scenario.props} />;
+    case 'tag-summary-zero-and-tags': return <TagSummary {...scenario.props} />;
     default:
       throw new Error(`Unimplemented shared React scenario: ${scenario.id}`);
   }

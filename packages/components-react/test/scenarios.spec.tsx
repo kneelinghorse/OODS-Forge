@@ -517,6 +517,27 @@ describe('@oods/components-react shared scenarios', () => {
           expect((component?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
           break;
         }
+        case 'owner-badge-principal': {
+          expect(component?.textContent).toBe('user-7');
+          expect(component?.getAttribute('data-badge-variant')).toBe('owner');
+          break;
+        }
+        case 'ownership-summary-terms': {
+          expect(component?.querySelector('h3')?.textContent).toBe('Ownership Summary');
+          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
+          expect(component?.hasAttribute('role')).toBe(false);
+          break;
+        }
+        case 'ownership-meta-inline-terms': {
+          expect(component?.querySelector('[data-meta-title]')?.textContent).toBe('Ownership');
+          expect([...component!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
+          expect(component?.hasAttribute('role')).toBe(false);
+          break;
+        }
+        case 'tag-summary-zero-and-tags': {
+          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
+          break;
+        }
         default:
           throw new Error(`Missing executable React assertion for ${scenario.id}`);
       }

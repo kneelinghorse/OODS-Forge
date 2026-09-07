@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Badge } from './presentational.js';
 import type { ComponentEmphasis, ComponentTone } from './types.js';
 import type {
+  OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps,
   LabelCellProps, InlineLabelProps, FormLabelGroupProps, ClassificationBadgeProps, ClassificationEditorProps,
   AddressEditorProps,
   AddressEditorValue,
@@ -421,6 +422,7 @@ function createBadgeFamily<Props extends object>(options: BadgeFamilyOptions) {
       <Badge
         ref={ref}
         status={status}
+        showIcon={false}
         tone={tone}
         emphasis={emphasis}
         className={classes(options.className, className)}
@@ -991,3 +993,53 @@ export const ClassificationEditor = React.forwardRef<HTMLFormElement, Classifica
   }
 );
 ClassificationEditor.displayName = 'OODS.ClassificationEditor';
+
+export const OwnerBadge = createBadgeFamily<OwnerBadgeProps>({
+  component: 'OwnerBadge', className: 'oods-owner-badge', defaultLabel: 'Owner', defaultVariant: 'owner',
+  labelKeys: ['label', 'text', 'owner', 'ownerType', 'value'], statusKeys: ['status', 'state'],
+});
+
+export const OwnershipSummary = React.forwardRef<HTMLElement, OwnershipSummaryProps>(
+  ({ title, label, heading, name, ownerId, owner_id, ownerType, owner_type, role, ownershipRole, summary, text, description, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const terms = ([['Owner ID', firstScalar(ownerId, owner_id)], ['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const fallback = firstText(summary, text, description);
+    return <section ref={ref} className={classes('oods-ownership-summary', className)} data-oods-component="OwnershipSummary" data-summary-type="ownership" {...rest}>
+      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Ownership Summary'}</h3>
+      {content.authored || content.scalar !== undefined ? children : terms.length
+        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
+        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
+    </section>;
+  }
+);
+OwnershipSummary.displayName = 'OODS.OwnershipSummary';
+
+export const TagSummary = React.forwardRef<HTMLElement, TagSummaryProps>(
+  ({ title, label, heading, name, tagCount, count, tags, summary, text, description, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const tagText = Array.isArray(tags) ? normalizeTagItems(tags).join(', ') || undefined : firstText(tags as string | undefined);
+    const terms = ([['Tag Count', firstScalar(tagCount, count)], ['Tags', tagText]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const fallback = firstText(summary, text, description);
+    return <section ref={ref} className={classes('oods-tags-summary', className)} data-oods-component="TagSummary" data-summary-type="tags" {...rest}>
+      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Tag Summary'}</h3>
+      {content.authored || content.scalar !== undefined ? children : terms.length
+        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
+        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
+    </section>;
+  }
+);
+TagSummary.displayName = 'OODS.TagSummary';
+
+export const OwnershipMeta = React.forwardRef<HTMLDivElement, OwnershipMetaProps>(
+  ({ title, label, heading, name, ownerType, owner_type, role, ownershipRole, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const terms = ([['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    return <div ref={ref} className={classes('oods-ownership-meta', className)} data-oods-component="OwnershipMeta" data-meta-type="ownership" {...rest}>
+      {content.authored || content.scalar !== undefined ? children : <>
+        <span data-meta-title="true">{firstText(title, label, heading, name) ?? 'Ownership'}</span>
+        {terms.map(([term, value]) => <span key={term} data-meta-item="true"><strong>{term}:</strong> {value}</span>)}
+      </>}
+    </div>;
+  }
+);
+OwnershipMeta.displayName = 'OODS.OwnershipMeta';

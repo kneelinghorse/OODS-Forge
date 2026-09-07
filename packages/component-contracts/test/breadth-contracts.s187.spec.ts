@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { componentContracts, NUCLEUS_COMPONENT_IDS, sharedScenarios } from '../src/index.js';
 
-const FAMILIES = ['LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor'] as const;
+const FAMILIES = [
+  'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary','LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor'] as const;
 describe('Sprint 187 fresh composition contracts', () => {
   it.each(FAMILIES)('%s has one governed contract and scenario without invented edit events', (id) => {
     expect(NUCLEUS_COMPONENT_IDS.filter((entry) => entry === id)).toEqual([id]);

@@ -66,6 +66,24 @@ describe('Sprint 187 fresh composition binding intent', () => {
     }
   });
 
+  it.each(['list', 'detail', 'card'] as const)('Organization/%s preserves its ownership and tag data through both generators', async (context) => {
+    const schema = (await compose({ object: 'Organization', context })).schema!;
+    const nodes = schemaNodes(schema);
+    if (context === 'list') expect(nodes.find((node) => node.component === 'OwnerBadge')?.props).toMatchObject({ ownerIdField: 'owner_id', ownerTypeField: 'owner_type' });
+    if (context === 'detail') expect(nodes.find((node) => node.component === 'OwnershipSummary')?.props).toMatchObject({ transferredAtField: 'ownership_transferred_at', allowTransferParameter: 'allowTransfer' });
+    if (context === 'card') {
+      expect(nodes.some((node) => node.component === 'Button')).toBe(false);
+      expect(nodes.find((node) => node.component === 'OwnershipMeta')).toBeDefined();
+      expect(nodes.find((node) => node.component === 'TagSummary')?.props).toMatchObject({ field: 'tags', countField: 'tag_count' });
+      expect(deriveConsumerModel(schema).tags).toEqual(['Consumer tag']);
+    }
+    for (const framework of ['react', 'vue'] as const) {
+      const generated = await generate({ schema, framework, profile: 'build' });
+      expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
+      if (context === 'card') expect(generated.code).toMatch(/tags=\{tags\}|:tags="tags"/);
+    }
+  });
+
   it('does not treat search-active booleans as editable search query text', () => {
     const schema: UiSchema = { version: '2026.02', objectSchema: {
       searchActive: { type: 'boolean', required: true, semanticType: 'state.search.active' },

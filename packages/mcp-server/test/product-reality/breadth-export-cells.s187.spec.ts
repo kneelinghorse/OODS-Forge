@@ -12,6 +12,7 @@ const requireVue = createRequire(new URL('../../../components-vue/package.json',
 const { h } = requireVue('vue');
 const { renderToString: renderVue } = requireVue('@vue/server-renderer');
 export const S187_COMPONENTS = [
+  'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
 ] as const;
 const CELLS = (['react', 'vue'] as const).flatMap((framework) => (
@@ -48,6 +49,18 @@ describe('Sprint 187 built package export cells', () => {
       expect(root.querySelector('input[name="category"]')?.getAttribute('value')).toBe('Electronics');
       expect(root.querySelector('input[name="tags"]')?.getAttribute('value')).toBe('["alpha","beta"]');
       expect(root.querySelector('option[selected]')?.textContent).toBe('flexible');
+    }
+    if (component === 'OwnerBadge') {
+      expect(root.textContent).toBe('user-7');
+      expect(root.getAttribute('data-badge-variant')).toBe('owner');
+    } else if (component === 'OwnershipSummary') {
+      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
+      expect(root.getAttribute('role')).toBeNull();
+    } else if (component === 'OwnershipMeta') {
+      expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
+      expect(root.getAttribute('role')).toBeNull();
+    } else if (component === 'TagSummary') {
+      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
     }
     expect(preflightTargetCapabilities([{ id: `export-${component}`, component, props: { ...scenario.props } }], framework)).toEqual([]);
   });

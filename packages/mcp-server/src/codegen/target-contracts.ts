@@ -23,6 +23,10 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   // Labelled trait recipe directives lower into title/supporting; they are
   // authoring metadata rather than additions to the public component API.
   CardHeader: new Set(['titleField', 'supportingField']),
+  OwnerBadge: new Set(['ownerIdField', 'ownerTypeField']),
+  OwnershipSummary: new Set(['ownerIdField', 'ownerTypeField', 'roleField', 'transferredAtField', 'allowTransferParameter']),
+  OwnershipMeta: new Set(['ownerTypeField', 'roleField']),
+  TagSummary: new Set(['countField']),
   LabelCell: new Set(['descriptionField', 'maxLengthParameter']),
   FormLabelGroup: new Set(['labelField', 'descriptionField', 'placeholderField', 'maxLabelLengthParameter', 'maxDescriptionLengthParameter', 'requireDescriptionParameter']),
   ClassificationBadge: new Set(['primaryCategoryField', 'tagPreviewField']),
@@ -467,6 +471,10 @@ const PROP_VALUE_CONTRACTS: Readonly<
     elevated: BOOLEAN_VALUE,
     as: enumContract(['div', 'section', 'article', 'aside']),
   },
+  OwnerBadge: { label: STRING_VALUE, text: STRING_VALUE, owner: STRING_VALUE, ownerType: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
+  OwnershipSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerId: STRING_VALUE, owner_id: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
+  OwnershipMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE },
+  TagSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, tagCount: STRING_OR_NUMBER_VALUE, count: STRING_OR_NUMBER_VALUE, tags: valueContract('a string or tag array', (value) => typeof value === 'string' || Array.isArray(value)), summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
   LabelCell: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, sublabel: STRING_VALUE, supporting: STRING_VALUE, truncate: BOOLEAN_VALUE, maxLength: STRING_OR_NUMBER_VALUE },
   InlineLabel: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, maxLength: STRING_OR_NUMBER_VALUE },
   FormLabelGroup: { label: STRING_VALUE, text: STRING_VALUE, title: STRING_VALUE, placeholder: STRING_VALUE, hint: STRING_VALUE, description: STRING_VALUE, htmlFor: STRING_VALUE, for: STRING_VALUE, inputId: STRING_VALUE },
@@ -858,6 +866,7 @@ function acceptedFieldKinds(
   // still mandatory, but the placeholder itself is always a string.
   if (framework === 'html') return ['string', 'number', 'boolean', 'object', 'array', 'unknown'];
   // Data props a generic field lowers to are independent of any local form state on the node.
+  if (propName === 'tags' && component === 'TagSummary') return ['string', 'array'];
   if (propName === 'filters' && component === 'FilterPanel') return ['array'];
   if (propName === 'tags' && (component === 'TagManager' || component === 'TagPills' || component === 'TagInput')) return ['array'];
   if (propName === 'role' && component === 'AddressSummaryBadge') return ['string'];

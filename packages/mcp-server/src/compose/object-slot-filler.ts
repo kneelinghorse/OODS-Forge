@@ -334,6 +334,9 @@ export function fillSlotsWithObject(
   for (const slot of template.slots) {
     if (!filledSlots.has(slot.name)) continue;
     if (!PRIMARY_SLOT_INTENTS.has(slot.intent)) continue;
+    // Optional action-or-metadata slots already have their authored content.
+    // Adding a default button here invents an empty, unbound action.
+    if (!slot.required && slot.intent === 'action-button') continue;
 
     const existingChildren = slotChildren.get(slot.name);
     if (!existingChildren || existingChildren.length === 0) continue;

@@ -20,7 +20,7 @@ const SPRINT_BASE = '1118f436345e160437abfedbe73a19f190a92562';
  * per-mission fold under its own record root; frozen prior records stay intact.
  */
 const RECORD_ROOT = 'artifacts/product-reality/sprint-187/baseline-fold';
-const FOLD_MISSION = 's187-m02';
+const FOLD_MISSION = 's187-m03';
 const FOUNDATION_PATH = 'packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json';
 const FOUNDATION_SHA256 = '7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71';
 const TARGETS = ['react', 'vue'];
@@ -32,6 +32,7 @@ const READINESS = {
 const PORTED_PACKED_REPORT = 'artifacts/product-reality/sprint-184/m04/packed-consumers/report.json';
 /** Every live packed-consumer proof that can carry a new nucleus component's generatedConsumer evidence. */
 const LIVE_ROOTS = Object.freeze([
+  'artifacts/product-reality/sprint-187/m03/live-attempt-2',
   'artifacts/product-reality/sprint-187/m02/live-attempt-3',
   'artifacts/product-reality/sprint-185/m04/live-consumers',
   'artifacts/product-reality/sprint-186/m01/live-consumers',

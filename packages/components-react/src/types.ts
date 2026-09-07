@@ -583,3 +583,21 @@ export interface ClassificationEditorProps extends Omit<React.FormHTMLAttributes
   readonly category?: string; readonly primaryCategory?: string; readonly tags?: string | readonly unknown[];
   readonly modes?: readonly unknown[]; readonly mode?: string; readonly classificationMode?: string;
 }
+
+export interface OwnerBadgeProps extends Omit<ClassificationBadgeProps, 'category' | 'mode'> {
+  readonly owner?: string; readonly ownerType?: string;
+}
+export interface OwnershipSummaryProps extends Omit<React.HTMLAttributes<HTMLElement>, 'role'> {
+  readonly label?: string; readonly heading?: string; readonly name?: string;
+  readonly ownerId?: string; readonly owner_id?: string; readonly ownerType?: string; readonly owner_type?: string;
+  readonly role?: string; readonly ownershipRole?: string; readonly summary?: string; readonly text?: string; readonly description?: string;
+}
+export interface OwnershipMetaProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {
+  readonly label?: string; readonly heading?: string; readonly name?: string;
+  readonly ownerType?: string; readonly owner_type?: string; readonly role?: string; readonly ownershipRole?: string;
+}
+export interface TagSummaryProps extends React.HTMLAttributes<HTMLElement> {
+  readonly label?: string; readonly heading?: string; readonly name?: string;
+  readonly tagCount?: number | string; readonly count?: number | string; readonly tags?: string | readonly unknown[];
+  readonly summary?: string; readonly text?: string; readonly description?: string;
+}

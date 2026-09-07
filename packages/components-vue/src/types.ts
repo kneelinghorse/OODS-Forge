@@ -288,3 +288,19 @@ export type ClassificationEditorProps = {
   title?: string; label?: string; heading?: string; name?: string; description?: string; subtitle?: string; hint?: string;
   category?: string; primaryCategory?: string; tags?: string | readonly unknown[]; modes?: readonly unknown[]; mode?: string; classificationMode?: string;
 };
+
+export type OwnerBadgeProps = Omit<ClassificationBadgeProps, 'category' | 'mode'> & { owner?: string; ownerType?: string };
+export type OwnershipSummaryProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  ownerId?: string; owner_id?: string; ownerType?: string; owner_type?: string; role?: string; ownershipRole?: string;
+  summary?: string; text?: string; description?: string;
+};
+export type OwnershipMetaProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  ownerType?: string; owner_type?: string; role?: string; ownershipRole?: string;
+};
+export type TagSummaryProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  tagCount?: number | string; count?: number | string; tags?: string | readonly unknown[];
+  summary?: string; text?: string; description?: string;
+};
