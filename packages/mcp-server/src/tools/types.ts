@@ -440,7 +440,18 @@ export type ComponentCatalogEntry = ComponentCatalogSummary & {
   codeSnippet?: string;
 };
 
+/** Current scope decision; historical per-row proposals do not exclude obligations. */
+export type ComponentObligationScope = {
+  schemaVersion: string;
+  decisionId: number;
+  disposition: "retain-all-obligations";
+  controllingObligationDenominator: number;
+  approvedRuntimeCensus: null;
+  classificationStatus: "historical-proposals-unapproved";
+};
+
 export type CatalogListOutput = {
+  obligationScope?: ComponentObligationScope;
   components: Array<ComponentCatalogSummary | ComponentCatalogEntry>;
   totalCount: number;
   returnedCount: number;

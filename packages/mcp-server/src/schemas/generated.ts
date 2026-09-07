@@ -896,7 +896,7 @@ export namespace CatalogListInputSchema {
      */
     context?: string;
     /**
-     * Filter by component status. 'stable' = has renderer, 'planned' = not yet implemented.
+     * Filter by legacy static-HTML status only: 'stable' = mapped HTML renderer; 'planned' = HTML fallback. Consult productReality.surfaces for React/Vue, generated-consumer and maturity evidence.
      */
     status?: 'stable' | 'beta' | 'planned';
     /**
@@ -918,6 +918,17 @@ export type CatalogListInput = CatalogListInputSchema.CatalogListInput;
 // Source: catalog.list.output.json
 export namespace CatalogListOutputSchema {
   export interface CatalogListOutput {
+    /**
+     * Current accepted catalog scope ruling, independent of historical row classification proposals and target capability evidence. Retained obligations are not implementation or maturity claims.
+     */
+    obligationScope?: {
+      schemaVersion: string;
+      decisionId: number;
+      disposition: 'retain-all-obligations';
+      controllingObligationDenominator: number;
+      approvedRuntimeCensus: null;
+      classificationStatus: 'historical-proposals-unapproved';
+    };
     /**
      * Array of component catalog entries
      */
@@ -1062,7 +1073,7 @@ export namespace CatalogListOutputSchema {
     };
   }
   /**
-   * Additive target-specific capability and evidence ledger. Use this instead of legacy status for React, Vue, generated-consumer, accessibility, theme, and interaction claims; reconciliationState records approval state.
+   * Additive target-specific capability and evidence ledger. Use this instead of legacy status for React, Vue, generated-consumer, accessibility, theme, and interaction claims; row classifications/reconciliationState are historical proposals, subject to the current obligationScope ruling.
    */
   export interface ComponentProductReality {
     schemaVersion: string;

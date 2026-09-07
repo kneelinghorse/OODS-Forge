@@ -1,0 +1,13 @@
+# Combined reconnect draft — prepared, not sent
+
+Sprint 187 candidate expands the governed root from 50 to 64 IDs with fourteen families: LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor, OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary, ArchiveSummary, ArchivePill, CancellationForm, CancellationBadge and PriceCardMeta. React/Vue roots, readiness and token CSS remain the shared package surfaces. `/ported`, `/readiness-ported` and `/css-ported` compatibility aliases remain because migration is unproven.
+
+Composer/lowering repairs preserve actual status, numeric zero and boolean false values, local query updates, ownership labels, meaningful card actions and nullable timestamps. Presentational classification/cancellation forms support local native controls with prevented submission; no persistence, cancellation or policy enforcement is claimed. HTML authority differences and consumed-unbound directives are documented in the public contracts.
+
+`catalog_list` keeps legacy HTML status filters and adds optional `obligationScope` for accepted retain-109 #1788. Historical classifications remain proposals; `approvedRuntimeCensus` is null. Read each target's `productReality.surfaces` evidence; mapped HTML is not proof of React/Vue or maturity. Structured discovery now comes from current Forge sources, generated at 2026-09-07T02:17:11Z. Reconnect after actual delivery to refresh advertised schemas/descriptions.
+
+Source/artifact identity: m05's isolated candidate is based on `25f2021bbb4361fc34647855063bc3c6f8922513` plus the recorded worktree diff and exact built-file hashes in `delivery-final/candidate-identity.json`. This is preparation evidence. The final combined notice must use m06's frozen implementation commit, sprint-wide advertised diff from `21c7c319`, final tarballs, census/cohort receipts and reviewed successor hashes. No moving-branch or generic-health identity is sufficient.
+
+Measured before final closeout: 66/66 schemas and 132/132 generation cells; the fourteen selected paths have per-mission packed evidence at their recorded mission source states. A single final-source 28-cell rerun, saved-store comparison and four-suite capture are still m06 work. Neither generation nor selected runtime paths prove all 66 runtime paths, a connected application or full maturity.
+
+Deployment: **pending**. Shared PM2 remains on the older primary checkout, and the served User-form record remains version 1. Isolated v2 and rollback proof does not migrate the served store. The old served read-only schema-load failure is retained for delivery verification. #1374/#1379/#1384 remain open; public publication and surface adapters are outside scope. No reconnect message has been sent.

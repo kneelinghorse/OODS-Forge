@@ -1,0 +1,33 @@
+..........F...F.
+======================================================================
+FAIL: test_etags_are_stable (test_refresh_structured_data.RefreshStructuredDataTest.test_etags_are_stable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 216, in test_etags_are_stable
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        compute_etag(self.components_payload),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "81357fdf12d4ce47ea63b66ceab2d582427a9cc300f3e96fd0219af21bf1e774",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: 'd022da95bc22f9aeb1252cb9b290e16432ce8f17b237c6f2085c572ebc1d0cf3' != '81357fdf12d4ce47ea63b66ceab2d582427a9cc300f3e96fd0219af21bf1e774'
+- d022da95bc22f9aeb1252cb9b290e16432ce8f17b237c6f2085c572ebc1d0cf3
++ 81357fdf12d4ce47ea63b66ceab2d582427a9cc300f3e96fd0219af21bf1e774
+
+
+======================================================================
+FAIL: test_structured_payloads_match_snapshot (test_refresh_structured_data.RefreshStructuredDataTest.test_structured_payloads_match_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/cmos/tests/test_refresh_structured_data.py", line 212, in test_structured_payloads_match_snapshot
+    self.assertEqual(self.components_payload, expected_components)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'$sc[293 chars]-09-04T00:00:00Z', 'stats': {'componentCount':[445581 chars]]}]}} != {'$sc[293 chars]-09-07T02:17:11Z', 'stats': {'componentCount':[453053 chars]]}]}}
+Diff is 1191088 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 16 tests in 7.787s
+
+FAILED (failures=2)

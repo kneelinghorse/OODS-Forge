@@ -454,7 +454,7 @@ Example output (truncated, default summary + pagination):
   "page": 1,
   "pageSize": 25,
   "returnedCount": 25,
-  "totalCount": 101,
+  "totalCount": 109,
   "hasMore": true,
   "components": [
     {
@@ -467,12 +467,14 @@ Example output (truncated, default summary + pagination):
       "traits": ["Addressable"]
     }
   ],
-  "generatedAt": "2026-03-06T02:51:49Z",
-  "stats": { "componentCount": 101, "traitCount": 41 }
+  "generatedAt": "2026-09-07T02:17:11Z",
+  "stats": { "componentCount": 109, "traitCount": 41 }
 }
 ```
 
 Notes:
+- `status` and its filter retain legacy static-HTML mapping semantics: `stable` means mapped, `planned` means fallback. They do not advertise React/Vue availability or accessibility/theme/interaction maturity. Read each `productReality.surfaces` entry and its evidence.
+- Optional additive `obligationScope` exposes accepted retain-109 decision #1788 independently of historical per-row classification proposals. Its `approvedRuntimeCensus` is null: the old 98 split is unapproved. Missing runtime code does not exclude an ID. Existing filters, pagination and status values are unchanged; strict clients should accept the documented additive output field after reconnecting.
 - Unfiltered calls default to `detail: "summary"` with pagination (`pageSize: 25`). Use `page`/`pageSize` to navigate.
 - To opt into full detail (props, slots, code references), set `detail: "full"` explicitly. Filtered calls default to full detail for backward compatibility.
 - Trait filters use canonical structured-data trait names such as `Stateful`, `Priceable`, or `Addressable`.

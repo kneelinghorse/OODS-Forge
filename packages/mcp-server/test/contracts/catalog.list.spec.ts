@@ -8,6 +8,8 @@ import {
   PRIMITIVE_PROP_SCHEMAS,
   transformComponentsToSummary,
 } from '../../src/tools/catalog.list.js';
+import { handle as generate } from '../../src/tools/code.generate.js';
+import { readComponentsDataset } from '../../src/tools/catalog.shared.js';
 import { resolveComponentCount } from '../../src/tools/catalog.shared.js';
 import { renderMappedComponent } from '../../src/render/component-map.js';
 import type {
@@ -95,6 +97,44 @@ describe('catalog.list', () => {
     const output = await handle({});
     expect(output.totalCount).toBe(109);
     expect(output.stats.componentCount).toBe(109);
+  });
+
+  it('exposes accepted retain-109 scope without turning historical proposals into exclusions', async () => {
+    const output = await handle({ detail: 'summary', pageSize: 200 });
+    const data = readComponentsDataset<{ generatedAt: string; components: Array<{ id: string }>; obligationScope: unknown }>();
+    expect(output.generatedAt).toBe(data.generatedAt);
+    expect(output.components.map((row) => row.name).sort()).toEqual(data.components.map((row) => row.id).sort());
+    expect(new Set(output.components.map((row) => row.name)).size).toBe(109);
+    expect(output.obligationScope).toEqual(data.obligationScope);
+    expect(output.obligationScope).toMatchObject({ decisionId: 1788, disposition: 'retain-all-obligations', controllingObligationDenominator: 109, approvedRuntimeCensus: null, classificationStatus: 'historical-proposals-unapproved' });
+    expect(validateOutput(output)).toBe(true);
+    expect(validateOutput({ ...output, obligationScope: { ...output.obligationScope, approvedRuntimeCensus: 98 } })).toBe(false);
+    // A retained historical proposal is still visible but cannot remove the row.
+    expect(output.components.find((row) => row.name === 'BillingAmountInput')?.productReality?.proposedClassification).toBe('authoring-only');
+  });
+
+  it('keeps HTML-stable discovery distinct from actual target readiness and unverified maturity', async () => {
+    const stable = await handle({ status: 'stable', detail: 'summary', pageSize: 200 });
+    const governed = stable.components.find((row) => row.name === 'ArchivePill')!;
+    const unavailable = stable.components.find((row) => row.name === 'ArchiveEvent')!;
+    expect(governed.status).toBe('stable');
+    expect(unavailable.status).toBe('stable');
+    for (const target of ['react', 'vue'] as const) {
+      expect(governed.productReality?.surfaces[target].state).toBe('implemented-evidence-complete');
+      expect(unavailable.productReality?.surfaces[target].state).toBe('unavailable');
+      for (const [component, expected] of [['ArchivePill', 'ok'], ['ArchiveEvent', 'error'], ['BillingAmountInput', 'error']] as const) {
+        const result = await generate({ framework: target, profile: 'build', schema: { version: '1.0.0', screens: [{ id: 'discovery-probe', component }] } });
+        expect(result.status, JSON.stringify(result.errors)).toBe(expected);
+        if (expected === 'error') expect(result.errors).toEqual([expect.objectContaining({ code: 'OODS-N015', component, message: expect.stringContaining('evidence state: unavailable') })]);
+      }
+    }
+    for (const surface of ['accessibility', 'theme', 'interaction'] as const) {
+      expect(governed.productReality?.surfaces[surface].state).toBe('unverified');
+      expect(unavailable.productReality?.surfaces[surface].state).toBe('unverified');
+    }
+    const planned = await handle({ status: 'planned', detail: 'summary', pageSize: 200 });
+    expect(planned.components.some((row) => row.name === 'BillingAmountInput')).toBe(true);
+    expect(stable.components.some((row) => row.name === 'BillingAmountInput')).toBe(false);
   });
 
   it('passes additive target-specific product reality through summary output', async () => {

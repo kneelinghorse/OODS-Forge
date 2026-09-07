@@ -1,0 +1,98 @@
+{
+  "request": {
+    "tool": "code_generate",
+    "input": {
+      "framework": "react",
+      "profile": "build",
+      "schema": {
+        "version": "1.0.0",
+        "screens": [
+          {
+            "id": "discovery-probe",
+            "component": "ArchiveEvent"
+          }
+        ]
+      }
+    },
+    "role": "designer"
+  },
+  "httpStatus": 200,
+  "body": {
+    "ok": true,
+    "tool": "code_generate",
+    "role": "designer",
+    "mode": "dry-run",
+    "incidentId": "c7730f4a-496e-4244-9719-88378eacacb8",
+    "artifacts": [],
+    "transcriptPath": null,
+    "bundleIndexPath": null,
+    "diagnosticsPath": null,
+    "preview": null,
+    "artifactsDetail": null,
+    "result": {
+      "status": "error",
+      "framework": "react",
+      "code": "",
+      "fileExtension": "",
+      "imports": [],
+      "warnings": [],
+      "validationReceipt": {
+        "profile": "build",
+        "defaulted": false,
+        "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+        "axes": {
+          "scope": "generated-artifact",
+          "enforcement": "blocking",
+          "fallback": "forbidden",
+          "target": {
+            "requested": "react",
+            "resolved": "react",
+            "source": "explicit"
+          }
+        },
+        "checks": [
+          "schema-structure",
+          "component-registry",
+          "state-contract",
+          "target-readiness"
+        ],
+        "notChecked": [
+          "normalization-fidelity",
+          "binding-contract",
+          "props-contract",
+          "slots-contract",
+          "events-contract",
+          "dependency-closure",
+          "fallback-policy",
+          "rendered-evidence",
+          "interaction-evidence",
+          "accessibility-evidence",
+          "theme-evidence",
+          "determinism-evidence",
+          "performance-evidence",
+          "certification-evidence"
+        ],
+        "evidence": {
+          "required": [],
+          "provided": [],
+          "missing": [],
+          "mismatched": [],
+          "accepted": [],
+          "notApplicable": []
+        }
+      },
+      "errors": [
+        {
+          "code": "OODS-N015",
+          "message": "Component ArchiveEvent is not emission-eligible for react; evidence state: unavailable.",
+          "nodeId": "discovery-probe",
+          "component": "ArchiveEvent"
+        }
+      ],
+      "meta": {
+        "nodeCount": 1,
+        "componentCount": 1
+      }
+    }
+  }
+}

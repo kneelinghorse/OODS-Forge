@@ -9,10 +9,12 @@ This wraps `cmos/scripts/refresh_structured_data.py` to regenerate structured da
 ## Usage (recommended)
 
 ```bash
-pnpm refresh:data
+pnpm refresh:data -- --upstream-root "$PWD"
 ```
 
-To populate code snippets for primitives (Button, Card, Stack, Text, etc.) from the upstream design system repo, point the refresh at upstream Storybook stories:
+Use the active OODS-Forge checkout for current product discovery (#1652). The explicit root keeps story snippets on the same source tree as the current traits, objects and capability ledger. The historical OODS-Foundry checkout is a reference source; selecting it is an explicit historical export, not the default evidence for current Forge delivery. Python 3 requires `PyYAML` and `jsonschema`; a disposable virtual environment on PATH can supply them without changing the system interpreter.
+
+To populate code snippets for primitives (Button, Card, Stack, Text, etc.) from a deliberately selected historical design-system reference, point the refresh at its Storybook stories:
 
 ```bash
 pnpm refresh:data -- --upstream-root ../OODS-Foundry
@@ -69,6 +71,12 @@ Flags:
 - `--generated-at` (pin timestamp for reproducible hashes; tests pin `2026-02-24T05:09:44Z`)
 - `--skip-delta` (omit delta report)
 - `--upstream-root`, `--upstream-stories-dir` (populate `code-connect.json` from upstream stories)
+
+## Current scope and surface claims
+
+The current `component-obligation-scope.v1.json` registry record is copied into the export and `catalog.list` as optional additive `obligationScope`. Decision #1788 retains all 109 intake IDs. The old 98-runtime/11-authoring-only split remains unapproved and `approvedRuntimeCensus` stays null. Per-row `proposedClassification` and `reconciliationState` retain their historical provenance; they cannot exclude an obligation or imply that the retain-109 choice is still awaiting approval. Frozen s182 records are preserved.
+
+`status` remains the legacy HTML mapping filter for compatibility. Use `productReality.surfaces.react`, `.vue` and `.generatedConsumer` for each target's evidence, and the separate accessibility/theme/interaction cells for maturity. An HTML-mapped `ArchiveEvent` remains unavailable to governed React/Vue build generation; `ArchivePill` has runtime evidence while its maturity cells remain unverified. The discovery row's `contract` cell is also historical evidence, not a substitute for the current governed package contract.
 
 ## Notes
 

@@ -46,6 +46,25 @@ class RefreshStructuredDataTest(unittest.TestCase):
             component_capabilities_path=CLOSEOUT_COMPONENT_CAPABILITY_PATH,
         )
 
+    def test_current_scope_retains_obligations_without_approving_historical_exclusions(self) -> None:
+        scope = self.components_payload["obligationScope"]
+        self.assertEqual(scope["decisionId"], 1788)
+        self.assertEqual(scope["disposition"], "retain-all-obligations")
+        self.assertEqual(scope["controllingObligationDenominator"], len(self.components_payload["components"]))
+        self.assertEqual(scope["controllingObligationDenominator"], 109)
+        self.assertIsNone(scope["approvedRuntimeCensus"])
+        self.assertEqual(scope["classificationStatus"], "historical-proposals-unapproved")
+        original = json.loads((CMOS_ROOT.parent / "packages/component-contracts/registry/component-reconciliation.proposed.v1.json").read_text())
+        self.assertIsNone(original["approvedRuntimeCensus"])
+
+    def test_scope_cannot_silently_shrink_the_intake(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            scope_path = Path(tmp) / "scope.json"
+            scope_path.write_text(json.dumps({**self.components_payload["obligationScope"], "controllingObligationDenominator": 98}))
+            with patch("scripts.refresh_structured_data.COMPONENT_OBLIGATION_SCOPE_PATH", scope_path):
+                with self.assertRaisesRegex(ValueError, "must retain exact canonical intake membership"):
+                    generate_structured_payloads()
+
     def test_defaults_target_planning_directory(self) -> None:
         self.assertEqual(OUTPUT_DIR, CMOS_ROOT / "planning")
         self.assertEqual(
@@ -187,16 +206,25 @@ class RefreshStructuredDataTest(unittest.TestCase):
         self.assertEqual(len(intake_ids), 109)
 
     def test_structured_payloads_match_snapshot(self) -> None:
+        # Preserve the frozen s182 target; a routine refresh replaces the live planning export.
+        frozen_dir = CMOS_ROOT.parent / "artifacts/structured-data"
+        expected_components = json.loads((frozen_dir / "oods-components-2026-09-04.json").read_text())
+        expected_tokens = json.loads((frozen_dir / "oods-tokens-2026-09-04.json").read_text())
+        historical_projection = {key: value for key, value in self.components_payload.items() if key != "obligationScope"}
+        self.assertEqual(historical_projection, expected_components)
+        self.assertEqual(self.tokens_payload, expected_tokens)
+
+    def test_live_refresh_matches_current_capabilities_and_recorded_timestamp(self) -> None:
         expected_components = json.loads(DEFAULT_BASELINE_COMPONENTS_PATH.read_text())
         expected_tokens = json.loads(DEFAULT_BASELINE_TOKENS_PATH.read_text())
-
-        self.assertEqual(self.components_payload, expected_components)
-        self.assertEqual(self.tokens_payload, expected_tokens)
+        current_components, current_tokens = generate_structured_payloads(generated_at=expected_components["generatedAt"])
+        self.assertEqual(current_components, expected_components)
+        self.assertEqual(current_tokens, expected_tokens)
 
     def test_etags_are_stable(self) -> None:
         self.assertEqual(
             compute_etag(self.components_payload),
-            "81357fdf12d4ce47ea63b66ceab2d582427a9cc300f3e96fd0219af21bf1e774",
+            "d022da95bc22f9aeb1252cb9b290e16432ce8f17b237c6f2085c572ebc1d0cf3",
         )
         self.assertEqual(
             compute_etag(self.tokens_payload),
