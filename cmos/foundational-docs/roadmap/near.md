@@ -4,6 +4,8 @@
 
 **Updated:** 2026-09-07 — review session `PS-2026-09-07-002`
 
+**PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head.
+
 **Scope:** The next three independently reviewed increments
 
 **Program authority:** [Forge Product Reality Program](product-reality-program.md)

@@ -47,7 +47,8 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   objects: 8,
   schemas: 52,
   traits: 68,
-  "artifacts/structured-data": 19,
+  // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
+  "artifacts/structured-data": 21,
 });
 
 const ABSOLUTE_PATH_EXEMPTIONS = new Set([

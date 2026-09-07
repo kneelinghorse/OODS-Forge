@@ -893,9 +893,11 @@ export function auditS184M06ReferencedLogs(
     }
   }
   const referencedLogs = [...referenced].sort();
-  const tracked = spawnSync('git', ['ls-files'], { cwd: repositoryRoot, encoding: 'utf8' });
-  invariant(tracked.status === 0, `git ls-files failed: ${tracked.stderr}`);
-  const trackedPaths = new Set(tracked.stdout.split(/\r?\n/).filter(Boolean));
+  const tracked = spawnSync('git', ['ls-files', '-z', '--', ':(glob)artifacts/product-reality/sprint-184/m06/**/*.log'], {
+    cwd: repositoryRoot, encoding: 'utf8',
+  });
+  invariant(!tracked.error && tracked.status === 0, `git ls-files failed: ${tracked.error?.message ?? tracked.stderr}`);
+  const trackedPaths = new Set(tracked.stdout.split('\0').filter(Boolean));
   const missing = referencedLogs.filter((log) => !existsSync(path.join(repositoryRoot, log)));
   const untracked = referencedLogs.filter((log) => !trackedPaths.has(log));
   for (const log of referencedLogs.filter((candidate) => !missing.includes(candidate))) {

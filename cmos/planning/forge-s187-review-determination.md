@@ -3,6 +3,7 @@
 **Determination:** CERTIFIED for the locked Fresh Composition Coverage scope. CLOSED.
 **Review session:** `PS-2026-09-07-002`, independent Codex review, 2026-09-07.
 **Decisions:** #1809 (certification), #1810 (next planning and retained obligations).
+**Remote CI qualification:** The initial PR #84 run failed three jobs. This review did not inspect that live run before closing; frozen local certification is not remote PR acceptance. See [the CI follow-up](forge-s187-ci-followup.md) for the failures, correction and validation boundary.
 **Reviewed heads:** implementation `a9c02b7d`, frozen suite execution `867c130e`, frozen review inputs `a429e9d4`, delivered evidence `083e82c1`; sprint base `21c7c319`.
 
 All six missions are complete and all seven literal closeout criteria are independently supported. No unresolved finding blocks certification of the locked scope. Deployment and the broader product obligations below remain separate work.

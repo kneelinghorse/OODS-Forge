@@ -1,0 +1,50 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge
+
+ ✓ |core| packages/mcp-server/test/product-reality/evidence-retention.s184.spec.ts (10 tests) 3018ms
+   ✓ Sprint 184 m01 — evidence survives and frozen surfaces stay classified > lets product-reality logs pass the later ignore rule  680ms
+   ✓ Sprint 184 m01 — evidence survives and frozen surfaces stay classified > keeps all 35 formerly orphaned Sprint 183 m05 logs in the index  639ms
+   ✓ Sprint 184 m01 — evidence survives and frozen surfaces stay classified > requires every log named by Sprint 183/184 evidence indexes to be tracked  1039ms
+   ✓ Sprint 184 m01 — evidence survives and frozen surfaces stay classified > makes the Vue packed runner require an explicit artifact root  414ms
+ ❯ |core| packages/mcp-server/test/product-reality/m06-evidence.s184.spec.ts (4 tests | 1 failed) 3188ms
+   ✓ Sprint 184 m06 retained live workflow evidence > retains the exact live matrix, sixteen real gate bites, and honest partial claim  636ms
+   ✓ Sprint 184 m06 retained live workflow evidence > retains the live-only emitter differential and its exact reverse restoration 10ms
+   ✓ Sprint 184 m06 retained live workflow evidence > retains exact bidirectional framework discrimination and source restoration 13ms
+   × Sprint 184 m06 retained live workflow evidence > covers every retained file with checksums and every raw log with the tracked-log audit 2525ms
+     → expected [ …(2) ] to deeply equal []
+ ✓ |core| packages/mcp-server/test/product-reality/m06-evidence-controls.s184.spec.ts (7 tests) 5613ms
+   ✓ Sprint 184 m06 evidence controls > acquires current code.generate output while the Sprint-183 harness still acquires committed artifacts  1141ms
+   ✓ Sprint 184 m06 evidence controls > discriminates the two frozen workflow schemas when one framework loses StatusBadge  897ms
+   ✓ Sprint 184 m06 evidence controls > keeps log tracking checks effective when unrelated git paths exceed the process output limit  2693ms
+   ✓ Sprint 184 m06 evidence controls > finds every JSON-referenced raw log that is absent from git ls-files  745ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| packages/mcp-server/test/product-reality/m06-evidence.s184.spec.ts > Sprint 184 m06 retained live workflow evidence > covers every retained file with checksums and every raw log with the tracked-log audit
+AssertionError: expected [ …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "artifacts/product-reality/sprint-184/m06/cross-framework-discrimination.log",
++   "artifacts/product-reality/sprint-184/m06/seal.log",
++ ]
+
+ ❯ packages/mcp-server/test/product-reality/m06-evidence.s184.spec.ts:211:29
+    209|     expect(audit.referencedLogs.length).toBeGreaterThan(0);
+    210|     expect(audit.missing).toEqual([]);
+    211|     expect(audit.untracked).toEqual([]);
+       |                             ^
+    212|     expect(audit.status).toBe('passed');
+    213|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 20 passed (21)
+   Start at  10:35:33
+   Duration  20.79s (transform 7.06s, setup 0ms, collect 21.03s, tests 11.82s, environment 7ms, prepare 4.03s)
+
