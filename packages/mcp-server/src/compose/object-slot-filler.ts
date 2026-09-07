@@ -749,13 +749,21 @@ function applyBoundFieldProps(
   fieldName: string,
   fieldEntry: FieldSchemaEntry,
 ): void {
+  // A continuous quantity has no finite choices. Preserve the selected field
+  // with a numeric editor instead of an empty Select that cannot display it.
+  if (node.component === 'Select' && !fieldEntry.enum?.length
+    && !node.props?.options && ['integer', 'number'].includes(fieldEntry.type)) {
+    node.component = 'Input';
+    node.props = { ...node.props, type: 'number' };
+    node.bindings = { ...node.bindings, onChange: node.bindings?.onChange ?? `handleChange_${fieldName}` };
+  }
   const nextProps: Record<string, unknown> = {
     ...(node.props ?? {}),
     field: fieldName,
   };
 
   // Set label from field description if not already present
-  if (fieldEntry.description && typeof nextProps.label !== 'string') {
+  if (node.component !== 'StatusTimeline' && fieldEntry.description && typeof nextProps.label !== 'string') {
     nextProps.label = fieldEntry.description;
   }
 

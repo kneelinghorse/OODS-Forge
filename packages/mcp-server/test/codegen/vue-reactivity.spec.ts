@@ -53,7 +53,7 @@ function makeDisplaySchema(
 /* ------------------------------------------------------------------ */
 
 describe('vue-emitter — ref() bindings', () => {
-  it('generates ref() for each field in form schemas', () => {
+  it('seeds each local form ref from optional typed props while preserving omitted-value defaults', () => {
     const schema = makeFormSchema(
       {
         name: { type: 'string', required: true, description: 'User name' },
@@ -68,9 +68,11 @@ describe('vue-emitter — ref() bindings', () => {
     );
     const result = emit(schema, { typescript: true, styling: 'inline' });
     expect(result.code).toContain("import { ref } from 'vue';");
-    expect(result.code).toContain("const name = ref<string>('')");
-    expect(result.code).toContain("const age = ref<number>(0)");
-    expect(result.code).toContain("const active = ref<boolean>(false)");
+    expect(result.code).toContain("const name = ref<string>(generatedProps.name ?? '')");
+    expect(result.code).toContain("name?: string;");
+    expect(result.code).toContain("const generatedProps = defineProps<Props>();");
+    expect(result.code).toContain("const age = ref<number>(generatedProps.age ?? 0)");
+    expect(result.code).toContain("const active = ref<boolean>(generatedProps.active ?? false)");
   });
 
   it('uses correct default values for different field types', () => {
@@ -86,9 +88,9 @@ describe('vue-emitter — ref() bindings', () => {
       ],
     );
     const result = emit(schema, { typescript: false, styling: 'inline' });
-    expect(result.code).toContain("const tags = ref([])");
-    expect(result.code).toContain("const config = ref({})");
-    expect(result.code).toContain("const status = ref('active')");
+    expect(result.code).toContain("const tags = ref(generatedProps.tags ?? [])");
+    expect(result.code).toContain("const config = ref(generatedProps.config ?? {})");
+    expect(result.code).toContain("const status = ref(generatedProps.status ?? 'active')");
   });
 
   it('does NOT generate ref() for non-form display schemas', () => {

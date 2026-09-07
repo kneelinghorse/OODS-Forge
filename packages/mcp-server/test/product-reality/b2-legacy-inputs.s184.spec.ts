@@ -139,21 +139,21 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
     },
     {
       framework: "react" as const,
-      code: "OODS-V007",
-      message: 'Prop "label" is not in the canonical StatusTimeline contract.',
+      code: undefined,
+      message: undefined,
     },
     {
       framework: "vue" as const,
-      code: "OODS-V007",
-      message: 'Prop "label" is not in the canonical StatusTimeline contract.',
+      code: undefined,
+      message: undefined,
     },
   ])(
     // Sprint 185 ported DetailHeader and Sprint 186 m01 ports PriceSummary,
     // ClassificationPanel and FilterPanel; the unchanged Product/detail operand
-    // now reaches the composer-authored StatusTimeline.label prop, which the
-    // ported StatusTimeline contract does not govern (carried by name). The
+    // reached the unsupported StatusTimeline.label prop. Sprint 187 repairs
+    // that producer; React/Vue now succeed with the identical operand. The
     // Sprint 184 observation remains immutable and is replayed against base below.
-    "remeasures the unchanged Product/detail $framework typed gap as $code",
+    "remeasures the unchanged Product/detail $framework operand after the producer repair",
     async ({ framework, code, message }) => {
       const result = await pipelineHandle({
         object: "Product",
@@ -161,8 +161,13 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
         framework,
       });
 
-      expect(result.error).toEqual({ step: "codegen", code, message });
-      expect(result.code).toBeUndefined();
+      if (framework === "html") {
+        expect(result.error).toEqual({ step: "codegen", code, message });
+        expect(result.code).toBeUndefined();
+      } else {
+        expect(result.error).toBeUndefined();
+        expect(result.code).toBeDefined();
+      }
       expect(result.saved).toBeUndefined();
       expect(result.validationReceipt.profile).toBe("build");
       expect(result.pipeline.steps).toEqual([
@@ -419,11 +424,19 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
       for (const outcome of disposition.typedOutcomes) {
         const expected = current.rows.find(({ id }) => id === outcome.id)!;
         const result = await pipelineHandle(outcome.input);
-        expect(result.error, outcome.id).toEqual(expected.error);
+        const repaired = ['product-detail-react-build', 'product-detail-vue-build'].includes(outcome.id);
+        // Frozen s186 measurements remain negative. The same operands now reach
+        // generated code after s187 fixes the default composer's timeline prop.
+        if (repaired) {
+          expect(result.error, outcome.id).toBeUndefined();
+          expect(result.code, outcome.id).toBeDefined();
+        } else {
+          expect(result.error, outcome.id).toEqual(expected.error);
+          expect(result.code, outcome.id).toBeUndefined();
+        }
         expect(result.validationReceipt.profile, outcome.id).toBe(
           outcome.profile,
         );
-        expect(result.code, outcome.id).toBeUndefined();
         expect(result.saved, outcome.id).toBeUndefined();
         expect(expected.codePresent, outcome.id).toBe(false);
         expect(expected.savedPresent, outcome.id).toBe(false);

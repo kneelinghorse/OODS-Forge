@@ -1,0 +1,113 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server
+
+ ✓ test/codegen/vue-emitter.spec.ts (29 tests) 116ms
+ ❯ test/codegen/vue-reactivity.spec.ts (12 tests | 2 failed) 83ms
+   × vue-emitter — ref() bindings > generates ref() for each field in form schemas 71ms
+     → expected '<template>\n  <Stack id="form-root" d…' to contain 'const name = ref<string>(\'\')'
+   × vue-emitter — ref() bindings > uses correct default values for different field types 3ms
+     → expected '<template>\n  <Stack id="form-root" d…' to contain 'const tags = ref([])'
+   ✓ vue-emitter — ref() bindings > does NOT generate ref() for non-form display schemas 1ms
+   ✓ vue-emitter — ref() bindings > includes field descriptions as JSDoc comments 1ms
+   ✓ vue-emitter — computed() properties > generates fullName computed from firstName + lastName 1ms
+   ✓ vue-emitter — computed() properties > does NOT generate computed when no derivable fields exist 1ms
+   ✓ vue-emitter — v-model > emits v-model on Input elements with field binding 0ms
+   ✓ vue-emitter — v-model > emits v-model on Select elements with field binding 0ms
+   ✓ vue-emitter — v-model > emits v-model on Textarea elements with field binding 0ms
+   ✓ vue-emitter — v-model > does NOT emit v-model on non-form components 1ms
+   ✓ vue-emitter — v-model > converts snake_case field to camelCase in v-model 0ms
+   ✓ vue-emitter — typed action protocol > adapts a supported component event to a required consumer action 1ms
+ ✓ test/product-reality/fresh-composition.s187.spec.ts (14 tests) 10875ms
+   ✓ Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated react  5178ms
+   ✓ Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated vue  5007ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/vue-reactivity.spec.ts > vue-emitter — ref() bindings > generates ref() for each field in form schemas
+AssertionError: expected '<template>\n  <Stack id="form-root" d…' to contain 'const name = ref<string>(\'\')'
+
+- Expected
++ Received
+
+- const name = ref<string>('')
++ <template>
++   <Stack id="form-root" data-oods-component="Stack" data-layout="stack" style="display: flex; flex-direction: column">
++       <Input id="inp-name" data-oods-component="Input" label="Name" placeholder="User name" required v-model="name" />
++       <Input id="inp-age" data-oods-component="Input" label="Age" type="number" v-model="age" />
++       <Toggle id="tog-active" data-oods-component="Toggle" v-model="active" />
++     </Stack>
++ </template>
++
++ <script setup lang="ts">
++ import { ref } from 'vue';
++ import { Input, Stack, Toggle } from '@oods/components-vue';
++ import '@oods/component-styles/css';
++
++ interface Props {
++   active?: boolean;
++   age?: number;
++   name?: string;
++ }
++ const generatedProps = defineProps<Props>();
++ const active = ref<boolean>(generatedProps.active ?? false);
++ const age = ref<number>(generatedProps.age ?? 0);
++ /** User name */
++ const name = ref<string>(generatedProps.name ?? '');
++ </script>
++
+
+ ❯ test/codegen/vue-reactivity.spec.ts:71:25
+     69|     const result = emit(schema, { typescript: true, styling: 'inline' …
+     70|     expect(result.code).toContain("import { ref } from 'vue';");
+     71|     expect(result.code).toContain("const name = ref<string>('')");
+       |                         ^
+     72|     expect(result.code).toContain("const age = ref<number>(0)");
+     73|     expect(result.code).toContain("const active = ref<boolean>(false)"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/codegen/vue-reactivity.spec.ts > vue-emitter — ref() bindings > uses correct default values for different field types
+AssertionError: expected '<template>\n  <Stack id="form-root" d…' to contain 'const tags = ref([])'
+
+- Expected
++ Received
+
+- const tags = ref([])
++ <template>
++   <Stack id="form-root" data-oods-component="Stack" data-layout="stack" style="display: flex; flex-direction: column">
++       <TagInput id="inp-tags" data-oods-component="TagInput" v-model="tags" />
++       <Select id="inp-status" data-oods-component="Select" label="Status" :options="[{'label':'Active','value':'active'},{'label':'Inactive','value':'inactive'}]" required v-model="status" />
++     </Stack>
++ </template>
++
++ <script setup>
++ import { ref } from 'vue';
++ import { Select, Stack, TagInput } from '@oods/components-vue';
++ import '@oods/component-styles/css';
++
++ const generatedProps = defineProps({ config: { default: undefined }, status: { default: undefined }, tags: { default: undefined } });
++ const config = ref(generatedProps.config ?? {});
++ const status = ref(generatedProps.status ?? 'active');
++ const tags = ref(generatedProps.tags ?? []);
++ </script>
++
+
+ ❯ test/codegen/vue-reactivity.spec.ts:89:25
+     87|     );
+     88|     const result = emit(schema, { typescript: false, styling: 'inline'…
+     89|     expect(result.code).toContain("const tags = ref([])");
+       |                         ^
+     90|     expect(result.code).toContain("const config = ref({})");
+     91|     expect(result.code).toContain("const status = ref('active')");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 53 passed (55)
+   Start at  19:20:26
+   Duration  17.43s (transform 1.95s, setup 262ms, collect 3.67s, tests 11.07s, environment 1ms, prepare 869ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/fresh-composition.s187.spec.ts test/codegen/vue-emitter.spec.ts test/codegen/vue-reactivity.spec.ts

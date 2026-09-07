@@ -7,6 +7,7 @@ import {
   runLiveGenerationOnly,
   runLiveWorkflowProof,
   type S184M06SchemaName,
+  type FreshCompositionInput,
 } from './s184-m06-live-consumers.js';
 import { S185_SCHEMA_NAMES, S186_SCHEMA_NAMES } from './s185-m04-consumer-contract.js';
 
@@ -18,7 +19,7 @@ export async function runS185M04LiveConsumers(
   options: Omit<Parameters<typeof runLiveWorkflowProof>[0], 'mission'> & { mission?: string },
 ) {
   const { mission = 's185-m04', ...rest } = options;
-  return runLiveWorkflowProof({ ...rest, mission, schemaNames: options.schemaNames ?? S185_ALL_SCHEMA_NAMES });
+  return runLiveWorkflowProof({ ...rest, mission, schemaNames: options.schemaNames ?? (options.freshInputs ? undefined : S185_ALL_SCHEMA_NAMES) });
 }
 
 async function main() {
@@ -27,22 +28,31 @@ async function main() {
   let generationOnly = false;
   let mission = 's185-m04';
   let schemaStore: string | undefined;
-  let schemaNames: readonly S184M06SchemaName[] = S185_ALL_SCHEMA_NAMES;
+  let schemaNames: readonly S184M06SchemaName[] | undefined;
+  let freshInputs: FreshCompositionInput[] | undefined;
   for (let index = 0; index < args.length; index += 1) {
     if (args[index] === '--generation-only') generationOnly = true;
     else if (args[index] === '--output' && args[index + 1]) artifactRoot = path.resolve(args[++index]!);
     else if (args[index] === '--mission' && args[index + 1]) mission = args[++index]!;
     else if (args[index] === '--store' && args[index + 1]) schemaStore = args[++index]!;
-    else if (args[index] === '--schemas' && args[index + 1]) {
+    else if (args[index] === '--fresh' && args[index + 1]) {
+      freshInputs = args[++index]!.split(',').map((value) => {
+        const parts = value.split('/');
+        if (parts.length !== 2) throw new Error('--fresh requires Object/context operands.');
+        return { object: parts[0]!, context: parts[1]! as FreshCompositionInput['context'] };
+      });
+    } else if (args[index] === '--schemas' && args[index + 1]) {
       const selected = args[++index]!.split(',');
-      if (!selected.length || selected.some((name) => !S186_ALL_SCHEMA_NAMES.includes(name as S184M06SchemaName))
+      if (!selected.length || selected.some((name) => !S186_ALL_SCHEMA_NAMES.some((available) => available === name))
         || new Set(selected).size !== selected.length) throw new Error('--schemas requires distinct saved schema names from the supported corpus.');
       schemaNames = selected as S184M06SchemaName[];
     } else throw new Error(`Unknown or incomplete argument: ${args[index]}`);
   }
+  if (freshInputs && (schemaNames || schemaStore)) throw new Error('--fresh cannot be combined with --schemas or --store.');
+  schemaNames = freshInputs ? undefined : schemaNames ?? S185_ALL_SCHEMA_NAMES;
   const result = generationOnly
-    ? await runLiveGenerationOnly({ artifactRoot, schemaNames, mission, ...(schemaStore ? { schemaStore } : {}) })
-    : await runS185M04LiveConsumers({ artifactRoot, schemaNames, mission, ...(schemaStore ? { schemaStore } : {}) });
+    ? await runLiveGenerationOnly({ artifactRoot, schemaNames, freshInputs, mission, ...(schemaStore ? { schemaStore } : {}) })
+    : await runS185M04LiveConsumers({ artifactRoot, schemaNames, freshInputs, mission, ...(schemaStore ? { schemaStore } : {}) });
   process.stdout.write(`${JSON.stringify(result.report, null, 2)}\n`);
 }
 

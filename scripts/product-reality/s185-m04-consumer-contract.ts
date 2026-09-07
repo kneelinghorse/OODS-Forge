@@ -56,6 +56,30 @@ export function schemaNodes(schema: UiSchema): UiElement[] {
 export const selectorForNode = (id: string): string => `[id=${JSON.stringify(id)}]`;
 const camel = (name: string) => name.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
 
+export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status'; expected: string; editable: boolean };
+
+/** Repaired bindings must visibly represent the supplied datum, including zero and false. */
+export function deriveValueProbes(schema: UiSchema, model: Record<string, unknown>): ValueProbe[] {
+  return schemaNodes(schema).flatMap((node): ValueProbe[] => {
+    const field = node.props?.field;
+    if (typeof field !== 'string') return [];
+    const entry = schema.objectSchema?.[field];
+    const value = model[camel(field)];
+    const base = { nodeId: node.id, field, editable: false };
+    if (node.component === 'Input' && node.props?.type === 'number' && ['integer', 'number'].includes(entry?.type ?? '')) {
+      return [{ ...base, kind: 'numeric-input', expected: String(value ?? ''), editable: !!node.bindings?.onChange }];
+    }
+    if (node.component === 'Text' && entry?.type === 'boolean') {
+      return [{ ...base, kind: 'boolean-text', expected: value == null ? '' : value ? 'Yes' : 'No' }];
+    }
+    if (node.component === 'StatusTimeline' && typeof value === 'string') {
+      const label = value.split(/[_-]/).filter(Boolean).map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1)).join(' ');
+      return [{ ...base, kind: 'status', expected: `Current status: ${label}` }];
+    }
+    return [];
+  });
+}
+
 export type MountObligation = { nodeId: string; component: string; requiredInitially: boolean; reason?: string };
 
 /** Canonical emitted ids/markers define the obligations; SSR output cannot erase them. */

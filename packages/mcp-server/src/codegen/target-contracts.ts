@@ -869,7 +869,8 @@ function acceptedFieldKinds(
   if (propName === 'datetime' && component === 'RelativeTimestamp') return ['string'];
   if (propName === 'status') return ['string'];
   if (isChildren) {
-    return component === 'Text' ? ['string', 'number', 'array'] : ['string', 'number'];
+    // Both emitters explicitly lower boolean text to Yes/No (null stays empty).
+    return component === 'Text' ? ['string', 'number', 'boolean', 'array'] : ['string', 'number'];
   }
   return [];
 }

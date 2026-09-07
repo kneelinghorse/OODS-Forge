@@ -380,6 +380,9 @@ function reactFieldExpression(
   if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
     return `String(${fieldName})`;
   }
+  if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
+    return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;
+  }
   if (
     node.component === 'Text'
     && isChildren
