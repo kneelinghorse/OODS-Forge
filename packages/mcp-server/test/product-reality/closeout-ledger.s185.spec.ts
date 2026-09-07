@@ -469,7 +469,7 @@ function freshFixture() {
   source('baselineFold', { denominator: 109, readinessReferences: [{ resolved: true }], sourceHashes: [f.ref(baselinePath)] });
   const readiness = f.ref(f.put('frozen/fresh/readiness.json', { status: 'passed', failures: [], totals: { references: 778, resolved: 778 } }));
   const cellNames = added.flatMap(name => targets.map(target => `${target}/${name}`));
-  const rawTests = (red?: string) => ({ success: !red, numPassedTests: red ? 27 : 28, numFailedTests: red ? 1 : 0, numPendingTests: 0, testResults: [{ assertionResults: cellNames.map(name => ({ fullName: `exports ${name}`, status: name === red ? 'failed' : 'passed' })) }] });
+  const rawTests = (red?: string) => ({ success: !red, numPassedTests: red ? 27 : 28, numFailedTests: red ? 1 : 0, numPendingTests: 0, testResults: [{ assertionResults: cellNames.map(name => ({ fullName: `Sprint 187 built package export cells '${name}'`, status: name === red ? 'failed' : 'passed' })) }] });
   const positiveExports = f.ref(f.put('frozen/fresh/positive.json', rawTests()));
   const mutants = cellNames.map(selectedCell => {
     const [framework, component] = selectedCell.split('/'); const prefix = `frozen/mutants/${selectedCell}`;

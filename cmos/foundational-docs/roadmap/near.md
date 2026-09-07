@@ -1,8 +1,8 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 locked by `#1787`–`#1789` and ready for build
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 BUILT, REVIEW PENDING; `builderSelfCertified:false`
 
-**Updated:** 2026-09-06 — planning session `PS-2026-09-06-007`
+**Updated:** 2026-09-07 — build session `PS-2026-09-07-001`
 
 **Scope:** The next three independently reviewed increments
 
@@ -26,16 +26,21 @@ through the existing public object/context inputs; saved-corpus success does not
 The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
 follows runnable product foundations.
 
-## Current measured state — certified Sprint 186; fresh-composition probe at `87a7933b`
+## Current measured state — Sprint 187 implementation `adab89f9`; independent review pending
 
-| Claim area | Current evidence | Near-horizon obligation |
+| Claim area | Current evidence | Remaining obligation |
 |---|---|---|
-| Component catalog | 109 obligation IDs; 50 governed components in one root union; the former eight ported families also resolve through compatibility aliases | Add fourteen families; review alias retirement; retain all 109 obligations under #1788 and review the eleven disputed classifications |
-| React and Vue | Sprint 186 added 23 families; ten live consumer cells pass 80/80 applicable gates; packed root/alias imports work in both frameworks | Accessibility, theme and interaction baseline cells for the 23 added families remain `unverified`; generation evidence does not promote those surfaces |
-| Fresh composition | All 11 objects returned by `object.list` × six public contexts were executed: 27/66 schemas generate in both frameworks, 58/132 individual cells pass | Fourteen missing components block 30 schemas; three binding-contract issue groups block nine more; see the locked Sprint 187 plan below |
-| Saved designs | Successor store: 16/16 and 32 green framework cells; original historical store: 15/16. Fresh User/form equals the saved version-2 successor | Preserve historical negative evidence; adoption into another store is explicit delivery work, not a retroactive repair of the original corpus |
-| Delivery and discovery | PR #83 merged; its 15 executed CI checks succeeded and echarts-render-soak was skipped. PM2 serves the primary checkout; `/health` is ready. Component metadata still dates to 2026-03-06; legacy catalog `status` describes HTML mapping | Verify served build identity and schema adoption; refresh discovery from current sources and make status meaning clear (#1371) |
-| Visualization | Program baseline: 13 admitted types, five complete the folded certified path. That population was not remeasured in this planning pass | Current public-render closure is still owed; remeasure before locking a chart increment, then expand breadth |
+| Component catalog | 109 obligation IDs retained under #1788; 64 unique governed root IDs; fourteen families added with 28 discriminating export bites and 778 resolved readiness references | The eleven disputed rows have individual dispositions; nine retain implementation work and two alias/merge proposals need product decisions. Old 98-runtime split remains unapproved |
+| React and Vue | All 14 locked fresh paths run in both frameworks: 28 packed-consumer cells, 218 passed gates, 6 N/A, zero failed or skipped | Selected local controls, typed values, hydration and token CSS are proven. Accessibility, theme and interaction baseline maturity stays unverified; no connected workflow or responsive-craft claim |
+| Fresh composition | All 11 advertised objects × six contexts: **66/66 schemas and 132/132 build generation cells**, from unmodified default composition | Generation covers all 66; runtime covers the locked14, not every object/context |
+| Saved designs | Unchanged original store remains 15/16 and 30 generation cells; exact authentic successor remains 16/16 and 32 cells | Historical negative retained; the successor is a distinct store. Served adoption remains explicit delivery work |
+| Delivery and discovery | Current Forge-source refresh dated 2026-09-07; optional obligationScope explains retain-109. Actual governed/unavailable catalog cases verified. Isolated bridge, schema-save/load and rollback rehearsal passed | PM2 serves a separate older checkout; generic health does not identify compiled revision. Its public schema-load failure is retained. Deployment/adoption/reconnect #1374/#1379/#1384 remain pending |
+| Visualization | Program baseline remains13 admitted types and five complete folded certified paths; not remeasured by this breadth build | Current public-render closure #1372 precedes expansion; VizAreaPreview remains a preview frame |
+
+The exact runtime and saved-store hashes are in
+[the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md).
+Final four-suite counts, skipped tests and file-attributed deltas belong to its retained capture and
+claim ledger. The baseline comparator is s186 execution `740e8405`, never a relabeled run.
 
 Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
 is not a runtime package, an admitted chart name is not rendered output, and a preview frame is not a
@@ -125,37 +130,32 @@ Pace rule from Derek, in force from this sprint on: appreciable progress every s
 and a lot of measuring. No per-mission four-suite captures, no new closeout apparatus, no critic
 workflow. The per-component evidence bar from Wave 1 is unchanged.
 
-## Increment 6 — Sprint 187: Fresh Composition Coverage — LOCKED, READY FOR BUILD
+## Increment 6 — Sprint 187: Fresh Composition Coverage — BUILT, REVIEW PENDING
 
 **LOCKED** by decisions `#1787`–`#1789`, planning session `PS-2026-09-06-007`.
 The [decision memo](../../planning/forge-s187-fresh-composition-decision-memo.md) is the build authority.
-Six serial CMOS missions exist: `s187-m01` is Current; `s187-m02`–`s187-m06` are Queued. Build has not started.
-The [planning census](../../planning/forge-s187-planning-probe/fresh-composition-census.json) executed
-all 66 default object/context combinations at the reviewed code: no component overrides, pruned
-schemas, or rewritten saved inputs. It measures generation only, not consumer runtime or usability.
+The fourteen component families, binding repairs, discovery refresh and delivery preparation are
+implemented. The serial mission evidence is retained under `artifacts/product-reality/sprint-187/`.
+The final census at `adab89f9` improves the planning baseline from 27/66 schemas and 58/132 cells to
+**66/66 and 132/132**. All 28 selected consumer cells pass their applicable gates (218 pass,
+6 explicitly N/A, zero failures/skips). No schemas were pruned or hand-authored as fresh inputs.
 
-Locked outcome: make the existing object composer produce supported React and Vue output for
-all 11 advertised objects and six public contexts. The target is 66/66 fresh schemas and
-132/132 generation cells, plus 14 named fresh paths in both frameworks (28 packed-consumer cells).
-The cohort covers all fourteen added families and the three measured binding issue groups.
-Readiness failures can mask further contract defects; the 14 ports alone are not a promise of closure.
-
-| Locked work | Measured reason |
+| Delivered work | Evidence boundary |
 |---|---|
-| Naming/classification: LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor | Shared blockers across Article, Media, Product, Organization and Relationship |
-| Ownership/summary: OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary | Unblocks ownership views and the remaining User card gap |
-| Lifecycle/financial: ArchiveSummary, ArchivePill, CancellationForm, CancellationBadge, PriceCardMeta | Blocks fresh Subscription/Transaction detail, form and card, plus Product card |
-| Repair composition and binding contracts | StatusTimeline.label breaks four already-governed detail schemas; numeric Select bindings fail four Vue cells; boolean Text binding fails Transaction/timeline |
-| Discovery, census and delivery preparation | Refresh metadata and surface-specific status; disposition the eleven disputed census rows while retaining 109; assess aliases and prepare isolated rollout/adoption proof |
+| LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor | Real React/Vue roots, contracts, styles and local native classification controls; no persistence |
+| OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary | Owner/role metadata, zero counts, tags and documented children precedence |
+| ArchiveSummary, ArchivePill, CancellationForm, CancellationBadge, PriceCardMeta | False badges, nullable archive timestamp, price model/interval and local cancellation controls; no cancellation workflow |
+| Composition and binding repairs | StatusTimeline.label, numeric zero, boolean false, local query updates, optional card actions and nullable datetime; original Product/detail B2 operand measured separately |
+| Discovery/census/aliases/delivery | Retain109 explained in live discovery; eleven dispositions recorded; aliases retained because migration is unproven; isolated delivery rehearsal and rollback complete |
 
-All fourteen components have executing HTML renderers. Use the existing port/contract/readiness and
-consumer patterns. Keep the one final four-suite capture and bounded independent review. The locked
-memo defines binding repair, three port clusters, discovery/delivery preparation, then closeout.
-The existing saved-schema consumer runner needs a bounded fresh-input extension in `s187-m01`.
+The existing s185/s186 proof tools received named, bounded s187 adaptations. No new closeout
+framework or per-mission four-suite capture was introduced. The source capability fold is unchanged
+from the evidence-backed m04 result:150 surface cells on 50 existing IDs and 600 references, with all 109
+identities retained. Final m06 runtime evidence supplements those retained proofs.
 
 After this increment, the strongest follow-on candidates are the still-partial **complete greenfield
 workflow** and **current visualization public-render closure**. Neither is automatically numbered or
-locked here. A green 66-schema generation matrix would not prove navigation, edit/cancel, state
+locked here. The green 66-schema generation matrix does not prove navigation, edit/cancel, state
 transitions, responsive craft, remaining catalog breadth, or chart pixels.
 
 ## Gates that apply to every increment
@@ -187,16 +187,16 @@ Sprint-181 follow-ups `#1315` and `#1318`–`#1322` remain Forge-owned maintenan
 Derek resolved the census choice (#1331) by accepting the recommendation to **retain all 109
 obligations** (#1788). The old 98-runtime split is not approved. Its generator assigns `authoring-only`
 when a root React export or HTML renderer is absent, although the excluded traits describe runtime
-behavior. Missing implementation cannot by itself remove an obligation. Sprint 187 m05 will review
-those eleven rows for implementation, explicit alias/merge, actual authoring-only use or deliberate
-retirement, with evidence and remaining work stated per row. This adds no eleven-port commitment.
+behavior. Missing implementation cannot by itself remove an obligation. Sprint 187 m05 reviewed
+those eleven rows with trait/caller evidence: nine retain implementation work and two alias/merge
+proposals need product decisions. No runtime intent was excluded because code was missing.
 The historical `approvedRuntimeCensus` stays null while that old proposal is unapproved; live discovery
 must explain the accepted retain-109 ruling. Surface-cell evidence updates do not move scope (#1726).
 
 The following are parked until their named dependency is met:
 
 - the eight-family root fold is complete; `/ported`, `/readiness-ported` and `/css-ported` alias
-  retirement is a Sprint-187 review item (#1382), not another root-fold mission;
+  retirement was reviewed in Sprint 187 (#1382/#1385); retain aliases while external migration is unproven;
 - closure of all current visualization recipes, and making VizAreaPreview a real chart — after
   component breadth, unless independent staffing permits parallel work;
 - visualization breadth beyond the current 13 — after the public render and certification path is
@@ -208,16 +208,19 @@ The following are parked until their named dependency is met:
 - `schema.ingest` — historically shelved by `#1649`; decision `#1652` retains the shelving result
   while superseding its incorrect surface claim.
 
-## Planning handoff
+## Independent review handoff
 
-Start the fresh build using [forge-s187-build-handoff.md](../../planning/forge-s187-build-handoff.md).
-The prepared worktree is `/Users/systemsystems/.codex/worktrees/s187/OODS-Forge`, branch
-`codex/sprint-187-fresh-composition`, based on merged PR #83 (`21c7c319`) plus review and planning
-records. Dependencies and build prerequisites pass; the fresh census reproduces 27/66 and 58/132.
-Use the primary checkout only as the canonical CMOS projectRoot; its source is on an older branch
-with pre-existing changes. Run `s187-m01` through `s187-m06` in dependency order.
+Read [the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md) and its
+claim-ledger/review-handoff JSON. The build is in
+`/Users/systemsystems/.codex/worktrees/s187/OODS-Forge`, branch
+`codex/sprint-187-fresh-composition`; actual public implementation `adab89f92e3dca8a67442ddd9873d62f36db8fe5`.
+The ledger separately names the actual four-suite execution and frozen evidence/review commits;
+public-byte equivalence must hold between implementation and execution. Canonical CMOS remains in
+the primary checkout, whose unrelated dirty work was not reset or used as implementation source.
 
-Deployment carries #1374/#1379 remain open. PM2's healthy process is not proof of the served source
-version; integration, build identity and authenticated successor-store adoption must be verified.
-PR #83 CI follow-up #1386 is resolved: coverage and viz-determinism succeeded; the soak skip remains
-disclosed. Planning is locked; build records evidence and leaves Sprint 187 Active for separate review.
+Sprint 187 stays **Active**, **BUILT, REVIEW PENDING**, `builderSelfCertified:false`. The separate
+review session determines certification and close. Deployment #1374/#1379/#1384 remains pending;
+no shared PM2 restart, shared-store overwrite, publication or outbound reconnect occurred. Alias
+retirement and unverified maturity remain open. Maintenance #1315/#1318–#1322 remains named and
+unabsorbed before integrated public release. PR83 CI follow-up #1386 was resolved before this build;
+its ECharts soak skip remains disclosed.

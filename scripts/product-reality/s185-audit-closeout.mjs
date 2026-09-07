@@ -296,13 +296,19 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     const exportTests = positive.testResults.flatMap(file => file.assertionResults);
     assert.equal(positive.success, true); assert.equal(positive.numPassedTests, 28); assert.equal(exportTests.length, 28);
     assert(exportTests.every(test => test.status === 'passed'));
-    for (const target of targets) for (const name of added) assert.equal(exportTests.filter(test => test.fullName.endsWith(`${target}/${name}`)).length, 1);
+    // Vitest quotes the interpolated $cell title. Match the complete terminal
+    // cell token, preserving compatibility with the plain synthetic fixtures.
+    const exportCell = test => {
+      const token = test.fullName.split(' ').at(-1);
+      return token.startsWith("'") && token.endsWith("'") ? token.slice(1, -1) : token;
+    };
+    for (const target of targets) for (const name of added) assert.equal(exportTests.filter(test => exportCell(test) === `${target}/${name}`).length, 1);
     const mutations = proof.mutations.flatMap(ref => JSON.parse(reference(ref).bytes.toString('utf8')).mutants);
     assert.deepEqual(mutations.map(row => row.selectedCell).sort(), added.flatMap(name => targets.map(target => `${target}/${name}`)).sort());
     for (const row of mutations) {
       assert.equal(row.status, 'passed'); assert.equal(row.restoredByteIdentically, true); assert.notEqual(row.sourceSha256Before, row.sourceSha256Deleted);
       const red = parseFrozen(row.selectedRed.packageReport).testResults.flatMap(file => file.assertionResults);
-      assert.deepEqual(red.filter(test => test.status === 'failed').map(test => test.fullName.split(' ').at(-1)), [row.selectedCell]);
+      assert.deepEqual(red.filter(test => test.status === 'failed').map(exportCell), [row.selectedCell]);
       const redReadiness = parseFrozen(row.selectedRed.readinessReport);
       assert(redReadiness.failures.length > 0 && redReadiness.failures.every(item => `${item.target}/${item.componentId}` === row.selectedCell));
       const restored = parseFrozen(row.restoredGreen.packageReport).testResults.flatMap(file => file.assertionResults);
