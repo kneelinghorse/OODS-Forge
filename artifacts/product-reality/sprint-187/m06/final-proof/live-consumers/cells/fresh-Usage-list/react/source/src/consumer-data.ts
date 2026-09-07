@@ -1,0 +1,27 @@
+import type { PageProps } from './GeneratedUI.js';
+
+export const model: Omit<PageProps, 'actions'> = {
+  "anomalies": [],
+  "consumedQuantity": 0,
+  "createdAt": "2026-09-05T12:00:00.000Z",
+  "includedQuantity": 0,
+  "lastEvent": "Consumer last event",
+  "lastEventAt": "2026-09-05T12:00:00.000Z",
+  "lastReportedAt": "2026-09-05T12:00:00.000Z",
+  "meterId": "consumer-meter-id",
+  "meterName": "Consumer meter name",
+  "overageRateMinor": 0,
+  "periodEnd": "2026-09-05",
+  "periodStart": "2026-09-05",
+  "projectedOverageMinor": 0,
+  "provider": "Consumer provider",
+  "rolloverStrategy": "Consumer rollover strategy",
+  "samples": [],
+  "status": "ok",
+  "subscriptionId": "consumer-subscription-id",
+  "trendPercent": 0,
+  "unitLabel": "Consumer unit label",
+  "updatedAt": "2026-09-05T12:00:00.000Z",
+  "usageId": "consumer-usage-id",
+  "varianceMinor": 0
+};

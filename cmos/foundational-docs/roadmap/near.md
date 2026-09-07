@@ -26,7 +26,7 @@ through the existing public object/context inputs; saved-corpus success does not
 The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
 follows runnable product foundations.
 
-## Current measured state — Sprint 187 implementation `adab89f9`; independent review pending
+## Current measured state — Sprint 187 implementation `a9c02b7d`; independent review pending
 
 | Claim area | Current evidence | Remaining obligation |
 |---|---|---|
@@ -40,7 +40,7 @@ follows runnable product foundations.
 The exact runtime and saved-store hashes are in
 [the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md).
 Final four-suite counts, skipped tests and file-attributed deltas belong to its retained capture and
-claim ledger. The baseline comparator is s186 execution `740e8405`, never a relabeled run.
+claim ledger. The baseline comparator is s186 execution `740e8405`, never a relabeled run. The initial clean `2a7bb93e` capture failed22 server and17 root assertions; its raw evidence remains retained. Corrected bundled discovery schema and contract expectations are verified at the new implementation. The corrected capture and output audit record the final build gates; their receipts control readiness for independent review.
 
 Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
 is not a runtime package, an admitted chart name is not rendered output, and a preview frame is not a
@@ -136,7 +136,7 @@ workflow. The per-component evidence bar from Wave 1 is unchanged.
 The [decision memo](../../planning/forge-s187-fresh-composition-decision-memo.md) is the build authority.
 The fourteen component families, binding repairs, discovery refresh and delivery preparation are
 implemented. The serial mission evidence is retained under `artifacts/product-reality/sprint-187/`.
-The final census at `adab89f9` improves the planning baseline from 27/66 schemas and 58/132 cells to
+The final census at `a9c02b7d` improves the planning baseline from 27/66 schemas and 58/132 cells to
 **66/66 and 132/132**. All 28 selected consumer cells pass their applicable gates (218 pass,
 6 explicitly N/A, zero failures/skips). No schemas were pruned or hand-authored as fresh inputs.
 
@@ -213,7 +213,7 @@ The following are parked until their named dependency is met:
 Read [the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md) and its
 claim-ledger/review-handoff JSON. The build is in
 `/Users/systemsystems/.codex/worktrees/s187/OODS-Forge`, branch
-`codex/sprint-187-fresh-composition`; actual public implementation `adab89f92e3dca8a67442ddd9873d62f36db8fe5`.
+`codex/sprint-187-fresh-composition`; actual public implementation `a9c02b7dadeef56690be82e05fe8b02f54beff9f`.
 The ledger separately names the actual four-suite execution and frozen evidence/review commits;
 public-byte equivalence must hold between implementation and execution. Canonical CMOS remains in
 the primary checkout, whose unrelated dirty work was not reset or used as implementation source.

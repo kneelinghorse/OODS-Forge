@@ -1,46 +1,47 @@
 # Sprint 187 m06 — final build evidence for independent review
 
-Public implementation: **adab89f92e3dca8a67442ddd9873d62f36db8fe5**. Scope base: **21c7c31906fbb81d049b943155c64ed78409fb9f**.
+Public implementation: **a9c02b7dadeef56690be82e05fe8b02f54beff9f**. Scope base: **21c7c31906fbb81d049b943155c64ed78409fb9f**.
 Branch: `codex/sprint-187-fresh-composition`. Canonical CMOS projectRoot is
 `/Users/systemsystems/portfolio/Design-Tools/OODS-Forge`; build worktree is
 `/Users/systemsystems/.codex/worktrees/s187/OODS-Forge`.
 
 **BUILT, REVIEW PENDING. Sprint 187 remains Active; builderSelfCertified:false.**
 The generated [claim ledger](closeout/claim-ledger.json) and [review handoff](closeout/review-handoff.json)
-name the actual four-suite execution and frozen review/evidence heads separately. Evidence-only
-commits and an audit title-parser correction do not relabel the implementation or runtime receipts.
+name the actual four-suite execution and frozen review/evidence heads separately. The initial `adab89f9` proof and failed `2a7bb93e` four-suite capture remain retained under their actual identities. Corrected proof uses `final-proof`; evidence-only commits never relabel the implementation or runtime receipts.
 The existing producer and separate output audit check public bytes across these identities.
 
 ## Measured build boundary
 
-- [Fresh census](fresh-census.json):66/66 fixed object/context schemas,132/132 build generation cells,
+- [Fresh census](final-proof/fresh-census.json):66/66 fixed object/context schemas,132/132 build generation cells,
   64 governed roots. Planning baseline27/66 and 58/132 remains untouched.
-- [Combined packed runtime](live-consumers/report.json):28 cells for all 14 locked paths × React/Vue;
+- [Combined packed runtime](final-proof/live-consumers/report.json):28 cells for all 14 locked paths × React/Vue;
   218 passed gates, 6 N/A,0 failed,0 skipped. Every cell retains exact source/schema,
   generated artifact, tarballs, install/build/SSR/browser logs and value observations. All generation
   came from the authentic public object/context operands; no hand-authored fresh fixture or pruning.
-- [Original store](saved-original/report.json):15/16,30 generation cells. [Successor](saved-successor/report.json):
-  16/16,32 cells. [Compatibility](saved-compatibility.json) verifies every input hash, retains the original
+- [Original store](final-proof/saved-original/report.json):15/16,30 generation cells. [Successor](final-proof/saved-successor/report.json):
+  16/16,32 cells. [Compatibility](final-proof/saved-compatibility.json) verifies every input hash, retains the original
   User-form negative and names the distinct m05 successor. No original-input improvement is claimed.
-- [Root evidence](root-evidence.json):all 14 added families,28 independent delete-export bites from m02–m04,
+- [Root evidence](final-proof/root-evidence.json):all 14 added families,28 independent delete-export bites from m02–m04,
   exact restoration,28 final positives,778 resolved readiness refs. [Baseline fold](../baseline-fold/report.json)
   remains 150 evidence-backed surface cells on 50 existing IDs,600 refs,109 identities unchanged.
   Accessibility/theme/interaction maturity remains unverified; local runtime probes are narrower.
-- [Public movers](movers/sprint-wide-movers.json):3 canonical and35 public files from the single sprint range,
-  including composition/lowering and live discovery. [Scope review](movers/review.json) explains the areas.
-- [Reconnect plan](reconnect/notice-plan.json) and [prepared records](reconnect/deliveries.json):two exact
+- [Public movers](final-proof/movers/sprint-wide-movers.json):5 canonical and38 public files from the single sprint range,
+  including composition/lowering and live discovery. [Scope review](final-proof/movers/review.json) explains the areas.
+- [Reconnect plan](final-proof/reconnect/notice-plan.json) and [prepared records](final-proof/reconnect/deliveries.json):two exact
   requests,zero sends, no message IDs. [Carries](carries.json) keeps deployment/adoption, maintenance,
   visualization and unverified maturity open; the complete greenfield workflow remains partial.
 
 ## Four suites and output audit
 
-The [capture plan](four-suite-capture-plan.json) records the literal invocation. It captures once with
+The [capture plan](four-suite-capture-plan.json) records the literal invocation. The corrected capture runs once with
 `capture-s185-m01-baseline.mjs --sprint sprint-187 --mission s187-m06 --label closeout --runs 1`, supplying
-this clean worktree and `/tmp/forge-s187-final-capture/four-suite-closeout` as the output directory.
+this clean worktree and `/tmp/forge-s187-final-capture-attempt-2/four-suite-closeout` as the output directory.
 Capture bytes are copied unchanged to [four-suite-closeout](four-suite-closeout/four-suite-baseline.json).
 Read that receipt and [file-attributed accounting](closeout/suite-accounting.json) for actual final counts,
 failures and skips. Comparator: s186 **740e8405fa8e094ab903a19e6e551fbe8bff2de2**, viz1390,
 render64,server5740+16 skips,root6049+same 16 skips. No skipped test is credited as passed.
+
+The [first failed capture](four-suite-closeout-attempt-1/four-suite-baseline.json) remains byte-identical: viz1390/render64 passed; server5841 passed,22 failed,16 skipped; root6127 passed,17 failed,16 skipped. [Recovery](recovery/README.md) explains every changed expectation and the real bundled-schema repair. The unchanged timing gate passed its isolated diagnostic; final suite results must still pass it. The baseline comparator never absorbs a failed Sprint187 attempt. Historical schemas and negative goldens remain unchanged.
 
 The pre-capture [manifest](closeout-inputs/manifest.json) binds all seven literal CMOS criteria to
 retained command inputs/logs/outputs and future exact suite receipt IDs. Existing s185 tools add a named
