@@ -32,6 +32,20 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['A log region named by its title, which is also a real h3 heading', 'Events are an ordered list with machine-readable timestamps', 'An empty timeline is named No events'],
     compatibility: 'Mirrors renderAddressValidationTimeline over renderTimelineContainer with data-timeline-type=address-validation and role=log: title aliases title/label/heading/name (default Address Validation Timeline); the first array among events/validations/history supplies the events, each rendered as label, time and detail exactly as normalizeTimelineItems reads them (records use label/title/event/status/state/text/name, timestamp/datetime/time/at/createdAt/updatedAt and detail/description/reason/message/from/to; scalars render as text); no events renders the named empty item; authored children replace the list. The generic field (the addresses collection) lowers to events.',
   },
+  ArchivePill: {
+    id: 'ArchivePill', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'status', 'state', 'value', 'variant', 'tone', 'emphasis', 'isArchived'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['false remains visible', 'archive is the badge variant'],
+    compatibility: 'Mirrors renderArchivePill over renderBadgePrimitive: label/text/status/state/isArchived/value label precedence, status/state/isArchived/value status precedence, Archive fallback and archive variant. Boolean false and true remain literal scalar labels/status metadata; absent flags remain absent and authored labels or children win. field binds isArchived. archivedAtField is consumed unbound because the HTML pill has no date term. Noninteractive; no archive or restore action.',
+  },
+  ArchiveSummary: {
+    id: 'ArchiveSummary', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'isArchived', 'archived', 'status', 'archivedAt', 'reason', 'archiveReason', 'summary', 'text', 'description'], slots: ['default'], events: [],
+    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
+    accessibility: ['false remains visible in its named term', 'archive date and reason remain associated terms'],
+    compatibility: 'Mirrors renderArchiveSummary: h3 heading and Archived (isArchived/archived/status), Archived At (archivedAt), Reason (reason/archiveReason) description-list terms. A nullable archivedAt omits its date term; scalar false and true remain literal text as in HTML; an absent flag is not false. summary/text/description fallback and authored body override preserve the heading. archivedField, archivedAtField and reasonField lower to their runtime keys. restoredAtField, archivedByField, metadataField, retainHistoryParameter, restoreWindowParameter and allowPartialRestoreParameter are consumed unbound: HTML has no restore, actor or archive metadata term or action. Noninteractive.',
+  },
   AuditEvent: {
     id: 'AuditEvent', version: COMPONENT_CONTRACT_VERSION,
     props: ['label', 'title', 'event', 'status', 'state', 'reason', 'text', 'timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt', 'detail', 'description', 'message', 'from', 'to', 'code'], slots: ['default'], events: [],
@@ -71,6 +85,20 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['default', 'hover', 'focus', 'pressed', 'disabled'], tokenRoles: ['button.background', 'button.border', 'button.text', 'button.focus'],
     accessibility: ['Native button semantics', 'Defaults to type=button'],
     compatibility: 'React asChild remains an extension and is not a Vue parity requirement.',
+  },
+  CancellationBadge: {
+    id: 'CancellationBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'status', 'state', 'value', 'variant', 'tone', 'emphasis', 'cancelAtPeriodEnd', 'isCancelled'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['false remains visible', 'cancellation is the badge variant'],
+    compatibility: 'Mirrors renderCancellationBadge over renderBadgePrimitive: label/text/status/state/cancelAtPeriodEnd/value label precedence; status/state/cancelAtPeriodEnd/isCancelled/value status precedence; Cancellation fallback and cancellation variant. Boolean false/true remain literal text as in HTML; absent flags remain absent. field binds cancelAtPeriodEnd. Authored labels or children win. Noninteractive; no cancellation action.',
+  },
+  CancellationForm: {
+    id: 'CancellationForm', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'allowedReasons', 'reasonCode', 'reason', 'cancellationReason'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
+    accessibility: ['reason and code retain their initial values', 'native controls are labelled', 'submit does not cancel or save'],
+    compatibility: 'Mirrors renderCancellationForm: title/label/heading/name (default Cancellation Form), description/subtitle/hint subtitle; labelled Reason Code select and Reason textarea, reason/cancellationReason precedence, allowedReasons with no_longer_needed/budget/duplicate defaults. Children replace controls and retain the header. reasonField and codeField lower to reason and reasonCode. requireReasonParameter, allowedReasonsParameter and windowParameter are consumed unbound. Presentational native controls only; submission is prevented and no cancel/save event or persistence is implemented.',
   },
   CancellationSummary: {
     id: 'CancellationSummary', version: COMPONENT_CONTRACT_VERSION,
@@ -301,6 +329,13 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
     accessibility: ['Formatted amount and currency remain visible text'],
     compatibility: 'Currency is formatted content; the emitted badge variant remains price.',
+  },
+  PriceCardMeta: {
+    id: 'PriceCardMeta', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'model', 'pricingModel', 'interval', 'billingInterval'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['meta.text', 'meta.label'],
+    accessibility: ['model and interval have literal inline labels', 'price metadata is noninteractive'],
+    compatibility: 'Mirrors renderPriceCardMeta over renderMetaInline: title/label/heading/name (default Price), Model model/pricingModel and Interval interval/billingInterval inline terms. Children replace the entire body including its title. modelField and intervalField lower to their runtime keys. amountField, currencyField and minorUnitsParameter are consumed unbound because this HTML metadata renderer has no amount or currency term. Noninteractive.',
   },
   PriceSummary: {
     id: 'PriceSummary', version: COMPONENT_CONTRACT_VERSION,

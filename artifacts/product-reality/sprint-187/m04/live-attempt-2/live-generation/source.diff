@@ -1,0 +1,1845 @@
+diff --git a/packages/component-contracts/src/contracts.ts b/packages/component-contracts/src/contracts.ts
+index 828c9ce7..b4685421 100644
+--- a/packages/component-contracts/src/contracts.ts
++++ b/packages/component-contracts/src/contracts.ts
+@@ -32,6 +32,20 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
+     accessibility: ['A log region named by its title, which is also a real h3 heading', 'Events are an ordered list with machine-readable timestamps', 'An empty timeline is named No events'],
+     compatibility: 'Mirrors renderAddressValidationTimeline over renderTimelineContainer with data-timeline-type=address-validation and role=log: title aliases title/label/heading/name (default Address Validation Timeline); the first array among events/validations/history supplies the events, each rendered as label, time and detail exactly as normalizeTimelineItems reads them (records use label/title/event/status/state/text/name, timestamp/datetime/time/at/createdAt/updatedAt and detail/description/reason/message/from/to; scalars render as text); no events renders the named empty item; authored children replace the list. The generic field (the addresses collection) lowers to events.',
+   },
++  ArchivePill: {
++    id: 'ArchivePill', version: COMPONENT_CONTRACT_VERSION,
++    props: ['label', 'text', 'status', 'state', 'value', 'variant', 'tone', 'emphasis', 'isArchived'], slots: ['default'], events: [],
++    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
++    accessibility: ['false remains visible', 'archive is the badge variant'],
++    compatibility: 'Mirrors renderArchivePill over renderBadgePrimitive: label/text/status/state/isArchived/value label precedence, status/state/isArchived/value status precedence, Archive fallback and archive variant. Boolean false and true remain literal scalar labels/status metadata; absent flags remain absent and authored labels or children win. field binds isArchived. archivedAtField is consumed unbound because the HTML pill has no date term. Noninteractive; no archive or restore action.',
++  },
++  ArchiveSummary: {
++    id: 'ArchiveSummary', version: COMPONENT_CONTRACT_VERSION,
++    props: ['title', 'label', 'heading', 'name', 'isArchived', 'archived', 'status', 'archivedAt', 'reason', 'archiveReason', 'summary', 'text', 'description'], slots: ['default'], events: [],
++    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
++    accessibility: ['false remains visible in its named term', 'archive date and reason remain associated terms'],
++    compatibility: 'Mirrors renderArchiveSummary: h3 heading and Archived (isArchived/archived/status), Archived At (archivedAt), Reason (reason/archiveReason) description-list terms. A nullable archivedAt omits its date term; scalar false and true remain literal text as in HTML; an absent flag is not false. summary/text/description fallback and authored body override preserve the heading. archivedField, archivedAtField and reasonField lower to their runtime keys. restoredAtField, archivedByField, metadataField, retainHistoryParameter, restoreWindowParameter and allowPartialRestoreParameter are consumed unbound: HTML has no restore, actor or archive metadata term or action. Noninteractive.',
++  },
+   AuditEvent: {
+     id: 'AuditEvent', version: COMPONENT_CONTRACT_VERSION,
+     props: ['label', 'title', 'event', 'status', 'state', 'reason', 'text', 'timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt', 'detail', 'description', 'message', 'from', 'to', 'code'], slots: ['default'], events: [],
+@@ -72,6 +86,20 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
+     accessibility: ['Native button semantics', 'Defaults to type=button'],
+     compatibility: 'React asChild remains an extension and is not a Vue parity requirement.',
+   },
++  CancellationBadge: {
++    id: 'CancellationBadge', version: COMPONENT_CONTRACT_VERSION,
++    props: ['label', 'text', 'status', 'state', 'value', 'variant', 'tone', 'emphasis', 'cancelAtPeriodEnd', 'isCancelled'], slots: ['default'], events: [],
++    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
++    accessibility: ['false remains visible', 'cancellation is the badge variant'],
++    compatibility: 'Mirrors renderCancellationBadge over renderBadgePrimitive: label/text/status/state/cancelAtPeriodEnd/value label precedence; status/state/cancelAtPeriodEnd/isCancelled/value status precedence; Cancellation fallback and cancellation variant. Boolean false/true remain literal text as in HTML; absent flags remain absent. field binds cancelAtPeriodEnd. Authored labels or children win. Noninteractive; no cancellation action.',
++  },
++  CancellationForm: {
++    id: 'CancellationForm', version: COMPONENT_CONTRACT_VERSION,
++    props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'allowedReasons', 'reasonCode', 'reason', 'cancellationReason'], slots: ['default'], events: [],
++    states: ['populated', 'empty'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
++    accessibility: ['reason and code retain their initial values', 'native controls are labelled', 'submit does not cancel or save'],
++    compatibility: 'Mirrors renderCancellationForm: title/label/heading/name (default Cancellation Form), description/subtitle/hint subtitle; labelled Reason Code select and Reason textarea, reason/cancellationReason precedence, allowedReasons with no_longer_needed/budget/duplicate defaults. Children replace controls and retain the header. reasonField and codeField lower to reason and reasonCode. requireReasonParameter, allowedReasonsParameter and windowParameter are consumed unbound. Presentational native controls only; submission is prevented and no cancel/save event or persistence is implemented.',
++  },
+   CancellationSummary: {
+     id: 'CancellationSummary', version: COMPONENT_CONTRACT_VERSION,
+     props: [
+@@ -302,6 +330,13 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
+     accessibility: ['Formatted amount and currency remain visible text'],
+     compatibility: 'Currency is formatted content; the emitted badge variant remains price.',
+   },
++  PriceCardMeta: {
++    id: 'PriceCardMeta', version: COMPONENT_CONTRACT_VERSION,
++    props: ['title', 'label', 'heading', 'name', 'model', 'pricingModel', 'interval', 'billingInterval'], slots: ['default'], events: [],
++    states: ['populated', 'empty'], tokenRoles: ['meta.text', 'meta.label'],
++    accessibility: ['model and interval have literal inline labels', 'price metadata is noninteractive'],
++    compatibility: 'Mirrors renderPriceCardMeta over renderMetaInline: title/label/heading/name (default Price), Model model/pricingModel and Interval interval/billingInterval inline terms. Children replace the entire body including its title. modelField and intervalField lower to their runtime keys. amountField, currencyField and minorUnitsParameter are consumed unbound because this HTML metadata renderer has no amount or currency term. Noninteractive.',
++  },
+   PriceSummary: {
+     id: 'PriceSummary', version: COMPONENT_CONTRACT_VERSION,
+     props: ['title', 'label', 'heading', 'name', 'amount', 'amountCents', 'unitAmountCents', 'currency', 'currencyCode', 'model', 'pricingModel', 'interval', 'billingInterval', 'summary', 'text', 'description'], slots: ['default'], events: [],
+diff --git a/packages/component-contracts/src/scenarios.ts b/packages/component-contracts/src/scenarios.ts
+index 966937f1..20af459a 100644
+--- a/packages/component-contracts/src/scenarios.ts
++++ b/packages/component-contracts/src/scenarios.ts
+@@ -5,6 +5,8 @@ export const sharedScenarios: readonly SharedScenario[] = [
+   { id: 'address-editor-fields-and-change', oodsComponentId: 'AddressEditor', props: { title: 'Shipping address', street: '1 Main St', city: 'Springfield', region: 'IL', postalCode: '62701' }, slots: {}, initialState: { street: '1 Main St' }, event: { name: 'change', trigger: 'type into the City input', expected: 'change emitted with the current street/city/region/postalCode record' }, assertions: ['title is a real h3 heading', 'four labelled inputs are prefilled', 'change carries the whole address record', 'submitting is a no-op'] },
+   { id: 'address-summary-badge-role', oodsComponentId: 'AddressSummaryBadge', props: { label: 'Billing address', role: 'billing' }, slots: {}, initialState: { status: 'billing' }, event: { name: 'render', trigger: 'mount', expected: 'visible Billing address label with data-badge-status billing and the address variant' }, assertions: ['label is visible text', 'data-badge-status is billing', 'data-badge-variant is address', 'badge is noninteractive'] },
+   { id: 'address-validation-timeline-events', oodsComponentId: 'AddressValidationTimeline', props: { title: 'Address checks', validations: [{ label: 'Postal code verified', timestamp: '2026-09-05T12:00:00Z', detail: 'Matched carrier database' }, 'Geocoded'] }, slots: {}, initialState: { events: 2 }, event: { name: 'render', trigger: 'mount', expected: 'a log region titled Address checks with two ordered events, the first timestamped and detailed' }, assertions: ['region has role log and an h3 title', 'events are ordered list items', 'the timestamp is a time element', 'scalar entries render as text'] },
++  { id: 'archive-pill-false', oodsComponentId: 'ArchivePill', props: {'isArchived': false}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'false remains visible; archive is the badge variant' }, assertions: ['false remains visible', 'archive is the badge variant'] },
++  { id: 'archive-summary-false-and-reason', oodsComponentId: 'ArchiveSummary', props: {'isArchived': false, 'archivedAt': '2026-09-05T12:00:00Z', 'reason': 'Retention policy'}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'false remains visible in its named term; archive date and reason remain associated terms' }, assertions: ['false remains visible in its named term', 'archive date and reason remain associated terms'] },
+   { id: 'audit-event-type-and-timestamp', oodsComponentId: 'AuditEvent', props: { event: 'user.updated', timestamp: '2026-09-05T12:00:00Z', detail: 'Display name changed' }, slots: {}, initialState: { timestamped: true }, event: { name: 'render', trigger: 'mount', expected: 'one audit article with a machine-readable time, the event label and the detail' }, assertions: ['article carries data-event-type audit', 'time element has a datetime', 'label and detail are visible text'] },
+   {
+     id: 'audit-timeline-transitions', oodsComponentId: 'AuditTimeline',
+@@ -16,6 +18,8 @@ export const sharedScenarios: readonly SharedScenario[] = [
+   { id: 'badge-status', oodsComponentId: 'Badge', props: { content: 'Past due', tone: 'critical', emphasis: 'solid' }, slots: {}, initialState: { tone: 'critical' }, event: { name: 'render', trigger: 'mount', expected: 'visible status text and decorative icon treatment' }, assertions: ['content is visible', 'badge is noninteractive'] },
+   { id: 'banner-dismissible', oodsComponentId: 'Banner', props: { title: 'Payment failed', detail: 'Update the card', tone: 'critical', dismissLabel: 'Dismiss payment warning' }, slots: { actions: ['Update card'] }, initialState: { dismissed: false }, event: { name: 'dismiss', trigger: 'activate dismiss button', expected: 'dismiss event emitted once' }, assertions: ['critical banner has alert role', 'dismiss button is named'] },
+   { id: 'button-activate', oodsComponentId: 'Button', props: { content: 'Save changes', intent: 'neutral', size: 'md' }, slots: { default: 'Save changes' }, initialState: { disabled: false }, event: { name: 'activate', trigger: 'pointer click or Enter', expected: 'activation handler called once' }, assertions: ['native type defaults to button', 'focus is visible'] },
++  { id: 'cancellation-badge-false', oodsComponentId: 'CancellationBadge', props: {'cancelAtPeriodEnd': false}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'false remains visible; cancellation is the badge variant' }, assertions: ['false remains visible', 'cancellation is the badge variant'] },
++  { id: 'cancellation-form-presentational-controls', oodsComponentId: 'CancellationForm', props: {'title': 'Cancellation request', 'reasonCode': 'budget', 'reason': 'Costs changed'}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'reason and code retain their initial values; native controls are labelled; submit does not cancel or save' }, assertions: ['reason and code retain their initial values', 'native controls are labelled', 'submit does not cancel or save'] },
+   {
+     id: 'cancellation-summary-boolean', oodsComponentId: 'CancellationSummary',
+     props: { cancelAtPeriodEnd: true, requestedAt: '2026-09-05T12:00:00Z', reason: 'Customer request' },
+@@ -64,6 +68,7 @@ export const sharedScenarios: readonly SharedScenario[] = [
+     event: { name: 'render', trigger: 'mount', expected: 'USD 25 is visible as a price badge' },
+     assertions: ['price variant is stable', 'currency is not used as the variant'],
+   },
++  { id: 'price-card-meta-inline-terms', oodsComponentId: 'PriceCardMeta', props: {'pricingModel': 'flat', 'billingInterval': 'monthly'}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'model and interval have literal inline labels; price metadata is noninteractive' }, assertions: ['model and interval have literal inline labels', 'price metadata is noninteractive'] },
+   { id: 'price-summary-terms', oodsComponentId: 'PriceSummary', props: { title: 'Price Summary', amount: 129900, currency: 'USD', model: 'recurring', interval: 'month' }, slots: {}, initialState: { terms: 4 }, event: { name: 'render', trigger: 'mount', expected: 'h3 heading and a four-term description list' }, assertions: ['title is a real h3 heading', 'data-summary-type is price', 'each term names its value', 'amount is visible text'] },
+   {
+     id: 'relative-timestamp-fixed', oodsComponentId: 'RelativeTimestamp',
+diff --git a/packages/component-contracts/src/types.ts b/packages/component-contracts/src/types.ts
+index d1407e77..b63559dd 100644
+--- a/packages/component-contracts/src/types.ts
++++ b/packages/component-contracts/src/types.ts
+@@ -14,11 +14,15 @@ export const NUCLEUS_COMPONENT_IDS = [
+   'AddressEditor',
+   'AddressSummaryBadge',
+   'AddressValidationTimeline',
++  'ArchivePill',
++  'ArchiveSummary',
+   'AuditEvent',
+   'AuditTimeline',
+   'Badge',
+   'Banner',
+   'Button',
++  'CancellationBadge',
++  'CancellationForm',
+   'CancellationSummary',
+   'Card',
+   'CardHeader',
+@@ -49,6 +53,7 @@ export const NUCLEUS_COMPONENT_IDS = [
+   'PreferenceSummaryBadge',
+   'PreferenceTimeline',
+   'PriceBadge',
++  'PriceCardMeta',
+   'PriceSummary',
+   'RelativeTimestamp',
+   'RoleAssignmentForm',
+diff --git a/packages/component-contracts/test/breadth-contracts.s187.spec.ts b/packages/component-contracts/test/breadth-contracts.s187.spec.ts
+index 01e56635..16fc7023 100644
+--- a/packages/component-contracts/test/breadth-contracts.s187.spec.ts
++++ b/packages/component-contracts/test/breadth-contracts.s187.spec.ts
+@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
+ import { componentContracts, NUCLEUS_COMPONENT_IDS, sharedScenarios } from '../src/index.js';
+ 
+ const FAMILIES = [
++  'ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta',
+   'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary','LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor'] as const;
+ describe('Sprint 187 fresh composition contracts', () => {
+   it.each(FAMILIES)('%s has one governed contract and scenario without invented edit events', (id) => {
+diff --git a/packages/component-styles/src/components.css b/packages/component-styles/src/components.css
+index cc19a55b..3ea2f201 100644
+--- a/packages/component-styles/src/components.css
++++ b/packages/component-styles/src/components.css
+@@ -356,7 +356,7 @@
+ }
+ 
+ /* Badge-family summaries reuse the governed Badge substrate; the pill groups mirror their plain-span HTML renderers. */
+-:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
++:where([data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
+   --cmp-badge-background: var(--sys-status-neutral-surface);
+   --cmp-badge-border: var(--sys-status-neutral-border);
+   --cmp-badge-text: var(--sys-status-neutral-text);
+@@ -372,13 +372,13 @@
+   font-weight: var(--cmp-badge-font-weight, 600);
+ }
+ 
+-:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
++:where([data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
+   border-color: var(--cmp-badge-text, CanvasText);
+   background: var(--cmp-badge-text, CanvasText);
+   color: var(--cmp-badge-background, Canvas);
+ }
+ 
+-:where([data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
++:where([data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
+   display: inline;
+   visibility: visible;
+   color: inherit;
+@@ -488,7 +488,7 @@
+   font: inherit;
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) {
+   --cmp-form-background: var(--sys-surface-raised);
+   --cmp-form-border: var(--sys-border-subtle);
+   --cmp-form-text: var(--sys-text-primary);
+@@ -503,12 +503,12 @@
+   color: var(--cmp-form-text, CanvasText);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] {
+   display: grid;
+   gap: var(--sys-spacing-stack-compact, 0.25rem);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > h3 {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > h3 {
+   margin: 0;
+   color: var(--cmp-form-text, CanvasText);
+   font-size: var(--sys-text-size-lg, 1.25rem);
+@@ -516,34 +516,34 @@
+   line-height: var(--sys-text-line-height-standard, 1.4);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > [data-form-subtitle] {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > [data-form-subtitle] {
+   color: var(--cmp-form-hint, CanvasText);
+   font-size: var(--sys-text-size-sm, 0.875rem);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-list] {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-list] {
+   display: flex;
+   flex-wrap: wrap;
+   gap: var(--cmp-spacing-inline-xs, 0.5rem);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-item] {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-item] {
+   padding: 0.125rem 0.5rem;
+   border: 1px solid var(--cmp-form-border, CanvasText);
+   border-radius: 999px;
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] {
+   display: grid;
+   gap: 0.25rem;
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] > span {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] > span {
+   color: var(--cmp-form-hint, CanvasText);
+   font-size: var(--sys-text-size-sm, 0.875rem);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) input {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) input {
+   padding: 0.375rem 0.5rem;
+   border: 1px solid var(--cmp-form-border, CanvasText);
+   border-radius: var(--cmp-input-radius, 0.375rem);
+@@ -552,34 +552,34 @@
+   font: inherit;
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > legend {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > legend {
+   padding-inline: 0.25rem;
+   font-size: var(--sys-text-size-lg, 1.25rem);
+   font-weight: var(--ref-typography-weights-semibold, 600);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-subtitle] {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-subtitle] {
+   color: var(--cmp-form-hint, CanvasText);
+   font-size: var(--sys-text-size-sm, 0.875rem);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-content] {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-content] {
+   display: grid;
+   gap: var(--cmp-spacing-stack-sm, 0.75rem);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] {
+   display: grid;
+   gap: 0.25rem;
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] > span {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] > span {
+   color: var(--cmp-form-hint, CanvasText);
+   font-size: var(--sys-text-size-sm, 0.875rem);
+ }
+ 
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) select,
+-:where([data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) textarea {
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) select,
++:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) textarea {
+   padding: 0.375rem 0.5rem;
+   border: 1px solid var(--cmp-form-border, CanvasText);
+   border-radius: var(--cmp-input-radius, 0.375rem);
+@@ -617,7 +617,7 @@
+   outline-offset: 2px;
+ }
+ 
+-:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) {
++:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) {
+   --cmp-summary-background: var(--sys-surface-raised);
+   --cmp-summary-border: var(--sys-border-subtle);
+   --cmp-summary-text: var(--sys-text-primary);
+@@ -631,34 +631,34 @@
+   color: var(--cmp-summary-text, CanvasText);
+ }
+ 
+-:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-title] {
++:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-title] {
+   margin: 0;
+   font-size: var(--sys-text-size-lg, 1.25rem);
+   font-weight: var(--ref-typography-weights-semibold, 600);
+   line-height: var(--sys-text-line-height-standard, 1.4);
+ }
+ 
+-:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > dl {
++:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > dl {
+   display: grid;
+   grid-template-columns: minmax(max-content, 1fr) minmax(0, 2fr);
+   gap: var(--cmp-spacing-stack-xs, 0.5rem) var(--cmp-spacing-inline-md, 1rem);
+   margin: 0;
+ }
+ 
+-:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) [data-summary-item] {
++:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) [data-summary-item] {
+   display: contents;
+ }
+ 
+-:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dt {
++:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dt {
+   color: var(--cmp-summary-label, CanvasText);
+   font-weight: var(--ref-typography-weights-semibold, 600);
+ }
+ 
+-:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dd {
++:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dd {
+   margin: 0;
+ }
+ 
+-:where([data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-fallback] {
++:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-fallback] {
+   margin: 0;
+   color: var(--cmp-summary-label, CanvasText);
+ }
+@@ -839,7 +839,7 @@
+     forced-color-adjust: none;
+   }
+ 
+-  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
++  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+     forced-color-adjust: none;
+     border-color: CanvasText;
+     background: Canvas;
+@@ -853,7 +853,7 @@
+   }
+ }
+ 
+-[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
++[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+   border-color: CanvasText;
+   background: Canvas;
+   color: CanvasText;
+@@ -898,7 +898,7 @@
+ }
+ 
+ @media (forced-colors: active) {
+-  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
++  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+     forced-color-adjust: none;
+     border-color: CanvasText;
+     background: Canvas;
+@@ -906,7 +906,7 @@
+   }
+ }
+ 
+-[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
++[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+   border-color: CanvasText;
+   background: Canvas;
+   color: CanvasText;
+@@ -1100,7 +1100,7 @@
+   --cmp-text-secondary: var(--sys-text-secondary);
+ }
+ 
+-:where([data-oods-component='OwnershipMeta']) {
++:where([data-oods-component='PriceCardMeta'], [data-oods-component='OwnershipMeta']) {
+   --cmp-meta-text: var(--sys-text-primary);
+   --cmp-meta-label: var(--sys-text-secondary);
+   display: flex;
+@@ -1108,8 +1108,8 @@
+   gap: var(--cmp-spacing-inline-sm, 0.75rem);
+   color: var(--cmp-meta-text, CanvasText);
+ }
+-:where([data-oods-component='OwnershipMeta']) [data-meta-title],
+-:where([data-oods-component='OwnershipMeta']) strong {
++:where([data-oods-component='PriceCardMeta'], [data-oods-component='OwnershipMeta']) [data-meta-title],
++:where([data-oods-component='PriceCardMeta'], [data-oods-component='OwnershipMeta']) strong {
+   color: var(--cmp-meta-label, CanvasText);
+   font-weight: var(--ref-typography-weights-semibold, 600);
+ }
+diff --git a/packages/component-styles/src/index.ts b/packages/component-styles/src/index.ts
+index eccba18a..6d9f30bf 100644
+--- a/packages/component-styles/src/index.ts
++++ b/packages/component-styles/src/index.ts
+@@ -1,14 +1,15 @@
+ export const COMPONENT_STYLE_VERSION = '1.0.0' as const;
+ 
+ export const COMPONENT_STYLE_IDS = [
+-  'AddressCollectionPanel', 'AddressEditor', 'AddressSummaryBadge', 'AddressValidationTimeline', 'AuditEvent',
+-  'AuditTimeline', 'Badge', 'Banner', 'Button', 'CancellationSummary',
+-  'Card', 'CardHeader', 'Checkbox', 'ClassificationBadge', 'ClassificationEditor',
+-  'ClassificationPanel', 'ColorSwatch', 'ColorizedBadge', 'DatePicker', 'DetailHeader',
+-  'FilterPanel', 'FormLabelGroup', 'Grid', 'InlineLabel', 'Input',
+-  'LabelCell', 'MembershipAuditTimeline', 'MembershipPanel', 'MessageEventTimeline', 'MessageStatusBadge',
+-  'OwnerBadge', 'OwnershipMeta', 'OwnershipSummary', 'PaginationBar', 'PreferenceEditor',
+-  'PreferencePanel', 'PreferenceSummaryBadge', 'PreferenceTimeline', 'PriceBadge', 'PriceSummary',
++  'AddressCollectionPanel', 'AddressEditor', 'AddressSummaryBadge', 'AddressValidationTimeline', 'ArchivePill',
++  'ArchiveSummary', 'AuditEvent', 'AuditTimeline', 'Badge', 'Banner',
++  'Button', 'CancellationBadge', 'CancellationForm', 'CancellationSummary', 'Card',
++  'CardHeader', 'Checkbox', 'ClassificationBadge', 'ClassificationEditor', 'ClassificationPanel',
++  'ColorSwatch', 'ColorizedBadge', 'DatePicker', 'DetailHeader', 'FilterPanel',
++  'FormLabelGroup', 'Grid', 'InlineLabel', 'Input', 'LabelCell',
++  'MembershipAuditTimeline', 'MembershipPanel', 'MessageEventTimeline', 'MessageStatusBadge', 'OwnerBadge',
++  'OwnershipMeta', 'OwnershipSummary', 'PaginationBar', 'PreferenceEditor', 'PreferencePanel',
++  'PreferenceSummaryBadge', 'PreferenceTimeline', 'PriceBadge', 'PriceCardMeta', 'PriceSummary',
+   'RelativeTimestamp', 'RoleAssignmentForm', 'RoleBadgeList', 'SearchInput', 'Select',
+   'Stack', 'StatusBadge', 'StatusSelector', 'StatusTimeline', 'Table',
+   'Tabs', 'TagInput', 'TagManager', 'TagPills', 'TagSummary',
+diff --git a/packages/component-styles/test/styles.spec.ts b/packages/component-styles/test/styles.spec.ts
+index aa47eca9..29320185 100644
+--- a/packages/component-styles/test/styles.spec.ts
++++ b/packages/component-styles/test/styles.spec.ts
+@@ -10,6 +10,7 @@ const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
+ const repoRoot = path.resolve(packageRoot, '../..');
+ const css = fs.readFileSync(path.join(packageRoot, 'src/components.css'), 'utf8');
+ const breadthComponents = [
++  'ArchiveSummary', 'ArchivePill', 'CancellationForm', 'CancellationBadge', 'PriceCardMeta',
+   'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
+   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
+   'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
+diff --git a/packages/components-react/evidence/react-readiness.v1.json b/packages/components-react/evidence/react-readiness.v1.json
+index 858343d8..fa355777 100644
+--- a/packages/components-react/evidence/react-readiness.v1.json
++++ b/packages/components-react/evidence/react-readiness.v1.json
+@@ -177,6 +177,92 @@
+         }
+       }
+     },
++    {
++      "componentId": "ArchivePill",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#ArchivePill"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#ArchivePill"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#ArchivePill"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#ArchivePill"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#owner-badge-principal"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "ArchiveSummary",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#ArchiveSummary"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#ArchiveSummary"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#ArchiveSummary"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#ArchiveSummary"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#owner-badge-principal"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "AuditEvent",
+       "state": "implemented-evidence-complete",
+@@ -392,6 +478,92 @@
+         }
+       }
+     },
++    {
++      "componentId": "CancellationBadge",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#CancellationBadge"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#CancellationBadge"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#CancellationBadge"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#CancellationBadge"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#owner-badge-principal"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "CancellationForm",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#CancellationForm"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#CancellationForm"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#CancellationForm"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#CancellationForm"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#owner-badge-principal"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "CancellationSummary",
+       "state": "implemented-evidence-complete",
+@@ -1682,6 +1854,49 @@
+         }
+       }
+     },
++    {
++      "componentId": "PriceCardMeta",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#PriceCardMeta"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/breadth.tsx#PriceCardMeta"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#PriceCardMeta"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#PriceCardMeta"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#owner-badge-principal"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "PriceSummary",
+       "state": "implemented-evidence-complete",
+diff --git a/packages/components-react/src/breadth.tsx b/packages/components-react/src/breadth.tsx
+index 5a565d1b..f7d74a1f 100644
+--- a/packages/components-react/src/breadth.tsx
++++ b/packages/components-react/src/breadth.tsx
+@@ -3,6 +3,7 @@ import * as React from 'react';
+ import { Badge } from './presentational.js';
+ import type { ComponentEmphasis, ComponentTone } from './types.js';
+ import type {
++  ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, CancellationBadgeProps, PriceCardMetaProps,
+   OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps,
+   LabelCellProps, InlineLabelProps, FormLabelGroupProps, ClassificationBadgeProps, ClassificationEditorProps,
+   AddressEditorProps,
+@@ -397,6 +398,7 @@ type BadgeFamilyOptions = {
+   defaultVariant: string;
+   labelKeys: readonly string[];
+   statusKeys: readonly string[];
++  booleanProps?: readonly string[];
+ };
+ 
+ // Every badge-family summary mirrors renderBadgePrimitive over the governed
+@@ -408,6 +410,7 @@ function createBadgeFamily<Props extends object>(options: BadgeFamilyOptions) {
+     const record = rest as Record<string, unknown>;
+     const scalar = (key: string): string | undefined => {
+       const value = record[key];
++      if (typeof value === 'boolean' && options.booleanProps?.includes(key)) return String(value);
+       return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
+     };
+     const content = childContent(children);
+@@ -1043,3 +1046,59 @@ export const OwnershipMeta = React.forwardRef<HTMLDivElement, OwnershipMetaProps
+   }
+ );
+ OwnershipMeta.displayName = 'OODS.OwnershipMeta';
++
++export const ArchivePill = createBadgeFamily<ArchivePillProps>({
++  component: 'ArchivePill', className: 'oods-archive-pill', defaultLabel: 'Archive', defaultVariant: 'archive',
++  labelKeys: ['label', 'text', 'status', 'state', 'isArchived', 'value'], statusKeys: ['status', 'state', 'isArchived', 'value'],
++  booleanProps: ['isArchived', 'value'],
++});
++export const CancellationBadge = createBadgeFamily<CancellationBadgeProps>({
++  component: 'CancellationBadge', className: 'oods-cancellation-badge', defaultLabel: 'Cancellation', defaultVariant: 'cancellation',
++  labelKeys: ['label', 'text', 'status', 'state', 'cancelAtPeriodEnd', 'value'], statusKeys: ['status', 'state', 'cancelAtPeriodEnd', 'isCancelled', 'value'],
++  booleanProps: ['cancelAtPeriodEnd', 'isCancelled', 'value'],
++});
++
++export const ArchiveSummary = React.forwardRef<HTMLElement, ArchiveSummaryProps>(
++  ({ title, label, heading, name, isArchived, archived, status, archivedAt, reason, archiveReason, summary, text, description, children, className, ...rest }, ref) => {
++    const content = childContent(children);
++    const terms = ([['Archived', firstScalar(isArchived, archived, status)], ['Archived At', firstText(archivedAt ?? undefined)], ['Reason', firstText(reason, archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++    const fallback = firstText(summary, text, description);
++    return <section ref={ref} className={classes('oods-archive-summary', className)} data-oods-component="ArchiveSummary" data-summary-type="archive" {...rest}>
++      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Archive Summary'}</h3>
++      {content.authored || content.scalar !== undefined ? children : terms.length
++        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
++        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
++    </section>;
++  }
++);
++ArchiveSummary.displayName = 'OODS.ArchiveSummary';
++
++export const PriceCardMeta = React.forwardRef<HTMLDivElement, PriceCardMetaProps>(
++  ({ title, label, heading, name, model, pricingModel, interval, billingInterval, children, className, ...rest }, ref) => {
++    const content = childContent(children);
++    const terms = ([['Model', firstText(model, pricingModel)], ['Interval', firstText(interval, billingInterval)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++    return <div ref={ref} className={classes('oods-price-card-meta', className)} data-oods-component="PriceCardMeta" data-meta-type="price" {...rest}>
++      {content.authored || content.scalar !== undefined ? children : <>
++        <span data-meta-title="true">{firstText(title, label, heading, name) ?? 'Price'}</span>
++        {terms.map(([term, value]) => <span key={term} data-meta-item="true"><strong>{term}:</strong> {value}</span>)}
++      </>}
++    </div>;
++  }
++);
++PriceCardMeta.displayName = 'OODS.PriceCardMeta';
++
++export const CancellationForm = React.forwardRef<HTMLFormElement, CancellationFormProps>(
++  ({ title, label, heading, name, description, subtitle, hint, allowedReasons, reasonCode, reason, cancellationReason, children, className, onSubmit, ...rest }, ref) => {
++    const content = childContent(children);
++    const choices = normalizeSelectOptions(allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate']);
++    return <form ref={ref} className={classes('oods-cancellation-form', className)} data-oods-component="CancellationForm" data-form-type="cancellation"
++      onSubmit={(event) => { preventSubmit(event); onSubmit?.(event); }} {...rest}>
++      {formHeader(firstText(title, label, heading, name) ?? 'Cancellation Form', firstText(description, subtitle, hint))}
++      <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
++        <label data-form-control="select"><span>Reason Code</span><select name="reasonCode" defaultValue={reasonCode}>{selectOptionsMarkup(choices)}</select></label>
++        <label data-form-control="textarea"><span>Reason</span><textarea name="reason" defaultValue={firstText(reason, cancellationReason) ?? ''} /></label>
++      </>}</div>
++    </form>;
++  }
++);
++CancellationForm.displayName = 'OODS.CancellationForm';
+diff --git a/packages/components-react/src/index.ts b/packages/components-react/src/index.ts
+index 3caba355..116cca18 100644
+--- a/packages/components-react/src/index.ts
++++ b/packages/components-react/src/index.ts
+@@ -93,3 +93,6 @@ export type {
+ 
+ export { OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary } from './breadth.js';
+ export type { OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps } from './types.js';
++
++export { ArchiveSummary, ArchivePill, CancellationForm, CancellationBadge, PriceCardMeta } from './breadth.js';
++export type { ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, CancellationBadgeProps, PriceCardMetaProps } from './types.js';
+diff --git a/packages/components-react/src/types.ts b/packages/components-react/src/types.ts
+index 194e89d4..da98986e 100644
+--- a/packages/components-react/src/types.ts
++++ b/packages/components-react/src/types.ts
+@@ -601,3 +601,23 @@ export interface TagSummaryProps extends React.HTMLAttributes<HTMLElement> {
+   readonly tagCount?: number | string; readonly count?: number | string; readonly tags?: string | readonly unknown[];
+   readonly summary?: string; readonly text?: string; readonly description?: string;
+ }
++
++export interface ArchiveSummaryProps extends React.HTMLAttributes<HTMLElement> {
++  readonly label?: string; readonly heading?: string; readonly name?: string;
++  readonly isArchived?: boolean | string; readonly archived?: boolean | string; readonly status?: boolean | string;
++  readonly archivedAt?: string | null; readonly reason?: string; readonly archiveReason?: string;
++  readonly summary?: string; readonly text?: string; readonly description?: string;
++}
++export interface ArchivePillProps extends Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> {
++  readonly isArchived?: boolean | string; readonly value?: boolean | string;
++}
++export interface CancellationBadgeProps extends Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> {
++  readonly cancelAtPeriodEnd?: boolean | string; readonly isCancelled?: boolean | string; readonly value?: boolean | string;
++}
++export interface CancellationFormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'title' | 'name'>, FormShellProps {
++  readonly allowedReasons?: readonly unknown[]; readonly reasonCode?: string; readonly reason?: string; readonly cancellationReason?: string;
++}
++export interface PriceCardMetaProps extends React.HTMLAttributes<HTMLDivElement> {
++  readonly label?: string; readonly heading?: string; readonly name?: string;
++  readonly model?: string; readonly pricingModel?: string; readonly interval?: string; readonly billingInterval?: string;
++}
+diff --git a/packages/components-react/test/breadth.s187.spec.tsx b/packages/components-react/test/breadth.s187.spec.tsx
+index 74d28aa7..b43ff7b1 100644
+--- a/packages/components-react/test/breadth.s187.spec.tsx
++++ b/packages/components-react/test/breadth.s187.spec.tsx
+@@ -107,3 +107,68 @@ describe('Sprint 187 ownership and summary semantics', () => {
+     expect(authored.querySelector('dl')).toBeNull();
+   });
+ });
++
++describe('Sprint 187 lifecycle and financial semantics', () => {
++  const values = (root: HTMLElement) => [...root.querySelectorAll('dd')].map((node) => node.textContent);
++  it.each([
++    ['ArchivePill', 'isArchived', 'Archive', 'archive'],
++    ['CancellationBadge', 'cancelAtPeriodEnd', 'Cancellation', 'cancellation'],
++  ] as const)('%s keeps false/true, absent aliases and authored content distinct', (name, field, fallback, variant) => {
++    for (const flag of [false, true]) {
++      const root = mountFamily(name, { [field]: flag });
++      expect(root.textContent).toBe(String(flag));
++      expect(root.getAttribute('data-badge-status')).toBe(String(flag));
++      expect(root.getAttribute('data-badge-variant')).toBe(variant);
++      expect(mountFamily(name, { value: flag }).textContent).toBe(String(flag));
++    }
++    expect(mountFamily(name).textContent).toBe(fallback);
++    expect(mountFamily(name).hasAttribute('data-badge-status')).toBe(false);
++    expect(mountFamily(name, { status: 'active', [field]: false }).textContent).toBe('active');
++    expect(mountFamily(name, { label: 'Scheduled', [field]: false }).textContent).toBe('Scheduled');
++    expect(mountFamily(name, { label: 'Scheduled', [field]: false }, 'Authored').textContent).toBe('Authored');
++  });
++  it('CancellationBadge uses isCancelled as status only without inventing a label', () => {
++    const root = mountFamily('CancellationBadge', { isCancelled: false });
++    expect(root.textContent).toBe('Cancellation');
++    expect(root.getAttribute('data-badge-status')).toBe('false');
++  });
++  it('ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics', () => {
++    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archived: true, status: 'active', archivedAt: '2026-09-05', reason: 'Primary', archiveReason: 'Alias' }))).toEqual(['false', '2026-09-05', 'Primary']);
++    expect(values(mountFamily('ArchiveSummary', { archived: true, archiveReason: 'Alias' }))).toEqual(['true', 'Alias']);
++    expect(values(mountFamily('ArchiveSummary'))).toEqual([]);
++    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archivedAt: null, reason: 'Retained' }))).toEqual(['false', 'Retained']);
++    expect(mountFamily('ArchiveSummary', { summary: 'Fallback', text: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
++    const authored = mountFamily('ArchiveSummary', { title: 'Archived', isArchived: false }, 'Authored');
++    expect(authored.textContent).toBe('ArchivedAuthored');
++    expect(authored.querySelector('dl')).toBeNull();
++  });
++  it('PriceCardMeta retains model/interval precedence and literal inline labels', () => {
++    const root = mountFamily('PriceCardMeta', { label: 'Billing', model: 'tiered', pricingModel: 'flat', interval: 'annual', billingInterval: 'monthly' });
++    expect(root.querySelector('[data-meta-title]')?.textContent).toBe('Billing');
++    expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: tiered', 'Interval: annual']);
++    expect(mountFamily('PriceCardMeta').textContent).toBe('Price');
++    expect(mountFamily('PriceCardMeta', { model: 'Hidden' }, 'Authored').textContent).toBe('Authored');
++  });
++  it('CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission', () => {
++    const root = mountFamily('CancellationForm', { heading: 'End subscription', hint: 'Only a request', reason: 'Primary', cancellationReason: 'Alias', reasonCode: 'b', allowedReasons: [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }] });
++    expect(root.querySelector('h3')?.textContent).toBe('End subscription');
++    expect(root.querySelector('[data-form-subtitle]')?.textContent).toBe('Only a request');
++    const select = root.querySelector<HTMLSelectElement>('select[name="reasonCode"]')!;
++    const textarea = root.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')!;
++    expect(select.value).toBe('b');
++    expect(textarea.value).toBe('Primary');
++    expect(select.closest('label')?.querySelector('span')?.textContent).toBe('Reason Code');
++    expect(textarea.closest('label')?.querySelector('span')?.textContent).toBe('Reason');
++    textarea.value = 'Changed locally'; textarea.dispatchEvent(new Event('input', { bubbles: true }));
++    select.value = 'a'; select.dispatchEvent(new Event('change', { bubbles: true }));
++    expect(textarea.value).toBe('Changed locally'); expect(select.value).toBe('a');
++    const event = new Event('submit', { cancelable: true, bubbles: true }); root.dispatchEvent(event);
++    expect(event.defaultPrevented).toBe(true); expect(root.querySelector('button')).toBeNull();
++    const defaults = mountFamily('CancellationForm', { cancellationReason: 'Alias' });
++    expect([...defaults.querySelectorAll('option')].map((node) => node.value)).toEqual(['no_longer_needed', 'budget', 'duplicate']);
++    expect(defaults.querySelector<HTMLTextAreaElement>('textarea')?.value).toBe('Alias');
++    const emptyChoice = mountFamily('CancellationForm', { allowedReasons: [] }).querySelector('option')!;
++    expect(emptyChoice.value).toBe(''); expect(emptyChoice.textContent).toBe('Select...');
++    expect(mountFamily('CancellationForm', {}, 'Authored').querySelector('select')).toBeNull();
++  });
++});
+diff --git a/packages/components-react/test/scenario-fixtures.tsx b/packages/components-react/test/scenario-fixtures.tsx
+index cb05c5d0..ac6aeffb 100644
+--- a/packages/components-react/test/scenario-fixtures.tsx
++++ b/packages/components-react/test/scenario-fixtures.tsx
+@@ -8,6 +8,7 @@ import type {
+ } from '../src/index.js';
+ 
+ import {
++  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+   AuditTimeline,
+@@ -264,6 +265,11 @@ export function renderSharedScenario(
+     case 'ownership-summary-terms': return <OwnershipSummary {...scenario.props} />;
+     case 'ownership-meta-inline-terms': return <OwnershipMeta {...scenario.props} />;
+     case 'tag-summary-zero-and-tags': return <TagSummary {...scenario.props} />;
++    case 'archive-summary-false-and-reason': return <ArchiveSummary {...scenario.props} />;
++    case 'archive-pill-false': return <ArchivePill {...scenario.props} />;
++    case 'cancellation-badge-false': return <CancellationBadge {...scenario.props} />;
++    case 'cancellation-form-presentational-controls': return <CancellationForm {...scenario.props} />;
++    case 'price-card-meta-inline-terms': return <PriceCardMeta {...scenario.props} />;
+     default:
+       throw new Error(`Unimplemented shared React scenario: ${scenario.id}`);
+   }
+diff --git a/packages/components-react/test/scenarios.spec.tsx b/packages/components-react/test/scenarios.spec.tsx
+index 11f47d5d..d8cd7f03 100644
+--- a/packages/components-react/test/scenarios.spec.tsx
++++ b/packages/components-react/test/scenarios.spec.tsx
+@@ -538,6 +538,25 @@ describe('@oods/components-react shared scenarios', () => {
+           expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
+           break;
+         }
++        case 'archive-pill-false':
++        case 'cancellation-badge-false': {
++          expect(component?.textContent).toBe('false');
++          expect(component?.getAttribute('data-badge-status')).toBe('false');
++          break;
++        }
++        case 'archive-summary-false-and-reason': {
++          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
++          break;
++        }
++        case 'cancellation-form-presentational-controls': {
++          expect(component?.querySelector<HTMLSelectElement>('select[name="reasonCode"]')?.value).toBe('budget');
++          expect(component?.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')?.value).toBe('Costs changed');
++          break;
++        }
++        case 'price-card-meta-inline-terms': {
++          expect([...component!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: flat', 'Interval: monthly']);
++          break;
++        }
+         default:
+           throw new Error(`Missing executable React assertion for ${scenario.id}`);
+       }
+diff --git a/packages/components-vue/evidence/vue-readiness.v1.json b/packages/components-vue/evidence/vue-readiness.v1.json
+index 8ea6ff81..d86b4fdd 100644
+--- a/packages/components-vue/evidence/vue-readiness.v1.json
++++ b/packages/components-vue/evidence/vue-readiness.v1.json
+@@ -177,6 +177,92 @@
+         }
+       }
+     },
++    {
++      "componentId": "ArchivePill",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#ArchivePill"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#ArchivePill"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#ArchivePill"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#ArchivePill"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#owner-badge-principal"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "ArchiveSummary",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#ArchiveSummary"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#ArchiveSummary"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#ArchiveSummary"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#ArchiveSummary"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#owner-badge-principal"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "AuditEvent",
+       "state": "implemented-evidence-complete",
+@@ -394,6 +480,92 @@
+         }
+       }
+     },
++    {
++      "componentId": "CancellationBadge",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#CancellationBadge"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#CancellationBadge"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#CancellationBadge"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#CancellationBadge"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#owner-badge-principal"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "CancellationForm",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#CancellationForm"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#CancellationForm"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#CancellationForm"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#CancellationForm"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#owner-badge-principal"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "CancellationSummary",
+       "state": "implemented-evidence-complete",
+@@ -1688,6 +1860,49 @@
+         }
+       }
+     },
++    {
++      "componentId": "PriceCardMeta",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#PriceCardMeta"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/breadth.ts#PriceCardMeta"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#PriceCardMeta"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#PriceCardMeta"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#owner-badge-principal"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "PriceSummary",
+       "state": "implemented-evidence-complete",
+diff --git a/packages/components-vue/src/breadth.ts b/packages/components-vue/src/breadth.ts
+index d2fec8e9..39a26e42 100644
+--- a/packages/components-vue/src/breadth.ts
++++ b/packages/components-vue/src/breadth.ts
+@@ -388,16 +388,19 @@ type BadgeFamilyOptions = {
+   defaultVariant: string;
+   labelKeys: readonly string[];
+   statusKeys: readonly string[];
++  booleanProps?: readonly string[];
+   extraProps: readonly string[];
+ };
+ 
+ // Every badge-family summary mirrors renderBadgePrimitive over the governed
+ // Badge substrate; only the marker, default label/variant and alias order differ.
+ function createBadgeFamily(options: BadgeFamilyOptions) {
+-  const props: Record<string, StringConstructor> = {
++  const props: Record<string, StringConstructor | { type: PropType<string | boolean>; default: undefined }> = {
+     label: String, text: String, value: String, status: String, state: String, variant: String, tone: String, emphasis: String,
+   };
+   for (const key of options.extraProps) props[key] = String;
++  // An absent Boolean prop must stay absent so it cannot shadow later aliases.
++  for (const key of options.booleanProps ?? []) props[key] = { type: [String, Boolean], default: undefined };
+   return defineComponent({
+     name: `Oods${options.component}`,
+     props,
+@@ -406,8 +409,9 @@ function createBadgeFamily(options: BadgeFamilyOptions) {
+         const record = componentProps as Record<string, unknown>;
+         const content = authoredContent(slots.default?.());
+         const scalar = scalarContent(content);
+-        const label = scalar ?? firstText(...options.labelKeys.map((key) => record[key])) ?? options.defaultLabel;
+-        const status = firstText(...options.statusKeys.map((key) => record[key]));
++        const read = (key: string) => typeof record[key] === 'boolean' && options.booleanProps?.includes(key) ? String(record[key]) : record[key];
++        const label = scalar ?? firstText(...options.labelKeys.map(read)) ?? options.defaultLabel;
++        const status = firstText(...options.statusKeys.map(read));
+         const variant = firstText(record.variant) ?? options.defaultVariant;
+         return h(Badge, {
+           status, tone: record.tone as ComponentTone | undefined, emphasis: record.emphasis as ComponentEmphasis | undefined,
+@@ -982,3 +986,65 @@ export const OwnershipMeta = defineComponent({
+     };
+   },
+ });
++
++export const ArchivePill = createBadgeFamily({
++  component: 'ArchivePill', className: 'oods-archive-pill', defaultLabel: 'Archive', defaultVariant: 'archive',
++  labelKeys: ['label', 'text', 'status', 'state', 'isArchived', 'value'], statusKeys: ['status', 'state', 'isArchived', 'value'],
++  extraProps: ['isArchived'], booleanProps: ['isArchived', 'value'],
++});
++export const CancellationBadge = createBadgeFamily({
++  component: 'CancellationBadge', className: 'oods-cancellation-badge', defaultLabel: 'Cancellation', defaultVariant: 'cancellation',
++  labelKeys: ['label', 'text', 'status', 'state', 'cancelAtPeriodEnd', 'value'], statusKeys: ['status', 'state', 'cancelAtPeriodEnd', 'isCancelled', 'value'],
++  extraProps: ['cancelAtPeriodEnd', 'isCancelled'], booleanProps: ['cancelAtPeriodEnd', 'isCancelled', 'value'],
++});
++
++export const ArchiveSummary = defineComponent({
++  name: 'OodsArchiveSummary', props: { title: String, label: String, heading: String, name: String, isArchived: { type: [String, Boolean], default: undefined }, archived: { type: [String, Boolean], default: undefined }, status: { type: [String, Boolean], default: undefined }, archivedAt: String as PropType<string | null>, reason: String, archiveReason: String, summary: String, text: String, description: String },
++  setup(props, { slots }) {
++    return () => {
++      const content = authoredContent(slots.default?.());
++      const terms = ([['Archived', firstScalar(props.isArchived, props.archived, props.status)], ['Archived At', firstText(props.archivedAt)], ['Reason', firstText(props.reason, props.archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++      const fallback = firstText(props.summary, props.text, props.description);
++      return h('section', { class: 'oods-archive-summary', 'data-oods-component': 'ArchiveSummary', 'data-summary-type': 'archive' }, [
++        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Archive Summary'),
++        ...(content.length ? content : terms.length
++          ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
++          : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
++      ]);
++    };
++  },
++});
++
++export const PriceCardMeta = defineComponent({
++  name: 'OodsPriceCardMeta', props: { title: String, label: String, heading: String, name: String, model: String, pricingModel: String, interval: String, billingInterval: String },
++  setup(props, { slots }) {
++    return () => {
++      const content = authoredContent(slots.default?.());
++      const terms = ([['Model', firstText(props.model, props.pricingModel)], ['Interval', firstText(props.interval, props.billingInterval)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
++      return h('div', { class: 'oods-price-card-meta', 'data-oods-component': 'PriceCardMeta', 'data-meta-type': 'price' }, content.length ? content : [
++        h('span', { 'data-meta-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Price'),
++        ...terms.map(([term, value]) => h('span', { key: term, 'data-meta-item': 'true' }, [h('strong', `${term}:`), ` ${value}`])),
++      ]);
++    };
++  },
++});
++
++export const CancellationForm = defineComponent({
++  name: 'OodsCancellationForm', props: {
++    title: String, label: String, heading: String, name: String, description: String, subtitle: String, hint: String,
++    allowedReasons: Array as PropType<readonly unknown[]>, reasonCode: String, reason: String, cancellationReason: String,
++  },
++  setup(props, { slots }) {
++    return () => {
++      const content = authoredContent(slots.default?.());
++      const choices = normalizeSelectOptions(props.allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate']);
++      return h('form', { class: 'oods-cancellation-form', 'data-oods-component': 'CancellationForm', 'data-form-type': 'cancellation', onSubmit: (event: Event) => event.preventDefault() }, [
++        formHeader(firstText(props.title, props.label, props.heading, props.name) ?? 'Cancellation Form', firstText(props.description, props.subtitle, props.hint)),
++        h('div', { 'data-form-content': 'true' }, content.length ? content : [
++          h('label', { 'data-form-control': 'select' }, [h('span', 'Reason Code'), h('select', { name: 'reasonCode', value: props.reasonCode }, selectOptionNodes(choices, props.reasonCode))]),
++          h('label', { 'data-form-control': 'textarea' }, [h('span', 'Reason'), h('textarea', { name: 'reason', value: firstText(props.reason, props.cancellationReason) ?? '' })]),
++        ]),
++      ]);
++    };
++  },
++});
+diff --git a/packages/components-vue/src/index.ts b/packages/components-vue/src/index.ts
+index 7f3c0e4e..cf0fb348 100644
+--- a/packages/components-vue/src/index.ts
++++ b/packages/components-vue/src/index.ts
+@@ -76,3 +76,6 @@ export type {
+ 
+ export { OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary } from './breadth.js';
+ export type { OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps } from './types.js';
++
++export { ArchiveSummary, ArchivePill, CancellationForm, CancellationBadge, PriceCardMeta } from './breadth.js';
++export type { ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, CancellationBadgeProps, PriceCardMetaProps } from './types.js';
+diff --git a/packages/components-vue/src/types.ts b/packages/components-vue/src/types.ts
+index 30481a3c..644300c6 100644
+--- a/packages/components-vue/src/types.ts
++++ b/packages/components-vue/src/types.ts
+@@ -304,3 +304,19 @@ export type TagSummaryProps = {
+   tagCount?: number | string; count?: number | string; tags?: string | readonly unknown[];
+   summary?: string; text?: string; description?: string;
+ };
++
++export type ArchiveSummaryProps = {
++  title?: string; label?: string; heading?: string; name?: string;
++  isArchived?: boolean | string; archived?: boolean | string; status?: boolean | string;
++  archivedAt?: string | null; reason?: string; archiveReason?: string; summary?: string; text?: string; description?: string;
++};
++export type ArchivePillProps = Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> & { isArchived?: boolean | string; value?: boolean | string };
++export type CancellationBadgeProps = Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> & { cancelAtPeriodEnd?: boolean | string; isCancelled?: boolean | string; value?: boolean | string };
++export type CancellationFormProps = {
++  title?: string; label?: string; heading?: string; name?: string; description?: string; subtitle?: string; hint?: string;
++  allowedReasons?: readonly unknown[]; reasonCode?: string; reason?: string; cancellationReason?: string;
++};
++export type PriceCardMetaProps = {
++  title?: string; label?: string; heading?: string; name?: string;
++  model?: string; pricingModel?: string; interval?: string; billingInterval?: string;
++};
+diff --git a/packages/components-vue/test/breadth.s187.spec.ts b/packages/components-vue/test/breadth.s187.spec.ts
+index 98fb14c2..ec121454 100644
+--- a/packages/components-vue/test/breadth.s187.spec.ts
++++ b/packages/components-vue/test/breadth.s187.spec.ts
+@@ -107,3 +107,68 @@ describe('Sprint 187 ownership and summary semantics', () => {
+     expect(authored.querySelector('dl')).toBeNull();
+   });
+ });
++
++describe('Sprint 187 lifecycle and financial semantics', () => {
++  const values = (root: HTMLElement) => [...root.querySelectorAll('dd')].map((node) => node.textContent);
++  it.each([
++    ['ArchivePill', 'isArchived', 'Archive', 'archive'],
++    ['CancellationBadge', 'cancelAtPeriodEnd', 'Cancellation', 'cancellation'],
++  ] as const)('%s keeps false/true, absent aliases and authored content distinct', (name, field, fallback, variant) => {
++    for (const flag of [false, true]) {
++      const root = mountFamily(name, { [field]: flag });
++      expect(root.textContent).toBe(String(flag));
++      expect(root.getAttribute('data-badge-status')).toBe(String(flag));
++      expect(root.getAttribute('data-badge-variant')).toBe(variant);
++      expect(mountFamily(name, { value: flag }).textContent).toBe(String(flag));
++    }
++    expect(mountFamily(name).textContent).toBe(fallback);
++    expect(mountFamily(name).hasAttribute('data-badge-status')).toBe(false);
++    expect(mountFamily(name, { status: 'active', [field]: false }).textContent).toBe('active');
++    expect(mountFamily(name, { label: 'Scheduled', [field]: false }).textContent).toBe('Scheduled');
++    expect(mountFamily(name, { label: 'Scheduled', [field]: false }, 'Authored').textContent).toBe('Authored');
++  });
++  it('CancellationBadge uses isCancelled as status only without inventing a label', () => {
++    const root = mountFamily('CancellationBadge', { isCancelled: false });
++    expect(root.textContent).toBe('Cancellation');
++    expect(root.getAttribute('data-badge-status')).toBe('false');
++  });
++  it('ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics', () => {
++    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archived: true, status: 'active', archivedAt: '2026-09-05', reason: 'Primary', archiveReason: 'Alias' }))).toEqual(['false', '2026-09-05', 'Primary']);
++    expect(values(mountFamily('ArchiveSummary', { archived: true, archiveReason: 'Alias' }))).toEqual(['true', 'Alias']);
++    expect(values(mountFamily('ArchiveSummary'))).toEqual([]);
++    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archivedAt: null, reason: 'Retained' }))).toEqual(['false', 'Retained']);
++    expect(mountFamily('ArchiveSummary', { summary: 'Fallback', text: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
++    const authored = mountFamily('ArchiveSummary', { title: 'Archived', isArchived: false }, 'Authored');
++    expect(authored.textContent).toBe('ArchivedAuthored');
++    expect(authored.querySelector('dl')).toBeNull();
++  });
++  it('PriceCardMeta retains model/interval precedence and literal inline labels', () => {
++    const root = mountFamily('PriceCardMeta', { label: 'Billing', model: 'tiered', pricingModel: 'flat', interval: 'annual', billingInterval: 'monthly' });
++    expect(root.querySelector('[data-meta-title]')?.textContent).toBe('Billing');
++    expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: tiered', 'Interval: annual']);
++    expect(mountFamily('PriceCardMeta').textContent).toBe('Price');
++    expect(mountFamily('PriceCardMeta', { model: 'Hidden' }, 'Authored').textContent).toBe('Authored');
++  });
++  it('CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission', () => {
++    const root = mountFamily('CancellationForm', { heading: 'End subscription', hint: 'Only a request', reason: 'Primary', cancellationReason: 'Alias', reasonCode: 'b', allowedReasons: [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }] });
++    expect(root.querySelector('h3')?.textContent).toBe('End subscription');
++    expect(root.querySelector('[data-form-subtitle]')?.textContent).toBe('Only a request');
++    const select = root.querySelector<HTMLSelectElement>('select[name="reasonCode"]')!;
++    const textarea = root.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')!;
++    expect(select.value).toBe('b');
++    expect(textarea.value).toBe('Primary');
++    expect(select.closest('label')?.querySelector('span')?.textContent).toBe('Reason Code');
++    expect(textarea.closest('label')?.querySelector('span')?.textContent).toBe('Reason');
++    textarea.value = 'Changed locally'; textarea.dispatchEvent(new Event('input', { bubbles: true }));
++    select.value = 'a'; select.dispatchEvent(new Event('change', { bubbles: true }));
++    expect(textarea.value).toBe('Changed locally'); expect(select.value).toBe('a');
++    const event = new Event('submit', { cancelable: true, bubbles: true }); root.dispatchEvent(event);
++    expect(event.defaultPrevented).toBe(true); expect(root.querySelector('button')).toBeNull();
++    const defaults = mountFamily('CancellationForm', { cancellationReason: 'Alias' });
++    expect([...defaults.querySelectorAll('option')].map((node) => node.value)).toEqual(['no_longer_needed', 'budget', 'duplicate']);
++    expect(defaults.querySelector<HTMLTextAreaElement>('textarea')?.value).toBe('Alias');
++    const emptyChoice = mountFamily('CancellationForm', { allowedReasons: [] }).querySelector('option')!;
++    expect(emptyChoice.value).toBe(''); expect(emptyChoice.textContent).toBe('Select...');
++    expect(mountFamily('CancellationForm', {}, 'Authored').querySelector('select')).toBeNull();
++  });
++});
+diff --git a/packages/components-vue/test/scenarios.spec.ts b/packages/components-vue/test/scenarios.spec.ts
+index 44a54a4c..17eb6ee3 100644
+--- a/packages/components-vue/test/scenarios.spec.ts
++++ b/packages/components-vue/test/scenarios.spec.ts
+@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
+ import { describe, expect, it } from 'vitest';
+ 
+ import {
++  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+   AuditTimeline,
+@@ -59,6 +60,7 @@ import {
+ } from '../src/index.js';
+ 
+ const implementations: Readonly<Record<string, Component>> = {
++  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+   AuditTimeline,
+@@ -679,6 +681,25 @@ describe('@oods/components-vue shared scenarios', () => {
+         case 'tag-summary-zero-and-tags': {
+           expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
+           break;
++        }
++        case 'archive-pill-false':
++        case 'cancellation-badge-false': {
++          expect(component.element?.textContent).toBe('false');
++          expect(component.element?.getAttribute('data-badge-status')).toBe('false');
++          break;
++        }
++        case 'archive-summary-false-and-reason': {
++          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
++          break;
++        }
++        case 'cancellation-form-presentational-controls': {
++          expect(component.element?.querySelector<HTMLSelectElement>('select[name="reasonCode"]')?.value).toBe('budget');
++          expect(component.element?.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')?.value).toBe('Costs changed');
++          break;
++        }
++        case 'price-card-meta-inline-terms': {
++          expect([...component.element!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: flat', 'Interval: monthly']);
++          break;
+         }
+           default:
+             throw new Error(`Missing executable Vue assertion for ${scenario.id}`);
+diff --git a/packages/components-vue/test/ssr.spec.ts b/packages/components-vue/test/ssr.spec.ts
+index f4d6a3e1..b263457a 100644
+--- a/packages/components-vue/test/ssr.spec.ts
++++ b/packages/components-vue/test/ssr.spec.ts
+@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue';
+ import { describe, expect, it } from 'vitest';
+ 
+ import {
++  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+   AuditTimeline,
+@@ -62,6 +63,11 @@ const ServerShowcase = defineComponent({
+   name: 'ServerShowcase',
+   setup() {
+     return () => h('main', [
++      h(ArchivePill, { isArchived: false }),
++      h(ArchiveSummary, { isArchived: false, reason: 'Retention' }),
++      h(CancellationBadge, { cancelAtPeriodEnd: false }),
++      h(CancellationForm, { reasonCode: 'budget', reason: 'Cost' }),
++      h(PriceCardMeta, { interval: 'monthly' }),
+       h(OwnerBadge, { owner: 'user-7' }),
+       h(OwnershipSummary, { ownerId: 'user-7', role: 'administrator' }),
+       h(OwnershipMeta, { ownerType: 'organization', role: 'custodian' }),
+diff --git a/packages/mcp-server/src/codegen/binding-utils.ts b/packages/mcp-server/src/codegen/binding-utils.ts
+index 11b854ae..50dcfdfa 100644
+--- a/packages/mcp-server/src/codegen/binding-utils.ts
++++ b/packages/mcp-server/src/codegen/binding-utils.ts
+@@ -25,6 +25,11 @@ const FIELD_TYPE_MAP: Record<string, string> = {
+ };
+ 
+ export function mapFieldType(entry: FieldSchemaEntry): string {
++  // Trait '?' markers mean nullable data, independently of property presence.
++  // Match the existing object generator's convention without rewriting the schema.
++  if (entry.type.endsWith('?')) {
++    return `${mapFieldType({ ...entry, type: entry.type.slice(0, -1).trim() })} | null`;
++  }
+   if (entry.enum && entry.enum.length > 0) {
+     return entry.enum.map(javascriptSingleQuotedString).join(' | ');
+   }
+@@ -744,7 +749,7 @@ export function resolveFieldProps(
+   if (
+     !existing.label
+     && (strategy === 'label-prop' || strategy === 'status-prop')
+-    && node.component !== 'StatusTimeline'
++    && !['StatusTimeline', 'ArchivePill', 'CancellationBadge'].includes(node.component)
+   ) {
+     props.label = humanizeFieldName(fieldProp);
+   }
+@@ -800,6 +805,8 @@ export const PATTERN_GROUP_DROPPED_DIRECTIVES: readonly string[] = [
+ ];
+ 
+ const FIELD_VALUE_PROP_TARGETS: Readonly<Record<string, string>> = {
++  ArchivePill: 'isArchived',
++  CancellationBadge: 'cancelAtPeriodEnd',
+   AddressSummaryBadge: 'role',
+   AddressValidationTimeline: 'events',
+   MembershipAuditTimeline: 'events',
+@@ -990,6 +997,9 @@ export type FrameworkRecipePropResolution = {
+ };
+ 
+ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
++  ArchiveSummary: { archivedField: 'isArchived', archivedAtField: 'archivedAt', reasonField: 'reason' },
++  CancellationForm: { reasonField: 'reason', codeField: 'reasonCode' },
++  PriceCardMeta: { modelField: 'model', intervalField: 'interval' },
+   OwnerBadge: { ownerIdField: 'owner', ownerTypeField: 'ownerType' },
+   OwnershipSummary: { ownerIdField: 'ownerId', ownerTypeField: 'ownerType', roleField: 'role' },
+   OwnershipMeta: { ownerTypeField: 'ownerType', roleField: 'role' },
+@@ -1080,6 +1090,11 @@ const RECIPE_PARAMETER_PROPS = new Set([
+   'initialParameter',
+   'minorUnitsParameter',
+   'allowTransferParameter',
++  'retainHistoryParameter',
++  'restoreWindowParameter',
++  'allowPartialRestoreParameter',
++  'allowedReasonsParameter',
++  'windowParameter',
+   'maxActiveParameter',
+   'maxLengthParameter',
+   'maxLabelLengthParameter',
+@@ -1111,6 +1126,9 @@ const RECIPE_PARAMETER_PROPS = new Set([
+  * would invent a prop; each is named in the component's contract record.
+  */
+ export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
++  ArchiveSummary: ['restoredAtField', 'archivedByField', 'metadataField'],
++  ArchivePill: ['archivedAtField'],
++  PriceCardMeta: ['amountField', 'currencyField'],
+   OwnershipSummary: ['transferredAtField'],
+   AddressCollectionPanel: ['roleField', 'defaultRoleField'],
+   AddressEditor: ['defaultRoleField'],
+diff --git a/packages/mcp-server/src/codegen/target-contracts.ts b/packages/mcp-server/src/codegen/target-contracts.ts
+index 6660033f..49698957 100644
+--- a/packages/mcp-server/src/codegen/target-contracts.ts
++++ b/packages/mcp-server/src/codegen/target-contracts.ts
+@@ -23,6 +23,10 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
+   // Labelled trait recipe directives lower into title/supporting; they are
+   // authoring metadata rather than additions to the public component API.
+   CardHeader: new Set(['titleField', 'supportingField']),
++  ArchiveSummary: new Set(['archivedField', 'archivedAtField', 'reasonField', 'restoredAtField', 'archivedByField', 'metadataField', 'retainHistoryParameter', 'restoreWindowParameter', 'allowPartialRestoreParameter']),
++  ArchivePill: new Set(['archivedAtField']),
++  CancellationForm: new Set(['reasonField', 'codeField', 'requireReasonParameter', 'allowedReasonsParameter', 'windowParameter']),
++  PriceCardMeta: new Set(['modelField', 'intervalField', 'amountField', 'currencyField', 'minorUnitsParameter']),
+   OwnerBadge: new Set(['ownerIdField', 'ownerTypeField']),
+   OwnershipSummary: new Set(['ownerIdField', 'ownerTypeField', 'roleField', 'transferredAtField', 'allowTransferParameter']),
+   OwnershipMeta: new Set(['ownerTypeField', 'roleField']),
+@@ -471,6 +475,11 @@ const PROP_VALUE_CONTRACTS: Readonly<
+     elevated: BOOLEAN_VALUE,
+     as: enumContract(['div', 'section', 'article', 'aside']),
+   },
++  ArchiveSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, isArchived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), archived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), status: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), archivedAt: valueContract('a string or null', (value) => typeof value === 'string' || value === null), reason: STRING_VALUE, archiveReason: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
++  ArchivePill: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, isArchived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
++  CancellationForm: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, hint: STRING_VALUE, allowedReasons: valueContract('an array of reason choices', Array.isArray), reasonCode: STRING_VALUE, reason: STRING_VALUE, cancellationReason: STRING_VALUE },
++  CancellationBadge: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, cancelAtPeriodEnd: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), isCancelled: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
++  PriceCardMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, model: STRING_VALUE, pricingModel: STRING_VALUE, interval: STRING_VALUE, billingInterval: STRING_VALUE },
+   OwnerBadge: { label: STRING_VALUE, text: STRING_VALUE, owner: STRING_VALUE, ownerType: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
+   OwnershipSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerId: STRING_VALUE, owner_id: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
+   OwnershipMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE },
+@@ -866,6 +875,7 @@ function acceptedFieldKinds(
+   // still mandatory, but the placeholder itself is always a string.
+   if (framework === 'html') return ['string', 'number', 'boolean', 'object', 'array', 'unknown'];
+   // Data props a generic field lowers to are independent of any local form state on the node.
++  if ((propName === 'isArchived' && component === 'ArchivePill') || (propName === 'cancelAtPeriodEnd' && component === 'CancellationBadge')) return ['string', 'boolean'];
+   if (propName === 'tags' && component === 'TagSummary') return ['string', 'array'];
+   if (propName === 'filters' && component === 'FilterPanel') return ['array'];
+   if (propName === 'tags' && (component === 'TagManager' || component === 'TagPills' || component === 'TagInput')) return ['array'];
+diff --git a/packages/mcp-server/src/compose/object-slot-filler.ts b/packages/mcp-server/src/compose/object-slot-filler.ts
+index 5ce7b67e..88d9b410 100644
+--- a/packages/mcp-server/src/compose/object-slot-filler.ts
++++ b/packages/mcp-server/src/compose/object-slot-filler.ts
+@@ -772,8 +772,9 @@ function applyBoundFieldProps(
+     field: fieldName,
+   };
+ 
+-  // Set label from field description if not already present
+-  if (node.component !== 'StatusTimeline' && fieldEntry.description && typeof nextProps.label !== 'string') {
++  // Keep value badges free of synthetic labels that would shadow their bound state.
++  // Other supported components retain field-description labels.
++  if (!['StatusTimeline', 'ArchivePill', 'CancellationBadge'].includes(node.component) && fieldEntry.description && typeof nextProps.label !== 'string') {
+     nextProps.label = fieldEntry.description;
+   }
+ 
+diff --git a/packages/mcp-server/test/product-reality/breadth-export-cells.s187.spec.ts b/packages/mcp-server/test/product-reality/breadth-export-cells.s187.spec.ts
+index 31a3e381..b39f27bf 100644
+--- a/packages/mcp-server/test/product-reality/breadth-export-cells.s187.spec.ts
++++ b/packages/mcp-server/test/product-reality/breadth-export-cells.s187.spec.ts
+@@ -12,6 +12,7 @@ const requireVue = createRequire(new URL('../../../components-vue/package.json',
+ const { h } = requireVue('vue');
+ const { renderToString: renderVue } = requireVue('@vue/server-renderer');
+ export const S187_COMPONENTS = [
++  'ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta',
+   'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
+   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
+ ] as const;
+@@ -62,6 +63,17 @@ describe('Sprint 187 built package export cells', () => {
+     } else if (component === 'TagSummary') {
+       expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
+     }
++    if (component === 'ArchivePill' || component === 'CancellationBadge') {
++      expect(root.textContent).toBe('false');
++      expect(root.getAttribute('data-badge-status')).toBe('false');
++    } else if (component === 'ArchiveSummary') {
++      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
++    } else if (component === 'CancellationForm') {
++      expect(root.querySelector('option[selected]')?.textContent).toBe('budget');
++      expect(root.querySelector('textarea')?.textContent).toBe('Costs changed');
++    } else if (component === 'PriceCardMeta') {
++      expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: flat', 'Interval: monthly']);
++    }
+     expect(preflightTargetCapabilities([{ id: `export-${component}`, component, props: { ...scenario.props } }], framework)).toEqual([]);
+   });
+ });
+diff --git a/packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts b/packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts
+index dcf54bf0..c7906ad4 100644
+--- a/packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts
++++ b/packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts
+@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
+ import { describe, expect, it } from 'vitest';
+ import { handle as compose } from '../../src/tools/design.compose.js';
+ import { handle as generate } from '../../src/tools/code.generate.js';
++import { resolveFieldProps, mapFieldType } from '../../src/codegen/binding-utils.js';
+ import { wireFieldProps } from '../../src/compose/object-slot-filler.js';
+ import { runS185M04LiveConsumers } from '../../../../scripts/product-reality/s185-m04-live-consumers.js';
+ import { composeFreshInputs, runLiveGenerationOnly } from '../../../../scripts/product-reality/s184-m06-live-consumers.js';
+@@ -84,6 +85,53 @@ describe('Sprint 187 fresh composition binding intent', () => {
+     }
+   });
+ 
++  it.each(['detail', 'form', 'card'] as const)('Subscription/%s preserves lifecycle data and disclosed directives', async (context) => {
++    const schema = (await compose({ object: 'Subscription', context })).schema!;
++    const nodes = schemaNodes(schema);
++    if (context === 'detail') expect(nodes.find((node) => node.component === 'ArchiveSummary')?.props)
++      .toMatchObject({ archivedField: 'is_archived', archivedAtField: 'archived_at', reasonField: 'archive_reason', metadataField: 'archive_metadata' });
++    if (context === 'form') {
++      const form = nodes.find((node) => node.component === 'CancellationForm')!;
++      expect(form.props).toMatchObject({ reasonField: 'cancellation_reason', codeField: 'cancellation_reason_code', allowedReasonsParameter: 'allowedReasons' });
++      expect(form.bindings).toBeUndefined();
++      expect(deriveConsumerModel(schema).cancellationReasonCode).toBe('budget');
++    }
++    if (context === 'card') {
++      for (const component of ['ArchivePill', 'CancellationBadge']) {
++        expect(nodes.find((node) => node.component === component)?.props).not.toHaveProperty('label');
++      }
++      expect(nodes.find((node) => node.component === 'PriceCardMeta')?.props).toMatchObject({ amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval' });
++    }
++    for (const framework of ['react', 'vue'] as const) {
++      const result = await generate({ schema, framework, profile: 'build' });
++      expect(result.status, JSON.stringify(result.errors)).toBe('ok');
++      if (context === 'detail') {
++        expect(schema.objectSchema?.archived_at.type).toBe('datetime?');
++        expect(result.code).toContain('archivedAt?: string | null;');
++      }
++    }
++  });
++
++  it.each(['ArchivePill', 'CancellationBadge'])('%s preserves an authored label while suppressing synthetic state labels', (component) => {
++    const schema: UiSchema = { version: '2026.02', objectSchema: { flag: { type: 'boolean', description: 'Technical description' } }, screens: [
++      { id: 'implicit', component, props: { field: 'flag' } },
++      { id: 'authored', component, props: { field: 'flag', label: 'Authored label' } },
++    ] };
++    wireFieldProps(schema);
++    expect(schema.screens[0]!.props).not.toHaveProperty('label');
++    expect(resolveFieldProps(schema.screens[0]!, schema.objectSchema) ?? {}).not.toHaveProperty('label');
++    expect(schema.screens[1]!.props?.label).toBe('Authored label');
++  });
++
++  it.each([
++    ['datetime?', 'string | null'], ['boolean?', 'boolean | null'], ['integer[]?', 'number[] | null'],
++  ])('maps nullable trait %s without changing the required flag or source entry', (type, expected) => {
++    const entry = { type, required: true };
++    expect(mapFieldType(entry)).toBe(expected);
++    expect(entry).toEqual({ type, required: true });
++    expect(mapFieldType({ type: 'string?', enum: ['a', 'b'] })).toBe("'a' | 'b' | null");
++  });
++
+   it('does not treat search-active booleans as editable search query text', () => {
+     const schema: UiSchema = { version: '2026.02', objectSchema: {
+       searchActive: { type: 'boolean', required: true, semanticType: 'state.search.active' },
+@@ -111,7 +159,7 @@ describe('Sprint 187 fresh composition binding intent', () => {
+   });
+ 
+   it.each(['react', 'vue'] as const)('renders real typed zero/nonzero and false/true in generated %s', async (framework) => {
+-    for (const [object, context] of operands.slice(4)) {
++    for (const [object, context] of [...operands.slice(4), ['Subscription', 'card'] as const, ['Subscription', 'detail'] as const]) {
+       const schema = (await compose({ object, context })).schema!;
+       const result = await generate({ schema, framework, profile: 'build', options: { typescript: true, styling: 'tokens' } });
+       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+@@ -136,6 +184,8 @@ describe('Sprint 187 fresh composition binding intent', () => {
+           const key = probe.field.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+           models[1]![key] = probe.kind === 'boolean-text' ? true : 7;
+         }
++        if (context === 'card') { models[1]!.isArchived = true; models[1]!.cancelAtPeriodEnd = true; }
++        if (context === 'detail') models.push({ ...deriveConsumerModel(schema), archivedAt: null });
+         const expectedModels = [...models];
+         if (framework === 'vue' && result.code!.includes('const generatedProps = defineProps<Props>();')) {
+           models.push({});
+@@ -156,13 +206,14 @@ const actionNames = ${JSON.stringify(result.artifact!.actions.map(({ name }) =>
+       ? require('react-dom/server').renderToString(require('react').createElement(generated.GeneratedUI, props))
+       : await require('@vue/server-renderer').renderToString(require('vue').createSSRApp(generated.default, props));
+     const document = JSDOM.fragment(html);
++    if (models[i].archivedAt === null) assert.ok(![...document.querySelectorAll('[data-oods-component=ArchiveSummary] dt')].some(node => node.textContent === 'Archived At'), 'null archive timestamp must omit its date term');
+     assert.ok(probes[i].length, 'a typed value must actually be exercised');
+     for (const probe of probes[i]) {
+       const node = document.querySelector('[id=' + JSON.stringify(probe.nodeId) + ']');
+       assert.ok(node, probe.nodeId);
+       const target = probe.selector ? node.querySelector(probe.selector) : node;
+       assert.ok(target, probe.selector);
+-      const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' ? target.getAttribute('value') : target.textContent.trim();
++      const actual = probe.kind === 'status' ? node.querySelector('[data-timeline-current]').textContent.trim() : probe.kind === 'native-value' ? target.value : probe.kind === 'numeric-input' || probe.kind === 'query-input' ? target.getAttribute('value') : target.textContent.trim();
+       assert.equal(actual, probe.expected, probe.field + ' must preserve its typed value');
+     }
+   }
+diff --git a/packages/mcp-server/test/product-reality/parity.s185.spec.ts b/packages/mcp-server/test/product-reality/parity.s185.spec.ts
+index fe83ee5e..b94228f4 100644
+--- a/packages/mcp-server/test/product-reality/parity.s185.spec.ts
++++ b/packages/mcp-server/test/product-reality/parity.s185.spec.ts
+@@ -13,6 +13,7 @@ const { h } = requireVue('vue');
+ const { renderToString: renderVue } = requireVue('@vue/server-renderer');
+ 
+ const COMPONENTS = [
++  'ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta',
+   'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
+   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
+   'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
+@@ -173,6 +174,8 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
+       expect(react.markers).toContain(component);
+     } else if (['OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary'].includes(component)) {
+       expect(react.markers).toContain(component);
++    } else if (['ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta'].includes(component)) {
++      expect(react.markers).toContain(component);
+     } else if (component === 'PriceSummary') {
+       expect(react.headings).toEqual([{ level: 'h3', text: 'Price Summary' }]);
+       for (const text of ['Amount', '129900', 'Currency', 'USD', 'Model', 'recurring', 'Interval', 'month']) expect(react.visibleText).toContain(text);
+diff --git a/scripts/product-reality/s184-m06-live-consumers.ts b/scripts/product-reality/s184-m06-live-consumers.ts
+index cbc4f136..813924f8 100644
+--- a/scripts/product-reality/s184-m06-live-consumers.ts
++++ b/scripts/product-reality/s184-m06-live-consumers.ts
+@@ -25,6 +25,7 @@ import {
+   deriveActionArguments,
+   deriveBoundFieldProbe,
+   deriveValueProbes,
++  schemaNodes,
+   deriveSharedNativeFieldProbes,
+   type SharedNativeFieldProbe,
+   type ValueProbe,
+@@ -1116,6 +1117,7 @@ async function browserProof({
+   boundFieldProbe,
+   valueProbes = [],
+   sharedNativeFields = [],
++  cancellationFormIds = [],
+   viewport = { width: 1280, height: 800 },
+   mountObligations,
+ }: {
+@@ -1129,6 +1131,7 @@ async function browserProof({
+   boundFieldProbe: BoundFieldProbe | null;
+   valueProbes?: ValueProbe[];
+   sharedNativeFields?: SharedNativeFieldProbe[];
++  cancellationFormIds?: string[];
+   viewport?: { width: number; height: number };
+   mountObligations: MountObligation[];
+ }): Promise<Record<string, unknown>> {
+@@ -1175,7 +1178,7 @@ async function browserProof({
+         const owner = page.locator(selectorForNode(probe.nodeId));
+         const visible = await owner.isVisible();
+         const target = probe.selector ? owner.locator(probe.selector) : owner;
+-        const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' ? await target.inputValue()
++        const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' || probe.kind === 'native-value' ? await target.inputValue()
+           : probe.kind === 'status' ? await owner.locator('[data-timeline-current]').textContent() : await target.textContent();
+         boundValues.push({ ...probe, actual, visible, passed: visible && actual?.trim() === probe.expected });
+       }
+@@ -1260,6 +1263,32 @@ async function browserProof({
+           if (disabledControls.some(({ passed }) => !passed)) throw new Error('Declared empty pagination controls were not visible, disabled, and inert.');
+           interactionEvidence.status = 'not-applicable';
+         }
++        const cancellationControls = [];
++        for (const nodeId of cancellationFormIds) {
++          const form = page.locator(selectorForNode(nodeId));
++          const reason = form.locator('textarea[name="reason"]');
++          const code = form.locator('select[name="reasonCode"]');
++          const before = { reason: await reason.inputValue(), code: await code.inputValue() };
++          const choices = await code.locator('option:not([disabled])').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value));
++          const next = choices.find((choice) => choice !== before.code);
++          if (!next) throw new Error('CancellationForm needs a distinct enabled reason-code choice.');
++          await reason.fill('Local cancellation reason');
++          await code.selectOption(next);
++          const submit = await form.evaluate((element) => {
++            const counts = () => JSON.stringify((window as unknown as { __OODS_ACTION_COUNTS__: unknown }).__OODS_ACTION_COUNTS__);
++            const beforeCounts = counts();
++            const event = new Event('submit', { bubbles: true, cancelable: true });
++            element.dispatchEvent(event);
++            return { prevented: event.defaultPrevented, actionCountsUnchanged: counts() === beforeCounts };
++          });
++          const after = { reason: await reason.inputValue(), code: await code.inputValue() };
++          const passed = after.reason === 'Local cancellation reason' && after.code === next && submit.prevented && submit.actionCountsUnchanged;
++          cancellationControls.push({ nodeId, before, after, ...submit, passed });
++        }
++        if (cancellationControls.length) {
++          Object.assign(interactionEvidence, { cancellationControls, cancellationScope: 'local native controls and prevented submission only; no cancellation, save or persistence action' });
++          eventHandlerAttached = eventHandlerAttached && cancellationControls.every(({ passed }) => passed);
++        }
+         const numericUpdates = [];
+         for (const probe of valueProbes.filter((entry) => entry.kind === 'numeric-input' && entry.editable)) {
+           const control = page.locator(selectorForNode(probe.nodeId));
+@@ -1870,6 +1899,7 @@ export async function runLiveConsumerCell({
+       boundFieldProbe: deriveBoundFieldProbe(schema),
+       sharedNativeFields: generation.composition ? deriveSharedNativeFieldProbes(schema) : [],
+       valueProbes: generation.composition ? deriveValueProbes(schema, model) : [],
++      cancellationFormIds: generation.composition ? schemaNodes(schema).filter((node) => node.component === 'CancellationForm').map((node) => node.id) : [],
+       // Fresh User/detail has eight tabs. At 1280px the intentional overflow
+       // effect removes tab buttons after attachment, outside this strict stable
+       // DOM hydration probe. Keep this proof at an explicit wide desktop size.
+diff --git a/scripts/product-reality/s185-baseline-surfaces.mjs b/scripts/product-reality/s185-baseline-surfaces.mjs
+index 6310354a..c6ba9629 100644
+--- a/scripts/product-reality/s185-baseline-surfaces.mjs
++++ b/scripts/product-reality/s185-baseline-surfaces.mjs
+@@ -20,7 +20,7 @@ const SPRINT_BASE = '1118f436345e160437abfedbe73a19f190a92562';
+  * per-mission fold under its own record root; frozen prior records stay intact.
+  */
+ const RECORD_ROOT = 'artifacts/product-reality/sprint-187/baseline-fold';
+-const FOLD_MISSION = 's187-m03';
++const FOLD_MISSION = 's187-m04';
+ const FOUNDATION_PATH = 'packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json';
+ const FOUNDATION_SHA256 = '7f473d04ca66be9b3119e41e3b4784876115cde5ca742b4f5dd13759e8f7be71';
+ const TARGETS = ['react', 'vue'];
+@@ -32,6 +32,7 @@ const READINESS = {
+ const PORTED_PACKED_REPORT = 'artifacts/product-reality/sprint-184/m04/packed-consumers/report.json';
+ /** Every live packed-consumer proof that can carry a new nucleus component's generatedConsumer evidence. */
+ const LIVE_ROOTS = Object.freeze([
++  'artifacts/product-reality/sprint-187/m04/live-attempt-1',
+   'artifacts/product-reality/sprint-187/m03/live-attempt-2',
+   'artifacts/product-reality/sprint-187/m02/live-attempt-3',
+   'artifacts/product-reality/sprint-185/m04/live-consumers',
+diff --git a/scripts/product-reality/s185-m04-consumer-contract.ts b/scripts/product-reality/s185-m04-consumer-contract.ts
+index 182a8208..02a72958 100644
+--- a/scripts/product-reality/s185-m04-consumer-contract.ts
++++ b/scripts/product-reality/s185-m04-consumer-contract.ts
+@@ -56,7 +56,7 @@ export function schemaNodes(schema: UiSchema): UiElement[] {
+ export const selectorForNode = (id: string): string => `[id=${JSON.stringify(id)}]`;
+ const camel = (name: string) => name.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+ 
+-export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status' | 'query-input' | 'family-text'; selector?: string; expected: string; editable: boolean };
++export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status' | 'query-input' | 'family-text' | 'native-value'; selector?: string; expected: string; editable: boolean };
+ 
+ /** Repaired bindings must visibly represent the supplied datum, including zero and false. */
+ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknown>): ValueProbe[] {
+@@ -70,6 +70,17 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
+       }
+       return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
+     };
++    if (node.component === 'ArchivePill' || node.component === 'CancellationBadge') return textProbe(node.props?.field, '[data-oods-badge-label]');
++    if (node.component === 'ArchiveSummary') return ['archivedField', 'archivedAtField', 'reasonField']
++      .filter((key) => typeof node.props?.[key] === 'string' && model[camel(node.props[key] as string)] != null)
++      .flatMap((key, index) =>
++      textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
++    if (node.component === 'PriceCardMeta') return textProbe(node.props?.intervalField, '[data-meta-item]:last-child')
++      .map((probe) => ({ ...probe, expected: `Interval: ${probe.expected}` }));
++    if (node.component === 'CancellationForm') return [
++      ...textProbe(node.props?.reasonField, 'textarea[name="reason"]'),
++      ...textProbe(node.props?.codeField, 'select[name="reasonCode"]'),
++    ].map((probe) => ({ ...probe, kind: 'native-value' }));
+     if (node.component === 'OwnerBadge') return textProbe(node.props?.ownerIdField ?? node.props?.ownerTypeField, '[data-oods-badge-label]');
+     if (node.component === 'OwnershipSummary') return ['ownerIdField', 'ownerTypeField', 'roleField'].flatMap((key, index) =>
+       textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
+@@ -173,6 +184,10 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
+     let value: unknown;
+     if (field.enum?.length) value = field.enum.includes(previous as string) ? previous : field.enum[0];
+     else if (Object.hasOwn(established, key)) value = previous;
++    // Exercise a non-first supported choice in the default presentational form.
++    // Parameter names are not resolved here or written into the schema.
++    else if (field.type === 'string' && schemaNodes(schema).some((node) => node.component === 'CancellationForm'
++      && node.props?.codeField === name && node.props?.allowedReasons === undefined)) value = 'budget';
+     else if (field.type === 'array' || field.type.endsWith('[]')) {
+       // The fresh summary cohort must exercise a real, nonempty tag datum.
+       value = schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
+@@ -181,7 +196,7 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
+     else if (field.type === 'integer' || field.type === 'number') value = 0;
+     else if (field.type === 'boolean') value = false;
+     else if (field.type === 'date') value = '2026-09-05';
+-    else if (field.type === 'datetime') value = '2026-09-05T12:00:00.000Z';
++    else if (field.type === 'datetime' || field.type === 'datetime?') value = '2026-09-05T12:00:00.000Z';
+     else if (field.type === 'email') value = 'consumer@example.test';
+     else if (field.type === 'url') value = 'https://example.test';
+     else value = name.endsWith('_id') ? `consumer-${name.replace(/_/g, '-')}` : `Consumer ${name.replace(/_/g, ' ')}`;

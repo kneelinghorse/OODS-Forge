@@ -304,3 +304,19 @@ export type TagSummaryProps = {
   tagCount?: number | string; count?: number | string; tags?: string | readonly unknown[];
   summary?: string; text?: string; description?: string;
 };
+
+export type ArchiveSummaryProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  isArchived?: boolean | string; archived?: boolean | string; status?: boolean | string;
+  archivedAt?: string | null; reason?: string; archiveReason?: string; summary?: string; text?: string; description?: string;
+};
+export type ArchivePillProps = Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> & { isArchived?: boolean | string; value?: boolean | string };
+export type CancellationBadgeProps = Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> & { cancelAtPeriodEnd?: boolean | string; isCancelled?: boolean | string; value?: boolean | string };
+export type CancellationFormProps = {
+  title?: string; label?: string; heading?: string; name?: string; description?: string; subtitle?: string; hint?: string;
+  allowedReasons?: readonly unknown[]; reasonCode?: string; reason?: string; cancellationReason?: string;
+};
+export type PriceCardMetaProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  model?: string; pricingModel?: string; interval?: string; billingInterval?: string;
+};

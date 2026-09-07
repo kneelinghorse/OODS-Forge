@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
@@ -59,6 +60,7 @@ import {
 } from '../src/index.js';
 
 const implementations: Readonly<Record<string, Component>> = {
+  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
@@ -678,6 +680,25 @@ describe('@oods/components-vue shared scenarios', () => {
         }
         case 'tag-summary-zero-and-tags': {
           expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
+          break;
+        }
+        case 'archive-pill-false':
+        case 'cancellation-badge-false': {
+          expect(component.element?.textContent).toBe('false');
+          expect(component.element?.getAttribute('data-badge-status')).toBe('false');
+          break;
+        }
+        case 'archive-summary-false-and-reason': {
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+          break;
+        }
+        case 'cancellation-form-presentational-controls': {
+          expect(component.element?.querySelector<HTMLSelectElement>('select[name="reasonCode"]')?.value).toBe('budget');
+          expect(component.element?.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')?.value).toBe('Costs changed');
+          break;
+        }
+        case 'price-card-meta-inline-terms': {
+          expect([...component.element!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: flat', 'Interval: monthly']);
           break;
         }
           default:

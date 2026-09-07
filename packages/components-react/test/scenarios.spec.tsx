@@ -538,6 +538,25 @@ describe('@oods/components-react shared scenarios', () => {
           expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
           break;
         }
+        case 'archive-pill-false':
+        case 'cancellation-badge-false': {
+          expect(component?.textContent).toBe('false');
+          expect(component?.getAttribute('data-badge-status')).toBe('false');
+          break;
+        }
+        case 'archive-summary-false-and-reason': {
+          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+          break;
+        }
+        case 'cancellation-form-presentational-controls': {
+          expect(component?.querySelector<HTMLSelectElement>('select[name="reasonCode"]')?.value).toBe('budget');
+          expect(component?.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')?.value).toBe('Costs changed');
+          break;
+        }
+        case 'price-card-meta-inline-terms': {
+          expect([...component!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: flat', 'Interval: monthly']);
+          break;
+        }
         default:
           throw new Error(`Missing executable React assertion for ${scenario.id}`);
       }

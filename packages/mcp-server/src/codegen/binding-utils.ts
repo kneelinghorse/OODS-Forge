@@ -25,6 +25,11 @@ const FIELD_TYPE_MAP: Record<string, string> = {
 };
 
 export function mapFieldType(entry: FieldSchemaEntry): string {
+  // Trait '?' markers mean nullable data, independently of property presence.
+  // Match the existing object generator's convention without rewriting the schema.
+  if (entry.type.endsWith('?')) {
+    return `${mapFieldType({ ...entry, type: entry.type.slice(0, -1).trim() })} | null`;
+  }
   if (entry.enum && entry.enum.length > 0) {
     return entry.enum.map(javascriptSingleQuotedString).join(' | ');
   }
@@ -744,7 +749,7 @@ export function resolveFieldProps(
   if (
     !existing.label
     && (strategy === 'label-prop' || strategy === 'status-prop')
-    && node.component !== 'StatusTimeline'
+    && !['StatusTimeline', 'ArchivePill', 'CancellationBadge'].includes(node.component)
   ) {
     props.label = humanizeFieldName(fieldProp);
   }
@@ -800,6 +805,8 @@ export const PATTERN_GROUP_DROPPED_DIRECTIVES: readonly string[] = [
 ];
 
 const FIELD_VALUE_PROP_TARGETS: Readonly<Record<string, string>> = {
+  ArchivePill: 'isArchived',
+  CancellationBadge: 'cancelAtPeriodEnd',
   AddressSummaryBadge: 'role',
   AddressValidationTimeline: 'events',
   MembershipAuditTimeline: 'events',
@@ -990,6 +997,9 @@ export type FrameworkRecipePropResolution = {
 };
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  ArchiveSummary: { archivedField: 'isArchived', archivedAtField: 'archivedAt', reasonField: 'reason' },
+  CancellationForm: { reasonField: 'reason', codeField: 'reasonCode' },
+  PriceCardMeta: { modelField: 'model', intervalField: 'interval' },
   OwnerBadge: { ownerIdField: 'owner', ownerTypeField: 'ownerType' },
   OwnershipSummary: { ownerIdField: 'ownerId', ownerTypeField: 'ownerType', roleField: 'role' },
   OwnershipMeta: { ownerTypeField: 'ownerType', roleField: 'role' },
@@ -1080,6 +1090,11 @@ const RECIPE_PARAMETER_PROPS = new Set([
   'initialParameter',
   'minorUnitsParameter',
   'allowTransferParameter',
+  'retainHistoryParameter',
+  'restoreWindowParameter',
+  'allowPartialRestoreParameter',
+  'allowedReasonsParameter',
+  'windowParameter',
   'maxActiveParameter',
   'maxLengthParameter',
   'maxLabelLengthParameter',
@@ -1111,6 +1126,9 @@ const RECIPE_PARAMETER_PROPS = new Set([
  * would invent a prop; each is named in the component's contract record.
  */
 export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
+  ArchiveSummary: ['restoredAtField', 'archivedByField', 'metadataField'],
+  ArchivePill: ['archivedAtField'],
+  PriceCardMeta: ['amountField', 'currencyField'],
   OwnershipSummary: ['transferredAtField'],
   AddressCollectionPanel: ['roleField', 'defaultRoleField'],
   AddressEditor: ['defaultRoleField'],

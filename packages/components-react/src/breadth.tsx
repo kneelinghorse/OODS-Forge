@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Badge } from './presentational.js';
 import type { ComponentEmphasis, ComponentTone } from './types.js';
 import type {
+  ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, CancellationBadgeProps, PriceCardMetaProps,
   OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps,
   LabelCellProps, InlineLabelProps, FormLabelGroupProps, ClassificationBadgeProps, ClassificationEditorProps,
   AddressEditorProps,
@@ -397,6 +398,7 @@ type BadgeFamilyOptions = {
   defaultVariant: string;
   labelKeys: readonly string[];
   statusKeys: readonly string[];
+  booleanProps?: readonly string[];
 };
 
 // Every badge-family summary mirrors renderBadgePrimitive over the governed
@@ -408,6 +410,7 @@ function createBadgeFamily<Props extends object>(options: BadgeFamilyOptions) {
     const record = rest as Record<string, unknown>;
     const scalar = (key: string): string | undefined => {
       const value = record[key];
+      if (typeof value === 'boolean' && options.booleanProps?.includes(key)) return String(value);
       return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
     };
     const content = childContent(children);
@@ -1043,3 +1046,59 @@ export const OwnershipMeta = React.forwardRef<HTMLDivElement, OwnershipMetaProps
   }
 );
 OwnershipMeta.displayName = 'OODS.OwnershipMeta';
+
+export const ArchivePill = createBadgeFamily<ArchivePillProps>({
+  component: 'ArchivePill', className: 'oods-archive-pill', defaultLabel: 'Archive', defaultVariant: 'archive',
+  labelKeys: ['label', 'text', 'status', 'state', 'isArchived', 'value'], statusKeys: ['status', 'state', 'isArchived', 'value'],
+  booleanProps: ['isArchived', 'value'],
+});
+export const CancellationBadge = createBadgeFamily<CancellationBadgeProps>({
+  component: 'CancellationBadge', className: 'oods-cancellation-badge', defaultLabel: 'Cancellation', defaultVariant: 'cancellation',
+  labelKeys: ['label', 'text', 'status', 'state', 'cancelAtPeriodEnd', 'value'], statusKeys: ['status', 'state', 'cancelAtPeriodEnd', 'isCancelled', 'value'],
+  booleanProps: ['cancelAtPeriodEnd', 'isCancelled', 'value'],
+});
+
+export const ArchiveSummary = React.forwardRef<HTMLElement, ArchiveSummaryProps>(
+  ({ title, label, heading, name, isArchived, archived, status, archivedAt, reason, archiveReason, summary, text, description, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const terms = ([['Archived', firstScalar(isArchived, archived, status)], ['Archived At', firstText(archivedAt ?? undefined)], ['Reason', firstText(reason, archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const fallback = firstText(summary, text, description);
+    return <section ref={ref} className={classes('oods-archive-summary', className)} data-oods-component="ArchiveSummary" data-summary-type="archive" {...rest}>
+      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Archive Summary'}</h3>
+      {content.authored || content.scalar !== undefined ? children : terms.length
+        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
+        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
+    </section>;
+  }
+);
+ArchiveSummary.displayName = 'OODS.ArchiveSummary';
+
+export const PriceCardMeta = React.forwardRef<HTMLDivElement, PriceCardMetaProps>(
+  ({ title, label, heading, name, model, pricingModel, interval, billingInterval, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const terms = ([['Model', firstText(model, pricingModel)], ['Interval', firstText(interval, billingInterval)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    return <div ref={ref} className={classes('oods-price-card-meta', className)} data-oods-component="PriceCardMeta" data-meta-type="price" {...rest}>
+      {content.authored || content.scalar !== undefined ? children : <>
+        <span data-meta-title="true">{firstText(title, label, heading, name) ?? 'Price'}</span>
+        {terms.map(([term, value]) => <span key={term} data-meta-item="true"><strong>{term}:</strong> {value}</span>)}
+      </>}
+    </div>;
+  }
+);
+PriceCardMeta.displayName = 'OODS.PriceCardMeta';
+
+export const CancellationForm = React.forwardRef<HTMLFormElement, CancellationFormProps>(
+  ({ title, label, heading, name, description, subtitle, hint, allowedReasons, reasonCode, reason, cancellationReason, children, className, onSubmit, ...rest }, ref) => {
+    const content = childContent(children);
+    const choices = normalizeSelectOptions(allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate']);
+    return <form ref={ref} className={classes('oods-cancellation-form', className)} data-oods-component="CancellationForm" data-form-type="cancellation"
+      onSubmit={(event) => { preventSubmit(event); onSubmit?.(event); }} {...rest}>
+      {formHeader(firstText(title, label, heading, name) ?? 'Cancellation Form', firstText(description, subtitle, hint))}
+      <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
+        <label data-form-control="select"><span>Reason Code</span><select name="reasonCode" defaultValue={reasonCode}>{selectOptionsMarkup(choices)}</select></label>
+        <label data-form-control="textarea"><span>Reason</span><textarea name="reason" defaultValue={firstText(reason, cancellationReason) ?? ''} /></label>
+      </>}</div>
+    </form>;
+  }
+);
+CancellationForm.displayName = 'OODS.CancellationForm';

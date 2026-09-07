@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { componentContracts, NUCLEUS_COMPONENT_IDS, sharedScenarios } from '../src/index.js';
 
 const FAMILIES = [
+  'ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta',
   'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary','LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor'] as const;
 describe('Sprint 187 fresh composition contracts', () => {
   it.each(FAMILIES)('%s has one governed contract and scenario without invented edit events', (id) => {

@@ -388,16 +388,19 @@ type BadgeFamilyOptions = {
   defaultVariant: string;
   labelKeys: readonly string[];
   statusKeys: readonly string[];
+  booleanProps?: readonly string[];
   extraProps: readonly string[];
 };
 
 // Every badge-family summary mirrors renderBadgePrimitive over the governed
 // Badge substrate; only the marker, default label/variant and alias order differ.
 function createBadgeFamily(options: BadgeFamilyOptions) {
-  const props: Record<string, StringConstructor> = {
+  const props: Record<string, StringConstructor | { type: PropType<string | boolean>; default: undefined }> = {
     label: String, text: String, value: String, status: String, state: String, variant: String, tone: String, emphasis: String,
   };
   for (const key of options.extraProps) props[key] = String;
+  // An absent Boolean prop must stay absent so it cannot shadow later aliases.
+  for (const key of options.booleanProps ?? []) props[key] = { type: [String, Boolean], default: undefined };
   return defineComponent({
     name: `Oods${options.component}`,
     props,
@@ -406,8 +409,9 @@ function createBadgeFamily(options: BadgeFamilyOptions) {
         const record = componentProps as Record<string, unknown>;
         const content = authoredContent(slots.default?.());
         const scalar = scalarContent(content);
-        const label = scalar ?? firstText(...options.labelKeys.map((key) => record[key])) ?? options.defaultLabel;
-        const status = firstText(...options.statusKeys.map((key) => record[key]));
+        const read = (key: string) => typeof record[key] === 'boolean' && options.booleanProps?.includes(key) ? String(record[key]) : record[key];
+        const label = scalar ?? firstText(...options.labelKeys.map(read)) ?? options.defaultLabel;
+        const status = firstText(...options.statusKeys.map(read));
         const variant = firstText(record.variant) ?? options.defaultVariant;
         return h(Badge, {
           status, tone: record.tone as ComponentTone | undefined, emphasis: record.emphasis as ComponentEmphasis | undefined,
@@ -978,6 +982,68 @@ export const OwnershipMeta = defineComponent({
       return h('div', { class: 'oods-ownership-meta', 'data-oods-component': 'OwnershipMeta', 'data-meta-type': 'ownership' }, content.length ? content : [
         h('span', { 'data-meta-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Ownership'),
         ...terms.map(([term, value]) => h('span', { key: term, 'data-meta-item': 'true' }, [h('strong', `${term}:`), ` ${value}`])),
+      ]);
+    };
+  },
+});
+
+export const ArchivePill = createBadgeFamily({
+  component: 'ArchivePill', className: 'oods-archive-pill', defaultLabel: 'Archive', defaultVariant: 'archive',
+  labelKeys: ['label', 'text', 'status', 'state', 'isArchived', 'value'], statusKeys: ['status', 'state', 'isArchived', 'value'],
+  extraProps: ['isArchived'], booleanProps: ['isArchived', 'value'],
+});
+export const CancellationBadge = createBadgeFamily({
+  component: 'CancellationBadge', className: 'oods-cancellation-badge', defaultLabel: 'Cancellation', defaultVariant: 'cancellation',
+  labelKeys: ['label', 'text', 'status', 'state', 'cancelAtPeriodEnd', 'value'], statusKeys: ['status', 'state', 'cancelAtPeriodEnd', 'isCancelled', 'value'],
+  extraProps: ['cancelAtPeriodEnd', 'isCancelled'], booleanProps: ['cancelAtPeriodEnd', 'isCancelled', 'value'],
+});
+
+export const ArchiveSummary = defineComponent({
+  name: 'OodsArchiveSummary', props: { title: String, label: String, heading: String, name: String, isArchived: { type: [String, Boolean], default: undefined }, archived: { type: [String, Boolean], default: undefined }, status: { type: [String, Boolean], default: undefined }, archivedAt: String as PropType<string | null>, reason: String, archiveReason: String, summary: String, text: String, description: String },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      const terms = ([['Archived', firstScalar(props.isArchived, props.archived, props.status)], ['Archived At', firstText(props.archivedAt)], ['Reason', firstText(props.reason, props.archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+      const fallback = firstText(props.summary, props.text, props.description);
+      return h('section', { class: 'oods-archive-summary', 'data-oods-component': 'ArchiveSummary', 'data-summary-type': 'archive' }, [
+        h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Archive Summary'),
+        ...(content.length ? content : terms.length
+          ? [h('dl', terms.map(([term, value]) => h('div', { key: term, 'data-summary-item': 'true' }, [h('dt', term), h('dd', value)])))]
+          : fallback ? [h('p', { 'data-summary-fallback': 'true' }, fallback)] : [h('dl')]),
+      ]);
+    };
+  },
+});
+
+export const PriceCardMeta = defineComponent({
+  name: 'OodsPriceCardMeta', props: { title: String, label: String, heading: String, name: String, model: String, pricingModel: String, interval: String, billingInterval: String },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      const terms = ([['Model', firstText(props.model, props.pricingModel)], ['Interval', firstText(props.interval, props.billingInterval)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+      return h('div', { class: 'oods-price-card-meta', 'data-oods-component': 'PriceCardMeta', 'data-meta-type': 'price' }, content.length ? content : [
+        h('span', { 'data-meta-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Price'),
+        ...terms.map(([term, value]) => h('span', { key: term, 'data-meta-item': 'true' }, [h('strong', `${term}:`), ` ${value}`])),
+      ]);
+    };
+  },
+});
+
+export const CancellationForm = defineComponent({
+  name: 'OodsCancellationForm', props: {
+    title: String, label: String, heading: String, name: String, description: String, subtitle: String, hint: String,
+    allowedReasons: Array as PropType<readonly unknown[]>, reasonCode: String, reason: String, cancellationReason: String,
+  },
+  setup(props, { slots }) {
+    return () => {
+      const content = authoredContent(slots.default?.());
+      const choices = normalizeSelectOptions(props.allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate']);
+      return h('form', { class: 'oods-cancellation-form', 'data-oods-component': 'CancellationForm', 'data-form-type': 'cancellation', onSubmit: (event: Event) => event.preventDefault() }, [
+        formHeader(firstText(props.title, props.label, props.heading, props.name) ?? 'Cancellation Form', firstText(props.description, props.subtitle, props.hint)),
+        h('div', { 'data-form-content': 'true' }, content.length ? content : [
+          h('label', { 'data-form-control': 'select' }, [h('span', 'Reason Code'), h('select', { name: 'reasonCode', value: props.reasonCode }, selectOptionNodes(choices, props.reasonCode))]),
+          h('label', { 'data-form-control': 'textarea' }, [h('span', 'Reason'), h('textarea', { name: 'reason', value: firstText(props.reason, props.cancellationReason) ?? '' })]),
+        ]),
       ]);
     };
   },

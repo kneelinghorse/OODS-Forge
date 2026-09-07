@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
@@ -62,6 +63,11 @@ const ServerShowcase = defineComponent({
   name: 'ServerShowcase',
   setup() {
     return () => h('main', [
+      h(ArchivePill, { isArchived: false }),
+      h(ArchiveSummary, { isArchived: false, reason: 'Retention' }),
+      h(CancellationBadge, { cancelAtPeriodEnd: false }),
+      h(CancellationForm, { reasonCode: 'budget', reason: 'Cost' }),
+      h(PriceCardMeta, { interval: 'monthly' }),
       h(OwnerBadge, { owner: 'user-7' }),
       h(OwnershipSummary, { ownerId: 'user-7', role: 'administrator' }),
       h(OwnershipMeta, { ownerType: 'organization', role: 'custodian' }),

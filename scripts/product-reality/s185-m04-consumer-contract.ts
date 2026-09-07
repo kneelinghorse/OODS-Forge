@@ -56,7 +56,7 @@ export function schemaNodes(schema: UiSchema): UiElement[] {
 export const selectorForNode = (id: string): string => `[id=${JSON.stringify(id)}]`;
 const camel = (name: string) => name.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
 
-export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status' | 'query-input' | 'family-text'; selector?: string; expected: string; editable: boolean };
+export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status' | 'query-input' | 'family-text' | 'native-value'; selector?: string; expected: string; editable: boolean };
 
 /** Repaired bindings must visibly represent the supplied datum, including zero and false. */
 export function deriveValueProbes(schema: UiSchema, model: Record<string, unknown>): ValueProbe[] {
@@ -70,6 +70,17 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
       }
       return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
     };
+    if (node.component === 'ArchivePill' || node.component === 'CancellationBadge') return textProbe(node.props?.field, '[data-oods-badge-label]');
+    if (node.component === 'ArchiveSummary') return ['archivedField', 'archivedAtField', 'reasonField']
+      .filter((key) => typeof node.props?.[key] === 'string' && model[camel(node.props[key] as string)] != null)
+      .flatMap((key, index) =>
+      textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
+    if (node.component === 'PriceCardMeta') return textProbe(node.props?.intervalField, '[data-meta-item]:last-child')
+      .map((probe) => ({ ...probe, expected: `Interval: ${probe.expected}` }));
+    if (node.component === 'CancellationForm') return [
+      ...textProbe(node.props?.reasonField, 'textarea[name="reason"]'),
+      ...textProbe(node.props?.codeField, 'select[name="reasonCode"]'),
+    ].map((probe) => ({ ...probe, kind: 'native-value' }));
     if (node.component === 'OwnerBadge') return textProbe(node.props?.ownerIdField ?? node.props?.ownerTypeField, '[data-oods-badge-label]');
     if (node.component === 'OwnershipSummary') return ['ownerIdField', 'ownerTypeField', 'roleField'].flatMap((key, index) =>
       textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
@@ -173,6 +184,10 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
     let value: unknown;
     if (field.enum?.length) value = field.enum.includes(previous as string) ? previous : field.enum[0];
     else if (Object.hasOwn(established, key)) value = previous;
+    // Exercise a non-first supported choice in the default presentational form.
+    // Parameter names are not resolved here or written into the schema.
+    else if (field.type === 'string' && schemaNodes(schema).some((node) => node.component === 'CancellationForm'
+      && node.props?.codeField === name && node.props?.allowedReasons === undefined)) value = 'budget';
     else if (field.type === 'array' || field.type.endsWith('[]')) {
       // The fresh summary cohort must exercise a real, nonempty tag datum.
       value = schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
@@ -181,7 +196,7 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
     else if (field.type === 'integer' || field.type === 'number') value = 0;
     else if (field.type === 'boolean') value = false;
     else if (field.type === 'date') value = '2026-09-05';
-    else if (field.type === 'datetime') value = '2026-09-05T12:00:00.000Z';
+    else if (field.type === 'datetime' || field.type === 'datetime?') value = '2026-09-05T12:00:00.000Z';
     else if (field.type === 'email') value = 'consumer@example.test';
     else if (field.type === 'url') value = 'https://example.test';
     else value = name.endsWith('_id') ? `consumer-${name.replace(/_/g, '-')}` : `Consumer ${name.replace(/_/g, ' ')}`;

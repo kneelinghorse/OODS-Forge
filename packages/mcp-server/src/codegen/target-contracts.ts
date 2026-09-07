@@ -23,6 +23,10 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   // Labelled trait recipe directives lower into title/supporting; they are
   // authoring metadata rather than additions to the public component API.
   CardHeader: new Set(['titleField', 'supportingField']),
+  ArchiveSummary: new Set(['archivedField', 'archivedAtField', 'reasonField', 'restoredAtField', 'archivedByField', 'metadataField', 'retainHistoryParameter', 'restoreWindowParameter', 'allowPartialRestoreParameter']),
+  ArchivePill: new Set(['archivedAtField']),
+  CancellationForm: new Set(['reasonField', 'codeField', 'requireReasonParameter', 'allowedReasonsParameter', 'windowParameter']),
+  PriceCardMeta: new Set(['modelField', 'intervalField', 'amountField', 'currencyField', 'minorUnitsParameter']),
   OwnerBadge: new Set(['ownerIdField', 'ownerTypeField']),
   OwnershipSummary: new Set(['ownerIdField', 'ownerTypeField', 'roleField', 'transferredAtField', 'allowTransferParameter']),
   OwnershipMeta: new Set(['ownerTypeField', 'roleField']),
@@ -471,6 +475,11 @@ const PROP_VALUE_CONTRACTS: Readonly<
     elevated: BOOLEAN_VALUE,
     as: enumContract(['div', 'section', 'article', 'aside']),
   },
+  ArchiveSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, isArchived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), archived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), status: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), archivedAt: valueContract('a string or null', (value) => typeof value === 'string' || value === null), reason: STRING_VALUE, archiveReason: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
+  ArchivePill: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, isArchived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
+  CancellationForm: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, hint: STRING_VALUE, allowedReasons: valueContract('an array of reason choices', Array.isArray), reasonCode: STRING_VALUE, reason: STRING_VALUE, cancellationReason: STRING_VALUE },
+  CancellationBadge: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, cancelAtPeriodEnd: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), isCancelled: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
+  PriceCardMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, model: STRING_VALUE, pricingModel: STRING_VALUE, interval: STRING_VALUE, billingInterval: STRING_VALUE },
   OwnerBadge: { label: STRING_VALUE, text: STRING_VALUE, owner: STRING_VALUE, ownerType: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
   OwnershipSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerId: STRING_VALUE, owner_id: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
   OwnershipMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE },
@@ -866,6 +875,7 @@ function acceptedFieldKinds(
   // still mandatory, but the placeholder itself is always a string.
   if (framework === 'html') return ['string', 'number', 'boolean', 'object', 'array', 'unknown'];
   // Data props a generic field lowers to are independent of any local form state on the node.
+  if ((propName === 'isArchived' && component === 'ArchivePill') || (propName === 'cancelAtPeriodEnd' && component === 'CancellationBadge')) return ['string', 'boolean'];
   if (propName === 'tags' && component === 'TagSummary') return ['string', 'array'];
   if (propName === 'filters' && component === 'FilterPanel') return ['array'];
   if (propName === 'tags' && (component === 'TagManager' || component === 'TagPills' || component === 'TagInput')) return ['array'];

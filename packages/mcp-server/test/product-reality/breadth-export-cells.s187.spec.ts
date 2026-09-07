@@ -12,6 +12,7 @@ const requireVue = createRequire(new URL('../../../components-vue/package.json',
 const { h } = requireVue('vue');
 const { renderToString: renderVue } = requireVue('@vue/server-renderer');
 export const S187_COMPONENTS = [
+  'ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta',
   'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
 ] as const;
@@ -61,6 +62,17 @@ describe('Sprint 187 built package export cells', () => {
       expect(root.getAttribute('role')).toBeNull();
     } else if (component === 'TagSummary') {
       expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
+    }
+    if (component === 'ArchivePill' || component === 'CancellationBadge') {
+      expect(root.textContent).toBe('false');
+      expect(root.getAttribute('data-badge-status')).toBe('false');
+    } else if (component === 'ArchiveSummary') {
+      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+    } else if (component === 'CancellationForm') {
+      expect(root.querySelector('option[selected]')?.textContent).toBe('budget');
+      expect(root.querySelector('textarea')?.textContent).toBe('Costs changed');
+    } else if (component === 'PriceCardMeta') {
+      expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: flat', 'Interval: monthly']);
     }
     expect(preflightTargetCapabilities([{ id: `export-${component}`, component, props: { ...scenario.props } }], framework)).toEqual([]);
   });

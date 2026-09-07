@@ -375,6 +375,53 @@ type TagSummaryProps = {
     text?: string;
     description?: string;
 };
+type ArchiveSummaryProps = {
+    title?: string;
+    label?: string;
+    heading?: string;
+    name?: string;
+    isArchived?: boolean | string;
+    archived?: boolean | string;
+    status?: boolean | string;
+    archivedAt?: string | null;
+    reason?: string;
+    archiveReason?: string;
+    summary?: string;
+    text?: string;
+    description?: string;
+};
+type ArchivePillProps = Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> & {
+    isArchived?: boolean | string;
+    value?: boolean | string;
+};
+type CancellationBadgeProps = Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> & {
+    cancelAtPeriodEnd?: boolean | string;
+    isCancelled?: boolean | string;
+    value?: boolean | string;
+};
+type CancellationFormProps = {
+    title?: string;
+    label?: string;
+    heading?: string;
+    name?: string;
+    description?: string;
+    subtitle?: string;
+    hint?: string;
+    allowedReasons?: readonly unknown[];
+    reasonCode?: string;
+    reason?: string;
+    cancellationReason?: string;
+};
+type PriceCardMetaProps = {
+    title?: string;
+    label?: string;
+    heading?: string;
+    name?: string;
+    model?: string;
+    pricingModel?: string;
+    interval?: string;
+    billingInterval?: string;
+};
 
 declare const Badge: vue.DefineComponent<vue.ExtractPropTypes<{
     content: {
@@ -1006,15 +1053,33 @@ declare const TagManager: vue.DefineComponent<vue.ExtractPropTypes<{
     tags: PropType<readonly unknown[]>;
     value: PropType<readonly unknown[]>;
 }>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
-declare const AddressSummaryBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+declare const AddressSummaryBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
     [key: string]: any;
-}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
-declare const MessageStatusBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const MessageStatusBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
     [key: string]: any;
-}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
-declare const PreferenceSummaryBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const PreferenceSummaryBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
     [key: string]: any;
-}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
 declare const RoleBadgeList: vue.DefineComponent<vue.ExtractPropTypes<{
     roles: PropType<readonly unknown[]>;
     badges: PropType<readonly unknown[]>;
@@ -1355,9 +1420,15 @@ declare const FormLabelGroup: vue.DefineComponent<vue.ExtractPropTypes<{
     for: StringConstructor;
     inputId: StringConstructor;
 }>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
-declare const ClassificationBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+declare const ClassificationBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
     [key: string]: any;
-}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
 declare const ClassificationEditor: vue.DefineComponent<vue.ExtractPropTypes<{
     title: StringConstructor;
     label: StringConstructor;
@@ -1389,9 +1460,15 @@ declare const ClassificationEditor: vue.DefineComponent<vue.ExtractPropTypes<{
     mode: StringConstructor;
     classificationMode: StringConstructor;
 }>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
-declare const OwnerBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+declare const OwnerBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
     [key: string]: any;
-}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
 declare const OwnershipSummary: vue.DefineComponent<vue.ExtractPropTypes<{
     title: StringConstructor;
     label: StringConstructor;
@@ -1468,6 +1545,125 @@ declare const OwnershipMeta: vue.DefineComponent<vue.ExtractPropTypes<{
     owner_type: StringConstructor;
     role: StringConstructor;
     ownershipRole: StringConstructor;
+}>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const ArchivePill: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+    [key: string]: any;
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const CancellationBadge: vue.DefineComponent<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+    [key: string]: any;
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<Record<string, StringConstructor | {
+    type: PropType<string | boolean>;
+    default: undefined;
+}>>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const ArchiveSummary: vue.DefineComponent<vue.ExtractPropTypes<{
+    title: StringConstructor;
+    label: StringConstructor;
+    heading: StringConstructor;
+    name: StringConstructor;
+    isArchived: {
+        type: (StringConstructor | BooleanConstructor)[];
+        default: undefined;
+    };
+    archived: {
+        type: (StringConstructor | BooleanConstructor)[];
+        default: undefined;
+    };
+    status: {
+        type: (StringConstructor | BooleanConstructor)[];
+        default: undefined;
+    };
+    archivedAt: PropType<string | null>;
+    reason: StringConstructor;
+    archiveReason: StringConstructor;
+    summary: StringConstructor;
+    text: StringConstructor;
+    description: StringConstructor;
+}>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+    [key: string]: any;
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<{
+    title: StringConstructor;
+    label: StringConstructor;
+    heading: StringConstructor;
+    name: StringConstructor;
+    isArchived: {
+        type: (StringConstructor | BooleanConstructor)[];
+        default: undefined;
+    };
+    archived: {
+        type: (StringConstructor | BooleanConstructor)[];
+        default: undefined;
+    };
+    status: {
+        type: (StringConstructor | BooleanConstructor)[];
+        default: undefined;
+    };
+    archivedAt: PropType<string | null>;
+    reason: StringConstructor;
+    archiveReason: StringConstructor;
+    summary: StringConstructor;
+    text: StringConstructor;
+    description: StringConstructor;
+}>> & Readonly<{}>, {
+    status: string | boolean;
+    isArchived: string | boolean;
+    archived: string | boolean;
+}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const PriceCardMeta: vue.DefineComponent<vue.ExtractPropTypes<{
+    title: StringConstructor;
+    label: StringConstructor;
+    heading: StringConstructor;
+    name: StringConstructor;
+    model: StringConstructor;
+    pricingModel: StringConstructor;
+    interval: StringConstructor;
+    billingInterval: StringConstructor;
+}>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+    [key: string]: any;
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<{
+    title: StringConstructor;
+    label: StringConstructor;
+    heading: StringConstructor;
+    name: StringConstructor;
+    model: StringConstructor;
+    pricingModel: StringConstructor;
+    interval: StringConstructor;
+    billingInterval: StringConstructor;
+}>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
+declare const CancellationForm: vue.DefineComponent<vue.ExtractPropTypes<{
+    title: StringConstructor;
+    label: StringConstructor;
+    heading: StringConstructor;
+    name: StringConstructor;
+    description: StringConstructor;
+    subtitle: StringConstructor;
+    hint: StringConstructor;
+    allowedReasons: PropType<readonly unknown[]>;
+    reasonCode: StringConstructor;
+    reason: StringConstructor;
+    cancellationReason: StringConstructor;
+}>, () => vue.VNode<vue.RendererNode, vue.RendererElement, {
+    [key: string]: any;
+}>, {}, {}, {}, vue.ComponentOptionsMixin, vue.ComponentOptionsMixin, {}, string, vue.PublicProps, Readonly<vue.ExtractPropTypes<{
+    title: StringConstructor;
+    label: StringConstructor;
+    heading: StringConstructor;
+    name: StringConstructor;
+    description: StringConstructor;
+    subtitle: StringConstructor;
+    hint: StringConstructor;
+    allowedReasons: PropType<readonly unknown[]>;
+    reasonCode: StringConstructor;
+    reason: StringConstructor;
+    cancellationReason: StringConstructor;
 }>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
 
 declare const Input: vue.DefineComponent<vue.ExtractPropTypes<{
@@ -2505,4 +2701,4 @@ declare const RelativeTimestamp: vue.DefineComponent<vue.ExtractPropTypes<{
     timezoneParameter: StringConstructor;
 }>> & Readonly<{}>, {}, {}, {}, {}, string, vue.ComponentProvideOptions, true, {}, any>;
 
-export { AddressCollectionPanel, type AddressCollectionPanelProps, AddressEditor, type AddressEditorProps, type AddressEditorValue, AddressSummaryBadge, type AddressSummaryBadgeProps, AddressValidationTimeline, type AddressValidationTimelineProps, AuditEvent, type AuditEventProps, AuditTimeline, Badge, Banner, Button, CancellationSummary, type CancellationSummaryProps, Card, CardHeader, type CardHeaderProps, Checkbox, ClassificationBadge, type ClassificationBadgeProps, ClassificationEditor, type ClassificationEditorProps, ClassificationPanel, type ClassificationPanelProps, ColorSwatch, type ColorSwatchProps, ColorizedBadge, type ColorizedBadgeProps, type ComponentEmphasis, type ComponentSize, type ComponentTone, DatePicker, DetailHeader, type DetailHeaderProps, type FilterDescriptor, FilterPanel, type FilterPanelProps, FormLabelGroup, type FormLabelGroupProps, Grid, type HeaderElement, type HeaderLevel, InlineLabel, type InlineLabelProps, Input, LabelCell, type LabelCellProps, type LayoutGap, MembershipAuditTimeline, type MembershipAuditTimelineProps, MembershipPanel, type MembershipPanelProps, MessageEventTimeline, type MessageEventTimelineProps, MessageStatusBadge, type MessageStatusBadgeProps, OwnerBadge, type OwnerBadgeProps, OwnershipMeta, type OwnershipMetaProps, OwnershipSummary, type OwnershipSummaryProps, PaginationBar, type PaginationBarProps, type PaginationItem, type PanelSectionProps, PreferenceEditor, type PreferenceEditorProps, PreferencePanel, type PreferencePanelProps, PreferenceSummaryBadge, type PreferenceSummaryBadgeProps, PreferenceTimeline, type PreferenceTimelineProps, PriceBadge, type PriceBadgeProps, PriceSummary, type PriceSummaryProps, RelativeTimestamp, type RelativeTimestampProps, RoleAssignmentForm, type RoleAssignmentFormProps, RoleBadgeList, type RoleBadgeListProps, SearchInput, type SearchInputProps, Select, type SelectOption, Stack, StatusBadge, type StatusBadgeProps, type StatusPresentation, StatusSelector, type StatusSelectorProps, StatusTimeline, type TabItem, Table, TableBody, TableCaption, TableCell, type TableColumn, TableHead, TableHeaderCell, type TableRecord, TableRow, Tabs, TagInput, type TagInputProps, TagManager, type TagManagerProps, TagPills, type TagPillsProps, TagSummary, type TagSummaryProps, TemplatePicker, type TemplatePickerProps, Text, type TextElement, Textarea, type TimelineEvent, type TimelineProps, type ValidationMessage, VizAreaPreview, type VizAreaPreviewProps };
+export { AddressCollectionPanel, type AddressCollectionPanelProps, AddressEditor, type AddressEditorProps, type AddressEditorValue, AddressSummaryBadge, type AddressSummaryBadgeProps, AddressValidationTimeline, type AddressValidationTimelineProps, ArchivePill, type ArchivePillProps, ArchiveSummary, type ArchiveSummaryProps, AuditEvent, type AuditEventProps, AuditTimeline, Badge, Banner, Button, CancellationBadge, type CancellationBadgeProps, CancellationForm, type CancellationFormProps, CancellationSummary, type CancellationSummaryProps, Card, CardHeader, type CardHeaderProps, Checkbox, ClassificationBadge, type ClassificationBadgeProps, ClassificationEditor, type ClassificationEditorProps, ClassificationPanel, type ClassificationPanelProps, ColorSwatch, type ColorSwatchProps, ColorizedBadge, type ColorizedBadgeProps, type ComponentEmphasis, type ComponentSize, type ComponentTone, DatePicker, DetailHeader, type DetailHeaderProps, type FilterDescriptor, FilterPanel, type FilterPanelProps, FormLabelGroup, type FormLabelGroupProps, Grid, type HeaderElement, type HeaderLevel, InlineLabel, type InlineLabelProps, Input, LabelCell, type LabelCellProps, type LayoutGap, MembershipAuditTimeline, type MembershipAuditTimelineProps, MembershipPanel, type MembershipPanelProps, MessageEventTimeline, type MessageEventTimelineProps, MessageStatusBadge, type MessageStatusBadgeProps, OwnerBadge, type OwnerBadgeProps, OwnershipMeta, type OwnershipMetaProps, OwnershipSummary, type OwnershipSummaryProps, PaginationBar, type PaginationBarProps, type PaginationItem, type PanelSectionProps, PreferenceEditor, type PreferenceEditorProps, PreferencePanel, type PreferencePanelProps, PreferenceSummaryBadge, type PreferenceSummaryBadgeProps, PreferenceTimeline, type PreferenceTimelineProps, PriceBadge, type PriceBadgeProps, PriceCardMeta, type PriceCardMetaProps, PriceSummary, type PriceSummaryProps, RelativeTimestamp, type RelativeTimestampProps, RoleAssignmentForm, type RoleAssignmentFormProps, RoleBadgeList, type RoleBadgeListProps, SearchInput, type SearchInputProps, Select, type SelectOption, Stack, StatusBadge, type StatusBadgeProps, type StatusPresentation, StatusSelector, type StatusSelectorProps, StatusTimeline, type TabItem, Table, TableBody, TableCaption, TableCell, type TableColumn, TableHead, TableHeaderCell, type TableRecord, TableRow, Tabs, TagInput, type TagInputProps, TagManager, type TagManagerProps, TagPills, type TagPillsProps, TagSummary, type TagSummaryProps, TemplatePicker, type TemplatePickerProps, Text, type TextElement, Textarea, type TimelineEvent, type TimelineProps, type ValidationMessage, VizAreaPreview, type VizAreaPreviewProps };

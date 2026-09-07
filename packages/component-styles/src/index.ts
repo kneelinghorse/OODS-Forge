@@ -1,14 +1,15 @@
 export const COMPONENT_STYLE_VERSION = '1.0.0' as const;
 
 export const COMPONENT_STYLE_IDS = [
-  'AddressCollectionPanel', 'AddressEditor', 'AddressSummaryBadge', 'AddressValidationTimeline', 'AuditEvent',
-  'AuditTimeline', 'Badge', 'Banner', 'Button', 'CancellationSummary',
-  'Card', 'CardHeader', 'Checkbox', 'ClassificationBadge', 'ClassificationEditor',
-  'ClassificationPanel', 'ColorSwatch', 'ColorizedBadge', 'DatePicker', 'DetailHeader',
-  'FilterPanel', 'FormLabelGroup', 'Grid', 'InlineLabel', 'Input',
-  'LabelCell', 'MembershipAuditTimeline', 'MembershipPanel', 'MessageEventTimeline', 'MessageStatusBadge',
-  'OwnerBadge', 'OwnershipMeta', 'OwnershipSummary', 'PaginationBar', 'PreferenceEditor',
-  'PreferencePanel', 'PreferenceSummaryBadge', 'PreferenceTimeline', 'PriceBadge', 'PriceSummary',
+  'AddressCollectionPanel', 'AddressEditor', 'AddressSummaryBadge', 'AddressValidationTimeline', 'ArchivePill',
+  'ArchiveSummary', 'AuditEvent', 'AuditTimeline', 'Badge', 'Banner',
+  'Button', 'CancellationBadge', 'CancellationForm', 'CancellationSummary', 'Card',
+  'CardHeader', 'Checkbox', 'ClassificationBadge', 'ClassificationEditor', 'ClassificationPanel',
+  'ColorSwatch', 'ColorizedBadge', 'DatePicker', 'DetailHeader', 'FilterPanel',
+  'FormLabelGroup', 'Grid', 'InlineLabel', 'Input', 'LabelCell',
+  'MembershipAuditTimeline', 'MembershipPanel', 'MessageEventTimeline', 'MessageStatusBadge', 'OwnerBadge',
+  'OwnershipMeta', 'OwnershipSummary', 'PaginationBar', 'PreferenceEditor', 'PreferencePanel',
+  'PreferenceSummaryBadge', 'PreferenceTimeline', 'PriceBadge', 'PriceCardMeta', 'PriceSummary',
   'RelativeTimestamp', 'RoleAssignmentForm', 'RoleBadgeList', 'SearchInput', 'Select',
   'Stack', 'StatusBadge', 'StatusSelector', 'StatusTimeline', 'Table',
   'Tabs', 'TagInput', 'TagManager', 'TagPills', 'TagSummary',

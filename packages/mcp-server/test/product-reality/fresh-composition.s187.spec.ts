@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
+import { resolveFieldProps, mapFieldType } from '../../src/codegen/binding-utils.js';
 import { wireFieldProps } from '../../src/compose/object-slot-filler.js';
 import { runS185M04LiveConsumers } from '../../../../scripts/product-reality/s185-m04-live-consumers.js';
 import { composeFreshInputs, runLiveGenerationOnly } from '../../../../scripts/product-reality/s184-m06-live-consumers.js';
@@ -84,6 +85,53 @@ describe('Sprint 187 fresh composition binding intent', () => {
     }
   });
 
+  it.each(['detail', 'form', 'card'] as const)('Subscription/%s preserves lifecycle data and disclosed directives', async (context) => {
+    const schema = (await compose({ object: 'Subscription', context })).schema!;
+    const nodes = schemaNodes(schema);
+    if (context === 'detail') expect(nodes.find((node) => node.component === 'ArchiveSummary')?.props)
+      .toMatchObject({ archivedField: 'is_archived', archivedAtField: 'archived_at', reasonField: 'archive_reason', metadataField: 'archive_metadata' });
+    if (context === 'form') {
+      const form = nodes.find((node) => node.component === 'CancellationForm')!;
+      expect(form.props).toMatchObject({ reasonField: 'cancellation_reason', codeField: 'cancellation_reason_code', allowedReasonsParameter: 'allowedReasons' });
+      expect(form.bindings).toBeUndefined();
+      expect(deriveConsumerModel(schema).cancellationReasonCode).toBe('budget');
+    }
+    if (context === 'card') {
+      for (const component of ['ArchivePill', 'CancellationBadge']) {
+        expect(nodes.find((node) => node.component === component)?.props).not.toHaveProperty('label');
+      }
+      expect(nodes.find((node) => node.component === 'PriceCardMeta')?.props).toMatchObject({ amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval' });
+    }
+    for (const framework of ['react', 'vue'] as const) {
+      const result = await generate({ schema, framework, profile: 'build' });
+      expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+      if (context === 'detail') {
+        expect(schema.objectSchema?.archived_at.type).toBe('datetime?');
+        expect(result.code).toContain('archivedAt?: string | null;');
+      }
+    }
+  });
+
+  it.each(['ArchivePill', 'CancellationBadge'])('%s preserves an authored label while suppressing synthetic state labels', (component) => {
+    const schema: UiSchema = { version: '2026.02', objectSchema: { flag: { type: 'boolean', description: 'Technical description' } }, screens: [
+      { id: 'implicit', component, props: { field: 'flag' } },
+      { id: 'authored', component, props: { field: 'flag', label: 'Authored label' } },
+    ] };
+    wireFieldProps(schema);
+    expect(schema.screens[0]!.props).not.toHaveProperty('label');
+    expect(resolveFieldProps(schema.screens[0]!, schema.objectSchema) ?? {}).not.toHaveProperty('label');
+    expect(schema.screens[1]!.props?.label).toBe('Authored label');
+  });
+
+  it.each([
+    ['datetime?', 'string | null'], ['boolean?', 'boolean | null'], ['integer[]?', 'number[] | null'],
+  ])('maps nullable trait %s without changing the required flag or source entry', (type, expected) => {
+    const entry = { type, required: true };
+    expect(mapFieldType(entry)).toBe(expected);
+    expect(entry).toEqual({ type, required: true });
+    expect(mapFieldType({ type: 'string?', enum: ['a', 'b'] })).toBe("'a' | 'b' | null");
+  });
+
   it('does not treat search-active booleans as editable search query text', () => {
     const schema: UiSchema = { version: '2026.02', objectSchema: {
       searchActive: { type: 'boolean', required: true, semanticType: 'state.search.active' },
@@ -111,7 +159,7 @@ describe('Sprint 187 fresh composition binding intent', () => {
   });
 
   it.each(['react', 'vue'] as const)('renders real typed zero/nonzero and false/true in generated %s', async (framework) => {
-    for (const [object, context] of operands.slice(4)) {
+    for (const [object, context] of [...operands.slice(4), ['Subscription', 'card'] as const, ['Subscription', 'detail'] as const]) {
       const schema = (await compose({ object, context })).schema!;
       const result = await generate({ schema, framework, profile: 'build', options: { typescript: true, styling: 'tokens' } });
       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
@@ -136,6 +184,8 @@ describe('Sprint 187 fresh composition binding intent', () => {
           const key = probe.field.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
           models[1]![key] = probe.kind === 'boolean-text' ? true : 7;
         }
+        if (context === 'card') { models[1]!.isArchived = true; models[1]!.cancelAtPeriodEnd = true; }
+        if (context === 'detail') models.push({ ...deriveConsumerModel(schema), archivedAt: null });
         const expectedModels = [...models];
         if (framework === 'vue' && result.code!.includes('const generatedProps = defineProps<Props>();')) {
           models.push({});
@@ -156,13 +206,14 @@ const actionNames = ${JSON.stringify(result.artifact!.actions.map(({ name }) => 
       ? require('react-dom/server').renderToString(require('react').createElement(generated.GeneratedUI, props))
       : await require('@vue/server-renderer').renderToString(require('vue').createSSRApp(generated.default, props));
     const document = JSDOM.fragment(html);
+    if (models[i].archivedAt === null) assert.ok(![...document.querySelectorAll('[data-oods-component=ArchiveSummary] dt')].some(node => node.textContent === 'Archived At'), 'null archive timestamp must omit its date term');
     assert.ok(probes[i].length, 'a typed value must actually be exercised');
     for (const probe of probes[i]) {
       const node = document.querySelector('[id=' + JSON.stringify(probe.nodeId) + ']');
       assert.ok(node, probe.nodeId);
       const target = probe.selector ? node.querySelector(probe.selector) : node;
       assert.ok(target, probe.selector);
-      const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' ? target.getAttribute('value') : target.textContent.trim();
+      const actual = probe.kind === 'status' ? node.querySelector('[data-timeline-current]').textContent.trim() : probe.kind === 'native-value' ? target.value : probe.kind === 'numeric-input' || probe.kind === 'query-input' ? target.getAttribute('value') : target.textContent.trim();
       assert.equal(actual, probe.expected, probe.field + ' must preserve its typed value');
     }
   }

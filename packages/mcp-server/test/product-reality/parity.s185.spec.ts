@@ -13,6 +13,7 @@ const { h } = requireVue('vue');
 const { renderToString: renderVue } = requireVue('@vue/server-renderer');
 
 const COMPONENTS = [
+  'ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta',
   'OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary',
   'LabelCell', 'InlineLabel', 'FormLabelGroup', 'ClassificationBadge', 'ClassificationEditor',
   'DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
@@ -172,6 +173,8 @@ describe('Sprint 185 computed React/Vue SSR parity', () => {
     } else if (component === 'LabelCell' || component === 'InlineLabel' || component === 'FormLabelGroup' || component === 'ClassificationBadge' || component === 'ClassificationEditor') {
       expect(react.markers).toContain(component);
     } else if (['OwnerBadge', 'OwnershipSummary', 'OwnershipMeta', 'TagSummary'].includes(component)) {
+      expect(react.markers).toContain(component);
+    } else if (['ArchiveSummary', 'ArchivePill', 'CancellationBadge', 'CancellationForm', 'PriceCardMeta'].includes(component)) {
       expect(react.markers).toContain(component);
     } else if (component === 'PriceSummary') {
       expect(react.headings).toEqual([{ level: 'h3', text: 'Price Summary' }]);

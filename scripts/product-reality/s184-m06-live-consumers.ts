@@ -25,6 +25,7 @@ import {
   deriveActionArguments,
   deriveBoundFieldProbe,
   deriveValueProbes,
+  schemaNodes,
   deriveSharedNativeFieldProbes,
   type SharedNativeFieldProbe,
   type ValueProbe,
@@ -1116,6 +1117,7 @@ async function browserProof({
   boundFieldProbe,
   valueProbes = [],
   sharedNativeFields = [],
+  cancellationFormIds = [],
   viewport = { width: 1280, height: 800 },
   mountObligations,
 }: {
@@ -1129,6 +1131,7 @@ async function browserProof({
   boundFieldProbe: BoundFieldProbe | null;
   valueProbes?: ValueProbe[];
   sharedNativeFields?: SharedNativeFieldProbe[];
+  cancellationFormIds?: string[];
   viewport?: { width: number; height: number };
   mountObligations: MountObligation[];
 }): Promise<Record<string, unknown>> {
@@ -1175,7 +1178,7 @@ async function browserProof({
         const owner = page.locator(selectorForNode(probe.nodeId));
         const visible = await owner.isVisible();
         const target = probe.selector ? owner.locator(probe.selector) : owner;
-        const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' ? await target.inputValue()
+        const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' || probe.kind === 'native-value' ? await target.inputValue()
           : probe.kind === 'status' ? await owner.locator('[data-timeline-current]').textContent() : await target.textContent();
         boundValues.push({ ...probe, actual, visible, passed: visible && actual?.trim() === probe.expected });
       }
@@ -1259,6 +1262,32 @@ async function browserProof({
           Object.assign(interactionEvidence, { disabledControls });
           if (disabledControls.some(({ passed }) => !passed)) throw new Error('Declared empty pagination controls were not visible, disabled, and inert.');
           interactionEvidence.status = 'not-applicable';
+        }
+        const cancellationControls = [];
+        for (const nodeId of cancellationFormIds) {
+          const form = page.locator(selectorForNode(nodeId));
+          const reason = form.locator('textarea[name="reason"]');
+          const code = form.locator('select[name="reasonCode"]');
+          const before = { reason: await reason.inputValue(), code: await code.inputValue() };
+          const choices = await code.locator('option:not([disabled])').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value));
+          const next = choices.find((choice) => choice !== before.code);
+          if (!next) throw new Error('CancellationForm needs a distinct enabled reason-code choice.');
+          await reason.fill('Local cancellation reason');
+          await code.selectOption(next);
+          const submit = await form.evaluate((element) => {
+            const proofWindow = window as unknown as { __OODS_ACTION_COUNTS__: unknown };
+            const beforeCounts = JSON.stringify(proofWindow.__OODS_ACTION_COUNTS__);
+            const event = new Event('submit', { bubbles: true, cancelable: true });
+            element.dispatchEvent(event);
+            return { prevented: event.defaultPrevented, actionCountsUnchanged: JSON.stringify(proofWindow.__OODS_ACTION_COUNTS__) === beforeCounts };
+          });
+          const after = { reason: await reason.inputValue(), code: await code.inputValue() };
+          const passed = after.reason === 'Local cancellation reason' && after.code === next && submit.prevented && submit.actionCountsUnchanged;
+          cancellationControls.push({ nodeId, before, after, ...submit, passed });
+        }
+        if (cancellationControls.length) {
+          Object.assign(interactionEvidence, { cancellationControls, cancellationScope: 'local native controls and prevented submission only; no cancellation, save or persistence action' });
+          eventHandlerAttached = eventHandlerAttached && cancellationControls.every(({ passed }) => passed);
         }
         const numericUpdates = [];
         for (const probe of valueProbes.filter((entry) => entry.kind === 'numeric-input' && entry.editable)) {
@@ -1870,6 +1899,7 @@ export async function runLiveConsumerCell({
       boundFieldProbe: deriveBoundFieldProbe(schema),
       sharedNativeFields: generation.composition ? deriveSharedNativeFieldProbes(schema) : [],
       valueProbes: generation.composition ? deriveValueProbes(schema, model) : [],
+      cancellationFormIds: generation.composition ? schemaNodes(schema).filter((node) => node.component === 'CancellationForm').map((node) => node.id) : [],
       // Fresh User/detail has eight tabs. At 1280px the intentional overflow
       // effect removes tab buttons after attachment, outside this strict stable
       // DOM hydration probe. Keep this proof at an explicit wide desktop size.

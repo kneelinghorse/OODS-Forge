@@ -107,3 +107,68 @@ describe('Sprint 187 ownership and summary semantics', () => {
     expect(authored.querySelector('dl')).toBeNull();
   });
 });
+
+describe('Sprint 187 lifecycle and financial semantics', () => {
+  const values = (root: HTMLElement) => [...root.querySelectorAll('dd')].map((node) => node.textContent);
+  it.each([
+    ['ArchivePill', 'isArchived', 'Archive', 'archive'],
+    ['CancellationBadge', 'cancelAtPeriodEnd', 'Cancellation', 'cancellation'],
+  ] as const)('%s keeps false/true, absent aliases and authored content distinct', (name, field, fallback, variant) => {
+    for (const flag of [false, true]) {
+      const root = mountFamily(name, { [field]: flag });
+      expect(root.textContent).toBe(String(flag));
+      expect(root.getAttribute('data-badge-status')).toBe(String(flag));
+      expect(root.getAttribute('data-badge-variant')).toBe(variant);
+      expect(mountFamily(name, { value: flag }).textContent).toBe(String(flag));
+    }
+    expect(mountFamily(name).textContent).toBe(fallback);
+    expect(mountFamily(name).hasAttribute('data-badge-status')).toBe(false);
+    expect(mountFamily(name, { status: 'active', [field]: false }).textContent).toBe('active');
+    expect(mountFamily(name, { label: 'Scheduled', [field]: false }).textContent).toBe('Scheduled');
+    expect(mountFamily(name, { label: 'Scheduled', [field]: false }, 'Authored').textContent).toBe('Authored');
+  });
+  it('CancellationBadge uses isCancelled as status only without inventing a label', () => {
+    const root = mountFamily('CancellationBadge', { isCancelled: false });
+    expect(root.textContent).toBe('Cancellation');
+    expect(root.getAttribute('data-badge-status')).toBe('false');
+  });
+  it('ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics', () => {
+    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archived: true, status: 'active', archivedAt: '2026-09-05', reason: 'Primary', archiveReason: 'Alias' }))).toEqual(['false', '2026-09-05', 'Primary']);
+    expect(values(mountFamily('ArchiveSummary', { archived: true, archiveReason: 'Alias' }))).toEqual(['true', 'Alias']);
+    expect(values(mountFamily('ArchiveSummary'))).toEqual([]);
+    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archivedAt: null, reason: 'Retained' }))).toEqual(['false', 'Retained']);
+    expect(mountFamily('ArchiveSummary', { summary: 'Fallback', text: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
+    const authored = mountFamily('ArchiveSummary', { title: 'Archived', isArchived: false }, 'Authored');
+    expect(authored.textContent).toBe('ArchivedAuthored');
+    expect(authored.querySelector('dl')).toBeNull();
+  });
+  it('PriceCardMeta retains model/interval precedence and literal inline labels', () => {
+    const root = mountFamily('PriceCardMeta', { label: 'Billing', model: 'tiered', pricingModel: 'flat', interval: 'annual', billingInterval: 'monthly' });
+    expect(root.querySelector('[data-meta-title]')?.textContent).toBe('Billing');
+    expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: tiered', 'Interval: annual']);
+    expect(mountFamily('PriceCardMeta').textContent).toBe('Price');
+    expect(mountFamily('PriceCardMeta', { model: 'Hidden' }, 'Authored').textContent).toBe('Authored');
+  });
+  it('CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission', () => {
+    const root = mountFamily('CancellationForm', { heading: 'End subscription', hint: 'Only a request', reason: 'Primary', cancellationReason: 'Alias', reasonCode: 'b', allowedReasons: [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }] });
+    expect(root.querySelector('h3')?.textContent).toBe('End subscription');
+    expect(root.querySelector('[data-form-subtitle]')?.textContent).toBe('Only a request');
+    const select = root.querySelector<HTMLSelectElement>('select[name="reasonCode"]')!;
+    const textarea = root.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')!;
+    expect(select.value).toBe('b');
+    expect(textarea.value).toBe('Primary');
+    expect(select.closest('label')?.querySelector('span')?.textContent).toBe('Reason Code');
+    expect(textarea.closest('label')?.querySelector('span')?.textContent).toBe('Reason');
+    textarea.value = 'Changed locally'; textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    select.value = 'a'; select.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(textarea.value).toBe('Changed locally'); expect(select.value).toBe('a');
+    const event = new Event('submit', { cancelable: true, bubbles: true }); root.dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(true); expect(root.querySelector('button')).toBeNull();
+    const defaults = mountFamily('CancellationForm', { cancellationReason: 'Alias' });
+    expect([...defaults.querySelectorAll('option')].map((node) => node.value)).toEqual(['no_longer_needed', 'budget', 'duplicate']);
+    expect(defaults.querySelector<HTMLTextAreaElement>('textarea')?.value).toBe('Alias');
+    const emptyChoice = mountFamily('CancellationForm', { allowedReasons: [] }).querySelector('option')!;
+    expect(emptyChoice.value).toBe(''); expect(emptyChoice.textContent).toBe('Select...');
+    expect(mountFamily('CancellationForm', {}, 'Authored').querySelector('select')).toBeNull();
+  });
+});
