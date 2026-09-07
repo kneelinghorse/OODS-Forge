@@ -35,6 +35,17 @@ describe('Notice implementation heads retain actual public bytes across test-onl
   });
   afterEach(() => rmSync(root, { recursive: true, force: true }));
 
+  it.each(['packages/mcp-server/src/tools/catalog.list.ts', 'cmos/scripts/refresh_structured_data.py',
+    'artifacts/structured-data/manifest.json', 'packages/component-contracts/registry/component-obligation-scope.v1.json'])
+  ('Sprint 187 independently detects changed discovery bytes: %s', (file) => {
+    write(file, 'original discovery'); const implementationHead = commit('discovery');
+    write(file, 'changed discovery'); const executionHead = commit('discovery changed');
+    const producer = derivePublicHeadEquivalence({ root, implementationHead, executionHead, sprintId: 'sprint-187' });
+    const audited = auditPublicRuntimeBytes({ root, implementationHead, executionHead, sprintId: 'sprint-187' });
+    expect(producer.changedPaths).toEqual([file]); expect(audited).toEqual(producer);
+    expect(auditSprintRange({ root, base: implementationHead, head: executionHead, sprintId: 'sprint-187' }).publicPaths).toEqual([file]);
+  });
+
   it('excludes only declared test paths and discloses each excluded change', () => {
     const implementationHead = commit('implementation');
     for (const file of testPaths) write(file, 'export const expected = 19;\n');

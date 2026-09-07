@@ -89,3 +89,26 @@ describe('Combined reconnect requires real unique deliveries of the exact review
     expect(() => verifyDeliveries(second.plan, second.deliveries)).toThrow('Retired');
   });
 });
+
+
+describe('Sprint 187 preserves the explicit prepared-only delivery boundary', () => {
+  const prepared = () => {
+    const original = fixture();
+    return { plan: { ...original.plan, missionId: 's187-m06', status: 'prepared', sendsExecuted: 0, deployment: 'pending' },
+      deliveries: original.deliveries.map(row => ({ ...row, status: 'prepared', messageId: null as string | null })) };
+  };
+  it('validates exact prepared requests without inventing sent receipts', () => {
+    const { plan, deliveries } = prepared();
+    expect(verifyDeliveries(plan, deliveries)).toEqual({ status: 'passed', preparedNotices: 2, successfulDeliveries: 0, uniqueMessageIds: [] });
+  });
+  it('rejects a sent state, fabricated message ID, changed body and wrong destination', () => {
+    const sent = prepared(); sent.deliveries[0]!.status = 'sent';
+    expect(() => verifyDeliveries(sent.plan, sent.deliveries)).toThrow(/Prepared notice/);
+    const invented = prepared(); invented.deliveries[0]!.messageId = '00000000-0000-4000-8000-000000000001';
+    expect(() => verifyDeliveries(invented.plan, invented.deliveries)).toThrow(/Prepared notice/);
+    const changed = prepared(); changed.plan.notices[0]!.request.body += ' changed';
+    expect(() => verifyDeliveries(changed.plan, changed.deliveries)).toThrow(/hash changed/);
+    const wrong = prepared(); wrong.plan.notices[0]!.request.targetAddress = 'cmos://unapproved';
+    expect(() => verifyDeliveries(wrong.plan, wrong.deliveries)).toThrow(/destination coverage/);
+  });
+});

@@ -28,11 +28,16 @@ const publicScope = [
 ];
 const publicScope186 = [...publicScope,
   'packages/mcp-server/src/compose', 'packages/mcp-server/src/tools/design.compose.ts'];
+const publicScope187 = [...publicScope186,
+  'packages/mcp-server/src/tools/catalog.list.ts', 'packages/mcp-server/src/tools/catalog.shared.ts', 'packages/mcp-server/src/tools/types.ts',
+  'cmos/scripts/refresh_structured_data.py', 'cmos/planning/component-schema.json',
+  'cmos/planning/oods-components.json', 'cmos/planning/oods-tokens.json',
+  'artifacts/structured-data', 'docs/mcp/Tool-Specs.md', 'docs/mcp/Structured-Data-Refresh.md'];
 const testPath = file => /(^|\/)(?:__tests__|test|tests)\//.test(file) || /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file);
 
 export function auditPublicRuntimeBytes({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {
   assert(fullHead(implementationHead) && fullHead(executionHead));
-  const scope = sprintId === 'sprint-186' ? publicScope186 : publicScope;
+  const scope = sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
   execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
   const scopedChangedPaths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', `${implementationHead}..${executionHead}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
     .split('\0').filter(Boolean).sort();
@@ -40,14 +45,14 @@ export function auditPublicRuntimeBytes({ root, implementationHead, executionHea
     scopedChangedPaths, changedPaths: scopedChangedPaths.filter(file => !testPath(file)), excludedTestPaths: scopedChangedPaths.filter(testPath) };
 }
 
-export function auditSprintRange({ root, base, head }) {
+export function auditSprintRange({ root, base, head, sprintId = 'sprint-186' }) {
   assert(fullHead(base) && fullHead(head));
   const paths = scope => execFileSync('git', ['diff', '--name-only', `${base}..${head}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
     .trim().split('\n').filter(file => file && !testPath(file)).sort();
   const canonical = ['configs/agent/policy.json', 'docs/api', 'packages/mcp-adapter/tool-descriptions.json',
     'packages/mcp-server/src/schemas', 'packages/mcp-server/src/schemas/generated.ts',
     'packages/mcp-server/src/security/policy.json', 'packages/mcp-server/src/tools/registry.json'];
-  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(publicScope186) };
+  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
 }
 const sourceKeys = [
   ['baselineFold'], ['movers'], ['movers', 'noticePlan', 'deliveries'],
@@ -57,18 +62,22 @@ const sourceKeys = [
 
 export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath = defaultManifest }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Audit requires actual full execution and review SHAs.');
+  const fresh = manifestPath.startsWith('artifacts/product-reality/sprint-187/m06/');
   const wave2 = manifestPath.startsWith('artifacts/product-reality/sprint-186/m06/');
-  const missionId = wave2 ? 's186-m06' : 's185-m05';
-  const sprintId = wave2 ? 'sprint-186' : 'sprint-185';
-  const criterionCount = wave2 ? 6 : 8;
-  const suiteCriterion = wave2 ? 4 : 6;
-  const outputPrefix = wave2 ? 'artifacts/product-reality/sprint-186/m06/closeout' : prefix;
-  const requiredSourceKeys = wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
+  const missionId = fresh ? 's187-m06' : wave2 ? 's186-m06' : 's185-m05';
+  const sprintId = fresh ? 'sprint-187' : wave2 ? 'sprint-186' : 'sprint-185';
+  const criterionCount = fresh ? 7 : wave2 ? 6 : 8;
+  const suiteCriterion = fresh ? 5 : wave2 ? 4 : 6;
+  const outputPrefix = fresh ? 'artifacts/product-reality/sprint-187/m06/closeout' : wave2 ? 'artifacts/product-reality/sprint-186/m06/closeout' : prefix;
+  const requiredSourceKeys = fresh ? [['freshCensus'], ['cohort', 'liveConsumers'], ['savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['rootEvidence', 'baselineFold'], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
     ['movers', 'noticePlan', 'deliveries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : sourceKeys;
   assert.equal(gitEvidence?.ancestor, true, 'Review head must descend from the actual execution head.');
   // Decision 1741 allows new capture records, not rewritten fixtures or code.
   for (const change of gitEvidence.changes) {
-    const allowed = wave2
+    const allowed = fresh
+      ? /^artifacts\/product-reality\/sprint-187\/m06\/four-suite-closeout(?:-attempt-[\w-]+)?\/(?:run-\d+\/(?:viz-core|viz-render|mcp-server|root-core)\.(?:json|vitest\.json|log)|setup\/[\w-]+\.log|four-suite-baseline\.json|accounting\.json|attributions\.json|failure-dispositions\.json)$/.test(change.path)
+        || /^artifacts\/product-reality\/sprint-187\/m06\/closeout\/(?:claim-ledger|review-handoff|evidence-index)\.json$/.test(change.path)
+      : wave2
       ? /^artifacts\/product-reality\/sprint-186\/m06\/four-suite-closeout(?:-attempt-[\w-]+)?\/(?:run-\d+\/(?:viz-core|viz-render|mcp-server|root-core)\.(?:json|vitest\.json|log)|setup\/[\w-]+\.log|four-suite-baseline\.json|accounting\.json|attributions\.json|failure-dispositions\.json)$/.test(change.path)
         || /^artifacts\/product-reality\/sprint-186\/m06\/closeout\/(?:claim-ledger|review-handoff|evidence-index)\.json$/.test(change.path)
       : /^artifacts\/product-reality\/sprint-185\/m05\/four-suite-closeout\/(?:run-\d+\/(?:viz-core|viz-render|mcp-server|root-core)\.(?:json|vitest\.json|log)|setup\/[\w-]+\.log|four-suite-baseline\.json|accounting\.json|attributions\.json|failure-dispositions\.json)$/.test(change.path)
@@ -115,7 +124,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
   if (implementationHead !== executionHead) {
     assert.equal(publicGitEvidence?.implementationHead, implementationHead);
     assert.equal(publicGitEvidence.executionHead, executionHead); assert.equal(publicGitEvidence.ancestor, true);
-    assert.equal(publicGitEvidence.excludeTests, true); assert.deepEqual(publicGitEvidence.scope, wave2 ? publicScope186 : publicScope);
+    assert.equal(publicGitEvidence.excludeTests, true); assert.deepEqual(publicGitEvidence.scope, fresh ? publicScope187 : wave2 ? publicScope186 : publicScope);
     assert.deepEqual(publicGitEvidence.excludedTestPaths, publicGitEvidence.scopedChangedPaths.filter(testPath));
     assert.deepEqual(publicGitEvidence.changedPaths, publicGitEvidence.scopedChangedPaths.filter(file => !testPath(file)));
     assert.deepEqual(publicGitEvidence.changedPaths, [], 'Advertised public runtime bytes changed after the notice implementation head.');
@@ -196,7 +205,157 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     && row.measuredHead === executionHead && row.cleanBefore === true && row.cleanAfter === true), 'Capture contains an unrelated, unclean or relabeled execution.');
   assert.deepEqual(captureRows.map(row => row.suite).sort(), ['mcp-server', 'root-core', 'viz-core', 'viz-render']);
 
-  if (wave2) {
+  if (fresh) {
+    const lockedBase = '21c7c31906fbb81d049b943155c64ed78409fb9f';
+    const expected = ['User/detail', 'Product/detail', 'Usage/list', 'Subscription/inline', 'Transaction/timeline', 'Product/list', 'Product/form', 'Product/inline',
+      'Organization/list', 'Organization/detail', 'Organization/card', 'Subscription/detail', 'Subscription/form', 'Subscription/card'];
+    const targets = ['react', 'vue'];
+    const names = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'];
+    const contexts = ['detail', 'list', 'form', 'timeline', 'card', 'inline'];
+    const census = parseFrozen(manifest.sources.freshCensus);
+    assert.equal(census.head, implementationHead); assert.equal(census.profile, 'build');
+    assert.equal(census.schemaCount, 66); assert.equal(census.greenSchemas, 66); assert.equal(census.generationCells, 132); assert.equal(census.greenCells, 132);
+    assert.deepEqual(census.objects, names); assert.deepEqual(census.contexts, contexts);
+    assert.deepEqual(census.rows.map(row => `${row.input.object}/${row.input.context}`).sort(), names.flatMap(name => contexts.map(context => `${name}/${context}`)).sort());
+    for (const row of census.rows) {
+      assert.deepEqual(Object.keys(row.input).sort(), ['context', 'object']); assert.equal(row.composed, true); assert.equal(row.green, true); assert.deepEqual(row.ungoverned, []);
+      assert.deepEqual(row.cells.map(cell => cell.framework), targets);
+      assert(row.cells.every(cell => cell.status === 'ok' && cell.artifactPresent && cell.errors.length === 0));
+    }
+    const cohort = parseFrozen(manifest.sources.cohort); const runtime = parseFrozen(manifest.sources.liveConsumers);
+    assert.deepEqual(cohort.groups.flatMap(group => group.paths), expected); assert.deepEqual(cohort.frameworks, targets);
+    assert.deepEqual(runtime.freshInputs.map(row => `${row.object}/${row.context}`), expected);
+    assert.deepEqual(runtime.cells.map(cell => `${cell.composition.input.object}/${cell.composition.input.context}/${cell.framework}`).sort(), expected.flatMap(item => targets.map(target => `${item}/${target}`)).sort());
+    assert.equal(runtime.status, 'passed'); assert.equal(runtime.cellCount, 28); assert.equal(runtime.failed, 0); assert.equal(runtime.skipped, 0);
+    const gates = ['fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'server-render', 'mount', 'hydration', 'shared-css-resolution', 'interaction-evidence'];
+    const runtimeDir = path.posix.dirname(manifest.sources.liveConsumers);
+    const observedPackages = new Map(); const observedFamilies = new Set();
+    let passed = 0; let notApplicable = 0;
+    for (const cell of runtime.cells) {
+      const doc = JSON.parse(reference({ path: path.posix.join(runtimeDir, cell.report), sha256: cell.reportSha256 }).bytes.toString('utf8'));
+      assert.equal(doc.framework, cell.framework); assert.equal(doc.status, 'passed'); assert.deepEqual(doc.gates.map(gate => gate.name), gates);
+      assert.equal(cell.composition.sourceHead, implementationHead); assert.equal(cell.composition.sourceDiffSha256, `sha256:${digest('')}`);
+      reference({ path: path.posix.join(runtimeDir, cell.composition.sourceDiffPath), sha256: cell.composition.sourceDiffSha256 });
+      const composed = parseFrozen(path.posix.join(runtimeDir, 'live-generation', cell.schema, 'composition.json'));
+      assert.deepEqual(composed.composition, cell.composition);
+      assert.equal(digest(`${JSON.stringify(composed.schema, null, 2)}\n`), bare(cell.composition.schemaSha256));
+      const artifact = parseFrozen(path.posix.join(runtimeDir, 'live-generation', cell.schema, cell.framework, 'artifact.json'));
+      assert.equal(artifact.contentHash, cell.generation.artifactContentHash);
+      for (const file of artifact.files) assert.equal(digest(file.contents), bare(file.contentHash));
+      reference({ path: path.posix.join(runtimeDir, cell.generation.sourcePath), sha256: cell.generation.sourceSha256 });
+      assert.equal(cell.generation.fingerprint.profile, 'build'); assert.equal(cell.generation.fingerprint.sourceOfArtifact, 'current-in-run-output');
+      for (const file of doc.localTarballs) {
+        const ref = { path: path.posix.join(runtimeDir, 'submitted-packages/tarballs', path.posix.basename(file.installSpec)), sha256: file.sha256 };
+        assert.equal(reference(ref).bytes.length, file.bytes);
+        if (observedPackages.has(file.name)) assert.equal(file.sha256, observedPackages.get(file.name));
+        else observedPackages.set(file.name, file.sha256);
+      }
+      for (const gate of doc.gates) {
+        if (gate.status === 'passed') assert(gate.logs?.length > 0, 'A passed runtime gate needs its retained command or browser log.');
+        for (const log of gate.logs ?? []) frozen(path.posix.join(runtimeDir, log));
+        if (gate.status === 'passed') passed++;
+        else { assert.equal(gate.name, 'interaction-evidence'); assert.equal(gate.status, 'not-applicable'); notApplicable++; }
+      }
+      assert.equal(doc.accounting.balanced, true); assert.equal(doc.accounting.namedUnprovenCount, 0);
+      assert.deepEqual(doc.browser.runtimeErrors, []); assert.equal(doc.browser.hydrationInvariant.equal, true);
+      assert(doc.browser.boundValues.every(value => value.passed === true && value.visible === true));
+      for (const [name, count] of Object.entries(doc.browser.componentCounts)) if (count > 0) observedFamilies.add(name);
+    }
+    assert.equal(runtime.selected, 224); assert.equal(runtime.passed, passed); assert.equal(runtime.notApplicable, notApplicable);
+    assert.equal(passed + notApplicable, 224); assert.equal(runtime.applicable, passed);
+    const originalStore = parseFrozen(manifest.sources.savedOriginal); const successor = parseFrozen(manifest.sources.savedSuccessor);
+    const compatible = parseFrozen(manifest.sources.savedCompatibility);
+    assert.equal(compatible.originalInputsUnchanged, true); assert.equal(compatible.successorInputsUnchanged, true); assert.equal(compatible.historicalNegativeRetained, true);
+    assert.equal(compatible.originalBaseline, 15); assert.equal(compatible.successorBaseline, 16); assert(compatible.originalDeltaExplanation?.trim());
+    for (const ref of compatible.references) reference(ref);
+    for (const [store, key] of [[originalStore, 'savedOriginal'], [successor, 'savedSuccessor']]) {
+      assert.equal(store.head, implementationHead); assert.equal(store.total, 16); assert.equal(store.rows.length, 16);
+      let greenSchemas = 0; let greenCells = 0;
+      for (const row of store.rows) {
+        reference(row.input); assert.deepEqual(row.cells.map(cell => cell.framework), targets);
+        const rawCells = row.cells.map(cell => {
+          const result = JSON.parse(reference({ path: path.posix.join(path.posix.dirname(manifest.sources[key]), cell.response.path), sha256: cell.response.sha256 }).bytes.toString('utf8'));
+          assert.equal(result.status, cell.status); assert.equal(Boolean(result.artifact), cell.artifactPresent);
+          if (result.status === 'ok' && result.artifact) { greenCells++; return true; } return false;
+        });
+        assert.equal(row.reachable, rawCells.every(Boolean)); if (row.reachable) greenSchemas++;
+      }
+      assert.equal(store.generatedCells, greenCells); assert.equal(store.reachable, greenSchemas);
+    }
+    assert(originalStore.reachable >= 15); assert.equal(successor.reachable, 16); assert.equal(successor.generatedCells, 32);
+    const types = 'packages/component-contracts/src/types.ts';
+    const ids = text => [...text.match(/export const NUCLEUS_COMPONENT_IDS = \[([\s\S]*?)\] as const/)[1].matchAll(/'([^']+)'/g)].map(match => match[1]);
+    const current = ids(frozen(types).bytes.toString('utf8')); const prior = ids(Buffer.from(readHistorical(lockedBase, types)).toString('utf8'));
+    const added = current.filter(name => !prior.includes(name)); const proof = parseFrozen(manifest.sources.rootEvidence);
+    assert.equal(current.length, 64); assert.equal(new Set(current).size, 64); assert.equal(added.length, 14); assert(prior.every(name => current.includes(name)));
+    assert.deepEqual(proof.governedIds, current); assert.deepEqual([...proof.addedIds].sort(), [...added].sort());
+    assert(added.every(name => observedFamilies.has(name)), 'A new family has no actual mounted runtime observation.');
+    const readiness = JSON.parse(reference(proof.readiness).bytes.toString('utf8'));
+    assert.equal(readiness.status, 'passed'); assert.deepEqual(readiness.failures, []); assert.equal(readiness.totals.references, 778); assert.equal(readiness.totals.resolved, 778);
+    const positive = JSON.parse(reference(proof.positiveExports).bytes.toString('utf8'));
+    const exportTests = positive.testResults.flatMap(file => file.assertionResults);
+    assert.equal(positive.success, true); assert.equal(positive.numPassedTests, 28); assert.equal(exportTests.length, 28);
+    assert(exportTests.every(test => test.status === 'passed'));
+    for (const target of targets) for (const name of added) assert.equal(exportTests.filter(test => test.fullName.endsWith(`${target}/${name}`)).length, 1);
+    const mutations = proof.mutations.flatMap(ref => JSON.parse(reference(ref).bytes.toString('utf8')).mutants);
+    assert.deepEqual(mutations.map(row => row.selectedCell).sort(), added.flatMap(name => targets.map(target => `${target}/${name}`)).sort());
+    for (const row of mutations) {
+      assert.equal(row.status, 'passed'); assert.equal(row.restoredByteIdentically, true); assert.notEqual(row.sourceSha256Before, row.sourceSha256Deleted);
+      const red = parseFrozen(row.selectedRed.packageReport).testResults.flatMap(file => file.assertionResults);
+      assert.deepEqual(red.filter(test => test.status === 'failed').map(test => test.fullName.split(' ').at(-1)), [row.selectedCell]);
+      const redReadiness = parseFrozen(row.selectedRed.readinessReport);
+      assert(redReadiness.failures.length > 0 && redReadiness.failures.every(item => `${item.target}/${item.componentId}` === row.selectedCell));
+      const restored = parseFrozen(row.restoredGreen.packageReport).testResults.flatMap(file => file.assertionResults);
+      assert(restored.length > 0 && restored.every(test => test.status === 'passed'));
+      assert.equal(parseFrozen(row.restoredGreen.readinessReport).status, 'passed');
+      assert.notEqual(row.selectedRed.packageRun.exitCode, 0); assert.notEqual(row.selectedRed.readinessRun.exitCode, 0);
+      assert.equal(row.restoredGreen.packageRun.exitCode, 0); assert.equal(row.restoredGreen.readinessRun.exitCode, 0);
+      for (const phase of ['selectedRed', 'restoredGreen']) { frozen(row[phase].packageRun.log); frozen(row[phase].readinessRun.log); }
+    }
+    const baselinePath = 'packages/component-contracts/registry/component-capability-baseline.v1.json';
+    const baseline = parseFrozen(baselinePath); const before = JSON.parse(Buffer.from(readHistorical(lockedBase, baselinePath)).toString('utf8'));
+    const identity = document => document.rows.map(row => [row.id, row.proposedClassification, row.reconciliationState]);
+    assert.equal(baseline.rows.length, 109); assert.deepEqual(identity(baseline), identity(before));
+    const scope = parseFrozen('packages/component-contracts/registry/component-obligation-scope.v1.json');
+    assert.equal(scope.decisionId, 1788); assert.equal(scope.controllingObligationDenominator, 109); assert.equal(scope.approvedRuntimeCensus, null);
+    assert.equal(parseFrozen('packages/component-contracts/registry/component-reconciliation.proposed.v1.json').approvedRuntimeCensus, null);
+    for (const name of added) {
+      const row = baseline.rows.find(row => row.id === name);
+      for (const surface of ['react', 'vue', 'generatedConsumer']) {
+        assert.equal(row.surfaces[surface].state, 'implemented-evidence-complete'); assert(row.surfaces[surface].evidence.length > 0);
+        for (const ref of row.surfaces[surface].evidence) {
+          const at = ref.indexOf('#'); assert(at > 0); const doc = parseFrozen(ref.slice(0, at)); const anchor = ref.slice(at + 1);
+          if (anchor.startsWith('/')) {
+            let value = doc;
+            for (const token of anchor.slice(1).split('/')) { const key = token.replaceAll('~1', '/').replaceAll('~0', '~'); assert(value != null && Object.hasOwn(value, key)); value = value[key]; }
+            assert(value != null);
+          } else assert.equal([...(doc.rows ?? []), ...(doc.components ?? [])].filter(item => (item.componentId ?? item.id) === anchor).length, 1);
+        }
+      }
+      for (const surface of ['accessibility', 'theme', 'interaction']) assert.equal(row.surfaces[surface].state, 'unverified');
+    }
+    const fold = parseFrozen(manifest.sources.baselineFold); for (const ref of fold.sourceHashes) reference(ref);
+    assert.equal(fold.denominator, 109); assert(fold.readinessReferences.length && fold.readinessReferences.every(row => row.resolved));
+    const movers = parseFrozen(manifest.sources.movers); const declared = parseFrozen(manifest.sources.moversDeclaration);
+    assert.equal(movers.s187.base, lockedBase); assert.equal(movers.s187.head, implementationHead);
+    assert.equal(rangeGitEvidence.base, lockedBase); assert.equal(rangeGitEvidence.head, implementationHead);
+    for (const key of ['canonicalPaths', 'publicPaths']) { assert.deepEqual(movers.s187[key], rangeGitEvidence[key]); assert.deepEqual(declared.s187[key], rangeGitEvidence[key]); }
+    const notice = parseFrozen(manifest.sources.noticePlan); const deliveries = parseFrozen(manifest.sources.deliveries);
+    assert.deepEqual(notice.addedNucleus, added); assert.equal(notice.status, 'prepared'); assert.equal(notice.sendsExecuted, 0); assert.equal(notice.deployment, 'pending');
+    assert.equal(notice.notices.length, 2); assert.equal(deliveries.length, 2);
+    for (const destination of ['cmos://derek/aquex-mcp', 'cmos://derek/forge-demos']) {
+      const entries = notice.notices.filter(row => row.request.targetAddress === destination); const records = deliveries.filter(row => row.targetAddress === destination);
+      assert.equal(entries.length, 1); assert.equal(records.length, 1); assert.equal(digest(JSON.stringify(entries[0].request)), entries[0].requestSha256);
+      assert.equal(records[0].requestSha256, entries[0].requestSha256); assert.equal(records[0].status, 'prepared'); assert.equal(records[0].messageId, null);
+      assert([...added, 'Deployment: pending', 'retain-109', '/ported', '/readiness-ported', '/css-ported'].every(term => entries[0].request.body.includes(term)));
+    }
+    const carries = parseFrozen(manifest.sources.carries);
+    assert.equal(carries.greenfieldWorkflow, 'partial'); assert.equal(carries.builderSelfCertified, false);
+    for (const id of [1315, 1318, 1319, 1320, 1321, 1322, 1372, 1374, 1375, 1379, 1384]) assert(carries.rows.some(row => row.id === id && row.status === 'pending' && row.remainingWork?.trim()));
+    assert.deepEqual(mission.successCriteria, original.successCriteria);
+    assert.equal(accounting.baselines.sprint186Closeout.measuredHead, '740e8405fa8e094ab903a19e6e551fbe8bff2de2');
+    assert(captureRows.every(row => row.exitCode === 0 && row.counts.failed === 0));
+  } else if (wave2) {
     assert.equal(typeof readHistorical, 'function', 'Audit requires historical Git bytes for the locked base.');
     const base = '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2';
     const typesPath = 'packages/component-contracts/src/types.ts';
@@ -284,7 +443,10 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
       assert.equal(sent[0].status, 'sent'); assert(/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(sent[0].messageId));
       assert.equal(sent[0].requestSha256, notice.requestSha256);
     }
-    assert.deepEqual(Object.keys(accounting.baselines), ['sprint185Closeout']);
+  }
+  if (wave2 || fresh) {
+    const baselineKey = fresh ? 'sprint186Closeout' : 'sprint185Closeout';
+    assert.deepEqual(Object.keys(accounting.baselines), [baselineKey]);
     const captures = { ...accounting.baselines, closeout: accounting.closeout };
     const populations = new Map();
     const normalize = value => ['pending', 'disabled', 'skipped'].includes(value) ? 'skipped' : value;
@@ -318,7 +480,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
       assert.deepEqual(comparison.fileDeltas.map(row => row.file), changed, 'A file population delta was omitted or invented.');
       assert(comparison.fileDeltas.every(row => row.attribution?.kind && row.attribution.reason?.trim() && row.attribution.references?.length), 'A changed file lacks attribution evidence.');
     }
-    assert.equal(accounting.comparisons.length, accounting.baselines.sprint185Closeout.runs.length * 4, 'A baseline suite comparison is absent.');
+    assert.equal(accounting.comparisons.length, accounting.baselines[baselineKey].runs.length * 4, 'A baseline suite comparison is absent.');
     assert(accounting.closeoutFailures.every(row => row.status === 'inherited-failure-disclosed'), 'An unexplained closeout failure was marked accounted.');
   }
 
@@ -383,8 +545,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const manifest = JSON.parse(readFrozen(manifestPath));
     const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan)).implementationHead;
     const publicGitEvidence = auditPublicRuntimeBytes({ root, implementationHead, executionHead,
-      sprintId: manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
-    const rangeGitEvidence = manifest.missionId === 's186-m06'
+      sprintId: manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
+    const rangeGitEvidence = manifest.missionId === 's187-m06'
+      ? auditSprintRange({ root, base: '21c7c31906fbb81d049b943155c64ed78409fb9f', head: implementationHead, sprintId: 'sprint-187' }) : manifest.missionId === 's186-m06'
       ? auditSprintRange({ root, base: '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2', head: implementationHead }) : undefined;
     const report = auditFinalCloseout({ executionHead, reviewHead,
       gitEvidence: { ancestor: true, changes }, publicGitEvidence, rangeGitEvidence, manifestPath,
