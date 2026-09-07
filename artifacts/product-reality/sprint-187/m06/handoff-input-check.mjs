@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 
 const base = 'artifacts/product-reality/sprint-187/m06/';
+const proofBase = process.argv[2] ? process.argv[2].replace(/\/$/, '') + '/' : base;
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const unwrap = file => read(base + file).rawResponse.structuredContent.data;
 const mission = unwrap('cmos-mission.json');
@@ -19,12 +20,12 @@ for (const id of [1315, 1318, 1319, 1320, 1321, 1322, 1372, 1374, 1375, 1379, 13
   assert(carries.rows.some(row => row.id === id && row.status === 'pending' && row.remainingWork.trim()));
 }
 for (const row of carries.rows) for (const file of row.evidence ?? []) assert(fs.existsSync(file), file);
-const census = read(base + 'fresh-census.json'); const runtime = read(base + 'live-consumers/report.json');
+const census = read(proofBase + 'fresh-census.json'); const runtime = read(proofBase + 'live-consumers/report.json');
 assert.equal(census.greenSchemas, 66); assert.equal(census.greenCells, 132);
 assert.equal(runtime.cellCount, 28); assert.equal(runtime.status, 'passed');
 assert.equal(runtime.failed, 0); assert.equal(runtime.skipped, 0);
 assert.equal(runtime.passed + runtime.notApplicable, 224);
-const notice = read(base + 'reconnect/notice-plan.json'); const deliveries = read(base + 'reconnect/deliveries.json');
+const notice = read(proofBase + 'reconnect/notice-plan.json'); const deliveries = read(proofBase + 'reconnect/deliveries.json');
 assert.equal(notice.implementationHead, census.head); assert.equal(notice.sendsExecuted, 0);
 assert.equal(notice.deployment, 'pending'); assert.equal(deliveries.length, 2);
 for (const { request, requestSha256 } of notice.notices) {

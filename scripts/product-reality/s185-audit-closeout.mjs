@@ -32,7 +32,7 @@ const publicScope187 = [...publicScope186,
   'packages/mcp-server/src/tools/catalog.list.ts', 'packages/mcp-server/src/tools/catalog.shared.ts', 'packages/mcp-server/src/tools/types.ts',
   'cmos/scripts/refresh_structured_data.py', 'cmos/planning/component-schema.json',
   'cmos/planning/oods-components.json', 'cmos/planning/oods-tokens.json',
-  'artifacts/structured-data', 'docs/mcp/Tool-Specs.md', 'docs/mcp/Structured-Data-Refresh.md'];
+  'artifacts/structured-data', 'docs/mcp/Tool-Specs.md', 'docs/mcp/Structured-Data-Refresh.md', 'docs/api/catalog-list.md', 'docs/how-forge-works.html'];
 const testPath = file => /(^|\/)(?:__tests__|test|tests)\//.test(file) || /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file);
 
 export function auditPublicRuntimeBytes({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {

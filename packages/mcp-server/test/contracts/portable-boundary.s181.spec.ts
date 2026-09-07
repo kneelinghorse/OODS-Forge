@@ -206,8 +206,11 @@ describe('s181 portable-runtime publish boundary', () => {
     const planningBytes = fs.readFileSync(PLANNING_COMPONENT_SCHEMA);
 
     expect(runtimeBytes.equals(planningBytes)).toBe(true);
+    const schema = JSON.parse(runtimeBytes.toString('utf8'));
+    expect(schema.required).not.toContain('obligationScope');
+    expect(schema.properties.obligationScope.properties.approvedRuntimeCensus).toMatchObject({ type: 'null' });
     expect(createHash('sha256').update(runtimeBytes).digest('hex')).toBe(
-      '7f5136224e4a8b4af00d39c22aeefca7f2c150c22e843d98343ebf4ffde360da',
+      '3a86283c441aaf8de5ef517cab0b9e83c6c9aaf564526ce7e03fb647d6f5a94f',
     );
   });
 
@@ -250,7 +253,7 @@ describe('s181 portable-runtime publish boundary', () => {
       .toContain('cmos/planning');
   });
 
-  it('pins the Sprint-182 manifest-present structuredData, map, and registry products deterministically', async () => {
+  it('keeps manifest-present discovery deterministic across authorized refreshes and preserves trait membership', async () => {
     const fetchResult = await fetchStructuredData({ dataset: 'components', includePayload: false });
     const traits = [...loadKnownTraits()].sort();
     const registry = loadComponentRegistry();
@@ -260,9 +263,20 @@ describe('s181 portable-runtime publish boundary', () => {
       warnings: registry.warnings,
     };
 
-    expect(sha256Json(fetchResult)).toBe('075a6136bea04f488e9038c60fd23fa81ee6852858942f62496339805ff8788f');
+    const manifest = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'artifacts/structured-data/manifest.json'), 'utf8'));
+    const artifact = manifest.artifacts.find((entry: { name: string }) => entry.name === 'components');
+    const payload = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, artifact.path), 'utf8'));
+    expect(fetchResult).toMatchObject({ dataset: 'components', version: manifest.version,
+      generatedAt: manifest.generatedAt, etag: artifact.etag, path: artifact.path,
+      sizeBytes: artifact.sizeBytes, payloadIncluded: false, schemaValidated: true,
+      meta: { componentCount: 109 } });
+    expect(await fetchStructuredData({ dataset: 'components', includePayload: false })).toEqual(fetchResult);
+    expect(payload.obligationScope).toMatchObject({ decisionId: 1788, controllingObligationDenominator: 109, approvedRuntimeCensus: null });
+    expect([...registry.names].sort()).toEqual(payload.components.map((entry: { id: string }) => entry.id).sort());
+    expect(registry.version).toBe(manifest.version);
+    expect(registry.warnings).toEqual([]);
     expect(sha256Json(traits)).toBe('ec10b9807834bc684542510524127ee4d2394e8e05a08341ab1b156e300a90c2');
-    expect(sha256Json(registryResult)).toBe('22b9984ac2adef68c95b8edbb6c586acc636492d50e2232ddac17fe6351bd31a');
+    expect(sha256Json(registryResult)).toBe('e48b7d3ff54185a057a107a1ec6aad8eaadbecd90b83c1c9eff0e806d2971d9c');
   });
 
   it('B-19 keeps the runtime data schema out of generated.ts', () => {

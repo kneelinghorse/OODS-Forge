@@ -323,7 +323,7 @@ describe('Sprint 186 list-context field-bound inputs on Vue', () => {
     const form = await generateCode({ framework: 'vue', profile: 'build', schema: formSchema });
     expect(form.status, JSON.stringify(form.errors)).toBe('ok');
     expect(form.code).toContain('v-model="lastEvent"');
-    expect(form.code).toContain("const lastEvent = ref<'created' | 'updated'>('created');");
+    expect(form.code).toContain("const lastEvent = ref<'created' | 'updated'>(generatedProps.lastEvent ?? 'created');");
     const compiler = require('@vue/compiler-sfc') as typeof import('@vue/compiler-sfc');
     for (const [name, code] of [['list', list.code], ['form', form.code]] as const) {
       const parsed = compiler.parse(code, { filename: `${name}.vue` });

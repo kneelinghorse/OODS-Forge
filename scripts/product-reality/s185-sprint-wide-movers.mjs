@@ -30,7 +30,7 @@ export const S187_PUBLIC_RUNTIME_SCOPE = Object.freeze([
   'packages/mcp-server/src/tools/catalog.list.ts', 'packages/mcp-server/src/tools/catalog.shared.ts', 'packages/mcp-server/src/tools/types.ts',
   'cmos/scripts/refresh_structured_data.py', 'cmos/planning/component-schema.json',
   'cmos/planning/oods-components.json', 'cmos/planning/oods-tokens.json',
-  'artifacts/structured-data', 'docs/mcp/Tool-Specs.md', 'docs/mcp/Structured-Data-Refresh.md',
+  'artifacts/structured-data', 'docs/mcp/Tool-Specs.md', 'docs/mcp/Structured-Data-Refresh.md', 'docs/api/catalog-list.md', 'docs/how-forge-works.html',
 ]);
 export const TABLE_PATHS = Object.freeze(['packages/components-react/src/table.tsx', 'packages/components-vue/src/table.ts']);
 const canonical = value => `${JSON.stringify(value, null, 2)}\n`;

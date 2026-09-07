@@ -1,0 +1,11 @@
+# First capture recovery
+
+The first clean execution `2a7bb93e850ea514bb7a8098b5f5042c1f76eef2` failed. Its byte-identical capture is retained in `../four-suite-closeout-attempt-1`; embedded references retain the original `four-suite-closeout` identity. No failure is waived. The original implementation census, live cells, saved stores and notices remain unchanged at their initial m06 paths. Corrected proof will use `../final-proof`.
+
+- Both visualization suites passed (1390 and 64). Server recorded 5841 passed, 22 failed, 16 skipped; root recorded 6127 passed, 17 failed, 16 skipped. `first-capture-failures.json` preserves all 39 per-suite failure observations.
+- The packaged component schema missed the optional obligation scope; synchronize it with planning and verify equality plus isolated dist startup/schema deletion. The refreshed API documentation and live explanatory page now reflect accepted retain-109 authority. Public byte accounting includes these docs.
+- Ready ports replace obsolete unavailable expectations for the unchanged public composition and fixture operands. Original `.n015` goldens and all saved input hashes are retained. The unchanged legacy detail fixture still fails five unsupported props with OODS-V007; its new explicit golden records those failures. Explicit input id continues to connect the original form label to its input.
+- The original ArchiveSummary syntax and mixed-tree probes remain covered. ArchiveEvent supplies separately named unavailable controls, including the synthetic fallback mutation. Vue ref assertions retain typed defaults and now require generated input props. Optional toolbar metadata does not invent an unbound Button.
+- Registry timing failed only in the first server capture. All five tests, including the exact unchanged timing gate, passed in `registry-timing-diagnostic.log`. No timing cause is claimed and the final full capture must pass it.
+
+Focused attempts are retained, including mistakes in expected prop-variable names, metadata field keys, inherited wording and native-id matching. Corrected checks passed their subsequent runs; no fixture schemas were pruned. Final full-suite accounting still determines total outcomes and inherited skip identity.

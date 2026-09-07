@@ -73,10 +73,12 @@ describe('Sprint 185 legacy CardHeader recipe fields retain their data meaning',
     expect(result.saved).toBeUndefined();
   });
 
-  it.each(['react', 'vue'] as const)('keeps the remaining Product/card %s gap on unported PriceCardMeta', async (framework) => {
+  it.each(['react', 'vue'] as const)('builds the unchanged Product/card %s operand with governed PriceCardMeta', async (framework) => {
     const result = await pipeline({ object: 'Product', context: 'card', framework });
-    expect(result.error).toEqual({ step: 'codegen', code: 'OODS-N015', message: `Component PriceCardMeta is not emission-eligible for ${framework}; evidence state: unavailable.` });
-    expect(result.code).toBeUndefined();
+    expect(result.error).toBeUndefined();
+    expect(result.code?.framework).toBe(framework);
+    expect(result.code?.output).toContain('PriceCardMeta');
+    expect(result.code?.output).toContain('CardHeader');
   });
 
   it.each(['react', 'vue'] as const)('%s compiles and server-renders actual object data through existing header props', async (framework) => {

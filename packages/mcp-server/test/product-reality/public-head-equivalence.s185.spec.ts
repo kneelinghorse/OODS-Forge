@@ -35,7 +35,7 @@ describe('Notice implementation heads retain actual public bytes across test-onl
   });
   afterEach(() => rmSync(root, { recursive: true, force: true }));
 
-  it.each(['packages/mcp-server/src/tools/catalog.list.ts', 'cmos/scripts/refresh_structured_data.py',
+  it.each(['packages/mcp-server/src/tools/catalog.list.ts', 'docs/api/catalog-list.md', 'docs/how-forge-works.html', 'cmos/scripts/refresh_structured_data.py',
     'artifacts/structured-data/manifest.json', 'packages/component-contracts/registry/component-obligation-scope.v1.json'])
   ('Sprint 187 independently detects changed discovery bytes: %s', (file) => {
     write(file, 'original discovery'); const implementationHead = commit('discovery');

@@ -11,7 +11,7 @@ import sys
 root = pathlib.Path(__file__).resolve().parents[4]
 spec_path = pathlib.Path(sys.argv[1])
 spec = json.loads(spec_path.read_text())
-base = root / 'artifacts/product-reality/sprint-187/m06/commands'
+base = root / spec.get('receiptDirectory', 'artifacts/product-reality/sprint-187/m06/commands')
 base.mkdir(parents=True, exist_ok=True)
 log = base / (spec['id'] + '.log')
 receipt = base / (spec['id'] + '.json')

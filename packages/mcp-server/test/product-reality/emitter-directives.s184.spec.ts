@@ -228,7 +228,7 @@ describe('Sprint 184 m03 target contract and emitter movement', () => {
     expect(result.code).toContain(
       "{{ Array.isArray(allowedTransitions) ? allowedTransitions.join(', ') : '' }}",
     );
-    expect(result.code).toContain('const allowedTransitions = ref<string[]>([]);');
+    expect(result.code).toContain('const allowedTransitions = ref<string[]>(generatedProps.allowedTransitions ?? []);');
     expect(result.code).not.toContain('ref<unknown>');
     expect(result.code).not.toContain('[object Object]');
     expect(vueStrictResult(result.code)).toEqual({ status: 0, output: '' });

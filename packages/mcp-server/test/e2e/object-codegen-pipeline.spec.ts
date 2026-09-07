@@ -11,16 +11,11 @@ import { handle as composeHandle } from '../../src/tools/design.compose.js';
 import { handle as codegenHandle } from '../../src/tools/code.generate.js';
 import { handle as validateHandle } from '../../src/tools/repl.validate.js';
 import { handle as renderHandle } from '../../src/tools/repl.render.js';
-import { createValidationReceipt, recordValidationChecks } from '../../src/codegen/validation-profile.js';
 import { validateGeneratedArtifact } from '../../src/codegen/artifact-envelope.js';
 import { preflightTargetCapabilities } from '../../src/codegen/target-readiness.js';
 
 type Framework = 'react' | 'vue';
 type AffectedNode = readonly [nodeId: string, component: string];
-
-const SUBSCRIPTION_DETAIL_UNREADY: readonly AffectedNode[] = [
-  ['ve-header-26', 'ArchiveSummary'],
-];
 
 const USER_DETAIL_NEWLY_READY: readonly AffectedNode[] = [
   ['ve-header-29', 'TagManager'],
@@ -56,49 +51,6 @@ function countComponents(schema: UiSchema): number {
   };
   visit(schema.screens);
   return ids.size;
-}
-
-function expectedTargetReadinessReceipt(framework: Framework) {
-  return recordValidationChecks(
-    createValidationReceipt(undefined, framework),
-    'schema-structure',
-    'component-registry',
-    'state-contract',
-    'target-readiness',
-  );
-}
-
-async function expectTargetUnavailable(
-  schemaRef: string,
-  schema: UiSchema,
-  framework: Framework,
-  affectedNodes: readonly AffectedNode[],
-): Promise<void> {
-  const result = await codegenHandle({
-    schemaRef,
-    framework,
-    options: { typescript: true, styling: 'tokens' },
-  });
-
-  expect(result).toEqual({
-    status: 'error',
-    framework,
-    code: '',
-    fileExtension: '',
-    imports: [],
-    warnings: [],
-    validationReceipt: expectedTargetReadinessReceipt(framework),
-    errors: affectedNodes.map(([nodeId, component]) => ({
-      code: 'OODS-N015',
-      message: `Component ${component} is not emission-eligible for ${framework}; evidence state: unavailable.`,
-      nodeId,
-      component,
-    })),
-    meta: {
-      nodeCount: countNodes(schema),
-      componentCount: countComponents(schema),
-    },
-  });
 }
 
 async function expectTargetGenerated(
@@ -142,7 +94,6 @@ async function expectTargetGenerated(
 async function composeAndCheck(
   object: 'Subscription' | 'User',
   context: 'detail' | 'list',
-  affectedNodes: readonly AffectedNode[] = [],
 ): Promise<void> {
   const compose = await composeHandle({ object, context });
   expect(compose.status).toBe('ok');
@@ -173,24 +124,20 @@ async function composeAndCheck(
   expect(render.html!.match(/data-oods-component=/g)?.length ?? 0).toBeGreaterThan(1);
 
   for (const framework of ['react', 'vue'] as const) {
-    if (affectedNodes.length > 0) {
-      await expectTargetUnavailable(schemaRef, compose.schema, framework, affectedNodes);
-    } else {
-      await expectTargetGenerated(schemaRef, compose.schema, framework);
-    }
+    await expectTargetGenerated(schemaRef, compose.schema, framework);
   }
 }
 
 describe('E2E object codegen target readiness', () => {
-  it('keeps Subscription detail blocked only by the remaining unavailable component', async () => {
-    await composeAndCheck('Subscription', 'detail', SUBSCRIPTION_DETAIL_UNREADY);
+  it('builds the original Subscription detail now that ArchiveSummary is governed', async () => {
+    await composeAndCheck('Subscription', 'detail');
   });
 
   it('builds the fully ported Subscription list for both framework targets', async () => {
     await composeAndCheck('Subscription', 'list');
   });
 
-  it('keeps User detail composition/rendering, resolves its former readiness gaps, and reports the remaining composer contract defect', async () => {
+  it('keeps the original User detail tree and builds it after the StatusTimeline binding repair', async () => {
     const compose = await composeHandle({ object: 'User', context: 'detail' });
     expect(compose.status).toBe('ok');
     expect(compose.schemaRef).toBeTruthy();
@@ -209,22 +156,11 @@ describe('E2E object codegen target readiness', () => {
 
     for (const framework of ['react', 'vue'] as const) {
       expect(preflightTargetCapabilities(compose.schema.screens, framework)).toEqual([]);
-      const result = await codegenHandle({ schemaRef, framework, options: { typescript: true, styling: 'tokens' } });
-      expect(result).toMatchObject({
-        status: 'error', framework, code: '', imports: [], warnings: [],
-        meta: { nodeCount: countNodes(compose.schema), componentCount: countComponents(compose.schema) },
-      });
-      expect(result.artifact).toBeUndefined();
-      expect(result.errors).toEqual([{
-        code: 'OODS-V007', component: 'StatusTimeline', nodeId: 've-header-28',
-        message: 'Prop "label" is not in the canonical StatusTimeline contract.',
-      }]);
-      expect(result.validationReceipt.checks).toEqual(expect.arrayContaining(['target-readiness', 'props-contract', 'slots-contract', 'events-contract']));
-      expect(result.validationReceipt.notChecked).toContain('dependency-closure');
+      await expectTargetGenerated(schemaRef, compose.schema, framework);
     }
   });
 
-  it('keeps objectSchema field metadata even when framework emission is blocked', async () => {
+  it('keeps objectSchema field metadata through successful framework emission', async () => {
     const compose = await composeHandle({ object: 'Subscription', context: 'detail' });
     expect(compose.status).toBe('ok');
     expect(Object.keys(compose.schema.objectSchema ?? {}).length).toBeGreaterThan(5);
@@ -233,12 +169,7 @@ describe('E2E object codegen target readiness', () => {
       expect(typeof entry.required).toBe('boolean');
     }
 
-    await expectTargetUnavailable(
-      compose.schemaRef!,
-      compose.schema,
-      'react',
-      SUBSCRIPTION_DETAIL_UNREADY,
-    );
+    await expectTargetGenerated(compose.schemaRef!, compose.schema, 'react');
   });
 
   it('builds the unchanged intent-only dashboard through both root component packages', async () => {

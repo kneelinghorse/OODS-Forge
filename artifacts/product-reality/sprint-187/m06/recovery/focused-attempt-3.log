@@ -1,0 +1,65 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/portable-boundary.s181.spec.ts (7 tests | 1 failed) 4241ms
+   ✓ s181 portable-runtime publish boundary > keeps the runtime component schema byte-identical to the planning producer output 5ms
+   ✓ s181 portable-runtime publish boundary > B-12 starts from dist plus package metadata only and answers degraded health without planning data  2353ms
+   ✓ s181 portable-runtime publish boundary > B-12 proves the relocated schema is load-bearing by deleting it from the staged dist  1361ms
+   ✓ s181 portable-runtime publish boundary > allows declared-data provenance but forbids quoted cmos path segments in executable dist JavaScript 46ms
+   × s181 portable-runtime publish boundary > keeps manifest-present discovery deterministic across authorized refreshes and preserves trait membership 109ms
+     → Cannot read properties of undefined (reading 'path')
+   ✓ s181 portable-runtime publish boundary > B-19 keeps the runtime data schema out of generated.ts 5ms
+   ✓ s181 portable-runtime publish boundary > derives the adapter wire version from package.json and no longer stages planning files for fresh installs  360ms
+ ✓ test/product-reality/sprint-wide-movers.s185.spec.ts (6 tests) 12925ms
+   ✓ Sprint-wide accounting includes runtime behavior omitted by per-mission scopes > replays the actual Table omission without pretending the narrow canonical scope catches it  1039ms
+   ✓ Sprint-wide accounting includes runtime behavior omitted by per-mission scopes > independently compares the exact canonical command and the public runtime supplement  392ms
+   ✓ Sprint-wide accounting includes runtime behavior omitted by per-mission scopes > turns a reproduced Table omission into a failing completed mover record  3172ms
+   ✓ Sprint-wide accounting includes runtime behavior omitted by per-mission scopes > uses the locked Sprint 186 range once and rejects omissions without inheriting the old two-sprint ceremony  3387ms
+   ✓ Sprint 187 discovery is part of the advertised public byte range > includes current scope, refresh exports and composer/lowering without inheriting two-sprint ranges  4921ms
+ ✓ test/product-reality/public-head-equivalence.s185.spec.ts (13 tests) 9369ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > Sprint 187 independently detects changed discovery bytes: packages/mcp-server/src/tools/catalog.list.ts  1547ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > Sprint 187 independently detects changed discovery bytes: docs/api/catalog-list.md  949ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > Sprint 187 independently detects changed discovery bytes: docs/how-forge-works.html  801ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > Sprint 187 independently detects changed discovery bytes: cmos/scripts/refresh_structured_data.py  757ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > Sprint 187 independently detects changed discovery bytes: artifacts/structured-data/manifest.json  880ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > Sprint 187 independently detects changed discovery bytes: packages/component-contracts/registry/component-obligation-scope.v1.json  852ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > excludes only declared test paths and discloses each excluded change  529ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > retains changed runtime bytes even when the file roster is unchanged and tests also move  460ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > does not mistake a runtime filename containing test text for a test  396ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > cannot hide a runtime removal by renaming its exact bytes to a test path  366ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > rejects reversed commit ancestry instead of claiming public equivalence  341ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > Sprint 186 independently catches a changed composer operand: packages/mcp-server/src/compose/object-slot-filler.ts  855ms
+   ✓ Notice implementation heads retain actual public bytes across test-only corrections > Sprint 186 independently catches a changed composer operand: packages/mcp-server/src/tools/design.compose.ts  634ms
+ ✓ test/product-reality/closeout-ledger.s185.spec.ts (60 tests) 3226ms
+   ✓ Independent public runtime equality uses actual Git bytes and disclosed test exclusions > test-only preserves the reviewed runtime boundary  857ms
+   ✓ Independent public runtime equality uses actual Git bytes and disclosed test exclusions > runtime-change preserves the reviewed runtime boundary  536ms
+   ✓ Independent public runtime equality uses actual Git bytes and disclosed test exclusions > runtime-renamed-to-test preserves the reviewed runtime boundary  646ms
+ ✓ test/product-reality/suite-accounting.s185.spec.ts (20 tests) 3330ms
+   ✓ Sprint 185 four-suite accounting counts executions and explains population movement > derives valid accounting across primary baselines, an immutable failed initial attempt and one distinct final four-suite capture  1514ms
+   ✓ Sprint 185 four-suite accounting counts executions and explains population movement > cannot reuse an old baseline execution as the newly measured closeout run  1562ms
+ ✓ test/product-reality/reconnect.s185.spec.ts (11 tests) 790ms
+   ✓ Combined reconnect requires real unique deliveries of the exact reviewed requests > prepares the 23 new families separately from the eight root promotions and names the alias horizon without sending  776ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/portable-boundary.s181.spec.ts > s181 portable-runtime publish boundary > keeps manifest-present discovery deterministic across authorized refreshes and preserves trait membership
+TypeError: Cannot read properties of undefined (reading 'path')
+ ❯ test/contracts/portable-boundary.s181.spec.ts:268:78
+    266|     const manifest = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, '…
+    267|     const artifact = manifest.artifacts.find((entry: { id: string }) =…
+    268|     const payload = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, ar…
+       |                                                                              ^
+    269|     expect(fetchResult).toMatchObject({ dataset: 'components', version…
+    270|       generatedAt: manifest.generatedAt, etag: artifact.etag, path: ar…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  1 failed | 116 passed (117)
+   Start at  23:47:10
+   Duration  39.06s (transform 931ms, setup 114ms, collect 1.66s, tests 33.88s, environment 1ms, prepare 1.18s)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/portable-boundary.s181.spec.ts test/product-reality/closeout-ledger.s185.spec.ts test/product-reality/public-head-equivalence.s185.spec.ts test/product-reality/suite-accounting.s185.spec.ts test/product-reality/sprint-wide-movers.s185.spec.ts test/product-reality/reconnect.s185.spec.ts --maxWorkers=2

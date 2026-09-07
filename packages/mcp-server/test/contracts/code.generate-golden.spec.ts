@@ -22,12 +22,12 @@ const FIXTURES = [
   {
     name: 'form-page',
     schemaFile: 'form-page.ui-schema.json',
-    expectedFile: 'form-page.n015.json',
+    expectedFile: 'form-page.ready.json',
   },
   {
     name: 'detail-page',
     schemaFile: 'detail-page.ui-schema.json',
-    expectedFile: 'detail-page.n015.json',
+    expectedFile: 'detail-page.v007.json',
   },
 ];
 
@@ -52,9 +52,16 @@ type ReadyGolden = {
   historicalReadinessGolden: string;
 };
 
-function loadGolden(fileName: string): UnreadyGolden | ReadyGolden {
+type PropsErrorGolden = {
+  status: 'props-error';
+  meta: { nodeCount: number; componentCount: number };
+  errors: Array<{ code: string; message: string; nodeId: string; component: string }>;
+  historicalReadinessGolden: string;
+};
+
+function loadGolden(fileName: string): UnreadyGolden | ReadyGolden | PropsErrorGolden {
   const filePath = path.join(GOLDEN_DIR, fileName);
-  return JSON.parse(readFileSync(filePath, 'utf8')) as UnreadyGolden | ReadyGolden;
+  return JSON.parse(readFileSync(filePath, 'utf8')) as UnreadyGolden | ReadyGolden | PropsErrorGolden;
 }
 
 function expectedTargetReadinessReceipt(framework: 'react' | 'vue') {
@@ -94,7 +101,9 @@ describe('code.generate golden readiness outcomes', () => {
           const nodes = [...schema.screens];
           while (nodes.length > 0) {
             const node = nodes.shift()!;
-            expect(result.code).toContain(`id="${node.id}" data-oods-component="${node.component}"`);
+            // An explicit native id connects the original FormLabelGroup htmlFor to its input.
+            const renderedId = node.props?.id ?? node.id;
+            expect(result.code).toContain(`id="${renderedId}" data-oods-component="${node.component}"`);
             nodes.push(...(node.children ?? []));
           }
           const historical = loadGolden(expected.historicalReadinessGolden) as UnreadyGolden;
@@ -108,9 +117,23 @@ describe('code.generate golden readiness outcomes', () => {
           return;
         }
 
+        if (expected.status === 'props-error') {
+          // Ports remove readiness failures without legitimizing unsupported legacy props.
+          const historical = loadGolden(expected.historicalReadinessGolden) as UnreadyGolden;
+          expect(historical.affectedNodes).toHaveLength(3);
+          expect(result).toEqual({
+            status: 'error', framework, code: '', fileExtension: '', imports: [], warnings: [],
+            meta: expected.meta, errors: expected.errors,
+            validationReceipt: recordValidationChecks(expectedTargetReadinessReceipt(framework),
+              'normalization-fidelity', 'binding-contract', 'props-contract', 'slots-contract', 'events-contract'),
+          });
+          expect(result.errors?.some((error) => error.code === 'OODS-N015')).toBe(false);
+          return;
+        }
+
         for (const component of expected.portedReadyComponents ?? []) {
           expect(
-            result.errors?.some((error) => error.component === component) ?? false,
+            result.errors?.some((error) => error.component === component && error.code === 'OODS-N015') ?? false,
             `${component} should no longer contribute an OODS-N015 error`,
           ).toBe(false);
         }

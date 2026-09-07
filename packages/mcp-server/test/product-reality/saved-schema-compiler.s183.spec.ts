@@ -214,7 +214,9 @@ describe('Sprint 183 M04 saved-schema compiler', () => {
       cpSync(corpusRoot, mutationCorpus, { recursive: true });
       const recordPath = path.join(mutationCorpus, `${recordName}.json`);
       const record = readJson<{ schema: UiSchema }>(recordPath);
-      record.schema.screens.push({ id: 'readiness-mutation-only', component: 'ArchiveSummary' });
+      // ArchiveSummary is now governed. This explicitly synthetic negative uses
+      // the still-unavailable ArchiveEvent; all original corpus hashes stay fixed.
+      record.schema.screens.push({ id: 'readiness-mutation-only', component: 'ArchiveEvent' });
       writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`);
       expect(sha256(path.join(mutationCorpus, 'tier1-acceptance-sub-detail.json'))).toBe(originalExitGateSha256);
 
@@ -228,7 +230,7 @@ describe('Sprint 183 M04 saved-schema compiler', () => {
           }
           return result;
         },
-      })).rejects.toThrow(/returned a generated artifact for unsupported ArchiveSummary; typed gap required/i);
+      })).rejects.toThrow(/returned a generated artifact for unsupported ArchiveEvent; typed gap required/i);
       // The compiler repeats the selected target before checking its gap disposition.
       expect(mutatedTypedGaps).toBe(2);
       expect(sha256(originalPath)).toBe(originalSha256);

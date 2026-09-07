@@ -11,7 +11,7 @@
 | `category` | string | No |  | Filter components by category (e.g., 'core', 'data') |
 | `trait` | string | No |  | Filter components by trait (e.g., 'Editable', 'Searchable') |
 | `context` | string | No |  | Filter components by context (e.g., 'detail', 'list') |
-| `status` | `stable` \| `beta` \| `planned` | No |  | Filter by component status. 'stable' = has renderer, 'planned' = not yet implemented. |
+| `status` | `stable` \| `beta` \| `planned` | No |  | Filter by legacy static-HTML status only: 'stable' = mapped HTML renderer; 'planned' = HTML fallback. Consult productReality.surfaces for React/Vue, generated-consumer and maturity evidence. |
 | `detail` | `summary` \| `full` | No |  | Response detail level. Defaults to summary for unfiltered calls, full when filters are provided. |
 | `page` | integer | No |  | 1-based page index for pagination. |
 | `pageSize` | integer | No |  | Number of components per page. |
@@ -20,6 +20,7 @@
 
 | Field | Type | Always Present | Description |
 |-------|------|----------------|-------------|
+| `obligationScope` | object | No | Current accepted catalog scope ruling, independent of historical row classification proposals and target capability evidence. Retained obligations are not implementation or maturity claims. |
 | `components` | object[] | Yes | Array of component catalog entries |
 | `totalCount` | integer | Yes | Total number of components that match the filters (before pagination). |
 | `returnedCount` | integer | Yes | Number of components returned in this page. |

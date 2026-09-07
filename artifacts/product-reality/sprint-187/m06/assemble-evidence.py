@@ -4,9 +4,10 @@ import json
 import pathlib
 import re
 import subprocess
+import sys
 
 root = pathlib.Path(__file__).resolve().parents[4]
-b = pathlib.Path('artifacts/product-reality/sprint-187/m06')
+b = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else 'artifacts/product-reality/sprint-187/m06')
 def read(file): return json.loads((root / file).read_text())
 def ref(file): return dict(path=str(file), sha256=hashlib.sha256((root / file).read_bytes()).hexdigest())
 def write(file, data):
