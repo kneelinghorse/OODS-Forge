@@ -1,8 +1,8 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 BUILT, REVIEW PENDING; `builderSelfCertified:false`
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`
 
-**Updated:** 2026-09-07 — build session `PS-2026-09-07-001`
+**Updated:** 2026-09-07 — review session `PS-2026-09-07-002`
 
 **Scope:** The next three independently reviewed increments
 
@@ -26,7 +26,7 @@ through the existing public object/context inputs; saved-corpus success does not
 The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
 follows runnable product foundations.
 
-## Current measured state — Sprint 187 implementation `a9c02b7d`; independent review pending
+## Current measured state — Sprint 187 implementation `a9c02b7d`; independently certified and closed
 
 | Claim area | Current evidence | Remaining obligation |
 |---|---|---|
@@ -40,7 +40,15 @@ follows runnable product foundations.
 The exact runtime and saved-store hashes are in
 [the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md).
 Final four-suite counts, skipped tests and file-attributed deltas belong to its retained capture and
-claim ledger. The baseline comparator is s186 execution `740e8405`, never a relabeled run. The initial clean `2a7bb93e` capture failed22 server and17 root assertions; its raw evidence remains retained. Corrected bundled discovery schema and contract expectations are verified at the new implementation. The corrected capture and output audit record the final build gates; their receipts control readiness for independent review.
+claim ledger. The baseline comparator is s186 execution `740e8405`, never a relabeled run. The initial clean `2a7bb93e` capture failed22 server and17 root assertions; its raw evidence remains retained. Corrected bundled discovery schema and contract expectations are verified at the new implementation. The corrected capture and output audit record the final build gates and were verified during independent review.
+
+Independent review re-derived all seven criteria byte-for-byte and reran the separate output audit:
+30 executions and 900 frozen paths pass. Rebuilt fresh and saved censuses reproduce the table above.
+Raw suite counts are 1390 / 64 / 5866 / 6146 passed, zero failed, with the identical 16 existing skips
+in the overlapping server/root runs. The review inspected retained browser and suite receipts rather
+than repeating those full runs. See [the review determination](../../planning/forge-s187-review-determination.md).
+CMOS closed Sprint 187 on 2026-09-07; learnings #516–#518 and carry-forward #1389–#1391 retain the
+review lessons, delivery work and explicit product limits. Master-context milestone snapshot: 2162.
 
 Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
 is not a runtime package, an admitted chart name is not rendered output, and a preview frame is not a
@@ -130,7 +138,7 @@ Pace rule from Derek, in force from this sprint on: appreciable progress every s
 and a lot of measuring. No per-mission four-suite captures, no new closeout apparatus, no critic
 workflow. The per-component evidence bar from Wave 1 is unchanged.
 
-## Increment 6 — Sprint 187: Fresh Composition Coverage — BUILT, REVIEW PENDING
+## Increment 6 — Sprint 187: Fresh Composition Coverage — CERTIFIED AND CLOSED
 
 **LOCKED** by decisions `#1787`–`#1789`, planning session `PS-2026-09-06-007`.
 The [decision memo](../../planning/forge-s187-fresh-composition-decision-memo.md) is the build authority.
@@ -208,7 +216,7 @@ The following are parked until their named dependency is met:
 - `schema.ingest` — historically shelved by `#1649`; decision `#1652` retains the shelving result
   while superseding its incorrect surface claim.
 
-## Independent review handoff
+## Independent review and remaining delivery
 
 Read [the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md) and its
 claim-ledger/review-handoff JSON. The build is in
@@ -218,8 +226,9 @@ The ledger separately names the actual four-suite execution and frozen evidence/
 public-byte equivalence must hold between implementation and execution. Canonical CMOS remains in
 the primary checkout, whose unrelated dirty work was not reset or used as implementation source.
 
-Sprint 187 stays **Active**, **BUILT, REVIEW PENDING**, `builderSelfCertified:false`. The separate
-review session determines certification and close. Deployment #1374/#1379/#1384 remains pending;
+Sprint 187 is **Completed**, independently certified by review `PS-2026-09-07-002` and decision
+`#1809`. Historical builder receipts retain `builderSelfCertified:false`; they are not relabeled.
+Deployment #1374/#1379/#1384 remains pending;
 no shared PM2 restart, shared-store overwrite, publication or outbound reconnect occurred. Alias
 retirement and unverified maturity remain open. Maintenance #1315/#1318–#1322 remains named and
 unabsorbed before integrated public release. PR83 CI follow-up #1386 was resolved before this build;
