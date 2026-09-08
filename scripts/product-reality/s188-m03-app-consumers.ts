@@ -14,6 +14,7 @@ import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
 import {
   GATE_NAMES, REPOSITORY_ROOT, commandResult, requireGreen, prepareManifest,
   isolatedNpmEnvironment, assertInstalledIsolation, resolveImports, withStaticServer, cssProof, launchProofBrowser,
+  type PackedPackageRecord,
 } from './s184-m06-live-consumers.js';
 
 type Framework = 'react' | 'vue';
@@ -210,7 +211,7 @@ export async function screenshots(page: Page, url: string, output: string, frame
       const file = `screenshots/${framework}-${context}-${width}.png`;
       await fs.mkdir(path.join(output, 'screenshots'), { recursive: true });
       await page.screenshot({ path: path.join(output, file), fullPage: true });
-      const layout = await page.evaluate(() => ({ viewport: window.innerWidth, documentWidth: document.documentElement.scrollWidth, overflowing: [...document.querySelectorAll('main *')].filter((node) => node.getBoundingClientRect().right > window.innerWidth + 1).slice(0, 20).map((node) => ({ tag: node.tagName, component: node.getAttribute('data-oods-component'), width: node.getBoundingClientRect().width })) }));
+      const layout = await page.evaluate(() => ({ viewport: window.innerWidth, documentWidth: document.documentElement.scrollWidth, overflowing: Array.from(document.querySelectorAll('main *')).filter((node) => node.getBoundingClientRect().right > window.innerWidth + 1).slice(0, 20).map((node) => ({ tag: node.tagName, component: node.getAttribute('data-oods-component'), width: node.getBoundingClientRect().width })) }));
       rows.push({ framework, screen: context, width, file, sha256: digest(await fs.readFile(path.join(output, file))), artifactHash, selectedId: await screen(page).getAttribute('data-selected-id'), layout });
       if (requireBillingViews && (context === 'list' || context === 'detail')) {
         const view = context === 'list' ? 'archived' : 'payments';
@@ -247,7 +248,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
     artifacts.set(framework, generated.artifact!);
     await json(path.join(output, `${framework}-generation.json`), generated);
   }
-  const tarballs = await packFoundationPackages(output);
+  const tarballs = await packFoundationPackages(output) as PackedPackageRecord[];
   const browser = await launchProofBrowser();
   const cells: Array<Record<string, unknown>> = [];
   const allStates: Array<Record<string, unknown>> = [];

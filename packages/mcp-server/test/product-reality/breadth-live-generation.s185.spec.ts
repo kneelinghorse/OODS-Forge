@@ -36,7 +36,9 @@ describe('Sprint 185 m03 live readiness and root export generation', () => {
       expect(current.rows.filter((row: { componentId: string }) => !previousIds.has(row.componentId))
         .map((row: { componentId: string }) => row.componentId)).toEqual(expect.arrayContaining(Object.keys(invalidProps)));
     }
-    expect(execFileSync('git', ['diff', 'b659a6ee', '--', 'packages/mcp-server/src/render/component-map.ts'], { cwd: root, encoding: 'utf8' })).toBe('');
+    // The unchanged HTML renderer was a Sprint 185 boundary. Later approved
+    // billing recipes must not retroactively change what that mission proved.
+    expect(execFileSync('git', ['diff', 'b659a6ee', 'f8d15098ba3bfd47231d489d7659027b5c9f50e3', '--', 'packages/mcp-server/src/render/component-map.ts'], { cwd: root, encoding: 'utf8' })).toBe('');
   });
 
   for (const framework of frameworks) {

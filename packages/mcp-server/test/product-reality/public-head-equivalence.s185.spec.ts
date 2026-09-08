@@ -47,7 +47,8 @@ describe('Notice implementation heads retain actual public bytes across test-onl
   });
 
   it.each(['packages/mcp-bridge/src/health.ts', 'packages/mcp-bridge/package.json', 'packages/mcp-server/package.json',
-    'scripts/build-revision.mjs', 'packages/mcp-server/src/codegen/workflow-emitter.ts', 'cmos/foundational-docs/roadmap/near.md'])
+    'scripts/build-revision.mjs', 'packages/mcp-server/src/codegen/workflow-emitter.ts', 'cmos/foundational-docs/roadmap/near.md',
+    'scripts/runtime/assemble.mjs', '.github/workflows/ci.yml'])
   ('Sprint 188 independently catches a changed workflow/delivery byte: %s', file => {
     write(file, 'original'); const implementationHead = commit('workflow implementation');
     write(file, 'changed'); const executionHead = commit('changed public workflow');

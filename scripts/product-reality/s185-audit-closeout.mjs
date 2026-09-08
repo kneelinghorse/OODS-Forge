@@ -34,7 +34,8 @@ const publicScope187 = [...publicScope186,
   'cmos/planning/oods-components.json', 'cmos/planning/oods-tokens.json',
   'artifacts/structured-data', 'docs/mcp/Tool-Specs.md', 'docs/mcp/Structured-Data-Refresh.md', 'docs/api/catalog-list.md', 'docs/how-forge-works.html'];
 const publicScope188 = [...publicScope187, 'packages/mcp-bridge/src', 'packages/mcp-bridge/package.json',
-  'packages/mcp-server/package.json', 'scripts/build-revision.mjs', 'cmos/foundational-docs/roadmap/near.md'];
+  'packages/mcp-server/package.json', 'scripts/build-revision.mjs', 'cmos/foundational-docs/roadmap/near.md',
+  'scripts/runtime/assemble.mjs', '.github/workflows/ci.yml'];
 const testPath = file => /(^|\/)(?:__tests__|test|tests)\//.test(file) || /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file);
 
 export function auditPublicRuntimeBytes({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {

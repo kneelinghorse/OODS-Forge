@@ -263,7 +263,8 @@ describe('object-aware compose — hybrid mode', () => {
     expect(result.warnings.some((warning) => warning.code === 'OODS-V119')).toBe(false);
 
     const components = collectComponentNames(result.schema.screens[0] as Record<string, unknown>);
-    expect(components).toContain('PriceSummary');
+    // Billable's detail extension owns the billing slot after recipe implementation.
+    expect(components).toContain('CycleProgressCard');
     expect(components).toContain('StatusTimeline');
     expect(components).toContain('StatusBadge');
     expect(components).toContain('CancellationSummary');

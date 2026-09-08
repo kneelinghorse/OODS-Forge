@@ -160,16 +160,16 @@ describe('Versioned structured data returns updated trait metadata', () => {
     expect(traitNames).toContain('Taggable');
   });
 
-  it('reports version in manifest matching latest available artifact', async () => {
+  it('reports the active manifest version even when a named release follows dated snapshots', async () => {
     const versions = listAvailableVersions('components');
     expect(versions.length).toBeGreaterThan(0);
-    const latest = versions[versions.length - 1];
-
     const result = await fetchData({ dataset: 'manifest' });
     expect(result.payloadIncluded).toBe(true);
     const manifest = result.payload as Record<string, unknown>;
-    expect(manifest.version).toBe(latest);
-    expect(result.version).toBe(latest);
+    const components = await fetchData({ dataset: 'components', version: manifest.version as string });
+    expect(components.version).toBe(manifest.version);
+    expect(components.warnings).toBeUndefined();
+    expect(result.version).toBe(manifest.version);
   });
 
   it('includes etag that differs from pre-sync baseline', async () => {

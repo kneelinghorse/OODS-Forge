@@ -93,7 +93,9 @@ const HTML_FALLBACK_SCHEMA: UiSchema = {
   version: '1.0',
   screens: [{
     id: 'html-fallback',
-    component: 'ArchivedRowOverlay',
+    // ArchivedRowOverlay became implemented in Sprint 188. Keep the fallback
+    // policy's negative operand on an explicitly unmapped retained registry row.
+    component: 'AuditSummaryCard',
     props: {},
   }],
 };

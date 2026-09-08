@@ -11,7 +11,7 @@
 | `dslVersion` | string | No |  | DSL version to use for this request. Defaults to the current version (1.0). |
 | `object` | string | No |  | Object name from the OODS registry (e.g., Subscription, User). |
 | `intent` | string | No |  | Natural-language description of the desired UI. |
-| `context` | `detail` \| `list` \| `form` \| `timeline` \| `card` \| `inline` | No |  | View context for object-aware composition. |
+| `context` | `detail` \| `list` \| `form` \| `timeline` \| `card` \| `inline` \| `workflow` | No |  | View context for object-aware composition. |
 | `layout` | `dashboard` \| `form` \| `detail` \| `list` \| `card` \| `timeline` \| `landing` \| `auto` | No |  | Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords. |
 | `preferences` | object | No |  |  |
 | `preferences.theme` | string | No |  | Theme token (e.g., 'light', 'dark'). |

@@ -37,6 +37,7 @@ export const S188_BASE = 'cd8ee986db40e73a3fb9a9f1ec7b7db6de9ca076';
 export const S188_PUBLIC_RUNTIME_SCOPE = Object.freeze([
   ...S187_PUBLIC_RUNTIME_SCOPE, 'packages/mcp-bridge/src', 'packages/mcp-bridge/package.json',
   'packages/mcp-server/package.json', 'scripts/build-revision.mjs', 'cmos/foundational-docs/roadmap/near.md',
+  'scripts/runtime/assemble.mjs', '.github/workflows/ci.yml',
 ]);
 export const TABLE_PATHS = Object.freeze(['packages/components-react/src/table.tsx', 'packages/components-vue/src/table.ts']);
 const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
