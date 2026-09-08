@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 814,
+    "classA": 680,
+    "classB": 134
+  },
+  "totals": {
+    "references": 814,
+    "classA": 680,
+    "classB": 134,
+    "resolved": 812
+  },
+  "targets": {
+    "react": {
+      "rows": 67,
+      "references": 402,
+      "classA": 335,
+      "classB": 67,
+      "resolved": 402
+    },
+    "vue": {
+      "rows": 67,
+      "references": 412,
+      "classA": 345,
+      "classB": 67,
+      "resolved": 410
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 134,
+    "targetImplementation": 134,
+    "packageExport": 134,
+    "publicDeclaration": 134,
+    "dependencyClosure": 134,
+    "frameworkScenario": 144
+  },
+  "failures": [
+    {
+      "target": "vue",
+      "componentId": "BillingAmountInput",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-vue/src/index.ts#BillingAmountInput",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "vue",
+      "componentId": "BillingAmountInput",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-vue/dist/index.d.ts#BillingAmountInput",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}

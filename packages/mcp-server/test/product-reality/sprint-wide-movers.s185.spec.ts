@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import {
-  CANONICAL_ADVERTISED_SCOPE, PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE, S187_BASE, ROOT, S184_BASE, S185_BASE, TABLE_PATHS,
+  CANONICAL_ADVERTISED_SCOPE, PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE, S187_BASE, S188_PUBLIC_RUNTIME_SCOPE, S188_BASE, ROOT, S184_BASE, S185_BASE, TABLE_PATHS,
   compareDeclaredPaths, deriveMovers, deriveRange, replayTableOmission,
 } from '../../../../scripts/product-reality/s185-sprint-wide-movers.mjs';
 
@@ -81,5 +81,20 @@ describe('Sprint 187 discovery is part of the advertised public byte range', () 
       expect(() => deriveMovers('HEAD', omitted, ROOT, options)).toThrow(/declared mover union differs/);
     }
     expect(() => deriveMovers('HEAD', declaration, ROOT, { ...options, base: S185_BASE })).toThrow(/locked build base/);
+  });
+});
+
+describe('Sprint 188 single advertised workflow range', () => {
+  it('uses cd8ee986 and catches omitted workflow, schema and build-revision movers', () => {
+    const options = { sprintId: 'sprint-188', missionId: 's188-m06', base: S188_BASE };
+    const range = deriveRange(S188_BASE, 'HEAD', ROOT, S188_PUBLIC_RUNTIME_SCOPE);
+    const declaration = { s188: range };
+    expect(deriveMovers('HEAD', declaration, ROOT, options)).toMatchObject({ status: 'passed', s188: range });
+    for (const file of ['packages/mcp-server/src/codegen/workflow-emitter.ts', 'packages/mcp-server/src/schemas/design.compose.input.json', 'scripts/build-revision.mjs', 'packages/mcp-bridge/src/health.ts']) {
+      expect(range.publicPaths).toContain(file);
+      const omitted = structuredClone(declaration); omitted.s188.publicPaths = omitted.s188.publicPaths.filter(path => path !== file);
+      expect(() => deriveMovers('HEAD', omitted, ROOT, options)).toThrow(/declared mover union differs/);
+    }
+    expect(() => deriveMovers('HEAD', declaration, ROOT, { ...options, base: S187_BASE })).toThrow(/locked build base/);
   });
 });

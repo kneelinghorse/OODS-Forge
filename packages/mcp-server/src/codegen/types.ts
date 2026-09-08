@@ -155,6 +155,7 @@ export type CodegenResult = {
   code: string;
   fileExtension: string;
   imports: string[];
+  files?: Array<{ path: string; contents: string }>;
   /** Required domain actions to include in the generated artifact contract. */
   actions?: GeneratedArtifactAction[];
   warnings: CodegenIssue[];

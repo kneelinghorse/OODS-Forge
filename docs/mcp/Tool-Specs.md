@@ -47,7 +47,7 @@ Place a `.oodsrc` JSON file in the project root to set default options for `pipe
 | `styling` | `inline` \| `tokens` \| `tailwind` | `tokens` | pipeline, code.generate |
 | `typescript` | boolean | `true` | code.generate |
 | `brand` | string | — | reserved |
-| `context` | `detail` \| `list` \| `form` \| `timeline` \| `card` \| `inline` | — | design.compose |
+| `context` | `detail` \| `list` \| `form` \| `timeline` \| `card` \| `inline` \| `workflow` | — | design.compose |
 | `layout` | `dashboard` \| `form` \| `detail` \| `list` \| `auto` | `auto` | design.compose |
 | `preferences` | object | — | design.compose |
 | `pipeline.checkA11y` | boolean | `false` | pipeline |
@@ -642,6 +642,35 @@ adds target-resolution provenance (`explicit`, `options-alias`, `.oodsrc`, or de
 ---
 
 ### `design.compose`
+
+`{ "object": "Subscription", "context": "workflow" }` composes the existing list,
+detail, form and timeline screens with routes `/`, `/:id`, `/:id/edit` and
+`/:id/timeline`. Each screen has loading, empty, error and success branches.
+The `workflow` block records object identity, screen declarations, transitions,
+canonical states and trait-derived data parameters. Cancellable supplies Cancel
+on detail/form; Timestampable supplies View timeline on detail in every context
+composition. The assembler reuses those bindings.
+
+Pass the schema or schemaRef to `code.generate` with `framework: "react"` or
+`"vue"`, `profile: "build"` and `options.typescript: true` (the default). The
+returned `artifact.files` contains App, four screen components, a shared typed
+action contract, an in-memory store, deterministic sample data, entry point,
+styles, tsconfig and package manifest. Preserve every file at its declared path;
+install the exact declared dependencies and run `npm run dev` or `npm run build`.
+OODS packages must be available from your configured registry or reviewed local
+tarballs. Workflow JavaScript-only output is rejected explicitly.
+
+The generated app owns local navigation and action implementations. It supports
+search, status filtering, sorting, pagination, editing, cancellation with history,
+and reversible archive. It starts with ten deterministic records; `?mode=empty`
+and `?mode=error` exercise data states, and `?latency=400` controls simulated
+latency. Error screens provide retry. Data lasts for the application session;
+URL routing and persistent storage are follow-on work. The generated `src/ssr.tsx`
+(React) or `src/ssr.ts` (Vue) exports `renderApp(options)`; the generated main
+entry hydrates existing root markup and mounts an empty root. The workflow data
+contract carries declared timestamp events and cancellation reason policy so
+sample records and native Save follow the object traits. The six existing contexts
+continue returning their single-screen artifact contract.
 
 - **Input schema**: `packages/mcp-server/src/schemas/design.compose.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/design.compose.output.json`

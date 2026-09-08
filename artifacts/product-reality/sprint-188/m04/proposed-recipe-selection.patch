@@ -1,0 +1,14 @@
+--- a/packages/mcp-server/src/tools/design.compose.ts
++++ b/packages/mcp-server/src/tools/design.compose.ts
+@@ -569,7 +569,10 @@
+       }
+     }
+ 
+-    const result: SelectionResult = selectComponent(slot.intent, catalog, {
++    // Billable recipes require their explicit trait field mappings. Keep them
++    // available to view-extension placement, not generic single-field fallback.
++    const result: SelectionResult = selectComponent(slot.intent, catalog.filter((component) =>
++      !['BillingSummaryBadge', 'BillingAmountInput', 'BillingIntervalSelector'].includes(component.name)), {
+       topN,
+       intentContext: contextForSlot(slot),
+       preferKeywordMatches: useKeywordMatches,

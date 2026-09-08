@@ -6,7 +6,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { deriveSuiteAccounting } from './s185-suite-accounting.mjs';
-import { PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
+import { PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE, S188_PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
 import { isTestPath } from './s184-m07-reconnect.mjs';
 
 export const OUTPUT_ROOT = 'artifacts/product-reality/sprint-185/m05/closeout';
@@ -40,7 +40,7 @@ function safePath(file) {
 /** Compare actual public bytes using the mover derivation's test exclusions. */
 export function derivePublicHeadEquivalence({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {
   assert(fullHead(implementationHead) && fullHead(executionHead), 'Public comparison requires full actual commit SHAs.');
-  const scope = sprintId === 'sprint-187' ? S187_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-186' ? S186_PUBLIC_RUNTIME_SCOPE : PUBLIC_RUNTIME_SCOPE;
+  const scope = sprintId === 'sprint-188' ? S188_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-187' ? S187_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-186' ? S186_PUBLIC_RUNTIME_SCOPE : PUBLIC_RUNTIME_SCOPE;
   execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
   // Disable rename folding so moving runtime source into a test path still
   // exposes the removed runtime path before test-only changes are excluded.
@@ -55,17 +55,18 @@ export function derivePublicHeadEquivalence({ root, implementationHead, executio
 /** Pure derivation over explicitly supplied frozen bytes; no working-tree fallback. */
 export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence, finalAudit }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Both full execution and review commit SHAs are required.');
+  const workflow = manifest.missionId === 's188-m06';
   const fresh = manifest.missionId === 's187-m06';
   const wave2 = manifest.missionId === 's186-m06';
-  const missionId = fresh ? 's187-m06' : wave2 ? 's186-m06' : 's185-m05';
-  const sprintId = fresh ? 'sprint-187' : wave2 ? 'sprint-186' : 'sprint-185';
-  const criterionCount = fresh ? 7 : wave2 ? 6 : 8;
-  const suiteCriterion = fresh ? 5 : wave2 ? 4 : 6;
+  const missionId = workflow ? 's188-m06' : fresh ? 's187-m06' : wave2 ? 's186-m06' : 's185-m05';
+  const sprintId = workflow ? 'sprint-188' : fresh ? 'sprint-187' : wave2 ? 'sprint-186' : 'sprint-185';
+  const criterionCount = workflow ? 6 : fresh ? 7 : wave2 ? 6 : 8;
+  const suiteCriterion = workflow ? 2 : fresh ? 5 : wave2 ? 4 : 6;
   const outputPaths = Object.fromEntries(Object.entries(OUTPUT_PATHS).map(([key, file]) => [key,
-    fresh ? file.replace('sprint-185/m05', 'sprint-187/m06') : wave2 ? file.replace('sprint-185/m05', 'sprint-186/m06') : file]));
-  const requiredSources = fresh ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'freshCensus', 'cohort', 'liveConsumers', 'savedOriginal', 'savedSuccessor', 'savedCompatibility', 'rootEvidence', 'baselineFold', 'movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries', 'near'] : wave2 ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'unionFold', 'baselineFold', 'movers',
+    workflow ? file.replace('sprint-185/m05', 'sprint-188/m06') : fresh ? file.replace('sprint-185/m05', 'sprint-187/m06') : wave2 ? file.replace('sprint-185/m05', 'sprint-186/m06') : file]));
+  const requiredSources = workflow ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'freshCensus', 'liveConsumers', 'savedOriginal', 'savedSuccessor', 'savedCompatibility', 'movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'missionHistory', 'historicalEvidence', 'prose', 'carries', 'near'] : fresh ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'freshCensus', 'cohort', 'liveConsumers', 'savedOriginal', 'savedSuccessor', 'savedCompatibility', 'rootEvidence', 'baselineFold', 'movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries', 'near'] : wave2 ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'unionFold', 'baselineFold', 'movers',
     'moversDeclaration', 'noticePlan', 'deliveries', 'near'] : mandatorySources;
-  const requiredByCriterion = fresh ? [['freshCensus'], ['cohort', 'liveConsumers'], ['savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['rootEvidence', 'baselineFold'], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
+  const requiredByCriterion = workflow ? [['freshCensus', 'savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['liveConsumers'], [], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries'], ['missionHistory', 'historicalEvidence', 'prose', 'near'], ['cmosMission', 'cmosSprint', 'carries', 'noticePlan']] : fresh ? [['freshCensus'], ['cohort', 'liveConsumers'], ['savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['rootEvidence', 'baselineFold'], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
     ['movers', 'noticePlan', 'deliveries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : criterionSources;
   assert.equal(manifest.missionId, missionId);
   assert(!Object.hasOwn(manifest, 'criteria') && !Object.hasOwn(manifest, 'claims'), 'Criterion text and outcomes cannot be supplied by the manifest.');
@@ -149,7 +150,60 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   const implementationHead = documents.noticePlan.implementationHead;
   const captureIds = suiteAccounting.closeout?.runs?.[0]?.suiteExecutionIds ?? [];
   const captureRows = captureIds.map(id => executions.get(id));
-  if (fresh) {
+  if (workflow) {
+    const census = documents.freshCensus;
+    const expectedRecipes = { list: ['BillingSummaryBadge', 'ArchivedRowOverlay'], detail: ['CycleProgressCard', 'PaymentTimeline'],
+      form: ['BillingAmountInput', 'BillingIntervalSelector'], timeline: ['PaymentEventTimeline'], card: ['BillingCardMeta'] };
+    check(0, census.head === implementationHead && census.profile === 'build' && census.schemaCount === 66 && census.greenSchemas === 66
+      && census.generationCells === 132 && census.greenCells === 132 && census.rows.length === 66
+      && census.workflow.input.object === 'Subscription' && census.workflow.input.context === 'workflow' && census.workflow.green,
+    'Frozen fresh census contains 66 passing schemas, 132 screen cells and two workflow cells.');
+    for (const row of [...census.rows, census.workflow]) {
+      const composed = json(row.composition.path); reference(row.composition.path, row.composition.sha256);
+      check(0, composed.status === 'ok' && row.cells.length === 2, `${row.input.object}/${row.input.context} composes and has two cells.`);
+      for (const cell of row.cells) {
+        reference(cell.response.path, cell.response.sha256); const generated = json(cell.response.path);
+        check(0, generated.status === 'ok' && generated.artifact && !generated.errors?.length, `${row.input.object}/${row.input.context}/${cell.framework} has an actual build artifact.`);
+      }
+      if (row.input.object === 'Subscription') check(0, (expectedRecipes[row.input.context] ?? []).every(id => row.components.includes(id)), `Subscription/${row.input.context} retains its declared recipes.`);
+    }
+    const original = documents.savedOriginal; const successor = documents.savedSuccessor; const compatibility = documents.savedCompatibility;
+    check(0, original.head === implementationHead && successor.head === implementationHead && original.total === 16 && original.reachable === 15
+      && original.generatedCells === 30 && successor.total === 16 && successor.reachable === 16 && successor.generatedCells === 32
+      && compatibility.originalInputsUnchanged && compatibility.successorInputsUnchanged && compatibility.liveStoreUnchanged,
+    'Original and successor saved stores retain their separate 15/16 and 16/16 results and exact inputs.');
+    for (const report of [original, successor]) for (const row of report.rows) {
+      reference(row.input.path, row.input.sha256);
+      for (const cell of row.cells) reference(`${path.posix.dirname(report === original ? manifest.sources.savedOriginal : manifest.sources.savedSuccessor)}/${cell.response.path}`, cell.response.sha256);
+    }
+    const app = documents.liveConsumers;
+    check(1, app.sourceHead === implementationHead && app.cells.length === 2 && app.cells.every(cell => cell.gates.length === 8
+      && cell.gates.every(gate => gate.status === 'passed') && cell.flow.length === 9 && cell.flow.every(row => row.status === 'passed')
+      && cell.consumerAuthoredComponents === 0 && cell.consumerAuthoredActions === 0), 'Both fresh applications pass all eight gates and nine generated flows without consumer wiring.');
+    check(1, app.stateObservations.length === 32 && app.screenshots.length === 36,
+      'Four states on four screens in both targets and six screenshot views at three widths are retained.');
+    const appRoot = path.posix.dirname(manifest.sources.liveConsumers);
+    for (const image of app.screenshots) reference(`${appRoot}/${image.file}`, image.sha256);
+    for (const cell of app.cellReports) reference(`${appRoot}/${cell.report}`, cell.sha256);
+    check(2, suiteAccounting.status === 'passed' && !suiteAccounting.validationIssues.length && !suiteAccounting.unattributedDeltas.length
+      && Object.keys(suiteAccounting.baselines).join() === 'sprint187Closeout' && suiteAccounting.closeout.runs.length === 1
+      && captureRows.length === 4 && captureRows.every(row => row.measuredHead === executionHead && row.cleanBefore && row.cleanAfter && row.counts.failed === 0),
+    'One clean capture has zero failures and file-attributed deltas against Sprint 187.');
+    check(2, publicHeadEquivalence?.changedPaths.length === 0 && equal(publicHeadEquivalence.scope, S188_PUBLIC_RUNTIME_SCOPE),
+      'Execution retains the frozen implementation public bytes, including workflow and bridge build identity.');
+    const movers = documents.movers; const declared = documents.moversDeclaration; const plan = documents.noticePlan;
+    check(3, movers.status === 'passed' && movers.s188.base === 'cd8ee986db40e73a3fb9a9f1ec7b7db6de9ca076'
+      && movers.s188.head === implementationHead && ['canonicalPaths', 'publicPaths'].every(key => equal(movers.s188[key], declared.s188[key]))
+      && plan.implementationHead === implementationHead && plan.status === 'prepared-unsent' && plan.deliverySprint === 'sprint-189'
+      && documents.deliveries.length === 0 && movers.s188.publicPaths.every(file => plan.draft.includes(file)),
+    'The one sprint-wide range is enumerated in an unsent Sprint 189 reconnect draft.');
+    check(4, documents.missionHistory.missions.length === 6 && documents.historicalEvidence.status === 'passed'
+      && documents.prose.success === true && documents.prose.numFailedTests === 0 && documents.prose.numPendingTests === 0
+      && near.includes('BUILT, REVIEW PENDING'), 'All mission criteria retain source/receipt bindings and the updated prose contracts pass.');
+    check(5, sprint.status === 'Active' && documents.carries.builderSelfCertified === false
+      && documents.carries.separateReviewRequired === true && documents.carries.screenshots === manifest.sources.liveConsumers,
+    'Handoff leaves certification to independent review and points to the actual craft screenshots.');
+  } else if (fresh) {
     const base = '21c7c31906fbb81d049b943155c64ed78409fb9f';
     const expectedPaths = ['User/detail', 'Product/detail', 'Usage/list', 'Subscription/inline', 'Transaction/timeline',
       'Product/list', 'Product/form', 'Product/inline', 'Organization/list', 'Organization/detail', 'Organization/card',
@@ -487,14 +541,36 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
       ...(binding.suiteBindings ? { suiteBindings: binding.suiteBindings } : {}),
       observations: checks[criterionIndex], unproven };
   });
+  const priorClaims = [];
+  if (workflow) {
+    const prior = documents.missionHistory.missions.filter(row => row.id !== missionId);
+    assert.equal(prior.length, 5);
+    assert.equal(manifest.priorClaimBindings?.length, prior.reduce((sum, row) => sum + row.successCriteria.length, 0));
+    for (const previous of prior) for (const [criterionIndex, criterion] of previous.successCriteria.entries()) {
+      const matches = manifest.priorClaimBindings.filter(row => row.missionId === previous.id && row.criterionIndex === criterionIndex);
+      assert.equal(matches.length, 1, 'Every earlier literal criterion needs one binding.');
+      const binding = matches[0];
+      assert(!Object.hasOwn(binding, 'criterion') && !Object.hasOwn(binding, 'status'));
+      const evidence = binding.evidencePaths.map(file => reference(file));
+      const bound = binding.executionIds.map(id => { assert(executions.has(id)); return executions.get(id); });
+      assert(bound.some(row => row.exitCode === 0 && row.evidenceKind === 'retained-command'
+        && row.logs.some(ref => binding.evidencePaths.includes(ref.path))
+        && row.inputs.some(ref => binding.evidencePaths.includes(ref.path))), 'Historical criterion lacks a successful evidence-verification execution.');
+      assert(binding.evidencePaths.includes(manifest.sources.historicalEvidence));
+      priorClaims.push({ claimId: `${previous.id}-sc${String(criterionIndex + 1).padStart(2, '0')}`, missionId: previous.id,
+        criterionIndex, criterion, executionIds: binding.executionIds, evidence, status: 'evidence-bound',
+        disclosure: 'Retained mission execution evidence verified at the frozen head; past delivery and sends are not replayed or relabeled.' });
+    }
+  }
   const unproven = claims.filter(row => row.status !== 'passed').map(row => ({ claimId: row.claimId, reasons: row.unproven }));
   const ledger = { schemaVersion: '1.0.0', missionId, implementationHead, executionHead, reviewHead,
     publicHeadEquivalence: implementationHead === executionHead ? { implementationHead, executionHead, identicalHead: true } : publicHeadEquivalence,
     criterionSource: reference(manifest.sources.cmosMission), originalCriterionSource: reference(manifest.sources.cmosOriginalMission),
-    executions: [...executions.values()], claims, headline: { total: claims.length, proven: claims.length - unproven.length, unproven: unproven.length },
+    executions: [...executions.values()], claims, ...(workflow ? { priorClaims, boundSprintCriteria: priorClaims.length + claims.length } : {}), headline: { total: claims.length, proven: claims.length - unproven.length, unproven: unproven.length },
     unproven, status: unproven.length ? 'incomplete' : 'ready-for-independent-review', builderSelfCertified: false, separateReviewRequired: true,
     validationBoundary: 'Producer consistency checks are not independent review. A separate output-layer audit must rederive the final ledger bytes, literal claims, execution references and frozen hashes.' };
   const handoff = { schemaVersion: '1.0.0', missionId, sprintId, executionHead, reviewHead,
+    ...(workflow ? { implementationHead, craft: reference(manifest.sources.liveConsumers), carries: reference(manifest.sources.carries), boundSprintCriteria: priorClaims.length + claims.length } : {}),
     sprintStatus: sprint.status, sprintStatusSource: reference(manifest.sources.cmosSprint),
     builderSelfCertified: false, separateReviewRequired: true, approvalStatus: 'pending-independent-review',
     buildStatus: 'BUILT, REVIEW PENDING', unproven,
@@ -524,8 +600,62 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   return outputs;
 }
 
+/** Bounded Sprint 188 mode: verify retained mission receipts without replaying delivery. */
+export function verifySprint188History({ root, output }) {
+  const base = 'artifacts/product-reality/sprint-188/';
+  const plan = JSON.parse(fs.readFileSync(path.join(root, base + 'm06/retained-evidence-plan.json'), 'utf8'));
+  assert.equal(plan.bindings.length, 33);
+  assert.equal(new Set(plan.bindings.map(row => `${row.missionId}/${row.criterionIndex}`)).size, 33);
+  const references = new Map();
+  for (const binding of plan.bindings) for (const file of binding.evidencePaths) {
+    const bytes = fs.readFileSync(path.join(root, file));
+    const head = execFileSync('git', ['rev-parse', binding.missionCommit], { cwd: root, encoding: 'utf8' }).trim();
+    assert(bytes.equals(execFileSync('git', ['show', `${head}:${file}`], { cwd: root, maxBuffer: 32 * 1024 * 1024 })), `Retained mission bytes changed: ${file}`);
+    references.set(file, { path: file, sha256: sha256(bytes), missionId: binding.missionId, missionHead: head });
+  }
+  const read = file => JSON.parse(fs.readFileSync(path.join(root, base + file), 'utf8'));
+  const delivered = read('m01/verification-summary.json');
+  assert.equal(delivered.publicCalls, 17); assert.equal(delivered.successfulHttpResponses, 17); assert.equal(delivered.expectedNegativeCells, 2);
+  assert(read('m01/build-results.json').every(row => row.exitCode === 0));
+  const adoption = read('m01/adoption.json'); assert.equal(adoption.unrelatedRecordsByteIdentical, 15); assert(adoption.unrelatedIndexEntriesUnchanged);
+  assert.equal(adoption.before['user-form-showcase.json'], 'd25d9ce30988cd5e26b390a5b43ce005f2055b765b8bc3abadc263571a848bb2');
+  const sends = read('m01/reconnect-sent.json'); assert.equal(sends.length, 2);
+  assert.deepEqual(sends.map(row => row.targetAddress).sort(), ['cmos://derek/aquex-mcp', 'cmos://derek/forge-demos']);
+  assert(sends.every(row => row.result.structuredContent.success && row.result.structuredContent.data.messageId));
+  const second = read('m02/verification-summary.json'); assert.equal(second.existingSchemas, 66); assert.equal(second.existingGenerationCells, 132);
+  assert.equal(second.labelsChanged, 24); assert.equal(second.traitBindingsAdded, 14); assert(second.applications.every(row => row.status === 'ok' && row.strictTypecheck === 'passed'));
+  for (const [mission, count] of [['m04', 9], ['m05', 13]]) {
+    const parity = read(`${mission}/parity.json`); assert.deepEqual(parity.allowlist, []); assert.equal(parity.receipts.length, count);
+    assert(parity.receipts.every(row => row.differences.length === 0));
+    const bites = read(`${mission}/export-bites/mutation-manifest.json`); assert.equal(bites.mutants.length, mission === 'm04' ? 6 : 10);
+    assert(bites.mutants.every(row => row.status === 'passed' && row.restoredByteIdentically && row.sourceSha256Before !== row.sourceSha256Deleted));
+  }
+  for (const [mission, directory, flows, screenshots] of [['m03', 'final-verified', 7, 24], ['m04', 'resolved-app-consumers-final', 9, 24], ['m05', 'app-consumers-final', 9, 36]]) {
+    const app = read(`${mission}/${directory}/report.json`);
+    assert.equal(app.cells.length, 2); assert.equal(app.stateObservations.length, 32); assert.equal(app.screenshots.length, screenshots);
+    assert(app.cells.every(cell => cell.gates.length === 8 && cell.gates.every(gate => gate.status === 'passed') && cell.flow.length === flows && cell.flow.every(row => row.status === 'passed')));
+    for (const image of app.screenshots) {
+      const file = `${base}${mission}/${directory}/${image.file}`;
+      const bytes = fs.readFileSync(path.join(root, file)); assert.equal(sha256(bytes), digest(image.sha256));
+      references.set(file, { path: file, sha256: sha256(bytes) });
+    }
+  }
+  assert.equal(read('m04/resolved-census.json').unchanged, 64); assert.equal(read('m05/resolved-census.json').unchanged, 61);
+  const health = read('m05/catalog-health-final.json'); assert.deepEqual(health.health.revision, health.serverStamp); assert.equal(health.foundationRows.length, 14);
+  assert(health.foundationRows.every(row => ['react', 'vue'].every(target => row.productReality.surfaces[target].state === 'implemented-evidence-complete')));
+  assert(health.frozen.every(row => row.current === row.original && row.unchanged));
+  const result = { status: 'passed', sourceHead: execFileSync('git', ['rev-parse', 'HEAD'], {cwd: root, encoding: 'utf8'}).trim(),
+    boundCriteria: plan.bindings.length, references: [...references.values()], replayedExternalActions: 0,
+    disclosure: plan.disclosure };
+  fs.mkdirSync(path.dirname(output), {recursive: true}); fs.writeFileSync(output, canonicalJson(result)); return result;
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const argument = name => { const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1]; };
+  if (argument('--verify-history')) {
+    const result = verifySprint188History({ root: process.cwd(), output: path.resolve(argument('--verify-history')) });
+    process.stdout.write(canonicalJson({status: result.status, boundCriteria: result.boundCriteria, references: result.references.length}));
+  } else {
   const root = path.resolve(argument('--root') ?? path.join(path.dirname(fileURLToPath(import.meta.url)), '../..'));
   const executionHead = argument('--execution-head'); const reviewHead = argument('--review-head');
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Supply full --execution-head and --review-head SHAs.');
@@ -538,12 +668,12 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const attributionPath = argument('--attributions');
   const failurePath = argument('--failures');
   const suiteAccounting = deriveSuiteAccounting({ root, executionHead, reviewHead,
-    ...(manifest.missionId === 's187-m06' ? { sprintId: 'sprint-187', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's186-m06' ? { sprintId: 'sprint-186', missionId: manifest.missionId, ...manifest.accounting } : {}),
+    ...(manifest.missionId === 's188-m06' ? { sprintId: 'sprint-188', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's187-m06' ? { sprintId: 'sprint-187', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's186-m06' ? { sprintId: 'sprint-186', missionId: manifest.missionId, ...manifest.accounting } : {}),
     ...(attributionPath ? { attributions: JSON.parse(readFrozen(attributionPath).toString('utf8')) } : {}),
     ...(failurePath ? { failureDispositions: JSON.parse(readFrozen(failurePath).toString('utf8')) } : {}) });
   const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan).toString('utf8')).implementationHead;
   const publicHeadEquivalence = derivePublicHeadEquivalence({ root, implementationHead, executionHead,
-    sprintId: manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
+    sprintId: manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
   const auditPath = argument('--final-audit');
   const outputs = deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence,
     ...(auditPath ? { finalAudit: JSON.parse(fs.readFileSync(path.resolve(auditPath), 'utf8')) } : {}) });
@@ -554,4 +684,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   }
   const ledger = Object.values(outputs).find(value => value?.headline && value?.claims);
   process.stdout.write(canonicalJson(ledger.headline));
+}
 }

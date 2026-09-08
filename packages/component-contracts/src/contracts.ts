@@ -46,6 +46,13 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['false remains visible in its named term', 'archive date and reason remain associated terms'],
     compatibility: 'Mirrors renderArchiveSummary: h3 heading and Archived (isArchived/archived/status), Archived At (archivedAt), Reason (reason/archiveReason) description-list terms. A nullable archivedAt omits its date term; scalar false and true remain literal text as in HTML; an absent flag is not false. summary/text/description fallback and authored body override preserve the heading. archivedField, archivedAtField and reasonField lower to their runtime keys. restoredAtField, archivedByField, metadataField, retainHistoryParameter, restoreWindowParameter and allowPartialRestoreParameter are consumed unbound: HTML has no restore, actor or archive metadata term or action. Noninteractive.',
   },
+  ArchivedRowOverlay: {
+    id: 'ArchivedRowOverlay', version: COMPONENT_CONTRACT_VERSION,
+    props: ["isArchived", "showBadge", "separateTab", "tabLabel", "label"], slots: ["default"], events: [],
+    states: ["active", "archived"], tokenRoles: ['billing.text', 'billing.surface', 'billing.border'],
+    accessibility: ["Native semantic elements retain their names and content", "Trait-declared grayed presentation: only archived rows are dimmed and optionally badged, retain aria-hidden=false and announce Archived plus the supplied entity label. Active content has no state announcement or opacity. archivedField lowers to isArchived. The authored style=grayed directive is consumed as the one supported token presentation; other values fail. separateTab and tabLabel are presentation metadata used by the generated workflow list to separate archived records; this row primitive owns no collection or navigation."],
+    compatibility: "Trait-declared grayed presentation: only archived rows are dimmed and optionally badged, retain aria-hidden=false and announce Archived plus the supplied entity label. Active content has no state announcement or opacity. archivedField lowers to isArchived. The authored style=grayed directive is consumed as the one supported token presentation; other values fail. separateTab and tabLabel are presentation metadata used by the generated workflow list to separate archived records; this row primitive owns no collection or navigation.",
+  },
   AuditEvent: {
     id: 'AuditEvent', version: COMPONENT_CONTRACT_VERSION,
     props: ['label', 'title', 'event', 'status', 'state', 'reason', 'text', 'timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt', 'detail', 'description', 'message', 'from', 'to', 'code'], slots: ['default'], events: [],
@@ -78,6 +85,34 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['info', 'success', 'warning', 'critical'], tokenRoles: ['banner.background', 'banner.border', 'banner.text', 'banner.icon'],
     accessibility: ['Critical tone uses alert', 'Other tones use status', 'Dismiss control has an accessible label'],
     compatibility: 'Dismissal is a real button and actions remain authored content.',
+  },
+  BillingAmountInput: {
+    id: 'BillingAmountInput', version: COMPONENT_CONTRACT_VERSION,
+    props: ['amount', 'currency', 'minorUnits', 'label', 'name', 'disabled'], slots: [], events: ['change'],
+    states: ['editing', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'input.border', 'input.background', 'input.validation'],
+    accessibility: ['A label names the decimal input', 'Currency describes the input', 'Invalid input has an associated alert and aria-invalid'],
+    compatibility: 'Billable amount is an integer number of minor units. Decimal major-unit edits emit number | undefined, rounded half up with decimal arithmetic; zero is valid, blank emits undefined, and negatives or unsafe values retain the draft and emit no update. amountField/currencyField bind runtime amount/currency; minorUnitsParameter resolves to the declared object parameter. Uncontrolled text is retained until amount/minorUnits changes. HTML supplies the same static value and validation semantics; framework components own updates.',
+  },
+  BillingCardMeta: {
+    id: 'BillingCardMeta', version: COMPONENT_CONTRACT_VERSION,
+    props: ["amount", "currency", "minorUnits", "interval"], slots: [], events: [],
+    states: ["populated", "empty"], tokenRoles: ['billing.text', 'billing.surface', 'billing.border'],
+    accessibility: ["Native semantic elements retain their names and content", "Billable card phrase uses integer minor units, explicit currency and interval. minorUnitsParameter resolves through the trait declaration. Zero is preserved and JPY/1 has no decimals."],
+    compatibility: "Billable card phrase uses integer minor units, explicit currency and interval. minorUnitsParameter resolves through the trait declaration. Zero is preserved and JPY/1 has no decimals.",
+  },
+  BillingIntervalSelector: {
+    id: 'BillingIntervalSelector', version: COMPONENT_CONTRACT_VERSION,
+    props: ['interval', 'intervals', 'label', 'name', 'disabled'], slots: [], events: ['change'],
+    states: ['editing', 'invalid'], tokenRoles: ['billing.interval.text', 'input.border', 'input.background', 'input.validation'],
+    accessibility: ['A label names the native select', 'Native keyboard navigation selects an interval', 'An invalid value is visible with an associated alert and aria-invalid'],
+    compatibility: 'Billable interval selection emits one string from intervals. intervalField binds interval; intervalsParameter resolves to the declared object parameter. Defaults are Billable monthly/quarterly/annual; Subscription resolves monthly/yearly. An absent value has a disabled Choose interval placeholder; an invalid value remains visible as a disabled option plus an alert. HTML supplies the same static options and validation semantics.',
+  },
+  BillingSummaryBadge: {
+    id: 'BillingSummaryBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['amount', 'currency', 'minorUnits', 'interval'], slots: [], events: [],
+    states: ['populated', 'empty', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'billing.interval.text'],
+    accessibility: ['Amount, currency and interval form one noninteractive announced phrase'],
+    compatibility: 'Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. Invalid amount/currency is named explicitly.',
   },
   Button: {
     id: 'Button', version: COMPONENT_CONTRACT_VERSION,
@@ -167,6 +202,13 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text', 'badge.icon', 'badge.color'],
     accessibility: ['Inherits Badge inline noninteractive status label semantics', 'A visible text label always accompanies the decorative color marker', 'Color is never the sole status signal'],
     compatibility: 'Mirrors renderColorizedBadge over renderBadgePrimitive label/status/color aliases and default variant colorized; Badge tone and emphasis retain their shared behavior.',
+  },
+  CycleProgressCard: {
+    id: 'CycleProgressCard', version: COMPONENT_CONTRACT_VERSION,
+    props: ["progress", "periodStart", "periodEnd", "interval", "now", "title"], slots: [], events: [],
+    states: ["populated", "empty"], tokenRoles: ['billing.text', 'billing.surface', 'billing.border'],
+    accessibility: ["Native semantic elements retain their names and content", "Billable cycle announces percentage and remaining days. Explicit progress wins over date-derived progress, except an ended period is always 100% with zero days. now is an injectable ISO clock; omission uses the current instant. Missing dates/progress produce named unavailable terms. Remaining days use ceil of the nonnegative UTC duration."],
+    compatibility: "Billable cycle announces percentage and remaining days. Explicit progress wins over date-derived progress, except an ended period is always 100% with zero days. now is an injectable ISO clock; omission uses the current instant. Missing dates/progress produce named unavailable terms. Remaining days use ceil of the nonnegative UTC duration.",
   },
   DatePicker: {
     id: 'DatePicker', version: COMPONENT_CONTRACT_VERSION,
@@ -289,6 +331,20 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     tokenRoles: ['pagination.background', 'pagination.border', 'pagination.text', 'pagination.focus'],
     accessibility: ['Navigation is named', 'Current page is exposed with aria-current'],
     compatibility: 'Uses page/pageSize/totalItems while preserving the legacy page/count headless behavior.',
+  },
+  PaymentEventTimeline: {
+    id: 'PaymentEventTimeline', version: COMPONENT_CONTRACT_VERSION,
+    props: ["lastPayment", "nextPayment", "paymentStatus", "amount", "currency", "minorUnits", "title"], slots: [], events: [],
+    states: ["populated", "empty"], tokenRoles: ['billing.text', 'billing.surface', 'billing.border'],
+    accessibility: ["Native semantic elements retain their names and content", "Public payment-event ID over the same shared payment timeline primitive as PaymentTimeline, without a payment-method term. Last and next payment are chronological UTC dates. Missing next payment is No payment scheduled; missing last is No previous payment. Amount, currency and payment status remain visible."],
+    compatibility: "Public payment-event ID over the same shared payment timeline primitive as PaymentTimeline, without a payment-method term. Last and next payment are chronological UTC dates. Missing next payment is No payment scheduled; missing last is No previous payment. Amount, currency and payment status remain visible.",
+  },
+  PaymentTimeline: {
+    id: 'PaymentTimeline', version: COMPONENT_CONTRACT_VERSION,
+    props: ["lastPayment", "nextPayment", "paymentStatus", "paymentMethod", "amount", "currency", "minorUnits", "title"], slots: [], events: [],
+    states: ["populated", "empty"], tokenRoles: ['billing.text', 'billing.surface', 'billing.border'],
+    accessibility: ["Native semantic elements retain their names and content", "Public detail ID over the same shared payment timeline primitive as PaymentEventTimeline, with a payment-method term (Not provided when absent). Last and next payment are chronological UTC dates. Missing next payment is No payment scheduled; missing last is No previous payment. Amount, currency and payment status remain visible."],
+    compatibility: "Public detail ID over the same shared payment timeline primitive as PaymentEventTimeline, with a payment-method term (Not provided when absent). Last and next payment are chronological UTC dates. Missing next payment is No payment scheduled; missing last is No previous payment. Amount, currency and payment status remain visible.",
   },
   PreferenceEditor: {
     id: 'PreferenceEditor', version: COMPONENT_CONTRACT_VERSION,

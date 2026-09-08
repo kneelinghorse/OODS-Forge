@@ -1,0 +1,663 @@
+[
+  {
+    "object": "Subscription",
+    "context": "detail",
+    "status": "ok",
+    "warnings": [
+      {
+        "code": "OODS-V121",
+        "message": "Object 'Subscription' has maturity 'beta' — composed output may change.",
+        "hint": "Consider using stable objects for production compositions."
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"status\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"cancel_at_period_end\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"cancellation_reason\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"cancellation_requested_at\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"amount\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"currency\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"billing_interval\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"current_period_start\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"current_period_end\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"current_period_progress\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"last_payment_at\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"next_payment_due_at\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V120",
+        "message": "No matching slot for position \"bottom\" from lifecycle/Timestampable/AuditTimeline."
+      }
+    ],
+    "selections": [
+      {
+        "slotName": "tab-0",
+        "intent": "status-indicator",
+        "selectedComponent": "CycleProgressCard",
+        "confidence": 0.95,
+        "confidenceLevel": "high",
+        "explanation": "CycleProgressCard was selected for slot \"tab-0\" because view_extension placement. Confidence is high (0.95).",
+        "candidates": [
+          {
+            "name": "CycleProgressCard",
+            "confidence": 0.95,
+            "reason": "view_extension placement"
+          }
+        ]
+      },
+      {
+        "slotName": "tab-1",
+        "intent": "metadata-display",
+        "selectedComponent": "PaymentTimeline",
+        "confidence": 0.95,
+        "confidenceLevel": "high",
+        "explanation": "PaymentTimeline was selected for slot \"tab-1\" because view_extension placement. Confidence is high (0.95).",
+        "candidates": [
+          {
+            "name": "PaymentTimeline",
+            "confidence": 0.95,
+            "reason": "view_extension placement"
+          }
+        ]
+      },
+      {
+        "slotName": "header",
+        "intent": "page-header",
+        "selectedComponent": "StatusTimeline",
+        "confidence": 0.95,
+        "confidenceLevel": "high",
+        "explanation": "StatusTimeline was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+        "candidates": [
+          {
+            "name": "StatusTimeline",
+            "confidence": 0.95,
+            "reason": "view_extension placement"
+          },
+          {
+            "name": "CancellationSummary",
+            "confidence": 0.95,
+            "reason": "view_extension placement"
+          },
+          {
+            "name": "ArchiveSummary",
+            "confidence": 0.95,
+            "reason": "view_extension placement"
+          }
+        ]
+      },
+      {
+        "slotName": "tab-2",
+        "intent": "metadata-display",
+        "selectedComponent": "Stack",
+        "confidence": 0.71,
+        "confidenceLevel": "medium",
+        "explanation": "Stack was selected for slot \"tab-2\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+        "candidates": [
+          {
+            "name": "Stack",
+            "confidence": 1,
+            "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Text",
+            "confidence": 0.9,
+            "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Card",
+            "confidence": 0.61,
+            "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      },
+      {
+        "slotName": "metadata",
+        "intent": "metadata-display",
+        "selectedComponent": "AuditTimeline",
+        "confidence": 0.4,
+        "confidenceLevel": "low",
+        "explanation": "AuditTimeline was selected for slot \"metadata\" because 1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s). Confidence is low (0.40). Alternatives to review: TagManager (0.95), DetailHeader (0.81). Review this slot before shipping, or pin a component with preferences.componentOverrides if you disagree with the pick.",
+        "candidates": [
+          {
+            "name": "AuditTimeline",
+            "confidence": 1,
+            "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 2 trait(s)",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 1,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "TagManager",
+            "confidence": 0.95,
+            "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 1,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "DetailHeader",
+            "confidence": 0.81,
+            "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s); position affinity: DetailHeader is a poor fit for sidebar",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 1,
+            "contextTraitMatches": 0
+          }
+        ],
+        "alternativeCandidates": [
+          {
+            "name": "TagManager",
+            "confidence": 0.95,
+            "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s)",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 1,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "DetailHeader",
+            "confidence": 0.81,
+            "reason": "1 tag match(es); tag match (metadata); 1 context match(es); 1 region match(es); 1 trait(s); position affinity: DetailHeader is a poor fit for sidebar",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 1,
+            "contextTraitMatches": 0
+          }
+        ],
+        "reviewHint": "Low-confidence selection for \"metadata\". Consider preferences.componentOverrides to pin a different component if needed."
+      },
+      {
+        "slotName": "tab-3",
+        "intent": "status-indicator",
+        "selectedComponent": "StatusBadge",
+        "confidence": 1,
+        "confidenceLevel": "high",
+        "explanation": "StatusBadge was selected for slot \"tab-3\" because preferred for \"status-indicator\" (rank 1); 1 tag match(es); tag match (status); 2 context match(es); 1 region match(es); 2 category match(es); 2 trait(s); name contains \"status\". Confidence is high (1.00).",
+        "candidates": [
+          {
+            "name": "StatusBadge",
+            "confidence": 1,
+            "reason": "preferred for \"status-indicator\" (rank 1); 1 tag match(es); tag match (status); 2 context match(es); 1 region match(es); 2 category match(es); 2 trait(s); name contains \"status\"",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Badge",
+            "confidence": 0.81,
+            "reason": "preferred for \"status-indicator\" (rank 2); 1 tag match(es); tag match (status); 2 context match(es); 1 category match(es); 1 trait(s)",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "ColorizedBadge",
+            "confidence": 0.61,
+            "reason": "preferred for \"status-indicator\" (rank 3); 1 tag match(es); tag match (status); 1 region match(es); 1 category match(es); 1 trait(s)",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      },
+      {
+        "slotName": "tab-4",
+        "intent": "metadata-display",
+        "selectedComponent": "Text",
+        "confidence": 0.76,
+        "confidenceLevel": "medium",
+        "explanation": "Text was selected for slot \"tab-4\" because preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab. Confidence is medium (0.76).",
+        "candidates": [
+          {
+            "name": "Text",
+            "confidence": 1,
+            "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); field affinity: field type \"datetime\" (rank 3); position affinity: Text fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Stack",
+            "confidence": 0.94,
+            "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Card",
+            "confidence": 0.58,
+            "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      },
+      {
+        "slotName": "tab-5",
+        "intent": "data-display",
+        "selectedComponent": "Card",
+        "confidence": 0.94,
+        "confidenceLevel": "high",
+        "explanation": "Card was selected for slot \"tab-5\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+        "candidates": [
+          {
+            "name": "Card",
+            "confidence": 1,
+            "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Table",
+            "confidence": 0.98,
+            "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Stack",
+            "confidence": 0.66,
+            "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      },
+      {
+        "slotName": "tab-6",
+        "intent": "metadata-display",
+        "selectedComponent": "Stack",
+        "confidence": 0.71,
+        "confidenceLevel": "medium",
+        "explanation": "Stack was selected for slot \"tab-6\" because preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab. Confidence is medium (0.71).",
+        "candidates": [
+          {
+            "name": "Stack",
+            "confidence": 1,
+            "reason": "preferred for \"metadata-display\" (rank 1); 1 context match(es); 2 region match(es); position affinity: Stack fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Text",
+            "confidence": 0.9,
+            "reason": "preferred for \"metadata-display\" (rank 2); 1 context match(es); 2 region match(es); position affinity: Text fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Card",
+            "confidence": 0.61,
+            "reason": "preferred for \"metadata-display\" (rank 3); 1 context match(es); position affinity: Card fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      },
+      {
+        "slotName": "tab-7",
+        "intent": "data-display",
+        "selectedComponent": "Card",
+        "confidence": 0.94,
+        "confidenceLevel": "high",
+        "explanation": "Card was selected for slot \"tab-7\" because preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab. Confidence is high (0.94).",
+        "candidates": [
+          {
+            "name": "Card",
+            "confidence": 1,
+            "reason": "preferred for \"data-display\" (rank 1); 2 tag match(es); 2 context match(es); 1 region match(es); position affinity: Card fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Table",
+            "confidence": 0.98,
+            "reason": "preferred for \"data-display\" (rank 2); 1 tag match(es); tag match (data); 2 context match(es); 1 region match(es); position affinity: Table fits well in tab",
+            "keywordTagMatches": 1,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Stack",
+            "confidence": 0.66,
+            "reason": "preferred for \"data-display\" (rank 3); 2 context match(es); 1 region match(es); position affinity: Stack fits well in tab",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "object": "Subscription",
+    "context": "timeline",
+    "status": "ok",
+    "warnings": [
+      {
+        "code": "OODS-V121",
+        "message": "Object 'Subscription' has maturity 'beta' — composed output may change.",
+        "hint": "Consider using stable objects for production compositions."
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"status\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"cancel_at_period_end\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"cancellation_reason\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"cancellation_requested_at\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"amount\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"currency\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"billing_interval\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"current_period_start\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"current_period_end\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"current_period_progress\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"last_payment_at\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V117",
+        "message": "Field collision: \"next_payment_due_at\" in object schema overrides trait definition"
+      },
+      {
+        "code": "OODS-V120",
+        "message": "No matching slot for position \"main\" from lifecycle/Stateful/StateTransitionEvent."
+      },
+      {
+        "code": "OODS-V120",
+        "message": "No matching slot for position \"main\" from lifecycle/Cancellable/CancellationEvent."
+      },
+      {
+        "code": "OODS-V120",
+        "message": "No matching slot for position \"main\" from lifecycle/Timestampable/AuditEvent."
+      },
+      {
+        "code": "OODS-V120",
+        "message": "No matching slot for position \"main\" from financial/Billable/PaymentEventTimeline."
+      },
+      {
+        "code": "OODS-V120",
+        "message": "No matching slot for position \"main\" from lifecycle/Archivable/ArchiveEvent."
+      }
+    ],
+    "selections": [
+      {
+        "slotName": "header",
+        "intent": "page-header",
+        "selectedComponent": "Text",
+        "confidence": 0.5,
+        "confidenceLevel": "medium",
+        "explanation": "Text was selected for slot \"header\" because fallback placement. Confidence is medium (0.50).",
+        "candidates": [
+          {
+            "name": "Text",
+            "confidence": 0.5,
+            "reason": "fallback placement"
+          }
+        ]
+      },
+      {
+        "slotName": "entry-0",
+        "intent": "timeline-entry",
+        "selectedComponent": "Stack",
+        "confidence": 0.5,
+        "confidenceLevel": "medium",
+        "explanation": "Stack was selected for slot \"entry-0\" because fallback placement. Confidence is medium (0.50).",
+        "candidates": [
+          {
+            "name": "Stack",
+            "confidence": 0.5,
+            "reason": "fallback placement"
+          }
+        ]
+      },
+      {
+        "slotName": "entry-1",
+        "intent": "timeline-entry",
+        "selectedComponent": "Stack",
+        "confidence": 0.74,
+        "confidenceLevel": "medium",
+        "explanation": "Stack was selected for slot \"entry-1\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+        "candidates": [
+          {
+            "name": "Stack",
+            "confidence": 1,
+            "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Table",
+            "confidence": 0.86,
+            "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "AuditTimeline",
+            "confidence": 0.5,
+            "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      },
+      {
+        "slotName": "entry-2",
+        "intent": "timeline-entry",
+        "selectedComponent": "Stack",
+        "confidence": 0.74,
+        "confidenceLevel": "medium",
+        "explanation": "Stack was selected for slot \"entry-2\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+        "candidates": [
+          {
+            "name": "Stack",
+            "confidence": 1,
+            "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Table",
+            "confidence": 0.86,
+            "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "AuditTimeline",
+            "confidence": 0.5,
+            "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      },
+      {
+        "slotName": "entry-3",
+        "intent": "timeline-entry",
+        "selectedComponent": "Stack",
+        "confidence": 0.74,
+        "confidenceLevel": "medium",
+        "explanation": "Stack was selected for slot \"entry-3\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+        "candidates": [
+          {
+            "name": "Stack",
+            "confidence": 1,
+            "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Table",
+            "confidence": 0.86,
+            "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "AuditTimeline",
+            "confidence": 0.5,
+            "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      },
+      {
+        "slotName": "entry-4",
+        "intent": "timeline-entry",
+        "selectedComponent": "Stack",
+        "confidence": 0.74,
+        "confidenceLevel": "medium",
+        "explanation": "Stack was selected for slot \"entry-4\" because preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es). Confidence is medium (0.74).",
+        "candidates": [
+          {
+            "name": "Stack",
+            "confidence": 1,
+            "reason": "preferred for \"data-list\" (rank 1); 1 context match(es); context match (timeline); 2 region match(es)",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "Table",
+            "confidence": 0.86,
+            "reason": "preferred for \"data-list\" (rank 2); 1 tag match(es); 1 context match(es); 2 region match(es)",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          },
+          {
+            "name": "AuditTimeline",
+            "confidence": 0.5,
+            "reason": "context match (timeline); 1 region match(es); 2 trait(s); name contains \"timeline\"",
+            "keywordTagMatches": 0,
+            "keywordTraitMatches": 0,
+            "contextTagMatches": 0,
+            "contextTraitMatches": 0
+          }
+        ]
+      }
+    ]
+  }
+]

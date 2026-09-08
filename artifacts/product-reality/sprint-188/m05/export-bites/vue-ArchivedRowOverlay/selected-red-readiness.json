@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 874,
+    "classA": 730,
+    "classB": 144
+  },
+  "totals": {
+    "references": 874,
+    "classA": 730,
+    "classB": 144,
+    "resolved": 872
+  },
+  "targets": {
+    "react": {
+      "rows": 72,
+      "references": 432,
+      "classA": 360,
+      "classB": 72,
+      "resolved": 432
+    },
+    "vue": {
+      "rows": 72,
+      "references": 442,
+      "classA": 370,
+      "classB": 72,
+      "resolved": 440
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 144,
+    "targetImplementation": 144,
+    "packageExport": 144,
+    "publicDeclaration": 144,
+    "dependencyClosure": 144,
+    "frameworkScenario": 154
+  },
+  "failures": [
+    {
+      "target": "vue",
+      "componentId": "ArchivedRowOverlay",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-vue/src/index.ts#ArchivedRowOverlay",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "vue",
+      "componentId": "ArchivedRowOverlay",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-vue/dist/index.d.ts#ArchivedRowOverlay",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}

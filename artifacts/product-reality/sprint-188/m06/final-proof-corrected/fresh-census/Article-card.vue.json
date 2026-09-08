@@ -1,0 +1,91 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n            <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                    <CardHeader id=\"ve-header-8\" data-oods-component=\"CardHeader\" :title=\"label\" :supporting=\"description\" />\n                    <StatusBadge id=\"ve-header-9\" data-oods-component=\"StatusBadge\" label=\"Canonical lifecycle state derived from the states parameter. This is the single source&#10;of truth for the entity's current lifecycle position. Consumed by Colorized to resolve&#10;visual tokens, and by view extensions to render StatusBadge and StatusTimeline.&#10;\" variant=\"subtle\" :status=\"status\" />\n                  </Stack>\n          </Stack>\n      <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n            <Card id=\"slot-body-4\" data-oods-component=\"Card\" />\n          </Stack>\n      <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n            <Button id=\"slot-footer-6\" data-oods-component=\"Button\" />\n          </Stack>\n    </Card>\n</template>\n\n<script setup lang=\"ts\">\nimport { Button, Card, CardHeader, Stack, StatusBadge } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Primary identifier for the article document. */\n  articleId: string;\n  /** Reference to the authoring user. */\n  authorId: string;\n  /** Markdown content rendered in CMS detail views. */\n  bodyMarkdown: string;\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Editorial template driving layout and governance workflows. */\n  contentType: 'knowledge_base' | 'announcement' | 'release_notes' | 'how_to';\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Summary text used in list + SEO contexts. */\n  excerpt?: string;\n  /** Optional Media object identifier referenced in hero slots. */\n  heroMediaId?: string;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Locale tag determining headline, copy, and SEO metadata. */\n  locale?: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Timestamp when the article was published live. */\n  publishedAt?: string;\n  /** Estimated reading time derived from body length. */\n  readingTimeMinutes?: number;\n  /** Canonical slug rendered in URLs and breadcrumb links. */\n  slug: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { allowedTransitions, articleId, authorId, bodyMarkdown, categories, classificationMetadata, contentType, createdAt, description, excerpt, heroMediaId, label, lastEvent, lastEventAt, locale, placeholder, primaryCategoryId, primaryCategoryPath, publishedAt, readingTimeMinutes, slug, stateHistory, status, tagCount, tagPreview, tags, updatedAt } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:94176c2afd46a8ff6f30df4da48b30416e2ee566ed6449f00e5cd5a0c0c67f57"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:a3c4734b39998030f7470700e70ba177293dc3f799552be54e9daa65f45aab7c"
+  },
+  "code": "<template>\n  <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n            <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                    <CardHeader id=\"ve-header-8\" data-oods-component=\"CardHeader\" :title=\"label\" :supporting=\"description\" />\n                    <StatusBadge id=\"ve-header-9\" data-oods-component=\"StatusBadge\" label=\"Canonical lifecycle state derived from the states parameter. This is the single source&#10;of truth for the entity's current lifecycle position. Consumed by Colorized to resolve&#10;visual tokens, and by view extensions to render StatusBadge and StatusTimeline.&#10;\" variant=\"subtle\" :status=\"status\" />\n                  </Stack>\n          </Stack>\n      <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n            <Card id=\"slot-body-4\" data-oods-component=\"Card\" />\n          </Stack>\n      <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n            <Button id=\"slot-footer-6\" data-oods-component=\"Button\" />\n          </Stack>\n    </Card>\n</template>\n\n<script setup lang=\"ts\">\nimport { Button, Card, CardHeader, Stack, StatusBadge } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Primary identifier for the article document. */\n  articleId: string;\n  /** Reference to the authoring user. */\n  authorId: string;\n  /** Markdown content rendered in CMS detail views. */\n  bodyMarkdown: string;\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Editorial template driving layout and governance workflows. */\n  contentType: 'knowledge_base' | 'announcement' | 'release_notes' | 'how_to';\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Summary text used in list + SEO contexts. */\n  excerpt?: string;\n  /** Optional Media object identifier referenced in hero slots. */\n  heroMediaId?: string;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Locale tag determining headline, copy, and SEO metadata. */\n  locale?: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Timestamp when the article was published live. */\n  publishedAt?: string;\n  /** Estimated reading time derived from body length. */\n  readingTimeMinutes?: number;\n  /** Canonical slug rendered in URLs and breadcrumb links. */\n  slug: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { allowedTransitions, articleId, authorId, bodyMarkdown, categories, classificationMetadata, contentType, createdAt, description, excerpt, heroMediaId, label, lastEvent, lastEventAt, locale, placeholder, primaryCategoryId, primaryCategoryPath, publishedAt, readingTimeMinutes, slug, stateHistory, status, tagCount, tagPreview, tags, updatedAt } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:a3c4734b39998030f7470700e70ba177293dc3f799552be54e9daa65f45aab7c"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 5
+  }
+}

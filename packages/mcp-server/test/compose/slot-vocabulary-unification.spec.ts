@@ -52,13 +52,13 @@ describe('slot vocabulary unification', () => {
       (selection) => selection.slotName === 'toolbar-actions',
     );
 
-    expect(toolbarSelection?.selectedComponent).toBe('PriceBadge');
-    expect(toolbarSelection?.candidates.map((candidate) => candidate.name)).toContain('PriceBadge');
+    expect(toolbarSelection?.selectedComponent).toBe('BillingSummaryBadge');
+    expect(toolbarSelection?.candidates.map((candidate) => candidate.name)).toContain('BillingSummaryBadge');
 
     const components = collectComponents(result.schema);
     // Optional slots retain real metadata without inventing an unbound action.
     expect(components).not.toContain('Button');
-    expect(components).toContain('PriceBadge');
+    expect(components).toContain('BillingSummaryBadge');
     expect(components).toContain('StatusBadge');
     expect(components).toContain('RelativeTimestamp');
   });

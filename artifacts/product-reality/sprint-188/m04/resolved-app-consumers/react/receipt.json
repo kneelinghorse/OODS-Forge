@@ -1,0 +1,182 @@
+{
+  "framework": "react",
+  "artifactHash": "sha256:885f53ee9709af202aa7ab0c06650bf4884a2a370b7177799cae71a306ed019a",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "detail": {
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-react",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-react"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-contracts",
+            "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+          },
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/components-react",
+            "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+          },
+          {
+            "specifier": "react",
+            "consumerRelative": "node_modules/react/index.js"
+          },
+          {
+            "specifier": "react-dom/client",
+            "consumerRelative": "node_modules/react-dom/client.js"
+          },
+          {
+            "specifier": "react-dom/server",
+            "consumerRelative": "node_modules/react-dom/server.node.js"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "react/logs/typecheck.log"
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "react/logs/build.log"
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "detail": {
+        "htmlHash": "sha256:29a0562d7843543eda28b601448f55fea2e160b54c719f4c4e6adb3d5f06e5ea",
+        "generatedEntry": "src/ssr.tsx"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "passed",
+      "detail": {
+        "screenCount": 1,
+        "errors": []
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "passed",
+      "detail": {
+        "preservesSsrRoot": true,
+        "errors": []
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "passed",
+      "detail": {
+        "files": [
+          "index-qsLTDehQ.css"
+        ],
+        "bytes": 130009,
+        "sha256": "sha256:7a533073b333cc6e2299353ca78b6cf13cc24d7ee1802bb461ad05e11208cb76",
+        "core": true,
+        "ported": true,
+        "requiresPorted": true,
+        "tokens": true
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "failed",
+      "error": "Expected values to be strictly equal:\n\n4 !== 9\n"
+    }
+  ],
+  "consumerAuthoredComponents": 0,
+  "consumerAuthoredActions": 0,
+  "generation": "current-in-run-public-output",
+  "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-react-dFexbb",
+  "flow": [
+    {
+      "name": "ten-sample-records",
+      "status": "passed",
+      "detail": {
+        "active": [
+          "subscription-001",
+          "subscription-002",
+          "subscription-003",
+          "subscription-004",
+          "subscription-005",
+          "subscription-006",
+          "subscription-007",
+          "subscription-008",
+          "subscription-009"
+        ],
+        "archived": [
+          "subscription-010"
+        ],
+        "total": 10,
+        "disposition": "nine active and one in the generated Archived view"
+      }
+    },
+    {
+      "name": "detail-navigation",
+      "status": "passed",
+      "detail": {
+        "id": "subscription-003",
+        "heading": "Subscription 03"
+      }
+    },
+    {
+      "name": "edit-seeded-values",
+      "status": "passed",
+      "detail": {
+        "id": "subscription-003",
+        "plan": "Subscription 03"
+      }
+    },
+    {
+      "name": "billing-edit-values",
+      "status": "failed",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'monthly'\n- 'yearly'\n"
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n4 !== 9\n\n    at <anonymous> (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:254:18)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:232:9)"
+}

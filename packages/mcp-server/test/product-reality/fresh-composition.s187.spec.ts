@@ -100,7 +100,7 @@ describe('Sprint 187 fresh composition binding intent', () => {
       for (const component of ['ArchivePill', 'CancellationBadge']) {
         expect(nodes.find((node) => node.component === component)?.props).not.toHaveProperty('label');
       }
-      expect(nodes.find((node) => node.component === 'PriceCardMeta')?.props).toMatchObject({ amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval' });
+      expect(nodes.find((node) => node.component === 'BillingCardMeta')?.props).toMatchObject({ amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnitsParameter: 'minorUnits', minorUnits: 100 });
     }
     for (const framework of ['react', 'vue'] as const) {
       const result = await generate({ schema, framework, profile: 'build' });

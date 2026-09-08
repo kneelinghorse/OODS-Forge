@@ -399,7 +399,9 @@ export async function handle(
 
   let artifact: NonNullable<CodeGenerateOutput['artifact']>;
   try {
-    artifact = buildGeneratedArtifact(result);
+    artifact = buildGeneratedArtifact(result.files
+      ? { framework: result.framework, imports: result.imports, actions: result.actions, files: result.files }
+      : { framework: result.framework, imports: result.imports, actions: result.actions, code: result.code, fileExtension: result.fileExtension });
   } catch (error) {
     validationReceipt = recordValidationChecks(validationReceipt, 'dependency-closure');
     return {

@@ -62,6 +62,7 @@ export namespace A11yScanInputSchema {
    * Optional UiSchema to include component inventory in the report.
    */
   export interface AgenticREPLUISchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -81,6 +82,54 @@ export namespace A11yScanInputSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {
@@ -1107,7 +1156,7 @@ export type CatalogListOutput = CatalogListOutputSchema.CatalogListOutput;
 // Source: code.generate.input.json
 export namespace CodeGenerateInputSchema {
   /**
-   * Generate framework-specific code from a validated UiSchema.
+   * Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data.
    */
   export type CodeGenerateInput = CodeGenerateInput1 & CodeGenerateInput2;
   export type CodeGenerateInput1 = {
@@ -1158,6 +1207,7 @@ export namespace CodeGenerateInputSchema {
    * A structurally valid UiSchema tree to generate code from. UiElement.state branches are checked against the canonical workflow-state vocabulary by the state-contract gate.
    */
   export interface AgenticREPLUISchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -1177,6 +1227,54 @@ export namespace CodeGenerateInputSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {
@@ -2630,7 +2728,7 @@ export type DashboardRenderOutput = DashboardRenderOutputSchema.DashboardRenderO
 // Source: design.compose.input.json
 export namespace DesignComposeInputSchema {
   /**
-   * Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'.
+   * Generate a complete UiSchema from an intent description and/or object definition using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions.
    */
   export type DesignComposeInput = DesignComposeInput1 & DesignComposeInput2;
   export type DesignComposeInput1 = {
@@ -2651,9 +2749,9 @@ export namespace DesignComposeInputSchema {
      */
     object?: string;
     /**
-     * View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form).
+     * View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data.
      */
-    context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
+    context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
     /**
      * Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords.
      */
@@ -2854,6 +2952,7 @@ export namespace DesignComposeOutputSchema {
    * The generated UiSchema (with slot placeholders intact for agent customization).
    */
   export interface AgenticREPLUISchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -2873,6 +2972,54 @@ export namespace DesignComposeOutputSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {
@@ -4575,7 +4722,7 @@ export type ObjectShowOutput = ObjectShowOutputSchema.ObjectShowOutput;
 // Source: pipeline.input.json
 export namespace PipelineInputSchema {
   /**
-   * Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call.
+   * Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data.
    */
   export interface PipelineInput {
     /**
@@ -4593,7 +4740,7 @@ export namespace PipelineInputSchema {
     /**
      * View context for object-aware composition.
      */
-    context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
+    context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
     /**
      * Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords.
      */
@@ -5274,6 +5421,7 @@ export namespace ReplOutputSchema {
     nodeId?: string;
   }
   export interface AgenticREPLUISchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -5293,6 +5441,54 @@ export namespace ReplOutputSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {
@@ -5514,6 +5710,7 @@ export namespace ReplRenderInputSchema {
     apply?: boolean;
   }
   export interface AgenticREPLUISchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -5533,6 +5730,54 @@ export namespace ReplRenderInputSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {
@@ -5708,6 +5953,7 @@ export namespace ReplRenderOutputSchema {
     nodeId?: string;
   }
   export interface AgenticREPLUISchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -5727,6 +5973,54 @@ export namespace ReplRenderOutputSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {
@@ -5819,6 +6113,7 @@ export type ReplRenderOutput = ReplRenderOutputSchema.ReplRenderOutput;
 // Source: repl.ui.schema.json
 export namespace UiSchemaSchema {
   export interface UiSchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -5838,6 +6133,54 @@ export namespace UiSchemaSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {
@@ -5950,6 +6293,7 @@ export namespace ReplValidateInputSchema {
     };
   }
   export interface AgenticREPLUISchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -5969,6 +6313,54 @@ export namespace ReplValidateInputSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {
@@ -6059,6 +6451,7 @@ export namespace ReplValidateInputSchema {
    * Required when mode='patch' to provide the base UiSchema to patch.
    */
   export interface AgenticREPLUISchema1 {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -6123,6 +6516,7 @@ export namespace ReplValidateOutputSchema {
     nodeId?: string;
   }
   export interface AgenticREPLUISchema {
+    workflow?: Workflow;
     $schema?: string;
     version: string;
     dsVersion?: string;
@@ -6142,6 +6536,54 @@ export namespace ReplValidateOutputSchema {
      */
     objectSchema?: {
       [k: string]: FieldSchemaEntry;
+    };
+  }
+  export interface Workflow {
+    object: string;
+    /**
+     * @minItems 4
+     * @maxItems 4
+     */
+    screens: [
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      },
+      {
+        id: string;
+        context: 'list' | 'detail' | 'form' | 'timeline';
+        route: string;
+      }
+    ];
+    transitions: {
+      action: string;
+      from: 'list' | 'detail' | 'form' | 'timeline';
+      to: 'list' | 'detail' | 'form' | 'timeline';
+      effect: 'navigate' | 'save' | 'pending_cancellation' | 'archive';
+    }[];
+    states: ('loading' | 'empty' | 'error' | 'success')[];
+    data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
+      idField: string;
+      traits: string[];
+      sampleCount: number;
+      lifecycleStates: string[];
+      billingIntervals: string[];
+      currency: string;
+      minorUnits: number;
     };
   }
   export interface UiElement {

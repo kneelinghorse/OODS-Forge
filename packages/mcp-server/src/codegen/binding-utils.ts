@@ -235,7 +235,11 @@ export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[
   { id: 'component:StatusSelector.onChange', scope: 'component', component: 'StatusSelector', event: 'onChange', kind: 'local', signature: STRING_VALUE },
   { id: 'component:TagInput.onChange', scope: 'component', component: 'TagInput', event: 'onChange', kind: 'local', signature: STRING_VALUE },
   // The editor hands the consumer the edited address record; the form owns no local state for it.
+  { id: 'component:BillingAmountInput.onChange', scope: 'component', component: 'BillingAmountInput', event: 'onChange', kind: 'domain', signature: { parameters: [{ name: 'amount', type: 'number | undefined' }] } },
+  { id: 'component:BillingIntervalSelector.onChange', scope: 'component', component: 'BillingIntervalSelector', event: 'onChange', kind: 'domain', signature: STRING_VALUE },
   { id: 'component:AddressEditor.onChange', scope: 'component', component: 'AddressEditor', event: 'onChange', kind: 'domain', signature: ADDRESS_RECORD },
+  { id: 'screen:onCancel', scope: 'screen', component: '$screen', event: 'onCancel', kind: 'domain', signature: NO_PARAMETERS },
+  { id: 'screen:onViewTimeline', scope: 'screen', component: '$screen', event: 'onViewTimeline', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'screen:onChange', scope: 'screen', component: '$screen', event: 'onChange', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'screen:onDelete', scope: 'screen', component: '$screen', event: 'onDelete', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'screen:onEdit', scope: 'screen', component: '$screen', event: 'onEdit', kind: 'domain', signature: NO_PARAMETERS },
@@ -997,6 +1001,14 @@ export type FrameworkRecipePropResolution = {
 };
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  BillingSummaryBadge: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
+  BillingCardMeta: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
+  CycleProgressCard: { progressField: 'progress', periodStartField: 'periodStart', periodEndField: 'periodEnd', intervalField: 'interval' },
+  PaymentTimeline: { lastPaymentField: 'lastPayment', nextPaymentField: 'nextPayment', paymentStatusField: 'paymentStatus', paymentMethodField: 'paymentMethod', amountField: 'amount', currencyField: 'currency' },
+  PaymentEventTimeline: { lastPaymentField: 'lastPayment', nextPaymentField: 'nextPayment', paymentStatusField: 'paymentStatus', amountField: 'amount', currencyField: 'currency' },
+  ArchivedRowOverlay: { archivedField: 'isArchived' },
+  BillingAmountInput: { amountField: 'amount', currencyField: 'currency' },
+  BillingIntervalSelector: { intervalField: 'interval' },
   ArchiveSummary: { archivedField: 'isArchived', archivedAtField: 'archivedAt', reasonField: 'reason' },
   CancellationForm: { reasonField: 'reason', codeField: 'reasonCode' },
   PriceCardMeta: { modelField: 'model', intervalField: 'interval' },
@@ -1078,6 +1090,7 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
 };
 
 const RECIPE_PARAMETER_PROPS = new Set([
+  'intervalsParameter',
   'allowCustomParameter',
   'allowDynamicParameter',
   'allowListParameter',
@@ -1126,6 +1139,7 @@ const RECIPE_PARAMETER_PROPS = new Set([
  * would invent a prop; each is named in the component's contract record.
  */
 export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
+  ArchivedRowOverlay: ['style'],
   ArchiveSummary: ['restoredAtField', 'archivedByField', 'metadataField'],
   ArchivePill: ['archivedAtField'],
   PriceCardMeta: ['amountField', 'currencyField'],

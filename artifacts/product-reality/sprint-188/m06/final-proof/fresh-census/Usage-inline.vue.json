@@ -1,0 +1,92 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n            <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Actual quantity consumed in the active period.\" placeholder=\"Enter consumed quantity\" required type=\"number\" :modelValue=\"handleChange_consumed_quantityState\" @update:modelValue=\"setHandleChange_consumed_quantityState\" @change=\"handleChange_consumed_quantity\" />\n            <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n          </Stack>\n      <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n            <Table id=\"slot-items-6\" data-oods-component=\"Table\" />\n          </Stack>\n      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n            <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n          </Stack>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { ref } from 'vue';\nimport { Button, Input, PaginationBar, SearchInput, Stack, Table } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  anomalies?: unknown[];\n  consumedQuantity?: number;\n  createdAt?: string;\n  includedQuantity?: number;\n  lastEvent?: string;\n  lastEventAt?: string;\n  lastReportedAt?: string;\n  meterId?: string;\n  meterName?: string;\n  overageRateMinor?: number;\n  periodEnd?: string;\n  periodStart?: string;\n  projectedOverageMinor?: number;\n  provider?: string;\n  rolloverStrategy?: string;\n  samples?: unknown[];\n  status?: 'ok' | 'delayed' | 'investigating';\n  subscriptionId?: string;\n  trendPercent?: number;\n  unitLabel?: string;\n  updatedAt?: string;\n  usageId?: string;\n  varianceMinor?: number;\n}\nconst generatedProps = defineProps<Props>();\n/** Detected anomalies with context for investigation. */\nconst anomalies = ref<unknown[]>(generatedProps.anomalies ?? []);\n/** Actual quantity consumed in the active period. */\nconst consumedQuantity = ref<number>(generatedProps.consumedQuantity ?? 0);\n/** Timestamp recording when the entity was first created. */\nconst createdAt = ref<string>(generatedProps.createdAt ?? '');\n/** Quantity included in base plan before overages. */\nconst includedQuantity = ref<number>(generatedProps.includedQuantity ?? 0);\n/** Lifecycle event associated with the most recent timestamp mutation. */\nconst lastEvent = ref<string>(generatedProps.lastEvent ?? '');\n/** Timestamp for the lifecycle event captured in last_event. */\nconst lastEventAt = ref<string>(generatedProps.lastEventAt ?? '');\n/** Timestamp of the most recent provider usage payload. */\nconst lastReportedAt = ref<string>(generatedProps.lastReportedAt ?? '');\n/** Provider specific meter identifier. */\nconst meterId = ref<string>(generatedProps.meterId ?? '');\n/** Friendly metered feature name shown in UI (ex: Analytics Seats). */\nconst meterName = ref<string>(generatedProps.meterName ?? '');\n/** Cost per additional unit expressed in minor currency units. */\nconst overageRateMinor = ref<number>(generatedProps.overageRateMinor ?? 0);\n/** Date the usage accumulation window ends. */\nconst periodEnd = ref<string>(generatedProps.periodEnd ?? '');\n/** Date the usage accumulation window began. */\nconst periodStart = ref<string>(generatedProps.periodStart ?? '');\n/** Forecasted overage spend derived from consumption trends. */\nconst projectedOverageMinor = ref<number>(generatedProps.projectedOverageMinor ?? 0);\n/** Source provider for usage data. */\nconst provider = ref<string>(generatedProps.provider ?? '');\n/** Strategy for unused units (inherits rolloverStrategy parameter). */\nconst rolloverStrategy = ref<string>(generatedProps.rolloverStrategy ?? '');\n/** Rolling usage measurements for charts or anomaly detection. */\nconst samples = ref<unknown[]>(generatedProps.samples ?? []);\n/** Health of the usage feed (ok, delayed, investigating). */\nconst status = ref<'ok' | 'delayed' | 'investigating'>(generatedProps.status ?? 'ok');\n/** Subscription the usage belongs to. */\nconst subscriptionId = ref<string>(generatedProps.subscriptionId ?? '');\n/** Percent delta compared to previous window. */\nconst trendPercent = ref<number>(generatedProps.trendPercent ?? 0);\n/** Label for display, defaults to the unit parameter. */\nconst unitLabel = ref<string>(generatedProps.unitLabel ?? '');\n/** Timestamp for the most recent modification, when available. */\nconst updatedAt = ref<string>(generatedProps.updatedAt ?? '');\n/** Identifier for this usage record. */\nconst usageId = ref<string>(generatedProps.usageId ?? '');\n/** Currency impact of usage variance calculated with overage rate. */\nconst varianceMinor = ref<number>(generatedProps.varianceMinor ?? 0);\n\nconst handleChange_consumed_quantityState = ref<string>(String(consumedQuantity.value ?? ''));\nconst setHandleChange_consumed_quantityState = (value: string) => { handleChange_consumed_quantityState.value = value; };\n/* @oods-local-binding handleChange_consumed_quantity */ const handleChange_consumed_quantity = (value: string) => { setHandleChange_consumed_quantityState(value); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:35cbaf48e05d1a0b13dd578f5a8119db445648a931b90accde0556e4e996b7cd"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:8d4505d5615708f62109afa1624de41d5e91a67b8a6de698513a6b0df60c2e4d"
+  },
+  "code": "<template>\n  <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n            <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Actual quantity consumed in the active period.\" placeholder=\"Enter consumed quantity\" required type=\"number\" :modelValue=\"handleChange_consumed_quantityState\" @update:modelValue=\"setHandleChange_consumed_quantityState\" @change=\"handleChange_consumed_quantity\" />\n            <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n          </Stack>\n      <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n            <Table id=\"slot-items-6\" data-oods-component=\"Table\" />\n          </Stack>\n      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n            <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n          </Stack>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { ref } from 'vue';\nimport { Button, Input, PaginationBar, SearchInput, Stack, Table } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  anomalies?: unknown[];\n  consumedQuantity?: number;\n  createdAt?: string;\n  includedQuantity?: number;\n  lastEvent?: string;\n  lastEventAt?: string;\n  lastReportedAt?: string;\n  meterId?: string;\n  meterName?: string;\n  overageRateMinor?: number;\n  periodEnd?: string;\n  periodStart?: string;\n  projectedOverageMinor?: number;\n  provider?: string;\n  rolloverStrategy?: string;\n  samples?: unknown[];\n  status?: 'ok' | 'delayed' | 'investigating';\n  subscriptionId?: string;\n  trendPercent?: number;\n  unitLabel?: string;\n  updatedAt?: string;\n  usageId?: string;\n  varianceMinor?: number;\n}\nconst generatedProps = defineProps<Props>();\n/** Detected anomalies with context for investigation. */\nconst anomalies = ref<unknown[]>(generatedProps.anomalies ?? []);\n/** Actual quantity consumed in the active period. */\nconst consumedQuantity = ref<number>(generatedProps.consumedQuantity ?? 0);\n/** Timestamp recording when the entity was first created. */\nconst createdAt = ref<string>(generatedProps.createdAt ?? '');\n/** Quantity included in base plan before overages. */\nconst includedQuantity = ref<number>(generatedProps.includedQuantity ?? 0);\n/** Lifecycle event associated with the most recent timestamp mutation. */\nconst lastEvent = ref<string>(generatedProps.lastEvent ?? '');\n/** Timestamp for the lifecycle event captured in last_event. */\nconst lastEventAt = ref<string>(generatedProps.lastEventAt ?? '');\n/** Timestamp of the most recent provider usage payload. */\nconst lastReportedAt = ref<string>(generatedProps.lastReportedAt ?? '');\n/** Provider specific meter identifier. */\nconst meterId = ref<string>(generatedProps.meterId ?? '');\n/** Friendly metered feature name shown in UI (ex: Analytics Seats). */\nconst meterName = ref<string>(generatedProps.meterName ?? '');\n/** Cost per additional unit expressed in minor currency units. */\nconst overageRateMinor = ref<number>(generatedProps.overageRateMinor ?? 0);\n/** Date the usage accumulation window ends. */\nconst periodEnd = ref<string>(generatedProps.periodEnd ?? '');\n/** Date the usage accumulation window began. */\nconst periodStart = ref<string>(generatedProps.periodStart ?? '');\n/** Forecasted overage spend derived from consumption trends. */\nconst projectedOverageMinor = ref<number>(generatedProps.projectedOverageMinor ?? 0);\n/** Source provider for usage data. */\nconst provider = ref<string>(generatedProps.provider ?? '');\n/** Strategy for unused units (inherits rolloverStrategy parameter). */\nconst rolloverStrategy = ref<string>(generatedProps.rolloverStrategy ?? '');\n/** Rolling usage measurements for charts or anomaly detection. */\nconst samples = ref<unknown[]>(generatedProps.samples ?? []);\n/** Health of the usage feed (ok, delayed, investigating). */\nconst status = ref<'ok' | 'delayed' | 'investigating'>(generatedProps.status ?? 'ok');\n/** Subscription the usage belongs to. */\nconst subscriptionId = ref<string>(generatedProps.subscriptionId ?? '');\n/** Percent delta compared to previous window. */\nconst trendPercent = ref<number>(generatedProps.trendPercent ?? 0);\n/** Label for display, defaults to the unit parameter. */\nconst unitLabel = ref<string>(generatedProps.unitLabel ?? '');\n/** Timestamp for the most recent modification, when available. */\nconst updatedAt = ref<string>(generatedProps.updatedAt ?? '');\n/** Identifier for this usage record. */\nconst usageId = ref<string>(generatedProps.usageId ?? '');\n/** Currency impact of usage variance calculated with overage rate. */\nconst varianceMinor = ref<number>(generatedProps.varianceMinor ?? 0);\n\nconst handleChange_consumed_quantityState = ref<string>(String(consumedQuantity.value ?? ''));\nconst setHandleChange_consumed_quantityState = (value: string) => { handleChange_consumed_quantityState.value = value; };\n/* @oods-local-binding handleChange_consumed_quantity */ const handleChange_consumed_quantity = (value: string) => { setHandleChange_consumed_quantityState(value); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "vue",
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:8d4505d5615708f62109afa1624de41d5e91a67b8a6de698513a6b0df60c2e4d"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 6
+  }
+}

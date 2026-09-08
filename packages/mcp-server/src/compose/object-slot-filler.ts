@@ -23,6 +23,7 @@ import type { ComponentCatalogSummary } from '../tools/types.js';
 import { getContentStrategy, type ContentStrategy } from '../codegen/content-strategy.js';
 import { inferSlotPosition, type SlotPosition } from './position-affinity.js';
 import type { FieldHint } from './field-affinity.js';
+import { isTraitRecipe } from './trait-recipes.js';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -280,7 +281,10 @@ export function fillSlotsWithObject(
   for (const entry of otherEntries) {
     const targetSlot = entry.targetSlot
       ? (slotSet.has(entry.targetSlot) ? entry.targetSlot : undefined)
-      : matchPositionToSlot(entry.position, slotSet);
+      : matchPositionToSlot(entry.position, slotSet)
+        ?? (entry.position === 'main' && isTraitRecipe(entry.component)
+          ? [...slotSet].filter((slot) => slot.startsWith('entry-')).sort()[0]
+          : undefined);
     if (!targetSlot) {
       const targetDescription = entry.targetSlot
         ? `slot "${entry.targetSlot}"`
@@ -514,6 +518,7 @@ export function populateBindings(
   schema: UiSchema,
   context: string,
   fieldNames?: string[],
+  traitNames: readonly string[] = [],
 ): void {
   const contextBindings = CONTEXT_BINDINGS[context];
   if (!contextBindings) return;
@@ -521,6 +526,13 @@ export function populateBindings(
   for (const screen of schema.screens) {
     // Add context-level bindings to the root screen element
     screen.bindings = { ...screen.bindings, ...contextBindings };
+    // These actions belong to every object carrying the trait, not to an app assembler.
+    if (['detail', 'form'].includes(context) && traitNames.some((name) => name.split('/').pop() === 'Cancellable')) {
+      screen.bindings.onCancel = 'handleCancel';
+    }
+    if (context === 'detail' && traitNames.some((name) => name.split('/').pop() === 'Timestampable')) {
+      screen.bindings.onViewTimeline = 'handleViewTimeline';
+    }
 
     // For form context, walk the tree and add per-field onChange bindings
     if (context === 'form' && fieldNames && fieldNames.length > 0) {

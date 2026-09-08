@@ -1,0 +1,39 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/billing.s188.spec.ts (4 tests | 2 failed) 209ms
+   ✓ Sprint 188 Billable list/form contracts > computes HTML/React/Vue visible-text and accessible-name parity with no allowlisted differences 195ms
+   ✓ Sprint 188 Billable list/form contracts > keeps decimal half-up rounding deterministic at money boundaries 0ms
+   × Sprint 188 Billable list/form contracts > react rejects unsupported runtime values and emits valid typed billing props 12ms
+     → expected false to be true // Object.is equality
+   × Sprint 188 Billable list/form contracts > vue rejects unsupported runtime values and emits valid typed billing props 0ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/billing.s188.spec.ts > Sprint 188 Billable list/form contracts > react rejects unsupported runtime values and emits valid typed billing props
+ FAIL  test/product-reality/billing.s188.spec.ts > Sprint 188 Billable list/form contracts > vue rejects unsupported runtime values and emits valid typed billing props
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/product-reality/billing.s188.spec.ts:76:74
+     74|       const result = await generate({ schema: { version: '2026.02', sc…
+     75|       expect(result.status).toBe('error');
+     76|       expect(result.errors?.some((error) => error.code === 'OODS-N016'…
+       |                                                                          ^
+     77|     }
+     78|     for (const entry of cases.filter((entry) => !entry.id.includes('in…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  23:53:14
+   Duration  4.78s (transform 1.09s, setup 133ms, collect 3.05s, tests 209ms, environment 0ms, prepare 305ms)
+

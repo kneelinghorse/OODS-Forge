@@ -1,0 +1,56 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/billing-composition.s188.spec.ts (3 tests | 2 failed) 593ms
+   ✓ Decision 1822 bounded recipe composition > resolves object overrides before trait defaults, preserves references and authored runtime props, and does not mutate inputs 36ms
+   × Decision 1822 bounded recipe composition > never selects the recipes for generic detail slots or an amount-bearing object without Billable 5ms
+     → expected false to be true // Object.is equality
+   × Decision 1822 bounded recipe composition > allows only enumerated trait placements and resolved parameters across the 66 schemas and 132 artifacts 552ms
+     → [{"code":"OODS-N016","message":"Invalid generated artifact: Generated import '@oods/component-contracts' is not supported for react. Generated import '@oods/component-contracts' is missing from the dependency manifest."}]: expected 'error' to be 'ok' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/billing-composition.s188.spec.ts > Decision 1822 bounded recipe composition > never selects the recipes for generic detail slots or an amount-bearing object without Billable
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/product-reality/billing-composition.s188.spec.ts:74:53
+     72|   it('never selects the recipes for generic detail slots or an amount-…
+     73|     const product = composeObject(loadObject('Product'));
+     74|     expect(Object.hasOwn(product.schema, 'amount')).toBe(true);
+       |                                                     ^
+     75|     expect(product.traits.some((trait) => trait.ref.name.endsWith('/Bi…
+     76|     for (const [object, context] of [['Subscription', 'detail'], ['Pro…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/product-reality/billing-composition.s188.spec.ts > Decision 1822 bounded recipe composition > allows only enumerated trait placements and resolved parameters across the 66 schemas and 132 artifacts
+AssertionError: [{"code":"OODS-N016","message":"Invalid generated artifact: Generated import '@oods/component-contracts' is not supported for react. Generated import '@oods/component-contracts' is missing from the dependency manifest."}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/billing-composition.s188.spec.ts:111:60
+    109|     for (const framework of ['react', 'vue'] as const) {
+    110|       const result = await generate({ schema: workflow.schema, framewo…
+    111|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+       |                                                            ^
+    112|     }
+    113|   }, 120_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  08:35:36
+   Duration  1.42s (transform 389ms, setup 14ms, collect 621ms, tests 593ms, environment 0ms, prepare 70ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/billing-composition.s188.spec.ts

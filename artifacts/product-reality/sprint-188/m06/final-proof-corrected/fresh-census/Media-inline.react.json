@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Button, InlineLabel, Input, PaginationBar, SearchInput, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Media form factor guiding viewer presentation. */\n  assetType: 'image' | 'video' | 'audio' | 'document';\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Hex-encoded checksum (SHA-256) for deduplication. */\n  checksum?: string;\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Media playback duration for video/audio assets. */\n  durationSeconds?: number;\n  /** Size of the binary payload in bytes. */\n  fileSizeBytes: number;\n  /** Pixel height for images/videos when available. */\n  heightPx?: number;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Primary identifier for the media asset across services. */\n  mediaId: string;\n  /** IANA MIME type recorded at ingestion. */\n  mimeType: string;\n  /** Provider-specific path or key referencing the binary object. */\n  objectKey: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Canonical CDN URL for public consumption. */\n  sourceUrl?: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Storage namespace (S3 bucket, GCS bucket) backing the asset. */\n  storageBucket: string;\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** List of transcoding profiles generated for the asset. */\n  transcodingProfiles?: string[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Pixel width for images/videos when available. */\n  widthPx?: number;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InlineLabelProps = React.ComponentPropsWithoutRef<typeof InlineLabel>;\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ allowedTransitions, assetType, categories, checksum, classificationMetadata, createdAt, description, durationSeconds, fileSizeBytes, heightPx, label, lastEvent, lastEventAt, mediaId, mimeType, objectKey, placeholder, primaryCategoryId, primaryCategoryPath, sourceUrl, stateHistory, status, storageBucket, tagCount, tagPreview, tags, transcodingProfiles, updatedAt, widthPx }) => {\n  const [handleChange_file_size_bytesState, setHandleChange_file_size_bytesState] = React.useState<string>(String(fileSizeBytes ?? ''));\n  /* @oods-local-binding handleChange_file_size_bytes */ const handleChange_file_size_bytes = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_file_size_bytesState(event.currentTarget.value); };\n\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                    <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Size of the binary payload in bytes.\" placeholder=\"Enter file size bytes\" required type=\"number\" value={handleChange_file_size_bytesState} onChange={handleChange_file_size_bytes} />\n                    <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" maxLength={40} label={label} />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:0101b53a31ad18fb371393ea5067b96bf44ee22f119ec5b6f67bb627c4d45a5e"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:cbe2bf188ce78a1cf6301ab1812301bba1b8dc8030c51836d8755e83c3fe2143"
+  },
+  "code": "import React from 'react';\nimport { Button, InlineLabel, Input, PaginationBar, SearchInput, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Media form factor guiding viewer presentation. */\n  assetType: 'image' | 'video' | 'audio' | 'document';\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Hex-encoded checksum (SHA-256) for deduplication. */\n  checksum?: string;\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Media playback duration for video/audio assets. */\n  durationSeconds?: number;\n  /** Size of the binary payload in bytes. */\n  fileSizeBytes: number;\n  /** Pixel height for images/videos when available. */\n  heightPx?: number;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Primary identifier for the media asset across services. */\n  mediaId: string;\n  /** IANA MIME type recorded at ingestion. */\n  mimeType: string;\n  /** Provider-specific path or key referencing the binary object. */\n  objectKey: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Canonical CDN URL for public consumption. */\n  sourceUrl?: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Storage namespace (S3 bucket, GCS bucket) backing the asset. */\n  storageBucket: string;\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** List of transcoding profiles generated for the asset. */\n  transcodingProfiles?: string[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Pixel width for images/videos when available. */\n  widthPx?: number;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InlineLabelProps = React.ComponentPropsWithoutRef<typeof InlineLabel>;\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ allowedTransitions, assetType, categories, checksum, classificationMetadata, createdAt, description, durationSeconds, fileSizeBytes, heightPx, label, lastEvent, lastEventAt, mediaId, mimeType, objectKey, placeholder, primaryCategoryId, primaryCategoryPath, sourceUrl, stateHistory, status, storageBucket, tagCount, tagPreview, tags, transcodingProfiles, updatedAt, widthPx }) => {\n  const [handleChange_file_size_bytesState, setHandleChange_file_size_bytesState] = React.useState<string>(String(fileSizeBytes ?? ''));\n  /* @oods-local-binding handleChange_file_size_bytes */ const handleChange_file_size_bytes = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_file_size_bytesState(event.currentTarget.value); };\n\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                    <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Size of the binary payload in bytes.\" placeholder=\"Enter file size bytes\" required type=\"number\" value={handleChange_file_size_bytesState} onChange={handleChange_file_size_bytes} />\n                    <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" maxLength={40} label={label} />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:cbe2bf188ce78a1cf6301ab1812301bba1b8dc8030c51836d8755e83c3fe2143"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 6
+  }
+}

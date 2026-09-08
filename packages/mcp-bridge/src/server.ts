@@ -20,6 +20,7 @@ import { registerArtifactEndpoints } from './endpoints/artifacts.js';
 import { buildErrorPayload, normalizeRunErrorCode, sendError, statusForCode } from './middleware/errors.js';
 import { buildToolNameMaps, resolveInternalToolName } from './tool-names.js';
 import { resolveBridgeToolSurface } from './tool-surface.js';
+import { registerBridgeHealth } from './health.js';
 
 const APPROVAL_REQUIRED_TOOLS = approvalRequiredTools;
 const APPLY_CAPABLE_TOOLS = applyCapableTools;
@@ -235,15 +236,11 @@ async function main() {
     open: bridgeConfig.rateLimit.artifacts,
   });
 
-  fastify.get('/health', async () => ({
-    status: 'ok',
-    bridge: 'ready',
-    toolset: {
-      mode: toolSurface.toolsetMode,
-      enabledCount: toolSurface.enabled.length,
-      registrySource,
-    },
-  }));
+  registerBridgeHealth(fastify, {
+    mode: toolSurface.toolsetMode,
+    enabledCount: toolSurface.enabled.length,
+    registrySource,
+  });
 
   fastify.get('/tools', { config: { rateLimit: bridgeConfig.rateLimit.tools } }, async () => ({
     tools: Array.from(ALLOWED_EXTERNAL_TOOLS),

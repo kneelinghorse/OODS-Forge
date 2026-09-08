@@ -1,3 +1,4 @@
+import { posix } from 'node:path';
 import { canonicalize, sha256 } from '@oods/artifacts';
 
 import { localSetterSymbol, localStateSymbol } from './binding-utils.js';
@@ -19,12 +20,15 @@ type DependencyCatalogEntry = Omit<GeneratedDependency, 'name'>;
  * update generation instead of leaking a workspace range to consumers.
  */
 export const GENERATED_DEPENDENCY_CATALOG = {
+  '@oods/component-contracts': { version: '0.1.0', kind: 'dependency' },
   '@oods/component-styles': { version: '0.1.0', kind: 'dependency' },
   '@oods/components-react': { version: '0.1.0', kind: 'dependency' },
   '@oods/components-vue': { version: '0.1.0', kind: 'dependency' },
   'class-variance-authority': { version: '0.7.1', kind: 'dependency' },
   react: { version: '19.2.0', kind: 'peerDependency' },
   'react-dom': { version: '19.2.0', kind: 'peerDependency' },
+  '@vue/server-renderer': { version: '3.5.42', kind: 'dependency' },
+  '@vitejs/plugin-vue': { version: '5.2.4', kind: 'dependency' },
   vue: { version: '3.5.42', kind: 'peerDependency' },
 } as const satisfies Record<string, DependencyCatalogEntry>;
 
@@ -37,20 +41,26 @@ const FRAMEWORK_PEERS: Record<CodegenFramework, readonly string[]> = {
 const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
   html: new Set(),
   react: new Set([
+    '@oods/component-contracts',
     '@oods/component-styles/css',
     '@oods/component-styles/css-ported',
     '@oods/components-react',
     '@oods/components-react/ported',
     'class-variance-authority',
     'react',
+    'react-dom/client',
+    'react-dom/server',
   ]),
   vue: new Set([
+    '@oods/component-contracts',
     '@oods/component-styles/css',
     '@oods/component-styles/css-ported',
     '@oods/components-vue',
     '@oods/components-vue/ported',
     'class-variance-authority',
     'vue',
+    '@vitejs/plugin-vue',
+    '@vue/server-renderer',
   ]),
 };
 
@@ -295,6 +305,18 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
     const expectedHash = contentHash(file.contents);
     if (!CONTENT_HASH.test(file.contentHash) || file.contentHash !== expectedHash) {
       issues.push(`Generated file '${file.path}' has an invalid contentHash.`);
+    }
+  }
+
+  // A portable application must close local imports as well as package imports.
+  for (const file of artifact.files) {
+    const importPattern = /\b(?:import|export)\s+(?:type\s+)?(?:[^'";]*?\sfrom\s*)?['"]([^'"]+)['"]/g;
+    for (const match of file.contents.matchAll(importPattern)) {
+      const specifier = match[1]!;
+      if (!specifier.startsWith('.')) continue;
+      const target = posix.normalize(posix.join(posix.dirname(file.path), specifier));
+      const candidates = [target, ...['.ts', '.tsx', '.js', '.jsx', '.vue', '.css'].map((extension) => target + extension), target.replace(/\.js$/, '.ts'), target + '/index.ts'];
+      if (!candidates.some((candidate) => paths.has(candidate))) issues.push(`Generated local import '${specifier}' in '${file.path}' has no artifact file.`);
     }
   }
 

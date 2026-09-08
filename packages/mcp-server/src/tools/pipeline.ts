@@ -30,7 +30,7 @@ export type PipelineInput = {
   dslVersion?: string;
   object?: string;
   intent?: string;
-  context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
+  context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
   layout?: LayoutInput;
   preferences?: DesignComposeInput['preferences'];
   /** Sprint 88: Stage1 BridgeSummary action_mappings, flat verb-keyed. */

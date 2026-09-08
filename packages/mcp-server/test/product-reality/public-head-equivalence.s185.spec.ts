@@ -46,6 +46,18 @@ describe('Notice implementation heads retain actual public bytes across test-onl
     expect(auditSprintRange({ root, base: implementationHead, head: executionHead, sprintId: 'sprint-187' }).publicPaths).toEqual([file]);
   });
 
+  it.each(['packages/mcp-bridge/src/health.ts', 'packages/mcp-bridge/package.json', 'packages/mcp-server/package.json',
+    'scripts/build-revision.mjs', 'packages/mcp-server/src/codegen/workflow-emitter.ts', 'cmos/foundational-docs/roadmap/near.md',
+    'scripts/runtime/assemble.mjs', '.github/workflows/ci.yml'])
+  ('Sprint 188 independently catches a changed workflow/delivery byte: %s', file => {
+    write(file, 'original'); const implementationHead = commit('workflow implementation');
+    write(file, 'changed'); const executionHead = commit('changed public workflow');
+    const options = { root, implementationHead, executionHead, sprintId: 'sprint-188' };
+    const produced = derivePublicHeadEquivalence(options);
+    expect(produced.changedPaths).toEqual([file]); expect(auditPublicRuntimeBytes(options)).toEqual(produced);
+    expect(auditSprintRange({ root, base: implementationHead, head: executionHead, sprintId: 'sprint-188' }).publicPaths).toEqual([file]);
+  });
+
   it('excludes only declared test paths and discloses each excluded change', () => {
     const implementationHead = commit('implementation');
     for (const file of testPaths) write(file, 'export const expected = 19;\n');

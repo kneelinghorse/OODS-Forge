@@ -8,6 +8,8 @@ import type {
 } from '../src/index.js';
 
 import {
+  CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay,
+  BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
@@ -73,6 +75,14 @@ export function renderSharedScenario(
 ): ReactElement {
   const { onEvent } = handlers;
   switch (scenario.id) {
+    case 'billing-cycle-progress': return <CycleProgressCard {...scenario.props} />;
+    case 'billing-payment-detail': return <PaymentTimeline {...scenario.props} />;
+    case 'billing-payment-events': return <PaymentEventTimeline {...scenario.props} />;
+    case 'billing-card-minor-units': return <BillingCardMeta {...scenario.props} />;
+    case 'archived-row-presentation': return <ArchivedRowOverlay {...scenario.props} />;
+    case 'billing-summary-minor-units': return <BillingSummaryBadge {...scenario.props} />;
+    case 'billing-amount-half-up': return <BillingAmountInput {...scenario.props} onChange={onEvent} />;
+    case 'billing-interval-subscription': return <BillingIntervalSelector {...scenario.props} onChange={onEvent} />;
     case 'badge-status':
       return <Badge content="Past due" tone="critical" emphasis="solid" icon="!" />;
     case 'banner-dismissible':

@@ -1,0 +1,158 @@
+{
+  "unchanged": 63,
+  "changed": [
+    {
+      "object": "Subscription",
+      "context": "detail",
+      "addedBillingNodes": [
+        {
+          "id": "slot-tab-1-6",
+          "component": "BillingAmountInput",
+          "meta": {
+            "intent": "slot:tab-1",
+            "label": "tab-1",
+            "confidence": 0.2,
+            "confidenceLevel": "low"
+          },
+          "props": {
+            "field": "amount",
+            "label": "Recurring price expressed in minor units (e.g., cents)."
+          }
+        },
+        {
+          "id": "slot-tab-2-8",
+          "component": "BillingAmountInput",
+          "meta": {
+            "intent": "slot:tab-2",
+            "label": "tab-2",
+            "confidence": 0.2,
+            "confidenceLevel": "low"
+          },
+          "props": {
+            "field": "subscription_id",
+            "label": "Primary identifier used across billing and lifecycle systems."
+          }
+        },
+        {
+          "id": "slot-tab-3-15",
+          "component": "BillingSummaryBadge",
+          "meta": {
+            "intent": "slot:tab-3",
+            "label": "tab-3",
+            "confidence": 0.24,
+            "confidenceLevel": "low"
+          },
+          "props": {
+            "field": "currency",
+            "label": "ISO 4217 currency code used for billing."
+          }
+        },
+        {
+          "id": "slot-tab-4-17",
+          "component": "BillingAmountInput",
+          "meta": {
+            "intent": "slot:tab-4",
+            "label": "tab-4",
+            "confidence": 0.2,
+            "confidenceLevel": "low"
+          },
+          "props": {
+            "field": "billing_interval",
+            "label": "Recurrence cadence (monthly, yearly, quarterly, etc.)."
+          }
+        },
+        {
+          "id": "slot-tab-5-19",
+          "component": "BillingSummaryBadge",
+          "meta": {
+            "intent": "slot:tab-5",
+            "label": "tab-5",
+            "confidence": 0.24,
+            "confidenceLevel": "low"
+          },
+          "props": {
+            "field": "last_event",
+            "label": "Lifecycle event associated with the most recent timestamp mutation."
+          }
+        },
+        {
+          "id": "slot-tab-6-21",
+          "component": "BillingAmountInput",
+          "meta": {
+            "intent": "slot:tab-6",
+            "label": "tab-6",
+            "confidence": 0.2,
+            "confidenceLevel": "low"
+          },
+          "props": {
+            "field": "current_period_progress",
+            "label": "Decimal progress (0-1) through the active billing cycle."
+          }
+        },
+        {
+          "id": "slot-tab-7-23",
+          "component": "BillingSummaryBadge",
+          "meta": {
+            "intent": "slot:tab-7",
+            "label": "tab-7",
+            "confidence": 0.24,
+            "confidenceLevel": "low"
+          },
+          "props": {
+            "field": "plan_name",
+            "label": "Human-readable plan label shown in headers."
+          }
+        }
+      ],
+      "beforeNodes": 28,
+      "afterNodes": 28
+    },
+    {
+      "object": "Subscription",
+      "context": "list",
+      "addedBillingNodes": [
+        {
+          "id": "slot-toolbar-actions-3",
+          "component": "BillingSummaryBadge",
+          "meta": {
+            "intent": "slot:toolbar-actions",
+            "label": "toolbar-actions"
+          },
+          "props": {
+            "amountField": "amount",
+            "currencyField": "currency",
+            "intervalField": "billing_interval",
+            "minorUnitsParameter": "minorUnits"
+          }
+        }
+      ],
+      "beforeNodes": 11,
+      "afterNodes": 11
+    },
+    {
+      "object": "Subscription",
+      "context": "form",
+      "addedBillingNodes": [
+        {
+          "id": "ve-field-0-26",
+          "component": "BillingIntervalSelector",
+          "props": {
+            "intervalField": "billing_interval",
+            "intervalsParameter": "billingIntervals"
+          }
+        },
+        {
+          "id": "ve-field-0-27",
+          "component": "BillingAmountInput",
+          "props": {
+            "amountField": "amount",
+            "currencyField": "currency",
+            "minorUnitsParameter": "minorUnits"
+          }
+        }
+      ],
+      "beforeNodes": 27,
+      "afterNodes": 29
+    }
+  ]
+}

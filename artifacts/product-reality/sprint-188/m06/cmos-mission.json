@@ -1,0 +1,43 @@
+{
+  "id": "s188-m06",
+  "name": "Final proof, one four-suite capture and independent-review handoff",
+  "status": "In Progress",
+  "objective": "Freeze the sprint's implementation, prove the whole population once at that head, capture the four suites once, compute the sprint-wide advertised diff from cd8ee986, prepare (not send) the reconnect for the next delivery, and hand off for independent review with builderSelfCertified:false. Reuse the Sprint 185\u2013187 closeout tooling with named bounded adaptations; no new closeout framework.",
+  "context": null,
+  "successCriteria": [
+    "Fresh census at the frozen implementation head: 66/66 schemas and 132/132 generation cells green at profile=build, every Subscription screen now containing the eight flow rows (or the descoped subset, named); the workflow context adds Subscription/workflow as a seventh measured schema with two green cells; original saved store 15/16 and successor store 16/16 with unchanged input hashes",
+    "The m03 app flow and 32 state observations pass in both frameworks at the frozen head; screenshots regenerated at that head",
+    "One four-suite capture (viz-core, viz-render, mcp-server, root core) at a clean execution commit whose public bytes equal the implementation head: zero failures; skips equal the same 16 pre-existing identities as the Sprint 187 baseline; every delta attributed by file",
+    "Sprint-wide advertised-surface diff computed once from git diff --name-only cd8ee986..HEAD over the advertised path set, listing the workflow context, schema and docs movers; the reconnect draft names them and is retained unsent",
+    "A claim ledger binding every m01\u2013m06 criterion to an execution with paths that exist at the frozen head and match their hashes, re-derived by the independent auditor script; roadmap and prose contract tests (tests/verification/*.contract.test.ts) pass at the frozen head after the near.md update",
+    "The review handoff records builderSelfCertified:false, separateReviewRequired:true, the frozen implementation, execution and evidence commits, and the craft screenshots the reviewer must inspect; Sprint 188 stays Active"
+  ],
+  "deliverables": [
+    "artifacts/product-reality/sprint-188/m06/README.md, closeout/claim-ledger.json, closeout/review-handoff.json, suite-accounting.json, final census and store receipts",
+    "near.md updated for the built state without relabeling the sprint as certified; roadmap contract tests run and green",
+    "A prepared reconnect draft for Sprint 189 m01 delivery; zero sends",
+    "PR from codex/sprint-188-subscription-workflow to OODS-pro opened with the evidence packet links, remote CI observed and its run id recorded in the handoff"
+  ],
+  "referenceDocs": [
+    "cmos/planning/forge-s188-subscription-workflow-decision-memo.md",
+    "artifacts/product-reality/sprint-187/m06/README.md",
+    "scripts/product-reality/s185-closeout.mjs",
+    "scripts/product-reality/s185-audit-closeout.mjs"
+  ],
+  "domainFields": null,
+  "notes": "[Started] M05 complete at 5ebd1651. Begin bounded reuse of Sprint 185-187 closeout tools, freeze implementation, run final census/store/app proofs and one four-suite capture, then independent-review PR handoff.",
+  "completedAt": null,
+  "createdAt": "2026-09-08T02:42:34.377Z",
+  "startedAt": "2026-09-08T16:26:09.131Z",
+  "updatedAt": "2026-09-08T16:26:09.131Z",
+  "metadata": null,
+  "sprint": {
+    "id": "sprint-188",
+    "title": "Sprint 188 \u2014 Ship, then make the Subscription app whole",
+    "focus": "Derek chose 2026-09-07 (decision #1814): (a) ship the merged Sprint 187 build (OODS-pro cd8ee986) to the live PM2 bridge, which still serves pre-Sprint-183 code at 8ce34907, adopt the authentic User-form successor with backup and rollback, resolve the served schema/load 400 and send the one combined reconnect to aquex-mcp and forge-demos (closes #1374/#1379/#1384); (b) generate from the public object/context inputs alone a runnable Subscription application in React and Vue \u2014 list, detail, edit, cancel, timeline \u2014 with loading/empty/error/success on every screen and Forge-generated navigation, store and sample data, and give the Subscription screens the eight Billable/Archivable rows their traits declare (BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector, CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay) implemented from the trait declarations to the Sprint 185 bar. Six serial missions: m01 ship; m02 workflow context + application emitters; m03 the app live in both frameworks with 32 state observations and craft screenshots; m04 list/form billing rows; m05 detail/timeline/card/archive rows + nucleus catalog truth + /health revision; m06 census 66/66 + workflow, one four-suite capture, sprint-wide advertised diff, review handoff. App before rows on purpose so a session cut after m03 still leaves a working app. Exit: the program sentence met for Subscription in both frameworks; criterion 8 opened; 'usable' decided by the independent review's craft inspection. Pace rule in force: no per-mission captures, no new closeout apparatus, no critic. Build fresh from cmos/planning/forge-s188-subscription-workflow-decision-memo.md in ~/.codex/worktrees/s188/OODS-Forge (codex/sprint-188-subscription-workflow from cd8ee986); builder does not self-certify.",
+    "status": "Active",
+    "projectId": "forge"
+  },
+  "projectId": "forge",
+  "localProjectId": "forge"
+}

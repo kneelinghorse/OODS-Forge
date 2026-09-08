@@ -11,7 +11,7 @@
 | `dslVersion` | string | No |  | DSL version to use for this request. Defaults to the current version (1.0). Controls feature availability and deprecation behavior. |
 | `intent` | string | Yes |  | Natural-language description of the desired UI (e.g., 'dashboard with metrics and sidebar', 'user registration form'). |
 | `object` | string | Yes |  | Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions. |
-| `context` | `detail` \| `list` \| `form` \| `timeline` \| `card` \| `inline` | No |  | View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). |
+| `context` | `detail` \| `list` \| `form` \| `timeline` \| `card` \| `inline` \| `workflow` | No |  | View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data. |
 | `layout` | `dashboard` \| `form` \| `detail` \| `list` \| `card` \| `timeline` \| `landing` \| `auto` | No | `"auto"` | Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords. |
 | `preferences` | object | No |  |  |
 | `preferences.theme` | string | No |  | Theme token (e.g., 'light', 'dark'). |

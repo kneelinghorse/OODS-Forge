@@ -1,0 +1,34 @@
+--- a/packages/mcp-server/src/tools/design.compose.ts
++++ b/packages/mcp-server/src/tools/design.compose.ts
+@@ -670,7 +670,8 @@
+         : undefined
+     );
+ 
+-    if (slotName && patternGroups[slotName]) {
++    // A trait recipe already owns this slot; generic grouping must not erase it.
++    if (slotName && patternGroups[slotName] && !isTraitRecipe(el.component)) {
+       const pattern = patternGroups[slotName];
+ 
+       const fieldChildren: UiElement[] = pattern.matchedFields
+--- a/packages/mcp-server/src/compose/object-slot-filler.ts
++++ b/packages/mcp-server/src/compose/object-slot-filler.ts
+@@ -23,6 +23,7 @@
+ import { getContentStrategy, type ContentStrategy } from '../codegen/content-strategy.js';
+ import { inferSlotPosition, type SlotPosition } from './position-affinity.js';
+ import type { FieldHint } from './field-affinity.js';
++import { isTraitRecipe } from './trait-recipes.js';
+ 
+ /* ------------------------------------------------------------------ */
+ /*  Types                                                              */
+@@ -280,7 +281,10 @@
+   for (const entry of otherEntries) {
+     const targetSlot = entry.targetSlot
+       ? (slotSet.has(entry.targetSlot) ? entry.targetSlot : undefined)
+-      : matchPositionToSlot(entry.position, slotSet);
++      : matchPositionToSlot(entry.position, slotSet)
++        ?? (entry.position === 'main' && isTraitRecipe(entry.component)
++          ? [...slotSet].filter((slot) => slot.startsWith('entry-')).sort()[0]
++          : undefined);
+     if (!targetSlot) {
+       const targetDescription = entry.targetSlot
+         ? `slot "${entry.targetSlot}"`

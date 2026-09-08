@@ -41,6 +41,7 @@ import { composeObject, type ComposedObject } from '../objects/trait-composer.js
 import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAction } from '../objects/types.js';
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
 import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema } from '../compose/object-slot-filler.js';
+import { isTraitRecipe } from '../compose/trait-recipes.js';
 import { collectDashboardViewExtensions, collectViewExtensions } from '../compose/view-extension-collector.js';
 import type { SlotPlan } from '../compose/view-extension-collector.js';
 import { expandSlots, groupFieldsIntoSlots, type ExpansionContext } from '../compose/slot-expander.js';
@@ -56,7 +57,8 @@ import {
   prefersDashboardLayout,
 } from '../compose/intent-sections.js';
 import { loadOodsrc } from '../lib/oodsrc.js';
-import { generateLabels } from '../compose/label-generator.js';
+import { assembleWorkflow } from '../compose/workflow-assembler.js';
+import { generateLabels, populateFieldLabels } from '../compose/label-generator.js';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -143,7 +145,7 @@ export interface DesignComposeInput {
   dslVersion?: string;
   intent?: string;
   object?: string;
-  context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
+  context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
   layout?: LayoutInput;
   preferences?: {
     theme?: string;
@@ -568,7 +570,8 @@ function fillSlots(
       }
     }
 
-    const result: SelectionResult = selectComponent(slot.intent, catalog, {
+    // Trait recipes remain available to explicit view-extension placement.
+    const result: SelectionResult = selectComponent(slot.intent, catalog.filter((component) => !isTraitRecipe(component.name)), {
       topN,
       intentContext: contextForSlot(slot),
       preferKeywordMatches: useKeywordMatches,
@@ -667,7 +670,8 @@ function applyPatternGroupWrappers(
         : undefined
     );
 
-    if (slotName && patternGroups[slotName]) {
+    // A trait recipe already owns this slot; generic grouping must not erase it.
+    if (slotName && patternGroups[slotName] && !isTraitRecipe(el.component)) {
       const pattern = patternGroups[slotName];
 
       const fieldChildren: UiElement[] = pattern.matchedFields
@@ -1355,6 +1359,8 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     input = { ...input, layout: rc.layout };
   }
 
+  if (input.context === 'workflow') return assembleWorkflow(input, handle);
+
   // Reject empty or whitespace-only intent when no object is provided
   if (input.intent !== undefined && !input.intent.trim() && !input.object) {
     return {
@@ -1890,12 +1896,14 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
       );
     }
     wireFieldProps(schema);
+    populateFieldLabels(schema);
 
     if (effectiveContext) {
       populateBindings(
         schema,
         effectiveContext,
         Object.keys(composed.schema),
+        composed.traits.map((trait) => trait.ref.name),
       );
     }
   }

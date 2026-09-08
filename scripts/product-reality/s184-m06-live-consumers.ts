@@ -1106,6 +1106,15 @@ async function withStaticServer<T>(directory: string, callback: (url: string) =>
   }
 }
 
+// A remote Linux browser can exercise native select arrow keys on macOS hosts.
+// Playwright's loopback forwarding keeps temporary consumer servers local.
+export async function launchProofBrowser() {
+  const { chromium } = await import('playwright');
+  return process.env.OODS_PLAYWRIGHT_WS_ENDPOINT
+    ? chromium.connect(process.env.OODS_PLAYWRIGHT_WS_ENDPOINT, { exposeNetwork: '<loopback>' })
+    : chromium.launch({ headless: true });
+}
+
 async function browserProof({
   framework,
   schemaName,
@@ -1135,8 +1144,7 @@ async function browserProof({
   viewport?: { width: number; height: number };
   mountObligations: MountObligation[];
 }): Promise<Record<string, unknown>> {
-  const { chromium } = await import('playwright');
-  const browser = await chromium.launch({ headless: true });
+  const browser = await launchProofBrowser();
   try {
     return await withStaticServer(distRoot, async (url) => {
       const page = await browser.newPage({ viewport });
@@ -1303,6 +1311,31 @@ async function browserProof({
         if (numericUpdates.length) {
           Object.assign(interactionEvidence, { numericUpdates, numericScope: 'generated local numeric editor state; no application filtering is claimed' });
           eventHandlerAttached = eventHandlerAttached && numericUpdates.every(({ passed }) => passed);
+        }
+        const billingControls = [];
+        for (const probe of valueProbes.filter((entry) => entry.kind === 'native-value' && entry.editable)) {
+          const control = page.locator(selectorForNode(probe.nodeId));
+          if (probe.options) {
+            const options = await control.locator('option:not([disabled])').evaluateAll((items) => items.map((item) => (item as HTMLOptionElement).value));
+            await control.focus(); await control.press('Home'); await control.press('ArrowDown');
+            const selected = await control.inputValue();
+            billingControls.push({ nodeId: probe.nodeId, kind: 'interval-keyboard', options, expectedOptions: probe.options, selected, expectedSelected: probe.options[1], passed: JSON.stringify(options) === JSON.stringify(probe.options) && selected === probe.options[1] });
+          } else if (await control.getAttribute('data-billing-minor-units')) {
+            await control.fill('19.99');
+            const amount = await control.inputValue();
+            await control.fill('-1');
+            const invalid = await control.getAttribute('aria-invalid');
+            const described = await control.getAttribute('aria-describedby');
+            const errorId = (described ?? '').split(' ').find((id) => id.endsWith('-error'));
+            const message = errorId ? await page.locator(selectorForNode(errorId)).innerText() : '';
+            await control.fill(''); const blank = await control.inputValue();
+            await control.fill('0'); const zero = await control.inputValue();
+            billingControls.push({ nodeId: probe.nodeId, kind: 'amount-validation', amount, invalid, message, blank, zero, passed: amount === '19.99' && invalid === 'true' && message === 'Enter a non-negative amount.' && blank === '' && zero === '0' });
+          }
+        }
+        if (billingControls.length) {
+          Object.assign(interactionEvidence, { billingControls });
+          eventHandlerAttached = eventHandlerAttached && billingControls.every(({ passed }) => passed);
         }
         const sharedNativeUpdates = [];
         for (const probe of sharedNativeFields) {
@@ -2213,3 +2246,6 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     process.exitCode = 1;
   });
 }
+
+// Shared with the bounded Sprint 188 App proof; retain the same isolation and gate rules.
+export { commandResult, requireGreen, prepareManifest, isolatedNpmEnvironment, assertInstalledIsolation, resolveImports, withStaticServer, cssProof };

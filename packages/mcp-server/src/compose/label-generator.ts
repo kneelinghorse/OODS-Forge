@@ -9,6 +9,29 @@
 
 import type { ComposedObject, ResolvedTrait } from '../objects/trait-composer.js';
 import type { ViewExtension } from '../objects/types.js';
+import type { UiElement, UiSchema } from '../schemas/generated.js';
+
+/** Field descriptions are authoritative; unnamed fields still need readable labels. */
+export function fieldLabel(name: string, description?: string): string {
+  if (description?.trim() && !/^Field \d+$/i.test(description.trim())) return description.trim();
+  const words = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/** Resolve anonymous form-slot labels before framework normalization can emit Field N. */
+export function populateFieldLabels(schema: UiSchema): void {
+  const visit = (node: UiElement): void => {
+    const field = node.props?.field;
+    const entry = typeof field === 'string' ? schema.objectSchema?.[field] : undefined;
+    const anonymousSlot = node.props?.label === undefined && /^field-\d+$/.test(node.meta?.label ?? '');
+    const placeholder = typeof node.props?.label === 'string' && /^Field \d+$/.test(node.props.label);
+    if (entry && typeof field === 'string' && (anonymousSlot || placeholder)) {
+      node.props = { ...node.props, label: fieldLabel(field, entry.description) };
+    }
+    node.children?.forEach(visit);
+  };
+  schema.screens.forEach(visit);
+}
 
 /* ------------------------------------------------------------------ */
 /*  Category → label mapping                                           */

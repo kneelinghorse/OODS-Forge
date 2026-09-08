@@ -712,6 +712,12 @@ describe('generated artifact envelope', () => {
     );
     expect(GENERATED_DEPENDENCY_CATALOG.react.version).toBe(resolvedLockVersion('.', 'dependencies', 'react'));
     expect(GENERATED_DEPENDENCY_CATALOG['react-dom'].version).toBe(resolvedLockVersion('.', 'dependencies', 'react-dom'));
+    expect(GENERATED_DEPENDENCY_CATALOG['@vue/server-renderer'].version).toBe(
+      resolvedLockVersion('packages/components-vue', 'devDependencies', '@vue/server-renderer'),
+    );
+    expect(GENERATED_DEPENDENCY_CATALOG['@vitejs/plugin-vue'].version).toBe(
+      resolvedLockVersion('packages/components-vue', 'devDependencies', '@vitejs/plugin-vue'),
+    );
     expect(GENERATED_DEPENDENCY_CATALOG.vue.version).toBe(
       resolvedLockVersion('packages/components-vue', 'devDependencies', 'vue'),
     );

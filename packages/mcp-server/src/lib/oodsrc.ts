@@ -23,7 +23,7 @@ export interface OodsrcConfig {
   /** Default brand preset */
   brand?: string;
   /** Default view context */
-  context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
+  context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
   /** Default layout */
   layout?: LayoutInput;
   /** Default composition preferences */
@@ -43,7 +43,7 @@ export interface OodsrcConfig {
 
 const VALID_FRAMEWORKS = new Set(['react', 'vue', 'html']);
 const VALID_STYLINGS = new Set(['inline', 'tokens', 'tailwind']);
-const VALID_CONTEXTS = new Set(['detail', 'list', 'form', 'timeline', 'card', 'inline']);
+const VALID_CONTEXTS = new Set(['detail', 'list', 'form', 'timeline', 'card', 'inline', 'workflow']);
 const VALID_LAYOUTS = new Set<string>(LAYOUT_INPUT_VALUES);
 
 /** Cached config to avoid re-reading the file on every tool call within a session. */

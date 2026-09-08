@@ -1,0 +1,716 @@
+{
+  "mission": "s188-m05",
+  "sourceHead": "fbeef2115baa0a6e091b16f5d23750291aee9b01",
+  "builderSelfCertified": false,
+  "cells": [
+    {
+      "framework": "react",
+      "artifactHash": "sha256:78a5f45845447511fb1125d86cd3ea302993108c84f43c79959277d98fa55800",
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "detail": {
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-contracts",
+                "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+              },
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "react/logs/typecheck.log"
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "react/logs/build.log"
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "detail": {
+            "htmlHash": "sha256:d68617d57d4813074c24dad4bf67af13aef9c52eb97e9fec676b80265af65e03",
+            "generatedEntry": "src/ssr.tsx"
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "detail": {
+            "screenCount": 1,
+            "errors": []
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "detail": {
+            "preservesSsrRoot": true,
+            "errors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "detail": {
+            "files": [
+              "index-CqQOuGZy.css"
+            ],
+            "bytes": 132625,
+            "sha256": "sha256:5215d0554d2c8237db2a236b167864aa30bf2bcbd020f739ef028539ee889792",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "failed",
+          "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Status & History', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button role=\"tab\" type=\"button\" tabindex=\"-1\" data-size=\"md\" aria-selected=\"false\" title=\"Status & History\" class=\"oods-tab tabs__tab\" data-tab-id=\"detail-detail-tab-panel-5\" id=\"_r_p_-tab-detail-detail-tab-panel-5\" aria-controls=\"_r_p_-panel-detail-detail-tab-panel-5\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <section class=\"workflow-content\" aria-label=\"Subscription screen\">…</section> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    14 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <section class=\"workflow-content\" aria-label=\"Subscription screen\">…</section> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n"
+        }
+      ],
+      "consumerAuthoredComponents": 0,
+      "consumerAuthoredActions": 0,
+      "generation": "current-in-run-public-output",
+      "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-react-dgCZYe",
+      "flow": [
+        {
+          "name": "ten-sample-records",
+          "status": "passed",
+          "detail": {
+            "active": [
+              "subscription-001",
+              "subscription-002",
+              "subscription-003",
+              "subscription-004",
+              "subscription-005",
+              "subscription-006",
+              "subscription-007",
+              "subscription-008",
+              "subscription-009"
+            ],
+            "archived": [
+              "subscription-010"
+            ],
+            "archivePresentation": {
+              "opacity": "0.6",
+              "accessibleName": "Archived: Subscription 10",
+              "tabLabel": "Archived",
+              "keyboardNavigation": true
+            },
+            "total": 10,
+            "disposition": "nine active and one in the generated Archived view"
+          }
+        },
+        {
+          "name": "detail-navigation",
+          "status": "passed",
+          "detail": {
+            "id": "subscription-003",
+            "heading": "Subscription 03",
+            "billingViews": {
+              "cycle": "Billing cycle\n\n100% complete · 0 days remaining\n\nmonthly",
+              "payments": "Payments\n\n$57.00 USD · failed\n\nPayment method: wire\n\nLast payment\nJan 1, 2026\nNext payment\nJan 1, 2026"
+            }
+          }
+        },
+        {
+          "name": "edit-seeded-values",
+          "status": "passed",
+          "detail": {
+            "id": "subscription-003",
+            "plan": "Subscription 03"
+          }
+        },
+        {
+          "name": "billing-edit-values",
+          "status": "passed",
+          "detail": {
+            "options": [
+              "monthly",
+              "yearly"
+            ],
+            "amount": "19.99",
+            "interval": "yearly",
+            "invalidSaveStayedOnForm": true
+          }
+        },
+        {
+          "name": "save-plan-name",
+          "status": "passed",
+          "detail": {
+            "heading": "Team annual"
+          }
+        },
+        {
+          "name": "billing-save-persists",
+          "status": "passed",
+          "detail": {
+            "id": "subscription-003",
+            "storedMinorUnits": 1999,
+            "majorUnitEditorValue": "19.99",
+            "interval": "yearly"
+          }
+        },
+        {
+          "name": "cancel-detail",
+          "status": "passed",
+          "detail": {
+            "text": "SUBSCRIPTION WORKSPACE\n\nTeam annual\nLocal workspace\nList\nDetail\nEdit\nTimeline\nCancellation details\nReason\nReason code\nCancel at period end\nStatus Timeline\n\nCurrent status: Pending Cancellation\n\nEvent 1\n\n2026-01-01T00:00:00.000Z\n\nSample record created\n\nActive → Pending Cancellation\n\n2026-09-08T16:11:22.445Z\n\nBudget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T16:11:22.445Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse\nBilling\nStatus & History\nDetails\nStatus\nDates & History\nPricing\nDetails 7\nPricing 8\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events\nCancel subscription\nArchive\nEdit\nView timeline\n\nChanges saved in this session.",
+            "id": "subscription-003"
+          }
+        },
+        {
+          "name": "cancel-list-badge",
+          "status": "passed",
+          "detail": {
+            "text": "…\nPENDING CANCELLATION"
+          }
+        },
+        {
+          "name": "timeline-navigation-and-history",
+          "status": "passed",
+          "detail": {
+            "text": "active\n2026-01-01T00:00:00.000Z\n\nSample record created\n\npending cancellation\n2026-09-08T16:11:22.445Z\n\nBudget changed for next year",
+            "id": "subscription-003",
+            "paymentEvents": "Payment events\n\n$19.99 USD · failed\n\nLast payment\nJan 1, 2026\nNext payment\nJan 1, 2026"
+          }
+        }
+      ],
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Status & History', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button role=\"tab\" type=\"button\" tabindex=\"-1\" data-size=\"md\" aria-selected=\"false\" title=\"Status & History\" class=\"oods-tab tabs__tab\" data-tab-id=\"detail-detail-tab-panel-5\" id=\"_r_p_-tab-detail-detail-tab-panel-5\" aria-controls=\"_r_p_-panel-detail-detail-tab-panel-5\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <section class=\"workflow-content\" aria-label=\"Subscription screen\">…</section> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    14 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <section class=\"workflow-content\" aria-label=\"Subscription screen\">…</section> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\" class=\"oods-card rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow dark:border-slate-800 dark:bg-slate-950\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n    at screenshots (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:199:82)\n    at async <anonymous> (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:317:26)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:292:9)"
+    },
+    {
+      "framework": "vue",
+      "artifactHash": "sha256:c5204ac31a99378ae850709f96e1421c9c86eea94f21bf7d616d6079661186d2",
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "detail": {
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-contracts",
+                "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+              },
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "vue/logs/typecheck.log"
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "vue/logs/build.log"
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "detail": {
+            "htmlHash": "sha256:c809f43190df5f3f3e35cafb4e902152c625d1849bffcb0d14efc067c9eaecae",
+            "generatedEntry": "src/ssr.ts"
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "detail": {
+            "screenCount": 1,
+            "errors": []
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "detail": {
+            "preservesSsrRoot": true,
+            "errors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "detail": {
+            "files": [
+              "index-CqQOuGZy.css"
+            ],
+            "bytes": 132625,
+            "sha256": "sha256:5215d0554d2c8237db2a236b167864aa30bf2bcbd020f739ef028539ee889792",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "failed",
+          "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Status & History', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button role=\"tab\" type=\"button\" tabindex=\"-1\" class=\"oods-tab\" aria-selected=\"false\" data-tab-id=\"detail-detail-tab-panel-5\" id=\"oods-v-59-tab-detail-detail-tab-panel-5\" aria-controls=\"oods-v-59-panel-detail-detail-tab-panel-5\">Status & History</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <section class=\"workflow-content\" aria-label=\"Subscription screen\">…</section> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    14 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <section class=\"workflow-content\" aria-label=\"Subscription screen\">…</section> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n"
+        }
+      ],
+      "consumerAuthoredComponents": 0,
+      "consumerAuthoredActions": 0,
+      "generation": "current-in-run-public-output",
+      "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-vue-07K2is",
+      "flow": [
+        {
+          "name": "ten-sample-records",
+          "status": "passed",
+          "detail": {
+            "active": [
+              "subscription-001",
+              "subscription-002",
+              "subscription-003",
+              "subscription-004",
+              "subscription-005",
+              "subscription-006",
+              "subscription-007",
+              "subscription-008",
+              "subscription-009"
+            ],
+            "archived": [
+              "subscription-010"
+            ],
+            "archivePresentation": {
+              "opacity": "0.6",
+              "accessibleName": "Archived: Subscription 10",
+              "tabLabel": "Archived",
+              "keyboardNavigation": true
+            },
+            "total": 10,
+            "disposition": "nine active and one in the generated Archived view"
+          }
+        },
+        {
+          "name": "detail-navigation",
+          "status": "passed",
+          "detail": {
+            "id": "subscription-003",
+            "heading": "Subscription 03",
+            "billingViews": {
+              "cycle": "Billing cycle\n\n100% complete · 0 days remaining\n\nmonthly",
+              "payments": "Payments\n\n$57.00 USD · failed\n\nPayment method: wire\n\nLast payment\nJan 1, 2026\nNext payment\nJan 1, 2026"
+            }
+          }
+        },
+        {
+          "name": "edit-seeded-values",
+          "status": "passed",
+          "detail": {
+            "id": "subscription-003",
+            "plan": "Subscription 03"
+          }
+        },
+        {
+          "name": "billing-edit-values",
+          "status": "passed",
+          "detail": {
+            "options": [
+              "monthly",
+              "yearly"
+            ],
+            "amount": "19.99",
+            "interval": "yearly",
+            "invalidSaveStayedOnForm": true
+          }
+        },
+        {
+          "name": "save-plan-name",
+          "status": "passed",
+          "detail": {
+            "heading": "Team annual"
+          }
+        },
+        {
+          "name": "billing-save-persists",
+          "status": "passed",
+          "detail": {
+            "id": "subscription-003",
+            "storedMinorUnits": 1999,
+            "majorUnitEditorValue": "19.99",
+            "interval": "yearly"
+          }
+        },
+        {
+          "name": "cancel-detail",
+          "status": "passed",
+          "detail": {
+            "text": "SUBSCRIPTION WORKSPACE\n\nTeam annual\nLocal workspace\nList\nDetail\nEdit\nTimeline\nCancellation details\nReason\nReason code\nCancel at period end\nStatus Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T16:12:19.881Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T16:12:19.881Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse\nBilling\nStatus & History\nDetails\nStatus\nDates & History\nPricing\nDetails 7\nPricing 8\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events\nCancel subscription\nArchive\nEdit\nView timeline\n\nChanges saved in this session.",
+            "id": "subscription-003"
+          }
+        },
+        {
+          "name": "cancel-list-badge",
+          "status": "passed",
+          "detail": {
+            "text": "…\nPending Cancellation"
+          }
+        },
+        {
+          "name": "timeline-navigation-and-history",
+          "status": "passed",
+          "detail": {
+            "text": "active\n2026-01-01T00:00:00.000Z\n\nSample record created\n\npending cancellation\n2026-09-08T16:12:19.881Z\n\nBudget changed for next year",
+            "id": "subscription-003",
+            "paymentEvents": "Payment events\n\n$19.99 USD · failed\n\nLast payment\nJan 1, 2026\nNext payment\nJan 1, 2026"
+          }
+        }
+      ],
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Status & History', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button role=\"tab\" type=\"button\" tabindex=\"-1\" class=\"oods-tab\" aria-selected=\"false\" data-tab-id=\"detail-detail-tab-panel-5\" id=\"oods-v-59-tab-detail-detail-tab-panel-5\" aria-controls=\"oods-v-59-panel-detail-detail-tab-panel-5\">Status & History</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <section class=\"workflow-content\" aria-label=\"Subscription screen\">…</section> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    14 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <section class=\"workflow-content\" aria-label=\"Subscription screen\">…</section> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m       - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - <div class=\"oods-card\" data-v-6a293c14=\"\" data-elevated=\"false\" data-layout=\"sidebar\" data-oods-component=\"Card\" id=\"detail-detail-body-10\">…</div> intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n    at screenshots (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:199:82)\n    at async <anonymous> (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:317:26)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:292:9)"
+    }
+  ],
+  "stateObservations": [
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "success",
+      "marker": "success",
+      "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly\n•\nFUTURE\nTimestamp for the most recent modification, when available.\nNo items\n‹\n›"
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "success",
+      "marker": "success",
+      "text": "Status Timeline\n\nCurrent status: Future\n\nEvent 1\n\n2026-01-01T00:00:00.000Z\n\nSample record created\n\nCancellation Summary\nCancel at period end\nNo\nRequested at\n2026-01-01T00:00:00.000Z\nArchive Summary\nArchived\nfalse\nBilling\nStatus & History\nDetails\nStatus\nDates & History\nPricing\nDetails 7\nPricing 8\nBilling cycle\n\n100% complete · 0 days remaining\n\nmonthly\n\nAudit Timeline\nNo events"
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "success",
+      "marker": "success",
+      "text": "Current lifecycle status of the subscription.\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\nCancellation Form\nReason Code\nno_longer_needed\nbudget\nduplicate\nReason\nBilling interval\nmonthly\nyearly\nBilling amount\nUSD\nWhether the subscription will cancel at the natural billing period end.\nFree-form explanation captured during cancellation workflows.\nTimestamp when cancellation was initiated.\nISO 4217 currency code used for billing.\n*\nPayment instrument category used for collection.\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\nBilling contact email address.\nLifecycle event associated with the most recent timestamp mutation.\n*\nRecurring price expressed in minor units (e.g., cents).\n*\nRecurrence cadence (monthly, yearly, quarterly, etc.).\nSave"
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\n\nLoading your records."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "success",
+      "marker": "success",
+      "text": "1900\nPayment events\n\n$19.00 USD · pending\n\nLast payment\nJan 1, 2026\nNext payment\nJan 1, 2026"
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\n\nChange the filters or add a record."
+    },
+    {
+      "framework": "react",
+      "screen": "list",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "detail",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "form",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "react",
+      "screen": "timeline",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\n\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "success",
+      "marker": "success",
+      "text": "Whether the subscription will cancel at the natural billing period end.\nEnter cancel at period end\n$19.00 · monthly\n⏲\nFuture\nTimestamp for the most recent modification, when available.\n‹\n›\n1\n/ 0"
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "success",
+      "marker": "success",
+      "text": "Status Timeline\n\nCurrent status: Future\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nfuture\n\nReason: Sample record created\n\nCancellation Summary\nCancel at period end\nNo\nRequested at\n2026-01-01T00:00:00.000Z\nArchive Summary\nArchived\nfalse\nBilling\nStatus & History\nDetails\nStatus\nDates & History\nPricing\nDetails 7\nPricing 8\nBilling cycle\n\n100% complete · 0 days remaining\n\nmonthly\n\nAudit Timeline\nNo events"
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "success",
+      "marker": "success",
+      "text": "Current lifecycle status of the subscription.\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\nCancellation Form\nReason Code\nno_longer_needed\nbudget\nduplicate\nReason\nBilling interval\nmonthly\nyearly\nBilling amount\nUSD\nWhether the subscription will cancel at the natural billing period end.\nFree-form explanation captured during cancellation workflows.\nTimestamp when cancellation was initiated.\nISO 4217 currency code used for billing.\nPayment instrument category used for collection.\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\nBilling contact email address.\nLifecycle event associated with the most recent timestamp mutation.\nRecurring price expressed in minor units (e.g., cents).\nRecurrence cadence (monthly, yearly, quarterly, etc.).\nSave"
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "loading",
+      "marker": "loading",
+      "text": "Loading\nLoading your records."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "success",
+      "marker": "success",
+      "text": "1900\nPayment events\n\n$19.00 USD · pending\n\nLast payment\nJan 1, 2026\nNext payment\nJan 1, 2026"
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "empty",
+      "marker": "empty",
+      "text": "No records found\nChange the filters or add a record."
+    },
+    {
+      "framework": "vue",
+      "screen": "list",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "detail",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "form",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    },
+    {
+      "framework": "vue",
+      "screen": "timeline",
+      "state": "error",
+      "marker": "error",
+      "text": "Unable to load records\nTry again or choose another record."
+    }
+  ],
+  "screenshots": []
+}

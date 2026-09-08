@@ -276,7 +276,10 @@ describe('s181 portable-runtime publish boundary', () => {
     expect(registry.version).toBe(manifest.version);
     expect(registry.warnings).toEqual([]);
     expect(sha256Json(traits)).toBe('ec10b9807834bc684542510524127ee4d2394e8e05a08341ab1b156e300a90c2');
-    expect(sha256Json(registryResult)).toBe('e48b7d3ff54185a057a107a1ec6aad8eaadbecd90b83c1c9eff0e806d2971d9c');
+    // The active manifest can select an authorized named release, while the
+    // 109-row identity set and warning-free discovery remain the boundary.
+    expect(registryResult).toEqual({ names: payload.components.map((entry: { id: string }) => entry.id).sort(), version: manifest.version, warnings: [] });
+    expect(sha256Json(registryResult.names)).toBe('cddc0aa36f209ef51e2da48c029ecc7dd6d8f20c9da038e745832fafc4a1804b');
   });
 
   it('B-19 keeps the runtime data schema out of generated.ts', () => {

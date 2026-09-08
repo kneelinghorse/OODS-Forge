@@ -1,3 +1,4 @@
+import { emitWorkflow } from './workflow-emitter.js';
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
 import type {
@@ -291,6 +292,8 @@ function vueBindingAttrs(node: UiElement, analysis: BindingAnalysis): string[] {
 }
 
 const SCREEN_ACTION_LABELS: Readonly<Record<string, string>> = {
+  onCancel: 'Cancel subscription',
+  onViewTimeline: 'View timeline',
   onChange: 'Change',
   onDelete: 'Delete',
   onEdit: 'Edit',
@@ -1328,6 +1331,7 @@ function buildScopedStyle(screens: UiElement[], options: CodegenOptions): string
  * Vue 3 SFC emitter — generates a Vue Single File Component from a UiSchema.
  */
 export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
+  if (schema.workflow) return emitWorkflow(schema, options, 'vue', emit);
   const warnings: CodegenIssue[] = [];
   const expandedSchema = executeCompositionDirectives(schema);
   const normalizedSchema = normalizeSchemaForFramework(expandedSchema, 'vue');

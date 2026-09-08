@@ -1113,3 +1113,86 @@
   color: var(--cmp-meta-label, CanvasText);
   font-weight: var(--ref-typography-weights-semibold, 600);
 }
+/* Billable list/form surfaces share the trait's semantic token roles. */
+[data-oods-component='BillingSummaryBadge'] {
+  display: inline-block;
+  color: var(--cmp-billing-amount-text, var(--sys-text-strong));
+  font-variant-numeric: tabular-nums;
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--cmp-billing-amount-text, var(--sys-text-strong));
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > span {
+  color: var(--cmp-billing-currency-text, var(--sys-text-subtle));
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > input,
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  color: inherit;
+  background: var(--sys-surface-default);
+  border: 1px solid var(--sys-border-default);
+  border-radius: var(--radius-md);
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > select {
+  color: var(--cmp-billing-interval-text, var(--sys-text-subtle));
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > :focus-visible {
+  outline: 2px solid var(--sys-focus-ring);
+  outline-offset: 2px;
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > [aria-invalid='true'] {
+  border-color: var(--sys-status-critical-border);
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > [role='alert'] {
+  color: var(--sys-status-critical-text);
+  margin: 0;
+}
+
+/* Billable cycle/payment and Archivable row surfaces. */
+[data-oods-component='CycleProgressCard'],
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) {
+  min-width: 0;
+  padding: var(--space-4, 1rem);
+  border: 1px solid var(--sys-border-default, GrayText);
+  border-radius: var(--radius-md, 0.5rem);
+  background: var(--sys-surface-default, Canvas);
+  color: var(--cmp-billing-timeline-text, var(--sys-text-default, CanvasText));
+}
+[data-oods-component='CycleProgressCard'] h3,
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) h3 { margin: 0 0 var(--space-3, 0.75rem); }
+[data-oods-component='CycleProgressCard'] p,
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) p { margin: var(--space-2, 0.5rem) 0; }
+[data-oods-component='CycleProgressCard'] progress {
+  width: 100%;
+  height: var(--cmp-billing-cycle-progress-height, var(--space-2, 0.5rem));
+  accent-color: var(--cmp-billing-cycle-progress-fill, var(--sys-surface-accent, Highlight));
+}
+.oods-billing-muted { color: var(--sys-text-subtle, GrayText); }
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) ol { margin: var(--space-4, 1rem) 0 0; padding-left: var(--space-4, 1rem); }
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) li { padding: var(--space-2, 0.5rem) 0; }
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) li > strong { display: block; }
+[data-oods-component='BillingCardMeta'] {
+  color: var(--cmp-billing-amount-text, var(--sys-text-strong, CanvasText));
+  font-variant-numeric: tabular-nums;
+}
+[data-oods-component='ArchivedRowOverlay'] { display: contents; }
+[data-oods-component='ArchivedRowOverlay'][data-archived='true'] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  opacity: var(--status-archive-overlay-opacity, 0.6);
+}
+.oods-archive-badge {
+  display: inline-block;
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border-radius: var(--radius-sm, 0.25rem);
+  color: var(--status-archive-text, CanvasText);
+  background: var(--status-archive-bg, ButtonFace);
+}
