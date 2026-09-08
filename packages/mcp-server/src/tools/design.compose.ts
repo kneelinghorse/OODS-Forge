@@ -41,6 +41,7 @@ import { composeObject, type ComposedObject } from '../objects/trait-composer.js
 import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAction } from '../objects/types.js';
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
 import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema } from '../compose/object-slot-filler.js';
+import { isTraitRecipe } from '../compose/trait-recipes.js';
 import { collectDashboardViewExtensions, collectViewExtensions } from '../compose/view-extension-collector.js';
 import type { SlotPlan } from '../compose/view-extension-collector.js';
 import { expandSlots, groupFieldsIntoSlots, type ExpansionContext } from '../compose/slot-expander.js';
@@ -569,7 +570,8 @@ function fillSlots(
       }
     }
 
-    const result: SelectionResult = selectComponent(slot.intent, catalog, {
+    // Trait recipes remain available to explicit view-extension placement.
+    const result: SelectionResult = selectComponent(slot.intent, catalog.filter((component) => !isTraitRecipe(component.name)), {
       topN,
       intentContext: contextForSlot(slot),
       preferKeywordMatches: useKeywordMatches,

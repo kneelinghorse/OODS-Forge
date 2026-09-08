@@ -22,6 +22,16 @@ describe('Billable value semantics', () => {
     expect(input.element.checkValidity()).toBe(false);
     wrapper.unmount();
   });
+  it('emits the selected declared interval as a string update', async () => {
+    const wrapper = mount(BillingIntervalSelector, { props: { interval: 'monthly', intervals: ['monthly', 'yearly'] } });
+    const select = wrapper.get('select');
+    await select.setValue('yearly');
+    expect(select.element.value).toBe('yearly');
+    expect(wrapper.emitted('change')).toEqual([['yearly']]);
+    await select.setValue('weekly');
+    expect(wrapper.emitted('change')).toEqual([['yearly']]);
+    wrapper.unmount();
+  });
   it('shows invalid intervals without silently selecting a valid value', () => {
     const wrapper = mount(BillingIntervalSelector, { props: { interval: 'weekly', intervals: ['monthly', 'yearly'] } });
     const select = wrapper.get('select');

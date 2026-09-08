@@ -25,6 +25,7 @@ from scripts.refresh_structured_data import (  # noqa: E402
     load_component_capabilities,
     load_component_intake,
     parse_args,
+    project_trait_recipe_surfaces,
     refresh_structured_data,
 )
 
@@ -45,6 +46,36 @@ class RefreshStructuredDataTest(unittest.TestCase):
             generated_at=EXPECTED_GENERATED_AT,
             component_capabilities_path=CLOSEOUT_COMPONENT_CAPABILITY_PATH,
         )
+
+    def test_current_recipe_projection_preserves_frozen_evidence_and_unrelated_rows(self) -> None:
+        frozen = COMPONENT_CAPABILITY_PATH.read_bytes()
+        baseline = {row["id"]: row for row in json.loads(frozen)["rows"]}
+        projected = project_trait_recipe_surfaces(baseline)
+        self.assertEqual(COMPONENT_CAPABILITY_PATH.read_bytes(), frozen)
+        self.assertEqual(baseline, {row["id"]: row for row in json.loads(frozen)["rows"]})
+        for component in ("BillingAmountInput", "BillingIntervalSelector", "BillingSummaryBadge"):
+            for target in ("react", "vue"):
+                surface = projected[component]["surfaces"][target]
+                self.assertEqual(surface["state"], "implemented-evidence-complete")
+                self.assertIn(f"#{component}", surface["evidence"][0])
+            self.assertEqual(projected[component]["surfaces"]["html"]["state"], "mapped")
+        self.assertEqual(projected["Button"], baseline["Button"])
+        self.assertEqual(projected["ColorStatePicker"], baseline["ColorStatePicker"])
+
+    def test_recipe_projection_does_not_promote_incomplete_readiness(self) -> None:
+        from scripts import refresh_structured_data as refresh
+        original = refresh.load_json
+        def incomplete(path):
+            document = original(path)
+            if str(path).endswith("components-vue/evidence/vue-readiness.v1.json"):
+                row = next(row for row in document["rows"] if row["componentId"] == "BillingAmountInput")
+                row["evidence"]["frameworkScenario"]["status"] = "missing"
+            return document
+        baseline = {row["id"]: row for row in json.loads(COMPONENT_CAPABILITY_PATH.read_text())["rows"]}
+        with patch("scripts.refresh_structured_data.load_json", side_effect=incomplete):
+            projected = project_trait_recipe_surfaces(baseline)
+        self.assertEqual(projected["BillingAmountInput"]["surfaces"]["vue"], baseline["BillingAmountInput"]["surfaces"]["vue"])
+        self.assertEqual(projected["BillingAmountInput"]["surfaces"]["html"]["state"], "fallback")
 
     def test_current_scope_retains_obligations_without_approving_historical_exclusions(self) -> None:
         scope = self.components_payload["obligationScope"]
@@ -80,7 +111,7 @@ class RefreshStructuredDataTest(unittest.TestCase):
 
     def test_component_capabilities_cli_defaults_and_accepts_override(self) -> None:
         with patch.object(sys, "argv", ["refresh_structured_data.py"]):
-            self.assertEqual(parse_args().component_capabilities, COMPONENT_CAPABILITY_PATH)
+            self.assertIsNone(parse_args().component_capabilities)
 
         override = Path("reviewed-component-capabilities.json")
         with patch.object(

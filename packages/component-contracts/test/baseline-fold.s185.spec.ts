@@ -1,9 +1,10 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import {
   assertSurfaceOnlyDiff, BASELINE_PATH, deriveBaselineSurfaceFold, deriveReadinessSurface,
   FOLD_BASE, identityProjection, OVERLAY_PATH, resolveSurfaceEvidence, SURFACES, verifyBaselineSurfaceFold,
@@ -13,10 +14,48 @@ import { componentCapabilityBaseline, componentReconciliationProposal, NUCLEUS_C
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const readJson = (file: string) => JSON.parse(readFileSync(path.join(root, file), 'utf8'));
 const before = JSON.parse(execFileSync('git', ['show', `${FOLD_BASE}:${BASELINE_PATH}`], { cwd: root, encoding: 'utf8' }));
-const derived = deriveBaselineSurfaceFold(root);
+// This is a frozen Sprint 187 fold, not a claim about today's growing nucleus.
+// Re-execute its derivation against its original inputs and retained declarations.
+// Every one of the record's 79 source hashes matches this merged execution head.
+const foldHead = 'cd8ee986db40e73a3fb9a9f1ec7b7db6de9ca076';
+const snapshot = mkdtempSync(path.join(tmpdir(), 'oods-historical-fold-'));
+afterAll(() => rmSync(snapshot, { recursive: true, force: true }));
+const frozen = (file: string) => execFileSync('git', ['show', `${foldHead}:${file}`], { cwd: root });
+const recordPath = 'artifacts/product-reality/sprint-187/baseline-fold/report.json';
+const record = JSON.parse(frozen(recordPath).toString());
+const inputs = new Set<string>([recordPath, ...record.sourceHashes.map((row: { path: string }) => row.path),
+  'packages/components-react/evidence/react-ported-readiness.v1.json',
+  'packages/components-vue/evidence/vue-readiness-ported.v1.json',
+]);
+for (const liveRoot of record.liveConsumerRoots) {
+  const live = JSON.parse(frozen(`${liveRoot}/report.json`).toString());
+  for (const cell of live.cells) {
+    const report = JSON.parse(frozen(`${liveRoot}/${cell.report}`).toString());
+    if (report.browser.requiredMounts.some((row: { requiredInitially: boolean }) => !row.requiredInitially)) {
+      inputs.add(`${liveRoot}/${report.generation.sourcePath}`);
+    }
+  }
+}
+for (const file of inputs) {
+  mkdirSync(path.dirname(path.join(snapshot, file)), { recursive: true });
+  writeFileSync(path.join(snapshot, file), frozen(file));
+}
+for (const output of record.retainedBuildOutputs) {
+  mkdirSync(path.dirname(path.join(snapshot, output.originalSourcePath)), { recursive: true });
+  writeFileSync(path.join(snapshot, output.originalSourcePath), readFileSync(path.join(snapshot, output.retainedPath)));
+}
+// The derivation uses git show for its two older inputs; this is read-only.
+writeFileSync(path.join(snapshot, '.git'), `gitdir: ${execFileSync('git', ['rev-parse', '--absolute-git-dir'], { cwd: root, encoding: 'utf8' }).trim()}\n`);
+const derived = deriveBaselineSurfaceFold(snapshot);
 const changedIds = [...derived.record.newNucleusComponents, ...derived.record.portedComponents].sort();
 
 describe('Sprint 185 baseline surface evidence preserves the identity denominator', () => {
+  it('keeps the historical cohort fixed as new canonical components are added', () => {
+    expect(derived.record).toEqual(record);
+    expect(derived.record.newNucleusComponents).not.toContain('BillingAmountInput');
+    expect(NUCLEUS_COMPONENT_IDS).toContain('BillingAmountInput');
+  });
+
   it('changes only the authorized surface cells and none of the 109 identity/classification/reconciliation rows', () => {
     expect(componentCapabilityBaseline.rows).toHaveLength(109);
     expect(identityProjection(componentCapabilityBaseline)).toEqual(identityProjection(before));
@@ -58,7 +97,7 @@ describe('Sprint 185 baseline surface evidence preserves the identity denominato
       .filter(file => file.includes('/dist/')))].sort();
     expect(derived.record.retainedBuildOutputs.map(({ originalSourcePath }) => originalSourcePath)).toEqual(declarationPaths);
     for (const output of derived.record.retainedBuildOutputs) {
-      expect(readFileSync(path.join(root, output.retainedPath))).toEqual(readFileSync(path.join(root, output.originalSourcePath)));
+      expect(readFileSync(path.join(root, output.retainedPath))).toEqual(readFileSync(path.join(snapshot, output.originalSourcePath)));
       expect(derived.record.sourceHashes.some(row => row.path === output.originalSourcePath)).toBe(false);
     }
     for (const row of derived.record.changes) for (const ref of row.after.evidence)
@@ -118,6 +157,6 @@ describe('Sprint 185 baseline surface evidence preserves the identity denominato
     expect(derived.record.newNucleusComponents.every(id => NUCLEUS_COMPONENT_IDS.includes(id))).toBe(true);
     expect(PORTED_COMPONENT_IDS.every(id => NUCLEUS_COMPONENT_IDS.includes(id))).toBe(true);
     expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(NUCLEUS_COMPONENT_IDS.length);
-    expect(() => verifyBaselineSurfaceFold(root)).not.toThrow();
+    expect(() => verifyBaselineSurfaceFold(snapshot)).not.toThrow();
   });
 });

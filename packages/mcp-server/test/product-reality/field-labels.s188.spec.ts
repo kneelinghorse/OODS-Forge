@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { composeObject } from '../../src/objects/trait-composer.js';
 import { loadObject } from '../../src/objects/object-loader.js';
@@ -7,6 +7,18 @@ import { fieldLabel, populateFieldLabels } from '../../src/compose/label-generat
 import type { UiElement, UiSchema } from '../../src/schemas/generated.js';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
+
+// Decision 1817 is a historical label/binding guard at the pre-billing catalog.
+// The expanded live census is asserted separately by billing-composition.s188.
+vi.mock('../../src/compose/trait-recipes.js', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../../src/compose/trait-recipes.js')>();
+  return { ...original, resolveTraitRecipeProps: (_trait: unknown, extension: { props?: Record<string, unknown> }) => extension.props ?? {} };
+});
+vi.mock('../../src/render/component-map.js', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../../src/render/component-map.js')>();
+  const { isTraitRecipe } = await import('../../src/compose/trait-recipes.js');
+  return { ...original, hasMappedRenderer: (component: string) => !isTraitRecipe(component) && original.hasMappedRenderer(component) };
+});
 
 type ExistingContext = 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
 const baseline = JSON.parse(readFileSync(new URL(

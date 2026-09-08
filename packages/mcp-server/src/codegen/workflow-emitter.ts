@@ -16,7 +16,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   if (schema.workflow.screens.map((screen) => screen.context).join(',') !== CONTEXTS.join(',')) return failure('Workflow requires list, detail, form and timeline screens in order.');
   const files: NonNullable<CodegenResult['files']> = [];
   const actionMap = new Map<string, GeneratedArtifactAction>();
-  const imports = new Set<string>();
+  const imports = new Set<string>(['@oods/component-contracts']);
   const warnings: CodegenResult['warnings'] = [];
   const fieldByNodeId: Record<string, string> = {};
   const formFields = new Set<string>();
@@ -189,7 +189,7 @@ export default function App(options: StoreOptions) {
     {state.screen === 'list' && <section className="workflow-toolbar" aria-label="Find subscriptions"><label>Search<input type="search" value={search} onChange={(event) => { setSearch(event.target.value); void app.filter(event.target.value, status); }} /></label><label>Status<select value={status} onChange={(event) => { setStatus(event.target.value); void app.filter(search, event.target.value); }}><option value="">All states</option>{statuses.map((value) => <option key={value} value={value}>{value.replaceAll('_', ' ')}</option>)}</select></label><label>Sort<select onChange={(event) => { void app.sort(event.target.value === 'desc'); }}><option value="asc">Name A–Z</option><option value="desc">Name Z–A</option></select></label><button type="button" aria-pressed={state.archived} onClick={() => { void app.archived(!state.archived); }}>{state.archived ? 'Show active' : 'Archived'}</button></section>}
     {state.error && <p role="alert">{state.error}</p>}
     {state.uiState === 'error' && <button type="button" onClick={() => { void app.retry(); }}>Try again</button>}
-    <section aria-label="${object} screen" className="workflow-content" onInputCapture={(event) => app.edit(event.nativeEvent)} onChangeCapture={(event) => app.edit(event.nativeEvent)}>
+    <section aria-label="${object} screen" className="workflow-content" onChangeCapture={(event) => app.edit(event.nativeEvent)}>
       {state.uiState === 'success' && state.screen === 'form' && supplementalFields.map((field) => <label className="workflow-field" key={field.name}>{field.label}<input name={field.name} defaultValue={String((state.draft as Record<string, unknown>)[field.name])} /></label>)}
       {state.uiState === 'success' && state.screen === 'detail' && cancellable && <fieldset className="workflow-cancel"><legend>Cancellation details</legend><label>Reason<input name="cancellation_reason" defaultValue={String((state.draft as Record<string, unknown>).cancellation_reason ?? '')} /></label><label>Reason code<input name="cancellation_reason_code" defaultValue={String((state.draft as Record<string, unknown>).cancellation_reason_code ?? '')} /></label><label><input name="cancel_at_period_end" type="checkbox" defaultChecked={Boolean((state.draft as Record<string, unknown>).cancel_at_period_end)} />Cancel at period end</label></fieldset>}
       ${CONTEXTS.map((context) => context === 'form' ? `{state.screen === 'form' && <form onSubmit={(event) => { event.preventDefault(); app.actions.handleSubmit(); }}><Form {...props} key={state.revision + ':' + state.uiState} /></form>}` : `{state.screen === '${context}' && <${nameOf(context)} {...props} key={state.revision + ':' + state.uiState} />}`).join('\n      ')}

@@ -9,6 +9,7 @@
 
 import type { ComposedObject } from '../objects/trait-composer.js';
 import type { ViewExtension } from '../objects/types.js';
+import { resolveTraitRecipeProps } from './trait-recipes.js';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -102,7 +103,7 @@ function collectRankedEntries(
           sourceTrait: traitName,
           position: ext.position ?? 'main',
           priority: ext.priority ?? 0,
-          props: ext.props ?? {},
+          props: resolveTraitRecipeProps(resolved, ext),
         },
         traitOrder,
       });

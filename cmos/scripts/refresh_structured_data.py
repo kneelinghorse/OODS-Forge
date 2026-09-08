@@ -12,6 +12,7 @@ Outputs (defaults):
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -829,6 +830,65 @@ def write_json(path: Path, payload: Dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
+    """Project current recipe evidence; never rewrite the historical baseline."""
+    result = copy.deepcopy(capabilities)
+    recipes = load_json(REPO_ROOT / "packages/mcp-server/src/compose/trait-recipes.json")
+    targets = {
+        target: {
+            row["componentId"]: row
+            for row in load_json(REPO_ROOT / f"packages/components-{target}/evidence/{target}-readiness.v1.json")["rows"]
+        }
+        for target in ("react", "vue")
+    }
+    evidence_classes = ("versionedContract", "targetImplementation", "packageExport", "publicDeclaration", "dependencyClosure", "frameworkScenario")
+    html_path = "packages/mcp-server/src/render/component-map.ts"
+    html = (REPO_ROOT / html_path).read_text(encoding="utf-8")
+    live_roots = (
+        "artifacts/product-reality/sprint-188/m04/resolved-packed-consumers-final",
+        "artifacts/product-reality/sprint-188/m05/packed-consumers",
+    )
+    for component_id in recipes:
+        if component_id not in result:
+            raise ValueError(f"Recipe is outside the canonical catalog: {component_id}")
+        surfaces = result[component_id]["surfaces"]
+        for target, rows in targets.items():
+            row = rows.get(component_id, {})
+            evidence = row.get("evidence", {})
+            if (row.get("emissionEligible") is True
+                    and row.get("state") == "implemented-evidence-complete"
+                    and all(evidence.get(kind, {}).get("status") == "passed"
+                            and evidence[kind].get("refs") for kind in evidence_classes)):
+                surfaces[target] = {"state": row["state"], "evidence": [f"packages/components-{target}/evidence/{target}-readiness.v1.json#{component_id}"]}
+        if all(surfaces[target]["state"] == "implemented-evidence-complete" for target in targets):
+            renderer = re.search(rf"^  {re.escape(component_id)}: (render\w+),$", html, re.MULTILINE)
+            if renderer:
+                surfaces["html"] = {"state": "mapped", "evidence": [f"{html_path}#{renderer.group(1)}"]}
+            surfaces["contract"] = {"state": "versioned-v1", "evidence": [f"packages/component-contracts/src/contracts.ts#{component_id}"]}
+        refs, measured_targets = [], set()
+        for live_root in live_roots:
+            report_path = REPO_ROOT / live_root / "report.json"
+            if not report_path.exists():
+                continue
+            live = load_json(report_path)
+            if live.get("status") != "passed" or live.get("failed") != 0 or live.get("skipped") != 0:
+                continue
+            for cell in live.get("cells", []):
+                cell_path = REPO_ROOT / live_root / cell["report"]
+                if hashlib.sha256(cell_path.read_bytes()).hexdigest() != cell["reportSha256"].removeprefix("sha256:"):
+                    raise ValueError(f"Recipe consumer evidence hash mismatch: {cell_path}")
+                report = load_json(cell_path)
+                if report.get("status") != "passed":
+                    continue
+                for index, observation in enumerate(report.get("browser", {}).get("requiredMounts", [])):
+                    if observation.get("component") == component_id and observation.get("present") is True and observation.get("passed") is True:
+                        refs.append(f"{live_root}/{cell['report']}#/browser/requiredMounts/{index}")
+                        measured_targets.add(report["framework"])
+        if measured_targets == set(targets):
+            surfaces["generatedConsumer"] = {"state": "implemented-evidence-complete", "evidence": sorted(refs)}
+    return result
+
+
 def generate_structured_payloads(
     *,
     generated_at: Optional[str] = None,
@@ -840,6 +900,8 @@ def generate_structured_payloads(
         canonical_ids,
         component_capabilities_path=component_capabilities_path,
     )
+    if component_capabilities_path is None:
+        capabilities_by_id = project_trait_recipe_surfaces(capabilities_by_id)
     obligation_scope = load_json(COMPONENT_OBLIGATION_SCOPE_PATH)
     if obligation_scope["controllingObligationDenominator"] != len(canonical_ids):
         raise ValueError("Obligation scope must retain exact canonical intake membership")
@@ -1638,8 +1700,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--component-capabilities",
         type=Path,
-        default=COMPONENT_CAPABILITY_PATH,
-        help="Component capability JSON path (defaults to the Sprint-182 M01 baseline).",
+        default=None,
+        help="Historical component capability JSON override (defaults to the baseline plus current declared recipe evidence).",
     )
     parser.add_argument(
         "--baseline-components",

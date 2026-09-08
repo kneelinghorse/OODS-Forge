@@ -41,7 +41,7 @@ function link(source: string, target: string) {
 }
 function rebuild(artifact: GeneratedArtifact, files: Array<{ path: string; contents: string }>) {
   return buildGeneratedArtifact({ framework: artifact.framework, files, actions: artifact.actions,
-    imports: artifact.framework === 'react' ? ['react', 'react-dom/client', 'react-dom/server', '@oods/components-react', '@oods/component-styles/css'] : ['vue', '@vitejs/plugin-vue', '@vue/server-renderer', '@oods/components-vue', '@oods/component-styles/css'] });
+    imports: artifact.framework === 'react' ? ['@oods/component-contracts', 'react', 'react-dom/client', 'react-dom/server', '@oods/components-react', '@oods/component-styles/css'] : ['@oods/component-contracts', 'vue', '@vitejs/plugin-vue', '@vue/server-renderer', '@oods/components-vue', '@oods/component-styles/css'] });
 }
 
 beforeAll(async () => {
@@ -164,7 +164,7 @@ describe('Generated applications close their own contracts', () => {
       const dependencies = framework === 'react' ? ['react', 'react-dom', '@types/react', '@types/react-dom'] : ['vue', '@vue/server-renderer'];
       for (const dependency of dependencies) link(path.dirname(req.resolve(`${dependency}/package.json`)), path.join(directory, 'node_modules', dependency));
       link(path.dirname(createRequire(path.join(root, 'package.json')).resolve('@types/node/package.json')), path.join(directory, 'node_modules/@types/node'));
-      for (const dependency of [`components-${framework}`, 'component-styles']) link(path.join(root, 'packages', dependency), path.join(directory, 'node_modules/@oods', dependency));
+      for (const dependency of [`components-${framework}`, 'component-styles', 'component-contracts']) link(path.join(root, 'packages', dependency), path.join(directory, 'node_modules/@oods', dependency));
       const compiler = vueRequire.resolve(framework === 'react' ? 'typescript/bin/tsc' : 'vue-tsc/bin/vue-tsc.js');
       const result = spawnSync(process.execPath, [compiler, '--noEmit', '--pretty', 'false', '-p', path.join(directory, 'tsconfig.json')], { encoding: 'utf8', timeout: 60_000 });
       expect(result.status, result.stdout + result.stderr).toBe(0);

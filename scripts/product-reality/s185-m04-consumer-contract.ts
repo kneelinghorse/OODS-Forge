@@ -57,7 +57,7 @@ export function schemaNodes(schema: UiSchema): UiElement[] {
 export const selectorForNode = (id: string): string => `[id=${JSON.stringify(id)}]`;
 const camel = (name: string) => name.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
 
-export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status' | 'query-input' | 'family-text' | 'native-value'; selector?: string; expected: string; editable: boolean };
+export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status' | 'query-input' | 'family-text' | 'native-value'; selector?: string; expected: string; editable: boolean; options?: readonly string[] };
 
 /** Repaired bindings must visibly represent the supplied datum, including zero and false. */
 export function deriveValueProbes(schema: UiSchema, model: Record<string, unknown>): ValueProbe[] {
@@ -73,7 +73,7 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
     };
     if (node.component === 'BillingSummaryBadge') return [{ nodeId: node.id, field: String(node.props?.amountField), kind: 'family-text', expected: billingSummary(model[camel(String(node.props?.amountField))] as number | undefined, model[camel(String(node.props?.currencyField))] as string | undefined, node.props?.minorUnits as number | undefined, model[camel(String(node.props?.intervalField))] as string | undefined), editable: false }];
     if (node.component === 'BillingAmountInput') return [{ nodeId: node.id, field: String(node.props?.amountField), kind: 'native-value', expected: String(Number(model[camel(String(node.props?.amountField))]) / Number(node.props?.minorUnits ?? 100)), editable: true }];
-    if (node.component === 'BillingIntervalSelector') return [{ nodeId: node.id, field: String(node.props?.intervalField), kind: 'native-value', expected: String(model[camel(String(node.props?.intervalField))]), editable: true }];
+    if (node.component === 'BillingIntervalSelector') return [{ nodeId: node.id, field: String(node.props?.intervalField), kind: 'native-value', expected: String(model[camel(String(node.props?.intervalField))]), editable: true, options: Array.isArray(node.props?.intervals) ? node.props.intervals as string[] : BILLING_INTERVALS }];
     if (node.component === 'ArchivePill' || node.component === 'CancellationBadge') return textProbe(node.props?.field, '[data-oods-badge-label]');
     if (node.component === 'ArchiveSummary') return ['archivedField', 'archivedAtField', 'reasonField']
       .filter((key) => typeof node.props?.[key] === 'string' && model[camel(node.props[key] as string)] != null)

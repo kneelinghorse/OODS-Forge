@@ -27,6 +27,16 @@ describe('Billable value semantics', () => {
     expect(input.getAttribute('aria-describedby')).toContain(error.id);
     expect(input.checkValidity()).toBe(false);
   });
+  it('emits the selected declared interval as a string update', () => {
+    const change = vi.fn();
+    render(<BillingIntervalSelector interval="monthly" intervals={['monthly', 'yearly']} onChange={change} />);
+    const select = screen.getByRole('combobox', { name: 'Billing interval' }) as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: 'yearly' } });
+    expect(select.value).toBe('yearly');
+    expect(change.mock.calls).toEqual([['yearly']]);
+    fireEvent.change(select, { target: { value: 'weekly' } });
+    expect(change.mock.calls).toEqual([['yearly']]);
+  });
   it('shows invalid intervals without silently selecting a valid value', () => {
     render(<BillingIntervalSelector interval="weekly" intervals={['monthly', 'yearly']} />);
     const select = screen.getByRole('combobox', { name: 'Billing interval' }) as HTMLSelectElement;

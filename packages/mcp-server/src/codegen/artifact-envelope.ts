@@ -20,6 +20,7 @@ type DependencyCatalogEntry = Omit<GeneratedDependency, 'name'>;
  * update generation instead of leaking a workspace range to consumers.
  */
 export const GENERATED_DEPENDENCY_CATALOG = {
+  '@oods/component-contracts': { version: '0.1.0', kind: 'dependency' },
   '@oods/component-styles': { version: '0.1.0', kind: 'dependency' },
   '@oods/components-react': { version: '0.1.0', kind: 'dependency' },
   '@oods/components-vue': { version: '0.1.0', kind: 'dependency' },
@@ -40,6 +41,7 @@ const FRAMEWORK_PEERS: Record<CodegenFramework, readonly string[]> = {
 const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
   html: new Set(),
   react: new Set([
+    '@oods/component-contracts',
     '@oods/component-styles/css',
     '@oods/component-styles/css-ported',
     '@oods/components-react',
@@ -50,6 +52,7 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
     'react-dom/server',
   ]),
   vue: new Set([
+    '@oods/component-contracts',
     '@oods/component-styles/css',
     '@oods/component-styles/css-ported',
     '@oods/components-vue',
