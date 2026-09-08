@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { deriveSuiteAccounting } from './s185-suite-accounting.mjs';
+import { deriveSuiteAccounting, S188_DERIVATION_FILES } from './s185-suite-accounting.mjs';
 import { PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE, S188_PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
 import { isTestPath } from './s184-m07-reconnect.mjs';
 
@@ -56,6 +56,7 @@ export function derivePublicHeadEquivalence({ root, implementationHead, executio
 export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence, finalAudit }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Both full execution and review commit SHAs are required.');
   const workflow = manifest.missionId === 's188-m06';
+  const approvedTimeout = workflow && manifest.accounting?.approvedTimeout;
   const fresh = manifest.missionId === 's187-m06';
   const wave2 = manifest.missionId === 's186-m06';
   const missionId = workflow ? 's188-m06' : fresh ? 's187-m06' : wave2 ? 's186-m06' : 's185-m05';
@@ -64,6 +65,7 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   const suiteCriterion = workflow ? 2 : fresh ? 5 : wave2 ? 4 : 6;
   const outputPaths = Object.fromEntries(Object.entries(OUTPUT_PATHS).map(([key, file]) => [key,
     workflow ? file.replace('sprint-185/m05', 'sprint-188/m06') : fresh ? file.replace('sprint-185/m05', 'sprint-187/m06') : wave2 ? file.replace('sprint-185/m05', 'sprint-186/m06') : file]));
+  if (approvedTimeout) for (const key of Object.keys(outputPaths)) outputPaths[key] = outputPaths[key].replace('/m06/closeout/', '/m06/closeout-accepted/');
   const requiredSources = workflow ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'freshCensus', 'liveConsumers', 'savedOriginal', 'savedSuccessor', 'savedCompatibility', 'movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'missionHistory', 'historicalEvidence', 'prose', 'carries', 'near'] : fresh ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'freshCensus', 'cohort', 'liveConsumers', 'savedOriginal', 'savedSuccessor', 'savedCompatibility', 'rootEvidence', 'baselineFold', 'movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries', 'near'] : wave2 ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'unionFold', 'baselineFold', 'movers',
     'moversDeclaration', 'noticePlan', 'deliveries', 'near'] : mandatorySources;
   const requiredByCriterion = workflow ? [['freshCensus', 'savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['liveConsumers'], [], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries'], ['missionHistory', 'historicalEvidence', 'prose', 'near'], ['cmosMission', 'cmosSprint', 'carries', 'noticePlan']] : fresh ? [['freshCensus'], ['cohort', 'liveConsumers'], ['savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['rootEvidence', 'baselineFold'], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
@@ -132,6 +134,11 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
     assert(row.inputs?.length > 0 && row.logs?.length > 0, `Execution ${row.id} lacks source/log bindings.`);
     const resolveExecutionRef = ref => {
       assert(typeof ref.sha256 === 'string' && /^[a-f0-9]{64}$/.test(digest(ref.sha256)), `Execution ${row.id} lacks a captured input/log hash.`);
+      if (approvedTimeout && S188_DERIVATION_FILES.includes(ref.path) && reference(ref.path).sha256 !== digest(ref.sha256)) {
+        const bytes = Buffer.from(readHistorical(row.executionHead, ref.path));
+        assert.equal(sha256(bytes), digest(ref.sha256), 'Captured audit-source hash differs at its actual execution.');
+        return { path: ref.path, sha256: sha256(bytes), bytes: bytes.length, commit: reviewHead, executionSourceHead: row.executionHead };
+      }
       return reference(ref.path, ref.sha256);
     };
     const inputs = row.inputs.map(resolveExecutionRef);
@@ -185,10 +192,11 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
     const appRoot = path.posix.dirname(manifest.sources.liveConsumers);
     for (const image of app.screenshots) reference(`${appRoot}/${image.file}`, image.sha256);
     for (const cell of app.cellReports) reference(`${appRoot}/${cell.report}`, cell.sha256);
+    if (approvedTimeout) { reference(approvedTimeout); assert.equal(suiteAccounting.timeoutAcceptance?.decisionId, 1830); assert(manifest.claimBindings[2].evidencePaths.includes(approvedTimeout)); }
     check(2, suiteAccounting.status === 'passed' && !suiteAccounting.validationIssues.length && !suiteAccounting.unattributedDeltas.length
       && Object.keys(suiteAccounting.baselines).join() === 'sprint187Closeout' && suiteAccounting.closeout.runs.length === 1
-      && captureRows.length === 4 && captureRows.every(row => row.measuredHead === executionHead && row.cleanBefore && row.cleanAfter && row.counts.failed === 0),
-    'One clean capture has zero failures and file-attributed deltas against Sprint 187.');
+      && captureRows.length === 4 && captureRows.every(row => row.measuredHead === executionHead && row.cleanBefore && row.cleanAfter && row.counts.failed === (approvedTimeout && row.suite === 'root-core' ? 1 : 0)),
+    approvedTimeout ? 'One clean corrective capture retains exactly the user-approved timeout and all file-attributed deltas.' : 'One clean capture has zero failures and file-attributed deltas against Sprint 187.');
     check(2, publicHeadEquivalence?.changedPaths.length === 0 && equal(publicHeadEquivalence.scope, S188_PUBLIC_RUNTIME_SCOPE),
       'Execution retains the frozen implementation public bytes, including workflow and bridge build identity.');
     const movers = documents.movers; const declared = documents.moversDeclaration; const plan = documents.noticePlan;
@@ -564,12 +572,14 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   }
   const unproven = claims.filter(row => row.status !== 'passed').map(row => ({ claimId: row.claimId, reasons: row.unproven }));
   const ledger = { schemaVersion: '1.0.0', missionId, implementationHead, executionHead, reviewHead,
+    ...(approvedTimeout ? { timeoutAcceptance: suiteAccounting.timeoutAcceptance } : {}),
     publicHeadEquivalence: implementationHead === executionHead ? { implementationHead, executionHead, identicalHead: true } : publicHeadEquivalence,
     criterionSource: reference(manifest.sources.cmosMission), originalCriterionSource: reference(manifest.sources.cmosOriginalMission),
     executions: [...executions.values()], claims, ...(workflow ? { priorClaims, boundSprintCriteria: priorClaims.length + claims.length } : {}), headline: { total: claims.length, proven: claims.length - unproven.length, unproven: unproven.length },
     unproven, status: unproven.length ? 'incomplete' : 'ready-for-independent-review', builderSelfCertified: false, separateReviewRequired: true,
     validationBoundary: 'Producer consistency checks are not independent review. A separate output-layer audit must rederive the final ledger bytes, literal claims, execution references and frozen hashes.' };
   const handoff = { schemaVersion: '1.0.0', missionId, sprintId, executionHead, reviewHead,
+    ...(approvedTimeout ? { timeoutAcceptance: suiteAccounting.timeoutAcceptance } : {}),
     ...(workflow ? { implementationHead, craft: reference(manifest.sources.liveConsumers), carries: reference(manifest.sources.carries), boundSprintCriteria: priorClaims.length + claims.length } : {}),
     sprintStatus: sprint.status, sprintStatusSource: reference(manifest.sources.cmosSprint),
     builderSelfCertified: false, separateReviewRequired: true, approvalStatus: 'pending-independent-review',

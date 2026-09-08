@@ -1,0 +1,51 @@
+{
+  "id": "s188-m06",
+  "name": "Final proof, one four-suite capture and independent-review handoff",
+  "status": "In Progress",
+  "objective": "Freeze the sprint's implementation, prove the whole population once at that head, capture the four suites once, compute the sprint-wide advertised diff from cd8ee986, prepare (not send) the reconnect for the next delivery, and hand off for independent review with builderSelfCertified:false. Reuse the Sprint 185–187 closeout tooling with named bounded adaptations; no new closeout framework.",
+  "context": null,
+  "successCriteria": [
+    "Fresh census at the frozen implementation head: 66/66 schemas and 132/132 generation cells green at profile=build, every Subscription screen now containing the eight flow rows (or the descoped subset, named); the workflow context adds Subscription/workflow as a seventh measured schema with two green cells; original saved store 15/16 and successor store 16/16 with unchanged input hashes",
+    "The m03 app flow and 32 state observations pass in both frameworks at the frozen head; screenshots regenerated at that head",
+    "Retain both four-suite captures unchanged. Accept the corrective capture at 3f0e9d13 with its one documented root-core mover-test timeout (20,000ms limit;21,855ms observed), backed by the passing unchanged-spec targeted retry and corroborating server/CI observations, as explicitly approved by the user. Keep the timeout counted and disclosed as an observed failure; no other failed observation is excepted. Clean execution public bytes equal the corrected implementation head; skips equal the same 16 pre-existing identities as Sprint 187; every delta attributed by file. Address timeout/capture handling in sprint review for adjustments next sprint.",
+    "Sprint-wide advertised-surface diff computed once from git diff --name-only cd8ee986..HEAD over the advertised path set, listing the workflow context, schema and docs movers; the reconnect draft names them and is retained unsent",
+    "A claim ledger binding every m01–m06 criterion to an execution with paths that exist at the frozen head and match their hashes, re-derived by the independent auditor script; roadmap and prose contract tests (tests/verification/*.contract.test.ts) pass at the frozen head after the near.md update",
+    "The review handoff records builderSelfCertified:false, separateReviewRequired:true, the frozen implementation, execution and evidence commits, and the craft screenshots the reviewer must inspect; Sprint 188 stays Active"
+  ],
+  "deliverables": [
+    "artifacts/product-reality/sprint-188/m06/README.md, closeout/claim-ledger.json, closeout/review-handoff.json, suite-accounting.json, final census and store receipts",
+    "near.md updated for the built state without relabeling the sprint as certified; roadmap contract tests run and green",
+    "A prepared reconnect draft for Sprint 189 m01 delivery; zero sends",
+    "PR from codex/sprint-188-subscription-workflow to OODS-pro opened with the evidence packet links, remote CI observed and its run id recorded in the handoff"
+  ],
+  "referenceDocs": [
+    "cmos/planning/forge-s188-subscription-workflow-decision-memo.md",
+    "artifacts/product-reality/sprint-187/m06/README.md",
+    "scripts/product-reality/s185-closeout.mjs",
+    "scripts/product-reality/s185-audit-closeout.mjs"
+  ],
+  "domainFields": {
+    "blocker": null,
+    "blockedSince": null,
+    "blockers": null,
+    "unblockedAt": "2026-09-08T19:48:44.492Z",
+    "previousBlocker": "The authorized corrective capture at3f0e9d13 retained one root mover-test timeout (21855ms over20000ms), so literal zero-failure criterion3 remains false. Same spec passed7/7 unchanged in isolation; affected test1094ms. All other suites, clean-tree checks, exact16skip identity checks and per-file attribution pass. Ledger5/6 M06,33 prior bindings; independent auditor correctly rejects failed accounting. Concrete evidence db63108d, handoff0f6891e3, PR86.",
+    "previousBlockedSince": "2026-09-08T17:57:04.628Z",
+    "resolution": "User approved the exact retained timeout exception and instructed sprint-review follow-up; criterion3 amended. Finish independent evidence audit with raw failures preserved."
+  },
+  "notes": "[Started] M05 complete at 5ebd1651. Begin bounded reuse of Sprint 185-187 closeout tools, freeze implementation, run final census/store/app proofs and one four-suite capture, then independent-review PR handoff. | [Blocked] The single capture permitted by success criterion 3 failed at800a75cb (server7/root6 failed assertions; generated API docs also made tree checks dirty). Raw evidence is retained unchanged. Corrections committed131d7352, handoff evidencec573a55c, PR86; focused tests, typecheck, API docs, Storybook and two clean identical portable assemblies pass. Need an explicit amendment allowing one corrective capture with the first retained; user input requested and pending.. Needs: Authorization/amendment of criterion 3 to retain the failed initial attempt and run one corrective clean four-suite capture. After approval, re-freeze corrected census/app/prose proof and independently audit all39 criteria before completion. | [Unblocked] User approved one corrective capture, retaining failed attempt; criterion 3 amended with unchanged final proof obligations. | [Started] Resume corrected frozen-head proof and one authorized corrective capture, then all-39 criterion independent audit and PR handoff. | [Blocked] The authorized corrective capture at3f0e9d13 retained one root mover-test timeout (21855ms over20000ms), so literal zero-failure criterion3 remains false. Same spec passed7/7 unchanged in isolation; affected test1094ms. All other suites, clean-tree checks, exact16skip identity checks and per-file attribution pass. Ledger5/6 M06,33 prior bindings; independent auditor correctly rejects failed accounting. Concrete evidence db63108d, handoff0f6891e3, PR86.. Needs: User decision on proposed criterion3 amendment: accept the one retained timeout with the passing unchanged-spec targeted retry and corroborating server/CI observations; no third full capture is authorized. Final independent39-criterion audit and audit controls remain required after an approved disposition. | [Unblocked] User approved the exact retained timeout exception and instructed sprint-review follow-up; criterion3 amended. Finish independent evidence audit with raw failures preserved. | [Started] Finalize the bounded approved-timeout evidence disposition, independent39-criterion audit, and PR handoff; retain all raw evidence and queue sprint-review follow-up.",
+  "completedAt": null,
+  "createdAt": "2026-09-08T02:42:34.377Z",
+  "startedAt": "2026-09-08T16:26:09.131Z",
+  "updatedAt": "2026-09-08T19:48:44.516Z",
+  "metadata": null,
+  "sprint": {
+    "id": "sprint-188",
+    "title": "Sprint 188 — Ship, then make the Subscription app whole",
+    "focus": "Derek chose 2026-09-07 (decision #1814): (a) ship the merged Sprint 187 build (OODS-pro cd8ee986) to the live PM2 bridge, which still serves pre-Sprint-183 code at 8ce34907, adopt the authentic User-form successor with backup and rollback, resolve the served schema/load 400 and send the one combined reconnect to aquex-mcp and forge-demos (closes #1374/#1379/#1384); (b) generate from the public object/context inputs alone a runnable Subscription application in React and Vue — list, detail, edit, cancel, timeline — with loading/empty/error/success on every screen and Forge-generated navigation, store and sample data, and give the Subscription screens the eight Billable/Archivable rows their traits declare (BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector, CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay) implemented from the trait declarations to the Sprint 185 bar. Six serial missions: m01 ship; m02 workflow context + application emitters; m03 the app live in both frameworks with 32 state observations and craft screenshots; m04 list/form billing rows; m05 detail/timeline/card/archive rows + nucleus catalog truth + /health revision; m06 census 66/66 + workflow, one four-suite capture, sprint-wide advertised diff, review handoff. App before rows on purpose so a session cut after m03 still leaves a working app. Exit: the program sentence met for Subscription in both frameworks; criterion 8 opened; 'usable' decided by the independent review's craft inspection. Pace rule in force: no per-mission captures, no new closeout apparatus, no critic. Build fresh from cmos/planning/forge-s188-subscription-workflow-decision-memo.md in ~/.codex/worktrees/s188/OODS-Forge (codex/sprint-188-subscription-workflow from cd8ee986); builder does not self-certify.",
+    "status": "Active",
+    "projectId": "forge"
+  },
+  "projectId": "forge",
+  "localProjectId": "forge"
+}
