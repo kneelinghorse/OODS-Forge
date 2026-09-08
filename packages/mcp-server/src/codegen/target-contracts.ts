@@ -22,6 +22,9 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
 > = {
   // Labelled trait recipe directives lower into title/supporting; they are
   // authoring metadata rather than additions to the public component API.
+  BillingSummaryBadge: new Set(['amountField', 'currencyField', 'intervalField', 'minorUnitsParameter']),
+  BillingAmountInput: new Set(['amountField', 'currencyField', 'minorUnitsParameter']),
+  BillingIntervalSelector: new Set(['intervalField', 'intervalsParameter']),
   CardHeader: new Set(['titleField', 'supportingField']),
   ArchiveSummary: new Set(['archivedField', 'archivedAtField', 'reasonField', 'restoredAtField', 'archivedByField', 'metadataField', 'retainHistoryParameter', 'restoreWindowParameter', 'allowPartialRestoreParameter']),
   ArchivePill: new Set(['archivedAtField']),
@@ -479,6 +482,9 @@ const PROP_VALUE_CONTRACTS: Readonly<
   ArchivePill: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, isArchived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
   CancellationForm: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, hint: STRING_VALUE, allowedReasons: valueContract('an array of reason choices', Array.isArray), reasonCode: STRING_VALUE, reason: STRING_VALUE, cancellationReason: STRING_VALUE },
   CancellationBadge: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, cancelAtPeriodEnd: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), isCancelled: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
+  BillingSummaryBadge: { amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), interval: STRING_VALUE },
+  BillingAmountInput: { amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), label: STRING_VALUE, name: STRING_VALUE, disabled: BOOLEAN_VALUE },
+  BillingIntervalSelector: { interval: STRING_VALUE, intervals: NON_EMPTY_STRING_ARRAY_VALUE, label: STRING_VALUE, name: STRING_VALUE, disabled: BOOLEAN_VALUE },
   PriceCardMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, model: STRING_VALUE, pricingModel: STRING_VALUE, interval: STRING_VALUE, billingInterval: STRING_VALUE },
   OwnerBadge: { label: STRING_VALUE, text: STRING_VALUE, owner: STRING_VALUE, ownerType: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
   OwnershipSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerId: STRING_VALUE, owner_id: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },

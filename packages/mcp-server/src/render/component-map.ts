@@ -1,3 +1,4 @@
+import { BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
 import { resolveSpacingLeaf } from './spacing-leaf.js';
@@ -290,6 +291,35 @@ function renderText(node: UiElement, childrenHtml = ''): string {
   const text = firstSerialized(props, ['content', 'text', 'value']) ?? node.meta?.label ?? '';
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(text);
   return `<${tag}${attrs}>${content}</${tag}>`;
+}
+
+function renderBillingSummaryBadge(node: UiElement): string {
+  const props = node.props ?? {};
+  const amount = typeof props.amount === 'number' ? props.amount : undefined;
+  const currency = asString(props.currency);
+  const minorUnits = typeof props.minorUnits === 'number' ? props.minorUnits : undefined;
+  return `<span id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-billing-summary" data-oods-component="BillingSummaryBadge">${escapeHtml(billingSummary(amount, currency, minorUnits, asString(props.interval)))}</span>`;
+}
+
+function renderBillingAmountInput(node: UiElement): string {
+  const props = node.props ?? {};
+  const id = asString(props.id) ?? node.id;
+  const amount = typeof props.amount === 'number' ? props.amount : undefined;
+  const minorUnits = typeof props.minorUnits === 'number' ? props.minorUnits : BILLING_MINOR_UNITS;
+  const error = billingAmountMessage(amount, minorUnits);
+  const description = `${id}-currency${error ? ` ${id}-error` : ''}`;
+  return `<div class="oods-billing-field" data-oods-component="BillingAmountInput" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing amount')}</label><span id="${escapeHtml(id)}-currency">${escapeHtml((asString(props.currency) ?? 'usd').toUpperCase())}</span><input id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''} type="text" inputmode="decimal" value="${escapeHtml(billingAmountText(amount, minorUnits))}" data-billing-minor-units="${minorUnits}" aria-describedby="${escapeHtml(description)}"${error ? ' aria-invalid="true"' : ''}${props.disabled ? ' disabled' : ''}>${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
+}
+
+function renderBillingIntervalSelector(node: UiElement): string {
+  const props = node.props ?? {};
+  const id = asString(props.id) ?? node.id;
+  const value = asString(props.interval) ?? '';
+  const intervals: readonly string[] = Array.isArray(props.intervals) ? props.intervals.filter((item): item is string => typeof item === 'string') : BILLING_INTERVALS;
+  const error = billingIntervalMessage(value || undefined, intervals);
+  const placeholder = intervals.includes(value) ? '' : `<option value="${escapeHtml(value)}" disabled selected>${escapeHtml(value || 'Choose interval')}</option>`;
+  const options = intervals.map((interval) => `<option value="${escapeHtml(interval)}"${interval === value ? ' selected' : ''}>${escapeHtml(interval)}</option>`).join('');
+  return `<div class="oods-billing-field" data-oods-component="BillingIntervalSelector" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing interval')}</label><select id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''}${props.disabled ? ' disabled' : ''}${error ? ` aria-invalid="true" aria-describedby="${escapeHtml(id)}-error"` : ''}>${placeholder}${options}</select>${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
 }
 
 function renderInput(node: UiElement): string {
@@ -1984,6 +2014,9 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   CancellationSummary: renderCancellationSummary,
   OwnershipMeta: renderOwnershipMeta,
   OwnershipSummary: renderOwnershipSummary,
+  BillingSummaryBadge: renderBillingSummaryBadge,
+  BillingAmountInput: renderBillingAmountInput,
+  BillingIntervalSelector: renderBillingIntervalSelector,
   PriceCardMeta: renderPriceCardMeta,
   PriceSummary: renderPriceSummary,
   TagPills: renderTagPills,

@@ -180,6 +180,7 @@ describe('Generated store drives the lifecycle without consumer wiring', () => {
         const source = artifacts.get('react')!.files.find((file) => file.path === `src/${name}.ts`)!.contents;
         writeFileSync(path.join(directory, `${name}.js`), ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText);
       }
+      link(path.join(root, 'packages/component-contracts'), path.join(directory, 'node_modules/@oods/component-contracts'));
       const req = createRequire(path.join(directory, 'entry.cjs'));
       const { sampleData } = req('./sample-data.js');
       const { createStore } = req('./store.js');

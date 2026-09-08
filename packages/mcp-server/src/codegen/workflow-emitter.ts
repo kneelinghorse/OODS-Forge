@@ -21,9 +21,12 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   const fieldByNodeId: Record<string, string> = {};
   const formFields = new Set<string>();
   const visit = (node: UiElement, context: string) => {
-    if (typeof node.props?.field === 'string') {
-      fieldByNodeId[node.id] = node.props.field;
-      if (context === 'form') formFields.add(node.props.field);
+    const field = node.props?.field
+      ?? (node.component === 'BillingAmountInput' ? node.props?.amountField : undefined)
+      ?? (node.component === 'BillingIntervalSelector' ? node.props?.intervalField : undefined);
+    if (typeof field === 'string') {
+      fieldByNodeId[node.id] = field;
+      if (context === 'form') formFields.add(field);
     }
     node.children?.forEach((child) => visit(child, context));
   };
@@ -70,7 +73,8 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   files.push(...workflowDataFiles(schema));
   const titleField = ['plan_name', 'name', 'title', 'display_name'].find((name) => schema.objectSchema![name]) ?? schema.workflow.data.idField;
   const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && field.required && field.type === 'string' && !field.enum);
-  files.push({ path: 'src/application.ts', contents: `import { createStore, idField, titleField, fieldTypes, screenProps, history, type DomainRecord, type ListQuery, type StoreOptions } from './store';
+  files.push({ path: 'src/application.ts', contents: `import { parseBillingAmount } from '@oods/component-contracts';
+import { createStore, idField, titleField, fieldTypes, screenProps, history, type DomainRecord, type ListQuery, type StoreOptions } from './store';
 import { sampleData } from './sample-data';
 import type { WorkflowActions } from './actions';
 export { idField, titleField, screenProps, history };
@@ -120,6 +124,11 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
     while (!Object.hasOwn(fieldTypes, field) && element) { field = fieldByNodeId[element.id] ?? ''; element = element.parentElement; }
     if (!Object.hasOwn(fieldTypes, field)) return;
     const type = fieldTypes[field];
+    if (target instanceof HTMLInputElement && target.dataset.billingMinorUnits !== undefined) {
+      const result = parseBillingAmount(target.value, Number(target.dataset.billingMinorUnits));
+      if (result.valid) publish({ draft: { ...state.draft, [field]: result.value }, notice: 'Unsaved changes' });
+      return;
+    }
     const value = target instanceof HTMLInputElement && target.type === 'checkbox' ? target.checked
       : type === 'number' || type === 'integer' ? Number(target.value) : target.value;
     publish({ draft: { ...state.draft, [field]: value }, notice: 'Unsaved changes' });

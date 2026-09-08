@@ -79,6 +79,27 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Critical tone uses alert', 'Other tones use status', 'Dismiss control has an accessible label'],
     compatibility: 'Dismissal is a real button and actions remain authored content.',
   },
+  BillingAmountInput: {
+    id: 'BillingAmountInput', version: COMPONENT_CONTRACT_VERSION,
+    props: ['amount', 'currency', 'minorUnits', 'label', 'name', 'disabled'], slots: [], events: ['change'],
+    states: ['editing', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'input.border', 'input.background', 'input.validation'],
+    accessibility: ['A label names the decimal input', 'Currency describes the input', 'Invalid input has an associated alert and aria-invalid'],
+    compatibility: 'Billable amount is an integer number of minor units. Decimal major-unit edits emit number | undefined, rounded half up with decimal arithmetic; zero is valid, blank emits undefined, and negatives or unsafe values retain the draft and emit no update. amountField/currencyField bind runtime amount/currency; minorUnitsParameter resolves to the declared object parameter. Uncontrolled text is retained until amount/minorUnits changes. HTML supplies the same static value and validation semantics; framework components own updates.',
+  },
+  BillingIntervalSelector: {
+    id: 'BillingIntervalSelector', version: COMPONENT_CONTRACT_VERSION,
+    props: ['interval', 'intervals', 'label', 'name', 'disabled'], slots: [], events: ['change'],
+    states: ['editing', 'invalid'], tokenRoles: ['billing.interval.text', 'input.border', 'input.background', 'input.validation'],
+    accessibility: ['A label names the native select', 'Native keyboard navigation selects an interval', 'An invalid value is visible with an associated alert and aria-invalid'],
+    compatibility: 'Billable interval selection emits one string from intervals. intervalField binds interval; intervalsParameter resolves to the declared object parameter. Defaults are Billable monthly/quarterly/annual; Subscription resolves monthly/yearly. An absent value has a disabled Choose interval placeholder; an invalid value remains visible as a disabled option plus an alert. HTML supplies the same static options and validation semantics.',
+  },
+  BillingSummaryBadge: {
+    id: 'BillingSummaryBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['amount', 'currency', 'minorUnits', 'interval'], slots: [], events: [],
+    states: ['populated', 'empty', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'billing.interval.text'],
+    accessibility: ['Amount, currency and interval form one noninteractive announced phrase'],
+    compatibility: 'Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. Invalid amount/currency is named explicitly.',
+  },
   Button: {
     id: 'Button', version: COMPONENT_CONTRACT_VERSION,
     props: ['content', 'intent', 'size', 'disabled', 'type'], slots: ['default'], events: ['activate'],

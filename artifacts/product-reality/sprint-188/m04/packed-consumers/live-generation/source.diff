@@ -1,0 +1,687 @@
+diff --git a/packages/component-contracts/src/contracts.ts b/packages/component-contracts/src/contracts.ts
+index b4685421..22d00ab9 100644
+--- a/packages/component-contracts/src/contracts.ts
++++ b/packages/component-contracts/src/contracts.ts
+@@ -79,6 +79,27 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
+     accessibility: ['Critical tone uses alert', 'Other tones use status', 'Dismiss control has an accessible label'],
+     compatibility: 'Dismissal is a real button and actions remain authored content.',
+   },
++  BillingAmountInput: {
++    id: 'BillingAmountInput', version: COMPONENT_CONTRACT_VERSION,
++    props: ['amount', 'currency', 'minorUnits', 'label', 'name', 'disabled'], slots: [], events: ['change'],
++    states: ['editing', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'input.border', 'input.background', 'input.validation'],
++    accessibility: ['A label names the decimal input', 'Currency describes the input', 'Invalid input has an associated alert and aria-invalid'],
++    compatibility: 'Billable amount is an integer number of minor units. Decimal major-unit edits emit number | undefined, rounded half up with decimal arithmetic; zero is valid, blank emits undefined, and negatives or unsafe values retain the draft and emit no update. amountField/currencyField bind runtime amount/currency; minorUnitsParameter resolves to the declared object parameter. Uncontrolled text is retained until amount/minorUnits changes. HTML supplies the same static value and validation semantics; framework components own updates.',
++  },
++  BillingIntervalSelector: {
++    id: 'BillingIntervalSelector', version: COMPONENT_CONTRACT_VERSION,
++    props: ['interval', 'intervals', 'label', 'name', 'disabled'], slots: [], events: ['change'],
++    states: ['editing', 'invalid'], tokenRoles: ['billing.interval.text', 'input.border', 'input.background', 'input.validation'],
++    accessibility: ['A label names the native select', 'Native keyboard navigation selects an interval', 'An invalid value is visible with an associated alert and aria-invalid'],
++    compatibility: 'Billable interval selection emits one string from intervals. intervalField binds interval; intervalsParameter resolves to the declared object parameter. Defaults are Billable monthly/quarterly/annual; Subscription resolves monthly/yearly. An absent value has a disabled Choose interval placeholder; an invalid value remains visible as a disabled option plus an alert. HTML supplies the same static options and validation semantics.',
++  },
++  BillingSummaryBadge: {
++    id: 'BillingSummaryBadge', version: COMPONENT_CONTRACT_VERSION,
++    props: ['amount', 'currency', 'minorUnits', 'interval'], slots: [], events: [],
++    states: ['populated', 'empty', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'billing.interval.text'],
++    accessibility: ['Amount, currency and interval form one noninteractive announced phrase'],
++    compatibility: 'Billable amountField/currencyField/intervalField bind amount/currency/interval. minorUnits is the explicit storage divisor, default 100; formatting uses deterministic en-US currency text with precision derived from the divisor. Zero stays visible; absent amount and interval are named No amount and No interval. Invalid amount/currency is named explicitly.',
++  },
+   Button: {
+     id: 'Button', version: COMPONENT_CONTRACT_VERSION,
+     props: ['content', 'intent', 'size', 'disabled', 'type'], slots: ['default'], events: ['activate'],
+diff --git a/packages/component-contracts/src/index.ts b/packages/component-contracts/src/index.ts
+index f93f0790..98cfd549 100644
+--- a/packages/component-contracts/src/index.ts
++++ b/packages/component-contracts/src/index.ts
+@@ -4,6 +4,7 @@ import capabilitiesJson from '../registry/component-capability-baseline.v1.json'
+ 
+ export * from './types.js';
+ export * from './contracts.js';
++export * from './billing.js';
+ export * from './scenarios.js';
+ export * from './ported-contracts.js';
+ export * from './ported-scenarios.js';
+diff --git a/packages/component-contracts/src/scenarios.ts b/packages/component-contracts/src/scenarios.ts
+index 20af459a..e43b3af2 100644
+--- a/packages/component-contracts/src/scenarios.ts
++++ b/packages/component-contracts/src/scenarios.ts
+@@ -17,6 +17,9 @@ export const sharedScenarios: readonly SharedScenario[] = [
+   },
+   { id: 'badge-status', oodsComponentId: 'Badge', props: { content: 'Past due', tone: 'critical', emphasis: 'solid' }, slots: {}, initialState: { tone: 'critical' }, event: { name: 'render', trigger: 'mount', expected: 'visible status text and decorative icon treatment' }, assertions: ['content is visible', 'badge is noninteractive'] },
+   { id: 'banner-dismissible', oodsComponentId: 'Banner', props: { title: 'Payment failed', detail: 'Update the card', tone: 'critical', dismissLabel: 'Dismiss payment warning' }, slots: { actions: ['Update card'] }, initialState: { dismissed: false }, event: { name: 'dismiss', trigger: 'activate dismiss button', expected: 'dismiss event emitted once' }, assertions: ['critical banner has alert role', 'dismiss button is named'] },
++  { id: 'billing-amount-half-up', oodsComponentId: 'BillingAmountInput', props: { amount: 1999, currency: 'usd', minorUnits: 100, label: 'Billing amount' }, slots: {}, initialState: { amount: 1999 }, event: { name: 'change', trigger: 'type 19.995', expected: '2000 emitted; negative input emits nothing; blank emits undefined' }, assertions: ['currency describes the labelled input', 'half-up rounding protects minor-unit storage', 'invalid input is announced'] },
++  { id: 'billing-interval-subscription', oodsComponentId: 'BillingIntervalSelector', props: { interval: 'monthly', intervals: ['monthly', 'yearly'], label: 'Billing interval' }, slots: {}, initialState: { interval: 'monthly' }, event: { name: 'change', trigger: 'ArrowDown from monthly', expected: 'yearly selected and emitted' }, assertions: ['only the resolved object intervals are selectable', 'a native select supports keyboard selection', 'invalid interval is announced'] },
++  { id: 'billing-summary-minor-units', oodsComponentId: 'BillingSummaryBadge', props: { amount: 1999, currency: 'usd', minorUnits: 100, interval: 'monthly' }, slots: {}, initialState: {}, event: { name: 'render', trigger: 'mount', expected: '$19.99 · monthly' }, assertions: ['integer minor units format as a currency amount', 'one visible phrase includes interval'] },
+   { id: 'button-activate', oodsComponentId: 'Button', props: { content: 'Save changes', intent: 'neutral', size: 'md' }, slots: { default: 'Save changes' }, initialState: { disabled: false }, event: { name: 'activate', trigger: 'pointer click or Enter', expected: 'activation handler called once' }, assertions: ['native type defaults to button', 'focus is visible'] },
+   { id: 'cancellation-badge-false', oodsComponentId: 'CancellationBadge', props: {'cancelAtPeriodEnd': false}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'false remains visible; cancellation is the badge variant' }, assertions: ['false remains visible', 'cancellation is the badge variant'] },
+   { id: 'cancellation-form-presentational-controls', oodsComponentId: 'CancellationForm', props: {'title': 'Cancellation request', 'reasonCode': 'budget', 'reason': 'Costs changed'}, slots: {}, initialState: { content: 'populated' }, event: { name: 'render', trigger: 'mount', expected: 'reason and code retain their initial values; native controls are labelled; submit does not cancel or save' }, assertions: ['reason and code retain their initial values', 'native controls are labelled', 'submit does not cancel or save'] },
+diff --git a/packages/component-contracts/src/types.ts b/packages/component-contracts/src/types.ts
+index b63559dd..2b407d6d 100644
+--- a/packages/component-contracts/src/types.ts
++++ b/packages/component-contracts/src/types.ts
+@@ -20,6 +20,9 @@ export const NUCLEUS_COMPONENT_IDS = [
+   'AuditTimeline',
+   'Badge',
+   'Banner',
++  'BillingAmountInput',
++  'BillingIntervalSelector',
++  'BillingSummaryBadge',
+   'Button',
+   'CancellationBadge',
+   'CancellationForm',
+diff --git a/packages/component-styles/src/components.css b/packages/component-styles/src/components.css
+index 3ea2f201..3ba3448d 100644
+--- a/packages/component-styles/src/components.css
++++ b/packages/component-styles/src/components.css
+@@ -1113,3 +1113,44 @@
+   color: var(--cmp-meta-label, CanvasText);
+   font-weight: var(--ref-typography-weights-semibold, 600);
+ }
++/* Billable list/form surfaces share the trait's semantic token roles. */
++.oods-billing-summary {
++  display: inline-block;
++  color: var(--cmp-billing-amount-text, var(--sys-text-strong));
++  font-variant-numeric: tabular-nums;
++}
++.oods-billing-field {
++  display: grid;
++  gap: var(--space-2);
++  min-width: 0;
++  color: var(--cmp-billing-amount-text, var(--sys-text-strong));
++}
++.oods-billing-field > span {
++  color: var(--cmp-billing-currency-text, var(--sys-text-subtle));
++}
++.oods-billing-field > input,
++.oods-billing-field > select {
++  width: 100%;
++  min-width: 0;
++  box-sizing: border-box;
++  padding: var(--space-2) var(--space-3);
++  font: inherit;
++  color: inherit;
++  background: var(--sys-surface-default);
++  border: 1px solid var(--sys-border-default);
++  border-radius: var(--radius-md);
++}
++.oods-billing-field > select {
++  color: var(--cmp-billing-interval-text, var(--sys-text-subtle));
++}
++.oods-billing-field > :focus-visible {
++  outline: 2px solid var(--sys-focus-ring);
++  outline-offset: 2px;
++}
++.oods-billing-field > [aria-invalid='true'] {
++  border-color: var(--sys-status-critical-border);
++}
++.oods-billing-field > [role='alert'] {
++  color: var(--sys-status-critical-text);
++  margin: 0;
++}
+diff --git a/packages/components-react/evidence/react-readiness.v1.json b/packages/components-react/evidence/react-readiness.v1.json
+index fa355777..33bf2eef 100644
+--- a/packages/components-react/evidence/react-readiness.v1.json
++++ b/packages/components-react/evidence/react-readiness.v1.json
+@@ -435,6 +435,135 @@
+         }
+       }
+     },
++    {
++      "componentId": "BillingAmountInput",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#BillingAmountInput"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/billing.tsx#BillingAmountInput"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#BillingAmountInput"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#BillingAmountInput"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#billing-amount-half-up"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "BillingIntervalSelector",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#BillingIntervalSelector"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/billing.tsx#BillingIntervalSelector"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#BillingIntervalSelector"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#BillingIntervalSelector"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#billing-interval-subscription"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "BillingSummaryBadge",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#BillingSummaryBadge"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/billing.tsx#BillingSummaryBadge"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#BillingSummaryBadge"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#BillingSummaryBadge"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#billing-summary-minor-units"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "Button",
+       "state": "implemented-evidence-complete",
+diff --git a/packages/components-react/src/index.ts b/packages/components-react/src/index.ts
+index 116cca18..ed587f43 100644
+--- a/packages/components-react/src/index.ts
++++ b/packages/components-react/src/index.ts
+@@ -96,3 +96,6 @@ export type { OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSum
+ 
+ export { ArchiveSummary, ArchivePill, CancellationForm, CancellationBadge, PriceCardMeta } from './breadth.js';
+ export type { ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, CancellationBadgeProps, PriceCardMetaProps } from './types.js';
++
++export { BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector } from './billing.js';
++export type { BillingSummaryBadgeProps, BillingAmountInputProps, BillingIntervalSelectorProps } from './billing.js';
+diff --git a/packages/components-react/test/scenario-fixtures.tsx b/packages/components-react/test/scenario-fixtures.tsx
+index ac6aeffb..cb11c1f4 100644
+--- a/packages/components-react/test/scenario-fixtures.tsx
++++ b/packages/components-react/test/scenario-fixtures.tsx
+@@ -8,6 +8,7 @@ import type {
+ } from '../src/index.js';
+ 
+ import {
++  BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
+   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+@@ -73,6 +74,9 @@ export function renderSharedScenario(
+ ): ReactElement {
+   const { onEvent } = handlers;
+   switch (scenario.id) {
++    case 'billing-summary-minor-units': return <BillingSummaryBadge {...scenario.props} />;
++    case 'billing-amount-half-up': return <BillingAmountInput {...scenario.props} onChange={onEvent} />;
++    case 'billing-interval-subscription': return <BillingIntervalSelector {...scenario.props} onChange={onEvent} />;
+     case 'badge-status':
+       return <Badge content="Past due" tone="critical" emphasis="solid" icon="!" />;
+     case 'banner-dismissible':
+diff --git a/packages/components-react/test/scenarios.spec.tsx b/packages/components-react/test/scenarios.spec.tsx
+index d8cd7f03..c0889861 100644
+--- a/packages/components-react/test/scenarios.spec.tsx
++++ b/packages/components-react/test/scenarios.spec.tsx
+@@ -30,6 +30,23 @@ describe('@oods/components-react shared scenarios', () => {
+       expect(container.textContent?.trim().length).toBeGreaterThan(0);
+ 
+       switch (scenario.id) {
++        case 'billing-summary-minor-units':
++          expect(component?.textContent?.trim()).toBe('$19.99 · monthly');
++          break;
++        case 'billing-amount-half-up': {
++          const input = screen.getByRole('textbox', { name: 'Billing amount' });
++          fireEvent.change(input, { target: { value: '19.995' } });
++          expect(onEvent).toHaveBeenLastCalledWith(2000);
++          expect(input.getAttribute('aria-describedby')).toContain('-currency');
++          break;
++        }
++        case 'billing-interval-subscription': {
++          const select = screen.getByRole('combobox', { name: 'Billing interval' });
++          expect([...select.querySelectorAll('option')].map((option) => option.value)).toEqual(['monthly', 'yearly']);
++          await user.selectOptions(select, 'yearly');
++          expect(onEvent).toHaveBeenLastCalledWith('yearly');
++          break;
++        }
+         case 'badge-status': {
+           expect(component?.textContent).toContain('Past due');
+           expect(component?.getAttribute('data-tone')).toBe('critical');
+diff --git a/packages/components-vue/evidence/vue-readiness.v1.json b/packages/components-vue/evidence/vue-readiness.v1.json
+index d86b4fdd..941d001d 100644
+--- a/packages/components-vue/evidence/vue-readiness.v1.json
++++ b/packages/components-vue/evidence/vue-readiness.v1.json
+@@ -436,6 +436,135 @@
+         }
+       }
+     },
++    {
++      "componentId": "BillingAmountInput",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#BillingAmountInput"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/billing.ts#BillingAmountInput"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#BillingAmountInput"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#BillingAmountInput"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#billing-amount-half-up"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "BillingIntervalSelector",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#BillingIntervalSelector"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/billing.ts#BillingIntervalSelector"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#BillingIntervalSelector"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#BillingIntervalSelector"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#billing-interval-subscription"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "BillingSummaryBadge",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#BillingSummaryBadge"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/billing.ts#BillingSummaryBadge"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#BillingSummaryBadge"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#BillingSummaryBadge"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#billing-summary-minor-units"
++          ]
++        }
++      }
++    },
+     {
+       "componentId": "Button",
+       "state": "implemented-evidence-complete",
+diff --git a/packages/components-vue/src/index.ts b/packages/components-vue/src/index.ts
+index cf0fb348..38b4c0ae 100644
+--- a/packages/components-vue/src/index.ts
++++ b/packages/components-vue/src/index.ts
+@@ -79,3 +79,5 @@ export type { OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSum
+ 
+ export { ArchiveSummary, ArchivePill, CancellationForm, CancellationBadge, PriceCardMeta } from './breadth.js';
+ export type { ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, CancellationBadgeProps, PriceCardMetaProps } from './types.js';
++
++export { BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector } from './billing.js';
+diff --git a/packages/components-vue/test/scenarios.spec.ts b/packages/components-vue/test/scenarios.spec.ts
+index 17eb6ee3..0f214888 100644
+--- a/packages/components-vue/test/scenarios.spec.ts
++++ b/packages/components-vue/test/scenarios.spec.ts
+@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
+ import { describe, expect, it } from 'vitest';
+ 
+ import {
++  BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
+   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+@@ -60,6 +61,7 @@ import {
+ } from '../src/index.js';
+ 
+ const implementations: Readonly<Record<string, Component>> = {
++  BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
+   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
+@@ -147,6 +149,19 @@ describe('@oods/components-vue shared scenarios', () => {
+         expect(component.text().trim().length, `${scenario.id} non-empty content`).toBeGreaterThan(0);
+ 
+         switch (scenario.id) {
++          case 'billing-summary-minor-units':
++            expect(component.text()).toBe('$19.99 · monthly');
++            break;
++          case 'billing-amount-half-up':
++            await component.get('input').setValue('19.995');
++            expect(wrapper.emitted('change')).toEqual([[2000]]);
++            expect(component.get('input').attributes('aria-describedby')).toContain('-currency');
++            break;
++          case 'billing-interval-subscription':
++            expect(component.findAll('option').map((option) => option.attributes('value'))).toEqual(['monthly', 'yearly']);
++            await component.get('select').setValue('yearly');
++            expect(wrapper.emitted('change')).toEqual([['yearly']]);
++            break;
+           case 'badge-status': {
+             expect(component.text()).toContain('Past due');
+             expect(component.attributes('data-tone')).toBe('critical');
+diff --git a/packages/mcp-server/src/codegen/binding-utils.ts b/packages/mcp-server/src/codegen/binding-utils.ts
+index 7e9d5728..651619c9 100644
+--- a/packages/mcp-server/src/codegen/binding-utils.ts
++++ b/packages/mcp-server/src/codegen/binding-utils.ts
+@@ -999,6 +999,9 @@ export type FrameworkRecipePropResolution = {
+ };
+ 
+ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
++  BillingSummaryBadge: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
++  BillingAmountInput: { amountField: 'amount', currencyField: 'currency' },
++  BillingIntervalSelector: { intervalField: 'interval' },
+   ArchiveSummary: { archivedField: 'isArchived', archivedAtField: 'archivedAt', reasonField: 'reason' },
+   CancellationForm: { reasonField: 'reason', codeField: 'reasonCode' },
+   PriceCardMeta: { modelField: 'model', intervalField: 'interval' },
+@@ -1080,6 +1083,7 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
+ };
+ 
+ const RECIPE_PARAMETER_PROPS = new Set([
++  'intervalsParameter',
+   'allowCustomParameter',
+   'allowDynamicParameter',
+   'allowListParameter',
+diff --git a/packages/mcp-server/src/codegen/target-contracts.ts b/packages/mcp-server/src/codegen/target-contracts.ts
+index 49698957..335a5f67 100644
+--- a/packages/mcp-server/src/codegen/target-contracts.ts
++++ b/packages/mcp-server/src/codegen/target-contracts.ts
+@@ -22,6 +22,9 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
+ > = {
+   // Labelled trait recipe directives lower into title/supporting; they are
+   // authoring metadata rather than additions to the public component API.
++  BillingSummaryBadge: new Set(['amountField', 'currencyField', 'intervalField', 'minorUnitsParameter']),
++  BillingAmountInput: new Set(['amountField', 'currencyField', 'minorUnitsParameter']),
++  BillingIntervalSelector: new Set(['intervalField', 'intervalsParameter']),
+   CardHeader: new Set(['titleField', 'supportingField']),
+   ArchiveSummary: new Set(['archivedField', 'archivedAtField', 'reasonField', 'restoredAtField', 'archivedByField', 'metadataField', 'retainHistoryParameter', 'restoreWindowParameter', 'allowPartialRestoreParameter']),
+   ArchivePill: new Set(['archivedAtField']),
+@@ -479,6 +482,9 @@ const PROP_VALUE_CONTRACTS: Readonly<
+   ArchivePill: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, isArchived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
+   CancellationForm: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, hint: STRING_VALUE, allowedReasons: valueContract('an array of reason choices', Array.isArray), reasonCode: STRING_VALUE, reason: STRING_VALUE, cancellationReason: STRING_VALUE },
+   CancellationBadge: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, cancelAtPeriodEnd: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), isCancelled: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
++  BillingSummaryBadge: { amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), interval: STRING_VALUE },
++  BillingAmountInput: { amount: NUMBER_VALUE, currency: STRING_VALUE, minorUnits: valueContract('a positive safe integer', (value) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 1), label: STRING_VALUE, name: STRING_VALUE, disabled: BOOLEAN_VALUE },
++  BillingIntervalSelector: { interval: STRING_VALUE, intervals: NON_EMPTY_STRING_ARRAY_VALUE, label: STRING_VALUE, name: STRING_VALUE, disabled: BOOLEAN_VALUE },
+   PriceCardMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, model: STRING_VALUE, pricingModel: STRING_VALUE, interval: STRING_VALUE, billingInterval: STRING_VALUE },
+   OwnerBadge: { label: STRING_VALUE, text: STRING_VALUE, owner: STRING_VALUE, ownerType: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
+   OwnershipSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerId: STRING_VALUE, owner_id: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
+diff --git a/packages/mcp-server/src/codegen/workflow-emitter.ts b/packages/mcp-server/src/codegen/workflow-emitter.ts
+index 382fd23f..5a203a72 100644
+--- a/packages/mcp-server/src/codegen/workflow-emitter.ts
++++ b/packages/mcp-server/src/codegen/workflow-emitter.ts
+@@ -21,9 +21,12 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
+   const fieldByNodeId: Record<string, string> = {};
+   const formFields = new Set<string>();
+   const visit = (node: UiElement, context: string) => {
+-    if (typeof node.props?.field === 'string') {
+-      fieldByNodeId[node.id] = node.props.field;
+-      if (context === 'form') formFields.add(node.props.field);
++    const field = node.props?.field
++      ?? (node.component === 'BillingAmountInput' ? node.props?.amountField : undefined)
++      ?? (node.component === 'BillingIntervalSelector' ? node.props?.intervalField : undefined);
++    if (typeof field === 'string') {
++      fieldByNodeId[node.id] = field;
++      if (context === 'form') formFields.add(field);
+     }
+     node.children?.forEach((child) => visit(child, context));
+   };
+@@ -70,7 +73,8 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
+   files.push(...workflowDataFiles(schema));
+   const titleField = ['plan_name', 'name', 'title', 'display_name'].find((name) => schema.objectSchema![name]) ?? schema.workflow.data.idField;
+   const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && field.required && field.type === 'string' && !field.enum);
+-  files.push({ path: 'src/application.ts', contents: `import { createStore, idField, titleField, fieldTypes, screenProps, history, type DomainRecord, type ListQuery, type StoreOptions } from './store';
++  files.push({ path: 'src/application.ts', contents: `import { parseBillingAmount } from '@oods/component-contracts';
++import { createStore, idField, titleField, fieldTypes, screenProps, history, type DomainRecord, type ListQuery, type StoreOptions } from './store';
+ import { sampleData } from './sample-data';
+ import type { WorkflowActions } from './actions';
+ export { idField, titleField, screenProps, history };
+@@ -120,6 +124,11 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
+     while (!Object.hasOwn(fieldTypes, field) && element) { field = fieldByNodeId[element.id] ?? ''; element = element.parentElement; }
+     if (!Object.hasOwn(fieldTypes, field)) return;
+     const type = fieldTypes[field];
++    if (target instanceof HTMLInputElement && target.dataset.billingMinorUnits !== undefined) {
++      const result = parseBillingAmount(target.value, Number(target.dataset.billingMinorUnits));
++      if (result.valid) publish({ draft: { ...state.draft, [field]: result.value }, notice: 'Unsaved changes' });
++      return;
++    }
+     const value = target instanceof HTMLInputElement && target.type === 'checkbox' ? target.checked
+       : type === 'number' || type === 'integer' ? Number(target.value) : target.value;
+     publish({ draft: { ...state.draft, [field]: value }, notice: 'Unsaved changes' });
+diff --git a/packages/mcp-server/src/render/component-map.ts b/packages/mcp-server/src/render/component-map.ts
+index 61fd9810..03288455 100644
+--- a/packages/mcp-server/src/render/component-map.ts
++++ b/packages/mcp-server/src/render/component-map.ts
+@@ -1,3 +1,4 @@
++import { BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
+ import type { UiElement } from '../schemas/generated.js';
+ import { escapeHtml } from './escape-html.js';
+ import { resolveSpacingLeaf } from './spacing-leaf.js';
+@@ -292,6 +293,35 @@ function renderText(node: UiElement, childrenHtml = ''): string {
+   return `<${tag}${attrs}>${content}</${tag}>`;
+ }
+ 
++function renderBillingSummaryBadge(node: UiElement): string {
++  const props = node.props ?? {};
++  const amount = typeof props.amount === 'number' ? props.amount : undefined;
++  const currency = asString(props.currency);
++  const minorUnits = typeof props.minorUnits === 'number' ? props.minorUnits : undefined;
++  return `<span id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-billing-summary" data-oods-component="BillingSummaryBadge">${escapeHtml(billingSummary(amount, currency, minorUnits, asString(props.interval)))}</span>`;
++}
++
++function renderBillingAmountInput(node: UiElement): string {
++  const props = node.props ?? {};
++  const id = asString(props.id) ?? node.id;
++  const amount = typeof props.amount === 'number' ? props.amount : undefined;
++  const minorUnits = typeof props.minorUnits === 'number' ? props.minorUnits : BILLING_MINOR_UNITS;
++  const error = billingAmountMessage(amount, minorUnits);
++  const description = `${id}-currency${error ? ` ${id}-error` : ''}`;
++  return `<div class="oods-billing-field" data-oods-component="BillingAmountInput" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing amount')}</label><span id="${escapeHtml(id)}-currency">${escapeHtml((asString(props.currency) ?? 'usd').toUpperCase())}</span><input id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''} type="text" inputmode="decimal" value="${escapeHtml(billingAmountText(amount, minorUnits))}" data-billing-minor-units="${minorUnits}" aria-describedby="${escapeHtml(description)}"${error ? ' aria-invalid="true"' : ''}${props.disabled ? ' disabled' : ''}>${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
++}
++
++function renderBillingIntervalSelector(node: UiElement): string {
++  const props = node.props ?? {};
++  const id = asString(props.id) ?? node.id;
++  const value = asString(props.interval) ?? '';
++  const intervals: readonly string[] = Array.isArray(props.intervals) ? props.intervals.filter((item): item is string => typeof item === 'string') : BILLING_INTERVALS;
++  const error = billingIntervalMessage(value || undefined, intervals);
++  const placeholder = intervals.includes(value) ? '' : `<option value="${escapeHtml(value)}" disabled selected>${escapeHtml(value || 'Choose interval')}</option>`;
++  const options = intervals.map((interval) => `<option value="${escapeHtml(interval)}"${interval === value ? ' selected' : ''}>${escapeHtml(interval)}</option>`).join('');
++  return `<div class="oods-billing-field" data-oods-component="BillingIntervalSelector" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing interval')}</label><select id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''}${props.disabled ? ' disabled' : ''}${error ? ` aria-invalid="true" aria-describedby="${escapeHtml(id)}-error"` : ''}>${placeholder}${options}</select>${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
++}
++
+ function renderInput(node: UiElement): string {
+   const props = isRecord(node.props) ? node.props : {};
+   const inputId = asString(props.id) ?? node.id;
+@@ -1984,6 +2014,9 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
+   CancellationSummary: renderCancellationSummary,
+   OwnershipMeta: renderOwnershipMeta,
+   OwnershipSummary: renderOwnershipSummary,
++  BillingSummaryBadge: renderBillingSummaryBadge,
++  BillingAmountInput: renderBillingAmountInput,
++  BillingIntervalSelector: renderBillingIntervalSelector,
+   PriceCardMeta: renderPriceCardMeta,
+   PriceSummary: renderPriceSummary,
+   TagPills: renderTagPills,
+diff --git a/scripts/product-reality/s185-m04-consumer-contract.ts b/scripts/product-reality/s185-m04-consumer-contract.ts
+index 02a72958..934e5f8e 100644
+--- a/scripts/product-reality/s185-m04-consumer-contract.ts
++++ b/scripts/product-reality/s185-m04-consumer-contract.ts
+@@ -1,3 +1,4 @@
++import { BILLING_INTERVALS, billingSummary } from '@oods/component-contracts';
+ import { createRequire } from 'node:module';
+ import type { GeneratedArtifactAction } from '../../packages/mcp-server/src/codegen/types.js';
+ import type { UiElement, UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
+@@ -70,6 +71,9 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
+       }
+       return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
+     };
++    if (node.component === 'BillingSummaryBadge') return [{ nodeId: node.id, field: String(node.props?.amountField), kind: 'family-text', expected: billingSummary(model[camel(String(node.props?.amountField))] as number | undefined, model[camel(String(node.props?.currencyField))] as string | undefined, node.props?.minorUnits as number | undefined, model[camel(String(node.props?.intervalField))] as string | undefined), editable: false }];
++    if (node.component === 'BillingAmountInput') return [{ nodeId: node.id, field: String(node.props?.amountField), kind: 'native-value', expected: String(Number(model[camel(String(node.props?.amountField))]) / Number(node.props?.minorUnits ?? 100)), editable: true }];
++    if (node.component === 'BillingIntervalSelector') return [{ nodeId: node.id, field: String(node.props?.intervalField), kind: 'native-value', expected: String(model[camel(String(node.props?.intervalField))]), editable: true }];
+     if (node.component === 'ArchivePill' || node.component === 'CancellationBadge') return textProbe(node.props?.field, '[data-oods-badge-label]');
+     if (node.component === 'ArchiveSummary') return ['archivedField', 'archivedAtField', 'reasonField']
+       .filter((key) => typeof node.props?.[key] === 'string' && model[camel(node.props[key] as string)] != null)
+@@ -184,6 +188,12 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
+     let value: unknown;
+     if (field.enum?.length) value = field.enum.includes(previous as string) ? previous : field.enum[0];
+     else if (Object.hasOwn(established, key)) value = previous;
++    else if (schemaNodes(schema).some((node) => node.component.startsWith('Billing') && node.props?.amountField === name)) value = 1999;
++    else if (schemaNodes(schema).some((node) => node.component.startsWith('Billing') && node.props?.currencyField === name)) value = 'usd';
++    else if (schemaNodes(schema).some((node) => node.component.startsWith('Billing') && node.props?.intervalField === name)) {
++      const selector = schemaNodes(schema).find((node) => node.component === 'BillingIntervalSelector' && node.props?.intervalField === name);
++      value = Array.isArray(selector?.props?.intervals) ? selector.props.intervals[0] : BILLING_INTERVALS[0];
++    }
+     // Exercise a non-first supported choice in the default presentational form.
+     // Parameter names are not resolved here or written into the schema.
+     else if (field.type === 'string' && schemaNodes(schema).some((node) => node.component === 'CancellationForm'

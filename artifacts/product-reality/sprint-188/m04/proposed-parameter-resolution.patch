@@ -1,0 +1,44 @@
+--- a/packages/mcp-server/src/compose/view-extension-collector.ts
++++ b/packages/mcp-server/src/compose/view-extension-collector.ts
+@@ -7,7 +7,7 @@
+  * downstream attribution.
+  */
+ 
+-import type { ComposedObject } from '../objects/trait-composer.js';
++import type { ComposedObject, ResolvedTrait } from '../objects/trait-composer.js';
+ import type { ViewExtension } from '../objects/types.js';
+ 
+ /* ------------------------------------------------------------------ */
+@@ -39,6 +39,23 @@
+ /* ------------------------------------------------------------------ */
+ /*  Collector                                                          */
+ /* ------------------------------------------------------------------ */
++
++/** Resolve only the new Billable runtime props; preserve the authored references. */
++function billingRuntimeProps(resolved: ResolvedTrait, extension: ViewExtension): Record<string, unknown> {
++  const props = { ...extension.props };
++  const runtimeProps: Record<string, string> = extension.component === 'BillingIntervalSelector'
++    ? { intervalsParameter: 'intervals' }
++    : ['BillingSummaryBadge', 'BillingAmountInput'].includes(extension.component)
++      ? { minorUnitsParameter: 'minorUnits' } : {};
++  for (const [directive, runtimeProp] of Object.entries(runtimeProps)) {
++    const name = props[directive];
++    if (typeof name !== 'string' || props[runtimeProp] !== undefined) continue;
++    const value = resolved.ref.parameters?.[name]
++      ?? resolved.definition.parameters.find((parameter) => parameter.name === name)?.default;
++    if (value !== undefined) props[runtimeProp] = structuredClone(value);
++  }
++  return props;
++}
+ 
+ interface RankedEntry {
+   plan: SlotPlan;
+@@ -102,7 +119,7 @@
+           sourceTrait: traitName,
+           position: ext.position ?? 'main',
+           priority: ext.priority ?? 0,
+-          props: ext.props ?? {},
++          props: billingRuntimeProps(resolved, ext),
+         },
+         traitOrder,
+       });

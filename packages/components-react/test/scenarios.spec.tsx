@@ -30,6 +30,23 @@ describe('@oods/components-react shared scenarios', () => {
       expect(container.textContent?.trim().length).toBeGreaterThan(0);
 
       switch (scenario.id) {
+        case 'billing-summary-minor-units':
+          expect(component?.textContent?.trim()).toBe('$19.99 · monthly');
+          break;
+        case 'billing-amount-half-up': {
+          const input = screen.getByRole('textbox', { name: 'Billing amount' });
+          fireEvent.change(input, { target: { value: '19.995' } });
+          expect(onEvent).toHaveBeenLastCalledWith(2000);
+          expect(input.getAttribute('aria-describedby')).toContain('-currency');
+          break;
+        }
+        case 'billing-interval-subscription': {
+          const select = screen.getByRole('combobox', { name: 'Billing interval' });
+          expect([...select.querySelectorAll('option')].map((option) => option.value)).toEqual(['monthly', 'yearly']);
+          await user.selectOptions(select, 'yearly');
+          expect(onEvent).toHaveBeenLastCalledWith('yearly');
+          break;
+        }
         case 'badge-status': {
           expect(component?.textContent).toContain('Past due');
           expect(component?.getAttribute('data-tone')).toBe('critical');

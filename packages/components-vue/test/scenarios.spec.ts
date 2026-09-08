@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
@@ -60,6 +61,7 @@ import {
 } from '../src/index.js';
 
 const implementations: Readonly<Record<string, Component>> = {
+  BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
@@ -147,6 +149,19 @@ describe('@oods/components-vue shared scenarios', () => {
         expect(component.text().trim().length, `${scenario.id} non-empty content`).toBeGreaterThan(0);
 
         switch (scenario.id) {
+          case 'billing-summary-minor-units':
+            expect(component.text()).toBe('$19.99 · monthly');
+            break;
+          case 'billing-amount-half-up':
+            await component.get('input').setValue('19.995');
+            expect(wrapper.emitted('change')).toEqual([[2000]]);
+            expect(component.get('input').attributes('aria-describedby')).toContain('-currency');
+            break;
+          case 'billing-interval-subscription':
+            expect(component.findAll('option').map((option) => option.attributes('value'))).toEqual(['monthly', 'yearly']);
+            await component.get('select').setValue('yearly');
+            expect(wrapper.emitted('change')).toEqual([['yearly']]);
+            break;
           case 'badge-status': {
             expect(component.text()).toContain('Past due');
             expect(component.attributes('data-tone')).toBe('critical');

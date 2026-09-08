@@ -4,6 +4,7 @@ import capabilitiesJson from '../registry/component-capability-baseline.v1.json'
 
 export * from './types.js';
 export * from './contracts.js';
+export * from './billing.js';
 export * from './scenarios.js';
 export * from './ported-contracts.js';
 export * from './ported-scenarios.js';

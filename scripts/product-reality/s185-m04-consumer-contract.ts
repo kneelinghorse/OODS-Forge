@@ -1,3 +1,4 @@
+import { BILLING_INTERVALS, billingSummary } from '@oods/component-contracts';
 import { createRequire } from 'node:module';
 import type { GeneratedArtifactAction } from '../../packages/mcp-server/src/codegen/types.js';
 import type { UiElement, UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
@@ -70,6 +71,9 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
       }
       return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
     };
+    if (node.component === 'BillingSummaryBadge') return [{ nodeId: node.id, field: String(node.props?.amountField), kind: 'family-text', expected: billingSummary(model[camel(String(node.props?.amountField))] as number | undefined, model[camel(String(node.props?.currencyField))] as string | undefined, node.props?.minorUnits as number | undefined, model[camel(String(node.props?.intervalField))] as string | undefined), editable: false }];
+    if (node.component === 'BillingAmountInput') return [{ nodeId: node.id, field: String(node.props?.amountField), kind: 'native-value', expected: String(Number(model[camel(String(node.props?.amountField))]) / Number(node.props?.minorUnits ?? 100)), editable: true }];
+    if (node.component === 'BillingIntervalSelector') return [{ nodeId: node.id, field: String(node.props?.intervalField), kind: 'native-value', expected: String(model[camel(String(node.props?.intervalField))]), editable: true }];
     if (node.component === 'ArchivePill' || node.component === 'CancellationBadge') return textProbe(node.props?.field, '[data-oods-badge-label]');
     if (node.component === 'ArchiveSummary') return ['archivedField', 'archivedAtField', 'reasonField']
       .filter((key) => typeof node.props?.[key] === 'string' && model[camel(node.props[key] as string)] != null)
@@ -184,6 +188,12 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
     let value: unknown;
     if (field.enum?.length) value = field.enum.includes(previous as string) ? previous : field.enum[0];
     else if (Object.hasOwn(established, key)) value = previous;
+    else if (schemaNodes(schema).some((node) => node.component.startsWith('Billing') && node.props?.amountField === name)) value = 1999;
+    else if (schemaNodes(schema).some((node) => node.component.startsWith('Billing') && node.props?.currencyField === name)) value = 'usd';
+    else if (schemaNodes(schema).some((node) => node.component.startsWith('Billing') && node.props?.intervalField === name)) {
+      const selector = schemaNodes(schema).find((node) => node.component === 'BillingIntervalSelector' && node.props?.intervalField === name);
+      value = Array.isArray(selector?.props?.intervals) ? selector.props.intervals[0] : BILLING_INTERVALS[0];
+    }
     // Exercise a non-first supported choice in the default presentational form.
     // Parameter names are not resolved here or written into the schema.
     else if (field.type === 'string' && schemaNodes(schema).some((node) => node.component === 'CancellationForm'

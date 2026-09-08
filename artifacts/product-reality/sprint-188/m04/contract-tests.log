@@ -1,0 +1,57 @@
+
+> @oods/component-contracts@0.1.0 test /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/component-contracts
+> vitest run --config vitest.config.ts
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/component-contracts
+
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 4ms
+ ✓ test/breadth-contracts.s185.spec.ts (15 tests) 16ms
+ ✓ test/ported-contracts.s184.spec.ts (4 tests) 16ms
+ ✓ test/breadth-contracts.s187.spec.ts (15 tests) 18ms
+ ✓ test/breadth-contracts.s186.spec.ts (48 tests) 22ms
+ ✓ test/contracts.spec.ts (7 tests) 22ms
+ ✓ test/workflow-states.s184.spec.ts (2 tests) 3ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/baseline-fold.s185.spec.ts [ test/baseline-fold.s185.spec.ts ]
+AssertionError: BillingAmountInput: generated evidence must cover both frameworks.
++ actual - expected
+
++ []
+- [
+-   'react',
+-   'vue'
+- ]
+
+
+- Expected
++ Received
+
+- [
+-   "react",
+-   "vue",
+- ]
++ []
+
+ ❯ deriveBaselineSurfaceFold ../../scripts/product-reality/s185-baseline-surfaces.mjs:208:14
+    206|         });
+    207|       }
+    208|       assert.deepEqual([...targets].sort(), TARGETS, `${componentId}: …
+       |              ^
+    209|       row.surfaces.generatedConsumer = { state: row.surfaces.react.sta…
+    210|     }
+ ❯ test/baseline-fold.s185.spec.ts:16:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  93 passed (93)
+   Start at  00:06:09
+   Duration  1.41s (transform 489ms, setup 0ms, collect 1.50s, tests 101ms, environment 1ms, prepare 1.07s)
+
+/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/component-contracts:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/component-contracts@0.1.0 test: `vitest run --config vitest.config.ts`
+Exit status 1

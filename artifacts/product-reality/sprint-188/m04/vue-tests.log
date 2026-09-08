@@ -1,0 +1,50 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/components-vue
+
+ ✓ test/billing.spec.ts (5 tests) 82ms
+ ✓ test/scenarios.spec.ts (68 tests) 334ms
+ ❯ test/package-contract.spec.ts (3 tests | 1 failed) 51ms
+   ✓ @oods/components-vue package contract > B-08 exports the exact Vue nucleus with public declarations 39ms
+   ✓ @oods/components-vue package contract > declares only Vue and the two frozen package dependencies at runtime 5ms
+   × @oods/components-vue package contract > publishes one independently derived Vue emission-eligibility row per nucleus id 7ms
+     → expected [ 'AddressCollectionPanel', …(63) ] to deeply equal [ 'AddressCollectionPanel', …(66) ]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/package-contract.spec.ts > @oods/components-vue package contract > publishes one independently derived Vue emission-eligibility row per nucleus id
+AssertionError: expected [ 'AddressCollectionPanel', …(63) ] to deeply equal [ 'AddressCollectionPanel', …(66) ]
+
+- Expected
++ Received
+
+@@ -7,13 +7,10 @@
+    "ArchiveSummary",
+    "AuditEvent",
+    "AuditTimeline",
+    "Badge",
+    "Banner",
+-   "BillingAmountInput",
+-   "BillingIntervalSelector",
+-   "BillingSummaryBadge",
+    "Button",
+    "CancellationBadge",
+    "CancellationForm",
+    "CancellationSummary",
+    "Card",
+
+ ❯ test/package-contract.spec.ts:119:58
+    117|     };
+    118|     expect(readiness.target).toBe('vue');
+    119|     expect(readiness.rows.map((row) => row.componentId)).toEqual(canon…
+       |                                                          ^
+    120|     for (const row of readiness.rows) {
+    121|       expect(row.state).toBe('implemented-evidence-complete');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 75 passed (76)
+   Start at  23:51:25
+   Duration  1.76s (transform 469ms, setup 0ms, collect 1.80s, tests 467ms, environment 1.22s, prepare 276ms)
+
