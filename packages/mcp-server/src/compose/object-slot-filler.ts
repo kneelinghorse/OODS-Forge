@@ -23,6 +23,7 @@ import type { ComponentCatalogSummary } from '../tools/types.js';
 import { getContentStrategy, type ContentStrategy } from '../codegen/content-strategy.js';
 import { inferSlotPosition, type SlotPosition } from './position-affinity.js';
 import type { FieldHint } from './field-affinity.js';
+import { isTraitRecipe } from './trait-recipes.js';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -280,7 +281,10 @@ export function fillSlotsWithObject(
   for (const entry of otherEntries) {
     const targetSlot = entry.targetSlot
       ? (slotSet.has(entry.targetSlot) ? entry.targetSlot : undefined)
-      : matchPositionToSlot(entry.position, slotSet);
+      : matchPositionToSlot(entry.position, slotSet)
+        ?? (entry.position === 'main' && isTraitRecipe(entry.component)
+          ? [...slotSet].filter((slot) => slot.startsWith('entry-')).sort()[0]
+          : undefined);
     if (!targetSlot) {
       const targetDescription = entry.targetSlot
         ? `slot "${entry.targetSlot}"`

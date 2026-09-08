@@ -1,6 +1,6 @@
 # Structured Data Delta
-- Baseline: 2026-09-08T13:50:00Z
-- Current:  2026-09-08T14:21:18Z
+- Baseline: 2026-09-08T14:21:18Z
+- Current:  2026-09-08T16:23:02Z
 
 ## Catalogue Stats
 - Components: 109 -> 109 (+0)

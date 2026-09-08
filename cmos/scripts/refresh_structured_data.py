@@ -877,6 +877,26 @@ def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any
         "artifacts/product-reality/sprint-188/m04/resolved-packed-consumers-final",
         "artifacts/product-reality/sprint-188/m05/packed-consumers",
     )
+    # React mounts a payment recipe only after its detail tab is selected.
+    # The application observer records those visible roots after real navigation.
+    app_root = "artifacts/product-reality/sprint-188/m05/app-consumers-final"
+    app_mounts = []
+    if (REPO_ROOT / app_root / "report.json").exists():
+        application = load_json(REPO_ROOT / app_root / "report.json")
+        for cell in application.get("cellReports", []):
+            cell_path = REPO_ROOT / app_root / cell["report"]
+            if hashlib.sha256(cell_path.read_bytes()).hexdigest() != cell["sha256"].removeprefix("sha256:"):
+                raise ValueError(f"Recipe application evidence hash mismatch: {cell_path}")
+            report = load_json(cell_path)
+            if len(report.get("gates", [])) != 8 or any(gate.get("status") != "passed" for gate in report["gates"]):
+                continue
+            for row_index, row in enumerate(report.get("flow", [])):
+                if row.get("status") != "passed":
+                    continue
+                for index, observation in enumerate(row.get("detail", {}).get("mounts", [])):
+                    if observation.get("present") is True and observation.get("passed") is True:
+                        app_mounts.append((observation["component"], report["framework"],
+                                           f"{app_root}/{cell['report']}#/flow/{row_index}/detail/mounts/{index}"))
     for component_id in recipes:
         if component_id not in result:
             raise ValueError(f"Recipe is outside the canonical catalog: {component_id}")
@@ -913,6 +933,10 @@ def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any
                     if observation.get("component") == component_id and observation.get("present") is True and observation.get("passed") is True:
                         refs.append(f"{live_root}/{cell['report']}#/browser/requiredMounts/{index}")
                         measured_targets.add(report["framework"])
+        for observed_component, target, ref in app_mounts:
+            if observed_component == component_id:
+                refs.append(ref)
+                measured_targets.add(target)
         if measured_targets == set(targets):
             surfaces["generatedConsumer"] = {"state": "implemented-evidence-complete", "evidence": sorted(refs)}
     return result

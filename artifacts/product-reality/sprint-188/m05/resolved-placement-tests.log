@@ -1,0 +1,118 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server
+
+ ✓ test/compose/object-slot-filler.spec.ts (27 tests) 320ms
+ ❯ test/product-reality/billing-placement.s188.spec.ts (8 tests | 1 failed) 508ms
+   ✓ Sprint 188 remaining trait placement obligations > never chooses any of the five recipes for generic slots on Product 90ms
+   ✓ Sprint 188 remaining trait placement obligations > preserves the entire generic pattern-grouped slot exactly as at the M04 head 7ms
+   ✓ Sprint 188 remaining trait placement obligations > leaves an unroutable generic main extension unplaced, with the existing warning and no timeline fallback 4ms
+   × Sprint 188 remaining trait placement obligations > allows only the enumerated trait placements across all 66 schemas, 132 artifacts and the workflow 376ms
+     → Subscription/detail unauthorized change: expected { version: '2026.02', …(2) } to deeply equal { version: '2026.02', …(2) }
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared detail recipe as a real node through all composer post-processing 10ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared timeline recipe as a real node through all composer post-processing 6ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared card recipe as a real node through all composer post-processing 6ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared list recipe as a real node through all composer post-processing 7ms
+ ✓ test/product-reality/workflow.s188.spec.ts (11 tests) 7334ms
+   ✓ Generated applications close their own contracts > react application typechecks strict against the built component packages  3309ms
+   ✓ Generated applications close their own contracts > vue application typechecks strict against the built component packages  3645ms
+ ❯ test/product-reality/billing-composition.s188.spec.ts (3 tests | 1 failed) 420ms
+   ✓ Decision 1822 bounded recipe composition > resolves object overrides before trait defaults, preserves references and authored runtime props, and does not mutate inputs 28ms
+   ✓ Decision 1822 bounded recipe composition > never selects the recipes for generic detail slots or an amount-bearing object without Billable 47ms
+   × Decision 1822 bounded recipe composition > allows only enumerated trait placements and resolved parameters across the 66 schemas and 132 artifacts 344ms
+     → Subscription/card has an unauthorized difference: expected { version: '2026.02', …(2) } to deeply equal { version: '2026.02', …(2) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/billing-composition.s188.spec.ts > Decision 1822 bounded recipe composition > allows only enumerated trait placements and resolved parameters across the 66 schemas and 132 artifacts
+AssertionError: Subscription/card has an unauthorized difference: expected { version: '2026.02', …(2) } to deeply equal { version: '2026.02', …(2) }
+
+- Expected
++ Received
+
+@@ -347,10 +347,11 @@
+                "id": "slot-body-4",
+                "meta": {
+                  "intent": "slot:body",
+                  "label": "body",
+                },
++               "props": undefined,
+              },
+            ],
+            "component": "Stack",
+            "id": "card-body-3",
+            "layout": {
+@@ -372,10 +373,11 @@
+                },
+                "props": {
+                  "amountField": "amount",
+                  "currencyField": "currency",
+                  "intervalField": "billing_interval",
++                 "minorUnits": 100,
+                  "minorUnitsParameter": "minorUnits",
+                },
+              },
+            ],
+            "component": "Stack",
+
+ ❯ test/product-reality/billing-composition.s188.spec.ts:91:92
+     89|       const result = await compose({ object: row.object, context: row.…
+     90|       expect(result.status).toBe('ok');
+     91|       expect(result.schema, `${row.object}/${row.context} has an unaut…
+       |                                                                                            ^
+     92|       if (JSON.stringify(result.schema) === JSON.stringify(row.schema)…
+     93|       const composed = composeObject(loadObject(row.object));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/product-reality/billing-placement.s188.spec.ts > Sprint 188 remaining trait placement obligations > allows only the enumerated trait placements across all 66 schemas, 132 artifacts and the workflow
+AssertionError: Subscription/detail unauthorized change: expected { version: '2026.02', …(2) } to deeply equal { version: '2026.02', …(2) }
+
+- Expected
++ Received
+
+@@ -299,11 +299,11 @@
+            "children": [
+              {
+                "children": [
+                  {
+                    "component": "StatusTimeline",
+-                   "id": "ve-header-28",
++                   "id": "ve-header-26",
+                    "props": {
+                      "field": "status",
+                      "historyField": "state_history",
+                      "showActorId": true,
+                      "showReason": true,
+@@ -320,11 +320,11 @@
+                      "requestedAtField": "cancellation_requested_at",
+                    },
+                  },
+                  {
+                    "component": "ArchiveSummary",
+-                   "id": "ve-header-26",
++                   "id": "ve-header-28",
+                    "props": {
+                      "allowPartialRestoreParameter": "allowPartialRestore",
+                      "archivedAtField": "archived_at",
+                      "archivedByField": "archived_by",
+                      "archivedField": "is_archived",
+
+ ❯ test/product-reality/billing-placement.s188.spec.ts:83:82
+     81|     for (const row of baseline.rows) {
+     82|       const current = await compose({ object: row.object, context: row…
+     83|       expect(current.schema, `${row.object}/${row.context} unauthorize…
+       |                                                                                  ^
+     84|       if (JSON.stringify(current.schema) === JSON.stringify(row.schema…
+     85|       const plan = collectViewExtensions(composeObject(loadObject(row.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  2 failed | 47 passed (49)
+   Start at  11:06:46
+   Duration  10.75s (transform 493ms, setup 22ms, collect 1.51s, tests 8.58s, environment 0ms, prepare 213ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/billing-placement.s188.spec.ts test/product-reality/billing-composition.s188.spec.ts test/product-reality/workflow.s188.spec.ts test/compose/object-slot-filler.spec.ts

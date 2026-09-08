@@ -16,6 +16,12 @@ vi.mock('../../src/render/component-map.js', async (importOriginal) => {
   return { ...original, hasMappedRenderer: (name: string) => (!isTraitRecipe(name) || ['BillingSummaryBadge', 'BillingAmountInput', 'BillingIntervalSelector'].includes(name)) && original.hasMappedRenderer(name) };
 });
 
+// Future recipe parameter resolutions are outside this historical M04 cohort too.
+vi.mock('../../src/compose/trait-recipes.js', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../../src/compose/trait-recipes.js')>();
+  return { ...original, resolveTraitRecipeProps: (trait: Parameters<typeof original.resolveTraitRecipeProps>[0], extension: Parameters<typeof original.resolveTraitRecipeProps>[1]) => ['BillingSummaryBadge', 'BillingAmountInput', 'BillingIntervalSelector'].includes(extension.component) ? original.resolveTraitRecipeProps(trait, extension) : { ...extension.props } };
+});
+
 type Context = 'list' | 'detail' | 'form' | 'timeline' | 'card' | 'inline';
 const baseline = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-188/m04/baseline-schemas.json', import.meta.url), 'utf8')) as { head: string; rows: Array<{ object: string; context: Context; schema: UiSchema }> };
 function nodes(schema: UiSchema): UiElement[] {

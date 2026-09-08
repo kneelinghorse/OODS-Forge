@@ -268,7 +268,12 @@ body { margin: 0; background: #f5f6f8; color: #1c2535; font-family: system-ui, s
 .workflow-content [data-layout="inline"] > [data-oods-component="SearchInput"], .workflow-content [data-layout="inline"] > [data-oods-component="Select"] { flex: 1 1 180px; min-width: 0; }
 .workflow-content [data-oods-component="PriceBadge"] { white-space: nowrap; }
 .workflow-content textarea { font: inherit; border: 1px solid #cdd4df; border-radius: 5px; padding: 10px; }
-.workflow-content [data-oods-component="Stack"] { min-width: 0; }
+.workflow-content [data-oods-component="Stack"], .workflow-content [data-oods-component="Tabs"] { min-width: 0; }
+.workflow-content .oods-tab, .workflow-content .oods-tab-list [aria-haspopup="menu"] { flex-shrink: 0; white-space: nowrap; }
+.workflow-content .oods-tab-list { overflow: visible; }
+.workflow-content .oods-tabs__overflow, .workflow-content .oods-tabs-overflow { position: relative; flex-shrink: 0; }
+.workflow-content .oods-tab-list [role="menu"] { position: absolute; inset: 100% 0 auto auto; z-index: 2; min-width: max-content; display: grid; padding: 4px; background: white; border: 1px solid #dce1e8; border-radius: 6px; }
+
 .workflow-cancel { display: flex; gap: 16px; flex-wrap: wrap; border: 1px solid #dce1e8; padding: 16px; margin: 0 0 24px; border-radius: 6px; }
 .workflow-records { padding: 0; list-style: none; margin: 24px 0; }
 .workflow-records li + li { margin-top: 8px; }
@@ -279,5 +284,5 @@ body { margin: 0; background: #f5f6f8; color: #1c2535; font-family: system-ui, s
 .workflow-history time { display: block; color: #57657b; font-size: 12px; margin: 8px 0; }
 .workflow-notice { min-height: 20px; color: #57657b; font-size: 13px; }
 [data-oods-screen-actions] { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-@media (max-width: 600px) { .workflow-app { padding: 24px 16px; } .workflow-content { padding: 16px; } .workflow-mode { display: none; } .workflow-toolbar > label { flex: 1 1 140px; } .workflow-records button { grid-template-columns: minmax(0, 1fr); gap: 10px; } .workflow-records button > [data-oods-component="StatusBadge"] { justify-self: start; max-width: 100%; } .workflow-records button > span:last-child { display: none; } }
+@media (max-width: 600px) { .workflow-content [data-layout="sidebar"] { grid-template-columns: minmax(0, 1fr) !important; } .workflow-app { padding: 24px 16px; } .workflow-content { padding: 16px; } .workflow-mode { display: none; } .workflow-toolbar > label { flex: 1 1 140px; } .workflow-records button { grid-template-columns: minmax(0, 1fr); gap: 10px; } .workflow-records button > [data-oods-component="StatusBadge"] { justify-self: start; max-width: 100%; } .workflow-records button > span:last-child { display: none; } }
 `;

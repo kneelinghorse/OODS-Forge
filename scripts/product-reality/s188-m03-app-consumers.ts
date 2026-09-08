@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Page } from 'playwright';
 import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
+import { isTraitRecipe } from '../../packages/mcp-server/src/compose/trait-recipes.js';
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import type { GeneratedArtifact } from '../../packages/mcp-server/src/codegen/types.js';
@@ -32,24 +33,80 @@ async function go(page: Page, context: string) {
   await page.getByRole('navigation', { name: 'Workflow screens' }).getByRole('button', { name: label, exact: true }).click();
 }
 
-export async function observeFlow(page: Page, url: string): Promise<Row[]> {
+async function selectPaymentTab(page: Page) {
+  const tab = page.getByRole('tab', { name: 'Status & History', exact: true });
+  if (await tab.isVisible()) await tab.click();
+  else {
+    await page.getByRole('button', { name: 'More tabs', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Status & History', exact: true }).click();
+  }
+  await page.locator('[data-oods-component="PaymentTimeline"]').waitFor({ state: 'visible' });
+}
+
+// Record actual visible recipe roots after navigation, including React's lazy tab panels.
+async function mountedRecipes(page: Page) {
+  const roots = await page.locator('[data-oods-component]').evaluateAll((elements) => elements
+    .filter((element) => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden')
+    .map((element) => ({ nodeId: element.id, component: element.getAttribute('data-oods-component')!, present: true, passed: true })));
+  return roots.filter((root) => isTraitRecipe(root.component));
+}
+
+export async function observeFlow(page: Page, url: string, requireBillingViews = false): Promise<Row[]> {
   const rows: Row[] = [];
   try {
     await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
     await ready(page, 'list');
     await observe(rows, 'ten-sample-records', async () => {
       const active = await page.locator('.workflow-records [data-record-id]').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-record-id')));
-      await page.getByRole('button', { name: 'Archived', exact: true }).click(); await ready(page, 'list');
+      const archiveTabs = page.getByRole('tablist', { name: 'Archive views' });
+      const hasArchive = await archiveTabs.count() > 0;
+      if (requireBillingViews) assert.equal(hasArchive, true, 'Declared archive views must be mounted');
+      if (hasArchive) {
+        assert.equal(await page.locator('.workflow-records [data-archived="true"]').count(), 0);
+        await archiveTabs.getByRole('tab', { name: 'Active', exact: true }).focus();
+        await page.keyboard.press('ArrowRight'); await page.keyboard.press('Enter');
+      } else await page.getByRole('button', { name: 'Archived', exact: true }).click();
+      await ready(page, 'list');
       const archived = await page.locator('.workflow-records [data-record-id]').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-record-id')));
       assert.equal(active.length, 9); assert.equal(archived.length, 1); assert.equal(new Set([...active, ...archived]).size, 10);
-      await page.getByRole('button', { name: 'Show active', exact: true }).click(); await ready(page, 'list');
-      return { active, archived, total: 10, disposition: 'nine active and one in the generated Archived view' };
+      const mounts = await mountedRecipes(page);
+      let archivePresentation: unknown;
+      if (hasArchive) {
+        const overlay = page.locator('.workflow-records [data-archived="true"]');
+        assert.equal(await overlay.count(), 1);
+        assert.equal(await overlay.getAttribute('role'), 'group');
+        assert.equal(await overlay.getAttribute('aria-hidden'), 'false');
+        assert.match(await overlay.getAttribute('aria-label') ?? '', /^Archived: Subscription/);
+        assert.equal(await overlay.locator('.oods-archive-badge').innerText(), 'Archived');
+        const opacity = await overlay.evaluate((node) => getComputedStyle(node).opacity);
+        assert.equal(opacity, '0.6');
+        archivePresentation = { opacity, accessibleName: await overlay.getAttribute('aria-label'), tabLabel: await overlay.getAttribute('data-archive-tab'), keyboardNavigation: true };
+        await archiveTabs.getByRole('tab', { name: 'Active', exact: true }).click();
+      } else await page.getByRole('button', { name: 'Show active', exact: true }).click();
+      await ready(page, 'list');
+      return { active, archived, archivePresentation, mounts, total: 10, disposition: 'nine active and one in the generated Archived view' };
     });
     await observe(rows, 'detail-navigation', async () => {
       await page.locator('.workflow-records [data-record-id="subscription-003"]').click();
       await ready(page, 'detail');
       assert.equal(await screen(page).getAttribute('data-selected-id'), 'subscription-003');
-      return { id: await screen(page).getAttribute('data-selected-id'), heading: await page.locator('h1').innerText() };
+      const cycle = page.locator('[data-oods-component="CycleProgressCard"]');
+      const payments = page.locator('[data-oods-component="PaymentTimeline"]');
+      const mounts = await mountedRecipes(page);
+      let billingViews: unknown;
+      if (requireBillingViews) assert.equal(await cycle.count(), 1);
+      if (await cycle.count()) {
+        assert.match(await cycle.innerText(), /\d+%.*remaining/);
+        assert.equal(await cycle.getByRole('progressbar').count(), 1);
+        const cycleText = await cycle.innerText();
+        await selectPaymentTab(page);
+        await payments.waitFor({ state: 'visible' });
+        assert.match(await payments.innerText(), /Payment method:/);
+        assert.equal(await payments.locator('[data-payment-kind]').count(), 2);
+        mounts.push(...await mountedRecipes(page));
+        billingViews = { cycle: cycleText, payments: await payments.innerText() };
+      }
+      return { id: await screen(page).getAttribute('data-selected-id'), heading: await page.locator('h1').innerText(), billingViews, mounts };
     });
     await observe(rows, 'edit-seeded-values', async () => {
       await page.locator('[data-oods-action="handleEdit"]').click(); await ready(page, 'form');
@@ -104,7 +161,15 @@ export async function observeFlow(page: Page, url: string): Promise<Row[]> {
       await page.locator('[data-oods-action="handleViewTimeline"]').click(); await ready(page, 'timeline');
       const text = await page.getByRole('list', { name: 'Lifecycle history' }).innerText();
       assert.match(text, /pending[ _]cancellation/i); assert.match(text, /Budget changed for next year/);
-      return { text, id: await screen(page).getAttribute('data-selected-id') };
+      const events = page.locator('[data-oods-component="PaymentEventTimeline"]');
+      let paymentEvents: string | undefined;
+      if (requireBillingViews) assert.equal(await events.count(), 1);
+      if (await events.count()) {
+        await events.waitFor({ state: 'visible' });
+        assert.equal(await events.locator('[data-payment-kind]').count(), 2);
+        paymentEvents = await events.innerText(); assert.match(paymentEvents, /Payment events/);
+      }
+      return { text, id: await screen(page).getAttribute('data-selected-id'), paymentEvents, mounts: await mountedRecipes(page) };
     });
   } catch { /* The exact failing row is retained; dependent flow rows are not claimed. */ }
   return rows;
@@ -131,9 +196,9 @@ async function observeStates(page: Page, url: string, framework: Framework) {
   return rows;
 }
 
-async function screenshots(page: Page, url: string, output: string, framework: Framework, artifactHash: string) {
+export async function screenshots(page: Page, url: string, output: string, framework: Framework, artifactHash: string, requireBillingViews: boolean) {
   const rows: Array<Record<string, unknown>> = [];
-  const flow = await observeFlow(page, url);
+  const flow = await observeFlow(page, url, requireBillingViews);
   assert.equal(flow.length, flow.some((row) => row.name === 'billing-edit-values') ? 9 : 7); assert.ok(flow.every((row) => row.status === 'passed'));
   await go(page, 'list'); await ready(page, 'list');
   for (const width of [390, 820, 1440]) {
@@ -147,6 +212,22 @@ async function screenshots(page: Page, url: string, output: string, framework: F
       await page.screenshot({ path: path.join(output, file), fullPage: true });
       const layout = await page.evaluate(() => ({ viewport: window.innerWidth, documentWidth: document.documentElement.scrollWidth, overflowing: [...document.querySelectorAll('main *')].filter((node) => node.getBoundingClientRect().right > window.innerWidth + 1).slice(0, 20).map((node) => ({ tag: node.tagName, component: node.getAttribute('data-oods-component'), width: node.getBoundingClientRect().width })) }));
       rows.push({ framework, screen: context, width, file, sha256: digest(await fs.readFile(path.join(output, file))), artifactHash, selectedId: await screen(page).getAttribute('data-selected-id'), layout });
+      if (requireBillingViews && (context === 'list' || context === 'detail')) {
+        const view = context === 'list' ? 'archived' : 'payments';
+        if (context === 'list') {
+          await page.getByRole('tablist', { name: 'Archive views' }).getByRole('tab', { name: 'Archived', exact: true }).click();
+          await ready(page, 'list');
+        } else {
+          await selectPaymentTab(page);
+        }
+        const extra = `screenshots/${framework}-${view}-${width}.png`;
+        await page.screenshot({ path: path.join(output, extra), fullPage: true });
+        rows.push({ framework, screen: view, width, file: extra, sha256: digest(await fs.readFile(path.join(output, extra))), artifactHash, selectedId: await screen(page).getAttribute('data-selected-id') });
+        if (context === 'list') {
+          await page.getByRole('tablist', { name: 'Archive views' }).getByRole('tab', { name: 'Active', exact: true }).click();
+          await ready(page, 'list');
+        }
+      }
     }
   }
   return rows;
@@ -157,6 +238,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
   const composition = await compose({ object: 'Subscription', context: 'workflow' });
   assert.equal(composition.status, 'ok');
   await json(path.join(output, 'composition.json'), composition);
+  const requireBillingViews = JSON.stringify(composition.schema).includes('CycleProgressCard');
   const artifacts = new Map<Framework, GeneratedArtifact>();
   for (const framework of ['react', 'vue'] as const) {
     const generated = await generate({ schema: composition.schema, framework, profile: 'build' });
@@ -249,12 +331,12 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
           pass(activeGate, { preservesSsrRoot: true, errors: [...errors] });
           await fs.writeFile(index, original);
           activeGate = 'interaction-evidence';
-          const flow = await observeFlow(page, url); cell.flow = flow;
+          const flow = await observeFlow(page, url, requireBillingViews); cell.flow = flow;
           await json(path.join(cellRoot, 'flow.json'), flow);
           assert.equal(flow.length, flow.some((row) => row.name === 'billing-edit-values') ? 9 : 7); assert.equal(flow.filter((row) => row.status !== 'passed').length, 0, JSON.stringify(flow));
           const states = await observeStates(page, url, framework); allStates.push(...states);
           await json(path.join(cellRoot, 'states.json'), states);
-          const images = await screenshots(page, url, output, framework, artifact.contentHash); allScreenshots.push(...images);
+          const images = await screenshots(page, url, output, framework, artifact.contentHash, requireBillingViews); allScreenshots.push(...images);
           assert.deepEqual(errors, []);
           pass(activeGate, { flowRows: flow.length, stateObservations: states.length, screenshots: images.length, errors });
           await page.close();
@@ -277,19 +359,20 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
       const build = commandResult('npm', ['exec', '--', 'vite', 'build'], consumer, { scrubNpmCredentials: true });
       await json(path.join(output, 'bite-build.json'), build); requireGreen(build, 'navigation bite build');
       const page = await browser.newPage();
-      const red = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url));
+      const red = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews));
       assert.deepEqual(red.filter((row) => row.status === 'failed').map((row) => row.name), ['detail-navigation']);
       await fs.writeFile(file, original); assert.equal(digest(await fs.readFile(file)), digest(original));
       const restore = commandResult('npm', ['exec', '--', 'vite', 'build'], consumer, { scrubNpmCredentials: true }); requireGreen(restore, 'restore navigation');
       await json(path.join(output, 'bite-restore-build.json'), restore);
-      const green = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url));
+      const green = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews));
       assert.equal(green.length, green.some((row) => row.name === 'billing-edit-values') ? 9 : 7); assert.ok(green.every((row) => row.status === 'passed'));
-      const unaffected = await withStaticServer(path.join(consumers.get('vue')!, 'dist'), (url) => observeFlow(page, url));
+      const unaffected = await withStaticServer(path.join(consumers.get('vue')!, 'dist'), (url) => observeFlow(page, url, requireBillingViews));
       assert.equal(unaffected.length, unaffected.some((row) => row.name === 'billing-edit-values') ? 9 : 7); assert.ok(unaffected.every((row) => row.status === 'passed'));
       await json(path.join(output, 'navigation-bite.json'), { framework: 'react', source: 'src/application.ts', beforeHash: digest(original), afterHash: digest(mutated), restoredHash: digest(await fs.readFile(file)), red, restored: green, unaffectedFramework: 'vue', unaffected });
       await page.close();
     }
-    const report = { mission, sourceHead: commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim(), builderSelfCertified: false, cells, stateObservations: allStates, screenshots: allScreenshots };
+    const cellReports = await Promise.all(cells.map(async (cell) => ({ framework: cell.framework, report: `${cell.framework}/receipt.json`, sha256: digest(await fs.readFile(path.join(output, `${cell.framework}/receipt.json`))) })));
+    const report = { mission, cellReports, sourceHead: commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim(), builderSelfCertified: false, cells, stateObservations: allStates, screenshots: allScreenshots };
     await json(path.join(output, 'report.json'), report);
     return report;
   } finally { await browser.close(); }

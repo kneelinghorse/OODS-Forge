@@ -670,7 +670,8 @@ function applyPatternGroupWrappers(
         : undefined
     );
 
-    if (slotName && patternGroups[slotName]) {
+    // A trait recipe already owns this slot; generic grouping must not erase it.
+    if (slotName && patternGroups[slotName] && !isTraitRecipe(el.component)) {
       const pattern = patternGroups[slotName];
 
       const fieldChildren: UiElement[] = pattern.matchedFields

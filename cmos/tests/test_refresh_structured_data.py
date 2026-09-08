@@ -106,6 +106,36 @@ class RefreshStructuredDataTest(unittest.TestCase):
         self.assertEqual(projected["BillingAmountInput"]["surfaces"]["vue"], baseline["BillingAmountInput"]["surfaces"]["vue"])
         self.assertEqual(projected["BillingAmountInput"]["surfaces"]["html"]["state"], "fallback")
 
+    def test_lazy_payment_mount_requires_a_passing_hash_bound_application_receipt(self) -> None:
+        from scripts import refresh_structured_data as refresh
+        original = refresh.load_json
+        baseline = {row["id"]: row for row in json.loads(COMPONENT_CAPABILITY_PATH.read_text())["rows"]}
+        projected = project_trait_recipe_surfaces(baseline)
+        surface = projected["PaymentTimeline"]["surfaces"]["generatedConsumer"]
+        self.assertEqual(surface["state"], "implemented-evidence-complete")
+        self.assertTrue(any("app-consumers-final/react/receipt.json" in ref for ref in surface["evidence"]))
+        def failed_app(path):
+            document = original(path)
+            if str(path).endswith("app-consumers-final/react/receipt.json"):
+                document["gates"][-1]["status"] = "failed"
+            return document
+        with patch("scripts.refresh_structured_data.load_json", side_effect=failed_app):
+            rejected = project_trait_recipe_surfaces(baseline)
+        self.assertEqual(rejected["PaymentTimeline"]["surfaces"]["generatedConsumer"], baseline["PaymentTimeline"]["surfaces"]["generatedConsumer"])
+
+    def test_recipe_application_hash_mismatch_fails_loudly(self) -> None:
+        from scripts import refresh_structured_data as refresh
+        original = refresh.load_json
+        def wrong_hash(path):
+            document = original(path)
+            if str(path).endswith("app-consumers-final/report.json"):
+                document["cellReports"][0]["sha256"] = "0" * 64
+            return document
+        baseline = {row["id"]: row for row in json.loads(COMPONENT_CAPABILITY_PATH.read_text())["rows"]}
+        with patch("scripts.refresh_structured_data.load_json", side_effect=wrong_hash):
+            with self.assertRaisesRegex(ValueError, "Recipe application evidence hash mismatch"):
+                project_trait_recipe_surfaces(baseline)
+
     def test_current_scope_retains_obligations_without_approving_historical_exclusions(self) -> None:
         scope = self.components_payload["obligationScope"]
         self.assertEqual(scope["decisionId"], 1788)

@@ -1,0 +1,172 @@
+{
+  "baselineHead": "8561d83c",
+  "decision": 1825,
+  "schemas": 66,
+  "generatedCells": 132,
+  "unchanged": 61,
+  "placements": [
+    {
+      "object": "Subscription",
+      "context": "detail",
+      "trait": "financial/Billable",
+      "component": "CycleProgressCard",
+      "nodeId": "slot-tab-0-4",
+      "parameters": {},
+      "props": {
+        "progressField": "current_period_progress",
+        "periodStartField": "current_period_start",
+        "periodEndField": "current_period_end",
+        "intervalField": "billing_interval"
+      }
+    },
+    {
+      "object": "Subscription",
+      "context": "detail",
+      "trait": "financial/Billable",
+      "component": "PaymentTimeline",
+      "nodeId": "slot-tab-1-6",
+      "parameters": {},
+      "props": {
+        "lastPaymentField": "last_payment_at",
+        "nextPaymentField": "next_payment_due_at",
+        "paymentStatusField": "payment_status",
+        "paymentMethodField": "payment_method_type",
+        "amountField": "amount",
+        "currencyField": "currency"
+      }
+    },
+    {
+      "object": "Subscription",
+      "context": "list",
+      "trait": "lifecycle/Archivable",
+      "component": "ArchivedRowOverlay",
+      "nodeId": "ve-items-13",
+      "parameters": {},
+      "props": {
+        "archivedField": "is_archived",
+        "style": "grayed",
+        "showBadge": true,
+        "separateTab": true,
+        "tabLabel": "Archived"
+      }
+    },
+    {
+      "object": "Subscription",
+      "context": "timeline",
+      "trait": "financial/Billable",
+      "component": "PaymentEventTimeline",
+      "nodeId": "slot-entry-0-4",
+      "parameters": {},
+      "props": {
+        "lastPaymentField": "last_payment_at",
+        "nextPaymentField": "next_payment_due_at",
+        "paymentStatusField": "payment_status",
+        "amountField": "amount",
+        "currencyField": "currency"
+      }
+    },
+    {
+      "object": "Subscription",
+      "context": "card",
+      "trait": "financial/Billable",
+      "component": "BillingCardMeta",
+      "nodeId": "slot-footer-6",
+      "parameters": {
+        "minorUnitsParameter": "minorUnits",
+        "minorUnits": 100
+      },
+      "props": {
+        "amountField": "amount",
+        "currencyField": "currency",
+        "intervalField": "billing_interval",
+        "minorUnitsParameter": "minorUnits",
+        "minorUnits": 100
+      }
+    },
+    {
+      "object": "Transaction",
+      "context": "list",
+      "trait": "lifecycle/Archivable",
+      "component": "ArchivedRowOverlay",
+      "nodeId": "ve-items-13",
+      "parameters": {},
+      "props": {
+        "archivedField": "is_archived",
+        "style": "grayed",
+        "showBadge": true,
+        "separateTab": true,
+        "tabLabel": "Archived"
+      }
+    }
+  ],
+  "workflow": {
+    "generatedCells": 2,
+    "exactExpectedDiff": true,
+    "placements": [
+      {
+        "object": "Subscription",
+        "context": "workflow",
+        "trait": "financial/Billable",
+        "component": "CycleProgressCard",
+        "nodeId": "detail-slot-tab-0-4",
+        "parameters": {},
+        "props": {
+          "progressField": "current_period_progress",
+          "periodStartField": "current_period_start",
+          "periodEndField": "current_period_end",
+          "intervalField": "billing_interval"
+        },
+        "sourceContext": "detail"
+      },
+      {
+        "object": "Subscription",
+        "context": "workflow",
+        "trait": "financial/Billable",
+        "component": "PaymentTimeline",
+        "nodeId": "detail-slot-tab-1-6",
+        "parameters": {},
+        "props": {
+          "lastPaymentField": "last_payment_at",
+          "nextPaymentField": "next_payment_due_at",
+          "paymentStatusField": "payment_status",
+          "paymentMethodField": "payment_method_type",
+          "amountField": "amount",
+          "currencyField": "currency"
+        },
+        "sourceContext": "detail"
+      },
+      {
+        "object": "Subscription",
+        "context": "workflow",
+        "trait": "lifecycle/Archivable",
+        "component": "ArchivedRowOverlay",
+        "nodeId": "list-ve-items-13",
+        "parameters": {},
+        "props": {
+          "archivedField": "is_archived",
+          "style": "grayed",
+          "showBadge": true,
+          "separateTab": true,
+          "tabLabel": "Archived"
+        },
+        "sourceContext": "list"
+      },
+      {
+        "object": "Subscription",
+        "context": "workflow",
+        "trait": "financial/Billable",
+        "component": "PaymentEventTimeline",
+        "nodeId": "timeline-slot-entry-0-4",
+        "parameters": {},
+        "props": {
+          "lastPaymentField": "last_payment_at",
+          "nextPaymentField": "next_payment_due_at",
+          "paymentStatusField": "payment_status",
+          "amountField": "amount",
+          "currencyField": "currency"
+        },
+        "sourceContext": "timeline"
+      }
+    ]
+  }
+}
