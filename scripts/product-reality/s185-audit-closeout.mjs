@@ -33,11 +33,13 @@ const publicScope187 = [...publicScope186,
   'cmos/scripts/refresh_structured_data.py', 'cmos/planning/component-schema.json',
   'cmos/planning/oods-components.json', 'cmos/planning/oods-tokens.json',
   'artifacts/structured-data', 'docs/mcp/Tool-Specs.md', 'docs/mcp/Structured-Data-Refresh.md', 'docs/api/catalog-list.md', 'docs/how-forge-works.html'];
+const publicScope188 = [...publicScope187, 'packages/mcp-bridge/src', 'packages/mcp-bridge/package.json',
+  'packages/mcp-server/package.json', 'scripts/build-revision.mjs', 'cmos/foundational-docs/roadmap/near.md'];
 const testPath = file => /(^|\/)(?:__tests__|test|tests)\//.test(file) || /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file);
 
 export function auditPublicRuntimeBytes({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {
   assert(fullHead(implementationHead) && fullHead(executionHead));
-  const scope = sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
+  const scope = sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
   execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
   const scopedChangedPaths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', `${implementationHead}..${executionHead}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
     .split('\0').filter(Boolean).sort();
@@ -52,7 +54,7 @@ export function auditSprintRange({ root, base, head, sprintId = 'sprint-186' }) 
   const canonical = ['configs/agent/policy.json', 'docs/api', 'packages/mcp-adapter/tool-descriptions.json',
     'packages/mcp-server/src/schemas', 'packages/mcp-server/src/schemas/generated.ts',
     'packages/mcp-server/src/security/policy.json', 'packages/mcp-server/src/tools/registry.json'];
-  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
+  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
 }
 const sourceKeys = [
   ['baselineFold'], ['movers'], ['movers', 'noticePlan', 'deliveries'],
@@ -62,19 +64,23 @@ const sourceKeys = [
 
 export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath = defaultManifest }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Audit requires actual full execution and review SHAs.');
+  const workflow = manifestPath.startsWith('artifacts/product-reality/sprint-188/m06/');
   const fresh = manifestPath.startsWith('artifacts/product-reality/sprint-187/m06/');
   const wave2 = manifestPath.startsWith('artifacts/product-reality/sprint-186/m06/');
-  const missionId = fresh ? 's187-m06' : wave2 ? 's186-m06' : 's185-m05';
-  const sprintId = fresh ? 'sprint-187' : wave2 ? 'sprint-186' : 'sprint-185';
-  const criterionCount = fresh ? 7 : wave2 ? 6 : 8;
-  const suiteCriterion = fresh ? 5 : wave2 ? 4 : 6;
-  const outputPrefix = fresh ? 'artifacts/product-reality/sprint-187/m06/closeout' : wave2 ? 'artifacts/product-reality/sprint-186/m06/closeout' : prefix;
-  const requiredSourceKeys = fresh ? [['freshCensus'], ['cohort', 'liveConsumers'], ['savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['rootEvidence', 'baselineFold'], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
+  const missionId = workflow ? 's188-m06' : fresh ? 's187-m06' : wave2 ? 's186-m06' : 's185-m05';
+  const sprintId = workflow ? 'sprint-188' : fresh ? 'sprint-187' : wave2 ? 'sprint-186' : 'sprint-185';
+  const criterionCount = workflow ? 6 : fresh ? 7 : wave2 ? 6 : 8;
+  const suiteCriterion = workflow ? 2 : fresh ? 5 : wave2 ? 4 : 6;
+  const outputPrefix = workflow ? 'artifacts/product-reality/sprint-188/m06/closeout' : fresh ? 'artifacts/product-reality/sprint-187/m06/closeout' : wave2 ? 'artifacts/product-reality/sprint-186/m06/closeout' : prefix;
+  const requiredSourceKeys = workflow ? [['freshCensus', 'savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['liveConsumers'], [], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries'], ['missionHistory', 'historicalEvidence', 'prose', 'near'], ['cmosMission', 'cmosSprint', 'carries', 'noticePlan']] : fresh ? [['freshCensus'], ['cohort', 'liveConsumers'], ['savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['rootEvidence', 'baselineFold'], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
     ['movers', 'noticePlan', 'deliveries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : sourceKeys;
   assert.equal(gitEvidence?.ancestor, true, 'Review head must descend from the actual execution head.');
   // Decision 1741 allows new capture records, not rewritten fixtures or code.
   for (const change of gitEvidence.changes) {
-    const allowed = fresh
+    const allowed = workflow
+      ? /^artifacts\/product-reality\/sprint-188\/m06\/four-suite-closeout\/(?:run-\d+\/(?:viz-core|viz-render|mcp-server|root-core)\.(?:json|vitest\.json|log)|setup\/[\w-]+\.log|four-suite-baseline\.json|accounting\.json|attributions\.json|failure-dispositions\.json)$/.test(change.path)
+        || /^artifacts\/product-reality\/sprint-188\/m06\/closeout\/(?:claim-ledger|review-handoff|evidence-index)\.json$/.test(change.path)
+      : fresh
       ? /^artifacts\/product-reality\/sprint-187\/m06\/four-suite-closeout(?:-attempt-[\w-]+)?\/(?:run-\d+\/(?:viz-core|viz-render|mcp-server|root-core)\.(?:json|vitest\.json|log)|setup\/[\w-]+\.log|four-suite-baseline\.json|accounting\.json|attributions\.json|failure-dispositions\.json)$/.test(change.path)
         || /^artifacts\/product-reality\/sprint-187\/m06\/closeout\/(?:claim-ledger|review-handoff|evidence-index)\.json$/.test(change.path)
       : wave2
@@ -124,7 +130,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
   if (implementationHead !== executionHead) {
     assert.equal(publicGitEvidence?.implementationHead, implementationHead);
     assert.equal(publicGitEvidence.executionHead, executionHead); assert.equal(publicGitEvidence.ancestor, true);
-    assert.equal(publicGitEvidence.excludeTests, true); assert.deepEqual(publicGitEvidence.scope, fresh ? publicScope187 : wave2 ? publicScope186 : publicScope);
+    assert.equal(publicGitEvidence.excludeTests, true); assert.deepEqual(publicGitEvidence.scope, workflow ? publicScope188 : fresh ? publicScope187 : wave2 ? publicScope186 : publicScope);
     assert.deepEqual(publicGitEvidence.excludedTestPaths, publicGitEvidence.scopedChangedPaths.filter(testPath));
     assert.deepEqual(publicGitEvidence.changedPaths, publicGitEvidence.scopedChangedPaths.filter(file => !testPath(file)));
     assert.deepEqual(publicGitEvidence.changedPaths, [], 'Advertised public runtime bytes changed after the notice implementation head.');
@@ -205,7 +211,89 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     && row.measuredHead === executionHead && row.cleanBefore === true && row.cleanAfter === true), 'Capture contains an unrelated, unclean or relabeled execution.');
   assert.deepEqual(captureRows.map(row => row.suite).sort(), ['mcp-server', 'root-core', 'viz-core', 'viz-render']);
 
-  if (fresh) {
+  if (workflow) {
+    const census = parseFrozen(manifest.sources.freshCensus);
+    const expectedObjects = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'];
+    const expectedContexts = ['card', 'detail', 'form', 'inline', 'list', 'timeline'];
+    assert.equal(census.head, implementationHead); assert.equal(census.profile, 'build');
+    assert.deepEqual(census.objects, expectedObjects); assert.deepEqual([...census.contexts].sort(), expectedContexts);
+    assert.equal(census.rows.length, 66); assert.equal(census.schemaCount, 66); assert.equal(census.greenSchemas, 66);
+    assert.equal(census.generationCells, 132); assert.equal(census.greenCells, 132);
+    assert.deepEqual(census.rows.map(row => `${row.input.object}/${row.input.context}`).sort(), expectedObjects.flatMap(object => expectedContexts.map(context => `${object}/${context}`)).sort());
+    const required = { list: ['BillingSummaryBadge', 'ArchivedRowOverlay'], form: ['BillingAmountInput', 'BillingIntervalSelector'],
+      detail: ['CycleProgressCard', 'PaymentTimeline'], timeline: ['PaymentEventTimeline'], card: ['BillingCardMeta'] };
+    assert.deepEqual(census.workflow.input, { object: 'Subscription', context: 'workflow' });
+    for (const row of [...census.rows, census.workflow]) {
+      const composed = JSON.parse(reference(row.composition).bytes.toString('utf8'));
+      assert.equal(composed.status, 'ok'); assert.equal(row.green, true);
+      const ids = new Set(); const walk = node => { ids.add(node.component); node.children?.forEach(walk); };
+      composed.schema.screens.forEach(walk);
+      assert.deepEqual([...ids].sort(), row.components);
+      if (row.input.object === 'Subscription') for (const id of required[row.input.context] ?? []) assert(ids.has(id));
+      assert.deepEqual(row.cells.map(cell => cell.framework).sort(), ['react', 'vue']);
+      for (const cell of row.cells) {
+        const generated = JSON.parse(reference(cell.response).bytes.toString('utf8'));
+        assert.equal(generated.status, 'ok'); assert(generated.artifact); assert(!generated.errors?.length);
+        for (const file of generated.artifact.files) assert.equal(bare(file.contentHash), digest(file.contents));
+      }
+    }
+    const adoption = parseFrozen('artifacts/product-reality/sprint-188/m01/adoption.json');
+    const historical = parseFrozen('artifacts/product-reality/sprint-186/m05/reachability/report.json');
+    const originalStore = parseFrozen(manifest.sources.savedOriginal); const successor = parseFrozen(manifest.sources.savedSuccessor);
+    const hashes = report => Object.fromEntries(report.rows.map(row => [row.schema + '.json', row.input.sha256]));
+    assert.deepEqual(hashes(originalStore), hashes(historical));
+    assert.deepEqual(hashes(successor), Object.fromEntries(Object.entries(adoption.after).filter(([file]) => file !== '_index.json')));
+    for (const [report, source, reachable, cells] of [[originalStore, manifest.sources.savedOriginal, 15, 30], [successor, manifest.sources.savedSuccessor, 16, 32]]) {
+      assert.equal(report.head, implementationHead); assert.equal(report.total, 16); assert.equal(report.reachable, reachable); assert.equal(report.generatedCells, cells);
+      let passing = 0;
+      for (const row of report.rows) {
+        reference(row.input);
+        const results = row.cells.map(cell => JSON.parse(reference({ path: `${path.posix.dirname(source)}/${cell.response.path}`, sha256: cell.response.sha256 }).bytes.toString('utf8')));
+        const green = results.every(result => result.status === 'ok' && result.artifact);
+        assert.equal(row.reachable, green); if (green) passing++;
+        else { assert.equal(row.schema, 'user-form-showcase'); assert(results.every(result => result.errors.some(error => error.code === 'OODS-N015'))); }
+      }
+      assert.equal(passing, reachable);
+    }
+    const compatibility = parseFrozen(manifest.sources.savedCompatibility);
+    assert(compatibility.originalInputsUnchanged && compatibility.successorInputsUnchanged && compatibility.liveStoreUnchanged);
+    assert.deepEqual(compatibility.liveStore.hashes, adoption.after);
+    const app = parseFrozen(manifest.sources.liveConsumers); const appRoot = path.posix.dirname(manifest.sources.liveConsumers);
+    assert.equal(app.sourceHead, implementationHead); assert.deepEqual(app.cells.map(cell => cell.framework).sort(), ['react', 'vue']);
+    for (const cell of app.cells) {
+      assert.equal(cell.gates.length, 8); assert(cell.gates.every(gate => gate.status === 'passed'));
+      assert.equal(cell.flow.length, 9); assert(cell.flow.every(row => row.status === 'passed'));
+      assert.equal(cell.consumerAuthoredComponents, 0); assert.equal(cell.consumerAuthoredActions, 0);
+      const cellRef = app.cellReports.find(ref => ref.framework === cell.framework);
+      assert.deepEqual(JSON.parse(reference({path: `${appRoot}/${cellRef.report}`, sha256: cellRef.sha256}).bytes.toString('utf8')), cell);
+      const archive = cell.flow.find(row => row.name === 'ten-sample-records').detail;
+      assert.equal(archive.active.length, 9); assert.equal(archive.archived.length, 1); assert.equal(archive.archivePresentation.opacity, '0.6');
+      const detail = cell.flow.find(row => row.name === 'detail-navigation').detail;
+      for (const id of ['CycleProgressCard', 'PaymentTimeline']) assert(detail.mounts.some(row => row.component === id && row.present && row.passed));
+      assert(cell.flow.find(row => row.name === 'timeline-navigation-and-history').detail.mounts.some(row => row.component === 'PaymentEventTimeline' && row.present));
+      const owned = parseFrozen(`${appRoot}/${cell.framework}/source-ownership.json`);
+      assert.equal(owned.generatedFilesUnchanged, true); assert(owned.files.every(row => row.actual === row.expected));
+    }
+    const states = ['loading', 'empty', 'error', 'success']; const contexts = ['list', 'detail', 'form', 'timeline'];
+    assert.deepEqual(app.stateObservations.map(row => `${row.framework}/${row.screen}/${row.state}`).sort(), ['react', 'vue'].flatMap(target => contexts.flatMap(context => states.map(state => `${target}/${context}/${state}`))).sort());
+    assert.equal(app.screenshots.length, 36);
+    assert.deepEqual(app.screenshots.map(row => `${row.framework}/${row.screen}/${row.width}`).sort(), ['react', 'vue'].flatMap(target => [...contexts, 'archived', 'payments'].flatMap(context => [390, 820, 1440].map(width => `${target}/${context}/${width}`))).sort());
+    for (const image of app.screenshots) reference({path: `${appRoot}/${image.file}`, sha256: image.sha256});
+    const bite = parseFrozen(`${appRoot}/navigation-bite.json`);
+    assert.equal(bite.beforeHash, bite.restoredHash); assert.notEqual(bite.beforeHash, bite.afterHash);
+    assert.deepEqual(bite.red.filter(row => row.status === 'failed').map(row => row.name), ['detail-navigation']);
+    assert(bite.restored.length === 9 && bite.unaffected.length === 9 && [...bite.restored, ...bite.unaffected].every(row => row.status === 'passed'));
+    const movers = parseFrozen(manifest.sources.movers); const declared = parseFrozen(manifest.sources.moversDeclaration);
+    assert.equal(rangeGitEvidence.base, 'cd8ee986db40e73a3fb9a9f1ec7b7db6de9ca076'); assert.equal(rangeGitEvidence.head, implementationHead);
+    for (const key of ['canonicalPaths', 'publicPaths']) { assert.deepEqual(movers.s188[key], rangeGitEvidence[key]); assert.deepEqual(declared.s188[key], rangeGitEvidence[key]); }
+    const plan = parseFrozen(manifest.sources.noticePlan);
+    assert.equal(plan.status, 'prepared-unsent'); assert.equal(plan.deliverySprint, 'sprint-189'); assert.equal(plan.implementationHead, implementationHead);
+    assert.deepEqual(parseFrozen(manifest.sources.deliveries), []); assert(rangeGitEvidence.publicPaths.every(file => plan.draft.includes(file)));
+    const prose = parseFrozen(manifest.sources.prose); assert(prose.success); assert.equal(prose.numFailedTests, 0); assert.equal(prose.numPendingTests, 0);
+    assert(prose.testResults.length > 0 && prose.testResults.every(row => /tests\/verification\/.*\.contract\.test\.ts$/.test(row.name)));
+    assert(frozen(manifest.sources.near).bytes.toString('utf8').includes('BUILT, REVIEW PENDING'));
+    assert.equal(handoff.implementationHead, implementationHead); reference(handoff.craft); reference(handoff.carries);
+  } else if (fresh) {
     const lockedBase = '21c7c31906fbb81d049b943155c64ed78409fb9f';
     const expected = ['User/detail', 'Product/detail', 'Usage/list', 'Subscription/inline', 'Transaction/timeline', 'Product/list', 'Product/form', 'Product/inline',
       'Organization/list', 'Organization/detail', 'Organization/card', 'Subscription/detail', 'Subscription/form', 'Subscription/card'];
@@ -450,8 +538,8 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
       assert.equal(sent[0].requestSha256, notice.requestSha256);
     }
   }
-  if (wave2 || fresh) {
-    const baselineKey = fresh ? 'sprint186Closeout' : 'sprint185Closeout';
+  if (wave2 || fresh || workflow) {
+    const baselineKey = workflow ? 'sprint187Closeout' : fresh ? 'sprint186Closeout' : 'sprint185Closeout';
     assert.deepEqual(Object.keys(accounting.baselines), [baselineKey]);
     const captures = { ...accounting.baselines, closeout: accounting.closeout };
     const populations = new Map();
@@ -474,6 +562,15 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
       }
       assert.deepEqual(execution.counts, counts, 'Accounting counts differ from actual raw assertion rows.');
       populations.set(execution.id, files);
+    }
+    if (workflow) {
+      for (const current of captureRows) {
+        assert.equal(current.counts.failed, 0); assert.equal(current.exitCode, 0);
+        const baseline = accounting.executions.find(row => row.cohort === 'sprint187Closeout' && row.suite === current.suite);
+        const skipped = execution => [...populations.get(execution.id)].flatMap(([file, row]) => [...row.assertions].filter(([, state]) => state === 'skipped').map(([name]) => `${file}:${name}`)).sort();
+        assert.deepEqual(skipped(current), skipped(baseline), 'A skipped test identity changed.');
+        assert.equal(skipped(current).length, ['mcp-server', 'root-core'].includes(current.suite) ? 16 : 0);
+      }
     }
     for (const comparison of accounting.comparisons) {
       const before = populations.get(comparison.beforeExecutionId); const after = populations.get(comparison.afterExecutionId);
@@ -522,11 +619,52 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     assert.equal(claim.status, 'passed', 'Claim remains unproven.'); assert.deepEqual(claim.unproven, []);
     assert(claim.observations.length > 0 && claim.observations.every(row => row.passed === true), 'Claim ignores an unmet measured predicate.');
   }
+  let checkedSprintCriteria = criterionCount;
+  if (workflow) {
+    const history = parseFrozen(manifest.sources.missionHistory);
+    const past = history.missions.filter(row => row.id !== missionId);
+    const expected = past.flatMap(row => row.successCriteria.map((criterion, criterionIndex) => ({ missionId: row.id, criterion, criterionIndex })));
+    assert.equal(expected.length, 33); assert.equal(ledger.priorClaims.length, expected.length);
+    assert.equal(ledger.boundSprintCriteria, 39); assert.equal(handoff.boundSprintCriteria, 39);
+    const retained = parseFrozen(manifest.sources.historicalEvidence);
+    assert.equal(retained.status, 'passed'); assert.equal(retained.boundCriteria, 33); assert.equal(retained.replayedExternalActions, 0);
+    for (const ref of retained.references) {
+      reference(ref);
+      if (ref.missionHead) assert.equal(digest(Buffer.from(readHistorical(ref.missionHead, ref.path))), bare(ref.sha256), 'Prior execution evidence changed since its mission close.');
+    }
+    const evidencePlan = parseFrozen('artifacts/product-reality/sprint-188/m06/retained-evidence-plan.json');
+    assert.equal(evidencePlan.bindings.length, 33);
+    const sends = parseFrozen('artifacts/product-reality/sprint-188/m01/reconnect-sent.json');
+    assert.deepEqual(sends.map(row => row.targetAddress).sort(), ['cmos://derek/aquex-mcp', 'cmos://derek/forge-demos']);
+    assert.equal(new Set(sends.map(row => row.result.structuredContent.data.messageId)).size, 2);
+    assert(sends.every(row => row.result.structuredContent.success));
+    for (const [mission, count] of [['m04', 9], ['m05', 13]]) {
+      const parity = parseFrozen(`artifacts/product-reality/sprint-188/${mission}/parity.json`);
+      assert.deepEqual(parity.allowlist, []); assert.equal(parity.receipts.length, count);
+      assert(parity.receipts.every(row => row.differences.length === 0));
+      const mutations = parseFrozen(`artifacts/product-reality/sprint-188/${mission}/export-bites/mutation-manifest.json`);
+      assert.equal(mutations.mutants.length, mission === 'm04' ? 6 : 10);
+      assert(mutations.mutants.every(row => row.status === 'passed' && row.restoredByteIdentically && row.sourceSha256Before !== row.sourceSha256Deleted));
+    }
+    for (const row of expected) {
+      const claim = ledger.priorClaims.find(claim => claim.missionId === row.missionId && claim.criterionIndex === row.criterionIndex);
+      assert(claim); assert.equal(claim.criterion, row.criterion); assert.equal(claim.status, 'evidence-bound');
+      const binding = manifest.priorClaimBindings.find(binding => binding.missionId === row.missionId && binding.criterionIndex === row.criterionIndex);
+      assert.deepEqual(claim.executionIds, binding.executionIds); assert.deepEqual(claim.evidence.map(ref => ref.path), binding.evidencePaths);
+      for (const ref of claim.evidence) reference(ref);
+      assert(binding.evidencePaths.includes(manifest.sources.historicalEvidence));
+      const planned = evidencePlan.bindings.find(binding => binding.missionId === row.missionId && binding.criterionIndex === row.criterionIndex);
+      assert(planned && planned.evidencePaths.every(file => binding.evidencePaths.includes(file)), 'Historical criterion dropped its retained execution evidence.');
+      assert(claim.executionIds.some(id => { const execution = executions.get(id); return execution && execution.exitCode === 0
+        && execution.inputs.some(ref => binding.evidencePaths.includes(ref.path)) && execution.logs.some(ref => binding.evidencePaths.includes(ref.path)); }));
+    }
+    checkedSprintCriteria += expected.length;
+  }
   assert.deepEqual(ledger.headline, { total: criterionCount, proven: criterionCount, unproven: 0 }); assert.deepEqual(ledger.unproven, []);
   assert.equal(ledger.status, 'ready-for-independent-review');
   return { schemaVersion: '1.0.0', status: 'passed', executionHead, reviewHead,
     ledgerSha256: digest(outputBytes.get('claim-ledger')), accountingSha256: digest(outputBytes.get('suite-accounting')),
-    checkedCriteria: criterionCount, checkedExecutions: executions.size, checkedFrozenPaths: checked.size, gitEvidence,
+    checkedCriteria: checkedSprintCriteria, checkedExecutions: executions.size, checkedFrozenPaths: checked.size, gitEvidence,
     publicHeadEquivalence: implementationHead === executionHead ? { implementationHead, executionHead, identicalHead: true } : publicGitEvidence,
     auditedInputs: [...checked.values()].map(({ path: file, sha256 }) => ({ path: file, sha256 })).sort((a, b) => a.path.localeCompare(b.path)),
     builderSelfCertified: false, separateReviewRequired: true,
@@ -551,8 +689,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const manifest = JSON.parse(readFrozen(manifestPath));
     const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan)).implementationHead;
     const publicGitEvidence = auditPublicRuntimeBytes({ root, implementationHead, executionHead,
-      sprintId: manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
-    const rangeGitEvidence = manifest.missionId === 's187-m06'
+      sprintId: manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
+    const rangeGitEvidence = manifest.missionId === 's188-m06'
+      ? auditSprintRange({ root, base: 'cd8ee986db40e73a3fb9a9f1ec7b7db6de9ca076', head: implementationHead, sprintId: 'sprint-188' }) : manifest.missionId === 's187-m06'
       ? auditSprintRange({ root, base: '21c7c31906fbb81d049b943155c64ed78409fb9f', head: implementationHead, sprintId: 'sprint-187' }) : manifest.missionId === 's186-m06'
       ? auditSprintRange({ root, base: '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2', head: implementationHead }) : undefined;
     const report = auditFinalCloseout({ executionHead, reviewHead,

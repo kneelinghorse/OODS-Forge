@@ -1,0 +1,69 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server
+
+ ✓ test/product-reality/fresh-composition.s187.spec.ts (29 tests) 5943ms
+   ✓ Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated react  2450ms
+   ✓ Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated vue  3078ms
+ ❯ test/contracts/catalog.list.spec.ts (30 tests | 1 failed) 998ms
+   ✓ catalog.list > validates schema contracts 39ms
+   ✓ catalog.list > should return component catalog 3ms
+   ✓ catalog.list > B-02 derives the catalog count from unique row IDs instead of stale stats 3ms
+   ✓ catalog.list > exposes accepted retain-109 scope without turning historical proposals into exclusions 7ms
+   × catalog.list > keeps HTML-stable discovery distinct from actual target readiness and unverified maturity 20ms
+     → expected false to be true // Object.is equality
+   ✓ catalog.list > passes additive target-specific product reality through summary output 3ms
+   ✓ catalog.list > should default to summary mode with pagination for unfiltered calls 3ms
+   ✓ catalog.list > should allow explicit full detail without default pagination 112ms
+   ✓ catalog.list > should paginate when page/pageSize are provided 5ms
+   ✓ catalog.list > should include component properties 3ms
+   ✓ catalog.list > should filter by category 82ms
+   ✓ catalog.list > includes filteredCount in stats when filters are active 75ms
+   ✓ catalog.list > should filter by trait 77ms
+   ✓ catalog.list > suggests traits when a trait filter returns zero results 76ms
+   ✓ catalog.list > should filter by context 79ms
+   ✓ catalog.list > should return totalCount matching filtered results 72ms
+   ✓ catalog.list > deduplicates trait names per component 75ms
+   ✓ catalog.list > should include propSchema for components with traits 3ms
+   ✓ catalog.list > should have valid structure for propSchema entries 3ms
+   ✓ catalog.list > surfaces real content props in propSchema for primitive components (Workbench signal) 3ms
+   ✓ catalog.list > advertised primitive content props actually render (parity guard vs renderer drift) 1ms
+   ✓ catalog.list > should have valid structure for slots 3ms
+   ✓ catalog.list > indexes only explicit Storybook parameters.oodsComponentId(s) 1ms
+   ✓ catalog.list > should prefer code-connect snippets when available 3ms
+   ✓ catalog.list > every component has a non-empty status field 3ms
+   ✓ catalog.list > documents legacy status as static HTML-renderer-only 0ms
+   ✓ catalog.list > filters by status=stable 74ms
+   ✓ catalog.list > keeps the legacy status census scoped to the 106 mapped / 3 fallback HTML surface after eight declared recipe implementations 163ms
+   ✓ catalog.list > all 4 Communicable components have stable status 3ms
+   ✓ catalog.list > status filter validates in input schema 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/catalog.list.spec.ts > catalog.list > keeps HTML-stable discovery distinct from actual target readiness and unverified maturity
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/contracts/catalog.list.spec.ts:136:81
+    134|     }
+    135|     const planned = await handle({ status: 'planned', detail: 'summary…
+    136|     expect(planned.components.some((row) => row.name === 'BillingAmoun…
+       |                                                                                 ^
+    137|     expect(stable.components.some((row) => row.name === 'BillingAmount…
+    138|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 58 passed (59)
+   Start at  11:38:16
+   Duration  8.90s (transform 534ms, setup 18ms, collect 1.54s, tests 6.94s, environment 0ms, prepare 168ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/catalog.list.spec.ts test/product-reality/fresh-composition.s187.spec.ts

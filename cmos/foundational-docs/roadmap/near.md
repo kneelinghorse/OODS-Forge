@@ -1,10 +1,10 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 locked by `#1815`
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 BUILT, REVIEW PENDING under `#1815`, `#1817`, `#1822`, `#1825`
 
-**Updated:** 2026-09-07 — review session `PS-2026-09-07-002`
+**Updated:** 2026-09-08 — Sprint 188 build session `PS-2026-09-08-008`; independent review pending
 
-**Sprint 188:** locked 2026-09-07 by planning session `PS-2026-09-08-001` (decisions `#1814`, `#1815`); build base `cd8ee986` (`OODS-pro` after PR #84 and PR #85 merged 2026-09-08 UTC). See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--locked-ready-for-build).
+**Sprint 188:** BUILT, REVIEW PENDING. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 freezes the final proof and hands off for independent review. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--built-review-pending).
 
 **PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`.
 
@@ -170,29 +170,15 @@ workflow** and **current visualization public-render closure**. Neither is autom
 locked here. The green 66-schema generation matrix does not prove navigation, edit/cancel, state
 transitions, responsive craft, remaining catalog breadth, or chart pixels.
 
-## Increment 7 — Sprint 188: Ship, then make the Subscription app whole — LOCKED, READY FOR BUILD
+## Increment 7 — Sprint 188: Ship, then make the Subscription app whole — BUILT, REVIEW PENDING
 
-**LOCKED** by decision `#1815` after Derek chose the direction (`#1814`) from three options on 2026-09-07.
-The [decision memo](../../planning/forge-s188-subscription-workflow-decision-memo.md) is the build authority;
-six serial CMOS missions `s188-m01`–`s188-m06` exist, m01 Current. Build base `cd8ee986`, whose public bytes
-equal the certified Sprint 187 implementation; the [planning census](../../planning/forge-s188-planning-probe/README.md)
-reproduces 66/66 schemas and 132/132 cells there.
+The build follows decisions `#1814`/`#1815` and amendments `#1817`, `#1822` and `#1825`. The [decision memo](../../planning/forge-s188-subscription-workflow-decision-memo.md) and amended CMOS criteria control scope. The [M05 packet](../../../artifacts/product-reality/sprint-188/m05/README.md) records the component and application evidence; the [M06 handoff](../../../artifacts/product-reality/sprint-188/m06/README.md) records the final implementation, execution and evidence heads. **Sprint remains Active; builderSelfCertified:false; separateReviewRequired:true.**
 
-Two outcomes, in order. **Ship:** the served bridge still runs the primary checkout at `8ce34907`, which
-predates Sprints 183–187, so nothing certified since is reachable through it. m01 fast-forwards that checkout to
-`cd8ee986`, rebuilds, restarts PM2, proves the compiled revision by discriminating calls rather than health,
-resolves the served `schema/load` failure, adopts only the reviewed User-form successor with a hashed backup,
-and sends the one combined reconnect to aquex-mcp and forge-demos, closing #1374/#1379/#1384. **Make the
-Subscription app whole:** a seventh public composition context, `workflow`, assembles the fresh list, detail,
-form and timeline screens with routes, transitions and the Sprint 184 four-state branches; both emitters
-produce a runnable application (App root, generated navigation, typed in-memory store, deterministic sample
-data, loading/empty/error/success) that packed React and Vue consumers drive through
-list → detail → edit → save → cancel → timeline in a browser, with 32 state observations and 24 screenshots for
-the independent craft inspection. The eight Billable/Archivable rows the Subscription traits declare
-(BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector, CycleProgressCard, PaymentTimeline,
-PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay) are implemented from the trait declarations to
-the Sprint 185 bar; composition places them automatically because `design.compose` drops only rows whose
-HTML status is `planned`. Catalog truth for the 14 nucleus rows is corrected and `/health` gains a revision.
+**Delivered:** Mission 1 fast-forwarded the primary checkout to merged `cd8ee986`, rebuilt and restarted PM2, repaired served schema loading, and adopted only the authentic User-form successor with hashed backup/rollback. Seventeen HTTP probes and two retained N015 negatives verified the served result. The authorized combined reconnect was sent once to aquex-mcp and forge-demos. The new workflow implementation awaits the next reviewed delivery.
+
+**Built:** public `context:'workflow'` produces a runnable Subscription application in both frameworks: generated navigation, typed local store, ten deterministic records, edit/save/cancel/history, archive views and loading/empty/error/success on list/detail/form/timeline. The M05 proof passes 16 gates, 18 flow checks and 32 state observations with 36 screenshots at 390/820/1440, including payment and archived views. The final M06 proof repeats at its frozen implementation head.
+
+All eight declared rows are implemented: BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector, CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta and ArchivedRowOverlay. Composition uses three mechanisms keyed on the declared recipe set: resolved parameters, extension-only selection and placement preservation. Generic grouping and unplaced-extension behavior are regression-pinned. M04 and M05 census changes are exactly attributed against their prior heads; the current baseline is 66/66 schemas and 132/132 screen generation cells plus Subscription/workflow's two cells. Current catalog discovery restores the original 14 nucleus rows from independently approved foundation evidence; frozen baseline/intake/reconciliation records remain unchanged. `/health.revision` exposes the build commit and structured-data manifest hash from a build-time stamp.
 
 | Mission | Outcome |
 |---|---|
@@ -273,12 +259,13 @@ the primary checkout, whose unrelated dirty work was not reset or used as implem
 
 Sprint 187 is **Completed**, independently certified by review `PS-2026-09-07-002` and decision
 `#1809`. Historical builder receipts retain `builderSelfCertified:false`; they are not relabeled.
-Deployment #1374/#1379/#1384 remains pending;
-no shared PM2 restart, shared-store overwrite, publication or outbound reconnect occurred. Alias
-retirement and unverified maturity remain open. Maintenance #1315/#1318–#1322 remains named and
-unabsorbed before integrated public release. PR83 CI follow-up #1386 was resolved before this build;
+Delivery #1374/#1379/#1384 was completed by Sprint 188 m01 at merged `cd8ee986`, with the authorized
+PM2 restart, exact User-form adoption and combined reconnect. That delivery does not deploy Sprint 188's
+new workflow. Alias retirement and unverified maturity remain open. Maintenance #1315/#1318–#1322
+remains named and unabsorbed before integrated public release. PR83 CI follow-up #1386 was resolved;
 its ECharts soak skip remains disclosed.
 
-Sprint 188 `s188-m01` performs that delivery from the primary checkout as described in its memo; until it
-completes, the served bridge remains at `8ce34907` and every figure above describes the merged source, not
-the served process.
+The Sprint 189 delivery draft is retained unsent for the next reviewed and merged implementation.
+The independent review must inspect the new craft screenshots, including duplicate source/application
+controls, raw timestamps and narrow summary terms, the wrapped archive badge and surplus empty cards.
+Functional build evidence does not settle whether the application is usable.

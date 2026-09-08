@@ -122,7 +122,7 @@ describe('catalog.list', () => {
     for (const target of ['react', 'vue'] as const) {
       expect(governed.productReality?.surfaces[target].state).toBe('implemented-evidence-complete');
       expect(unavailable.productReality?.surfaces[target].state).toBe('unavailable');
-      for (const [component, expected] of [['ArchivePill', 'ok'], ['ArchiveEvent', 'error'], ['BillingAmountInput', 'error']] as const) {
+      for (const [component, expected] of [['ArchivePill', 'ok'], ['ArchiveEvent', 'error'], ['BillingAmountInput', 'ok']] as const) {
         const result = await generate({ framework: target, profile: 'build', schema: { version: '1.0.0', screens: [{ id: 'discovery-probe', component }] } });
         expect(result.status, JSON.stringify(result.errors)).toBe(expected);
         if (expected === 'error') expect(result.errors).toEqual([expect.objectContaining({ code: 'OODS-N015', component, message: expect.stringContaining('evidence state: unavailable') })]);
@@ -133,8 +133,8 @@ describe('catalog.list', () => {
       expect(unavailable.productReality?.surfaces[surface].state).toBe('unverified');
     }
     const planned = await handle({ status: 'planned', detail: 'summary', pageSize: 200 });
-    expect(planned.components.some((row) => row.name === 'BillingAmountInput')).toBe(true);
-    expect(stable.components.some((row) => row.name === 'BillingAmountInput')).toBe(false);
+    expect(planned.components.some((row) => row.name === 'BillingAmountInput')).toBe(false);
+    expect(stable.components.some((row) => row.name === 'BillingAmountInput')).toBe(true);
   });
 
   it('passes additive target-specific product reality through summary output', async () => {
@@ -535,13 +535,13 @@ describe('catalog.list', () => {
     }
   });
 
-  it('keeps the legacy status census scoped to the 98 mapped / 11 fallback HTML surface', async () => {
+  it('keeps the legacy status census scoped to the 106 mapped / 3 fallback HTML surface after eight declared recipe implementations', async () => {
     const stable = await handle({ status: 'stable' });
     const planned = await handle({ status: 'planned' });
     const beta = await handle({ status: 'beta' });
 
-    expect(stable.totalCount).toBe(98);
-    expect(planned.totalCount).toBe(11);
+    expect(stable.totalCount).toBe(106);
+    expect(planned.totalCount).toBe(3);
     expect(beta.totalCount).toBe(0);
   });
 
