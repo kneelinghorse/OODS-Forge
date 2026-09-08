@@ -81,6 +81,18 @@ describe("Sprint 177 prose truth carriers", () => {
     expect(normalizedNear).toContain(
       "remote acceptance is determined by the checks on the corrected PR head",
     );
+
+    // Sprint 188 closes under its independent review (PS-2026-09-08-011);
+    // the workflow runs in both frameworks and usability is explicitly not certified.
+    expect(near).toContain(
+      "Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`",
+    );
+    expect(normalizedNear).toContain(
+      "Sprint 188 is **Completed**, independently certified by review `PS-2026-09-08-011` and decision `#1831`.",
+    );
+    expect(normalizedNear).toContain(
+      "so usable is not certified. The ranked carries are decision `#1832`",
+    );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
     );
