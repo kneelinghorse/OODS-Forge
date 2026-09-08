@@ -127,6 +127,21 @@ export function auditSprint188ApprovalChanges(changes, readHistorical, readCurre
   }
 }
 
+// This historical schema remains invalid for the five original scalar bindings.
+export function auditSprint188OriginalFormFailure(results) {
+  assert.equal(results.length, 2);
+  for (const [index, result] of results.entries()) {
+    const framework = ['react', 'vue'][index];
+    const expected = [['address_roles', 'array', 'Input', 'slot-field-3-13'],
+      ['preference_document', 'unknown', 'Input', 'slot-field-5-17'],
+      ['state_history', 'array', 'DatePicker', 'slot-field-6-19'],
+      ['tags', 'array', 'Input', 'slot-field-8-23'], ['tag_metadata', 'array', 'Input', 'slot-field-9-25']];
+    assert.equal(result.status, 'error'); assert(!result.artifact);
+    assert.deepEqual(result.errors, expected.map(([field, kind, component, nodeId]) => ({code: 'OODS-V007', nodeId, component,
+      message: `Field "${field}" has ${kind} data, which cannot bind to ${component}.value on the ${framework} target; accepted field kinds: string, number, boolean.`})));
+  }
+}
+
 export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath = defaultManifest }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Audit requires actual full execution and review SHAs.');
   const workflow = manifestPath.startsWith('artifacts/product-reality/sprint-188/m06/');
@@ -243,7 +258,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
   assert.equal(accounting.headRelation.ancestor, true);
   if (approvedTimeout) {
     assert.equal(accounting.headRelation.executableInputsUnchanged, false);
-    assert.equal(accounting.headRelation.testedInputsUnchanged, true); assert.equal(accounting.headRelation.postCaptureDerivationOnly, true);
+    assert.equal(accounting.headRelation.capturedRuntimeAndTestSourcesUnchanged, true); assert.equal(accounting.headRelation.postCaptureDerivationOnly, true);
     assert.equal(accounting.headRelation.proposalHead, '0f6891e3b4a8decb0626d49dbf6fa870bb712276');
     assert.deepEqual(accounting.headRelation.derivationFiles, auditDerivationFiles188);
     assert.deepEqual(accounting.headRelation.changedEvidencePaths, gitEvidence.changes);
@@ -278,7 +293,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
       const refs = actual[key] ?? [];
       assert.deepEqual((row[key] ?? []).map(ref => ({ path: ref.path, sha256: bare(ref.sha256) })), refs.map(ref => ({ path: ref.path, sha256: bare(ref.sha256) })), `Execution ${actual.id} has different ${key}.`);
       for (const ref of row[key] ?? []) {
-        if (ref.executionSourceHead !== undefined) { assert.equal(key, 'inputs'); assert.equal(ref.executionSourceHead, actual.executionHead); }
+        if (ref.executionSourceHead !== undefined) { assert.equal(key, 'inputs'); assert.equal(ref.executionSourceHead, actual.inputSourceHead ?? actual.executionHead); if (actual.inputSourceHead) assert.equal(actual.sourceState, 'worktree'); }
         reference(ref);
       }
     }
@@ -341,7 +356,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
         const results = row.cells.map(cell => JSON.parse(reference({ path: `${path.posix.dirname(source)}/${cell.response.path}`, sha256: cell.response.sha256 }).bytes.toString('utf8')));
         const green = results.every(result => result.status === 'ok' && result.artifact);
         assert.equal(row.reachable, green); if (green) passing++;
-        else { assert.equal(row.schema, 'user-form-showcase'); assert(results.every(result => result.errors.some(error => error.code === 'OODS-N015'))); }
+        else { assert.equal(row.schema, 'user-form-showcase'); auditSprint188OriginalFormFailure(results); }
       }
       assert.equal(passing, reachable);
     }

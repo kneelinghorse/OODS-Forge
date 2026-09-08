@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { assertSprint188ApprovalChanges, validateSprint188Timeout } from '../../../../scripts/product-reality/s185-suite-accounting.mjs';
-import { auditSprint188ApprovalChanges, auditSprint188Timeout } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
+import { auditSprint188ApprovalChanges, auditSprint188Timeout, auditSprint188OriginalFormFailure } from '../../../../scripts/product-reality/s185-audit-closeout.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
 const base = 'artifacts/product-reality/sprint-188/m06';
@@ -87,3 +87,20 @@ for (const [name, guard] of [['producer', assertSprint188ApprovalChanges], ['ind
     });
   });
 }
+
+
+describe('Original saved User form retains its exact binding failures', () => {
+  const results = () => ['react', 'vue'].map(target => JSON.parse(readFileSync(path.join(root,
+    `${base}/final-proof-corrected/saved-original/user-form-showcase.${target}.response.json`), 'utf8')));
+  it('accepts the unchanged five V007 errors in each frozen target', () => { expect(() => auditSprint188OriginalFormFailure(results())).not.toThrow(); });
+  it.each(['missing-error', 'wrong-code', 'changed-field', 'unexpected-error', 'artifact-present'])(
+    'rejects %s rather than accepting any failing schema', kind => {
+      const rows = results();
+      if (kind === 'missing-error') rows[0].errors.pop();
+      if (kind === 'wrong-code') rows[0].errors[0].code = 'OODS-N015';
+      if (kind === 'changed-field') rows[1].errors[0].message = 'Different field failure';
+      if (kind === 'unexpected-error') rows[1].errors.push({...rows[1].errors[0]});
+      if (kind === 'artifact-present') rows[0].artifact = {};
+      expect(() => auditSprint188OriginalFormFailure(rows)).toThrow();
+    });
+});

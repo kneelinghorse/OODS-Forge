@@ -135,9 +135,12 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
     const resolveExecutionRef = ref => {
       assert(typeof ref.sha256 === 'string' && /^[a-f0-9]{64}$/.test(digest(ref.sha256)), `Execution ${row.id} lacks a captured input/log hash.`);
       if (approvedTimeout && S188_DERIVATION_FILES.includes(ref.path) && reference(ref.path).sha256 !== digest(ref.sha256)) {
-        const bytes = Buffer.from(readHistorical(row.executionHead, ref.path));
+        const inputHead = row.inputSourceHead ?? row.executionHead;
+        if (row.inputSourceHead) assert.equal(row.sourceState, 'worktree');
+        assert(fullHead(inputHead));
+        const bytes = Buffer.from(readHistorical(inputHead, ref.path));
         assert.equal(sha256(bytes), digest(ref.sha256), 'Captured audit-source hash differs at its actual execution.');
-        return { path: ref.path, sha256: sha256(bytes), bytes: bytes.length, commit: reviewHead, executionSourceHead: row.executionHead };
+        return { path: ref.path, sha256: sha256(bytes), bytes: bytes.length, commit: reviewHead, executionSourceHead: inputHead };
       }
       return reference(ref.path, ref.sha256);
     };
