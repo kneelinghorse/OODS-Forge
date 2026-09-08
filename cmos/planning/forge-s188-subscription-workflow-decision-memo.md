@@ -112,6 +112,8 @@ composition is certified for those contexts.
 12. **Delivery cadence from here:** each sprint's first mission delivers the previous sprint's reviewed and
     merged head. This sprint's own code reaches the bridge in Sprint 189 m01.
 
+Amendment (decision #1817): existing-context regression permits enumerated additive Cancellable/ Timestampable screen bindings alongside label fixes; all other schema bytes remain pinned.
+
 ## 5. Missions (serial; each mission's gate is executable)
 
 | Mission | Outcome | Gate |

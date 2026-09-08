@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 export type PolicyRule = {
   tool: string; // exact name or "*"
+  description?: string; // informational scope advertised alongside policy
   allow: string[]; // roles
   writes?: string[]; // path patterns (currently informational)
   readOnly?: boolean;

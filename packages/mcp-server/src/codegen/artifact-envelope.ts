@@ -1,3 +1,4 @@
+import { posix } from 'node:path';
 import { canonicalize, sha256 } from '@oods/artifacts';
 
 import { localSetterSymbol, localStateSymbol } from './binding-utils.js';
@@ -25,6 +26,7 @@ export const GENERATED_DEPENDENCY_CATALOG = {
   'class-variance-authority': { version: '0.7.1', kind: 'dependency' },
   react: { version: '19.2.0', kind: 'peerDependency' },
   'react-dom': { version: '19.2.0', kind: 'peerDependency' },
+  '@vitejs/plugin-vue': { version: '5.2.4', kind: 'dependency' },
   vue: { version: '3.5.42', kind: 'peerDependency' },
 } as const satisfies Record<string, DependencyCatalogEntry>;
 
@@ -43,6 +45,7 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
     '@oods/components-react/ported',
     'class-variance-authority',
     'react',
+    'react-dom/client',
   ]),
   vue: new Set([
     '@oods/component-styles/css',
@@ -51,6 +54,7 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
     '@oods/components-vue/ported',
     'class-variance-authority',
     'vue',
+    '@vitejs/plugin-vue',
   ]),
 };
 
@@ -295,6 +299,18 @@ export function validateGeneratedArtifact(artifact: GeneratedArtifact): string[]
     const expectedHash = contentHash(file.contents);
     if (!CONTENT_HASH.test(file.contentHash) || file.contentHash !== expectedHash) {
       issues.push(`Generated file '${file.path}' has an invalid contentHash.`);
+    }
+  }
+
+  // A portable application must close local imports as well as package imports.
+  for (const file of artifact.files) {
+    const importPattern = /\b(?:import|export)\s+(?:type\s+)?(?:[^'";]*?\sfrom\s*)?['"]([^'"]+)['"]/g;
+    for (const match of file.contents.matchAll(importPattern)) {
+      const specifier = match[1]!;
+      if (!specifier.startsWith('.')) continue;
+      const target = posix.normalize(posix.join(posix.dirname(file.path), specifier));
+      const candidates = [target, ...['.ts', '.tsx', '.js', '.jsx', '.vue', '.css'].map((extension) => target + extension), target.replace(/\.js$/, '.ts'), target + '/index.ts'];
+      if (!candidates.some((candidate) => paths.has(candidate))) issues.push(`Generated local import '${specifier}' in '${file.path}' has no artifact file.`);
     }
   }
 

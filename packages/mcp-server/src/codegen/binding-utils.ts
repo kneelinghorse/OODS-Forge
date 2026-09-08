@@ -236,6 +236,8 @@ export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[
   { id: 'component:TagInput.onChange', scope: 'component', component: 'TagInput', event: 'onChange', kind: 'local', signature: STRING_VALUE },
   // The editor hands the consumer the edited address record; the form owns no local state for it.
   { id: 'component:AddressEditor.onChange', scope: 'component', component: 'AddressEditor', event: 'onChange', kind: 'domain', signature: ADDRESS_RECORD },
+  { id: 'screen:onCancel', scope: 'screen', component: '$screen', event: 'onCancel', kind: 'domain', signature: NO_PARAMETERS },
+  { id: 'screen:onViewTimeline', scope: 'screen', component: '$screen', event: 'onViewTimeline', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'screen:onChange', scope: 'screen', component: '$screen', event: 'onChange', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'screen:onDelete', scope: 'screen', component: '$screen', event: 'onDelete', kind: 'domain', signature: NO_PARAMETERS },
   { id: 'screen:onEdit', scope: 'screen', component: '$screen', event: 'onEdit', kind: 'domain', signature: NO_PARAMETERS },

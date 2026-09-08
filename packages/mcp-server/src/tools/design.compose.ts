@@ -56,7 +56,8 @@ import {
   prefersDashboardLayout,
 } from '../compose/intent-sections.js';
 import { loadOodsrc } from '../lib/oodsrc.js';
-import { generateLabels } from '../compose/label-generator.js';
+import { assembleWorkflow } from '../compose/workflow-assembler.js';
+import { generateLabels, populateFieldLabels } from '../compose/label-generator.js';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -143,7 +144,7 @@ export interface DesignComposeInput {
   dslVersion?: string;
   intent?: string;
   object?: string;
-  context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline';
+  context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
   layout?: LayoutInput;
   preferences?: {
     theme?: string;
@@ -1355,6 +1356,8 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     input = { ...input, layout: rc.layout };
   }
 
+  if (input.context === 'workflow') return assembleWorkflow(input, handle);
+
   // Reject empty or whitespace-only intent when no object is provided
   if (input.intent !== undefined && !input.intent.trim() && !input.object) {
     return {
@@ -1890,12 +1893,14 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
       );
     }
     wireFieldProps(schema);
+    populateFieldLabels(schema);
 
     if (effectiveContext) {
       populateBindings(
         schema,
         effectiveContext,
         Object.keys(composed.schema),
+        composed.traits.map((trait) => trait.ref.name),
       );
     }
   }

@@ -5,6 +5,7 @@
   "type": "object",
   "required": ["version", "screens"],
   "properties": {
+    "workflow": { "$ref": "#/$defs/workflow" },
     "$schema": { "type": "string" },
     "version": { "type": "string", "minLength": 1 },
     "dsVersion": { "type": "string" },
@@ -27,6 +28,167 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object",
+        "screens",
+        "transitions",
+        "states",
+        "data"
+      ],
+      "properties": {
+        "object": {
+          "type": "string",
+          "minLength": 1
+        },
+        "screens": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "context",
+              "route"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "context": {
+                "type": "string",
+                "enum": [
+                  "list",
+                  "detail",
+                  "form",
+                  "timeline"
+                ]
+              },
+              "route": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "from",
+              "to",
+              "effect"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "minLength": 1
+              },
+              "from": {
+                "type": "string",
+                "enum": [
+                  "list",
+                  "detail",
+                  "form",
+                  "timeline"
+                ]
+              },
+              "to": {
+                "type": "string",
+                "enum": [
+                  "list",
+                  "detail",
+                  "form",
+                  "timeline"
+                ]
+              },
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "navigate",
+                  "save",
+                  "pending_cancellation",
+                  "archive"
+                ]
+              }
+            }
+          }
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "loading",
+              "empty",
+              "error",
+              "success"
+            ]
+          }
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "idField",
+            "traits",
+            "sampleCount",
+            "lifecycleStates",
+            "billingIntervals",
+            "currency",
+            "minorUnits"
+          ],
+          "properties": {
+            "idField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "traits": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "sampleCount": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "lifecycleStates": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "billingIntervals": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "currency": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minorUnits": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
     "fieldSchemaEntry": {
       "type": "object",
       "required": ["type", "required"],

@@ -514,6 +514,7 @@ export function populateBindings(
   schema: UiSchema,
   context: string,
   fieldNames?: string[],
+  traitNames: readonly string[] = [],
 ): void {
   const contextBindings = CONTEXT_BINDINGS[context];
   if (!contextBindings) return;
@@ -521,6 +522,13 @@ export function populateBindings(
   for (const screen of schema.screens) {
     // Add context-level bindings to the root screen element
     screen.bindings = { ...screen.bindings, ...contextBindings };
+    // These actions belong to every object carrying the trait, not to an app assembler.
+    if (['detail', 'form'].includes(context) && traitNames.some((name) => name.split('/').pop() === 'Cancellable')) {
+      screen.bindings.onCancel = 'handleCancel';
+    }
+    if (context === 'detail' && traitNames.some((name) => name.split('/').pop() === 'Timestampable')) {
+      screen.bindings.onViewTimeline = 'handleViewTimeline';
+    }
 
     // For form context, walk the tree and add per-field onChange bindings
     if (context === 'form' && fieldNames && fieldNames.length > 0) {
