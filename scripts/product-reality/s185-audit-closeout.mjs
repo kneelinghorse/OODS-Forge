@@ -199,7 +199,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
   const reference = ref => {
     assert(ref && typeof ref.sha256 === 'string' && /^[a-f0-9]{64}$/.test(bare(ref.sha256)), 'Cited reference lacks captured SHA256.');
     if (ref.executionSourceHead !== undefined) {
-      assert(approvedTimeout && auditDerivationFiles188.includes(ref.path)); assert(fullHead(ref.executionSourceHead));
+      assert(approvedTimeout && (auditDerivationFiles188.includes(ref.path) || ref.path === 'packages/mcp-server/test/product-reality/approved-timeout.s188.spec.ts')); assert(fullHead(ref.executionSourceHead));
       const bytes = Buffer.from(readHistorical(ref.executionSourceHead, ref.path));
       assert.equal(digest(bytes), bare(ref.sha256), 'Captured derivation source hash differs.'); assert.equal(ref.commit, reviewHead);
       return {path: ref.path, sha256: digest(bytes), bytes};

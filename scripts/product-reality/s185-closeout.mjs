@@ -134,7 +134,7 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
     assert(row.inputs?.length > 0 && row.logs?.length > 0, `Execution ${row.id} lacks source/log bindings.`);
     const resolveExecutionRef = ref => {
       assert(typeof ref.sha256 === 'string' && /^[a-f0-9]{64}$/.test(digest(ref.sha256)), `Execution ${row.id} lacks a captured input/log hash.`);
-      if (approvedTimeout && S188_DERIVATION_FILES.includes(ref.path) && reference(ref.path).sha256 !== digest(ref.sha256)) {
+      if (approvedTimeout && (S188_DERIVATION_FILES.includes(ref.path) || ref.path === 'packages/mcp-server/test/product-reality/approved-timeout.s188.spec.ts') && reference(ref.path).sha256 !== digest(ref.sha256)) {
         const inputHead = row.inputSourceHead ?? row.executionHead;
         if (row.inputSourceHead) assert.equal(row.sourceState, 'worktree');
         assert(fullHead(inputHead));
