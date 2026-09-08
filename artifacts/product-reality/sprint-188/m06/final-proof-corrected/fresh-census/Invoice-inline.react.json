@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Button, PaginationBar, SearchInput, Select, Stack, Table } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Number of days outstanding grouped for aging reports. */\n  agingBucketDays?: number;\n  /** Supporting documents or credit memos associated with the invoice. */\n  attachments?: unknown[];\n  /** Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  attemptCount?: number;\n  /** Remaining amount outstanding in minor units. */\n  balanceMinor?: number;\n  /** Email address for the billing contact. */\n  billingContactEmail?: string;\n  /** Customer billing contact receiving the invoice. */\n  billingContactName?: string;\n  /** Dunning phase or retry program detail presented to success teams. */\n  collectionState?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Remaining credit memo balance that can be applied to invoices. */\n  creditMemoBalanceMinor?: number;\n  /** Category of credit memo tied to business justification. */\n  creditMemoType?: string;\n  /** ISO 4217 currency for the invoice. */\n  currency: string;\n  /** Total discounts applied to the invoice in minor units. */\n  discountMinor?: number;\n  /** Payment due timestamp derived from payment terms. */\n  dueAt?: string;\n  /** Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name. */\n  dunningStep?: string;\n  /** Primary identifier for the invoice inside the billing domain. */\n  invoiceId: string;\n  /** Human readable invoice identifier presented to customers. */\n  invoiceNumber: string;\n  /** Timestamp when the invoice was finalized or posted. */\n  issuedAt: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp when the most recent refund was issued. */\n  lastRefundAt?: string;\n  /** Timestamp of most recent payment reminder issued to customer. */\n  lastReminderAt?: string;\n  /** Normalized line items with quantity, amount_minor, and description fields. */\n  lineItems?: unknown[];\n  /** Internal finance note or customer visible memo. */\n  memo?: string;\n  /** When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  nextPaymentAttempt?: string;\n  /** Internal commentary about refund actions or policy exceptions. */\n  notes?: string;\n  /** Timestamp when full payment cleared. */\n  paidAt?: string;\n  /** Payment method used or expected (card, ach, wire). */\n  paymentSource?: string;\n  /** Payment term label describing when payment is expected. */\n  paymentTerms?: string;\n  /** Link to the hosted invoice or customer billing portal. */\n  portalUrl?: string;\n  /** Source system providing invoice data. */\n  provider: string;\n  /** Native provider identifier retained for audit trails. */\n  providerInvoiceId?: string;\n  /** Original provider reported status or badge. */\n  providerStatus?: string;\n  /** Link to customer facing refund or cancellation policy. */\n  refundPolicyUrl?: string;\n  /** Date when refund eligibility window ends for this record. */\n  refundableUntil?: string;\n  /** Indicates if finance manager approval is required before issuing refund. */\n  requiresManagerApproval?: boolean;\n  /** Canonical invoice status after provider mapping. */\n  status: string;\n  /** Subscription identifier this invoice is associated with. */\n  subscriptionId: string;\n  /** Subtotal before discounts and tax in minor units. */\n  subtotalMinor?: number;\n  /** Tax amount collected on the invoice in minor currency units. */\n  taxMinor?: number;\n  /** Total amount due expressed in minor currency units. */\n  totalMinor: number;\n  /** Cumulative amount refunded in minor currency units. */\n  totalRefundedMinor?: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TableProps = React.ComponentPropsWithoutRef<typeof Table>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ agingBucketDays, attachments, attemptCount, balanceMinor, billingContactEmail, billingContactName, collectionState, createdAt, creditMemoBalanceMinor, creditMemoType, currency, discountMinor, dueAt, dunningStep, invoiceId, invoiceNumber, issuedAt, lastEvent, lastEventAt, lastRefundAt, lastReminderAt, lineItems, memo, nextPaymentAttempt, notes, paidAt, paymentSource, paymentTerms, portalUrl, provider, providerInvoiceId, providerStatus, refundPolicyUrl, refundableUntil, requiresManagerApproval, status, subscriptionId, subtotalMinor, taxMinor, totalMinor, totalRefundedMinor, updatedAt }) => {\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                    <Select id=\"slot-filters-2\" data-oods-component=\"Select\" label=\"ISO 4217 currency for the invoice.\" placeholder=\"Enter currency\" required value={currency} />\n                    <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <Table id=\"slot-items-6\" data-oods-component=\"Table\" />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:2401eb76be74fe610e07dbf51094e4071ac9051c356c1de0cd6a1a2d0a84c30f"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:b3fc20c677a63130cfbb082b1b1ad17a510e6aa6fb5a0d0d3612bce7adc7ee65"
+  },
+  "code": "import React from 'react';\nimport { Button, PaginationBar, SearchInput, Select, Stack, Table } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Number of days outstanding grouped for aging reports. */\n  agingBucketDays?: number;\n  /** Supporting documents or credit memos associated with the invoice. */\n  attachments?: unknown[];\n  /** Number of automatic payment attempts made on this invoice (Stripe smart-retries attempt_count). Increments on each retry in the dunning window. Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  attemptCount?: number;\n  /** Remaining amount outstanding in minor units. */\n  balanceMinor?: number;\n  /** Email address for the billing contact. */\n  billingContactEmail?: string;\n  /** Customer billing contact receiving the invoice. */\n  billingContactName?: string;\n  /** Dunning phase or retry program detail presented to success teams. */\n  collectionState?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Remaining credit memo balance that can be applied to invoices. */\n  creditMemoBalanceMinor?: number;\n  /** Category of credit memo tied to business justification. */\n  creditMemoType?: string;\n  /** ISO 4217 currency for the invoice. */\n  currency: string;\n  /** Total discounts applied to the invoice in minor units. */\n  discountMinor?: number;\n  /** Payment due timestamp derived from payment terms. */\n  dueAt?: string;\n  /** Current dunning playbook step label (ex: reminder_1, reminder_final, collections). The structured retry window (attempt_count + next_payment_attempt) is provided by the composed SaaSBillingPayable trait; this field is the human-readable step name. */\n  dunningStep?: string;\n  /** Primary identifier for the invoice inside the billing domain. */\n  invoiceId: string;\n  /** Human readable invoice identifier presented to customers. */\n  invoiceNumber: string;\n  /** Timestamp when the invoice was finalized or posted. */\n  issuedAt: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp when the most recent refund was issued. */\n  lastRefundAt?: string;\n  /** Timestamp of most recent payment reminder issued to customer. */\n  lastReminderAt?: string;\n  /** Normalized line items with quantity, amount_minor, and description fields. */\n  lineItems?: unknown[];\n  /** Internal finance note or customer visible memo. */\n  memo?: string;\n  /** When the next automatic payment retry is scheduled (Stripe smart-retries next_payment_attempt). Defines the open end of the retry window — modeled on the Refundable.refundable_until datetime-window precedent. Absent/null when no further attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries. */\n  nextPaymentAttempt?: string;\n  /** Internal commentary about refund actions or policy exceptions. */\n  notes?: string;\n  /** Timestamp when full payment cleared. */\n  paidAt?: string;\n  /** Payment method used or expected (card, ach, wire). */\n  paymentSource?: string;\n  /** Payment term label describing when payment is expected. */\n  paymentTerms?: string;\n  /** Link to the hosted invoice or customer billing portal. */\n  portalUrl?: string;\n  /** Source system providing invoice data. */\n  provider: string;\n  /** Native provider identifier retained for audit trails. */\n  providerInvoiceId?: string;\n  /** Original provider reported status or badge. */\n  providerStatus?: string;\n  /** Link to customer facing refund or cancellation policy. */\n  refundPolicyUrl?: string;\n  /** Date when refund eligibility window ends for this record. */\n  refundableUntil?: string;\n  /** Indicates if finance manager approval is required before issuing refund. */\n  requiresManagerApproval?: boolean;\n  /** Canonical invoice status after provider mapping. */\n  status: string;\n  /** Subscription identifier this invoice is associated with. */\n  subscriptionId: string;\n  /** Subtotal before discounts and tax in minor units. */\n  subtotalMinor?: number;\n  /** Tax amount collected on the invoice in minor currency units. */\n  taxMinor?: number;\n  /** Total amount due expressed in minor currency units. */\n  totalMinor: number;\n  /** Cumulative amount refunded in minor currency units. */\n  totalRefundedMinor?: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TableProps = React.ComponentPropsWithoutRef<typeof Table>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ agingBucketDays, attachments, attemptCount, balanceMinor, billingContactEmail, billingContactName, collectionState, createdAt, creditMemoBalanceMinor, creditMemoType, currency, discountMinor, dueAt, dunningStep, invoiceId, invoiceNumber, issuedAt, lastEvent, lastEventAt, lastRefundAt, lastReminderAt, lineItems, memo, nextPaymentAttempt, notes, paidAt, paymentSource, paymentTerms, portalUrl, provider, providerInvoiceId, providerStatus, refundPolicyUrl, refundableUntil, requiresManagerApproval, status, subscriptionId, subtotalMinor, taxMinor, totalMinor, totalRefundedMinor, updatedAt }) => {\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                    <Select id=\"slot-filters-2\" data-oods-component=\"Select\" label=\"ISO 4217 currency for the invoice.\" placeholder=\"Enter currency\" required value={currency} />\n                    <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <Table id=\"slot-items-6\" data-oods-component=\"Table\" />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:b3fc20c677a63130cfbb082b1b1ad17a510e6aa6fb5a0d0d3612bce7adc7ee65"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 6
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Button, Input, OwnerBadge, PaginationBar, SearchInput, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  actions: GeneratedUIActions;\n  /** Identifiers for add-ons commonly sold with this plan. */\n  addOnIds?: string[];\n  /** Contract value expressed in minor currency units. */\n  amountMinor: number;\n  /** Day of month used to anchor renewals when prorating. */\n  billingAnchorDay?: number;\n  /** Billing cadence name selected from supportedIntervals. */\n  billingInterval: string;\n  /** How billing is collected (charge_automatically, send_invoice). */\n  collectionMethod?: string;\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** ISO 4217 currency for the plan price. */\n  currency: string;\n  /** Plans that can be downgraded to from this plan. */\n  downgradeTargets?: string[];\n  /** Array of feature descriptors listing entitlement tiers. */\n  featureMatrix?: unknown[];\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Multiplier for interval (ex: 12 with monthly => yearly cadence). */\n  intervalCount?: number;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Internal commentary for packaging or finance teams. */\n  notes?: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Provider specific identifier for the plan or price. */\n  planCode: string;\n  /** Stable identifier for the plan within the billing domain. */\n  planId: string;\n  /** Human readable plan label rendered in list and detail contexts. */\n  planName: string;\n  /** Price strategy (flat, per_unit, tiered, package). */\n  pricingModel?: string;\n  /** High level product family grouping for analytics and reporting. */\n  productFamily: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Availability state of the plan (active, deprecated, private_beta). */\n  status: 'active' | 'deprecated' | 'private_beta' | 'legacy';\n  /** Length of introductory trial period in days. */\n  trialPeriodDays?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Plans presented as upgrade destinations. */\n  upgradeTargets?: string[];\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype OwnerBadgeProps = React.ComponentPropsWithoutRef<typeof OwnerBadge>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, addOnIds, amountMinor, billingAnchorDay, billingInterval, collectionMethod, consumedQuantity, currency, downgradeTargets, featureMatrix, includedQuantity, intervalCount, meterName, notes, overageRateMinor, ownerId, ownerType, ownershipRole, ownershipTransferredAt, periodEnd, periodStart, planCode, planId, planName, pricingModel, productFamily, projectedOverageMinor, rolloverStrategy, samples, status, trialPeriodDays, unitLabel, upgradeTargets }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  const [handleChange_amount_minorState, setHandleChange_amount_minorState] = React.useState<string>(String(amountMinor ?? ''));\n  /* @oods-local-binding handleChange_amount_minor */ const handleChange_amount_minor = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_amount_minorState(event.currentTarget.value); };\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                      <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                      <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Contract value expressed in minor currency units.\" placeholder=\"Enter amount minor\" required type=\"number\" value={handleChange_amount_minorState} onChange={handleChange_amount_minor} />\n                      <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                    </Stack>\n              <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                      <OwnerBadge id=\"slot-items-6\" data-oods-component=\"OwnerBadge\" owner={ownerId} ownerType={ownerType} />\n                    </Stack>\n              <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                      <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                    </Stack>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-list-9\">\n          <button type=\"button\" data-oods-action=\"handleFilter\" onClick={() => handleFilter({})}>Filter</button>\n          <button type=\"button\" data-oods-action=\"handleRowClick\" onClick={() => handleRowClick(ownerId)}>Open row</button>\n          <button type=\"button\" data-oods-action=\"handleSort\" onClick={() => handleSort('status')}>Sort</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:0a4c6bf3f749f23d2c1ed063bd23e2c7201c6f7d4354da3e0667247d04ac0d08"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [
+      {
+        "name": "handleFilter",
+        "parameters": [
+          {
+            "name": "criteria",
+            "type": "Record<string, unknown>"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onFilter"
+          }
+        ]
+      },
+      {
+        "name": "handleRowClick",
+        "parameters": [
+          {
+            "name": "rowId",
+            "type": "string"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onRowClick"
+          }
+        ]
+      },
+      {
+        "name": "handleSort",
+        "parameters": [
+          {
+            "name": "column",
+            "type": "string"
+          }
+        ],
+        "sources": [
+          {
+            "nodeId": "screen-list-9",
+            "component": "Stack",
+            "event": "onSort"
+          }
+        ]
+      }
+    ],
+    "contentHash": "sha256:80e9c672753098a8a9f44a806fd2032739a28696bd50d5ae89abb0f1f852e0d5"
+  },
+  "code": "import React from 'react';\nimport { Button, Input, OwnerBadge, PaginationBar, SearchInput, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  actions: GeneratedUIActions;\n  /** Identifiers for add-ons commonly sold with this plan. */\n  addOnIds?: string[];\n  /** Contract value expressed in minor currency units. */\n  amountMinor: number;\n  /** Day of month used to anchor renewals when prorating. */\n  billingAnchorDay?: number;\n  /** Billing cadence name selected from supportedIntervals. */\n  billingInterval: string;\n  /** How billing is collected (charge_automatically, send_invoice). */\n  collectionMethod?: string;\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** ISO 4217 currency for the plan price. */\n  currency: string;\n  /** Plans that can be downgraded to from this plan. */\n  downgradeTargets?: string[];\n  /** Array of feature descriptors listing entitlement tiers. */\n  featureMatrix?: unknown[];\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Multiplier for interval (ex: 12 with monthly => yearly cadence). */\n  intervalCount?: number;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Internal commentary for packaging or finance teams. */\n  notes?: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Provider specific identifier for the plan or price. */\n  planCode: string;\n  /** Stable identifier for the plan within the billing domain. */\n  planId: string;\n  /** Human readable plan label rendered in list and detail contexts. */\n  planName: string;\n  /** Price strategy (flat, per_unit, tiered, package). */\n  pricingModel?: string;\n  /** High level product family grouping for analytics and reporting. */\n  productFamily: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Availability state of the plan (active, deprecated, private_beta). */\n  status: 'active' | 'deprecated' | 'private_beta' | 'legacy';\n  /** Length of introductory trial period in days. */\n  trialPeriodDays?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Plans presented as upgrade destinations. */\n  upgradeTargets?: string[];\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype OwnerBadgeProps = React.ComponentPropsWithoutRef<typeof OwnerBadge>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, addOnIds, amountMinor, billingAnchorDay, billingInterval, collectionMethod, consumedQuantity, currency, downgradeTargets, featureMatrix, includedQuantity, intervalCount, meterName, notes, overageRateMinor, ownerId, ownerType, ownershipRole, ownershipTransferredAt, periodEnd, periodStart, planCode, planId, planName, pricingModel, productFamily, projectedOverageMinor, rolloverStrategy, samples, status, trialPeriodDays, unitLabel, upgradeTargets }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  const [handleChange_amount_minorState, setHandleChange_amount_minorState] = React.useState<string>(String(amountMinor ?? ''));\n  /* @oods-local-binding handleChange_amount_minor */ const handleChange_amount_minor = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_amount_minorState(event.currentTarget.value); };\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                      <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                      <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Contract value expressed in minor currency units.\" placeholder=\"Enter amount minor\" required type=\"number\" value={handleChange_amount_minorState} onChange={handleChange_amount_minor} />\n                      <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                    </Stack>\n              <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                      <OwnerBadge id=\"slot-items-6\" data-oods-component=\"OwnerBadge\" owner={ownerId} ownerType={ownerType} />\n                    </Stack>\n              <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                      <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                    </Stack>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-list-9\">\n          <button type=\"button\" data-oods-action=\"handleFilter\" onClick={() => handleFilter({})}>Filter</button>\n          <button type=\"button\" data-oods-action=\"handleRowClick\" onClick={() => handleRowClick(ownerId)}>Open row</button>\n          <button type=\"button\" data-oods-action=\"handleSort\" onClick={() => handleSort('status')}>Sort</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:80e9c672753098a8a9f44a806fd2032739a28696bd50d5ae89abb0f1f852e0d5"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 6
+  }
+}
