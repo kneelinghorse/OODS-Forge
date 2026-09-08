@@ -3,10 +3,10 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawnSync } from 'node:child_process';
 import ts from 'typescript';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { handle as compose } from '../../src/tools/design.compose.js';
+import { typecheckWorkflow } from './workflow-typecheck.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
 import { collectUiStateBranches, preflightStateContract } from '../../src/codegen/state-contract.js';
 import { buildGeneratedArtifact, validateGeneratedArtifact } from '../../src/codegen/artifact-envelope.js';
@@ -22,19 +22,10 @@ import pipelineInput from '../../src/schemas/pipeline.input.json' assert { type:
 
 
 const root = fileURLToPath(new URL('../../../../', import.meta.url));
-const vueRequire = createRequire(path.join(root, 'packages/components-vue/package.json'));
-const reactRequire = createRequire(path.join(root, 'packages/components-react/package.json'));
 const contexts = ['list', 'detail', 'form', 'timeline'] as const;
 const artifacts = new Map<'react' | 'vue', GeneratedArtifact>();
 let schema: UiSchema;
 
-function unpack(artifact: GeneratedArtifact, directory: string) {
-  for (const file of artifact.files) {
-    const target = path.join(directory, file.path);
-    mkdirSync(path.dirname(target), { recursive: true });
-    writeFileSync(target, file.contents);
-  }
-}
 function link(source: string, target: string) {
   mkdirSync(path.dirname(target), { recursive: true });
   symlinkSync(source, target, 'junction');
@@ -157,18 +148,8 @@ describe('Generated applications close their own contracts', () => {
   });
 
   it.each(['react', 'vue'] as const)('%s application typechecks strict against the built component packages', (framework) => {
-    const directory = mkdtempSync(path.join(tmpdir(), `oods-s188-${framework}-`));
-    try {
-      unpack(artifacts.get(framework)!, directory);
-      const req = framework === 'react' ? reactRequire : vueRequire;
-      const dependencies = framework === 'react' ? ['react', 'react-dom', '@types/react', '@types/react-dom'] : ['vue', '@vue/server-renderer'];
-      for (const dependency of dependencies) link(path.dirname(req.resolve(`${dependency}/package.json`)), path.join(directory, 'node_modules', dependency));
-      link(path.dirname(createRequire(path.join(root, 'package.json')).resolve('@types/node/package.json')), path.join(directory, 'node_modules/@types/node'));
-      for (const dependency of [`components-${framework}`, 'component-styles', 'component-contracts']) link(path.join(root, 'packages', dependency), path.join(directory, 'node_modules/@oods', dependency));
-      const compiler = vueRequire.resolve(framework === 'react' ? 'typescript/bin/tsc' : 'vue-tsc/bin/vue-tsc.js');
-      const result = spawnSync(process.execPath, [compiler, '--noEmit', '--pretty', 'false', '-p', path.join(directory, 'tsconfig.json')], { encoding: 'utf8', timeout: 60_000 });
-      expect(result.status, result.stdout + result.stderr).toBe(0);
-    } finally { rmSync(directory, { recursive: true, force: true }); }
+    const result = typecheckWorkflow(artifacts.get(framework)!);
+    expect(result.status, result.stdout + result.stderr).toBe(0);
   }, 70_000);
 });
 

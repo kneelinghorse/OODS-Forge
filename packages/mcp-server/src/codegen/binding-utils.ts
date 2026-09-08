@@ -1002,6 +1002,11 @@ export type FrameworkRecipePropResolution = {
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   BillingSummaryBadge: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
+  BillingCardMeta: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
+  CycleProgressCard: { progressField: 'progress', periodStartField: 'periodStart', periodEndField: 'periodEnd', intervalField: 'interval' },
+  PaymentTimeline: { lastPaymentField: 'lastPayment', nextPaymentField: 'nextPayment', paymentStatusField: 'paymentStatus', paymentMethodField: 'paymentMethod', amountField: 'amount', currencyField: 'currency' },
+  PaymentEventTimeline: { lastPaymentField: 'lastPayment', nextPaymentField: 'nextPayment', paymentStatusField: 'paymentStatus', amountField: 'amount', currencyField: 'currency' },
+  ArchivedRowOverlay: { archivedField: 'isArchived' },
   BillingAmountInput: { amountField: 'amount', currencyField: 'currency' },
   BillingIntervalSelector: { intervalField: 'interval' },
   ArchiveSummary: { archivedField: 'isArchived', archivedAtField: 'archivedAt', reasonField: 'reason' },
@@ -1134,6 +1139,7 @@ const RECIPE_PARAMETER_PROPS = new Set([
  * would invent a prop; each is named in the component's contract record.
  */
 export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
+  ArchivedRowOverlay: ['style'],
   ArchiveSummary: ['restoredAtField', 'archivedByField', 'metadataField'],
   ArchivePill: ['archivedAtField'],
   PriceCardMeta: ['amountField', 'currencyField'],

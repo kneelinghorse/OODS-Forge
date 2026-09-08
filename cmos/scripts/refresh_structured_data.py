@@ -830,6 +830,35 @@ def write_json(path: Path, payload: Dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def project_foundation_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
+    """Expose the original 14 nucleus targets from their reviewed foundation record."""
+    result = copy.deepcopy(capabilities)
+    foundation_path = "packages/component-contracts/registry/component-capability-foundation-v1.s182.v1.json"
+    closeout_path = "packages/component-contracts/registry/component-capability-closeout.s182.v1.json"
+    foundation = load_json(REPO_ROOT / foundation_path)
+    closeout = {row["id"]: row for row in load_json(REPO_ROOT / closeout_path)["rows"]}
+    rows = {row["id"]: row for row in foundation["rows"]}
+    if foundation.get("independentReviewApproved") is not True:
+        return result
+    for cell in foundation["foundationCells"]:
+        component_id, target = cell["componentId"], cell["target"]
+        if (target not in ("react", "vue") or cell.get("independentReviewApproved") is not True
+                or cell.get("evaluation", {}).get("foundationV1") is not True
+                or not all(cell.get("evidence", {}).get(kind, {}).get("status") == "passed"
+                           and cell["evidence"][kind].get("refs") for kind in foundation["foundationEvidenceClasses"])):
+            continue
+        surface = rows[component_id]["surfaces"][target]
+        if surface != closeout[component_id]["surfaces"][target]:
+            raise ValueError(f"Foundation and closeout disagree: {component_id}/{target}")
+        if surface["state"] != "implemented-evidence-complete":
+            raise ValueError(f"Approved foundation target is incomplete: {component_id}/{target}")
+        result[component_id]["surfaces"][target] = {
+            "state": surface["state"],
+            "evidence": sorted(set(surface["evidence"] + [f"{foundation_path}#{component_id}", f"{closeout_path}#{component_id}"])),
+        }
+    return result
+
+
 def project_trait_recipe_surfaces(capabilities: Dict[str, Any]) -> Dict[str, Any]:
     """Project current recipe evidence; never rewrite the historical baseline."""
     result = copy.deepcopy(capabilities)
@@ -901,7 +930,7 @@ def generate_structured_payloads(
         component_capabilities_path=component_capabilities_path,
     )
     if component_capabilities_path is None:
-        capabilities_by_id = project_trait_recipe_surfaces(capabilities_by_id)
+        capabilities_by_id = project_trait_recipe_surfaces(project_foundation_surfaces(capabilities_by_id))
     obligation_scope = load_json(COMPONENT_OBLIGATION_SCOPE_PATH)
     if obligation_scope["controllingObligationDenominator"] != len(canonical_ids):
         raise ValueError("Obligation scope must retain exact canonical intake membership")

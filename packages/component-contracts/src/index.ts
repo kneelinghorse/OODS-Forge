@@ -46,3 +46,5 @@ export function validateComponentIntakeDocument(input: unknown): string[] {
 export function getBaselineCapability(componentId: string) {
   return componentCapabilityBaseline.rows.find((row) => row.id === componentId);
 }
+
+export * from './billing-views.js';

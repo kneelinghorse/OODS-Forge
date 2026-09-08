@@ -20,7 +20,9 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   const warnings: CodegenResult['warnings'] = [];
   const fieldByNodeId: Record<string, string> = {};
   const formFields = new Set<string>();
+  let archiveOverlay: UiElement | undefined;
   const visit = (node: UiElement, context: string) => {
+    if (context === 'list' && node.component === 'ArchivedRowOverlay') archiveOverlay = node;
     const field = node.props?.field
       ?? (node.component === 'BillingAmountInput' ? node.props?.amountField : undefined)
       ?? (node.component === 'BillingIntervalSelector' ? node.props?.intervalField : undefined);
@@ -83,6 +85,7 @@ export type UIState = 'loading' | 'empty' | 'error' | 'success';
 export const routes = ${JSON.stringify(Object.fromEntries(schema.workflow.screens.map((screen) => [screen.context, screen.route])))};
 export const cancellable = ${JSON.stringify(schema.workflow.data.traits.some((trait) => trait.split('/').pop() === 'Cancellable'))};
 export const statuses = ${JSON.stringify(schema.workflow.data.lifecycleStates)};
+export const archivePresentation = ${JSON.stringify({ archivedField: archiveOverlay?.props?.archivedField ?? 'is_archived', showBadge: archiveOverlay?.props?.showBadge ?? true, separateTab: archiveOverlay?.props?.separateTab ?? true, tabLabel: archiveOverlay?.props?.tabLabel ?? 'Archived' })};
 export const supplementalFields = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name, field.description) })))};
 const fieldByNodeId: Record<string, string> = ${JSON.stringify(fieldByNodeId)};
 export interface AppState { screen: Screen; uiState: UIState; id: string; draft: DomainRecord; records: DomainRecord[]; total: number; page: number; archived: boolean; error: string; notice: string; revision: number }
@@ -147,7 +150,7 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
   };
 }
 ` });
-  const app = framework === 'react' ? reactApp(schema.workflow.object, titleField) : vueApp(schema.workflow.object, titleField);
+  const app = framework === 'react' ? reactApp(schema.workflow.object, titleField, Boolean(archiveOverlay)) : vueApp(schema.workflow.object, titleField, Boolean(archiveOverlay));
   const extension = framework === 'react' ? '.tsx' : '.vue';
   files.push({ path: `src/App${extension}`, contents: app });
   if (framework === 'react') {
@@ -169,11 +172,11 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
   return { status: 'ok', framework, code: app, fileExtension: extension, files, imports: [...imports], actions, warnings };
 }
 
-function reactApp(object: string, titleField: string): string {
+function reactApp(object: string, titleField: string, hasArchive: boolean): string {
   return `import React from 'react';
-import { StatusBadge } from '@oods/components-react';
+import { StatusBadge${hasArchive ? ', ArchivedRowOverlay, Tabs' : ''} } from '@oods/components-react';
 ${CONTEXTS.map((context) => `import { GeneratedUI as ${nameOf(context)} } from './screens/${nameOf(context)}';`).join('\n')}
-import { createWorkflow, idField, titleField, screenProps, history, routes, statuses, supplementalFields, cancellable, type Screen } from './application';
+import { createWorkflow, idField, titleField, screenProps, history, routes, statuses, supplementalFields, cancellable, archivePresentation, type Screen } from './application';
 import type { StoreOptions } from './store';
 import './app.css';
 export default function App(options: StoreOptions) {
@@ -183,17 +186,18 @@ export default function App(options: StoreOptions) {
   const [status, setStatus] = React.useState('');
   React.useEffect(() => { const unsubscribe = app.subscribe(setState); void app.navigate('list'); return () => { unsubscribe(); app.dispose(); }; }, [app]);
   const props = { ...screenProps(state.draft), actions: app.actions, uiState: state.uiState };
+  const recordList = <> <ul className="workflow-records">{state.records.map((record) => <li key={String(record[idField])}>${hasArchive ? `<ArchivedRowOverlay isArchived={Boolean((record as Record<string, unknown>)[archivePresentation.archivedField])} label={String(record[titleField])} showBadge={archivePresentation.showBadge} separateTab={archivePresentation.separateTab} tabLabel={archivePresentation.tabLabel}>` : ''}<button type="button" data-record-id={String(record[idField])} onClick={() => app.actions.handleRowClick(String(record[idField]))}><strong>{String(record[titleField])}</strong><StatusBadge status={String((record as Record<string, unknown>).status)} /><span aria-hidden="true">→</span></button>${hasArchive ? '</ArchivedRowOverlay>' : ''}</li>)}</ul><div className="workflow-pagination"><span>{state.total} records</span><button disabled={state.page <= 1} onClick={() => { void app.page(state.page - 1); }}>Previous</button><button disabled={state.page * 10 >= state.total} onClick={() => { void app.page(state.page + 1); }}>Next</button></div> </>;
   return <main className="workflow-app" data-oods-workflow="${object}" data-screen={state.screen} data-selected-id={state.id} data-route={routes[state.screen]} data-ui-state={state.uiState}>
     <header className="workflow-heading"><div><p className="workflow-eyebrow">${object.toUpperCase()} WORKSPACE</p><h1>{state.screen === 'list' ? '${object}s' : String(state.draft[${JSON.stringify(titleField)}])}</h1></div><span className="workflow-mode">Local workspace</span></header>
     <nav aria-label="Workflow screens">{(['list', 'detail', 'form', 'timeline'] as Screen[]).map((screen) => <button type="button" key={screen} aria-current={state.screen === screen ? 'page' : undefined} onClick={() => { void app.navigate(screen); }}>{screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1)}</button>)}</nav>
-    {state.screen === 'list' && <section className="workflow-toolbar" aria-label="Find subscriptions"><label>Search<input type="search" value={search} onChange={(event) => { setSearch(event.target.value); void app.filter(event.target.value, status); }} /></label><label>Status<select value={status} onChange={(event) => { setStatus(event.target.value); void app.filter(search, event.target.value); }}><option value="">All states</option>{statuses.map((value) => <option key={value} value={value}>{value.replaceAll('_', ' ')}</option>)}</select></label><label>Sort<select onChange={(event) => { void app.sort(event.target.value === 'desc'); }}><option value="asc">Name A–Z</option><option value="desc">Name Z–A</option></select></label><button type="button" aria-pressed={state.archived} onClick={() => { void app.archived(!state.archived); }}>{state.archived ? 'Show active' : 'Archived'}</button></section>}
+    {state.screen === 'list' && <section className="workflow-toolbar" aria-label="Find subscriptions"><label>Search<input type="search" value={search} onChange={(event) => { setSearch(event.target.value); void app.filter(event.target.value, status); }} /></label><label>Status<select value={status} onChange={(event) => { setStatus(event.target.value); void app.filter(search, event.target.value); }}><option value="">All states</option>{statuses.map((value) => <option key={value} value={value}>{value.replaceAll('_', ' ')}</option>)}</select></label><label>Sort<select onChange={(event) => { void app.sort(event.target.value === 'desc'); }}><option value="asc">Name A–Z</option><option value="desc">Name Z–A</option></select></label>${hasArchive ? '' : `<button type="button" aria-pressed={state.archived} onClick={() => { void app.archived(!state.archived); }}>{state.archived ? 'Show active' : 'Archived'}</button>`}</section>}
     {state.error && <p role="alert">{state.error}</p>}
     {state.uiState === 'error' && <button type="button" onClick={() => { void app.retry(); }}>Try again</button>}
     <section aria-label="${object} screen" className="workflow-content" onChangeCapture={(event) => app.edit(event.nativeEvent)}>
       {state.uiState === 'success' && state.screen === 'form' && supplementalFields.map((field) => <label className="workflow-field" key={field.name}>{field.label}<input name={field.name} defaultValue={String((state.draft as Record<string, unknown>)[field.name])} /></label>)}
       {state.uiState === 'success' && state.screen === 'detail' && cancellable && <fieldset className="workflow-cancel"><legend>Cancellation details</legend><label>Reason<input name="cancellation_reason" defaultValue={String((state.draft as Record<string, unknown>).cancellation_reason ?? '')} /></label><label>Reason code<input name="cancellation_reason_code" defaultValue={String((state.draft as Record<string, unknown>).cancellation_reason_code ?? '')} /></label><label><input name="cancel_at_period_end" type="checkbox" defaultChecked={Boolean((state.draft as Record<string, unknown>).cancel_at_period_end)} />Cancel at period end</label></fieldset>}
       ${CONTEXTS.map((context) => context === 'form' ? `{state.screen === 'form' && <form onSubmit={(event) => { event.preventDefault(); app.actions.handleSubmit(); }}><Form {...props} key={state.revision + ':' + state.uiState} /></form>}` : `{state.screen === '${context}' && <${nameOf(context)} {...props} key={state.revision + ':' + state.uiState} />}`).join('\n      ')}
-      {state.uiState === 'success' && state.screen === 'list' && <><ul className="workflow-records">{state.records.map((record) => <li key={String(record[idField])}><button type="button" data-record-id={String(record[idField])} onClick={() => app.actions.handleRowClick(String(record[idField]))}><strong>{String(record[titleField])}</strong><StatusBadge status={String((record as Record<string, unknown>).status)} /><span aria-hidden="true">→</span></button></li>)}</ul><div className="workflow-pagination"><span>{state.total} records</span><button disabled={state.page <= 1} onClick={() => { void app.page(state.page - 1); }}>Previous</button><button disabled={state.page * 10 >= state.total} onClick={() => { void app.page(state.page + 1); }}>Next</button></div></>}
+      {state.uiState === 'success' && state.screen === 'list' && ${hasArchive ? `<Tabs ariaLabel="Archive views" selectedId={state.archived ? 'archived' : 'active'} onChange={(id) => { void app.archived(id === 'archived'); }} items={[{ id: 'active', label: 'Active', panel: state.archived ? null : recordList }, { id: 'archived', label: archivePresentation.tabLabel, panel: state.archived ? recordList : null }]} />` : 'recordList'}}
       {state.uiState === 'success' && state.screen === 'timeline' && <ol className="workflow-history" aria-label="Lifecycle history">{history(state.draft).map((entry, index) => <li key={index}><strong>{entry.to.replaceAll('_', ' ')}</strong><time dateTime={entry.at}>{entry.at}</time><p>{entry.reason}</p></li>)}</ol>}
       {state.uiState === 'success' && state.screen === 'detail' && Boolean((state.draft as Record<string, unknown>).is_archived) && <button onClick={() => { void app.restore(); }}>Restore record</button>}
     </section>
@@ -203,12 +207,12 @@ export default function App(options: StoreOptions) {
 `;
 }
 
-function vueApp(object: string, titleField: string): string {
+function vueApp(object: string, titleField: string, hasArchive: boolean): string {
   return `<script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, shallowRef } from 'vue';
-import { StatusBadge } from '@oods/components-vue';
+import { StatusBadge${hasArchive ? ', ArchivedRowOverlay, Tabs' : ''} } from '@oods/components-vue';
 ${CONTEXTS.map((context) => `import ${nameOf(context)} from './screens/${nameOf(context)}.vue';`).join('\n')}
-import { createWorkflow, idField, titleField, screenProps, history, routes, statuses, supplementalFields, cancellable, type Screen } from './application';
+import { createWorkflow, idField, titleField, screenProps, history, routes, statuses, supplementalFields, cancellable, archivePresentation, type Screen } from './application';
 import type { StoreOptions } from './store';
 import './app.css';
 const options = defineProps<StoreOptions>();
@@ -228,13 +232,13 @@ const values = computed(() => state.value.draft as Record<string, unknown>);
   <main class="workflow-app" data-oods-workflow="${object}" :data-screen="state.screen" :data-selected-id="state.id" :data-route="routes[state.screen]" :data-ui-state="state.uiState">
     <header class="workflow-heading"><div><p class="workflow-eyebrow">${object.toUpperCase()} WORKSPACE</p><h1>{{ state.screen === 'list' ? '${object}s' : state.draft[${JSON.stringify(titleField)}] }}</h1></div><span class="workflow-mode">Local workspace</span></header>
     <nav aria-label="Workflow screens"><button v-for="screen in screens" :key="screen" type="button" :aria-current="state.screen === screen ? 'page' : undefined" @click="app.navigate(screen)">{{ screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1) }}</button></nav>
-    <section v-if="state.screen === 'list'" class="workflow-toolbar" aria-label="Find subscriptions"><label>Search<input v-model="search" type="search" @input="app.filter(($event.target as HTMLInputElement).value, status)" /></label><label>Status<select v-model="status" @change="app.filter(search, ($event.target as HTMLSelectElement).value)"><option value="">All states</option><option v-for="value in statuses" :key="value" :value="value">{{ value.replaceAll('_', ' ') }}</option></select></label><label>Sort<select @change="app.sort(($event.target as HTMLSelectElement).value === 'desc')"><option value="asc">Name A–Z</option><option value="desc">Name Z–A</option></select></label><button type="button" :aria-pressed="state.archived" @click="app.archived(!state.archived)">{{ state.archived ? 'Show active' : 'Archived' }}</button></section>
+    <section v-if="state.screen === 'list'" class="workflow-toolbar" aria-label="Find subscriptions"><label>Search<input v-model="search" type="search" @input="app.filter(($event.target as HTMLInputElement).value, status)" /></label><label>Status<select v-model="status" @change="app.filter(search, ($event.target as HTMLSelectElement).value)"><option value="">All states</option><option v-for="value in statuses" :key="value" :value="value">{{ value.replaceAll('_', ' ') }}</option></select></label><label>Sort<select @change="app.sort(($event.target as HTMLSelectElement).value === 'desc')"><option value="asc">Name A–Z</option><option value="desc">Name Z–A</option></select></label>${hasArchive ? '' : `<button type="button" :aria-pressed="state.archived" @click="app.archived(!state.archived)">{{ state.archived ? 'Show active' : 'Archived' }}</button>`}</section>
     <p v-if="state.error" role="alert">{{ state.error }}</p><button v-if="state.uiState === 'error'" type="button" @click="app.retry()">Try again</button>
     <section aria-label="${object} screen" class="workflow-content" @input.capture="app.edit" @change.capture="app.edit">
       <template v-if="state.uiState === 'success' && state.screen === 'form'"><label v-for="field in supplementalFields" :key="field.name" class="workflow-field">{{ field.label }}<input :name="field.name" :value="values[field.name]" /></label></template>
       <fieldset v-if="state.uiState === 'success' && state.screen === 'detail' && cancellable" class="workflow-cancel"><legend>Cancellation details</legend><label>Reason<input name="cancellation_reason" :value="values.cancellation_reason ?? ''" /></label><label>Reason code<input name="cancellation_reason_code" :value="values.cancellation_reason_code ?? ''" /></label><label><input name="cancel_at_period_end" type="checkbox" :checked="Boolean(values.cancel_at_period_end)" />Cancel at period end</label></fieldset>
       <form v-if="state.screen === 'form'" @submit.prevent="app.actions.handleSubmit"><Form :key="state.revision + ':' + state.uiState" v-bind="props" /></form><component v-else :is="view" :key="state.revision + ':' + state.uiState" v-bind="props" />
-      <template v-if="state.uiState === 'success' && state.screen === 'list'"><ul class="workflow-records"><li v-for="record in state.records" :key="String(record[idField])"><button type="button" :data-record-id="record[idField]" @click="app.actions.handleRowClick(String(record[idField]))"><strong>{{ record[titleField] }}</strong><StatusBadge :status="String((record as Record<string, unknown>).status)" /><span aria-hidden="true">→</span></button></li></ul><div class="workflow-pagination"><span>{{ state.total }} records</span><button :disabled="state.page <= 1" @click="app.page(state.page - 1)">Previous</button><button :disabled="state.page * 10 >= state.total" @click="app.page(state.page + 1)">Next</button></div></template>
+      <template v-if="state.uiState === 'success' && state.screen === 'list'">${hasArchive ? `<Tabs aria-label="Archive views" :selected-id="state.archived ? 'archived' : 'active'" :items="[{ id: 'active', label: 'Active', panel: '' }, { id: 'archived', label: archivePresentation.tabLabel, panel: '' }]" @change="app.archived($event === 'archived')"><template #panel="{ selected }"><template v-if="selected">` : ''}<ul class="workflow-records"><li v-for="record in state.records" :key="String(record[idField])">${hasArchive ? `<ArchivedRowOverlay :is-archived="Boolean((record as Record<string, unknown>)[archivePresentation.archivedField])" :label="String(record[titleField])" :show-badge="archivePresentation.showBadge" :separate-tab="archivePresentation.separateTab" :tab-label="archivePresentation.tabLabel">` : ''}<button type="button" :data-record-id="record[idField]" @click="app.actions.handleRowClick(String(record[idField]))"><strong>{{ record[titleField] }}</strong><StatusBadge :status="String((record as Record<string, unknown>).status)" /><span aria-hidden="true">→</span></button>${hasArchive ? '</ArchivedRowOverlay>' : ''}</li></ul><div class="workflow-pagination"><span>{{ state.total }} records</span><button :disabled="state.page <= 1" @click="app.page(state.page - 1)">Previous</button><button :disabled="state.page * 10 >= state.total" @click="app.page(state.page + 1)">Next</button></div>${hasArchive ? '</template></template></Tabs>' : ''}</template>
       <ol v-if="state.uiState === 'success' && state.screen === 'timeline'" class="workflow-history" aria-label="Lifecycle history"><li v-for="(entry, index) in history(state.draft)" :key="index"><strong>{{ entry.to.replaceAll('_', ' ') }}</strong><time :datetime="entry.at">{{ entry.at }}</time><p>{{ entry.reason }}</p></li></ol>
       <button v-if="state.uiState === 'success' && state.screen === 'detail' && values.is_archived" @click="app.restore()">Restore record</button>
     </section><p class="workflow-notice" role="status">{{ state.notice }}</p>

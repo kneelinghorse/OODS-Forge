@@ -30,6 +30,29 @@ describe('@oods/components-react shared scenarios', () => {
       expect(container.textContent?.trim().length).toBeGreaterThan(0);
 
       switch (scenario.id) {
+        case 'billing-cycle-progress':
+          expect(screen.getByRole('progressbar').getAttribute('value')).toBe('40');
+          expect(screen.getByRole('progressbar').getAttribute('aria-label')).toBe('40% complete · 18 days remaining');
+          break;
+        case 'billing-payment-detail':
+          expect(screen.getByRole('log', { name: 'Payments' }).textContent).toContain('Payment method: card');
+          expect(component?.textContent).toContain('No payment scheduled');
+          expect(component?.textContent).toContain('$19.99 USD');
+          break;
+        case 'billing-payment-events':
+          expect([...component!.querySelectorAll('time')].map((node) => node.getAttribute('datetime'))).toEqual(['2026-01-01T00:00:00Z', '2026-02-01T00:00:00Z']);
+          expect(screen.getByRole('log', { name: 'Payment events' }).textContent).toContain('$19.99 USD');
+          expect(component?.textContent).not.toContain('Payment method');
+          break;
+        case 'billing-card-minor-units':
+          expect(component?.textContent).toBe('$19.99 · monthly');
+          break;
+        case 'archived-row-presentation':
+          expect(screen.getByRole('group', { name: 'Archived: Team subscription' }).getAttribute('aria-hidden')).toBe('false');
+          expect(component?.getAttribute('data-archive-tab')).toBe('Archived');
+          expect(component?.textContent).toBe('Archived');
+          break;
+
         case 'billing-summary-minor-units':
           expect(component?.textContent?.trim()).toBe('$19.99 · monthly');
           break;

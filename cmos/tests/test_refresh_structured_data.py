@@ -26,6 +26,7 @@ from scripts.refresh_structured_data import (  # noqa: E402
     load_component_intake,
     parse_args,
     project_trait_recipe_surfaces,
+    project_foundation_surfaces,
     refresh_structured_data,
 )
 
@@ -46,6 +47,34 @@ class RefreshStructuredDataTest(unittest.TestCase):
             generated_at=EXPECTED_GENERATED_AT,
             component_capabilities_path=CLOSEOUT_COMPONENT_CAPABILITY_PATH,
         )
+
+    def test_foundation_projection_promotes_only_the_reviewed_14_target_pairs(self) -> None:
+        frozen = COMPONENT_CAPABILITY_PATH.read_bytes()
+        baseline = {row["id"]: row for row in json.loads(frozen)["rows"]}
+        projected = project_foundation_surfaces(baseline)
+        changed = [(component, target) for component in baseline for target in ("react", "vue")
+                   if projected[component]["surfaces"][target] != baseline[component]["surfaces"][target]]
+        self.assertEqual(len(changed), 28)
+        self.assertEqual(len({component for component, _ in changed}), 14)
+        for component, target in changed:
+            self.assertEqual(projected[component]["surfaces"][target]["state"], "implemented-evidence-complete")
+            self.assertTrue(any("foundation-v1" in ref for ref in projected[component]["surfaces"][target]["evidence"]))
+        for component in ("Button", "Stack", "Grid", "Input"):
+            self.assertTrue(all((component, target) in changed for target in ("react", "vue")))
+        self.assertEqual(projected["ColorStatePicker"], baseline["ColorStatePicker"])
+        self.assertEqual(COMPONENT_CAPABILITY_PATH.read_bytes(), frozen)
+
+    def test_unapproved_foundation_cannot_promote_current_discovery(self) -> None:
+        from scripts import refresh_structured_data as refresh
+        original = refresh.load_json
+        def unapproved(path):
+            document = original(path)
+            if str(path).endswith("component-capability-foundation-v1.s182.v1.json"):
+                document["independentReviewApproved"] = False
+            return document
+        baseline = {row["id"]: row for row in json.loads(COMPONENT_CAPABILITY_PATH.read_text())["rows"]}
+        with patch("scripts.refresh_structured_data.load_json", side_effect=unapproved):
+            self.assertEqual(project_foundation_surfaces(baseline), baseline)
 
     def test_current_recipe_projection_preserves_frozen_evidence_and_unrelated_rows(self) -> None:
         frozen = COMPONENT_CAPABILITY_PATH.read_bytes()

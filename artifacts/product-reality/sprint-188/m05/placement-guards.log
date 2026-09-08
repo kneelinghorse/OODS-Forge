@@ -1,0 +1,62 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/billing-placement.s188.spec.ts (6 tests | 2 failed) 985ms
+   ✓ Sprint 188 remaining trait placement obligations > never chooses any of the five recipes for generic slots on Product 288ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every schema outside the five declared object/context changes byte-identical to the m04 head  644ms
+   × Sprint 188 remaining trait placement obligations > keeps every declared detail recipe as a real node through all composer post-processing 10ms
+     → Subscription/detail: CycleProgressCard was erased or never placed: expected false to be true // Object.is equality
+   × Sprint 188 remaining trait placement obligations > keeps every declared timeline recipe as a real node through all composer post-processing 7ms
+     → Subscription/timeline: PaymentEventTimeline was erased or never placed: expected false to be true // Object.is equality
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared card recipe as a real node through all composer post-processing 21ms
+   ✓ Sprint 188 remaining trait placement obligations > keeps every declared list recipe as a real node through all composer post-processing 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/billing-placement.s188.spec.ts > Sprint 188 remaining trait placement obligations > keeps every declared detail recipe as a real node through all composer post-processing
+AssertionError: Subscription/detail: CycleProgressCard was erased or never placed: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/product-reality/billing-placement.s188.spec.ts:39:167
+     37|     const result = await compose({ object: 'Subscription', context });
+     38|     const placed = nodes(result.schema);
+     39|     for (const component of required) expect(placed.some((node) => nod…
+       |                                                                                                                                                                       ^
+     40|     if (context === 'card') expect(placed.find((node) => node.componen…
+     41|     for (const framework of ['react', 'vue'] as const) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/product-reality/billing-placement.s188.spec.ts > Sprint 188 remaining trait placement obligations > keeps every declared timeline recipe as a real node through all composer post-processing
+AssertionError: Subscription/timeline: PaymentEventTimeline was erased or never placed: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/product-reality/billing-placement.s188.spec.ts:39:167
+     37|     const result = await compose({ object: 'Subscription', context });
+     38|     const placed = nodes(result.schema);
+     39|     for (const component of required) expect(placed.some((node) => nod…
+       |                                                                                                                                                                       ^
+     40|     if (context === 'card') expect(placed.find((node) => node.componen…
+     41|     for (const framework of ['react', 'vue'] as const) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  09:22:01
+   Duration  2.60s (transform 806ms, setup 15ms, collect 1.39s, tests 985ms, environment 0ms, prepare 94ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/billing-placement.s188.spec.ts

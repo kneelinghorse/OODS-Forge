@@ -1,4 +1,4 @@
-import { BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
+import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
 import { resolveSpacingLeaf } from './spacing-leaf.js';
@@ -320,6 +320,34 @@ function renderBillingIntervalSelector(node: UiElement): string {
   const placeholder = intervals.includes(value) ? '' : `<option value="${escapeHtml(value)}" disabled selected>${escapeHtml(value || 'Choose interval')}</option>`;
   const options = intervals.map((interval) => `<option value="${escapeHtml(interval)}"${interval === value ? ' selected' : ''}>${escapeHtml(interval)}</option>`).join('');
   return `<div class="oods-billing-field" data-oods-component="BillingIntervalSelector" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing interval')}</label><select id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''}${props.disabled ? ' disabled' : ''}${error ? ` aria-invalid="true" aria-describedby="${escapeHtml(id)}-error"` : ''}>${placeholder}${options}</select>${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
+}
+
+function renderCycleProgressCard(node: UiElement): string {
+  const props = node.props ?? {};
+  const title = asString(props.title) ?? 'Billing cycle';
+  const cycle = billingCycle({ progress: typeof props.progress === 'number' ? props.progress : undefined, periodStart: asString(props.periodStart), periodEnd: asString(props.periodEnd), interval: asString(props.interval), now: asString(props.now) });
+  return `<section id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-billing-cycle" data-oods-component="CycleProgressCard" aria-label="${escapeHtml(title)}"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(cycle.announcement)}</p>${cycle.percent === undefined ? '' : `<progress max="100" value="${cycle.percent}" aria-label="${escapeHtml(cycle.announcement)}"></progress>`}${props.interval ? `<p class="oods-billing-muted">${escapeHtml(asString(props.interval) ?? '')}</p>` : ''}</section>`;
+}
+
+function renderBillingTimeline(node: UiElement, includeMethod: boolean): string {
+  const props = node.props ?? {};
+  const title = asString(props.title) ?? (includeMethod ? 'Payments' : 'Payment events');
+  const values = { lastPayment: asString(props.lastPayment), nextPayment: asString(props.nextPayment), paymentStatus: asString(props.paymentStatus), paymentMethod: asString(props.paymentMethod), amount: typeof props.amount === 'number' ? props.amount : undefined, currency: asString(props.currency), minorUnits: typeof props.minorUnits === 'number' ? props.minorUnits : undefined };
+  const rows = billingPaymentRows(values).map((row) => `<li data-payment-kind="${row.kind}"><strong>${row.label}</strong>${row.at ? `<time datetime="${escapeHtml(row.at)}">${escapeHtml(row.text)}</time>` : `<span>${escapeHtml(row.text)}</span>`}</li>`).join('');
+  return `<section id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-payment-timeline" data-oods-component="${node.component}" role="log" aria-label="${escapeHtml(title)}"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(billingPaymentSummary(values))}</p>${includeMethod ? `<p class="oods-billing-muted">Payment method: ${escapeHtml(values.paymentMethod ?? 'Not provided')}</p>` : ''}<ol>${rows}</ol></section>`;
+}
+function renderPaymentTimeline(node: UiElement): string { return renderBillingTimeline(node, true); }
+function renderPaymentEventTimeline(node: UiElement): string { return renderBillingTimeline(node, false); }
+function renderBillingCardMeta(node: UiElement): string {
+  const props = node.props ?? {};
+  return `<span id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-billing-card-meta" data-oods-component="BillingCardMeta">${escapeHtml(billingSummary(typeof props.amount === 'number' ? props.amount : undefined, asString(props.currency), typeof props.minorUnits === 'number' ? props.minorUnits : undefined, asString(props.interval)))}</span>`;
+}
+function renderArchivedRowOverlay(node: UiElement, childrenHtml = ''): string {
+  const props = node.props ?? {};
+  const archived = props.isArchived === true;
+  const tabLabel = asString(props.tabLabel) ?? 'Archived';
+  const label = asString(props.label);
+  return `<span id="${escapeHtml(asString(props.id) ?? node.id)}" class="oods-archived-row" data-oods-component="ArchivedRowOverlay"${archived ? ` data-archived="true" role="group" aria-hidden="false" aria-label="${escapeHtml(`${tabLabel}${label ? `: ${label}` : ''}`)}"` : ''}${props.separateTab !== false ? ` data-archive-tab="${escapeHtml(tabLabel)}"` : ''}>${childrenHtml}${archived && props.showBadge !== false ? `<span class="oods-archive-badge">${escapeHtml(tabLabel)}</span>` : ''}</span>`;
 }
 
 function renderInput(node: UiElement): string {
@@ -2015,6 +2043,11 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   OwnershipMeta: renderOwnershipMeta,
   OwnershipSummary: renderOwnershipSummary,
   BillingSummaryBadge: renderBillingSummaryBadge,
+  CycleProgressCard: renderCycleProgressCard,
+  PaymentTimeline: renderPaymentTimeline,
+  PaymentEventTimeline: renderPaymentEventTimeline,
+  BillingCardMeta: renderBillingCardMeta,
+  ArchivedRowOverlay: renderArchivedRowOverlay,
   BillingAmountInput: renderBillingAmountInput,
   BillingIntervalSelector: renderBillingIntervalSelector,
   PriceCardMeta: renderPriceCardMeta,
