@@ -1,0 +1,64 @@
+{
+  "decisionId": 1830,
+  "approved": true,
+  "missionId": "s188-m06",
+  "executionHead": "3f0e9d136e12b81a8ee459b43d1c1fc4aa3c617e",
+  "captureEvidenceHead": "db63108da2a8b384119c17783702156db9767b23",
+  "proposalHead": "0f6891e3b4a8decb0626d49dbf6fa870bb712276",
+  "file": "packages/mcp-server/test/product-reality/sprint-wide-movers.s185.spec.ts",
+  "testKey": "Sprint-wide accounting includes runtime behavior omitted by per-mission scopes turns a reproduced Table omission into a failing completed mover record#0",
+  "timeoutMs": 20000,
+  "observedDurationMs": 21855,
+  "diagnostic": "artifacts/product-reality/sprint-188/m06/timeout-diagnostic/receipt.json",
+  "sprintReview": {
+    "status": "pending-sprint-review",
+    "nextSprintAdjustmentRequired": true,
+    "text": "Review timeout budgets, suite concurrency and capture/retry handling next sprint. This exact exception is not a standing waiver; retain raw failures and avoid repeatedly recapturing entire populations for a single diagnostic timeout."
+  },
+  "userInstruction": "yes, i approve and we'll address it in sprint review so that we adjust for these issues next sprint.",
+  "cmosDecision": {
+    "sessionId": "PS-2026-09-08-010",
+    "category": "decision",
+    "content": "User explicitly approves the documented exception for the single root-core mover-test timeout in corrective capture 3f0e9d13 (20,000ms limit;21,855ms observed), backed by the unchanged 7/7 targeted spec retry (affected test1,094ms) and corroborating passing server/CI observations. Keep both raw captures unchanged and the timeout counted as an observed failure; accept it for M06 criterion3 with exact evidence bindings. No third capture or runtime/composer change. Finish independent all39-criterion audit and mission handoff. User directs sprint review to address these issues and adjust test/capture handling next sprint; this exception is not a standing waiver. Sprint remains Active; builderSelfCertified:false and separateReviewRequired:true.",
+    "timestamp": "2026-09-08T19:48:43.857Z",
+    "captureCount": 1,
+    "message": "Captured decision in session 'PS-2026-09-08-010' (1 total captures)",
+    "structuredMaterialization": {
+      "target": "strategic_decisions",
+      "timing": "immediate",
+      "outcome": "materialized"
+    },
+    "writeFailures": [],
+    "missionId": "s188-m06",
+    "decisionExtractionCount": 1,
+    "decisionAlreadyExtracted": false,
+    "decisionId": 1830,
+    "supersessionCandidates": [
+      {
+        "id": 1829,
+        "decisionText": "User explicitly approved proceeding with one corrective four-suite capture after retained initial failed execution 800a75cb. Amend only s188-m06 criterion 3: retain the failed initial attempt unchanged and permit one corrective final clean capture after corrections at 131d7352. Final proof must be refreshed at the corrected implementation; zero failures, same 16 pre-existing Sprint 187 skip identities, per-file delta accounting and independent all-39-criterion audit remain required. No additional composer mechanism, deployment, reconnect send, sprint certification or merge is authorized by this amendment.",
+        "sprintId": "sprint-188",
+        "createdAt": "2026-09-08T17:31:33.610Z",
+        "overlapCount": 12
+      },
+      {
+        "id": 1828,
+        "decisionText": "M06 recovery at131d7352 preserves historical proof boundaries: the S185 HTML no-change guard ends at actual f8d15098 execution; current fallback policy uses still-unmapped AuditSummaryCard after archive implementation; registry names retain the exact109-member digest while release version follows the active manifest. Only disposable React/Vue .cache bundles are ignored by source inventory. Portable boundary stays exact at27 tracked files and admits only the three named S188 component snapshots to the existing provenance exception. No composer changes. Failed800a75cb capture retained byte-exact; no repeat without amendment of the literal one-capture criterion.",
+        "sprintId": "sprint-188",
+        "createdAt": "2026-09-08T17:17:10.118Z",
+        "overlapCount": 8
+      },
+      {
+        "id": 1813,
+        "decisionText": "Change for Sprint 188 onward: a certification decision names the remote CI run and PR head it is conditioned on. If remote CI is not yet green when the review certifies on frozen local evidence, the roadmap keeps the sprint at BUILT / REVIEW PENDING and the certification says so explicitly, so 'certified' and 'CI green' are never silently disjoint. Any roadmap or prose edit made by the review runs the roadmap/prose contract tests before it is committed (Sprint 187's review edit to near.md turned the coverage job red, PS-2026-09-07-003). This adds no new closeout framework; it is a two-line rule on the existing review step.",
+        "sprintId": "sprint-187",
+        "createdAt": "2026-09-07T16:45:38.468Z",
+        "overlapCount": 7
+      }
+    ],
+    "supersessionMessage": "Potential supersession detected:\n  - Decision #1829 (sprint-188): \"User explicitly approved proceeding with one corrective four-suite capture after...\" (12 keyword overlap)\n  - Decision #1828 (sprint-188): \"M06 recovery at131d7352 preserves historical proof boundaries: the S185 HTML no-...\" (8 keyword overlap)\n  - Decision #1813 (sprint-187): \"Change for Sprint 188 onward: a certification decision names the remote CI run a...\" (7 keyword overlap)\n\nTo mark a candidate as superseded:\n  cmos_decisions(action=\"update\", decisionId=1829, supersededBy=1830)\n  cmos_decisions(action=\"update\", decisionId=1828, supersededBy=1830)\n  cmos_decisions(action=\"update\", decisionId=1813, supersededBy=1830)",
+    "implicitlyReaffirmedLearningIds": [
+      230
+    ]
+  }
+}

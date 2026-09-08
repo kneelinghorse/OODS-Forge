@@ -223,8 +223,68 @@ export function assertEvidenceOnlyHeadChanges(changes, sprintId = 'sprint-185') 
     `Review descendant changes an executable input, fixture, or pre-existing evidence: ${row.status} ${row.path}`);
 }
 
+// Decision 1830 accepts one already-captured observation, never a general retry waiver.
+export function validateSprint188Timeout({ approval, failures, executions, readBytes, readHistorical }) {
+  assert.equal(approval.decisionId, 1830); assert.equal(approval.approved, true);
+  assert.equal(approval.cmosDecision.decisionId, 1830); assert.equal(approval.cmosDecision.missionId, 's188-m06');
+  assert.equal(approval.missionId, 's188-m06');
+  assert.equal(approval.executionHead, '3f0e9d136e12b81a8ee459b43d1c1fc4aa3c617e');
+  assert.equal(approval.proposalHead, '0f6891e3b4a8decb0626d49dbf6fa870bb712276');
+  assert.equal(approval.file, 'packages/mcp-server/test/product-reality/sprint-wide-movers.s185.spec.ts');
+  assert.equal(approval.testKey, 'Sprint-wide accounting includes runtime behavior omitted by per-mission scopes turns a reproduced Table omission into a failing completed mover record#0');
+  assert.equal(approval.timeoutMs, 20000); assert.equal(approval.observedDurationMs, 21855);
+  assert.equal(approval.sprintReview.status, 'pending-sprint-review'); assert.equal(approval.sprintReview.nextSprintAdjustmentRequired, true);
+  assert(approval.sprintReview.text.trim()); assert.equal(failures.length, 1, 'Exception covers exactly one observed failure.');
+  const failure = failures[0]; assert.equal(failure.suite, 'root-core'); assert.equal(failure.file, approval.file); assert.equal(failure.testKey, approval.testKey);
+  const evidence = failure.failureEvidence; assert.equal(evidence.source, 'raw-log'); assert.equal(evidence.status, 'resolved');
+  const log = readBytes(evidence.log.path); assert.equal(hash(log), evidence.log.sha256);
+  assert.equal(log.toString().split('\n').slice(evidence.startLine - 1, evidence.endLine).join('\n'), evidence.text);
+  assert(evidence.cause.startsWith('Error: Test timed out in 20000ms.\n'));
+  const read = file => JSON.parse(readBytes(file));
+  const diagnostic = read(approval.diagnostic);
+  assert.equal(diagnostic.capturedExecutionHead, approval.executionHead); assert.equal(diagnostic.spec, approval.file);
+  for (const ref of diagnostic.files) assert.equal(hash(readBytes(ref.path)), ref.sha256, 'Retry/CI evidence hash changed.');
+  const diagnosticRoot = path.posix.dirname(approval.diagnostic);
+  const retry = read(`${diagnosticRoot}/isolation.vitest.json`); const ci = read(`${diagnosticRoot}/ci-complete.json`);
+  assert(retry.success); assert.equal(retry.numPassedTests, 7); assert.equal(retry.numFailedTests, 0); assert.equal(retry.numPendingTests, 0); assert.equal(retry.testResults.length, 1);
+  assert.equal(ci.databaseId, 34256102496); assert.equal(ci.status, 'completed'); assert.equal(ci.conclusion, 'success');
+  for (const job of ['coverage', 'viz-determinism']) assert.equal(ci.jobs.find(row => row.name === job)?.conclusion, 'success');
+  const sourceHash = hash(readHistorical(approval.executionHead, approval.file));
+  for (const head of [ci.headSha, approval.proposalHead]) assert.equal(hash(readHistorical(head, approval.file)), sourceHash, 'The retry/corroborating spec changed.');
+  for (const [head, expected] of Object.entries(diagnostic.specHashes)) assert.equal(hash(readHistorical(head, approval.file)), expected);
+  const captures = executions.filter(row => row.cohort === 'closeout'); assert.equal(captures.length, 4);
+  for (const row of captures) {
+    assert.equal(row.measuredHead, approval.executionHead); assert(row.cleanBefore && row.cleanAfter);
+    assert.equal(row.counts.failed, row.suite === 'root-core' ? 1 : 0); assert.equal(row.exitCode, row.suite === 'root-core' ? 1 : 0);
+  }
+  const testFile = raw => { const file = raw.testResults.find(row => row.name.endsWith('/' + approval.file)); assert(file); return file; };
+  const rootFile = testFile(read(captures.find(row => row.suite === 'root-core').rawReport.path));
+  const serverFile = testFile(read(captures.find(row => row.suite === 'mcp-server').rawReport.path));
+  const retryFile = testFile(retry); const names = file => file.assertionResults.map(row => row.fullName).sort();
+  assert.deepEqual(names(rootFile), names(retryFile)); assert.deepEqual(names(serverFile), names(retryFile));
+  assert.equal(rootFile.assertionResults.filter(row => row.status === 'failed').length, 1);
+  assert.equal(rootFile.assertionResults.find(row => row.status === 'failed').fullName + '#0', approval.testKey);
+  assert([...serverFile.assertionResults, ...retryFile.assertionResults].every(row => row.status === 'passed'));
+  assert.equal(diagnostic.isolation.exitCode, 0); assert.equal(diagnostic.isolation.targetDurationMs, retryFile.assertionResults.find(row => row.fullName + '#0' === approval.testKey).duration);
+  return { decisionId: 1830, status: 'accepted-observed-timeout', file: approval.file, testKey: approval.testKey,
+    observedFailureCount: 1, retryPassed: 7, sprintReview: approval.sprintReview };
+}
+
+export const S188_DERIVATION_FILES = Object.freeze(['scripts/product-reality/s185-suite-accounting.mjs',
+  'scripts/product-reality/s185-closeout.mjs', 'scripts/product-reality/s185-audit-closeout.mjs']);
+
+export function assertSprint188ApprovalChanges(changes, readHistorical, readCurrent) {
+  for (const row of changes) {
+    if (S188_DERIVATION_FILES.includes(row.path)) { assert.equal(row.status, 'M'); continue; }
+    if (row.path === 'packages/mcp-server/test/product-reality/approved-timeout.s188.spec.ts') { assert.equal(row.status, 'A'); continue; }
+    assert.equal(row.status, 'A', `Approval cannot rewrite captured inputs: ${row.path}`);
+    if (row.path.startsWith('artifacts/product-reality/sprint-188/m06/accepted-timeout/')) continue;
+    assert(Buffer.from(readCurrent(row.path)).equals(Buffer.from(readHistorical('0f6891e3b4a8decb0626d49dbf6fa870bb712276', row.path))), `Previously submitted evidence changed: ${row.path}`);
+  }
+}
+
 export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, attributions = [], failureDispositions = [],
-  sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts,
+  sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout,
   capturePath = sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
   assert(executionHead && reviewHead, 'Both actual execution head and separate frozen review head are required.');
   assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188'].includes(sprintId), 'Unsupported sprint.');
@@ -346,7 +406,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   const historicalFailures = observedFailures.filter(row => Object.hasOwn(baselinePaths, row.cohort));
   const closeoutFailures = observedFailures.filter(row => row.cohort === 'closeout').map(failure => {
     const classified = classifyFailure(failure, historicalFailures, failureDispositions);
-    if (classified.status === 'unexplained-failure') issues.push({ kind: 'unexplained-closeout-failure', executionId: failure.executionId,
+    if (!approvedTimeout && classified.status === 'unexplained-failure') issues.push({ kind: 'unexplained-closeout-failure', executionId: failure.executionId,
       file: failure.file, testKey: failure.testKey });
     const testSource = { commit: executionHead, path: failure.file, blob: git(['rev-parse', `${executionHead}:${failure.file}`]) };
     const historicalTestSources = classified.matchingHistoricalReceipts.map(receiptPath => {
@@ -361,7 +421,18 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   const ancestor = spawnSync('git', ['merge-base', '--is-ancestor', executionHead, reviewHead], { cwd: root }).status === 0;
   assert(ancestor, 'The review head must descend from the actual execution head.');
   const headChanges = changedPaths(executionHead, reviewHead);
-  assertEvidenceOnlyHeadChanges(headChanges, sprintId);
+  let timeoutAcceptance;
+  if (approvedTimeout) {
+    assert.equal(sprintId, 'sprint-188');
+    const approval = json(approvedTimeout);
+    assert.equal(approval.executionHead, executionHead);
+    const historical = (head, file) => execFileSync('git', ['show', `${head}:${file}`], {cwd: root, maxBuffer: 128 * 1024 * 1024});
+    execFileSync('git', ['merge-base', '--is-ancestor', approval.proposalHead, reviewHead], {cwd: root});
+    assertSprint188ApprovalChanges(headChanges, historical, bytes);
+    timeoutAcceptance = { ...validateSprint188Timeout({approval, failures: closeoutFailures, executions, readBytes: bytes, readHistorical: historical}), approval: refs.get(approvedTimeout) };
+    closeoutFailures[0].status = 'approved-timeout-disclosed';
+    closeoutFailures[0].approval = refs.get(approvedTimeout);
+  } else assertEvidenceOnlyHeadChanges(headChanges, sprintId);
   const changedAt = new Map();
   const commitsFor = (before, file) => git(['log', '--format=%H', `${before}..${executionHead}`, '--', file]).split('\n').filter(Boolean)
     .map(commit => ({ commit, path: file }));
@@ -429,12 +500,14 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     });
   return { schemaVersion: '1.0.0', mission: missionId, kind: 'four-suite-execution-and-delta-accounting',
     status: issues.length ? 'failed' : 'passed', executionHead, reviewHead,
-    headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: true,
-      limitation: 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
+    headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: !approvedTimeout,
+      ...(approvedTimeout ? { capturedRuntimeAndTestSourcesUnchanged: true, postCaptureDerivationOnly: true, proposalHead: '0f6891e3b4a8decb0626d49dbf6fa870bb712276', derivationFiles: S188_DERIVATION_FILES } : {}),
+      limitation: approvedTimeout ? 'Actual capture and diagnostic heads remain unchanged. Decision 1830 permits separately frozen approval and audit derivation inputs; no captured runtime or test input changes.' : 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
+    ...(timeoutAcceptance ? { timeoutAcceptance } : {}),
     baselines, closeout, closeoutAttempts, executions, comparisons, historicalAttempts, closeoutFailures, unattributedDeltas, unusedAttributions,
     unusedFailureDispositions, validationIssues: issues,
     references: [...refs.values()].sort((a, b) => a.path.localeCompare(b.path)),
-    countPolicy: 'Status describes accounting validity, not blanket suite greenness. Counts belong to individual executed receipts. Any disclosed inherited failure remains a failed execution; new or unmatched failures invalidate accounting. Skips and prior failures remain visible; no cross-suite or retry total claims unique tests.',
+    countPolicy: 'Status describes accounting validity, not blanket suite greenness. Counts belong to individual executed receipts. Any disclosed inherited failure remains a failed execution; new or unmatched failures invalidate accounting unless exactly bound to the explicit Sprint 188 decision 1830 timeout exception. Skips and prior failures remain visible; no cross-suite or retry total claims unique tests.',
     builderSelfCertified: false, separateReviewRequired: true };
 }
 

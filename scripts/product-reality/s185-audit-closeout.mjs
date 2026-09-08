@@ -63,21 +63,102 @@ const sourceKeys = [
   ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near', 'm04BuildRecord'],
 ];
 
+// Independent verification of the one named user exception; no producer helper imports.
+export function auditSprint188Timeout({ approval, accounting, readBytes, readHistorical }) {
+  assert.equal(approval.approved, true); assert.equal(approval.decisionId, 1830);
+  assert.equal(approval.cmosDecision.decisionId, 1830); assert.equal(approval.cmosDecision.missionId, 's188-m06');
+  assert.equal(approval.missionId, 's188-m06');
+  assert.equal(approval.executionHead, '3f0e9d136e12b81a8ee459b43d1c1fc4aa3c617e');
+  assert.equal(approval.proposalHead, '0f6891e3b4a8decb0626d49dbf6fa870bb712276');
+  const file = 'packages/mcp-server/test/product-reality/sprint-wide-movers.s185.spec.ts';
+  const name = 'Sprint-wide accounting includes runtime behavior omitted by per-mission scopes turns a reproduced Table omission into a failing completed mover record';
+  assert.equal(approval.file, file); assert.equal(approval.testKey, name + '#0');
+  assert.equal(approval.timeoutMs, 20000); assert.equal(approval.observedDurationMs, 21855);
+  assert.equal(approval.sprintReview.status, 'pending-sprint-review'); assert(approval.sprintReview.nextSprintAdjustmentRequired && approval.sprintReview.text.trim());
+  const read = target => JSON.parse(readBytes(target));
+  const captures = accounting.executions.filter(row => row.cohort === 'closeout'); assert.equal(captures.length, 4);
+  const observed = []; const inspected = {};
+  for (const capture of captures) {
+    assert.equal(capture.measuredHead, approval.executionHead); assert(capture.cleanBefore && capture.cleanAfter);
+    assert.equal(capture.counts.failed, capture.suite === 'root-core' ? 1 : 0); assert.equal(capture.exitCode, capture.suite === 'root-core' ? 1 : 0);
+    const raw = read(capture.rawReport.path);
+    for (const result of raw.testResults) {
+      if (result.name.endsWith('/' + file)) inspected[capture.suite] = result;
+      for (const test of result.assertionResults ?? []) if (test.status === 'failed') observed.push({ suite: capture.suite, file: result.name, test });
+    }
+  }
+  assert.equal(observed.length, 1); assert.equal(observed[0].suite, 'root-core'); assert(observed[0].file.endsWith('/' + file)); assert.equal(observed[0].test.fullName, name);
+  assert.equal(accounting.closeoutFailures.length, 1);
+  const failure = accounting.closeoutFailures[0]; assert.equal(failure.status, 'approved-timeout-disclosed'); assert.equal(failure.file, file); assert.equal(failure.testKey, name + '#0');
+  const proof = failure.failureEvidence; assert.equal(proof.source, 'raw-log'); assert.equal(proof.status, 'resolved');
+  const log = readBytes(proof.log.path); assert.equal(digest(log), proof.log.sha256);
+  assert.equal(log.toString().split('\n').slice(proof.startLine - 1, proof.endLine).join('\n'), proof.text);
+  assert(proof.text.includes(` FAIL  |core| ${file} > `)); assert(proof.cause.startsWith('Error: Test timed out in 20000ms.\n'));
+  const diagnostic = read(approval.diagnostic); assert.equal(diagnostic.capturedExecutionHead, approval.executionHead); assert.equal(diagnostic.spec, file);
+  for (const ref of diagnostic.files) assert.equal(digest(readBytes(ref.path)), ref.sha256, 'Retained diagnostic bytes changed.');
+  const directory = path.posix.dirname(approval.diagnostic);
+  const retry = read(directory + '/isolation.vitest.json'); const ci = read(directory + '/ci-complete.json');
+  assert.equal(retry.success, true); assert.equal(retry.numPassedTests, 7); assert.equal(retry.numFailedTests, 0); assert.equal(retry.numPendingTests, 0); assert.equal(retry.testResults.length, 1);
+  const isolated = retry.testResults[0]; assert(isolated.name.endsWith('/' + file));
+  for (const result of [inspected['root-core'], inspected['mcp-server']]) {
+    assert(result); assert.deepEqual(result.assertionResults.map(row => row.fullName).sort(), isolated.assertionResults.map(row => row.fullName).sort());
+  }
+  assert([...isolated.assertionResults, ...inspected['mcp-server'].assertionResults].every(row => row.status === 'passed'));
+  assert.equal(diagnostic.isolation.exitCode, 0); assert.equal(diagnostic.isolation.targetDurationMs, isolated.assertionResults.find(row => row.fullName === name).duration);
+  assert.equal(ci.databaseId, 34256102496); assert.equal(ci.status, 'completed'); assert.equal(ci.conclusion, 'success');
+  assert(['coverage', 'viz-determinism'].every(job => ci.jobs.some(row => row.name === job && row.conclusion === 'success')));
+  const source = digest(readHistorical(approval.executionHead, file));
+  assert.equal(digest(readHistorical(ci.headSha, file)), source); assert.equal(digest(readHistorical(approval.proposalHead, file)), source);
+  for (const [head, expected] of Object.entries(diagnostic.specHashes)) assert.equal(digest(readHistorical(head, file)), expected);
+  assert.deepEqual(accounting.timeoutAcceptance, { decisionId: 1830, status: 'accepted-observed-timeout', file, testKey: name + '#0',
+    observedFailureCount: 1, retryPassed: 7, sprintReview: approval.sprintReview, approval: accounting.timeoutAcceptance.approval });
+  assert.deepEqual(failure.approval, accounting.timeoutAcceptance.approval);
+  return true;
+}
+const auditDerivationFiles188 = ['scripts/product-reality/s185-suite-accounting.mjs',
+  'scripts/product-reality/s185-closeout.mjs', 'scripts/product-reality/s185-audit-closeout.mjs'];
+export function auditSprint188ApprovalChanges(changes, readHistorical, readCurrent) {
+  for (const { path: file, status } of changes) {
+    if (auditDerivationFiles188.includes(file)) { assert.equal(status, 'M'); continue; }
+    if (file === 'packages/mcp-server/test/product-reality/approved-timeout.s188.spec.ts') { assert.equal(status, 'A'); continue; }
+    assert.equal(status, 'A', `Approval changes a captured input: ${file}`);
+    if (file.startsWith('artifacts/product-reality/sprint-188/m06/accepted-timeout/')) continue;
+    assert.equal(digest(readCurrent(file)), digest(readHistorical('0f6891e3b4a8decb0626d49dbf6fa870bb712276', file)), `Submitted evidence changed: ${file}`);
+  }
+}
+
+// This historical schema remains invalid for the five original scalar bindings.
+export function auditSprint188OriginalFormFailure(results) {
+  assert.equal(results.length, 2);
+  for (const [index, result] of results.entries()) {
+    const framework = ['react', 'vue'][index];
+    const expected = [['address_roles', 'array', 'Input', 'slot-field-3-13'],
+      ['preference_document', 'unknown', 'Input', 'slot-field-5-17'],
+      ['state_history', 'array', 'DatePicker', 'slot-field-6-19'],
+      ['tags', 'array', 'Input', 'slot-field-8-23'], ['tag_metadata', 'array', 'Input', 'slot-field-9-25']];
+    assert.equal(result.status, 'error'); assert(!result.artifact);
+    assert.deepEqual(result.errors, expected.map(([field, kind, component, nodeId]) => ({code: 'OODS-V007', nodeId, component,
+      message: `Field "${field}" has ${kind} data, which cannot bind to ${component}.value on the ${framework} target; accepted field kinds: string, number, boolean.`})));
+  }
+}
+
 export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath = defaultManifest }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Audit requires actual full execution and review SHAs.');
   const workflow = manifestPath.startsWith('artifacts/product-reality/sprint-188/m06/');
+  const approvedTimeout = workflow && JSON.parse(readFrozen(manifestPath)).accounting?.approvedTimeout;
   const fresh = manifestPath.startsWith('artifacts/product-reality/sprint-187/m06/');
   const wave2 = manifestPath.startsWith('artifacts/product-reality/sprint-186/m06/');
   const missionId = workflow ? 's188-m06' : fresh ? 's187-m06' : wave2 ? 's186-m06' : 's185-m05';
   const sprintId = workflow ? 'sprint-188' : fresh ? 'sprint-187' : wave2 ? 'sprint-186' : 'sprint-185';
   const criterionCount = workflow ? 6 : fresh ? 7 : wave2 ? 6 : 8;
   const suiteCriterion = workflow ? 2 : fresh ? 5 : wave2 ? 4 : 6;
-  const outputPrefix = workflow ? 'artifacts/product-reality/sprint-188/m06/closeout' : fresh ? 'artifacts/product-reality/sprint-187/m06/closeout' : wave2 ? 'artifacts/product-reality/sprint-186/m06/closeout' : prefix;
+  const outputPrefix = workflow ? `artifacts/product-reality/sprint-188/m06/${approvedTimeout ? 'closeout-accepted' : 'closeout'}` : fresh ? 'artifacts/product-reality/sprint-187/m06/closeout' : wave2 ? 'artifacts/product-reality/sprint-186/m06/closeout' : prefix;
   const requiredSourceKeys = workflow ? [['freshCensus', 'savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['liveConsumers'], [], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries'], ['missionHistory', 'historicalEvidence', 'prose', 'near'], ['cmosMission', 'cmosSprint', 'carries', 'noticePlan']] : fresh ? [['freshCensus'], ['cohort', 'liveConsumers'], ['savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['rootEvidence', 'baselineFold'], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
     ['movers', 'noticePlan', 'deliveries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : sourceKeys;
   assert.equal(gitEvidence?.ancestor, true, 'Review head must descend from the actual execution head.');
   // Decision 1741 allows new capture records, not rewritten fixtures or code.
-  for (const change of gitEvidence.changes) {
+  if (approvedTimeout) auditSprint188ApprovalChanges(gitEvidence.changes, readHistorical, readFrozen);
+  else for (const change of gitEvidence.changes) {
     const allowed = workflow
       ? /^artifacts\/product-reality\/sprint-188\/m06\/four-suite-closeout\/(?:run-\d+\/(?:viz-core|viz-render|mcp-server|root-core)\.(?:json|vitest\.json|log)|setup\/[\w-]+\.log|four-suite-baseline\.json|accounting\.json|attributions\.json|failure-dispositions\.json)$/.test(change.path)
         || /^artifacts\/product-reality\/sprint-188\/m06\/closeout\/(?:claim-ledger|review-handoff|evidence-index)\.json$/.test(change.path)
@@ -117,6 +198,12 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
   };
   const reference = ref => {
     assert(ref && typeof ref.sha256 === 'string' && /^[a-f0-9]{64}$/.test(bare(ref.sha256)), 'Cited reference lacks captured SHA256.');
+    if (ref.executionSourceHead !== undefined) {
+      assert(approvedTimeout && (auditDerivationFiles188.includes(ref.path) || ref.path === 'packages/mcp-server/test/product-reality/approved-timeout.s188.spec.ts')); assert(fullHead(ref.executionSourceHead));
+      const bytes = Buffer.from(readHistorical(ref.executionSourceHead, ref.path));
+      assert.equal(digest(bytes), bare(ref.sha256), 'Captured derivation source hash differs.'); assert.equal(ref.commit, reviewHead);
+      return {path: ref.path, sha256: digest(bytes), bytes};
+    }
     const observed = frozen(ref.path);
     assert.equal(observed.sha256, bare(ref.sha256), `Frozen source hash differs: ${ref.path}`);
     if (ref.commit !== undefined) assert.equal(ref.commit, reviewHead, 'Frozen reference has a relabeled review commit.');
@@ -168,7 +255,14 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
 
   assert.equal(accounting.status, 'passed');
   assert.deepEqual(accounting.validationIssues, []); assert.deepEqual(accounting.unattributedDeltas, []);
-  assert.equal(accounting.headRelation.ancestor, true); assert.equal(accounting.headRelation.executableInputsUnchanged, true);
+  assert.equal(accounting.headRelation.ancestor, true);
+  if (approvedTimeout) {
+    assert.equal(accounting.headRelation.executableInputsUnchanged, false);
+    assert.equal(accounting.headRelation.capturedRuntimeAndTestSourcesUnchanged, true); assert.equal(accounting.headRelation.postCaptureDerivationOnly, true);
+    assert.equal(accounting.headRelation.proposalHead, '0f6891e3b4a8decb0626d49dbf6fa870bb712276');
+    assert.deepEqual(accounting.headRelation.derivationFiles, auditDerivationFiles188);
+    assert.deepEqual(accounting.headRelation.changedEvidencePaths, gitEvidence.changes);
+  } else assert.equal(accounting.headRelation.executableInputsUnchanged, true);
   for (const ref of accounting.references) reference(ref);
   const executions = new Map();
   for (const row of ledger.executions) {
@@ -198,7 +292,10 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     for (const key of ['inputs', 'outputs', 'logs']) {
       const refs = actual[key] ?? [];
       assert.deepEqual((row[key] ?? []).map(ref => ({ path: ref.path, sha256: bare(ref.sha256) })), refs.map(ref => ({ path: ref.path, sha256: bare(ref.sha256) })), `Execution ${actual.id} has different ${key}.`);
-      for (const ref of refs) reference(ref);
+      for (const ref of row[key] ?? []) {
+        if (ref.executionSourceHead !== undefined) { assert.equal(key, 'inputs'); assert.equal(ref.executionSourceHead, actual.inputSourceHead ?? actual.executionHead); if (actual.inputSourceHead) assert.equal(actual.sourceState, 'worktree'); }
+        reference(ref);
+      }
     }
     const logIdentity = actual.logs.map(ref => bare(ref.sha256)).sort().join(':');
     assert(!supplementalLogs.has(logIdentity) && !rawHashes.has(logIdentity), 'A supplemental execution was rolled up twice.'); supplementalLogs.add(logIdentity);
@@ -212,6 +309,13 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     && row.measuredHead === executionHead && row.cleanBefore === true && row.cleanAfter === true), 'Capture contains an unrelated, unclean or relabeled execution.');
   assert.deepEqual(captureRows.map(row => row.suite).sort(), ['mcp-server', 'root-core', 'viz-core', 'viz-render']);
 
+  if (approvedTimeout) {
+    const approval = parseFrozen(approvedTimeout);
+    assert.equal(accounting.timeoutAcceptance.approval.path, approvedTimeout); reference(accounting.timeoutAcceptance.approval);
+    assert(manifest.claimBindings[2].evidencePaths.includes(approvedTimeout));
+    auditSprint188Timeout({approval, accounting, readBytes: file => frozen(file).bytes, readHistorical});
+    assert.deepEqual(ledger.timeoutAcceptance, accounting.timeoutAcceptance); assert.deepEqual(handoff.timeoutAcceptance, accounting.timeoutAcceptance);
+  }
   if (workflow) {
     const census = parseFrozen(manifest.sources.freshCensus);
     const expectedObjects = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'];
@@ -252,7 +356,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
         const results = row.cells.map(cell => JSON.parse(reference({ path: `${path.posix.dirname(source)}/${cell.response.path}`, sha256: cell.response.sha256 }).bytes.toString('utf8')));
         const green = results.every(result => result.status === 'ok' && result.artifact);
         assert.equal(row.reachable, green); if (green) passing++;
-        else { assert.equal(row.schema, 'user-form-showcase'); assert(results.every(result => result.errors.some(error => error.code === 'OODS-N015'))); }
+        else { assert.equal(row.schema, 'user-form-showcase'); auditSprint188OriginalFormFailure(results); }
       }
       assert.equal(passing, reachable);
     }
@@ -566,7 +670,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     }
     if (workflow) {
       for (const current of captureRows) {
-        assert.equal(current.counts.failed, 0); assert.equal(current.exitCode, 0);
+        assert.equal(current.counts.failed, approvedTimeout && current.suite === 'root-core' ? 1 : 0); assert.equal(current.exitCode, approvedTimeout && current.suite === 'root-core' ? 1 : 0);
         const baseline = accounting.executions.find(row => row.cohort === 'sprint187Closeout' && row.suite === current.suite);
         const skipped = execution => [...populations.get(execution.id)].flatMap(([file, row]) => [...row.assertions].filter(([, state]) => state === 'skipped').map(([name]) => `${file}:${name}`)).sort();
         assert.deepEqual(skipped(current), skipped(baseline), 'A skipped test identity changed.');
@@ -585,7 +689,7 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
       assert(comparison.fileDeltas.every(row => row.attribution?.kind && row.attribution.reason?.trim() && row.attribution.references?.length), 'A changed file lacks attribution evidence.');
     }
     assert.equal(accounting.comparisons.length, accounting.baselines[baselineKey].runs.length * 4, 'A baseline suite comparison is absent.');
-    assert(accounting.closeoutFailures.every(row => row.status === 'inherited-failure-disclosed'), 'An unexplained closeout failure was marked accounted.');
+    assert(accounting.closeoutFailures.every(row => row.status === (approvedTimeout ? 'approved-timeout-disclosed' : 'inherited-failure-disclosed')), 'An unexplained closeout failure was marked accounted.');
   }
 
   assert.equal(manifest.claimBindings.length, criterionCount); assert.equal(new Set(manifest.claimBindings.map(row => row.criterionIndex)).size, criterionCount);
