@@ -23,6 +23,15 @@ export const S186_PUBLIC_RUNTIME_SCOPE = Object.freeze([
   ...PUBLIC_RUNTIME_SCOPE,
   'packages/mcp-server/src/compose', 'packages/mcp-server/src/tools/design.compose.ts',
 ]);
+// Sprint 187 adds live structured discovery and its retained-obligation contract.
+export const S187_BASE = '21c7c31906fbb81d049b943155c64ed78409fb9f';
+export const S187_PUBLIC_RUNTIME_SCOPE = Object.freeze([
+  ...S186_PUBLIC_RUNTIME_SCOPE,
+  'packages/mcp-server/src/tools/catalog.list.ts', 'packages/mcp-server/src/tools/catalog.shared.ts', 'packages/mcp-server/src/tools/types.ts',
+  'cmos/scripts/refresh_structured_data.py', 'cmos/planning/component-schema.json',
+  'cmos/planning/oods-components.json', 'cmos/planning/oods-tokens.json',
+  'artifacts/structured-data', 'docs/mcp/Tool-Specs.md', 'docs/mcp/Structured-Data-Refresh.md', 'docs/api/catalog-list.md', 'docs/how-forge-works.html',
+]);
 export const TABLE_PATHS = Object.freeze(['packages/components-react/src/table.tsx', 'packages/components-vue/src/table.ts']);
 const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
@@ -72,20 +81,24 @@ export function replayTableOmission(root = ROOT) {
 }
 
 export function deriveMovers(head, declaration, root = ROOT, options = {}) {
-  if (options.sprintId === 'sprint-186') {
-    assert(options.missionId === 's186-m06' && options.base, 'Sprint 186 requires its mission and explicit build base.');
-    const s186 = deriveRange(options.base, head, root, S186_PUBLIC_RUNTIME_SCOPE);
-    assert(s186.base === resolveCommit('5aa53b3a', root), 'Sprint 186 mover base differs from the locked build base.');
-    const comparison = { s186: {} };
+  if (['sprint-186', 'sprint-187'].includes(options.sprintId)) {
+    const fresh = options.sprintId === 'sprint-187';
+    const key = fresh ? 's187' : 's186';
+    const missionId = fresh ? 's187-m06' : 's186-m06';
+    const scope = fresh ? S187_PUBLIC_RUNTIME_SCOPE : S186_PUBLIC_RUNTIME_SCOPE;
+    assert(options.missionId === missionId && options.base, `${options.sprintId} requires its mission and explicit build base.`);
+    const range = deriveRange(options.base, head, root, scope);
+    assert(range.base === resolveCommit(fresh ? S187_BASE : '5aa53b3a', root), `${options.sprintId} mover base differs from the locked build base.`);
+    const comparison = { [key]: {} };
     for (const surface of ['canonicalPaths', 'publicPaths']) {
-      assert(Array.isArray(declaration?.s186?.[surface]), `Missing s186/${surface} declaration.`);
-      const result = compareDeclaredPaths(s186[surface], declaration.s186[surface]);
+      assert(Array.isArray(declaration?.[key]?.[surface]), `Missing ${key}/${surface} declaration.`);
+      const result = compareDeclaredPaths(range[surface], declaration[key][surface]);
       assert(result.missingFromDeclaration.length === 0 && result.extraInDeclaration.length === 0,
-        `s186/${surface}: declared mover union differs: ${canonical(result)}`);
-      comparison.s186[surface] = result;
+        `${key}/${surface}: declared mover union differs: ${canonical(result)}`);
+      comparison[key][surface] = result;
     }
     return { missionId: options.missionId, sprintId: options.sprintId, status: 'passed',
-      canonicalScope: CANONICAL_ADVERTISED_SCOPE, publicScope: S186_PUBLIC_RUNTIME_SCOPE, s186, comparison };
+      canonicalScope: CANONICAL_ADVERTISED_SCOPE, publicScope: scope, [key]: range, comparison };
   }
   const s184 = deriveRange(S184_BASE, S185_BASE, root);
   const s185 = deriveRange(S185_BASE, head, root);
@@ -107,16 +120,16 @@ export function deriveMovers(head, declaration, root = ROOT, options = {}) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const argument = name => { const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1]; };
   const options = { sprintId: argument('--sprint') ?? 'sprint-185', missionId: argument('--mission') ?? 's185-m05', base: argument('--base') };
-  assert(['sprint-185', 'sprint-186'].includes(options.sprintId), 'Unsupported sprint.');
+  assert(['sprint-185', 'sprint-186', 'sprint-187'].includes(options.sprintId), 'Unsupported sprint.');
   const headIndex = process.argv.indexOf('--head');
   const head = resolveCommit(headIndex >= 0 ? process.argv[headIndex + 1] : 'HEAD', ROOT);
-  const directory = path.resolve(ROOT, argument('--output') ?? (options.sprintId === 'sprint-186' ? 'artifacts/product-reality/sprint-186/m06/movers' : OUTPUT)); fs.mkdirSync(directory, { recursive: true });
+  const directory = path.resolve(ROOT, argument('--output') ?? (options.sprintId !== 'sprint-185' ? `artifacts/product-reality/${options.sprintId}/m06/movers` : OUTPUT)); fs.mkdirSync(directory, { recursive: true });
   const declarationPath = path.join(directory, 'declared-movers.json');
   if (process.argv.includes('--declare')) {
     assert(!fs.existsSync(declarationPath), 'Refusing to replace an existing mover declaration. Review differences explicitly.');
     const declaration = { missionId: options.missionId, declarationHead: head,
       method: 'One reviewed declaration per sprint range; later checks independently re-run both Git diffs and reject additions or omissions.',
-      ...(options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head, ROOT, S186_PUBLIC_RUNTIME_SCOPE) }
+      ...(options.sprintId === 'sprint-187' ? { s187: deriveRange(options.base, head, ROOT, S187_PUBLIC_RUNTIME_SCOPE) } : options.sprintId === 'sprint-186' ? { s186: deriveRange(options.base, head, ROOT, S186_PUBLIC_RUNTIME_SCOPE) }
         : { s184: deriveRange(S184_BASE, S185_BASE), s185: deriveRange(S185_BASE, head) }) };
     fs.writeFileSync(declarationPath, canonical(declaration));
   }
@@ -124,7 +137,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const outputPath = path.join(directory, 'sprint-wide-movers.json');
   if (process.argv.includes('--check')) assert(fs.readFileSync(outputPath, 'utf8') === canonical(report), 'Mover report is stale.');
   else fs.writeFileSync(outputPath, canonical(report));
-  process.stdout.write(canonical(options.sprintId === 'sprint-186' ? { head,
+  process.stdout.write(canonical(options.sprintId === 'sprint-187' ? { head, s187: { canonical: report.s187.canonicalPaths.length, public: report.s187.publicPaths.length } } : options.sprintId === 'sprint-186' ? { head,
     s186: { canonical: report.s186.canonicalPaths.length, public: report.s186.publicPaths.length } }
     : { head, s184: { canonical: report.s184.canonicalPaths.length, public: report.s184.publicPaths.length },
     s185: { canonical: report.s185.canonicalPaths.length, public: report.s185.publicPaths.length }, tableControl: report.tableControl.status }));

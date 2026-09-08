@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0.0",
+  "framework": "react",
+  "files": [
+    {
+      "path": "src/GeneratedUI.tsx",
+      "contents": "import React from 'react';\nimport { Button, Input, PaginationBar, RelativeTimestamp, SearchInput, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  actions: GeneratedUIActions;\n  /** Detected anomalies with context for investigation. */\n  anomalies?: unknown[];\n  /** Actual quantity consumed in the active period. */\n  consumedQuantity: number;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Quantity included in base plan before overages. */\n  includedQuantity: number;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent provider usage payload. */\n  lastReportedAt: string;\n  /** Provider specific meter identifier. */\n  meterId: string;\n  /** Friendly metered feature name shown in UI (ex: Analytics Seats). */\n  meterName: string;\n  /** Cost per additional unit expressed in minor currency units. */\n  overageRateMinor?: number;\n  /** Date the usage accumulation window ends. */\n  periodEnd: string;\n  /** Date the usage accumulation window began. */\n  periodStart: string;\n  /** Forecasted overage spend derived from consumption trends. */\n  projectedOverageMinor?: number;\n  /** Source provider for usage data. */\n  provider: string;\n  /** Strategy for unused units (inherits rolloverStrategy parameter). */\n  rolloverStrategy?: string;\n  /** Rolling usage measurements for charts or anomaly detection. */\n  samples?: unknown[];\n  /** Health of the usage feed (ok, delayed, investigating). */\n  status?: 'ok' | 'delayed' | 'investigating';\n  /** Subscription the usage belongs to. */\n  subscriptionId: string;\n  /** Percent delta compared to previous window. */\n  trendPercent?: number;\n  /** Label for display, defaults to the unit parameter. */\n  unitLabel: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Identifier for this usage record. */\n  usageId: string;\n  /** Currency impact of usage variance calculated with overage rate. */\n  varianceMinor?: number;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype RelativeTimestampProps = React.ComponentPropsWithoutRef<typeof RelativeTimestamp>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, anomalies, consumedQuantity, createdAt, includedQuantity, lastEvent, lastEventAt, lastReportedAt, meterId, meterName, overageRateMinor, periodEnd, periodStart, projectedOverageMinor, provider, rolloverStrategy, samples, status, subscriptionId, trendPercent, unitLabel, updatedAt, usageId, varianceMinor }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  const [handleChange_consumed_quantityState, setHandleChange_consumed_quantityState] = React.useState<string>(String(consumedQuantity ?? ''));\n  /* @oods-local-binding handleChange_consumed_quantity */ const handleChange_consumed_quantity = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_consumed_quantityState(event.currentTarget.value); };\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                      <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                      <Input id=\"slot-filters-2\" data-oods-component=\"Input\" label=\"Actual quantity consumed in the active period.\" placeholder=\"Enter consumed quantity\" required type=\"number\" value={handleChange_consumed_quantityState} onChange={handleChange_consumed_quantity} />\n                      <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                    </Stack>\n              <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                      <RelativeTimestamp id=\"slot-items-6\" data-oods-component=\"RelativeTimestamp\" label=\"Timestamp for the most recent modification, when available.\" datetime={updatedAt ?? createdAt} />\n                    </Stack>\n              <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                      <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                    </Stack>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-list-9\">\n          <button type=\"button\" data-oods-action=\"handleFilter\" onClick={() => handleFilter({})}>Filter</button>\n          <button type=\"button\" data-oods-action=\"handleRowClick\" onClick={() => handleRowClick(meterId)}>Open row</button>\n          <button type=\"button\" data-oods-action=\"handleSort\" onClick={() => handleSort('status')}>Sort</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+      "contentHash": "sha256:a926b86a410733df9a1edb401643ffa6bcd327aeb7443c17c773b50ce69af93b"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "@oods/component-styles",
+      "version": "0.1.0",
+      "kind": "dependency"
+    },
+    {
+      "name": "@oods/components-react",
+      "version": "0.1.0",
+      "kind": "dependency"
+    },
+    {
+      "name": "react",
+      "version": "19.2.0",
+      "kind": "peerDependency"
+    },
+    {
+      "name": "react-dom",
+      "version": "19.2.0",
+      "kind": "peerDependency"
+    }
+  ],
+  "actions": [
+    {
+      "name": "handleFilter",
+      "parameters": [
+        {
+          "name": "criteria",
+          "type": "Record<string, unknown>"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onFilter"
+        }
+      ]
+    },
+    {
+      "name": "handleRowClick",
+      "parameters": [
+        {
+          "name": "rowId",
+          "type": "string"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onRowClick"
+        }
+      ]
+    },
+    {
+      "name": "handleSort",
+      "parameters": [
+        {
+          "name": "column",
+          "type": "string"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onSort"
+        }
+      ]
+    }
+  ],
+  "contentHash": "sha256:037adbab12b40f8ca89ef5017f41cae908ba2a72b86bc0e66ed5d1608e0b2442"
+}

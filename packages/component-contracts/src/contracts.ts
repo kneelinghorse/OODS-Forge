@@ -32,6 +32,20 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['A log region named by its title, which is also a real h3 heading', 'Events are an ordered list with machine-readable timestamps', 'An empty timeline is named No events'],
     compatibility: 'Mirrors renderAddressValidationTimeline over renderTimelineContainer with data-timeline-type=address-validation and role=log: title aliases title/label/heading/name (default Address Validation Timeline); the first array among events/validations/history supplies the events, each rendered as label, time and detail exactly as normalizeTimelineItems reads them (records use label/title/event/status/state/text/name, timestamp/datetime/time/at/createdAt/updatedAt and detail/description/reason/message/from/to; scalars render as text); no events renders the named empty item; authored children replace the list. The generic field (the addresses collection) lowers to events.',
   },
+  ArchivePill: {
+    id: 'ArchivePill', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'status', 'state', 'value', 'variant', 'tone', 'emphasis', 'isArchived'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['false remains visible', 'archive is the badge variant'],
+    compatibility: 'Mirrors renderArchivePill over renderBadgePrimitive: label/text/status/state/isArchived/value label precedence, status/state/isArchived/value status precedence, Archive fallback and archive variant. Boolean false and true remain literal scalar labels/status metadata; absent flags remain absent and authored labels or children win. field binds isArchived. archivedAtField is consumed unbound because the HTML pill has no date term. Noninteractive; no archive or restore action.',
+  },
+  ArchiveSummary: {
+    id: 'ArchiveSummary', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'isArchived', 'archived', 'status', 'archivedAt', 'reason', 'archiveReason', 'summary', 'text', 'description'], slots: ['default'], events: [],
+    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
+    accessibility: ['false remains visible in its named term', 'archive date and reason remain associated terms'],
+    compatibility: 'Mirrors renderArchiveSummary: h3 heading and Archived (isArchived/archived/status), Archived At (archivedAt), Reason (reason/archiveReason) description-list terms. A nullable archivedAt omits its date term; scalar false and true remain literal text as in HTML; an absent flag is not false. summary/text/description fallback and authored body override preserve the heading. archivedField, archivedAtField and reasonField lower to their runtime keys. restoredAtField, archivedByField, metadataField, retainHistoryParameter, restoreWindowParameter and allowPartialRestoreParameter are consumed unbound: HTML has no restore, actor or archive metadata term or action. Noninteractive.',
+  },
   AuditEvent: {
     id: 'AuditEvent', version: COMPONENT_CONTRACT_VERSION,
     props: ['label', 'title', 'event', 'status', 'state', 'reason', 'text', 'timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt', 'detail', 'description', 'message', 'from', 'to', 'code'], slots: ['default'], events: [],
@@ -72,6 +86,20 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Native button semantics', 'Defaults to type=button'],
     compatibility: 'React asChild remains an extension and is not a Vue parity requirement.',
   },
+  CancellationBadge: {
+    id: 'CancellationBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'status', 'state', 'value', 'variant', 'tone', 'emphasis', 'cancelAtPeriodEnd', 'isCancelled'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['false remains visible', 'cancellation is the badge variant'],
+    compatibility: 'Mirrors renderCancellationBadge over renderBadgePrimitive: label/text/status/state/cancelAtPeriodEnd/value label precedence; status/state/cancelAtPeriodEnd/isCancelled/value status precedence; Cancellation fallback and cancellation variant. Boolean false/true remain literal text as in HTML; absent flags remain absent. field binds cancelAtPeriodEnd. Authored labels or children win. Noninteractive; no cancellation action.',
+  },
+  CancellationForm: {
+    id: 'CancellationForm', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'allowedReasons', 'reasonCode', 'reason', 'cancellationReason'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
+    accessibility: ['reason and code retain their initial values', 'native controls are labelled', 'submit does not cancel or save'],
+    compatibility: 'Mirrors renderCancellationForm: title/label/heading/name (default Cancellation Form), description/subtitle/hint subtitle; labelled Reason Code select and Reason textarea, reason/cancellationReason precedence, allowedReasons with no_longer_needed/budget/duplicate defaults. Children replace controls and retain the header. reasonField and codeField lower to reason and reasonCode. requireReasonParameter, allowedReasonsParameter and windowParameter are consumed unbound. Presentational native controls only; submission is prevented and no cancel/save event or persistence is implemented.',
+  },
   CancellationSummary: {
     id: 'CancellationSummary', version: COMPONENT_CONTRACT_VERSION,
     props: [
@@ -103,6 +131,22 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Native checkbox semantics', 'Label and help/error descriptions are programmatically associated'],
     compatibility: 'Indeterminate remains unsupported until implemented and tested in both targets.',
   },
+  ClassificationBadge: {
+    id: 'ClassificationBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'category', 'value', 'status', 'state', 'mode', 'variant', 'tone', 'emphasis'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['category is visible', 'mode is the status metadata', 'noninteractive badge'],
+    compatibility: 'Mirrors renderClassificationBadge over Badge: label/text/category/value precedence, status/state/mode precedence and classification variant. primaryCategoryField binds category; tagPreviewField is consumed unbound because the HTML badge reads no tag preview. Noninteractive.',
+  },
+
+  ClassificationEditor: {
+    id: 'ClassificationEditor', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'category', 'primaryCategory', 'tags', 'modes', 'mode', 'classificationMode'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
+    accessibility: ['labelled native inputs retain their values', 'mode selection is flexible', 'submit does not navigate or save'],
+    compatibility: 'Mirrors renderClassificationEditor: form header aliases, Category input from category/primaryCategory, serialized Tags input and Mode select from modes or strict/flexible, with mode/classificationMode selection. Children replace the generated controls. modeParameter, tagPolicyParameter and maxTagsParameter are consumed unbound. The generic field binds the visible description subtitle without an invented onChange. Presentational native controls only: submit is prevented; no classification change, persistence or save event is promised.',
+  },
+
   ClassificationPanel: {
     id: 'ClassificationPanel', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'subtitle', 'description', 'metadata', 'summary', 'text', 'body', 'emptyMessage'], slots: ['default'], events: [],
@@ -143,14 +187,30 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     props: ['filters', 'activeFilters', 'mode', 'collapsible'], slots: ['default'], events: [],
     states: ['immediate', 'batch', 'active', 'empty'], tokenRoles: ['filter.background', 'filter.border', 'filter.text', 'filter.legend'],
     accessibility: ['A named region (aria-label Filters) wraps the panel', 'Each filter descriptor is a fieldset with a visible legend', 'The active-filter count is a polite live region'],
-    compatibility: 'Mirrors renderFilterPanel with data-behavioral=filter and data-filter-mode (default immediate): filters renders one fieldset per record descriptor labelled by label, then field, then Filter; activeFilters renders the polite count with a Clear all control; mode=batch adds an Apply control; collapsible (default true) marks each fieldset data-collapsible. The generic field lowers to filters and activeField to activeFilters; modeParameter and collapsibleParameter are consumed. The Clear all and Apply controls are unwired in the HTML renderer and stay unwired here: the contract declares no events.',
+    compatibility: 'Mirrors renderFilterPanel with data-behavioral=filter and data-filter-mode (default immediate): filters renders one fieldset per record descriptor labelled by label, then field, then Filter; activeFilters renders the polite count with a Clear all control; mode=batch adds an Apply control; collapsible (default true) marks each fieldset data-collapsible. The generic field lowers to filters and activeField to activeFilters; modeParameter, collapsibleParameter and maxActiveParameter are consumed. The Clear all and Apply controls are unwired in the HTML renderer and stay unwired here: the contract declares no events.',
   },
+  FormLabelGroup: {
+    id: 'FormLabelGroup', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'title', 'placeholder', 'hint', 'description', 'htmlFor', 'for', 'inputId'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['text.primary', 'text.secondary'],
+    accessibility: ['for targets the authored input id', 'hint is visible'],
+    compatibility: 'Mirrors renderFormLabelGroup: a label with htmlFor/for/inputId association, label/text/title precedence and placeholder/hint/description hint precedence. Children sit between the label and hint. labelField, descriptionField and placeholderField bind consumed runtime keys. maxLabelLengthParameter, maxDescriptionLengthParameter and requireDescriptionParameter are consumed without runtime values; this label alone does not implement an editor.',
+  },
+
   Grid: {
     id: 'Grid', version: COMPONENT_CONTRACT_VERSION,
     props: ['columns', 'minColumnWidth', 'gap', 'align', 'justify'], slots: ['default'], events: [],
     states: ['fixed-columns', 'auto-fit'], tokenRoles: ['layout.gap', 'layout.breakpoint'], accessibility: ['Does not alter child semantics'],
     compatibility: 'CSS-grid layout with responsive behavior defined by the shared CSS contract.',
   },
+  InlineLabel: {
+    id: 'InlineLabel', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'value', 'maxLength'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['text.primary'],
+    accessibility: ['label is truncated with the HTML suffix', 'noninteractive span'],
+    compatibility: 'Mirrors renderInlineLabel with label/text/value precedence, numeric maxLength truncation and authored children replacing the label. The generic field binds label so its datum retains truncation semantics instead of becoming authored children.',
+  },
+
   Input: {
     id: 'Input', version: COMPONENT_CONTRACT_VERSION,
     props: ['id', 'label', 'type', 'value', 'defaultValue', 'placeholder', 'required', 'disabled', 'readOnly', 'help', 'validation'], slots: ['label', 'help', 'validation'], events: ['input', 'change', 'update'],
@@ -158,6 +218,14 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     accessibility: ['Native input semantics', 'Label and help/error descriptions are programmatically associated'],
     compatibility: 'Canonicalizes TextField; TextField remains a non-counting compatibility alias.',
   },
+  LabelCell: {
+    id: 'LabelCell', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'value', 'description', 'subtitle', 'sublabel', 'supporting', 'truncate', 'maxLength'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['text.primary', 'text.secondary'],
+    accessibility: ['primary and description are truncated with the HTML suffix', 'no editor is implied'],
+    compatibility: 'Mirrors renderLabelCell: label/text/value precedence, description/subtitle/sublabel/supporting precedence, truncate defaults the limit to 40, and maxLength accepts a number or numeric string. Truncation uses the HTML three-dot suffix. Authored children replace the entire body. field binds label and descriptionField binds description; maxLengthParameter is consumed without a runtime value.',
+  },
+
   MembershipAuditTimeline: {
     id: 'MembershipAuditTimeline', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'events', 'memberships', 'history'], slots: ['default'], events: [],
@@ -185,6 +253,27 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
     accessibility: ['Inherits Badge inline noninteractive status label semantics', 'The resolved label is always visible text'],
     compatibility: 'Mirrors renderMessageStatusBadge over renderBadgePrimitive with default variant message and default label Message: the label reads label/text/status/delivery/value in that order, the status reads status/state/delivery/value, and both are exposed as data-badge-status and data-badge-variant on the governed Badge substrate; tone and emphasis retain their shared Badge behaviour. The saved-schema directive statusesField is consumed and left unbound: the HTML renderer reads no statuses collection.',
+  },
+  OwnerBadge: {
+    id: 'OwnerBadge', version: COMPONENT_CONTRACT_VERSION,
+    props: ['label', 'text', 'owner', 'ownerType', 'value', 'status', 'state', 'variant', 'tone', 'emphasis'], slots: ['default'], events: [],
+    states: ['subtle', 'solid'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
+    accessibility: ['owner identity is visible', 'owner is the badge variant'],
+    compatibility: 'Mirrors renderOwnerBadge over renderBadgePrimitive: label/text/owner/ownerType/value precedence, status/state metadata, owner variant and Owner fallback. ownerIdField lowers to owner and ownerTypeField to ownerType. The badge is noninteractive; no ownership change is implied.',
+  },
+  OwnershipMeta: {
+    id: 'OwnershipMeta', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'ownerType', 'owner_type', 'role', 'ownershipRole'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['meta.text', 'meta.label'],
+    accessibility: ['metadata has inline term labels', 'role is visible text not an ARIA role'],
+    compatibility: 'Mirrors renderOwnershipMeta over renderMetaInline: title/label/heading/name (default Ownership), Owner Type ownerType/owner_type, Role role/ownershipRole. Each value is an inline span with a strong term and separator; children replace the entire body including its title. ownerTypeField and roleField lower to their consumed keys. role is displayed data, never an ARIA role. Noninteractive.',
+  },
+  OwnershipSummary: {
+    id: 'OwnershipSummary', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'ownerId', 'owner_id', 'ownerType', 'owner_type', 'role', 'ownershipRole', 'summary', 'text', 'description'], slots: ['default'], events: [],
+    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
+    accessibility: ['a real h3 names the description list', 'owner id, type and role remain associated terms'],
+    compatibility: 'Mirrors renderOwnershipSummary over renderSummarySection: title/label/heading/name (default Ownership Summary); Owner ID reads ownerId/owner_id, Owner Type ownerType/owner_type, Role role/ownershipRole; summary/text/description is a fallback when no term resolves. Children replace the body but retain the h3 heading. ownerIdField, ownerTypeField and roleField lower to their runtime keys. transferredAtField and allowTransferParameter are consumed unbound; no transfer term or action is implemented. role is displayed data, never an ARIA role.',
   },
   PaginationBar: {
     id: 'PaginationBar', version: COMPONENT_CONTRACT_VERSION,
@@ -240,6 +329,13 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
     accessibility: ['Formatted amount and currency remain visible text'],
     compatibility: 'Currency is formatted content; the emitted badge variant remains price.',
+  },
+  PriceCardMeta: {
+    id: 'PriceCardMeta', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'model', 'pricingModel', 'interval', 'billingInterval'], slots: ['default'], events: [],
+    states: ['populated', 'empty'], tokenRoles: ['meta.text', 'meta.label'],
+    accessibility: ['model and interval have literal inline labels', 'price metadata is noninteractive'],
+    compatibility: 'Mirrors renderPriceCardMeta over renderMetaInline: title/label/heading/name (default Price), Model model/pricingModel and Interval interval/billingInterval inline terms. Children replace the entire body including its title. modelField and intervalField lower to their runtime keys. amountField, currencyField and minorUnitsParameter are consumed unbound because this HTML metadata renderer has no amount or currency term. Noninteractive.',
   },
   PriceSummary: {
     id: 'PriceSummary', version: COMPONENT_CONTRACT_VERSION,
@@ -362,6 +458,13 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     states: ['populated', 'overflow', 'empty'], tokenRoles: ['badge.background', 'badge.border', 'badge.text'],
     accessibility: ['Each visible tag is text inside one noninteractive group', 'The overflow label is visible text'],
     compatibility: 'Mirrors renderTagPills with data-summary-type=tag-pills: tags, then value (records read label/name/role/value/id, scalars render as text) render one data-tag-pill each up to maxVisible (a number or numeric string; default every tag); when tags remain, overflowLabel replaces {{ tag_count }} with the total tag count exactly as the HTML renderer does, or +N with the hidden count without a template; authored children replace the pills. The generic field lowers to tags; the saved-schema label is consumed and left unbound because the renderer never reads it.',
+  },
+  TagSummary: {
+    id: 'TagSummary', version: COMPONENT_CONTRACT_VERSION,
+    props: ['title', 'label', 'heading', 'name', 'tagCount', 'count', 'tags', 'summary', 'text', 'description'], slots: ['default'], events: [],
+    states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
+    accessibility: ['zero count remains visible', 'typed tag entries render normalized visible names'],
+    compatibility: 'Preserves renderTagSummary scalar summary semantics: title/label/heading/name (default Tag Summary), Tag Count tagCount/count, Tags tags; summary/text/description fallback; children replace the description-list body but keep the h3. field lowers to tags and countField to tagCount. Adds typed array presentation required by Taggable: the existing tag normalizer resolves label/name/role/value/id and joins visible names with comma-space, unlike the HTML scalar reader which ignores arrays. Empty arrays omit the Tags term; numeric zero count remains visible. Noninteractive; no tagging action is implied.',
   },
   TemplatePicker: {
     id: 'TemplatePicker', version: COMPONENT_CONTRACT_VERSION,

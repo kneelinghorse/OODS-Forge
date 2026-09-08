@@ -3,6 +3,48 @@
   "type": "object",
   "required": ["components", "totalCount", "returnedCount", "page", "pageSize", "hasMore", "detail", "generatedAt", "stats", "availableCategories"],
   "properties": {
+    "obligationScope": {
+      "type": "object",
+      "description": "Current accepted catalog scope ruling, independent of historical row classification proposals and target capability evidence. Retained obligations are not implementation or maturity claims.",
+      "required": [
+        "schemaVersion",
+        "decisionId",
+        "disposition",
+        "controllingObligationDenominator",
+        "approvedRuntimeCensus",
+        "classificationStatus"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decisionId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "retain-all-obligations"
+          ]
+        },
+        "controllingObligationDenominator": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "approvedRuntimeCensus": {
+          "type": "null"
+        },
+        "classificationStatus": {
+          "type": "string",
+          "enum": [
+            "historical-proposals-unapproved"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
     "components": {
       "type": "array",
       "description": "Array of component catalog entries",
@@ -45,7 +87,7 @@
           },
           "productReality": {
             "$ref": "#/$defs/componentProductReality",
-            "description": "Additive target-specific capability and evidence ledger. Use this instead of legacy status for React, Vue, generated-consumer, accessibility, theme, and interaction claims; reconciliationState records approval state."
+            "description": "Additive target-specific capability and evidence ledger. Use this instead of legacy status for React, Vue, generated-consumer, accessibility, theme, and interaction claims; row classifications/reconciliationState are historical proposals, subject to the current obligationScope ruling."
           },
           "status": {
             "type": "string",

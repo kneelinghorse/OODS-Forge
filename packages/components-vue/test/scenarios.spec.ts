@@ -4,6 +4,9 @@ import { h, nextTick, type Component, type Slot } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+  LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
   PaginationBar,
@@ -57,6 +60,9 @@ import {
 } from '../src/index.js';
 
 const implementations: Readonly<Record<string, Component>> = {
+  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+  LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
   PaginationBar,
@@ -627,6 +633,74 @@ describe('@oods/components-vue shared scenarios', () => {
             expect(component.get('[data-timeline-empty="true"]').text()).toBe('No events');
             break;
           }
+        case 'label-cell-truncation-and-description': {
+          expect(component.element?.querySelector('[data-oods-label-cell-primary]')?.textContent).toBe('Long pr...');
+          expect(component.element?.querySelector('[data-oods-label-cell-description]')?.textContent).toBe('Long su...');
+          break;
+        }
+        case 'inline-label-truncation': {
+          expect(component.element?.textContent).toBe('Long in...');
+          break;
+        }
+        case 'form-label-group-association': {
+          expect(component.element?.getAttribute('for')).toBe('product-name');
+          expect(component.element?.querySelector('[data-oods-form-label]')?.textContent).toBe('Product name');
+          expect(component.element?.querySelector('[data-oods-form-hint]')?.textContent).toBe('Name shown to customers');
+          break;
+        }
+        case 'classification-badge-category': {
+          expect(component.element?.querySelector('[data-oods-badge-label]')?.textContent).toBe('Electronics');
+          expect(component.element?.getAttribute('data-badge-status')).toBe('strict');
+          expect(component.element?.getAttribute('data-badge-variant')).toBe('classification');
+          break;
+        }
+        case 'classification-editor-presentational-controls': {
+          expect(component.element?.querySelector('h3')?.textContent).toBe('Product classification');
+          expect((component.element?.querySelector('[name="category"]') as HTMLInputElement).value).toBe('Electronics');
+          expect((component.element?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
+          expect((component.element?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
+          break;
+        }
+        case 'owner-badge-principal': {
+          expect(component.element?.textContent).toBe('user-7');
+          expect(component.element?.getAttribute('data-badge-variant')).toBe('owner');
+          break;
+        }
+        case 'ownership-summary-terms': {
+          expect(component.element?.querySelector('h3')?.textContent).toBe('Ownership Summary');
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
+          expect(component.element?.hasAttribute('role')).toBe(false);
+          break;
+        }
+        case 'ownership-meta-inline-terms': {
+          expect(component.element?.querySelector('[data-meta-title]')?.textContent).toBe('Ownership');
+          expect([...component.element!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
+          expect(component.element?.hasAttribute('role')).toBe(false);
+          break;
+        }
+        case 'tag-summary-zero-and-tags': {
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
+          break;
+        }
+        case 'archive-pill-false':
+        case 'cancellation-badge-false': {
+          expect(component.element?.textContent).toBe('false');
+          expect(component.element?.getAttribute('data-badge-status')).toBe('false');
+          break;
+        }
+        case 'archive-summary-false-and-reason': {
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+          break;
+        }
+        case 'cancellation-form-presentational-controls': {
+          expect(component.element?.querySelector<HTMLSelectElement>('select[name="reasonCode"]')?.value).toBe('budget');
+          expect(component.element?.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')?.value).toBe('Costs changed');
+          break;
+        }
+        case 'price-card-meta-inline-terms': {
+          expect([...component.element!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: flat', 'Interval: monthly']);
+          break;
+        }
           default:
             throw new Error(`Missing executable Vue assertion for ${scenario.id}`);
         }

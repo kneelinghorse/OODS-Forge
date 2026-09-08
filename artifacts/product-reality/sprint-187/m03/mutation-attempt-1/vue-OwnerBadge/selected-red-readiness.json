@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "s185-m03",
+  "kind": "readiness-reference-verification",
+  "classification": {
+    "classA": "repository source, package export, dependency closure, or framework scenario",
+    "classB": "built public declaration"
+  },
+  "expected": {
+    "references": 718,
+    "classA": 600,
+    "classB": 118
+  },
+  "totals": {
+    "references": 718,
+    "classA": 600,
+    "classB": 118,
+    "resolved": 716
+  },
+  "targets": {
+    "react": {
+      "rows": 59,
+      "references": 354,
+      "classA": 295,
+      "classB": 59,
+      "resolved": 354
+    },
+    "vue": {
+      "rows": 59,
+      "references": 364,
+      "classA": 305,
+      "classB": 59,
+      "resolved": 362
+    }
+  },
+  "evidenceClasses": {
+    "versionedContract": 118,
+    "targetImplementation": 118,
+    "packageExport": 118,
+    "publicDeclaration": 118,
+    "dependencyClosure": 118,
+    "frameworkScenario": 128
+  },
+  "failures": [
+    {
+      "target": "vue",
+      "componentId": "OwnerBadge",
+      "evidenceClass": "packageExport",
+      "referenceClass": "A",
+      "ref": "packages/components-vue/src/index.ts#OwnerBadge",
+      "reason": "symbol-unavailable"
+    },
+    {
+      "target": "vue",
+      "componentId": "OwnerBadge",
+      "evidenceClass": "publicDeclaration",
+      "referenceClass": "B",
+      "ref": "packages/components-vue/dist/index.d.ts#OwnerBadge",
+      "reason": "symbol-unavailable"
+    }
+  ],
+  "status": "failed"
+}

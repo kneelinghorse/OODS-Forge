@@ -12,6 +12,8 @@ import type {
   GeneratedArtifactAction,
 } from '../../packages/mcp-server/src/codegen/types.js';
 import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
+import { handle as designCompose } from '../../packages/mcp-server/src/tools/design.compose.js';
+import { handle as objectList } from '../../packages/mcp-server/src/tools/object.list.js';
 import { handle as codeGenerate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import type { CodeGenerateOutput } from '../../packages/mcp-server/src/tools/types.js';
 import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
@@ -22,6 +24,11 @@ import {
   S186_SCHEMA_NAMES,
   deriveActionArguments,
   deriveBoundFieldProbe,
+  deriveValueProbes,
+  schemaNodes,
+  deriveSharedNativeFieldProbes,
+  type SharedNativeFieldProbe,
+  type ValueProbe,
   deriveConsumerModel,
   deriveInteraction,
   deriveMountObligations,
@@ -60,7 +67,10 @@ export const GATE_NAMES = Object.freeze([
 export type S184M06SchemaName =
   | (typeof SCHEMA_NAMES)[number]
   | (typeof S185_SCHEMA_NAMES)[number]
-  | (typeof S186_SCHEMA_NAMES)[number];
+  | (typeof S186_SCHEMA_NAMES)[number]
+  | `fresh-${string}`;
+
+export type FreshCompositionInput = { object: string; context: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' };
 export type S184M06Framework = (typeof FRAMEWORKS)[number];
 export type S184M06GateName = (typeof GATE_NAMES)[number];
 
@@ -88,6 +98,8 @@ export type LiveGenerationCell = {
   mission?: string;
   schema: S184M06SchemaName;
   schemaRef: string;
+  sourceSchema?: UiSchema;
+  composition?: Record<string, unknown>;
   derivation?: Record<string, unknown>;
   framework: S184M06Framework;
   status: 'passed';
@@ -155,6 +167,7 @@ type AppliedMutation = {
 };
 
 type SavedSchemaRecord = {
+  composition?: Record<string, unknown>;
   /** Present only on a derived record outside the frozen saved store. */
   derivation?: Record<string, unknown>;
   schemaRef: string;
@@ -540,28 +553,71 @@ function assertSchemaSelection(names: readonly S184M06SchemaName[]): void {
   }
 }
 
+/** Only public object/context operands are accepted; the composer output is never patched. */
+export async function composeFreshInputs(inputs: readonly FreshCompositionInput[]): Promise<SavedSchemaRecord[]> {
+  const objects = new Set((await objectList({})).objects.map((entry) => entry.name));
+  const contexts = ['detail', 'list', 'form', 'timeline', 'card', 'inline'];
+  const identities = inputs.map(({ object, context }) => `${object}/${context}`);
+  if (!inputs.length || new Set(identities).size !== inputs.length
+    || inputs.some((input) => Object.keys(input).sort().join(',') !== 'context,object'
+      || !objects.has(input.object) || !contexts.includes(input.context))) {
+    throw new Error('Fresh inputs require distinct public {object, context} operands without overrides.');
+  }
+  const identity = commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT);
+  requireGreen(identity, 'fresh source identity');
+  const sourceHead = identity.stdout.trim();
+  const sourceDiff = commandResult('git', ['diff', 'HEAD', '--', 'packages', 'scripts'], REPOSITORY_ROOT).stdout;
+  const records = [];
+  for (const input of inputs) {
+    const composed = await designCompose(input);
+    if (composed.status !== 'ok' || !composed.schema) throw new Error(`Fresh composition failed: ${JSON.stringify({ input, composed })}`);
+    const schemaSha256 = sha256Urn(canonicalJson(composed.schema));
+    records.push({
+      name: `fresh-${input.object}-${input.context}` as S184M06SchemaName,
+      schemaRef: schemaSha256, schema: composed.schema,
+      composition: { handler: 'design.compose', input, sourceHead, sourceDiffSha256: sha256Urn(sourceDiff), sourceDiffPath: 'live-generation/source.diff', schemaSha256, composedAt: new Date().toISOString() },
+    });
+  }
+  return records;
+}
+
 export async function runLiveGenerationOnly({
   artifactRoot,
   generate = codeGenerate,
-  schemaNames = SCHEMA_NAMES,
+  schemaNames,
+  freshInputs,
   mission = 's184-m06',
   schemaStore = SAVED_SCHEMA_STORE,
 }: {
   artifactRoot: string;
   generate?: LiveGenerator;
   schemaNames?: readonly S184M06SchemaName[];
+  freshInputs?: readonly FreshCompositionInput[];
   mission?: string;
   schemaStore?: string;
 }): Promise<{ report: Record<string, unknown>; cells: LiveGenerationCell[] }> {
   if (!artifactRoot) throw new Error('artifactRoot is required.');
-  assertSchemaSelection(schemaNames);
+  if (freshInputs && (schemaNames || schemaStore !== SAVED_SCHEMA_STORE)) throw new Error('Fresh inputs and saved-store selection are mutually exclusive.');
+  if (!freshInputs) assertSchemaSelection(schemaNames ?? SCHEMA_NAMES);
   await fsp.mkdir(artifactRoot, { recursive: true });
   const outputRoot = path.join(artifactRoot, 'live-generation');
   await mkdirAbsent(outputRoot);
   const cells: LiveGenerationCell[] = [];
 
-  for (const schemaName of schemaNames) {
-    const record = savedSchema(schemaName, schemaStore);
+  const records = freshInputs ? await composeFreshInputs(freshInputs)
+    : (schemaNames ?? SCHEMA_NAMES).map((name) => savedSchema(name, schemaStore));
+  if (freshInputs) {
+    const diff = commandResult('git', ['diff', 'HEAD', '--', 'packages', 'scripts'], REPOSITORY_ROOT);
+    requireGreen(diff, 'fresh source diff');
+    if (records.some((record) => record.composition?.sourceDiffSha256 !== sha256Urn(diff.stdout))) {
+      throw new Error('Source changed during fresh composition.');
+    }
+    await fsp.writeFile(path.join(outputRoot, 'source.diff'), diff.stdout);
+  }
+  for (const record of records) {
+    const schemaName = record.name;
+    const composition = record.composition;
+    if (composition) await writeJson(path.join(outputRoot, schemaName, 'composition.json'), record);
     for (const framework of FRAMEWORKS) {
       const startedAt = new Date().toISOString();
       const result = await generate({
@@ -582,6 +638,7 @@ export async function runLiveGenerationOnly({
         'live-generation', schemaName, framework, 'generation.log',
       ));
       await fsp.writeFile(path.join(cellRoot, sourceFileName), source);
+      await writeJson(path.join(cellRoot, 'artifact.json'), artifact);
       const fingerprint = {
         handler: 'code.generate' as const,
         invocation: 'live-in-process' as const,
@@ -591,7 +648,7 @@ export async function runLiveGenerationOnly({
         generatedAt: startedAt,
       };
       const interaction = deriveInteraction(record.schema, artifact.actions);
-      const model = deriveConsumerModel(record.schema, MODEL);
+      const model = deriveConsumerModel(record.schema, composition ? {} : MODEL);
       const ownership = sourceOwnership(source, file.path, artifact.actions, {}, interaction);
       assertGeneratedOwnership(ownership, schemaName, framework);
       await writeLog(path.join(artifactRoot, generationLog), [
@@ -613,6 +670,8 @@ export async function runLiveGenerationOnly({
         mission,
         schema: schemaName,
         schemaRef: record.schemaRef,
+        sourceSchema: record.schema,
+        ...(composition ? { composition } : {}),
         ...(record.derivation ? { derivation: record.derivation } : {}),
         framework,
         status: 'passed',
@@ -629,11 +688,12 @@ export async function runLiveGenerationOnly({
     }
   }
 
-  const publicCells = cells.map(({ artifact: _artifact, source: _source, ...cell }) => cell);
+  const publicCells = cells.map(({ artifact: _artifact, source: _source, sourceSchema: _schema, ...cell }) => cell);
   const report = {
     schemaVersion: '1.0.0',
     mission,
-    schemaStore,
+    schemaStore: freshInputs ? null : schemaStore,
+    ...(freshInputs ? { freshInputs } : {}),
     kind: 'live-code-generate-fingerprint',
     status: 'passed',
     handler: 'code.generate',
@@ -692,6 +752,8 @@ export function createConsumerFiles({
   const actionCounts = Object.fromEntries(actions.map(({ name }) => [name, 0]));
   const actionArgs = Object.fromEntries(actions.map(({ name }) => [name, []]));
   const title = `${mission} ${schemaName} ${framework} live consumer`;
+  const consumerCss = schemaName.startsWith('fresh-')
+    ? CONSUMER_CSS.replace('max-width: 72rem', 'max-width: 112rem') : CONSUMER_CSS;
   const acceptsModel = framework === 'react' ? source.includes('export interface PageProps {') : source.includes('interface Props {');
   const suppliedModel = acceptsModel ? model : {};
   const propsExpression = actions.length > 0 ? '{ ...model, actions }' : '{ ...model }';
@@ -726,7 +788,7 @@ ${actionObjectSource(actions, 'server', framework)}
 const html = renderToString(React.createElement(GeneratedUI, ${propsExpression}));
 process.stdout.write(JSON.stringify({ html }));
 `.trimStart(),
-      'src/consumer.css': CONSUMER_CSS,
+      'src/consumer.css': consumerCss,
       'src/window.d.ts': windowTypes,
       'index.html': `<!doctype html><html data-brand="A" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title></head><body><div id="app"><!--SSR_MARKUP--></div><script>${FINGERPRINT_SCRIPT}</script><script type="module" src="/src/main.tsx"></script></body></html>\n`,
       'tsconfig.json': canonicalJson({
@@ -776,7 +838,7 @@ async function main() {
 }
 void main();
 `.trimStart(),
-    'src/consumer.css': CONSUMER_CSS,
+    'src/consumer.css': consumerCss,
     'src/window.d.ts': `${windowTypes}declare module '*.vue';\n`,
     'index.html': `<!doctype html><html data-brand="A" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title></head><body><div id="app"><!--SSR_MARKUP--></div><script>${FINGERPRINT_SCRIPT}</script><script type="module" src="/src/main.ts"></script></body></html>\n`,
     'tsconfig.json': canonicalJson({
@@ -1053,6 +1115,10 @@ async function browserProof({
   expectedComponents,
   interaction,
   boundFieldProbe,
+  valueProbes = [],
+  sharedNativeFields = [],
+  cancellationFormIds = [],
+  viewport = { width: 1280, height: 800 },
   mountObligations,
 }: {
   framework: S184M06Framework;
@@ -1063,13 +1129,17 @@ async function browserProof({
   expectedComponents: string[];
   interaction: ConsumerInteraction;
   boundFieldProbe: BoundFieldProbe | null;
+  valueProbes?: ValueProbe[];
+  sharedNativeFields?: SharedNativeFieldProbe[];
+  cancellationFormIds?: string[];
+  viewport?: { width: number; height: number };
   mountObligations: MountObligation[];
 }): Promise<Record<string, unknown>> {
   const { chromium } = await import('playwright');
   const browser = await chromium.launch({ headless: true });
   try {
     return await withStaticServer(distRoot, async (url) => {
-      const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+      const page = await browser.newPage({ viewport });
       const runtimeErrors: string[] = [];
       page.on('pageerror', (error) => runtimeErrors.push(error.message));
       page.on('console', (message) => {
@@ -1103,6 +1173,15 @@ async function browserProof({
           everyCapturedNode: proofWindow.__OODS_SSR_NODES__.every((node) => document.getElementById('app')!.contains(node)),
         };
       });
+      const boundValues = [];
+      for (const probe of valueProbes) {
+        const owner = page.locator(selectorForNode(probe.nodeId));
+        const visible = await owner.isVisible();
+        const target = probe.selector ? owner.locator(probe.selector) : owner;
+        const actual = probe.kind === 'numeric-input' || probe.kind === 'query-input' || probe.kind === 'native-value' ? await target.inputValue()
+          : probe.kind === 'status' ? await owner.locator('[data-timeline-current]').textContent() : await target.textContent();
+        boundValues.push({ ...probe, actual, visible, passed: visible && actual?.trim() === probe.expected });
+      }
       const interactionEvidence: Record<string, unknown> = { ...interaction, status: 'unproven' };
       let selectedSelector: string | null = interaction.kind === 'none' ? null : interaction.selector;
       let selectorCount = 0;
@@ -1183,6 +1262,70 @@ async function browserProof({
           Object.assign(interactionEvidence, { disabledControls });
           if (disabledControls.some(({ passed }) => !passed)) throw new Error('Declared empty pagination controls were not visible, disabled, and inert.');
           interactionEvidence.status = 'not-applicable';
+        }
+        const cancellationControls = [];
+        for (const nodeId of cancellationFormIds) {
+          const form = page.locator(selectorForNode(nodeId));
+          const reason = form.locator('textarea[name="reason"]');
+          const code = form.locator('select[name="reasonCode"]');
+          const before = { reason: await reason.inputValue(), code: await code.inputValue() };
+          const choices = await code.locator('option:not([disabled])').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value));
+          const next = choices.find((choice) => choice !== before.code);
+          if (!next) throw new Error('CancellationForm needs a distinct enabled reason-code choice.');
+          await reason.fill('Local cancellation reason');
+          await code.selectOption(next);
+          const submit = await form.evaluate((element) => {
+            const proofWindow = window as unknown as { __OODS_ACTION_COUNTS__: unknown };
+            const beforeCounts = JSON.stringify(proofWindow.__OODS_ACTION_COUNTS__);
+            const event = new Event('submit', { bubbles: true, cancelable: true });
+            element.dispatchEvent(event);
+            return { prevented: event.defaultPrevented, actionCountsUnchanged: JSON.stringify(proofWindow.__OODS_ACTION_COUNTS__) === beforeCounts };
+          });
+          const after = { reason: await reason.inputValue(), code: await code.inputValue() };
+          const passed = after.reason === 'Local cancellation reason' && after.code === next && submit.prevented && submit.actionCountsUnchanged;
+          cancellationControls.push({ nodeId, before, after, ...submit, passed });
+        }
+        if (cancellationControls.length) {
+          Object.assign(interactionEvidence, { cancellationControls, cancellationScope: 'local native controls and prevented submission only; no cancellation, save or persistence action' });
+          eventHandlerAttached = eventHandlerAttached && cancellationControls.every(({ passed }) => passed);
+        }
+        const numericUpdates = [];
+        for (const probe of valueProbes.filter((entry) => entry.kind === 'numeric-input' && entry.editable)) {
+          const control = page.locator(selectorForNode(probe.nodeId));
+          const values = [];
+          for (const next of ['7', '0']) {
+            await control.fill(next);
+            await control.blur();
+            values.push({ expected: next, actual: await control.inputValue() });
+          }
+          numericUpdates.push({ nodeId: probe.nodeId, values, passed: values.every(({ expected, actual }) => expected === actual) });
+        }
+        if (numericUpdates.length) {
+          Object.assign(interactionEvidence, { numericUpdates, numericScope: 'generated local numeric editor state; no application filtering is claimed' });
+          eventHandlerAttached = eventHandlerAttached && numericUpdates.every(({ passed }) => passed);
+        }
+        const sharedNativeUpdates = [];
+        for (const probe of sharedNativeFields) {
+          const input = page.locator(selectorForNode(probe.inputId));
+          const owner = page.locator(selectorForNode(probe.selectId));
+          const select = probe.selectContainer ? owner.locator('select') : owner;
+          const choices = await select.locator('option:not([disabled])').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value));
+          if (choices.length < 2) throw new Error(`Shared field ${probe.field} needs two real choices for its two-writer proof.`);
+          await input.fill(choices[0]!);
+          const inputToSelect = await page.waitForFunction(({ selectId, selectContainer, expected }) => {
+            const owner = document.getElementById(selectId);
+            const control = selectContainer ? owner?.querySelector('select') : owner;
+            return (control as HTMLSelectElement)?.value === expected;
+          }, { selectId: probe.selectId, selectContainer: probe.selectContainer, expected: choices[0]! }, { timeout: 2_000 }).then(() => true, () => false);
+          await select.selectOption(choices[1]!);
+          const passed = await page.waitForFunction(({ inputId, expected }) =>
+            (document.getElementById(inputId) as HTMLInputElement)?.value === expected,
+          { inputId: probe.inputId, expected: choices[1]! }, { timeout: 2_000 }).then(() => true, () => false);
+          sharedNativeUpdates.push({ ...probe, choices: choices.slice(0, 2), input: await input.inputValue(), select: await select.inputValue(), inputToSelect, selectToInput: passed, passed: inputToSelect && passed });
+        }
+        if (sharedNativeUpdates.length) {
+          Object.assign(interactionEvidence, { sharedNativeUpdates, sharedNativeScope: 'two native writers of generated local field state; no persistence is claimed' });
+          eventHandlerAttached = eventHandlerAttached && sharedNativeUpdates.every(({ passed }) => passed);
         }
         if (boundFieldProbe) {
           const control = page.locator(selectorForNode(boundFieldProbe.writerId));
@@ -1268,6 +1411,8 @@ async function browserProof({
       return {
         framework,
         schema: schemaName,
+        boundValues,
+        viewport,
         mount: rootCount === 1 ? 'passed' : 'failed',
         rootId,
         rootCount,
@@ -1513,7 +1658,7 @@ export async function runLiveConsumerCell({
   schemaStore?: string;
 }): Promise<Record<string, unknown>> {
   const { schema: schemaName, framework, artifact, source } = generation;
-  const schema = savedSchema(schemaName, schemaStore).schema;
+  const schema = generation.sourceSchema ?? savedSchema(schemaName, schemaStore).schema;
   const interaction = generation.interaction ?? deriveInteraction(schema, artifact.actions);
   const model = generation.model ?? deriveConsumerModel(schema, MODEL);
   const mountObligations = deriveMountObligations(schema, source);
@@ -1752,6 +1897,13 @@ export async function runLiveConsumerCell({
       expectedComponents: mountedExpectedComponents,
       interaction,
       boundFieldProbe: deriveBoundFieldProbe(schema),
+      sharedNativeFields: generation.composition ? deriveSharedNativeFieldProbes(schema) : [],
+      valueProbes: generation.composition ? deriveValueProbes(schema, model) : [],
+      cancellationFormIds: generation.composition ? schemaNodes(schema).filter((node) => node.component === 'CancellationForm').map((node) => node.id) : [],
+      // Fresh User/detail has eight tabs. At 1280px the intentional overflow
+      // effect removes tab buttons after attachment, outside this strict stable
+      // DOM hydration probe. Keep this proof at an explicit wide desktop size.
+      ...(generation.composition ? { viewport: { width: 1920, height: 1080 } } : {}),
       mountObligations,
     });
     await writeLog(path.join(logRoot, 'browser-proof.log'), canonicalJson(browser));
@@ -1765,9 +1917,10 @@ export async function runLiveConsumerCell({
     const componentCounts = browser.componentCounts as Record<string, number>;
     const missingComponents = mountedExpectedComponents.filter((name) => (componentCounts[name] ?? 0) < 1);
     const labelVisibility = browser.labelVisibility as Array<{ passed: boolean }>;
+    const boundValues = browser.boundValues as Array<{ passed: boolean }>;
     const requiredMounts = browser.requiredMounts as Array<{ passed: boolean }>;
     if (browser.mount !== 'passed' || missingComponents.length > 0 || labelVisibility.some(({ passed }) => !passed)
-      || requiredMounts.some(({ passed }) => !passed)) {
+      || boundValues.some(({ passed }) => !passed) || requiredMounts.some(({ passed }) => !passed)) {
       throw new Error(`${schemaName}/${framework}: mount failed or omitted ${missingComponents.join(', ')}.`);
     }
     passGate(rows, activeGate, {
@@ -1777,6 +1930,7 @@ export async function runLiveConsumerCell({
       generatedCoreComponents: coreComponents,
       generatedPortedComponents: portedComponents,
       labelVisibility,
+      boundValues,
       requiredMounts,
     });
 
@@ -1832,6 +1986,7 @@ export async function runLiveConsumerCell({
       reportPath: toPosix(path.join(cellRelative, 'report.json')),
       schema: schemaName,
       schemaRef: generation.schemaRef,
+      ...(generation.composition ? { composition: generation.composition } : {}),
     ...(generation.derivation ? { derivation: generation.derivation } : {}),
       framework,
       status: 'passed',
@@ -1877,6 +2032,7 @@ export async function runLiveConsumerCell({
       reportPath: toPosix(path.join(cellRelative, 'report.json')),
       schema: schemaName,
       schemaRef: generation.schemaRef,
+      ...(generation.composition ? { composition: generation.composition } : {}),
     ...(generation.derivation ? { derivation: generation.derivation } : {}),
       framework,
       status: 'failed',
@@ -1931,7 +2087,8 @@ export async function runLiveWorkflowProof({
   artifactRoot,
   generate = codeGenerate,
   tarballs,
-  schemaNames = SCHEMA_NAMES,
+  schemaNames,
+  freshInputs,
   mission = 's184-m06',
   schemaStore = SAVED_SCHEMA_STORE,
 }: {
@@ -1939,6 +2096,7 @@ export async function runLiveWorkflowProof({
   generate?: LiveGenerator;
   tarballs?: PackedPackageRecord[];
   schemaNames?: readonly S184M06SchemaName[];
+  freshInputs?: readonly FreshCompositionInput[];
   mission?: string;
   schemaStore?: string;
 }): Promise<{
@@ -1948,12 +2106,14 @@ export async function runLiveWorkflowProof({
   tarballs: PackedPackageRecord[];
 }> {
   if (!artifactRoot) throw new Error('artifactRoot is required.');
-  assertSchemaSelection(schemaNames);
+  if (freshInputs && (schemaNames || schemaStore !== SAVED_SCHEMA_STORE)) throw new Error('Fresh inputs and saved-store selection are mutually exclusive.');
+  if (!freshInputs) assertSchemaSelection(schemaNames ?? SCHEMA_NAMES);
+  const schemaCount = freshInputs?.length ?? (schemaNames ?? SCHEMA_NAMES).length;
   await mkdirAbsent(artifactRoot);
   const submittedTarballs = tarballs ?? await packFoundationPackages(artifactRoot) as PackedPackageRecord[];
   // Packing runs each package's prepack build. Generate only after that coherent
   // build boundary so target-readiness never observes a half-written dist tree.
-  const generation = await runLiveGenerationOnly({ artifactRoot, generate, schemaNames, mission, schemaStore });
+  const generation = await runLiveGenerationOnly({ artifactRoot, generate, schemaNames, freshInputs, mission, schemaStore });
   const cellReports = [];
   for (const generationCell of generation.cells) {
     cellReports.push(await runLiveConsumerCell({
@@ -1971,6 +2131,7 @@ export async function runLiveWorkflowProof({
     return {
       schema,
       schemaRef: cell.schemaRef,
+      ...(cell.composition ? { composition: cell.composition } : {}),
       ...(cell.derivation ? { derivation: cell.derivation } : {}),
       framework,
       status: cell.status,
@@ -1993,9 +2154,10 @@ export async function runLiveWorkflowProof({
   const report = {
     schemaVersion: '1.0.0',
     mission,
-    schemaStore,
+    schemaStore: freshInputs ? null : schemaStore,
+    ...(freshInputs ? { freshInputs } : {}),
     kind: 'live-schema-workflow-clean-consumer-proof',
-    status: passed + notApplicable === selected && selected === schemaNames.length * FRAMEWORKS.length * GATE_NAMES.length
+    status: passed + notApplicable === selected && selected === schemaCount * FRAMEWORKS.length * GATE_NAMES.length
       ? 'passed'
       : 'failed',
     selected,
@@ -2004,11 +2166,11 @@ export async function runLiveWorkflowProof({
     applicable: selected - notApplicable,
     failed: selected - passed - notApplicable,
     skipped: 0,
-    schemaCount: schemaNames.length,
+    schemaCount: schemaCount,
     frameworkCount: FRAMEWORKS.length,
     cellCount: publicCells.length,
-    expectedCellCount: schemaNames.length * FRAMEWORKS.length,
-    equalityRule: 'Every selected immutable saved schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.',
+    expectedCellCount: schemaCount * FRAMEWORKS.length,
+    equalityRule: 'Every selected unchanged saved or freshly composed schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.',
     generationPolicy: 'code.generate is invoked live once per schema/framework cell and only that in-run artifact is consumed.',
     consumerPolicy: 'Consumers are outside the workspace, begin without node_modules, use empty npm configs, and install OODS packages only from exact tarballs produced by npm pack after each package prepack build.',
     logPathPolicy: 'Every gate log path is relative to this report artifact root, including paths repeated in nested cell reports.',

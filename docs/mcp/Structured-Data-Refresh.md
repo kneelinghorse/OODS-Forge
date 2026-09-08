@@ -9,10 +9,12 @@ This wraps `cmos/scripts/refresh_structured_data.py` to regenerate structured da
 ## Usage (recommended)
 
 ```bash
-pnpm refresh:data
+pnpm refresh:data -- --upstream-root "$PWD"
 ```
 
-To populate code snippets for primitives (Button, Card, Stack, Text, etc.) from the upstream design system repo, point the refresh at upstream Storybook stories:
+Use the active OODS-Forge checkout for current product discovery (#1652). The explicit root keeps story snippets on the same source tree as the current traits, objects and capability ledger. The historical OODS-Foundry checkout is a reference source; selecting it is an explicit historical export, not the default evidence for current Forge delivery. Python 3 requires `PyYAML` and `jsonschema`; a disposable virtual environment on PATH can supply them without changing the system interpreter.
+
+To populate code snippets for primitives (Button, Card, Stack, Text, etc.) from a deliberately selected historical design-system reference, point the refresh at its Storybook stories:
 
 ```bash
 pnpm refresh:data -- --upstream-root ../OODS-Foundry
@@ -70,9 +72,15 @@ Flags:
 - `--skip-delta` (omit delta report)
 - `--upstream-root`, `--upstream-stories-dir` (populate `code-connect.json` from upstream stories)
 
+## Current scope and surface claims
+
+The current `component-obligation-scope.v1.json` registry record is copied into the export and `catalog.list` as optional additive `obligationScope`. Decision #1788 retains all 109 intake IDs. The old 98-runtime/11-authoring-only split remains unapproved and `approvedRuntimeCensus` stays null. Per-row `proposedClassification` and `reconciliationState` retain their historical provenance; they cannot exclude an obligation or imply that the retain-109 choice is still awaiting approval. Frozen s182 records are preserved.
+
+`status` remains the legacy HTML mapping filter for compatibility. Use `productReality.surfaces.react`, `.vue` and `.generatedConsumer` for each target's evidence, and the separate accessibility/theme/interaction cells for maturity. An HTML-mapped `ArchiveEvent` remains unavailable to governed React/Vue build generation; `ArchivePill` has runtime evidence while its maturity cells remain unverified. The discovery row's `contract` cell is also historical evidence, not a substitute for the current governed package contract.
+
 ## Notes
 
-- Payloads are validated against `cmos/planning/component-schema.json`; the script aborts on schema errors.
+- Payloads are validated against `cmos/planning/component-schema.json`; the script aborts on schema errors. When that schema changes, synchronize the byte-identical packaged copy at `packages/mcp-server/src/schemas/component-schema.json` and rebuild the server. `structuredData.fetch` consumes the packaged copy so dist-only delivery has no planning-directory dependency; the portable-boundary test enforces equality.
 - Viz-related components include `renderComplexity` metadata (tier + score) derived from trait categories when applicable.
 - ETags are computed from canonical payloads with `generatedAt` removed; hashes stay stable for identical content (tests assert the component/token hashes).
 - Trait/object discovery walks `traits/**/*.trait.yaml`, `domains/*/traits/*.trait.yaml`, and object definitions; patterns and sample queries are derived from the current registries.

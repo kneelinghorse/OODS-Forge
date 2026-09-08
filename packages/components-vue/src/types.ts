@@ -277,3 +277,46 @@ export type PriceSummaryProps = {
   text?: string;
   description?: string;
 };
+
+export type InlineLabelProps = { label?: string; text?: string; value?: string; maxLength?: number | string };
+export type LabelCellProps = InlineLabelProps & {
+  description?: string; subtitle?: string; sublabel?: string; supporting?: string; truncate?: boolean;
+};
+export type FormLabelGroupProps = { label?: string; text?: string; title?: string; placeholder?: string; hint?: string; description?: string; htmlFor?: string; for?: string; inputId?: string };
+export type ClassificationBadgeProps = { label?: string; text?: string; category?: string; value?: string; status?: string; state?: string; mode?: string; variant?: string; tone?: ComponentTone; emphasis?: ComponentEmphasis };
+export type ClassificationEditorProps = {
+  title?: string; label?: string; heading?: string; name?: string; description?: string; subtitle?: string; hint?: string;
+  category?: string; primaryCategory?: string; tags?: string | readonly unknown[]; modes?: readonly unknown[]; mode?: string; classificationMode?: string;
+};
+
+export type OwnerBadgeProps = Omit<ClassificationBadgeProps, 'category' | 'mode'> & { owner?: string; ownerType?: string };
+export type OwnershipSummaryProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  ownerId?: string; owner_id?: string; ownerType?: string; owner_type?: string; role?: string; ownershipRole?: string;
+  summary?: string; text?: string; description?: string;
+};
+export type OwnershipMetaProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  ownerType?: string; owner_type?: string; role?: string; ownershipRole?: string;
+};
+export type TagSummaryProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  tagCount?: number | string; count?: number | string; tags?: string | readonly unknown[];
+  summary?: string; text?: string; description?: string;
+};
+
+export type ArchiveSummaryProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  isArchived?: boolean | string; archived?: boolean | string; status?: boolean | string;
+  archivedAt?: string | null; reason?: string; archiveReason?: string; summary?: string; text?: string; description?: string;
+};
+export type ArchivePillProps = Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> & { isArchived?: boolean | string; value?: boolean | string };
+export type CancellationBadgeProps = Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> & { cancelAtPeriodEnd?: boolean | string; isCancelled?: boolean | string; value?: boolean | string };
+export type CancellationFormProps = {
+  title?: string; label?: string; heading?: string; name?: string; description?: string; subtitle?: string; hint?: string;
+  allowedReasons?: readonly unknown[]; reasonCode?: string; reason?: string; cancellationReason?: string;
+};
+export type PriceCardMetaProps = {
+  title?: string; label?: string; heading?: string; name?: string;
+  model?: string; pricingModel?: string; interval?: string; billingInterval?: string;
+};

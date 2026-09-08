@@ -3,6 +3,9 @@ import * as React from 'react';
 import { Badge } from './presentational.js';
 import type { ComponentEmphasis, ComponentTone } from './types.js';
 import type {
+  ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, CancellationBadgeProps, PriceCardMetaProps,
+  OwnerBadgeProps, OwnershipSummaryProps, OwnershipMetaProps, TagSummaryProps,
+  LabelCellProps, InlineLabelProps, FormLabelGroupProps, ClassificationBadgeProps, ClassificationEditorProps,
   AddressEditorProps,
   AddressEditorValue,
   AddressSummaryBadgeProps,
@@ -395,6 +398,7 @@ type BadgeFamilyOptions = {
   defaultVariant: string;
   labelKeys: readonly string[];
   statusKeys: readonly string[];
+  booleanProps?: readonly string[];
 };
 
 // Every badge-family summary mirrors renderBadgePrimitive over the governed
@@ -406,6 +410,7 @@ function createBadgeFamily<Props extends object>(options: BadgeFamilyOptions) {
     const record = rest as Record<string, unknown>;
     const scalar = (key: string): string | undefined => {
       const value = record[key];
+      if (typeof value === 'boolean' && options.booleanProps?.includes(key)) return String(value);
       return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
     };
     const content = childContent(children);
@@ -420,6 +425,7 @@ function createBadgeFamily<Props extends object>(options: BadgeFamilyOptions) {
       <Badge
         ref={ref}
         status={status}
+        showIcon={false}
         tone={tone}
         emphasis={emphasis}
         className={classes(options.className, className)}
@@ -923,3 +929,176 @@ export const TemplatePicker = React.forwardRef<HTMLFieldSetElement, TemplatePick
   }
 );
 TemplatePicker.displayName = 'OODS.TemplatePicker';
+
+// Matches truncateText in the HTML authority, including its three-dot suffix.
+const truncateLabel = (value: string, maxLength: number | string | undefined): string => {
+  const limit = typeof maxLength === 'number' ? maxLength : Number(maxLength);
+  return !Number.isFinite(limit) || limit <= 0 || value.length <= limit
+    ? value : `${value.slice(0, Math.max(0, limit - 1)).trimEnd()}...`;
+};
+
+export const InlineLabel = React.forwardRef<HTMLSpanElement, InlineLabelProps>(
+  ({ label, text, value, maxLength, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    return <span ref={ref} className={classes('oods-inline-label', className)} data-oods-component="InlineLabel" {...rest}>
+      {content.authored || content.scalar !== undefined ? children : truncateLabel(firstText(label, text, value) ?? '', maxLength)}
+    </span>;
+  }
+);
+InlineLabel.displayName = 'OODS.InlineLabel';
+
+export const LabelCell = React.forwardRef<HTMLSpanElement, LabelCellProps>(
+  ({ label, text, value, description, subtitle, sublabel, supporting, truncate, maxLength, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const limit = truncate ? maxLength ?? 40 : maxLength;
+    const primary = truncateLabel(firstText(label, text, value) ?? '', limit);
+    const detail = firstText(description, subtitle, sublabel, supporting);
+    return <span ref={ref} className={classes('oods-label-cell', className)} data-oods-component="LabelCell" {...rest}>
+      {content.authored || content.scalar !== undefined ? children : <>
+        <span data-oods-label-cell-primary="true">{primary}</span>
+        {detail ? <span data-oods-label-cell-description="true">{truncateLabel(detail, limit)}</span> : null}
+      </>}
+    </span>;
+  }
+);
+LabelCell.displayName = 'OODS.LabelCell';
+
+export const FormLabelGroup = React.forwardRef<HTMLLabelElement, FormLabelGroupProps>(
+  ({ label, text, title, placeholder, hint, description, htmlFor, for: forId, inputId, children, className, ...rest }, ref) => {
+    const detail = firstText(placeholder, hint, description);
+    return <label ref={ref} className={classes('oods-form-label-group', className)} data-oods-component="FormLabelGroup" htmlFor={htmlFor ?? forId ?? inputId} {...rest}>
+      <span data-oods-form-label="true">{firstText(label, text, title) ?? 'Label'}</span>
+      {children}
+      {detail ? <span data-oods-form-hint="true">{detail}</span> : null}
+    </label>;
+  }
+);
+FormLabelGroup.displayName = 'OODS.FormLabelGroup';
+
+export const ClassificationBadge = createBadgeFamily<ClassificationBadgeProps>({
+  component: 'ClassificationBadge', className: 'oods-classification-badge', defaultLabel: 'Classification', defaultVariant: 'classification',
+  labelKeys: ['label', 'text', 'category', 'value'], statusKeys: ['status', 'state', 'mode'],
+});
+
+export const ClassificationEditor = React.forwardRef<HTMLFormElement, ClassificationEditorProps>(
+  ({ title, label, heading, name, description, subtitle, hint, category, primaryCategory, tags, modes, mode, classificationMode, children, className, onSubmit, ...rest }, ref) => {
+    const content = childContent(children);
+    const tagText = typeof tags === 'string' ? tags : tags === undefined ? '' : JSON.stringify(tags);
+    return <form ref={ref} className={classes('oods-classification-editor', className)} data-oods-component="ClassificationEditor" data-form-type="classification-editor"
+      onSubmit={(event) => { preventSubmit(event); onSubmit?.(event); }} {...rest}>
+      {formHeader(firstText(title, label, heading, name) ?? 'Classification Editor', firstText(description, subtitle, hint))}
+      <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
+        <label data-form-control="input"><span>Category</span><input type="text" name="category" defaultValue={firstText(category, primaryCategory) ?? ''} /></label>
+        <label data-form-control="input"><span>Tags</span><input type="text" name="tags" placeholder="tag-1, tag-2" defaultValue={tagText} /></label>
+        <label data-form-control="select"><span>Mode</span><select name="mode" defaultValue={firstText(mode, classificationMode)}>{selectOptionsMarkup(normalizeSelectOptions(Array.isArray(modes) ? modes : ['strict', 'flexible']))}</select></label>
+      </>}</div>
+    </form>;
+  }
+);
+ClassificationEditor.displayName = 'OODS.ClassificationEditor';
+
+export const OwnerBadge = createBadgeFamily<OwnerBadgeProps>({
+  component: 'OwnerBadge', className: 'oods-owner-badge', defaultLabel: 'Owner', defaultVariant: 'owner',
+  labelKeys: ['label', 'text', 'owner', 'ownerType', 'value'], statusKeys: ['status', 'state'],
+});
+
+export const OwnershipSummary = React.forwardRef<HTMLElement, OwnershipSummaryProps>(
+  ({ title, label, heading, name, ownerId, owner_id, ownerType, owner_type, role, ownershipRole, summary, text, description, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const terms = ([['Owner ID', firstScalar(ownerId, owner_id)], ['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const fallback = firstText(summary, text, description);
+    return <section ref={ref} className={classes('oods-ownership-summary', className)} data-oods-component="OwnershipSummary" data-summary-type="ownership" {...rest}>
+      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Ownership Summary'}</h3>
+      {content.authored || content.scalar !== undefined ? children : terms.length
+        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
+        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
+    </section>;
+  }
+);
+OwnershipSummary.displayName = 'OODS.OwnershipSummary';
+
+export const TagSummary = React.forwardRef<HTMLElement, TagSummaryProps>(
+  ({ title, label, heading, name, tagCount, count, tags, summary, text, description, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const tagText = Array.isArray(tags) ? normalizeTagItems(tags).join(', ') || undefined : firstText(tags as string | undefined);
+    const terms = ([['Tag Count', firstScalar(tagCount, count)], ['Tags', tagText]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const fallback = firstText(summary, text, description);
+    return <section ref={ref} className={classes('oods-tags-summary', className)} data-oods-component="TagSummary" data-summary-type="tags" {...rest}>
+      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Tag Summary'}</h3>
+      {content.authored || content.scalar !== undefined ? children : terms.length
+        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
+        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
+    </section>;
+  }
+);
+TagSummary.displayName = 'OODS.TagSummary';
+
+export const OwnershipMeta = React.forwardRef<HTMLDivElement, OwnershipMetaProps>(
+  ({ title, label, heading, name, ownerType, owner_type, role, ownershipRole, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const terms = ([['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    return <div ref={ref} className={classes('oods-ownership-meta', className)} data-oods-component="OwnershipMeta" data-meta-type="ownership" {...rest}>
+      {content.authored || content.scalar !== undefined ? children : <>
+        <span data-meta-title="true">{firstText(title, label, heading, name) ?? 'Ownership'}</span>
+        {terms.map(([term, value]) => <span key={term} data-meta-item="true"><strong>{term}:</strong> {value}</span>)}
+      </>}
+    </div>;
+  }
+);
+OwnershipMeta.displayName = 'OODS.OwnershipMeta';
+
+export const ArchivePill = createBadgeFamily<ArchivePillProps>({
+  component: 'ArchivePill', className: 'oods-archive-pill', defaultLabel: 'Archive', defaultVariant: 'archive',
+  labelKeys: ['label', 'text', 'status', 'state', 'isArchived', 'value'], statusKeys: ['status', 'state', 'isArchived', 'value'],
+  booleanProps: ['isArchived', 'value'],
+});
+export const CancellationBadge = createBadgeFamily<CancellationBadgeProps>({
+  component: 'CancellationBadge', className: 'oods-cancellation-badge', defaultLabel: 'Cancellation', defaultVariant: 'cancellation',
+  labelKeys: ['label', 'text', 'status', 'state', 'cancelAtPeriodEnd', 'value'], statusKeys: ['status', 'state', 'cancelAtPeriodEnd', 'isCancelled', 'value'],
+  booleanProps: ['cancelAtPeriodEnd', 'isCancelled', 'value'],
+});
+
+export const ArchiveSummary = React.forwardRef<HTMLElement, ArchiveSummaryProps>(
+  ({ title, label, heading, name, isArchived, archived, status, archivedAt, reason, archiveReason, summary, text, description, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const terms = ([['Archived', firstScalar(isArchived, archived, status)], ['Archived At', firstText(archivedAt ?? undefined)], ['Reason', firstText(reason, archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const fallback = firstText(summary, text, description);
+    return <section ref={ref} className={classes('oods-archive-summary', className)} data-oods-component="ArchiveSummary" data-summary-type="archive" {...rest}>
+      <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Archive Summary'}</h3>
+      {content.authored || content.scalar !== undefined ? children : terms.length
+        ? <dl>{terms.map(([term, value]) => <div key={term} data-summary-item="true"><dt>{term}</dt><dd>{value}</dd></div>)}</dl>
+        : fallback ? <p data-summary-fallback="true">{fallback}</p> : <dl />}
+    </section>;
+  }
+);
+ArchiveSummary.displayName = 'OODS.ArchiveSummary';
+
+export const PriceCardMeta = React.forwardRef<HTMLDivElement, PriceCardMetaProps>(
+  ({ title, label, heading, name, model, pricingModel, interval, billingInterval, children, className, ...rest }, ref) => {
+    const content = childContent(children);
+    const terms = ([['Model', firstText(model, pricingModel)], ['Interval', firstText(interval, billingInterval)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    return <div ref={ref} className={classes('oods-price-card-meta', className)} data-oods-component="PriceCardMeta" data-meta-type="price" {...rest}>
+      {content.authored || content.scalar !== undefined ? children : <>
+        <span data-meta-title="true">{firstText(title, label, heading, name) ?? 'Price'}</span>
+        {terms.map(([term, value]) => <span key={term} data-meta-item="true"><strong>{term}:</strong> {value}</span>)}
+      </>}
+    </div>;
+  }
+);
+PriceCardMeta.displayName = 'OODS.PriceCardMeta';
+
+export const CancellationForm = React.forwardRef<HTMLFormElement, CancellationFormProps>(
+  ({ title, label, heading, name, description, subtitle, hint, allowedReasons, reasonCode, reason, cancellationReason, children, className, onSubmit, ...rest }, ref) => {
+    const content = childContent(children);
+    const choices = normalizeSelectOptions(allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate']);
+    return <form ref={ref} className={classes('oods-cancellation-form', className)} data-oods-component="CancellationForm" data-form-type="cancellation"
+      onSubmit={(event) => { preventSubmit(event); onSubmit?.(event); }} {...rest}>
+      {formHeader(firstText(title, label, heading, name) ?? 'Cancellation Form', firstText(description, subtitle, hint))}
+      <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
+        <label data-form-control="select"><span>Reason Code</span><select name="reasonCode" defaultValue={reasonCode}>{selectOptionsMarkup(choices)}</select></label>
+        <label data-form-control="textarea"><span>Reason</span><textarea name="reason" defaultValue={firstText(reason, cancellationReason) ?? ''} /></label>
+      </>}</div>
+    </form>;
+  }
+);
+CancellationForm.displayName = 'OODS.CancellationForm';

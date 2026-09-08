@@ -25,6 +25,11 @@ const FIELD_TYPE_MAP: Record<string, string> = {
 };
 
 export function mapFieldType(entry: FieldSchemaEntry): string {
+  // Trait '?' markers mean nullable data, independently of property presence.
+  // Match the existing object generator's convention without rewriting the schema.
+  if (entry.type.endsWith('?')) {
+    return `${mapFieldType({ ...entry, type: entry.type.slice(0, -1).trim() })} | null`;
+  }
   if (entry.enum && entry.enum.length > 0) {
     return entry.enum.map(javascriptSingleQuotedString).join(' | ');
   }
@@ -217,6 +222,7 @@ export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[
   { id: 'component:Input.onChange', scope: 'component', component: 'Input', event: 'onChange', kind: 'local', signature: STRING_VALUE },
   { id: 'component:Input.onInput', scope: 'component', component: 'Input', event: 'onInput', kind: 'local', signature: STRING_VALUE },
   { id: 'component:Input.onUpdate', scope: 'component', component: 'Input', event: 'onUpdate', kind: 'local', signature: STRING_VALUE },
+  { id: 'component:SearchInput.onUpdate', scope: 'component', component: 'SearchInput', event: 'onUpdate', kind: 'local', signature: STRING_VALUE },
   { id: 'component:Select.onChange', scope: 'component', component: 'Select', event: 'onChange', kind: 'local', signature: STRING_VALUE },
   { id: 'component:Select.onUpdate', scope: 'component', component: 'Select', event: 'onUpdate', kind: 'local', signature: STRING_VALUE },
   { id: 'component:Table.onRowActivate', scope: 'component', component: 'Table', event: 'onRowActivate', kind: 'domain', signature: ROW_ID },
@@ -743,7 +749,7 @@ export function resolveFieldProps(
   if (
     !existing.label
     && (strategy === 'label-prop' || strategy === 'status-prop')
-    && node.component !== 'StatusTimeline'
+    && !['StatusTimeline', 'ArchivePill', 'CancellationBadge'].includes(node.component)
   ) {
     props.label = humanizeFieldName(fieldProp);
   }
@@ -799,6 +805,8 @@ export const PATTERN_GROUP_DROPPED_DIRECTIVES: readonly string[] = [
 ];
 
 const FIELD_VALUE_PROP_TARGETS: Readonly<Record<string, string>> = {
+  ArchivePill: 'isArchived',
+  CancellationBadge: 'cancelAtPeriodEnd',
   AddressSummaryBadge: 'role',
   AddressValidationTimeline: 'events',
   MembershipAuditTimeline: 'events',
@@ -806,6 +814,7 @@ const FIELD_VALUE_PROP_TARGETS: Readonly<Record<string, string>> = {
   TagInput: 'tags',
   TagManager: 'tags',
   TagPills: 'tags',
+  TagSummary: 'tags',
 };
 
 /** The data prop a component's generic field lowers to, when it is not its content or form value. */
@@ -919,6 +928,19 @@ export function resolveFrameworkChildContent(
     };
   }
 
+  if (node.component === 'ClassificationEditor'
+    && typeof sourceField === 'string' && ownFieldSchemaEntry(objectSchema, sourceField)) {
+    // This presentational form exposes supporting text, not a generic value editor.
+    return { strategy: 'value-prop', fieldName: snakeToCamel(sourceField), propName: 'description', isChildren: false };
+  }
+
+  if (['LabelCell', 'InlineLabel'].includes(node.component)
+    && typeof sourceField === 'string' && ownFieldSchemaEntry(objectSchema, sourceField)) {
+    // Bound labels use the real value prop; authored children keep their HTML
+    // override semantics and are not confused with text that needs truncation.
+    return { strategy: 'label-prop', fieldName: snakeToCamel(sourceField), propName: 'label', isChildren: false };
+  }
+
   const resolution = resolveChildContent(node, objectSchema);
   if (!resolution) {
     const field = node.props?.field;
@@ -975,6 +997,16 @@ export type FrameworkRecipePropResolution = {
 };
 
 const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  ArchiveSummary: { archivedField: 'isArchived', archivedAtField: 'archivedAt', reasonField: 'reason' },
+  CancellationForm: { reasonField: 'reason', codeField: 'reasonCode' },
+  PriceCardMeta: { modelField: 'model', intervalField: 'interval' },
+  OwnerBadge: { ownerIdField: 'owner', ownerTypeField: 'ownerType' },
+  OwnershipSummary: { ownerIdField: 'ownerId', ownerTypeField: 'ownerType', roleField: 'role' },
+  OwnershipMeta: { ownerTypeField: 'ownerType', roleField: 'role' },
+  TagSummary: { countField: 'tagCount' },
+  LabelCell: { descriptionField: 'description' },
+  FormLabelGroup: { labelField: 'label', descriptionField: 'description', placeholderField: 'placeholder' },
+  ClassificationBadge: { primaryCategoryField: 'category' },
   AuditEvent: {
     typeField: 'event',
     timestampField: 'timestamp',
@@ -1057,7 +1089,18 @@ const RECIPE_PARAMETER_PROPS = new Set([
   'fallbackRoleParameter',
   'initialParameter',
   'minorUnitsParameter',
+  'allowTransferParameter',
+  'retainHistoryParameter',
+  'restoreWindowParameter',
+  'allowPartialRestoreParameter',
+  'allowedReasonsParameter',
+  'windowParameter',
+  'maxActiveParameter',
   'maxLengthParameter',
+  'maxLabelLengthParameter',
+  'maxDescriptionLengthParameter',
+  'requireDescriptionParameter',
+  'tagPolicyParameter',
   'maxTagsParameter',
   'minLengthParameter',
   'minQueryLengthParameter',
@@ -1083,8 +1126,13 @@ const RECIPE_PARAMETER_PROPS = new Set([
  * would invent a prop; each is named in the component's contract record.
  */
 export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[]>> = {
+  ArchiveSummary: ['restoredAtField', 'archivedByField', 'metadataField'],
+  ArchivePill: ['archivedAtField'],
+  PriceCardMeta: ['amountField', 'currencyField'],
+  OwnershipSummary: ['transferredAtField'],
   AddressCollectionPanel: ['roleField', 'defaultRoleField'],
   AddressEditor: ['defaultRoleField'],
+  ClassificationBadge: ['tagPreviewField'],
   ClassificationPanel: ['categoriesField', 'tagsField', 'metadataField'],
   MembershipPanel: ['membershipsField', 'hierarchyField', 'roleField', 'permissionField'],
   MessageStatusBadge: ['statusesField'],

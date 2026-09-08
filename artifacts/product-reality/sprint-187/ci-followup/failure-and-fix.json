@@ -1,0 +1,161 @@
+{
+  "pullRequest": "https://github.com/kneelinghorse/OODS-Forge/pull/84",
+  "failedRun": "https://github.com/kneelinghorse/OODS-Forge/actions/runs/34133038275",
+  "failedHead": "083e82c18948a77546b8889278c935291c3f87ac",
+  "sessionId": "PS-2026-09-07-003",
+  "decisionId": 1811,
+  "failedJobs": {
+    "coverage": 101777486442,
+    "viz-determinism": 101777486470,
+    "portable-runtime": 101777486586
+  },
+  "causes": [
+    "Two historical evidence auditors queried the whole git index; stdout exceeded spawnSync default buffer. ENOBUFS can coexist with status 0 on Darwin, so status-only handling also hid the cause locally.",
+    "The approved refresh added two structured-data files; the portable runtime still pinned the historical 19-file count, but actual count is 21."
+  ],
+  "approvedBoundaryAdditions": [
+    "artifacts/structured-data/oods-components-2026-09-07.json",
+    "artifacts/structured-data/oods-tokens-2026-09-07.json"
+  ],
+  "localValidation": {
+    "largeIndexRegression": "failed against old code; both auditors pass with scoped queries and still reject an untracked log",
+    "serverFocused": {
+      "files": 3,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0
+    },
+    "rootCoreFocused": {
+      "files": 3,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0
+    },
+    "firstCorrection": "retained: ordinary double-star pathspec omitted two root-level logs; Git glob magic includes root and nested logs, confirmed by existing full receipt checks",
+    "runtimeAssembly": {
+      "status": "passed",
+      "dirty": true,
+      "determinismCertified": false,
+      "method": "Darwin development assembly; Linux CI runs clean final builds and certifies determinism",
+      "archiveSha256": "8aeee2a3a15771dd82bb4d87b49e72072974029e185ca80dba9a82ef0ac2bbcb",
+      "thirdPartyCount": 245,
+      "payloadEntryCount": 18476
+    },
+    "runtimeE2E": {
+      "status": "pass",
+      "manifest": {
+        "commit": "da441f3ebc2135580f33ce345db9d533cb5272c3",
+        "dirty": true,
+        "file": "forge-runtime.manifest.json",
+        "payloadTreeSha256": "93284a0ee1fdf11e08fa9b910999d62a0cfb9d146e366555ac811c3adcebfe34",
+        "thirdPartyCount": 245
+      },
+      "tools": {
+        "count": 20,
+        "names": [
+          "tokens_build",
+          "structuredData_fetch",
+          "brand_apply",
+          "brand_intake",
+          "catalog_list",
+          "code_generate",
+          "design_compose",
+          "pipeline",
+          "health",
+          "registry_snapshot",
+          "viz_compose",
+          "viz_render",
+          "dashboard_render",
+          "artifact_certify",
+          "fidelity_preview",
+          "map",
+          "schema",
+          "object",
+          "repl",
+          "review"
+        ]
+      },
+      "lifecycle": {
+        "primaryTermination": {
+          "code": 0,
+          "exited": true,
+          "method": "stdin-close",
+          "signal": null
+        },
+        "restart": {
+          "initialized": true,
+          "nativeHealth": "ok",
+          "sigterm": {
+            "alreadyExited": false,
+            "code": 0,
+            "forcedKill": false,
+            "requestedSignal": "SIGTERM",
+            "signal": null
+          }
+        },
+        "stdinClose": {
+          "code": 0,
+          "exited": true,
+          "signal": null
+        }
+      },
+      "extractionTree": {
+        "after": "0ab94d5f0d4756cd07e74410135eba65ea9b2f7c83efe2a05bf202bbd08234f5",
+        "before": "0ab94d5f0d4756cd07e74410135eba65ea9b2f7c83efe2a05bf202bbd08234f5",
+        "unchanged": true
+      }
+    }
+  },
+  "files": [
+    {
+      "path": "ci-coverage-failed.log",
+      "sha256": "678e21a9876f026bd460d889d1df904e371cc45429ae2d92f9d3adac36bbd814"
+    },
+    {
+      "path": "ci-viz-determinism-failed.log",
+      "sha256": "31d7676392414b6f33d4d2eb67dd40e055f80a5ea624fcbb2eca575bfe8ca6bf"
+    },
+    {
+      "path": "ci-portable-runtime-failed.log",
+      "sha256": "ea09230c0a46aaf29e03053657be75e8d9a78781b3107260025c2ffc85296308"
+    },
+    {
+      "path": "large-index-red.log",
+      "sha256": "8fd909e17565cac3d9835e2fdfacf7f3ecc2d3df847b7d839cb87583cf707201"
+    },
+    {
+      "path": "retention-attempt-1.log",
+      "sha256": "cebdc2cda0a75cd6194838e42986bf638cb72036522f04ca04921500910903ef"
+    },
+    {
+      "path": "root-retention-attempt-1.log",
+      "sha256": "2d36b5d4f8a3e90dc82f590a59c889540f1c83711532f196344b6b368525ea38"
+    },
+    {
+      "path": "retention-passed.log",
+      "sha256": "53d51d14e5ece7e61d8c274fc99d90f4cf8f31737e364e548be01891c4dd10b9"
+    },
+    {
+      "path": "root-retention-passed.log",
+      "sha256": "cfbf614a2fea7685d7b42f5c7b8eff8e7c8d2717b1b2da8cb1217d3b5b4ed117"
+    },
+    {
+      "path": "runtime-assemble.log",
+      "sha256": "99930b596a5575b8f0ff50ddf49b82c49d302c17c29109e7bcdb0ce8be4ea31f"
+    },
+    {
+      "path": "runtime-manifest.json",
+      "sha256": "2b7e7264fc5c127fe53d9a5d23c06598c302c21cab57905ae719fef927e0e7d9"
+    },
+    {
+      "path": "runtime-e2e.json",
+      "sha256": "7a4333b0f926bfb18d39cf0ea3bf4fda8a4182053ac50f7fbe2cb48daddc797e"
+    }
+  ],
+  "trackedPathBytesByHead": {
+    "867c130e": 1097653,
+    "a429e9d4": 1099175,
+    "083e82c1": 1099755,
+    "da441f3e": 1107162
+  }
+}

@@ -1,0 +1,50 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server
+
+ ✓ test/product-reality/m06-evidence-controls.s184.spec.ts (7 tests) 2586ms
+   ✓ Sprint 184 m06 evidence controls > acquires current code.generate output while the Sprint-183 harness still acquires committed artifacts  512ms
+   ✓ Sprint 184 m06 evidence controls > discriminates the two frozen workflow schemas when one framework loses StatusBadge  311ms
+   ✓ Sprint 184 m06 evidence controls > keeps log tracking checks effective when unrelated git paths exceed the process output limit  1258ms
+   ✓ Sprint 184 m06 evidence controls > finds every JSON-referenced raw log that is absent from git ls-files  479ms
+ ❯ test/product-reality/m06-evidence.s184.spec.ts (4 tests | 1 failed) 1225ms
+   ✓ Sprint 184 m06 retained live workflow evidence > retains the exact live matrix, sixteen real gate bites, and honest partial claim  356ms
+   ✓ Sprint 184 m06 retained live workflow evidence > retains the live-only emitter differential and its exact reverse restoration 7ms
+   ✓ Sprint 184 m06 retained live workflow evidence > retains exact bidirectional framework discrimination and source restoration 3ms
+   × Sprint 184 m06 retained live workflow evidence > covers every retained file with checksums and every raw log with the tracked-log audit 856ms
+     → expected [ …(2) ] to deeply equal []
+ ✓ test/product-reality/evidence-retention.s184.spec.ts (10 tests) 1040ms
+   ✓ Sprint 184 m01 — evidence survives and frozen surfaces stay classified > requires every log named by Sprint 183/184 evidence indexes to be tracked  351ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/m06-evidence.s184.spec.ts > Sprint 184 m06 retained live workflow evidence > covers every retained file with checksums and every raw log with the tracked-log audit
+AssertionError: expected [ …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "artifacts/product-reality/sprint-184/m06/cross-framework-discrimination.log",
++   "artifacts/product-reality/sprint-184/m06/seal.log",
++ ]
+
+ ❯ test/product-reality/m06-evidence.s184.spec.ts:211:29
+    209|     expect(audit.referencedLogs.length).toBeGreaterThan(0);
+    210|     expect(audit.missing).toEqual([]);
+    211|     expect(audit.untracked).toEqual([]);
+       |                             ^
+    212|     expect(audit.status).toBe('passed');
+    213|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 20 passed (21)
+   Start at  10:34:49
+   Duration  18.96s (transform 4.27s, setup 243ms, collect 8.95s, tests 4.85s, environment 3ms, prepare 2.01s)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/evidence-retention.s184.spec.ts test/product-reality/m06-evidence.s184.spec.ts test/product-reality/m06-evidence-controls.s184.spec.ts

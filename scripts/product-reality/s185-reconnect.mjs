@@ -20,6 +20,48 @@ const array = (text, name) => {
 
 export function buildNotices(movers, root = ROOT, options = {}) {
   assert(movers.status === 'passed', 'A checked Git-derived mover record is required.');
+  if (movers.missionId === 's187-m06') {
+    const head = movers.s187.head;
+    const types = 'packages/component-contracts/src/types.ts';
+    const nucleus = array(source(head, types, root), 'NUCLEUS_COMPONENT_IDS');
+    const prior = array(source(movers.s187.base, types, root), 'NUCLEUS_COMPONENT_IDS');
+    const added = nucleus.filter(id => !prior.includes(id));
+    assert(nucleus.length === 64 && new Set(nucleus).size === 64 && added.length === 14 && prior.every(id => nucleus.includes(id)), 'Sprint 187 root membership differs.');
+    for (const framework of ['react', 'vue']) {
+      const exports = JSON.parse(source(head, `packages/components-${framework}/package.json`, root)).exports;
+      assert(JSON.stringify(exports['.']) === JSON.stringify(exports['./ported']) && JSON.stringify(exports['./readiness']) === JSON.stringify(exports['./readiness-ported']), 'Compatibility aliases differ from roots.');
+    }
+    const styles = JSON.parse(source(head, 'packages/component-styles/package.json', root)).exports;
+    assert(JSON.stringify(styles['./css']) === JSON.stringify(styles['./css-ported']), 'CSS alias differs.');
+    const censusPath = options.censusPath ?? 'artifacts/product-reality/sprint-187/m06/fresh-census.json';
+    const runtimePath = options.runtimePath ?? 'artifacts/product-reality/sprint-187/m06/live-consumers/report.json';
+    const census = JSON.parse(fs.readFileSync(path.join(root, censusPath), 'utf8'));
+    const runtime = JSON.parse(fs.readFileSync(path.join(root, runtimePath), 'utf8'));
+    assert(census.head === head && census.greenSchemas === 66 && census.greenCells === 132, 'Fresh census is incomplete or from another implementation.');
+    assert(runtime.status === 'passed' && runtime.cellCount === 28 && runtime.failed === 0 && runtime.skipped === 0
+      && runtime.cells.every(cell => cell.composition?.sourceHead === head), 'Runtime proof is incomplete or from another implementation.');
+    const successor = 'artifacts/product-reality/sprint-187/m05/delivery-final/recomposition.json';
+    const adoption = JSON.parse(fs.readFileSync(path.join(root, successor), 'utf8'));
+    const body = [
+      `Forge Sprint 187 is built for independent review at ${head}. Prepared only: this message has not been sent.`,
+      `New governed root families (${added.length}): ${added.join(', ')}. All ${nucleus.length} IDs share root contracts, React/Vue readiness and token CSS. /ported, /readiness-ported and /css-ported remain compatibility aliases because external migration is unproven.`,
+      'Emitter movers: authentic default composition preserves StatusTimeline data, numeric zero and boolean false, controlled query updates, owner/role metadata, optional card actions and nullable datetime values. ClassificationEditor and CancellationForm provide local native controls and prevented submission; no persistence, cancellation or policy enforcement is claimed. Consumed-unbound directives and HTML differences are documented.',
+      `Fresh coverage: 66/66 schemas and 132/132 React/Vue build generation cells; ${runtime.cellCount} named packed-consumer cells, ${runtime.passed} passed gates, ${runtime.notApplicable} N/A, ${runtime.failed} failed and ${runtime.skipped} skipped. Evidence: ${censusPath}; ${runtimePath}. Selected runtime paths do not prove all 66 paths or a connected application.`,
+      'Discovery: catalog_list adds optional obligationScope for accepted retain-109 #1788. approvedRuntimeCensus remains null; historical classifications are unapproved proposals. Legacy status filters describe HTML mapping only. Read each productReality.surfaces entry for target availability and unverified maturity. Current Forge-source refresh replaces historical snippets and stale capability evidence.',
+      `Saved adoption operand: authentic User/form v2 in ${adoption.successorStore}; schema SHA256 ${adoption.schemaSha256}; original record SHA256 ${adoption.originalHashes['user-form-showcase.json']}; successor record SHA256 ${adoption.successorHashes['user-form-showcase.json']}. Original inputs and negative receipts remain preserved; final saved-store comparisons disclose actual reachability separately.`,
+      'Deployment: pending. The served checkout is separate; no shared PM2 restart, shared-store adoption, publish or outbound notice occurred. The old served schema-load failure is recorded. Use the prepared rollout/backup/identity/rollback packet only in separately authorized delivery. Reconnect after verified served integration; generic health does not attest source revision. #1374/#1379/#1384 remain open.',
+      `Sprint 187 canonical schema/tool movers (${movers.s187.canonicalPaths.length}):\n${movers.s187.canonicalPaths.map(file => `- ${file}`).join('\n')}`,
+      `Sprint 187 additional public movers (${movers.s187.supplementalRuntimePaths.length}):\n${movers.s187.supplementalRuntimePaths.map(file => `- ${file}`).join('\n')}`,
+      'Carries: greenfield workflow partial; visualization public-render closure #1372, unverified maturity #1375, maintenance #1315/#1318–#1322 remain owed. Visualization breadth, Parts Town, publication and surface adapters are outside this build. Dashboard Demos is retired under #1719. builderSelfCertified:false; Sprint 187 stays Active for separate review.',
+    ].join('\n\n');
+    return { missionId: 's187-m06', implementationHead: head, status: 'prepared', sendsExecuted: 0, deployment: 'pending',
+      addedNucleus: added, nucleusCount: nucleus.length, aliasDisposition: 'retained; migration unproven', censusPath, runtimePath, successor,
+      retired: { targetAddress: 'cmos://derek/dashboard-demos', decisionId: 1719, disposition: 'retired; not sent', messageId: null },
+      notices: DESTINATIONS.map(targetAddress => {
+        const request = { type: 'info_push', targetAddress, summary: `Forge Sprint 187 candidate ${head}; reconnect after verified delivery`, body };
+        return { request, requestSha256: requestHash(request) };
+      }) };
+  }
   if (movers.missionId === 's186-m06') {
     const head = movers.s186.head;
     const types = 'packages/component-contracts/src/types.ts';
@@ -105,6 +147,19 @@ export function buildNotices(movers, root = ROOT, options = {}) {
 }
 
 export function verifyDeliveries(plan, deliveries) {
+  if (plan.missionId === 's187-m06') {
+    assert(plan.status === 'prepared' && plan.sendsExecuted === 0 && plan.deployment === 'pending', 'Sprint 187 delivery must remain prepared only.');
+    assert(deliveries.length === DESTINATIONS.length && plan.notices.length === DESTINATIONS.length, 'Exactly two prepared destinations required.');
+    assert(JSON.stringify(plan.notices.map(row => row.request.targetAddress).sort()) === JSON.stringify([...DESTINATIONS].sort()), 'Prepared destination coverage differs.');
+    for (const { request, requestSha256 } of plan.notices) {
+      assert(requestHash(request) === requestSha256, 'Notice request hash changed.');
+      const rows = deliveries.filter(row => row.targetAddress === request.targetAddress);
+      assert(rows.length === 1 && rows[0].status === 'prepared' && rows[0].messageId === null
+        && rows[0].requestSha256 === requestSha256, 'Prepared notice must have exact bytes and no fabricated delivery.');
+    }
+    assert(plan.retired.messageId === null && !deliveries.some(row => row.targetAddress === plan.retired.targetAddress), 'Retired destination received a fabricated delivery.');
+    return { status: 'passed', preparedNotices: deliveries.length, successfulDeliveries: 0, uniqueMessageIds: [] };
+  }
   assert(deliveries.length === DESTINATIONS.length, 'Exactly two active deliveries required.');
   const ids = new Set();
   for (const { request, requestSha256 } of plan.notices) {
@@ -123,15 +178,16 @@ export function verifyDeliveries(plan, deliveries) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const argument = name => { const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1]; };
   const sprintId = argument('--sprint') ?? 'sprint-185';
-  const moversPath = path.resolve(ROOT, argument('--movers') ?? `${sprintId === 'sprint-186' ? 'artifacts/product-reality/sprint-186/m06/movers' : MOVERS_OUTPUT}/sprint-wide-movers.json`);
+  const moversPath = path.resolve(ROOT, argument('--movers') ?? `${sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/movers` : MOVERS_OUTPUT}/sprint-wide-movers.json`);
   const movers = JSON.parse(fs.readFileSync(moversPath, 'utf8'));
   const declaration = JSON.parse(fs.readFileSync(path.resolve(ROOT, argument('--declaration') ?? path.join(path.dirname(moversPath), 'declared-movers.json')), 'utf8'));
-  const rederived = sprintId === 'sprint-186'
+  const rederived = sprintId === 'sprint-187'
+    ? deriveMovers(movers.s187.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's187-m06', base: movers.s187.base }) : sprintId === 'sprint-186'
     ? deriveMovers(movers.s186.head, declaration, ROOT, { sprintId, missionId: argument('--mission') ?? 's186-m06', base: movers.s186.base })
     : deriveMovers(movers.s185.head, declaration);
   assert(canonical(movers) === canonical(rederived), 'Mover input is stale.');
-  const directory = path.resolve(ROOT, argument('--output') ?? (sprintId === 'sprint-186' ? 'artifacts/product-reality/sprint-186/m06/reconnect' : OUTPUT)); fs.mkdirSync(directory, { recursive: true });
-  const plan = buildNotices(movers, ROOT, { censusPath: argument('--census') });
+  const directory = path.resolve(ROOT, argument('--output') ?? (sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/reconnect` : OUTPUT)); fs.mkdirSync(directory, { recursive: true });
+  const plan = buildNotices(movers, ROOT, { censusPath: argument('--census'), runtimePath: argument('--runtime') });
   const output = path.join(directory, 'notice-plan.json');
   if (process.argv.includes('--check')) assert(fs.readFileSync(output, 'utf8') === canonical(plan), 'Notice plan is stale.');
   else fs.writeFileSync(output, canonical(plan));

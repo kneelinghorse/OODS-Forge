@@ -1,0 +1,85 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/component-styles
+
+ ❯ test/styles.spec.ts (8 tests | 1 failed) 20ms
+   ✓ Sprint 182 shared component style contract > covers every nucleus component with token-driven CSS 3ms
+   × Sprint 182 shared component style contract > binds the six declared brand/theme cells to real token sources 13ms
+     → ClassificationBadge.badge.icon in A/light: expected '\n  --cmp-badge-background: var(--sys…' to contain 'var(--cmp-badge-icon,'
+   ✓ Sprint 182 shared component style contract > s185-m02 keeps color labels visible beside decorative markers in hc and forced colors 1ms
+   ✓ Sprint 182 shared component style contract > s185-m02 exposes styled heading, supporting copy and a dimensioned empty preview frame 0ms
+   ✓ Sprint 182 shared component style contract > s182-m01a keeps shared high-contrast controls on matching system colors 2ms
+   ✓ Sprint 182 shared component style contract > s182-m01b binds the measured Brand B light action foreground to pure white 0ms
+   ✓ Sprint 182 shared component style contract > encodes the locked visual state vocabulary without consumer utility scanning 0ms
+   ✓ Sprint 182 shared component style contract > styles field controls without treating framework wrappers as native controls 0ms
+ ✓ test/ported-styles.spec.ts (4 tests) 3ms
+ ✓ test/high-contrast.browser.spec.ts (21 tests) 4596ms
+   ✓ Sprint 182 shared component-style browser corrections > s185-m02 preserves visible color labels in A/light, forcedColors=none  567ms
+   ✓ Sprint 182 shared component-style browser corrections > A light/dark keeps the default disabled label distinct from its surface  337ms
+   ✓ Sprint 182 shared component-style browser corrections > B light/dark keeps the default disabled label distinct from its surface  362ms
+   ✓ Sprint 182 shared component-style browser corrections > B/hc keeps status, validation, disabled, and dismiss controls legible with forcedColors=none  306ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/styles.spec.ts > Sprint 182 shared component style contract > binds the six declared brand/theme cells to real token sources
+AssertionError: ClassificationBadge.badge.icon in A/light: expected '\n  --cmp-badge-background: var(--sys…' to contain 'var(--cmp-badge-icon,'
+
+- Expected
++ Received
+
+- var(--cmp-badge-icon,
++
++   --cmp-badge-background: var(--sys-status-neutral-surface);
++   --cmp-badge-border: var(--sys-status-neutral-border);
++   --cmp-badge-text: var(--sys-status-neutral-text);
++   display: inline-flex;
++   align-items: center;
++   gap: var(--cmp-badge-gap, 0.25rem);
++   padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
++   border: 1px solid var(--cmp-badge-border, CanvasText);
++   border-radius: var(--cmp-badge-radius, 999px);
++   background: var(--cmp-badge-background, Canvas);
++   color: var(--cmp-badge-text, CanvasText);
++   font-size: var(--cmp-badge-font-size, 0.875rem);
++   font-weight: var(--cmp-badge-font-weight, 600);
++
++
++   border-color: var(--cmp-badge-text, CanvasText);
++   background: var(--cmp-badge-text, CanvasText);
++   color: var(--cmp-badge-background, Canvas);
++
++
++   display: inline;
++   visibility: visible;
++   color: inherit;
++
++
++     forced-color-adjust: none;
++     border-color: CanvasText;
++     background: Canvas;
++     color: CanvasText;
++   
++
++   border-color: CanvasText;
++   background: Canvas;
++   color: CanvasText;
++
+
+ ❯ test/styles.spec.ts:75:40
+     73|           const variable = `--cmp-${role.replaceAll('.', '-')}`;
+     74|           // A contract role must be consumed and bound, not merely me…
+     75|           expect(declarations, detail).toContain(`var(${variable},`);
+       |                                        ^
+     76|           const binding = declarations.match(new RegExp(`${variable}: …
+     77|           expect(binding, `${detail}: component-to-system binding`).no…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 32 passed (33)
+   Start at  19:53:53
+   Duration  5.49s (transform 340ms, setup 0ms, collect 961ms, tests 4.62s, environment 0ms, prepare 402ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/component-styles:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config vitest.config.ts --maxWorkers=2

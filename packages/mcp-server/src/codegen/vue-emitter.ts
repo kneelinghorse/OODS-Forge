@@ -240,6 +240,7 @@ function vueControlledProp(occurrence: LocalBindingOccurrence): string | null {
   if (
     occurrence.component === 'DatePicker'
     || occurrence.component === 'Input'
+    || occurrence.component === 'SearchInput'
     || occurrence.component === 'Select'
     || occurrence.component === 'Textarea'
     || occurrence.component === 'StatusSelector'
@@ -365,6 +366,9 @@ function vueFieldExpression(
     : undefined;
   if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
     return `String(${fieldName})`;
+  }
+  if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
+    return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;
   }
   if (
     node.component === 'Text'
@@ -1133,9 +1137,30 @@ function buildScriptSetup(
   if (actionTypes) lines.push('', actionTypes);
 
   if (formMode && hasObjectSchema) {
-    // Vue 3 Composition API: ref() for each form field
+    // Optional initial form values preserve existing empty-form callers while
+    // allowing typed records (including zero and false) to seed local editors.
     lines.push('');
     const sortedFields = Object.entries(objectSchema!).sort(([a], [b]) => a.localeCompare(b));
+    if (options.typescript) {
+      lines.push('interface Props {');
+      if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
+      if (hasStateBranches) lines.push('  uiState: GeneratedUIState;');
+      for (const [fieldName, entry] of sortedFields) {
+        lines.push(`  ${snakeToCamel(fieldName)}?: ${mapFieldType(entry)};`);
+      }
+      lines.push('}', 'const generatedProps = defineProps<Props>();');
+    } else {
+      const runtimeProps = [
+        ...sortedFields.map(([fieldName]) => `${snakeToCamel(fieldName)}: { default: undefined }`),
+        ...(hasDomainActions ? ['actions: { type: Object, required: true }'] : []),
+        ...(hasStateBranches ? ['uiState: { type: String, required: true }'] : []),
+      ];
+      lines.push(`const generatedProps = defineProps({ ${runtimeProps.join(', ')} });`);
+    }
+    if (hasDomainActions) lines.push(options.typescript ? 'const actions = generatedProps.actions;'
+      : 'const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
+    if (hasStateBranches) lines.push(options.typescript ? 'const uiState = generatedProps.uiState;'
+      : 'const uiState = /** @type {GeneratedUIState} */ (generatedProps.uiState);');
     for (const [fieldName, entry] of sortedFields) {
       const camelName = snakeToCamel(fieldName);
       const defaultValue = fieldRefDefault(entry);
@@ -1145,9 +1170,9 @@ function buildScriptSetup(
         lines.push(`/** ${escapeVueScriptComment(entry.description)} */`);
       }
       if (tsType) {
-        lines.push(`const ${camelName} = ref<${tsType}>(${defaultValue});`);
+        lines.push(`const ${camelName} = ref<${tsType}>(generatedProps.${camelName} ?? ${defaultValue});`);
       } else {
-        lines.push(`const ${camelName} = ref(${defaultValue});`);
+        lines.push(`const ${camelName} = ref(generatedProps.${camelName} ?? ${defaultValue});`);
       }
     }
 
@@ -1157,32 +1182,6 @@ function buildScriptSetup(
       lines.push('');
       for (const cp of computedProps) {
         lines.push(`const ${cp.name} = computed(() => ${cp.expression});`);
-      }
-    }
-    if (hasDomainActions || hasStateBranches) {
-      lines.push('');
-      if (options.typescript) {
-        const propNames = [
-          ...(hasDomainActions ? ['actions'] : []),
-          ...(hasStateBranches ? ['uiState'] : []),
-        ];
-        const propTypes = [
-          ...(hasDomainActions ? ['actions: GeneratedUIActions'] : []),
-          ...(hasStateBranches ? ['uiState: GeneratedUIState'] : []),
-        ];
-        lines.push(`const { ${propNames.join(', ')} } = defineProps<{ ${propTypes.join('; ')} }>();`);
-      } else {
-        const runtimeProps = [
-          ...(hasDomainActions ? ['actions: { type: Object, required: true }'] : []),
-          ...(hasStateBranches ? ['uiState: { type: String, required: true }'] : []),
-        ];
-        lines.push(`const generatedProps = defineProps({ ${runtimeProps.join(', ')} });`);
-        if (hasDomainActions) {
-          lines.push('const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
-        }
-        if (hasStateBranches) {
-          lines.push('const uiState = /** @type {GeneratedUIState} */ (generatedProps.uiState);');
-        }
       }
     }
   } else if (options.typescript && hasObjectSchema) {

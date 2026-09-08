@@ -202,6 +202,10 @@ export function retainedCaptureReference(aggregatePath, ref, originalRoot) {
 
 /** Decision 1741 permits captured receipts and named derived outputs, never arbitrary artifact fixtures. */
 export function allowedReviewEvidence(file, sprintId = 'sprint-185') {
+  if (sprintId === 'sprint-187') {
+    return file.startsWith('artifacts/product-reality/sprint-187/m06/')
+      && allowedReviewEvidence(file.replace('sprint-187/m06/', 'sprint-186/m06/'), 'sprint-186');
+  }
   if (sprintId === 'sprint-186') {
     return /^artifacts\/product-reality\/sprint-186\/m06\/four-suite-closeout(?:-attempt-[\w-]+)?\/(?:run-\d+\/(?:viz-core|viz-render|mcp-server|root-core)\.(?:json|vitest\.json|log)|setup\/[\w-]+\.log|four-suite-baseline\.json|accounting\.json|attributions\.json|failure-dispositions\.json)$/.test(file)
       || /^artifacts\/product-reality\/sprint-186\/m06\/closeout\/(?:claim-ledger|review-handoff|evidence-index)\.json$/.test(file);
@@ -217,13 +221,14 @@ export function assertEvidenceOnlyHeadChanges(changes, sprintId = 'sprint-185') 
 
 export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, attributions = [], failureDispositions = [],
   sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts,
-  capturePath = sprintId === 'sprint-186' ? 'artifacts/product-reality/sprint-186/m06/four-suite-closeout/four-suite-baseline.json' : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
+  capturePath = sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
   assert(executionHead && reviewHead, 'Both actual execution head and separate frozen review head are required.');
-  assert(['sprint-185', 'sprint-186'].includes(sprintId), 'Unsupported sprint.');
-  if (sprintId === 'sprint-186') assert.equal(missionId, 's186-m06');
-  const baselinePaths = sprintId === 'sprint-186'
+  assert(['sprint-185', 'sprint-186', 'sprint-187'].includes(sprintId), 'Unsupported sprint.');
+  if (sprintId !== 'sprint-185') assert.equal(missionId, sprintId === 'sprint-187' ? 's187-m06' : 's186-m06');
+  const baselinePaths = sprintId === 'sprint-187'
+    ? { sprint186Closeout: baselinePath ?? 'artifacts/product-reality/sprint-186/m06/four-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-186'
     ? { sprint185Closeout: baselinePath ?? `${EVIDENCE_ROOT}/four-suite-baseline.json` } : BASELINES;
-  const attemptInputs = attempts ?? (sprintId === 'sprint-186' ? [] : [{ name: 'initial-failed-closeout', path: INITIAL_CLOSEOUT,
+  const attemptInputs = attempts ?? (sprintId !== 'sprint-185' ? [] : [{ name: 'initial-failed-closeout', path: INITIAL_CLOSEOUT,
     originalReferenceRoot: 'four-suite-closeout', reason: 'The first complete clean-tree closeout failed. Its original capture bytes and observed failures remain retained before the corrected source is captured again.' }]);
   const issues = [];
   const refs = new Map();
@@ -243,7 +248,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   const observedFailures = [];
   const loadCapture = (file, cohort, originalRoot) => {
     const aggregate = json(file);
-    if (sprintId === 'sprint-186' && cohort === 'closeout') {
+    if (sprintId !== 'sprint-185' && cohort === 'closeout') {
       assert.equal(aggregate.sprintId, sprintId, 'Closeout capture belongs to another sprint.');
       assert.equal(aggregate.missionId, missionId, 'Closeout capture belongs to another mission.');
     }
@@ -407,7 +412,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   if (unusedAttributions.length) issues.push({ kind: 'unused-manual-attributions', count: unusedAttributions.length });
   // Inventory named historical retries separately; they are not substituted into primary comparisons.
   const m01Root = 'artifacts/product-reality/sprint-185/m01';
-  const historicalAttempts = sprintId === 'sprint-186' ? [] : readdirSync(path.join(root, m01Root), { withFileTypes: true }).filter(row => row.isDirectory())
+  const historicalAttempts = sprintId !== 'sprint-185' ? [] : readdirSync(path.join(root, m01Root), { withFileTypes: true }).filter(row => row.isDirectory())
     .map(row => `${m01Root}/${row.name}/four-suite-baseline.json`).filter(file => existsSync(path.join(root, file)) && !Object.values(BASELINES).includes(file))
     .sort().map(file => {
       const report = json(file);
@@ -436,13 +441,13 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const failurePath = argument('--failures');
   const sprintId = argument('--sprint') ?? 'sprint-185';
   const report = deriveSuiteAccounting({ executionHead: argument('--execution-head'), reviewHead: argument('--review-head'),
-    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
+    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-187' ? 's187-m06' : sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
     ...(argument('--capture') ? { capturePath: argument('--capture') } : {}),
     ...(argument('--baseline') ? { baselinePath: argument('--baseline') } : {}),
     ...(argument('--attempts') ? { attempts: JSON.parse(readFileSync(path.resolve(ROOT, argument('--attempts')), 'utf8')) } : {}),
     ...(attributionPath ? { attributions: JSON.parse(readFileSync(path.resolve(ROOT, attributionPath), 'utf8')) } : {}),
     ...(failurePath ? { failureDispositions: JSON.parse(readFileSync(path.resolve(ROOT, failurePath), 'utf8')) } : {}) });
-  const output = path.resolve(ROOT, argument('--output') ?? (sprintId === 'sprint-186' ? 'artifacts/product-reality/sprint-186/m06/four-suite-closeout/accounting.json' : `${EVIDENCE_ROOT}/accounting.json`));
+  const output = path.resolve(ROOT, argument('--output') ?? (sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/accounting.json` : `${EVIDENCE_ROOT}/accounting.json`));
   if (mode === '--write') { mkdirSync(path.dirname(output), { recursive: true }); writeFileSync(output, canonical(report)); }
   else assert.equal(readFileSync(output, 'utf8'), canonical(report), 'Suite accounting is stale.');
   process.stdout.write(`${report.status}: ${report.executions.length} distinct retained receipts; ${report.unattributedDeltas.length} unattributed deltas; ${report.validationIssues.length} issues.\n`);

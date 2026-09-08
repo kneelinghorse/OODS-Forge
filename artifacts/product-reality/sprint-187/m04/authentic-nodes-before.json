@@ -1,0 +1,83 @@
+[
+  {
+    "input": {
+      "object": "Subscription",
+      "context": "detail"
+    },
+    "nodes": [
+      {
+        "id": "ve-header-26",
+        "component": "ArchiveSummary",
+        "props": {
+          "archivedField": "is_archived",
+          "archivedAtField": "archived_at",
+          "restoredAtField": "restored_at",
+          "reasonField": "archive_reason",
+          "archivedByField": "archived_by",
+          "metadataField": "archive_metadata",
+          "retainHistoryParameter": "retainHistory",
+          "restoreWindowParameter": "restoreWindowDays",
+          "allowPartialRestoreParameter": "allowPartialRestore"
+        }
+      }
+    ]
+  },
+  {
+    "input": {
+      "object": "Subscription",
+      "context": "form"
+    },
+    "nodes": [
+      {
+        "id": "ve-title-27",
+        "component": "CancellationForm",
+        "props": {
+          "reasonField": "cancellation_reason",
+          "codeField": "cancellation_reason_code",
+          "requireReasonParameter": "requireReason",
+          "allowedReasonsParameter": "allowedReasons",
+          "windowParameter": "cancellationWindowHours"
+        }
+      }
+    ]
+  },
+  {
+    "input": {
+      "object": "Subscription",
+      "context": "card"
+    },
+    "nodes": [
+      {
+        "id": "ve-header-9",
+        "component": "CancellationBadge",
+        "props": {
+          "field": "cancel_at_period_end",
+          "label": "Whether the subscription will cancel at the natural billing period end."
+        }
+      },
+      {
+        "id": "ve-header-11",
+        "component": "ArchivePill",
+        "props": {
+          "field": "is_archived",
+          "archivedAtField": "archived_at",
+          "label": "Flag indicating whether the entity is currently archived (soft-deleted)."
+        }
+      },
+      {
+        "id": "slot-footer-6",
+        "component": "PriceCardMeta",
+        "meta": {
+          "intent": "slot:footer",
+          "label": "footer"
+        },
+        "props": {
+          "amountField": "amount",
+          "currencyField": "currency",
+          "intervalField": "billing_interval",
+          "minorUnitsParameter": "minorUnits"
+        }
+      }
+    ]
+  }
+]

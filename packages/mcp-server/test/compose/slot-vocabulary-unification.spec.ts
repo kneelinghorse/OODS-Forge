@@ -26,7 +26,7 @@ describe('slot vocabulary unification', () => {
     expect(result.status).toBe('ok');
     expect(result.warnings.filter((warning) => warning.code === 'OODS-V120')).toHaveLength(0);
     expect(result.selections.find((selection) => selection.slotName === 'search')?.selectedComponent).toBe('SearchInput');
-    expect(result.selections.find((selection) => selection.slotName === 'toolbar-actions')?.selectedComponent).toBe('Button');
+    expect(result.selections.find((selection) => selection.slotName === 'toolbar-actions')?.selectedComponent).toBe('AddressSummaryBadge');
 
     const components = collectComponents(result.schema);
     expect(components).toContain('MessageStatusBadge');
@@ -34,7 +34,8 @@ describe('slot vocabulary unification', () => {
     expect(components).toContain('PreferenceSummaryBadge');
     expect(components).toContain('RoleBadgeList');
     expect(components).toContain('SearchInput');
-    expect(components).toContain('Button');
+    // Optional slots retain real metadata without inventing an unbound action.
+    expect(components).not.toContain('Button');
   });
 
   it('maps Subscription list secondary billing placement without OODS-V120 warnings', async () => {
@@ -51,11 +52,12 @@ describe('slot vocabulary unification', () => {
       (selection) => selection.slotName === 'toolbar-actions',
     );
 
-    expect(toolbarSelection?.selectedComponent).toBe('Button');
+    expect(toolbarSelection?.selectedComponent).toBe('PriceBadge');
     expect(toolbarSelection?.candidates.map((candidate) => candidate.name)).toContain('PriceBadge');
 
     const components = collectComponents(result.schema);
-    expect(components).toContain('Button');
+    // Optional slots retain real metadata without inventing an unbound action.
+    expect(components).not.toContain('Button');
     expect(components).toContain('PriceBadge');
     expect(components).toContain('StatusBadge');
     expect(components).toContain('RelativeTimestamp');

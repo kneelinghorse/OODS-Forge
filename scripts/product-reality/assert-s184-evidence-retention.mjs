@@ -62,14 +62,14 @@ export function findUntrackedNamedLogs(namedLogPaths, trackedPaths) {
 }
 
 function gitTrackedPaths(repositoryRoot) {
-  const result = spawnSync("git", ["ls-files"], {
+  const result = spawnSync("git", ["ls-files", "-z", "--", ...sprintRoots.map((root) => `:(glob)${root}/**/*.log`)], {
     cwd: repositoryRoot,
     encoding: "utf8",
   });
-  if (result.status !== 0) {
-    throw new Error(`git ls-files failed: ${result.stderr.trim()}`);
+  if (result.error || result.status !== 0) {
+    throw new Error(`git ls-files failed: ${result.error?.message ?? result.stderr.trim()}`);
   }
-  return result.stdout.split(/\r?\n/).filter(Boolean);
+  return result.stdout.split("\0").filter(Boolean);
 }
 
 export function auditEvidenceRetention(repositoryRoot = defaultRepositoryRoot) {

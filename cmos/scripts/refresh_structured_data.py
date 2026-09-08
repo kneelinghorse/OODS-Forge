@@ -43,6 +43,10 @@ COMPONENT_CAPABILITY_PATH = (
     REPO_ROOT / "packages" / "component-contracts" / "registry" / "component-capability-baseline.v1.json"
 )
 
+COMPONENT_OBLIGATION_SCOPE_PATH = (
+    REPO_ROOT / "packages" / "component-contracts" / "registry" / "component-obligation-scope.v1.json"
+)
+
 
 @dataclass
 class ExtractedArtifact:
@@ -836,6 +840,9 @@ def generate_structured_payloads(
         canonical_ids,
         component_capabilities_path=component_capabilities_path,
     )
+    obligation_scope = load_json(COMPONENT_OBLIGATION_SCOPE_PATH)
+    if obligation_scope["controllingObligationDenominator"] != len(canonical_ids):
+        raise ValueError("Obligation scope must retain exact canonical intake membership")
     traits, components_index, domain_traits, trait_overlays = collect_traits(canonical_ids)
     objects, trait_object_map, domain_objects = collect_objects()
 
@@ -862,6 +869,7 @@ def generate_structured_payloads(
     timestamp = generated_at or iso_now()
     components_payload = {
         "$schema": "./component-schema.json",
+        "obligationScope": obligation_scope,
         "generatedAt": timestamp,
         "stats": {
             "componentCount": len(components),

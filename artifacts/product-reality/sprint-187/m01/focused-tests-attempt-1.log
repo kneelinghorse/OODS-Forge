@@ -1,0 +1,90 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/b2-legacy-inputs.s184.spec.ts (7 tests | 1 failed) 1019ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > remeasures the unchanged Product/detail 'html' operand after the producer repair 185ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > remeasures the unchanged Product/detail 'react' operand after the producer repair 33ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > remeasures the unchanged Product/detail 'vue' operand after the producer repair 31ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > retains OODS-V162 for Product/card/HTML at release without evidence 31ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > returns a typed OODS-V007 error on the no-context Product/HTML save path 24ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > binds all 13 retained repoints to a source selector and a non-empty reason  639ms
+   × Sprint 184 m07 B2 legacy-input compatibility disclosure > binds historical B2 outcomes to their base replay and current remeasurement without changing operands 71ms
+     → product-detail-react-build: expected undefined to deeply equal { step: 'codegen', …(2) }
+ ❯ test/product-reality/fresh-composition.s187.spec.ts (14 tests | 2 failed) 695ms
+   ✓ Sprint 187 fresh composition binding intent > Article/detail preserves its fields and generates in both frameworks 202ms
+   ✓ Sprint 187 fresh composition binding intent > Media/detail preserves its fields and generates in both frameworks 22ms
+   ✓ Sprint 187 fresh composition binding intent > Product/detail preserves its fields and generates in both frameworks 73ms
+   ✓ Sprint 187 fresh composition binding intent > User/detail preserves its fields and generates in both frameworks 41ms
+   ✓ Sprint 187 fresh composition binding intent > Plan/inline preserves its fields and generates in both frameworks 27ms
+   ✓ Sprint 187 fresh composition binding intent > Subscription/inline preserves its fields and generates in both frameworks 19ms
+   ✓ Sprint 187 fresh composition binding intent > Usage/list preserves its fields and generates in both frameworks 14ms
+   ✓ Sprint 187 fresh composition binding intent > Usage/inline preserves its fields and generates in both frameworks 11ms
+   ✓ Sprint 187 fresh composition binding intent > Transaction/timeline preserves its fields and generates in both frameworks 14ms
+   ✓ Sprint 187 fresh composition binding intent > keeps authored choices and enum semantics, converting only continuous empty Selects 1ms
+   × Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated react 19ms
+     → ENOENT: no such file or directory, mkdtemp '/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-react/.cache/s187-values-XXXXXX'
+   × Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated vue 19ms
+     → ENOENT: no such file or directory, mkdtemp '/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue/.cache/s187-values-XXXXXX'
+   ✓ Sprint 187 fresh composition binding intent > retains authentic fresh schemas and artifact provenance without touching a saved store 227ms
+   ✓ Sprint 187 fresh composition binding intent > rejects duplicate, non-public, overridden, and mixed fresh/saved operands 3ms
+ ✓ test/compose/wire-field-props.spec.ts (10 tests) 34ms
+ ✓ test/product-reality/live-workflow-consumers.s184.spec.ts (4 tests) 192403ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/b2-legacy-inputs.s184.spec.ts > Sprint 184 m07 B2 legacy-input compatibility disclosure > binds historical B2 outcomes to their base replay and current remeasurement without changing operands
+AssertionError: product-detail-react-build: expected undefined to deeply equal { step: 'codegen', …(2) }
+
+- Expected: 
+{
+  "code": "OODS-V007",
+  "message": "Prop \"label\" is not in the canonical StatusTimeline contract.",
+  "step": "codegen",
+}
+
++ Received: 
+undefined
+
+ ❯ test/product-reality/b2-legacy-inputs.s184.spec.ts:427:42
+    425|         const expected = current.rows.find(({ id }) => id === outcome.…
+    426|         const result = await pipelineHandle(outcome.input);
+    427|         const repaired = ['product-detail-react-build', 'product-detai…
+       |                                          ^
+    428|         // Frozen s186 measurements remain negative. The same operands…
+    429|         // generated code after s187 fixes the default composer's time…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  test/product-reality/fresh-composition.s187.spec.ts > Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated react
+Error: ENOENT: no such file or directory, mkdtemp '/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-react/.cache/s187-values-XXXXXX'
+ ❯ test/product-reality/fresh-composition.s187.spec.ts:64:25
+     62|       const result = await generate({ schema, framework, profile: 'bui…
+     63|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+     64|       const cacheRoot = path.join(repositoryRoot, `packages/components…
+       |                         ^
+     65|       mkdirSync(cacheRoot, { recursive: true });
+     66|       const directory = mkdtempSync(path.join(cacheRoot, 's187-values-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/product-reality/fresh-composition.s187.spec.ts > Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated vue
+Error: ENOENT: no such file or directory, mkdtemp '/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue/.cache/s187-values-XXXXXX'
+ ❯ test/product-reality/fresh-composition.s187.spec.ts:64:25
+     62|       const result = await generate({ schema, framework, profile: 'bui…
+     63|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+     64|       const cacheRoot = path.join(repositoryRoot, `packages/components…
+       |                         ^
+     65|       mkdirSync(cacheRoot, { recursive: true });
+     66|       const directory = mkdtempSync(path.join(cacheRoot, 's187-values-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  3 failed | 32 passed (35)
+   Start at  19:16:46
+   Duration  202.21s (transform 2.06s, setup 116ms, collect 6.02s, tests 194.15s, environment 4ms, prepare 621ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/fresh-composition.s187.spec.ts test/product-reality/b2-legacy-inputs.s184.spec.ts test/product-reality/live-workflow-consumers.s184.spec.ts test/compose/wire-field-props.spec.ts test/codegen/target-contracts.spec.ts

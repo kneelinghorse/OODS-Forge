@@ -33,6 +33,7 @@ describe('Sprint 183 binding analysis', () => {
       { id: 'component:Input.onChange', kind: 'local', parameters: [{ name: 'value', type: 'string' }] },
       { id: 'component:Input.onInput', kind: 'local', parameters: [{ name: 'value', type: 'string' }] },
       { id: 'component:Input.onUpdate', kind: 'local', parameters: [{ name: 'value', type: 'string' }] },
+      { id: 'component:SearchInput.onUpdate', kind: 'local', parameters: [{ name: 'value', type: 'string' }] },
       { id: 'component:Select.onChange', kind: 'local', parameters: [{ name: 'value', type: 'string' }] },
       { id: 'component:Select.onUpdate', kind: 'local', parameters: [{ name: 'value', type: 'string' }] },
       { id: 'component:Table.onRowActivate', kind: 'domain', parameters: [{ name: 'rowId', type: 'string' }] },

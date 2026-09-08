@@ -404,3 +404,137 @@ describe('Independent public runtime equality uses actual Git bytes and disclose
     } finally { rmSync(root, { recursive: true, force: true }); }
   });
 });
+
+// Synthetic seven-criterion graph. It exercises new predicates, not real build claims.
+function freshFixture() {
+  const f = wave2Fixture();
+  const base = '21c7c31906fbb81d049b943155c64ed78409fb9f';
+  const outputPrefix = 'artifacts/product-reality/sprint-187/m06/closeout';
+  const paths = ['User/detail', 'Product/detail', 'Usage/list', 'Subscription/inline', 'Transaction/timeline', 'Product/list', 'Product/form', 'Product/inline', 'Organization/list', 'Organization/detail', 'Organization/card', 'Subscription/detail', 'Subscription/form', 'Subscription/card'];
+  const targets = ['react', 'vue'];
+  const added = Array.from({ length: 14 }, (_, index) => `New${index}`).sort();
+  const prior = Array.from({ length: 50 }, (_, index) => `Prior${index}`);
+  const ids = [...prior, ...added].sort();
+  const declaration = (values: string[]) => `export const NUCLEUS_COMPONENT_IDS = [${values.map(value => `'${value}'`).join(',')}] as const;`;
+  const types = 'packages/component-contracts/src/types.ts'; f.put(types, declaration(ids)); f.historical.set(types, Buffer.from(declaration(prior)));
+  const source = (name: string, value: unknown) => { const file = f.put(`frozen/fresh/${name}.json`, value); f.manifest.sources[name] = file; return file; };
+  source('cmosMission', { id: 's187-m06', successCriteria: literalCriteria.slice(0, 7) });
+  source('cmosOriginalMission', { id: 's187-m06', successCriteria: literalCriteria.slice(0, 7) });
+  source('cmosSprint', { id: 'sprint-187', status: 'Active' }); source('near', 'Sprint 187: BUILT, REVIEW PENDING.');
+  const names = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'];
+  const contexts = ['detail', 'list', 'form', 'timeline', 'card', 'inline'];
+  source('freshCensus', { head: executionHead, profile: 'build', schemaCount: 66, greenSchemas: 66, generationCells: 132, greenCells: 132, governedComponentCount: 64, objects: names, contexts,
+    rows: names.flatMap(object => contexts.map(context => ({ input: { object, context }, composed: true, green: true, ungoverned: [],
+      cells: targets.map(framework => ({ framework, status: 'ok', artifactPresent: true, errors: [] })) }))) });
+  source('cohort', { groups: [{ paths }], frameworks: targets });
+  const runtimeDir = 'frozen/live';
+  f.put(`${runtimeDir}/source.diff`, ''); f.put(`${runtimeDir}/submitted-packages/tarballs/package.tgz`, 'packed');
+  const gates = ['fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'server-render', 'mount', 'hydration', 'shared-css-resolution', 'interaction-evidence'];
+  const cells = paths.flatMap(value => targets.map(framework => {
+    const [object, context] = value.split('/'); const schemaName = `fresh-${object}-${context}`;
+    const schema = { version: '1.0.0', screens: [{ id: 'root', component: 'Text' }] };
+    const composition = { input: { object, context }, sourceHead: executionHead, sourceDiffSha256: `sha256:${hash('')}`, sourceDiffPath: 'source.diff', schemaSha256: `sha256:${hash(`${JSON.stringify(schema, null, 2)}\n`)}` };
+    f.put(`${runtimeDir}/live-generation/${schemaName}/composition.json`, { schema, composition });
+    const contents = `source ${value} ${framework}`;
+    f.put(`${runtimeDir}/live-generation/${schemaName}/${framework}/artifact.json`, { contentHash: 'artifact', files: [{ contents, contentHash: `sha256:${hash(contents)}` }] });
+    const sourcePath = `live-generation/${schemaName}/${framework}/Generated.ts`; f.put(`${runtimeDir}/${sourcePath}`, contents);
+    const report = `cells/${schemaName}/${framework}/report.json`;
+    const log = `cells/${schemaName}/${framework}/proof.log`; f.put(`${runtimeDir}/${log}`, 'Synthetic command and browser observations.');
+    f.put(`${runtimeDir}/${report}`, { framework, status: 'passed', gates: gates.map(name => ({ name, status: 'passed', logs: [log] })),
+      accounting: { balanced: true, namedUnprovenCount: 0 }, localTarballs: [{ name: 'package', installSpec: 'file:./tarballs/package.tgz', sha256: `sha256:${hash('packed')}`, bytes: 6 }],
+      browser: { runtimeErrors: [], hydrationInvariant: { equal: true }, boundValues: [{ passed: true, visible: true }], componentCounts: Object.fromEntries(added.map(name => [name, 1])) } });
+    return { schema: schemaName, framework, composition, report, reportSha256: f.ref(`${runtimeDir}/${report}`).sha256,
+      generation: { sourcePath, sourceSha256: `sha256:${hash(contents)}`, artifactContentHash: 'artifact', fingerprint: { profile: 'build', sourceOfArtifact: 'current-in-run-output' } } };
+  }));
+  const livePath = f.put(`${runtimeDir}/report.json`, { status: 'passed', freshInputs: paths.map(value => { const [object, context] = value.split('/'); return { object, context }; }), selected: 224, passed: 224, notApplicable: 0, applicable: 224, failed: 0, skipped: 0, cellCount: 28, cells });
+  f.manifest.sources.liveConsumers = livePath;
+  for (const name of ['savedOriginal', 'savedSuccessor']) {
+    const rows = Array.from({ length: 16 }, (_, i) => {
+      const input = f.ref(f.put(`frozen/stores/${name}/${i}.json`, { schema: i }));
+      return { input, reachable: true, cells: targets.map(framework => {
+        const file = `frozen/fresh/${name}-${i}-${framework}.json`; f.put(file, { status: 'ok', artifact: {} });
+        return { framework, status: 'ok', artifactPresent: true, response: { path: path.basename(file), sha256: f.ref(file).sha256 } };
+      }) };
+    });
+    source(name, { head: executionHead, total: 16, reachable: 16, generatedCells: 32, rows });
+  }
+  source('savedCompatibility', { originalInputsUnchanged: true, successorInputsUnchanged: true, historicalNegativeRetained: true, originalBaseline: 15, successorBaseline: 16, originalDeltaExplanation: 'Synthetic repaired source; historical bytes retained.', references: [f.ref(f.put('frozen/old-negative.json', { status: 'error' }))] });
+  const oldRows = [...ids, ...Array.from({ length: 45 }, (_, i) => `Other${i}`)].map(id => ({ id, proposedClassification: 'native', reconciliationState: 'historical', surfaces: {} }));
+  const baselinePath = 'packages/component-contracts/registry/component-capability-baseline.v1.json'; f.historical.set(baselinePath, Buffer.from(JSON.stringify({ rows: oldRows })));
+  const baseline = structuredClone(oldRows) as any[]; const surfaceFile = f.put('frozen/fresh/surfaces.json', { rows: added.map(componentId => ({ componentId })) });
+  for (const row of baseline.filter(row => added.includes(row.id))) row.surfaces = Object.fromEntries(['react', 'vue', 'generatedConsumer', 'accessibility', 'theme', 'interaction'].map(surface => [surface,
+    { state: ['react', 'vue', 'generatedConsumer'].includes(surface) ? 'implemented-evidence-complete' : 'unverified', evidence: [`${surfaceFile}#${row.id}`] }]));
+  f.put(baselinePath, { rows: baseline });
+  f.put('packages/component-contracts/registry/component-obligation-scope.v1.json', { decisionId: 1788, controllingObligationDenominator: 109, approvedRuntimeCensus: null });
+  source('baselineFold', { denominator: 109, readinessReferences: [{ resolved: true }], sourceHashes: [f.ref(baselinePath)] });
+  const readiness = f.ref(f.put('frozen/fresh/readiness.json', { status: 'passed', failures: [], totals: { references: 778, resolved: 778 } }));
+  const cellNames = added.flatMap(name => targets.map(target => `${target}/${name}`));
+  const rawTests = (red?: string) => ({ success: !red, numPassedTests: red ? 27 : 28, numFailedTests: red ? 1 : 0, numPendingTests: 0, testResults: [{ assertionResults: cellNames.map(name => ({ fullName: `Sprint 187 built package export cells '${name}'`, status: name === red ? 'failed' : 'passed' })) }] });
+  const positiveExports = f.ref(f.put('frozen/fresh/positive.json', rawTests()));
+  const mutants = cellNames.map(selectedCell => {
+    const [framework, component] = selectedCell.split('/'); const prefix = `frozen/mutants/${selectedCell}`;
+    const packageReport = f.put(`${prefix}-red.json`, rawTests(selectedCell));
+    const readinessReport = f.put(`${prefix}-readiness.json`, { status: 'failed', failures: [{ target: framework, componentId: component }] });
+    const log = f.put(`${prefix}.log`, `${selectedCell} observed red and restore`);
+    return { selectedCell, status: 'passed', sourceSha256Before: 'before', sourceSha256Deleted: 'deleted', restoredByteIdentically: true,
+      selectedRed: { packageRedCells: [selectedCell], readinessRedCells: [selectedCell], packageReport, readinessReport, packageRun: { exitCode: 1, log }, readinessRun: { exitCode: 1, log } },
+      restoredGreen: { packageReport: positiveExports.path, readinessReport: readiness.path, observations: cellNames.map(cell => ({ cell, status: 'passed' })), packageRun: { exitCode: 0, log }, readinessRun: { exitCode: 0, log } } };
+  });
+  source('rootEvidence', { governedIds: ids, addedIds: added, readiness, positiveExports, mutations: [f.ref(f.put('frozen/fresh/mutations.json', { mutants }))] });
+  const range = { base, head: executionHead, canonicalPaths: ['canonical.ts'], publicPaths: ['canonical.ts', 'discovery.ts'] };
+  source('movers', { status: 'passed', s187: range, comparison: { s187: Object.fromEntries(['canonicalPaths', 'publicPaths'].map(key => [key, { missingFromDeclaration: [], extraInDeclaration: [] }])) } });
+  source('moversDeclaration', { s187: range });
+  const notices = ['cmos://derek/aquex-mcp', 'cmos://derek/forge-demos'].map(targetAddress => { const request = { targetAddress, body: [...added, 'Deployment: pending', 'retain-109', '/ported', '/readiness-ported', '/css-ported'].join(' ') }; return { request, requestSha256: hash(JSON.stringify(request)) }; });
+  source('noticePlan', { implementationHead: executionHead, addedNucleus: added, notices, status: 'prepared', sendsExecuted: 0, deployment: 'pending' });
+  source('deliveries', notices.map(row => ({ targetAddress: row.request.targetAddress, requestSha256: row.requestSha256, status: 'prepared', messageId: null })));
+  source('carries', { greenfieldWorkflow: 'partial', builderSelfCertified: false, rows: [1315, 1318, 1319, 1320, 1321, 1322, 1372, 1374, 1375, 1379, 1384].map(id => ({ id, status: 'pending', remainingWork: 'Named work remains owed.' })) });
+  const previous = f.suiteAccounting.baselines.sprint185Closeout;
+  f.suiteAccounting.baselines = { sprint186Closeout: { ...previous, measuredHead: '740e8405fa8e094ab903a19e6e551fbe8bff2de2' } };
+  for (const row of f.suiteAccounting.executions) if (row.cohort === 'sprint185Closeout') row.cohort = 'sprint186Closeout';
+  f.manifest.missionId = 's187-m06'; f.manifest.manifestPath = 'artifacts/product-reality/sprint-187/m06/closeout-inputs/manifest.json';
+  const sourcePaths = Object.values(f.manifest.sources).filter((value): value is string => typeof value === 'string');
+  f.manifest.executions[0].inputs = sourcePaths.map(f.ref);
+  const suiteRows = f.suiteAccounting.executions.filter((row: any) => row.cohort === 'closeout');
+  f.manifest.claimBindings = literalCriteria.slice(0, 7).map((_, criterionIndex) => ({ criterionIndex, executionIds: criterionIndex === 5 ? [] : ['supplemental-proof'],
+    ...(criterionIndex === 5 ? { suiteBindings: suiteRows.map((row: any) => row.suite) } : {}), evidencePaths: [...sourcePaths, 'frozen/supplemental.log', ...suiteRows.map((row: any) => row.log.path)] }));
+  const replace = (key: string, value: unknown) => { f.put(f.manifest.sources[key], value); f.manifest.executions[0].inputs = sourcePaths.map(f.ref); };
+  const audit = (outputs: Record<string, any>) => auditFinalCloseout({ executionHead, reviewHead, manifestPath: f.manifest.manifestPath,
+    readFrozen: f.readFrozen, readHistorical: f.readHistorical, readOutput: (file: string) => Buffer.from(`${JSON.stringify(outputs[file], null, 2)}\n`),
+    gitEvidence: { ancestor: true, changes: [] }, publicGitEvidence: undefined, rangeGitEvidence: range });
+  return { ...f, outputPrefix, replace, audit };
+}
+
+describe('Sprint 187 proves seven literal criteria without claiming served delivery', () => {
+  it('derives and independently audits the complete synthetic graph', () => {
+    const f = freshFixture(); const output = f.derive();
+    expect(output[`${f.outputPrefix}/claim-ledger.json`].headline).toEqual({ total: 7, proven: 7, unproven: 0 });
+    expect(f.audit(output)).toMatchObject({ status: 'passed', checkedCriteria: 7, builderSelfCertified: false });
+  });
+  it.each(['freshCensus', 'liveConsumers', 'deliveries', 'carries'])('rejects a resealed false %s claim at its semantic gate', (key) => {
+    const f = freshFixture(); const value = JSON.parse(f.readFrozen(f.manifest.sources[key]).toString());
+    if (key === 'freshCensus') value.rows[0].input.context = 'card';
+    if (key === 'liveConsumers') value.cells[0].composition.sourceHead = 'c'.repeat(40);
+    if (key === 'deliveries') { value[0].status = 'sent'; value[0].messageId = 'invented'; }
+    if (key === 'carries') value.rows[0].status = 'completed';
+    f.replace(key, value); const outputs = f.derive();
+    expect(outputs[`${f.outputPrefix}/claim-ledger.json`].headline.unproven).toBeGreaterThan(0);
+    expect(() => f.audit(outputs)).toThrow();
+  });
+  it('rejects a passed runtime gate whose command logs were removed and report hashes resealed', () => {
+    const f = freshFixture(); const live = JSON.parse(f.readFrozen(f.manifest.sources.liveConsumers).toString());
+    const file = `frozen/live/${live.cells[0].report}`; const report = JSON.parse(f.readFrozen(file).toString());
+    report.gates[0].logs = []; f.put(file, report); live.cells[0].reportSha256 = f.ref(file).sha256;
+    f.replace('liveConsumers', live); const output = f.derive();
+    expect(output[`${f.outputPrefix}/claim-ledger.json`].headline.unproven).toBeGreaterThan(0);
+    expect(() => f.audit(output)).toThrow();
+  });
+  it('independent audit checks raw export observations even when a positive headline is forged', () => {
+    const f = freshFixture(); const outputs = f.derive();
+    const root = JSON.parse(f.readFrozen(f.manifest.sources.rootEvidence).toString());
+    const raw = JSON.parse(f.readFrozen(root.positiveExports.path).toString()); raw.testResults[0].assertionResults[0].status = 'failed';
+    f.put(root.positiveExports.path, raw); root.positiveExports.sha256 = f.ref(root.positiveExports.path).sha256; f.replace('rootEvidence', root);
+    const resealed = f.derive();
+    expect(() => f.audit(resealed)).toThrow();
+    expect(outputs[`${f.outputPrefix}/review-handoff.json`].sprintStatus).toBe('Active');
+  });
+});

@@ -1,0 +1,79 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server
+
+ ✓ test/product-reality/b2-legacy-inputs.s184.spec.ts (7 tests) 1775ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > remeasures the unchanged Product/detail 'html' operand after the producer repair  329ms
+   ✓ Sprint 184 m07 B2 legacy-input compatibility disclosure > binds all 13 retained repoints to a source selector and a non-empty reason  1025ms
+ ✓ test/codegen/prop-binding.spec.ts (33 tests) 21ms
+ ❯ test/product-reality/fresh-composition.s187.spec.ts (14 tests | 1 failed) 10142ms
+   ✓ Sprint 187 fresh composition binding intent > Article/detail preserves its fields and generates in both frameworks  352ms
+   ✓ Sprint 187 fresh composition binding intent > Media/detail preserves its fields and generates in both frameworks 44ms
+   ✓ Sprint 187 fresh composition binding intent > Product/detail preserves its fields and generates in both frameworks 48ms
+   ✓ Sprint 187 fresh composition binding intent > User/detail preserves its fields and generates in both frameworks 36ms
+   ✓ Sprint 187 fresh composition binding intent > Plan/inline preserves its fields and generates in both frameworks 36ms
+   ✓ Sprint 187 fresh composition binding intent > Subscription/inline preserves its fields and generates in both frameworks 61ms
+   ✓ Sprint 187 fresh composition binding intent > Usage/list preserves its fields and generates in both frameworks 44ms
+   ✓ Sprint 187 fresh composition binding intent > Usage/inline preserves its fields and generates in both frameworks 33ms
+   ✓ Sprint 187 fresh composition binding intent > Transaction/timeline preserves its fields and generates in both frameworks 46ms
+   ✓ Sprint 187 fresh composition binding intent > keeps authored choices and enum semantics, converting only continuous empty Selects 3ms
+   ✓ Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated react  7177ms
+   × Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated vue 1883ms
+     → AssertionError [ERR_ASSERTION]: amount_minor must preserve its typed value
+
+'0' !== '7'
+
+    at /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue/.cache/s187-values-tEcRsU/render.cjs:21:14 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '0',
+  expected: '7',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+: expected 1 to be +0 // Object.is equality
+   ✓ Sprint 187 fresh composition binding intent > retains authentic fresh schemas and artifact provenance without touching a saved store  359ms
+   ✓ Sprint 187 fresh composition binding intent > rejects duplicate, non-public, overridden, and mixed fresh/saved operands 9ms
+ ✓ test/compose/wire-field-props.spec.ts (10 tests) 46ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/fresh-composition.s187.spec.ts > Sprint 187 fresh composition binding intent > renders real typed zero/nonzero and false/true in generated vue
+AssertionError: AssertionError [ERR_ASSERTION]: amount_minor must preserve its typed value
+
+'0' !== '7'
+
+    at /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue/.cache/s187-values-tEcRsU/render.cjs:21:14 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '0',
+  expected: '7',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ test/product-reality/fresh-composition.s187.spec.ts:111:50
+    109| `);
+    110|         const rendered = spawnSync('node', [path.join(directory, 'rend…
+    111|         expect(rendered.status, rendered.stderr).toBe(0);
+       |                                                  ^
+    112|       } finally { rmSync(directory, { recursive: true, force: true });…
+    113|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 63 passed (64)
+   Start at  19:18:37
+   Duration  25.91s (transform 3.39s, setup 92ms, collect 11.13s, tests 11.98s, environment 1ms, prepare 1.23s)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/fresh-composition.s187.spec.ts test/product-reality/b2-legacy-inputs.s184.spec.ts test/compose/wire-field-props.spec.ts test/codegen/prop-binding.spec.ts

@@ -226,6 +226,7 @@ function reactControlledProp(occurrence: LocalBindingOccurrence): string | null 
   if (
     occurrence.component === 'DatePicker'
     || occurrence.component === 'Input'
+    || occurrence.component === 'SearchInput'
     || occurrence.component === 'Select'
     || occurrence.component === 'Textarea'
     || occurrence.component === 'StatusSelector'
@@ -379,6 +380,9 @@ function reactFieldExpression(
     : undefined;
   if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
     return `String(${fieldName})`;
+  }
+  if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
+    return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;
   }
   if (
     node.component === 'Text'
@@ -951,11 +955,14 @@ function generateReactLocalHandler(
     const receivesNativeEvent = occurrence.component !== 'Tabs'
       && (occurrence.event === 'onChange' || occurrence.event === 'onInput');
     if (receivesNativeEvent) {
-      const reactEvent = occurrence.event === 'onInput' ? 'React.FormEvent' : 'React.ChangeEvent';
-      params = options.typescript
-        ? `(event: ${reactEvent}<${reactElementType(occurrence.component)}>)`
-        : '(event)';
-      jsDocParameter = `  /** @param {${reactEvent}<${reactElementType(occurrence.component)}>} event */`;
+      // A shared field may be edited by distinct native controls (for example
+      // StatusSelector and Input). Type every event source, not only the first.
+      const eventType = [...new Set(handler.occurrences.map((source) => {
+        const reactEvent = source.event === 'onInput' ? 'React.FormEvent' : 'React.ChangeEvent';
+        return `${reactEvent}<${reactElementType(source.component)}>`;
+      }))].join(' | ');
+      params = options.typescript ? `(event: ${eventType})` : '(event)';
+      jsDocParameter = `  /** @param {${eventType}} event */`;
       nextValue = parameter.type === 'boolean'
         ? 'event.currentTarget.checked'
         : 'event.currentTarget.value';

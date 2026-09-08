@@ -1,9 +1,6 @@
 /**
- * Tier-1 compatibility is intentionally bounded in Sprint 182.
- *
- * The historical composed Subscription flow contains target components outside
- * the 14-family nucleus and therefore returns OODS-N015 for React/Vue. The
- * checked-in saved schema proves only Card/Stack/Tabs/Text compatibility.
+ * Preserve the original bounded saved schema and the full Subscription operand.
+ * The latter now generates after Sprint187; history is not rewritten or pruned.
  */
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
@@ -49,7 +46,7 @@ describe('Tier 1 acceptance — bounded framework compatibility', () => {
   });
 
   it.each(['react', 'vue'] as const)(
-    'returns OODS-N015 with no code for the legacy Subscription detail %s flow',
+    'builds the unchanged Subscription detail %s flow after its final family port',
     async (framework) => {
       const result = await pipelineHandle({
         object: 'Subscription',
@@ -59,10 +56,10 @@ describe('Tier 1 acceptance — bounded framework compatibility', () => {
         options: { skipValidation: true, skipRender: true },
       });
 
-      expect(result.error?.step).toBe('codegen');
-      expect(result.error?.code).toBe('OODS-N015');
-      expect(result.error?.message).toContain(`not emission-eligible for ${framework}`);
-      expect(result.code).toBeUndefined();
+      expect(result.error).toBeUndefined();
+      expect(result.code?.framework).toBe(framework);
+      expect(result.code?.output).toContain('ArchiveSummary');
+      expect(result.code?.output).toContain(`@oods/components-${framework}`);
       expect(result.pipeline.steps).toEqual(['compose', 'codegen']);
     },
   );

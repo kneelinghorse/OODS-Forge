@@ -65,6 +65,7 @@ type ComponentData = {
 };
 
 type ComponentsDataset = {
+  obligationScope?: CatalogListOutput["obligationScope"];
   generatedAt?: string;
   stats?: {
     componentCount?: number;
@@ -1012,6 +1013,7 @@ export async function handle(input: CatalogListInput): Promise<CatalogListOutput
       hasMore,
       detail,
       generatedAt: componentsData.generatedAt || new Date().toISOString(),
+      ...(componentsData.obligationScope ? { obligationScope: componentsData.obligationScope } : {}),
       stats: {
         componentCount,
         traitCount: componentsData.stats?.traitCount || 0,

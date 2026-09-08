@@ -1,10 +1,11 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 
 import { describe, expect, it } from 'vitest';
 
+import { auditEvidenceRetention } from '../../../../scripts/product-reality/assert-s184-evidence-retention.mjs';
 import {
   S184_M06_FRAMEWORKS,
   S184_M06_GATE_NAMES,
@@ -195,6 +196,40 @@ describe('Sprint 184 m06 evidence controls', () => {
     artifactTouched.mutation.artifactJsonPathsTouched.push('legacy.artifact.json');
     expect(() => assertS184M06DifferentialControl(artifactTouched))
       .toThrow(/artifact JSON/);
+  });
+
+  it('keeps log tracking checks effective when unrelated git paths exceed the process output limit', () => {
+    const repositoryRoot = mkdtempSync(path.join(tmpdir(), 'oods-retention-large-index-'));
+    const evidenceRoot = path.join(repositoryRoot, 'artifacts/product-reality/sprint-184/m06');
+    try {
+      mkdirSync(path.join(evidenceRoot, 'logs'), { recursive: true });
+      writeFileSync(path.join(repositoryRoot, log), 'control\n');
+      writeFileSync(path.join(evidenceRoot, 'evidence-index.json'), JSON.stringify({ logs: [log] }));
+      execFileSync('git', ['init', '-q'], { cwd: repositoryRoot });
+      execFileSync('git', ['add', 'artifacts'], { cwd: repositoryRoot });
+      const blob = execFileSync('git', ['hash-object', '-w', '--stdin'], {
+        cwd: repositoryRoot, input: '', encoding: 'utf8',
+      }).trim();
+      // Index-only entries keep the fixture small on disk. They sort before the
+      // audited log so a truncated whole-repository listing cannot prove it tracked.
+      const unrelated = Array.from({ length: 12000 }, (_, index) => (
+        `100644 ${blob}\t000-unrelated/${index}-${'x'.repeat(160)}\n`
+      )).join('');
+      execFileSync('git', ['update-index', '--index-info'], { cwd: repositoryRoot, input: unrelated });
+      const listing = execFileSync('git', ['ls-files'], { cwd: repositoryRoot, maxBuffer: 4 * 1024 * 1024 });
+      expect(listing.byteLength).toBeGreaterThan(1024 * 1024);
+
+      const audits = [
+        () => auditEvidenceRetention(repositoryRoot),
+        () => auditS184M06ReferencedLogs(repositoryRoot, evidenceRoot),
+      ];
+      for (const audit of audits) expect(audit()).toMatchObject({ status: 'passed', untracked: [] });
+
+      execFileSync('git', ['update-index', '--force-remove', log], { cwd: repositoryRoot });
+      for (const audit of audits) expect(audit()).toMatchObject({ status: 'failed', untracked: [log] });
+    } finally {
+      rmSync(repositoryRoot, { recursive: true, force: true });
+    }
   });
 
   it('finds every JSON-referenced raw log that is absent from git ls-files', () => {

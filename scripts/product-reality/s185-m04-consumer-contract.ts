@@ -56,6 +56,92 @@ export function schemaNodes(schema: UiSchema): UiElement[] {
 export const selectorForNode = (id: string): string => `[id=${JSON.stringify(id)}]`;
 const camel = (name: string) => name.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
 
+export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status' | 'query-input' | 'family-text' | 'native-value'; selector?: string; expected: string; editable: boolean };
+
+/** Repaired bindings must visibly represent the supplied datum, including zero and false. */
+export function deriveValueProbes(schema: UiSchema, model: Record<string, unknown>): ValueProbe[] {
+  return schemaNodes(schema).flatMap((node): ValueProbe[] => {
+    const textProbe = (field: unknown, selector?: string, truncate = false): ValueProbe[] => {
+      if (typeof field !== 'string' || !schema.objectSchema?.[field]) return [];
+      let expected = String(model[camel(field)] ?? '');
+      if (truncate) {
+        const limit = Number(node.props?.maxLength ?? (node.props?.truncate ? 40 : NaN));
+        if (Number.isFinite(limit) && limit > 0 && expected.length > limit) expected = expected.slice(0, Math.max(0, limit - 1)).trimEnd() + '...';
+      }
+      return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
+    };
+    if (node.component === 'ArchivePill' || node.component === 'CancellationBadge') return textProbe(node.props?.field, '[data-oods-badge-label]');
+    if (node.component === 'ArchiveSummary') return ['archivedField', 'archivedAtField', 'reasonField']
+      .filter((key) => typeof node.props?.[key] === 'string' && model[camel(node.props[key] as string)] != null)
+      .flatMap((key, index) =>
+      textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
+    if (node.component === 'PriceCardMeta') return textProbe(node.props?.intervalField, '[data-meta-item]:last-child')
+      .map((probe) => ({ ...probe, expected: `Interval: ${probe.expected}` }));
+    if (node.component === 'CancellationForm') return [
+      ...textProbe(node.props?.reasonField, 'textarea[name="reason"]'),
+      ...textProbe(node.props?.codeField, 'select[name="reasonCode"]'),
+    ].map((probe) => ({ ...probe, kind: 'native-value' }));
+    if (node.component === 'OwnerBadge') return textProbe(node.props?.ownerIdField ?? node.props?.ownerTypeField, '[data-oods-badge-label]');
+    if (node.component === 'OwnershipSummary') return ['ownerIdField', 'ownerTypeField', 'roleField'].flatMap((key, index) =>
+      textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
+    if (node.component === 'OwnershipMeta') return ['ownerTypeField', 'roleField'].flatMap((key, index) => {
+      const probes = textProbe(node.props?.[key], `[data-meta-item]:nth-of-type(${index + 2})`);
+      return probes.map((probe) => ({ ...probe, expected: `${index === 0 ? 'Owner Type' : 'Role'}: ${probe.expected}` }));
+    });
+    if (node.component === 'TagSummary') {
+      const probes = textProbe(node.props?.countField, 'dl > [data-summary-item]:first-child > dd');
+      const field = node.props?.field;
+      if (typeof field === 'string' && Array.isArray(model[camel(field)]) && (model[camel(field)] as unknown[]).length) {
+        probes.push({ nodeId: node.id, field, kind: 'family-text', selector: 'dl > [data-summary-item]:last-child > dd', expected: (model[camel(field)] as string[]).join(', '), editable: false });
+      }
+      return probes;
+    }
+    if (node.component === 'LabelCell') return [
+      ...textProbe(node.props?.field, '[data-oods-label-cell-primary]', true),
+      ...textProbe(node.props?.descriptionField, '[data-oods-label-cell-description]', true),
+    ];
+    if (node.component === 'InlineLabel') return textProbe(node.props?.field, undefined, true);
+    if (node.component === 'FormLabelGroup') return [
+      ...textProbe(node.props?.labelField, '[data-oods-form-label]'),
+      ...textProbe(node.props?.placeholderField ?? node.props?.descriptionField, '[data-oods-form-hint]'),
+    ];
+    if (node.component === 'ClassificationBadge') return textProbe(node.props?.primaryCategoryField, '[data-oods-badge-label]');
+    if (node.component === 'ClassificationEditor') return textProbe(node.props?.field, '[data-form-subtitle]');
+    const field = node.props?.field;
+    if (typeof field !== 'string') return [];
+    const entry = schema.objectSchema?.[field];
+    const value = model[camel(field)];
+    const base = { nodeId: node.id, field, editable: false };
+    if (node.component === 'Input' && node.props?.type === 'number' && ['integer', 'number'].includes(entry?.type ?? '')) {
+      return [{ ...base, kind: 'numeric-input', expected: String(value ?? ''), editable: !!node.bindings?.onChange }];
+    }
+    if (node.component === 'SearchInput' && entry?.type === 'string') return [{ ...base, kind: 'query-input', expected: String(value ?? '') }];
+    if (node.component === 'Text' && entry?.type === 'boolean') {
+      return [{ ...base, kind: 'boolean-text', expected: value == null ? '' : value ? 'Yes' : 'No' }];
+    }
+    if (node.component === 'StatusTimeline' && typeof value === 'string') {
+      const label = value.split(/[_-]/).filter(Boolean).map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1)).join(' ');
+      return [{ ...base, kind: 'status', expected: `Current status: ${label}` }];
+    }
+    return [];
+  });
+}
+
+export type SharedNativeFieldProbe = { field: string; inputId: string; selectId: string; selectContainer: boolean };
+
+/** Exercise both native writers when an authentic schema shares one local field handler. */
+export function deriveSharedNativeFieldProbes(schema: UiSchema): SharedNativeFieldProbe[] {
+  const nodes = schemaNodes(schema);
+  return nodes.flatMap((select): SharedNativeFieldProbe[] => {
+    if (!['Select', 'StatusSelector'].includes(select.component) || !select.bindings?.onChange) return [];
+    const field = select.props?.field;
+    if (typeof field !== 'string' || schema.objectSchema?.[field]?.type !== 'string') return [];
+    const input = nodes.find((node) => node.component === 'Input' && node.props?.field === field
+      && node.bindings?.onChange === select.bindings?.onChange);
+    return input ? [{ field, inputId: input.id, selectId: select.id, selectContainer: select.component === 'StatusSelector' }] : [];
+  });
+}
+
 export type MountObligation = { nodeId: string; component: string; requiredInitially: boolean; reason?: string };
 
 /** Canonical emitted ids/markers define the obligations; SSR output cannot erase them. */
@@ -98,12 +184,19 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
     let value: unknown;
     if (field.enum?.length) value = field.enum.includes(previous as string) ? previous : field.enum[0];
     else if (Object.hasOwn(established, key)) value = previous;
-    else if (field.type === 'array' || field.type.endsWith('[]')) value = [];
+    // Exercise a non-first supported choice in the default presentational form.
+    // Parameter names are not resolved here or written into the schema.
+    else if (field.type === 'string' && schemaNodes(schema).some((node) => node.component === 'CancellationForm'
+      && node.props?.codeField === name && node.props?.allowedReasons === undefined)) value = 'budget';
+    else if (field.type === 'array' || field.type.endsWith('[]')) {
+      // The fresh summary cohort must exercise a real, nonempty tag datum.
+      value = schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
+    }
     else if (field.type === 'object' || field.type.startsWith('Record<')) value = {};
     else if (field.type === 'integer' || field.type === 'number') value = 0;
     else if (field.type === 'boolean') value = false;
     else if (field.type === 'date') value = '2026-09-05';
-    else if (field.type === 'datetime') value = '2026-09-05T12:00:00.000Z';
+    else if (field.type === 'datetime' || field.type === 'datetime?') value = '2026-09-05T12:00:00.000Z';
     else if (field.type === 'email') value = 'consumer@example.test';
     else if (field.type === 'url') value = 'https://example.test';
     else value = name.endsWith('_id') ? `consumer-${name.replace(/_/g, '-')}` : `Consumer ${name.replace(/_/g, ' ')}`;

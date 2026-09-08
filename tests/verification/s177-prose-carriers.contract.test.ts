@@ -64,16 +64,22 @@ describe("Sprint 177 prose truth carriers", () => {
     const normalizedProgram = productProgram.replace(/\s+/g, " ");
     const normalizedIndex = roadmapIndex.replace(/\s+/g, " ");
 
-    // Sprint 186 keeps the program Active, retains the independently reviewed
-    // Sprint 185 history, and requires its own review (rule #1690).
+    // Sprint 187 closes under its independent review while the program stays
+    // Active. Frozen builder receipts and remote CI remain separate evidence.
     expect(near).toContain(
-      "**Status:** ACTIVE — program decision `#1652`; Sprint 186 build closeout in progress; independent review pending",
+      "**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`",
     );
     expect(normalizedNear).toContain(
       "locked by decision `#1724` at build base `1118f436`",
     );
     expect(normalizedNear).toContain(
-      "The sprint remains Active and `builderSelfCertified` remains false. An independent review decides certification and sprint closure.",
+      "Sprint 187 is **Completed**, independently certified by review `PS-2026-09-07-002` and decision `#1809`.",
+    );
+    expect(normalizedNear).toContain(
+      "Historical builder receipts retain `builderSelfCertified:false`; they are not relabeled.",
+    );
+    expect(normalizedNear).toContain(
+      "remote acceptance is determined by the checks on the corrected PR head",
     );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",

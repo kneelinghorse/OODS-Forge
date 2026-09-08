@@ -1,0 +1,719 @@
+diff --git a/packages/mcp-server/src/codegen/react-emitter.ts b/packages/mcp-server/src/codegen/react-emitter.ts
+index 7513c9ae..35f3e06d 100644
+--- a/packages/mcp-server/src/codegen/react-emitter.ts
++++ b/packages/mcp-server/src/codegen/react-emitter.ts
+@@ -380,6 +380,9 @@ function reactFieldExpression(
+   if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
+     return `String(${fieldName})`;
+   }
++  if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
++    return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;
++  }
+   if (
+     node.component === 'Text'
+     && isChildren
+diff --git a/packages/mcp-server/src/codegen/target-contracts.ts b/packages/mcp-server/src/codegen/target-contracts.ts
+index 75afeeb8..2c652c7e 100644
+--- a/packages/mcp-server/src/codegen/target-contracts.ts
++++ b/packages/mcp-server/src/codegen/target-contracts.ts
+@@ -869,7 +869,8 @@ function acceptedFieldKinds(
+   if (propName === 'datetime' && component === 'RelativeTimestamp') return ['string'];
+   if (propName === 'status') return ['string'];
+   if (isChildren) {
+-    return component === 'Text' ? ['string', 'number', 'array'] : ['string', 'number'];
++    // Both emitters explicitly lower boolean text to Yes/No (null stays empty).
++    return component === 'Text' ? ['string', 'number', 'boolean', 'array'] : ['string', 'number'];
+   }
+   return [];
+ }
+diff --git a/packages/mcp-server/src/codegen/vue-emitter.ts b/packages/mcp-server/src/codegen/vue-emitter.ts
+index 4bd9bc7c..5ef4dd75 100644
+--- a/packages/mcp-server/src/codegen/vue-emitter.ts
++++ b/packages/mcp-server/src/codegen/vue-emitter.ts
+@@ -366,6 +366,9 @@ function vueFieldExpression(
+   if (node.component === 'Select' && propName === 'value' && entry?.type === 'boolean') {
+     return `String(${fieldName})`;
+   }
++  if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
++    return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;
++  }
+   if (
+     node.component === 'Text'
+     && isChildren
+@@ -1133,9 +1136,30 @@ function buildScriptSetup(
+   if (actionTypes) lines.push('', actionTypes);
+ 
+   if (formMode && hasObjectSchema) {
+-    // Vue 3 Composition API: ref() for each form field
++    // Optional initial form values preserve existing empty-form callers while
++    // allowing typed records (including zero and false) to seed local editors.
+     lines.push('');
+     const sortedFields = Object.entries(objectSchema!).sort(([a], [b]) => a.localeCompare(b));
++    if (options.typescript) {
++      lines.push('interface Props {');
++      if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
++      if (hasStateBranches) lines.push('  uiState: GeneratedUIState;');
++      for (const [fieldName, entry] of sortedFields) {
++        lines.push(`  ${snakeToCamel(fieldName)}?: ${mapFieldType(entry)};`);
++      }
++      lines.push('}', 'const generatedProps = defineProps<Props>();');
++    } else {
++      const runtimeProps = [
++        ...sortedFields.map(([fieldName]) => `${snakeToCamel(fieldName)}: { default: undefined }`),
++        ...(hasDomainActions ? ['actions: { type: Object, required: true }'] : []),
++        ...(hasStateBranches ? ['uiState: { type: String, required: true }'] : []),
++      ];
++      lines.push(`const generatedProps = defineProps({ ${runtimeProps.join(', ')} });`);
++    }
++    if (hasDomainActions) lines.push(options.typescript ? 'const actions = generatedProps.actions;'
++      : 'const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
++    if (hasStateBranches) lines.push(options.typescript ? 'const uiState = generatedProps.uiState;'
++      : 'const uiState = /** @type {GeneratedUIState} */ (generatedProps.uiState);');
+     for (const [fieldName, entry] of sortedFields) {
+       const camelName = snakeToCamel(fieldName);
+       const defaultValue = fieldRefDefault(entry);
+@@ -1145,9 +1169,9 @@ function buildScriptSetup(
+         lines.push(`/** ${escapeVueScriptComment(entry.description)} */`);
+       }
+       if (tsType) {
+-        lines.push(`const ${camelName} = ref<${tsType}>(${defaultValue});`);
++        lines.push(`const ${camelName} = ref<${tsType}>(generatedProps.${camelName} ?? ${defaultValue});`);
+       } else {
+-        lines.push(`const ${camelName} = ref(${defaultValue});`);
++        lines.push(`const ${camelName} = ref(generatedProps.${camelName} ?? ${defaultValue});`);
+       }
+     }
+ 
+@@ -1159,32 +1183,6 @@ function buildScriptSetup(
+         lines.push(`const ${cp.name} = computed(() => ${cp.expression});`);
+       }
+     }
+-    if (hasDomainActions || hasStateBranches) {
+-      lines.push('');
+-      if (options.typescript) {
+-        const propNames = [
+-          ...(hasDomainActions ? ['actions'] : []),
+-          ...(hasStateBranches ? ['uiState'] : []),
+-        ];
+-        const propTypes = [
+-          ...(hasDomainActions ? ['actions: GeneratedUIActions'] : []),
+-          ...(hasStateBranches ? ['uiState: GeneratedUIState'] : []),
+-        ];
+-        lines.push(`const { ${propNames.join(', ')} } = defineProps<{ ${propTypes.join('; ')} }>();`);
+-      } else {
+-        const runtimeProps = [
+-          ...(hasDomainActions ? ['actions: { type: Object, required: true }'] : []),
+-          ...(hasStateBranches ? ['uiState: { type: String, required: true }'] : []),
+-        ];
+-        lines.push(`const generatedProps = defineProps({ ${runtimeProps.join(', ')} });`);
+-        if (hasDomainActions) {
+-          lines.push('const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
+-        }
+-        if (hasStateBranches) {
+-          lines.push('const uiState = /** @type {GeneratedUIState} */ (generatedProps.uiState);');
+-        }
+-      }
+-    }
+   } else if (options.typescript && hasObjectSchema) {
+     // Non-form: use defineProps for display components
+     lines.push('');
+diff --git a/packages/mcp-server/src/compose/object-slot-filler.ts b/packages/mcp-server/src/compose/object-slot-filler.ts
+index e1a3d4a7..11939dc9 100644
+--- a/packages/mcp-server/src/compose/object-slot-filler.ts
++++ b/packages/mcp-server/src/compose/object-slot-filler.ts
+@@ -749,13 +749,21 @@ function applyBoundFieldProps(
+   fieldName: string,
+   fieldEntry: FieldSchemaEntry,
+ ): void {
++  // A continuous quantity has no finite choices. Preserve the selected field
++  // with a numeric editor instead of an empty Select that cannot display it.
++  if (node.component === 'Select' && !fieldEntry.enum?.length
++    && !node.props?.options && ['integer', 'number'].includes(fieldEntry.type)) {
++    node.component = 'Input';
++    node.props = { ...node.props, type: 'number' };
++    node.bindings = { ...node.bindings, onChange: node.bindings?.onChange ?? `handleChange_${fieldName}` };
++  }
+   const nextProps: Record<string, unknown> = {
+     ...(node.props ?? {}),
+     field: fieldName,
+   };
+ 
+   // Set label from field description if not already present
+-  if (fieldEntry.description && typeof nextProps.label !== 'string') {
++  if (node.component !== 'StatusTimeline' && fieldEntry.description && typeof nextProps.label !== 'string') {
+     nextProps.label = fieldEntry.description;
+   }
+ 
+diff --git a/packages/mcp-server/test/codegen/vue-reactivity.spec.ts b/packages/mcp-server/test/codegen/vue-reactivity.spec.ts
+index 4e33f05b..e32a36bd 100644
+--- a/packages/mcp-server/test/codegen/vue-reactivity.spec.ts
++++ b/packages/mcp-server/test/codegen/vue-reactivity.spec.ts
+@@ -53,7 +53,7 @@ function makeDisplaySchema(
+ /* ------------------------------------------------------------------ */
+ 
+ describe('vue-emitter — ref() bindings', () => {
+-  it('generates ref() for each field in form schemas', () => {
++  it('seeds each local form ref from optional typed props while preserving omitted-value defaults', () => {
+     const schema = makeFormSchema(
+       {
+         name: { type: 'string', required: true, description: 'User name' },
+@@ -68,9 +68,11 @@ describe('vue-emitter — ref() bindings', () => {
+     );
+     const result = emit(schema, { typescript: true, styling: 'inline' });
+     expect(result.code).toContain("import { ref } from 'vue';");
+-    expect(result.code).toContain("const name = ref<string>('')");
+-    expect(result.code).toContain("const age = ref<number>(0)");
+-    expect(result.code).toContain("const active = ref<boolean>(false)");
++    expect(result.code).toContain("const name = ref<string>(generatedProps.name ?? '')");
++    expect(result.code).toContain("name?: string;");
++    expect(result.code).toContain("const generatedProps = defineProps<Props>();");
++    expect(result.code).toContain("const age = ref<number>(generatedProps.age ?? 0)");
++    expect(result.code).toContain("const active = ref<boolean>(generatedProps.active ?? false)");
+   });
+ 
+   it('uses correct default values for different field types', () => {
+@@ -86,9 +88,9 @@ describe('vue-emitter — ref() bindings', () => {
+       ],
+     );
+     const result = emit(schema, { typescript: false, styling: 'inline' });
+-    expect(result.code).toContain("const tags = ref([])");
+-    expect(result.code).toContain("const config = ref({})");
+-    expect(result.code).toContain("const status = ref('active')");
++    expect(result.code).toContain("const tags = ref(generatedProps.tags ?? [])");
++    expect(result.code).toContain("const config = ref(generatedProps.config ?? {})");
++    expect(result.code).toContain("const status = ref(generatedProps.status ?? 'active')");
+   });
+ 
+   it('does NOT generate ref() for non-form display schemas', () => {
+diff --git a/packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts b/packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts
+index f35de123..0c0744c3 100644
+--- a/packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts
++++ b/packages/mcp-server/test/product-reality/b2-legacy-inputs.s184.spec.ts
+@@ -139,21 +139,21 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
+     },
+     {
+       framework: "react" as const,
+-      code: "OODS-V007",
+-      message: 'Prop "label" is not in the canonical StatusTimeline contract.',
++      code: undefined,
++      message: undefined,
+     },
+     {
+       framework: "vue" as const,
+-      code: "OODS-V007",
+-      message: 'Prop "label" is not in the canonical StatusTimeline contract.',
++      code: undefined,
++      message: undefined,
+     },
+   ])(
+     // Sprint 185 ported DetailHeader and Sprint 186 m01 ports PriceSummary,
+     // ClassificationPanel and FilterPanel; the unchanged Product/detail operand
+-    // now reaches the composer-authored StatusTimeline.label prop, which the
+-    // ported StatusTimeline contract does not govern (carried by name). The
++    // reached the unsupported StatusTimeline.label prop. Sprint 187 repairs
++    // that producer; React/Vue now succeed with the identical operand. The
+     // Sprint 184 observation remains immutable and is replayed against base below.
+-    "remeasures the unchanged Product/detail $framework typed gap as $code",
++    "remeasures the unchanged Product/detail $framework operand after the producer repair",
+     async ({ framework, code, message }) => {
+       const result = await pipelineHandle({
+         object: "Product",
+@@ -161,8 +161,13 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
+         framework,
+       });
+ 
+-      expect(result.error).toEqual({ step: "codegen", code, message });
+-      expect(result.code).toBeUndefined();
++      if (framework === "html") {
++        expect(result.error).toEqual({ step: "codegen", code, message });
++        expect(result.code).toBeUndefined();
++      } else {
++        expect(result.error).toBeUndefined();
++        expect(result.code).toBeDefined();
++      }
+       expect(result.saved).toBeUndefined();
+       expect(result.validationReceipt.profile).toBe("build");
+       expect(result.pipeline.steps).toEqual([
+@@ -419,11 +424,19 @@ describe("Sprint 184 m07 B2 legacy-input compatibility disclosure", () => {
+       for (const outcome of disposition.typedOutcomes) {
+         const expected = current.rows.find(({ id }) => id === outcome.id)!;
+         const result = await pipelineHandle(outcome.input);
+-        expect(result.error, outcome.id).toEqual(expected.error);
++        const repaired = ['product-detail-react-build', 'product-detail-vue-build'].includes(outcome.id);
++        // Frozen s186 measurements remain negative. The same operands now reach
++        // generated code after s187 fixes the default composer's timeline prop.
++        if (repaired) {
++          expect(result.error, outcome.id).toBeUndefined();
++          expect(result.code, outcome.id).toBeDefined();
++        } else {
++          expect(result.error, outcome.id).toEqual(expected.error);
++          expect(result.code, outcome.id).toBeUndefined();
++        }
+         expect(result.validationReceipt.profile, outcome.id).toBe(
+           outcome.profile,
+         );
+-        expect(result.code, outcome.id).toBeUndefined();
+         expect(result.saved, outcome.id).toBeUndefined();
+         expect(expected.codePresent, outcome.id).toBe(false);
+         expect(expected.savedPresent, outcome.id).toBe(false);
+diff --git a/scripts/product-reality/s184-m06-live-consumers.ts b/scripts/product-reality/s184-m06-live-consumers.ts
+index f2b2b30d..0f3a461c 100644
+--- a/scripts/product-reality/s184-m06-live-consumers.ts
++++ b/scripts/product-reality/s184-m06-live-consumers.ts
+@@ -12,6 +12,8 @@ import type {
+   GeneratedArtifactAction,
+ } from '../../packages/mcp-server/src/codegen/types.js';
+ import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
++import { handle as designCompose } from '../../packages/mcp-server/src/tools/design.compose.js';
++import { handle as objectList } from '../../packages/mcp-server/src/tools/object.list.js';
+ import { handle as codeGenerate } from '../../packages/mcp-server/src/tools/code.generate.js';
+ import type { CodeGenerateOutput } from '../../packages/mcp-server/src/tools/types.js';
+ import { packFoundationPackages } from './s182-m04-consumer-harness.mjs';
+@@ -22,6 +24,8 @@ import {
+   S186_SCHEMA_NAMES,
+   deriveActionArguments,
+   deriveBoundFieldProbe,
++  deriveValueProbes,
++  type ValueProbe,
+   deriveConsumerModel,
+   deriveInteraction,
+   deriveMountObligations,
+@@ -60,7 +64,10 @@ export const GATE_NAMES = Object.freeze([
+ export type S184M06SchemaName =
+   | (typeof SCHEMA_NAMES)[number]
+   | (typeof S185_SCHEMA_NAMES)[number]
+-  | (typeof S186_SCHEMA_NAMES)[number];
++  | (typeof S186_SCHEMA_NAMES)[number]
++  | `fresh-${string}`;
++
++export type FreshCompositionInput = { object: string; context: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' };
+ export type S184M06Framework = (typeof FRAMEWORKS)[number];
+ export type S184M06GateName = (typeof GATE_NAMES)[number];
+ 
+@@ -88,6 +95,8 @@ export type LiveGenerationCell = {
+   mission?: string;
+   schema: S184M06SchemaName;
+   schemaRef: string;
++  sourceSchema?: UiSchema;
++  composition?: Record<string, unknown>;
+   derivation?: Record<string, unknown>;
+   framework: S184M06Framework;
+   status: 'passed';
+@@ -155,6 +164,7 @@ type AppliedMutation = {
+ };
+ 
+ type SavedSchemaRecord = {
++  composition?: Record<string, unknown>;
+   /** Present only on a derived record outside the frozen saved store. */
+   derivation?: Record<string, unknown>;
+   schemaRef: string;
+@@ -540,28 +550,71 @@ function assertSchemaSelection(names: readonly S184M06SchemaName[]): void {
+   }
+ }
+ 
++/** Only public object/context operands are accepted; the composer output is never patched. */
++export async function composeFreshInputs(inputs: readonly FreshCompositionInput[]): Promise<SavedSchemaRecord[]> {
++  const objects = new Set((await objectList({})).objects.map((entry) => entry.name));
++  const contexts = ['detail', 'list', 'form', 'timeline', 'card', 'inline'];
++  const identities = inputs.map(({ object, context }) => `${object}/${context}`);
++  if (!inputs.length || new Set(identities).size !== inputs.length
++    || inputs.some((input) => Object.keys(input).sort().join(',') !== 'context,object'
++      || !objects.has(input.object) || !contexts.includes(input.context))) {
++    throw new Error('Fresh inputs require distinct public {object, context} operands without overrides.');
++  }
++  const identity = commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT);
++  requireGreen(identity, 'fresh source identity');
++  const sourceHead = identity.stdout.trim();
++  const sourceDiff = commandResult('git', ['diff', 'HEAD', '--', 'packages', 'scripts'], REPOSITORY_ROOT).stdout;
++  const records = [];
++  for (const input of inputs) {
++    const composed = await designCompose(input);
++    if (composed.status !== 'ok' || !composed.schema) throw new Error(`Fresh composition failed: ${JSON.stringify({ input, composed })}`);
++    const schemaSha256 = sha256Urn(canonicalJson(composed.schema));
++    records.push({
++      name: `fresh-${input.object}-${input.context}` as S184M06SchemaName,
++      schemaRef: schemaSha256, schema: composed.schema,
++      composition: { handler: 'design.compose', input, sourceHead, sourceDiffSha256: sha256Urn(sourceDiff), sourceDiffPath: 'live-generation/source.diff', schemaSha256, composedAt: new Date().toISOString() },
++    });
++  }
++  return records;
++}
++
+ export async function runLiveGenerationOnly({
+   artifactRoot,
+   generate = codeGenerate,
+-  schemaNames = SCHEMA_NAMES,
++  schemaNames,
++  freshInputs,
+   mission = 's184-m06',
+   schemaStore = SAVED_SCHEMA_STORE,
+ }: {
+   artifactRoot: string;
+   generate?: LiveGenerator;
+   schemaNames?: readonly S184M06SchemaName[];
++  freshInputs?: readonly FreshCompositionInput[];
+   mission?: string;
+   schemaStore?: string;
+ }): Promise<{ report: Record<string, unknown>; cells: LiveGenerationCell[] }> {
+   if (!artifactRoot) throw new Error('artifactRoot is required.');
+-  assertSchemaSelection(schemaNames);
++  if (freshInputs && (schemaNames || schemaStore !== SAVED_SCHEMA_STORE)) throw new Error('Fresh inputs and saved-store selection are mutually exclusive.');
++  if (!freshInputs) assertSchemaSelection(schemaNames ?? SCHEMA_NAMES);
+   await fsp.mkdir(artifactRoot, { recursive: true });
+   const outputRoot = path.join(artifactRoot, 'live-generation');
+   await mkdirAbsent(outputRoot);
+   const cells: LiveGenerationCell[] = [];
+ 
+-  for (const schemaName of schemaNames) {
+-    const record = savedSchema(schemaName, schemaStore);
++  const records = freshInputs ? await composeFreshInputs(freshInputs)
++    : (schemaNames ?? SCHEMA_NAMES).map((name) => savedSchema(name, schemaStore));
++  if (freshInputs) {
++    const diff = commandResult('git', ['diff', 'HEAD', '--', 'packages', 'scripts'], REPOSITORY_ROOT);
++    requireGreen(diff, 'fresh source diff');
++    if (records.some((record) => record.composition?.sourceDiffSha256 !== sha256Urn(diff.stdout))) {
++      throw new Error('Source changed during fresh composition.');
++    }
++    await fsp.writeFile(path.join(outputRoot, 'source.diff'), diff.stdout);
++  }
++  for (const record of records) {
++    const schemaName = record.name;
++    const composition = record.composition;
++    if (composition) await writeJson(path.join(outputRoot, schemaName, 'composition.json'), record);
+     for (const framework of FRAMEWORKS) {
+       const startedAt = new Date().toISOString();
+       const result = await generate({
+@@ -582,6 +635,7 @@ export async function runLiveGenerationOnly({
+         'live-generation', schemaName, framework, 'generation.log',
+       ));
+       await fsp.writeFile(path.join(cellRoot, sourceFileName), source);
++      await writeJson(path.join(cellRoot, 'artifact.json'), artifact);
+       const fingerprint = {
+         handler: 'code.generate' as const,
+         invocation: 'live-in-process' as const,
+@@ -591,7 +645,7 @@ export async function runLiveGenerationOnly({
+         generatedAt: startedAt,
+       };
+       const interaction = deriveInteraction(record.schema, artifact.actions);
+-      const model = deriveConsumerModel(record.schema, MODEL);
++      const model = deriveConsumerModel(record.schema, composition ? {} : MODEL);
+       const ownership = sourceOwnership(source, file.path, artifact.actions, {}, interaction);
+       assertGeneratedOwnership(ownership, schemaName, framework);
+       await writeLog(path.join(artifactRoot, generationLog), [
+@@ -613,6 +667,8 @@ export async function runLiveGenerationOnly({
+         mission,
+         schema: schemaName,
+         schemaRef: record.schemaRef,
++        sourceSchema: record.schema,
++        ...(composition ? { composition } : {}),
+         ...(record.derivation ? { derivation: record.derivation } : {}),
+         framework,
+         status: 'passed',
+@@ -629,11 +685,12 @@ export async function runLiveGenerationOnly({
+     }
+   }
+ 
+-  const publicCells = cells.map(({ artifact: _artifact, source: _source, ...cell }) => cell);
++  const publicCells = cells.map(({ artifact: _artifact, source: _source, sourceSchema: _schema, ...cell }) => cell);
+   const report = {
+     schemaVersion: '1.0.0',
+     mission,
+-    schemaStore,
++    schemaStore: freshInputs ? null : schemaStore,
++    ...(freshInputs ? { freshInputs } : {}),
+     kind: 'live-code-generate-fingerprint',
+     status: 'passed',
+     handler: 'code.generate',
+@@ -1053,6 +1110,8 @@ async function browserProof({
+   expectedComponents,
+   interaction,
+   boundFieldProbe,
++  valueProbes = [],
++  viewport = { width: 1280, height: 800 },
+   mountObligations,
+ }: {
+   framework: S184M06Framework;
+@@ -1063,13 +1122,15 @@ async function browserProof({
+   expectedComponents: string[];
+   interaction: ConsumerInteraction;
+   boundFieldProbe: BoundFieldProbe | null;
++  valueProbes?: ValueProbe[];
++  viewport?: { width: number; height: number };
+   mountObligations: MountObligation[];
+ }): Promise<Record<string, unknown>> {
+   const { chromium } = await import('playwright');
+   const browser = await chromium.launch({ headless: true });
+   try {
+     return await withStaticServer(distRoot, async (url) => {
+-      const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
++      const page = await browser.newPage({ viewport });
+       const runtimeErrors: string[] = [];
+       page.on('pageerror', (error) => runtimeErrors.push(error.message));
+       page.on('console', (message) => {
+@@ -1103,6 +1164,14 @@ async function browserProof({
+           everyCapturedNode: proofWindow.__OODS_SSR_NODES__.every((node) => document.getElementById('app')!.contains(node)),
+         };
+       });
++      const boundValues = [];
++      for (const probe of valueProbes) {
++        const owner = page.locator(selectorForNode(probe.nodeId));
++        const visible = await owner.isVisible();
++        const actual = probe.kind === 'numeric-input' ? await owner.inputValue()
++          : probe.kind === 'status' ? await owner.locator('[data-timeline-current]').textContent() : await owner.textContent();
++        boundValues.push({ ...probe, actual, visible, passed: visible && actual?.trim() === probe.expected });
++      }
+       const interactionEvidence: Record<string, unknown> = { ...interaction, status: 'unproven' };
+       let selectedSelector: string | null = interaction.kind === 'none' ? null : interaction.selector;
+       let selectorCount = 0;
+@@ -1184,6 +1253,21 @@ async function browserProof({
+           if (disabledControls.some(({ passed }) => !passed)) throw new Error('Declared empty pagination controls were not visible, disabled, and inert.');
+           interactionEvidence.status = 'not-applicable';
+         }
++        const numericUpdates = [];
++        for (const probe of valueProbes.filter((entry) => entry.kind === 'numeric-input' && entry.editable)) {
++          const control = page.locator(selectorForNode(probe.nodeId));
++          const values = [];
++          for (const next of ['7', '0']) {
++            await control.fill(next);
++            await control.blur();
++            values.push({ expected: next, actual: await control.inputValue() });
++          }
++          numericUpdates.push({ nodeId: probe.nodeId, values, passed: values.every(({ expected, actual }) => expected === actual) });
++        }
++        if (numericUpdates.length) {
++          Object.assign(interactionEvidence, { numericUpdates, numericScope: 'generated local numeric editor state; no application filtering is claimed' });
++          eventHandlerAttached = eventHandlerAttached && numericUpdates.every(({ passed }) => passed);
++        }
+         if (boundFieldProbe) {
+           const control = page.locator(selectorForNode(boundFieldProbe.writerId));
+           const heading = page.locator(selectorForNode(boundFieldProbe.readerId)).locator('h1,h2,h3,h4,h5,h6');
+@@ -1268,6 +1352,8 @@ async function browserProof({
+       return {
+         framework,
+         schema: schemaName,
++        boundValues,
++        viewport,
+         mount: rootCount === 1 ? 'passed' : 'failed',
+         rootId,
+         rootCount,
+@@ -1513,7 +1599,7 @@ export async function runLiveConsumerCell({
+   schemaStore?: string;
+ }): Promise<Record<string, unknown>> {
+   const { schema: schemaName, framework, artifact, source } = generation;
+-  const schema = savedSchema(schemaName, schemaStore).schema;
++  const schema = generation.sourceSchema ?? savedSchema(schemaName, schemaStore).schema;
+   const interaction = generation.interaction ?? deriveInteraction(schema, artifact.actions);
+   const model = generation.model ?? deriveConsumerModel(schema, MODEL);
+   const mountObligations = deriveMountObligations(schema, source);
+@@ -1752,6 +1838,11 @@ export async function runLiveConsumerCell({
+       expectedComponents: mountedExpectedComponents,
+       interaction,
+       boundFieldProbe: deriveBoundFieldProbe(schema),
++      valueProbes: generation.composition ? deriveValueProbes(schema, model) : [],
++      // Fresh User/detail has eight tabs. At 1280px the intentional overflow
++      // effect removes tab buttons after attachment, outside this strict stable
++      // DOM hydration probe. Keep this proof at an explicit wide desktop size.
++      ...(generation.composition ? { viewport: { width: 1920, height: 1080 } } : {}),
+       mountObligations,
+     });
+     await writeLog(path.join(logRoot, 'browser-proof.log'), canonicalJson(browser));
+@@ -1765,9 +1856,10 @@ export async function runLiveConsumerCell({
+     const componentCounts = browser.componentCounts as Record<string, number>;
+     const missingComponents = mountedExpectedComponents.filter((name) => (componentCounts[name] ?? 0) < 1);
+     const labelVisibility = browser.labelVisibility as Array<{ passed: boolean }>;
++    const boundValues = browser.boundValues as Array<{ passed: boolean }>;
+     const requiredMounts = browser.requiredMounts as Array<{ passed: boolean }>;
+     if (browser.mount !== 'passed' || missingComponents.length > 0 || labelVisibility.some(({ passed }) => !passed)
+-      || requiredMounts.some(({ passed }) => !passed)) {
++      || boundValues.some(({ passed }) => !passed) || requiredMounts.some(({ passed }) => !passed)) {
+       throw new Error(`${schemaName}/${framework}: mount failed or omitted ${missingComponents.join(', ')}.`);
+     }
+     passGate(rows, activeGate, {
+@@ -1777,6 +1869,7 @@ export async function runLiveConsumerCell({
+       generatedCoreComponents: coreComponents,
+       generatedPortedComponents: portedComponents,
+       labelVisibility,
++      boundValues,
+       requiredMounts,
+     });
+ 
+@@ -1832,6 +1925,7 @@ export async function runLiveConsumerCell({
+       reportPath: toPosix(path.join(cellRelative, 'report.json')),
+       schema: schemaName,
+       schemaRef: generation.schemaRef,
++      ...(generation.composition ? { composition: generation.composition } : {}),
+     ...(generation.derivation ? { derivation: generation.derivation } : {}),
+       framework,
+       status: 'passed',
+@@ -1877,6 +1971,7 @@ export async function runLiveConsumerCell({
+       reportPath: toPosix(path.join(cellRelative, 'report.json')),
+       schema: schemaName,
+       schemaRef: generation.schemaRef,
++      ...(generation.composition ? { composition: generation.composition } : {}),
+     ...(generation.derivation ? { derivation: generation.derivation } : {}),
+       framework,
+       status: 'failed',
+@@ -1931,7 +2026,8 @@ export async function runLiveWorkflowProof({
+   artifactRoot,
+   generate = codeGenerate,
+   tarballs,
+-  schemaNames = SCHEMA_NAMES,
++  schemaNames,
++  freshInputs,
+   mission = 's184-m06',
+   schemaStore = SAVED_SCHEMA_STORE,
+ }: {
+@@ -1939,6 +2035,7 @@ export async function runLiveWorkflowProof({
+   generate?: LiveGenerator;
+   tarballs?: PackedPackageRecord[];
+   schemaNames?: readonly S184M06SchemaName[];
++  freshInputs?: readonly FreshCompositionInput[];
+   mission?: string;
+   schemaStore?: string;
+ }): Promise<{
+@@ -1948,12 +2045,14 @@ export async function runLiveWorkflowProof({
+   tarballs: PackedPackageRecord[];
+ }> {
+   if (!artifactRoot) throw new Error('artifactRoot is required.');
+-  assertSchemaSelection(schemaNames);
++  if (freshInputs && (schemaNames || schemaStore !== SAVED_SCHEMA_STORE)) throw new Error('Fresh inputs and saved-store selection are mutually exclusive.');
++  if (!freshInputs) assertSchemaSelection(schemaNames ?? SCHEMA_NAMES);
++  const schemaCount = freshInputs?.length ?? (schemaNames ?? SCHEMA_NAMES).length;
+   await mkdirAbsent(artifactRoot);
+   const submittedTarballs = tarballs ?? await packFoundationPackages(artifactRoot) as PackedPackageRecord[];
+   // Packing runs each package's prepack build. Generate only after that coherent
+   // build boundary so target-readiness never observes a half-written dist tree.
+-  const generation = await runLiveGenerationOnly({ artifactRoot, generate, schemaNames, mission, schemaStore });
++  const generation = await runLiveGenerationOnly({ artifactRoot, generate, schemaNames, freshInputs, mission, schemaStore });
+   const cellReports = [];
+   for (const generationCell of generation.cells) {
+     cellReports.push(await runLiveConsumerCell({
+@@ -1971,6 +2070,7 @@ export async function runLiveWorkflowProof({
+     return {
+       schema,
+       schemaRef: cell.schemaRef,
++      ...(cell.composition ? { composition: cell.composition } : {}),
+       ...(cell.derivation ? { derivation: cell.derivation } : {}),
+       framework,
+       status: cell.status,
+@@ -1993,9 +2093,10 @@ export async function runLiveWorkflowProof({
+   const report = {
+     schemaVersion: '1.0.0',
+     mission,
+-    schemaStore,
++    schemaStore: freshInputs ? null : schemaStore,
++    ...(freshInputs ? { freshInputs } : {}),
+     kind: 'live-schema-workflow-clean-consumer-proof',
+-    status: passed + notApplicable === selected && selected === schemaNames.length * FRAMEWORKS.length * GATE_NAMES.length
++    status: passed + notApplicable === selected && selected === schemaCount * FRAMEWORKS.length * GATE_NAMES.length
+       ? 'passed'
+       : 'failed',
+     selected,
+@@ -2004,11 +2105,11 @@ export async function runLiveWorkflowProof({
+     applicable: selected - notApplicable,
+     failed: selected - passed - notApplicable,
+     skipped: 0,
+-    schemaCount: schemaNames.length,
++    schemaCount: schemaCount,
+     frameworkCount: FRAMEWORKS.length,
+     cellCount: publicCells.length,
+-    expectedCellCount: schemaNames.length * FRAMEWORKS.length,
+-    equalityRule: 'Every selected immutable saved schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.',
++    expectedCellCount: schemaCount * FRAMEWORKS.length,
++    equalityRule: 'Every selected unchanged saved or freshly composed schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.',
+     generationPolicy: 'code.generate is invoked live once per schema/framework cell and only that in-run artifact is consumed.',
+     consumerPolicy: 'Consumers are outside the workspace, begin without node_modules, use empty npm configs, and install OODS packages only from exact tarballs produced by npm pack after each package prepack build.',
+     logPathPolicy: 'Every gate log path is relative to this report artifact root, including paths repeated in nested cell reports.',
+diff --git a/scripts/product-reality/s185-m04-consumer-contract.ts b/scripts/product-reality/s185-m04-consumer-contract.ts
+index c8d10502..5753bc05 100644
+--- a/scripts/product-reality/s185-m04-consumer-contract.ts
++++ b/scripts/product-reality/s185-m04-consumer-contract.ts
+@@ -56,6 +56,30 @@ export function schemaNodes(schema: UiSchema): UiElement[] {
+ export const selectorForNode = (id: string): string => `[id=${JSON.stringify(id)}]`;
+ const camel = (name: string) => name.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+ 
++export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' | 'boolean-text' | 'status'; expected: string; editable: boolean };
++
++/** Repaired bindings must visibly represent the supplied datum, including zero and false. */
++export function deriveValueProbes(schema: UiSchema, model: Record<string, unknown>): ValueProbe[] {
++  return schemaNodes(schema).flatMap((node): ValueProbe[] => {
++    const field = node.props?.field;
++    if (typeof field !== 'string') return [];
++    const entry = schema.objectSchema?.[field];
++    const value = model[camel(field)];
++    const base = { nodeId: node.id, field, editable: false };
++    if (node.component === 'Input' && node.props?.type === 'number' && ['integer', 'number'].includes(entry?.type ?? '')) {
++      return [{ ...base, kind: 'numeric-input', expected: String(value ?? ''), editable: !!node.bindings?.onChange }];
++    }
++    if (node.component === 'Text' && entry?.type === 'boolean') {
++      return [{ ...base, kind: 'boolean-text', expected: value == null ? '' : value ? 'Yes' : 'No' }];
++    }
++    if (node.component === 'StatusTimeline' && typeof value === 'string') {
++      const label = value.split(/[_-]/).filter(Boolean).map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1)).join(' ');
++      return [{ ...base, kind: 'status', expected: `Current status: ${label}` }];
++    }
++    return [];
++  });
++}
++
+ export type MountObligation = { nodeId: string; component: string; requiredInitially: boolean; reason?: string };
+ 
+ /** Canonical emitted ids/markers define the obligations; SSR output cannot erase them. */
+diff --git a/scripts/product-reality/s185-m04-live-consumers.ts b/scripts/product-reality/s185-m04-live-consumers.ts
+index 863206a9..294009a1 100644
+--- a/scripts/product-reality/s185-m04-live-consumers.ts
++++ b/scripts/product-reality/s185-m04-live-consumers.ts
+@@ -7,6 +7,7 @@ import {
+   runLiveGenerationOnly,
+   runLiveWorkflowProof,
+   type S184M06SchemaName,
++  type FreshCompositionInput,
+ } from './s184-m06-live-consumers.js';
+ import { S185_SCHEMA_NAMES, S186_SCHEMA_NAMES } from './s185-m04-consumer-contract.js';
+ 
+@@ -18,7 +19,7 @@ export async function runS185M04LiveConsumers(
+   options: Omit<Parameters<typeof runLiveWorkflowProof>[0], 'mission'> & { mission?: string },
+ ) {
+   const { mission = 's185-m04', ...rest } = options;
+-  return runLiveWorkflowProof({ ...rest, mission, schemaNames: options.schemaNames ?? S185_ALL_SCHEMA_NAMES });
++  return runLiveWorkflowProof({ ...rest, mission, schemaNames: options.schemaNames ?? (options.freshInputs ? undefined : S185_ALL_SCHEMA_NAMES) });
+ }
+ 
+ async function main() {
+@@ -27,22 +28,31 @@ async function main() {
+   let generationOnly = false;
+   let mission = 's185-m04';
+   let schemaStore: string | undefined;
+-  let schemaNames: readonly S184M06SchemaName[] = S185_ALL_SCHEMA_NAMES;
++  let schemaNames: readonly S184M06SchemaName[] | undefined;
++  let freshInputs: FreshCompositionInput[] | undefined;
+   for (let index = 0; index < args.length; index += 1) {
+     if (args[index] === '--generation-only') generationOnly = true;
+     else if (args[index] === '--output' && args[index + 1]) artifactRoot = path.resolve(args[++index]!);
+     else if (args[index] === '--mission' && args[index + 1]) mission = args[++index]!;
+     else if (args[index] === '--store' && args[index + 1]) schemaStore = args[++index]!;
+-    else if (args[index] === '--schemas' && args[index + 1]) {
++    else if (args[index] === '--fresh' && args[index + 1]) {
++      freshInputs = args[++index]!.split(',').map((value) => {
++        const parts = value.split('/');
++        if (parts.length !== 2) throw new Error('--fresh requires Object/context operands.');
++        return { object: parts[0]!, context: parts[1]! as FreshCompositionInput['context'] };
++      });
++    } else if (args[index] === '--schemas' && args[index + 1]) {
+       const selected = args[++index]!.split(',');
+-      if (!selected.length || selected.some((name) => !S186_ALL_SCHEMA_NAMES.includes(name as S184M06SchemaName))
++      if (!selected.length || selected.some((name) => !S186_ALL_SCHEMA_NAMES.some((available) => available === name))
+         || new Set(selected).size !== selected.length) throw new Error('--schemas requires distinct saved schema names from the supported corpus.');
+       schemaNames = selected as S184M06SchemaName[];
+     } else throw new Error(`Unknown or incomplete argument: ${args[index]}`);
+   }
++  if (freshInputs && (schemaNames || schemaStore)) throw new Error('--fresh cannot be combined with --schemas or --store.');
++  schemaNames = freshInputs ? undefined : schemaNames ?? S185_ALL_SCHEMA_NAMES;
+   const result = generationOnly
+-    ? await runLiveGenerationOnly({ artifactRoot, schemaNames, mission, ...(schemaStore ? { schemaStore } : {}) })
+-    : await runS185M04LiveConsumers({ artifactRoot, schemaNames, mission, ...(schemaStore ? { schemaStore } : {}) });
++    ? await runLiveGenerationOnly({ artifactRoot, schemaNames, freshInputs, mission, ...(schemaStore ? { schemaStore } : {}) })
++    : await runS185M04LiveConsumers({ artifactRoot, schemaNames, freshInputs, mission, ...(schemaStore ? { schemaStore } : {}) });
+   process.stdout.write(`${JSON.stringify(result.report, null, 2)}\n`);
+ }
+ 

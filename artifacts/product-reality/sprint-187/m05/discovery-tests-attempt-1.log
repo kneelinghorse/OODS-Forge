@@ -1,0 +1,67 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/catalog.list.spec.ts (30 tests | 1 failed) 3298ms
+   ✓ catalog.list > validates schema contracts 116ms
+   ✓ catalog.list > should return component catalog 8ms
+   ✓ catalog.list > B-02 derives the catalog count from unique row IDs instead of stale stats 10ms
+   ✓ catalog.list > exposes accepted retain-109 scope without turning historical proposals into exclusions 17ms
+   × catalog.list > keeps HTML-stable discovery distinct from actual target readiness and unverified maturity 31ms
+     → expected '[{"code":"OODS-N015","message":"Compo…' to contain 'OODS-V119'
+   ✓ catalog.list > passes additive target-specific product reality through summary output 7ms
+   ✓ catalog.list > should default to summary mode with pagination for unfiltered calls 7ms
+   ✓ catalog.list > should allow explicit full detail without default pagination  348ms
+   ✓ catalog.list > should paginate when page/pageSize are provided 18ms
+   ✓ catalog.list > should include component properties 7ms
+   ✓ catalog.list > should filter by category  442ms
+   ✓ catalog.list > includes filteredCount in stats when filters are active 176ms
+   ✓ catalog.list > should filter by trait 168ms
+   ✓ catalog.list > suggests traits when a trait filter returns zero results 241ms
+   ✓ catalog.list > should filter by context 245ms
+   ✓ catalog.list > should return totalCount matching filtered results 235ms
+   ✓ catalog.list > deduplicates trait names per component  334ms
+   ✓ catalog.list > should include propSchema for components with traits 14ms
+   ✓ catalog.list > should have valid structure for propSchema entries 9ms
+   ✓ catalog.list > surfaces real content props in propSchema for primitive components (Workbench signal) 35ms
+   ✓ catalog.list > advertised primitive content props actually render (parity guard vs renderer drift) 5ms
+   ✓ catalog.list > should have valid structure for slots 10ms
+   ✓ catalog.list > indexes only explicit Storybook parameters.oodsComponentId(s) 7ms
+   ✓ catalog.list > should prefer code-connect snippets when available 17ms
+   ✓ catalog.list > every component has a non-empty status field 10ms
+   ✓ catalog.list > documents legacy status as static HTML-renderer-only 1ms
+   ✓ catalog.list > filters by status=stable  351ms
+   ✓ catalog.list > keeps the legacy status census scoped to the 98 mapped / 11 fallback HTML surface  400ms
+   ✓ catalog.list > all 4 Communicable components have stable status 11ms
+   ✓ catalog.list > status filter validates in input schema 1ms
+ ✓ src/tools/schema.group.test.ts (26 tests) 22ms
+ ✓ src/tools/schema/__tests__/schema-tools.test.ts (7 tests) 410ms
+   ✓ schema tool handlers > integration lifecycle compose -> save -> list -> load -> validate -> delete  337ms
+ ✓ test/contracts/structuredData.fetch.spec.ts (11 tests) 73ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/catalog.list.spec.ts > catalog.list > keeps HTML-stable discovery distinct from actual target readiness and unverified maturity
+AssertionError: expected '[{"code":"OODS-N015","message":"Compo…' to contain 'OODS-V119'
+
+Expected: "OODS-V119"
+Received: "[{"code":"OODS-N015","message":"Component ArchiveEvent is not emission-eligible for react; evidence state: unavailable.","nodeId":"discovery-probe","component":"ArchiveEvent"}]"
+
+ ❯ test/contracts/catalog.list.spec.ts:128:73
+    126|         const result = await generate({ framework: target, profile: 'b…
+    127|         expect(result.status, JSON.stringify(result.errors)).toBe(expe…
+    128|         if (expected === 'error') expect(JSON.stringify(result.errors)…
+       |                                                                         ^
+    129|       }
+    130|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 73 passed (74)
+   Start at  21:59:23
+   Duration  9.93s (transform 1.58s, setup 122ms, collect 3.50s, tests 3.80s, environment 1ms, prepare 843ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/catalog.list.spec.ts test/contracts/structuredData.fetch.spec.ts src/tools/schema.group.test.ts src/tools/schema/__tests__/schema-tools.test.ts --maxWorkers=2

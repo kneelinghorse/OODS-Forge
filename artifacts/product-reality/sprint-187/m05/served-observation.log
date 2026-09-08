@@ -1,0 +1,51 @@
+node:internal/child_process:1120
+    result.error = new ErrnoException(result.error, 'spawnSync ' + options.file);
+                   ^
+
+<ref *1> Error: spawnSync git ENOBUFS
+    at Object.spawnSync (node:internal/child_process:1120:20)
+    at spawnSync (node:child_process:910:24)
+    at execFileSync (node:child_process:953:15)
+    at file:///Users/systemsystems/.codex/worktrees/s187/OODS-Forge/artifacts/product-reality/sprint-187/m05/observe-served.mjs:32:382
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  errno: -55,
+  code: 'ENOBUFS',
+  syscall: 'spawnSync git',
+  path: 'git',
+  spawnargs: [ 'diff', 'HEAD', '--binary' ],
+  error: [Circular *1],
+  status: null,
+  signal: 'SIGTERM',
+  output: [
+    null,
+    Buffer(1114112) [Uint8Array] [
+      100, 105, 102, 102,  32,  45,  45, 103, 105, 116,  32,  97,
+       47,  99, 109, 111, 115,  47, 100,  98,  47, 115, 110,  97,
+      112, 115, 104, 111, 116, 115,  47, 115, 110,  97, 112, 115,
+      104, 111, 116,  45,  50,  48,  50,  54,  48,  51,  49,  49,
+       84,  49,  53,  50,  49,  50,  50,  48,  52,  53,  90,  45,
+       97,  55, 100,  48,  46, 115, 113, 108, 105, 116, 101,  32,
+       98,  47,  99, 109, 111, 115,  47, 100,  98,  47, 115, 110,
+       97, 112, 115, 104, 111, 116, 115,  47, 115, 110,  97, 112,
+      115, 104, 111, 116,
+      ... 1114012 more items
+    ],
+    Buffer(0) [Uint8Array] []
+  ],
+  pid: 35724,
+  stdout: Buffer(1114112) [Uint8Array] [
+    100, 105, 102, 102,  32,  45,  45, 103, 105, 116,  32,  97,
+     47,  99, 109, 111, 115,  47, 100,  98,  47, 115, 110,  97,
+    112, 115, 104, 111, 116, 115,  47, 115, 110,  97, 112, 115,
+    104, 111, 116,  45,  50,  48,  50,  54,  48,  51,  49,  49,
+     84,  49,  53,  50,  49,  50,  50,  48,  52,  53,  90,  45,
+     97,  55, 100,  48,  46, 115, 113, 108, 105, 116, 101,  32,
+     98,  47,  99, 109, 111, 115,  47, 100,  98,  47, 115, 110,
+     97, 112, 115, 104, 111, 116, 115,  47, 115, 110,  97, 112,
+    115, 104, 111, 116,
+    ... 1114012 more items
+  ],
+  stderr: Buffer(0) [Uint8Array] []
+}
+
+Node.js v24.6.0

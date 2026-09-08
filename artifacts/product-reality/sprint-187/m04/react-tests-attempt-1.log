@@ -1,0 +1,71 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-react
+
+ ✓ test/scenarios.spec.tsx (65 tests) 1841ms
+ ✓ test/accessibility.spec.tsx (32 tests) 2382ms
+   ✓ @oods/components-react accessibility > passes axe for the AddressCollectionPanel shared scenario with visible text semantics  579ms
+ ✓ test/breadth.s186.spec.tsx (25 tests) 824ms
+ ✓ test/interactions.spec.tsx (5 tests) 772ms
+   ✓ @oods/components-react interactions > B-07 moves React Tabs selection and focus with ArrowRight  324ms
+ ✓ test/ported-scenarios.spec.tsx (10 tests) 822ms
+ ✓ test/ported-accessibility.spec.tsx (2 tests) 822ms
+   ✓ @oods/components-react ported accessibility > passes automated axe for all eight ported roots  730ms
+ ✓ test/breadth.s185.spec.tsx (35 tests) 791ms
+   ✓ Sprint 185 React component breadth > uses real default headings and lets as take precedence over level  328ms
+ ❯ test/breadth.s187.spec.tsx (16 tests | 1 failed) 335ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell preserves alias precedence, truncation edge cases and authored override 81ms
+   ✓ Sprint 187 naming and classification semantics > InlineLabel preserves alias precedence, truncation edge cases and authored override 12ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell keeps supporting aliases and defaults truncation to forty characters 5ms
+   ✓ Sprint 187 naming and classification semantics > FormLabelGroup preserves native association and hint precedence around children 3ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationBadge exposes classification status and honors authored labels 3ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationEditor labels native editable controls but prevents unwired submission 80ms
+   ✓ Sprint 187 ownership and summary semantics > OwnerBadge preserves principal aliases, status metadata and authored precedence 13ms
+   ✓ Sprint 187 ownership and summary semantics > OwnershipSummary associates owner data with terms and consumes role as data, not ARIA 35ms
+   ✓ Sprint 187 ownership and summary semantics > OwnershipMeta keeps literal term separators and lets authored children replace its entire body 2ms
+   ✓ Sprint 187 ownership and summary semantics > TagSummary preserves zero counts and scalar text, and shows the trait array using existing tag normalization 18ms
+   ✓ Sprint 187 lifecycle and financial semantics > ArchivePill keeps false/true, absent aliases and authored content distinct 29ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationBadge keeps false/true, absent aliases and authored content distinct 9ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationBadge uses isCancelled as status only without inventing a label 2ms
+   ✓ Sprint 187 lifecycle and financial semantics > ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics 6ms
+   ✓ Sprint 187 lifecycle and financial semantics > PriceCardMeta retains model/interval precedence and literal inline labels 3ms
+   × Sprint 187 lifecycle and financial semantics > CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission 32ms
+     → expected <option value></option> to have a length of +0 but got 1
+ ✓ test/contract-amendments.s184.spec.tsx (3 tests) 345ms
+   ✓ Sprint 184 React contract amendments > renders Select.placeholder as the disabled empty-value choice  331ms
+ ✓ test/badge-tone.s185.spec.tsx (4 tests) 82ms
+ ✓ test/table-empty.s184.spec.tsx (1 test) 106ms
+ ✓ test/package-contract.spec.ts (3 tests) 77ms
+ ✓ test/ported-package-contract.spec.ts (4 tests) 20ms
+ ✓ test/ssr.spec.tsx (1 test) 91ms
+ ✓ test/ported-ssr.spec.tsx (1 test) 41ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/breadth.s187.spec.tsx > Sprint 187 lifecycle and financial semantics > CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission
+AssertionError: expected <option value></option> to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ test/breadth.s187.spec.tsx:169:96
+    167|     expect([...defaults.querySelectorAll('option')].map((node) => node…
+    168|     expect(defaults.querySelector<HTMLTextAreaElement>('textarea')?.va…
+    169|     expect(mountFamily('CancellationForm', { allowedReasons: [] }).que…
+       |                                                                                                ^
+    170|     expect(mountFamily('CancellationForm', {}, 'Authored').querySelect…
+    171|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 14 passed (15)
+      Tests  1 failed | 206 passed (207)
+   Start at  20:52:57
+   Duration  23.48s (transform 2.70s, setup 0ms, collect 11.90s, tests 9.35s, environment 15.52s, prepare 2.75s)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-react:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config vitest.config.ts --maxWorkers=2

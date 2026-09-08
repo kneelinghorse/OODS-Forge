@@ -489,6 +489,74 @@ describe('@oods/components-react shared scenarios', () => {
           expect(component?.querySelector('[data-timeline-empty]')?.textContent).toBe('No events');
           break;
         }
+        case 'label-cell-truncation-and-description': {
+          expect(component?.querySelector('[data-oods-label-cell-primary]')?.textContent).toBe('Long pr...');
+          expect(component?.querySelector('[data-oods-label-cell-description]')?.textContent).toBe('Long su...');
+          break;
+        }
+        case 'inline-label-truncation': {
+          expect(component?.textContent).toBe('Long in...');
+          break;
+        }
+        case 'form-label-group-association': {
+          expect(component?.getAttribute('for')).toBe('product-name');
+          expect(component?.querySelector('[data-oods-form-label]')?.textContent).toBe('Product name');
+          expect(component?.querySelector('[data-oods-form-hint]')?.textContent).toBe('Name shown to customers');
+          break;
+        }
+        case 'classification-badge-category': {
+          expect(component?.querySelector('[data-oods-badge-label]')?.textContent).toBe('Electronics');
+          expect(component?.getAttribute('data-badge-status')).toBe('strict');
+          expect(component?.getAttribute('data-badge-variant')).toBe('classification');
+          break;
+        }
+        case 'classification-editor-presentational-controls': {
+          expect(component?.querySelector('h3')?.textContent).toBe('Product classification');
+          expect((component?.querySelector('[name="category"]') as HTMLInputElement).value).toBe('Electronics');
+          expect((component?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
+          expect((component?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
+          break;
+        }
+        case 'owner-badge-principal': {
+          expect(component?.textContent).toBe('user-7');
+          expect(component?.getAttribute('data-badge-variant')).toBe('owner');
+          break;
+        }
+        case 'ownership-summary-terms': {
+          expect(component?.querySelector('h3')?.textContent).toBe('Ownership Summary');
+          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['user-7', 'person', 'administrator']);
+          expect(component?.hasAttribute('role')).toBe(false);
+          break;
+        }
+        case 'ownership-meta-inline-terms': {
+          expect(component?.querySelector('[data-meta-title]')?.textContent).toBe('Ownership');
+          expect([...component!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
+          expect(component?.hasAttribute('role')).toBe(false);
+          break;
+        }
+        case 'tag-summary-zero-and-tags': {
+          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);
+          break;
+        }
+        case 'archive-pill-false':
+        case 'cancellation-badge-false': {
+          expect(component?.textContent).toBe('false');
+          expect(component?.getAttribute('data-badge-status')).toBe('false');
+          break;
+        }
+        case 'archive-summary-false-and-reason': {
+          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+          break;
+        }
+        case 'cancellation-form-presentational-controls': {
+          expect(component?.querySelector<HTMLSelectElement>('select[name="reasonCode"]')?.value).toBe('budget');
+          expect(component?.querySelector<HTMLTextAreaElement>('textarea[name="reason"]')?.value).toBe('Costs changed');
+          break;
+        }
+        case 'price-card-meta-inline-terms': {
+          expect([...component!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Model: flat', 'Interval: monthly']);
+          break;
+        }
         default:
           throw new Error(`Missing executable React assertion for ${scenario.id}`);
       }

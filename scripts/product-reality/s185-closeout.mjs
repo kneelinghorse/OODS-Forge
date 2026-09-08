@@ -6,7 +6,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { deriveSuiteAccounting } from './s185-suite-accounting.mjs';
-import { PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
+import { PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE } from './s185-sprint-wide-movers.mjs';
 import { isTestPath } from './s184-m07-reconnect.mjs';
 
 export const OUTPUT_ROOT = 'artifacts/product-reality/sprint-185/m05/closeout';
@@ -40,7 +40,7 @@ function safePath(file) {
 /** Compare actual public bytes using the mover derivation's test exclusions. */
 export function derivePublicHeadEquivalence({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {
   assert(fullHead(implementationHead) && fullHead(executionHead), 'Public comparison requires full actual commit SHAs.');
-  const scope = sprintId === 'sprint-186' ? S186_PUBLIC_RUNTIME_SCOPE : PUBLIC_RUNTIME_SCOPE;
+  const scope = sprintId === 'sprint-187' ? S187_PUBLIC_RUNTIME_SCOPE : sprintId === 'sprint-186' ? S186_PUBLIC_RUNTIME_SCOPE : PUBLIC_RUNTIME_SCOPE;
   execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
   // Disable rename folding so moving runtime source into a test path still
   // exposes the removed runtime path before test-only changes are excluded.
@@ -55,16 +55,17 @@ export function derivePublicHeadEquivalence({ root, implementationHead, executio
 /** Pure derivation over explicitly supplied frozen bytes; no working-tree fallback. */
 export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence, finalAudit }) {
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Both full execution and review commit SHAs are required.');
+  const fresh = manifest.missionId === 's187-m06';
   const wave2 = manifest.missionId === 's186-m06';
-  const missionId = wave2 ? 's186-m06' : 's185-m05';
-  const sprintId = wave2 ? 'sprint-186' : 'sprint-185';
-  const criterionCount = wave2 ? 6 : 8;
-  const suiteCriterion = wave2 ? 4 : 6;
+  const missionId = fresh ? 's187-m06' : wave2 ? 's186-m06' : 's185-m05';
+  const sprintId = fresh ? 'sprint-187' : wave2 ? 'sprint-186' : 'sprint-185';
+  const criterionCount = fresh ? 7 : wave2 ? 6 : 8;
+  const suiteCriterion = fresh ? 5 : wave2 ? 4 : 6;
   const outputPaths = Object.fromEntries(Object.entries(OUTPUT_PATHS).map(([key, file]) => [key,
-    wave2 ? file.replace('sprint-185/m05', 'sprint-186/m06') : file]));
-  const requiredSources = wave2 ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'unionFold', 'baselineFold', 'movers',
+    fresh ? file.replace('sprint-185/m05', 'sprint-187/m06') : wave2 ? file.replace('sprint-185/m05', 'sprint-186/m06') : file]));
+  const requiredSources = fresh ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'freshCensus', 'cohort', 'liveConsumers', 'savedOriginal', 'savedSuccessor', 'savedCompatibility', 'rootEvidence', 'baselineFold', 'movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries', 'near'] : wave2 ? ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'unionFold', 'baselineFold', 'movers',
     'moversDeclaration', 'noticePlan', 'deliveries', 'near'] : mandatorySources;
-  const requiredByCriterion = wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
+  const requiredByCriterion = fresh ? [['freshCensus'], ['cohort', 'liveConsumers'], ['savedOriginal', 'savedSuccessor', 'savedCompatibility'], ['rootEvidence', 'baselineFold'], ['movers', 'moversDeclaration', 'noticePlan', 'deliveries', 'carries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : wave2 ? [['unionFold'], ['baselineFold'], ['movers', 'moversDeclaration'],
     ['movers', 'noticePlan', 'deliveries'], [], ['cmosMission', 'cmosOriginalMission', 'cmosSprint', 'near']] : criterionSources;
   assert.equal(manifest.missionId, missionId);
   assert(!Object.hasOwn(manifest, 'criteria') && !Object.hasOwn(manifest, 'claims'), 'Criterion text and outcomes cannot be supplied by the manifest.');
@@ -148,7 +149,145 @@ export function deriveCloseout({ executionHead, reviewHead, manifest, readFrozen
   const implementationHead = documents.noticePlan.implementationHead;
   const captureIds = suiteAccounting.closeout?.runs?.[0]?.suiteExecutionIds ?? [];
   const captureRows = captureIds.map(id => executions.get(id));
-  if (wave2) {
+  if (fresh) {
+    const base = '21c7c31906fbb81d049b943155c64ed78409fb9f';
+    const expectedPaths = ['User/detail', 'Product/detail', 'Usage/list', 'Subscription/inline', 'Transaction/timeline',
+      'Product/list', 'Product/form', 'Product/inline', 'Organization/list', 'Organization/detail', 'Organization/card',
+      'Subscription/detail', 'Subscription/form', 'Subscription/card'];
+    const frameworks = ['react', 'vue'];
+    const contexts = ['detail', 'list', 'form', 'timeline', 'card', 'inline'];
+    const objects = ['Article', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Subscription', 'Transaction', 'Usage', 'User'];
+    const array = (source, name) => [...(source.match(new RegExp(`export const ${name} = \\[([\\s\\S]*?)\\] as const`))?.[1] ?? '').matchAll(/'([^']+)'/g)].map(match => match[1]);
+    const typesPath = 'packages/component-contracts/src/types.ts';
+    const ids = array(text(typesPath), 'NUCLEUS_COMPONENT_IDS');
+    const priorIds = array(Buffer.from(readHistorical(base, typesPath)).toString('utf8'), 'NUCLEUS_COMPONENT_IDS');
+    const added = ids.filter(id => !priorIds.includes(id));
+    const census = documents.freshCensus;
+    const population = objects.flatMap(object => contexts.map(context => `${object}/${context}`)).sort();
+    check(0, census.head === implementationHead && census.profile === 'build' && census.schemaCount === 66 && census.greenSchemas === 66
+      && census.generationCells === 132 && census.greenCells === 132 && census.governedComponentCount === 64
+      && equal(census.objects, objects) && equal(census.contexts, contexts)
+      && equal(census.rows.map(row => `${row.input.object}/${row.input.context}`).sort(), population)
+      && census.rows.every(row => equal(Object.keys(row.input).sort(), ['context', 'object']) && row.composed === true && row.green === true
+        && row.ungoverned.length === 0 && equal(row.cells.map(cell => cell.framework), frameworks)
+        && row.cells.every(cell => cell.status === 'ok' && cell.artifactPresent === true && cell.errors.length === 0)),
+    'Every fixed public object/context uses the exact default input and produces both build artifacts at the final implementation.');
+    const live = documents.liveConsumers;
+    const cohort = documents.cohort;
+    check(1, equal(cohort.groups.flatMap(group => group.paths), expectedPaths) && equal(cohort.frameworks, frameworks)
+      && equal(live.freshInputs.map(input => `${input.object}/${input.context}`), expectedPaths)
+      && live.status === 'passed' && live.cellCount === 28 && live.selected === 224 && live.failed === 0 && live.skipped === 0
+      && live.passed + live.notApplicable === 224 && live.applicable === live.passed
+      && equal(live.cells.map(cell => `${cell.composition.input.object}/${cell.composition.input.context}/${cell.framework}`).sort(),
+        expectedPaths.flatMap(value => frameworks.map(framework => `${value}/${framework}`)).sort()),
+    'All fourteen locked runtime operands have both framework cells and balanced passed/N/A accounting.');
+    const liveRoot = path.posix.dirname(manifest.sources.liveConsumers);
+    const tarballHashes = new Map();
+    const gates = ['fresh-exact-tarball-install', 'strict-typecheck', 'production-build', 'server-render', 'mount', 'hydration', 'shared-css-resolution', 'interaction-evidence'];
+    for (const cell of live.cells) {
+      const reportPath = path.posix.join(liveRoot, cell.report);
+      reference(reportPath, cell.reportSha256); const report = json(reportPath);
+      const comp = cell.composition;
+      const composition = json(path.posix.join(liveRoot, 'live-generation', cell.schema, 'composition.json'));
+      check(1, equal(composition.composition, comp) && digest(comp.schemaSha256) === sha256(canonicalJson(composition.schema)),
+        `${cell.schema}/${cell.framework} retains the exact composed schema bytes.`);
+      const artifact = json(path.posix.join(liveRoot, 'live-generation', cell.schema, cell.framework, 'artifact.json'));
+      check(1, artifact.contentHash === cell.generation.artifactContentHash && artifact.files.every(file => digest(file.contentHash) === sha256(file.contents)),
+        `${cell.schema}/${cell.framework} retains its in-run generated artifact and file hashes.`);
+      reference(path.posix.join(liveRoot, comp.sourceDiffPath), comp.sourceDiffSha256);
+      reference(path.posix.join(liveRoot, cell.generation.sourcePath), cell.generation.sourceSha256);
+      for (const tarball of report.localTarballs) {
+        reference(path.posix.join(liveRoot, 'submitted-packages/tarballs', path.posix.basename(tarball.installSpec)), tarball.sha256);
+        if (!tarballHashes.has(tarball.name)) tarballHashes.set(tarball.name, tarball.sha256);
+        check(1, tarballHashes.get(tarball.name) === tarball.sha256, `All ${tarball.name} consumers install identical tarball bytes.`);
+      }
+      check(1, comp.sourceHead === implementationHead && comp.sourceDiffSha256 === `sha256:${sha256('')}`
+        && cell.generation.fingerprint.profile === 'build' && cell.generation.fingerprint.sourceOfArtifact === 'current-in-run-output'
+        && report.status === 'passed' && equal(report.gates.map(gate => gate.name), gates)
+        && report.gates.every(gate => (gate.status === 'passed' && gate.logs?.length > 0) || (gate.name === 'interaction-evidence' && gate.status === 'not-applicable'))
+        && report.accounting.balanced === true && report.accounting.namedUnprovenCount === 0
+        && report.browser.runtimeErrors.length === 0 && report.browser.hydrationInvariant.equal === true
+        && report.browser.boundValues.every(value => value.passed === true),
+      `${cell.schema}/${cell.framework} retains a clean final-source artifact, eight gates, typed value observations and hydration parity.`);
+    }
+    const original = documents.savedOriginal; const successor = documents.savedSuccessor; const compatibility = documents.savedCompatibility;
+    check(2, original.head === implementationHead && successor.head === implementationHead && original.total === 16 && successor.total === 16
+      && successor.reachable === 16 && successor.generatedCells === 32
+      && original.reachable >= 15 && original.generatedCells >= 30 && compatibility.originalInputsUnchanged === true
+      && compatibility.successorInputsUnchanged === true && compatibility.historicalNegativeRetained === true
+      && compatibility.originalBaseline === 15 && compatibility.successorBaseline === 16
+      && nonempty(compatibility.originalDeltaExplanation), 'Both identified saved stores preserve input hashes; successor is 16/16 and any original improvement is explained alongside retained negative evidence.');
+    for (const saved of [original, successor]) for (const row of saved.rows) {
+      reference(row.input.path, row.input.sha256);
+      for (const cell of row.cells) reference(path.posix.join(path.posix.dirname(saved === original ? manifest.sources.savedOriginal : manifest.sources.savedSuccessor), cell.response.path), cell.response.sha256);
+    }
+    for (const ref of compatibility.references) reference(ref.path, ref.sha256);
+    const baselinePath = 'packages/component-contracts/registry/component-capability-baseline.v1.json';
+    const baseline = json(baselinePath); const historical = JSON.parse(Buffer.from(readHistorical(base, baselinePath)).toString('utf8'));
+    const identity = rows => rows.map(({ id, proposedClassification, reconciliationState }) => ({ id, proposedClassification, reconciliationState }));
+    const rootEvidence = documents.rootEvidence;
+    check(3, ids.length === 64 && new Set(ids).size === 64 && added.length === 14 && priorIds.every(id => ids.includes(id))
+      && equal(rootEvidence.governedIds, ids) && equal([...rootEvidence.addedIds].sort(), [...added].sort())
+      && baseline.rows.length === 109 && equal(identity(baseline.rows), identity(historical.rows))
+      && json('packages/component-contracts/registry/component-obligation-scope.v1.json').decisionId === 1788
+      && json('packages/component-contracts/registry/component-reconciliation.proposed.v1.json').approvedRuntimeCensus === null,
+    '64 unique governed roots retain all 109 identities and the accepted scope separately from the unapproved old split.');
+    const readiness = json(rootEvidence.readiness.path); reference(rootEvidence.readiness.path, rootEvidence.readiness.sha256);
+    check(3, readiness.status === 'passed' && readiness.failures.length === 0 && readiness.totals.resolved === readiness.totals.references
+      && readiness.totals.references === 778, 'All current runtime and declaration readiness references resolve after rebuild.');
+    const positive = json(rootEvidence.positiveExports.path); reference(rootEvidence.positiveExports.path, rootEvidence.positiveExports.sha256);
+    check(3, positive.success === true && positive.numPassedTests === 28 && positive.numFailedTests === 0 && positive.numPendingTests === 0,
+      'All 28 final built package export cells pass without skips.');
+    const mutants = rootEvidence.mutations.flatMap(ref => { reference(ref.path, ref.sha256); return json(ref.path).mutants; });
+    check(3, equal(mutants.map(row => row.selectedCell).sort(), added.flatMap(id => frameworks.map(framework => `${framework}/${id}`)).sort())
+      && mutants.every(row => row.status === 'passed' && row.sourceSha256Before !== row.sourceSha256Deleted && row.restoredByteIdentically === true
+        && equal(row.selectedRed.packageRedCells, [row.selectedCell]) && equal(row.selectedRed.readinessRedCells, [row.selectedCell])
+        && row.selectedRed.packageRun.exitCode !== 0 && row.selectedRed.readinessRun.exitCode !== 0
+        && row.restoredGreen.packageRun.exitCode === 0 && row.restoredGreen.readinessRun.exitCode === 0
+        && row.restoredGreen.observations.every(cell => cell.status === 'passed')),
+    '28 distinct real export deletions fail only their selected package/readiness cell and restore to green bytes.');
+    for (const mutant of mutants) for (const phase of ['selectedRed', 'restoredGreen']) {
+      reference(mutant[phase].packageReport); reference(mutant[phase].readinessReport);
+      reference(mutant[phase].packageRun.log); reference(mutant[phase].readinessRun.log);
+    }
+    for (const ref of documents.baselineFold.sourceHashes) reference(ref.path, ref.sha256);
+    check(3, documents.baselineFold.denominator === 109 && documents.baselineFold.readinessReferences.every(ref => ref.resolved === true)
+      && added.every(id => {
+        const row = baseline.rows.find(row => row.id === id);
+        return ['react', 'vue', 'generatedConsumer'].every(surface => row.surfaces[surface].state === 'implemented-evidence-complete' && row.surfaces[surface].evidence.length > 0)
+          && ['accessibility', 'theme', 'interaction'].every(surface => row.surfaces[surface].state === 'unverified');
+      }), 'Capability updates are supported by the retained fold; no new maturity surface is promoted.');
+    const movers = documents.movers; const declaration = documents.moversDeclaration; const plan = documents.noticePlan;
+    const samePublic = implementationHead === executionHead || (publicHeadEquivalence?.implementationHead === implementationHead
+      && publicHeadEquivalence.executionHead === executionHead && publicHeadEquivalence.ancestor === true
+      && equal(publicHeadEquivalence.scope, S187_PUBLIC_RUNTIME_SCOPE) && publicHeadEquivalence.excludeTests === true
+      && equal(publicHeadEquivalence.changedPaths, publicHeadEquivalence.scopedChangedPaths.filter(file => !isTestPath(file)))
+      && equal(publicHeadEquivalence.excludedTestPaths, publicHeadEquivalence.scopedChangedPaths.filter(isTestPath)) && publicHeadEquivalence.changedPaths.length === 0);
+    check(4, samePublic && movers.status === 'passed' && movers.s187.base === base && movers.s187.head === implementationHead
+      && ['canonicalPaths', 'publicPaths'].every(key => equal(movers.s187[key], declaration.s187[key])
+        && movers.comparison.s187[key].missingFromDeclaration.length === 0 && movers.comparison.s187[key].extraInDeclaration.length === 0),
+    'One sprint-wide canonical/public diff includes discovery and composer/lowering and matches final execution public bytes.');
+    check(4, plan.status === 'prepared' && plan.sendsExecuted === 0 && plan.deployment === 'pending' && equal(plan.addedNucleus, added)
+      && plan.notices.length === 2 && documents.deliveries.length === 2
+      && ['cmos://derek/aquex-mcp', 'cmos://derek/forge-demos'].every(destination => {
+        const notices = plan.notices.filter(row => row.request.targetAddress === destination); const receipts = documents.deliveries.filter(row => row.targetAddress === destination);
+        return notices.length === 1 && receipts.length === 1 && sha256(JSON.stringify(notices[0].request)) === notices[0].requestSha256
+          && receipts[0].status === 'prepared' && receipts[0].messageId === null && receipts[0].requestSha256 === notices[0].requestSha256
+          && [...added, 'Deployment: pending', 'retain-109', '/ported', '/readiness-ported', '/css-ported'].every(term => notices[0].request.body.includes(term));
+      }), 'The combined exact-identity notice remains prepared with no fabricated sent receipt or served adoption.');
+    check(4, [1315, 1318, 1319, 1320, 1321, 1322, 1372, 1374, 1375, 1379, 1384].every(id => documents.carries.rows.some(row => row.id === id && row.status === 'pending' && nonempty(row.remainingWork)))
+      && documents.carries.greenfieldWorkflow === 'partial' && documents.carries.builderSelfCertified === false,
+    'All named maintenance, delivery, visualization and maturity carries remain explicitly owed.');
+    check(5, suiteAccounting.status === 'passed' && suiteAccounting.validationIssues.length === 0 && suiteAccounting.unattributedDeltas.length === 0
+      && equal(Object.keys(suiteAccounting.baselines), ['sprint186Closeout'])
+      && suiteAccounting.baselines.sprint186Closeout.measuredHead === '740e8405fa8e094ab903a19e6e551fbe8bff2de2'
+      && suiteAccounting.closeout.runs.length === 1 && captureIds.length === 4 && new Set(captureIds).size === 4
+      && captureRows.every(row => row.cohort === 'closeout' && row.measuredHead === executionHead && row.cleanBefore === true && row.cleanAfter === true && row.exitCode === 0 && row.counts.failed === 0)
+      && suiteAccounting.headRelation.ancestor === true && suiteAccounting.headRelation.executableInputsUnchanged === true,
+    'One clean four-suite capture compares actual Sprint 186 closeout and accounts for every changed file; failed attempts and skips remain separate.');
+    check(6, sprint.status === 'Active' && near.includes('BUILT, REVIEW PENDING') && equal(mission.successCriteria, originalMission.successCriteria),
+      'Seven literal CMOS criteria and measured near.md are retained, with Sprint 187 Active for separate review.');
+  } else if (wave2) {
     assert.equal(typeof readHistorical, 'function', 'Sprint 186 requires actual locked-base Git sources.');
     const base = '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2';
     const typesPath = 'packages/component-contracts/src/types.ts';
@@ -399,12 +538,12 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const attributionPath = argument('--attributions');
   const failurePath = argument('--failures');
   const suiteAccounting = deriveSuiteAccounting({ root, executionHead, reviewHead,
-    ...(manifest.missionId === 's186-m06' ? { sprintId: 'sprint-186', missionId: manifest.missionId, ...manifest.accounting } : {}),
+    ...(manifest.missionId === 's187-m06' ? { sprintId: 'sprint-187', missionId: manifest.missionId, ...manifest.accounting } : manifest.missionId === 's186-m06' ? { sprintId: 'sprint-186', missionId: manifest.missionId, ...manifest.accounting } : {}),
     ...(attributionPath ? { attributions: JSON.parse(readFrozen(attributionPath).toString('utf8')) } : {}),
     ...(failurePath ? { failureDispositions: JSON.parse(readFrozen(failurePath).toString('utf8')) } : {}) });
   const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan).toString('utf8')).implementationHead;
   const publicHeadEquivalence = derivePublicHeadEquivalence({ root, implementationHead, executionHead,
-    sprintId: manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
+    sprintId: manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
   const auditPath = argument('--final-audit');
   const outputs = deriveCloseout({ executionHead, reviewHead, manifest, readFrozen, readHistorical, suiteAccounting, publicHeadEquivalence,
     ...(auditPath ? { finalAudit: JSON.parse(fs.readFileSync(path.resolve(auditPath), 'utf8')) } : {}) });

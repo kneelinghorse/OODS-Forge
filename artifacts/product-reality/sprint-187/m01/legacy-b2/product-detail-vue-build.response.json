@@ -1,0 +1,291 @@
+{
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": true,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:8e640f0c6fc091a999a7f25927fdc9dd3cad399b56a098012f47f772949f51de"
+    }
+  },
+  "compose": {
+    "object": "Product",
+    "context": "detail",
+    "layout": "detail",
+    "componentCount": 10
+  },
+  "pipeline": {
+    "steps": [
+      "compose",
+      "validate",
+      "render",
+      "codegen"
+    ],
+    "duration": 310,
+    "stepLatency": {
+      "compose": 264,
+      "validate": 15,
+      "render": 8,
+      "codegen": 23
+    }
+  },
+  "schemaRef": "compose-8d27a063",
+  "schemaRefCreatedAt": "2026-09-07T00:23:19.598Z",
+  "schemaRefExpiresAt": "2026-09-07T00:53:19.598Z",
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "render": {
+    "html": "<!DOCTYPE html>\n<html lang=\"en\" data-theme=\"light\" data-brand=\"default\">\n<head>\n  <meta charset=\"utf-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>OODS Preview</title>\n  <!-- tokens.css omitted (compact mode) — use tokens.build to obtain -->\n  <style data-source=\"components\">\n#oods-preview-root {\n  margin: 0;\n  padding: var(--ref-space-inset-default, 24px);\n  min-height: 100dvh;\n  box-sizing: border-box;\n  background: var(--sys-surface-canvas, var(--ref-color-neutral-50, #f8fafc));\n  color: var(--sys-text-primary, var(--ref-color-neutral-900, #0f172a));\n  font-family: var(--ref-typography-families-sans, Inter, \"Helvetica Neue\", Arial, sans-serif);\n}\n[data-oods-component] {\n  box-sizing: border-box;\n}\n[data-oods-component=\"Button\"] {\n  border: var(--ref-border-width-hairline, 1px) solid var(--sys-surface-interactive-primary-default, var(--ref-color-primary-500, #4f46e5));\n  border-radius: var(--ref-border-radius-md, 12px);\n  background: var(--sys-surface-interactive-primary-default, var(--ref-color-primary-500, #4f46e5));\n  color: var(--sys-text-on-interactive, var(--ref-color-neutral-0, #ffffff));\n  font-family: inherit;\n  padding: var(--oods-size-spacing-sm, 0.5rem) var(--oods-size-spacing-md, 0.875rem);\n  font-size: var(--oods-size-font-md, 16px);\n}\n[data-oods-component=\"Card\"] {\n  border: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  border-radius: var(--ref-border-radius-md, 12px);\n  background: var(--sys-surface-raised, var(--ref-color-neutral-0, #ffffff));\n  padding: var(--ref-space-inset-compact, 8px);\n}\n[data-oods-component=\"Badge\"] {\n  display: inline-flex;\n  border-radius: var(--ref-border-radius-pill, 999px);\n  padding: 0.125rem 0.5rem;\n  background: var(--sys-status-info-surface, var(--ref-color-info-100, #eef2ff));\n}\n[data-oods-component=\"Banner\"] {\n  border-radius: var(--ref-border-radius-md, 12px);\n  border-left: 4px solid var(--sys-status-info-border, var(--ref-color-info-700, #2563eb));\n  padding: var(--ref-space-inset-compact, 8px);\n  background: var(--sys-status-info-surface, var(--ref-color-info-100, #eff6ff));\n}\n[data-oods-component=\"Table\"] {\n  width: 100%;\n  border-collapse: collapse;\n}\n[data-oods-component=\"Table\"] th,\n[data-oods-component=\"Table\"] td {\n  border-bottom: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  text-align: left;\n  padding: 0.5rem;\n}\n[data-oods-component=\"Tabs\"] [role=\"tablist\"] {\n  display: flex;\n  gap: 0.5rem;\n  margin-bottom: 0.5rem;\n}\n[data-sidebar-aside=\"true\"] {\n  border-left: var(--ref-border-width-hairline, 1px) solid var(--sys-border-subtle, var(--ref-color-neutral-200, #e2e8f0));\n  padding-left: var(--ref-space-inset-compact, 8px);\n}\n[data-oods-surface=\"inverse\"] {\n  background: var(--sys-surface-inverse, var(--ref-color-neutral-900, #0f172a));\n  color: var(--sys-text-inverse, var(--ref-color-neutral-0, #ffffff));\n}\n  </style>\n</head>\n<body data-theme=\"light\" data-brand=\"default\">\n  <main id=\"oods-preview-root\"><div id=\"screen-detail-13\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"screen-detail-13\" data-layout=\"stack\"><div id=\"detail-header-1\" style=\"display:flex;flex-direction:row;justify-content:space-between;padding:var(--sys-space-inset-default, var(--ref-space-inset-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-header-1\" data-layout=\"inline\"><div id=\"slot-header-2\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-header-2\" data-layout=\"stack\" data-oods-label=\"header\"><header id=\"ve-header-24\" data-oods-component=\"DetailHeader\" data-oods-node-id=\"ve-header-24\" data-prop-title-field=\"label\" data-prop-subtitle-field=\"description\" data-prop-heading-level=\"1\"><h2>Details</h2></header><div id=\"ve-header-25\" role=\"log\" data-oods-component=\"StatusTimeline\" data-oods-node-id=\"ve-header-25\" data-timeline-type=\"status\" data-prop-field=\"status\" data-prop-history-field=\"state_history\" data-prop-states-parameter=\"states\" data-prop-show-actor-id=\"true\" data-prop-show-reason=\"true\"><h3 data-timeline-title=\"true\">Status Timeline</h3><ol data-timeline-events=\"true\"><li data-timeline-empty=\"true\">No events</li></ol></div><div id=\"ve-header-27\" data-oods-component=\"SearchInput\" data-oods-node-id=\"ve-header-27\" data-behavioral=\"search\" data-prop-placeholder-parameter=\"placeholder\" data-prop-clearable-parameter=\"clearable\" data-prop-label=\"The current search query string entered by the user.\" role=\"search\"><input type=\"search\" placeholder=\"Enter searchQuery\" value=\"\" aria-label=\"Enter searchQuery\" /></div><section id=\"ve-header-29\" data-oods-component=\"PriceSummary\" data-oods-node-id=\"ve-header-29\" data-summary-type=\"price\" data-prop-amount-field=\"unit_amount_cents\" data-prop-currency-field=\"currency\" data-prop-model-field=\"pricing_model\" data-prop-interval-field=\"billing_interval\" data-prop-tax-behavior-field=\"tax_behavior\"><h3 data-summary-title=\"true\">Price Summary</h3><dl><div data-summary-item=\"true\"><dt>Amount</dt><dd>unit_amount_cents</dd></div><div data-summary-item=\"true\"><dt>Currency</dt><dd>currency</dd></div><div data-summary-item=\"true\"><dt>Model</dt><dd>pricing_model</dd></div><div data-summary-item=\"true\"><dt>Interval</dt><dd>billing_interval</dd></div></dl></section></div></div><article id=\"detail-body-10\" style=\"align-items:start;display:grid;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default));grid-template-columns:minmax(0, 1fr) minmax(16rem, 24rem)\" data-oods-component=\"Card\" data-oods-node-id=\"detail-body-10\" data-layout=\"sidebar\"><div data-sidebar-main=\"true\"><section id=\"detail-tabs-9\" data-oods-component=\"Tabs\" data-oods-node-id=\"detail-tabs-9\"><div id=\"detail-tab-panel-3\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-3\" data-layout=\"stack\" data-prop-label=\"Content\"><div id=\"slot-tab-0-4\" role=\"log\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-tight, var(--ref-space-cluster-tight))\" data-oods-component=\"StatusTimeline\" data-oods-node-id=\"slot-tab-0-4\" data-layout=\"stack\" data-oods-label=\"tab-0\" data-timeline-type=\"status\"><h3 data-timeline-title=\"true\">tab-0</h3><ol data-timeline-events=\"true\"><p id=\"pg-status-timeline-31\" aria-description=\"Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity&#39;s current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n\" data-bind=\"status\" data-oods-component=\"Text\" data-oods-node-id=\"pg-status-timeline-31\" data-prop-field=\"status\">[status]</p><p id=\"pg-status-timeline-32\" aria-description=\"Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n\" data-bind=\"allowedTransitions\" data-oods-component=\"Text\" data-oods-node-id=\"pg-status-timeline-32\" data-prop-field=\"allowed_transitions\">[allowedTransitions]</p></ol></div></div><div id=\"detail-tab-panel-5\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-5\" data-layout=\"stack\" data-prop-label=\"Status &amp; History\"><article id=\"slot-tab-1-6\" data-oods-component=\"Card\" data-oods-node-id=\"slot-tab-1-6\" data-oods-label=\"tab-1\"></article></div><div id=\"detail-tab-panel-7\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-7\" data-layout=\"stack\" data-prop-label=\"Overview\"><p id=\"slot-tab-2-8\" aria-description=\"Timestamp recording when the entity was first created.\" data-oods-component=\"Text\" data-oods-node-id=\"slot-tab-2-8\" data-oods-label=\"tab-2\" data-prop-field=\"created_at\">tab-2</p></div><div id=\"detail-tab-panel-14\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-14\" data-layout=\"stack\" data-prop-label=\"Behavior\"><article id=\"slot-tab-3-15\" data-oods-component=\"Card\" data-oods-node-id=\"slot-tab-3-15\" data-oods-label=\"tab-3\"></article></div><div id=\"detail-tab-panel-16\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-16\" data-layout=\"stack\" data-prop-label=\"Billing\"><div id=\"slot-tab-4-17\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-tab-4-17\" data-oods-label=\"tab-4\" data-layout=\"stack\"></div></div><div id=\"detail-tab-panel-18\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-18\" data-layout=\"stack\" data-prop-label=\"Settings\"><div id=\"slot-tab-5-19\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-tab-5-19\" data-oods-label=\"tab-5\" data-layout=\"stack\"></div></div><div id=\"detail-tab-panel-20\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-20\" data-layout=\"stack\" data-prop-label=\"Pricing\"><article id=\"slot-tab-6-21\" data-oods-component=\"Card\" data-oods-node-id=\"slot-tab-6-21\" data-oods-label=\"tab-6\"></article></div><div id=\"detail-tab-panel-22\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-tab-panel-22\" data-layout=\"stack\" data-prop-label=\"Details\"><article id=\"slot-tab-7-23\" data-oods-component=\"Card\" data-oods-node-id=\"slot-tab-7-23\" data-oods-label=\"tab-7\"></article></div></section></div><aside data-sidebar-aside=\"true\"><div id=\"detail-meta-11\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-tight, var(--ref-space-cluster-tight));padding:var(--sys-space-inset-default, var(--ref-space-inset-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"detail-meta-11\" data-layout=\"stack\"><div id=\"slot-metadata-12\" style=\"display:flex;flex-direction:column;gap:var(--sys-space-cluster-default, var(--ref-space-cluster-default))\" data-oods-component=\"Stack\" data-oods-node-id=\"slot-metadata-12\" data-layout=\"stack\" data-oods-label=\"metadata\"><section id=\"ve-metadata-26\" data-oods-component=\"ClassificationPanel\" data-oods-node-id=\"ve-metadata-26\" data-panel-type=\"classification\" data-prop-categories-field=\"categories\" data-prop-tags-field=\"tags\" data-prop-metadata-field=\"classification_metadata\" data-prop-mode-parameter=\"classification_mode\"><header data-panel-header=\"true\"><h3>Classification</h3></header><div data-panel-content=\"true\"></div></section><aside id=\"ve-metadata-28\" data-oods-component=\"FilterPanel\" data-oods-node-id=\"ve-metadata-28\" data-behavioral=\"filter\" data-filter-mode=\"immediate\" data-prop-field=\"filters\" data-prop-active-field=\"activeFilters\" data-prop-mode-parameter=\"filterMode\" data-prop-collapsible-parameter=\"collapsible\" role=\"region\" aria-label=\"Filters\"></aside></div></div></aside></article></div></main>\n</body>\n</html>",
+    "tokenCssRef": "tokens.build",
+    "meta": {
+      "status": "ok",
+      "warnings": 0,
+      "errors": 0,
+      "format": "document",
+      "strict": false,
+      "validationMeta": {
+        "screenCount": 1,
+        "nodeCount": 31
+      }
+    }
+  },
+  "code": {
+    "framework": "vue",
+    "styling": "tokens",
+    "artifact": {
+      "schemaVersion": "1.0.0",
+      "framework": "vue",
+      "files": [
+        {
+          "path": "src/GeneratedUI.vue",
+          "contents": "<template>\n  <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                    <DetailHeader id=\"ve-header-24\" data-oods-component=\"DetailHeader\" :title=\"label\" :subtitle=\"description\" :level=\"1\" />\n                    <StatusTimeline id=\"ve-header-25\" data-oods-component=\"StatusTimeline\" showActorId showReason :history=\"stateHistory\" :allowedTransitions=\"allowedTransitions\" :status=\"status\" />\n                    <SearchInput id=\"ve-header-27\" data-oods-component=\"SearchInput\" label=\"The current search query string entered by the user.\" placeholder=\"Enter searchQuery\" :value=\"searchQuery\" />\n                    <PriceSummary id=\"ve-header-29\" data-oods-component=\"PriceSummary\" :amount=\"unitAmountCents\" :currency=\"currency\" :model=\"pricingModel\" :interval=\"billingInterval\" />\n                  </Stack>\n          </Stack>\n      <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"sidebar\" style=\"align-items: start; display: grid; gap: var(--ref-space-cluster-default); grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem)\">\n            <div data-sidebar-main>\n              <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" :items=\"[{'id':'detail-tab-panel-3','label':'Content','panel':''},{'id':'detail-tab-panel-5','label':'Status \\x26 History','panel':''},{'id':'detail-tab-panel-7','label':'Overview','panel':''},{'id':'detail-tab-panel-14','label':'Behavior','panel':''},{'id':'detail-tab-panel-16','label':'Billing','panel':''},{'id':'detail-tab-panel-18','label':'Settings','panel':''},{'id':'detail-tab-panel-20','label':'Pricing','panel':''},{'id':'detail-tab-panel-22','label':'Details','panel':''}]\">\n                        <template #panel=\"{ item }\">\n                          <template v-if=\"item.id === 'detail-tab-panel-3'\">\n                            <Stack id=\"detail-tab-panel-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <StatusTimeline id=\"slot-tab-0-4\" data-oods-component=\"StatusTimeline\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n                                  <Text id=\"pg-status-timeline-31\" data-oods-component=\"Text\" label=\"Canonical lifecycle state derived from the states parameter. This is the single source&#10;of truth for the entity's current lifecycle position. Consumed by Colorized to resolve&#10;visual tokens, and by view extensions to render StatusBadge and StatusTimeline.&#10;\">{{ status }}</Text>\n                                  <Text id=\"pg-status-timeline-32\" data-oods-component=\"Text\" label=\"Materialized list of valid next states from the current status, computed from the&#10;transitionRules parameter. When transitionRules is null (open model), this contains&#10;all states except the current one. Used by StatusSelector to disable invalid options&#10;and by StatusBadge to indicate available paths.&#10;\">{{ Array.isArray(allowedTransitions) ? allowedTransitions.join(', ') : '' }}</Text>\n                                </StatusTimeline>\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-5'\">\n                            <Stack id=\"detail-tab-panel-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Card id=\"slot-tab-1-6\" data-oods-component=\"Card\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-7'\">\n                            <Stack id=\"detail-tab-panel-7\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Text id=\"slot-tab-2-8\" data-oods-component=\"Text\" label=\"Timestamp recording when the entity was first created.\">{{ createdAt }}</Text>\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-14'\">\n                            <Stack id=\"detail-tab-panel-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Card id=\"slot-tab-3-15\" data-oods-component=\"Card\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-16'\">\n                            <Stack id=\"detail-tab-panel-16\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Stack id=\"slot-tab-4-17\" data-oods-component=\"Stack\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-18'\">\n                            <Stack id=\"detail-tab-panel-18\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Stack id=\"slot-tab-5-19\" data-oods-component=\"Stack\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-20'\">\n                            <Stack id=\"detail-tab-panel-20\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Card id=\"slot-tab-6-21\" data-oods-component=\"Card\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-22'\">\n                            <Stack id=\"detail-tab-panel-22\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Card id=\"slot-tab-7-23\" data-oods-component=\"Card\" />\n                            </Stack>\n                          </template>\n                        </template>\n                      </Tabs>\n            </div>\n            <aside data-sidebar-aside>\n              <Stack id=\"detail-meta-11\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n                        <Stack id=\"slot-metadata-12\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                                    <ClassificationPanel id=\"ve-metadata-26\" data-oods-component=\"ClassificationPanel\" />\n                                    <FilterPanel id=\"ve-metadata-28\" data-oods-component=\"FilterPanel\" :activeFilters=\"activeFilters\" :filters=\"filters\" />\n                                  </Stack>\n                      </Stack>\n            </aside>\n          </Card>\n    </Stack>\n  <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n    <button type=\"button\" data-oods-action=\"handleDelete\" @click=\"handleDelete()\">Delete</button>\n    <button type=\"button\" data-oods-action=\"handleEdit\" @click=\"handleEdit()\">Edit</button>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { Card, ClassificationPanel, DetailHeader, FilterPanel, PriceSummary, SearchInput, Stack, StatusTimeline, Tabs, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n}\n\ninterface Props {\n  actions: GeneratedUIActions;\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Billing cadence when pricing_model indicates recurring revenue. */\n  billingInterval?: string;\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO currency code for the unit amount. */\n  currency: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** Availability state synchronized with inventory service. */\n  inventoryStatus: 'in_stock' | 'low_stock' | 'backorder' | 'discontinued';\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Current page number (1-based). */\n  page: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Monetization model applied to the entity. */\n  pricingModel: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Primary identifier for the product listing. */\n  productId: string;\n  /** Channel describing how the product is released to customers. */\n  releaseChannel: 'alpha' | 'beta' | 'limited' | 'general_availability';\n  /** Indicates whether access to the product requires an active subscription. */\n  requiresSubscription: boolean;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** Merchandising SKU exposed to commerce systems. */\n  sku: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Short merchandising description surfaced in marketing contexts. */\n  summaryBlurb?: string;\n  /** SLA tier associated with the product. */\n  supportLevel?: 'standard' | 'premium' | 'enterprise';\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** Defines whether taxes are included in the displayed price. */\n  taxBehavior: 'exclusive' | 'inclusive';\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n  /** Base unit price expressed in the smallest currency denomination. */\n  unitAmountCents: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { actions, activeFilters, allowedTransitions, billingInterval, categories, classificationMetadata, createdAt, currency, description, filterCount, filters, inventoryStatus, label, lastEvent, lastEventAt, page, pageSize, placeholder, pricingModel, primaryCategoryId, primaryCategoryPath, productId, releaseChannel, requiresSubscription, searchActive, searchQuery, sku, stateHistory, status, summaryBlurb, supportLevel, tagCount, tagPreview, tags, taxBehavior, totalItems, totalPages, unitAmountCents, updatedAt } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n\n/* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n/* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+          "contentHash": "sha256:75a0fed2e66aaecedefab882cd84c6a73a3185482fc3f0eac4293e614118ef1b"
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "@oods/component-styles",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "@oods/components-vue",
+          "version": "0.1.0",
+          "kind": "dependency"
+        },
+        {
+          "name": "vue",
+          "version": "3.5.42",
+          "kind": "peerDependency"
+        }
+      ],
+      "actions": [
+        {
+          "name": "handleDelete",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onDelete"
+            }
+          ]
+        },
+        {
+          "name": "handleEdit",
+          "parameters": [],
+          "sources": [
+            {
+              "nodeId": "screen-detail-13",
+              "component": "Stack",
+              "event": "onEdit"
+            }
+          ]
+        }
+      ],
+      "contentHash": "sha256:8e640f0c6fc091a999a7f25927fdc9dd3cad399b56a098012f47f772949f51de"
+    },
+    "output": "<template>\n  <Stack id=\"screen-detail-13\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"detail-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                    <DetailHeader id=\"ve-header-24\" data-oods-component=\"DetailHeader\" :title=\"label\" :subtitle=\"description\" :level=\"1\" />\n                    <StatusTimeline id=\"ve-header-25\" data-oods-component=\"StatusTimeline\" showActorId showReason :history=\"stateHistory\" :allowedTransitions=\"allowedTransitions\" :status=\"status\" />\n                    <SearchInput id=\"ve-header-27\" data-oods-component=\"SearchInput\" label=\"The current search query string entered by the user.\" placeholder=\"Enter searchQuery\" :value=\"searchQuery\" />\n                    <PriceSummary id=\"ve-header-29\" data-oods-component=\"PriceSummary\" :amount=\"unitAmountCents\" :currency=\"currency\" :model=\"pricingModel\" :interval=\"billingInterval\" />\n                  </Stack>\n          </Stack>\n      <Card id=\"detail-body-10\" data-oods-component=\"Card\" data-layout=\"sidebar\" style=\"align-items: start; display: grid; gap: var(--ref-space-cluster-default); grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem)\">\n            <div data-sidebar-main>\n              <Tabs id=\"detail-tabs-9\" data-oods-component=\"Tabs\" :items=\"[{'id':'detail-tab-panel-3','label':'Content','panel':''},{'id':'detail-tab-panel-5','label':'Status \\x26 History','panel':''},{'id':'detail-tab-panel-7','label':'Overview','panel':''},{'id':'detail-tab-panel-14','label':'Behavior','panel':''},{'id':'detail-tab-panel-16','label':'Billing','panel':''},{'id':'detail-tab-panel-18','label':'Settings','panel':''},{'id':'detail-tab-panel-20','label':'Pricing','panel':''},{'id':'detail-tab-panel-22','label':'Details','panel':''}]\">\n                        <template #panel=\"{ item }\">\n                          <template v-if=\"item.id === 'detail-tab-panel-3'\">\n                            <Stack id=\"detail-tab-panel-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <StatusTimeline id=\"slot-tab-0-4\" data-oods-component=\"StatusTimeline\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n                                  <Text id=\"pg-status-timeline-31\" data-oods-component=\"Text\" label=\"Canonical lifecycle state derived from the states parameter. This is the single source&#10;of truth for the entity's current lifecycle position. Consumed by Colorized to resolve&#10;visual tokens, and by view extensions to render StatusBadge and StatusTimeline.&#10;\">{{ status }}</Text>\n                                  <Text id=\"pg-status-timeline-32\" data-oods-component=\"Text\" label=\"Materialized list of valid next states from the current status, computed from the&#10;transitionRules parameter. When transitionRules is null (open model), this contains&#10;all states except the current one. Used by StatusSelector to disable invalid options&#10;and by StatusBadge to indicate available paths.&#10;\">{{ Array.isArray(allowedTransitions) ? allowedTransitions.join(', ') : '' }}</Text>\n                                </StatusTimeline>\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-5'\">\n                            <Stack id=\"detail-tab-panel-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Card id=\"slot-tab-1-6\" data-oods-component=\"Card\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-7'\">\n                            <Stack id=\"detail-tab-panel-7\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Text id=\"slot-tab-2-8\" data-oods-component=\"Text\" label=\"Timestamp recording when the entity was first created.\">{{ createdAt }}</Text>\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-14'\">\n                            <Stack id=\"detail-tab-panel-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Card id=\"slot-tab-3-15\" data-oods-component=\"Card\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-16'\">\n                            <Stack id=\"detail-tab-panel-16\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Stack id=\"slot-tab-4-17\" data-oods-component=\"Stack\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-18'\">\n                            <Stack id=\"detail-tab-panel-18\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Stack id=\"slot-tab-5-19\" data-oods-component=\"Stack\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-20'\">\n                            <Stack id=\"detail-tab-panel-20\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Card id=\"slot-tab-6-21\" data-oods-component=\"Card\" />\n                            </Stack>\n                          </template>\n                          <template v-if=\"item.id === 'detail-tab-panel-22'\">\n                            <Stack id=\"detail-tab-panel-22\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                              <Card id=\"slot-tab-7-23\" data-oods-component=\"Card\" />\n                            </Stack>\n                          </template>\n                        </template>\n                      </Tabs>\n            </div>\n            <aside data-sidebar-aside>\n              <Stack id=\"detail-meta-11\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n                        <Stack id=\"slot-metadata-12\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                                    <ClassificationPanel id=\"ve-metadata-26\" data-oods-component=\"ClassificationPanel\" />\n                                    <FilterPanel id=\"ve-metadata-28\" data-oods-component=\"FilterPanel\" :activeFilters=\"activeFilters\" :filters=\"filters\" />\n                                  </Stack>\n                      </Stack>\n            </aside>\n          </Card>\n    </Stack>\n  <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-detail-13\">\n    <button type=\"button\" data-oods-action=\"handleDelete\" @click=\"handleDelete()\">Delete</button>\n    <button type=\"button\" data-oods-action=\"handleEdit\" @click=\"handleEdit()\">Edit</button>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { Card, ClassificationPanel, DetailHeader, FilterPanel, PriceSummary, SearchInput, Stack, StatusTimeline, Tabs, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleDelete sha256:221fdee3330ccb3c003961fa632660ca61b4f1713ca9b67d2612c45fe63a1f43 */\n  /* @oods-domain-source sha256:74252fa49ed24d37978bced342336a0b2aac9bed23e8fa0d6d3db7f99f0fe9fc */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:8d06ae954d1e16d46333996b5945dbfef37c642e52d7bc1f68ece666c760d9b2 */\n  /* @oods-domain-source sha256:c0d990cc2989feb07786ba35c93b878e524cccf8ecc11583869e8f3344f87f48 */\n  handleEdit: () => void;\n}\n\ninterface Props {\n  actions: GeneratedUIActions;\n  /** Array of currently applied filter values:\n  - field: string (matches a filter descriptor field)\n  - operator: \"eq\" | \"in\" | \"range\" | \"gt\" | \"lt\" | \"between\"\n  - value: unknown (the selected filter value or values)\n */\n  activeFilters?: Record<string, unknown>[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Billing cadence when pricing_model indicates recurring revenue. */\n  billingInterval?: string;\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO currency code for the unit amount. */\n  currency: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Computed count of currently active filters. */\n  filterCount: number;\n  /** Array of available filter descriptors. Each entry defines a filterable dimension:\n  - field: string (the schema field to filter on)\n  - label: string (display label)\n  - type: \"select\" | \"multi-select\" | \"range\" | \"boolean\" | \"date-range\"\n  - options: array of { value, label } for select/multi-select types\n */\n  filters?: Record<string, unknown>[];\n  /** Availability state synchronized with inventory service. */\n  inventoryStatus: 'in_stock' | 'low_stock' | 'backorder' | 'discontinued';\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Current page number (1-based). */\n  page: number;\n  /** Number of items displayed per page. */\n  pageSize: number;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Monetization model applied to the entity. */\n  pricingModel: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Primary identifier for the product listing. */\n  productId: string;\n  /** Channel describing how the product is released to customers. */\n  releaseChannel: 'alpha' | 'beta' | 'limited' | 'general_availability';\n  /** Indicates whether access to the product requires an active subscription. */\n  requiresSubscription: boolean;\n  /** Whether the search input is currently focused or has a non-empty query. */\n  searchActive?: boolean;\n  /** The current search query string entered by the user. */\n  searchQuery?: string;\n  /** Merchandising SKU exposed to commerce systems. */\n  sku: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Short merchandising description surfaced in marketing contexts. */\n  summaryBlurb?: string;\n  /** SLA tier associated with the product. */\n  supportLevel?: 'standard' | 'premium' | 'enterprise';\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** Defines whether taxes are included in the displayed price. */\n  taxBehavior: 'exclusive' | 'inclusive';\n  /** Total number of items across all pages. Used to compute total page count. */\n  totalItems?: number;\n  /** Computed total number of pages (ceil(totalItems / pageSize)). */\n  totalPages?: number;\n  /** Base unit price expressed in the smallest currency denomination. */\n  unitAmountCents: number;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { actions, activeFilters, allowedTransitions, billingInterval, categories, classificationMetadata, createdAt, currency, description, filterCount, filters, inventoryStatus, label, lastEvent, lastEventAt, page, pageSize, placeholder, pricingModel, primaryCategoryId, primaryCategoryPath, productId, releaseChannel, requiresSubscription, searchActive, searchQuery, sku, stateHistory, status, summaryBlurb, supportLevel, tagCount, tagPreview, tags, taxBehavior, totalItems, totalPages, unitAmountCents, updatedAt } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n\n/* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n/* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n"
+  },
+  "summary": "Product, detail view, with 5 fields, vue/tokens, 10 components",
+  "metrics": {
+    "totalNodes": 31,
+    "componentsUsed": 10,
+    "fieldsBound": 5,
+    "fieldsOmitted": [
+      {
+        "field": "label",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "description",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "placeholder",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "state_history",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "updated_at",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "last_event",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "last_event_at",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "unit_amount_cents",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "currency",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "pricing_model",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "billing_interval",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "tax_behavior",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "classification_metadata",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "categories",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "primary_category_id",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "primary_category_path",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "tags",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "tag_count",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "tag_preview",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "searchActive",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "activeFilters",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "filterCount",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "page",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "pageSize",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "totalItems",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "totalPages",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "product_id",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "sku",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "inventory_status",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "release_channel",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "requires_subscription",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "support_level",
+        "reason": "No view slot available for this field in the current layout context"
+      },
+      {
+        "field": "summary_blurb",
+        "reason": "No view slot available for this field in the current layout context"
+      }
+    ],
+    "responseBytes": 45738
+  }
+}

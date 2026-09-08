@@ -8,6 +8,9 @@ import type {
 } from '../src/index.js';
 
 import {
+  ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+  OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+  LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
   AuditTimeline,
   CancellationSummary,
   PaginationBar,
@@ -248,6 +251,25 @@ export function renderSharedScenario(
       return <StatusBadge {...scenario.props} />;
     case 'status-timeline-history':
       return <StatusTimeline {...scenario.props} />;
+    case 'label-cell-truncation-and-description':
+      return <LabelCell {...scenario.props} />;
+    case 'inline-label-truncation':
+      return <InlineLabel {...scenario.props} />;
+    case 'form-label-group-association':
+      return <FormLabelGroup {...scenario.props} />;
+    case 'classification-badge-category':
+      return <ClassificationBadge {...scenario.props} />;
+    case 'classification-editor-presentational-controls':
+      return <ClassificationEditor {...scenario.props} />;
+    case 'owner-badge-principal': return <OwnerBadge {...scenario.props} />;
+    case 'ownership-summary-terms': return <OwnershipSummary {...scenario.props} />;
+    case 'ownership-meta-inline-terms': return <OwnershipMeta {...scenario.props} />;
+    case 'tag-summary-zero-and-tags': return <TagSummary {...scenario.props} />;
+    case 'archive-summary-false-and-reason': return <ArchiveSummary {...scenario.props} />;
+    case 'archive-pill-false': return <ArchivePill {...scenario.props} />;
+    case 'cancellation-badge-false': return <CancellationBadge {...scenario.props} />;
+    case 'cancellation-form-presentational-controls': return <CancellationForm {...scenario.props} />;
+    case 'price-card-meta-inline-terms': return <PriceCardMeta {...scenario.props} />;
     default:
       throw new Error(`Unimplemented shared React scenario: ${scenario.id}`);
   }

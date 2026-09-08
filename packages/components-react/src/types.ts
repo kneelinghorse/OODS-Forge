@@ -561,3 +561,63 @@ export interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'chil
   readonly weight?: 'regular' | 'medium' | 'semibold';
   readonly as?: SafeTextElement;
 }
+
+export interface InlineLabelProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly label?: string; readonly text?: string; readonly value?: string; readonly maxLength?: number | string;
+}
+export interface LabelCellProps extends InlineLabelProps {
+  readonly description?: string; readonly subtitle?: string; readonly sublabel?: string; readonly supporting?: string;
+  readonly truncate?: boolean;
+}
+export interface FormLabelGroupProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  readonly label?: string; readonly text?: string; readonly title?: string;
+  readonly placeholder?: string; readonly hint?: string; readonly description?: string;
+  readonly for?: string; readonly inputId?: string;
+}
+export interface ClassificationBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly label?: string; readonly text?: string; readonly category?: string; readonly value?: string;
+  readonly status?: string; readonly state?: string; readonly mode?: string; readonly variant?: string;
+  readonly tone?: ComponentTone; readonly emphasis?: ComponentEmphasis;
+}
+export interface ClassificationEditorProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'title' | 'name'>, FormShellProps {
+  readonly category?: string; readonly primaryCategory?: string; readonly tags?: string | readonly unknown[];
+  readonly modes?: readonly unknown[]; readonly mode?: string; readonly classificationMode?: string;
+}
+
+export interface OwnerBadgeProps extends Omit<ClassificationBadgeProps, 'category' | 'mode'> {
+  readonly owner?: string; readonly ownerType?: string;
+}
+export interface OwnershipSummaryProps extends Omit<React.HTMLAttributes<HTMLElement>, 'role'> {
+  readonly label?: string; readonly heading?: string; readonly name?: string;
+  readonly ownerId?: string; readonly owner_id?: string; readonly ownerType?: string; readonly owner_type?: string;
+  readonly role?: string; readonly ownershipRole?: string; readonly summary?: string; readonly text?: string; readonly description?: string;
+}
+export interface OwnershipMetaProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {
+  readonly label?: string; readonly heading?: string; readonly name?: string;
+  readonly ownerType?: string; readonly owner_type?: string; readonly role?: string; readonly ownershipRole?: string;
+}
+export interface TagSummaryProps extends React.HTMLAttributes<HTMLElement> {
+  readonly label?: string; readonly heading?: string; readonly name?: string;
+  readonly tagCount?: number | string; readonly count?: number | string; readonly tags?: string | readonly unknown[];
+  readonly summary?: string; readonly text?: string; readonly description?: string;
+}
+
+export interface ArchiveSummaryProps extends React.HTMLAttributes<HTMLElement> {
+  readonly label?: string; readonly heading?: string; readonly name?: string;
+  readonly isArchived?: boolean | string; readonly archived?: boolean | string; readonly status?: boolean | string;
+  readonly archivedAt?: string | null; readonly reason?: string; readonly archiveReason?: string;
+  readonly summary?: string; readonly text?: string; readonly description?: string;
+}
+export interface ArchivePillProps extends Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> {
+  readonly isArchived?: boolean | string; readonly value?: boolean | string;
+}
+export interface CancellationBadgeProps extends Omit<ClassificationBadgeProps, 'category' | 'mode' | 'value'> {
+  readonly cancelAtPeriodEnd?: boolean | string; readonly isCancelled?: boolean | string; readonly value?: boolean | string;
+}
+export interface CancellationFormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'title' | 'name'>, FormShellProps {
+  readonly allowedReasons?: readonly unknown[]; readonly reasonCode?: string; readonly reason?: string; readonly cancellationReason?: string;
+}
+export interface PriceCardMetaProps extends React.HTMLAttributes<HTMLDivElement> {
+  readonly label?: string; readonly heading?: string; readonly name?: string;
+  readonly model?: string; readonly pricingModel?: string; readonly interval?: string; readonly billingInterval?: string;
+}

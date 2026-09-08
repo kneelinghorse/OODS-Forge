@@ -315,3 +315,17 @@ describe('Sprint 185 four-suite accounting counts executions and explains popula
       capturePath: 'artifacts/product-reality/sprint-185/m01/four-suite-baseline-after/four-suite-baseline.json' })).toThrow(/relabeled/);
   });
 });
+
+
+describe('Sprint 187 review descendants retain only new closeout evidence', () => {
+  it('accepts its own captured receipts and rejects another sprint, changed evidence and executable input', () => {
+    const capture = 'artifacts/product-reality/sprint-187/m06/four-suite-closeout/run-1/mcp-server.vitest.json';
+    expect(allowedReviewEvidence(capture, 'sprint-187')).toBe(true);
+    expect(() => assertEvidenceOnlyHeadChanges([{ status: 'A', path: capture }], 'sprint-187')).not.toThrow();
+    for (const file of [capture.replace('sprint-187', 'sprint-186'), 'packages/mcp-server/src/tools/catalog.list.ts',
+      'artifacts/product-reality/sprint-187/m06/closeout-inputs/manifest.json', 'artifacts/product-reality/sprint-187/m06/live-consumers/report.json']) {
+      expect(allowedReviewEvidence(file, 'sprint-187')).toBe(false);
+    }
+    expect(() => assertEvidenceOnlyHeadChanges([{ status: 'M', path: capture }], 'sprint-187')).toThrow(/pre-existing evidence/);
+  });
+});

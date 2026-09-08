@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import {
-  CANONICAL_ADVERTISED_SCOPE, PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, ROOT, S184_BASE, S185_BASE, TABLE_PATHS,
+  CANONICAL_ADVERTISED_SCOPE, PUBLIC_RUNTIME_SCOPE, S186_PUBLIC_RUNTIME_SCOPE, S187_PUBLIC_RUNTIME_SCOPE, S187_BASE, ROOT, S184_BASE, S185_BASE, TABLE_PATHS,
   compareDeclaredPaths, deriveMovers, deriveRange, replayTableOmission,
 } from '../../../../scripts/product-reality/s185-sprint-wide-movers.mjs';
 
@@ -59,6 +59,27 @@ describe('Sprint-wide accounting includes runtime behavior omitted by per-missio
     }
     const changed = structuredClone(declaration); changed.s186.publicPaths.push('invented-runtime.ts');
     expect(() => deriveMovers('HEAD', changed, ROOT, options)).toThrow(/declared mover union differs/);
+    expect(() => deriveMovers('HEAD', declaration, ROOT, { ...options, base: S185_BASE })).toThrow(/locked build base/);
+  });
+});
+
+
+describe('Sprint 187 discovery is part of the advertised public byte range', () => {
+  it('includes current scope, refresh exports and composer/lowering without inheriting two-sprint ranges', () => {
+    const options = { sprintId: 'sprint-187', missionId: 's187-m06', base: S187_BASE };
+    const range = deriveRange(S187_BASE, 'HEAD', ROOT, S187_PUBLIC_RUNTIME_SCOPE);
+    const declaration = { s187: range };
+    const report = deriveMovers('HEAD', declaration, ROOT, options);
+    expect(report.status).toBe('passed');
+    expect(report).not.toHaveProperty('s186');
+    const changed = ['packages/mcp-server/src/tools/catalog.list.ts', 'cmos/scripts/refresh_structured_data.py',
+      'artifacts/structured-data/manifest.json', 'packages/component-contracts/registry/component-obligation-scope.v1.json',
+      'packages/mcp-server/src/codegen/binding-utils.ts', 'packages/mcp-server/src/compose/object-slot-filler.ts'];
+    expect(range.publicPaths).toEqual(expect.arrayContaining(changed));
+    for (const path of changed) {
+      const omitted = structuredClone(declaration); omitted.s187.publicPaths = omitted.s187.publicPaths.filter(file => file !== path);
+      expect(() => deriveMovers('HEAD', omitted, ROOT, options)).toThrow(/declared mover union differs/);
+    }
     expect(() => deriveMovers('HEAD', declaration, ROOT, { ...options, base: S185_BASE })).toThrow(/locked build base/);
   });
 });

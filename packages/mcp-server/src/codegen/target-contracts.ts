@@ -23,12 +23,24 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   // Labelled trait recipe directives lower into title/supporting; they are
   // authoring metadata rather than additions to the public component API.
   CardHeader: new Set(['titleField', 'supportingField']),
+  ArchiveSummary: new Set(['archivedField', 'archivedAtField', 'reasonField', 'restoredAtField', 'archivedByField', 'metadataField', 'retainHistoryParameter', 'restoreWindowParameter', 'allowPartialRestoreParameter']),
+  ArchivePill: new Set(['archivedAtField']),
+  CancellationForm: new Set(['reasonField', 'codeField', 'requireReasonParameter', 'allowedReasonsParameter', 'windowParameter']),
+  PriceCardMeta: new Set(['modelField', 'intervalField', 'amountField', 'currencyField', 'minorUnitsParameter']),
+  OwnerBadge: new Set(['ownerIdField', 'ownerTypeField']),
+  OwnershipSummary: new Set(['ownerIdField', 'ownerTypeField', 'roleField', 'transferredAtField', 'allowTransferParameter']),
+  OwnershipMeta: new Set(['ownerTypeField', 'roleField']),
+  TagSummary: new Set(['countField']),
+  LabelCell: new Set(['descriptionField', 'maxLengthParameter']),
+  FormLabelGroup: new Set(['labelField', 'descriptionField', 'placeholderField', 'maxLabelLengthParameter', 'maxDescriptionLengthParameter', 'requireDescriptionParameter']),
+  ClassificationBadge: new Set(['primaryCategoryField', 'tagPreviewField']),
+  ClassificationEditor: new Set(['modeParameter', 'tagPolicyParameter', 'maxTagsParameter']),
   Checkbox: new Set(['name']),
   // Sprint 186 wave-2 directives: consumed by codegen (bound or disclosed unbound), never public props.
   ClassificationPanel: new Set(['categoriesField', 'tagsField', 'metadataField', 'modeParameter']),
   DatePicker: new Set(['name']),
   DetailHeader: new Set(['titleField', 'subtitleField', 'headingLevel']),
-  FilterPanel: new Set(['activeField', 'modeParameter', 'collapsibleParameter']),
+  FilterPanel: new Set(['activeField', 'modeParameter', 'collapsibleParameter', 'maxActiveParameter']),
   Input: new Set(['name']),
   PriceSummary: new Set(['amountField', 'currencyField', 'modelField', 'intervalField', 'taxBehaviorField']),
   AddressCollectionPanel: new Set(['roleField', 'defaultRoleField', 'roleParameter']),
@@ -463,6 +475,20 @@ const PROP_VALUE_CONTRACTS: Readonly<
     elevated: BOOLEAN_VALUE,
     as: enumContract(['div', 'section', 'article', 'aside']),
   },
+  ArchiveSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, isArchived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), archived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), status: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), archivedAt: valueContract('a string or null', (value) => typeof value === 'string' || value === null), reason: STRING_VALUE, archiveReason: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
+  ArchivePill: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, isArchived: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
+  CancellationForm: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, hint: STRING_VALUE, allowedReasons: valueContract('an array of reason choices', Array.isArray), reasonCode: STRING_VALUE, reason: STRING_VALUE, cancellationReason: STRING_VALUE },
+  CancellationBadge: { label: STRING_VALUE, text: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, value: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE, cancelAtPeriodEnd: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string'), isCancelled: valueContract('a boolean or string', (value) => typeof value === 'boolean' || typeof value === 'string') },
+  PriceCardMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, model: STRING_VALUE, pricingModel: STRING_VALUE, interval: STRING_VALUE, billingInterval: STRING_VALUE },
+  OwnerBadge: { label: STRING_VALUE, text: STRING_VALUE, owner: STRING_VALUE, ownerType: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
+  OwnershipSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerId: STRING_VALUE, owner_id: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE, summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
+  OwnershipMeta: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, ownerType: STRING_VALUE, owner_type: STRING_VALUE, role: STRING_VALUE, ownershipRole: STRING_VALUE },
+  TagSummary: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, tagCount: STRING_OR_NUMBER_VALUE, count: STRING_OR_NUMBER_VALUE, tags: valueContract('a string or tag array', (value) => typeof value === 'string' || Array.isArray(value)), summary: STRING_VALUE, text: STRING_VALUE, description: STRING_VALUE },
+  LabelCell: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, sublabel: STRING_VALUE, supporting: STRING_VALUE, truncate: BOOLEAN_VALUE, maxLength: STRING_OR_NUMBER_VALUE },
+  InlineLabel: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, maxLength: STRING_OR_NUMBER_VALUE },
+  FormLabelGroup: { label: STRING_VALUE, text: STRING_VALUE, title: STRING_VALUE, placeholder: STRING_VALUE, hint: STRING_VALUE, description: STRING_VALUE, htmlFor: STRING_VALUE, for: STRING_VALUE, inputId: STRING_VALUE },
+  ClassificationBadge: { label: STRING_VALUE, text: STRING_VALUE, category: STRING_VALUE, value: STRING_VALUE, status: STRING_VALUE, state: STRING_VALUE, mode: STRING_VALUE, variant: STRING_VALUE, tone: TONE_VALUE, emphasis: EMPHASIS_VALUE },
+  ClassificationEditor: { title: STRING_VALUE, label: STRING_VALUE, heading: STRING_VALUE, name: STRING_VALUE, description: STRING_VALUE, subtitle: STRING_VALUE, hint: STRING_VALUE, category: STRING_VALUE, primaryCategory: STRING_VALUE, tags: valueContract('a string or array', (value) => typeof value === 'string' || Array.isArray(value)), modes: valueContract('an array of mode choices', Array.isArray), mode: STRING_VALUE, classificationMode: STRING_VALUE },
   CardHeader: {
     title: STRING_VALUE,
     label: STRING_VALUE,
@@ -849,6 +875,8 @@ function acceptedFieldKinds(
   // still mandatory, but the placeholder itself is always a string.
   if (framework === 'html') return ['string', 'number', 'boolean', 'object', 'array', 'unknown'];
   // Data props a generic field lowers to are independent of any local form state on the node.
+  if ((propName === 'isArchived' && component === 'ArchivePill') || (propName === 'cancelAtPeriodEnd' && component === 'CancellationBadge')) return ['string', 'boolean'];
+  if (propName === 'tags' && component === 'TagSummary') return ['string', 'array'];
   if (propName === 'filters' && component === 'FilterPanel') return ['array'];
   if (propName === 'tags' && (component === 'TagManager' || component === 'TagPills' || component === 'TagInput')) return ['array'];
   if (propName === 'role' && component === 'AddressSummaryBadge') return ['string'];
@@ -865,11 +893,14 @@ function acceptedFieldKinds(
     return framework === 'vue' ? ['string'] : ['string', 'number'];
   }
   if (propName === 'content') return ['string', 'number'];
+  if (propName === 'description' && component === 'ClassificationEditor') return ['string'];
+  if (propName === 'label' && ['LabelCell', 'InlineLabel', 'FormLabelGroup'].includes(component)) return ['string'];
   if (propName === 'label' && component === 'PriceBadge') return ['string', 'number'];
   if (propName === 'datetime' && component === 'RelativeTimestamp') return ['string'];
   if (propName === 'status') return ['string'];
   if (isChildren) {
-    return component === 'Text' ? ['string', 'number', 'array'] : ['string', 'number'];
+    // Both emitters explicitly lower boolean text to Yes/No (null stays empty).
+    return component === 'Text' ? ['string', 'number', 'boolean', 'array'] : ['string', 'number'];
   }
   return [];
 }

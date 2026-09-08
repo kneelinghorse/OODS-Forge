@@ -15,6 +15,48 @@
     "sampleQueries"
   ],
   "properties": {
+    "obligationScope": {
+      "type": "object",
+      "description": "Current accepted catalog scope ruling, independent of historical row classification proposals and target capability evidence. Retained obligations are not implementation or maturity claims.",
+      "required": [
+        "schemaVersion",
+        "decisionId",
+        "disposition",
+        "controllingObligationDenominator",
+        "approvedRuntimeCensus",
+        "classificationStatus"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decisionId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "retain-all-obligations"
+          ]
+        },
+        "controllingObligationDenominator": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "approvedRuntimeCensus": {
+          "type": "null"
+        },
+        "classificationStatus": {
+          "type": "string",
+          "enum": [
+            "historical-proposals-unapproved"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
     "$schema": {
       "type": "string"
     },

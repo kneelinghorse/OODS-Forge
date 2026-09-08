@@ -219,7 +219,7 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("109 unique component claims");
     expect(html).toContain("98 as runtime component rows");
     expect(html).toContain("11 as non-runtime authoring-only rows");
-    expect(html).toContain("All 109 remain pending Derek approval");
+    expect(html).toContain("Derek accepted retaining all 109 obligations in decision #1788");
     expect(html).toContain("exactly 14 React and 14 Vue surface cells");
     expect(html).toContain("a separate independent review accepted");
     expect(html).toContain("promoted all 28");
@@ -229,8 +229,8 @@ describe("how Forge works narrative truth", () => {
     expect(html).toContain("@oods/component-styles/css</span>");
     expect(html).toContain("OODS-N015</span> and no source payload");
 
-    // Sprint 186: retain the historical foundation authority while the current
-    // breadth build remains pending independent review (rule #1690).
+    // Sprint 187's independent review closes the locked breadth scope without
+    // changing the historical foundation authority or approving the old census.
     expect(nearRoadmap).toContain("Sprint 182: Product Reality Foundation — CLOSED 2026-09-04");
     expect(nearRoadmap).toContain("decision `#1662`");
     expect(normalizedNear).toContain("promoted by Derek (decision `#1663`)");
@@ -238,15 +238,15 @@ describe("how Forge works narrative truth", () => {
       "The 14-component nucleus is real in React and Vue with clean packed-consumer proof.",
     );
     expect(normalizedNear).toContain(
-      "`approvedRuntimeCensus` stops being null and the 109 denominator can move (`#1331`)",
+      "The historical `approvedRuntimeCensus` stays null while that old proposal is unapproved",
     );
-    expect(nearRoadmap).toContain("98-row proposed runtime census");
-    expect(nearRoadmap).toContain("Versioned artifacts, typed actions and behavioral local-state validation");
+    expect(nearRoadmap).toContain("The old 98-runtime split is not approved.");
+    expect(nearRoadmap).toContain("Sprint 183: Runnable Generation");
     expect(normalizedNear).toContain(
       "installs, builds, renders, hydrates and passes interactions in clean React and Vue consumers",
     );
     expect(normalizedNear).toContain(
-      "## Increment 5 — Sprint 186: Component Breadth Wave 2 — BUILT, REVIEW PENDING",
+      "## Increment 6 — Sprint 187: Fresh Composition Coverage — CERTIFIED AND CLOSED",
     );
     expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",

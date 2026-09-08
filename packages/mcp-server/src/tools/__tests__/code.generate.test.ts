@@ -516,6 +516,25 @@ describe('code.generate tool', () => {
     }
   });
 
+  it('retains the original ArchiveSummary operands after its Sprint-187 port', async () => {
+    const unsafe = await handle({ framework: 'react', schema: { version: '2026.03', screens: [{
+      id: 'unready', component: 'ArchiveSummary', props: { 'data-x.y': 'would fail syntax preflight' },
+    }] } });
+    expect(unsafe.status).toBe('error');
+    expect(unsafe.errors?.map((error) => error.code)).toEqual(['OODS-V007']);
+    expect(unsafe.errors?.[0]?.component).toBe('ArchiveSummary');
+    const original = await handle({ framework: 'react', schema: { version: '2026.03', screens: [{
+      id: 'readiness-root', component: 'Stack', children: [
+        { id: 'archive-summary', component: 'ArchiveSummary' }, { id: 'tag-input', component: 'TagInput' },
+      ],
+    }] } });
+    expect(original.status).toBe('ok');
+    expect(original.errors).toBeUndefined();
+    expect(original.meta).toMatchObject({ nodeCount: 3, componentCount: 3 });
+    for (const id of ['readiness-root', 'archive-summary', 'tag-input']) expect(original.code).toContain(`id="${id}"`);
+    expect(original.validationReceipt.checks).toContain('dependency-closure');
+  });
+
   it('checks known target readiness before emitted-syntax safety', async () => {
     const result = await handle({
       framework: 'react',
@@ -523,7 +542,7 @@ describe('code.generate tool', () => {
         version: '2026.03',
         screens: [{
           id: 'unready',
-          component: 'ArchiveSummary',
+          component: 'ArchiveEvent',
           props: { 'data-x.y': 'would fail syntax preflight' },
         }],
       },
@@ -544,9 +563,9 @@ describe('code.generate tool', () => {
       ]),
       errors: [{
         code: 'OODS-N015',
-        message: 'Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.',
+        message: 'Component ArchiveEvent is not emission-eligible for react; evidence state: unavailable.',
         nodeId: 'unready',
-        component: 'ArchiveSummary',
+        component: 'ArchiveEvent',
       }],
       meta: { nodeCount: 1, componentCount: 1 },
     });
@@ -562,7 +581,7 @@ describe('code.generate tool', () => {
             id: 'readiness-root',
             component: 'Stack',
             children: [
-              { id: 'archive-summary', component: 'ArchiveSummary' },
+              { id: 'archive-event', component: 'ArchiveEvent' },
               { id: 'tag-input', component: 'TagInput' },
             ],
           },
@@ -586,9 +605,9 @@ describe('code.generate tool', () => {
       errors: [
         {
           code: 'OODS-N015',
-          message: 'Component ArchiveSummary is not emission-eligible for react; evidence state: unavailable.',
-          nodeId: 'archive-summary',
-          component: 'ArchiveSummary',
+          message: 'Component ArchiveEvent is not emission-eligible for react; evidence state: unavailable.',
+          nodeId: 'archive-event',
+          component: 'ArchiveEvent',
         },
       ],
       meta: {

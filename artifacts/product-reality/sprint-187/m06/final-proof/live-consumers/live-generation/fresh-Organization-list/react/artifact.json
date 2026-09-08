@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0.0",
+  "framework": "react",
+  "files": [
+    {
+      "path": "src/GeneratedUI.tsx",
+      "contents": "import React from 'react';\nimport { AddressSummaryBadge, LabelCell, MessageStatusBadge, OwnerBadge, PaginationBar, PreferenceSummaryBadge, RelativeTimestamp, RoleBadgeList, SearchInput, Select, Stack, StatusBadge, TagPills } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  actions: GeneratedUIActions;\n  /** Ordered list of roles that currently have address entries. */\n  addressRoles: string[];\n  /** Collection of { role, address, metadata } entries keyed by role. */\n  addresses?: unknown[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Primary contact email for invoicing and finance escalations. */\n  billingContactEmail?: string;\n  /** Coarse account-level financial standing used by the billing subsystem. Intentionally coarser than the subscription lifecycle: this is a 4-state account vocabulary {good_standing, past_due, unpaid, suspended}, NOT the 8-state billing.subscription.status set. See docs/billing/lifecycle-states.md. */\n  billingStatus: 'good_standing' | 'past_due' | 'unpaid' | 'suspended';\n  /** Provider configuration for each channel (SMTP/Twilio/FCM/Webhook). */\n  channelCatalog: unknown[];\n  /** Multi-party threaded conversations with membership metadata (R20.6 Part 3.3). */\n  conversations?: unknown[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Preferred data residency region selected during onboarding. */\n  dataResidency?: 'us' | 'eu' | 'apac' | 'latam';\n  /** Role surfaced in UI contexts when one address must be highlighted. */\n  defaultAddressRole?: string;\n  /** Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle). */\n  deliveryPolicies: unknown[];\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Verified root domain associated with the organization. */\n  domain: string;\n  /** Reported number of active employees. */\n  employeeCount?: number;\n  /** Optional NAICS-derived industry tag. */\n  industry?: string;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4). */\n  membershipRecords: unknown[];\n  /** Delivery state machine transitions (queued → sent → delivered → failed → retried → read). */\n  messageStatuses?: unknown[];\n  /** Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives). */\n  messages?: unknown[];\n  /** Primary identifier for the organization tenant. */\n  organizationId: string;\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Atomic permissions following resource:action notation (TABLE 2). */\n  permissionCatalog: unknown[];\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Billing plan currently assigned to the organization. */\n  planTier: 'free' | 'growth' | 'enterprise';\n  /** Normalized preference payload captured by PreferenceStore (version, preferences map, metadata). */\n  preferenceDocument: unknown;\n  /** Tracks schema version, lastUpdated timestamp, migration records, and source. */\n  preferenceMetadata: unknown;\n  /** Monotonic counter incremented whenever preferences mutate (invalidates caches). */\n  preferenceMutations?: number;\n  /** Materialized namespace list resolved from parameters/registry for auditing. */\n  preferenceNamespaces: string[];\n  /** SemVer mirror of preference_document.version for indexing and analytics. */\n  preferenceVersion: string;\n  /** Canonical RBAC roles (R21.2 Part 4.2 TABLE 1). */\n  roleCatalog: unknown[];\n  /** Parent→child adjacency list for hierarchical RBAC (Part 3.1). */\n  roleHierarchyEdges?: unknown[];\n  /** Junction map for role→permission edges (TABLE 3). */\n  rolePermissions: unknown;\n  /** Materialized roles granted within the current session/token exchange. */\n  sessionRoles?: string[];\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Localized template definitions with declared variables per R20.1 Part 2.3. */\n  templateCatalog: unknown[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype AddressSummaryBadgeProps = React.ComponentPropsWithoutRef<typeof AddressSummaryBadge>;\ntype LabelCellProps = React.ComponentPropsWithoutRef<typeof LabelCell>;\ntype MessageStatusBadgeProps = React.ComponentPropsWithoutRef<typeof MessageStatusBadge>;\ntype OwnerBadgeProps = React.ComponentPropsWithoutRef<typeof OwnerBadge>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype PreferenceSummaryBadgeProps = React.ComponentPropsWithoutRef<typeof PreferenceSummaryBadge>;\ntype RelativeTimestampProps = React.ComponentPropsWithoutRef<typeof RelativeTimestamp>;\ntype RoleBadgeListProps = React.ComponentPropsWithoutRef<typeof RoleBadgeList>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusBadgeProps = React.ComponentPropsWithoutRef<typeof StatusBadge>;\ntype TagPillsProps = React.ComponentPropsWithoutRef<typeof TagPills>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, addressRoles, addresses, allowedTransitions, billingContactEmail, billingStatus, channelCatalog, conversations, createdAt, dataResidency, defaultAddressRole, deliveryPolicies, description, domain, employeeCount, industry, label, lastEvent, lastEventAt, membershipRecords, messageStatuses, messages, organizationId, ownerId, ownerType, ownershipRole, ownershipTransferredAt, permissionCatalog, placeholder, planTier, preferenceDocument, preferenceMetadata, preferenceMutations, preferenceNamespaces, preferenceVersion, roleCatalog, roleHierarchyEdges, rolePermissions, sessionRoles, stateHistory, status, tagCount, tagMetadata, tags, templateCatalog, updatedAt }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n              <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                      <Stack id=\"slot-search-1\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <SearchInput id=\"primary-search-19\" data-oods-component=\"SearchInput\" />\n                                <MessageStatusBadge id=\"ve-search-11\" data-oods-component=\"MessageStatusBadge\" />\n                              </Stack>\n                      <Select id=\"slot-filters-2\" data-oods-component=\"Select\" label=\"Verified root domain associated with the organization.\" placeholder=\"Enter domain\" required value={domain} />\n                      <Stack id=\"slot-toolbar-actions-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <AddressSummaryBadge id=\"ve-toolbar-actions-16\" data-oods-component=\"AddressSummaryBadge\" label=\"Role surfaced in UI contexts when one address must be highlighted.\" role={defaultAddressRole} />\n                                <PreferenceSummaryBadge id=\"ve-toolbar-actions-17\" data-oods-component=\"PreferenceSummaryBadge\" version={preferenceVersion} />\n                                <RoleBadgeList id=\"ve-toolbar-actions-18\" data-oods-component=\"RoleBadgeList\" roles={sessionRoles} />\n                              </Stack>\n                    </Stack>\n              <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                      <Stack id=\"slot-items-6\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <LabelCell id=\"ve-items-10\" data-oods-component=\"LabelCell\" truncate description={description} label={label} />\n                                <StatusBadge id=\"ve-items-12\" data-oods-component=\"StatusBadge\" label=\"Canonical lifecycle state derived from the states parameter. This is the single source&#10;of truth for the entity's current lifecycle position. Consumed by Colorized to resolve&#10;visual tokens, and by view extensions to render StatusBadge and StatusTimeline.&#10;\" tone=\"lifecycle\" status={status} />\n                                <OwnerBadge id=\"ve-items-13\" data-oods-component=\"OwnerBadge\" owner={ownerId} ownerType={ownerType} />\n                                <RelativeTimestamp id=\"ve-items-14\" data-oods-component=\"RelativeTimestamp\" label=\"Timestamp for the most recent modification, when available.\" datetime={updatedAt ?? createdAt} />\n                                <TagPills id=\"ve-items-15\" data-oods-component=\"TagPills\" maxVisible={3} overflowLabel=\"+{{ tag_count }}\" tags={tags} />\n                              </Stack>\n                    </Stack>\n              <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                      <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                    </Stack>\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-list-9\">\n          <button type=\"button\" data-oods-action=\"handleFilter\" onClick={() => handleFilter({})}>Filter</button>\n          <button type=\"button\" data-oods-action=\"handleRowClick\" onClick={() => handleRowClick(organizationId)}>Open row</button>\n          <button type=\"button\" data-oods-action=\"handleSort\" onClick={() => handleSort('status')}>Sort</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+      "contentHash": "sha256:2c74876c242b45112f1d5fbdec51aa5d44270550db2e80461a4f4aa458212ad3"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "@oods/component-styles",
+      "version": "0.1.0",
+      "kind": "dependency"
+    },
+    {
+      "name": "@oods/components-react",
+      "version": "0.1.0",
+      "kind": "dependency"
+    },
+    {
+      "name": "react",
+      "version": "19.2.0",
+      "kind": "peerDependency"
+    },
+    {
+      "name": "react-dom",
+      "version": "19.2.0",
+      "kind": "peerDependency"
+    }
+  ],
+  "actions": [
+    {
+      "name": "handleFilter",
+      "parameters": [
+        {
+          "name": "criteria",
+          "type": "Record<string, unknown>"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onFilter"
+        }
+      ]
+    },
+    {
+      "name": "handleRowClick",
+      "parameters": [
+        {
+          "name": "rowId",
+          "type": "string"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onRowClick"
+        }
+      ]
+    },
+    {
+      "name": "handleSort",
+      "parameters": [
+        {
+          "name": "column",
+          "type": "string"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onSort"
+        }
+      ]
+    }
+  ],
+  "contentHash": "sha256:c01faeb7cb04e0b4245483c59928da4f44519150cbd6a1f6fe75accdfcdc9e57"
+}

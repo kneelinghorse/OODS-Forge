@@ -1,0 +1,67 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue
+
+ ✓ test/breadth.s186.spec.ts (17 tests) 779ms
+ ✓ test/accessibility.spec.ts (4 tests) 946ms
+   ✓ @oods/components-vue accessibility outcomes > has no automated axe violations for the nondegenerate showcase  744ms
+ ❯ test/breadth.s187.spec.ts (16 tests | 1 failed) 559ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell preserves alias precedence, truncation edge cases and authored override 210ms
+   ✓ Sprint 187 naming and classification semantics > InlineLabel preserves alias precedence, truncation edge cases and authored override 17ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell keeps supporting aliases and defaults truncation to forty characters 29ms
+   ✓ Sprint 187 naming and classification semantics > FormLabelGroup preserves native association and hint precedence around children 9ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationBadge exposes classification status and honors authored labels 11ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationEditor labels native editable controls but prevents unwired submission 24ms
+   ✓ Sprint 187 ownership and summary semantics > OwnerBadge preserves principal aliases, status metadata and authored precedence 107ms
+   ✓ Sprint 187 ownership and summary semantics > OwnershipSummary associates owner data with terms and consumes role as data, not ARIA 53ms
+   ✓ Sprint 187 ownership and summary semantics > OwnershipMeta keeps literal term separators and lets authored children replace its entire body 15ms
+   ✓ Sprint 187 ownership and summary semantics > TagSummary preserves zero counts and scalar text, and shows the trait array using existing tag normalization 20ms
+   ✓ Sprint 187 lifecycle and financial semantics > ArchivePill keeps false/true, absent aliases and authored content distinct 13ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationBadge keeps false/true, absent aliases and authored content distinct 10ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationBadge uses isCancelled as status only without inventing a label 2ms
+   ✓ Sprint 187 lifecycle and financial semantics > ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics 18ms
+   ✓ Sprint 187 lifecycle and financial semantics > PriceCardMeta retains model/interval precedence and literal inline labels 6ms
+   × Sprint 187 lifecycle and financial semantics > CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission 14ms
+     → expected <option value></option> to have a length of +0 but got 1
+ ✓ test/ported-accessibility.spec.ts (3 tests) 560ms
+   ✓ @oods/components-vue ported accessibility outcomes > has no automated axe violations for the nondegenerate showcase  351ms
+ ✓ test/scenarios.spec.ts (65 tests) 878ms
+ ✓ test/interactions.spec.ts (7 tests) 214ms
+ ✓ test/ported-scenarios.spec.ts (10 tests) 165ms
+ ✓ test/package-contract.spec.ts (3 tests) 88ms
+ ✓ test/breadth.s185.spec.ts (26 tests) 671ms
+ ✓ test/ported-ssr.spec.ts (1 test) 106ms
+ ✓ test/ssr.spec.ts (1 test) 242ms
+ ✓ test/contract-amendments.s184.spec.ts (2 tests) 43ms
+ ✓ test/ported-package-contract.spec.ts (3 tests) 40ms
+ ✓ test/table-empty.s184.spec.ts (1 test) 28ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/breadth.s187.spec.ts > Sprint 187 lifecycle and financial semantics > CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission
+AssertionError: expected <option value></option> to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ test/breadth.s187.spec.ts:169:96
+    167|     expect([...defaults.querySelectorAll('option')].map((node) => node…
+    168|     expect(defaults.querySelector<HTMLTextAreaElement>('textarea')?.va…
+    169|     expect(mountFamily('CancellationForm', { allowedReasons: [] }).que…
+       |                                                                                                ^
+    170|     expect(mountFamily('CancellationForm', {}, 'Authored').querySelect…
+    171|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 13 passed (14)
+      Tests  1 failed | 158 passed (159)
+   Start at  20:52:57
+   Duration  23.18s (transform 1.51s, setup 0ms, collect 13.03s, tests 5.32s, environment 16.81s, prepare 3.13s)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s187/OODS-Forge/packages/components-vue:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config vitest.config.ts --maxWorkers=2
