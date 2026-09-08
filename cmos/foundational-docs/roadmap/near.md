@@ -1,10 +1,12 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 locked by `#1815`
 
 **Updated:** 2026-09-07 — review session `PS-2026-09-07-002`
 
-**PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head.
+**Sprint 188:** locked 2026-09-07 by planning session `PS-2026-09-08-001` (decisions `#1814`, `#1815`); build base `cd8ee986` (`OODS-pro` after PR #84 and PR #85 merged 2026-09-08 UTC). See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--locked-ready-for-build).
+
+**PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`.
 
 **Scope:** The next three independently reviewed increments
 
@@ -168,6 +170,47 @@ workflow** and **current visualization public-render closure**. Neither is autom
 locked here. The green 66-schema generation matrix does not prove navigation, edit/cancel, state
 transitions, responsive craft, remaining catalog breadth, or chart pixels.
 
+## Increment 7 — Sprint 188: Ship, then make the Subscription app whole — LOCKED, READY FOR BUILD
+
+**LOCKED** by decision `#1815` after Derek chose the direction (`#1814`) from three options on 2026-09-07.
+The [decision memo](../../planning/forge-s188-subscription-workflow-decision-memo.md) is the build authority;
+six serial CMOS missions `s188-m01`–`s188-m06` exist, m01 Current. Build base `cd8ee986`, whose public bytes
+equal the certified Sprint 187 implementation; the [planning census](../../planning/forge-s188-planning-probe/README.md)
+reproduces 66/66 schemas and 132/132 cells there.
+
+Two outcomes, in order. **Ship:** the served bridge still runs the primary checkout at `8ce34907`, which
+predates Sprints 183–187, so nothing certified since is reachable through it. m01 fast-forwards that checkout to
+`cd8ee986`, rebuilds, restarts PM2, proves the compiled revision by discriminating calls rather than health,
+resolves the served `schema/load` failure, adopts only the reviewed User-form successor with a hashed backup,
+and sends the one combined reconnect to aquex-mcp and forge-demos, closing #1374/#1379/#1384. **Make the
+Subscription app whole:** a seventh public composition context, `workflow`, assembles the fresh list, detail,
+form and timeline screens with routes, transitions and the Sprint 184 four-state branches; both emitters
+produce a runnable application (App root, generated navigation, typed in-memory store, deterministic sample
+data, loading/empty/error/success) that packed React and Vue consumers drive through
+list → detail → edit → save → cancel → timeline in a browser, with 32 state observations and 24 screenshots for
+the independent craft inspection. The eight Billable/Archivable rows the Subscription traits declare
+(BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector, CycleProgressCard, PaymentTimeline,
+PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay) are implemented from the trait declarations to
+the Sprint 185 bar; composition places them automatically because `design.compose` drops only rows whose
+HTML status is `planned`. Catalog truth for the 14 nucleus rows is corrected and `/health` gains a revision.
+
+| Mission | Outcome |
+|---|---|
+| m01 | Delivery, adoption, reconnect from the primary checkout; no code change |
+| m02 | `context:'workflow'`, application emitters in React and Vue, real field labels |
+| m03 | The app live in both frameworks: full flow, four states on four screens, screenshots |
+| m04 | BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector |
+| m05 | CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay; nucleus catalog truth; `/health` revision |
+| m06 | Census 66/66 plus `Subscription/workflow`, one four-suite capture, sprint-wide advertised diff, review handoff |
+
+Exit: the program sentence — *the same semantic workflow is usable in both frameworks with loading, empty,
+error, and success states* — met for Subscription, and criterion 8 opened with one application. **"Usable" is
+decided by the independent review's responsive/craft inspection, not by the build.** The sprint does not claim
+persistence, a backend, URL routing, confirmation or permission primitives, or maturity of the 64 families.
+Descope ladder and never-cut list are in the memo. After this increment, the strongest follow-on candidates are
+the **browser design loop** (compose, render live, adjust, reconcile) and **current visualization public-render
+closure** (#1372); neither is numbered or locked here.
+
 ## Gates that apply to every increment
 
 - Claims come from executable evidence, never catalog prose or research conclusions.
@@ -235,3 +278,7 @@ no shared PM2 restart, shared-store overwrite, publication or outbound reconnect
 retirement and unverified maturity remain open. Maintenance #1315/#1318–#1322 remains named and
 unabsorbed before integrated public release. PR83 CI follow-up #1386 was resolved before this build;
 its ECharts soak skip remains disclosed.
+
+Sprint 188 `s188-m01` performs that delivery from the primary checkout as described in its memo; until it
+completes, the served bridge remains at `8ce34907` and every figure above describes the merged source, not
+the served process.
