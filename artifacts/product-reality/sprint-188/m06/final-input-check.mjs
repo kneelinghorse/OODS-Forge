@@ -22,7 +22,7 @@ if (process.argv[2] === 'compatibility') {
   const adoption = read(adoptionPath);
   assert.deepEqual(hashes(successor), Object.fromEntries(Object.entries(adoption.after).filter(([file]) => file !== '_index.json')));
   assert.equal(original.reachable, 15); assert.equal(successor.reachable, 16);
-  const liveRoot = '/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/.oods/schemas';
+  const liveRoot = '/Users/systemsystems/portfolio/Design-Tools/OODS-Forge/packages/mcp-server/.oods/schemas';
   const live = Object.fromEntries(fs.readdirSync(liveRoot).filter(file => file.endsWith('.json')).sort().map(file => [file, sha(fs.readFileSync(path.join(liveRoot, file)))]));
   assert.deepEqual(live, adoption.after);
   write(`${proof}/saved-compatibility.json`, {sourceHead:head, originalInputsUnchanged:true, successorInputsUnchanged:true, liveStoreUnchanged:true,
