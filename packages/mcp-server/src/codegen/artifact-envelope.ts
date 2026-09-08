@@ -26,6 +26,7 @@ export const GENERATED_DEPENDENCY_CATALOG = {
   'class-variance-authority': { version: '0.7.1', kind: 'dependency' },
   react: { version: '19.2.0', kind: 'peerDependency' },
   'react-dom': { version: '19.2.0', kind: 'peerDependency' },
+  '@vue/server-renderer': { version: '3.5.42', kind: 'dependency' },
   '@vitejs/plugin-vue': { version: '5.2.4', kind: 'dependency' },
   vue: { version: '3.5.42', kind: 'peerDependency' },
 } as const satisfies Record<string, DependencyCatalogEntry>;
@@ -46,6 +47,7 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
     'class-variance-authority',
     'react',
     'react-dom/client',
+    'react-dom/server',
   ]),
   vue: new Set([
     '@oods/component-styles/css',
@@ -55,6 +57,7 @@ const FRAMEWORK_IMPORTS: Record<CodegenFramework, ReadonlySet<string>> = {
     'class-variance-authority',
     'vue',
     '@vitejs/plugin-vue',
+    '@vue/server-renderer',
   ]),
 };
 

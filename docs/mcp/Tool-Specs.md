@@ -665,7 +665,11 @@ search, status filtering, sorting, pagination, editing, cancellation with histor
 and reversible archive. It starts with ten deterministic records; `?mode=empty`
 and `?mode=error` exercise data states, and `?latency=400` controls simulated
 latency. Error screens provide retry. Data lasts for the application session;
-URL routing and persistent storage are follow-on work. The six existing contexts
+URL routing and persistent storage are follow-on work. The generated `src/ssr.tsx`
+(React) or `src/ssr.ts` (Vue) exports `renderApp(options)`; the generated main
+entry hydrates existing root markup and mounts an empty root. The workflow data
+contract carries declared timestamp events and cancellation reason policy so
+sample records and native Save follow the object traits. The six existing contexts
 continue returning their single-screen artifact contract.
 
 - **Input schema**: `packages/mcp-server/src/schemas/design.compose.input.json`

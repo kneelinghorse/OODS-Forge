@@ -12,6 +12,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   const failure = (message: string): CodegenResult => ({ status: 'error', framework, code: '', fileExtension: '', imports: [], warnings: [], errors: [{ code: 'OODS-N016', message }] });
   if (!options.typescript) return failure('Workflow applications require options.typescript=true for their typed store and action contract.');
   if (!schema.objectSchema || !schema.workflow) return failure('Workflow applications require an object schema and workflow contract.');
+  if (!/^[A-Za-z][A-Za-z0-9]*$/.test(schema.workflow.object)) return failure('Workflow object must use a canonical alphanumeric registry name.');
   if (schema.workflow.screens.map((screen) => screen.context).join(',') !== CONTEXTS.join(',')) return failure('Workflow requires list, detail, form and timeline screens in order.');
   const files: NonNullable<CodegenResult['files']> = [];
   const actionMap = new Map<string, GeneratedArtifactAction>();
@@ -104,7 +105,7 @@ export function createWorkflow(options: StoreOptions = {}) {
   }
   async function change(operation: () => DomainRecord, destination: Screen) {
     publish({ uiState: 'loading', error: '' });
-    try { await store.ready(); operation(); await navigate(destination); }
+    try { await store.ready(); operation(); publish({ notice: 'Changes saved in this session.' }); await navigate(destination); }
     catch (error) { publish({ uiState: 'error', error: error instanceof Error ? error.message : String(error) }); }
   }
   const actions: WorkflowActions = {
@@ -142,21 +143,26 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
   files.push({ path: `src/App${extension}`, contents: app });
   if (framework === 'react') {
     imports.add('react-dom/client');
-    files.push({ path: 'src/main.tsx', contents: "import React from 'react';\nimport { createRoot } from 'react-dom/client';\nimport App from './App';\nconst query = new URLSearchParams(window.location.search);\ncreateRoot(document.getElementById('app')!).render(<App empty={query.get('mode') === 'empty'} fail={query.get('mode') === 'error'} latency={Number(query.get('latency') ?? 180)} />);\n" });
+    imports.add('react-dom/server');
+    files.push({ path: 'src/ssr.tsx', contents: "import React from 'react';\nimport { renderToString } from 'react-dom/server';\nimport App from './App';\nimport type { StoreOptions } from './store';\nexport function renderApp(options: StoreOptions = {}) { return renderToString(<App {...options} />); }\n" });
+    files.push({ path: 'src/main.tsx', contents: "import React from 'react';\nimport { createRoot, hydrateRoot } from 'react-dom/client';\nimport App from './App';\nconst query = new URLSearchParams(window.location.search);\nconst root = document.getElementById('app')!;\nconst app = <App empty={query.get('mode') === 'empty'} fail={query.get('mode') === 'error'} latency={Number(query.get('latency') ?? 180)} />;\nif (root.hasChildNodes()) hydrateRoot(root, app); else createRoot(root).render(app);\n" });
   } else {
     imports.add('@vitejs/plugin-vue');
-    files.push({ path: 'src/main.ts', contents: "import { createApp } from 'vue';\nimport App from './App.vue';\nconst query = new URLSearchParams(window.location.search);\ncreateApp(App, { empty: query.get('mode') === 'empty', fail: query.get('mode') === 'error', latency: Number(query.get('latency') ?? 180) }).mount('#app');\n" });
+    imports.add('@vue/server-renderer');
+    files.push({ path: 'src/ssr.ts', contents: "import { createSSRApp } from 'vue';\nimport { renderToString } from '@vue/server-renderer';\nimport App from './App.vue';\nimport type { StoreOptions } from './store';\nexport function renderApp(options: StoreOptions = {}) { return renderToString(createSSRApp(App, { ...options })); }\n" });
+    files.push({ path: 'src/main.ts', contents: "import { createApp, createSSRApp } from 'vue';\nimport App from './App.vue';\nconst query = new URLSearchParams(window.location.search);\nconst root = document.getElementById('app')!;\n(root.hasChildNodes() ? createSSRApp : createApp)(App, { empty: query.get('mode') === 'empty', fail: query.get('mode') === 'error', latency: Number(query.get('latency') ?? 180) }).mount('#app');\n" });
     files.push({ path: 'vite.config.mjs', contents: "import vue from '@vitejs/plugin-vue';\nexport default { plugins: [vue()] };\n" });
   }
   files.push({ path: 'index.html', contents: `<!doctype html>\n<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${schema.workflow.object} workspace</title></head><body><div id="app"></div><script type="module" src="/src/main.${framework === 'react' ? 'tsx' : 'ts'}"></script></body></html>\n` });
   files.push({ path: 'src/app.css', contents: APP_CSS });
   files.push({ path: 'tsconfig.json', contents: JSON.stringify({ compilerOptions: { target: 'ES2022', module: 'ESNext', moduleResolution: 'Bundler', strict: true, jsx: 'react-jsx', esModuleInterop: true, skipLibCheck: false, noEmit: true, lib: ['ES2022', 'DOM', 'DOM.Iterable'] }, include: ['src'] }, null, 2) + '\n' });
-  files.push({ path: 'package.json', contents: JSON.stringify({ name: `${schema.workflow.object.toLowerCase()}-workflow-${framework}`, version: '1.0.0', private: true, type: 'module', scripts: { dev: 'vite --host 127.0.0.1', build: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit && vite build`, typecheck: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit` }, dependencies: { '@oods/component-styles': '0.1.0', [`@oods/components-${framework}`]: '0.1.0', ...(imports.has('class-variance-authority') ? { 'class-variance-authority': '0.7.1' } : {}), ...(framework === 'react' ? { react: '19.2.0', 'react-dom': '19.2.0' } : { vue: '3.5.42' }) }, devDependencies: { typescript: '5.9.3', vite: '6.4.1', ...(framework === 'react' ? { '@types/react': '19.2.2', '@types/react-dom': '19.2.1' } : { '@vitejs/plugin-vue': '5.2.4', 'vue-tsc': '3.3.11' }) } }, null, 2) + '\n' });
+  files.push({ path: 'package.json', contents: JSON.stringify({ name: `${schema.workflow.object.toLowerCase()}-workflow-${framework}`, version: '1.0.0', private: true, type: 'module', scripts: { dev: 'vite --host 127.0.0.1', build: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit && vite build`, typecheck: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit` }, dependencies: { '@oods/component-styles': '0.1.0', [`@oods/components-${framework}`]: '0.1.0', ...(imports.has('class-variance-authority') ? { 'class-variance-authority': '0.7.1' } : {}), ...(framework === 'react' ? { react: '19.2.0', 'react-dom': '19.2.0' } : { vue: '3.5.42', '@vue/server-renderer': '3.5.42' }) }, devDependencies: { '@types/node': '20.19.21', typescript: '5.9.3', vite: '6.4.1', ...(framework === 'react' ? { '@types/react': '19.2.2', '@types/react-dom': '19.2.1' } : { '@vitejs/plugin-vue': '5.2.4', 'vue-tsc': '3.3.11' }) } }, null, 2) + '\n' });
   return { status: 'ok', framework, code: app, fileExtension: extension, files, imports: [...imports], actions, warnings };
 }
 
 function reactApp(object: string, titleField: string): string {
   return `import React from 'react';
+import { StatusBadge } from '@oods/components-react';
 ${CONTEXTS.map((context) => `import { GeneratedUI as ${nameOf(context)} } from './screens/${nameOf(context)}';`).join('\n')}
 import { createWorkflow, idField, titleField, screenProps, history, routes, statuses, supplementalFields, cancellable, type Screen } from './application';
 import type { StoreOptions } from './store';
@@ -168,7 +174,7 @@ export default function App(options: StoreOptions) {
   const [status, setStatus] = React.useState('');
   React.useEffect(() => { const unsubscribe = app.subscribe(setState); void app.navigate('list'); return () => { unsubscribe(); app.dispose(); }; }, [app]);
   const props = { ...screenProps(state.draft), actions: app.actions, uiState: state.uiState };
-  return <main className="workflow-app" data-oods-workflow="${object}" data-screen={state.screen} data-route={routes[state.screen]} data-ui-state={state.uiState}>
+  return <main className="workflow-app" data-oods-workflow="${object}" data-screen={state.screen} data-selected-id={state.id} data-route={routes[state.screen]} data-ui-state={state.uiState}>
     <header className="workflow-heading"><div><p className="workflow-eyebrow">${object.toUpperCase()} WORKSPACE</p><h1>{state.screen === 'list' ? '${object}s' : String(state.draft[${JSON.stringify(titleField)}])}</h1></div><span className="workflow-mode">Local workspace</span></header>
     <nav aria-label="Workflow screens">{(['list', 'detail', 'form', 'timeline'] as Screen[]).map((screen) => <button type="button" key={screen} aria-current={state.screen === screen ? 'page' : undefined} onClick={() => { void app.navigate(screen); }}>{screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1)}</button>)}</nav>
     {state.screen === 'list' && <section className="workflow-toolbar" aria-label="Find subscriptions"><label>Search<input type="search" value={search} onChange={(event) => { setSearch(event.target.value); void app.filter(event.target.value, status); }} /></label><label>Status<select value={status} onChange={(event) => { setStatus(event.target.value); void app.filter(search, event.target.value); }}><option value="">All states</option>{statuses.map((value) => <option key={value} value={value}>{value.replaceAll('_', ' ')}</option>)}</select></label><label>Sort<select onChange={(event) => { void app.sort(event.target.value === 'desc'); }}><option value="asc">Name A–Z</option><option value="desc">Name Z–A</option></select></label><button type="button" aria-pressed={state.archived} onClick={() => { void app.archived(!state.archived); }}>{state.archived ? 'Show active' : 'Archived'}</button></section>}
@@ -177,8 +183,8 @@ export default function App(options: StoreOptions) {
     <section aria-label="${object} screen" className="workflow-content" onInputCapture={(event) => app.edit(event.nativeEvent)} onChangeCapture={(event) => app.edit(event.nativeEvent)}>
       {state.uiState === 'success' && state.screen === 'form' && supplementalFields.map((field) => <label className="workflow-field" key={field.name}>{field.label}<input name={field.name} defaultValue={String((state.draft as Record<string, unknown>)[field.name])} /></label>)}
       {state.uiState === 'success' && state.screen === 'detail' && cancellable && <fieldset className="workflow-cancel"><legend>Cancellation details</legend><label>Reason<input name="cancellation_reason" defaultValue={String((state.draft as Record<string, unknown>).cancellation_reason ?? '')} /></label><label>Reason code<input name="cancellation_reason_code" defaultValue={String((state.draft as Record<string, unknown>).cancellation_reason_code ?? '')} /></label><label><input name="cancel_at_period_end" type="checkbox" defaultChecked={Boolean((state.draft as Record<string, unknown>).cancel_at_period_end)} />Cancel at period end</label></fieldset>}
-      ${CONTEXTS.map((context) => `{state.screen === '${context}' && <${nameOf(context)} {...props} key={state.revision + ':' + state.uiState} />}`).join('\n      ')}
-      {state.uiState === 'success' && state.screen === 'list' && <><ul className="workflow-records">{state.records.map((record) => <li key={String(record[idField])}><button type="button" data-record-id={String(record[idField])} onClick={() => app.actions.handleRowClick(String(record[idField]))}><strong>{String(record[titleField])}</strong><span>{String((record as Record<string, unknown>).status).replaceAll('_', ' ')}</span><span aria-hidden="true">→</span></button></li>)}</ul><div className="workflow-pagination"><span>{state.total} records</span><button disabled={state.page <= 1} onClick={() => { void app.page(state.page - 1); }}>Previous</button><button disabled={state.page * 10 >= state.total} onClick={() => { void app.page(state.page + 1); }}>Next</button></div></>}
+      ${CONTEXTS.map((context) => context === 'form' ? `{state.screen === 'form' && <form onSubmit={(event) => { event.preventDefault(); app.actions.handleSubmit(); }}><Form {...props} key={state.revision + ':' + state.uiState} /></form>}` : `{state.screen === '${context}' && <${nameOf(context)} {...props} key={state.revision + ':' + state.uiState} />}`).join('\n      ')}
+      {state.uiState === 'success' && state.screen === 'list' && <><ul className="workflow-records">{state.records.map((record) => <li key={String(record[idField])}><button type="button" data-record-id={String(record[idField])} onClick={() => app.actions.handleRowClick(String(record[idField]))}><strong>{String(record[titleField])}</strong><StatusBadge status={String((record as Record<string, unknown>).status)} /><span aria-hidden="true">→</span></button></li>)}</ul><div className="workflow-pagination"><span>{state.total} records</span><button disabled={state.page <= 1} onClick={() => { void app.page(state.page - 1); }}>Previous</button><button disabled={state.page * 10 >= state.total} onClick={() => { void app.page(state.page + 1); }}>Next</button></div></>}
       {state.uiState === 'success' && state.screen === 'timeline' && <ol className="workflow-history" aria-label="Lifecycle history">{history(state.draft).map((entry, index) => <li key={index}><strong>{entry.to.replaceAll('_', ' ')}</strong><time dateTime={entry.at}>{entry.at}</time><p>{entry.reason}</p></li>)}</ol>}
       {state.uiState === 'success' && state.screen === 'detail' && Boolean((state.draft as Record<string, unknown>).is_archived) && <button onClick={() => { void app.restore(); }}>Restore record</button>}
     </section>
@@ -191,6 +197,7 @@ export default function App(options: StoreOptions) {
 function vueApp(object: string, titleField: string): string {
   return `<script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, shallowRef } from 'vue';
+import { StatusBadge } from '@oods/components-vue';
 ${CONTEXTS.map((context) => `import ${nameOf(context)} from './screens/${nameOf(context)}.vue';`).join('\n')}
 import { createWorkflow, idField, titleField, screenProps, history, routes, statuses, supplementalFields, cancellable, type Screen } from './application';
 import type { StoreOptions } from './store';
@@ -209,7 +216,7 @@ const view = computed(() => ({ list: List, detail: Detail, form: Form, timeline:
 const values = computed(() => state.value.draft as Record<string, unknown>);
 </script>
 <template>
-  <main class="workflow-app" data-oods-workflow="${object}" :data-screen="state.screen" :data-route="routes[state.screen]" :data-ui-state="state.uiState">
+  <main class="workflow-app" data-oods-workflow="${object}" :data-screen="state.screen" :data-selected-id="state.id" :data-route="routes[state.screen]" :data-ui-state="state.uiState">
     <header class="workflow-heading"><div><p class="workflow-eyebrow">${object.toUpperCase()} WORKSPACE</p><h1>{{ state.screen === 'list' ? '${object}s' : state.draft[${JSON.stringify(titleField)}] }}</h1></div><span class="workflow-mode">Local workspace</span></header>
     <nav aria-label="Workflow screens"><button v-for="screen in screens" :key="screen" type="button" :aria-current="state.screen === screen ? 'page' : undefined" @click="app.navigate(screen)">{{ screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1) }}</button></nav>
     <section v-if="state.screen === 'list'" class="workflow-toolbar" aria-label="Find subscriptions"><label>Search<input v-model="search" type="search" @input="app.filter(($event.target as HTMLInputElement).value, status)" /></label><label>Status<select v-model="status" @change="app.filter(search, ($event.target as HTMLSelectElement).value)"><option value="">All states</option><option v-for="value in statuses" :key="value" :value="value">{{ value.replaceAll('_', ' ') }}</option></select></label><label>Sort<select @change="app.sort(($event.target as HTMLSelectElement).value === 'desc')"><option value="asc">Name A–Z</option><option value="desc">Name Z–A</option></select></label><button type="button" :aria-pressed="state.archived" @click="app.archived(!state.archived)">{{ state.archived ? 'Show active' : 'Archived' }}</button></section>
@@ -217,8 +224,8 @@ const values = computed(() => state.value.draft as Record<string, unknown>);
     <section aria-label="${object} screen" class="workflow-content" @input.capture="app.edit" @change.capture="app.edit">
       <template v-if="state.uiState === 'success' && state.screen === 'form'"><label v-for="field in supplementalFields" :key="field.name" class="workflow-field">{{ field.label }}<input :name="field.name" :value="values[field.name]" /></label></template>
       <fieldset v-if="state.uiState === 'success' && state.screen === 'detail' && cancellable" class="workflow-cancel"><legend>Cancellation details</legend><label>Reason<input name="cancellation_reason" :value="values.cancellation_reason ?? ''" /></label><label>Reason code<input name="cancellation_reason_code" :value="values.cancellation_reason_code ?? ''" /></label><label><input name="cancel_at_period_end" type="checkbox" :checked="Boolean(values.cancel_at_period_end)" />Cancel at period end</label></fieldset>
-      <component :is="view" :key="state.revision + ':' + state.uiState" v-bind="props" />
-      <template v-if="state.uiState === 'success' && state.screen === 'list'"><ul class="workflow-records"><li v-for="record in state.records" :key="String(record[idField])"><button type="button" :data-record-id="record[idField]" @click="app.actions.handleRowClick(String(record[idField]))"><strong>{{ record[titleField] }}</strong><span>{{ String((record as Record<string, unknown>).status).replaceAll('_', ' ') }}</span><span aria-hidden="true">→</span></button></li></ul><div class="workflow-pagination"><span>{{ state.total }} records</span><button :disabled="state.page <= 1" @click="app.page(state.page - 1)">Previous</button><button :disabled="state.page * 10 >= state.total" @click="app.page(state.page + 1)">Next</button></div></template>
+      <form v-if="state.screen === 'form'" @submit.prevent="app.actions.handleSubmit"><Form :key="state.revision + ':' + state.uiState" v-bind="props" /></form><component v-else :is="view" :key="state.revision + ':' + state.uiState" v-bind="props" />
+      <template v-if="state.uiState === 'success' && state.screen === 'list'"><ul class="workflow-records"><li v-for="record in state.records" :key="String(record[idField])"><button type="button" :data-record-id="record[idField]" @click="app.actions.handleRowClick(String(record[idField]))"><strong>{{ record[titleField] }}</strong><StatusBadge :status="String((record as Record<string, unknown>).status)" /><span aria-hidden="true">→</span></button></li></ul><div class="workflow-pagination"><span>{{ state.total }} records</span><button :disabled="state.page <= 1" @click="app.page(state.page - 1)">Previous</button><button :disabled="state.page * 10 >= state.total" @click="app.page(state.page + 1)">Next</button></div></template>
       <ol v-if="state.uiState === 'success' && state.screen === 'timeline'" class="workflow-history" aria-label="Lifecycle history"><li v-for="(entry, index) in history(state.draft)" :key="index"><strong>{{ entry.to.replaceAll('_', ' ') }}</strong><time :datetime="entry.at">{{ entry.at }}</time><p>{{ entry.reason }}</p></li></ol>
       <button v-if="state.uiState === 'success' && state.screen === 'detail' && values.is_archived" @click="app.restore()">Restore record</button>
     </section><p class="workflow-notice" role="status">{{ state.notice }}</p>
@@ -244,6 +251,11 @@ body { margin: 0; background: #f5f6f8; color: #1c2535; font-family: system-ui, s
 .workflow-app input:not([type="checkbox"]), .workflow-app select { font: inherit; max-width: 100%; border: 1px solid #cdd4df; border-radius: 5px; padding: 10px; background: white; }
 .workflow-content { padding: 24px; border: 1px solid #dce1e8; border-radius: 12px; background: white; min-width: 0; overflow-wrap: anywhere; }
 .workflow-field { margin-bottom: 20px; }
+.workflow-content [data-layout="inline"] { flex-wrap: wrap; gap: 12px; }
+.workflow-content [data-layout="inline"] > [data-oods-component="SearchInput"], .workflow-content [data-layout="inline"] > [data-oods-component="Select"] { flex: 1 1 180px; min-width: 0; }
+.workflow-content [data-oods-component="PriceBadge"] { white-space: nowrap; }
+.workflow-content textarea { font: inherit; border: 1px solid #cdd4df; border-radius: 5px; padding: 10px; }
+.workflow-content [data-oods-component="Stack"] { min-width: 0; }
 .workflow-cancel { display: flex; gap: 16px; flex-wrap: wrap; border: 1px solid #dce1e8; padding: 16px; margin: 0 0 24px; border-radius: 6px; }
 .workflow-records { padding: 0; list-style: none; margin: 24px 0; }
 .workflow-records li + li { margin-top: 8px; }
@@ -254,5 +266,5 @@ body { margin: 0; background: #f5f6f8; color: #1c2535; font-family: system-ui, s
 .workflow-history time { display: block; color: #57657b; font-size: 12px; margin: 8px 0; }
 .workflow-notice { min-height: 20px; color: #57657b; font-size: 13px; }
 [data-oods-screen-actions] { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-@media (max-width: 600px) { .workflow-app { padding: 24px 16px; } .workflow-content { padding: 16px; } .workflow-mode { display: none; } .workflow-toolbar > label { flex: 1 1 140px; } .workflow-records button { grid-template-columns: 1fr auto; } .workflow-records button span:last-child { display: none; } }
+@media (max-width: 600px) { .workflow-app { padding: 24px 16px; } .workflow-content { padding: 16px; } .workflow-mode { display: none; } .workflow-toolbar > label { flex: 1 1 140px; } .workflow-records button { grid-template-columns: minmax(0, 1fr); gap: 10px; } .workflow-records button > [data-oods-component="StatusBadge"] { justify-self: start; max-width: 100%; } .workflow-records button > span:last-child { display: none; } }
 `;

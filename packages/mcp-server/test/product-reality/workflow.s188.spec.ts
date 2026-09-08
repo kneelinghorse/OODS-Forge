@@ -41,7 +41,7 @@ function link(source: string, target: string) {
 }
 function rebuild(artifact: GeneratedArtifact, files: Array<{ path: string; contents: string }>) {
   return buildGeneratedArtifact({ framework: artifact.framework, files, actions: artifact.actions,
-    imports: artifact.framework === 'react' ? ['react', 'react-dom/client', '@oods/components-react', '@oods/component-styles/css'] : ['vue', '@vitejs/plugin-vue', '@oods/components-vue', '@oods/component-styles/css'] });
+    imports: artifact.framework === 'react' ? ['react', 'react-dom/client', 'react-dom/server', '@oods/components-react', '@oods/component-styles/css'] : ['vue', '@vitejs/plugin-vue', '@vue/server-renderer', '@oods/components-vue', '@oods/component-styles/css'] });
 }
 
 beforeAll(async () => {
@@ -133,6 +133,15 @@ describe('Generated applications close their own contracts', () => {
     expect(unsupported.status).toBe('error');
     expect(unsupported.errors?.[0]?.message).toContain('typescript=true');
   });
+  it('rejects noncanonical object names before interpolating an application shell', async () => {
+    const unsafe = structuredClone(schema);
+    unsafe.workflow!.object = `Subscription" onClick={alert(1)}`;
+    const result = await generate({ schema: unsafe, framework: 'react', profile: 'build' });
+    expect(result.status).toBe('error');
+    expect(result.errors?.[0]?.message).toContain('canonical alphanumeric');
+    expect(result.artifact).toBeUndefined();
+  });
+
   it.each(['react', 'vue'] as const)('%s ships every source file and rejects missing imports or disconnected actions', (framework) => {
     const artifact = artifacts.get(framework)!;
     const extension = framework === 'react' ? '.tsx' : '.vue';
@@ -152,8 +161,9 @@ describe('Generated applications close their own contracts', () => {
     try {
       unpack(artifacts.get(framework)!, directory);
       const req = framework === 'react' ? reactRequire : vueRequire;
-      const dependencies = framework === 'react' ? ['react', 'react-dom', '@types/react', '@types/react-dom'] : ['vue'];
+      const dependencies = framework === 'react' ? ['react', 'react-dom', '@types/react', '@types/react-dom'] : ['vue', '@vue/server-renderer'];
       for (const dependency of dependencies) link(path.dirname(req.resolve(`${dependency}/package.json`)), path.join(directory, 'node_modules', dependency));
+      link(path.dirname(createRequire(path.join(root, 'package.json')).resolve('@types/node/package.json')), path.join(directory, 'node_modules/@types/node'));
       for (const dependency of [`components-${framework}`, 'component-styles']) link(path.join(root, 'packages', dependency), path.join(directory, 'node_modules/@oods', dependency));
       const compiler = vueRequire.resolve(framework === 'react' ? 'typescript/bin/tsc' : 'vue-tsc/bin/vue-tsc.js');
       const result = spawnSync(process.execPath, [compiler, '--noEmit', '--pretty', 'false', '-p', path.join(directory, 'tsconfig.json')], { encoding: 'utf8', timeout: 60_000 });
@@ -199,6 +209,9 @@ describe('Generated store drives the lifecycle without consumer wiring', () => {
       expect(store.list({ archived: true }).total).toBe(2);
       store.restore('subscription-003');
       expect(store.list().total).toBe(9);
+      // Subscription declares requireReason=false; the store must not invent a mandatory reason.
+      expect(createStore().cancel('subscription-001', '', '', false).status).toBe('pending_cancellation');
+      expect(sampleData.every((record: { last_event: string }) => schema.workflow!.data.recordedEvents!.includes(record.last_event))).toBe(true);
       expect(createStore({ empty: true }).list().total).toBe(0);
       const failing = createStore({ fail: true, latency: 0 });
       await expect(failing.ready()).rejects.toThrow(/Simulated/);

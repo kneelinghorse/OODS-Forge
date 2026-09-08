@@ -1,0 +1,52 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/workflow.s188.spec.ts (10 tests | 1 failed) 9584ms
+   ✓ Subscription workflow composition > derives routes and six transition meanings from the public source screens 38ms
+   ✓ Subscription workflow composition > keeps exactly four canonical branches on every react screen 1ms
+   ✓ Subscription workflow composition > keeps exactly four canonical branches on every vue screen 1ms
+   ✓ Subscription workflow composition > adds actions in the trait mapping, including no additions for Plan carrying neither trait 62ms
+   ✓ Generated applications close their own contracts > accepts workflow through pipeline and makes unsupported JavaScript-only emission explicit 73ms
+   ✓ Generated applications close their own contracts > react ships every source file and rejects missing imports or disconnected actions 12ms
+   ✓ Generated applications close their own contracts > vue ships every source file and rejects missing imports or disconnected actions 12ms
+   ✓ Generated applications close their own contracts > react application typechecks strict against the built component packages  2432ms
+   × Generated applications close their own contracts > vue application typechecks strict against the built component packages 6426ms
+     → ../../node_modules/.pnpm/@vue+server-renderer@3.5.42/node_modules/@vue/server-renderer/dist/server-renderer.d.ts(2,36): error TS2307: Cannot find module 'node:stream' or its corresponding type declarations.
+../../../../../../../../var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-vue-v2HKb1/src/ssr.ts(5,97): error TS2345: Argument of type 'StoreOptions' is not assignable to parameter of type 'Data'.
+  Index signature for type 'string' is missing in type 'StoreOptions'.
+: expected 2 to be +0 // Object.is equality
+   ✓ Generated store drives the lifecycle without consumer wiring > covers deterministic seeds, query boundaries, save, cancellation history, archive/restore and failure modes 167ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/workflow.s188.spec.ts > Generated applications close their own contracts > vue application typechecks strict against the built component packages
+AssertionError: ../../node_modules/.pnpm/@vue+server-renderer@3.5.42/node_modules/@vue/server-renderer/dist/server-renderer.d.ts(2,36): error TS2307: Cannot find module 'node:stream' or its corresponding type declarations.
+../../../../../../../../var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-vue-v2HKb1/src/ssr.ts(5,97): error TS2345: Argument of type 'StoreOptions' is not assignable to parameter of type 'Data'.
+  Index signature for type 'string' is missing in type 'StoreOptions'.
+: expected 2 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ test/product-reality/workflow.s188.spec.ts:160:60
+    158|       const compiler = vueRequire.resolve(framework === 'react' ? 'typ…
+    159|       const result = spawnSync(process.execPath, [compiler, '--noEmit'…
+    160|       expect(result.status, result.stdout + result.stderr).toBe(0);
+       |                                                            ^
+    161|     } finally { rmSync(directory, { recursive: true, force: true }); }
+    162|   }, 70_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  23:08:37
+   Duration  12.10s (transform 1.07s, setup 31ms, collect 2.13s, tests 9.58s, environment 0ms, prepare 137ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s188/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/workflow.s188.spec.ts

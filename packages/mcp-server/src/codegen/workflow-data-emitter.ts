@@ -12,6 +12,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
     if (name === titleField) return `${workflow.object} ${String(index + 1).padStart(2, '0')}`;
     if (name === 'status' && lifecycleStates.length) return lifecycleStates[index % lifecycleStates.length];
     if (name === 'billing_interval' && billingIntervals.length) return billingIntervals[index % billingIntervals.length];
+    if (name === 'last_event') return workflow.data.recordedEvents?.[index % Math.max(1, workflow.data.recordedEvents.length)] ?? 'created';
     if (name === 'currency') return currency;
     if (name === 'amount') return (index + 1) * 1900;
     if (name === 'is_archived') return index === sampleCount - 1;
@@ -108,7 +109,8 @@ export function createStore(options: StoreOptions = {}) {
       const record = get(id);
       const values = record as Record<string, unknown>;
       if (values.is_archived || values.status === 'terminated' || values.status === 'pending_cancellation') throw new Error('This record cannot be cancelled in its current state');
-      if (!reason.trim()) throw new Error('Enter a cancellation reason');
+      ${workflow.data.cancellationRequiresReason ? `if (!reason.trim()) throw new Error('Enter a cancellation reason');
+      if (!code || (${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])}.length > 0 && !(${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])} as readonly string[]).includes(code))) throw new Error('Choose an allowed cancellation reason code');` : ''}
       const at = now();
       const entry: HistoryEntry = { from: String(values.status), to: 'pending_cancellation', at, reason: reason.trim(), code, atPeriodEnd };
       Object.assign(record, { status: 'pending_cancellation', cancellation_reason: reason.trim(), cancellation_reason_code: code, cancel_at_period_end: atPeriodEnd, cancellation_requested_at: at, state_history: [...history(record), entry], updated_at: at });

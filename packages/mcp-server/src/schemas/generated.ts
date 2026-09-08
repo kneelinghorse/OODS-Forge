@@ -120,6 +120,9 @@ export namespace A11yScanInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;
@@ -1262,6 +1265,9 @@ export namespace CodeGenerateInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;
@@ -3004,6 +3010,9 @@ export namespace DesignComposeOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;
@@ -5470,6 +5479,9 @@ export namespace ReplOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;
@@ -5756,6 +5768,9 @@ export namespace ReplRenderInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;
@@ -5996,6 +6011,9 @@ export namespace ReplRenderOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;
@@ -6153,6 +6171,9 @@ export namespace UiSchemaSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;
@@ -6330,6 +6351,9 @@ export namespace ReplValidateInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;
@@ -6550,6 +6574,9 @@ export namespace ReplValidateOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      recordedEvents?: string[];
+      cancellationRequiresReason?: boolean;
+      cancellationReasonCodes?: string[];
       idField: string;
       traits: string[];
       sampleCount: number;

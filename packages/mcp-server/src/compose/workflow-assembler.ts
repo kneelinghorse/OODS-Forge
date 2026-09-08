@@ -25,6 +25,8 @@ export async function assembleWorkflow(
   const parameters = (name: string) => object.traits.find((trait) => trait.ref.name.split('/').pop() === name)?.ref.parameters ?? {};
   const lifecycle = parameters('Stateful');
   const billing = parameters('Billable');
+  const timestamps = parameters('Timestampable');
+  const cancellation = parameters('Cancellable');
   const fields = first.schema.objectSchema ?? {};
   const idField = Object.keys(fields).find((field) => field === `${object.object.name.toLowerCase()}_id`)
     ?? Object.keys(fields).find((field) => field === 'id' || field.endsWith('_id'))
@@ -34,6 +36,9 @@ export async function assembleWorkflow(
     object: object.object.name, screens: (Object.keys(ROUTES) as Array<keyof typeof ROUTES>).map((context) => ({ id: `${context}-screen`, context, route: ROUTES[context] })) as NonNullable<UiSchema['workflow']>['screens'], transitions: [], states: [...UI_WORKFLOW_STATES],
     data: {
       idField, traits: first.objectUsed.traits, sampleCount: 10,
+      recordedEvents: Array.isArray(timestamps.recordedEvents) ? timestamps.recordedEvents.map(String) : [],
+      cancellationRequiresReason: cancellation.requireReason === true,
+      cancellationReasonCodes: Array.isArray(cancellation.allowedReasons) ? cancellation.allowedReasons.map(String) : [],
       lifecycleStates: Array.isArray(lifecycle.states) ? lifecycle.states.map(String) : fields.status?.enum ?? [],
       billingIntervals: Array.isArray(billing.billingIntervals) ? billing.billingIntervals.map(String) : [],
       currency: String(billing.defaultCurrency ?? 'usd'), minorUnits: Number(billing.minorUnits ?? 100),

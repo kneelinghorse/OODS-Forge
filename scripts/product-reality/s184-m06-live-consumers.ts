@@ -2213,3 +2213,6 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     process.exitCode = 1;
   });
 }
+
+// Shared with the bounded Sprint 188 App proof; retain the same isolation and gate rules.
+export { commandResult, requireGreen, prepareManifest, isolatedNpmEnvironment, assertInstalledIsolation, resolveImports, withStaticServer, cssProof };
