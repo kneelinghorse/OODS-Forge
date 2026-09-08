@@ -249,6 +249,10 @@ describe("how Forge works narrative truth", () => {
       "## Increment 6 — Sprint 187: Fresh Composition Coverage — CERTIFIED AND CLOSED",
     );
     expect(normalizedNear).toContain(
+      "## Increment 7 — Sprint 188: Ship, then make the Subscription app whole — CERTIFIED AND CLOSED",
+    );
+    expect(nearRoadmap).not.toContain("Sprint 188 BUILT, REVIEW PENDING");
+    expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",
     );
     expect(normalizedNear).toContain("`#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt");

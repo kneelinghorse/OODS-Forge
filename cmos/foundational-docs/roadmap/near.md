@@ -1,12 +1,12 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 BUILT, REVIEW PENDING under `#1815`, `#1817`, `#1822`, `#1825`
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`
 
-**Updated:** 2026-09-08 — Sprint 188 build session `PS-2026-09-08-008`; independent review pending
+**Updated:** 2026-09-08 — Sprint 188 review session `PS-2026-09-08-011`; independently certified and closed
 
-**Sprint 188:** BUILT, REVIEW PENDING. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 freezes the final proof and hands off for independent review. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--built-review-pending).
+**Sprint 188:** CERTIFIED AND CLOSED. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 froze the final proof and handed off. Review `PS-2026-09-08-011` (decision `#1831`) inspected all 36 frozen-head screenshots in both frameworks: the workflow runs end to end with all four states and criterion 8 is opened; usable is not certified, and the ranked craft carries are preserved by `#1832`. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--certified-and-closed).
 
-**PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`.
+**PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`. Sprint 188 merged through PR #86 (`33a20d0e`) and PR #87 (`ed0d5750`); remote CI on the frozen head `7fc3c9e0` passed all three workflows before the review.
 
 **Scope:** The next three independently reviewed increments
 
@@ -170,9 +170,9 @@ workflow** and **current visualization public-render closure**. Neither is autom
 locked here. The green 66-schema generation matrix does not prove navigation, edit/cancel, state
 transitions, responsive craft, remaining catalog breadth, or chart pixels.
 
-## Increment 7 — Sprint 188: Ship, then make the Subscription app whole — BUILT, REVIEW PENDING
+## Increment 7 — Sprint 188: Ship, then make the Subscription app whole — CERTIFIED AND CLOSED
 
-The build follows decisions `#1814`/`#1815` and amendments `#1817`, `#1822` and `#1825`. The [decision memo](../../planning/forge-s188-subscription-workflow-decision-memo.md) and amended CMOS criteria control scope. The [M05 packet](../../../artifacts/product-reality/sprint-188/m05/README.md) records the component and application evidence; the [M06 handoff](../../../artifacts/product-reality/sprint-188/m06/README.md) records the final implementation, execution and evidence heads. **Sprint remains Active; builderSelfCertified:false; separateReviewRequired:true.**
+The build follows decisions `#1814`/`#1815` and amendments `#1817`, `#1822` and `#1825`. The [decision memo](../../planning/forge-s188-subscription-workflow-decision-memo.md) and amended CMOS criteria control scope. The [M05 packet](../../../artifacts/product-reality/sprint-188/m05/README.md) records the component and application evidence; the [M06 handoff](../../../artifacts/product-reality/sprint-188/m06/accepted-timeout/README.md) records the final implementation, execution and evidence heads. Sprint 188 is **Completed**, independently certified by review `PS-2026-09-08-011` and decision `#1831`. Historical builder receipts retain `builderSelfCertified:false`; they are not relabeled.
 
 **Delivered:** Mission 1 fast-forwarded the primary checkout to merged `cd8ee986`, rebuilt and restarted PM2, repaired served schema loading, and adopted only the authentic User-form successor with hashed backup/rollback. Seventeen HTTP probes and two retained N015 negatives verified the served result. The authorized combined reconnect was sent once to aquex-mcp and forge-demos. The new workflow implementation awaits the next reviewed delivery.
 
@@ -196,6 +196,14 @@ persistence, a backend, URL routing, confirmation or permission primitives, or m
 Descope ladder and never-cut list are in the memo. After this increment, the strongest follow-on candidates are
 the **browser design loop** (compose, render live, adjust, reconcile) and **current visualization public-render
 closure** (#1372); neither is numbered or locked here.
+
+**Review verdict (`PS-2026-09-08-011`, decision `#1831`):** all 36 screenshots at 390/820/1440 in both frameworks
+were inspected. The application is operable end to end and the eight declared rows render real values, but the
+composed source screens carry template defects — an unwired list header block with a `No items` paginator above
+nine records, four empty timeline cards, description-as-label form fields with duplicated controls, an editable
+cancellation fieldset and `Archived: false` on the detail screen, raw ISO timestamps — so usable is not certified.
+The ranked carries are decision `#1832` and are the target list for the browser design loop candidate. Capture and
+timeout handling for Sprint 189 is decision `#1833`.
 
 ## Gates that apply to every increment
 
