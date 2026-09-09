@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "framework": "vue",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "vue",
+    "files": [
+      {
+        "path": "src/GeneratedUI.vue",
+        "contents": "<template>\n  <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{{ mediaId }}</Text>\n          </Stack>\n      <section id=\"timeline-entries-13\" data-oods-collection=\"events\"><template v-if=\"events.length === 0\"><Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" /></template><ol v-else aria-label=\"Lifecycle history\" class=\"oods-collection\"><li v-for=\"(collectionEvent, collectionIndex) in chronologicalEvents(events)\" :key=\"collectionEvent.id\"><Card :id=\"'timeline-entries-13-entry-' + collectionIndex\"><strong>{{ collectionEvent.title }}</strong><time :datetime=\"collectionEvent.at\">{{ formatDateTime(collectionEvent.at) }}</time><p>{{ collectionEvent.description }}</p></Card></li></ol></section>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\nimport { Banner, Card, Stack, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  events?: CollectionEvent[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Media form factor guiding viewer presentation. */\n  assetType: 'image' | 'video' | 'audio' | 'document';\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Hex-encoded checksum (SHA-256) for deduplication. */\n  checksum?: string;\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Media playback duration for video/audio assets. */\n  durationSeconds?: number;\n  /** Size of the binary payload in bytes. */\n  fileSizeBytes: number;\n  /** Pixel height for images/videos when available. */\n  heightPx?: number;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Primary identifier for the media asset across services. */\n  mediaId: string;\n  /** IANA MIME type recorded at ingestion. */\n  mimeType: string;\n  /** Provider-specific path or key referencing the binary object. */\n  objectKey: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Canonical CDN URL for public consumption. */\n  sourceUrl?: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Storage namespace (S3 bucket, GCS bucket) backing the asset. */\n  storageBucket: string;\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** List of transcoding profiles generated for the asset. */\n  transcodingProfiles?: string[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Pixel width for images/videos when available. */\n  widthPx?: number;\n}\n\nconst { allowedTransitions, assetType, categories, checksum, classificationMetadata, createdAt, description, durationSeconds, fileSizeBytes, heightPx, label, lastEvent, lastEventAt, mediaId, mimeType, objectKey, placeholder, primaryCategoryId, primaryCategoryPath, sourceUrl, stateHistory, status, storageBucket, tagCount, tagPreview, tags, transcodingProfiles, updatedAt, widthPx, events = [] } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+        "contentHash": "sha256:c13b08c9a8e36b2bc686103b3572dde37bf1748fe8ffdf5aa7844265c190867d"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-contracts",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-vue",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.42",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:16a2d884d773217e85cef96825ff86a3c77629bb780dea6bab95a27fdf75bb56"
+  },
+  "code": "<template>\n  <Stack id=\"screen-timeline-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <Text id=\"timeline-header-1-title\" data-oods-component=\"Text\">{{ mediaId }}</Text>\n          </Stack>\n      <section id=\"timeline-entries-13\" data-oods-collection=\"events\"><template v-if=\"events.length === 0\"><Banner id=\"timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" /></template><ol v-else aria-label=\"Lifecycle history\" class=\"oods-collection\"><li v-for=\"(collectionEvent, collectionIndex) in chronologicalEvents(events)\" :key=\"collectionEvent.id\"><Card :id=\"'timeline-entries-13-entry-' + collectionIndex\"><strong>{{ collectionEvent.title }}</strong><time :datetime=\"collectionEvent.at\">{{ formatDateTime(collectionEvent.at) }}</time><p>{{ collectionEvent.description }}</p></Card></li></ol></section>\n    </Stack>\n</template>\n\n<script setup lang=\"ts\">\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\nimport { Banner, Card, Stack, Text } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  events?: CollectionEvent[];\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Media form factor guiding viewer presentation. */\n  assetType: 'image' | 'video' | 'audio' | 'document';\n  /** Ordered taxonomy nodes scoped to the object. */\n  categories?: unknown[];\n  /** Hex-encoded checksum (SHA-256) for deduplication. */\n  checksum?: string;\n  /** Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n */\n  classificationMetadata: unknown;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Media playback duration for video/audio assets. */\n  durationSeconds?: number;\n  /** Size of the binary payload in bytes. */\n  fileSizeBytes: number;\n  /** Pixel height for images/videos when available. */\n  heightPx?: number;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Primary identifier for the media asset across services. */\n  mediaId: string;\n  /** IANA MIME type recorded at ingestion. */\n  mimeType: string;\n  /** Provider-specific path or key referencing the binary object. */\n  objectKey: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Identifier of the canonical taxonomy node. */\n  primaryCategoryId?: string;\n  /** Human-readable breadcrumb path (Electronics > Mobile > Android). */\n  primaryCategoryPath?: string;\n  /** Canonical CDN URL for public consumption. */\n  sourceUrl?: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Storage namespace (S3 bucket, GCS bucket) backing the asset. */\n  storageBucket: string;\n  /** Number of canonical tags assigned to the object. */\n  tagCount?: number;\n  /** Denormalized comma-delimited preview for list renders. */\n  tagPreview?: string;\n  /** Canonical tag collection after synonym collapse. */\n  tags?: unknown[];\n  /** List of transcoding profiles generated for the asset. */\n  transcodingProfiles?: string[];\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n  /** Pixel width for images/videos when available. */\n  widthPx?: number;\n}\n\nconst { allowedTransitions, assetType, categories, checksum, classificationMetadata, createdAt, description, durationSeconds, fileSizeBytes, heightPx, label, lastEvent, lastEventAt, mediaId, mimeType, objectKey, placeholder, primaryCategoryId, primaryCategoryPath, sourceUrl, stateHistory, status, storageBucket, tagCount, tagPreview, tags, transcodingProfiles, updatedAt, widthPx, events = [] } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+  "fileExtension": ".vue",
+  "imports": [
+    "@oods/component-contracts",
+    "@oods/components-vue",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "vue",
+        "resolved": "vue",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:16a2d884d773217e85cef96825ff86a3c77629bb780dea6bab95a27fdf75bb56"
+    }
+  },
+  "meta": {
+    "nodeCount": 6,
+    "componentCount": 4
+  }
+}
