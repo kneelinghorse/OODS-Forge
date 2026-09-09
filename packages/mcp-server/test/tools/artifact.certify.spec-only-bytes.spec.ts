@@ -44,6 +44,21 @@ const baseline = JSON.parse(
 
 const cases = SPEC_ONLY_CASES(buildVizSpecFromRows);
 
+// s190 #1850: retain the immutable historical fixture. Only the named scope deltas
+// are admitted: cartesian content/render hashes and the full-palette ECharts Role-C
+// failure against the corrected --oods-sys-surface-canvas. All other bytes stay pinned.
+const SCOPED_ROLE_C_PREFIX = 'Role-C (WCAG 1.4.11) fail: --viz-scale-categorical-04 below 3:1 vs the canvas. ';
+const CATEGORICAL_ECHARTS = new Set(['MarkTreemap', 'MarkSunburst', 'MarkSankey', 'MarkGraph', 'MarkChord']);
+function expectedAtLightScope(trait: string): Record<string, unknown> {
+  const expected = structuredClone(baseline[trait]);
+  if (CATEGORICAL_ECHARTS.has(trait)) {
+    (expected.pillars as Record<string, unknown>).contrast = 'fail';
+    expected.contrastNote = SCOPED_ROLE_C_PREFIX + expected.contrastNote;
+  }
+  return expected;
+}
+
+
 /**
  * The ENUMERATED notes[] ADDITIONS on the ECharts {spec}-only path. Each entry is a
  * substring that must appear in exactly one ADDED note, and the added notes must be
@@ -116,7 +131,18 @@ describe(`artifact.certify — {spec}-only byte compatibility, cartesian half (b
         DECLARED_CARTESIAN_DETERMINISM_ADDITIONS.length === 0
       ) {
         // Nothing declared: the old absolute clause (i) — byte-identical, full-object.
-        expect(JSON.stringify(out)).toBe(JSON.stringify(baseline[trait]));
+        const { determinism, ...rest } = out;
+        const { determinism: previous, ...expected } = expectedAtLightScope(trait);
+        const current = determinism as Record<string, unknown>;
+        const original = previous as Record<string, unknown>;
+        expect(Object.keys(current)).toEqual(Object.keys(original));
+        for (const key of ['contentHash', 'renderHash']) {
+          expect(current[key]).toMatch(/^[a-f0-9]{64}$/);
+          expect(current[key]).not.toBe(original[key]);
+        }
+        expect(current.stable).toBe(original.stable);
+        expect((await handle({ spec: cases[trait] })).determinism).toEqual(determinism);
+        expect(JSON.stringify(rest)).toBe(JSON.stringify(expected));
         return;
       }
       // Declared movement only: everything EXCEPT contrastNote and determinism is
@@ -157,20 +183,20 @@ describe(`artifact.certify — {spec}-only byte compatibility, cartesian half (b
 
 describe(`artifact.certify — {spec}-only byte compatibility, ECharts half (baseline ${BASELINE_COMMIT})`, () => {
   it.each(ECHARTS_MARK_TRAITS)(
-    `%s: every key EXCEPT notes[] and contrastNote is byte-identical to pristine HEAD ${BASELINE_COMMIT}`,
+    `%s: scope-declared verdict movement only; every other key matches pristine HEAD ${BASELINE_COMMIT}`,
     async (trait) => {
       const out = (await handle({ spec: cases[trait] })) as Record<string, unknown>;
       const { notes: _outNotes, contrastNote: _outContrast, ...outRest } = out;
-      const { notes: _baseNotes, contrastNote: _baseContrast, ...baseRest } = baseline[trait];
+      const { notes: _baseNotes, contrastNote: _baseContrast, ...baseRest } = expectedAtLightScope(trait);
       expect(JSON.stringify(outRest)).toBe(JSON.stringify(baseRest));
     },
   );
 
   it.each(ECHARTS_MARK_TRAITS)(
-    '%s: contrastNote is byte-identical (s180 declares zero ECharts contrastNote movement)',
+    '%s: contrastNote changes only by the declared light/A Role-C prefix',
     async (trait) => {
       const out = (await handle({ spec: cases[trait] })) as { contrastNote?: string };
-      const base = baseline[trait].contrastNote as string | undefined;
+      const base = expectedAtLightScope(trait).contrastNote as string | undefined;
       if (DECLARED_ECHARTS_CONTRAST_NOTE_REWORD === null) {
         // Nothing declared: byte-identity for all 8 — the D11 fork's handler-level tripwire.
         expect(out.contrastNote).toBe(base);

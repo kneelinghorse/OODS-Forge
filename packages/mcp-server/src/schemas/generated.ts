@@ -2062,6 +2062,10 @@ export namespace DashboardRenderInputSchema {
    */
   export interface DashboardRenderInput {
     /**
+     * CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.
+     */
+    theme?: 'light' | 'dark';
+    /**
      * IR version discriminant (V01 convention). A future template/shape change bumps to v0.2.
      */
     schemaVersion: 'v0.1';
@@ -2117,7 +2121,7 @@ export namespace DashboardRenderInputSchema {
      */
     tokenCssRef?: string;
     /**
-     * Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte. Uppercase 'A' or 'B' exactly — these select the --oods-brand-a-* / --oods-brand-b-* token sets @oods/tokens already ships. Threads into the tokens inlined by the output.html export AND the palette output.contrastScan grades, so the colours painted and the colours checked are always the same brand.
+     * CSS token brand for the dashboard document and chart pixels; defaults to A. The contrast scan grades the same scoped document tokens.
      */
     brand?: 'A' | 'B';
     /**
@@ -2577,6 +2581,10 @@ export namespace DashboardRenderOutputSchema {
       dataTable?: boolean;
       contrastScan?: boolean;
       includeA11y?: boolean;
+      /**
+       * Echoes an explicitly requested CSS token theme.
+       */
+      theme?: 'light' | 'dark';
       /**
        * Echoes input.brand, and ONLY when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed.
        */
@@ -8156,6 +8164,14 @@ export namespace VizRenderInputSchema {
 
   export interface VizRenderInput2 {
     /**
+     * CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported.
+     */
+    theme?: 'light' | 'dark';
+    /**
+     * CSS token brand for chart pixels. Omission resolves light/A.
+     */
+    brand?: 'A' | 'B';
+    /**
      * DSL version to use for this request. Defaults to the current version (1.0).
      */
     dslVersion?: string;
@@ -8566,13 +8582,13 @@ export namespace VizRenderOutputSchema {
      */
     mode?: 'explicit' | 'suggest';
     /**
-     * The compiled, renderable Vega-Lite spec — the primary payload a consumer renders. An empty object on error. As of sprint-144 the cartesian family also carries a baked OODS `config` chrome theme (background, axes/gridlines, typography, legend, view box) alongside the sprint-138 series-color bake, so a generated chart reads as OODS-designed on the light theme; this moved the cartesian render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the ECharts-primary types byte-unchanged (separate adapter).
+     * Compiled Vega-Lite spec with OODS chrome and series tokens resolved at the requested CSS scope (light/A by default). Scope changes alter chart content and pixel hashes.
      */
     spec: {
       [k: string]: any;
     };
     /**
-     * The compiled ECharts option. Present only when output.echarts was requested (opt-in full path). As of sprint-145 the 8 ECharts-primary types (treemap/sunburst/sankey/chord/force_graph + geo choropleth/bubble_map/flow_map) also carry a baked OODS chrome theme (background, tile/node/arc borders, on-canvas + on-tile labels, breadcrumb/ring surfaces, geo visualMap labels, and the chart title) — the mirror of the sprint-144 cartesian chrome — so a generated chart reads as OODS-designed on the light theme; this moved the ECharts render↔certify contentHash to a new value in lockstep (an owned #564 regen) and left the cartesian family byte-unchanged. Series colors (categorical/sequential) are untouched — only chrome is themed.
+     * Compiled ECharts option. Primary ECharts chart types include scoped OODS canvas, borders, labels and title chrome. Series palettes use the same scope; where no themed palette exists they retain the light palette.
      */
     echartsSpec?: {
       [k: string]: any;
@@ -8648,7 +8664,7 @@ export namespace VizRenderOutputSchema {
      */
     svg?: string;
     /**
-     * SHA-256 of the exact returned SVG bytes (normalized structural bytes for ECharts). At default intrinsic dimensions, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Dimension overrides change the hash.
+     * SHA-256 of the exact returned SVG bytes. At default intrinsic dimensions and light/A scope, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Scope and dimension changes alter the hash.
      */
     svgHash?: string;
     /**
@@ -8666,8 +8682,8 @@ export namespace VizRenderOutputSchema {
       engine: 'vega-lite' | 'echarts';
       width: number;
       height: number;
-      theme: 'light';
-      brand: 'A';
+      theme: 'light' | 'dark';
+      brand: 'A' | 'B';
     };
     /**
      * Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef).

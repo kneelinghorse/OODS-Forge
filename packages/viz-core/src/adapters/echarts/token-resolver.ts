@@ -15,14 +15,17 @@
 
 import tokensBundle from '@oods/tokens';
 
-// ECharts needs resolved colors, not CSS variables (canvas renderer can't use CSS cascade)
-// Token resolution map from @oods/tokens bundle
-const CSS_VARIABLE_MAP: Record<string, string> =
-  (tokensBundle?.cssVariables as Record<string, string>) ?? {};
+/** Scope is explicit so concurrent renders never share mutable theme state. */
+export interface TokenScope {
+  readonly brand?: 'A' | 'B';
+  readonly theme?: 'light' | 'dark' | 'hc';
+}
 
-export function resolveTokenToColor(token: string): string | undefined {
+const DEFAULT_SCOPE = { brand: 'A', theme: 'light' } as const;
+
+export function resolveTokenToColor(token: string, scope: TokenScope = DEFAULT_SCOPE): string | undefined {
   const normalized = normalizeTokenName(token);
-  const value = lookupTokenValue(normalized);
+  const value = lookupTokenValue(normalized, scope);
   if (value) {
     return formatColorValue(value);
   }
@@ -31,22 +34,22 @@ export function resolveTokenToColor(token: string): string | undefined {
   if (!prefixed) {
     return undefined;
   }
-  const fallback = lookupTokenValue(prefixed);
+  const fallback = lookupTokenValue(prefixed, scope);
   return fallback ? formatColorValue(fallback) : undefined;
 }
 
 /**
- * Raw token value from the SAME cssVariables source resolveTokenToColor reads
+ * Raw token value from the SAME cssVariablesByScope source resolveTokenToColor reads
  * (sprint-144 m02 — cartesian chrome theme). Returns the UNRESOLVED token string
  * (an oklch color, a `"24px"` size, or a font-family stack) with the same
  * `--oods-` prefix fallback. The chrome-config resolver uses this for the
  * non-color type tokens (font family/size/weight) so they come from one source
  * without a second copy of the bundle; colors keep going through
- * resolveTokenToColor. Left byte-identical to preserve the ECharts/geo goldens.
+ * resolveTokenToColor. Omitted scope resolves the CSS light/A theme.
  */
-export function resolveTokenValue(token: string): string | undefined {
+export function resolveTokenValue(token: string, scope: TokenScope = DEFAULT_SCOPE): string | undefined {
   const normalized = normalizeTokenName(token);
-  const value = lookupTokenValue(normalized);
+  const value = lookupTokenValue(normalized, scope);
   if (value !== undefined) {
     return value;
   }
@@ -54,15 +57,15 @@ export function resolveTokenValue(token: string): string | undefined {
   if (!prefixed) {
     return undefined;
   }
-  return lookupTokenValue(prefixed);
+  return lookupTokenValue(prefixed, scope);
 }
 
 function normalizeTokenName(name: string): string {
   return name.startsWith('--') ? name : `--${name}`;
 }
 
-function lookupTokenValue(name: string): string | undefined {
-  return CSS_VARIABLE_MAP[name];
+function lookupTokenValue(name: string, scope: TokenScope): string | undefined {
+  return tokensBundle.cssVariablesByScope[scope.brand ?? 'A'][scope.theme ?? 'light'][name];
 }
 
 function formatColorValue(value: string): string {

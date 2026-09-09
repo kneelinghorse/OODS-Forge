@@ -1,3 +1,4 @@
+import type { TokenScope } from '../echarts/token-resolver.js';
 // Bubble-map (symbol) ECharts adapter (sprint-112 m01 port).
 // Ported from src/viz/adapters/spatial/echarts-bubble-adapter.ts; only the imports
 // are repointed (slim spatial spec + local tooltip config) and echarts is a
@@ -105,14 +106,14 @@ function numericDomain(values: number[]): [number, number] {
   return [Math.min(...values), Math.max(...values)];
 }
 
-function buildGeoComponent(mapName: string, roam: boolean): GeoComponentOption {
+function buildGeoComponent(mapName: string, roam: boolean, scope: TokenScope): GeoComponentOption {
   return pruneUndefined({
     map: mapName,
     roam,
     label: { show: false },
     itemStyle: {
-      areaColor: resolveColor(DEFAULT_AREA_COLOR),
-      borderColor: resolveColor(DEFAULT_BORDER_COLOR),
+      areaColor: resolveColor(DEFAULT_AREA_COLOR, scope),
+      borderColor: resolveColor(DEFAULT_BORDER_COLOR, scope),
     },
   });
 }
@@ -155,11 +156,11 @@ export function buildSizeFunction(
   };
 }
 
-function resolveColorPalette(range?: readonly string[]): readonly string[] {
+function resolveColorPalette(range: readonly string[] | undefined, scope: TokenScope): readonly string[] {
   const palette = range && range.length > 0 ? range : DEFAULT_COLOR_RANGE;
   // Resolve to concrete colours — the ordinal itemStyle path writes these straight
   // into the option, where the headless canvas cannot resolve a CSS var().
-  return palette.map(resolveColor);
+  return palette.map((color) => resolveColor(color, scope));
 }
 
 function buildOrdinalColorMap(values: Array<string | null>, palette: readonly string[]): Map<string, string> {
@@ -180,7 +181,8 @@ export function buildBubbleSeries(
   spec: SpatialSpec,
   layer: SymbolLayer,
   data: DataRecord[],
-  geoData: FeatureCollection | undefined
+  geoData: FeatureCollection | undefined,
+  scope: TokenScope = {}
 ): BubbleBuildResult {
   const mapName = deriveMapName(spec);
   const sizeEncoding = layer.encoding.size;
@@ -198,7 +200,7 @@ export function buildBubbleSeries(
   // dropped by viz.render's JSON projection, taking the whole size encoding with it).
   const sizeFor = buildSizeFunction(sizeDomain, sizeRange, sizeEncoding?.scale);
 
-  const colorPalette = resolveColorPalette(colorEncoding?.range);
+  const colorPalette = resolveColorPalette(colorEncoding?.range, scope);
   const colorField = colorEncoding?.field;
   const colorValues = colorField
     ? data.map((datum) => {
@@ -237,7 +239,7 @@ export function buildBubbleSeries(
     });
   });
 
-  const geo = buildGeoComponent(mapName, Boolean(spec.interactions?.some((interaction) => interaction.type === 'panZoom')));
+  const geo = buildGeoComponent(mapName, Boolean(spec.interactions?.some((interaction) => interaction.type === 'panZoom')), scope);
   const registration = geoData ? registerGeoJson(mapName, geoData) : undefined;
   const tooltipFormatter = buildEChartsTooltipFormatter(
     createBubbleTooltipFields({
@@ -270,6 +272,7 @@ export function buildBubbleSeries(
       .map((datum) => coerceNumber(datum[colorEncoding.field as string]))
       .filter((value): value is number => value !== null);
     visualMap = createVisualMapForScale({
+    scope,
       scale: colorEncoding.scale,
       domain: (colorEncoding.domain as [number, number] | undefined) ?? undefined,
       range: colorEncoding.range,
@@ -285,7 +288,8 @@ export function adaptBubbleToECharts(
   spec: SpatialSpec,
   geoData: FeatureCollection | undefined,
   data: DataRecord[],
-  dimensions: { readonly width: number; readonly height: number }
+  dimensions: { readonly width: number; readonly height: number },
+  scope: TokenScope = {}
 ): EChartsOption {
   if (!data || data.length === 0) {
     throw new Error('Bubble map requires tabular data records.');
@@ -296,8 +300,8 @@ export function adaptBubbleToECharts(
     throw new Error('Spatial spec must include at least one symbol layer for bubble map rendering.');
   }
 
-  const result = buildBubbleSeries(spec, symbolLayer, data, geoData);
-  const chrome = resolveOodsEchartsChrome(spec);
+  const result = buildBubbleSeries(spec, symbolLayer, data, geoData, scope);
+  const chrome = resolveOodsEchartsChrome(spec, scope);
   const tooltipFormatter = buildEChartsTooltipFormatter(
     createBubbleTooltipFields({
       longitudeField: symbolLayer.encoding.longitude.field,

@@ -142,26 +142,26 @@ describe('vega-lite-adapter — OODS chrome config bake (s144 m02; mutation guar
     };
 
     // Background = the surface-canvas the render sits on (also the canvas certify grades against).
-    expect(compiled.config?.background).toBe('#FCFCFD');
+    expect(compiled.config?.background).toBe('#FDF3DE');
     // Typography = the OODS DM Sans stack, nested-quote artifact normalized.
     expect(compiled.config?.font).toBe("'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif");
     // Title chrome (left-anchored heading-lg).
-    expect(compiled.config?.title?.color).toBe('#2D313A');
+    expect(compiled.config?.title?.color).toBe('#18233C');
     expect(compiled.config?.title?.fontSize).toBe(24);
     expect(compiled.config?.title?.fontWeight).toBe(600);
     expect(compiled.config?.title?.anchor).toBe('start');
     // Axis chrome: text-primary titles, text-neutral labels, subtle H-grid, neutral domain/ticks.
-    expect(compiled.config?.axis?.titleColor).toBe('#2D313A');
-    expect(compiled.config?.axis?.labelColor).toBe('#494E5A');
-    expect(compiled.config?.axis?.gridColor).toBe('#E9ECEF');
-    expect(compiled.config?.axis?.domainColor).toBe('#D5DAE4');
-    expect(compiled.config?.axis?.tickColor).toBe('#D5DAE4');
+    expect(compiled.config?.axis?.titleColor).toBe('#18233C');
+    expect(compiled.config?.axis?.labelColor).toBe('#4B4D5A');
+    expect(compiled.config?.axis?.gridColor).toBe('#DAD0BA');
+    expect(compiled.config?.axis?.domainColor).toBe('#D6DAE4');
+    expect(compiled.config?.axis?.tickColor).toBe('#D6DAE4');
     // Gridlines are horizontal-only (Y grid on, X grid off) — regardless of orientation.
     expect(compiled.config?.axisX?.grid).toBe(false);
     expect(compiled.config?.axisY?.grid).toBe(true);
     // Legend chrome + the grey plot box killed.
-    expect(compiled.config?.legend?.titleColor).toBe('#2D313A');
-    expect(compiled.config?.legend?.labelColor).toBe('#494E5A');
+    expect(compiled.config?.legend?.titleColor).toBe('#18233C');
+    expect(compiled.config?.legend?.labelColor).toBe('#4B4D5A');
     expect(compiled.config?.view?.stroke).toBeNull();
 
     // The whole config block is exactly the shared resolver's output (single source).
@@ -195,7 +195,7 @@ describe('vega-lite-adapter — OODS chrome config bake (s144 m02; mutation guar
       config?: { mark?: { tooltip?: boolean }; background?: string };
     };
     expect(compiled.config?.mark?.tooltip).toBe(true);
-    expect(compiled.config?.background).toBe('#FCFCFD');
+    expect(compiled.config?.background).toBe('#FDF3DE');
   });
 });
 

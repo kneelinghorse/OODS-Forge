@@ -17,7 +17,7 @@ import type { NormalizedVizSpec } from '../../spec/normalized-viz-spec.js';
 import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
-import { resolveTokenToColor } from './token-resolver.js';
+import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
 
 // Fallback colors if tokens aren't available (matches categorical scale)
 const FALLBACK_PALETTE = [
@@ -106,10 +106,10 @@ interface EChartsGraphCategory {
   readonly itemStyle?: { readonly color?: string };
 }
 
-export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput): EChartsOption {
+export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput, scope: TokenScope = {}): EChartsOption {
   const graphSpec = spec as GraphStorySpec;
-  const palette = buildPalette();
-  const chrome = resolveOodsEchartsChrome(graphSpec);
+  const palette = buildPalette(scope);
+  const chrome = resolveOodsEchartsChrome(graphSpec, scope);
   const dimensions = resolveDimensions(graphSpec);
 
   // Extract unique categories from nodes
@@ -345,9 +345,9 @@ function generateGraphLegend(
   };
 }
 
-function buildPalette(): readonly string[] {
+function buildPalette(scope: TokenScope): readonly string[] {
   const tokens = getVizScaleTokens('categorical', { count: 9 });
-  const resolved = tokens.map(resolveTokenToColor);
+  const resolved = tokens.map((token) => resolveTokenToColor(token, scope));
 
   // If no tokens resolved, use fallback palette
   if (resolved.every((c) => c === undefined)) {

@@ -8,12 +8,15 @@ HTML IDENTITY. When output.html=true, outputHtmlHash is SHA-256 over the exact r
 
 BRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined into output.html and the four-pair contrast preflight; omit it for the previous behavior. Per-panel contentHash and dashboard contentHash are brand-invariant because brand applies at HTML/SVG emission time, while outputHtmlHash is brand-variant.
 
+SCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the generated CSS token scopes for chart pixels. Omission equals explicit light/A. Scope changes chart content and SVG hashes. The flat token export is unchanged. HC token scopes remain exported, but HC pixels are deferred because Canvas/CanvasText require the user agent. Series retain the light palette where tokens declare no theme-specific palette. HTML sets data-theme and data-brand on the document.
+
 **Registration:** auto
 
 ## Input Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
+| `theme` | `light` \| `dark` | No | `"light"` | CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported. |
 | `schemaVersion` | any | Yes |  | IR version discriminant (V01 convention). A future template/shape change bumps to v0.2. |
 | `id` | string | No |  | Stable identifier for the dashboard instance. |
 | `title` | string | No |  | Human-friendly dashboard title surfaced in UI + narration. |
@@ -29,7 +32,7 @@ BRAND. Pass brand:'A'|'B' to select the palette used by both the tokens inlined 
 | `a11yEquivalence` | boolean | No | `true` | A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. Each cartesian chart panel's emission is checked against the accessible-equivalence engine: an error-severity failure makes an error panel (first per-rule OODS-A11Y-<rule.id> code), warn-severity failures fold into the dashboard `warnings` as OODS-A11Y-<rule.id> prefixed with the originating panel id. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02); set false to opt out for agent-supplied non-conformant panels. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded). |
 | `a11y` | _ref_ | Yes |  |  |
 | `tokenCssRef` | string | No |  | SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). When supplied, this exact reference is returned in compact output. KPI threshold colors are NOT resolved inline. |
-| `brand` | `A` \| `B` | No |  | Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte. Uppercase 'A' or 'B' exactly — these select the --oods-brand-a-* / --oods-brand-b-* token sets @oods/tokens already ships. Threads into the tokens inlined by the output.html export AND the palette output.contrastScan grades, so the colours painted and the colours checked are always the same brand. |
+| `brand` | `A` \| `B` | No |  | CSS token brand for the dashboard document and chart pixels; defaults to A. The contrast scan grades the same scoped document tokens. |
 | `selection` | Record<string, _ref_> | No |  | Optional accumulated cross-filter SelectionState, keyed by sourceWidgetId (one active selection per source). When present, each panel's rows are cross-filtered (skip-self + AND-across-sources) before render/KPI compute; absent -> the unfiltered dashboard. |
 | `output` | object | No |  | Optional render output controls (mirrors viz.render). |
 | `output.compact` | boolean | No | `true` | When true, omit full token CSS and return a tokenCssRef instead. |

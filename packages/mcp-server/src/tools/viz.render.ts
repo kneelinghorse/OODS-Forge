@@ -254,7 +254,7 @@ export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
     out.svgHash = sha256(svg);
     out.svgBytes = Buffer.byteLength(svg, 'utf8');
     out.svgRef = describeSchemaRef(createValueRef(svg, 'viz.render')).ref;
-    out.render = { engine, width: renderedWidth, height: renderedHeight, theme: 'light', brand: 'A' };
+    out.render = { engine, width: renderedWidth, height: renderedHeight, theme: input.theme ?? 'light', brand: input.brand ?? 'A' };
     out.output = { ...out.output!, svg: true, ...(width !== undefined ? { width } : {}), ...(height !== undefined ? { height } : {}) };
     return out;
   } catch (error) {
@@ -392,7 +392,7 @@ async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
           description: input.description,
         });
 
-    const spec = toVegaLiteSpec(built.spec) as unknown as VizRenderOutput['spec'];
+    const spec = toVegaLiteSpec(built.spec, input) as unknown as VizRenderOutput['spec'];
 
     // F5 explicit color range warnings (sprint-147 m03): all WARN, never blocking.
     // Measured against the COMPILED scale.range so "applied vs dropped" reflects reality.
@@ -543,7 +543,7 @@ async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
       out.normalizedSpec = built.spec as unknown as VizRenderOutput['normalizedSpec'];
     }
     if (wantEcharts) {
-      out.echartsSpec = toEChartsOption(built.spec) as unknown as VizRenderOutput['echartsSpec'];
+      out.echartsSpec = toEChartsOption(built.spec, input) as unknown as VizRenderOutput['echartsSpec'];
     }
     if (compact) {
       out.tokenCssRef = 'tokens.build';
@@ -665,21 +665,21 @@ function renderEChartsPrimary(
     let nodeCount: number;
     if (chartType === 'sankey') {
       const sankey = branchData as unknown as SankeyInput;
-      option = adaptSankeyToECharts(spec, sankey);
+      option = adaptSankeyToECharts(spec, sankey, input);
       nodeCount = sankey.nodes.length;
     } else if (chartType === 'chord') {
       // chord rides the dedicated 'chord' branch (sankey-shaped: required
       // source/target/value); the IR reuses SankeyInput. Ribbon width = edge.value.
       const chord = branchData as unknown as SankeyInput;
-      option = adaptChordToECharts(spec, chord);
+      option = adaptChordToECharts(spec, chord, input);
       nodeCount = chord.nodes.length;
     } else if (chartType === 'force_graph') {
       const network = branchData as unknown as NetworkInput;
-      option = adaptGraphToECharts(spec, network);
+      option = adaptGraphToECharts(spec, network, input);
       nodeCount = network.nodes.length;
     } else if (chartType === 'sunburst') {
       const hierarchy = branchData as unknown as HierarchyInput;
-      option = adaptSunburstToECharts(spec, hierarchy);
+      option = adaptSunburstToECharts(spec, hierarchy, input);
       nodeCount = hierarchyNodeCount(hierarchy);
     } else if (chartType === 'choropleth' || chartType === 'bubble_map' || chartType === 'flow_map') {
       // Geo dispatch: build a SpatialSpec from the 'geo' branch and render via the
@@ -701,12 +701,13 @@ function renderEChartsPrimary(
         chartType,
         branchData as GeoBranch,
         spec.a11y.description,
+        input,
       );
       option = result.option;
       nodeCount = result.count;
     } else {
       const hierarchy = branchData as unknown as HierarchyInput;
-      option = adaptTreemapToECharts(spec, hierarchy);
+      option = adaptTreemapToECharts(spec, hierarchy, input);
       nodeCount = hierarchyNodeCount(hierarchy);
     }
 

@@ -1,3 +1,4 @@
+import type { TokenScope } from '../echarts/token-resolver.js';
 // Choropleth (region-fill) ECharts adapter (sprint-112 m01 port).
 // Ported from src/viz/adapters/spatial/echarts-choropleth-adapter.ts; only the
 // imports are repointed (slim spatial spec + local tooltip config) and echarts is
@@ -79,18 +80,18 @@ function resolveName(properties: Record<string, unknown>, feature: Feature, name
   return candidate !== undefined ? String(candidate) : 'unknown';
 }
 
-function buildGeoComponent(mapName: string, roam: boolean, nameProperty?: string): GeoComponentOption {
+function buildGeoComponent(mapName: string, roam: boolean, nameProperty?: string, scope: TokenScope = {}): GeoComponentOption {
   return pruneUndefined({
     map: mapName,
     nameProperty,
     roam,
     label: { show: false },
     itemStyle: {
-      areaColor: resolveColor(DEFAULT_AREA_COLOR),
-      borderColor: resolveColor(DEFAULT_BORDER_COLOR),
+      areaColor: resolveColor(DEFAULT_AREA_COLOR, scope),
+      borderColor: resolveColor(DEFAULT_BORDER_COLOR, scope),
     },
     emphasis: {
-      itemStyle: { areaColor: resolveColor(DEFAULT_EMPHASIS_COLOR) },
+      itemStyle: { areaColor: resolveColor(DEFAULT_EMPHASIS_COLOR, scope) },
     },
   });
 }
@@ -118,7 +119,8 @@ export function buildChoropleth(
   layer: RegionFillLayer,
   geoData: FeatureCollection,
   data: DataRecord[] | undefined,
-  emitJoinNameProperty = false
+  emitJoinNameProperty = false,
+  scope: TokenScope = {}
 ): ChoroplethBuildResult {
   const mapName = deriveMapName(spec);
   const join = isGeoJoinData(spec.data) ? spec.data : null;
@@ -132,6 +134,7 @@ export function buildChoropleth(
 
   const domainValues = collectDomainValues(mergedFeatures, layer.encoding.color.field);
   const visualMap = createVisualMapForScale({
+    scope,
     scale: layer.encoding.color.scale,
     domain: (layer.encoding.color.domain as [number, number] | undefined) ?? undefined,
     range: layer.encoding.color.range,
@@ -152,8 +155,7 @@ export function buildChoropleth(
   const geo = buildGeoComponent(
     mapName,
     Boolean(spec.interactions?.some((interaction) => interaction.type === 'panZoom')),
-    emitJoinNameProperty && join ? nameField : undefined
-  );
+    emitJoinNameProperty && join ? nameField : undefined, scope);
   const registration = registerGeoJson(mapName, { type: 'FeatureCollection', features: mergedFeatures });
 
   const series = pruneUndefined({
@@ -183,7 +185,8 @@ export function adaptChoroplethToECharts(
   spec: SpatialSpec,
   geoData: FeatureCollection,
   data: DataRecord[] | undefined,
-  dimensions: { readonly width: number; readonly height: number }
+  dimensions: { readonly width: number; readonly height: number },
+  scope: TokenScope = {}
 ): EChartsOption {
   if (!geoData) {
     throw new Error('GeoJSON FeatureCollection is required for choropleth maps.');
@@ -194,8 +197,8 @@ export function adaptChoroplethToECharts(
     throw new Error('Spatial spec is missing a regionFill layer required for choropleth rendering.');
   }
 
-  const result = buildChoropleth(spec, regionLayer, geoData, data, true);
-  const chrome = resolveOodsEchartsChrome(spec);
+  const result = buildChoropleth(spec, regionLayer, geoData, data, true, scope);
+  const chrome = resolveOodsEchartsChrome(spec, scope);
   const nameField = isGeoJoinData(spec.data) ? spec.data.geoKey : 'name';
   const tooltipFormatter = buildEChartsTooltipFormatter(
     createChoroplethTooltipFields({ regionField: nameField, valueField: regionLayer.encoding.color.field })

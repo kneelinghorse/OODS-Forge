@@ -19,7 +19,7 @@
 // only injects the values.
 
 import { renderVegaLiteToSvg, renderEChartsToSvg, normalizeEChartsSvg, type VegaLiteSpec } from '@oods/viz-render';
-import { resolveTokenToColor } from '@oods/viz-core';
+import { resolveTokenToColor, type TokenScope } from '@oods/viz-core';
 import { contrastRatio } from '@oods/a11y-tools';
 import type { DashboardRenderOutput } from '../schemas/generated.js';
 
@@ -55,10 +55,11 @@ export function exportTokenMap(brand: ExportBrand = DEFAULT_EXPORT_BRAND): Reado
   );
 }
 
-export function resolveBrandTokens(brand: ExportBrand = DEFAULT_EXPORT_BRAND): Record<string, string> {
+export function resolveBrandTokens(brand: ExportBrand = DEFAULT_EXPORT_BRAND, theme: TokenScope['theme'] = 'light'): Record<string, string> {
   const resolved: Record<string, string> = {};
   for (const [cssVar, tokenName] of Object.entries(exportTokenMap(brand))) {
-    const value = resolveTokenToColor(tokenName);
+    const suffix = tokenName.replace(/^--oods-brand-[ab]-/, '');
+    const value = resolveTokenToColor(`--oods-theme-${suffix}`, { brand, theme });
     if (value) {
       resolved[cssVar] = value;
     }
@@ -182,6 +183,8 @@ export interface ChartTableData {
 }
 
 export interface ComposeHtmlArgs {
+  readonly brand?: ExportBrand;
+  readonly theme?: 'light' | 'dark';
   readonly title?: string;
   readonly panels: readonly PanelResult[];
   readonly layout: readonly Placement[];
@@ -189,8 +192,8 @@ export interface ComposeHtmlArgs {
   /** Grid column count (input.layout.columns, default 12). */
   readonly columns: number;
   /**
-   * Resolved brand tokens (CSS custom-property name -> value). Threaded to the SVG
-   * emitter and inlined into the document in m04; undefined in m03.
+   * Resolved document tokens (CSS custom-property name -> value). Chart specs
+   * already carry their own scoped chrome from viz.render.
    */
   readonly tokens?: Readonly<Record<string, string>>;
   /**
@@ -207,7 +210,7 @@ export interface ComposeHtmlArgs {
 export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<string> {
   const { title, panels, layout, a11y, columns, tokens, tableData, dataQualityField } = args;
   // m04: resolve the brand tokens once. Caller override wins; else the default brand.
-  const resolvedTokens = tokens ?? resolveBrandTokens();
+  const resolvedTokens = tokens ?? resolveBrandTokens(args.brand, args.theme);
 
   const placementById = new Map<string, Placement>(layout.map((p) => [p.id, p]));
   const byId = new Map<string, PanelResult>(panels.map((p) => [p.id, p]));
@@ -219,7 +222,7 @@ export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<strin
     if (!panel) {
       continue;
     }
-    cells.push(await renderPanelCell(panel, placementById.get(id), columns, resolvedTokens, tableData?.get(id), dataQualityField));
+    cells.push(await renderPanelCell(panel, placementById.get(id), columns, tableData?.get(id), dataQualityField));
   }
 
   const docTitle = title ?? 'Dashboard';
@@ -227,7 +230,7 @@ export async function composeDashboardHtml(args: ComposeHtmlArgs): Promise<strin
 
   const lines: string[] = [
     '<!DOCTYPE html>',
-    '<html lang="en">',
+    `<html lang="en" data-theme="${args.theme ?? 'light'}" data-brand="${args.brand ?? 'A'}">`,
     '<head>',
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
@@ -265,7 +268,6 @@ async function renderPanelCell(
   panel: PanelResult,
   placement: Placement | undefined,
   columns: number,
-  tokens: Readonly<Record<string, string>> | undefined,
   table: ChartTableData | undefined,
   dataQualityField: string | undefined,
 ): Promise<string> {
@@ -288,7 +290,7 @@ async function renderPanelCell(
             height: placement.h * NOMINAL_ROW_HEIGHT_PX,
           }
         : {};
-    const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { tokens, ...dims });
+    const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { ...dims });
     return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
   }
   if (panel.echartsSpec) {

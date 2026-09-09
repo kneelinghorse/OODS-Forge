@@ -84,14 +84,9 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
   // (sprint-135 m03); the builder is conformant-by-construction (m02), so generated panels surface no
   // findings. Set a11yEquivalence:false to opt out for agent-supplied non-conformant panels.
   const wantA11yEquivalence = input.a11yEquivalence ?? true;
-  // s169 m04 — BRAND. Optional, no default: absent means "as before", which keeps the
-  // whole no-brand path byte-identical (`resolveBrandTokens()` falls back to brand A, the
-  // hard-coded value it used to be). Resolved ONCE here and threaded through the two seams
-  // that already existed — `tokens` on composeDashboardHtml and `tokensOverride` on
-  // scanBrandContrast — so the HTML the export paints and the palette the scan grades can
-  // never be two different brands.
   const brand = input.brand as ExportBrand | undefined;
-  const exportTokens = resolveBrandTokens(brand);
+  const theme = input.theme ?? 'light';
+  const exportTokens = resolveBrandTokens(brand, theme);
   // A11y completeness (sprint-118 m07) — all default-off so the absent path is byte-identical.
   const wantDataTable = input.output?.dataTable ?? false;
   const wantContrastScan = input.output?.contrastScan ?? false;
@@ -666,7 +661,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       wantA11y,
       wantA11yEquivalence,
     );
-    const out = await vizRenderHandle(vizInput);
+    const out = await vizRenderHandle({ ...vizInput, brand, theme });
 
     if (out.status !== 'ok') {
       const issue = out.errors?.[0] ?? { code: 'OODS-V129', message: 'panel failed to render' };
@@ -785,6 +780,7 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       // Echoed ONLY when supplied (the additive-spread pattern every other control here
       // uses), so an absent brand leaves this object byte-identical to s168's.
       ...(brand ? { brand } : {}),
+      ...(input.theme ? { theme } : {}),
     },
     meta: {
       panelCount: panelResults.length,
@@ -822,6 +818,8 @@ export async function handle(input: DashboardRenderInput): Promise<DashboardRend
       columns: input.layout?.columns ?? 12,
       // The same resolved map the scan graded — one brand per render, by construction.
       tokens: exportTokens,
+      brand,
+      theme,
       ...(tableData ? { tableData } : {}),
       ...(dataQualityField ? { dataQualityField } : {}),
     });

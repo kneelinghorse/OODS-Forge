@@ -65,15 +65,13 @@ describe('certify-contrast — role-C (WCAG mark-vs-canvas) + default palette', 
     expect(out.contrastNote).toContain('series-to-paint assignment of the rendered chart');
   });
 
-  it('the re-spaced OODS categorical palette (6 series) -> clean pass, at/above the >=10 target (s146 F1, memo §3a)', async () => {
-    // min-pairwise ΔE00 (min-over-CVD) for the s146-respaced 6-slot palette is ~10.60 — a
-    // CLEAN pass at/above the >=10 best-practice target, so NO distinguishability caution
-    // rides along (the pre-s146 palette sat at ~7.25 in the 2-10 warn band). Six series
-    // over six slots: the rendered assignment has no duplicate, exactly the palette.
+  it('the default six-slot palette exposes slot 04 below 3:1 on the corrected light/A canvas (#1850)', async () => {
+    // The palette did not change; the old neutral canvas was not the CSS light/A theme.
     const out = await grade(
       mk({ color: { field: 'series', type: 'nominal' }, values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']) }),
     );
-    expect(out.contrast).toBe('pass');
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastNote).toContain('categorical-04 below 3:1');
     expect(out.contrastNote).not.toContain('Distinguishability caution');
   });
 
@@ -135,11 +133,12 @@ describe('certify-contrast — role-A chroma floor (s146 F2 "reads-as-gray" guar
   });
 
   it('the re-chromatized default palette is ABOVE the chroma floor -> the guardrail fires on nothing (zero-flip)', async () => {
+    // Explicit neutral canvas isolates the chroma-floor rule from scoped light/A Role C.
     // Every s146 F1 slot is chroma >= 0.045 (the co-designed margin above the 0.03 floor), so
     // F2 never fires on the DEFAULT palette — a permanent zero-flip guardrail. The verdict is
     // the clean role-A pass, unchanged by F2.
     const out = await grade(
-      mk({ color: { field: 'series', type: 'nominal' }, values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']) }),
+      mk({ color: { field: 'series', type: 'nominal' }, values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']), tokens: { '--oods-sys-surface-canvas': '#FCFCFD' } }),
     );
     expect(out.contrast).toBe('pass');
     expect(out.contrastNote).not.toContain('chroma-floor');
@@ -420,6 +419,8 @@ describe('certify-contrast — s176 render-backed assignment grading', () => {
   it('ten series over the six-slot default palette -> role-A ΔE00=0 fail (the recycled assignment reaches the grader)', async () => {
     const out = await grade(
       mk({
+        // Isolate recycled assignments from the light/A slot-04 canvas failure.
+        tokens: { '--oods-sys-surface-canvas': '#FCFCFD' },
         color: { field: 'series', type: 'nominal' },
         values: seriesRows(['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10']),
       }),

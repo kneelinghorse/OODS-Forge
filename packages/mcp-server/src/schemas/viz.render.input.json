@@ -5,6 +5,9 @@
   "description": "Render a real, data-bound visualization spec from inline data rows (or a cached datasetRef). Supply chartType + encodings for explicit mode, or omit chartType to let the recommender choose one from inferred field profiles (suggest mode). Compiles to a Vega-Lite spec; set output.echarts to also return an ECharts option.",
   "type": "object",
   "properties": {
+    "theme": { "type": "string", "enum": ["light", "dark"], "default": "light", "description": "CSS token theme for chart pixels. HC token scopes are exported but browser system-color pixels are not supported." },
+    "brand": { "type": "string", "enum": ["A", "B"], "default": "A", "description": "CSS token brand for chart pixels. Omission resolves light/A." },
+
     "dslVersion": {
       "type": "string",
       "description": "DSL version to use for this request. Defaults to the current version (1.0)."

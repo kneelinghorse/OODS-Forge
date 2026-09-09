@@ -12,7 +12,7 @@ import { resolveOodsEchartsChrome, type OodsEchartsChrome } from '../../tokens/o
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { convertToEChartsTreeData, generateHierarchyTooltip } from './hierarchy-utils.js';
-import { resolveTokenToColor } from './token-resolver.js';
+import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
 
 const TREEMAP_SQUARE_RATIO = 1.618;
 
@@ -33,10 +33,10 @@ interface InteractionFlags {
   readonly breadcrumb: boolean;
 }
 
-export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyInput): EChartsOption {
+export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyInput, scope: TokenScope = {}): EChartsOption {
   const data = convertToEChartsTreeData(input);
-  const palette = buildPalette();
-  const chrome = resolveOodsEchartsChrome(spec);
+  const palette = buildPalette(scope);
+  const chrome = resolveOodsEchartsChrome(spec, scope);
   const dimensions = resolveDimensions(spec);
   const interactions = extractInteractionFlags(spec);
 
@@ -108,9 +108,9 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
   }) as unknown as EChartsOption;
 }
 
-function buildPalette(): readonly string[] {
+function buildPalette(scope: TokenScope): readonly string[] {
   const tokens = getVizScaleTokens('categorical', { count: 8 });
-  const resolved = tokens.map(resolveTokenToColor);
+  const resolved = tokens.map((token) => resolveTokenToColor(token, scope));
 
   // If no tokens resolved, use fallback palette
   if (resolved.every((c) => c === undefined)) {

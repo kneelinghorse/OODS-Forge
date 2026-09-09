@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi, afterEach } from 'vitest';
+import { resolveTokenToColor } from '@oods/viz-core';
+import { toHex } from '../../../viz-core/src/tokens/categorical-palette.js';
 import { sha256 } from '@oods/artifacts';
 import * as renderer from '@oods/viz-render';
 import { getAjv } from '../lib/ajv.js';
@@ -20,6 +22,7 @@ const inputs: VizRenderInput[] = [
 const schema = (name: string) => JSON.parse(readFileSync(new URL(`../schemas/${name}.json`, import.meta.url), 'utf8'));
 const validateOutput = getAjv().compile(schema('viz.render.output'));
 const validateInput = getAjv().compile(schema('viz.render.input'));
+const checkDashboard = getAjv().compile(schema('dashboard.render.input'));
 const svgInput = (input: VizRenderInput): VizRenderInput => ({ ...input, output: { ...input.output, svg: true, includeNormalizedSpec: true } });
 
 afterEach(() => vi.restoreAllMocks());
@@ -102,5 +105,58 @@ describe('public SVG contract', () => {
     expect(first.outputHtmlHash).toBe(sha256(first.html!)); expect(second.html).toBe(first.html);
     const failed = await dashboard({ ...request, strictFields: true, panels: [{ id: 'bad', kind: 'chart', chartType: 'bar', datasetId: 'sales', encodings: { x: 'region', y: 'missing' } }] });
     expect(failed.html).toContain('oods-placeholder-error'); expect(failed.html).not.toContain('<svg');
+  });
+});
+
+const canvasFill = (svg: string): string | undefined => /^<svg\b[^>]*>\s*<rect\b[^>]*\bfill="([^"]+)"/.exec(svg)?.[1];
+
+describe('public scoped SVG contract', () => {
+  it.each(inputs)('$chartType paints and repeats all four supported CSS scopes', async input => {
+    const defaultRender = await render(svgInput(input));
+    for (const brand of ['A', 'B'] as const) {
+      let light: string | undefined;
+      for (const theme of ['light', 'dark'] as const) {
+        const request = { ...svgInput(input), brand, theme };
+        const first = await render(request); const second = await render(request);
+        expect(first.status, JSON.stringify(first.errors)).toBe('ok');
+        expect(validateOutput(first), JSON.stringify(validateOutput.errors)).toBe(true);
+        expect(first.svg).toBe(second.svg);
+        expect(first.render).toMatchObject({ brand, theme });
+        expect(canvasFill(first.svg!)).toBe(toHex(resolveTokenToColor('--sys-surface-canvas', { brand, theme })!));
+        if (theme === 'light') light = first.svg;
+        else expect(first.svg).not.toBe(light);
+        if (brand === 'A' && theme === 'light') expect(first.svg).toBe(defaultRender.svg);
+      }
+    }
+    // A dark/B render must not contaminate the next omitted-scope render.
+    expect((await render(svgInput(input))).svg).toBe(defaultRender.svg);
+  });
+
+  it.each([{ theme: 'sepia' }, { theme: 'hc' }, { brand: 'C' }, { brand: 'a' }])('rejects unsupported scope %j at the public schema boundary', scope => {
+    expect(validateInput({ ...svgInput(inputs[0]!), ...scope })).toBe(false);
+    expect(validateInput.errors?.some(error => error.keyword === 'enum')).toBe(true);
+    expect(checkDashboard({ schemaVersion: 'v0.1', datasets: [], panels: [], a11y: { description: 'Scope rejection.' }, ...scope })).toBe(false);
+    expect(checkDashboard.errors?.some(error => error.keyword === 'enum')).toBe(true);
+  });
+
+  it.each(['A', 'B'] as const)('dashboard %s draws 11 scoped charts with matching document attributes and stable hashes', async brand => {
+    const request = {
+      schemaVersion: 'v0.1', datasets: [{ id: 'sales', rows: [...SALES] }],
+      panels: inputs.filter(input => !['chord', 'flow_map'].includes(input.chartType!)).map(({ rows, output, ...input }) => ({ ...input, id: input.chartType, kind: 'chart', ...(rows ? { datasetId: 'sales' } : {}) })),
+      a11y: { description: 'All eleven chart types at the requested scope.' }, output: { html: true }, brand,
+    } as DashboardRenderInput;
+    let light: string | undefined;
+    for (const theme of ['light', 'dark'] as const) {
+      const first = await dashboard({ ...request, theme }); const second = await dashboard({ ...request, theme });
+      expect(first.status, JSON.stringify(first.errors)).toBe('ok');
+      expect(first.html).toContain(`data-theme="${theme}" data-brand="${brand}"`);
+      expect(first.html).toBe(second.html); expect(first.outputHtmlHash).toBe(sha256(first.html!));
+      const svgs = first.html!.match(/<svg\b[\s\S]*?<\/svg>/g)!;
+      expect(svgs).toHaveLength(11);
+      for (const svg of svgs) expect(canvasFill(svg)).toBe(toHex(resolveTokenToColor('--sys-surface-canvas', { brand, theme })!));
+      if (theme === 'light') light = first.html;
+      else expect(first.html).not.toBe(light);
+    }
+    if (brand === 'A') expect((await dashboard({ ...request, brand: undefined })).html).toBe(light);
   });
 });

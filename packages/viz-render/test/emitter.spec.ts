@@ -1,5 +1,17 @@
+import { resolveTokenToColor, resolveTokenValue } from '../../viz-core/src/adapters/echarts/token-resolver.js';
 import { describe, expect, it } from 'vitest';
 import { renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
+
+// The renderer's formerly unthemed golden now requests the real light/A scope (#1850).
+function chromeTokens(theme: 'light' | 'dark'): Record<string, string> {
+  const scope = { theme, brand: 'A' as const };
+  const colors = ['surface-canvas', 'text-primary', 'text-neutral', 'border-subtle', 'border-neutral'];
+  const type = ['ref-typography-families-sans', 'sys-text-scale-heading-lg-font-size', 'sys-text-scale-heading-lg-font-weight'];
+  return Object.fromEntries([
+    ...colors.map(suffix => { const key = `--oods-sys-${suffix}`; return [key, resolveTokenToColor(key, scope)!]; }),
+    ...type.map(suffix => { const key = `--oods-${suffix}`; return [key, resolveTokenValue(key, scope)!]; }),
+  ]);
+}
 
 // A fixed line spec (the dashboard "trend" panel shape): tabular data, line mark.
 const TREND_SPEC: VegaLiteSpec = {
@@ -100,14 +112,31 @@ describe('renderVegaLiteToSvg', () => {
     expect(svg).toContain('aria-roledescription');
   });
 
-  it('threads brand tokens without changing output in m02 (applied in m04)', async () => {
-    // The tokens option is the m04 seam: accepted now, not yet applied. Passing
-    // tokens must NOT alter the rendered bytes this sprint-mission.
+  it('applies dark-scope chrome tokens without changing series colors or mutating the spec', async () => {
+    const before = JSON.stringify(TREND_SPEC);
     const withoutTokens = await renderVegaLiteToSvg(TREND_SPEC);
-    const withTokens = await renderVegaLiteToSvg(TREND_SPEC, {
-      tokens: { '--oods-color-accent': '#3366cc', '--oods-color-fg': '#111111' },
-    });
-    expect(withTokens).toBe(withoutTokens);
+    const light = await renderVegaLiteToSvg(TREND_SPEC, { tokens: chromeTokens('light') });
+    const dark = await renderVegaLiteToSvg(TREND_SPEC, { tokens: chromeTokens('dark') });
+    expect(dark).not.toBe(light); expect(light).not.toBe(withoutTokens);
+    expect(dark).toContain(`fill="${resolveTokenToColor('--oods-sys-surface-canvas', { theme: 'dark' })}"`);
+    expect(dark).toContain(`fill="${resolveTokenToColor('--oods-sys-text-neutral', { theme: 'dark' })}"`);
+    expect(dark).toContain(`stroke="${resolveTokenToColor('--oods-sys-border-subtle', { theme: 'dark' })}"`);
+    expect(dark).toContain('DM Sans');
+    // Chrome input must never secretly re-color the series.
+    expect(dark).toContain('stroke="#4c78a8"'); expect(light).toContain('stroke="#4c78a8"');
+    expect(JSON.stringify(TREND_SPEC)).toBe(before);
+    expect(await renderVegaLiteToSvg(TREND_SPEC, { tokens: chromeTokens('dark') })).toBe(dark);
+  });
+
+  it('applies supplied typography sizes and rejects non-numeric size tokens', async () => {
+    const titled = { ...TREND_SPEC, title: 'Revenue' };
+    const svg = await renderVegaLiteToSvg(titled, { tokens: {
+      ...chromeTokens('light'), '--oods-sys-text-scale-body-sm-font-size': '14px',
+    } });
+    expect(svg).toContain('font-size="24px"'); expect(svg).toContain('font-size="14px"');
+    await expect(renderVegaLiteToSvg(titled, { tokens: {
+      '--oods-sys-text-scale-heading-lg-font-size': 'broken',
+    } })).rejects.toThrow('Invalid numeric chrome token');
   });
 
   it('matches the committed byte-stable SVG golden (fixed spec + dataset)', async () => {
@@ -116,7 +145,7 @@ describe('renderVegaLiteToSvg', () => {
     // path or the determinism pins (text metrics / id normalization) must update a
     // committed snapshot. Byte-stable cross-machine: the text-width estimator is
     // arithmetic (font-independent) and vega is lockfile-pinned.
-    const svg = await renderVegaLiteToSvg(TREND_SPEC);
+    const svg = await renderVegaLiteToSvg(TREND_SPEC, { tokens: chromeTokens('light') });
     expect(svg).toMatchSnapshot();
   });
 

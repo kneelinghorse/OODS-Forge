@@ -10,7 +10,7 @@ import { resolveOodsEchartsChrome } from './oods-echarts-chrome.js';
 // on-tile labels carry the legibility MECHANISM (§5) rather than a fixed colour.
 //
 // SCOPE (honest): this file covers (a) chrome-text-VS-CANVAS surfaces (on-canvas labels,
-// breadcrumb, title, geo visualMap ticks, graph legend) graded against #FCFCFD; and
+// breadcrumb, title, geo visualMap ticks, graph legend) graded against #FDF3DE; and
 // (b) the on-TILE labels, which do NOT sit on the canvas — they are covered by the halo
 // MECHANISM (a surface-canvas text-border around a text-primary label), asserted present
 // and graded text-vs-halo. It imports the SOURCE resolver directly (relative, not the
@@ -21,7 +21,7 @@ import { resolveOodsEchartsChrome } from './oods-echarts-chrome.js';
 // Self-contained WCAG contrast: deliberately INDEPENDENT of certify's grader
 // (@oods/a11y-tools) because it enforces a surface certify does not grade. The standard
 // sRGB relative-luminance formula below reproduces the memo's verified ratios exactly
-// (text-primary 12.71, text-neutral 8.13, text-muted 4.56, text-disabled 1.85). Copied
+// (text-primary 14.17, text-neutral 7.60, text-muted 4.56, text-disabled 1.85). Copied
 // verbatim from oods-vega-config.spec.ts:19-33.
 
 function luminance(hex: string): number {
@@ -64,8 +64,8 @@ describe('resolveOodsEchartsChrome — a11y-of-chrome tripwire (s145 m03, memo �
     ['visualMapLabel', chrome.visualMapLabel],
   ];
 
-  it('the baked background is the OODS surface-canvas (#FCFCFD) contrast is graded against', () => {
-    expect(bg).toBe('#FCFCFD');
+  it('the baked background is the OODS surface-canvas (#FDF3DE) contrast is graded against', () => {
+    expect(bg).toBe('#FDF3DE');
   });
 
   it.each(canvasTextSurfaces)('%s clears WCAG AA (≥ 4.5:1) on the baked background', (_name, color) => {
@@ -79,21 +79,21 @@ describe('resolveOodsEchartsChrome — a11y-of-chrome tripwire (s145 m03, memo �
     }
   });
 
-  it('reproduces the memo-verified ratios (text-primary 12.71, text-neutral 8.13)', () => {
+  it('reproduces the scoped light/A ratios (#1850) (text-primary 14.17, text-neutral 7.60)', () => {
     // Pins the Derek-locked token choices: on-canvas labels + title on text-primary, geo
     // visualMap + graph legend on text-neutral. A regression to a lower-contrast token trips
     // both this and the ≥4.5 gate.
-    expect(chrome.labelOnCanvas).toBe('#2D313A');
-    expect(chrome.title).toBe('#2D313A');
-    expect(chrome.visualMapLabel).toBe('#494E5A');
-    expect(contrastRatio('#2D313A', bg)).toBeCloseTo(12.71, 1);
-    expect(contrastRatio('#494E5A', bg)).toBeCloseTo(8.13, 1);
+    expect(chrome.labelOnCanvas).toBe('#18233C');
+    expect(chrome.title).toBe('#18233C');
+    expect(chrome.visualMapLabel).toBe('#4B4D5A');
+    expect(contrastRatio('#18233C', bg)).toBeCloseTo(14.17, 1);
+    expect(contrastRatio('#4B4D5A', bg)).toBeCloseTo(7.60, 1);
   });
 
   // On-TILE labels (treemap node/upperLabel, sunburst arc) do NOT sit on the canvas — the §4
   // sweep proved NO fixed colour clears WCAG on all 6 OODS categorical hues, so legibility
   // rides the MECHANISM (§5): a surface-canvas text-border around a text-primary label. Assert
-  // the mechanism is present AND that the label reads against its own halo (text-vs-halo 12.71),
+  // the mechanism is present AND that the label reads against its own halo (text-vs-halo 14.17),
   // so the on-tile label stays legible on ANY tile colour.
   describe('on-tile label mechanism (§5 Derek-lock)', () => {
     const m = chrome.onTileLabelMechanism;
@@ -107,8 +107,8 @@ describe('resolveOodsEchartsChrome — a11y-of-chrome tripwire (s145 m03, memo �
     it('the halo is the surface-canvas and the label reads against it (≥ 4.5:1, text-vs-halo)', () => {
       // The halo IS the baked canvas colour, so the on-tile label carries a high-contrast edge
       // independent of the tile hue underneath it.
-      expect(m.textBorderColor).toBe('#FCFCFD');
-      expect(m.color).toBe('#2D313A');
+      expect(m.textBorderColor).toBe('#FDF3DE');
+      expect(m.color).toBe('#18233C');
       expect(contrastRatio(m.color, m.textBorderColor)).toBeGreaterThanOrEqual(WCAG_AA_TEXT);
     });
   });

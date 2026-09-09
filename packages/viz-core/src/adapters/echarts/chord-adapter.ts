@@ -28,7 +28,7 @@ import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 
 import { resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
 
-import { resolveTokenToColor } from './token-resolver.js';
+import { resolveTokenToColor, type TokenScope } from './token-resolver.js';
 
 // Fallback colors if tokens aren't available (matches the categorical scale used
 // by the sibling network/flow adapters).
@@ -85,10 +85,10 @@ interface EChartsChordLink {
  * the edge value at render time — we do NOT precompute a width). Ring node order
  * is the input order (deterministic); each node is coloured by its index.
  */
-export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput): EChartsOption {
+export function adaptChordToECharts(spec: NormalizedVizSpec, input: SankeyInput, scope: TokenScope = {}): EChartsOption {
   const chordSpec = spec as ChordStorySpec;
-  const palette = buildPalette();
-  const chrome = resolveOodsEchartsChrome(chordSpec);
+  const palette = buildPalette(scope);
+  const chrome = resolveOodsEchartsChrome(chordSpec, scope);
   const dimensions = resolveDimensions(chordSpec);
 
   const nodes = buildNodes(input.nodes, palette);
@@ -182,9 +182,9 @@ function buildLinks(links: readonly SankeyLink[]): EChartsChordLink[] {
   }));
 }
 
-function buildPalette(): readonly string[] {
+function buildPalette(scope: TokenScope): readonly string[] {
   const tokens = getVizScaleTokens('categorical', { count: 9 });
-  const resolved = tokens.map(resolveTokenToColor);
+  const resolved = tokens.map((token) => resolveTokenToColor(token, scope));
 
   // If no tokens resolved, use the fallback palette.
   if (resolved.every((c) => c === undefined)) {

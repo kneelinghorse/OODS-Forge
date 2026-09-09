@@ -1,3 +1,4 @@
+import type { TokenScope } from './echarts/token-resolver.js';
 import type {
   TraitBinding as NormalizedTraitBinding,
   Transform as NormalizedSpecTransform,
@@ -170,7 +171,7 @@ export class EChartsAdapterError extends Error {
   }
 }
 
-export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
+export function toEChartsOption(spec: NormalizedVizSpec, scope: TokenScope = {}): EChartsOption {
   if (spec.marks.length === 0) {
     throw new EChartsAdapterError('Normalized viz spec must contain at least one mark.');
   }
@@ -187,7 +188,7 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
   const tooltip = buildTooltip(spec);
   const dataZoom = buildDataZoomComponents(spec);
   const brush = buildBrushComponent(spec);
-  const visualMap = buildHeatmapVisualMap(spec);
+  const visualMap = buildHeatmapVisualMap(spec, scope);
 
   const option = removeUndefined({
     dataset: [dataset, ...linkedDatasets],
@@ -453,7 +454,7 @@ function applyHeatmapEncoding(
 // color field's numeric extent; the range is the OODS sequential (or diverging) viz-scale,
 // resolved to canvas colors by the SHARED spatial generator; and the tick label is themed
 // onto chrome exactly like the geo adapters (visualMap.textStyle.color = chrome.visualMapLabel).
-function buildHeatmapVisualMap(spec: NormalizedVizSpec): Record<string, unknown> | undefined {
+function buildHeatmapVisualMap(spec: NormalizedVizSpec, scope: TokenScope): Record<string, unknown> | undefined {
   if (!isMarkRectGrid(spec)) {
     return undefined;
   }
@@ -481,6 +482,7 @@ function buildHeatmapVisualMap(spec: NormalizedVizSpec): Record<string, unknown>
 
   const range = isDiverging ? getVizScaleTokens('diverging') : getVizScaleTokens('sequential');
   const base = createVisualMapForScale({
+    scope,
     scale: isDiverging ? 'diverging' : 'linear',
     range,
     values,
@@ -495,7 +497,7 @@ function buildHeatmapVisualMap(spec: NormalizedVizSpec): Record<string, unknown>
   const dimension = rows.length > 0 ? colorBinding.field : undefined;
 
   // Bake the tick label onto chrome — the same visualMap-label token the geo adapters use.
-  const chrome = resolveOodsEchartsChrome(spec);
+  const chrome = resolveOodsEchartsChrome(spec, scope);
   return {
     ...base,
     ...(dimension !== undefined ? { dimension } : {}),

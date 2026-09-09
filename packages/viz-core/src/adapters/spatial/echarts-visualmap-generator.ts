@@ -1,3 +1,4 @@
+import type { TokenScope } from '../echarts/token-resolver.js';
 // VisualMap generation for the choropleth/bubble geo adapters (sprint-112 m01 port).
 // Ported verbatim from src/viz/adapters/spatial/echarts-visualmap-generator.ts;
 // the only change is the ColorScaleType import (now the local slim spatial spec)
@@ -83,7 +84,8 @@ function interpolatePieces(domain: [number, number], count: number): Array<{ min
 
 export function createContinuousVisualMap(
   domain: [number, number],
-  range: readonly string[] = DEFAULT_CONTINUOUS_COLORS
+  range: readonly string[] = DEFAULT_CONTINUOUS_COLORS,
+  scope: TokenScope = {}
 ): VisualMapComponentOption {
   const [min, max] = domain;
   return pruneUndefined({
@@ -91,14 +93,15 @@ export function createContinuousVisualMap(
     min,
     max,
     calculable: true,
-    inRange: { color: range.map(resolveColor) },
+    inRange: { color: range.map((color) => resolveColor(color, scope)) },
   });
 }
 
 export function createPiecewiseVisualMap(
   pieces: Array<{ min?: number; max?: number; label?: string; value?: number }> | undefined,
   colors: readonly string[] = DEFAULT_PIECEWISE_COLORS,
-  splitNumber?: number
+  splitNumber?: number,
+  scope: TokenScope = {}
 ): VisualMapComponentOption {
   const palette = colors.length > 0 ? colors : DEFAULT_PIECEWISE_COLORS;
   const resolvedPieces =
@@ -108,7 +111,7 @@ export function createPiecewiseVisualMap(
 
   const coloredPieces = resolvedPieces.map((piece, index) => ({
     ...piece,
-    color: resolveColor(palette[index % palette.length]),
+    color: resolveColor(palette[index % palette.length], scope),
   }));
 
   return pruneUndefined({
@@ -119,6 +122,7 @@ export function createPiecewiseVisualMap(
 }
 
 export function createVisualMapForScale(params: {
+  readonly scope?: TokenScope;
   readonly scale: ColorScaleType | undefined;
   readonly domain?: [number, number];
   readonly range?: readonly string[];
@@ -134,11 +138,11 @@ export function createVisualMapForScale(params: {
   // one continuous visualMap (never binned pieces). s157 m03 (B2): center the domain at 0
   // (symmetrizeDivergingDomain) so the neutral hue renders at data 0 == Vega domainMid:0.
   if (scale === 'diverging') {
-    return createContinuousVisualMap(symmetrizeDivergingDomain(domain), hasRange ? palette : DEFAULT_DIVERGING_COLORS);
+    return createContinuousVisualMap(symmetrizeDivergingDomain(domain), hasRange ? palette : DEFAULT_DIVERGING_COLORS, params.scope);
   }
 
   if (!scale || scale === 'linear') {
-    return createContinuousVisualMap(domain, palette);
+    return createContinuousVisualMap(domain, palette, params.scope);
   }
 
   const pieceCount = palette.length || 5;
@@ -147,5 +151,5 @@ export function createVisualMapForScale(params: {
     label: `Bin ${index + 1}`,
   }));
 
-  return createPiecewiseVisualMap(pieces, palette, pieceCount);
+  return createPiecewiseVisualMap(pieces, palette, pieceCount, params.scope);
 }
