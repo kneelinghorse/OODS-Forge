@@ -1,0 +1,47 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server
+
+ ✓ test/product-reality/workflow.s188.spec.ts (11 tests) 5176ms
+   ✓ Generated applications close their own contracts > react application typechecks strict against the built component packages  1568ms
+   ✓ Generated applications close their own contracts > vue application typechecks strict against the built component packages  3204ms
+ ❯ test/codegen/form-detail.s189.spec.ts (6 tests | 1 failed) 4972ms
+   ✓ form and detail reconcile their declared semantics > uses names for identification and keeps descriptions below controls 59ms
+   ✓ form and detail reconcile their declared semantics > leaves each recipe as the sole owner of its fields and keeps native Save 22ms
+   ✓ form and detail reconcile their declared semantics > keeps only populated unique detail tabs and reads the declared history 7ms
+   × form and detail reconcile their declared semantics > lowers HTML summary booleans, dates and unknown reason codes without losing values 10ms
+     → expected '<label for="value-check">Requested at…' to contain 'value="2026-09-08T12:00"'
+   ✓ form and detail reconcile their declared semantics > react workflow compiles its on-demand cancellation and native form  1539ms
+   ✓ form and detail reconcile their declared semantics > vue workflow compiles its on-demand cancellation and native form  3333ms
+ ✓ test/product-reality/archive-workflow.s188.spec.ts (2 tests) 5208ms
+   ✓ generated archive-view integration > react carries the authored archive label into governed Tabs and row overlays, and typechecks  1543ms
+   ✓ generated archive-view integration > vue carries the authored archive label into governed Tabs and row overlays, and typechecks  3663ms
+ ✓ test/product-reality/field-labels.s188.spec.ts (3 tests) 346ms
+   ✓ Sprint 188 meaningful field labels > keeps all 66 public compositions free of anonymous Field N labels  344ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/form-detail.s189.spec.ts > form and detail reconcile their declared semantics > lowers HTML summary booleans, dates and unknown reason codes without losing values
+AssertionError: expected '<label for="value-check">Requested at…' to contain 'value="2026-09-08T12:00"'
+
+Expected: "value="2026-09-08T12:00""
+Received: "<label for="value-check">Requested at</label><input id="value-check" type="datetime-local" value="2026-09-08T12:00:00Z" aria-describedby="value-check-help" data-oods-component="Input" data-oods-node-id="value-check" /><small id="value-check-help">When requested.</small>"
+
+ ❯ test/codegen/form-detail.s189.spec.ts:57:134
+     55|     expect(summary).toContain('Sep 8, 2026, 12:00 PM'); expect(summary…
+     56|     expect(html('CancellationForm', { reasonCode: 'customer_request', …
+     57|     expect(html('Input', { type: 'datetime-local', value: '2026-09-08T…
+       |                                                                                                                                      ^
+     58|   });
+     59| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 21 passed (22)
+   Start at  21:49:45
+   Duration  20.74s (transform 1.17s, setup 144ms, collect 3.63s, tests 15.70s, environment 0ms, prepare 267ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/codegen/form-detail.s189.spec.ts test/product-reality/field-labels.s188.spec.ts test/product-reality/workflow.s188.spec.ts test/product-reality/archive-workflow.s188.spec.ts

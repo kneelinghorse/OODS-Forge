@@ -1,0 +1,51 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/components-react
+
+ ✓ test/ported-ssr.spec.tsx (1 test) 59ms
+ ✓ test/billing-views.spec.tsx (7 tests) 159ms
+ ❯ test/breadth.s187.spec.tsx (19 tests | 1 failed) 216ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell preserves alias precedence, truncation edge cases and authored override 61ms
+   ✓ Sprint 187 naming and classification semantics > InlineLabel preserves alias precedence, truncation edge cases and authored override 11ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell keeps supporting aliases and defaults truncation to forty characters 2ms
+   ✓ Sprint 187 naming and classification semantics > FormLabelGroup preserves native association and hint precedence around children 2ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationBadge exposes classification status and honors authored labels 3ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationEditor labels native editable controls but prevents unwired submission 23ms
+   ✓ Sprint 187 ownership and summary semantics > OwnerBadge preserves principal aliases, status metadata and authored precedence 4ms
+   ✓ Sprint 187 ownership and summary semantics > OwnershipSummary associates owner data with terms and consumes role as data, not ARIA 17ms
+   ✓ Sprint 187 ownership and summary semantics > OwnershipMeta keeps literal term separators and lets authored children replace its entire body 2ms
+   ✓ Sprint 187 ownership and summary semantics > TagSummary preserves zero counts and scalar text, and shows the trait array using existing tag normalization 4ms
+   ✓ Sprint 187 lifecycle and financial semantics > ArchivePill keeps false/true, absent aliases and authored content distinct 7ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationBadge keeps false/true, absent aliases and authored content distinct 5ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationBadge uses isCancelled as status only without inventing a label 1ms
+   ✓ Sprint 187 lifecycle and financial semantics > ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics 32ms
+   ✓ Sprint 187 lifecycle and financial semantics > PriceCardMeta retains model/interval precedence and literal inline labels 2ms
+   × Sprint 187 lifecycle and financial semantics > CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission 16ms
+     → Cannot read properties of null (reading 'value')
+   ✓ form/detail value preservation > shows a seeded reason code even when it is outside the offered choices 2ms
+   ✓ form/detail value preservation > shows present UTC datetimes in the native datetime-local control 3ms
+   ✓ form/detail value preservation > renders both audit history entries and readable timestamps 20ms
+ ✓ test/ported-scenarios.spec.tsx (10 tests) 435ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/breadth.s187.spec.tsx > Sprint 187 lifecycle and financial semantics > CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission
+TypeError: Cannot read properties of null (reading 'value')
+ ❯ test/breadth.s187.spec.tsx:171:24
+    169|     expect(defaults.querySelector<HTMLTextAreaElement>('textarea')?.va…
+    170|     const emptyChoice = mountFamily('CancellationForm', { allowedReaso…
+    171|     expect(emptyChoice.value).toBe(''); expect(emptyChoice.textContent…
+       |                        ^
+    172|     expect(mountFamily('CancellationForm', {}, 'Authored').querySelect…
+    173|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 36 passed (37)
+   Start at  21:52:15
+   Duration  2.64s (transform 897ms, setup 0ms, collect 3.12s, tests 868ms, environment 2.60s, prepare 573ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/components-react:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/breadth.s187.spec.tsx test/ported-scenarios.spec.tsx test/ported-ssr.spec.tsx test/billing-views.spec.tsx

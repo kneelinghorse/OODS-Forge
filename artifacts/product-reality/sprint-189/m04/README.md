@@ -1,0 +1,23 @@
+# Sprint 189 m04 — form and detail reconciliation
+
+Producer head: `30f925f7` (full head in receipts). Builder self certification: **false**. This packet records implementation evidence; independent review owns usability.
+
+## Changes and evidence
+
+Form labels use short field names and descriptions render as help. Placed billing, status and cancellation recipes own their fields; duplicate raw controls are suppressed. Datetime-local inputs preserve seeded values, cancellation reason codes preserve values outside a declared list, and the native form has one Save. Detail starts read-only; Cancel subscription opens the trait form. Nonempty panels have unique category labels, audit uses declared history, summary booleans use Yes/No, and cancellation terms retain readable columns at 390 px.
+
+`before/` contains eight m03-head receipts and 24 PNGs. `after/` contains ten current-head receipts and 30 PNGs across 390/820/1440: direct form/detail, the review's post-save/post-cancel form/detail state, and the on-demand cancellation form. `inputs/` contains their public compose and interaction operands. `diffs/` compares each of the eight paired receipts. Schemas and generated artifacts were never repaired by hand. `receipt-verification.json`, `panel-verification.json`, and `parity.json` record machine checks; parity retains visible symbols, letter case, and accessible-name order with an empty allowlist.
+
+`census-before.json` is the m03 implementation census. `census-after.json` and `census-diff.json` enumerate every changed schema by the permitted classes: short labels/help, recipe ownership, datetime lowering, populated unique tabs, read-only detail/audit/on-demand cancellation, and Yes/No summaries. Certified population: 66/66 schemas, 132/132 cells, Subscription/workflow 2/2. Wider population remains 75/77 and 150/154; User/workflow and Organization/workflow retain pre-existing OODS-N016 gaps. 61 schemas and 110 artifact cells change. `store-hashes.json` retains all 17 store-file hashes unchanged.
+
+StatusTimeline React/Vue wording moved forward from m05 to satisfy this mission's zero-diff requirement (CMOS #1837); m05 still owns HTML status-history parity. Main implementation is `1e001aca`, followed by datetime precision and native event fixes (`cf9a4892`, `2a091fa6`, `2394aaed`, `30f925f7`).
+
+## Validation and retained failures
+
+Focused producer tests: 130/130 before the final two additional value tests; the final form/detail file has 8/8 (including HTML/React/Vue summary values and strict generation). Label/detail targeted run: 20/20. React component tests: 37/37; Vue component tests: 38/38, including the missing existing nucleus SSR fixtures. Design-loop tests: 10/10. Server TypeScript build succeeds. No tests are silently skipped in those successful runs.
+
+The first packed flow (`app-consumers/`) is a **failed** iteration: React passed, Vue native billing selection failed. `keyboard-*.json`, `select-persistence.json`, and `step-persistence.json` retain diagnosis. Vue must commit its component change before the App publishes the draft; the App ignores select input and handles bubbling change. A second issue was the preview's completely frozen Date.now: Vue's event guard rejects a bubbling event with a timestamp equal to listener attachment. The loop now advances wall time exactly 1 ms per recorded interaction, with real timers running, and records its final clock and clockStepMs. This preserves deterministic timestamps and event order (CMOS learning #541).
+
+Earlier parity/field/test failures remain in iteration folders and test logs, including empty code choices, old boolean/text expectations, stale workflow provenance, a missing Vue SSR fixture, and a bare Vue import from the MCP package. A diagnostic navigation race and an attempt while serve was starting are not successful proof. An accidental `pnpm run test -- ...` selected a partial serial MCP suite; it was interrupted and retained, never counted as green or as a four-suite capture (CMOS #538). The corrected selector uses `pnpm exec vitest run ...`. A census-diff invocation missing its three arguments failed, then was rerun with explicit operands. Full four-suite capture remains reserved for m06; none has run in this mission.
+
+The final exact-tarball rerun in `app-consumers-final/` passes all 16 gates, 18 flow rows, 32 state observations and 8 collection query observations across React and Vue. No consumer-authored components or actions were added. All ten latest loop receipts and their 30 screenshot hashes validate; form/detail parity is zero at all three widths and panel/native-form checks pass.
