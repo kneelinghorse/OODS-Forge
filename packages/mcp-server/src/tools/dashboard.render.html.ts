@@ -3,9 +3,8 @@
 // Composes the metric-overview dashboard into ONE self-contained HTML document:
 //   - Vega-Lite chart panels (trend/breakdown) -> inline SVG via @oods/viz-render;
 //   - KPI tiles rendered from the computed KPI values + their a11y string;
-//   - ECharts-primary panels (geo: empty `spec`, `echartsSpec` present) -> an
-//     a11y-described PLACEHOLDER (NOT rendered in v1, per the m01 seam (c));
-//   - failed panels -> the same a11y-described placeholder.
+//   - ECharts-primary panels -> normalized inline SVG through the shared worker;
+//   - failed panels -> an a11y-described error placeholder.
 //
 // Emitted ONLY when input output.html=true; the rest of the dashboard.render payload
 // is untouched (opt-in additive, seam (e)). Output is deterministic: no timestamps,
@@ -19,7 +18,7 @@
 // emits an on-brand-by-construction-ready structure with token-var defaults so m04
 // only injects the values.
 
-import { renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
+import { renderVegaLiteToSvg, renderEChartsToSvg, normalizeEChartsSvg, type VegaLiteSpec } from '@oods/viz-render';
 import { resolveTokenToColor } from '@oods/viz-core';
 import { contrastRatio } from '@oods/a11y-tools';
 import type { DashboardRenderOutput } from '../schemas/generated.js';
@@ -292,8 +291,14 @@ async function renderPanelCell(
     const svg = await renderVegaLiteToSvg(panel.spec as unknown as VegaLiteSpec, { tokens, ...dims });
     return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
   }
-  // ECharts-primary (geo): empty spec + echartsSpec -> a11y-described placeholder.
-  return placeholderCell(panel.title, panel.a11yDescription, style, 'geo');
+  if (panel.echartsSpec) {
+    const dims = placement && columns > 0
+      ? { width: Math.round((placement.w / columns) * NOMINAL_DASHBOARD_WIDTH_PX), height: placement.h * NOMINAL_ROW_HEIGHT_PX }
+      : undefined;
+    const svg = normalizeEChartsSvg(await renderEChartsToSvg(panel.echartsSpec, dims));
+    return chartCell(panel.title, panel.a11yDescription, svg, style, table, dataQualityField);
+  }
+  throw new Error('Chart panel has no renderable spec.');
 }
 
 function kpiCell(panel: Extract<PanelResult, { kind: 'kpi' }>, style: string): string {
@@ -384,9 +389,9 @@ function placeholderCell(
   title: string | undefined,
   a11yDescription: string | undefined,
   style: string,
-  variant: 'geo' | 'error',
+  variant: 'error',
 ): string {
-  const note = a11yDescription ?? (variant === 'geo' ? 'Map panel (not rendered in this export).' : 'Panel could not be rendered.');
+  const note = a11yDescription ?? 'Panel could not be rendered.';
   const parts: string[] = [
     `<section class="oods-panel oods-placeholder oods-placeholder-${variant}" role="img"${style}${ariaLabelAttr(note)}>`,
   ];

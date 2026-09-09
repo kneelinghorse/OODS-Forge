@@ -144,6 +144,9 @@ function buildErrorCodes(toolName: string): string {
 
   // Tool-specific codes
   const specific: Record<string, Array<{ code: string; desc: string }>> = {
+    'viz.render': [
+      { code: 'OODS-V165', desc: 'SVG rendering failed; no SVG or spec-only success is returned' },
+    ],
     'design.compose': [
       { code: 'OODS-V006', desc: 'Unknown component during slot selection' },
       { code: 'OODS-N001', desc: 'Object not found in registry' },

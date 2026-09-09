@@ -98,7 +98,7 @@
         },
         "renderHash": {
           "type": "string",
-          "description": "OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on render-graded cartesian charts and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry, and cartesian charts with nothing to render-grade. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json."
+          "description": "OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on cartesian charts (including contrast-exempt charts) and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json."
         }
       },
       "additionalProperties": false

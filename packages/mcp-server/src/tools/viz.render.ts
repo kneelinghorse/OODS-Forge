@@ -36,6 +36,7 @@ import {
 } from '@oods/viz-core';
 import { canonicalize, sha256 } from '@oods/artifacts';
 import { isHexColor } from '@oods/a11y-tools';
+import { ECHARTS_SSR_DIMENSIONS, normalizeEChartsSvg, renderEChartsToSvg, renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
 import type { VizRenderInput, VizRenderOutput } from '../schemas/generated.js';
 import {
   ECHARTS_PRIMARY,
@@ -228,6 +229,40 @@ function neverCycleWarnings(
 // ./echarts-link-integrity.ts (sprint-172 m01) so certify replays the SAME V147 check.
 
 export async function handle(input: VizRenderInput): Promise<VizRenderOutput> {
+  const out = await renderSpec(input);
+  if (out.status !== 'ok' || !input.output?.svg) return out;
+
+  try {
+    const { width, height } = input.output;
+    const engine = isEChartsPrimaryType(input.chartType) ? 'echarts' : 'vega-lite';
+    // The public bytes use the same render legs as certification. Cartesian
+    // defaults are intrinsic dimensions; ECharts returns normalized bytes so
+    // svgHash always hashes exactly the payload cached by svgRef.
+    const svg = engine === 'echarts'
+      ? normalizeEChartsSvg(await renderEChartsToSvg(out.echartsSpec!, {
+          width: width ?? ECHARTS_SSR_DIMENSIONS.width,
+          height: height ?? ECHARTS_SSR_DIMENSIONS.height,
+        }))
+      : await renderVegaLiteToSvg(out.spec as unknown as VegaLiteSpec, { width, height });
+    const root = /^<svg\b[^>]*>/.exec(svg)?.[0];
+    const renderedWidth = Number(root?.match(/\bwidth="([\d.]+)"/)?.[1]);
+    const renderedHeight = Number(root?.match(/\bheight="([\d.]+)"/)?.[1]);
+    if (!root || !(renderedWidth > 0) || !(renderedHeight > 0)) {
+      throw new Error('Renderer returned an SVG without readable positive dimensions.');
+    }
+    out.svg = svg;
+    out.svgHash = sha256(svg);
+    out.svgBytes = Buffer.byteLength(svg, 'utf8');
+    out.svgRef = describeSchemaRef(createValueRef(svg, 'viz.render')).ref;
+    out.render = { engine, width: renderedWidth, height: renderedHeight, theme: 'light', brand: 'A' };
+    out.output = { ...out.output!, svg: true, ...(width !== undefined ? { width } : {}), ...(height !== undefined ? { height } : {}) };
+    return out;
+  } catch (error) {
+    return errorOut('OODS-V165', `SVG rendering failed: ${error instanceof Error ? error.message : String(error)}`, input.output?.compact ?? true, input.output?.echarts ?? false);
+  }
+}
+
+async function renderSpec(input: VizRenderInput): Promise<VizRenderOutput> {
   const compact = input.output?.compact ?? true;
   const wantEcharts = input.output?.echarts ?? false;
   const includeNormalized = input.output?.includeNormalizedSpec ?? false;

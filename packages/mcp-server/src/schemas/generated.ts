@@ -628,7 +628,7 @@ export namespace ArtifactCertifyOutputSchema {
        */
       contentHash: string;
       /**
-       * OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on render-graded cartesian charts and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry, and cartesian charts with nothing to render-grade. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json.
+       * OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on cartesian charts (including contrast-exempt charts) and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json.
        */
       renderHash?: string;
     };
@@ -2143,7 +2143,7 @@ export namespace DashboardRenderInputSchema {
        */
       includeNormalizedSpec?: boolean;
       /**
-       * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary panels (geo), not a rendered ECharts chart. Absent/false leaves the output byte-identical to the compact/echarts payload.
+       * Opt-in render-to-SVG export (sprint-115). When true, additionally emit a self-contained HTML document on the output `html` field: Vega-Lite panels (trend/breakdown) rendered to inline SVG via @oods/viz-render, KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent/false leaves the output byte-identical to the compact/echarts payload.
        */
       html?: boolean;
       /**
@@ -2546,7 +2546,7 @@ export namespace DashboardRenderOutputSchema {
      */
     tokenCssRef?: string;
     /**
-     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and a11y-described PLACEHOLDER bytes for ECharts-primary (geo) panels, not rendered ECharts charts. Absent leaves the rest of the payload byte-identical.
+     * Opt-in self-contained HTML export (sprint-115), present only when input output.html=true. A single HTML document with the metric-overview panels composed per the resolved layout: Vega-Lite panels rendered to inline SVG (@oods/viz-render), KPI tiles, and normalized inline SVG for all six admitted ECharts-primary panel types. Absent leaves the rest of the payload byte-identical.
      */
     html?: string;
     /**
@@ -2560,7 +2560,7 @@ export namespace DashboardRenderOutputSchema {
      */
     contentHash?: string;
     /**
-     * Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; ECharts-primary panels remain placeholders. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim.
+     * Deterministic SHA-256 (hex) over the exact bytes returned in html, present only when input output.html=true. This receipt is brand-VARIANT because brand is applied while emitting the HTML/SVG bytes; all 11 admitted chart panel types draw SVG; placeholders are reserved for error panels. It is evidence of this call's deterministic output, not a certified-matrix renderHashEpoch claim.
      */
     outputHtmlHash?: string;
     /**
@@ -8467,6 +8467,18 @@ export namespace VizRenderInputSchema {
      */
     output?: {
       /**
+       * Return deterministic server-rendered SVG for the resolved chart type. Renderer failure is OODS-V165; default false keeps spec-only output.
+       */
+      svg?: boolean;
+      /**
+       * SVG width override in pixels. Omit for intrinsic Vega-Lite dimensions or 600px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size.
+       */
+      width?: number;
+      /**
+       * SVG height override in pixels. Omit for intrinsic Vega-Lite dimensions or 400px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size.
+       */
+      height?: number;
+      /**
        * When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps.
        */
       compact?: boolean;
@@ -8632,6 +8644,32 @@ export namespace VizRenderOutputSchema {
      */
     lowConfidence?: boolean;
     /**
+     * Server-rendered SVG bytes, present only for output.svg:true. ECharts allocator tokens are normalized before return; Vega-Lite retains its accessible graphics roles.
+     */
+    svg?: string;
+    /**
+     * SHA-256 of the exact returned SVG bytes (normalized structural bytes for ECharts). At default intrinsic dimensions, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Dimension overrides change the hash.
+     */
+    svgHash?: string;
+    /**
+     * UTF-8 byte length of svg.
+     */
+    svgBytes?: number;
+    /**
+     * Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef.
+     */
+    svgRef?: string;
+    /**
+     * Actual SVG dimensions, primary engine and rendered scope.
+     */
+    render?: {
+      engine: 'vega-lite' | 'echarts';
+      width: number;
+      height: number;
+      theme: 'light';
+      brand: 'A';
+    };
+    /**
      * Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef).
      */
     specRef?: string;
@@ -8655,6 +8693,9 @@ export namespace VizRenderOutputSchema {
      * Echoes the normalized output controls used by the renderer.
      */
     output?: {
+      svg?: boolean;
+      width?: number;
+      height?: number;
       compact: boolean;
       echarts?: boolean;
       includeNormalizedSpec?: boolean;

@@ -169,12 +169,12 @@ export function prepareEChartsRenderInput(
 
   const resolvedDimensions = dimensions ?? ECHARTS_SSR_DIMENSIONS;
   if (
-    resolvedDimensions.width !== ECHARTS_SSR_DIMENSIONS.width ||
-    resolvedDimensions.height !== ECHARTS_SSR_DIMENSIONS.height
+    !Number.isSafeInteger(resolvedDimensions.width) || resolvedDimensions.width <= 0 ||
+    !Number.isSafeInteger(resolvedDimensions.height) || resolvedDimensions.height <= 0
   ) {
     throw new EChartsRenderError(
       "ECHARTS_INVALID_DIMENSIONS",
-      `ECharts SSR uses the fixed ${ECHARTS_SSR_DIMENSIONS.width}x${ECHARTS_SSR_DIMENSIONS.height} viewport.`,
+      "ECharts SSR dimensions must be positive safe integers in pixels.",
     );
   }
 
@@ -279,7 +279,7 @@ export function prepareEChartsRenderInput(
   return {
     projectedOption: cloned,
     canonicalProjectedBytes: canonicalizeJson(cloned),
-    dimensions: ECHARTS_SSR_DIMENSIONS,
+    dimensions: { width: resolvedDimensions.width, height: resolvedDimensions.height },
   };
 }
 

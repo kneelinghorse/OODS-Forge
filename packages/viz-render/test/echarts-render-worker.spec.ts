@@ -365,11 +365,11 @@ describe.sequential("ECharts render worker contract", () => {
     });
   });
 
-  it("rejects noncanonical dimensions before worker creation", async () => {
+  it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])("rejects invalid width %s before worker creation", async (width) => {
     await expectTypedError(
       () =>
         renderEChartsToSvg(optionFor("treemap"), {
-          width: 601,
+          width,
           height: 400,
         }),
       "ECHARTS_INVALID_DIMENSIONS",

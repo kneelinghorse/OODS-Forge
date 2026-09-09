@@ -313,6 +313,9 @@
       "type": "object",
       "description": "Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior.",
       "properties": {
+        "svg": {"type": "boolean", "default": false, "description": "Return deterministic server-rendered SVG for the resolved chart type. Renderer failure is OODS-V165; default false keeps spec-only output."},
+        "width": {"type": "integer", "minimum": 1, "description": "SVG width override in pixels. Omit for intrinsic Vega-Lite dimensions or 600px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size."},
+        "height": {"type": "integer", "minimum": 1, "description": "SVG height override in pixels. Omit for intrinsic Vega-Lite dimensions or 400px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size."},
         "compact": {
           "type": "boolean",
           "default": true,

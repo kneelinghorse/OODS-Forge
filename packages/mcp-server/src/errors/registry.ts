@@ -294,6 +294,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V162', { code: 'OODS-V162', category: 'validation', message: 'Required release evidence is missing', retryable: true }],
   ['OODS-V163', { code: 'OODS-V163', category: 'validation', message: 'Release evidence artifact hash mismatch', retryable: true }],
   ['OODS-V164', { code: 'OODS-V164', category: 'validation', message: 'Unknown UI workflow state', retryable: true }],
+  ['OODS-V165', { code: 'OODS-V165', category: 'validation', message: 'SVG rendering failed', retryable: true }],
 
   // ── Validation: Brand/Map ───────────────────────────────────────────────
   ['OODS-V200', { code: 'OODS-V200', category: 'validation', message: 'Map validation failed', retryable: true }],

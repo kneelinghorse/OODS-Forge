@@ -891,21 +891,20 @@ export async function handle(input: ArtifactCertifyInput): Promise<ArtifactCerti
     // DETERMINISM, render half (s176 m02) — double-render byte-equality:
     // sha256(renderVegaLiteToSvg(compiled)) twice, equal. The FIRST hash is the contrast
     // grade's own render (reused, never recomputed); the SECOND render call below IS the
-    // proof — the ":623-625 KEEP-the-second discipline", render edition. Runs exactly
-    // when the grade rendered (>= 1 series unit), so `renderHash` presence tracks this
-    // cartesian rendered-grading path. A second-render
-    // throw is a failed proof (the artifact could not be re-rendered), never a
-    // status:error — the catch keeps the fault inside the pillar.
+    // proof — the ":623-625 KEEP-the-second discipline", render edition. Rendering
+    // determinism also covers contrast-exempt charts (e.g. quantitative heatmaps):
+    // public SVG identity must not depend on whether contrast can grade the paint.
+    // Reuse the contrast render when available; otherwise render the same compiled
+    // spec here. A renderer throw remains a failed determinism proof.
     let renderHash: string | undefined;
     let renderStable = true;
-    if (gradedSvg !== undefined) {
-      renderHash = sha256(gradedSvg);
-      try {
-        renderStable =
-          renderHash === sha256(await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec));
-      } catch {
-        renderStable = false;
-      }
+    try {
+      const firstSvg = gradedSvg ?? await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec);
+      renderHash = sha256(firstSvg);
+      renderStable =
+        renderHash === sha256(await renderVegaLiteToSvg(compiled as unknown as VegaLiteSpec));
+    } catch {
+      renderStable = false;
     }
     // The folded stable: the compile proof AND (when a render happened) the render proof.
     const stable = compileStable && renderStable;

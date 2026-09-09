@@ -53,6 +53,9 @@
 | `strictFields` | boolean | No | `false` | Field/key-presence STRICT switch (sprint-118 m05/m06). When true, a referenced data key that does not resolve is surfaced in `warnings` instead of a silent confident-wrong result: (m05) an explicit tabular chart whose encoding references a field ABSENT from every (non-empty) row → OODS-V131; (m06) a choropleth corridor whose join key has NO matching map feature → OODS-V134 (per unmatched corridor). DEFAULT false keeps today's behavior byte-identical (the geo silent-drop preserved). The dashboard.render strict check (its own `strictFields`) escalates V131 to an error panel via `onPanelError`. |
 | `a11yEquivalence` | boolean | No | `true` | A11y equivalence CERTIFY-AT-EMISSION switch (sprint-134 m03; gate sprint-135 m04). DEFAULT ON. The cartesian (Vega-Lite) emission is checked against the accessible-equivalence engine (validateVizEquivalenceRules): error-severity rules BLOCK (status:'error' with per-rule OODS-A11Y-<rule.id> codes in `errors`), warn-severity failures surface in `warnings` as OODS-A11Y-<rule.id>. Default builder output is conformant-BY-CONSTRUCTION (sprint-135 m02), so generated specs pass; set false to opt out for agent-supplied non-conformant specs. Scoped to the cartesian path (the ECharts-primary scaffold has empty data and would spuriously fail data-equivalence rules). |
 | `output` | object | No |  | Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior. |
+| `output.svg` | boolean | No | `false` | Return deterministic server-rendered SVG for the resolved chart type. Renderer failure is OODS-V165; default false keeps spec-only output. |
+| `output.width` | integer | No |  | SVG width override in pixels. Omit for intrinsic Vega-Lite dimensions or 600px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size. |
+| `output.height` | integer | No |  | SVG height override in pixels. Omit for intrinsic Vega-Lite dimensions or 400px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size. |
 | `output.compact` | boolean | No | `true` | When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps. |
 | `output.echarts` | boolean | No | `false` | Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec. Decision 3: Vega-Lite is compact-default, ECharts is opt-in full. |
 | `output.includeNormalizedSpec` | boolean | No | `false` | When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip). |
@@ -78,6 +81,11 @@
 | `a11y` | object | No | Structured two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from (Forge-Demos FD#10). Present only when output.includeA11y is true (additive; default-off keeps the wire byte-identical). An agent reads this to verify/iterate its own chart without re-deriving the data. |
 | `suggestion` | object | No | Present in suggest mode: the recommender pick that drove the chart type, with the data-aware rationale and runner-up alternatives. |
 | `lowConfidence` | boolean | No | Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced). |
+| `svg` | string | No | Server-rendered SVG bytes, present only for output.svg:true. ECharts allocator tokens are normalized before return; Vega-Lite retains its accessible graphics roles. |
+| `svgHash` | string | No | SHA-256 of the exact returned SVG bytes (normalized structural bytes for ECharts). At default intrinsic dimensions, cartesian svgHash equals artifact.certify determinism.renderHash for the same normalized spec. Dimension overrides change the hash. |
+| `svgBytes` | integer | No | UTF-8 byte length of svg. |
+| `svgRef` | string | No | Temporary pipeline reference caching exactly the svg string, with the same lifetime as specRef. |
+| `render` | object | No | Actual SVG dimensions, primary engine and rendered scope. |
 | `specRef` | string | No | Temporary reference to the produced spec for pipeline reuse (mirrors viz.compose schemaRef). |
 | `specRefCreatedAt` | string | No | ISO timestamp when the specRef was created. |
 | `specRefExpiresAt` | string | No | ISO timestamp when the specRef expires. |
@@ -94,6 +102,7 @@
 |------|-------------|
 | `OODS-V001` | Input validation failed |
 | `OODS-S001` | Internal server error |
+| `OODS-V165` | SVG rendering failed; no SVG or spec-only success is returned |
 
 ## Example Request
 
