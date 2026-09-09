@@ -27,3 +27,11 @@ PR #90 targets OODS-pro. `ci/observed.json` retains the actual `gh pr view` and 
 ## Corrective freeze
 
 The initial full capture failed with 15 MCP and 11 root assertion failures; its raw reports remain under `four-suite-closeout-attempt-1`. See [correction/README.md](correction/README.md) for each class of correction and the TS6133 fix. Final closeout will bind `corrective-proof/`, `before-after/corrective-mapping.json`, and the second full capture, while retaining the first freeze and all its receipts. No independent-review verdict or Sprint closure is implied.
+
+## Corrective execution inputs
+
+The final proof binds corrected implementation `ab7a463140c05dd2d494ab762c5a4ed4de0128a9` through `closeout-inputs/corrective-manifest.json`. The initial manifest, proofs, and failed capture remain immutable historical evidence. Fifteen successful corrected command receipts have matching input, output, and log hashes, including root TypeScript, census and store checks, packed consumers, browser receipts, historical claims, and prose contracts.
+
+`corrective-proof/receipt-set.json` retains 24 receipts and 72 screenshots. `before-after/corrective-mapping.json` is the final seven-item mapping; the initial `before-after/mapping.json` remains retained at its original head. Lifecycle text differences are zero. The builder inspected the corrected 390px detail screenshot; the existing disclosed craft limitations and independent usability review still apply. Runtime packs, install receipts, and startup logs are retained in `corrective-proof/loop-runtime/`.
+
+The next capture is the second and final full capture permitted by decision #1833, following the retained assertion failures and actual committed corrections. Final results and CI observations will be added as evidence only. The authoritative final handoff will be `closeout/review-handoff.json`; Sprint 189 remains Active and the Sprint 190 reconnect stays unsent.

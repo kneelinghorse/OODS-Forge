@@ -1,0 +1,1714 @@
+# Render receipt diff
+
+28 differences.
+
+## schemaHash
+
+Before:
+```json
+"sha256:6aca09f3fe5d622fb23c7a4f155b590f0d80575f3e853abe8d16b5fa3094aea3"
+```
+After:
+```json
+"sha256:1c047ae408a6c8724958b82eb3752e17665a8e77ee902071cd5cd46468de5f5f"
+```
+
+## artifactContentHash
+
+Before:
+```json
+"sha256:4d225b4b38f67b0b07e2f5e833eb79ab2d9c0185e617722a9816140edea67c4c"
+```
+After:
+```json
+"sha256:69b5dd6076d5f7a28779c9700e71d1217c539eecc52cba29b8ba211ef3322470"
+```
+
+## errors
+
+Before:
+```json
+[
+  {
+    "type": "console",
+    "text": "In HTML, %s cannot be a descendant of <%s>.\nThis will cause a hydration error.%s <form> form \n\n  <App empty={false} fail={false} latency={180}>\n    <main className=\"workflow-app\" data-oods-workflow=\"Subscription\" data-screen=\"form\" data-selected-id=\"subscripti...\" ...>\n      <header>\n      <nav>\n      <section aria-label=\"Subscripti...\" className=\"workflow-c...\" onChangeCapture={function onChangeCapture}>\n        <label>\n>       <form onSubmit={function onSubmit}>\n          <GeneratedUI status=\"active\" stateHistory={[...]} allowedTransitions={[...]} cancelAtPeriodEnd={false} ...>\n            <OODS.Stack id=\"form-screen\" data-oods-component=\"Stack\">\n              <div ref={null} className=\"oods-stack\" data-oods-component=\"Stack\" data-direction=\"column\" ...>\n                <OODS.Stack id=\"form-scree...\" data-oods-component=\"Stack\" data-oods-state=\"success\" data-layout=\"stack\" ...>\n                  <div ref={null} className=\"oods-stack\" data-oods-component=\"Stack\" data-direction=\"column\" ...>\n                    <OODS.Stack id=\"form-form-...\" data-oods-component=\"Stack\" data-layout=\"stack\" ...>\n                      <div ref={null} className=\"oods-stack\" data-oods-component=\"Stack\" data-direction=\"column\" ...>\n                        <OODS.StatusSelector>\n                        <OODS.CancellationForm id=\"form-ve-ti...\" data-oods-component=\"Cancellati...\" reason=\"\" ...>\n>                         <form\n>                           ref={null}\n>                           className=\"oods-cancellation-form\"\n>                           data-oods-component=\"CancellationForm\"\n>                           data-form-type=\"cancellation\"\n>                           onSubmit={function onSubmit}\n>                           id=\"form-ve-title-29\"\n>                         >\n                    ...\n            ...\n      ...\n"
+  },
+  {
+    "type": "console",
+    "text": "<%s> cannot contain a nested %s.\nSee this log for the ancestor stack trace. form <form>"
+  }
+]
+```
+After:
+```json
+[]
+```
+
+## files.src/App.tsx
+
+Before:
+```json
+"sha256:de7fc175e52b25ca2e5671a5b39a339705343791f0c7fc69524d9aef410b388e"
+```
+After:
+```json
+"sha256:323fcb74dbe121b8e16af9b34fb714b04c37ad92428bd6ee3fff10076b714b60"
+```
+
+## files.src/actions.ts
+
+Before:
+```json
+"sha256:358299998a1455f2679149c5eb40da0b9747a19283a82eaa594f49f576436fb6"
+```
+After:
+```json
+"sha256:7885a54420c4faa0f50c1926de2469fca71ade8bda029b87618003a0572ddbee"
+```
+
+## files.src/app.css
+
+Before:
+```json
+"sha256:f43b46c08d98bf049ae9f72ff1822072fe725670d1b7ce47e77d75bf3863ecf1"
+```
+After:
+```json
+"sha256:142fce8b38ccc442764efa88cb15dc3e8c6293fbad34a9f787a47d5529e34dca"
+```
+
+## files.src/application.ts
+
+Before:
+```json
+"sha256:3b26488a83aabbe088afc2e5d257bd8ffa15d8993c1a55e34f90d791cc2037c7"
+```
+After:
+```json
+"sha256:78caf7f46e197dff42bd50d0871b7520cd7db624381e8594adc443e882d9902c"
+```
+
+## files.src/sample-data.ts
+
+Before:
+```json
+"sha256:94e8c77058e9cf40b3c0560e2d96fc782447de291f3045ba7359abdce6682529"
+```
+After:
+```json
+"sha256:158948fec9e9aa2b84939ebdb4a0486a2833b6de5e19a27668d953c744a9f695"
+```
+
+## files.src/screens/Detail.tsx
+
+Before:
+```json
+"sha256:9dd27d475f8511fdbcfa3edf78ab9619057cd726f91d0426017ab6b7599a223c"
+```
+After:
+```json
+"sha256:f48a62f6f08431ebaf42ba064e3f005b22d0f7f0e088eaa9922b6e0a8518bfee"
+```
+
+## files.src/screens/Form.tsx
+
+Before:
+```json
+"sha256:1a0d7eb2c2ab7372f1db6702de35d010cc2b549306f0e3c24c006f195bf97307"
+```
+After:
+```json
+"sha256:9c1cf9b03121d04d5bcaf3aca4c0f192a30d273a39f02ce72c98401e998362bf"
+```
+
+## files.src/screens/List.tsx
+
+Before:
+```json
+"sha256:2093ad6d9ea6c995cc2b187b9e373d6653400a375b7e3d528d35c4055e8f32cf"
+```
+After:
+```json
+"sha256:e50843da34a4bfb2a83912d17fcad45d20392a0019347408bcf99bb21749bd8d"
+```
+
+## files.src/screens/Timeline.tsx
+
+Before:
+```json
+"sha256:87c7079bb4b147d533d99227bf08b266fea19a474e79518f22c617f2be95219a"
+```
+After:
+```json
+"sha256:47326f7e3bcb9c4b8f8cc9abaf71e37640bab427986da84012b201a76223dd3f"
+```
+
+## files.src/store.ts
+
+Before:
+```json
+"sha256:28b00d7da7aa41fb566cf104836cca4a2b7f17e1ffda06d23c5d7b5f8a10a452"
+```
+After:
+```json
+"sha256:6e28fff21ef055e6ca3fe8514c08da6da6f50f1d237375a94d94d2c6abf3a99a"
+```
+
+## views.390.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Find subscriptions\":\n    - text: Search\n    - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n  - region \"Subscription screen\":\n    - search:\n      - text: Search\n      - searchbox \"Search\"\n    - text: Whether the subscription will cancel at the natural billing period end.\n    - combobox \"Whether the subscription will cancel at the natural billing period end.\":\n      - option \"Enter cancel at period end\" [disabled]\n    - text: $19.00 · monthly Future\n    - time: Timestamp for the most recent modification, when available.\n    - navigation \"Pagination\":\n      - text: No items\n      - button \"Previous page\" [disabled]: ‹\n      - list\n      - button \"Next page\" [disabled]: ›\n    - group \"Screen actions\":\n      - button \"Filter\"\n      - button \"Open row\"\n      - button \"Sort\"\n    - tablist \"Archive views\":\n      - tab \"Active\" [selected]\n      - tab \"Archived\"\n    - tabpanel \"Active\":\n      - list:\n        - listitem:\n          - 'button \"Subscription 01 Status: Future\"':\n            - strong: Subscription 01\n            - text: Future\n        - listitem:\n          - 'button \"Subscription 02 Status: Trialing\"':\n            - strong: Subscription 02\n            - text: Trialing\n        - listitem:\n          - 'button \"Subscription 04 Status: Paused\"':\n            - strong: Subscription 04\n            - text: Paused\n        - listitem:\n          - 'button \"Subscription 05 Status: Pending Cancellation\"':\n            - strong: Subscription 05\n            - text: Pending Cancellation\n        - listitem:\n          - 'button \"Subscription 06 Status: Past Due\"':\n            - strong: Subscription 06\n            - text: Past Due\n        - listitem:\n          - 'button \"Subscription 07 Status: Unpaid\"':\n            - strong: Subscription 07\n            - text: Unpaid\n        - listitem:\n          - 'button \"Subscription 08 Status: Terminated\"':\n            - strong: Subscription 08\n            - text: Terminated\n        - listitem:\n          - 'button \"Subscription 09 Status: Future\"':\n            - strong: Subscription 09\n            - text: Future\n        - listitem:\n          - 'button \"Team annual Status: Pending Cancellation\"':\n            - strong: Team annual\n            - text: Pending Cancellation\n      - text: 9 records\n      - button \"Previous\" [disabled]\n      - button \"Next\" [disabled]\n  - status: Changes saved in this session."
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\" [selected]\n      - tab \"Archived\"\n    - tabpanel \"Active\":\n      - list \"Records\":\n        - listitem:\n          - 'button \"Subscription 01 Status: Future Sep 1, 2026, 12:00 PM $19.00 · monthly\"':\n            - text: Subscription 01 Future\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $19.00 · monthly\n        - listitem:\n          - 'button \"Subscription 02 Status: Trialing Mar 1, 2026, 12:00 PM $38.00 · yearly\"':\n            - text: Subscription 02 Trialing\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $38.00 · yearly\n        - listitem:\n          - 'button \"Subscription 04 Status: Paused Mar 1, 2026, 12:00 PM $76.00 · yearly\"':\n            - text: Subscription 04 Paused\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $76.00 · yearly\n        - listitem:\n          - 'button \"Subscription 05 Status: Pending Cancellation Sep 1, 2026, 12:00 PM $95.00 · monthly\"':\n            - text: Subscription 05 Pending Cancellation\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $95.00 · monthly\n        - listitem:\n          - 'button \"Subscription 06 Status: Past Due Mar 1, 2026, 12:00 PM $114.00 · yearly\"':\n            - text: Subscription 06 Past Due\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $114.00 · yearly\n        - listitem:\n          - 'button \"Subscription 07 Status: Unpaid Sep 1, 2026, 12:00 PM $133.00 · monthly\"':\n            - text: Subscription 07 Unpaid\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $133.00 · monthly\n        - listitem:\n          - 'button \"Subscription 08 Status: Terminated Mar 1, 2025, 12:00 PM $152.00 · yearly\"':\n            - text: Subscription 08 Terminated\n            - time: Mar 1, 2025, 12:00 PM\n            - text: $152.00 · yearly\n        - listitem:\n          - 'button \"Subscription 09 Status: Future Sep 1, 2026, 12:00 PM $171.00 · monthly\"':\n            - text: Subscription 09 Future\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $171.00 · monthly\n        - listitem:\n          - 'button \"Team annual Status: Pending Cancellation Sep 8, 2026, 12:00 PM $19.99 · yearly\"':\n            - text: Team annual Pending Cancellation\n            - time: Sep 8, 2026, 12:00 PM\n            - text: $19.99 · yearly\n    - navigation \"Pagination\":\n      - text: 9 records Showing 1–9 of 9\n      - button \"Previous page\" [disabled]: ‹\n      - list:\n        - listitem:\n          - button \"Page 1\": \"1\"\n      - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status: Changes saved in this session."
+```
+
+## views.390.visibleText
+
+Before:
+```json
+null
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1\n\nChanges saved in this session."
+```
+
+## views.390.values
+
+Before:
+```json
+[
+  {
+    "element": "input",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "select",
+    "name": "StatusAll statesfuturetrialingactivepausedpending cancellationpast dueunpaidterminated",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "select",
+    "name": "SortName A–ZName Z–A",
+    "value": "asc",
+    "checked": false
+  },
+  {
+    "element": "list-slot-search-1",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-slot-filters-2",
+    "name": "Whether the subscription will cancel at the natural billing period end.*",
+    "value": "",
+    "checked": false
+  }
+]
+```
+After:
+```json
+[
+  {
+    "element": "list-slot-search-1",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-slot-filters-2",
+    "name": "Status",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-list-toolbar-4-sort",
+    "name": "Sort",
+    "value": "asc",
+    "checked": false
+  }
+]
+```
+
+## views.390.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 390,
+  "documentWidth": 390,
+  "elementCount": 118,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "span",
+      "text": "Whether the subscription will cancel at the natural billing period end.",
+      "lines": [
+        "Whether the subscription will cancel at the",
+        "natural billing period end."
+      ]
+    },
+    {
+      "element": "list-ve-items-11",
+      "text": "Timestamp for the most recent modification, when available.",
+      "lines": [
+        "Timestamp for the most recent modification,",
+        "when available."
+      ]
+    }
+  ]
+}
+```
+After:
+```json
+{
+  "viewportWidth": 390,
+  "documentWidth": 390,
+  "elementCount": 123,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+
+## views.390.regions
+
+Before:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly\n•\nFUTURE\nTimestamp for the most recent modification, when available.\nNo items\n‹\n›"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly\n•\nFUTURE\nTimestamp for the most recent modification, when available.\nNo items\n‹\n›"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "list-slot-search-1",
+    "component": "SearchInput",
+    "text": ""
+  },
+  {
+    "id": "list-slot-filters-2",
+    "component": "Select",
+    "text": "Enter cancel at period end"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3",
+    "component": "BillingSummaryBadge",
+    "text": "$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "Stack",
+    "text": "•\nFUTURE\nTimestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-slot-items-6",
+    "component": "Stack",
+    "text": "•\nFUTURE\nTimestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-ve-items-10",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "list-ve-items-11",
+    "component": "RelativeTimestamp",
+    "text": "Timestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "No items\n‹\n›"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "No items\n‹\n›"
+  },
+  {
+    "id": "",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 01\n•\nFUTURE\nSubscription 02\n★\nTRIALING\nSubscription 04\n⏸\nPAUSED\nSubscription 05\n…\nPENDING CANCELLATION\nSubscription 06\n⚠︎\nPAST DUE\nSubscription 07\n⨯\nUNPAID\nSubscription 08\n∅\nTERMINATED\nSubscription 09\n•\nFUTURE\nTeam annual\n…\nPENDING CANCELLATION\n9 records\nPrevious\nNext"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "★\nTRIALING"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⏸\nPAUSED"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "…\nPENDING CANCELLATION"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⚠︎\nPAST DUE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⨯\nUNPAID"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "∅\nTERMINATED"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "…\nPENDING CANCELLATION"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "list-slot-search-1",
+    "component": "Input",
+    "text": ""
+  },
+  {
+    "id": "list-slot-filters-2",
+    "component": "Select",
+    "text": "All states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "list-list-toolbar-4-sort",
+    "component": "Select",
+    "text": "Name A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 01"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "⏲\nFuture"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-1",
+    "component": "Button",
+    "text": "Subscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-1",
+    "component": "Text",
+    "text": "Subscription 02"
+  },
+  {
+    "id": "list-ve-items-10-1",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-1",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-1",
+    "component": "BillingSummaryBadge",
+    "text": "$38.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-2",
+    "component": "Button",
+    "text": "Subscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-2",
+    "component": "Text",
+    "text": "Subscription 04"
+  },
+  {
+    "id": "list-ve-items-10-2",
+    "component": "StatusBadge",
+    "text": "⏸\nPaused"
+  },
+  {
+    "id": "list-ve-items-11-2",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-2",
+    "component": "BillingSummaryBadge",
+    "text": "$76.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-3",
+    "component": "Button",
+    "text": "Subscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-3",
+    "component": "Text",
+    "text": "Subscription 05"
+  },
+  {
+    "id": "list-ve-items-10-3",
+    "component": "StatusBadge",
+    "text": "…\nPending Cancellation"
+  },
+  {
+    "id": "list-ve-items-11-3",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-3",
+    "component": "BillingSummaryBadge",
+    "text": "$95.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-4",
+    "component": "Button",
+    "text": "Subscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-4",
+    "component": "Text",
+    "text": "Subscription 06"
+  },
+  {
+    "id": "list-ve-items-10-4",
+    "component": "StatusBadge",
+    "text": "⚠︎\nPast Due"
+  },
+  {
+    "id": "list-ve-items-11-4",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-4",
+    "component": "BillingSummaryBadge",
+    "text": "$114.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-5",
+    "component": "Button",
+    "text": "Subscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-5",
+    "component": "Text",
+    "text": "Subscription 07"
+  },
+  {
+    "id": "list-ve-items-10-5",
+    "component": "StatusBadge",
+    "text": "⨯\nUnpaid"
+  },
+  {
+    "id": "list-ve-items-11-5",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-5",
+    "component": "BillingSummaryBadge",
+    "text": "$133.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-6",
+    "component": "Button",
+    "text": "Subscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-6",
+    "component": "Text",
+    "text": "Subscription 08"
+  },
+  {
+    "id": "list-ve-items-10-6",
+    "component": "StatusBadge",
+    "text": "∅\nTerminated"
+  },
+  {
+    "id": "list-ve-items-11-6",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2025, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-6",
+    "component": "BillingSummaryBadge",
+    "text": "$152.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-7",
+    "component": "Button",
+    "text": "Subscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-7",
+    "component": "Text",
+    "text": "Subscription 09"
+  },
+  {
+    "id": "list-ve-items-10-7",
+    "component": "StatusBadge",
+    "text": "⏲\nFuture"
+  },
+  {
+    "id": "list-ve-items-11-7",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-7",
+    "component": "BillingSummaryBadge",
+    "text": "$171.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-8",
+    "component": "Button",
+    "text": "Team annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-8",
+    "component": "Text",
+    "text": "Team annual"
+  },
+  {
+    "id": "list-ve-items-10-8",
+    "component": "StatusBadge",
+    "text": "…\nPending Cancellation"
+  },
+  {
+    "id": "list-ve-items-11-8",
+    "component": "RelativeTimestamp",
+    "text": "Sep 8, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-8",
+    "component": "BillingSummaryBadge",
+    "text": "$19.99 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```
+
+## views.820.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Find subscriptions\":\n    - text: Search\n    - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n  - region \"Subscription screen\":\n    - search:\n      - text: Search\n      - searchbox \"Search\"\n    - text: Whether the subscription will cancel at the natural billing period end.\n    - combobox \"Whether the subscription will cancel at the natural billing period end.\":\n      - option \"Enter cancel at period end\" [disabled]\n    - text: $19.00 · monthly Future\n    - time: Timestamp for the most recent modification, when available.\n    - navigation \"Pagination\":\n      - text: No items\n      - button \"Previous page\" [disabled]: ‹\n      - list\n      - button \"Next page\" [disabled]: ›\n    - group \"Screen actions\":\n      - button \"Filter\"\n      - button \"Open row\"\n      - button \"Sort\"\n    - tablist \"Archive views\":\n      - tab \"Active\" [selected]\n      - tab \"Archived\"\n    - tabpanel \"Active\":\n      - list:\n        - listitem:\n          - 'button \"Subscription 01 Status: Future\"':\n            - strong: Subscription 01\n            - text: Future\n        - listitem:\n          - 'button \"Subscription 02 Status: Trialing\"':\n            - strong: Subscription 02\n            - text: Trialing\n        - listitem:\n          - 'button \"Subscription 04 Status: Paused\"':\n            - strong: Subscription 04\n            - text: Paused\n        - listitem:\n          - 'button \"Subscription 05 Status: Pending Cancellation\"':\n            - strong: Subscription 05\n            - text: Pending Cancellation\n        - listitem:\n          - 'button \"Subscription 06 Status: Past Due\"':\n            - strong: Subscription 06\n            - text: Past Due\n        - listitem:\n          - 'button \"Subscription 07 Status: Unpaid\"':\n            - strong: Subscription 07\n            - text: Unpaid\n        - listitem:\n          - 'button \"Subscription 08 Status: Terminated\"':\n            - strong: Subscription 08\n            - text: Terminated\n        - listitem:\n          - 'button \"Subscription 09 Status: Future\"':\n            - strong: Subscription 09\n            - text: Future\n        - listitem:\n          - 'button \"Team annual Status: Pending Cancellation\"':\n            - strong: Team annual\n            - text: Pending Cancellation\n      - text: 9 records\n      - button \"Previous\" [disabled]\n      - button \"Next\" [disabled]\n  - status: Changes saved in this session."
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\" [selected]\n      - tab \"Archived\"\n    - tabpanel \"Active\":\n      - list \"Records\":\n        - listitem:\n          - 'button \"Subscription 01 Status: Future Sep 1, 2026, 12:00 PM $19.00 · monthly\"':\n            - text: Subscription 01 Future\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $19.00 · monthly\n        - listitem:\n          - 'button \"Subscription 02 Status: Trialing Mar 1, 2026, 12:00 PM $38.00 · yearly\"':\n            - text: Subscription 02 Trialing\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $38.00 · yearly\n        - listitem:\n          - 'button \"Subscription 04 Status: Paused Mar 1, 2026, 12:00 PM $76.00 · yearly\"':\n            - text: Subscription 04 Paused\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $76.00 · yearly\n        - listitem:\n          - 'button \"Subscription 05 Status: Pending Cancellation Sep 1, 2026, 12:00 PM $95.00 · monthly\"':\n            - text: Subscription 05 Pending Cancellation\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $95.00 · monthly\n        - listitem:\n          - 'button \"Subscription 06 Status: Past Due Mar 1, 2026, 12:00 PM $114.00 · yearly\"':\n            - text: Subscription 06 Past Due\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $114.00 · yearly\n        - listitem:\n          - 'button \"Subscription 07 Status: Unpaid Sep 1, 2026, 12:00 PM $133.00 · monthly\"':\n            - text: Subscription 07 Unpaid\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $133.00 · monthly\n        - listitem:\n          - 'button \"Subscription 08 Status: Terminated Mar 1, 2025, 12:00 PM $152.00 · yearly\"':\n            - text: Subscription 08 Terminated\n            - time: Mar 1, 2025, 12:00 PM\n            - text: $152.00 · yearly\n        - listitem:\n          - 'button \"Subscription 09 Status: Future Sep 1, 2026, 12:00 PM $171.00 · monthly\"':\n            - text: Subscription 09 Future\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $171.00 · monthly\n        - listitem:\n          - 'button \"Team annual Status: Pending Cancellation Sep 8, 2026, 12:00 PM $19.99 · yearly\"':\n            - text: Team annual Pending Cancellation\n            - time: Sep 8, 2026, 12:00 PM\n            - text: $19.99 · yearly\n    - navigation \"Pagination\":\n      - text: 9 records Showing 1–9 of 9\n      - button \"Previous page\" [disabled]: ‹\n      - list:\n        - listitem:\n          - button \"Page 1\": \"1\"\n      - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status: Changes saved in this session."
+```
+
+## views.820.visibleText
+
+Before:
+```json
+null
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nLocal workspace\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1\n\nChanges saved in this session."
+```
+
+## views.820.values
+
+Before:
+```json
+[
+  {
+    "element": "input",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "select",
+    "name": "StatusAll statesfuturetrialingactivepausedpending cancellationpast dueunpaidterminated",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "select",
+    "name": "SortName A–ZName Z–A",
+    "value": "asc",
+    "checked": false
+  },
+  {
+    "element": "list-slot-search-1",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-slot-filters-2",
+    "name": "Whether the subscription will cancel at the natural billing period end.*",
+    "value": "",
+    "checked": false
+  }
+]
+```
+After:
+```json
+[
+  {
+    "element": "list-slot-search-1",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-slot-filters-2",
+    "name": "Status",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-list-toolbar-4-sort",
+    "name": "Sort",
+    "value": "asc",
+    "checked": false
+  }
+]
+```
+
+## views.820.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 820,
+  "documentWidth": 820,
+  "elementCount": 128,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+After:
+```json
+{
+  "viewportWidth": 820,
+  "documentWidth": 820,
+  "elementCount": 124,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+
+## views.820.regions
+
+Before:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly\n•\nFUTURE\nTimestamp for the most recent modification, when available.\nNo items\n‹\n›"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly\n•\nFUTURE\nTimestamp for the most recent modification, when available.\nNo items\n‹\n›"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "list-slot-search-1",
+    "component": "SearchInput",
+    "text": ""
+  },
+  {
+    "id": "list-slot-filters-2",
+    "component": "Select",
+    "text": "Enter cancel at period end"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3",
+    "component": "BillingSummaryBadge",
+    "text": "$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "Stack",
+    "text": "•\nFUTURE\nTimestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-slot-items-6",
+    "component": "Stack",
+    "text": "•\nFUTURE\nTimestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-ve-items-10",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "list-ve-items-11",
+    "component": "RelativeTimestamp",
+    "text": "Timestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "No items\n‹\n›"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "No items\n‹\n›"
+  },
+  {
+    "id": "",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 01\n•\nFUTURE\n→\nSubscription 02\n★\nTRIALING\n→\nSubscription 04\n⏸\nPAUSED\n→\nSubscription 05\n…\nPENDING CANCELLATION\n→\nSubscription 06\n⚠︎\nPAST DUE\n→\nSubscription 07\n⨯\nUNPAID\n→\nSubscription 08\n∅\nTERMINATED\n→\nSubscription 09\n•\nFUTURE\n→\nTeam annual\n…\nPENDING CANCELLATION\n→\n9 records\nPrevious\nNext"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "★\nTRIALING"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⏸\nPAUSED"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "…\nPENDING CANCELLATION"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⚠︎\nPAST DUE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⨯\nUNPAID"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "∅\nTERMINATED"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "…\nPENDING CANCELLATION"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "list-slot-search-1",
+    "component": "Input",
+    "text": ""
+  },
+  {
+    "id": "list-slot-filters-2",
+    "component": "Select",
+    "text": "All states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "list-list-toolbar-4-sort",
+    "component": "Select",
+    "text": "Name A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 01"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "⏲\nFuture"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-1",
+    "component": "Button",
+    "text": "Subscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-1",
+    "component": "Text",
+    "text": "Subscription 02"
+  },
+  {
+    "id": "list-ve-items-10-1",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-1",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-1",
+    "component": "BillingSummaryBadge",
+    "text": "$38.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-2",
+    "component": "Button",
+    "text": "Subscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-2",
+    "component": "Text",
+    "text": "Subscription 04"
+  },
+  {
+    "id": "list-ve-items-10-2",
+    "component": "StatusBadge",
+    "text": "⏸\nPaused"
+  },
+  {
+    "id": "list-ve-items-11-2",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-2",
+    "component": "BillingSummaryBadge",
+    "text": "$76.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-3",
+    "component": "Button",
+    "text": "Subscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-3",
+    "component": "Text",
+    "text": "Subscription 05"
+  },
+  {
+    "id": "list-ve-items-10-3",
+    "component": "StatusBadge",
+    "text": "…\nPending Cancellation"
+  },
+  {
+    "id": "list-ve-items-11-3",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-3",
+    "component": "BillingSummaryBadge",
+    "text": "$95.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-4",
+    "component": "Button",
+    "text": "Subscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-4",
+    "component": "Text",
+    "text": "Subscription 06"
+  },
+  {
+    "id": "list-ve-items-10-4",
+    "component": "StatusBadge",
+    "text": "⚠︎\nPast Due"
+  },
+  {
+    "id": "list-ve-items-11-4",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-4",
+    "component": "BillingSummaryBadge",
+    "text": "$114.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-5",
+    "component": "Button",
+    "text": "Subscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-5",
+    "component": "Text",
+    "text": "Subscription 07"
+  },
+  {
+    "id": "list-ve-items-10-5",
+    "component": "StatusBadge",
+    "text": "⨯\nUnpaid"
+  },
+  {
+    "id": "list-ve-items-11-5",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-5",
+    "component": "BillingSummaryBadge",
+    "text": "$133.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-6",
+    "component": "Button",
+    "text": "Subscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-6",
+    "component": "Text",
+    "text": "Subscription 08"
+  },
+  {
+    "id": "list-ve-items-10-6",
+    "component": "StatusBadge",
+    "text": "∅\nTerminated"
+  },
+  {
+    "id": "list-ve-items-11-6",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2025, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-6",
+    "component": "BillingSummaryBadge",
+    "text": "$152.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-7",
+    "component": "Button",
+    "text": "Subscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-7",
+    "component": "Text",
+    "text": "Subscription 09"
+  },
+  {
+    "id": "list-ve-items-10-7",
+    "component": "StatusBadge",
+    "text": "⏲\nFuture"
+  },
+  {
+    "id": "list-ve-items-11-7",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-7",
+    "component": "BillingSummaryBadge",
+    "text": "$171.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-8",
+    "component": "Button",
+    "text": "Team annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-8",
+    "component": "Text",
+    "text": "Team annual"
+  },
+  {
+    "id": "list-ve-items-10-8",
+    "component": "StatusBadge",
+    "text": "…\nPending Cancellation"
+  },
+  {
+    "id": "list-ve-items-11-8",
+    "component": "RelativeTimestamp",
+    "text": "Sep 8, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-8",
+    "component": "BillingSummaryBadge",
+    "text": "$19.99 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```
+
+## views.1440.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Find subscriptions\":\n    - text: Search\n    - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n  - region \"Subscription screen\":\n    - search:\n      - text: Search\n      - searchbox \"Search\"\n    - text: Whether the subscription will cancel at the natural billing period end.\n    - combobox \"Whether the subscription will cancel at the natural billing period end.\":\n      - option \"Enter cancel at period end\" [disabled]\n    - text: $19.00 · monthly Future\n    - time: Timestamp for the most recent modification, when available.\n    - navigation \"Pagination\":\n      - text: No items\n      - button \"Previous page\" [disabled]: ‹\n      - list\n      - button \"Next page\" [disabled]: ›\n    - group \"Screen actions\":\n      - button \"Filter\"\n      - button \"Open row\"\n      - button \"Sort\"\n    - tablist \"Archive views\":\n      - tab \"Active\" [selected]\n      - tab \"Archived\"\n    - tabpanel \"Active\":\n      - list:\n        - listitem:\n          - 'button \"Subscription 01 Status: Future\"':\n            - strong: Subscription 01\n            - text: Future\n        - listitem:\n          - 'button \"Subscription 02 Status: Trialing\"':\n            - strong: Subscription 02\n            - text: Trialing\n        - listitem:\n          - 'button \"Subscription 04 Status: Paused\"':\n            - strong: Subscription 04\n            - text: Paused\n        - listitem:\n          - 'button \"Subscription 05 Status: Pending Cancellation\"':\n            - strong: Subscription 05\n            - text: Pending Cancellation\n        - listitem:\n          - 'button \"Subscription 06 Status: Past Due\"':\n            - strong: Subscription 06\n            - text: Past Due\n        - listitem:\n          - 'button \"Subscription 07 Status: Unpaid\"':\n            - strong: Subscription 07\n            - text: Unpaid\n        - listitem:\n          - 'button \"Subscription 08 Status: Terminated\"':\n            - strong: Subscription 08\n            - text: Terminated\n        - listitem:\n          - 'button \"Subscription 09 Status: Future\"':\n            - strong: Subscription 09\n            - text: Future\n        - listitem:\n          - 'button \"Team annual Status: Pending Cancellation\"':\n            - strong: Team annual\n            - text: Pending Cancellation\n      - text: 9 records\n      - button \"Previous\" [disabled]\n      - button \"Next\" [disabled]\n  - status: Changes saved in this session."
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\" [selected]\n      - tab \"Archived\"\n    - tabpanel \"Active\":\n      - list \"Records\":\n        - listitem:\n          - 'button \"Subscription 01 Status: Future Sep 1, 2026, 12:00 PM $19.00 · monthly\"':\n            - text: Subscription 01 Future\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $19.00 · monthly\n        - listitem:\n          - 'button \"Subscription 02 Status: Trialing Mar 1, 2026, 12:00 PM $38.00 · yearly\"':\n            - text: Subscription 02 Trialing\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $38.00 · yearly\n        - listitem:\n          - 'button \"Subscription 04 Status: Paused Mar 1, 2026, 12:00 PM $76.00 · yearly\"':\n            - text: Subscription 04 Paused\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $76.00 · yearly\n        - listitem:\n          - 'button \"Subscription 05 Status: Pending Cancellation Sep 1, 2026, 12:00 PM $95.00 · monthly\"':\n            - text: Subscription 05 Pending Cancellation\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $95.00 · monthly\n        - listitem:\n          - 'button \"Subscription 06 Status: Past Due Mar 1, 2026, 12:00 PM $114.00 · yearly\"':\n            - text: Subscription 06 Past Due\n            - time: Mar 1, 2026, 12:00 PM\n            - text: $114.00 · yearly\n        - listitem:\n          - 'button \"Subscription 07 Status: Unpaid Sep 1, 2026, 12:00 PM $133.00 · monthly\"':\n            - text: Subscription 07 Unpaid\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $133.00 · monthly\n        - listitem:\n          - 'button \"Subscription 08 Status: Terminated Mar 1, 2025, 12:00 PM $152.00 · yearly\"':\n            - text: Subscription 08 Terminated\n            - time: Mar 1, 2025, 12:00 PM\n            - text: $152.00 · yearly\n        - listitem:\n          - 'button \"Subscription 09 Status: Future Sep 1, 2026, 12:00 PM $171.00 · monthly\"':\n            - text: Subscription 09 Future\n            - time: Sep 1, 2026, 12:00 PM\n            - text: $171.00 · monthly\n        - listitem:\n          - 'button \"Team annual Status: Pending Cancellation Sep 8, 2026, 12:00 PM $19.99 · yearly\"':\n            - text: Team annual Pending Cancellation\n            - time: Sep 8, 2026, 12:00 PM\n            - text: $19.99 · yearly\n    - navigation \"Pagination\":\n      - text: 9 records Showing 1–9 of 9\n      - button \"Previous page\" [disabled]: ‹\n      - list:\n        - listitem:\n          - button \"Page 1\": \"1\"\n      - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status: Changes saved in this session."
+```
+
+## views.1440.visibleText
+
+Before:
+```json
+null
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nLocal workspace\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1\n\nChanges saved in this session."
+```
+
+## views.1440.values
+
+Before:
+```json
+[
+  {
+    "element": "input",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "select",
+    "name": "StatusAll statesfuturetrialingactivepausedpending cancellationpast dueunpaidterminated",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "select",
+    "name": "SortName A–ZName Z–A",
+    "value": "asc",
+    "checked": false
+  },
+  {
+    "element": "list-slot-search-1",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-slot-filters-2",
+    "name": "Whether the subscription will cancel at the natural billing period end.*",
+    "value": "",
+    "checked": false
+  }
+]
+```
+After:
+```json
+[
+  {
+    "element": "list-slot-search-1",
+    "name": "Search",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-slot-filters-2",
+    "name": "Status",
+    "value": "",
+    "checked": false
+  },
+  {
+    "element": "list-list-toolbar-4-sort",
+    "name": "Sort",
+    "value": "asc",
+    "checked": false
+  }
+]
+```
+
+## views.1440.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 1440,
+  "documentWidth": 1440,
+  "elementCount": 128,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+After:
+```json
+{
+  "viewportWidth": 1440,
+  "documentWidth": 1440,
+  "elementCount": 124,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+
+## views.1440.regions
+
+Before:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly\n•\nFUTURE\nTimestamp for the most recent modification, when available.\nNo items\n‹\n›"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly\n•\nFUTURE\nTimestamp for the most recent modification, when available.\nNo items\n‹\n›"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nWhether the subscription will cancel at the natural billing period end.\n*\nEnter cancel at period end\n$19.00 · monthly"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "list-slot-search-1",
+    "component": "SearchInput",
+    "text": ""
+  },
+  {
+    "id": "list-slot-filters-2",
+    "component": "Select",
+    "text": "Enter cancel at period end"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3",
+    "component": "BillingSummaryBadge",
+    "text": "$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "Stack",
+    "text": "•\nFUTURE\nTimestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-slot-items-6",
+    "component": "Stack",
+    "text": "•\nFUTURE\nTimestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-ve-items-10",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "list-ve-items-11",
+    "component": "RelativeTimestamp",
+    "text": "Timestamp for the most recent modification, when available."
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "No items\n‹\n›"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "No items\n‹\n›"
+  },
+  {
+    "id": "",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 01\n•\nFUTURE\n→\nSubscription 02\n★\nTRIALING\n→\nSubscription 04\n⏸\nPAUSED\n→\nSubscription 05\n…\nPENDING CANCELLATION\n→\nSubscription 06\n⚠︎\nPAST DUE\n→\nSubscription 07\n⨯\nUNPAID\n→\nSubscription 08\n∅\nTERMINATED\n→\nSubscription 09\n•\nFUTURE\n→\nTeam annual\n…\nPENDING CANCELLATION\n→\n9 records\nPrevious\nNext"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "★\nTRIALING"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⏸\nPAUSED"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "…\nPENDING CANCELLATION"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⚠︎\nPAST DUE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "⨯\nUNPAID"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "∅\nTERMINATED"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "•\nFUTURE"
+  },
+  {
+    "id": "",
+    "component": "StatusBadge",
+    "text": "…\nPENDING CANCELLATION"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly\n9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "list-slot-search-1",
+    "component": "Input",
+    "text": ""
+  },
+  {
+    "id": "list-slot-filters-2",
+    "component": "Select",
+    "text": "All states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "list-list-toolbar-4-sort",
+    "component": "Select",
+    "text": "Name A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly\nSubscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly\nSubscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly\nSubscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly\nSubscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly\nSubscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly\nSubscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly\nSubscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly\nTeam annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 01\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 01"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "⏲\nFuture"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$19.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-1",
+    "component": "Button",
+    "text": "Subscription 02\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$38.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-1",
+    "component": "Text",
+    "text": "Subscription 02"
+  },
+  {
+    "id": "list-ve-items-10-1",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-1",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-1",
+    "component": "BillingSummaryBadge",
+    "text": "$38.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-2",
+    "component": "Button",
+    "text": "Subscription 04\n⏸\nPaused\nMar 1, 2026, 12:00 PM\n$76.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-2",
+    "component": "Text",
+    "text": "Subscription 04"
+  },
+  {
+    "id": "list-ve-items-10-2",
+    "component": "StatusBadge",
+    "text": "⏸\nPaused"
+  },
+  {
+    "id": "list-ve-items-11-2",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-2",
+    "component": "BillingSummaryBadge",
+    "text": "$76.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-3",
+    "component": "Button",
+    "text": "Subscription 05\n…\nPending Cancellation\nSep 1, 2026, 12:00 PM\n$95.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-3",
+    "component": "Text",
+    "text": "Subscription 05"
+  },
+  {
+    "id": "list-ve-items-10-3",
+    "component": "StatusBadge",
+    "text": "…\nPending Cancellation"
+  },
+  {
+    "id": "list-ve-items-11-3",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-3",
+    "component": "BillingSummaryBadge",
+    "text": "$95.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-4",
+    "component": "Button",
+    "text": "Subscription 06\n⚠︎\nPast Due\nMar 1, 2026, 12:00 PM\n$114.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-4",
+    "component": "Text",
+    "text": "Subscription 06"
+  },
+  {
+    "id": "list-ve-items-10-4",
+    "component": "StatusBadge",
+    "text": "⚠︎\nPast Due"
+  },
+  {
+    "id": "list-ve-items-11-4",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-4",
+    "component": "BillingSummaryBadge",
+    "text": "$114.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-5",
+    "component": "Button",
+    "text": "Subscription 07\n⨯\nUnpaid\nSep 1, 2026, 12:00 PM\n$133.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-5",
+    "component": "Text",
+    "text": "Subscription 07"
+  },
+  {
+    "id": "list-ve-items-10-5",
+    "component": "StatusBadge",
+    "text": "⨯\nUnpaid"
+  },
+  {
+    "id": "list-ve-items-11-5",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-5",
+    "component": "BillingSummaryBadge",
+    "text": "$133.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-6",
+    "component": "Button",
+    "text": "Subscription 08\n∅\nTerminated\nMar 1, 2025, 12:00 PM\n$152.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-6",
+    "component": "Text",
+    "text": "Subscription 08"
+  },
+  {
+    "id": "list-ve-items-10-6",
+    "component": "StatusBadge",
+    "text": "∅\nTerminated"
+  },
+  {
+    "id": "list-ve-items-11-6",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2025, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-6",
+    "component": "BillingSummaryBadge",
+    "text": "$152.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-row-7",
+    "component": "Button",
+    "text": "Subscription 09\n⏲\nFuture\nSep 1, 2026, 12:00 PM\n$171.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-title-7",
+    "component": "Text",
+    "text": "Subscription 09"
+  },
+  {
+    "id": "list-ve-items-10-7",
+    "component": "StatusBadge",
+    "text": "⏲\nFuture"
+  },
+  {
+    "id": "list-ve-items-11-7",
+    "component": "RelativeTimestamp",
+    "text": "Sep 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-7",
+    "component": "BillingSummaryBadge",
+    "text": "$171.00 · monthly"
+  },
+  {
+    "id": "list-list-items-5-row-8",
+    "component": "Button",
+    "text": "Team annual\n…\nPending Cancellation\nSep 8, 2026, 12:00 PM\n$19.99 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-8",
+    "component": "Text",
+    "text": "Team annual"
+  },
+  {
+    "id": "list-ve-items-10-8",
+    "component": "StatusBadge",
+    "text": "…\nPending Cancellation"
+  },
+  {
+    "id": "list-ve-items-11-8",
+    "component": "RelativeTimestamp",
+    "text": "Sep 8, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-8",
+    "component": "BillingSummaryBadge",
+    "text": "$19.99 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "9 records\nShowing 1–9 of 9\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```
