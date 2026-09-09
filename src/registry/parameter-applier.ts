@@ -60,6 +60,21 @@ export function applyTraitParameters(
 
   const clone = cloneTraitDefinition(definition);
 
+  // A bound payment chart projects existing domain fields. Standalone mark
+  // controls and encoding-trait dependencies do not belong to the host object.
+  if (clone.trait.name === 'MarkArea' && resolvedParameters.chart) {
+    clone.schema = {};
+    clone.semantics = {};
+    clone.dependencies = [];
+    clone.view_extensions = {
+      detail: [{ component: 'VizAreaPreview', position: 'top', priority: 55, props: {
+        chart: resolvedParameters.chart,
+        title: 'Payment amounts',
+        description: 'Recorded and scheduled sample payments in major currency units.',
+      } }],
+    };
+  }
+
   if (!clone.metadata) {
     clone.metadata = {};
   }

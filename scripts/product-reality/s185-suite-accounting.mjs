@@ -539,13 +539,24 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     assert.equal(hash(bytes(row.file)), row.afterSha256, `m03 golden changed: ${row.file}`);
     assert.equal(hash(execFileSync('git', ['show', `${goldenAttribution.beforeHead}:${row.file}`], { cwd: root, maxBuffer: 32 * 1024 * 1024 })), row.beforeSha256);
   }
+  let goldenHistory;
+  if (goldenAttribution) {
+    const first = json('artifacts/product-reality/sprint-190/m02/golden-attribution.json');
+    const beforeSha256 = hash(execFileSync('git', ['show', `${first.base}:${first.file}`], { cwd: root, maxBuffer: 32 * 1024 * 1024 }));
+    const afterSha256 = hash(execFileSync('git', ['show', `${goldenAttribution.beforeHead}:${first.file}`], { cwd: root, maxBuffer: 32 * 1024 * 1024 }));
+    assert.equal(afterSha256, goldenAttribution.files.find(row => row.file === first.file).beforeSha256);
+    const tokenDifferences = 'artifacts/product-reality/sprint-190/m03/flat-vs-light-A.json'; bytes(tokenDifferences);
+    goldenHistory = { m02: { ...first, beforeSha256, afterSha256 }, m03: { decision: 1850,
+      tokenDifferences: refs.get(tokenDifferences), files: goldenAttribution.files },
+      laterPixelGoldenChanges: [], disclosure: 'The m02 dashboard migration precedes the one m03 scope migration. All 15 m03 file hashes are verified unchanged at closeout.' };
+  }
   return { schemaVersion: '1.0.0', mission: missionId, kind: 'four-suite-execution-and-delta-accounting',
     status: issues.length ? 'failed' : 'passed', executionHead, reviewHead,
     headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: !approvedTimeout,
       ...(approvedTimeout ? { capturedRuntimeAndTestSourcesUnchanged: true, postCaptureDerivationOnly: true, proposalHead: '0f6891e3b4a8decb0626d49dbf6fa870bb712276', derivationFiles: S188_DERIVATION_FILES } : {}),
       limitation: approvedTimeout ? 'Actual capture and diagnostic heads remain unchanged. Decision 1830 permits separately frozen approval and audit derivation inputs; no captured runtime or test input changes.' : 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
     ...(timeoutAcceptance ? { timeoutAcceptance } : {}),
-    ...(goldenAttribution ? { goldenAttribution } : {}),
+    ...(goldenAttribution ? { goldenAttribution, goldenHistory } : {}),
     baselines, closeout, closeoutAttempts, executions, comparisons, historicalAttempts, closeoutFailures, unattributedDeltas, unusedAttributions,
     unusedFailureDispositions, validationIssues: issues,
     references: [...refs.values()].sort((a, b) => a.path.localeCompare(b.path)),

@@ -1,0 +1,42 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge
+
+ ✓ |core| tests/integration/object-registry.test.ts (3 tests) 108ms
+ ❯ |core| tests/integration/universal-quintet-objects.integration.test.ts (6 tests | 1 failed) 100ms
+   ✓ Canonical object registry integration > resolves, composes, and generates types for User 50ms
+   ✓ Canonical object registry integration > resolves, composes, and generates types for Organization 7ms
+   ✓ Canonical object registry integration > resolves, composes, and generates types for Product 10ms
+   ✓ Canonical object registry integration > resolves, composes, and generates types for Transaction 5ms
+   ✓ Canonical object registry integration > resolves, composes, and generates types for Relationship 2ms
+   × Canonical object registry integration > resolves, composes, and generates types for Subscription 10ms
+     → expected 6 to be 5 // Object.is equality
+ ✓ |core| tests/integration/type-generation.test.ts (2 tests) 595ms
+   ✓ Object type generation integration > generates TypeScript definitions that are directly importable  577ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/integration/universal-quintet-objects.integration.test.ts > Canonical object registry integration > resolves, composes, and generates types for Subscription
+AssertionError: expected 6 to be 5 // Object.is equality
+
+- Expected
++ Received
+
+- 5
++ 6
+
+ ❯ tests/integration/universal-quintet-objects.integration.test.ts:99:53
+     97|       });
+     98| 
+     99|       expect(resolved.composed.metadata.traitCount).toBe(testCase.expe…
+       |                                                     ^
+    100|       expect(
+    101|         new Set(resolved.composed.metadata.traitOrder)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 10 passed (11)
+   Start at  18:51:25
+   Duration  1.33s (transform 319ms, setup 0ms, collect 1.07s, tests 803ms, environment 0ms, prepare 189ms)
+

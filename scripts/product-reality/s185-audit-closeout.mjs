@@ -39,7 +39,7 @@ const publicScope188 = [...publicScope187, 'packages/mcp-bridge/src', 'packages/
 const testPath = file => /(^|\/)(?:__tests__|test|tests)\//.test(file) || /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file);
 
 const publicScope189 = [...publicScope188, 'scripts/design-loop', 'packages/mcp-server/src/tools/design.preview.ts', 'packages/mcp-server/src/index.ts', 'packages/mcp-server/src/tools/registry.ts', 'agents.md', 'README.md', 'package.json'];
-const publicScope190 = [...publicScope189, 'packages/tokens', 'packages/viz-core', 'packages/viz-render', 'packages/mcp-server/src/tools/viz.render.ts', 'packages/mcp-server/src/tools/dashboard.render.ts', 'packages/mcp-server/src/tools/artifact.certify.ts', 'packages/mcp-server/src/tools/certify-contrast.ts', 'packages/mcp-server/src/tools/certify-echarts-emit.ts', 'packages/mcp-server/src/tools/certify-echarts-render-contrast.ts', 'objects', 'traits', 'src/types/oods-tokens.d.ts', 'cmos/foundational-docs/roadmap/product-reality-program.md'];
+const publicScope190 = [...publicScope189, 'packages/tokens', 'packages/viz-core', 'packages/viz-render', 'packages/mcp-server/src/tools/viz.render.ts', 'packages/mcp-server/src/tools/dashboard.render.ts', 'packages/mcp-server/src/tools/artifact.certify.ts', 'packages/mcp-server/src/tools/certify-contrast.ts', 'packages/mcp-server/src/tools/certify-echarts-emit.ts', 'packages/mcp-server/src/tools/certify-echarts-render-contrast.ts', 'objects', 'traits', 'src/types/oods-tokens.d.ts', 'src/registry/trait-loader.ts', 'src/registry/parameter-applier.ts', 'schemas/traits/mark-area.parameters.schema.json', 'cmos/foundational-docs/roadmap/product-reality-program.md'];
 export function auditPublicRuntimeBytes({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {
   assert(fullHead(implementationHead) && fullHead(executionHead));
   const scope = sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
@@ -849,6 +849,33 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     limitation: 'This audit verifies the actual build evidence graph and does not certify the sprint. Handoff flags are checked; handoff bytes are excluded because the handoff subsequently binds this audit.' };
 }
 
+/** The root project repeats MCP tests; compare identities, not summed skips. */
+export function auditSprint190SkippedIdentities(current, baseline) {
+  const collect = rows => {
+    assert.deepEqual(rows.map(row => row.suite).sort(), ['mcp-server','root-core','viz-core','viz-render']);
+    return Object.fromEntries(rows.map(({suite, workspace, report}) => {
+      const identities = [];
+      for (const file of report.testResults) {
+        const relative = path.relative(workspace, file.name).replaceAll('\\', '/');
+        assert(relative && !relative.startsWith('../') && !path.isAbsolute(relative));
+        const occurrences = new Map();
+        for (const test of file.assertionResults ?? []) {
+          const name = test.fullName ?? [...(test.ancestorTitles ?? []), test.title].join(' ');
+          const occurrence = occurrences.get(name) ?? 0; occurrences.set(name, occurrence + 1);
+          if (['pending','disabled','skipped'].includes(test.status)) identities.push(`${relative}:${name}#${occurrence}`);
+        }
+      }
+      assert.equal(identities.length, report.numPendingTests);
+      return [suite, identities.sort()];
+    }));
+  };
+  const observed = collect(current), expected = collect(baseline);
+  assert.deepEqual(observed, expected, 'Skipped identities changed from Sprint 189.');
+  const identities = [...new Set(Object.values(observed).flat())].sort();
+  assert.equal(identities.length, 16);
+  return { uniqueIdentities: identities.length, skippedExecutions: Object.values(observed).flat().length, identities };
+}
+
 /** Independent s190 audit: read actual output files and re-derive from frozen inputs. */
 export function auditSprint190Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, publicGitEvidence, rangeGitEvidence, manifestPath }) {
   const folder = 'artifacts/product-reality/sprint-190/m06/closeout';
@@ -915,12 +942,25 @@ export function auditSprint190Closeout({ executionHead, reviewHead, readOutput, 
     const passed=raw.testResults.flatMap(file=>file.assertionResults??[]).filter(row=>row.status==='passed'); assert.equal(`${passed[0].fullName}#0`,failure.testKey);
   } else assert.deepEqual(accounting.closeoutFailures,[]);
   for(const run of runs) { const raw=JSON.parse(verifyRef(run.rawReport)); const failed=timeout?.executionId===run.id?1:0; assert.equal(run.measuredHead,executionHead); assert.equal(run.exitCode,failed); assert.equal(raw.success,!failed); assert.equal(raw.numFailedTests,failed); assert.equal(raw.numPassedTests,run.counts.passed); assert.equal(raw.numPendingTests,run.counts.skipped); }
-  assert.equal(runs.reduce((count,row)=>count+row.counts.skipped,0),16);
+  const skipInputs = (cohort, capture) => {
+    const aggregate = JSON.parse(verifyRef(capture.aggregate));
+    return accounting.executions.filter(row => row.cohort === cohort).map(row => ({
+      suite: row.suite, workspace: aggregate.workspace, report: JSON.parse(verifyRef(row.rawReport)),
+    }));
+  };
+  const skipped = auditSprint190SkippedIdentities(skipInputs('closeout', accounting.closeout),
+    skipInputs('sprint189Closeout', accounting.baselines.sprint189Closeout));
+  const m02 = JSON.parse(readFrozen('artifacts/product-reality/sprint-190/m02/golden-attribution.json'));
+  assert.deepEqual(accounting.goldenHistory.m02, { ...m02,
+    beforeSha256: digest(readHistorical(m02.base, m02.file)),
+    afterSha256: digest(readHistorical(accounting.goldenAttribution.beforeHead, m02.file)) });
+  assert.deepEqual(accounting.goldenHistory.m03.files, accounting.goldenAttribution.files);
+  verifyRef(accounting.goldenHistory.m03.tokenDifferences);
   for(const row of accounting.goldenAttribution.files) verifyRef({path:row.file,sha256:row.afterSha256});
   const notice=source('noticePlan'); assert.equal(notice.sent,false); assert.equal(notice.implementationHead,manifest.implementationHead); assert.deepEqual(notice.targets,['cmos-dashboard','dashboard-demos','forge-demos','aquex-mcp']);
   const ci=source('ci'); assert.equal(ci.baseRefName,'OODS-pro'); for(const job of ['pkg-compat','viz-determinism','coverage']) assert(ci.jobs.some(row=>row.name===job && row.runId && row.conclusion==='success'));
   assert.equal(source('prose').exitCode,0);
-  return {status:'passed',checkedCriteria:37,checkedExecutions:ledger.executions.length,checkedFrozenPaths:checked.size,executionHead,reviewHead,builderSelfCertified:false,separateReviewRequired:true};
+  return {status:'passed',skipped,checkedCriteria:37,checkedExecutions:ledger.executions.length,checkedFrozenPaths:checked.size,executionHead,reviewHead,builderSelfCertified:false,separateReviewRequired:true};
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

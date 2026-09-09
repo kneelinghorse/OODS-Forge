@@ -7,7 +7,7 @@ import { applySteps, observeGraphicsAccessibility } from '../../../../scripts/de
 
 const theme = process.argv[2] as 'light' | 'dark';
 assert(['light', 'dark'].includes(theme));
-const directory = new URL(`./after/${theme}/`, import.meta.url);
+const directory = new URL(`./${process.argv.includes('--corrective') ? 'corrective/' : ''}after/${theme}/`, import.meta.url);
 const input = JSON.parse(await fs.readFile(new URL(`./inputs/final-${theme}.json`, import.meta.url), 'utf8'));
 const browser = await launchProofBrowser();
 const rows: Array<Record<string, any>> = [];
