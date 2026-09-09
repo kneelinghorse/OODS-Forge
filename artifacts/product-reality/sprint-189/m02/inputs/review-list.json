@@ -1,0 +1,59 @@
+{
+  "compose": {
+    "object": "Subscription",
+    "context": "workflow"
+  },
+  "framework": "both",
+  "steps": [
+    {
+      "action": "click",
+      "selector": ".workflow-records [data-record-id=\"subscription-003\"]"
+    },
+    {
+      "action": "click",
+      "selector": "[data-oods-action=\"handleEdit\"]"
+    },
+    {
+      "action": "fill",
+      "selector": "[data-billing-minor-units]",
+      "value": "19.99"
+    },
+    {
+      "action": "select",
+      "selector": "[data-oods-component=\"BillingIntervalSelector\"] select",
+      "value": "yearly"
+    },
+    {
+      "action": "fill",
+      "selector": "input[name=\"plan_name\"]",
+      "value": "Team annual"
+    },
+    {
+      "action": "click",
+      "selector": "button:text-is(\"Save\")"
+    },
+    {
+      "action": "fill",
+      "selector": "input[name=\"cancellation_reason\"]",
+      "value": "Budget changed for next year"
+    },
+    {
+      "action": "fill",
+      "selector": "input[name=\"cancellation_reason_code\"]",
+      "value": "customer_request"
+    },
+    {
+      "action": "check",
+      "selector": "input[name=\"cancel_at_period_end\"]"
+    },
+    {
+      "action": "click",
+      "selector": "[data-oods-action=\"handleCancel\"]"
+    },
+    {
+      "action": "click",
+      "selector": "nav[aria-label=\"Workflow screens\"] button:text-is(\"List\")"
+    }
+  ],
+  "output": "/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/artifacts/product-reality/sprint-189/m02/before/review-list"
+}

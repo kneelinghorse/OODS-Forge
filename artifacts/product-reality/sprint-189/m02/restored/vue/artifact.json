@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0.0",
+  "framework": "vue",
+  "files": [
+    {
+      "path": "src/GeneratedUI.vue",
+      "contents": "<template>\n  <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-default)\">\n            <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n            <Select id=\"slot-filters-2\" data-oods-component=\"Select\" label=\"Whether the subscription will cancel at the natural billing period end.\" placeholder=\"Enter cancel at period end\" required :modelValue=\"String(cancelAtPeriodEnd)\" />\n            <BillingSummaryBadge id=\"slot-toolbar-actions-3\" data-oods-component=\"BillingSummaryBadge\" :minorUnits=\"100\" :amount=\"amount\" :currency=\"currency\" :interval=\"billingInterval\" />\n          </Stack>\n      <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight)\">\n            <Stack id=\"slot-items-6\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                    <StatusBadge id=\"ve-items-10\" data-oods-component=\"StatusBadge\" label=\"Current lifecycle status of the subscription.\" tone=\"lifecycle\" :status=\"status\" />\n                    <RelativeTimestamp id=\"ve-items-11\" data-oods-component=\"RelativeTimestamp\" label=\"Timestamp for the most recent modification, when available.\" :datetime=\"updatedAt ?? createdAt\" />\n                    <ArchivedRowOverlay id=\"ve-items-13\" data-oods-component=\"ArchivedRowOverlay\" separateTab showBadge tabLabel=\"Archived\" :isArchived=\"isArchived\" />\n                  </Stack>\n          </Stack>\n      <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: center; padding: var(--ref-space-inset-default)\">\n            <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n          </Stack>\n    </Stack>\n  <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"screen-list-9\">\n    <button type=\"button\" data-oods-action=\"handleFilter\" @click=\"handleFilter({})\">Filter</button>\n    <button type=\"button\" data-oods-action=\"handleRowClick\" @click=\"handleRowClick(subscriptionId)\">Open row</button>\n    <button type=\"button\" data-oods-action=\"handleSort\" @click=\"handleSort('status')\">Sort</button>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { ArchivedRowOverlay, BillingSummaryBadge, PaginationBar, RelativeTimestamp, SearchInput, Select, Stack, StatusBadge } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface GeneratedUIActions {\n  /* @oods-domain-action handleFilter sha256:16ab1e92d1fca94435e207207864ab7015dc274fc62e2f211a0df55cc291ea36 */\n  /* @oods-domain-source sha256:8e5f3caefc9ad5e749948c77de5f5978bb91ef33958f95a5a2be4b419cff400e */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handleRowClick sha256:773eb5947f10b9c469abd54e200f61529df89035100d7d19eaa88adcd565efc0 */\n  /* @oods-domain-source sha256:2691a39947329776a84396671cd57ad501e6855e24bc09bfe575a98e1fde4a88 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:757d6df84825c12c0f0cf60e76596eb7c5d0f48a6a4d4cf4186ee36063811b44 */\n  /* @oods-domain-source sha256:a44f6b01c1934ac2bd84da820758bea74479e3a4ec56f169390a3d3eeaf34649 */\n  handleSort: (column: string) => void;\n}\n\ninterface Props {\n  actions: GeneratedUIActions;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Recurring price expressed in minor units (e.g., cents). */\n  amount: number;\n  /** Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n */\n  archiveMetadata?: Record<string, unknown>;\n  /** Human-readable narrative describing why the entity was archived. */\n  archiveReason?: string;\n  /** Timestamp for when the entity entered the archived state. */\n  archivedAt?: string | null;\n  /** User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n */\n  archivedBy?: string;\n  /** Recurrence cadence (monthly, yearly, quarterly, etc.). */\n  billingInterval?: string;\n  /** Whether the subscription will cancel at the natural billing period end. */\n  cancelAtPeriodEnd: boolean;\n  /** Free-form explanation captured during cancellation workflows. */\n  cancellationReason?: string;\n  /** Structured reason code chosen from the allowedReasons parameter. */\n  cancellationReasonCode?: string;\n  /** Timestamp when cancellation was initiated. */\n  cancellationRequestedAt?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO 4217 currency code used for billing. */\n  currency: string;\n  /** End timestamp of the current billing cycle. */\n  currentPeriodEnd: string;\n  /** Decimal progress (0-1) through the active billing cycle. */\n  currentPeriodProgress?: number;\n  /** Start timestamp of the current billing cycle. */\n  currentPeriodStart: string;\n  /** Billing contact email address. */\n  customerEmail?: string;\n  /** Customer or account name associated with the subscription. */\n  customerName?: string;\n  /** Flag indicating whether the entity is currently archived (soft-deleted). */\n  isArchived: boolean;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent successful payment. */\n  lastPaymentAt?: string;\n  /** Timestamp when the next payment attempt should occur. */\n  nextPaymentDueAt?: string;\n  /** Payment instrument category used for collection. */\n  paymentMethodType?: 'card' | 'ach' | 'wire' | 'invoice' | 'other';\n  /** Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n */\n  paymentStatus?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded';\n  /** Internal plan code or price identifier. */\n  planCode?: string;\n  /** Billing interval descriptor (monthly, yearly, etc.). */\n  planInterval?: string;\n  /** Human-readable plan label shown in headers. */\n  planName: string;\n  /** Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n */\n  prorationAmount?: number;\n  /** Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n */\n  prorationDate?: number;\n  /** Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n */\n  restorationMetadata?: Record<string, unknown>;\n  /** Timestamp for when the entity was most recently restored from an archived state. */\n  restoredAt?: string | null;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Current lifecycle status of the subscription. */\n  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';\n  /** Primary identifier used across billing and lifecycle systems. */\n  subscriptionId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { actions, allowedTransitions, amount, archiveMetadata, archiveReason, archivedAt, archivedBy, billingInterval, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, currency, currentPeriodEnd, currentPeriodProgress, currentPeriodStart, customerEmail, customerName, isArchived, lastEvent, lastEventAt, lastPaymentAt, nextPaymentDueAt, paymentMethodType, paymentStatus, planCode, planInterval, planName, prorationAmount, prorationDate, restorationMetadata, restoredAt, stateHistory, status, subscriptionId, updatedAt } = defineProps<Props>();\n\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\nif (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n/* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n/* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n/* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+      "contentHash": "sha256:9cdae19799bfea2869771185ea4fe5effe86afac61e3780b03a9b048d94632c7"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "@oods/component-styles",
+      "version": "0.1.0",
+      "kind": "dependency"
+    },
+    {
+      "name": "@oods/components-vue",
+      "version": "0.1.0",
+      "kind": "dependency"
+    },
+    {
+      "name": "vue",
+      "version": "3.5.42",
+      "kind": "peerDependency"
+    }
+  ],
+  "actions": [
+    {
+      "name": "handleFilter",
+      "parameters": [
+        {
+          "name": "criteria",
+          "type": "Record<string, unknown>"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onFilter"
+        }
+      ]
+    },
+    {
+      "name": "handleRowClick",
+      "parameters": [
+        {
+          "name": "rowId",
+          "type": "string"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onRowClick"
+        }
+      ]
+    },
+    {
+      "name": "handleSort",
+      "parameters": [
+        {
+          "name": "column",
+          "type": "string"
+        }
+      ],
+      "sources": [
+        {
+          "nodeId": "screen-list-9",
+          "component": "Stack",
+          "event": "onSort"
+        }
+      ]
+    }
+  ],
+  "contentHash": "sha256:111322028b17de837f1da4a26953b812329b5a170888af916b6480daf3ac4b4a"
+}
