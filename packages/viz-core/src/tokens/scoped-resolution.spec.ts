@@ -6,7 +6,10 @@ import { resolveOodsEchartsChrome } from './oods-echarts-chrome.js';
 import { toHex } from './categorical-palette.js';
 import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 
-const spec = { marks: [{ trait: 'MarkBar' }], config: {} } as NormalizedVizSpec;
+const spec: NormalizedVizSpec = {
+  data: { values: [] }, encoding: {}, a11y: { description: 'Scoped chrome fixture.' },
+  marks: [{ trait: 'MarkBar' }], config: {},
+};
 
 describe('scoped chrome follows CSS, with light/A as the default', () => {
   for (const brand of ['A', 'B'] as const) for (const theme of ['light', 'dark'] as const) {
