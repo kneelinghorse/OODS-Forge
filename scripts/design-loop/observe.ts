@@ -3,8 +3,12 @@ import path from 'node:path';
 import type { Page } from 'playwright';
 import { digest, type BrowserStep } from './common.js';
 
-export async function applySteps(page: Page, steps: BrowserStep[]) {
+export async function applySteps(page: Page, steps: BrowserStep[], clockStart?: number) {
+  let stepIndex = 0;
   for (const step of steps) {
+    // Vue rejects bubbling events timestamped at or before listener attachment.
+    // Advance deterministic wall time between interactions while real timers run.
+    if (clockStart !== undefined) await page.clock.setFixedTime(new Date(clockStart + ++stepIndex));
     const target = page.locator(step.selector);
     if (step.action === 'click') await target.click();
     else if (step.action === 'fill') await target.fill(step.value ?? '');

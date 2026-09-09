@@ -66,7 +66,7 @@ async function capture(consumer: Consumer, browser: Browser, request: CaptureReq
     await page.goto(`http://127.0.0.1:${consumer.port}`, { waitUntil: 'networkidle' });
     await page.locator('[data-oods-component]').first().waitFor({ timeout: 8000 });
     if (sourceFiles['package.json']) await page.locator('[data-oods-workflow][data-ui-state="success"]').waitFor();
-    await applySteps(page, request.steps);
+    await applySteps(page, request.steps, Date.parse('2026-09-08T12:00:00.000Z'));
     const views = [];
     for (const width of request.widths) views.push(await observeView(page, width, output));
     const receipt = {
@@ -74,7 +74,7 @@ async function capture(consumer: Consumer, browser: Browser, request: CaptureReq
       schemaHash: request.schemaHash, artifactContentHash: request.artifact.contentHash,
       files: request.artifact.files.map(({ path, contentHash }) => ({ path, contentHash })),
       sourceHead: request.sourceHead, model: request.model, steps: request.steps,
-      clock: '2026-09-08T12:00:00.000Z', locale: 'en-US', timezone: 'UTC',
+      clock: new Date(Date.parse('2026-09-08T12:00:00.000Z') + request.steps.length).toISOString(), clockStepMs: 1, locale: 'en-US', timezone: 'UTC',
       packages: consumer.packages, views, errors,
       timings: { ...request.timings, captureMs: performance.now() - started },
       output, consumer: { root: consumer.root, port: consumer.port, pid: process.pid },

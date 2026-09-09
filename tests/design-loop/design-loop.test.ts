@@ -7,6 +7,8 @@ import { consumerEntries } from '../../scripts/design-loop/serve.js';
 import { compareReceipts, diff } from '../../scripts/design-loop/diff.js';
 import { outputDirectory, relativeFile, validateReceipt, type CaptureRequest } from '../../scripts/design-loop/common.js';
 import { render } from '../../scripts/design-loop/render.js';
+import { applySteps } from '../../scripts/design-loop/observe.js';
+import type { Page } from 'playwright';
 import { status } from '../../scripts/design-loop/status.js';
 
 const temporary: string[] = [];
@@ -23,6 +25,19 @@ function receipt() {
 }
 
 describe('Design-loop observations remain evidence rather than repaired output', () => {
+  it('advances deterministic event time so a change after mounting is newer than its listeners', async () => {
+    const times: number[] = [];
+    const start = Date.parse('2026-09-08T12:00:00Z');
+    let attached = start;
+    let saved = '';
+    const page = { clock: { setFixedTime: async (date: Date) => { times.push(date.getTime()); } }, locator: () => ({
+      click: async () => { attached = times.at(-1)!; },
+      selectOption: async (value: string) => { if (times.at(-1)! > attached) saved = value; }, count: async () => 0,
+    }) } as unknown as Page;
+    await applySteps(page, [{ action: 'click', selector: 'Edit' }, { action: 'select', selector: 'Interval', value: 'yearly' }], start);
+    expect(saved).toBe('yearly');
+    expect(times).toEqual([start + 1, start + 2]);
+  });
   it('requires hashes, errors and measurements instead of accepting an incomplete green receipt', async () => {
     await expect(validateReceipt(receipt())).resolves.toBeUndefined();
     for (const key of ['errors', 'schemaHash', 'views']) {
