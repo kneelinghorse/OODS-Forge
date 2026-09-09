@@ -1,0 +1,1726 @@
+{
+  "request": {
+    "tool": "code_generate",
+    "input": {
+      "schema": {
+        "version": "2026.02",
+        "screens": [
+          {
+            "id": "list-screen",
+            "component": "Stack",
+            "route": "/",
+            "bindings": {
+              "onRowClick": "handleRowClick",
+              "onSort": "handleSort",
+              "onFilter": "handleFilter",
+              "onPageChange": "handlePageChange"
+            },
+            "children": [
+              {
+                "id": "list-loading",
+                "component": "Banner",
+                "state": "loading",
+                "props": {
+                  "title": "Loading",
+                  "message": "Loading your records."
+                }
+              },
+              {
+                "id": "list-empty",
+                "component": "Banner",
+                "state": "empty",
+                "props": {
+                  "title": "No records found",
+                  "message": "Change the filters or add a record."
+                }
+              },
+              {
+                "id": "list-error",
+                "component": "Banner",
+                "state": "error",
+                "props": {
+                  "title": "Unable to load records",
+                  "message": "Try again or choose another record."
+                }
+              },
+              {
+                "id": "list-screen-list-9",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "list-list-toolbar-4",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "inline",
+                      "align": "space-between"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-slot-search-1",
+                        "component": "SearchInput",
+                        "meta": {
+                          "intent": "slot:search",
+                          "label": "search",
+                          "confidence": 1,
+                          "confidenceLevel": "low"
+                        },
+                        "collectionControl": "search",
+                        "props": {
+                          "label": "Search",
+                          "placeholder": "Search records",
+                          "clearable": true
+                        }
+                      },
+                      {
+                        "id": "list-slot-filters-2",
+                        "component": "Select",
+                        "meta": {
+                          "intent": "slot:filters",
+                          "label": "filters",
+                          "confidence": 0.67,
+                          "confidenceLevel": "low"
+                        },
+                        "props": {
+                          "label": "Status",
+                          "options": [
+                            {
+                              "value": "",
+                              "label": "All states"
+                            },
+                            {
+                              "value": "future",
+                              "label": "future"
+                            },
+                            {
+                              "value": "trialing",
+                              "label": "trialing"
+                            },
+                            {
+                              "value": "active",
+                              "label": "active"
+                            },
+                            {
+                              "value": "paused",
+                              "label": "paused"
+                            },
+                            {
+                              "value": "pending_cancellation",
+                              "label": "pending cancellation"
+                            },
+                            {
+                              "value": "past_due",
+                              "label": "past due"
+                            },
+                            {
+                              "value": "unpaid",
+                              "label": "unpaid"
+                            },
+                            {
+                              "value": "terminated",
+                              "label": "terminated"
+                            }
+                          ]
+                        },
+                        "collectionControl": "filter"
+                      },
+                      {
+                        "id": "list-list-toolbar-4-sort",
+                        "component": "Select",
+                        "collectionControl": "sort",
+                        "props": {
+                          "field": "plan_name",
+                          "label": "Sort",
+                          "options": [
+                            {
+                              "value": "asc",
+                              "label": "Name A\u2013Z"
+                            },
+                            {
+                              "value": "desc",
+                              "label": "Name Z\u2013A"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "list-list-items-5-archive-tabs",
+                    "component": "Tabs",
+                    "collectionControl": "archive",
+                    "children": [
+                      {
+                        "id": "list-list-items-5",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "list-ve-items-13",
+                            "component": "ArchivedRowOverlay",
+                            "props": {
+                              "archivedField": "is_archived",
+                              "style": "grayed",
+                              "showBadge": true,
+                              "separateTab": true,
+                              "tabLabel": "Archived",
+                              "labelField": "plan_name"
+                            },
+                            "children": [
+                              {
+                                "id": "list-list-items-5-row",
+                                "component": "Button",
+                                "collectionControl": "open",
+                                "props": {
+                                  "field": "subscription_id"
+                                },
+                                "layout": {
+                                  "type": "inline",
+                                  "gapToken": "cluster-default"
+                                },
+                                "children": [
+                                  {
+                                    "id": "list-list-items-5-title",
+                                    "component": "Text",
+                                    "props": {
+                                      "field": "plan_name"
+                                    }
+                                  },
+                                  {
+                                    "id": "list-ve-items-10",
+                                    "component": "StatusBadge",
+                                    "props": {
+                                      "tone": "lifecycle",
+                                      "statusField": "status"
+                                    }
+                                  },
+                                  {
+                                    "id": "list-ve-items-11",
+                                    "component": "RelativeTimestamp",
+                                    "props": {
+                                      "field": "updated_at",
+                                      "fallbackField": "created_at",
+                                      "timezoneParameter": "timezone"
+                                    }
+                                  },
+                                  {
+                                    "id": "list-slot-toolbar-actions-3",
+                                    "component": "BillingSummaryBadge",
+                                    "meta": {
+                                      "intent": "slot:toolbar-actions",
+                                      "label": "toolbar-actions"
+                                    },
+                                    "props": {
+                                      "amountField": "amount",
+                                      "currencyField": "currency",
+                                      "intervalField": "billing_interval",
+                                      "minorUnitsParameter": "minorUnits",
+                                      "minorUnits": 100
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "id": "list-list-items-5-empty",
+                            "component": "Banner",
+                            "props": {
+                              "message": "No records found."
+                            },
+                            "collectionControl": "empty"
+                          }
+                        ],
+                        "collection": {
+                          "source": "rows",
+                          "keyField": "subscription_id",
+                          "labelField": "plan_name"
+                        }
+                      }
+                    ],
+                    "props": {
+                      "ariaLabel": "Archive views",
+                      "items": [
+                        {
+                          "id": "active",
+                          "label": "Active",
+                          "panel": ""
+                        },
+                        {
+                          "id": "archived",
+                          "label": "Archived",
+                          "panel": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "list-list-pagination-7",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "inline",
+                      "align": "center"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    },
+                    "children": [
+                      {
+                        "id": "list-slot-pagination-8",
+                        "component": "PaginationBar",
+                        "meta": {
+                          "intent": "slot:pagination",
+                          "label": "pagination",
+                          "confidence": 0.77,
+                          "confidenceLevel": "low"
+                        },
+                        "collectionControl": "page",
+                        "props": {
+                          "showItemRange": true
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "state": "success"
+              }
+            ]
+          },
+          {
+            "id": "detail-screen",
+            "component": "Stack",
+            "route": "/:id",
+            "bindings": {
+              "onEdit": "handleEdit",
+              "onDelete": "handleDelete",
+              "onCancel": "handleCancel",
+              "onViewTimeline": "handleViewTimeline"
+            },
+            "children": [
+              {
+                "id": "detail-loading",
+                "component": "Banner",
+                "state": "loading",
+                "props": {
+                  "title": "Loading",
+                  "message": "Loading your records."
+                }
+              },
+              {
+                "id": "detail-empty",
+                "component": "Banner",
+                "state": "empty",
+                "props": {
+                  "title": "No records found",
+                  "message": "Change the filters or add a record."
+                }
+              },
+              {
+                "id": "detail-error",
+                "component": "Banner",
+                "state": "error",
+                "props": {
+                  "title": "Unable to load records",
+                  "message": "Try again or choose another record."
+                }
+              },
+              {
+                "id": "detail-screen-detail-13",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "detail-detail-header-1",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "inline",
+                      "align": "space-between"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-slot-header-2",
+                        "component": "Stack",
+                        "meta": {
+                          "intent": "slot:header",
+                          "label": "header"
+                        },
+                        "children": [
+                          {
+                            "id": "detail-ve-header-26",
+                            "component": "StatusTimeline",
+                            "props": {
+                              "field": "status",
+                              "historyField": "state_history",
+                              "statesParameter": "states",
+                              "showActorId": true,
+                              "showReason": true
+                            }
+                          },
+                          {
+                            "id": "detail-ve-header-27",
+                            "component": "CancellationSummary",
+                            "props": {
+                              "cancelAtPeriodEndField": "cancel_at_period_end",
+                              "reasonField": "cancellation_reason",
+                              "codeField": "cancellation_reason_code",
+                              "requestedAtField": "cancellation_requested_at"
+                            }
+                          },
+                          {
+                            "id": "detail-ve-header-28",
+                            "component": "ArchiveSummary",
+                            "props": {
+                              "archivedField": "is_archived",
+                              "archivedAtField": "archived_at",
+                              "restoredAtField": "restored_at",
+                              "reasonField": "archive_reason",
+                              "archivedByField": "archived_by",
+                              "metadataField": "archive_metadata",
+                              "retainHistoryParameter": "retainHistory",
+                              "restoreWindowParameter": "restoreWindowDays",
+                              "allowPartialRestoreParameter": "allowPartialRestore"
+                            }
+                          }
+                        ],
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-default"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "detail-detail-body-10",
+                    "component": "Card",
+                    "layout": {
+                      "type": "sidebar",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "detail-detail-tabs-9",
+                        "component": "Tabs",
+                        "children": [
+                          {
+                            "id": "detail-detail-tab-panel-3",
+                            "component": "Stack",
+                            "layout": {
+                              "type": "stack",
+                              "gapToken": "cluster-default"
+                            },
+                            "props": {
+                              "label": "Billing"
+                            },
+                            "children": [
+                              {
+                                "id": "detail-slot-tab-0-4",
+                                "component": "CycleProgressCard",
+                                "meta": {
+                                  "intent": "slot:tab-0",
+                                  "label": "tab-0"
+                                },
+                                "props": {
+                                  "progressField": "current_period_progress",
+                                  "periodStartField": "current_period_start",
+                                  "periodEndField": "current_period_end",
+                                  "intervalField": "billing_interval"
+                                }
+                              },
+                              {
+                                "id": "detail-slot-tab-1-6",
+                                "component": "PaymentTimeline",
+                                "meta": {
+                                  "intent": "slot:tab-1",
+                                  "label": "tab-1"
+                                },
+                                "props": {
+                                  "lastPaymentField": "last_payment_at",
+                                  "nextPaymentField": "next_payment_due_at",
+                                  "paymentStatusField": "payment_status",
+                                  "paymentMethodField": "payment_method_type",
+                                  "amountField": "amount",
+                                  "currencyField": "currency"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "detail-detail-tab-panel-14",
+                            "component": "Stack",
+                            "layout": {
+                              "type": "stack",
+                              "gapToken": "cluster-default"
+                            },
+                            "props": {
+                              "label": "Details"
+                            },
+                            "children": [
+                              {
+                                "id": "detail-slot-tab-3-15",
+                                "component": "StatusBadge",
+                                "meta": {
+                                  "intent": "slot:tab-3",
+                                  "label": "tab-3",
+                                  "confidence": 1,
+                                  "confidenceLevel": "low"
+                                },
+                                "props": {
+                                  "field": "payment_status",
+                                  "label": "Payment status"
+                                }
+                              },
+                              {
+                                "id": "detail-slot-tab-4-17",
+                                "component": "Text",
+                                "meta": {
+                                  "intent": "slot:tab-4",
+                                  "label": "tab-4",
+                                  "confidence": 0.76,
+                                  "confidenceLevel": "low"
+                                },
+                                "props": {
+                                  "field": "amount",
+                                  "label": "Amount"
+                                }
+                              }
+                            ]
+                          }
+                        ],
+                        "props": {
+                          "ariaLabel": "Record details"
+                        }
+                      },
+                      {
+                        "id": "detail-detail-meta-11",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "style": {
+                          "spacingToken": "inset-default"
+                        },
+                        "children": [
+                          {
+                            "id": "detail-slot-metadata-12",
+                            "component": "AuditTimeline",
+                            "meta": {
+                              "intent": "slot:metadata",
+                              "label": "metadata",
+                              "confidence": 0.4,
+                              "confidenceLevel": "low"
+                            },
+                            "props": {
+                              "auditLogField": "state_history"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "state": "success"
+              }
+            ]
+          },
+          {
+            "id": "form-screen",
+            "component": "Stack",
+            "route": "/:id/edit",
+            "bindings": {
+              "onSubmit": "handleSubmit"
+            },
+            "children": [
+              {
+                "id": "form-loading",
+                "component": "Banner",
+                "state": "loading",
+                "props": {
+                  "title": "Loading",
+                  "message": "Loading your records."
+                }
+              },
+              {
+                "id": "form-empty",
+                "component": "Banner",
+                "state": "empty",
+                "props": {
+                  "title": "No records found",
+                  "message": "Change the filters or add a record."
+                }
+              },
+              {
+                "id": "form-error",
+                "component": "Banner",
+                "state": "error",
+                "props": {
+                  "title": "Unable to load records",
+                  "message": "Try again or choose another record."
+                }
+              },
+              {
+                "id": "form-screen-form-11",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                },
+                "style": {
+                  "spacingToken": "inset-default"
+                },
+                "children": [
+                  {
+                    "id": "form-form-title-1",
+                    "component": "Stack",
+                    "props": {
+                      "as": "h1"
+                    },
+                    "meta": {
+                      "intent": "slot:title",
+                      "label": "title"
+                    },
+                    "children": [
+                      {
+                        "id": "form-ve-title-28",
+                        "component": "StatusSelector",
+                        "props": {
+                          "field": "status",
+                          "optionsParameter": "states",
+                          "initialParameter": "initialState",
+                          "allowedTransitionsField": "allowed_transitions",
+                          "requireReasonParameter": "requireTransitionReason",
+                          "label": "Status",
+                          "help": "Current lifecycle status of the subscription."
+                        },
+                        "bindings": {
+                          "onChange": "handleChange_status"
+                        }
+                      },
+                      {
+                        "id": "form-ve-title-29",
+                        "component": "CancellationForm",
+                        "props": {
+                          "reasonField": "cancellation_reason",
+                          "codeField": "cancellation_reason_code",
+                          "requireReasonParameter": "requireReason",
+                          "allowedReasonsParameter": "allowedReasons",
+                          "windowParameter": "cancellationWindowHours",
+                          "reasonHelp": "Free-form explanation captured during cancellation workflows.",
+                          "codeHelp": "Structured reason code chosen from the allowedReasons parameter.",
+                          "embedded": true,
+                          "allowedReasons": []
+                        }
+                      }
+                    ],
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    }
+                  },
+                  {
+                    "id": "form-form-fields-8",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "form-form-field-group-2",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "form-slot-field-0-3",
+                            "component": "Stack",
+                            "meta": {
+                              "intent": "slot:field-0",
+                              "label": "field-0"
+                            },
+                            "children": [
+                              {
+                                "id": "form-ve-field-0-26",
+                                "component": "BillingIntervalSelector",
+                                "props": {
+                                  "intervalField": "billing_interval",
+                                  "intervalsParameter": "billingIntervals",
+                                  "intervals": [
+                                    "monthly",
+                                    "yearly"
+                                  ],
+                                  "help": "Recurrence cadence (monthly, yearly, quarterly, etc.)."
+                                }
+                              },
+                              {
+                                "id": "form-ve-field-0-27",
+                                "component": "BillingAmountInput",
+                                "props": {
+                                  "amountField": "amount",
+                                  "currencyField": "currency",
+                                  "minorUnitsParameter": "minorUnits",
+                                  "minorUnits": 100,
+                                  "help": "Recurring price expressed in minor units (e.g., cents)."
+                                }
+                              }
+                            ],
+                            "layout": {
+                              "type": "stack",
+                              "gapToken": "cluster-default"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "form-form-field-group-4",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "form-slot-field-1-5",
+                            "component": "Checkbox",
+                            "meta": {
+                              "intent": "slot:field-1",
+                              "label": "field-1",
+                              "confidence": 1,
+                              "confidenceLevel": "low"
+                            },
+                            "props": {
+                              "field": "cancel_at_period_end",
+                              "label": "Cancel at period end",
+                              "help": "Whether the subscription will cancel at the natural billing period end."
+                            },
+                            "bindings": {
+                              "onChange": "handleChange_cancel_at_period_end"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "form-form-field-group-6",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "form-form-field-group-12",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "form-slot-field-3-13",
+                            "component": "Input",
+                            "meta": {
+                              "intent": "slot:field-3",
+                              "label": "field-3",
+                              "confidence": 1,
+                              "confidenceLevel": "low"
+                            },
+                            "props": {
+                              "field": "cancellation_requested_at",
+                              "label": "Cancellation requested at",
+                              "help": "Timestamp when cancellation was initiated.",
+                              "type": "datetime-local"
+                            },
+                            "bindings": {
+                              "onChange": "handleChange_cancellation_requested_at"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "form-form-field-group-14",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "form-slot-field-4-15",
+                            "component": "Input",
+                            "meta": {
+                              "intent": "slot:field-4",
+                              "label": "field-4",
+                              "confidence": 1,
+                              "confidenceLevel": "low"
+                            },
+                            "props": {
+                              "field": "currency",
+                              "label": "Currency",
+                              "placeholder": "Enter currency",
+                              "help": "ISO 4217 currency code used for billing."
+                            },
+                            "bindings": {
+                              "onChange": "handleChange_currency"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "form-form-field-group-16",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "form-slot-field-5-17",
+                            "component": "Select",
+                            "meta": {
+                              "intent": "slot:field-5",
+                              "label": "field-5",
+                              "confidence": 1,
+                              "confidenceLevel": "low"
+                            },
+                            "props": {
+                              "field": "payment_method_type",
+                              "label": "Payment method type",
+                              "placeholder": "Enter payment method type",
+                              "options": [
+                                {
+                                  "value": "card",
+                                  "label": "card"
+                                },
+                                {
+                                  "value": "ach",
+                                  "label": "ach"
+                                },
+                                {
+                                  "value": "wire",
+                                  "label": "wire"
+                                },
+                                {
+                                  "value": "invoice",
+                                  "label": "invoice"
+                                },
+                                {
+                                  "value": "other",
+                                  "label": "other"
+                                }
+                              ],
+                              "help": "Payment instrument category used for collection."
+                            },
+                            "bindings": {
+                              "onChange": "handleChange_payment_method_type"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "form-form-field-group-18",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "form-slot-field-6-19",
+                            "component": "Input",
+                            "meta": {
+                              "intent": "slot:field-6",
+                              "label": "field-6",
+                              "confidence": 1,
+                              "confidenceLevel": "low"
+                            },
+                            "props": {
+                              "field": "customer_email",
+                              "label": "Customer email",
+                              "placeholder": "Enter customer email",
+                              "type": "email",
+                              "help": "Billing contact email address."
+                            },
+                            "bindings": {
+                              "onChange": "handleChange_customer_email"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "form-form-field-group-20",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": [
+                          {
+                            "id": "form-slot-field-7-21",
+                            "component": "Input",
+                            "meta": {
+                              "intent": "slot:field-7",
+                              "label": "field-7",
+                              "confidence": 1,
+                              "confidenceLevel": "low"
+                            },
+                            "props": {
+                              "field": "last_event",
+                              "label": "Last event",
+                              "placeholder": "Enter last event",
+                              "help": "Lifecycle event associated with the most recent timestamp mutation."
+                            },
+                            "bindings": {
+                              "onChange": "handleChange_last_event"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "form-form-field-group-22",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "form-form-field-group-24",
+                        "component": "Stack",
+                        "layout": {
+                          "type": "stack",
+                          "gapToken": "cluster-tight"
+                        },
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "id": "form-form-actions-9",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "inline",
+                      "align": "end"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    },
+                    "children": [
+                      {
+                        "id": "form-form-submit-10",
+                        "component": "Button",
+                        "props": {
+                          "label": "Save",
+                          "type": "submit"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "state": "success"
+              }
+            ]
+          },
+          {
+            "id": "timeline-screen",
+            "component": "Stack",
+            "route": "/:id/timeline",
+            "children": [
+              {
+                "id": "timeline-loading",
+                "component": "Banner",
+                "state": "loading",
+                "props": {
+                  "title": "Loading",
+                  "message": "Loading your records."
+                }
+              },
+              {
+                "id": "timeline-empty",
+                "component": "Banner",
+                "state": "empty",
+                "props": {
+                  "title": "No records found",
+                  "message": "Change the filters or add a record."
+                }
+              },
+              {
+                "id": "timeline-error",
+                "component": "Banner",
+                "state": "error",
+                "props": {
+                  "title": "Unable to load records",
+                  "message": "Try again or choose another record."
+                }
+              },
+              {
+                "id": "timeline-screen-timeline-14",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                },
+                "children": [
+                  {
+                    "id": "timeline-timeline-header-1",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "inline",
+                      "align": "space-between"
+                    },
+                    "style": {
+                      "spacingToken": "inset-default"
+                    },
+                    "children": [
+                      {
+                        "id": "timeline-timeline-header-1-title",
+                        "component": "Text",
+                        "props": {
+                          "field": "plan_name"
+                        }
+                      },
+                      {
+                        "id": "timeline-timeline-header-1-billing",
+                        "component": "BillingSummaryBadge",
+                        "props": {
+                          "amountField": "amount",
+                          "currencyField": "currency",
+                          "intervalField": "billing_interval",
+                          "minorUnits": 100
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "timeline-timeline-entries-13",
+                    "component": "Stack",
+                    "layout": {
+                      "type": "stack",
+                      "gapToken": "cluster-default"
+                    },
+                    "children": [
+                      {
+                        "id": "timeline-timeline-entries-13-entry",
+                        "component": "Card",
+                        "collectionControl": "event",
+                        "children": [
+                          {
+                            "id": "timeline-slot-entry-0-4",
+                            "component": "PaymentEventTimeline",
+                            "meta": {
+                              "intent": "slot:entry-0",
+                              "label": "entry-0"
+                            },
+                            "props": {
+                              "lastPaymentField": "last_payment_at",
+                              "nextPaymentField": "next_payment_due_at",
+                              "paymentStatusField": "payment_status",
+                              "amountField": "amount",
+                              "currencyField": "currency"
+                            },
+                            "collectionControl": "payment-event"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "timeline-timeline-entries-13-empty",
+                        "component": "Banner",
+                        "props": {
+                          "message": "No events yet."
+                        },
+                        "collectionControl": "empty"
+                      }
+                    ],
+                    "collection": {
+                      "source": "events",
+                      "keyField": "id",
+                      "labelField": "title",
+                      "historyField": "state_history"
+                    }
+                  }
+                ],
+                "state": "success"
+              }
+            ]
+          }
+        ],
+        "objectSchema": {
+          "status": {
+            "type": "string",
+            "required": true,
+            "description": "Current lifecycle status of the subscription.",
+            "enum": [
+              "future",
+              "trialing",
+              "active",
+              "paused",
+              "pending_cancellation",
+              "past_due",
+              "unpaid",
+              "terminated"
+            ],
+            "semanticType": "billing.subscription.status"
+          },
+          "state_history": {
+            "type": "StateTransition[]",
+            "required": false,
+            "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+            "semanticType": "timeline.state_transition"
+          },
+          "allowed_transitions": {
+            "type": "string[]",
+            "required": false,
+            "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+            "semanticType": "status.navigation"
+          },
+          "cancel_at_period_end": {
+            "type": "boolean",
+            "required": true,
+            "description": "Whether the subscription will cancel at the natural billing period end.",
+            "semanticType": "billing.subscription.cancel_at_period_end"
+          },
+          "cancellation_reason": {
+            "type": "string",
+            "required": false,
+            "description": "Free-form explanation captured during cancellation workflows.",
+            "semanticType": "billing.subscription.cancellation_reason"
+          },
+          "cancellation_reason_code": {
+            "type": "string",
+            "required": false,
+            "description": "Structured reason code chosen from the allowedReasons parameter.",
+            "semanticType": "status.cancel.reason_code"
+          },
+          "cancellation_requested_at": {
+            "type": "datetime",
+            "required": false,
+            "description": "Timestamp when cancellation was initiated.",
+            "semanticType": "billing.subscription.cancellation_requested_at"
+          },
+          "created_at": {
+            "type": "datetime",
+            "required": true,
+            "description": "Timestamp recording when the entity was first created.",
+            "semanticType": "audit.created_at"
+          },
+          "updated_at": {
+            "type": "datetime",
+            "required": false,
+            "description": "Timestamp for the most recent modification, when available.",
+            "semanticType": "audit.updated_at"
+          },
+          "last_event": {
+            "type": "string",
+            "required": true,
+            "description": "Lifecycle event associated with the most recent timestamp mutation.",
+            "semanticType": "audit.event.type"
+          },
+          "last_event_at": {
+            "type": "datetime",
+            "required": false,
+            "description": "Timestamp for the lifecycle event captured in last_event.",
+            "semanticType": "audit.event.timestamp"
+          },
+          "amount": {
+            "type": "integer",
+            "required": true,
+            "description": "Recurring price expressed in minor units (e.g., cents).",
+            "semanticType": "billing.plan.amount"
+          },
+          "currency": {
+            "type": "string",
+            "required": true,
+            "description": "ISO 4217 currency code used for billing.",
+            "semanticType": "billing.plan.currency"
+          },
+          "billing_interval": {
+            "type": "string",
+            "required": false,
+            "description": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+            "semanticType": "billing.subscription.interval"
+          },
+          "payment_status": {
+            "type": "string",
+            "required": false,
+            "description": "Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status \u2014 a subscription can be \"active\" with payment_status \"retrying\".\n",
+            "enum": [
+              "pending",
+              "succeeded",
+              "failed",
+              "retrying",
+              "refunded"
+            ],
+            "semanticType": "billing.cycle.payment_status"
+          },
+          "payment_method_type": {
+            "type": "string",
+            "required": false,
+            "description": "Payment instrument category used for collection.",
+            "enum": [
+              "card",
+              "ach",
+              "wire",
+              "invoice",
+              "other"
+            ],
+            "semanticType": "billing.cycle.payment_method"
+          },
+          "proration_amount": {
+            "type": "integer",
+            "required": false,
+            "description": "Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n",
+            "semanticType": "billing.cycle.proration"
+          },
+          "proration_date": {
+            "type": "integer",
+            "required": false,
+            "description": "Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit \u2014 an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n",
+            "semanticType": "billing.cycle.proration_timestamp"
+          },
+          "last_payment_at": {
+            "type": "datetime",
+            "required": false,
+            "description": "Timestamp of the most recent successful payment.",
+            "semanticType": "billing.subscription.last_payment_at"
+          },
+          "next_payment_due_at": {
+            "type": "datetime",
+            "required": false,
+            "description": "Timestamp when the next payment attempt should occur.",
+            "semanticType": "billing.subscription.next_payment_due_at"
+          },
+          "current_period_start": {
+            "type": "datetime",
+            "required": true,
+            "description": "Start timestamp of the current billing cycle.",
+            "semanticType": "billing.subscription.current_period_start"
+          },
+          "current_period_end": {
+            "type": "datetime",
+            "required": true,
+            "description": "End timestamp of the current billing cycle.",
+            "semanticType": "billing.subscription.current_period_end"
+          },
+          "current_period_progress": {
+            "type": "number",
+            "required": false,
+            "description": "Decimal progress (0-1) through the active billing cycle.",
+            "semanticType": "billing.subscription.current_period_progress"
+          },
+          "is_archived": {
+            "type": "boolean",
+            "required": true,
+            "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+            "semanticType": "status.archive.state"
+          },
+          "archived_at": {
+            "type": "datetime?",
+            "required": false,
+            "description": "Timestamp for when the entity entered the archived state.",
+            "semanticType": "status.archive.timestamp"
+          },
+          "restored_at": {
+            "type": "datetime?",
+            "required": false,
+            "description": "Timestamp for when the entity was most recently restored from an archived state.",
+            "semanticType": "status.archive.restore_timestamp"
+          },
+          "archive_reason": {
+            "type": "string",
+            "required": false,
+            "description": "Human-readable narrative describing why the entity was archived.",
+            "semanticType": "status.archive.reason"
+          },
+          "archived_by": {
+            "type": "string",
+            "required": false,
+            "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+            "semanticType": "status.archive.actor"
+          },
+          "archive_metadata": {
+            "type": "object",
+            "required": false,
+            "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" \u2014 how the archive was triggered\n  - compliance_tags: string[] \u2014 regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string \u2014 reference to the retention policy that triggered archival\n  - original_status: string \u2014 the Stateful status before archival\n  - related_entity_count: number \u2014 count of related entities also archived (cascade)\n",
+            "semanticType": "status.archive.compliance"
+          },
+          "restoration_metadata": {
+            "type": "object",
+            "required": false,
+            "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string \u2014 user ID or \"system\"\n  - restored_fields: string[] \u2014 when partial restore, which fields were restored\n  - restoration_reason: string \u2014 why the entity was restored\n  - restored_from_snapshot: boolean \u2014 whether restored from a point-in-time snapshot\n",
+            "semanticType": "status.archive.restoration"
+          },
+          "subscription_id": {
+            "type": "string",
+            "required": true,
+            "description": "Primary identifier used across billing and lifecycle systems.",
+            "semanticType": "billing.subscription.id"
+          },
+          "plan_name": {
+            "type": "string",
+            "required": true,
+            "description": "Human-readable plan label shown in headers.",
+            "semanticType": "billing.plan.name"
+          },
+          "plan_code": {
+            "type": "string",
+            "required": false,
+            "description": "Internal plan code or price identifier.",
+            "semanticType": "billing.plan.code"
+          },
+          "plan_interval": {
+            "type": "string",
+            "required": false,
+            "description": "Billing interval descriptor (monthly, yearly, etc.).",
+            "semanticType": "billing.plan.interval"
+          },
+          "customer_name": {
+            "type": "string",
+            "required": false,
+            "description": "Customer or account name associated with the subscription.",
+            "semanticType": "customer.account.name"
+          },
+          "customer_email": {
+            "type": "email",
+            "required": false,
+            "description": "Billing contact email address.",
+            "semanticType": "customer.account.email"
+          }
+        },
+        "workflow": {
+          "object": "Subscription",
+          "screens": [
+            {
+              "id": "list-screen",
+              "context": "list",
+              "route": "/"
+            },
+            {
+              "id": "detail-screen",
+              "context": "detail",
+              "route": "/:id"
+            },
+            {
+              "id": "form-screen",
+              "context": "form",
+              "route": "/:id/edit"
+            },
+            {
+              "id": "timeline-screen",
+              "context": "timeline",
+              "route": "/:id/timeline"
+            }
+          ],
+          "transitions": [
+            {
+              "action": "handleRowClick",
+              "from": "list",
+              "to": "detail",
+              "effect": "navigate"
+            },
+            {
+              "action": "handleEdit",
+              "from": "detail",
+              "to": "form",
+              "effect": "navigate"
+            },
+            {
+              "action": "handleDelete",
+              "from": "detail",
+              "to": "list",
+              "effect": "archive"
+            },
+            {
+              "action": "handleCancel",
+              "from": "detail",
+              "to": "detail",
+              "effect": "pending_cancellation"
+            },
+            {
+              "action": "handleViewTimeline",
+              "from": "detail",
+              "to": "timeline",
+              "effect": "navigate"
+            },
+            {
+              "action": "handleSubmit",
+              "from": "form",
+              "to": "detail",
+              "effect": "save"
+            }
+          ],
+          "states": [
+            "loading",
+            "empty",
+            "error",
+            "success"
+          ],
+          "data": {
+            "idField": "subscription_id",
+            "traits": [
+              "lifecycle/Stateful",
+              "lifecycle/Cancellable",
+              "lifecycle/Timestampable",
+              "financial/Billable",
+              "lifecycle/Archivable"
+            ],
+            "sampleCount": 10,
+            "recordedEvents": [
+              "billing_cycle_started",
+              "billing_cycle_completed",
+              "payment_received",
+              "cancellation_requested"
+            ],
+            "cancellationRequiresReason": false,
+            "cancellationReasonCodes": [],
+            "lifecycleStates": [
+              "future",
+              "trialing",
+              "active",
+              "paused",
+              "pending_cancellation",
+              "past_due",
+              "unpaid",
+              "terminated"
+            ],
+            "billingIntervals": [
+              "monthly",
+              "yearly"
+            ],
+            "currency": "usd",
+            "minorUnits": 100
+          }
+        }
+      },
+      "framework": "react",
+      "profile": "build"
+    },
+    "role": "designer"
+  },
+  "httpStatus": 200,
+  "response": {
+    "ok": true,
+    "tool": "code_generate",
+    "role": "designer",
+    "mode": "dry-run",
+    "incidentId": "98afbab9-3c30-44aa-9e12-e563d9b084b0",
+    "artifacts": [],
+    "transcriptPath": null,
+    "bundleIndexPath": null,
+    "diagnosticsPath": null,
+    "preview": null,
+    "artifactsDetail": null,
+    "result": {
+      "status": "ok",
+      "framework": "react",
+      "artifact": {
+        "schemaVersion": "1.0.0",
+        "framework": "react",
+        "files": [
+          {
+            "path": "index.html",
+            "contents": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Subscription workspace</title></head><body><div id=\"app\"></div><script type=\"module\" src=\"/src/main.tsx\"></script></body></html>\n",
+            "contentHash": "sha256:98712216e6d3b5af8167d721de884e92053a571c496bd4c486ec557e1d3bfa4d"
+          },
+          {
+            "path": "package.json",
+            "contents": "{\n  \"name\": \"subscription-workflow-react\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"vite --host 127.0.0.1\",\n    \"build\": \"tsc --noEmit && vite build\",\n    \"typecheck\": \"tsc --noEmit\"\n  },\n  \"dependencies\": {\n    \"@oods/component-styles\": \"0.1.0\",\n    \"@oods/components-react\": \"0.1.0\",\n    \"react\": \"19.2.0\",\n    \"react-dom\": \"19.2.0\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"20.19.21\",\n    \"typescript\": \"5.9.3\",\n    \"vite\": \"6.4.1\",\n    \"@types/react\": \"19.2.2\",\n    \"@types/react-dom\": \"19.2.1\"\n  }\n}\n",
+            "contentHash": "sha256:60ecaeda603cef680bc167fe44ab84721f6f384eb291bec904e7c16684c06c81"
+          },
+          {
+            "path": "src/App.tsx",
+            "contents": "import React from 'react';\nimport { CancellationForm } from '@oods/components-react';\nimport { GeneratedUI as List } from './screens/List';\nimport { GeneratedUI as Detail } from './screens/Detail';\nimport { GeneratedUI as Form } from './screens/Form';\nimport { GeneratedUI as Timeline } from './screens/Timeline';\nimport { createWorkflow, screenProps, collectionEvents, routes, supplementalFields, cancellable, cancellationFormProps, type Screen } from './application';\nimport type { StoreOptions } from './store';\nimport './app.css';\nexport default function App(options: StoreOptions) {\n  const [app] = React.useState(() => createWorkflow(options));\n  const [state, setState] = React.useState(app.snapshot);\n  React.useEffect(() => { const unsubscribe = app.subscribe(setState); void app.navigate('list'); return () => { unsubscribe(); app.dispose(); }; }, [app]);\n  const props = { ...screenProps(state.draft), rows: state.records.map(screenProps), events: collectionEvents(state.draft), collectionQuery: state, actions: app.actions, uiState: state.uiState };\n  return <main className=\"workflow-app\" data-oods-workflow=\"Subscription\" data-screen={state.screen} data-selected-id={state.id} data-route={routes[state.screen]} data-ui-state={state.uiState}>\n    <header className=\"workflow-heading\"><div><p className=\"workflow-eyebrow\">SUBSCRIPTION WORKSPACE</p><h1>{state.screen === 'list' ? 'Subscriptions' : String(state.draft[\"plan_name\"])}</h1></div><span className=\"workflow-mode\">Local workspace</span></header>\n    <nav aria-label=\"Workflow screens\">{(['list', 'detail', 'form', 'timeline'] as Screen[]).map((screen) => <button type=\"button\" key={screen} aria-current={state.screen === screen ? 'page' : undefined} onClick={() => { void app.navigate(screen); }}>{screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1)}</button>)}</nav>\n    {state.error && <p role=\"alert\">{state.error}</p>}\n    {state.uiState === 'error' && <button type=\"button\" onClick={() => { void app.retry(); }}>Try again</button>}\n    <section aria-label=\"Subscription screen\" className=\"workflow-content\" onChangeCapture={(event) => app.edit(event.nativeEvent)}>\n      {state.uiState === 'success' && state.screen === 'form' && supplementalFields.map((field) => <div className=\"workflow-field\" key={field.name}><label htmlFor={field.name}>{field.label}</label><input id={field.name} name={field.name} aria-describedby={field.name + \"-help\"} defaultValue={String((state.draft as Record<string, unknown>)[field.name])} /><small id={field.name + \"-help\"} className=\"oods-field-help\">{field.help}</small></div>)}\n      {state.uiState === 'success' && state.screen === 'detail' && cancellable && state.cancelOpen && <section className=\"workflow-cancel\" aria-label=\"Cancel subscription\">\n        <CancellationForm {...cancellationFormProps} reason={String((state.draft as Record<string, unknown>).cancellation_reason ?? '')} reasonCode={String((state.draft as Record<string, unknown>).cancellation_reason_code ?? '')} />\n        <label className=\"workflow-checkbox\"><input name=\"cancel_at_period_end\" type=\"checkbox\" defaultChecked={Boolean((state.draft as Record<string, unknown>).cancel_at_period_end)} />Cancel at period end</label>\n        <button type=\"button\" onClick={() => { void app.confirmCancellation(); }}>Confirm cancellation</button><button type=\"button\" onClick={() => app.dismissCancellation()}>Keep subscription</button>\n      </section>}\n      {state.screen === 'list' && <List {...props} key={'list'} />}\n      {state.screen === 'detail' && <Detail {...props} key={state.revision + ':' + state.uiState} />}\n      {state.screen === 'form' && <form onSubmit={(event) => { event.preventDefault(); app.actions.handleSubmit(); }}><Form {...props} key={state.revision + ':' + state.uiState} /></form>}\n      {state.screen === 'timeline' && <Timeline {...props} key={state.revision + ':' + state.uiState} />}\n      {state.uiState === 'success' && state.screen === 'detail' && Boolean((state.draft as Record<string, unknown>).is_archived) && <button onClick={() => { void app.restore(); }}>Restore record</button>}\n    </section>\n    <p className=\"workflow-notice\" role=\"status\">{state.notice}</p>\n  </main>;\n}\n",
+            "contentHash": "sha256:323fcb74dbe121b8e16af9b34fb714b04c37ad92428bd6ee3fff10076b714b60"
+          },
+          {
+            "path": "src/actions.ts",
+            "contents": "export interface WorkflowActions {\n  /* @oods-domain-action handleCancel sha256:e8eee895cb879c6be09dbe320b8df87643e06ebac9d7568a8be807ac89139d99 */\n  /* @oods-domain-source sha256:a340cc3e4279d3b55f8af9f92525c31976c6714edbafc6a842629011926a9688 */\n  handleCancel: () => void;\n  /* @oods-domain-action handleDelete sha256:e958fc4dbee224e7fa8a18179149f2c767ffe34192f16926cabd8ccb54ea7160 */\n  /* @oods-domain-source sha256:5b51d6d668874eeceb4de2326434d8cd762aee730fb9a50bcdcd2b9697a71b6e */\n  handleDelete: () => void;\n  /* @oods-domain-action handleEdit sha256:182384d13b6b98a724f3da849699c7366e6563e36e5d43b4a0e193875662bc50 */\n  /* @oods-domain-source sha256:e0774f642e1a26ebce8a8d9dae8da4a509838d11a3f255381068363bb2920c5a */\n  handleEdit: () => void;\n  /* @oods-domain-action handleFilter sha256:3caa4ca45751d5f98ecb9ca5b3bad67dae3648851ba5c81266abe239c327333e */\n  /* @oods-domain-source sha256:dcd80e5df82a87effadc835ba3ee01b87b8f94956dd248f3916e4caea4eeaee2 */\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  /* @oods-domain-action handlePageChange sha256:96a80b8c3ce40c07c8848f6f1c89113ff702b20ed4b76f78632453ea8e2c87d8 */\n  /* @oods-domain-source sha256:0a8c55c98fd586a66355cacc9e6a93637464d275e70b994fc88514b12079369f */\n  handlePageChange: (page: number) => void;\n  /* @oods-domain-action handleRowClick sha256:ceae6f55efc7d37856f8f7289091cfbaf7a9e975d11de5d12d3c0cad4486b910 */\n  /* @oods-domain-source sha256:40f1128b9a619913b31806b44fb2798a64ee2fe80586edfbd8c637eb690790e1 */\n  handleRowClick: (rowId: string) => void;\n  /* @oods-domain-action handleSort sha256:7e0b149250c324d6472b9703e8d2a0e89c0ea2a39f11ac7bdfab83da38f9607b */\n  /* @oods-domain-source sha256:1d35bd28d115ccb4e75fd245375fc8db7b06af97b029755330560fdbc0a86211 */\n  handleSort: (column: string) => void;\n  /* @oods-domain-action handleSubmit sha256:2f6aa5a9b7d11a3da9990fa83c008344c4ccae92969fb06db5ed068195a26871 */\n  /* @oods-domain-source sha256:2774690c84b88d282fa52995d82608d30054d91e7730e9b770103035c2565545 */\n  handleSubmit: () => void;\n  /* @oods-domain-action handleViewTimeline sha256:77fdf70710dad3e639537244fdc3c3a64e330b99b0cb1427d79f38c14ebf78fe */\n  /* @oods-domain-source sha256:ff23e1f2f34ea61a383aabf23a73f205422002045d7cd5f98aec63fc98ee9b6c */\n  handleViewTimeline: () => void;\n}\n",
+            "contentHash": "sha256:7885a54420c4faa0f50c1926de2469fca71ade8bda029b87618003a0572ddbee"
+          },
+          {
+            "path": "src/app.css",
+            "contents": "* { box-sizing: border-box; }\nbody { margin: 0; background: #f5f6f8; color: #1c2535; font-family: system-ui, sans-serif; }\n.workflow-app { max-width: 1100px; margin: auto; padding: 40px 28px; }\n.workflow-heading, .workflow-pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px; }\n.workflow-eyebrow { font-size: 11px; letter-spacing: .16em; color: #57657b; font-weight: 700; }\n.workflow-heading h1 { margin: 8px 0 28px; font-size: clamp(24px, 4vw, 36px); letter-spacing: -.035em; }\n.workflow-mode { font-size: 12px; color: #57657b; }\n.workflow-app nav { display: flex; gap: 6px; padding-bottom: 20px; flex-wrap: wrap; }\n.workflow-app button { cursor: pointer; font: inherit; border: 1px solid #cdd4df; padding: 9px 14px; background: white; border-radius: 6px; color: inherit; }\n.workflow-app button:disabled { opacity: .5; cursor: default; }\n.workflow-app button[aria-current=\"page\"] { background: #213957; color: white; border-color: #213957; }\n.workflow-app :focus-visible { outline: 3px solid #3479c9; outline-offset: 3px; }\n.workflow-app label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }\n.workflow-app input:not([type=\"checkbox\"]), .workflow-app select { font: inherit; max-width: 100%; border: 1px solid #cdd4df; border-radius: 5px; padding: 10px; background: white; }\n.workflow-content { padding: 24px; border: 1px solid #dce1e8; border-radius: 12px; background: white; min-width: 0; overflow-wrap: anywhere; }\n.workflow-app label:has(input[type=\"checkbox\"]) { display: flex; flex-direction: row; align-items: center; }\n.workflow-field { margin-bottom: 20px; }\n.workflow-content [data-layout=\"inline\"] { flex-wrap: wrap; gap: 12px; }\n.workflow-content [data-layout=\"inline\"] > [data-oods-component=\"SearchInput\"], .workflow-content [data-layout=\"inline\"] > [data-oods-component=\"Select\"] { flex: 1 1 180px; min-width: 0; }\n.workflow-content [data-oods-component=\"PriceBadge\"] { white-space: nowrap; }\n.workflow-content textarea { font: inherit; border: 1px solid #cdd4df; border-radius: 5px; padding: 10px; }\n.workflow-content [data-oods-component=\"Stack\"], .workflow-content [data-oods-component=\"Tabs\"] { min-width: 0; }\n.workflow-content .oods-tab, .workflow-content .oods-tab-list [aria-haspopup=\"menu\"] { flex-shrink: 0; white-space: nowrap; }\n.workflow-content .oods-tab-list { overflow: visible; }\n.workflow-content .oods-tabs__overflow, .workflow-content .oods-tabs-overflow { position: relative; flex-shrink: 0; }\n.workflow-content .oods-tab-list [role=\"menu\"] { position: absolute; inset: 100% 0 auto auto; z-index: 2; min-width: max-content; display: grid; padding: 4px; background: white; border: 1px solid #dce1e8; border-radius: 6px; }\n\n.workflow-cancel { display: flex; gap: 16px; flex-wrap: wrap; border: 1px solid #dce1e8; padding: 16px; margin: 0 0 24px; border-radius: 6px; }\n.workflow-notice { min-height: 20px; color: #57657b; font-size: 13px; }\n[data-oods-screen-actions] { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }\n@media (max-width: 600px) { .workflow-content [data-layout=\"sidebar\"] { grid-template-columns: minmax(0, 1fr) !important; } .workflow-app { padding: 24px 16px; } .workflow-content { padding: 16px; } .workflow-mode { display: none; } }\n",
+            "contentHash": "sha256:142fce8b38ccc442764efa88cb15dc3e8c6293fbad34a9f787a47d5529e34dca"
+          },
+          {
+            "path": "src/application.ts",
+            "contents": "import { parseBillingAmount } from '@oods/component-contracts';\nimport { createStore, idField, titleField, fieldTypes, screenProps, history, collectionEvents, type DomainRecord, type ListQuery, type StoreOptions } from './store';\nimport { sampleData } from './sample-data';\nimport type { WorkflowActions } from './actions';\nexport { idField, titleField, screenProps, history, collectionEvents };\nexport type Screen = 'list' | 'detail' | 'form' | 'timeline';\nexport type UIState = 'loading' | 'empty' | 'error' | 'success';\nexport const routes = {\"list\":\"/\",\"detail\":\"/:id\",\"form\":\"/:id/edit\",\"timeline\":\"/:id/timeline\"};\nexport const cancellable = true;\nexport const statuses = [\"future\",\"trialing\",\"active\",\"paused\",\"pending_cancellation\",\"past_due\",\"unpaid\",\"terminated\"];\nexport const archivePresentation = {\"archivedField\":\"is_archived\",\"showBadge\":true,\"separateTab\":true,\"tabLabel\":\"Archived\"};\nexport const supplementalFields = [{\"name\":\"plan_name\",\"label\":\"Plan name\",\"help\":\"Human-readable plan label shown in headers.\"}];\nexport const cancellationFormProps = {\"allowedReasons\":[],\"reasonHelp\":\"Free-form explanation captured during cancellation workflows.\",\"codeHelp\":\"Structured reason code chosen from the allowedReasons parameter.\"};\nconst fieldByNodeId: Record<string, string> = {\"list-list-toolbar-4-sort\":\"plan_name\",\"list-list-items-5-row\":\"subscription_id\",\"list-list-items-5-title\":\"plan_name\",\"list-ve-items-11\":\"updated_at\",\"detail-ve-header-26\":\"status\",\"detail-slot-tab-3-15\":\"payment_status\",\"detail-slot-tab-4-17\":\"amount\",\"form-ve-title-28\":\"status\",\"form-ve-field-0-26\":\"billing_interval\",\"form-ve-field-0-27\":\"amount\",\"form-slot-field-1-5\":\"cancel_at_period_end\",\"form-slot-field-3-13\":\"cancellation_requested_at\",\"form-slot-field-4-15\":\"currency\",\"form-slot-field-5-17\":\"payment_method_type\",\"form-slot-field-6-19\":\"customer_email\",\"form-slot-field-7-21\":\"last_event\",\"timeline-timeline-header-1-title\":\"plan_name\"};\nexport interface AppState { screen: Screen; uiState: UIState; id: string; draft: DomainRecord; records: DomainRecord[]; total: number; page: number; pageSize: number; search: string; status: string; descending: boolean; archived: boolean; error: string; notice: string; revision: number; cancelOpen: boolean }\nexport function createWorkflow(options: StoreOptions = {}) {\n  const store = createStore(options);\n  let query: ListQuery = {};\n  let request = 0;\n  const first = store.list().records[0] ?? sampleData[0]!;\n  let state: AppState = { screen: 'list', uiState: 'loading', id: String(first[idField]), draft: structuredClone(first), records: [], total: 0, page: 1, pageSize: 10, search: '', status: '', descending: false, archived: false, error: '', notice: '', revision: 0, cancelOpen: false };\n  const listeners = new Set<(state: AppState) => void>();\n  const publish = (patch: Partial<AppState>) => { state = { ...state, ...patch }; listeners.forEach((listener) => listener(state)); };\n  const value = (field: string) => (state.draft as Record<string, unknown>)[field];\n  async function navigate(screen: Screen, id = state.id) {\n    const ticket = ++request;\n    publish({ screen, id, cancelOpen: false, uiState: 'loading', error: '', revision: state.revision + 1 });\n    try {\n      await store.ready();\n      if (ticket !== request) return;\n      const list = store.list(query);\n      const selected = screen === 'list' ? list.records[0] : store.list({ archived: query.archived, pageSize: 10000 }).records.find((record) => String(record[idField]) === id);\n      const draft = selected ?? sampleData[0]!;\n      publish({ records: list.records, total: list.total, page: list.page, pageSize: list.pageSize, search: query.search ?? '', status: query.status ?? '', descending: query.descending ?? false, archived: query.archived ?? false, draft: structuredClone(draft), id: selected ? String(selected[idField]) : id, uiState: selected ? 'success' : 'empty' });\n    } catch (error) { if (ticket === request) publish({ uiState: 'error', error: error instanceof Error ? error.message : String(error) }); }\n  }\n  function refreshList() {\n    const list = store.list(query);\n    const selected = list.records[0];\n    publish({ records: list.records, total: list.total, page: list.page, pageSize: list.pageSize, search: query.search ?? '', status: query.status ?? '', descending: query.descending ?? false, archived: query.archived ?? false, uiState: selected ? 'success' : 'empty' });\n  }\n  async function change(operation: () => DomainRecord, destination: Screen) {\n    publish({ uiState: 'loading', error: '' });\n    try { await store.ready(); operation(); publish({ notice: 'Changes saved in this session.' }); await navigate(destination); }\n    catch (error) { publish({ uiState: 'error', error: error instanceof Error ? error.message : String(error) }); }\n  }\n  const actions: WorkflowActions = {\n    handleCancel: () => { publish({ cancelOpen: true }); },\n    handleDelete: () => { void change(() => store.archive(state.id), \"list\"); },\n    handleEdit: () => { void navigate(\"form\"); },\n    handleFilter: (criteria) => { query = { ...query, search: String(criteria.search ?? \"\"), status: String(criteria.status ?? \"\"), archived: Boolean(criteria.archived ?? query.archived), page: 1 }; refreshList(); },\n    handlePageChange: (page) => { query = { ...query, page }; refreshList(); },\n    handleRowClick: (id) => { void navigate(\"detail\", id); },\n    handleSort: (column) => { if (column in fieldTypes) { query = { ...query, sort: column as keyof DomainRecord, descending: !query.descending }; refreshList(); } },\n    handleSubmit: () => { void change(() => store.save(state.draft), \"detail\"); },\n    handleViewTimeline: () => { void navigate(\"timeline\"); },\n  };\n  function edit(event: Event) {\n    if (state.screen !== 'form' && state.screen !== 'detail') return;\n    const target = event.target;\n    if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;\n    // A native select commits on change. Publishing during input can redraw its\n    // old controlled value before change reads the keyboard selection in Vue.\n    if (target instanceof HTMLSelectElement && event.type === 'input') return;\n    let field = target.name;\n    if (target.closest('[data-oods-component=\"CancellationForm\"]')) field = ({ reason: 'cancellation_reason', reasonCode: 'cancellation_reason_code' } as Record<string, string>)[field] ?? field;\n    let element: HTMLElement | null = target;\n    while (!Object.hasOwn(fieldTypes, field) && element) { field = fieldByNodeId[element.id] ?? ''; element = element.parentElement; }\n    if (!Object.hasOwn(fieldTypes, field)) return;\n    const type = fieldTypes[field];\n    if (target instanceof HTMLInputElement && target.dataset.billingMinorUnits !== undefined) {\n      const result = parseBillingAmount(target.value, Number(target.dataset.billingMinorUnits));\n      if (result.valid) publish({ draft: { ...state.draft, [field]: result.value }, notice: 'Unsaved changes' });\n      return;\n    }\n    const value = target instanceof HTMLInputElement && target.type === 'checkbox' ? target.checked\n      : type === 'number' || type === 'integer' ? Number(target.value) : target instanceof HTMLInputElement && target.type === 'datetime-local' && target.value ? new Date(target.value + 'Z').toISOString() : target.value;\n    publish({ draft: { ...state.draft, [field]: value }, notice: 'Unsaved changes' });\n  }\n  return {\n    snapshot: () => state,\n    subscribe(listener: (state: AppState) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },\n    navigate, actions, edit,\n    confirmCancellation() { return change(() => store.cancel(state.id, String(value(\"cancellation_reason\") ?? \"\"), String(value(\"cancellation_reason_code\") ?? \"\"), Boolean(value(\"cancel_at_period_end\"))), 'detail'); },\n    dismissCancellation() { publish({ cancelOpen: false }); },\n    filter(search: string, status = query.status ?? '') { query = { ...query, search, status, page: 1 }; return refreshList(); },\n    sort(descending: boolean) { query = { ...query, sort: titleField, descending }; return refreshList(); },\n    page(page: number) { query = { ...query, page }; return refreshList(); },\n    archived(archived: boolean) { query = { ...query, archived, page: 1 }; return refreshList(); },\n    restore() { return change(() => store.restore(state.id), 'list'); },\n    retry() { store.setFailure(false); return navigate(state.screen); },\n    dispose() { request++; listeners.clear(); },\n  };\n}\n",
+            "contentHash": "sha256:78caf7f46e197dff42bd50d0871b7520cd7db624381e8594adc443e882d9902c"
+          },
+          {
+            "path": "src/main.tsx",
+            "contents": "import React from 'react';\nimport { createRoot, hydrateRoot } from 'react-dom/client';\nimport App from './App';\nconst query = new URLSearchParams(window.location.search);\nconst root = document.getElementById('app')!;\nconst app = <App empty={query.get('mode') === 'empty'} fail={query.get('mode') === 'error'} latency={Number(query.get('latency') ?? 180)} />;\nif (root.hasChildNodes()) hydrateRoot(root, app); else createRoot(root).render(app);\n",
+            "contentHash": "sha256:31c61d237e587b50e9e9fe0d57c228b3fffbe45523d96bee77f6de295a8a2def"
+          },
+          {
+            "path": "src/sample-data.ts",
+            "contents": "import type { DomainRecord } from './store';\n\nexport const sampleData: DomainRecord[] = [\n  {\n    \"status\": \"future\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"future\",\n        \"at\": \"2026-09-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2026-09-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-09-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-09-01T12:00:00.000Z\",\n    \"amount\": 1900,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"monthly\",\n    \"payment_status\": \"pending\",\n    \"payment_method_type\": \"card\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-09-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-09-01T12:00:00.000Z\",\n    \"current_period_end\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.23333333333333334,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-001\",\n    \"plan_name\": \"Subscription 01\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer1@example.com\"\n  },\n  {\n    \"status\": \"trialing\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"trialing\",\n        \"at\": \"2026-03-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2026-03-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-03-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-03-01T12:00:00.000Z\",\n    \"amount\": 3800,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"yearly\",\n    \"payment_status\": \"succeeded\",\n    \"payment_method_type\": \"ach\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-03-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2027-03-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-03-01T12:00:00.000Z\",\n    \"current_period_end\": \"2027-03-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.5232876712328767,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-002\",\n    \"plan_name\": \"Subscription 02\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer2@example.com\"\n  },\n  {\n    \"status\": \"active\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"active\",\n        \"at\": \"2026-09-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2026-09-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-09-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-09-01T12:00:00.000Z\",\n    \"amount\": 5700,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"monthly\",\n    \"payment_status\": \"failed\",\n    \"payment_method_type\": \"wire\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-09-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-09-01T12:00:00.000Z\",\n    \"current_period_end\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.23333333333333334,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-003\",\n    \"plan_name\": \"Subscription 03\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer3@example.com\"\n  },\n  {\n    \"status\": \"paused\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"paused\",\n        \"at\": \"2026-03-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2026-03-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-03-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-03-01T12:00:00.000Z\",\n    \"amount\": 7600,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"yearly\",\n    \"payment_status\": \"retrying\",\n    \"payment_method_type\": \"invoice\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-03-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2027-03-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-03-01T12:00:00.000Z\",\n    \"current_period_end\": \"2027-03-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.5232876712328767,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-004\",\n    \"plan_name\": \"Subscription 04\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer4@example.com\"\n  },\n  {\n    \"status\": \"pending_cancellation\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"pending_cancellation\",\n        \"at\": \"2026-09-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": true,\n    \"created_at\": \"2026-09-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-09-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-09-01T12:00:00.000Z\",\n    \"amount\": 9500,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"monthly\",\n    \"payment_status\": \"refunded\",\n    \"payment_method_type\": \"other\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-09-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-09-01T12:00:00.000Z\",\n    \"current_period_end\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.23333333333333334,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-005\",\n    \"plan_name\": \"Subscription 05\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer5@example.com\",\n    \"cancellation_reason\": \"Subscription no longer needed\",\n    \"cancellation_reason_code\": \"customer_request\",\n    \"cancellation_requested_at\": \"2026-09-01T12:00:00.000Z\"\n  },\n  {\n    \"status\": \"past_due\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"past_due\",\n        \"at\": \"2026-03-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2026-03-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-03-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-03-01T12:00:00.000Z\",\n    \"amount\": 11400,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"yearly\",\n    \"payment_status\": \"pending\",\n    \"payment_method_type\": \"card\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-03-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2027-03-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-03-01T12:00:00.000Z\",\n    \"current_period_end\": \"2027-03-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.5232876712328767,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-006\",\n    \"plan_name\": \"Subscription 06\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer6@example.com\"\n  },\n  {\n    \"status\": \"unpaid\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"unpaid\",\n        \"at\": \"2026-09-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2026-09-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-09-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-09-01T12:00:00.000Z\",\n    \"amount\": 13300,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"monthly\",\n    \"payment_status\": \"succeeded\",\n    \"payment_method_type\": \"ach\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-09-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-09-01T12:00:00.000Z\",\n    \"current_period_end\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.23333333333333334,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-007\",\n    \"plan_name\": \"Subscription 07\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer7@example.com\"\n  },\n  {\n    \"status\": \"terminated\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"terminated\",\n        \"at\": \"2025-03-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2025-03-01T12:00:00.000Z\",\n    \"updated_at\": \"2025-03-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2025-03-01T12:00:00.000Z\",\n    \"amount\": 15200,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"yearly\",\n    \"payment_status\": \"failed\",\n    \"payment_method_type\": \"wire\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2025-03-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2026-03-01T12:00:00.000Z\",\n    \"current_period_start\": \"2025-03-01T12:00:00.000Z\",\n    \"current_period_end\": \"2026-03-01T12:00:00.000Z\",\n    \"current_period_progress\": 1,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-008\",\n    \"plan_name\": \"Subscription 08\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer8@example.com\",\n    \"cancellation_reason\": \"Subscription no longer needed\",\n    \"cancellation_reason_code\": \"customer_request\",\n    \"cancellation_requested_at\": \"2026-03-01T12:00:00.000Z\"\n  },\n  {\n    \"status\": \"future\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"future\",\n        \"at\": \"2026-09-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2026-09-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-09-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-09-01T12:00:00.000Z\",\n    \"amount\": 17100,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"monthly\",\n    \"payment_status\": \"retrying\",\n    \"payment_method_type\": \"invoice\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-09-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-09-01T12:00:00.000Z\",\n    \"current_period_end\": \"2026-10-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.23333333333333334,\n    \"is_archived\": false,\n    \"archived_at\": null,\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-009\",\n    \"plan_name\": \"Subscription 09\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer9@example.com\"\n  },\n  {\n    \"status\": \"trialing\",\n    \"state_history\": [\n      {\n        \"from\": null,\n        \"to\": \"trialing\",\n        \"at\": \"2026-03-01T12:00:00.000Z\",\n        \"event\": \"billing_cycle_started\",\n        \"reason\": \"Sample record created\"\n      }\n    ],\n    \"allowed_transitions\": [],\n    \"cancel_at_period_end\": false,\n    \"created_at\": \"2026-03-01T12:00:00.000Z\",\n    \"updated_at\": \"2026-03-01T12:00:00.000Z\",\n    \"last_event\": \"billing_cycle_started\",\n    \"last_event_at\": \"2026-03-01T12:00:00.000Z\",\n    \"amount\": 19000,\n    \"currency\": \"usd\",\n    \"billing_interval\": \"yearly\",\n    \"payment_status\": \"refunded\",\n    \"payment_method_type\": \"other\",\n    \"proration_amount\": 0,\n    \"proration_date\": 0,\n    \"last_payment_at\": \"2026-03-01T12:00:00.000Z\",\n    \"next_payment_due_at\": \"2027-03-01T12:00:00.000Z\",\n    \"current_period_start\": \"2026-03-01T12:00:00.000Z\",\n    \"current_period_end\": \"2027-03-01T12:00:00.000Z\",\n    \"current_period_progress\": 0.5232876712328767,\n    \"is_archived\": true,\n    \"archived_at\": \"2026-09-07T12:00:00.000Z\",\n    \"restored_at\": \"2026-01-01T00:00:00.000Z\",\n    \"archive_reason\": \"\",\n    \"archived_by\": \"\",\n    \"archive_metadata\": {},\n    \"restoration_metadata\": {},\n    \"subscription_id\": \"subscription-010\",\n    \"plan_name\": \"Subscription 10\",\n    \"plan_code\": \"\",\n    \"plan_interval\": \"\",\n    \"customer_name\": \"\",\n    \"customer_email\": \"customer10@example.com\"\n  }\n];\n",
+            "contentHash": "sha256:158948fec9e9aa2b84939ebdb4a0486a2833b6de5e19a27668d953c744a9f695"
+          },
+          {
+            "path": "src/screens/Detail.tsx",
+            "contents": "import React from 'react';\nimport { ArchiveSummary, AuditTimeline, Banner, CancellationSummary, Card, CycleProgressCard, PaymentTimeline, Stack, StatusBadge, StatusTimeline, Tabs, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport type GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';\n\nexport interface GeneratedUIActions {\n  handleCancel: () => void;\n  handleDelete: () => void;\n  handleEdit: () => void;\n  handleViewTimeline: () => void;\n}\n\nexport interface PageProps {\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Recurring price expressed in minor units (e.g., cents). */\n  amount: number;\n  /** Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" \u2014 how the archive was triggered\n  - compliance_tags: string[] \u2014 regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string \u2014 reference to the retention policy that triggered archival\n  - original_status: string \u2014 the Stateful status before archival\n  - related_entity_count: number \u2014 count of related entities also archived (cascade)\n */\n  archiveMetadata?: Record<string, unknown>;\n  /** Human-readable narrative describing why the entity was archived. */\n  archiveReason?: string;\n  /** Timestamp for when the entity entered the archived state. */\n  archivedAt?: string | null;\n  /** User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n */\n  archivedBy?: string;\n  /** Recurrence cadence (monthly, yearly, quarterly, etc.). */\n  billingInterval?: string;\n  /** Whether the subscription will cancel at the natural billing period end. */\n  cancelAtPeriodEnd: boolean;\n  /** Free-form explanation captured during cancellation workflows. */\n  cancellationReason?: string;\n  /** Structured reason code chosen from the allowedReasons parameter. */\n  cancellationReasonCode?: string;\n  /** Timestamp when cancellation was initiated. */\n  cancellationRequestedAt?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO 4217 currency code used for billing. */\n  currency: string;\n  /** End timestamp of the current billing cycle. */\n  currentPeriodEnd: string;\n  /** Decimal progress (0-1) through the active billing cycle. */\n  currentPeriodProgress?: number;\n  /** Start timestamp of the current billing cycle. */\n  currentPeriodStart: string;\n  /** Billing contact email address. */\n  customerEmail?: string;\n  /** Customer or account name associated with the subscription. */\n  customerName?: string;\n  /** Flag indicating whether the entity is currently archived (soft-deleted). */\n  isArchived: boolean;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent successful payment. */\n  lastPaymentAt?: string;\n  /** Timestamp when the next payment attempt should occur. */\n  nextPaymentDueAt?: string;\n  /** Payment instrument category used for collection. */\n  paymentMethodType?: 'card' | 'ach' | 'wire' | 'invoice' | 'other';\n  /** Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status \u2014 a subscription can be \"active\" with payment_status \"retrying\".\n */\n  paymentStatus?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded';\n  /** Internal plan code or price identifier. */\n  planCode?: string;\n  /** Billing interval descriptor (monthly, yearly, etc.). */\n  planInterval?: string;\n  /** Human-readable plan label shown in headers. */\n  planName: string;\n  /** Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n */\n  prorationAmount?: number;\n  /** Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit \u2014 an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n */\n  prorationDate?: number;\n  /** Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string \u2014 user ID or \"system\"\n  - restored_fields: string[] \u2014 when partial restore, which fields were restored\n  - restoration_reason: string \u2014 why the entity was restored\n  - restored_from_snapshot: boolean \u2014 whether restored from a point-in-time snapshot\n */\n  restorationMetadata?: Record<string, unknown>;\n  /** Timestamp for when the entity was most recently restored from an archived state. */\n  restoredAt?: string | null;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Current lifecycle status of the subscription. */\n  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';\n  /** Primary identifier used across billing and lifecycle systems. */\n  subscriptionId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype ArchiveSummaryProps = React.ComponentPropsWithoutRef<typeof ArchiveSummary>;\ntype AuditTimelineProps = React.ComponentPropsWithoutRef<typeof AuditTimeline>;\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype CancellationSummaryProps = React.ComponentPropsWithoutRef<typeof CancellationSummary>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype CycleProgressCardProps = React.ComponentPropsWithoutRef<typeof CycleProgressCard>;\ntype PaymentTimelineProps = React.ComponentPropsWithoutRef<typeof PaymentTimeline>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusBadgeProps = React.ComponentPropsWithoutRef<typeof StatusBadge>;\ntype StatusTimelineProps = React.ComponentPropsWithoutRef<typeof StatusTimeline>;\ntype TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, uiState, allowedTransitions, amount, archiveMetadata, archiveReason, archivedAt, archivedBy, billingInterval, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, currency, currentPeriodEnd, currentPeriodProgress, currentPeriodStart, customerEmail, customerName, isArchived, lastEvent, lastEventAt, lastPaymentAt, nextPaymentDueAt, paymentMethodType, paymentStatus, planCode, planInterval, planName, prorationAmount, prorationDate, restorationMetadata, restoredAt, stateHistory, status, subscriptionId, updatedAt }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleCancel') || typeof actions.handleCancel !== 'function') { throw new Error('GeneratedUI requires actions.handleCancel.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleDelete') || typeof actions.handleDelete !== 'function') { throw new Error('GeneratedUI requires actions.handleDelete.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleEdit') || typeof actions.handleEdit !== 'function') { throw new Error('GeneratedUI requires actions.handleEdit.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleViewTimeline') || typeof actions.handleViewTimeline !== 'function') { throw new Error('GeneratedUI requires actions.handleViewTimeline.'); }\n\n  /* @oods-domain-binding handleCancel */ const handleCancel = () => { actions.handleCancel(); };\n  /* @oods-domain-binding handleDelete */ const handleDelete = () => { actions.handleDelete(); };\n  /* @oods-domain-binding handleEdit */ const handleEdit = () => { actions.handleEdit(); };\n  /* @oods-domain-binding handleViewTimeline */ const handleViewTimeline = () => { actions.handleViewTimeline(); };\n\n  return (\n    <>\n      <>\n        <Stack id=\"detail-screen\" data-oods-component=\"Stack\">\n              {uiState === 'loading' && (\n                <Banner id=\"detail-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n              )}\n              {uiState === 'empty' && (\n                <Banner id=\"detail-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"Change the filters or add a record.\" title=\"No records found\" />\n              )}\n              {uiState === 'error' && (\n                <Banner id=\"detail-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n              )}\n              {uiState === 'success' && (\n                <Stack id=\"detail-screen-detail-13\" data-oods-component=\"Stack\" data-oods-state=\"success\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                        <Stack id=\"detail-detail-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                                  <Stack id=\"detail-slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                              <StatusTimeline id=\"detail-ve-header-26\" data-oods-component=\"StatusTimeline\" showActorId showReason history={stateHistory} allowedTransitions={allowedTransitions} status={status} />\n                                              <CancellationSummary id=\"detail-ve-header-27\" data-oods-component=\"CancellationSummary\" cancelAtPeriodEnd={cancelAtPeriodEnd} requestedAt={cancellationRequestedAt} reason={cancellationReason} code={cancellationReasonCode} />\n                                              <ArchiveSummary id=\"detail-ve-header-28\" data-oods-component=\"ArchiveSummary\" isArchived={isArchived} archivedAt={archivedAt} reason={archiveReason} />\n                                            </Stack>\n                                </Stack>\n                        <Card id=\"detail-detail-body-10\" data-oods-component=\"Card\" data-layout=\"sidebar\" style={{ alignItems: 'start', display: 'grid', gap: 'var(--ref-space-cluster-default)', gridTemplateColumns: 'minmax(0, 1fr) minmax(16rem, 24rem)' }}>\n                                  <div data-sidebar-main>\n                                    <Tabs id=\"detail-detail-tabs-9\" data-oods-component=\"Tabs\" ariaLabel=\"Record details\" items={[\n                                      { ...{\"id\":\"detail-detail-tab-panel-3\",\"label\":\"Billing\"}, panel: (\n                                        <Stack id=\"detail-detail-tab-panel-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                          <CycleProgressCard id=\"detail-slot-tab-0-4\" data-oods-component=\"CycleProgressCard\" progress={currentPeriodProgress} periodStart={currentPeriodStart} periodEnd={currentPeriodEnd} interval={billingInterval} />\n                                          <PaymentTimeline id=\"detail-slot-tab-1-6\" data-oods-component=\"PaymentTimeline\" lastPayment={lastPaymentAt} nextPayment={nextPaymentDueAt} paymentStatus={paymentStatus} paymentMethod={paymentMethodType} amount={amount} currency={currency} />\n                                        </Stack>\n                                      ) },\n                                      { ...{\"id\":\"detail-detail-tab-panel-14\",\"label\":\"Details\"}, panel: (\n                                        <Stack id=\"detail-detail-tab-panel-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                          <StatusBadge id=\"detail-slot-tab-3-15\" data-oods-component=\"StatusBadge\" label=\"Payment status\" status={paymentStatus} />\n                                          <Text id=\"detail-slot-tab-4-17\" data-oods-component=\"Text\" label=\"Amount\">{amount}</Text>\n                                        </Stack>\n                                      ) }\n                                    ]} />\n                                  </div>\n                                  <aside data-sidebar-aside>\n                                    <Stack id=\"detail-detail-meta-11\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)', padding: 'var(--ref-space-inset-default)' }}>\n                                                  <AuditTimeline id=\"detail-slot-metadata-12\" data-oods-component=\"AuditTimeline\" auditLog={stateHistory} />\n                                                </Stack>\n                                  </aside>\n                                </Card>\n                      </Stack>\n              )}\n            </Stack>\n        <div role=\"group\" aria-label=\"Screen actions\" data-oods-screen-actions=\"detail-screen\">\n          <button type=\"button\" data-oods-action=\"handleCancel\" onClick={() => handleCancel()}>Cancel subscription</button>\n          <button type=\"button\" data-oods-action=\"handleDelete\" onClick={() => handleDelete()}>Archive</button>\n          <button type=\"button\" data-oods-action=\"handleEdit\" onClick={() => handleEdit()}>Edit</button>\n          <button type=\"button\" data-oods-action=\"handleViewTimeline\" onClick={() => handleViewTimeline()}>View timeline</button>\n        </div>\n      </>\n    </>\n  );\n};\n",
+            "contentHash": "sha256:f48a62f6f08431ebaf42ba064e3f005b22d0f7f0e088eaa9922b6e0a8518bfee"
+          },
+          {
+            "path": "src/screens/Form.tsx",
+            "contents": "import React from 'react';\nimport { Banner, BillingAmountInput, BillingIntervalSelector, Button, CancellationForm, Checkbox, Input, Select, Stack, StatusSelector } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport type GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';\n\nexport interface GeneratedUIActions {\n  handleSubmit: () => void;\n}\n\nexport interface PageProps {\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Recurring price expressed in minor units (e.g., cents). */\n  amount: number;\n  /** Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" \u2014 how the archive was triggered\n  - compliance_tags: string[] \u2014 regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string \u2014 reference to the retention policy that triggered archival\n  - original_status: string \u2014 the Stateful status before archival\n  - related_entity_count: number \u2014 count of related entities also archived (cascade)\n */\n  archiveMetadata?: Record<string, unknown>;\n  /** Human-readable narrative describing why the entity was archived. */\n  archiveReason?: string;\n  /** Timestamp for when the entity entered the archived state. */\n  archivedAt?: string | null;\n  /** User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n */\n  archivedBy?: string;\n  /** Recurrence cadence (monthly, yearly, quarterly, etc.). */\n  billingInterval?: string;\n  /** Whether the subscription will cancel at the natural billing period end. */\n  cancelAtPeriodEnd: boolean;\n  /** Free-form explanation captured during cancellation workflows. */\n  cancellationReason?: string;\n  /** Structured reason code chosen from the allowedReasons parameter. */\n  cancellationReasonCode?: string;\n  /** Timestamp when cancellation was initiated. */\n  cancellationRequestedAt?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO 4217 currency code used for billing. */\n  currency: string;\n  /** End timestamp of the current billing cycle. */\n  currentPeriodEnd: string;\n  /** Decimal progress (0-1) through the active billing cycle. */\n  currentPeriodProgress?: number;\n  /** Start timestamp of the current billing cycle. */\n  currentPeriodStart: string;\n  /** Billing contact email address. */\n  customerEmail?: string;\n  /** Customer or account name associated with the subscription. */\n  customerName?: string;\n  /** Flag indicating whether the entity is currently archived (soft-deleted). */\n  isArchived: boolean;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent successful payment. */\n  lastPaymentAt?: string;\n  /** Timestamp when the next payment attempt should occur. */\n  nextPaymentDueAt?: string;\n  /** Payment instrument category used for collection. */\n  paymentMethodType?: 'card' | 'ach' | 'wire' | 'invoice' | 'other';\n  /** Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status \u2014 a subscription can be \"active\" with payment_status \"retrying\".\n */\n  paymentStatus?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded';\n  /** Internal plan code or price identifier. */\n  planCode?: string;\n  /** Billing interval descriptor (monthly, yearly, etc.). */\n  planInterval?: string;\n  /** Human-readable plan label shown in headers. */\n  planName: string;\n  /** Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n */\n  prorationAmount?: number;\n  /** Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit \u2014 an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n */\n  prorationDate?: number;\n  /** Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string \u2014 user ID or \"system\"\n  - restored_fields: string[] \u2014 when partial restore, which fields were restored\n  - restoration_reason: string \u2014 why the entity was restored\n  - restored_from_snapshot: boolean \u2014 whether restored from a point-in-time snapshot\n */\n  restorationMetadata?: Record<string, unknown>;\n  /** Timestamp for when the entity was most recently restored from an archived state. */\n  restoredAt?: string | null;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Current lifecycle status of the subscription. */\n  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';\n  /** Primary identifier used across billing and lifecycle systems. */\n  subscriptionId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype BillingAmountInputProps = React.ComponentPropsWithoutRef<typeof BillingAmountInput>;\ntype BillingIntervalSelectorProps = React.ComponentPropsWithoutRef<typeof BillingIntervalSelector>;\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype CancellationFormProps = React.ComponentPropsWithoutRef<typeof CancellationForm>;\ntype CheckboxProps = React.ComponentPropsWithoutRef<typeof Checkbox>;\ntype InputProps = React.ComponentPropsWithoutRef<typeof Input>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusSelectorProps = React.ComponentPropsWithoutRef<typeof StatusSelector>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, uiState, allowedTransitions, amount, archiveMetadata, archiveReason, archivedAt, archivedBy, billingInterval, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, currency, currentPeriodEnd, currentPeriodProgress, currentPeriodStart, customerEmail, customerName, isArchived, lastEvent, lastEventAt, lastPaymentAt, nextPaymentDueAt, paymentMethodType, paymentStatus, planCode, planInterval, planName, prorationAmount, prorationDate, restorationMetadata, restoredAt, stateHistory, status, subscriptionId, updatedAt }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSubmit') || typeof actions.handleSubmit !== 'function') { throw new Error('GeneratedUI requires actions.handleSubmit.'); }\n\n  const [handleChange_cancel_at_period_endState, setHandleChange_cancel_at_period_endState] = React.useState<boolean>(cancelAtPeriodEnd ?? false);\n  /* @oods-local-binding handleChange_cancel_at_period_end */ const handleChange_cancel_at_period_end = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_cancel_at_period_endState(event.currentTarget.checked); };\n  const [handleChange_cancellation_requested_atState, setHandleChange_cancellation_requested_atState] = React.useState<string>(String(cancellationRequestedAt ?? ''));\n  /* @oods-local-binding handleChange_cancellation_requested_at */ const handleChange_cancellation_requested_at = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_cancellation_requested_atState(event.currentTarget.value); };\n  const [handleChange_currencyState, setHandleChange_currencyState] = React.useState<string>(String(currency ?? ''));\n  /* @oods-local-binding handleChange_currency */ const handleChange_currency = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_currencyState(event.currentTarget.value); };\n  const [handleChange_customer_emailState, setHandleChange_customer_emailState] = React.useState<string>(String(customerEmail ?? ''));\n  /* @oods-local-binding handleChange_customer_email */ const handleChange_customer_email = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_customer_emailState(event.currentTarget.value); };\n  const [handleChange_last_eventState, setHandleChange_last_eventState] = React.useState<string>(String(lastEvent ?? ''));\n  /* @oods-local-binding handleChange_last_event */ const handleChange_last_event = (event: React.ChangeEvent<HTMLInputElement>) => { setHandleChange_last_eventState(event.currentTarget.value); };\n  const [handleChange_payment_method_typeState, setHandleChange_payment_method_typeState] = React.useState<string>(String(paymentMethodType ?? ''));\n  /* @oods-local-binding handleChange_payment_method_type */ const handleChange_payment_method_type = (event: React.ChangeEvent<HTMLSelectElement>) => { setHandleChange_payment_method_typeState(event.currentTarget.value); };\n  const [handleChange_statusState, setHandleChange_statusState] = React.useState<string>(String(status ?? ''));\n  /* @oods-local-binding handleChange_status */ const handleChange_status = (event: React.ChangeEvent<HTMLSelectElement>) => { setHandleChange_statusState(event.currentTarget.value); };\n  /* @oods-domain-binding handleSubmit */ const handleSubmit = () => { actions.handleSubmit(); };\n\n  return (\n    <>\n      <Stack id=\"form-screen\" data-oods-component=\"Stack\">\n            {uiState === 'loading' && (\n              <Banner id=\"form-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n            )}\n            {uiState === 'empty' && (\n              <Banner id=\"form-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"Change the filters or add a record.\" title=\"No records found\" />\n            )}\n            {uiState === 'error' && (\n              <Banner id=\"form-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n            )}\n            {uiState === 'success' && (\n              <Stack id=\"form-screen-form-11\" data-oods-component=\"Stack\" data-oods-state=\"success\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)', padding: 'var(--ref-space-inset-default)' }}>\n                      <Stack id=\"form-form-title-1\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <StatusSelector id=\"form-ve-title-28\" data-oods-component=\"StatusSelector\" help=\"Current lifecycle status of the subscription.\" label=\"Status\" options={[{\"label\":\"Future\",\"value\":\"future\"},{\"label\":\"Trialing\",\"value\":\"trialing\"},{\"label\":\"Active\",\"value\":\"active\"},{\"label\":\"Paused\",\"value\":\"paused\"},{\"label\":\"Pending Cancellation\",\"value\":\"pending_cancellation\"},{\"label\":\"Past Due\",\"value\":\"past_due\"},{\"label\":\"Unpaid\",\"value\":\"unpaid\"},{\"label\":\"Terminated\",\"value\":\"terminated\"}]} value={handleChange_statusState} onChange={handleChange_status} />\n                                <CancellationForm id=\"form-ve-title-29\" data-oods-component=\"CancellationForm\" allowedReasons={[]} codeHelp=\"Structured reason code chosen from the allowedReasons parameter.\" embedded reasonHelp=\"Free-form explanation captured during cancellation workflows.\" reason={cancellationReason} reasonCode={cancellationReasonCode} />\n                              </Stack>\n                      <Stack id=\"form-form-fields-8\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                <Stack id=\"form-form-field-group-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                            <Stack id=\"form-slot-field-0-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                                                          <BillingIntervalSelector id=\"form-ve-field-0-26\" data-oods-component=\"BillingIntervalSelector\" help=\"Recurrence cadence (monthly, yearly, quarterly, etc.).\" intervals={[\"monthly\",\"yearly\"]} interval={billingInterval} />\n                                                          <BillingAmountInput id=\"form-ve-field-0-27\" data-oods-component=\"BillingAmountInput\" help=\"Recurring price expressed in minor units (e.g., cents).\" minorUnits={100} amount={amount} currency={currency} />\n                                                        </Stack>\n                                          </Stack>\n                                <Stack id=\"form-form-field-group-4\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                            <Checkbox id=\"form-slot-field-1-5\" data-oods-component=\"Checkbox\" help=\"Whether the subscription will cancel at the natural billing period end.\" label=\"Cancel at period end\" checked={handleChange_cancel_at_period_endState} onChange={handleChange_cancel_at_period_end} />\n                                          </Stack>\n                                <Stack id=\"form-form-field-group-6\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }} />\n                                <Stack id=\"form-form-field-group-12\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                            <Input id=\"form-slot-field-3-13\" data-oods-component=\"Input\" help=\"Timestamp when cancellation was initiated.\" label=\"Cancellation requested at\" placeholder=\"Timestamp when cancellation was initiated.\" type=\"datetime-local\" value={handleChange_cancellation_requested_atState} onChange={handleChange_cancellation_requested_at} />\n                                          </Stack>\n                                <Stack id=\"form-form-field-group-14\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                            <Input id=\"form-slot-field-4-15\" data-oods-component=\"Input\" help=\"ISO 4217 currency code used for billing.\" label=\"Currency\" placeholder=\"Enter currency\" required value={handleChange_currencyState} onChange={handleChange_currency} />\n                                          </Stack>\n                                <Stack id=\"form-form-field-group-16\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                            <Select id=\"form-slot-field-5-17\" data-oods-component=\"Select\" help=\"Payment instrument category used for collection.\" label=\"Payment method type\" options={[{\"value\":\"card\",\"label\":\"card\"},{\"value\":\"ach\",\"label\":\"ach\"},{\"value\":\"wire\",\"label\":\"wire\"},{\"value\":\"invoice\",\"label\":\"invoice\"},{\"value\":\"other\",\"label\":\"other\"}]} placeholder=\"Enter payment method type\" value={handleChange_payment_method_typeState} onChange={handleChange_payment_method_type} />\n                                          </Stack>\n                                <Stack id=\"form-form-field-group-18\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                            <Input id=\"form-slot-field-6-19\" data-oods-component=\"Input\" help=\"Billing contact email address.\" label=\"Customer email\" placeholder=\"Enter customer email\" type=\"email\" value={handleChange_customer_emailState} onChange={handleChange_customer_email} />\n                                          </Stack>\n                                <Stack id=\"form-form-field-group-20\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                                            <Input id=\"form-slot-field-7-21\" data-oods-component=\"Input\" help=\"Lifecycle event associated with the most recent timestamp mutation.\" label=\"Last event\" placeholder=\"Enter last event\" required value={handleChange_last_eventState} onChange={handleChange_last_event} />\n                                          </Stack>\n                                <Stack id=\"form-form-field-group-22\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }} />\n                                <Stack id=\"form-form-field-group-24\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }} />\n                              </Stack>\n                      <Stack id=\"form-form-actions-9\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: 'var(--ref-space-inset-default)' }}>\n                                <Button id=\"form-form-submit-10\" data-oods-component=\"Button\" content=\"Save\" type=\"submit\" />\n                              </Stack>\n                    </Stack>\n            )}\n          </Stack>\n    </>\n  );\n};\n",
+            "contentHash": "sha256:9c1cf9b03121d04d5bcaf3aca4c0f192a30d273a39f02ce72c98401e998362bf"
+          },
+          {
+            "path": "src/screens/List.tsx",
+            "contents": "import React from 'react';\nimport { ArchivedRowOverlay, Banner, BillingSummaryBadge, Button, PaginationBar, RelativeTimestamp, SearchInput, Select, Stack, StatusBadge, Tabs, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport type GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';\n\nexport interface GeneratedUIActions {\n  handleFilter: (criteria: Record<string, unknown>) => void;\n  handlePageChange: (page: number) => void;\n  handleRowClick: (rowId: string) => void;\n  handleSort: (column: string) => void;\n}\n\nexport interface PageProps {\n  rows?: Array<{ status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated'; stateHistory?: unknown[]; allowedTransitions?: string[]; cancelAtPeriodEnd: boolean; cancellationReason?: string; cancellationReasonCode?: string; cancellationRequestedAt?: string; createdAt: string; updatedAt?: string; lastEvent: string; lastEventAt?: string; amount: number; currency: string; billingInterval?: string; paymentStatus?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded'; paymentMethodType?: 'card' | 'ach' | 'wire' | 'invoice' | 'other'; prorationAmount?: number; prorationDate?: number; lastPaymentAt?: string; nextPaymentDueAt?: string; currentPeriodStart: string; currentPeriodEnd: string; currentPeriodProgress?: number; isArchived: boolean; archivedAt?: string | null; restoredAt?: string | null; archiveReason?: string; archivedBy?: string; archiveMetadata?: Record<string, unknown>; restorationMetadata?: Record<string, unknown>; subscriptionId: string; planName: string; planCode?: string; planInterval?: string; customerName?: string; customerEmail?: string }>;\n  collectionQuery?: { search?: string; status?: string; descending?: boolean; archived?: boolean; page?: number; pageSize?: number; total?: number };\n  actions: GeneratedUIActions;\n  uiState: GeneratedUIState;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Recurring price expressed in minor units (e.g., cents). */\n  amount: number;\n  /** Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" \u2014 how the archive was triggered\n  - compliance_tags: string[] \u2014 regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string \u2014 reference to the retention policy that triggered archival\n  - original_status: string \u2014 the Stateful status before archival\n  - related_entity_count: number \u2014 count of related entities also archived (cascade)\n */\n  archiveMetadata?: Record<string, unknown>;\n  /** Human-readable narrative describing why the entity was archived. */\n  archiveReason?: string;\n  /** Timestamp for when the entity entered the archived state. */\n  archivedAt?: string | null;\n  /** User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n */\n  archivedBy?: string;\n  /** Recurrence cadence (monthly, yearly, quarterly, etc.). */\n  billingInterval?: string;\n  /** Whether the subscription will cancel at the natural billing period end. */\n  cancelAtPeriodEnd: boolean;\n  /** Free-form explanation captured during cancellation workflows. */\n  cancellationReason?: string;\n  /** Structured reason code chosen from the allowedReasons parameter. */\n  cancellationReasonCode?: string;\n  /** Timestamp when cancellation was initiated. */\n  cancellationRequestedAt?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO 4217 currency code used for billing. */\n  currency: string;\n  /** End timestamp of the current billing cycle. */\n  currentPeriodEnd: string;\n  /** Decimal progress (0-1) through the active billing cycle. */\n  currentPeriodProgress?: number;\n  /** Start timestamp of the current billing cycle. */\n  currentPeriodStart: string;\n  /** Billing contact email address. */\n  customerEmail?: string;\n  /** Customer or account name associated with the subscription. */\n  customerName?: string;\n  /** Flag indicating whether the entity is currently archived (soft-deleted). */\n  isArchived: boolean;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent successful payment. */\n  lastPaymentAt?: string;\n  /** Timestamp when the next payment attempt should occur. */\n  nextPaymentDueAt?: string;\n  /** Payment instrument category used for collection. */\n  paymentMethodType?: 'card' | 'ach' | 'wire' | 'invoice' | 'other';\n  /** Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status \u2014 a subscription can be \"active\" with payment_status \"retrying\".\n */\n  paymentStatus?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded';\n  /** Internal plan code or price identifier. */\n  planCode?: string;\n  /** Billing interval descriptor (monthly, yearly, etc.). */\n  planInterval?: string;\n  /** Human-readable plan label shown in headers. */\n  planName: string;\n  /** Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n */\n  prorationAmount?: number;\n  /** Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit \u2014 an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n */\n  prorationDate?: number;\n  /** Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string \u2014 user ID or \"system\"\n  - restored_fields: string[] \u2014 when partial restore, which fields were restored\n  - restoration_reason: string \u2014 why the entity was restored\n  - restored_from_snapshot: boolean \u2014 whether restored from a point-in-time snapshot\n */\n  restorationMetadata?: Record<string, unknown>;\n  /** Timestamp for when the entity was most recently restored from an archived state. */\n  restoredAt?: string | null;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Current lifecycle status of the subscription. */\n  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';\n  /** Primary identifier used across billing and lifecycle systems. */\n  subscriptionId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype ArchivedRowOverlayProps = React.ComponentPropsWithoutRef<typeof ArchivedRowOverlay>;\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype BillingSummaryBadgeProps = React.ComponentPropsWithoutRef<typeof BillingSummaryBadge>;\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype RelativeTimestampProps = React.ComponentPropsWithoutRef<typeof RelativeTimestamp>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusBadgeProps = React.ComponentPropsWithoutRef<typeof StatusBadge>;\ntype TabsProps = React.ComponentPropsWithoutRef<typeof Tabs>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ actions, uiState, allowedTransitions, amount, archiveMetadata, archiveReason, archivedAt, archivedBy, billingInterval, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, currency, currentPeriodEnd, currentPeriodProgress, currentPeriodStart, customerEmail, customerName, isArchived, lastEvent, lastEventAt, lastPaymentAt, nextPaymentDueAt, paymentMethodType, paymentStatus, planCode, planInterval, planName, prorationAmount, prorationDate, restorationMetadata, restoredAt, stateHistory, status, subscriptionId, updatedAt, rows = [], collectionQuery = {} }) => {\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleFilter') || typeof actions.handleFilter !== 'function') { throw new Error('GeneratedUI requires actions.handleFilter.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handlePageChange') || typeof actions.handlePageChange !== 'function') { throw new Error('GeneratedUI requires actions.handlePageChange.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleRowClick') || typeof actions.handleRowClick !== 'function') { throw new Error('GeneratedUI requires actions.handleRowClick.'); }\n  if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleSort') || typeof actions.handleSort !== 'function') { throw new Error('GeneratedUI requires actions.handleSort.'); }\n\n  /* @oods-domain-binding handleFilter */ const handleFilter = (criteria: Record<string, unknown>) => { actions.handleFilter(criteria); };\n  /* @oods-domain-binding handlePageChange */ const handlePageChange = (page: number) => { actions.handlePageChange(page); };\n  /* @oods-domain-binding handleRowClick */ const handleRowClick = (rowId: string) => { actions.handleRowClick(rowId); };\n  /* @oods-domain-binding handleSort */ const handleSort = (column: string) => { actions.handleSort(column); };\n\n  return (\n    <>\n      <Stack id=\"list-screen\" data-oods-component=\"Stack\">\n            {uiState === 'loading' && (\n              <Banner id=\"list-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n            )}\n            {uiState === 'empty' && (\n              <Banner id=\"list-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"Change the filters or add a record.\" title=\"No records found\" />\n            )}\n            {uiState === 'error' && (\n              <Banner id=\"list-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n            )}\n            {(uiState === 'success' || uiState === 'empty') && (\n              <Stack id=\"list-screen-list-9\" data-oods-component=\"Stack\" data-oods-state={uiState === 'success' ? 'success' : undefined} data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Stack id=\"list-list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                                <SearchInput id=\"list-slot-search-1\" label=\"Search\" placeholder=\"Search records\" value={collectionQuery.search ?? ''} clearable={true} onValueChange={(search) => handleFilter({ ...collectionQuery, search })} />\n                                <Select id=\"list-slot-filters-2\" label=\"Status\" value={collectionQuery.status ?? ''} options={[{'value': '', 'label': 'All states'}, {'value': 'future', 'label': 'future'}, {'value': 'trialing', 'label': 'trialing'}, {'value': 'active', 'label': 'active'}, {'value': 'paused', 'label': 'paused'}, {'value': 'pending_cancellation', 'label': 'pending cancellation'}, {'value': 'past_due', 'label': 'past due'}, {'value': 'unpaid', 'label': 'unpaid'}, {'value': 'terminated', 'label': 'terminated'}]} onChange={(event) => handleFilter({ ...collectionQuery, status: event.currentTarget.value })} />\n                                <Select id=\"list-list-toolbar-4-sort\" label=\"Sort\" value={collectionQuery.descending ? 'desc' : 'asc'} options={[{'value': 'asc', 'label': 'Name A\u2013Z'}, {'value': 'desc', 'label': 'Name Z\u2013A'}]} onChange={() => handleSort('plan_name')} />\n                              </Stack>\n                      <Tabs id=\"list-list-items-5-archive-tabs\" ariaLabel=\"Archive views\" selectedId={collectionQuery.archived ? 'archived' : 'active'} items={[{ id: 'active', label: 'Active', panel: (collectionQuery.archived ? 'archived' : 'active') === 'active' ? (<><section id=\"list-list-items-5\" data-oods-collection=\"rows\">{rows.length === 0 ? (<Banner id=\"list-list-items-5-empty\" data-oods-component=\"Banner\" content=\"No records found.\" />) : (<ol aria-label=\"Records\" className=\"oods-collection\">{rows.map(({ status, stateHistory, allowedTransitions, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, updatedAt, lastEvent, lastEventAt, amount, currency, billingInterval, paymentStatus, paymentMethodType, prorationAmount, prorationDate, lastPaymentAt, nextPaymentDueAt, currentPeriodStart, currentPeriodEnd, currentPeriodProgress, isArchived, archivedAt, restoredAt, archiveReason, archivedBy, archiveMetadata, restorationMetadata, subscriptionId, planName, planCode, planInterval, customerName, customerEmail }, collectionIndex) => <li key={String(subscriptionId)}><ArchivedRowOverlay id={'list-ve-items-13-' + collectionIndex} data-oods-component=\"ArchivedRowOverlay\" separateTab showBadge tabLabel=\"Archived\" isArchived={isArchived} label={planName}>\n                                <Button id={'list-list-items-5-row-' + collectionIndex} type=\"button\" className=\"oods-collection-row\" data-record-id={String(subscriptionId)} onClick={() => handleRowClick(String(subscriptionId))}><Text id={'list-list-items-5-title-' + collectionIndex} data-oods-component=\"Text\">{planName}</Text>\n                                <StatusBadge id={'list-ve-items-10-' + collectionIndex} data-oods-component=\"StatusBadge\" tone=\"lifecycle\" status={status} />\n                                <RelativeTimestamp id={'list-ve-items-11-' + collectionIndex} data-oods-component=\"RelativeTimestamp\" datetime={updatedAt ?? createdAt} />\n                                <BillingSummaryBadge id={'list-slot-toolbar-actions-3-' + collectionIndex} data-oods-component=\"BillingSummaryBadge\" minorUnits={100} amount={amount} currency={currency} interval={billingInterval} /></Button>\n                              </ArchivedRowOverlay></li>)}</ol>)}</section></>) : null }, { id: 'archived', label: 'Archived', panel: (collectionQuery.archived ? 'archived' : 'active') === 'archived' ? (<><section id=\"list-list-items-5\" data-oods-collection=\"rows\">{rows.length === 0 ? (<Banner id=\"list-list-items-5-empty\" data-oods-component=\"Banner\" content=\"No records found.\" />) : (<ol aria-label=\"Records\" className=\"oods-collection\">{rows.map(({ status, stateHistory, allowedTransitions, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, updatedAt, lastEvent, lastEventAt, amount, currency, billingInterval, paymentStatus, paymentMethodType, prorationAmount, prorationDate, lastPaymentAt, nextPaymentDueAt, currentPeriodStart, currentPeriodEnd, currentPeriodProgress, isArchived, archivedAt, restoredAt, archiveReason, archivedBy, archiveMetadata, restorationMetadata, subscriptionId, planName, planCode, planInterval, customerName, customerEmail }, collectionIndex) => <li key={String(subscriptionId)}><ArchivedRowOverlay id={'list-ve-items-13-' + collectionIndex} data-oods-component=\"ArchivedRowOverlay\" separateTab showBadge tabLabel=\"Archived\" isArchived={isArchived} label={planName}>\n                                <Button id={'list-list-items-5-row-' + collectionIndex} type=\"button\" className=\"oods-collection-row\" data-record-id={String(subscriptionId)} onClick={() => handleRowClick(String(subscriptionId))}><Text id={'list-list-items-5-title-' + collectionIndex} data-oods-component=\"Text\">{planName}</Text>\n                                <StatusBadge id={'list-ve-items-10-' + collectionIndex} data-oods-component=\"StatusBadge\" tone=\"lifecycle\" status={status} />\n                                <RelativeTimestamp id={'list-ve-items-11-' + collectionIndex} data-oods-component=\"RelativeTimestamp\" datetime={updatedAt ?? createdAt} />\n                                <BillingSummaryBadge id={'list-slot-toolbar-actions-3-' + collectionIndex} data-oods-component=\"BillingSummaryBadge\" minorUnits={100} amount={amount} currency={currency} interval={billingInterval} /></Button>\n                              </ArchivedRowOverlay></li>)}</ol>)}</section></>) : null }]} onChange={(id) => handleFilter({ ...collectionQuery, archived: id === 'archived' })} />\n                      <Stack id=\"list-list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                                <PaginationBar id=\"list-slot-pagination-8\" page={collectionQuery.page ?? 1} pageSize={collectionQuery.pageSize ?? 10} totalItems={collectionQuery.total ?? rows.length} onPageChange={handlePageChange} />\n                              </Stack>\n                    </Stack>\n            )}\n          </Stack>\n    </>\n  );\n};\n",
+            "contentHash": "sha256:e50843da34a4bfb2a83912d17fcad45d20392a0019347408bcf99bb21749bd8d"
+          },
+          {
+            "path": "src/screens/Timeline.tsx",
+            "contents": "import React from 'react';\nimport { Banner, BillingSummaryBadge, Card, PaymentEventTimeline, Stack, Text } from '@oods/components-react';\nimport '@oods/component-styles/css';\nimport { chronologicalEvents, formatDateTime, type CollectionEvent } from '@oods/component-contracts';\n\nexport type GeneratedUIState = 'loading' | 'empty' | 'error' | 'success';\n\nexport interface PageProps {\n  events?: CollectionEvent[];\n  uiState: GeneratedUIState;\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Recurring price expressed in minor units (e.g., cents). */\n  amount: number;\n  /** Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" \u2014 how the archive was triggered\n  - compliance_tags: string[] \u2014 regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string \u2014 reference to the retention policy that triggered archival\n  - original_status: string \u2014 the Stateful status before archival\n  - related_entity_count: number \u2014 count of related entities also archived (cascade)\n */\n  archiveMetadata?: Record<string, unknown>;\n  /** Human-readable narrative describing why the entity was archived. */\n  archiveReason?: string;\n  /** Timestamp for when the entity entered the archived state. */\n  archivedAt?: string | null;\n  /** User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n */\n  archivedBy?: string;\n  /** Recurrence cadence (monthly, yearly, quarterly, etc.). */\n  billingInterval?: string;\n  /** Whether the subscription will cancel at the natural billing period end. */\n  cancelAtPeriodEnd: boolean;\n  /** Free-form explanation captured during cancellation workflows. */\n  cancellationReason?: string;\n  /** Structured reason code chosen from the allowedReasons parameter. */\n  cancellationReasonCode?: string;\n  /** Timestamp when cancellation was initiated. */\n  cancellationRequestedAt?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO 4217 currency code used for billing. */\n  currency: string;\n  /** End timestamp of the current billing cycle. */\n  currentPeriodEnd: string;\n  /** Decimal progress (0-1) through the active billing cycle. */\n  currentPeriodProgress?: number;\n  /** Start timestamp of the current billing cycle. */\n  currentPeriodStart: string;\n  /** Billing contact email address. */\n  customerEmail?: string;\n  /** Customer or account name associated with the subscription. */\n  customerName?: string;\n  /** Flag indicating whether the entity is currently archived (soft-deleted). */\n  isArchived: boolean;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent successful payment. */\n  lastPaymentAt?: string;\n  /** Timestamp when the next payment attempt should occur. */\n  nextPaymentDueAt?: string;\n  /** Payment instrument category used for collection. */\n  paymentMethodType?: 'card' | 'ach' | 'wire' | 'invoice' | 'other';\n  /** Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status \u2014 a subscription can be \"active\" with payment_status \"retrying\".\n */\n  paymentStatus?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded';\n  /** Internal plan code or price identifier. */\n  planCode?: string;\n  /** Billing interval descriptor (monthly, yearly, etc.). */\n  planInterval?: string;\n  /** Human-readable plan label shown in headers. */\n  planName: string;\n  /** Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n */\n  prorationAmount?: number;\n  /** Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit \u2014 an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n */\n  prorationDate?: number;\n  /** Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string \u2014 user ID or \"system\"\n  - restored_fields: string[] \u2014 when partial restore, which fields were restored\n  - restoration_reason: string \u2014 why the entity was restored\n  - restored_from_snapshot: boolean \u2014 whether restored from a point-in-time snapshot\n */\n  restorationMetadata?: Record<string, unknown>;\n  /** Timestamp for when the entity was most recently restored from an archived state. */\n  restoredAt?: string | null;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Current lifecycle status of the subscription. */\n  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';\n  /** Primary identifier used across billing and lifecycle systems. */\n  subscriptionId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype BannerProps = React.ComponentPropsWithoutRef<typeof Banner>;\ntype BillingSummaryBadgeProps = React.ComponentPropsWithoutRef<typeof BillingSummaryBadge>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype PaymentEventTimelineProps = React.ComponentPropsWithoutRef<typeof PaymentEventTimeline>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype TextProps = React.ComponentPropsWithoutRef<typeof Text>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ uiState, allowedTransitions, amount, archiveMetadata, archiveReason, archivedAt, archivedBy, billingInterval, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, currency, currentPeriodEnd, currentPeriodProgress, currentPeriodStart, customerEmail, customerName, isArchived, lastEvent, lastEventAt, lastPaymentAt, nextPaymentDueAt, paymentMethodType, paymentStatus, planCode, planInterval, planName, prorationAmount, prorationDate, restorationMetadata, restoredAt, stateHistory, status, subscriptionId, updatedAt, events = [] }) => {\n  return (\n    <>\n      <Stack id=\"timeline-screen\" data-oods-component=\"Stack\">\n            {uiState === 'loading' && (\n              <Banner id=\"timeline-loading\" data-oods-component=\"Banner\" data-oods-state=\"loading\" content=\"Loading your records.\" title=\"Loading\" />\n            )}\n            {uiState === 'empty' && (\n              <Banner id=\"timeline-empty\" data-oods-component=\"Banner\" data-oods-state=\"empty\" content=\"Change the filters or add a record.\" title=\"No records found\" />\n            )}\n            {uiState === 'error' && (\n              <Banner id=\"timeline-error\" data-oods-component=\"Banner\" data-oods-state=\"error\" content=\"Try again or choose another record.\" title=\"Unable to load records\" />\n            )}\n            {uiState === 'success' && (\n              <Stack id=\"timeline-screen-timeline-14\" data-oods-component=\"Stack\" data-oods-state=\"success\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                      <Stack id=\"timeline-timeline-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                                <Text id=\"timeline-timeline-header-1-title\" data-oods-component=\"Text\">{planName}</Text>\n                                <BillingSummaryBadge id=\"timeline-timeline-header-1-billing\" data-oods-component=\"BillingSummaryBadge\" minorUnits={100} amount={amount} currency={currency} interval={billingInterval} />\n                              </Stack>\n                      <section id=\"timeline-timeline-entries-13\" data-oods-collection=\"events\">{events.length === 0 ? (<Banner id=\"timeline-timeline-entries-13-empty\" data-oods-component=\"Banner\" content=\"No events yet.\" />) : (<ol aria-label=\"Lifecycle history\" className=\"oods-collection\">{chronologicalEvents(events).map((collectionEvent, collectionIndex) => <li key={collectionEvent.id}><Card id={'timeline-timeline-entries-13-entry-' + collectionIndex}>{collectionEvent.kind === 'payment' ? (<PaymentEventTimeline id={'timeline-slot-entry-0-4-' + collectionIndex} event={collectionEvent} />) : (<><strong>{collectionEvent.title}</strong><time dateTime={collectionEvent.at}>{formatDateTime(collectionEvent.at)}</time><p>{collectionEvent.description}</p></>)}</Card></li>)}</ol>)}</section>\n                    </Stack>\n            )}\n          </Stack>\n    </>\n  );\n};\n",
+            "contentHash": "sha256:47326f7e3bcb9c4b8f8cc9abaf71e37640bab427986da84012b201a76223dd3f"
+          },
+          {
+            "path": "src/ssr.tsx",
+            "contents": "import React from 'react';\nimport { renderToString } from 'react-dom/server';\nimport App from './App';\nimport type { StoreOptions } from './store';\nexport function renderApp(options: StoreOptions = {}) { return renderToString(<App {...options} />); }\n",
+            "contentHash": "sha256:955f316df646abe4cc9ef0ec3ee7d9b8dc6f38e68dd78bf5837b387bf3c839a0"
+          },
+          {
+            "path": "src/store.ts",
+            "contents": "import { chronologicalEvents, billingSummary, type CollectionEvent } from '@oods/component-contracts';\nimport { sampleData } from './sample-data';\n\nexport type DomainRecord = {\n  \"status\": 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';\n  \"state_history\"?: unknown[];\n  \"allowed_transitions\"?: string[];\n  \"cancel_at_period_end\": boolean;\n  \"cancellation_reason\"?: string;\n  \"cancellation_reason_code\"?: string;\n  \"cancellation_requested_at\"?: string;\n  \"created_at\": string;\n  \"updated_at\"?: string;\n  \"last_event\": string;\n  \"last_event_at\"?: string;\n  \"amount\": number;\n  \"currency\": string;\n  \"billing_interval\"?: string;\n  \"payment_status\"?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded';\n  \"payment_method_type\"?: 'card' | 'ach' | 'wire' | 'invoice' | 'other';\n  \"proration_amount\"?: number;\n  \"proration_date\"?: number;\n  \"last_payment_at\"?: string;\n  \"next_payment_due_at\"?: string;\n  \"current_period_start\": string;\n  \"current_period_end\": string;\n  \"current_period_progress\"?: number;\n  \"is_archived\": boolean;\n  \"archived_at\"?: string | null;\n  \"restored_at\"?: string | null;\n  \"archive_reason\"?: string;\n  \"archived_by\"?: string;\n  \"archive_metadata\"?: Record<string, unknown>;\n  \"restoration_metadata\"?: Record<string, unknown>;\n  \"subscription_id\": string;\n  \"plan_name\": string;\n  \"plan_code\"?: string;\n  \"plan_interval\"?: string;\n  \"customer_name\"?: string;\n  \"customer_email\"?: string;\n};\nexport const idField = \"subscription_id\" as const;\nexport const titleField = \"plan_name\" as const;\nexport const fieldTypes: Record<string, string> = {\"status\":\"string\",\"state_history\":\"StateTransition[]\",\"allowed_transitions\":\"string[]\",\"cancel_at_period_end\":\"boolean\",\"cancellation_reason\":\"string\",\"cancellation_reason_code\":\"string\",\"cancellation_requested_at\":\"datetime\",\"created_at\":\"datetime\",\"updated_at\":\"datetime\",\"last_event\":\"string\",\"last_event_at\":\"datetime\",\"amount\":\"integer\",\"currency\":\"string\",\"billing_interval\":\"string\",\"payment_status\":\"string\",\"payment_method_type\":\"string\",\"proration_amount\":\"integer\",\"proration_date\":\"integer\",\"last_payment_at\":\"datetime\",\"next_payment_due_at\":\"datetime\",\"current_period_start\":\"datetime\",\"current_period_end\":\"datetime\",\"current_period_progress\":\"number\",\"is_archived\":\"boolean\",\"archived_at\":\"datetime?\",\"restored_at\":\"datetime?\",\"archive_reason\":\"string\",\"archived_by\":\"string\",\"archive_metadata\":\"object\",\"restoration_metadata\":\"object\",\"subscription_id\":\"string\",\"plan_name\":\"string\",\"plan_code\":\"string\",\"plan_interval\":\"string\",\"customer_name\":\"string\",\"customer_email\":\"email\"};\nexport const traits: readonly string[] = [\"Stateful\",\"Cancellable\",\"Timestampable\",\"Billable\",\"Archivable\"];\nexport interface StoreOptions { empty?: boolean; fail?: boolean; latency?: number; now?: () => string; seed?: DomainRecord[] }\nexport interface ListQuery { search?: string; status?: string; archived?: boolean; sort?: keyof DomainRecord; descending?: boolean; page?: number; pageSize?: number }\nexport interface HistoryEntry { from: string | null; to: string; at: string; reason: string; code?: string; atPeriodEnd?: boolean }\nexport function screenProps(record: DomainRecord) {\n  return {\n  status: record[\"status\"],\n  stateHistory: record[\"state_history\"],\n  allowedTransitions: record[\"allowed_transitions\"],\n  cancelAtPeriodEnd: record[\"cancel_at_period_end\"],\n  cancellationReason: record[\"cancellation_reason\"],\n  cancellationReasonCode: record[\"cancellation_reason_code\"],\n  cancellationRequestedAt: record[\"cancellation_requested_at\"],\n  createdAt: record[\"created_at\"],\n  updatedAt: record[\"updated_at\"],\n  lastEvent: record[\"last_event\"],\n  lastEventAt: record[\"last_event_at\"],\n  amount: record[\"amount\"],\n  currency: record[\"currency\"],\n  billingInterval: record[\"billing_interval\"],\n  paymentStatus: record[\"payment_status\"],\n  paymentMethodType: record[\"payment_method_type\"],\n  prorationAmount: record[\"proration_amount\"],\n  prorationDate: record[\"proration_date\"],\n  lastPaymentAt: record[\"last_payment_at\"],\n  nextPaymentDueAt: record[\"next_payment_due_at\"],\n  currentPeriodStart: record[\"current_period_start\"],\n  currentPeriodEnd: record[\"current_period_end\"],\n  currentPeriodProgress: record[\"current_period_progress\"],\n  isArchived: record[\"is_archived\"],\n  archivedAt: record[\"archived_at\"],\n  restoredAt: record[\"restored_at\"],\n  archiveReason: record[\"archive_reason\"],\n  archivedBy: record[\"archived_by\"],\n  archiveMetadata: record[\"archive_metadata\"],\n  restorationMetadata: record[\"restoration_metadata\"],\n  subscriptionId: record[\"subscription_id\"],\n  planName: record[\"plan_name\"],\n  planCode: record[\"plan_code\"],\n  planInterval: record[\"plan_interval\"],\n  customerName: record[\"customer_name\"],\n  customerEmail: record[\"customer_email\"],\n  };\n}\nexport function history(record: DomainRecord): HistoryEntry[] {\n  const value = (record as Record<string, unknown>).state_history;\n  return Array.isArray(value) ? value.filter((entry): entry is HistoryEntry => !!entry && typeof entry === 'object' && typeof entry.to === 'string' && typeof entry.at === 'string') : [];\n}\nexport function collectionEvents(record: DomainRecord): CollectionEvent[] {\n  const values = record as Record<string, unknown>;\n  const source = values[\"state_history\"];\n  const events: CollectionEvent[] = Array.isArray(source) ? source.flatMap((entry, index) => {\n    if (!entry || typeof entry !== 'object' || typeof entry.at !== 'string' || typeof entry.to !== 'string') return [];\n    return [{ id: 'state-' + index, title: entry.to.replaceAll('_', ' '), at: entry.at, description: String(entry.reason ?? ''), kind: 'state' as const }];\n  }) : [];\n  for (const source of [{\"field\":\"last_payment_at\",\"title\":\"Last payment\"},{\"field\":\"next_payment_due_at\",\"title\":\"Next payment\"}] as Array<{ field: string; title: string }>) {\n    const at = values[source.field];\n    if (typeof at === 'string') events.push({ id: 'payment-' + source.field, title: source.title, at, description: billingSummary(Number(values.amount), String(values.currency), 100, String(values.billing_interval)), kind: 'payment' });\n  }\n  return chronologicalEvents(events);\n}\nexport function createStore(options: StoreOptions = {}) {\n  let records = structuredClone(options.seed ?? (options.empty ? [] : sampleData));\n  let fail = options.fail ?? false;\n  const now = options.now ?? (() => new Date().toISOString());\n  const requireTrait = (trait: string) => { if (!traits.includes(trait)) throw new Error('Object does not support ' + trait); };\n  const get = (id: string) => {\n    const record = records.find((entry) => String(entry[idField]) === id);\n    if (!record) throw new Error('Record not found: ' + id);\n    return structuredClone(record);\n  };\n  const save = (record: DomainRecord) => {\n    const index = records.findIndex((entry) => entry[idField] === record[idField]);\n    if (index < 0) throw new Error('Cannot save a missing record');\n    records[index] = structuredClone(record);\n    return get(String(record[idField]));\n  };\n  const setArchived = (id: string, archived: boolean) => {\n    requireTrait('Archivable');\n    const record = get(id);\n    Object.assign(record, { is_archived: archived, archived_at: archived ? now() : null });\n    return save(record);\n  };\n  return {\n    get, save,\n    async ready() {\n      await new Promise<void>((resolve) => setTimeout(resolve, Math.max(0, options.latency ?? 180)));\n      if (fail) throw new Error('Simulated data service failure');\n    },\n    setFailure(value: boolean) { fail = value; },\n    list(query: ListQuery = {}) {\n      const search = (query.search ?? '').trim().toLowerCase();\n      const filtered = records.filter((record) => {\n        const values = record as Record<string, unknown>;\n        return Boolean(values.is_archived) === (query.archived ?? false)\n          && (!query.status || values.status === query.status)\n          && (!search || Object.values(record).some((value) => String(value).toLowerCase().includes(search)));\n      });\n      const sort = query.sort ?? titleField;\n      filtered.sort((a, b) => {\n        const left = a[sort]; const right = b[sort];\n        const order = typeof left === 'number' && typeof right === 'number' ? left - right : String(left).localeCompare(String(right));\n        return (query.descending ? -1 : 1) * order;\n      });\n      const pageSize = Math.max(1, Math.floor(query.pageSize ?? 10));\n      const page = Math.max(1, Math.floor(query.page ?? 1));\n      return { total: filtered.length, page, pageSize, records: structuredClone(filtered.slice((page - 1) * pageSize, page * pageSize)) };\n    },\n    cancel(id: string, reason: string, code: string, atPeriodEnd: boolean) {\n      requireTrait('Cancellable');\n      const record = get(id);\n      const values = record as Record<string, unknown>;\n      if (values.is_archived || values.status === 'terminated' || values.status === 'pending_cancellation') throw new Error('This record cannot be cancelled in its current state');\n      \n      const at = now();\n      const entry: HistoryEntry = { from: String(values.status), to: 'pending_cancellation', at, reason: reason.trim(), code, atPeriodEnd };\n      Object.assign(record, { status: 'pending_cancellation', cancellation_reason: reason.trim(), cancellation_reason_code: code, cancel_at_period_end: atPeriodEnd, cancellation_requested_at: at, state_history: [...history(record), entry], updated_at: at });\n      return save(record);\n    },\n    archive(id: string) { return setArchived(id, true); },\n    restore(id: string) { return setArchived(id, false); },\n  };\n}\n",
+            "contentHash": "sha256:6e28fff21ef055e6ca3fe8514c08da6da6f50f1d237375a94d94d2c6abf3a99a"
+          },
+          {
+            "path": "tsconfig.json",
+            "contents": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"ESNext\",\n    \"moduleResolution\": \"Bundler\",\n    \"strict\": true,\n    \"jsx\": \"react-jsx\",\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": false,\n    \"noEmit\": true,\n    \"lib\": [\n      \"ES2022\",\n      \"DOM\",\n      \"DOM.Iterable\"\n    ]\n  },\n  \"include\": [\n    \"src\"\n  ]\n}\n",
+            "contentHash": "sha256:a0c6dad213106eebefcf5e817d07e31a8b6666e4bc678a449b7c578f62f6fb3a"
+          }
+        ],
+        "dependencies": [
+          {
+            "name": "@oods/component-contracts",
+            "version": "0.1.0",
+            "kind": "dependency"
+          },
+          {
+            "name": "@oods/component-styles",
+            "version": "0.1.0",
+            "kind": "dependency"
+          },
+          {
+            "name": "@oods/components-react",
+            "version": "0.1.0",
+            "kind": "dependency"
+          },
+          {
+            "name": "react",
+            "version": "19.2.0",
+            "kind": "peerDependency"
+          },
+          {
+            "name": "react-dom",
+            "version": "19.2.0",
+            "kind": "peerDependency"
+          }
+        ],
+        "actions": [
+          {
+            "name": "handleCancel",
+            "parameters": [],
+            "sources": [
+              {
+                "nodeId": "detail-screen",
+                "component": "Stack",
+                "event": "onCancel"
+              }
+            ]
+          },
+          {
+            "name": "handleDelete",
+            "parameters": [],
+            "sources": [
+              {
+                "nodeId": "detail-screen",
+                "component": "Stack",
+                "event": "onDelete"
+              }
+            ]
+          },
+          {
+            "name": "handleEdit",
+            "parameters": [],
+            "sources": [
+              {
+                "nodeId": "detail-screen",
+                "component": "Stack",
+                "event": "onEdit"
+              }
+            ]
+          },
+          {
+            "name": "handleFilter",
+            "parameters": [
+              {
+                "name": "criteria",
+                "type": "Record<string, unknown>"
+              }
+            ],
+            "sources": [
+              {
+                "nodeId": "list-screen",
+                "component": "Stack",
+                "event": "onFilter"
+              }
+            ]
+          },
+          {
+            "name": "handlePageChange",
+            "parameters": [
+              {
+                "name": "page",
+                "type": "number"
+              }
+            ],
+            "sources": [
+              {
+                "nodeId": "list-screen",
+                "component": "Stack",
+                "event": "onPageChange"
+              }
+            ]
+          },
+          {
+            "name": "handleRowClick",
+            "parameters": [
+              {
+                "name": "rowId",
+                "type": "string"
+              }
+            ],
+            "sources": [
+              {
+                "nodeId": "list-screen",
+                "component": "Stack",
+                "event": "onRowClick"
+              }
+            ]
+          },
+          {
+            "name": "handleSort",
+            "parameters": [
+              {
+                "name": "column",
+                "type": "string"
+              }
+            ],
+            "sources": [
+              {
+                "nodeId": "list-screen",
+                "component": "Stack",
+                "event": "onSort"
+              }
+            ]
+          },
+          {
+            "name": "handleSubmit",
+            "parameters": [],
+            "sources": [
+              {
+                "nodeId": "form-screen",
+                "component": "Stack",
+                "event": "onSubmit"
+              }
+            ]
+          },
+          {
+            "name": "handleViewTimeline",
+            "parameters": [],
+            "sources": [
+              {
+                "nodeId": "detail-screen",
+                "component": "Stack",
+                "event": "onViewTimeline"
+              }
+            ]
+          }
+        ],
+        "contentHash": "sha256:69b5dd6076d5f7a28779c9700e71d1217c539eecc52cba29b8ba211ef3322470"
+      },
+      "code": "import React from 'react';\nimport { CancellationForm } from '@oods/components-react';\nimport { GeneratedUI as List } from './screens/List';\nimport { GeneratedUI as Detail } from './screens/Detail';\nimport { GeneratedUI as Form } from './screens/Form';\nimport { GeneratedUI as Timeline } from './screens/Timeline';\nimport { createWorkflow, screenProps, collectionEvents, routes, supplementalFields, cancellable, cancellationFormProps, type Screen } from './application';\nimport type { StoreOptions } from './store';\nimport './app.css';\nexport default function App(options: StoreOptions) {\n  const [app] = React.useState(() => createWorkflow(options));\n  const [state, setState] = React.useState(app.snapshot);\n  React.useEffect(() => { const unsubscribe = app.subscribe(setState); void app.navigate('list'); return () => { unsubscribe(); app.dispose(); }; }, [app]);\n  const props = { ...screenProps(state.draft), rows: state.records.map(screenProps), events: collectionEvents(state.draft), collectionQuery: state, actions: app.actions, uiState: state.uiState };\n  return <main className=\"workflow-app\" data-oods-workflow=\"Subscription\" data-screen={state.screen} data-selected-id={state.id} data-route={routes[state.screen]} data-ui-state={state.uiState}>\n    <header className=\"workflow-heading\"><div><p className=\"workflow-eyebrow\">SUBSCRIPTION WORKSPACE</p><h1>{state.screen === 'list' ? 'Subscriptions' : String(state.draft[\"plan_name\"])}</h1></div><span className=\"workflow-mode\">Local workspace</span></header>\n    <nav aria-label=\"Workflow screens\">{(['list', 'detail', 'form', 'timeline'] as Screen[]).map((screen) => <button type=\"button\" key={screen} aria-current={state.screen === screen ? 'page' : undefined} onClick={() => { void app.navigate(screen); }}>{screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1)}</button>)}</nav>\n    {state.error && <p role=\"alert\">{state.error}</p>}\n    {state.uiState === 'error' && <button type=\"button\" onClick={() => { void app.retry(); }}>Try again</button>}\n    <section aria-label=\"Subscription screen\" className=\"workflow-content\" onChangeCapture={(event) => app.edit(event.nativeEvent)}>\n      {state.uiState === 'success' && state.screen === 'form' && supplementalFields.map((field) => <div className=\"workflow-field\" key={field.name}><label htmlFor={field.name}>{field.label}</label><input id={field.name} name={field.name} aria-describedby={field.name + \"-help\"} defaultValue={String((state.draft as Record<string, unknown>)[field.name])} /><small id={field.name + \"-help\"} className=\"oods-field-help\">{field.help}</small></div>)}\n      {state.uiState === 'success' && state.screen === 'detail' && cancellable && state.cancelOpen && <section className=\"workflow-cancel\" aria-label=\"Cancel subscription\">\n        <CancellationForm {...cancellationFormProps} reason={String((state.draft as Record<string, unknown>).cancellation_reason ?? '')} reasonCode={String((state.draft as Record<string, unknown>).cancellation_reason_code ?? '')} />\n        <label className=\"workflow-checkbox\"><input name=\"cancel_at_period_end\" type=\"checkbox\" defaultChecked={Boolean((state.draft as Record<string, unknown>).cancel_at_period_end)} />Cancel at period end</label>\n        <button type=\"button\" onClick={() => { void app.confirmCancellation(); }}>Confirm cancellation</button><button type=\"button\" onClick={() => app.dismissCancellation()}>Keep subscription</button>\n      </section>}\n      {state.screen === 'list' && <List {...props} key={'list'} />}\n      {state.screen === 'detail' && <Detail {...props} key={state.revision + ':' + state.uiState} />}\n      {state.screen === 'form' && <form onSubmit={(event) => { event.preventDefault(); app.actions.handleSubmit(); }}><Form {...props} key={state.revision + ':' + state.uiState} /></form>}\n      {state.screen === 'timeline' && <Timeline {...props} key={state.revision + ':' + state.uiState} />}\n      {state.uiState === 'success' && state.screen === 'detail' && Boolean((state.draft as Record<string, unknown>).is_archived) && <button onClick={() => { void app.restore(); }}>Restore record</button>}\n    </section>\n    <p className=\"workflow-notice\" role=\"status\">{state.notice}</p>\n  </main>;\n}\n",
+      "fileExtension": ".tsx",
+      "imports": [
+        "@oods/component-contracts",
+        "react",
+        "@oods/components-react",
+        "@oods/component-styles/css",
+        "react-dom/client",
+        "react-dom/server"
+      ],
+      "warnings": [],
+      "validationReceipt": {
+        "profile": "build",
+        "defaulted": false,
+        "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+        "axes": {
+          "scope": "generated-artifact",
+          "enforcement": "blocking",
+          "fallback": "forbidden",
+          "target": {
+            "requested": "react",
+            "resolved": "react",
+            "source": "explicit"
+          }
+        },
+        "checks": [
+          "schema-structure",
+          "component-registry",
+          "state-contract",
+          "target-readiness",
+          "normalization-fidelity",
+          "binding-contract",
+          "props-contract",
+          "slots-contract",
+          "events-contract",
+          "dependency-closure",
+          "fallback-policy"
+        ],
+        "notChecked": [
+          "rendered-evidence",
+          "interaction-evidence",
+          "accessibility-evidence",
+          "theme-evidence",
+          "determinism-evidence",
+          "performance-evidence",
+          "certification-evidence"
+        ],
+        "evidence": {
+          "required": [],
+          "provided": [],
+          "missing": [],
+          "mismatched": [],
+          "accepted": [],
+          "notApplicable": [],
+          "artifactContentHash": "sha256:69b5dd6076d5f7a28779c9700e71d1217c539eecc52cba29b8ba211ef3322470"
+        }
+      },
+      "meta": {
+        "nodeCount": 82,
+        "componentCount": 26
+      }
+    }
+  }
+}
