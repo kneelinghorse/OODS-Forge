@@ -1,0 +1,140 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/viz-recipes.s190.spec.ts (2 tests | 1 failed) 1900ms
+   ✓ one executable visualization registry (s190 m05) > measures through public contracts only; no private implementation/registry imports 1ms
+   × one executable visualization registry (s190 m05) > the exported registry equals every live census cell after canonicalization 1898ms
+     → expected [ { chartType: 'bar', …(11) }, …(4) ] to have a length of 11 but got 5
+ ✓ test/tools/artifact.certify.spec.ts (72 tests) 600ms
+ ❯ test/tools/artifact.certify.echarts-render-grading.s179.spec.ts (13 tests | 8 failed) 374ms
+   × artifact.certify — operand-backed ECharts render grading (s179 m05) > 'treemap': keeps option identity and adds a stable first-render hash 266ms
+     → expected 'Contrast was graded from the actual r…' to contain 'light-theme canvas'
+   × artifact.certify — operand-backed ECharts render grading (s179 m05) > 'sunburst': keeps option identity and adds a stable first-render hash 9ms
+     → expected 'Contrast was graded from the actual r…' to contain 'light-theme canvas'
+   × artifact.certify — operand-backed ECharts render grading (s179 m05) > 'sankey': keeps option identity and adds a stable first-render hash 10ms
+     → expected 'Contrast was graded from the actual r…' to contain 'light-theme canvas'
+   × artifact.certify — operand-backed ECharts render grading (s179 m05) > 'chord': keeps option identity and adds a stable first-render hash 8ms
+     → expected 'Contrast was graded from the actual r…' to contain 'light-theme canvas'
+   × artifact.certify — operand-backed ECharts render grading (s179 m05) > 'force_graph': keeps option identity and adds a stable first-render hash 20ms
+     → expected 'Contrast was graded from the actual r…' to contain 'light-theme canvas'
+   × artifact.certify — operand-backed ECharts render grading (s179 m05) > 'choropleth': keeps option identity and adds a stable first-render hash 17ms
+     → expected 'Geo carrier paints were read from the…' to contain 'no light-theme canvas ratio is graded'
+   × artifact.certify — operand-backed ECharts render grading (s179 m05) > 'bubble_map': keeps option identity and adds a stable first-render hash 11ms
+     → expected 'Geo carrier paints were read from the…' to contain 'no light-theme canvas ratio is graded'
+   × artifact.certify — operand-backed ECharts render grading (s179 m05) > 'flow_map': keeps option identity and adds a stable first-render hash 6ms
+     → expected 'Geo carrier paints were read from the…' to contain 'no light-theme canvas ratio is graded'
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > surfaces the real nested-sunburst tint as a render-measured contrast failure 6ms
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > keeps bubble-without-geometry option-only because the server never resolves a map 2ms
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > keeps option/a11y/accuracy evidence but fails determinism and contrast on a typed first-render fault 8ms
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > second-diff retains the first hash but makes the combined proof unstable 7ms
+   ✓ artifact.certify — operand-backed ECharts render grading (s179 m05) > second-fault retains the first hash but makes the combined proof unstable 4ms
+ ✓ test/tools/artifact.certify.echarts-s179-baseline.spec.ts (10 tests) 380ms
+ ✓ test/tools/artifact.certify.data-operand.spec.ts (33 tests) 340ms
+ ✓ test/tools/certify-echarts-render-contrast.s179.spec.ts (13 tests) 362ms
+ ✓ test/tools/artifact.certify.spec-only-bytes.spec.ts (32 tests) 241ms
+ ❯ test/tools/artifact.certify.ten-series-collision.spec.ts (4 tests | 1 failed) 245ms
+   ✓ artifact.certify — the §0 ten-series palette-recycling collision (RED-first, s176 m01) > MECHANISM (in-test, independent of the verdict): 10 consumed series over a 6-hex domainless baked range 5ms
+   ✓ artifact.certify — the §0 ten-series palette-recycling collision (RED-first, s176 m01) > a 10-series chart with four recycled series pairs must NOT certify conformant (RED at 4f64bcf) 185ms
+   × artifact.certify — the §0 ten-series palette-recycling collision (RED-first, s176 m01) > contentHash is the untouched compile hash — the render feeds grading, never the hash (D7) 30ms
+     → expected '7ac7e99973f261c694c69738a3ca43275afcd…' to be '35f16e4dd8eed844cc6c97dc25ce7acf6837d…' // Object.is equality
+   ✓ artifact.certify — the §0 ten-series palette-recycling collision (RED-first, s176 m01) > CONTROL: a 6-series chart (no recycling) passes every pillar and stays conformant 24ms
+ ✓ test/tools/certify-contrast.echarts-caveat-pin.spec.ts (2 tests) 3ms
+ ✓ test/contracts/artifact-certify-render-prose.s179.spec.ts (13 tests) 2ms
+ ✓ test/tools/artifact.certify.echarts-a11y-warnfirst.spec.ts (88 tests) 1176ms
+   ✓ artifact.certify — the NOT-APPLICABLE channel, a11yNotApplicable[] (s175 m03) > when the engine THROWS the key is ABSENT (the partial list is discarded) and the note says so  353ms
+ ✓ test/tools/artifact.certify.echarts-determinism.spec.ts (45 tests) 667ms
+ ✓ test/tools/artifact.certify.echarts-accuracy.spec.ts (28 tests) 553ms
+ ✓ test/tools/artifact.certify.render-determinism.spec.ts (5 tests) 470ms
+ ✓ test/tools/artifact.certify.geo-id-parity.spec.ts (26 tests) 325ms
+ ✓ test/tools/certify-contrast.spec.ts (26 tests) 281ms
+ ✓ test/tools/certify-echarts-role-c.spec.ts (16 tests) 311ms
+ ✓ test/tools/artifact.certify.echarts-option-stability.s179.spec.ts (2 tests) 260ms
+ ✓ test/tools/artifact.certify.unchecked-tristate.spec.ts (6 tests) 220ms
+ ✓ test/tools/artifact.certify.accuracy-fault.spec.ts (3 tests) 182ms
+ ✓ test/tools/artifact.certify.contrast-fault.spec.ts (3 tests) 169ms
+ ✓ test/tools/certify-echarts-projected-render-s179.spec.ts (2 tests) 52ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/viz-recipes.s190.spec.ts > one executable visualization registry (s190 m05) > the exported registry equals every live census cell after canonicalization
+AssertionError: expected [ { chartType: 'bar', …(11) }, …(4) ] to have a length of 11 but got 5
+
+- Expected
++ Received
+
+- 11
++ 5
+
+ ❯ test/contracts/viz-recipes.s190.spec.ts:30:70
+     28|     expect(source).toHaveLength(13);
+     29|     expect(source.filter((row: any) => row.certifyCoverage === 'certif…
+     30|     expect(source.filter((row: any) => row.dashboardDrawn === true)).t…
+       |                                                                      ^
+     31|     for (const row of result.observations) for (const scope of row.sco…
+     32|       if (scope.coverage === 'uncertified') expect(scope.conformant).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  test/tools/artifact.certify.echarts-render-grading.s179.spec.ts > artifact.certify — operand-backed ECharts render grading (s179 m05) > 'treemap': keeps option identity and adds a stable first-render hash
+ FAIL  test/tools/artifact.certify.echarts-render-grading.s179.spec.ts > artifact.certify — operand-backed ECharts render grading (s179 m05) > 'sunburst': keeps option identity and adds a stable first-render hash
+ FAIL  test/tools/artifact.certify.echarts-render-grading.s179.spec.ts > artifact.certify — operand-backed ECharts render grading (s179 m05) > 'sankey': keeps option identity and adds a stable first-render hash
+ FAIL  test/tools/artifact.certify.echarts-render-grading.s179.spec.ts > artifact.certify — operand-backed ECharts render grading (s179 m05) > 'chord': keeps option identity and adds a stable first-render hash
+ FAIL  test/tools/artifact.certify.echarts-render-grading.s179.spec.ts > artifact.certify — operand-backed ECharts render grading (s179 m05) > 'force_graph': keeps option identity and adds a stable first-render hash
+AssertionError: expected 'Contrast was graded from the actual r…' to contain 'light-theme canvas'
+
+Expected: "light-theme canvas"
+Received: "Contrast was graded from the actual rendered ECharts carrier geometry and semantic assignment. certify grades actual carrier paints extracted from the normalized SVG rendered from the retained projected ECharts option against the requested CSS scope canvas. Scope: light/A."
+
+ ❯ test/tools/artifact.certify.echarts-render-grading.s179.spec.ts:175:34
+    173|       } else {
+    174|         expect(out.contrastNote).toContain("grades actual carrier pain…
+    175|         expect(out.contrastNote).toContain("light-theme canvas");
+       |                                  ^
+    176|       }
+    177|       expect(out.notes?.join(" ")).toContain(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  test/tools/artifact.certify.echarts-render-grading.s179.spec.ts > artifact.certify — operand-backed ECharts render grading (s179 m05) > 'choropleth': keeps option identity and adds a stable first-render hash
+ FAIL  test/tools/artifact.certify.echarts-render-grading.s179.spec.ts > artifact.certify — operand-backed ECharts render grading (s179 m05) > 'bubble_map': keeps option identity and adds a stable first-render hash
+ FAIL  test/tools/artifact.certify.echarts-render-grading.s179.spec.ts > artifact.certify — operand-backed ECharts render grading (s179 m05) > 'flow_map': keeps option identity and adds a stable first-render hash
+AssertionError: expected 'Geo carrier paints were read from the…' to contain 'no light-theme canvas ratio is graded'
+
+Expected: "no light-theme canvas ratio is graded"
+Received: "Geo carrier paints were read from the rendered ECharts SVG, but geo color remains exempt from categorical contrast grading under the standing gradient-essential ruling. certify reads actual carrier paints from the normalized SVG rendered from the retained projected ECharts option. Geo categorical contrast remains exempt, so no canvas ratio is graded. Scope: light/A."
+
+ ❯ test/tools/artifact.certify.echarts-render-grading.s179.spec.ts:169:34
+    167|           "Geo categorical contrast remains exempt",
+    168|         );
+    169|         expect(out.contrastNote).toContain(
+       |                                  ^
+    170|           "no light-theme canvas ratio is graded",
+    171|         );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  test/tools/artifact.certify.ten-series-collision.spec.ts > artifact.certify — the §0 ten-series palette-recycling collision (RED-first, s176 m01) > contentHash is the untouched compile hash — the render feeds grading, never the hash (D7)
+AssertionError: expected '7ac7e99973f261c694c69738a3ca43275afcd…' to be '35f16e4dd8eed844cc6c97dc25ce7acf6837d…' // Object.is equality
+
+Expected: "35f16e4dd8eed844cc6c97dc25ce7acf6837d97331966f7455544db057f41a3a"
+Received: "7ac7e99973f261c694c69738a3ca43275afcd3493403702ea31f3c2abb349136"
+
+ ❯ test/tools/artifact.certify.ten-series-collision.spec.ts:98:42
+     96|     const spec = buildSeriesBar(10);
+     97|     const out = await certify(spec);
+     98|     expect(out.determinism?.contentHash).toBe(sha256(canonicalize(toVe…
+       |                                          ^
+     99|     expect(out.determinism?.stable).toBe(true);
+    100|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+
+ Test Files  3 failed | 19 passed (22)
+      Tests  10 failed | 434 passed (444)
+   Start at  17:57:41
+   Duration  17.25s (transform 960ms, setup 64ms, collect 5.39s, tests 9.11s, environment 2ms, prepare 703ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s190/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run certify test/contracts/viz-recipes.s190.spec.ts

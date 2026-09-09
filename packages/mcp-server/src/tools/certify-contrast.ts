@@ -38,9 +38,8 @@
 // rendered assignment is read from the emitter's SVG (deterministic: pinned text
 // metrics, normalized auto-ids), and only paints that match what the unit BAKED are
 // graded — an author decoration painted in a palette hex cannot fake a collision, and a
-// non-palette decoration stays chrome (the Derek CASE-2 fork, generalized). The one
-// remaining caveat is theme: resolveTokenToColor is theme-blind (light-only), so
-// dark-theme contrast is unverified/OOS.
+// non-palette decoration stays chrome (the Derek CASE-2 fork, generalized). The
+// requested CSS scope supplies the canvas and palette, matching the compiled render.
 
 import Color from 'colorjs.io';
 import { contrastRatio, normaliseColor } from '@oods/a11y-tools';
@@ -49,6 +48,7 @@ import {
   resolveCategoricalPalette,
   resolveTokenToColor,
   type NormalizedVizSpec,
+  type TokenScope,
   type VegaLiteAdapterSpec,
 } from '@oods/viz-core';
 import { renderVegaLiteToSvg, type VegaLiteSpec } from '@oods/viz-render';
@@ -74,9 +74,7 @@ export interface ContrastPillarResult {
   readonly renderedSvg?: string;
 }
 
-// The concrete light-theme canvas the role-C mark-vs-background check measures
-// against (resolveTokenToColor is theme-blind/light-only). This token resolves to
-// #FCFCFD and reproduces the memo §1 role-C numbers exactly.
+// The requested CSS scope supplies the role-C reference canvas.
 const CANVAS_TOKEN = '--oods-sys-surface-canvas';
 
 // OODS viz-scale categorical token names, for the failure-note labels. (The pre-s176
@@ -112,35 +110,28 @@ export interface CategoricalRoleAGrade {
   readonly lowChromaPaints: readonly string[];
 }
 
-// THE CAVEAT FORK (s176 m01, memo §1a D11). Until s176 one constant rode every
-// contrastNote on both paths. The cartesian path is render-backed now, so its caveat says
-// so. The ECharts SPEC-ONLY fallback still reconstructs baked constants because it has no
-// operand to emit or render; the cartesian CASE-3 exempt note is also a byte-frozen
-// non-mover (D5). Both keep the pre-fork text VERBATIM below.
-// certify-contrast.echarts-caveat-pin.spec.ts pins that path-scoped fallback truth.
+// Render-backed and spec-only evidence remain distinct. s190 scopes both paths;
+// the literal caveat pin declares the scope wording change without moving old fixtures.
 const RENDERED_CONTRAST_CAVEAT =
   'certify grades the series-to-paint assignment of the rendered chart (the compiled ' +
-  'spec rendered through @oods/viz-render), on the light theme; dark-theme contrast is not verified.';
+  'spec rendered through @oods/viz-render), against the requested CSS scope canvas.';
 
-// The pre-fork caveat, byte-for-byte. Still TRUE where it is used: an ECharts spec-only
-// grade IS a claim about baked constants, and the CASE-3 exempt verdict IS a claim about
-// what the compiled spec baked. Operand-backed ECharts responses use their render-evidence
-// caveat in artifact.certify instead.
+// Spec-only calls grade a reconstructed palette, never rendered carriers.
 const BAKED_CONTRAST_CAVEAT =
   'certify measures the categorical color bytes Forge baked into the compiled spec, ' +
-  'on the light theme; dark-theme contrast is not verified.';
+  'against the requested CSS scope canvas; no rendered carrier measurement is claimed.';
 
 // A color channel exists but the adapter baked NO OODS categorical palette (no
 // scale.range, no OODS mark.color): the chart renders as a continuous/default color
 // scale — a legit sequential/diverging gradient, OR a divergence/mistype (a color
 // binding the bake gate left quantitative). Either way there is no discrete palette to
 // contrast-check, so WCAG 1.4.11's essential exception applies (memo §3 case 3 / fork A).
-// Classified from the COMPILED spec before any render logic (s176 D5); byte-frozen — a
-// declared s176 NON-mover, hence the pre-fork caveat tail.
+// Classified from the compiled spec before render logic; no canvas ratio is graded.
+const NO_RATIO_CAVEAT = 'No categorical canvas ratio is graded for this scope.';
 const EXEMPT_NOTE =
   'No OODS categorical palette was baked into the compiled color scale — the chart renders ' +
   'as a continuous/default color scale (WCAG 1.4.11 gradient essential exception); ' +
-  "Forge's generated accessible data table is the guarantee. " + BAKED_CONTRAST_CAVEAT;
+  "Forge's generated accessible data table is the guarantee. " + NO_RATIO_CAVEAT;
 
 function distinctCount(values: Array<Record<string, unknown>> | undefined, field: string): number {
   if (!values || values.length === 0) return 0;
@@ -165,8 +156,8 @@ function overrideMap(spec: NormalizedVizSpec): Map<string, string> {
 }
 
 /** Resolve a token to hex, honoring an agent config.tokens override; undefined if unresolvable. */
-function resolveSlotHex(token: string, overrides: Map<string, string>): string | undefined {
-  const raw = overrides.get(token) ?? resolveTokenToColor(token);
+function resolveSlotHex(token: string, overrides: Map<string, string>, scope: TokenScope = {}): string | undefined {
+  const raw = overrides.get(token) ?? resolveTokenToColor(token, scope);
   if (!raw) return undefined;
   try {
     return normaliseColor(raw, token); // rgb()/oklch->hex bridge (throws on non-color)
@@ -200,14 +191,16 @@ function minPairwiseDeltaEOverCvd(hexes: readonly string[]): number {
 }
 
 /**
- * Grade the paints carried by actual rendered geometry against the fixed light-theme
+ * Grade the paints carried by actual rendered geometry against the requested CSS
  * ECharts canvas. This is deliberately independent from Role A: hierarchy tints can
  * fail here without changing the semantic category assignment.
  */
 export function evaluateCategoricalRoleC(
   paints: readonly string[],
+  scope: TokenScope = {},
+  canvas?: string,
 ): CategoricalRoleCGrade {
-  const canvasHex = resolveSlotHex(CANVAS_TOKEN, new Map());
+  const canvasHex = resolveSlotHex(CANVAS_TOKEN, canvas === undefined ? new Map() : new Map([[CANVAS_TOKEN, canvas]]), scope);
   if (paints.length === 0 || !canvasHex) {
     return { verdict: 'ungradeable', failingPaints: [] };
   }
@@ -594,11 +587,12 @@ function renderedAssignment(
 export async function evaluateContrastPillar(
   spec: NormalizedVizSpec,
   compiled: VegaLiteAdapterSpec,
+  scope: TokenScope = {},
 ): Promise<ContrastPillarResult> {
   // Resolve the canvas + the single-series categorical-01 slot ONCE (both are global —
   // config.tokens is chart-wide), then classify every unit from the compiled spec.
-  const canvasHex = resolveSlotHex(CANVAS_TOKEN, overrideMap(spec));
-  const slot1Hex = resolveCategoricalPalette(spec)[0];
+  const canvasHex = resolveSlotHex(CANVAS_TOKEN, overrideMap(spec), scope);
+  const slot1Hex = resolveCategoricalPalette(spec, scope)[0];
 
   const classified = compiledColorUnits(compiled).map((unit) => classifyUnit(unit, spec, slot1Hex));
   const seriesUnits = classified.filter(
@@ -685,11 +679,11 @@ export async function evaluateContrastPillar(
  * The adapters pass count:8|9 but VIZ_CATEGORICAL_SCALE has 6 slots and the getter clamps,
  * so the count is inert — the no-arg call resolves the identical fixed 6.
  */
-export function reconstructEChartsCategoricalPalette(): Array<{ token: string; hex: string }> {
+export function reconstructEChartsCategoricalPalette(scope: TokenScope = {}): Array<{ token: string; hex: string }> {
   const noOverrides = new Map<string, string>();
   const slots: Array<{ token: string; hex: string }> = [];
   for (const token of getVizScaleTokens('categorical')) {
-    const hex = resolveSlotHex(token, noOverrides);
+    const hex = resolveSlotHex(token, noOverrides, scope);
     if (hex) slots.push({ token, hex });
   }
   return slots;
@@ -713,16 +707,13 @@ const ECHARTS_CATEGORICAL_CAVEAT =
 
 /**
  * Grade the fixed default OODS categorical palette the 5 ECharts categorical adapters bake
- * into itemStyle (s141 m02) — role-C (each of the 6 slots vs the light-theme canvas ≥ 3:1)
- * + role-A (min-pairwise CIEDE2000 over Machado CVD). Reuses gradeCategorical + the #FCFCFD
- * canvas the cartesian path uses — with the frozen pre-fork caveat (D11), never the
- * cartesian render-backed one. NON-override for BOTH palette AND canvas (the categorical
- * adapters honor neither a config.tokens palette NOR canvas overrides), so `certified ==
- * rendered`. Pure function of constants → byte-stable across re-runs.
+ * into itemStyle (s141 m02) — role-C (each of the 6 slots vs the requested CSS scope canvas ≥ 3:1)
+ * + role-A (min-pairwise CIEDE2000 over Machado CVD). No operand means no render: this
+ * fallback uses the scope defaults, excluding per-node paint and canvas overrides.
  */
-export function evaluateEChartsCategoricalContrast(): ContrastPillarResult {
-  const canvasHex = resolveSlotHex(CANVAS_TOKEN, new Map());
-  const slots = reconstructEChartsCategoricalPalette();
+export function evaluateEChartsCategoricalContrast(scope: TokenScope = {}): ContrastPillarResult {
+  const canvasHex = resolveSlotHex(CANVAS_TOKEN, new Map(), scope);
+  const slots = reconstructEChartsCategoricalPalette(scope);
   const graded = gradeCategorical(slots, canvasHex, BAKED_CONTRAST_CAVEAT);
   return {
     contrast: graded.contrast,
@@ -758,4 +749,4 @@ export const ECHARTS_GEO_EXEMPT_NOTE =
   'it renders on are reachable — grading them would be a new scope decision, not a bug ' +
   'fix. The palette itself stays out of reach either way: the branch has no range field, ' +
   "so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the " +
-  'categories outnumber it. ' + BAKED_CONTRAST_CAVEAT;
+  'categories outnumber it. ' + NO_RATIO_CAVEAT;

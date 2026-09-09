@@ -1,3 +1,4 @@
+// s190 #1850/#1856: literal pins admit the light/A Role-C failure and scoped caveat; historical fixture bytes are untouched.
 // D11 path-scoped byte pin for the ECharts SPEC-ONLY fallback.
 //
 // Operand-backed ECharts calls now replace these notes with render-evidence wording in
@@ -21,7 +22,7 @@ import {
 // exact text must keep ending every spec-only fallback contrastNote.
 const FROZEN_ECHARTS_CAVEAT =
   'certify measures the categorical color bytes Forge baked into the compiled spec, ' +
-  'on the light theme; dark-theme contrast is not verified.';
+  'against the requested CSS scope canvas; no rendered carrier measurement is claimed.';
 
 // evaluateEChartsCategoricalContrast's clean-pass contrastNote at 4f64bcf: the shared
 // grader's clean-pass note (the caveat alone) + ' ' + ECHARTS_CATEGORICAL_CAVEAT.
@@ -46,14 +47,13 @@ const FROZEN_ECHARTS_GEO_EXEMPT_NOTE =
   'it renders on are reachable — grading them would be a new scope decision, not a bug ' +
   'fix. The palette itself stays out of reach either way: the branch has no range field, ' +
   "so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the " +
-  'categories outnumber it. ' +
-  FROZEN_ECHARTS_CAVEAT;
+  'categories outnumber it. No categorical canvas ratio is graded for this scope.';
 
 describe('certify-contrast — D11 keeps the ECharts spec-only fallback byte-frozen', () => {
   it('the spec-only categorical fallback is byte-identical to the baked-palette text', () => {
     const out = evaluateEChartsCategoricalContrast();
-    expect(out.contrast).toBe('pass');
-    expect(out.contrastNote).toBe(FROZEN_ECHARTS_CATEGORICAL_NOTE);
+    expect(out.contrast).toBe('fail');
+    expect(out.contrastNote).toBe('Role-C (WCAG 1.4.11) fail: --viz-scale-categorical-04 below 3:1 vs the canvas. ' + FROZEN_ECHARTS_CATEGORICAL_NOTE);
   });
 
   it('the spec-only geo fallback is byte-identical to the baked-palette text', () => {

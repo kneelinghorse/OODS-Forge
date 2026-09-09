@@ -212,12 +212,12 @@ describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
   // flips MarkSankey's contrast verdict, so the invert lands in m02 (the code change that
   // causes it), not m03. Design A: contrast 'unchecked' → 'pass'; a11yEquivalence +
   // determinism STAY 'unchecked' (still no Vega compile); coverage STAYS 'uncertified'.
-  it('an ECharts-primary categorical IR (MarkSankey) → contrast now GRADED (pass); a11yEquivalence + determinism STAY unchecked, coverage still uncertified', async () => {
+  it('an ECharts-primary categorical IR (MarkSankey) → contrast graded (light/A Role-C failure #1852); a11yEquivalence + determinism STAY unchecked, coverage still uncertified', async () => {
     const good = buildSpec(ROWS3);
     const sankey = { ...good, marks: [{ ...good.marks[0], trait: 'MarkSankey' }] } as unknown;
     const out = await certify(sankey);
     expect(out.coverage).toBe('uncertified');
-    expect(out.pillars).toEqual({ a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'pass', accuracy: 'unchecked' });
+    expect(out.pillars).toEqual({ a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'fail', accuracy: 'unchecked' });
     expect(validateOutput(out)).toBe(true);
   });
 });
@@ -475,7 +475,7 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
   };
 
   it.each(CATEGORICAL_TRAITS)(
-    '%s → contrast:pass (role-C all ≥3:1, role-A ≥10 clean pass); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash',
+    '%s → contrast:fail (light/A slot04 below 3:1); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash',
     async (trait) => {
       const out = await certify(withTrait(trait));
       expect(out.status).toBe('ok');
@@ -485,8 +485,8 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
       expect(out.determinism).toBeUndefined(); // no Vega compile → no determinism proof / hash
       expect(out.pillars?.a11yEquivalence).toBe('unchecked');
       expect(out.pillars?.determinism).toBe('unchecked');
-      // The graded verdict — the reconstructed default palette passes role-C + role-A.
-      expect(out.pillars?.contrast).toBe('pass');
+      // The graded verdict — the reconstructed default palette fails Role C at light/A (#1852).
+      expect(out.pillars?.contrast).toBe('fail');
       // Mandatory caveats (memo §4): adjacency-ungraded + per-node data-color override.
       expect(out.contrastNote).toContain(
         'touching-mark/adjacency contrast not graded; relies on the separating stroke',
@@ -502,7 +502,7 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
     },
   );
 
-  it('the categorical grade is INPUT-INVARIANT — a config.tokens grey override does NOT move the verdict (the ECharts adapters ignore config.tokens; the grade is the fixed default palette, NOT resolveCategoricalPalette)', async () => {
+  it('the categorical grade is INPUT-INVARIANT — a config.tokens grey override does NOT move the verdict (the spec-only fallback excludes config.tokens; the grade is the fixed default palette, NOT resolveCategoricalPalette)', async () => {
     const base = buildSpec(ROWS3);
     const sankey = { ...base, marks: [{ ...base.marks[0], trait: 'MarkSankey' }] } as NormalizedVizSpec;
     const greyOverride = {
@@ -520,8 +520,8 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
     const b = await certify(greyOverride);
     // Grading the FIXED default palette (memo §3b) means a config.tokens override the
     // ECharts render ignores must NOT change the verdict — certified == rendered.
-    expect(a.pillars?.contrast).toBe('pass');
-    expect(b.pillars?.contrast).toBe('pass');
+    expect(a.pillars?.contrast).toBe('fail');
+    expect(b.pillars?.contrast).toBe('fail');
     expect(b.contrastNote).toBe(a.contrastNote);
   });
 });
@@ -577,14 +577,8 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
     expect(CERTIFY_PALETTE).toEqual(['#416CD9', '#3E44BE', '#279669', '#B78827', '#CA4948', '#993B00']);
   });
 
-  // s141 review PS-2026-07-04-004 (floor guard); floor slot updated s146 F1 re-space. The
-  // categorical 'pass' is real but THIN: the min slot #B78827 (gold) sits at ~3.12:1 vs the
-  // canvas, only ~4% over the WCAG 1.4.11 3:1 floor. Nothing else pins that headroom (role-A
-  // is now a clean >=10 pass after s146, no longer the ~7.25 warn), so a future palette or
-  // canvas-token tweak could push a slot under 3:1 and silently flip every ECharts
-  // categorical chart to contrast:'fail'. This locks the role-C floor: if it erodes, THIS
-  // test fails first — a loud regression, not a silent verdict flip.
-  it('pins the role-C floor — every categorical slot clears 3:1 vs the canvas, min at ~3.12:1 (#B78827, thin headroom)', () => {
+  // #1850/#1852: the corrected CSS light/A canvas exposes the existing gold-slot failure.
+  it('pins the light/A Role-C failure — gold falls below 3:1 (#1852)', () => {
     // Derive the canvas from the SAME token the grader resolves — resolveSlotHex ->
     // resolveTokenToColor at certify-contrast.ts:407 (with no override this is exactly
     // normaliseColor(resolveTokenToColor('--oods-sys-surface-canvas'))). s142-review #2:
@@ -595,20 +589,15 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
     const canvasRaw = resolveTokenToColor('--oods-sys-surface-canvas');
     expect(canvasRaw, 'the --oods-sys-surface-canvas token must resolve').toBeTruthy();
     const CANVAS = normaliseColor(canvasRaw as string, 'canvas');
-    expect(CANVAS).toBe('#FCFCFD'); // resolves here today (memo §1); pinned so a retoken is loud
+    expect(CANVAS).toBe('#FDF3DE'); // resolves here today (memo §1); pinned so a retoken is loud
     const ratios = reconstructEChartsCategoricalPalette().map((s) => ({
       ...s,
       ratio: contrastRatio(s.hex, CANVAS),
     }));
-    // Hard WCAG floor: every slot >= 3:1 → the constant 'pass' is earned, not incidental.
-    for (const { token, ratio } of ratios) {
-      expect(ratio, `${token} role-C vs canvas`).toBeGreaterThanOrEqual(3);
-    }
-    // Thin-headroom guard: the floor is #B78827 (gold) at ~3.12:1. Pinned so any drift toward
-    // 3:1 trips here before it can flip a chart's verdict.
+    expect(ratios.filter(({ ratio }) => ratio < 3).map(({ hex }) => hex)).toEqual(['#B78827']);
     const min = ratios.reduce((a, b) => (b.ratio < a.ratio ? b : a));
     expect(min.hex).toBe('#B78827');
-    expect(min.ratio).toBeCloseTo(3.12, 2); // ~3.12:1 — the load-bearing floor (s146 F1)
+    expect(min.ratio).toBeLessThan(3);
   });
 
   it.each([
@@ -722,7 +711,7 @@ describe('artifact.certify — round-trip honesty floor: certify accepts viz.ren
     const certified = await certify(rendered.normalizedSpec);
     expect(certified.status).toBe('ok');
     expect(certified.errors).toBeUndefined();
-    expect(certified.pillars?.contrast).toBe('pass');
+    expect(certified.pillars?.contrast).toBe('fail');
     // Design A is preserved for the ECharts path — only contrast carries a verdict.
     expect(certified.coverage).toBe('uncertified');
     expect(certified.conformant).toBeNull();
@@ -807,10 +796,10 @@ describe('artifact.certify — round-trip honesty floor: certify accepts viz.ren
   };
 
   const ROUND_TRIP_CASES = [
-    { type: 'treemap', input: { chartType: 'treemap', hierarchy: HIER }, trait: 'MarkTreemap', contrast: 'pass' },
-    { type: 'sunburst', input: { chartType: 'sunburst', hierarchy: HIER }, trait: 'MarkSunburst', contrast: 'pass' },
-    { type: 'force_graph', input: { chartType: 'force_graph', network: NET }, trait: 'MarkGraph', contrast: 'pass' },
-    { type: 'chord', input: { chartType: 'chord', chord: CHORD }, trait: 'MarkChord', contrast: 'pass' },
+    { type: 'treemap', input: { chartType: 'treemap', hierarchy: HIER }, trait: 'MarkTreemap', contrast: 'fail' },
+    { type: 'sunburst', input: { chartType: 'sunburst', hierarchy: HIER }, trait: 'MarkSunburst', contrast: 'fail' },
+    { type: 'force_graph', input: { chartType: 'force_graph', network: NET }, trait: 'MarkGraph', contrast: 'fail' },
+    { type: 'chord', input: { chartType: 'chord', chord: CHORD }, trait: 'MarkChord', contrast: 'fail' },
     { type: 'bubble_map', input: { chartType: 'bubble_map', geo: BUBBLE_GEO }, trait: 'MarkBubble', contrast: 'exempt' },
     { type: 'flow_map', input: { chartType: 'flow_map', geo: FLOW_GEO }, trait: 'MarkFlow', contrast: 'exempt' },
   ] as const;

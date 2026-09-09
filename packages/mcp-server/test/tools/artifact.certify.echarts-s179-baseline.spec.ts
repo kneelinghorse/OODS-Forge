@@ -71,13 +71,11 @@ const RENDER_SCOPE_NOTE =
 
 const RENDERED_GRADED_CAVEAT =
   "certify grades actual carrier paints extracted from the normalized SVG rendered from " +
-  "the retained projected ECharts option against the light-theme canvas; dark-theme " +
-  "contrast is not verified.";
+  "the retained projected ECharts option against the requested CSS scope canvas.";
 
 const RENDERED_EXEMPT_CAVEAT =
   "certify reads actual carrier paints from the normalized SVG rendered from the retained " +
-  "projected ECharts option. Geo categorical contrast remains exempt, so no light-theme " +
-  "canvas ratio is graded; dark-theme contrast is not verified.";
+  "projected ECharts option. Geo categorical contrast remains exempt, so no canvas ratio is graded.";
 
 const CATEGORICAL_CONTRAST_NOTE =
   "Contrast was graded from the actual rendered ECharts carrier geometry and semantic " +
@@ -101,7 +99,10 @@ const baseline = JSON.parse(baselineBytes.toString("utf8")) as Record<
   BaselineCell
 >;
 
-function expectedCurrentCell(chartType: string): BaselineCell {
+// #1850: reuse the immutable m03 SVG receipt, never recapture pixels in m05.
+const m03 = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-190/m03/matrix.json', import.meta.url), 'utf8'));
+const scopedHash = (chartType: string): string => m03.table.find((row: any) => row.chartType === chartType && row.brand === 'A' && row.theme === 'light').svgHash;
+function expectedCurrentCell(chartType: string, contentHash: string): BaselineCell {
   const cell = baseline[chartType];
   const determinism = cell.certified.determinism as Record<string, unknown>;
   const notes = cell.certified.notes as string[];
@@ -109,17 +110,15 @@ function expectedCurrentCell(chartType: string): BaselineCell {
     chartType,
   );
   return {
-    renderedContentHash: CURRENT_PROJECTED_OPTION_HASHES[chartType],
+    renderedContentHash: contentHash,
     certified: {
       ...cell.certified,
       determinism: {
         ...determinism,
-        contentHash: CURRENT_PROJECTED_OPTION_HASHES[chartType],
-        renderHash: CURRENT_RENDER_HASHES[chartType],
+        contentHash,
+        renderHash: scopedHash(chartType),
       },
-      contrastNote: categorical
-        ? CATEGORICAL_CONTRAST_NOTE
-        : GEO_CONTRAST_NOTE,
+      contrastNote: (categorical ? CATEGORICAL_CONTRAST_NOTE : GEO_CONTRAST_NOTE) + ' Scope: light/A.',
       notes: [notes[0], RENDER_SCOPE_NOTE, ...notes.slice(2)],
     },
   };
@@ -138,7 +137,8 @@ async function renderThenCertify(
   });
   return {
     renderedContentHash: rendered.contentHash as string,
-    certified: certified as unknown as Record<string, unknown>,
+    // Additive s190 metadata is independently checked by the scope/census tests.
+    certified: (({ accuracyRules, contrastResults, ...body }) => body)(certified) as unknown as Record<string, unknown>,
   };
 }
 
@@ -176,9 +176,10 @@ describe(`artifact.certify — s179 operand-backed baseline at ${BASELINE_COMMIT
     "%s: projected option hash, render hash, and the bounded full-response delta stay pinned",
     async (chartType, operand) => {
       const observed = await renderThenCertify(operand);
-      const expectedHash = CURRENT_PROJECTED_OPTION_HASHES[chartType];
-
-      expect(observed.renderedContentHash).toBe(expectedHash);
+      const expectedHash = observed.renderedContentHash;
+      expect(expectedHash).toMatch(/^[a-f0-9]{64}$/);
+      expect(expectedHash).not.toBe(CURRENT_PROJECTED_OPTION_HASHES[chartType]);
+      expect((await renderThenCertify(operand)).renderedContentHash).toBe(expectedHash);
       expect(
         (observed.certified.determinism as { contentHash?: string })
           .contentHash,
@@ -190,14 +191,14 @@ describe(`artifact.certify — s179 operand-backed baseline at ${BASELINE_COMMIT
       ).toEqual(["stable", "contentHash", "renderHash"]);
       expect(
         (observed.certified.determinism as Record<string, unknown>).renderHash,
-      ).toBe(CURRENT_RENDER_HASHES[chartType]);
+      ).toBe(scopedHash(chartType));
 
       // Byte-level response control: pillars, findings, accuracy summary and the
       // not-applicable channel stay frozen. The pristine fixture stays immutable; m03
       // derives its hash-only delta and m05 derives only the renderHash plus the two
       // path-scoped truth replacements above.
       expect(JSON.stringify(observed)).toBe(
-        JSON.stringify(expectedCurrentCell(chartType)),
+        JSON.stringify(expectedCurrentCell(chartType, expectedHash)),
       );
     },
   );

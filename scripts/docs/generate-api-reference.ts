@@ -14,6 +14,7 @@ const ROOT = path.resolve(import.meta.dirname, '../..');
 const SCHEMAS_DIR = path.join(ROOT, 'packages/mcp-server/src/schemas');
 const DESCRIPTIONS_PATH = path.join(ROOT, 'packages/mcp-adapter/tool-descriptions.json');
 const REGISTRY_PATH = path.join(ROOT, 'packages/mcp-server/src/tools/registry.json');
+const VIZ_RECIPES_PATH = path.join(ROOT, 'packages/viz-core/src/registry/viz-recipes.v1.json');
 const OUT_DIR = path.join(ROOT, 'docs/api');
 
 type JsonSchema = {
@@ -281,6 +282,23 @@ function buildExampleBlock(inputSchema: JsonSchema): string {
   ].join('\n') + '\n';
 }
 
+function visualizationCoverage(toolName: string): string {
+  if (!['viz.render', 'dashboard.render', 'artifact.certify'].includes(toolName)) return '';
+  const recipes = readJson<Array<{ chartType: string; specEngine: string; publicSvg: boolean; dashboardDrawn: boolean | string; themes: Record<string, boolean>; brands: string[]; certifyCoverage: string; contrastMeasured: string[]; chartInApp: string; notes: string[] }>>(VIZ_RECIPES_PATH);
+  const count = (predicate: (row: typeof recipes[number]) => boolean) => recipes.filter(predicate).length;
+  return [
+    '## Measured visualization coverage', '',
+    'Derived from `packages/viz-core/src/registry/viz-recipes.v1.json`, checked against the public-handler census.', '',
+    `Public SVG: ${count(row => row.publicSvg)}/${recipes.length}. Dashboard SVG panels: ${count(row => row.dashboardDrawn === true)}/${recipes.length}. Certification coverage: ${count(row => row.certifyCoverage === 'certified')} certified / ${count(row => row.certifyCoverage === 'uncertified')} uncertified; uncertified results keep conformant:null.`, '',
+    `Theme parameters: light (${count(row => row.themes.light)}/${recipes.length}) and dark (${count(row => row.themes.dark)}/${recipes.length}); HC pixels (${count(row => row.themes.hc)}/${recipes.length}) are deferred. Brand parameters: ${[...new Set(recipes.flatMap(row => row.brands))].join(', ')}. Default scope is light/A.`, '',
+    'Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four cartesian accuracy rules remain a closed set (V150–V153); the ECharts set remains V154–V159 with per-type applicability.', '',
+    '| Type | Engine | Dashboard | Certification | Contrast measured | Application |',
+    '| --- | --- | --- | --- | --- | --- |',
+    ...recipes.map(row => `| ${row.chartType} | ${row.specEngine} | ${row.dashboardDrawn} | ${row.certifyCoverage} | ${row.contrastMeasured.join(', ') || 'none (exempt)'} | ${row.chartInApp} |`), '',
+    ...[...new Set(recipes.flatMap(row => row.notes))].map(note => `- ${note}`), '',
+  ].join('\n');
+}
+
 function generateToolDoc(
   toolName: string,
   description: string,
@@ -293,6 +311,9 @@ function generateToolDoc(
   lines.push(`# ${toolName}\n`);
   lines.push(`> ${description}\n`);
   lines.push(`**Registration:** ${tier}\n`);
+
+  const coverage = visualizationCoverage(toolName);
+  if (coverage) lines.push(coverage);
 
   lines.push(`## Input Parameters\n`);
   lines.push(buildParamsTable(inputSchema));

@@ -346,7 +346,7 @@ export namespace ArtifactCertifyInputSchema {
       };
 
   /**
-   * Input to artifact.certify: a Forge NormalizedVizSpec IR to certify, plus (s172) an OPTIONAL `data` operand for the 8 ECharts-primary types. The tool boundary is intentionally PERMISSIVE on `spec` ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR. BRAND, STATED PLAINLY (s169 m04): this input takes NO brand, deliberately. Every operand certify grades is brand-INVARIANT — cartesian paints come from the compiled render, and data-backed ECharts paints come from the rendered projected option. Where categorical contrast is graded, those paints are compared against the light-theme :root canvas; geo render evidence remains exempt with no canvas ratio. A brand therefore could not change any verdict. Offering the field would be a false affordance. dashboard.render and repl render DO accept brand; certify does not, because for certify it would mean nothing. DATA IS THE COUNTERPART CASE, NOT THE SAME CASE (s172 m01): `data` is NOT an affordance — it is the OPERAND. An ECharts-primary NormalizedVizSpec is METADATA-ONLY by ratified design (data:{values:[]}, encoding:{}); the chart's actual nodes/links/rows/geometry live in viz.render's data branch and never enter the IR. Without `data` there is nothing for the determinism and accuracy pillars to read, so they stay 'unchecked'; with it they carry real verdicts that genuinely change with the operand. That is exactly why it is offered and brand is not.
+   * Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC token exports exist, but server-side HC pixels are not supported. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.
    */
   export interface ArtifactCertifyInput {
     /**
@@ -365,6 +365,14 @@ export namespace ArtifactCertifyInputSchema {
       network?: NetworkBranch;
       geo?: GeoBranch;
     };
+    /**
+     * CSS scope used by certification emission, SVG rendering and contrast grading. Each result retains this requested scope.
+     */
+    theme?: 'light' | 'dark';
+    /**
+     * CSS brand scope, matching viz.render for the same normalized spec and data operand.
+     */
+    brand?: 'A' | 'B';
   }
   /**
    * A nested-hierarchy node: a name, an optional numeric value, and optional children (recursive). Extra fields are preserved for tooltips.
@@ -598,7 +606,7 @@ export namespace ArtifactCertifyOutputSchema {
      */
     coverage?: 'certified' | 'uncertified';
     /**
-     * The folded conformance gate (s140/s170), CARTESIAN PATH ONLY: true iff a11y-equivalence has zero error-severity failures AND contrast is neither 'fail' nor 'ungradeable' AND accuracy is neither 'fail' nor 'ungradeable' AND determinism is stable — measured on the light theme (dark-theme contrast unverified). null on the uncertified path, and it STAYS null there even when an ECharts accuracy rule fires (s172): the uncertified path makes no folded claim, so an ECharts accuracy failure is read from pillars.accuracy and findings[], never from conformant. Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. 'ungradeable' (s175, closes #781) pulls the fold exactly as 'fail' does on both graded pillars: a grade that was ATTEMPTED and failed for a reason outside the spec — a poisoned canvas token, an evaluator fault — is not a pass. 'unchecked' (nothing to grade) and 'exempt' leave conformant a11y-driven (the s139 lock). A scoped, monotonic tightening: some inputs move true->false, none move false->true.
+     * The folded conformance gate (s140/s170), CARTESIAN PATH ONLY: true iff a11y-equivalence has zero error-severity failures AND contrast is neither 'fail' nor 'ungradeable' AND accuracy is neither 'fail' nor 'ungradeable' AND determinism is stable — measured at the requested theme and brand. null on the uncertified path, and it STAYS null there even when an ECharts accuracy rule fires (s172): the uncertified path makes no folded claim, so an ECharts accuracy failure is read from pillars.accuracy and findings[], never from conformant. Absent on the error path. A contrast- or accuracy-driven false is explained by pillars + contrastNote + the OODS-V15x findings; a warn-severity a11y failure does not affect conformance. 'ungradeable' (s175, closes #781) pulls the fold exactly as 'fail' does on both graded pillars: a grade that was ATTEMPTED and failed for a reason outside the spec — a poisoned canvas token, an evaluator fault — is not a pass. 'unchecked' (nothing to grade) and 'exempt' leave conformant a11y-driven (the s139 lock). A scoped, monotonic tightening: some inputs move true->false, none move false->true.
      */
     conformant?: boolean | null;
     /**
@@ -661,7 +669,7 @@ export namespace ArtifactCertifyOutputSchema {
        */
       determinism: 'pass' | 'fail' | 'unchecked';
       /**
-       * Rendered-reality contrast on the light theme. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded.
+       * Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded.
        */
       contrast: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
       /**
@@ -670,7 +678,7 @@ export namespace ArtifactCertifyOutputSchema {
       accuracy: 'pass' | 'fail' | 'ungradeable' | 'unchecked';
     };
     /**
-     * Contrast rationale and scope. Cartesian and categorical data-backed ECharts notes state that the grade reads actual normalized render evidence on the light theme and that dark-theme contrast is not verified. Data-backed geo notes state that normalized render evidence was read while categorical contrast remains exempt and no canvas ratio is graded. ECharts spec-only notes retain the baked-bytes caveat because those calls have no render operand and still use the reconstructed default palette.
+     * Contrast rationale naming the exact theme/brand. Cartesian and data-backed categorical ECharts results grade rendered paints against that CSS scope canvas; geo and continuous heatmap results remain exempt. Spec-only ECharts calls reconstruct scoped baked colors and make no rendered-carrier measurement claim. For exempt results, no canvas ratio is graded.
      */
     contrastNote?: string;
     /**
@@ -681,6 +689,26 @@ export namespace ArtifactCertifyOutputSchema {
      * Present and non-empty when status is 'error' (the input was not a valid NormalizedVizSpec IR).
      */
     errors?: Finding[];
+    /**
+     * The contrast row for this call's requested theme/brand. Collect rows from separate scope calls to compare themes. measured is true only for a successful render-backed categorical evaluation (pass or fail); exempt, unchecked, ungradeable and spec-only palette reconstruction do not claim a completed canvas ratio measurement.
+     *
+     * @minItems 1
+     * @maxItems 1
+     */
+    contrastResults?: [
+      {
+        theme: 'light' | 'dark';
+        brand: 'A' | 'B';
+        verdict: 'pass' | 'fail' | 'ungradeable' | 'unchecked' | 'exempt';
+        measured: boolean;
+        evidence: 'render' | 'baked-palette' | 'none';
+        note: string;
+      }
+    ];
+    /**
+     * Offered accuracy rule codes for this chart type. This closed set is distinct from accuracySummary.rulesEvaluated, which counts resolved operands; an empty array means no rule is offered.
+     */
+    accuracyRules?: string[];
   }
   export interface Finding {
     /**

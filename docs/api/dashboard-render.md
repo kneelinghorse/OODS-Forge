@@ -12,6 +12,38 @@ SCOPE. theme (light|dark, default light) and brand (A|B, default A) resolve the 
 
 **Registration:** auto
 
+## Measured visualization coverage
+
+Derived from `packages/viz-core/src/registry/viz-recipes.v1.json`, checked against the public-handler census.
+
+Public SVG: 13/13. Dashboard SVG panels: 11/13. Certification coverage: 5 certified / 8 uncertified; uncertified results keep conformant:null.
+
+Theme parameters: light (13/13) and dark (13/13); HC pixels (0/13) are deferred. Brand parameters: A, B. Default scope is light/A.
+
+Contrast measurement records actual categorical canvas grades, including failures; exemptions and unchecked results do not count as measured passes. The four cartesian accuracy rules remain a closed set (V150–V153); the ECharts set remains V154–V159 with per-type applicability.
+
+| Type | Engine | Dashboard | Certification | Contrast measured | Application |
+| --- | --- | --- | --- | --- | --- |
+| bar | vega-lite | true | certified | light, dark | not-placed |
+| line | vega-lite | true | certified | light, dark | not-placed |
+| area | vega-lite | true | certified | light, dark | placed |
+| scatter | vega-lite | true | certified | light, dark | not-placed |
+| heatmap | vega-lite | true | certified | none (exempt) | not-placed |
+| treemap | echarts | true | uncertified | light, dark | not-placed |
+| sunburst | echarts | true | uncertified | light, dark | not-placed |
+| sankey | echarts | true | uncertified | light, dark | not-placed |
+| chord | echarts | excluded (#881) | uncertified | light, dark | not-placed |
+| force_graph | echarts | true | uncertified | light, dark | not-placed |
+| choropleth | echarts | true | uncertified | none (exempt) | not-placed |
+| bubble_map | echarts | true | uncertified | none (exempt) | not-placed |
+| flow_map | echarts | excluded (#881) | uncertified | none (exempt) | not-placed |
+
+- HC pixels deferred (#1851); HC token scopes retained.
+- Light palette on dark canvas; no separate dark viz-scale token overrides.
+- Static sample chart placement: Subscription/detail; edited form data does not regenerate SVG.
+- Contrast verdict exempt; no categorical canvas-ratio measurement claimed.
+- Dashboard exclusion (#881): the public panel schema does not admit this type.
+
 ## Input Parameters
 
 | Parameter | Type | Required | Default | Description |

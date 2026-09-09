@@ -111,3 +111,5 @@ export * from './tokens/oods-echarts-chrome.js';
 // NAMED (not `export *`) so the TemporalGranularity TYPE stays the single re-export from
 // builder/spec-builder.ts (an `export *` here would duplicate it).
 export { finestGranularity, parseTemporalValue } from './analysis/temporal.js';
+
+export { VIZ_RECIPES, type VizRecipeCapability } from './registry/viz-recipes.js';

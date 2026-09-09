@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/artifact.certify.input.json",
   "title": "Artifact certify input",
-  "description": "Input to artifact.certify: a Forge NormalizedVizSpec IR to certify, plus (s172) an OPTIONAL `data` operand for the 8 ECharts-primary types. The tool boundary is intentionally PERMISSIVE on `spec` ({ spec: object }) — a cross-package $ref to the viz-core normalized-viz-spec schema is not resolvable in the mcp-server AJV setup, so the handler's assertNormalizedVizSpec (AJV vs the runtime normalized-viz-spec schema) is the AUTHORITATIVE validator and returns a structured error (status:'error') for a malformed IR. BRAND, STATED PLAINLY (s169 m04): this input takes NO brand, deliberately. Every operand certify grades is brand-INVARIANT — cartesian paints come from the compiled render, and data-backed ECharts paints come from the rendered projected option. Where categorical contrast is graded, those paints are compared against the light-theme :root canvas; geo render evidence remains exempt with no canvas ratio. A brand therefore could not change any verdict. Offering the field would be a false affordance. dashboard.render and repl render DO accept brand; certify does not, because for certify it would mean nothing. DATA IS THE COUNTERPART CASE, NOT THE SAME CASE (s172 m01): `data` is NOT an affordance — it is the OPERAND. An ECharts-primary NormalizedVizSpec is METADATA-ONLY by ratified design (data:{values:[]}, encoding:{}); the chart's actual nodes/links/rows/geometry live in viz.render's data branch and never enter the IR. Without `data` there is nothing for the determinism and accuracy pillars to read, so they stay 'unchecked'; with it they carry real verdicts that genuinely change with the operand. That is exactly why it is offered and brand is not.",
+  "description": "Certify a Forge NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC token exports exist, but server-side HC pixels are not supported. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.",
   "type": "object",
   "required": [
     "spec"
@@ -37,6 +37,24 @@
         }
       },
       "additionalProperties": false
+    },
+    "theme": {
+      "type": "string",
+      "enum": [
+        "light",
+        "dark"
+      ],
+      "default": "light",
+      "description": "CSS scope used by certification emission, SVG rendering and contrast grading. Each result retains this requested scope."
+    },
+    "brand": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B"
+      ],
+      "default": "A",
+      "description": "CSS brand scope, matching viz.render for the same normalized spec and data operand."
     }
   },
   "additionalProperties": false,

@@ -55,7 +55,32 @@ function expectedAtLightScope(trait: string): Record<string, unknown> {
     (expected.pillars as Record<string, unknown>).contrast = 'fail';
     expected.contrastNote = SCOPED_ROLE_C_PREFIX + expected.contrastNote;
   }
+  const caveat = String(expected.contrastNote);
+  expected.contrastNote = caveat.replace(
+    'on the light theme; dark-theme contrast is not verified.',
+    CATEGORICAL_ECHARTS.has(trait) || trait.includes('Choropleth') || trait.includes('Bubble') || trait.includes('Flow')
+      ? 'against the requested CSS scope canvas; no rendered carrier measurement is claimed.'
+      : 'against the requested CSS scope canvas.',
+  ).replace(/certify measures the categorical color bytes Forge baked into the compiled spec, against the requested CSS scope canvas; no rendered carrier measurement is claimed\.$/, trait.includes('Choropleth') || trait.includes('Bubble') || trait.includes('Flow') ? 'No categorical canvas ratio is graded for this scope.' : '$&') + ' Scope: light/A.';
   return expected;
+}
+
+// #1856 declares exactly these additive fields; the pre-existing body stays byte-pinned.
+const OFFERED: Record<string, string[]> = {
+  MarkTreemap: ['OODS-V154', 'OODS-V155'], MarkSunburst: ['OODS-V154', 'OODS-V155'],
+  MarkSankey: ['OODS-V156', 'OODS-V157', 'OODS-V158'], MarkChord: ['OODS-V156'],
+  MarkGraph: [], MarkChoropleth: ['OODS-V159'], MarkBubble: [], MarkFlow: [],
+};
+function checkScopedMetadata(out: Record<string, unknown>, trait: string): Record<string, unknown> {
+  const { accuracyRules, contrastResults, ...body } = out;
+  expect(accuracyRules).toEqual(OFFERED[trait] ?? ['OODS-V150', 'OODS-V151', 'OODS-V152', 'OODS-V153']);
+  const expected = expectedAtLightScope(trait);
+  const verdict = (expected.pillars as Record<string, unknown>).contrast;
+  const rendered = CARTESIAN_MARK_TRAITS.includes(trait as never);
+  const graded = verdict === 'pass' || verdict === 'fail';
+  expect(contrastResults).toEqual([{ theme: 'light', brand: 'A', verdict, measured: rendered && graded,
+    evidence: rendered ? 'render' : graded ? 'baked-palette' : 'none', note: expected.contrastNote }]);
+  return body;
 }
 
 
@@ -125,7 +150,7 @@ describe(`artifact.certify — {spec}-only byte compatibility, cartesian half (b
   it.each(CARTESIAN_MARK_TRAITS)(
     `%s: the {spec}-only response moves only by the declared set vs pristine HEAD ${BASELINE_COMMIT}`,
     async (trait) => {
-      const out = (await handle({ spec: cases[trait] })) as Record<string, unknown>;
+      const out = checkScopedMetadata((await handle({ spec: cases[trait] })) as Record<string, unknown>, trait);
       if (
         DECLARED_CARTESIAN_CONTRAST_NOTE_REWORD === null &&
         DECLARED_CARTESIAN_DETERMINISM_ADDITIONS.length === 0
@@ -185,7 +210,7 @@ describe(`artifact.certify — {spec}-only byte compatibility, ECharts half (bas
   it.each(ECHARTS_MARK_TRAITS)(
     `%s: scope-declared verdict movement only; every other key matches pristine HEAD ${BASELINE_COMMIT}`,
     async (trait) => {
-      const out = (await handle({ spec: cases[trait] })) as Record<string, unknown>;
+      const out = checkScopedMetadata((await handle({ spec: cases[trait] })) as Record<string, unknown>, trait);
       const { notes: _outNotes, contrastNote: _outContrast, ...outRest } = out;
       const { notes: _baseNotes, contrastNote: _baseContrast, ...baseRest } = expectedAtLightScope(trait);
       expect(JSON.stringify(outRest)).toBe(JSON.stringify(baseRest));

@@ -160,19 +160,19 @@ describe("artifact.certify — operand-backed ECharts render grading (s179 m05)"
         operand.branch === "geo" ? "exempt" : "pass",
       );
       expect(out.contrastNote).toContain("normalized SVG rendered");
-      expect(out.contrastNote).toContain("dark-theme contrast is not verified");
+      expect(out.contrastNote).toContain("Scope: light/A.");
       expect(out.contrastNote).not.toMatch(/reconstruct|baked into/i);
       if (operand.branch === "geo") {
         expect(out.contrastNote).toContain(
           "Geo categorical contrast remains exempt",
         );
         expect(out.contrastNote).toContain(
-          "no light-theme canvas ratio is graded",
+          "no canvas ratio is graded",
         );
         expect(out.contrastNote).not.toContain("grades actual carrier paints");
       } else {
         expect(out.contrastNote).toContain("grades actual carrier paints");
-        expect(out.contrastNote).toContain("light-theme canvas");
+        expect(out.contrastNote).toContain("requested CSS scope canvas");
       }
       expect(out.notes?.join(" ")).toContain(
         "packages/viz-render/certified-matrix.json",
