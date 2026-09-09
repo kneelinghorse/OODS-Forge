@@ -11,7 +11,9 @@ const output = path.resolve(args[0] && !args[0].startsWith('--') ? args.shift() 
 let store = path.join(root, 'artifacts/product-reality/sprint-183/m04/saved-schema-store');
 let missionId = 's185-m04';
 let fresh = false;
+let fullPopulation = false;
 for (let index = 0; index < args.length; index += 1) {
+  if (args[index] === '--full-population') { fullPopulation = true; continue; }
   if (args[index] === '--fresh') { fresh = true; continue; }
   const option = args[index];
   const value = args[++index];
@@ -35,7 +37,7 @@ if (fresh) {
     return { path: path.relative(root, path.join(output, file)), sha256: digest(bytes) };
   };
   const inputs = objects.flatMap(object => contexts.map(context => ({ object, context })));
-  inputs.push({ object: 'Subscription', context: 'workflow' });
+  inputs.push(...(fullPopulation ? objects : ['Subscription']).map(object => ({ object, context: 'workflow' })));
   const rows = [];
   for (const input of inputs) {
     const composed = await compose(input);
@@ -58,8 +60,10 @@ if (fresh) {
     profile: 'build', objects, contexts, schemaCount: screens.length, greenSchemas: screens.filter(row => row.green).length,
     generationCells: screens.length * 2, greenCells: screens.flatMap(row => row.cells).filter(cell => cell.status === 'ok' && cell.artifactPresent && !cell.errors.length).length,
     workflow, rows: screens, limitation: 'Generation-only evidence; the full generated application has a separate packed browser proof.' };
+  if (fullPopulation) Object.assign(report, { totalSchemas: rows.length, greenTotalSchemas: rows.filter(row => row.green).length, totalCells: rows.length * 2, greenTotalCells: rows.flatMap(row => row.cells).filter(cell => cell.status === 'ok' && cell.artifactPresent && !cell.errors.length).length, allRows: rows });
   record('report.json', report);
   console.log(JSON.stringify({ schemaCount: report.schemaCount, greenSchemas: report.greenSchemas, greenCells: report.greenCells, workflowGreen: workflow.green }));
+  if (fullPopulation && (report.totalSchemas !== 77 || report.greenTotalSchemas !== 75 || report.greenTotalCells !== 150)) process.exitCode = 1;
   if (report.schemaCount !== 66 || report.greenSchemas !== 66 || report.greenCells !== 132 || !workflow.green) process.exitCode = 1;
 } else {
 const files = fs.readdirSync(store).filter(name => name.endsWith('.json') && name !== '_index.json').sort();

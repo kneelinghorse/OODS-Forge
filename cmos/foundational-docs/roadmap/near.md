@@ -41,7 +41,7 @@ follows runnable product foundations.
 | Fresh composition | All 11 advertised objects × six contexts: **66/66 schemas and 132/132 build generation cells**, from unmodified default composition | Generation covers all 66; runtime covers the locked14, not every object/context |
 | Saved designs | Unchanged original store remains 15/16 and 30 generation cells; exact authentic successor remains 16/16 and 32 cells | Historical negative retained; the successor is a distinct store. Served adoption remains explicit delivery work |
 | Delivery and discovery | Current Forge-source refresh dated 2026-09-07; optional obligationScope explains retain-109. Actual governed/unavailable catalog cases verified. Isolated bridge, schema-save/load and rollback rehearsal passed | PM2 serves a separate older checkout; generic health does not identify compiled revision. Its public schema-load failure is retained. Deployment/adoption/reconnect #1374/#1379/#1384 remain pending |
-| Visualization | Program baseline remains13 admitted types and five complete folded certified paths; not remeasured by this breadth build | Current public-render closure #1372 precedes expansion; VizAreaPreview remains a preview frame |
+| Visualization | 13/13 public SVG in light/dark × A/B; 5 certified / 8 uncertified; area placed on Subscription/detail | Sprint 190 BUILT, REVIEW PENDING; HC pixels deferred (#1851); registry/census is the capability source |
 
 The exact runtime and saved-store hashes are in
 [the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md).
@@ -308,3 +308,13 @@ capture passed with zero failures and zero timeouts. The Package Compatibility C
 pre-existing workflow gap (the compat runner never built `@oods/component-contracts` before Storybook and had not run
 since those imports landed); the review closure commit adds that build step to `scripts/pkg/compat.ts`, mirroring the
 a11y-contract job, with public runtime bytes unchanged.
+
+## Increment 9 — Sprint 190: Visualization public render — BUILT, REVIEW PENDING
+
+Sprint 190 remains Active. `builderSelfCertified:false`; `separateReviewRequired:true`. The measured [visualization registry](../../../packages/viz-core/src/registry/viz-recipes.v1.json) reports 13/13 public SVG in light/dark × A/B; 5 certified / 8 uncertified; area placed on Subscription/detail. Dashboard HTML draws 11/11 admitted types; chord and flow_map remain excluded under #881. The public-tool census, two-run 52-SVG matrix, component and saved-store census, packed application flows and light/dark browser receipts are retained in the [m06 packet](../../../artifacts/product-reality/sprint-190/m06/README.md). Final review reads its frozen heads and CI observations from the [handoff](../../../artifacts/product-reality/sprint-190/m06/closeout/review-handoff.json).
+
+The default uses CSS light/A. The flat token export remains byte-identical; m03 contains the one-time golden migration and every flat-versus-light/A token difference (#1850). HC token scopes remain exported while HC pixels are deferred (#1851). Certification grades the requested scope and retains failures: the existing light categorical palettes on dark canvases can fail contrast. Heatmap and geo exemptions make no categorical canvas-ratio claim. Eight ECharts-primary types retain `conformant:null`.
+
+Subscription/detail includes a static sample-payment SVG above the timeline in HTML, React and Vue; workflow records each receive a seeded SVG. Editing the form does not regenerate the chart. This placement changes only Subscription/detail in the 66-schema population. The wider 77-schema population retains the Organization/User workflow OODS-N016 gaps. Generation coverage does not imply full runtime coverage for every context.
+
+Mission 1 delivered the reviewed Sprint 189 head and its authorized reconnects. Sprint 190 implementation stays in its build worktree. The Sprint 191 reconnect for cmos-dashboard, dashboard-demos, forge-demos and aquex-mcp is prepared and unsent. Independent review decides closure and later delivery.

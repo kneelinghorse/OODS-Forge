@@ -39,9 +39,10 @@ const publicScope188 = [...publicScope187, 'packages/mcp-bridge/src', 'packages/
 const testPath = file => /(^|\/)(?:__tests__|test|tests)\//.test(file) || /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file);
 
 const publicScope189 = [...publicScope188, 'scripts/design-loop', 'packages/mcp-server/src/tools/design.preview.ts', 'packages/mcp-server/src/index.ts', 'packages/mcp-server/src/tools/registry.ts', 'agents.md', 'README.md', 'package.json'];
+const publicScope190 = [...publicScope189, 'packages/tokens', 'packages/viz-core', 'packages/viz-render', 'packages/mcp-server/src/tools/viz.render.ts', 'packages/mcp-server/src/tools/dashboard.render.ts', 'packages/mcp-server/src/tools/artifact.certify.ts', 'packages/mcp-server/src/tools/certify-contrast.ts', 'packages/mcp-server/src/tools/certify-echarts-emit.ts', 'packages/mcp-server/src/tools/certify-echarts-render-contrast.ts', 'objects', 'traits', 'src/types/oods-tokens.d.ts', 'cmos/foundational-docs/roadmap/product-reality-program.md'];
 export function auditPublicRuntimeBytes({ root, implementationHead, executionHead, sprintId = 'sprint-185' }) {
   assert(fullHead(implementationHead) && fullHead(executionHead));
-  const scope = sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
+  const scope = sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : sprintId === 'sprint-186' ? publicScope186 : publicScope;
   execFileSync('git', ['merge-base', '--is-ancestor', implementationHead, executionHead], { cwd: root });
   const scopedChangedPaths = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', `${implementationHead}..${executionHead}`, '--', ...scope], { cwd: root, encoding: 'utf8' })
     .split('\0').filter(Boolean).sort();
@@ -56,7 +57,7 @@ export function auditSprintRange({ root, base, head, sprintId = 'sprint-186' }) 
   const canonical = ['configs/agent/policy.json', 'docs/api', 'packages/mcp-adapter/tool-descriptions.json',
     'packages/mcp-server/src/schemas', 'packages/mcp-server/src/schemas/generated.ts',
     'packages/mcp-server/src/security/policy.json', 'packages/mcp-server/src/tools/registry.json'];
-  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
+  return { base, head, canonicalPaths: paths(canonical), publicPaths: paths(sprintId === 'sprint-190' ? publicScope190 : sprintId === 'sprint-189' ? publicScope189 : sprintId === 'sprint-188' ? publicScope188 : sprintId === 'sprint-187' ? publicScope187 : publicScope186) };
 }
 const sourceKeys = [
   ['baselineFold'], ['movers'], ['movers', 'noticePlan', 'deliveries'],
@@ -161,6 +162,7 @@ export function auditBrowserReceipt(ref, readFrozen, head) {
 }
 
 export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath = defaultManifest }) {
+  if (manifestPath.startsWith('artifacts/product-reality/sprint-190/m06/')) return auditSprint190Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, publicGitEvidence, rangeGitEvidence, manifestPath });
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Audit requires actual full execution and review SHAs.');
   const browser = manifestPath.startsWith('artifacts/product-reality/sprint-189/m06/');
   const workflow = browser || manifestPath.startsWith('artifacts/product-reality/sprint-188/m06/');
@@ -847,6 +849,80 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     limitation: 'This audit verifies the actual build evidence graph and does not certify the sprint. Handoff flags are checked; handoff bytes are excluded because the handoff subsequently binds this audit.' };
 }
 
+/** Independent s190 audit: read actual output files and re-derive from frozen inputs. */
+export function auditSprint190Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, publicGitEvidence, rangeGitEvidence, manifestPath }) {
+  const folder = 'artifacts/product-reality/sprint-190/m06/closeout';
+  const manifest = JSON.parse(readFrozen(manifestPath));
+  const ledger = JSON.parse(readOutput(`${folder}/claim-ledger.json`));
+  const handoff = JSON.parse(readOutput(`${folder}/review-handoff.json`));
+  const accounting = JSON.parse(readOutput(`${folder}/suite-accounting.json`));
+  for (const out of [ledger, handoff]) { assert.equal(out.executionHead, executionHead); assert.equal(out.reviewHead, reviewHead); assert.equal(out.builderSelfCertified, false); assert.equal(out.separateReviewRequired, true); assert.equal(out.sprintStatus, 'Active'); }
+  const checked = new Set();
+  const verifyRef = ref => { assert(ref.path && !path.isAbsolute(ref.path) && !ref.path.split('/').includes('..')); const bytes = readFrozen(ref.path); assert.equal(digest(bytes), bare(ref.sha256), ref.path); checked.add(ref.path); return bytes; };
+  for (const ref of [...ledger.references, ...accounting.references]) verifyRef(ref);
+  const source = key => JSON.parse(readFrozen(manifest.sources[key]));
+  const criteria = source('missions').missions.flatMap(mission => mission.successCriteria.map((criterion,index) => ({missionId:mission.id,criterionIndex:index+1,criterion})));
+  assert.equal(criteria.length, 37); assert.equal(ledger.claims.length, 37);
+  const ids = new Set(ledger.executions.map(row => row.id)); assert.equal(ids.size, ledger.executions.length);
+  for (let i=0;i<criteria.length;i++) {
+    const claim = ledger.claims[i]; for (const key of ['missionId','criterionIndex','criterion']) assert.equal(claim[key], criteria[i][key]);
+    assert.equal(claim.status, 'proven'); assert(claim.executionIds.length && claim.evidence.length);
+    claim.executionIds.forEach(id => assert(ids.has(id))); claim.evidence.forEach(verifyRef);
+  }
+  for (const execution of ledger.executions) for (const ref of execution.evidence) {
+    const bytes = verifyRef(ref); if (execution.historical) assert(bytes.equals(readHistorical(execution.head,ref.path)));
+  }
+  assert(publicGitEvidence.ancestor); assert.deepEqual(publicGitEvidence.changedPaths, []);
+  assert.deepEqual(publicGitEvidence.scope, publicScope190);
+  const movers = source('movers');
+  assert.equal(rangeGitEvidence.head, manifest.implementationHead);
+  for (const key of ['canonicalPaths','publicPaths']) assert.deepEqual(movers.s190[key], rangeGitEvidence[key]);
+  const registry = source('registry'); assert.deepEqual(registry,source('vizCensus')); assert.equal(registry.length,13);
+  assert.equal(registry.filter(row=>row.publicSvg && row.themes.light && row.themes.dark && !row.themes.hc).length,13);
+  assert.equal(registry.filter(row=>row.dashboardDrawn===true).length,11);
+  assert.equal(registry.filter(row=>row.certifyCoverage==='certified').length,5);
+  assert.deepEqual(registry.filter(row=>row.chartInApp==='placed').map(row=>row.chartType),['area']);
+  const observed = source('vizObservations');
+  assert.equal(observed.observations.flatMap(row=>row.scopes).length,52);
+  for(const row of observed.observations) for(const scope of row.scopes) {
+    assert.equal(scope.svgHash,scope.renderHash); assert.equal(scope.contrast.theme,scope.theme); assert.equal(scope.contrast.brand,scope.brand);
+    if (scope.coverage==='uncertified') assert.equal(scope.conformant,null);
+    if (!['pass','fail'].includes(scope.contrast.verdict)) assert.equal(scope.contrast.measured,false);
+  }
+  const matrix=source('matrix'); assert.equal(matrix.head,manifest.implementationHead); assert.equal(matrix.table.length,52);
+  for(const row of matrix.table) { assert.equal(row.svgHash,row.secondHash); verifyRef({path:`${path.posix.dirname(manifest.sources.matrix)}/${row.file}`,sha256:row.svgHash}); }
+  const census=source('componentCensus'); assert.equal(census.greenSchemas,66); assert.equal(census.greenCells,132); assert.equal(census.greenTotalSchemas,75); assert.equal(census.totalSchemas,77); assert(census.workflow.green);
+  for(const row of census.allRows.filter(row=>!row.green)) assert(row.cells.every(cell=>cell.errors.some(error=>error.code==='OODS-N016')));
+  assert.deepEqual(source('schemaMovement').changedSchemas,['Subscription/detail']);
+  assert.equal(source('originalStore').reachable,15); assert.equal(source('successorStore').reachable,16);
+  assert.equal(source('compatibility').liveStoreFiles,17); assert.equal(source('compatibility').changedLiveFiles,0);
+  const flows=source('flows'); assert.equal(flows.sourceHead,manifest.implementationHead); assert.equal(flows.stateObservations.length,32);
+  for(const cell of flows.cells) { assert.equal(cell.gates.length,8); assert.equal(cell.flow.length,9); assert([...cell.gates,...cell.flow].every(row=>row.status==='passed')); }
+  assert.equal(flows.screenshots.length,36); for(const shot of flows.screenshots) verifyRef({path:`${path.posix.dirname(manifest.sources.flows)}/${shot.file}`,sha256:shot.sha256});
+  const browser=source('browserReceipts'); assert.equal(browser.receipts.length,4);
+  for(const ref of browser.receipts) { const receipt=JSON.parse(verifyRef(ref)); assert.equal(receipt.sourceHead,manifest.implementationHead); assert.deepEqual(receipt.errors,[]); assert.equal(receipt.views.length,3); for(const view of receipt.views) { assert(view.accessibility.includes('graphics-object')); assert(view.accessibility.includes('img "Payment amounts"')); assert.deepEqual(view.measurements.overflow,[]); verifyRef({path:`${path.posix.dirname(ref.path)}/${view.screenshot}`,sha256:view.screenshotHash}); } }
+  assert.equal(accounting.status,'passed'); assert.deepEqual(accounting.validationIssues,[]); assert.deepEqual(accounting.unattributedDeltas,[]);
+  const runs=accounting.executions.filter(row=>row.cohort==='closeout'); assert.equal(runs.length,4);
+  assert.deepEqual(runs.map(row=>row.suite).sort(),['mcp-server','root-core','viz-core','viz-render']);
+  const timeout=accounting.timeoutAcceptance;
+  if(timeout) {
+    assert.equal(timeout.decisionId,1833); assert.equal(accounting.closeoutFailures.length,1);
+    const failure=accounting.closeoutFailures[0], message=[...failure.messages,failure.failureEvidence?.cause??''].join('\n');
+    assert(/(?:Test|Hook) timed out in \d+ms/.test(message) && !message.includes('AssertionError')); assert.equal(failure.status,'isolated-timeout-disclosed');
+    const retry=timeout.rerun; assert.equal(retry.executionHead,executionHead); assert.equal(retry.attempts,1); assert.equal(retry.exitCode,0); assert.equal(retry.testKey,failure.testKey); assert.equal(retry.file,failure.file);
+    assert(retry.argv.includes('-t'));
+    const raw=JSON.parse(verifyRef(retry.rawReport)); verifyRef(retry.log); assert(raw.success); assert.equal(raw.numFailedTests,0); assert.equal(raw.numPassedTests,1);
+    const passed=raw.testResults.flatMap(file=>file.assertionResults??[]).filter(row=>row.status==='passed'); assert.equal(`${passed[0].fullName}#0`,failure.testKey);
+  } else assert.deepEqual(accounting.closeoutFailures,[]);
+  for(const run of runs) { const raw=JSON.parse(verifyRef(run.rawReport)); const failed=timeout?.executionId===run.id?1:0; assert.equal(run.measuredHead,executionHead); assert.equal(run.exitCode,failed); assert.equal(raw.success,!failed); assert.equal(raw.numFailedTests,failed); assert.equal(raw.numPassedTests,run.counts.passed); assert.equal(raw.numPendingTests,run.counts.skipped); }
+  assert.equal(runs.reduce((count,row)=>count+row.counts.skipped,0),16);
+  for(const row of accounting.goldenAttribution.files) verifyRef({path:row.file,sha256:row.afterSha256});
+  const notice=source('noticePlan'); assert.equal(notice.sent,false); assert.equal(notice.implementationHead,manifest.implementationHead); assert.deepEqual(notice.targets,['cmos-dashboard','dashboard-demos','forge-demos','aquex-mcp']);
+  const ci=source('ci'); assert.equal(ci.baseRefName,'OODS-pro'); for(const job of ['pkg-compat','viz-determinism','coverage']) assert(ci.jobs.some(row=>row.name===job && row.runId && row.conclusion==='success'));
+  assert.equal(source('prose').exitCode,0);
+  return {status:'passed',checkedCriteria:37,checkedExecutions:ledger.executions.length,checkedFrozenPaths:checked.size,executionHead,reviewHead,builderSelfCertified:false,separateReviewRequired:true};
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const argument = name => { const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1]; };
   const root = path.resolve(argument('--root') ?? path.join(path.dirname(fileURLToPath(import.meta.url)), '../..'));
@@ -865,8 +941,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const manifest = JSON.parse(readFrozen(manifestPath));
     const implementationHead = JSON.parse(readFrozen(manifest.sources.noticePlan)).implementationHead;
     const publicGitEvidence = auditPublicRuntimeBytes({ root, implementationHead, executionHead,
-      sprintId: manifest.missionId === 's189-m06' ? 'sprint-189' : manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
-    const rangeGitEvidence = manifest.missionId === 's189-m06' ? auditSprintRange({ root, base: 'f4cd1ba3cda3d1d52405582e425ecd6d19890b51', head: implementationHead, sprintId: 'sprint-189' }) : manifest.missionId === 's188-m06'
+      sprintId: manifest.missionId === 's190-m06' ? 'sprint-190' : manifest.missionId === 's189-m06' ? 'sprint-189' : manifest.missionId === 's188-m06' ? 'sprint-188' : manifest.missionId === 's187-m06' ? 'sprint-187' : manifest.missionId === 's186-m06' ? 'sprint-186' : 'sprint-185' });
+    const rangeGitEvidence = manifest.missionId === 's190-m06' ? auditSprintRange({ root, base: execFileSync('git',['rev-parse','c3a68d5f'],{cwd:root,encoding:'utf8'}).trim(), head: implementationHead, sprintId:'sprint-190' }) : manifest.missionId === 's189-m06' ? auditSprintRange({ root, base: 'f4cd1ba3cda3d1d52405582e425ecd6d19890b51', head: implementationHead, sprintId: 'sprint-189' }) : manifest.missionId === 's188-m06'
       ? auditSprintRange({ root, base: 'cd8ee986db40e73a3fb9a9f1ec7b7db6de9ca076', head: implementationHead, sprintId: 'sprint-188' }) : manifest.missionId === 's187-m06'
       ? auditSprintRange({ root, base: '21c7c31906fbb81d049b943155c64ed78409fb9f', head: implementationHead, sprintId: 'sprint-187' }) : manifest.missionId === 's186-m06'
       ? auditSprintRange({ root, base: '5aa53b3ae92cdb70b1577b56a72debf10e58a5b2', head: implementationHead }) : undefined;
