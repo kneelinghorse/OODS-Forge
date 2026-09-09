@@ -142,7 +142,7 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
       return;
     }
     const value = target instanceof HTMLInputElement && target.type === 'checkbox' ? target.checked
-      : type === 'number' || type === 'integer' ? Number(target.value) : target instanceof HTMLInputElement && target.type === 'datetime-local' && target.value ? new Date(target.value + ':00Z').toISOString() : target.value;
+      : type === 'number' || type === 'integer' ? Number(target.value) : target instanceof HTMLInputElement && target.type === 'datetime-local' && target.value ? new Date(target.value + 'Z').toISOString() : target.value;
     publish({ draft: { ...state.draft, [field]: value }, notice: 'Unsaved changes' });
   }
   return {
