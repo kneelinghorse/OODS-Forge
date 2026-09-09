@@ -7,7 +7,7 @@ import { consumerEntries } from '../../scripts/design-loop/serve.js';
 import { compareReceipts, diff } from '../../scripts/design-loop/diff.js';
 import { outputDirectory, relativeFile, validateReceipt, type CaptureRequest } from '../../scripts/design-loop/common.js';
 import { render } from '../../scripts/design-loop/render.js';
-import { applySteps } from '../../scripts/design-loop/observe.js';
+import { applySteps, observeGraphicsAccessibility } from '../../scripts/design-loop/observe.js';
 import type { Page } from 'playwright';
 import { status } from '../../scripts/design-loop/status.js';
 
@@ -25,6 +25,20 @@ function receipt() {
 }
 
 describe('Design-loop observations remain evidence rather than repaired output', () => {
+  it('retains actual browser graphics descendants instead of guessing from authored DOM roles', async () => {
+    const replies: Record<string, unknown> = {
+      'DOM.getDocument': { root: { nodeId: 1 } }, 'DOM.querySelector': { nodeId: 2 },
+      'DOM.describeNode': { node: { backendNodeId: 22 } },
+      'Accessibility.getFullAXTree': { nodes: [
+        { nodeId: 'figure', backendDOMNodeId: 22, role: { value: 'image' }, name: { value: 'Payments' }, childIds: ['chart'] },
+        { nodeId: 'chart', role: { value: 'graphics-object' }, name: { value: 'Amounts' }, childIds: [] },
+      ] },
+    };
+    const page = { locator: () => ({ count: async () => 1 }), context: () => ({ newCDPSession: async () => ({ send: async (method: string) => replies[method], detach: async () => {} }) }) } as unknown as Page;
+    expect(await observeGraphicsAccessibility(page)).toContain('- image "Payments"\n  - graphics-object "Amounts"');
+    replies['Accessibility.getFullAXTree'] = { nodes: [] };
+    await expect(observeGraphicsAccessibility(page)).rejects.toThrow('absent');
+  });
   it('advances deterministic event time so a change after mounting is newer than its listeners', async () => {
     const times: number[] = [];
     const start = Date.parse('2026-09-08T12:00:00Z');

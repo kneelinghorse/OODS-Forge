@@ -150,6 +150,7 @@ export interface DesignComposeInput {
   context?: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
   layout?: LayoutInput;
   preferences?: {
+    brand?: 'A' | 'B';
     theme?: string;
     metricColumns?: number;
     fieldGroups?: number;
@@ -1912,6 +1913,13 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
 
   if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, Number(composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Billable')?.ref.parameters?.minorUnits ?? 100));
   if (composed && effectiveContext) reconcileFormDetail(schema, effectiveContext, composed, input.preferences?.tabLabels);
+  if (input.preferences?.brand) {
+    const applyChartBrand = (node: UiElement): void => {
+      if (node.chart) node.chart.brand = input.preferences!.brand;
+      node.children?.forEach(applyChartBrand);
+    };
+    schema.screens.forEach(applyChartBrand);
+  }
 
   // 4. Auto-validate
   let validation: DesignComposeOutput['validation'];

@@ -1,3 +1,4 @@
+import { chartNodes } from './chart-declaration.js';
 import { emitCollectionNode, collectionProps, collectionParameters, collectionSources, wiredCollectionAction } from './collection-emitter.js';
 import { emitWorkflow } from './workflow-emitter.js';
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
@@ -500,6 +501,10 @@ function emitNode(
     attrParts.push(`data-layout="${node.layout.type}"`);
   }
 
+  if (node.chart && typeof propsObject?.svg === 'string') {
+    attrParts.push(`svg={svg ?? ${JSON.stringify(propsObject.svg)}}`);
+    delete propsObject.svg;
+  }
   // Spread user props (except style and children)
   if (propsObject) {
     const propsStr = propsToJsxAttrs(propsObject, options.styling === 'tailwind');
@@ -1117,7 +1122,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
       normalizedSchema.objectSchema!,
       hasDomainActions,
       hasStateBranches,
-      collectionProps(ctx.tree, ctx.objectSchema ?? {}),
+      [...collectionProps(ctx.tree, ctx.objectSchema ?? {}), ...(chartNodes(ctx.tree).length ? ['svg?: string;'] : [])],
     )
     : '';
   const returnType = options.typescript
@@ -1184,6 +1189,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
       ...(hasStateBranches ? ['uiState'] : []),
       ...fieldNames,
       ...collectionParameters(ctx.tree),
+      ...(chartNodes(ctx.tree).length ? ['svg'] : []),
     ];
     const destructure = `{ ${parameterNames.join(', ')} }`;
     if (!options.typescript && (hasDomainActions || hasStateBranches)) {

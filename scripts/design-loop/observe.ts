@@ -23,7 +23,7 @@ export async function applySteps(page: Page, steps: BrowserStep[], clockStart?: 
 export async function observeView(page: Page, width: number, output: string) {
   await page.setViewportSize({ width, height: 1000 });
   await page.evaluate(() => document.fonts.ready);
-  const accessibility = await page.locator('body').ariaSnapshot();
+  const accessibility = (await page.locator('body').ariaSnapshot()) + await observeGraphicsAccessibility(page);
   const observation = await page.evaluate(() => {
     const all = Array.from(document.body.querySelectorAll('*')).filter(element => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden');
     const overflow = all.flatMap(element => {
@@ -59,4 +59,29 @@ export async function observeView(page: Page, width: number, output: string) {
   await fs.writeFile(path.join(output, dump), accessibility + '\n');
   await page.screenshot({ path: path.join(output, screenshot), fullPage: true, animations: 'disabled' });
   return { width, accessibility, ...observation, screenshot, screenshotHash: digest(await fs.readFile(path.join(output, screenshot))), dump };
+}
+
+/** Playwright's text snapshot collapses SVG roles into img. Retain the browser's
+ * actual graphics subtree as additional evidence; never infer it from DOM roles. */
+export async function observeGraphicsAccessibility(page: Page): Promise<string> {
+  const selector = 'figure[data-viz-rendered="true"]';
+  if (!await page.locator(selector).count()) return '';
+  const client = await page.context().newCDPSession(page);
+  try {
+    const { root } = await client.send('DOM.getDocument');
+    const { nodeId } = await client.send('DOM.querySelector', { nodeId: root.nodeId, selector });
+    const { node } = await client.send('DOM.describeNode', { nodeId });
+    const { nodes } = await client.send('Accessibility.getFullAXTree');
+    const figure = nodes.find(entry => entry.backendDOMNodeId === node.backendNodeId);
+    if (!figure) throw new Error('Rendered chart figure is absent from the browser accessibility tree.');
+    const byId = new Map(nodes.map(entry => [entry.nodeId, entry]));
+    const lines = ['\nBrowser AX subtree for the chart figure:'];
+    const visit = (entry: (typeof nodes)[number] | undefined, depth: number): void => {
+      if (!entry) return;
+      lines.push(`${'  '.repeat(depth)}- ${entry.role?.value} ${JSON.stringify(entry.name?.value ?? '')}${entry.ignored ? ' [ignored]' : ''}`);
+      for (const id of entry.childIds ?? []) visit(byId.get(id), depth + 1);
+    };
+    visit(figure, 0);
+    return lines.join('\n');
+  } finally { await client.detach(); }
 }

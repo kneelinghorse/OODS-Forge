@@ -281,6 +281,22 @@
   text-align: center;
 }
 
+:where([data-oods-component='VizAreaPreview'][data-viz-rendered='true']) {
+  margin: 0;
+  padding: 0;
+  min-block-size: 0;
+  inline-size: 100%;
+  border: 0;
+  place-items: stretch;
+}
+:where([data-viz-rendered='true']) > figcaption {
+  font-size: var(--sys-text-scale-heading-md-font-size, 1.25rem);
+  font-weight: 600;
+}
+:where([data-viz-svg]) { min-inline-size: 0; }
+:where([data-viz-svg]) > svg { display: block; inline-size: 100%; block-size: auto; }
+:where([data-viz-description]) { color: var(--sys-text-neutral); font-size: 0.875rem; }
+
 /* Timeline-family logs and the audit event article mirror renderTimelineContainer and renderEventArticle. */
 :where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) {
   --cmp-timeline-background: var(--sys-surface-raised);

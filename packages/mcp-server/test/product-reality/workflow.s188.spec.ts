@@ -162,7 +162,7 @@ describe('Generated store drives the lifecycle without consumer wiring', () => {
   it('covers deterministic seeds, query boundaries, save, cancellation history, archive/restore and failure modes', async () => {
     const directory = mkdtempSync(path.join(tmpdir(), 'oods-s188-store-'));
     try {
-      for (const name of ['store', 'sample-data', 'application', 'actions']) {
+      for (const name of ['store', 'sample-data', 'application', 'actions', 'chart-assets']) {
         const source = artifacts.get('react')!.files.find((file) => file.path === `src/${name}.ts`)!.contents;
         writeFileSync(path.join(directory, `${name}.js`), ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText);
       }

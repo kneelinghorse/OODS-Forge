@@ -51,6 +51,16 @@ traits:
       retainHistory: true
       restoreWindowDays: 30
 
+  - name: viz/MarkArea
+    parameters:
+      chart:
+        chartType: area
+        source: payment-events
+        dateFields: [last_payment_at, next_payment_due_at]
+        amountField: amount
+        minorUnits: 100
+        currencyField: currency
+
 schema:
   subscription_id:
     type: string

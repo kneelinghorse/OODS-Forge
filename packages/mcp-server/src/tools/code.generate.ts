@@ -1,4 +1,5 @@
 import { preflightCollections } from '../codegen/collection-emitter.js';
+import { prepareChartAssets } from '../codegen/chart-assets.js';
 import { loadComponentRegistry, validateSchema } from './repl.utils.js';
 import { emit as emitHtml } from '../codegen/html-emitter.js';
 import { emit as emitReact } from '../codegen/react-emitter.js';
@@ -359,7 +360,17 @@ export async function handle(
   }
 
   // Dispatch to framework emitter
-  const result = emitter(schema, options);
+  let prepared: Awaited<ReturnType<typeof prepareChartAssets>>;
+  try {
+    prepared = await prepareChartAssets(schema);
+  } catch (error) {
+    return { status: 'error', framework, code: '', fileExtension: '', imports: [], warnings, validationReceipt, meta,
+      errors: [{ code: 'OODS-N016', message: error instanceof Error ? error.message : String(error) }] };
+  }
+  const result = emitter(prepared.schema, options);
+  if (prepared.files.length && result.status === 'ok') {
+    result.files = [...(result.files ?? [{ path: framework === 'html' ? 'index.html' : `src/GeneratedUI${result.fileExtension}`, contents: result.code }]), ...prepared.files];
+  }
 
   // Merge warnings
   const allWarnings = [...warnings, ...result.warnings];

@@ -28,6 +28,21 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "chartDeclaration": {
+      "description": "Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chartType", "source", "dateFields", "amountField", "minorUnits", "currencyField"],
+      "properties": {
+        "chartType": { "const": "area" },
+        "source": { "const": "payment-events" },
+        "dateFields": { "type": "array", "minItems": 2, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "amountField": { "type": "string", "minLength": 1 },
+        "minorUnits": { "type": "number", "exclusiveMinimum": 0 },
+        "currencyField": { "type": "string", "minLength": 1 },
+        "brand": { "enum": ["A", "B"] }
+      }
+    },
     "workflow": {
       "type": "object",
       "additionalProperties": false,
@@ -266,6 +281,7 @@
         "layout": { "$ref": "#/$defs/layout" },
         "style": { "$ref": "#/$defs/style" },
         "props": { "$ref": "#/$defs/props" },
+        "chart": { "$ref": "#/$defs/chartDeclaration" },
         "bindings": { "$ref": "#/$defs/bindings" },
         "collection": {
           "type": "object",

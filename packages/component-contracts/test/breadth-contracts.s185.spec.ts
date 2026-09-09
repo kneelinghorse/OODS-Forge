@@ -31,7 +31,7 @@ const BREADTH_CONTRACTS = {
     scenario: 'detail-header-heading-level',
   },
   VizAreaPreview: {
-    props: ['width', 'height'],
+    props: ['svg', 'title', 'description', 'width', 'height'],
     renderer: 'renderVizAreaPreview',
     scenario: 'viz-area-preview-frame-placeholder-and-slot',
   },
@@ -54,7 +54,7 @@ describe('Sprint 185 component breadth contracts', () => {
     it(`${id} governs its measured props and mirrors the named HTML renderer`, () => {
       const contract = componentContracts[id as keyof typeof BREADTH_CONTRACTS];
       expect(contract.id).toBe(id);
-      expect(contract.version).toBe(COMPONENT_CONTRACT_VERSION);
+      expect(contract.version).toBe(id === 'VizAreaPreview' ? COMPONENT_CONTRACT_VERSION_1_1 : COMPONENT_CONTRACT_VERSION);
       expect([...contract.props].sort()).toEqual([...expected.props].sort());
       expect(new Set(contract.props).size).toBe(contract.props.length);
       expect(contract.props).not.toContain('field'); // Generic field bindings are lowered before component rendering.
@@ -79,12 +79,12 @@ describe('Sprint 185 component breadth contracts', () => {
     });
   }
 
-  it('moves versions only when contract shape changes, retaining the three Sprint 184 amendments', () => {
+  it('versions the static SVG extension while retaining the three Sprint 184 amendments', () => {
     const amended = Object.values(componentContracts)
       .filter(({ version }) => version === COMPONENT_CONTRACT_VERSION_1_1)
       .map(({ id }) => id)
       .sort();
-    expect(amended).toEqual(['Select', 'Stack', 'Text']);
+    expect(amended).toEqual(['Select', 'Stack', 'Text', 'VizAreaPreview']);
     const original = Object.values(componentContracts)
       .filter(({ version }) => version === COMPONENT_CONTRACT_VERSION)
       .map(({ id }) => id)
@@ -131,8 +131,8 @@ describe('Sprint 185 component breadth contracts', () => {
 
   it('makes the preview frame limitation and placeholder-versus-slot behavior explicit', () => {
     const contract = componentContracts.VizAreaPreview;
-    expect(contract.compatibility).toContain('not visualization evidence');
-    expect(contract.compatibility).toContain('renders no chart pixels');
+    expect(contract.compatibility).toContain('With svg, renders a labelled figure preserving static SVG IDs and ARIA');
+    expect(contract.compatibility).toContain('without svg, the placeholder remains unchanged');
     expect(contract.compatibility).toContain('renderVizPreview');
     expect(contract.compatibility).toContain('data-viz-preview-type=area');
     expect(contract.compatibility).toContain('640x360');

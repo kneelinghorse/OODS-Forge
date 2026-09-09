@@ -1,3 +1,4 @@
+import { assertStaticSvg } from '@oods/component-contracts';
 import { dateTimeInputValue, formatDateTime, summaryValue } from '@oods/component-contracts';
 import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
@@ -1495,15 +1496,21 @@ function renderVizPreview(node: UiElement, childrenHtml: string, previewType: st
   const props = isRecord(node.props) ? node.props : {};
   const width = firstSerialized(props, ['width']) ?? '640';
   const height = firstSerialized(props, ['height']) ?? '360';
+  const svg = previewType === 'area' && typeof props.svg === 'string' ? assertStaticSvg(props.svg) : undefined;
+  const title = typeof props.title === 'string' ? props.title : undefined;
+  const description = typeof props.description === 'string' ? props.description : undefined;
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
-    consumedProps: new Set(['width', 'height']),
+    consumedProps: new Set(['width', 'height', 'svg', 'title', 'description']),
+    htmlOverrides: svg !== undefined ? { role: 'img', 'aria-label': title ?? description ?? 'Payment amounts' } : {},
     dataOverrides: {
       'data-viz-preview-type': previewType,
       'data-viz-width': width,
       'data-viz-height': height,
+      ...(svg !== undefined ? { 'data-viz-rendered': 'true' } : {}),
     },
   });
+  if (svg !== undefined) return `<figure${attrs}>${title ? `<figcaption>${escapeHtml(title)}</figcaption>` : ''}<div data-viz-svg="true">${svg}</div>${description ? `<p data-viz-description="true">${escapeHtml(description)}</p>` : ''}</figure>`;
   const content = hasChildrenHtml(childrenHtml)
     ? childrenHtml
     : `<div data-viz-preview-placeholder="true">${escapeHtml(defaultLabel)} preview (${escapeHtml(width)} x ${escapeHtml(height)})</div>`;

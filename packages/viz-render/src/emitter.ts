@@ -1,3 +1,4 @@
+/// <reference path="./vega-textmetrics.d.ts" />
 // Deterministic Vega-Lite -> SVG emitter (sprint-115 m02).
 //
 // Compiles a Vega-Lite spec to a Vega spec, instantiates a HEADLESS Vega view

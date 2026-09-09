@@ -1,3 +1,4 @@
+import { assertStaticSvg } from '@oods/component-contracts';
 import { formatDateTime, summaryValue } from '@oods/component-contracts';
 import {
   Comment,
@@ -158,12 +159,25 @@ export const ColorizedBadge = defineComponent({
 export const VizAreaPreview = defineComponent({
   name: 'OodsVizAreaPreview',
   props: {
+    svg: String,
+    title: String,
+    description: String,
     width: { type: Number, default: 640 },
     height: { type: Number, default: 360 },
   },
   setup(props, { slots }) {
     return () => {
       const content = authoredContent(slots.default?.());
+      if (props.svg !== undefined) return h('figure', {
+        class: 'oods-viz-area-preview', 'data-oods-component': 'VizAreaPreview',
+        'data-viz-preview-type': 'area', 'data-viz-rendered': 'true',
+        'data-viz-width': props.width, 'data-viz-height': props.height,
+        role: 'img', 'aria-label': props.title ?? props.description ?? 'Payment amounts',
+      }, [
+        ...(props.title ? [h('figcaption', props.title)] : []),
+        h('div', { 'data-viz-svg': 'true', innerHTML: assertStaticSvg(props.svg) }),
+        ...(props.description ? [h('p', { 'data-viz-description': 'true' }, props.description)] : []),
+      ]);
       return h('div', {
         class: 'oods-viz-area-preview',
         'data-oods-component': 'VizAreaPreview',

@@ -489,6 +489,18 @@ Example input (explicit full detail):
 
 ### `code.generate`
 
+Subscription detail declares a read-only `VizAreaPreview.chart` over
+`last_payment_at`, `next_payment_due_at`, and `amount / minorUnits`. This public
+UiSchema declaration is rendered through `viz.render` during generation using
+the compose theme and brand (default light/A). React and Vue receive an optional
+typed `svg` prop with a seed default; workflows include one hashed static SVG
+asset per seed record, selected by record id. These sample charts stay fixed
+when the local record is edited; consumers can supply a replacement SVG.
+Generated applications require no visualization runtime. The component embeds
+the SVG verbatim in a labelled figure and retains the existing placeholder when
+`svg` is omitted. Its passive SVG boundary rejects scripts, style blocks or
+attributes, and external references.
+
 - **Input schema**: `packages/mcp-server/src/schemas/code.generate.input.json`
 - **Output schema**: `packages/mcp-server/src/schemas/code.generate.output.json`
 - **Policy**: designer, maintainer | read-only | timeout 30s | rate 60/min | concurrency 4

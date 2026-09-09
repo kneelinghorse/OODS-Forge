@@ -9,7 +9,7 @@ import {
 } from '../src/index.js';
 
 describe('Sprint 184 nucleus contract amendments', () => {
-  it('versions only the three contracts whose saved-schema semantics changed', () => {
+  it('versions the three original amendments and the static SVG extension', () => {
     const supportedVersions: readonly ComponentContract['version'][] = ['1.0.0', '1.1.0'];
     const version11Ids = Object.values(componentContracts)
       .filter((contract) => contract.version === COMPONENT_CONTRACT_VERSION_1_1)
@@ -22,7 +22,7 @@ describe('Sprint 184 nucleus contract amendments', () => {
 
     expect(supportedVersions).toEqual(['1.0.0', '1.1.0']);
     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
-    expect(version11Ids).toEqual(['Select', 'Stack', 'Text']);
+    expect(version11Ids).toEqual(['Select', 'Stack', 'Text', 'VizAreaPreview']);
     expect(version10Ids).toEqual(
       [...NUCLEUS_COMPONENT_IDS].filter((id) => !version11Ids.includes(id)).sort(),
     );

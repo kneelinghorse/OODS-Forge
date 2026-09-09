@@ -143,6 +143,7 @@ export namespace A11yScanInputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -169,6 +170,21 @@ export namespace A11yScanInputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -1295,6 +1311,7 @@ export namespace CodeGenerateInputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -1321,6 +1338,21 @@ export namespace CodeGenerateInputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -2780,6 +2812,10 @@ export namespace DesignComposeInputSchema {
     layout?: 'dashboard' | 'form' | 'detail' | 'list' | 'card' | 'timeline' | 'landing' | 'auto';
     preferences?: {
       /**
+       * Brand scope for data-bound charts; defaults to A.
+       */
+      brand?: 'A' | 'B';
+      /**
        * Theme token (e.g., 'light', 'dark').
        */
       theme?: string;
@@ -3055,6 +3091,7 @@ export namespace DesignComposeOutputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -3081,6 +3118,21 @@ export namespace DesignComposeOutputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -5627,6 +5679,7 @@ export namespace ReplOutputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -5653,6 +5706,21 @@ export namespace ReplOutputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -5923,6 +5991,7 @@ export namespace ReplRenderInputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -5949,6 +6018,21 @@ export namespace ReplRenderInputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -6173,6 +6257,7 @@ export namespace ReplRenderOutputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -6199,6 +6284,21 @@ export namespace ReplRenderOutputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -6340,6 +6440,7 @@ export namespace UiSchemaSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -6366,6 +6467,21 @@ export namespace UiSchemaSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -6527,6 +6643,7 @@ export namespace ReplValidateInputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -6553,6 +6670,21 @@ export namespace ReplValidateInputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
@@ -6757,6 +6889,7 @@ export namespace ReplValidateOutputSchema {
     layout?: Layout;
     style?: Style;
     props?: Props;
+    chart?: ChartDeclaration;
     bindings?: Bindings;
     collection?: {
       source: 'rows' | 'events';
@@ -6783,6 +6916,21 @@ export namespace ReplValidateOutputSchema {
   }
   export interface Props {
     [k: string]: any;
+  }
+  /**
+   * Read-only payment chart rendered by public viz.render during code generation. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.
+   */
+  export interface ChartDeclaration {
+    chartType: 'area';
+    source: 'payment-events';
+    /**
+     * @minItems 2
+     */
+    dateFields: [string, string, ...string[]];
+    amountField: string;
+    minorUnits: number;
+    currencyField: string;
+    brand?: 'A' | 'B';
   }
   export interface Bindings {
     [k: string]: string;
