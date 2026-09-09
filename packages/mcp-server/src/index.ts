@@ -131,6 +131,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/artifact.certify.input.json',
     outputSchema: './schemas/artifact.certify.output.json',
   },
+  'design.preview': {
+    modulePath: './tools/design.preview.js',
+    inputSchema: './schemas/design.preview.input.json',
+    outputSchema: './schemas/design.preview.output.json',
+  },
   'fidelity.preview': {
     modulePath: './tools/fidelity.preview.js',
     inputSchema: './schemas/fidelity.preview.input.json',

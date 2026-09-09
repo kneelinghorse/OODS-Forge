@@ -319,6 +319,8 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-N017', { code: 'OODS-N017', category: 'not_found', message: 'Generated artifact envelope missing', retryable: false }],
   ['OODS-N018', { code: 'OODS-N018', category: 'not_found', message: 'HTML Tailwind styling unavailable', retryable: false }],
 
+  ['OODS-N019', { code: 'OODS-N019', category: 'not_found', message: 'Design loop server not running; start it with pnpm design:loop serve', retryable: true }],
+
   // ── Conflict ────────────────────────────────────────────────────────────
   ['OODS-C001', { code: 'OODS-C001', category: 'conflict', message: 'Schema ref missing after compose', retryable: false }],
   ['OODS-C002', { code: 'OODS-C002', category: 'conflict', message: 'Tag already exists', retryable: false }],

@@ -1063,6 +1063,8 @@ type TimelineItem = {
   label: string;
   timestamp?: string;
   detail?: string;
+  actor?: string;
+  reason?: string;
 };
 
 type TimelineOptions = {
@@ -1071,16 +1073,17 @@ type TimelineOptions = {
   eventKeys?: string[];
 };
 
-function normalizeTimelineItems(raw: unknown): TimelineItem[] {
+function normalizeTimelineItems(raw: unknown, lifecycle = false): TimelineItem[] {
   if (!Array.isArray(raw)) return [];
   const items: TimelineItem[] = [];
   for (const entry of raw) {
     if (entry === undefined || entry === null) continue;
     if (isRecord(entry)) {
-      const label = firstSerialized(entry, ['label', 'title', 'event', 'status', 'state', 'text', 'name']) ?? 'Event';
+      const from = firstSerialized(entry, ['from']), to = firstSerialized(entry, ['to']);
+      const label = firstSerialized(entry, ['label', 'title', 'event', 'status', 'state', 'text', 'name']) ?? (lifecycle && from && to ? `${from} → ${to}` : 'Event');
       const timestamp = firstSerialized(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']);
-      const detail = firstSerialized(entry, ['detail', 'description', 'reason', 'message', 'from', 'to']);
-      items.push({ label, timestamp, detail });
+      const detail = firstSerialized(entry, lifecycle ? ['detail', 'description', 'message', 'from', 'to'] : ['detail', 'description', 'reason', 'message', 'from', 'to']);
+      items.push({ label, timestamp, detail, ...(lifecycle ? { actor: firstSerialized(entry, ['actorId', 'actor_id', 'actor']), reason: firstSerialized(entry, ['reason']) } : {}) });
       continue;
     }
     items.push({ label: serializePropValue(entry) });
@@ -1093,7 +1096,9 @@ function renderTimelineContainer(node: UiElement, childrenHtml: string, options:
   const title = firstSerialized(props, ['title', 'label', 'heading', 'name']) ?? node.meta?.label ?? options.defaultTitle;
   const keys = options.eventKeys ?? ['events', 'history', 'entries', 'items'];
   const rawEvents = keys.map((key) => props[key]).find((value) => Array.isArray(value));
-  const events = normalizeTimelineItems(rawEvents);
+  const lifecycle = ['status', 'audit'].includes(options.timelineType);
+  const allEvents = normalizeTimelineItems(rawEvents, lifecycle);
+  const events = lifecycle && typeof props.maxVisible === 'number' && Number.isFinite(props.maxVisible) ? allEvents.slice(0, Math.max(0, Math.floor(props.maxVisible))) : allEvents;
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
     consumedProps: new Set(['title', 'label', 'heading', 'name', ...keys]),
@@ -1110,12 +1115,16 @@ function renderTimelineContainer(node: UiElement, childrenHtml: string, options:
             ? `<time data-timeline-time="true" datetime="${escapeHtml(item.timestamp)}">${escapeHtml(formatDateTime(item.timestamp))}</time>`
             : '';
           const detailHtml = item.detail ? `<p data-timeline-detail="true">${escapeHtml(item.detail)}</p>` : '';
-          return `<li><article data-timeline-event="true"><p data-timeline-label="true">${escapeHtml(item.label)}</p>${timeHtml}${detailHtml}</article></li>`;
+          const actorHtml = item.actor && props.showActorId !== false ? `<p>Actor: ${escapeHtml(item.actor)}</p>` : '';
+          const reasonHtml = item.reason && props.showReason !== false ? `<p>Reason: ${escapeHtml(item.reason)}</p>` : '';
+          return `<li><article data-timeline-event="true"><p data-timeline-label="true">${escapeHtml(item.label)}</p>${timeHtml}${detailHtml}${actorHtml}${reasonHtml}</article></li>`;
         })
         .join('')
       : '<li data-timeline-empty="true">No events</li>';
 
-  return `<div${attrs}><h3 data-timeline-title="true">${escapeHtml(title)}</h3><ol data-timeline-events="true">${eventHtml}</ol></div>`;
+  const statusHtml = options.timelineType === 'status' && props.status ? `<p>Current status: ${escapeHtml(String(props.status).split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' '))}</p>` : '';
+  const transitionsHtml = lifecycle && Array.isArray(props.allowedTransitions) && props.allowedTransitions.length ? `<p>Allowed transitions: ${escapeHtml(props.allowedTransitions.join(', '))}</p>` : '';
+  return `<div${attrs}><h3 data-timeline-title="true">${escapeHtml(title)}</h3>${statusHtml}${transitionsHtml}<ol data-timeline-events="true">${eventHtml}</ol></div>`;
 }
 
 type EventOptions = {
@@ -1147,7 +1156,7 @@ function renderAuditTimeline(node: UiElement, childrenHtml = ''): string {
   return renderTimelineContainer(node, childrenHtml, {
     defaultTitle: 'Audit Timeline',
     timelineType: 'audit',
-    eventKeys: ['events', 'history', 'entries'],
+    eventKeys: ['auditLog', 'events', 'history', 'entries', 'stateHistory'],
   });
 }
 
@@ -1187,7 +1196,7 @@ function renderStatusTimeline(node: UiElement, childrenHtml = ''): string {
   return renderTimelineContainer(node, childrenHtml, {
     defaultTitle: 'Status Timeline',
     timelineType: 'status',
-    eventKeys: ['events', 'history', 'stateHistory'],
+    eventKeys: ['events', 'history', 'entries', 'stateHistory'],
   });
 }
 

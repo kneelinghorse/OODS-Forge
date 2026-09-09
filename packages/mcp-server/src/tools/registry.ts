@@ -26,6 +26,7 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'catalog.list',
     'code.generate',
     'design.compose',
+    'design.preview',
     'pipeline',
     'health',
     'registry.snapshot',

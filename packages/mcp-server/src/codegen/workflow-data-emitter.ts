@@ -38,10 +38,41 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
     { field: payment.props?.lastPaymentField, title: 'Last payment' },
     { field: payment.props?.nextPaymentField, title: 'Next payment' },
   ].filter(source => typeof source.field === 'string') : [];
-  const records = Array.from({ length: sampleCount }, (_, index) => Object.fromEntries(
-    Object.entries(fields).map(([name, field]) => [name, seedValue(name, field, index)]),
-  ));
-  const types = Object.entries(fields).map(([name, field]) => `  ${JSON.stringify(name)}: ${mapFieldType(field)};`).join('\n');
+  const seedAt = '2026-09-08T12:00:00.000Z';
+  const creationEvent = workflow.data.recordedEvents?.find(event => /creat|start/.test(event)) ?? workflow.data.recordedEvents?.[0] ?? 'created';
+  const records = Array.from({ length: sampleCount }, (_, index) => {
+    const record = Object.fromEntries(Object.entries(fields).map(([name, field]) => [name, seedValue(name, field, index)]));
+    const ended = ['ended', 'terminated', 'cancelled', 'canceled'].includes(String(record.status));
+    const cancelling = ended || record.status === 'pending_cancellation';
+    const interval = String(record.billing_interval ?? 'monthly');
+    const months = interval === 'yearly' ? 12 : interval === 'quarterly' ? 3 : 1;
+    const start = new Date(interval === 'yearly' ? '2026-03-01T12:00:00Z' : interval === 'quarterly' ? '2026-08-01T12:00:00Z' : '2026-09-01T12:00:00Z');
+    if (ended) start.setUTCMonth(start.getUTCMonth() - months);
+    const end = new Date(start);
+    end.setUTCMonth(end.getUTCMonth() + months);
+    const startAt = start.toISOString(), endAt = end.toISOString();
+    const assign = (name: string, value: unknown) => { if (Object.hasOwn(fields, name)) record[name] = value; };
+    assign('created_at', startAt);
+    assign('updated_at', startAt);
+    assign('last_event_at', startAt);
+    assign('last_event', creationEvent);
+    assign('last_payment_at', startAt);
+    assign('next_payment_due_at', endAt);
+    assign('current_period_start', startAt);
+    assign('current_period_end', endAt);
+    assign('current_period_progress', ended ? 1 : (Date.parse(seedAt) - start.getTime()) / (end.getTime() - start.getTime()));
+    assign('state_history', [{ from: null, to: record.status ?? lifecycleStates[0] ?? 'created', at: startAt, event: creationEvent, reason: 'Sample record created' }]);
+    assign('cancel_at_period_end', record.status === 'pending_cancellation');
+    for (const name of Object.keys(fields).filter(name => name.startsWith('cancellation_'))) delete record[name];
+    if (cancelling) {
+      assign('cancellation_reason', 'Subscription no longer needed');
+      assign('cancellation_reason_code', workflow.data.cancellationReasonCodes?.[0] ?? 'customer_request');
+      assign('cancellation_requested_at', ended ? endAt : startAt);
+    }
+    if (record.is_archived) assign('archived_at', '2026-09-07T12:00:00.000Z');
+    return record;
+  });
+  const types = Object.entries(fields).map(([name, field]) => `  ${JSON.stringify(name)}${field.required ? '' : '?'}: ${mapFieldType(field)};`).join('\n');
   const camelProps = Object.keys(fields).map((name) => `  ${snakeToCamel(name)}: record[${JSON.stringify(name)}],`).join('\n');
   return [
     { path: 'src/sample-data.ts', contents: `import type { DomainRecord } from './store';\n\nexport const sampleData: DomainRecord[] = ${JSON.stringify(records, null, 2)};\n` },
