@@ -313,7 +313,7 @@ function renderTimelineEvent(
     h('article', { 'data-timeline-event': 'true' }, [
       h('p', { 'data-timeline-label': 'true' }, event.label),
       event.timestamp
-        ? h('time', { 'data-timeline-time': 'true', datetime: event.timestamp }, event.timestamp)
+        ? h('time', { 'data-timeline-time': 'true', datetime: event.timestamp }, formatDateTime(event.timestamp))
         : null,
       event.detail ? h('p', { 'data-timeline-detail': 'true' }, event.detail) : null,
       showActorId && event.actorId
@@ -438,7 +438,7 @@ export const CancellationSummary = defineComponent({
       if (props.requestedAt) {
         rows.push(summaryEntry(
           'Requested at',
-          h('time', { datetime: props.requestedAt }, props.requestedAt),
+          h('time', { datetime: props.requestedAt }, formatDateTime(props.requestedAt)),
           'requested-at',
         ));
       }

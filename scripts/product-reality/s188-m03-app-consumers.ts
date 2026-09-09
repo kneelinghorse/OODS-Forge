@@ -35,6 +35,7 @@ async function go(page: Page, context: string) {
 }
 
 async function selectPaymentTab(page: Page) {
+  if (await page.locator('[data-oods-component="PaymentTimeline"]').isVisible()) return;
   const tab = page.getByRole('tab', { name: 'Status & History', exact: true });
   if (await tab.isVisible()) await tab.click();
   else {
@@ -143,13 +144,29 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       return { id: await screen(page).getAttribute('data-selected-id'), storedMinorUnits: 1999, majorUnitEditorValue: amount, interval };
     });
     await observe(rows, 'cancel-detail', async () => {
-      await page.locator('input[name="cancellation_reason"]').fill('Budget changed for next year');
-      await page.locator('input[name="cancellation_reason_code"]').fill('customer_request');
-      await page.locator('input[name="cancel_at_period_end"]').check();
-      await page.locator('[data-oods-action="handleCancel"]').click(); await ready(page, 'detail');
+      const onDemand = await page.locator('input[name="cancellation_reason"]').count() === 0;
+      if (onDemand) {
+        assert.equal(await page.locator('[data-oods-component="CancellationForm"]').count(), 0);
+        assert.equal(await page.getByRole('textbox').count(), 0);
+        assert.equal(await page.getByRole('checkbox').count(), 0);
+        await page.locator('[data-oods-action="handleCancel"]').click();
+        await page.locator('[data-oods-component="CancellationForm"] textarea[name="reason"]').fill('Budget changed for next year');
+        const code = page.locator('[data-oods-component="CancellationForm"] [name="reasonCode"]');
+        if (await code.evaluate(element => element.tagName) === 'SELECT') await code.selectOption('customer_request');
+        else await code.fill('customer_request');
+        await page.locator('input[name="cancel_at_period_end"]').check();
+        await page.getByRole('button', { name: 'Confirm cancellation', exact: true }).click();
+      } else {
+        await page.locator('input[name="cancellation_reason"]').fill('Budget changed for next year');
+        await page.locator('input[name="cancellation_reason_code"]').fill('customer_request');
+        await page.locator('input[name="cancel_at_period_end"]').check();
+        await page.locator('[data-oods-action="handleCancel"]').click();
+      }
+      await ready(page, 'detail');
       const text = await screen(page).innerText(); assert.match(text, /pending[ _]cancellation/i);
       assert.equal(await page.locator('.workflow-notice').innerText(), 'Changes saved in this session.');
-      return { text, id: await screen(page).getAttribute('data-selected-id') };
+      if (onDemand) assert.equal(await page.locator('[data-oods-component="CancellationForm"]').count(), 0);
+      return { text, id: await screen(page).getAttribute('data-selected-id'), onDemand, readOnlyBeforeActivation: onDemand };
     });
     await observe(rows, 'cancel-list-badge', async () => {
       await go(page, 'list'); await ready(page, 'list');

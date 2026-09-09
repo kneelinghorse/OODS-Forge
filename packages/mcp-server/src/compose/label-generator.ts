@@ -11,9 +11,8 @@ import type { ComposedObject, ResolvedTrait } from '../objects/trait-composer.js
 import type { ViewExtension } from '../objects/types.js';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 
-/** Field descriptions are authoritative; unnamed fields still need readable labels. */
-export function fieldLabel(name: string, description?: string): string {
-  if (description?.trim() && !/^Field \d+$/i.test(description.trim())) return description.trim();
+/** Names identify controls; descriptions belong in their separate help text. */
+export function fieldLabel(name: string, _description?: string): string {
   const words = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ');
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
@@ -25,8 +24,8 @@ export function populateFieldLabels(schema: UiSchema): void {
     const entry = typeof field === 'string' ? schema.objectSchema?.[field] : undefined;
     const anonymousSlot = node.props?.label === undefined && /^field-\d+$/.test(node.meta?.label ?? '');
     const placeholder = typeof node.props?.label === 'string' && /^Field \d+$/.test(node.props.label);
-    if (entry && typeof field === 'string' && (anonymousSlot || placeholder)) {
-      node.props = { ...node.props, label: fieldLabel(field, entry.description) };
+    if (entry && typeof field === 'string' && (anonymousSlot || placeholder || node.props?.label === entry.description)) {
+      node.props = { ...node.props, label: fieldLabel(field) };
     }
     node.children?.forEach(visit);
   };

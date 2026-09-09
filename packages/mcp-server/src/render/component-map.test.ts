@@ -754,7 +754,7 @@ describe('component map coverage', () => {
     }));
 
     expect(html).toContain('Cancellation schedule');
-    expect(html).toContain('<dt>Cancel at Period End</dt><dd>Yes</dd>');
+    expect(html).toContain('<dt>Cancel at period end</dt><dd>Yes</dd>');
     expect(html).not.toContain('<dd>true</dd>');
   });
 

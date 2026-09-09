@@ -1,3 +1,4 @@
+import { dateTimeInputValue } from '@oods/component-contracts';
 import * as React from 'react';
 import type {
   CheckboxProps,
@@ -147,6 +148,10 @@ const InputPrimitive = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
+    if (type === 'datetime-local') {
+      if (rest.value !== undefined) rest.value = dateTimeInputValue(rest.value);
+      if (rest.defaultValue !== undefined) rest.defaultValue = dateTimeInputValue(rest.defaultValue);
+    }
     const resolvedHelp = help ?? description;
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = event => {
       onChange?.(event);

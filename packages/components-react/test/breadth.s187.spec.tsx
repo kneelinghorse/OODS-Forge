@@ -133,10 +133,10 @@ describe('Sprint 187 lifecycle and financial semantics', () => {
     expect(root.getAttribute('data-badge-status')).toBe('false');
   });
   it('ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics', () => {
-    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archived: true, status: 'active', archivedAt: '2026-09-05', reason: 'Primary', archiveReason: 'Alias' }))).toEqual(['false', '2026-09-05', 'Primary']);
-    expect(values(mountFamily('ArchiveSummary', { archived: true, archiveReason: 'Alias' }))).toEqual(['true', 'Alias']);
+    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archived: true, status: 'active', archivedAt: '2026-09-05', reason: 'Primary', archiveReason: 'Alias' }))).toEqual(['No', 'Sep 5, 2026, 12:00 AM', 'Primary']);
+    expect(values(mountFamily('ArchiveSummary', { archived: true, archiveReason: 'Alias' }))).toEqual(['Yes', 'Alias']);
     expect(values(mountFamily('ArchiveSummary'))).toEqual([]);
-    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archivedAt: null, reason: 'Retained' }))).toEqual(['false', 'Retained']);
+    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archivedAt: null, reason: 'Retained' }))).toEqual(['No', 'Retained']);
     expect(mountFamily('ArchiveSummary', { summary: 'Fallback', text: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
     const authored = mountFamily('ArchiveSummary', { title: 'Archived', isArchived: false }, 'Authored');
     expect(authored.textContent).toBe('ArchivedAuthored');
@@ -167,8 +167,30 @@ describe('Sprint 187 lifecycle and financial semantics', () => {
     const defaults = mountFamily('CancellationForm', { cancellationReason: 'Alias' });
     expect([...defaults.querySelectorAll('option')].map((node) => node.value)).toEqual(['no_longer_needed', 'budget', 'duplicate']);
     expect(defaults.querySelector<HTMLTextAreaElement>('textarea')?.value).toBe('Alias');
-    const emptyChoice = mountFamily('CancellationForm', { allowedReasons: [] }).querySelector('option')!;
-    expect(emptyChoice.value).toBe(''); expect(emptyChoice.textContent).toBe('Select...');
+    const freeCode = mountFamily('CancellationForm', { allowedReasons: [] }).querySelector<HTMLInputElement>('input[name="reasonCode"]')!;
+    expect(freeCode.value).toBe('');
+    freeCode.value = 'customer_request'; expect(freeCode.value).toBe('customer_request');
     expect(mountFamily('CancellationForm', {}, 'Authored').querySelector('select')).toBeNull();
+  });
+});
+
+// Sprint 189: these values must survive native controls and shared display policy.
+describe('form/detail value preservation', () => {
+  it('shows a seeded reason code even when it is outside the offered choices', () => {
+    const root = mountFamily('CancellationForm', { reasonCode: 'customer_request', allowedReasons: ['budget'], reason: 'Keep this reason', embedded: true });
+    expect(root.tagName).toBe('FIELDSET');
+    expect(root.querySelector<HTMLSelectElement>('select')?.value).toBe('customer_request');
+    expect(root.querySelector<HTMLTextAreaElement>('textarea')?.value).toBe('Keep this reason');
+    expect(root.querySelector('form')).toBeNull();
+  });
+  it('shows present UTC datetimes in the native datetime-local control', () => {
+    const root = mountFamily('Input', { type: 'datetime-local', value: '2026-09-08T12:00:00.000Z', label: 'Requested at' });
+    expect(root.querySelector<HTMLInputElement>('input')?.value).toBe('2026-09-08T12:00');
+  });
+  it('renders both audit history entries and readable timestamps', () => {
+    const root = mountFamily('AuditTimeline', { auditLog: [{ from: null, to: 'active', at: '2026-09-01T12:00:00Z' }, { from: 'active', to: 'pending_cancellation', at: '2026-09-08T12:00:00Z', reason: 'Budget' }] });
+    expect(root.querySelectorAll('[data-timeline-event]')).toHaveLength(2);
+    expect(root.textContent).toContain('Sep 8, 2026, 12:00 PM');
+    expect(root.textContent).not.toMatch(/No events|Event 1|\d{4}-\d{2}-\d{2}T/);
   });
 });

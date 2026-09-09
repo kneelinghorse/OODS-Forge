@@ -311,6 +311,10 @@ function screenActionArgumentExpressions(
   });
 }
 
+function hasSubmitControl(node: UiElement): boolean {
+  return node.component === 'Button' && node.props?.type === 'submit' || Boolean(node.children?.some(hasSubmitControl));
+}
+
 function reactScreenActionSurface(
   node: UiElement,
   analysis: BindingAnalysis,
@@ -319,6 +323,7 @@ function reactScreenActionSurface(
   const occurrences = bindingsForNode(analysis, node.id).filter(
     (occurrence): occurrence is DomainBindingOccurrence => (
       occurrence.kind === 'domain' && occurrence.scope === 'screen' && !wiredCollectionAction(node, occurrence.event)
+      && !(occurrence.event === 'onSubmit' && hasSubmitControl(node))
     ),
   );
   if (occurrences.length === 0) return '';

@@ -203,16 +203,17 @@ function normalizeTimelineEvents(values: readonly unknown[]): TimelineEvent[] {
     return [{
       id: eventText(value, ['id']) ?? `event-${index}`,
       label: eventText(value, ['label', 'title', 'event', 'status', 'state', 'text', 'name'])
-        ?? (from && to ? `${humanize(from)} → ${humanize(to)}` : undefined),
+        ?? (from && to ? `${from} → ${to}` : undefined)
+        ?? 'Event',
       from,
       to,
       status: eventText(value, ['status']),
       state: eventText(value, ['state']),
       timestamp: eventText(value, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']),
-      actor: eventText(value, ['actor']),
+      actor: eventText(value, ['actorId', 'actor_id', 'actor']),
       actorId: eventText(value, ['actorId', 'actor_id']),
       reason: eventText(value, ['reason']),
-      detail: eventText(value, ['detail', 'description', 'message']),
+      detail: eventText(value, ['detail', 'description', 'message', 'from', 'to']),
     }];
   });
 }
@@ -323,11 +324,9 @@ const TimelinePrimitive = React.forwardRef<HTMLDivElement, TimelinePrimitiveProp
         {kind === 'status' && status ? (
           <p className="oods-timeline__current" data-timeline-current="true">
             Current status: {humanize(status)}
-            {transitionCount > 0
-              ? `. ${transitionCount} transition${transitionCount === 1 ? '' : 's'} available.`
-              : null}
           </p>
         ) : null}
+        {transitionCount > 0 ? <p>Allowed transitions: {allowedTransitions?.join(', ')}</p> : null}
         {children ?? (
           <ol className="oods-timeline__events">
             {visibleEvents.length === 0 ? (
@@ -340,16 +339,16 @@ const TimelinePrimitive = React.forwardRef<HTMLDivElement, TimelinePrimitiveProp
                 ?? (event.from && event.to ? `${humanize(event.from)} → ${humanize(event.to)}` : undefined)
                 ?? (event.status ? humanize(event.status) : undefined)
                 ?? (event.state ? humanize(event.state) : undefined)
-                ?? `Event ${index + 1}`;
+                ?? 'Event';
               const detail = event.detail ?? event.description;
               return (
                 <li key={event.id ?? `${timestamp ?? 'event'}-${index}`}>
                   <article className="oods-timeline__event" data-timeline-event="true">
                     <p className="oods-timeline__label">{eventLabel}</p>
-                    {timestamp ? <time dateTime={timestamp}>{timestamp}</time> : null}
-                    {showActorId && actor ? <p className="oods-timeline__actor">Actor: {actor}</p> : null}
-                    {showReason && event.reason ? <p className="oods-timeline__reason">{event.reason}</p> : null}
+                    {timestamp ? <time dateTime={timestamp}>{formatDateTime(timestamp)}</time> : null}
                     {detail ? <p className="oods-timeline__detail">{detail}</p> : null}
+                    {showActorId && actor ? <p className="oods-timeline__actor">Actor: {actor}</p> : null}
+                    {showReason && event.reason ? <p className="oods-timeline__reason">Reason: {event.reason}</p> : null}
                   </article>
                 </li>
               );
@@ -445,7 +444,7 @@ export const CancellationSummary = React.forwardRef<HTMLElement, CancellationSum
             </div>
           ) : null}
           {requestedAt ? (
-            <div data-summary-item="true"><dt>Requested at</dt><dd>{requestedAt}</dd></div>
+            <div data-summary-item="true"><dt>Requested at</dt><dd>{formatDateTime(requestedAt)}</dd></div>
           ) : null}
           {reason ? (
             <div data-summary-item="true"><dt>Reason</dt><dd>{reason}</dd></div>

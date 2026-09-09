@@ -1,3 +1,4 @@
+import { formatDateTime, summaryValue } from '@oods/component-contracts';
 import * as React from 'react';
 
 import { Badge } from './presentational.js';
@@ -807,7 +808,7 @@ export const RoleAssignmentForm = React.forwardRef<HTMLFormElement, RoleAssignme
 RoleAssignmentForm.displayName = 'OODS.RoleAssignmentForm';
 
 export const StatusSelector = React.forwardRef<HTMLDivElement, StatusSelectorProps>(
-  ({ label, title, options, states, value, status, children, className, onChange, onValueChange, onUpdate, ...rest }, ref) => {
+  ({ label, title, help, options, states, value, status, children, className, onChange, onValueChange, onUpdate, ...rest }, ref) => {
     const content = childContent(children);
     const authored = content.authored || content.scalar !== undefined;
     const resolvedLabel = firstText(label, title) ?? 'Status';
@@ -840,6 +841,7 @@ export const StatusSelector = React.forwardRef<HTMLDivElement, StatusSelectorPro
             </select>
           </label>
         )}
+        {help && <p className="oods-field-help">{help}</p>}
       </div>
     );
   }
@@ -1061,7 +1063,7 @@ export const CancellationBadge = createBadgeFamily<CancellationBadgeProps>({
 export const ArchiveSummary = React.forwardRef<HTMLElement, ArchiveSummaryProps>(
   ({ title, label, heading, name, isArchived, archived, status, archivedAt, reason, archiveReason, summary, text, description, children, className, ...rest }, ref) => {
     const content = childContent(children);
-    const terms = ([['Archived', firstScalar(isArchived, archived, status)], ['Archived At', firstText(archivedAt ?? undefined)], ['Reason', firstText(reason, archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const terms = ([['Archived', summaryValue(isArchived ?? archived ?? status)], ['Archived At', archivedAt ? formatDateTime(archivedAt) : undefined], ['Reason', firstText(reason, archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
     const fallback = firstText(summary, text, description);
     return <section ref={ref} className={classes('oods-archive-summary', className)} data-oods-component="ArchiveSummary" data-summary-type="archive" {...rest}>
       <h3 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Archive Summary'}</h3>
@@ -1087,18 +1089,23 @@ export const PriceCardMeta = React.forwardRef<HTMLDivElement, PriceCardMetaProps
 );
 PriceCardMeta.displayName = 'OODS.PriceCardMeta';
 
-export const CancellationForm = React.forwardRef<HTMLFormElement, CancellationFormProps>(
-  ({ title, label, heading, name, description, subtitle, hint, allowedReasons, reasonCode, reason, cancellationReason, children, className, onSubmit, ...rest }, ref) => {
+export const CancellationForm = React.forwardRef<HTMLFormElement | HTMLFieldSetElement, CancellationFormProps>(
+  ({ title, label, heading, name, description, subtitle, hint, allowedReasons, reasonCode, reason, cancellationReason, embedded, reasonHelp, codeHelp, children, className, onSubmit, ...rest }, ref) => {
     const content = childContent(children);
     const choices = normalizeSelectOptions(allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate']);
-    return <form ref={ref} className={classes('oods-cancellation-form', className)} data-oods-component="CancellationForm" data-form-type="cancellation"
-      onSubmit={(event) => { preventSubmit(event); onSubmit?.(event); }} {...rest}>
+    if (reasonCode && !choices.some(choice => choice.value === reasonCode)) choices.unshift({ value: reasonCode, label: reasonCode });
+    return React.createElement(embedded ? 'fieldset' : 'form', {
+      ...rest, ref, className: classes('oods-cancellation-form', className), 'data-oods-component': 'CancellationForm', 'data-form-type': 'cancellation',
+      ...(!embedded ? { onSubmit: (event: React.FormEvent<HTMLFormElement>) => { preventSubmit(event); onSubmit?.(event); } } : {}),
+    }, <>
       {formHeader(firstText(title, label, heading, name) ?? 'Cancellation Form', firstText(description, subtitle, hint))}
       <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
-        <label data-form-control="select"><span>Reason Code</span><select name="reasonCode" defaultValue={reasonCode}>{selectOptionsMarkup(choices)}</select></label>
+        <label data-form-control="select"><span>Reason Code</span>{allowedReasons?.length === 0 ? <input name="reasonCode" defaultValue={reasonCode ?? ''} /> : <select name="reasonCode" defaultValue={reasonCode}>{selectOptionsMarkup(choices)}</select>}</label>
+        {codeHelp && <p className="oods-field-help">{codeHelp}</p>}
         <label data-form-control="textarea"><span>Reason</span><textarea name="reason" defaultValue={firstText(reason, cancellationReason) ?? ''} /></label>
+        {reasonHelp && <p className="oods-field-help">{reasonHelp}</p>}
       </>}</div>
-    </form>;
+    </>);
   }
 );
 CancellationForm.displayName = 'OODS.CancellationForm';

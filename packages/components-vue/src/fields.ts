@@ -1,3 +1,4 @@
+import { dateTimeInputValue } from '@oods/component-contracts';
 import {
   computed,
   defineComponent,
@@ -17,6 +18,7 @@ type FieldPresentation = {
   id?: string;
   label?: string;
   help?: string;
+  required?: boolean;
   validation?: ValidationMessage;
 };
 
@@ -70,7 +72,7 @@ function renderField(
     style: validationStyle(props.validation),
   }, [
     label
-      ? h('label', { class: 'oods-field-label', for: metadata.controlId.value }, label)
+      ? h('label', { class: 'oods-field-label', for: metadata.controlId.value }, [label, props.required ? h('span', { class: 'oods-field-required', 'aria-hidden': 'true' }, '*') : null])
       : null,
     control,
     help
@@ -134,7 +136,7 @@ export const Input = defineComponent({
       class: 'oods-field-control',
       type: props.type,
       name: props.name,
-      value: currentValue.value,
+      value: props.type === 'datetime-local' ? dateTimeInputValue(currentValue.value) : currentValue.value,
       placeholder: props.placeholder,
       required: props.required,
       disabled: props.disabled,

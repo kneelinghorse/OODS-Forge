@@ -292,6 +292,7 @@ export interface RoleAssignmentFormProps extends Omit<React.FormHTMLAttributes<H
 }
 
 export interface StatusSelectorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'title'> {
+  readonly help?: string;
   readonly label?: string;
   readonly title?: string;
   readonly options?: readonly unknown[];
@@ -615,6 +616,7 @@ export interface CancellationBadgeProps extends Omit<ClassificationBadgeProps, '
   readonly cancelAtPeriodEnd?: boolean | string; readonly isCancelled?: boolean | string; readonly value?: boolean | string;
 }
 export interface CancellationFormProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'title' | 'name'>, FormShellProps {
+  readonly embedded?: boolean; readonly reasonHelp?: string; readonly codeHelp?: string;
   readonly allowedReasons?: readonly unknown[]; readonly reasonCode?: string; readonly reason?: string; readonly cancellationReason?: string;
 }
 export interface PriceCardMetaProps extends React.HTMLAttributes<HTMLDivElement> {

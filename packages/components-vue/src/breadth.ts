@@ -1,3 +1,4 @@
+import { formatDateTime, summaryValue } from '@oods/component-contracts';
 import {
   Comment,
   Fragment,
@@ -760,7 +761,7 @@ export const RoleAssignmentForm = defineComponent({
 export const StatusSelector = defineComponent({
   name: 'OodsStatusSelector',
   props: {
-    label: String, title: String,
+    label: String, title: String, help: String,
     options: Array as PropType<readonly unknown[]>, states: Array as PropType<readonly unknown[]>,
     value: String, status: String, modelValue: String,
   },
@@ -785,6 +786,7 @@ export const StatusSelector = defineComponent({
           h('span', label),
           h('select', { name: 'status', value: selected, onChange }, selectOptionNodes(choices, selected)),
         ]),
+        props.help ? h('p', { class: 'oods-field-help' }, props.help) : null,
       ]);
     };
   },
@@ -1003,7 +1005,7 @@ export const ArchiveSummary = defineComponent({
   setup(props, { slots }) {
     return () => {
       const content = authoredContent(slots.default?.());
-      const terms = ([['Archived', firstScalar(props.isArchived, props.archived, props.status)], ['Archived At', firstText(props.archivedAt)], ['Reason', firstText(props.reason, props.archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+      const terms = ([['Archived', summaryValue(props.isArchived ?? props.archived ?? props.status)], ['Archived At', props.archivedAt ? formatDateTime(props.archivedAt) : undefined], ['Reason', firstText(props.reason, props.archiveReason)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
       const fallback = firstText(props.summary, props.text, props.description);
       return h('section', { class: 'oods-archive-summary', 'data-oods-component': 'ArchiveSummary', 'data-summary-type': 'archive' }, [
         h('h3', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Archive Summary'),
@@ -1032,17 +1034,20 @@ export const PriceCardMeta = defineComponent({
 export const CancellationForm = defineComponent({
   name: 'OodsCancellationForm', props: {
     title: String, label: String, heading: String, name: String, description: String, subtitle: String, hint: String,
-    allowedReasons: Array as PropType<readonly unknown[]>, reasonCode: String, reason: String, cancellationReason: String,
+    allowedReasons: Array as PropType<readonly unknown[]>, reasonCode: String, reason: String, cancellationReason: String, embedded: Boolean, reasonHelp: String, codeHelp: String,
   },
   setup(props, { slots }) {
     return () => {
       const content = authoredContent(slots.default?.());
       const choices = normalizeSelectOptions(props.allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate']);
-      return h('form', { class: 'oods-cancellation-form', 'data-oods-component': 'CancellationForm', 'data-form-type': 'cancellation', onSubmit: (event: Event) => event.preventDefault() }, [
+      if (props.reasonCode && !choices.some(choice => choice.value === props.reasonCode)) choices.unshift({ value: props.reasonCode, label: props.reasonCode });
+      return h(props.embedded ? 'fieldset' : 'form', { class: 'oods-cancellation-form', 'data-oods-component': 'CancellationForm', 'data-form-type': 'cancellation', onSubmit: props.embedded ? undefined : (event: Event) => event.preventDefault() }, [
         formHeader(firstText(props.title, props.label, props.heading, props.name) ?? 'Cancellation Form', firstText(props.description, props.subtitle, props.hint)),
         h('div', { 'data-form-content': 'true' }, content.length ? content : [
-          h('label', { 'data-form-control': 'select' }, [h('span', 'Reason Code'), h('select', { name: 'reasonCode', value: props.reasonCode }, selectOptionNodes(choices, props.reasonCode))]),
+          h('label', { 'data-form-control': 'select' }, [h('span', 'Reason Code'), props.allowedReasons?.length === 0 ? h('input', { name: 'reasonCode', value: props.reasonCode ?? '' }) : h('select', { name: 'reasonCode', value: props.reasonCode }, selectOptionNodes(choices, props.reasonCode))]),
+          props.codeHelp ? h('p', { class: 'oods-field-help' }, props.codeHelp) : null,
           h('label', { 'data-form-control': 'textarea' }, [h('span', 'Reason'), h('textarea', { name: 'reason', value: firstText(props.reason, props.cancellationReason) ?? '' })]),
+          props.reasonHelp ? h('p', { class: 'oods-field-help' }, props.reasonHelp) : null,
         ]),
       ]);
     };

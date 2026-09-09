@@ -21,12 +21,13 @@ export function BillingSummaryBadge({ id, amount, currency, minorUnits, interval
 
 export interface BillingAmountInputProps extends Omit<BillingSummaryBadgeProps, 'interval'> {
   label?: string;
+  help?: string;
   name?: string;
   disabled?: boolean;
   onChange?: (value: number | undefined) => void;
 }
 
-export function BillingAmountInput({ id, amount, currency = 'usd', minorUnits = BILLING_MINOR_UNITS, label = 'Billing amount', name, disabled, className, onChange }: BillingAmountInputProps) {
+export function BillingAmountInput({ id, amount, currency = 'usd', minorUnits = BILLING_MINOR_UNITS, label = 'Billing amount', name, disabled, className, help, onChange }: BillingAmountInputProps) {
   const generatedId = React.useId();
   const controlId = id ?? `billing-amount-${generatedId}`;
   const [text, setText] = React.useState(() => billingAmountText(amount, minorUnits));
@@ -45,6 +46,7 @@ export function BillingAmountInput({ id, amount, currency = 'usd', minorUnits = 
         setText(next); setError(result.valid ? undefined : result.message);
         if (result.valid) onChange?.(result.value);
       }} />
+    {help && <p className="oods-field-help">{help}</p>}
     {error && <p id={`${controlId}-error`} role="alert">{error}</p>}
   </div>;
 }
@@ -54,13 +56,14 @@ export interface BillingIntervalSelectorProps {
   interval?: string;
   intervals?: readonly string[];
   label?: string;
+  help?: string;
   name?: string;
   disabled?: boolean;
   className?: string;
   onChange?: (value: string) => void;
 }
 
-export function BillingIntervalSelector({ id, interval, intervals = BILLING_INTERVALS, label = 'Billing interval', name, disabled, className, onChange }: BillingIntervalSelectorProps) {
+export function BillingIntervalSelector({ id, interval, intervals = BILLING_INTERVALS, label = 'Billing interval', name, disabled, className, help, onChange }: BillingIntervalSelectorProps) {
   const generatedId = React.useId();
   const controlId = id ?? `billing-interval-${generatedId}`;
   const [value, setValue] = React.useState(interval ?? '');
@@ -76,6 +79,7 @@ export function BillingIntervalSelector({ id, interval, intervals = BILLING_INTE
       {!intervals.includes(value) && <option value={value} disabled>{value || 'Choose interval'}</option>}
       {intervals.map((option) => <option key={option} value={option}>{option}</option>)}
     </select>
+    {help && <p className="oods-field-help">{help}</p>}
     {error && <p id={`${controlId}-error`} role="alert">{error}</p>}
   </div>;
 }

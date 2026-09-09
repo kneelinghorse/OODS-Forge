@@ -41,6 +41,7 @@ import { composeObject, type ComposedObject } from '../objects/trait-composer.js
 import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAction } from '../objects/types.js';
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
 import { populateCollections } from '../compose/collections.js';
+import { reconcileFormDetail } from '../compose/form-detail.js';
 import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema } from '../compose/object-slot-filler.js';
 import { isTraitRecipe } from '../compose/trait-recipes.js';
 import { collectDashboardViewExtensions, collectViewExtensions } from '../compose/view-extension-collector.js';
@@ -1910,6 +1911,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   }
 
   if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, Number(composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Billable')?.ref.parameters?.minorUnits ?? 100));
+  if (composed && effectiveContext) reconcileFormDetail(schema, effectiveContext, composed, input.preferences?.tabLabels);
 
   // 4. Auto-validate
   let validation: DesignComposeOutput['validation'];

@@ -21,8 +21,10 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   const fieldByNodeId: Record<string, string> = {};
   const formFields = new Set<string>();
   let archiveOverlay: UiElement | undefined;
+  let cancellationForm: UiElement | undefined;
   const visit = (node: UiElement, context: string) => {
     if (context === 'list' && node.component === 'ArchivedRowOverlay') archiveOverlay = node;
+    if (context === 'form' && node.component === 'CancellationForm') cancellationForm = node;
     const field = node.props?.field
       ?? (node.component === 'BillingAmountInput' ? node.props?.amountField : undefined)
       ?? (node.component === 'BillingIntervalSelector' ? node.props?.intervalField : undefined);
@@ -58,7 +60,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
     handleRowClick: '(id) => { void navigate("detail", id); }',
     handleEdit: '() => { void navigate("form"); }',
     handleSubmit: '() => { void change(() => store.save(state.draft), "detail"); }',
-    handleCancel: '() => { void change(() => store.cancel(state.id, String(value("cancellation_reason") ?? ""), String(value("cancellation_reason_code") ?? ""), Boolean(value("cancel_at_period_end"))), "detail"); }',
+    handleCancel: '() => { publish({ cancelOpen: true }); }',
     handleViewTimeline: '() => { void navigate("timeline"); }',
     handleDelete: '() => { void change(() => store.archive(state.id), "list"); }',
     handleChange: '() => { publish({ notice: "Changes are ready to save." }); }',
@@ -86,21 +88,22 @@ export const routes = ${JSON.stringify(Object.fromEntries(schema.workflow.screen
 export const cancellable = ${JSON.stringify(schema.workflow.data.traits.some((trait) => trait.split('/').pop() === 'Cancellable'))};
 export const statuses = ${JSON.stringify(schema.workflow.data.lifecycleStates)};
 export const archivePresentation = ${JSON.stringify({ archivedField: archiveOverlay?.props?.archivedField ?? 'is_archived', showBadge: archiveOverlay?.props?.showBadge ?? true, separateTab: archiveOverlay?.props?.separateTab ?? true, tabLabel: archiveOverlay?.props?.tabLabel ?? 'Archived' })};
-export const supplementalFields = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name, field.description) })))};
+export const supplementalFields = ${JSON.stringify(supplemental.map(([name, field]) => ({ name, label: fieldLabel(name), help: field.description ?? '' })))};
+export const cancellationFormProps = ${JSON.stringify({ allowedReasons: schema.workflow.data.cancellationReasonCodes, reasonHelp: cancellationForm?.props?.reasonHelp, codeHelp: cancellationForm?.props?.codeHelp })};
 const fieldByNodeId: Record<string, string> = ${JSON.stringify(fieldByNodeId)};
-export interface AppState { screen: Screen; uiState: UIState; id: string; draft: DomainRecord; records: DomainRecord[]; total: number; page: number; pageSize: number; search: string; status: string; descending: boolean; archived: boolean; error: string; notice: string; revision: number }
+export interface AppState { screen: Screen; uiState: UIState; id: string; draft: DomainRecord; records: DomainRecord[]; total: number; page: number; pageSize: number; search: string; status: string; descending: boolean; archived: boolean; error: string; notice: string; revision: number; cancelOpen: boolean }
 export function createWorkflow(options: StoreOptions = {}) {
   const store = createStore(options);
   let query: ListQuery = {};
   let request = 0;
   const first = store.list().records[0] ?? sampleData[0]!;
-  let state: AppState = { screen: 'list', uiState: 'loading', id: String(first[idField]), draft: structuredClone(first), records: [], total: 0, page: 1, pageSize: 10, search: '', status: '', descending: false, archived: false, error: '', notice: '', revision: 0 };
+  let state: AppState = { screen: 'list', uiState: 'loading', id: String(first[idField]), draft: structuredClone(first), records: [], total: 0, page: 1, pageSize: 10, search: '', status: '', descending: false, archived: false, error: '', notice: '', revision: 0, cancelOpen: false };
   const listeners = new Set<(state: AppState) => void>();
   const publish = (patch: Partial<AppState>) => { state = { ...state, ...patch }; listeners.forEach((listener) => listener(state)); };
   const value = (field: string) => (state.draft as Record<string, unknown>)[field];
   async function navigate(screen: Screen, id = state.id) {
     const ticket = ++request;
-    publish({ screen, id, uiState: 'loading', error: '', revision: state.revision + 1 });
+    publish({ screen, id, cancelOpen: false, uiState: 'loading', error: '', revision: state.revision + 1 });
     try {
       await store.ready();
       if (ticket !== request) return;
@@ -128,6 +131,7 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
     const target = event.target;
     if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
     let field = target.name;
+    if (target.closest('[data-oods-component="CancellationForm"]')) field = ({ reason: 'cancellation_reason', reasonCode: 'cancellation_reason_code' } as Record<string, string>)[field] ?? field;
     let element: HTMLElement | null = target;
     while (!Object.hasOwn(fieldTypes, field) && element) { field = fieldByNodeId[element.id] ?? ''; element = element.parentElement; }
     if (!Object.hasOwn(fieldTypes, field)) return;
@@ -138,13 +142,15 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
       return;
     }
     const value = target instanceof HTMLInputElement && target.type === 'checkbox' ? target.checked
-      : type === 'number' || type === 'integer' ? Number(target.value) : target.value;
+      : type === 'number' || type === 'integer' ? Number(target.value) : target instanceof HTMLInputElement && target.type === 'datetime-local' && target.value ? new Date(target.value + ':00Z').toISOString() : target.value;
     publish({ draft: { ...state.draft, [field]: value }, notice: 'Unsaved changes' });
   }
   return {
     snapshot: () => state,
     subscribe(listener: (state: AppState) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     navigate, actions, edit,
+    confirmCancellation() { return change(() => store.cancel(state.id, String(value("cancellation_reason") ?? ""), String(value("cancellation_reason_code") ?? ""), Boolean(value("cancel_at_period_end"))), 'detail'); },
+    dismissCancellation() { publish({ cancelOpen: false }); },
     filter(search: string, status = query.status ?? '') { query = { ...query, search, status, page: 1 }; return refreshList(); },
     sort(descending: boolean) { query = { ...query, sort: titleField, descending }; return refreshList(); },
     page(page: number) { query = { ...query, page }; return refreshList(); },
@@ -179,8 +185,9 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
 
 function reactApp(object: string, titleField: string): string {
   return `import React from 'react';
+import { CancellationForm } from '@oods/components-react';
 ${CONTEXTS.map((context) => `import { GeneratedUI as ${nameOf(context)} } from './screens/${nameOf(context)}';`).join('\n')}
-import { createWorkflow, screenProps, collectionEvents, routes, supplementalFields, cancellable, type Screen } from './application';
+import { createWorkflow, screenProps, collectionEvents, routes, supplementalFields, cancellable, cancellationFormProps, type Screen } from './application';
 import type { StoreOptions } from './store';
 import './app.css';
 export default function App(options: StoreOptions) {
@@ -194,8 +201,12 @@ export default function App(options: StoreOptions) {
     {state.error && <p role="alert">{state.error}</p>}
     {state.uiState === 'error' && <button type="button" onClick={() => { void app.retry(); }}>Try again</button>}
     <section aria-label="${object} screen" className="workflow-content" onChangeCapture={(event) => app.edit(event.nativeEvent)}>
-      {state.uiState === 'success' && state.screen === 'form' && supplementalFields.map((field) => <label className="workflow-field" key={field.name}>{field.label}<input name={field.name} defaultValue={String((state.draft as Record<string, unknown>)[field.name])} /></label>)}
-      {state.uiState === 'success' && state.screen === 'detail' && cancellable && <fieldset className="workflow-cancel"><legend>Cancellation details</legend><label>Reason<input name="cancellation_reason" defaultValue={String((state.draft as Record<string, unknown>).cancellation_reason ?? '')} /></label><label>Reason code<input name="cancellation_reason_code" defaultValue={String((state.draft as Record<string, unknown>).cancellation_reason_code ?? '')} /></label><label><input name="cancel_at_period_end" type="checkbox" defaultChecked={Boolean((state.draft as Record<string, unknown>).cancel_at_period_end)} />Cancel at period end</label></fieldset>}
+      {state.uiState === 'success' && state.screen === 'form' && supplementalFields.map((field) => <div className="workflow-field" key={field.name}><label htmlFor={field.name}>{field.label}</label><input id={field.name} name={field.name} aria-describedby={field.name + "-help"} defaultValue={String((state.draft as Record<string, unknown>)[field.name])} /><small id={field.name + "-help"} className="oods-field-help">{field.help}</small></div>)}
+      {state.uiState === 'success' && state.screen === 'detail' && cancellable && state.cancelOpen && <section className="workflow-cancel" aria-label="Cancel subscription">
+        <CancellationForm {...cancellationFormProps} reason={String((state.draft as Record<string, unknown>).cancellation_reason ?? '')} reasonCode={String((state.draft as Record<string, unknown>).cancellation_reason_code ?? '')} />
+        <label className="workflow-checkbox"><input name="cancel_at_period_end" type="checkbox" defaultChecked={Boolean((state.draft as Record<string, unknown>).cancel_at_period_end)} />Cancel at period end</label>
+        <button type="button" onClick={() => { void app.confirmCancellation(); }}>Confirm cancellation</button><button type="button" onClick={() => app.dismissCancellation()}>Keep subscription</button>
+      </section>}
       ${CONTEXTS.map((context) => context === 'form' ? `{state.screen === 'form' && <form onSubmit={(event) => { event.preventDefault(); app.actions.handleSubmit(); }}><Form {...props} key={state.revision + ':' + state.uiState} /></form>}` : `{state.screen === '${context}' && <${nameOf(context)} {...props} key={${context === 'list' ? "'list'" : "state.revision + ':' + state.uiState"}} />}`).join('\n      ')}
       {state.uiState === 'success' && state.screen === 'detail' && Boolean((state.draft as Record<string, unknown>).is_archived) && <button onClick={() => { void app.restore(); }}>Restore record</button>}
     </section>
@@ -208,8 +219,9 @@ export default function App(options: StoreOptions) {
 function vueApp(object: string, titleField: string): string {
   return `<script setup lang="ts">
 import { computed, onMounted, onUnmounted, shallowRef } from 'vue';
+import { CancellationForm } from '@oods/components-vue';
 ${CONTEXTS.map((context) => `import ${nameOf(context)} from './screens/${nameOf(context)}.vue';`).join('\n')}
-import { createWorkflow, screenProps, collectionEvents, routes, supplementalFields, cancellable, type Screen } from './application';
+import { createWorkflow, screenProps, collectionEvents, routes, supplementalFields, cancellable, cancellationFormProps, type Screen } from './application';
 import type { StoreOptions } from './store';
 import './app.css';
 const options = defineProps<StoreOptions>();
@@ -229,8 +241,12 @@ const values = computed(() => state.value.draft as Record<string, unknown>);
     <nav aria-label="Workflow screens"><button v-for="screen in screens" :key="screen" type="button" :aria-current="state.screen === screen ? 'page' : undefined" @click="app.navigate(screen)">{{ screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1) }}</button></nav>
     <p v-if="state.error" role="alert">{{ state.error }}</p><button v-if="state.uiState === 'error'" type="button" @click="app.retry()">Try again</button>
     <section aria-label="${object} screen" class="workflow-content" @input.capture="app.edit" @change.capture="app.edit">
-      <template v-if="state.uiState === 'success' && state.screen === 'form'"><label v-for="field in supplementalFields" :key="field.name" class="workflow-field">{{ field.label }}<input :name="field.name" :value="values[field.name]" /></label></template>
-      <fieldset v-if="state.uiState === 'success' && state.screen === 'detail' && cancellable" class="workflow-cancel"><legend>Cancellation details</legend><label>Reason<input name="cancellation_reason" :value="values.cancellation_reason ?? ''" /></label><label>Reason code<input name="cancellation_reason_code" :value="values.cancellation_reason_code ?? ''" /></label><label><input name="cancel_at_period_end" type="checkbox" :checked="Boolean(values.cancel_at_period_end)" />Cancel at period end</label></fieldset>
+      <template v-if="state.uiState === 'success' && state.screen === 'form'"><div v-for="field in supplementalFields" :key="field.name" class="workflow-field"><label :for="field.name">{{ field.label }}</label><input :id="field.name" :name="field.name" :aria-describedby="field.name + '-help'" :value="values[field.name]" /><small :id="field.name + '-help'" class="oods-field-help">{{ field.help }}</small></div></template>
+      <section v-if="state.uiState === 'success' && state.screen === 'detail' && cancellable && state.cancelOpen" class="workflow-cancel" aria-label="Cancel subscription">
+        <CancellationForm v-bind="cancellationFormProps" :reason="String(values.cancellation_reason ?? '')" :reason-code="String(values.cancellation_reason_code ?? '')" />
+        <label class="workflow-checkbox"><input name="cancel_at_period_end" type="checkbox" :checked="Boolean(values.cancel_at_period_end)" />Cancel at period end</label>
+        <button type="button" @click="app.confirmCancellation()">Confirm cancellation</button><button type="button" @click="app.dismissCancellation()">Keep subscription</button>
+      </section>
       <form v-if="state.screen === 'form'" @submit.prevent="app.actions.handleSubmit"><Form :key="state.revision + ':' + state.uiState" v-bind="props" /></form><component v-else :is="view" :key="state.screen === 'list' ? 'list' : state.revision + ':' + state.uiState" v-bind="props" />
       <button v-if="state.uiState === 'success' && state.screen === 'detail' && values.is_archived" @click="app.restore()">Restore record</button>
     </section><p class="workflow-notice" role="status">{{ state.notice }}</p>
@@ -254,6 +270,7 @@ body { margin: 0; background: #f5f6f8; color: #1c2535; font-family: system-ui, s
 .workflow-app label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
 .workflow-app input:not([type="checkbox"]), .workflow-app select { font: inherit; max-width: 100%; border: 1px solid #cdd4df; border-radius: 5px; padding: 10px; background: white; }
 .workflow-content { padding: 24px; border: 1px solid #dce1e8; border-radius: 12px; background: white; min-width: 0; overflow-wrap: anywhere; }
+.workflow-app label:has(input[type="checkbox"]) { display: flex; flex-direction: row; align-items: center; }
 .workflow-field { margin-bottom: 20px; }
 .workflow-content [data-layout="inline"] { flex-wrap: wrap; gap: 12px; }
 .workflow-content [data-layout="inline"] > [data-oods-component="SearchInput"], .workflow-content [data-layout="inline"] > [data-oods-component="Select"] { flex: 1 1 180px; min-width: 0; }

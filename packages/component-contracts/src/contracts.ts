@@ -43,8 +43,8 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     id: 'ArchiveSummary', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'isArchived', 'archived', 'status', 'archivedAt', 'reason', 'archiveReason', 'summary', 'text', 'description'], slots: ['default'], events: [],
     states: ['populated', 'fallback', 'empty'], tokenRoles: ['summary.background', 'summary.border', 'summary.text', 'summary.label'],
-    accessibility: ['false remains visible in its named term', 'archive date and reason remain associated terms'],
-    compatibility: 'Mirrors renderArchiveSummary: h3 heading and Archived (isArchived/archived/status), Archived At (archivedAt), Reason (reason/archiveReason) description-list terms. A nullable archivedAt omits its date term; scalar false and true remain literal text as in HTML; an absent flag is not false. summary/text/description fallback and authored body override preserve the heading. archivedField, archivedAtField and reasonField lower to their runtime keys. restoredAtField, archivedByField, metadataField, retainHistoryParameter, restoreWindowParameter and allowPartialRestoreParameter are consumed unbound: HTML has no restore, actor or archive metadata term or action. Noninteractive.',
+    accessibility: ['false renders No in its named term', 'archive date and reason remain associated terms'],
+    compatibility: 'Mirrors renderArchiveSummary: h3 heading and Archived (isArchived/archived/status), Archived At (archivedAt), Reason (reason/archiveReason) description-list terms. A nullable archivedAt omits its date term; boolean summary terms render No and Yes; an absent flag remains absent. summary/text/description fallback and authored body override preserve the heading. archivedField, archivedAtField and reasonField lower to their runtime keys. restoredAtField, archivedByField, metadataField, retainHistoryParameter, restoreWindowParameter and allowPartialRestoreParameter are consumed unbound: HTML has no restore, actor or archive metadata term or action. Noninteractive.',
   },
   ArchivedRowOverlay: {
     id: 'ArchivedRowOverlay', version: COMPONENT_CONTRACT_VERSION,
@@ -88,7 +88,7 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
   },
   BillingAmountInput: {
     id: 'BillingAmountInput', version: COMPONENT_CONTRACT_VERSION,
-    props: ['amount', 'currency', 'minorUnits', 'label', 'name', 'disabled'], slots: [], events: ['change'],
+    props: ['help', 'amount', 'currency', 'minorUnits', 'label', 'name', 'disabled'], slots: [], events: ['change'],
     states: ['editing', 'invalid'], tokenRoles: ['billing.amount.text', 'billing.currency.text', 'input.border', 'input.background', 'input.validation'],
     accessibility: ['A label names the decimal input', 'Currency describes the input', 'Invalid input has an associated alert and aria-invalid'],
     compatibility: 'Billable amount is an integer number of minor units. Decimal major-unit edits emit number | undefined, rounded half up with decimal arithmetic; zero is valid, blank emits undefined, and negatives or unsafe values retain the draft and emit no update. amountField/currencyField bind runtime amount/currency; minorUnitsParameter resolves to the declared object parameter. Uncontrolled text is retained until amount/minorUnits changes. HTML supplies the same static value and validation semantics; framework components own updates.',
@@ -102,7 +102,7 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
   },
   BillingIntervalSelector: {
     id: 'BillingIntervalSelector', version: COMPONENT_CONTRACT_VERSION,
-    props: ['interval', 'intervals', 'label', 'name', 'disabled'], slots: [], events: ['change'],
+    props: ['help', 'interval', 'intervals', 'label', 'name', 'disabled'], slots: [], events: ['change'],
     states: ['editing', 'invalid'], tokenRoles: ['billing.interval.text', 'input.border', 'input.background', 'input.validation'],
     accessibility: ['A label names the native select', 'Native keyboard navigation selects an interval', 'An invalid value is visible with an associated alert and aria-invalid'],
     compatibility: 'Billable interval selection emits one string from intervals. intervalField binds interval; intervalsParameter resolves to the declared object parameter. Defaults are Billable monthly/quarterly/annual; Subscription resolves monthly/yearly. An absent value has a disabled Choose interval placeholder; an invalid value remains visible as a disabled option plus an alert. HTML supplies the same static options and validation semantics.',
@@ -130,10 +130,10 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
   },
   CancellationForm: {
     id: 'CancellationForm', version: COMPONENT_CONTRACT_VERSION,
-    props: ['title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'allowedReasons', 'reasonCode', 'reason', 'cancellationReason'], slots: ['default'], events: [],
+    props: ['embedded', 'reasonHelp', 'codeHelp', 'title', 'label', 'heading', 'name', 'description', 'subtitle', 'hint', 'allowedReasons', 'reasonCode', 'reason', 'cancellationReason'], slots: ['default'], events: [],
     states: ['populated', 'empty'], tokenRoles: ['form.background', 'form.border', 'form.text', 'form.hint'],
     accessibility: ['reason and code retain their initial values', 'native controls are labelled', 'submit does not cancel or save'],
-    compatibility: 'Mirrors renderCancellationForm: title/label/heading/name (default Cancellation Form), description/subtitle/hint subtitle; labelled Reason Code select and Reason textarea, reason/cancellationReason precedence, allowedReasons with no_longer_needed/budget/duplicate defaults. Children replace controls and retain the header. reasonField and codeField lower to reason and reasonCode. requireReasonParameter, allowedReasonsParameter and windowParameter are consumed unbound. Presentational native controls only; submission is prevented and no cancel/save event or persistence is implemented.',
+    compatibility: 'Mirrors renderCancellationForm: title/label/heading/name (default Cancellation Form), description/subtitle/hint subtitle; labelled Reason Code select and Reason textarea, reason/cancellationReason precedence, allowedReasons with no_longer_needed/budget/duplicate defaults; an explicitly empty list permits a text code, and an existing code absent from finite options is preserved as an option. embedded uses a fieldset within a host form. reasonHelp and codeHelp remain below their controls. Children replace controls and retain the header. reasonField and codeField lower to reason and reasonCode. requireReasonParameter, allowedReasonsParameter and windowParameter are consumed unbound. Presentational native controls only; submission is prevented and no cancel/save event or persistence is implemented.',
   },
   CancellationSummary: {
     id: 'CancellationSummary', version: COMPONENT_CONTRACT_VERSION,
@@ -464,7 +464,7 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
   },
   StatusSelector: {
     id: 'StatusSelector', version: COMPONENT_CONTRACT_VERSION,
-    props: ['label', 'title', 'options', 'states', 'value', 'status'], slots: ['default'], events: ['change', 'update'],
+    props: ['help', 'label', 'title', 'options', 'states', 'value', 'status'], slots: ['default'], events: ['change', 'update'],
     states: ['selected', 'unselected'], tokenRoles: ['input.background', 'input.border', 'input.text', 'input.focus'],
     accessibility: ['Native select semantics inside a wrapper carrying data-summary-type=status-selector', 'The label targets the select'],
     compatibility: 'Mirrors renderStatusSelector: a labelled select named status whose label reads label/title (default Status), whose options read options, then states (default draft/active/inactive; records read value/id/label, scalars render as text) and whose selection reads value, then status; authored children replace the control. The generic field lowers to value; a saved onChange binding owns a local string state in the React and Vue targets, so the select is controlled. optionsParameter, initialParameter and requireReasonParameter are consumed; allowedTransitionsField is consumed unbound because the renderer reads no transitions.',
