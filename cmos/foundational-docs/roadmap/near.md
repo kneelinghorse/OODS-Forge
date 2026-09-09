@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`
 
-**Updated:** 2026-09-08 — Sprint 188 review session `PS-2026-09-08-011`; independently certified and closed
+**Updated:** 2026-09-09 — Sprint 189 build session `PS-2026-09-09-001`; BUILT, REVIEW PENDING
 
 **Sprint 188:** CERTIFIED AND CLOSED. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 froze the final proof and handed off. Review `PS-2026-09-08-011` (decision `#1831`) inspected all 36 frozen-head screenshots in both frameworks: the workflow runs end to end with all four states and criterion 8 is opened; usable is not certified, and the ranked craft carries are preserved by `#1832`. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--certified-and-closed).
 
@@ -273,7 +273,18 @@ new workflow. Alias retirement and unverified maturity remain open. Maintenance 
 remains named and unabsorbed before integrated public release. PR83 CI follow-up #1386 was resolved;
 its ECharts soak skip remains disclosed.
 
-The Sprint 189 delivery draft is retained unsent for the next reviewed and merged implementation.
+The historical Sprint 189 delivery draft was sent by Sprint 189 m01 after reviewed `f4cd1ba3` was delivered.
 The independent review must inspect the new craft screenshots, including duplicate source/application
 controls, raw timestamps and narrow summary terms, the wrapped archive badge and surplus empty cards.
 Functional build evidence does not settle whether the application is usable.
+
+
+## Increment 8 — Sprint 189: Browser design loop — BUILT, REVIEW PENDING
+
+Sprint 189 remains Active under decisions #1832–#1834. Mission 1 delivered reviewed `f4cd1ba3` from the primary checkout, rebuilt and restarted PM2, verified its build-stamped revision and sent the prepared reconnect to aquex-mcp and forge-demos. All 17 served-store hashes stayed unchanged.
+
+The build worktree now has a persistent exact-tarball React/Vue preview loop with screenshots, accessibility text, layout measurements and source hashes. Composed list and timeline contexts own their collections and controls. Forms use short labels with help, one owner per field and native Save; detail is read-only with cancellation on demand and populated, uniquely labeled tabs. Summary values, timestamps, archived badges and deterministic billing seeds are reconciled. The public `design.preview` tool uses the same loop and reports OODS-N019 when it is stopped. The served primary bridge still has the delivered Sprint 188 implementation; the Sprint 189 preview tool is proven on the worktree bridge.
+
+The final packet retains the 77-schema census with the 66/66 and 132/132 single-screen population plus Subscription/workflow 2/2. The wider generation result remains 75/77 and 150/154, with the existing User/workflow and Organization/workflow gaps disclosed. Saved-corpus results remain separate: original 15/16, successor 16/16. The final four-suite capture follows #1833; exact counts and all failures/skips belong to its raw receipts and file-attributed accounting.
+
+[The Sprint 189 handoff](../../../artifacts/product-reality/sprint-189/m06/README.md) binds the frozen implementation, execution and evidence commits, the BEFORE/AFTER browser receipts and all seven craft dispositions. The Sprint 190 reconnect is prepared and remains unsent. `builderSelfCertified:false`; `separateReviewRequired:true`. Independent review must inspect the receipts and decide usability and sprint closure. This build does not certify accessibility, theme maturity or every object/context at runtime.

@@ -86,9 +86,9 @@ Response (error):
 
 ---
 
-## Auto tool contracts (20 registry entries)
+## Auto tool contracts (21 registry entries)
 
-The 20 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
+The 21 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
 
 ### `tokens.build`
 
