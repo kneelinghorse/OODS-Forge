@@ -34,8 +34,14 @@ describe('slot vocabulary unification', () => {
     expect(components).toContain('PreferenceSummaryBadge');
     expect(components).toContain('RoleBadgeList');
     expect(components).toContain('SearchInput');
-    // Optional slots retain real metadata without inventing an unbound action.
-    expect(components).not.toContain('Button');
+    // The one row action is bound to its collection; surplus toolbar actions stay absent.
+    const row = result.schema.screens[0].children?.flatMap(node => node.children ?? []).find(node => node.collection?.source === 'rows')
+      ?? result.schema.screens[0].children?.find(node => node.collection?.source === 'rows');
+    const visit = (node: UiElement): UiElement[] => [node, ...(node.children ?? []).flatMap(visit)];
+    const buttons = result.schema.screens.flatMap(visit).filter(node => node.component === 'Button');
+    expect(row).toBeDefined();
+    expect(buttons).toHaveLength(1);
+    expect(buttons[0]).toMatchObject({ collectionControl: 'open', props: { field: row!.collection!.keyField } });
   });
 
   it('maps Subscription list secondary billing placement without OODS-V120 warnings', async () => {
@@ -56,8 +62,14 @@ describe('slot vocabulary unification', () => {
     expect(toolbarSelection?.candidates.map((candidate) => candidate.name)).toContain('BillingSummaryBadge');
 
     const components = collectComponents(result.schema);
-    // Optional slots retain real metadata without inventing an unbound action.
-    expect(components).not.toContain('Button');
+    // The one row action is bound to its collection; surplus toolbar actions stay absent.
+    const row = result.schema.screens[0].children?.flatMap(node => node.children ?? []).find(node => node.collection?.source === 'rows')
+      ?? result.schema.screens[0].children?.find(node => node.collection?.source === 'rows');
+    const visit = (node: UiElement): UiElement[] => [node, ...(node.children ?? []).flatMap(visit)];
+    const buttons = result.schema.screens.flatMap(visit).filter(node => node.component === 'Button');
+    expect(row).toBeDefined();
+    expect(buttons).toHaveLength(1);
+    expect(buttons[0]).toMatchObject({ collectionControl: 'open', props: { field: row!.collection!.keyField } });
     expect(components).toContain('BillingSummaryBadge');
     expect(components).toContain('StatusBadge');
     expect(components).toContain('RelativeTimestamp');

@@ -1,0 +1,768 @@
+# Render receipt diff
+
+15 differences.
+
+## artifactContentHash
+
+Before:
+```json
+"sha256:5e86c67bd582f9b8bf8debb1c011d98e011773872348e191b34f740bc9bf3824"
+```
+After:
+```json
+"sha256:83d27f1ddcfa33d9d3d1546fc2a920d276caca50c9b5ad3ea41619c70fef86d0"
+```
+
+## files.src/sample-data.ts
+
+Before:
+```json
+"sha256:94e8c77058e9cf40b3c0560e2d96fc782447de291f3045ba7359abdce6682529"
+```
+After:
+```json
+"sha256:158948fec9e9aa2b84939ebdb4a0486a2833b6de5e19a27668d953c744a9f695"
+```
+
+## files.src/store.ts
+
+Before:
+```json
+"sha256:fe4dc1083e012f85c32d0ddd229ba1e42011beeb3464b4a199a3bf57b86094ce"
+```
+After:
+```json
+"sha256:6e28fff21ef055e6ca3fe8514c08da6da6f50f1d237375a94d94d2c6abf3a99a"
+```
+
+## views.390.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\"\n      - tab \"Archived\" [selected]\n    - tabpanel \"Archived\":\n      - list \"Records\":\n        - listitem:\n          - 'group \"Archived: Subscription 10\"':\n            - 'button \"Subscription 10 Status: Trialing Jan 1, 2026, 12:00 AM $190.00 · yearly\"':\n              - text: Subscription 10 Trialing\n              - time: Jan 1, 2026, 12:00 AM\n              - text: $190.00 · yearly\n            - text: Archived\n    - navigation \"Pagination\":\n      - text: 1 record Showing 1–1 of 1\n      - list:\n        - listitem:\n          - button \"Previous page\" [disabled]: ‹\n        - listitem:\n          - button \"Page 1\": \"1\"\n        - listitem:\n          - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status"
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\"\n      - tab \"Archived\" [selected]\n    - tabpanel \"Archived\":\n      - list \"Records\":\n        - listitem:\n          - 'group \"Archived: Subscription 10\"':\n            - 'button \"Subscription 10 Status: Trialing Mar 1, 2026, 12:00 PM $190.00 · yearly\"':\n              - text: Subscription 10 Trialing\n              - time: Mar 1, 2026, 12:00 PM\n              - text: $190.00 · yearly\n            - text: Archived\n    - navigation \"Pagination\":\n      - text: 1 record Showing 1–1 of 1\n      - list:\n        - listitem:\n          - button \"Previous page\" [disabled]: ‹\n        - listitem:\n          - button \"Page 1\": \"1\"\n        - listitem:\n          - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status"
+```
+
+## views.390.visibleText
+
+Before:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+```
+
+## views.390.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 390,
+  "documentWidth": 390,
+  "elementCount": 53,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "label",
+      "text": "Search",
+      "lines": [
+        "Searc",
+        "h"
+      ]
+    },
+    {
+      "element": "span",
+      "text": "Archived",
+      "lines": [
+        "Archi",
+        "ved"
+      ]
+    }
+  ]
+}
+```
+After:
+```json
+{
+  "viewportWidth": 390,
+  "documentWidth": 390,
+  "elementCount": 53,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "label",
+      "text": "Search",
+      "lines": [
+        "Searc",
+        "h"
+      ]
+    }
+  ]
+}
+```
+
+## views.390.regions
+
+Before:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Status\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Sort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-ve-items-13-0",
+    "component": "ArchivedRowOverlay",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 10"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Jan 1, 2026, 12:00 AM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$190.00 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Status\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Sort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-ve-items-13-0",
+    "component": "ArchivedRowOverlay",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 10"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$190.00 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```
+
+## views.820.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\"\n      - tab \"Archived\" [selected]\n    - tabpanel \"Archived\":\n      - list \"Records\":\n        - listitem:\n          - 'group \"Archived: Subscription 10\"':\n            - 'button \"Subscription 10 Status: Trialing Jan 1, 2026, 12:00 AM $190.00 · yearly\"':\n              - text: Subscription 10 Trialing\n              - time: Jan 1, 2026, 12:00 AM\n              - text: $190.00 · yearly\n            - text: Archived\n    - navigation \"Pagination\":\n      - text: 1 record Showing 1–1 of 1\n      - list:\n        - listitem:\n          - button \"Previous page\" [disabled]: ‹\n        - listitem:\n          - button \"Page 1\": \"1\"\n        - listitem:\n          - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status"
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\"\n      - tab \"Archived\" [selected]\n    - tabpanel \"Archived\":\n      - list \"Records\":\n        - listitem:\n          - 'group \"Archived: Subscription 10\"':\n            - 'button \"Subscription 10 Status: Trialing Mar 1, 2026, 12:00 PM $190.00 · yearly\"':\n              - text: Subscription 10 Trialing\n              - time: Mar 1, 2026, 12:00 PM\n              - text: $190.00 · yearly\n            - text: Archived\n    - navigation \"Pagination\":\n      - text: 1 record Showing 1–1 of 1\n      - list:\n        - listitem:\n          - button \"Previous page\" [disabled]: ‹\n        - listitem:\n          - button \"Page 1\": \"1\"\n        - listitem:\n          - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status"
+```
+
+## views.820.visibleText
+
+Before:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nLocal workspace\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nLocal workspace\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+```
+
+## views.820.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 820,
+  "documentWidth": 820,
+  "elementCount": 54,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "label",
+      "text": "Search",
+      "lines": [
+        "Sear",
+        "ch"
+      ]
+    },
+    {
+      "element": "span",
+      "text": "Archived",
+      "lines": [
+        "Archive",
+        "d"
+      ]
+    }
+  ]
+}
+```
+After:
+```json
+{
+  "viewportWidth": 820,
+  "documentWidth": 820,
+  "elementCount": 54,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "label",
+      "text": "Search",
+      "lines": [
+        "Sear",
+        "ch"
+      ]
+    }
+  ]
+}
+```
+
+## views.820.regions
+
+Before:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Status\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Sort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-ve-items-13-0",
+    "component": "ArchivedRowOverlay",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 10"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Jan 1, 2026, 12:00 AM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$190.00 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Status\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Sort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-ve-items-13-0",
+    "component": "ArchivedRowOverlay",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 10"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$190.00 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```
+
+## views.1440.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\"\n      - tab \"Archived\" [selected]\n    - tabpanel \"Archived\":\n      - list \"Records\":\n        - listitem:\n          - 'group \"Archived: Subscription 10\"':\n            - 'button \"Subscription 10 Status: Trialing Jan 1, 2026, 12:00 AM $190.00 · yearly\"':\n              - text: Subscription 10 Trialing\n              - time: Jan 1, 2026, 12:00 AM\n              - text: $190.00 · yearly\n            - text: Archived\n    - navigation \"Pagination\":\n      - text: 1 record Showing 1–1 of 1\n      - list:\n        - listitem:\n          - button \"Previous page\" [disabled]: ‹\n        - listitem:\n          - button \"Page 1\": \"1\"\n        - listitem:\n          - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status"
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Subscriptions\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - search \"Search\":\n      - text: Search\n      - searchbox \"Search\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All states\" [selected]\n      - option \"future\"\n      - option \"trialing\"\n      - option \"active\"\n      - option \"paused\"\n      - option \"pending cancellation\"\n      - option \"past due\"\n      - option \"unpaid\"\n      - option \"terminated\"\n    - text: Sort\n    - combobox \"Sort\":\n      - option \"Name A–Z\" [selected]\n      - option \"Name Z–A\"\n    - tablist \"Archive views\":\n      - tab \"Active\"\n      - tab \"Archived\" [selected]\n    - tabpanel \"Archived\":\n      - list \"Records\":\n        - listitem:\n          - 'group \"Archived: Subscription 10\"':\n            - 'button \"Subscription 10 Status: Trialing Mar 1, 2026, 12:00 PM $190.00 · yearly\"':\n              - text: Subscription 10 Trialing\n              - time: Mar 1, 2026, 12:00 PM\n              - text: $190.00 · yearly\n            - text: Archived\n    - navigation \"Pagination\":\n      - text: 1 record Showing 1–1 of 1\n      - list:\n        - listitem:\n          - button \"Previous page\" [disabled]: ‹\n        - listitem:\n          - button \"Page 1\": \"1\"\n        - listitem:\n          - button \"Next page\" [disabled]: ›\n      - text: Page 1 of 1\n  - status"
+```
+
+## views.1440.visibleText
+
+Before:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nLocal workspace\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nSubscriptions\nLocal workspace\nList\nDetail\nEdit\nTimeline\nSearch\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+```
+
+## views.1440.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 1440,
+  "documentWidth": 1440,
+  "elementCount": 54,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "label",
+      "text": "Search",
+      "lines": [
+        "Searc",
+        "h"
+      ]
+    },
+    {
+      "element": "span",
+      "text": "Archived",
+      "lines": [
+        "Archive",
+        "d"
+      ]
+    }
+  ]
+}
+```
+After:
+```json
+{
+  "viewportWidth": 1440,
+  "documentWidth": 1440,
+  "elementCount": 54,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "label",
+      "text": "Search",
+      "lines": [
+        "Searc",
+        "h"
+      ]
+    }
+  ]
+}
+```
+
+## views.1440.regions
+
+Before:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Status\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Sort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-ve-items-13-0",
+    "component": "ArchivedRowOverlay",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 10\n★\nTrialing\nJan 1, 2026, 12:00 AM\n$190.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 10"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Jan 1, 2026, 12:00 AM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$190.00 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "list-screen",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-screen-list-9",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A\nActive\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived\n1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-list-toolbar-4",
+    "component": "Stack",
+    "text": "Search\nStatus\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated\nSort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "",
+    "component": "SearchInput",
+    "text": "Search"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Status\nAll states\nfuture\ntrialing\nactive\npaused\npending cancellation\npast due\nunpaid\nterminated"
+  },
+  {
+    "id": "",
+    "component": "Select",
+    "text": "Sort\nName A–Z\nName Z–A"
+  },
+  {
+    "id": "list-list-items-5-archive-tabs",
+    "component": "Tabs",
+    "text": "Active\nArchived\nSubscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5",
+    "component": "section",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-ve-items-13-0",
+    "component": "ArchivedRowOverlay",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly\nArchived"
+  },
+  {
+    "id": "list-list-items-5-row-0",
+    "component": "Button",
+    "text": "Subscription 10\n★\nTrialing\nMar 1, 2026, 12:00 PM\n$190.00 · yearly"
+  },
+  {
+    "id": "list-list-items-5-title-0",
+    "component": "Text",
+    "text": "Subscription 10"
+  },
+  {
+    "id": "list-ve-items-10-0",
+    "component": "StatusBadge",
+    "text": "★\nTrialing"
+  },
+  {
+    "id": "list-ve-items-11-0",
+    "component": "RelativeTimestamp",
+    "text": "Mar 1, 2026, 12:00 PM"
+  },
+  {
+    "id": "list-slot-toolbar-actions-3-0",
+    "component": "BillingSummaryBadge",
+    "text": "$190.00 · yearly"
+  },
+  {
+    "id": "list-list-pagination-7",
+    "component": "Stack",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  },
+  {
+    "id": "list-slot-pagination-8",
+    "component": "PaginationBar",
+    "text": "1 record\nShowing 1–1 of 1\n‹\n1\n›\nPage 1 of 1"
+  }
+]
+```

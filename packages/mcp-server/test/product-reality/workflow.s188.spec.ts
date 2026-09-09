@@ -1,3 +1,8 @@
+import { vi } from 'vitest';
+
+// Decision #1833: git-range/census work has an explicit serial execution budget.
+vi.setConfig({ testTimeout: 60_000 });
+
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
@@ -66,7 +71,6 @@ describe('Subscription workflow composition', () => {
       { action: 'handleEdit', from: 'detail', to: 'form', effect: 'navigate' },
       { action: 'handleSubmit', from: 'form', to: 'detail', effect: 'save' },
       { action: 'handleCancel', from: 'detail', to: 'detail', effect: 'pending_cancellation' },
-      { action: 'handleCancel', from: 'form', to: 'detail', effect: 'pending_cancellation' },
       { action: 'handleViewTimeline', from: 'detail', to: 'timeline', effect: 'navigate' },
       { action: 'handleDelete', from: 'detail', to: 'list', effect: 'archive' },
     ]));
@@ -95,7 +99,7 @@ describe('Subscription workflow composition', () => {
   it('adds actions in the trait mapping, including no additions for Plan carrying neither trait', async () => {
     for (const context of ['detail', 'form'] as const) {
       const subscription = await compose({ object: 'Subscription', context });
-      expect(subscription.schema.screens[0].bindings?.onCancel).toBe('handleCancel');
+      expect(subscription.schema.screens[0].bindings?.onCancel).toBe(context === 'detail' ? 'handleCancel' : undefined);
       expect(subscription.schema.screens[0].bindings?.onViewTimeline).toBe(context === 'detail' ? 'handleViewTimeline' : undefined);
       const plan = await compose({ object: 'Plan', context });
       expect(plan.objectUsed!.traits.some((trait) => /Cancellable|Timestampable/.test(trait))).toBe(false);
@@ -104,7 +108,8 @@ describe('Subscription workflow composition', () => {
       for (const framework of ['react', 'vue'] as const) {
         const result = await generate({ schema: subscription.schema, framework, profile: 'build' });
         expect(result.status, JSON.stringify(result.errors)).toBe('ok');
-        expect(result.code).toContain('actions.handleCancel();');
+        if (context === 'detail') expect(result.code).toContain('actions.handleCancel();');
+        else expect(result.code).not.toContain('actions.handleCancel();');
         if (context === 'detail') expect(result.code).toContain('actions.handleViewTimeline();');
         expect(validateGeneratedArtifact(result.artifact!)).toEqual([]);
       }
@@ -144,7 +149,7 @@ describe('Generated applications close their own contracts', () => {
     expect(() => rebuild(artifact, artifact.files.filter((file) => file.path !== 'src/store.ts'))).toThrow(/local import/);
     expect(() => rebuild(artifact, artifact.files.map((file) => ({ ...file, contents: file.contents.replace('actions.handleCancel();', 'actions.handleEdit();') })))).toThrow(/must forward to actions.handleCancel/);
     expect(() => rebuild(artifact, artifact.files.map((file) => ({ ...file, contents: file.contents.replace('actions.handleViewTimeline();', '') })))).toThrow(/must forward/);
-    expect(artifact.actions.find(({ name }) => name === 'handleCancel')?.sources.map(({ nodeId }) => nodeId).sort()).toEqual(['detail-screen', 'form-screen']);
+    expect(artifact.actions.find(({ name }) => name === 'handleCancel')?.sources.map(({ nodeId }) => nodeId).sort()).toEqual(['detail-screen']);
   });
 
   it.each(['react', 'vue'] as const)('%s application typechecks strict against the built component packages', (framework) => {

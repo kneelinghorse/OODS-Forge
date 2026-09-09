@@ -1,0 +1,48 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Subscriptions" [level=1]
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - search "Search":
+      - text: Search
+      - searchbox "Search"
+    - text: Status
+    - combobox "Status":
+      - option "All states" [selected]
+      - option "future"
+      - option "trialing"
+      - option "active"
+      - option "paused"
+      - option "pending cancellation"
+      - option "past due"
+      - option "unpaid"
+      - option "terminated"
+    - text: Sort
+    - combobox "Sort":
+      - option "Name A–Z" [selected]
+      - option "Name Z–A"
+    - tablist "Archive views":
+      - tab "Active"
+      - tab "Archived" [selected]
+    - tabpanel "Archived":
+      - list "Records":
+        - listitem:
+          - 'group "Archived: Subscription 10"':
+            - 'button "Subscription 10 Status: Trialing Mar 1, 2026, 12:00 PM $190.00 · yearly"':
+              - text: Subscription 10 Trialing
+              - time: Mar 1, 2026, 12:00 PM
+              - text: $190.00 · yearly
+            - text: Archived
+    - navigation "Pagination":
+      - text: 1 record Showing 1–1 of 1
+      - button "Previous page" [disabled]: ‹
+      - list:
+        - listitem:
+          - button "Page 1": "1"
+      - button "Next page" [disabled]: ›
+      - text: Page 1 of 1
+  - status

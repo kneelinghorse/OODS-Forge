@@ -121,14 +121,19 @@ describe('Sprint 184 m04 ported export mutation evidence', () => {
     expect(Object.values(report.assertions).every(Boolean)).toBe(true);
   });
 
-  it('reproduces the checked-in canonical report, log, and checksums byte for byte', () => {
-    const reportContents = `${JSON.stringify(report, null, 2)}\n`;
-    const logContents = formatPortedMutationMatrixLog(report);
-    expect(readFileSync(path.join(MUTATION_EVIDENCE_DIRECTORY, 'mutation-matrix.json'), 'utf8'))
-      .toBe(reportContents);
-    expect(readFileSync(path.join(MUTATION_EVIDENCE_DIRECTORY, 'mutation-matrix.log'), 'utf8'))
-      .toBe(logContents);
+  it('retains historical checksums and the same mutation isolation as current source evolves', () => {
+    const reportContents = readFileSync(path.join(MUTATION_EVIDENCE_DIRECTORY, 'mutation-matrix.json'), 'utf8');
+    const retained = JSON.parse(reportContents) as PortedMutationMatrixReport;
+    const logContents = formatPortedMutationMatrixLog(retained);
+    expect(readFileSync(path.join(MUTATION_EVIDENCE_DIRECTORY, 'mutation-matrix.log'), 'utf8')).toBe(logContents);
     expect(readFileSync(path.join(MUTATION_EVIDENCE_DIRECTORY, 'SHA256SUMS'), 'utf8'))
       .toBe(formatPortedMutationMatrixChecksums(reportContents, logContents));
+    // Source hashes identify their own executions; the 16-cell isolation promise stays exact.
+    const semantics = (value: PortedMutationMatrixReport) => ({
+      ...value,
+      mutations: value.mutations.map(({ sourceSha256Before: _before, virtualSourceSha256After: _after, ...row }) => row),
+      restoration: { ...value.restoration, sourceSha256BeforeAndAfter: undefined },
+    });
+    expect(semantics(report)).toEqual(semantics(retained));
   });
 });

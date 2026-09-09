@@ -1,0 +1,61 @@
+- text: Current lifecycle status of the subscription.
+- combobox "Current lifecycle status of the subscription.":
+  - option "Future" [selected]
+  - option "Trialing"
+  - option "Active"
+  - option "Paused"
+  - option "Pending Cancellation"
+  - option "Past Due"
+  - option "Unpaid"
+  - option "Terminated"
+- banner:
+  - heading "Cancellation Form" [level=3]
+- text: Reason Code
+- combobox "Reason Code":
+  - option "no_longer_needed"
+  - option "budget" [selected]
+  - option "duplicate"
+- text: Reason
+- textbox "Reason": Consumer cancellation reason
+- text: Billing interval
+- combobox "Billing interval":
+  - option "monthly" [selected]
+  - option "yearly"
+- text: Billing amount USD
+- textbox "Billing amount": "19.99"
+- checkbox "Whether the subscription will cancel at the natural billing period end."
+- text: Whether the subscription will cancel at the natural billing period end. Free-form explanation captured during cancellation workflows.
+- textbox "Free-form explanation captured during cancellation workflows.": Consumer cancellation reason
+- text: Timestamp when cancellation was initiated.
+- textbox "Timestamp when cancellation was initiated."
+- text: ISO 4217 currency code used for billing.
+- textbox "ISO 4217 currency code used for billing.":
+  - /placeholder: Enter currency
+  - text: usd
+- text: Payment instrument category used for collection.
+- combobox "Payment instrument category used for collection.":
+  - option "Enter payment method type" [disabled]
+  - option "card" [selected]
+  - option "ach"
+  - option "wire"
+  - option "invoice"
+  - option "other"
+- text: Billing contact email address.
+- textbox "Billing contact email address.":
+  - /placeholder: Enter customer email
+  - text: consumer@example.test
+- text: Lifecycle event associated with the most recent timestamp mutation.
+- textbox "Lifecycle event associated with the most recent timestamp mutation.":
+  - /placeholder: Enter last event
+  - text: Consumer last event
+- text: Recurring price expressed in minor units (e.g., cents).
+- spinbutton "Recurring price expressed in minor units (e.g., cents).": "1999"
+- text: Recurrence cadence (monthly, yearly, quarterly, etc.).
+- textbox "Recurrence cadence (monthly, yearly, quarterly, etc.).":
+  - /placeholder: Enter billing interval
+  - text: monthly
+- button "Save"
+- group "Screen actions":
+  - button "Cancel subscription"
+  - button "Change"
+  - button "Submit"

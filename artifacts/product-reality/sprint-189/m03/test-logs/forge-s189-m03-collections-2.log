@@ -1,0 +1,66 @@
+
+> @oods/mcp-server@0.1.0 test /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server
+> vitest run "test/codegen/collections.s189.spec.ts"
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server
+
+ ❯ test/codegen/collections.s189.spec.ts (8 tests | 4 failed) 228ms
+   ✓ collection screens own the data presentation > declares one row template and moves the billing and archive recipes into it 113ms
+   ✓ collection screens own the data presentation > replaces fixed timeline slots with an event template and keeps the declared payment recipe 10ms
+   × collection screens own the data presentation > react standalone collection props compile without a workflow or invented records 12ms
+     → [{"code":"OODS-V007","message":"Prop \"labelField\" is not in the canonical ArchivedRowOverlay contract.","nodeId":"ve-items-13","component":"ArchivedRowOverlay"}]: expected 'error' to be 'ok' // Object.is equality
+   × collection screens own the data presentation > vue standalone collection props compile without a workflow or invented records 7ms
+     → [{"code":"OODS-V007","message":"Prop \"labelField\" is not in the canonical ArchivedRowOverlay contract.","nodeId":"ve-items-13","component":"ArchivedRowOverlay"}]: expected 'error' to be 'ok' // Object.is equality
+   × collection screens own the data presentation > react App binds the composed collection instead of shipping a competing presentation 31ms
+     → expected 'error' to be 'ok' // Object.is equality
+   × collection screens own the data presentation > vue App binds the composed collection instead of shipping a competing presentation 25ms
+     → expected 'error' to be 'ok' // Object.is equality
+   ✓ collection screens own the data presentation > formats instants with an explicit UTC policy and allows callers to select their locale and zone 29ms
+   ✓ collection screens own the data presentation > merges event sources chronologically, preserves ties and does not mutate the caller 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > react standalone collection props compile without a workflow or invented records
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > vue standalone collection props compile without a workflow or invented records
+AssertionError: [{"code":"OODS-V007","message":"Prop \"labelField\" is not in the canonical ArchivedRowOverlay contract.","nodeId":"ve-items-13","component":"ArchivedRowOverlay"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/codegen/collections.s189.spec.ts:46:60
+     44|       const composition = await compose({ object: 'Subscription', cont…
+     45|       const result = await generate({ schema: composition.schema, fram…
+     46|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+       |                                                            ^
+     47|       expect(validateGeneratedArtifact(result.artifact!)).toEqual([]);
+     48|       expect(result.code).toContain(context === 'list' ? 'rows?: Array…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > react App binds the composed collection instead of shipping a competing presentation
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > vue App binds the composed collection instead of shipping a competing presentation
+AssertionError: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/codegen/collections.s189.spec.ts:61:27
+     59|     const composition = await compose({ object: 'Subscription', contex…
+     60|     const result = await generate({ schema: composition.schema, framew…
+     61|     expect(result.status).toBe('ok');
+       |                           ^
+     62|     const app = result.artifact!.files.find(file => /src\/App\./.test(…
+     63|     expect(app).not.toMatch(/workflow-toolbar|workflow-records|workflo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 4 passed (8)
+   Start at  20:57:32
+   Duration  1.24s (transform 472ms, setup 14ms, collect 798ms, tests 228ms, environment 0ms, prepare 75ms)
+
+/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/mcp-server@0.1.0 test: `vitest run "test/codegen/collections.s189.spec.ts"`
+Exit status 1

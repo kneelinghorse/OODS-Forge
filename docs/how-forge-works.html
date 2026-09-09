@@ -110,7 +110,7 @@
     <div role="listitem"><i>define</i><b>Objects</b>Things you model (User, Product, Invoice…) = a list of traits + a few own fields.</div>
     <div role="listitem"><i>assemble</i><b>Contexts</b>List, detail, form, timeline, card, inline (+ chart, dashboard shells) — built from the traits' contributions.</div>
     <div role="listitem"><i>style</i><b>Tokens &amp; brands</b>Every colour/size/type value once; compiled to CSS, TS, Tailwind, Swift, Kotlin; switched by brand + theme.</div>
-    <div role="listitem"><i>export + check</i><b>Tools</b>26 registered tools (20 auto + 6 on demand), as defined by <span class="k">packages/mcp-server/src/tools/registry.json</span>: compose, validate, render, code, charts, dashboards, certify, tokens, catalog.</div>
+    <div role="listitem"><i>export + check</i><b>Tools</b>27 registered tools (21 auto + 6 on demand), as defined by <span class="k">packages/mcp-server/src/tools/registry.json</span>: compose, validate, render, code, charts, dashboards, certify, tokens, catalog.</div>
   </div>
   <p>Everything lives in one repository as plain files: traits and objects are YAML (<span class="k">traits/</span>, <span class="k">objects/</span>, <span class="k">domains/</span>), tokens are JSON (<span class="k">packages/tokens/src/tokens/</span>), components are packaged for React and Vue (<span class="k">packages/components-react/</span>, <span class="k">packages/components-vue/</span>) with shared styles (<span class="k">packages/component-styles/</span>), and the tools are a local server (<span class="k">packages/mcp-server/</span>). A <b>tool</b> is a typed function — name plus JSON in, JSON out — that you call over the Model Context Protocol from an AI assistant, over HTTP from a panel, or from the command line. Nothing requires a hosted service.</p>
 
@@ -342,12 +342,12 @@ schema:   <span class="cmt"># Product's own fields</span>
 
   <!-- 11 -->
   <h2 id="operate"><span class="n">11</span>Operating it: starting, connecting, tools</h2>
-  <p><b>Start and connect.</b> Build the server once: <span class="k">pnpm --filter @oods/mcp-server run build</span>. Connect an AI assistant with the stdio adapter — copy <span class="k">configs/agents/claude-desktop.stdio-mcp.json</span> into Claude Desktop's MCP config, or <span class="k">cursor.stdio-mcp.json</span> into <span class="k">.cursor/mcp.json</span>. For a browser panel or HTTP-style agents, run the bridge (<span class="k">pnpm bridge:dev</span>; it listens on <span class="k">127.0.0.1:4466</span>). From the terminal, call any tool directly: <span class="k">pnpm exec tsx tools/oods-agent-cli/src/index.ts plan design.compose '{"intent":"product detail page"}'</span>. The authoritative roster is <span class="k">packages/mcp-server/src/tools/registry.json</span>: 20 tools register by default and 6 more switch on with <span class="k">MCP_TOOLSET=all</span>.</p>
+  <p><b>Start and connect.</b> Build the server once: <span class="k">pnpm --filter @oods/mcp-server run build</span>. Connect an AI assistant with the stdio adapter — copy <span class="k">configs/agents/claude-desktop.stdio-mcp.json</span> into Claude Desktop's MCP config, or <span class="k">cursor.stdio-mcp.json</span> into <span class="k">.cursor/mcp.json</span>. For a browser panel or HTTP-style agents, run the bridge (<span class="k">pnpm bridge:dev</span>; it listens on <span class="k">127.0.0.1:4466</span>). From the terminal, call any tool directly: <span class="k">pnpm exec tsx tools/oods-agent-cli/src/index.ts plan design.compose '{"intent":"product detail page"}'</span>. The authoritative roster is <span class="k">packages/mcp-server/src/tools/registry.json</span>: 21 tools register by default and 6 more switch on with <span class="k">MCP_TOOLSET=all</span>.</p>
   <div class="tw"><table>
     <thead><tr><th>Group</th><th>Tools</th></tr></thead>
     <tbody>
       <tr><td>Registry</td><td>catalog.list · object (list, show) · structuredData.fetch · registry.snapshot · health</td></tr>
-      <tr><td>Generate &amp; review</td><td>design.compose · repl (validate, render) · code.generate · pipeline · schema (save, load, list, delete) · fidelity.preview · map (create, list, resolve, update, delete, apply) · review (resolve, chain)</td></tr>
+      <tr><td>Generate &amp; review</td><td>design.compose · design.preview · repl (validate, render) · code.generate · pipeline · schema (save, load, list, delete) · fidelity.preview · map (create, list, resolve, update, delete, apply) · review (resolve, chain)</td></tr>
       <tr><td>Charts</td><td>viz.render · dashboard.render · artifact.certify · (viz.compose, deprecated)</td></tr>
       <tr><td>Tokens &amp; brand</td><td>tokens.build · brand.apply · brand.intake</td></tr>
       <tr><td>On demand</td><td>a11y.scan · diag.snapshot · billing.reviewKit · billing.switchFixtures · release.verify · release.tag</td></tr>
@@ -376,5 +376,5 @@ schema:   <span class="cmt"># Product's own fields</span>
     <li>Fonts are not yet per-brand (one global stack); the chart palette is one fixed set; the Swift/Kotlin files carry one brand × theme and omit font stacks and easing curves.</li>
   </ul>
 
-  <footer class="foot">Figures are from the Forge repository in August 2026 (41 traits · 11 objects · ~100 catalogued components · 8 contexts · 13 chart types). The 26-tool roster comes from <span class="k">packages/mcp-server/src/tools/registry.json</span>; contracts: <span class="k">packages/mcp-server/src/schemas/</span> and <span class="k">docs/api/</span>.</footer>
+  <footer class="foot">Figures are from the Forge repository in August 2026 (41 traits · 11 objects · ~100 catalogued components · 8 contexts · 13 chart types). The 27-tool roster comes from <span class="k">packages/mcp-server/src/tools/registry.json</span>; contracts: <span class="k">packages/mcp-server/src/schemas/</span> and <span class="k">docs/api/</span>.</footer>
 </div>

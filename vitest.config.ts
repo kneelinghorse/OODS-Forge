@@ -143,6 +143,14 @@ export default defineConfig({
           'packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts',
           'packages/mcp-server/test/product-reality/reconnect.s184.spec.ts',
           'packages/mcp-server/test/tools/dashboard-identity-lifts.s180.spec.ts',
+          // s189 / decision #1833: git-range and census proofs stay in the serial
+          // package suite, avoiding duplicate root-core execution and contention.
+          // Per-file counts: sprint-189/m02/test-handling/suite-accounting-inputs.json.
+          'packages/mcp-server/test/product-reality/sprint-wide-movers.s185.spec.ts',
+          'packages/mcp-server/test/product-reality/public-head-equivalence.s185.spec.ts',
+          'packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts',
+          'packages/mcp-server/test/product-reality/workflow.s188.spec.ts',
+          'packages/mcp-server/test/product-reality/archive-workflow.s188.spec.ts',
         ],
         environment: 'node'
       }

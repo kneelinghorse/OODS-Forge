@@ -45,7 +45,7 @@ export function preflightNormalizationSafety(
 
   while (stack.length > 0) {
     const node = stack.pop()!;
-    if (node.component === 'Tabs' && node.children?.length) {
+    if (node.component === 'Tabs' && node.children?.length && (node.collectionControl !== 'archive' || framework === 'html')) {
       const propKeys = recordKeys(node.props);
       const hasExplicitItems = propKeys.some((key) => (
         (key === 'items' || key === 'tabs')

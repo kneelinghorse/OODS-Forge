@@ -1184,15 +1184,40 @@
 }
 [data-oods-component='ArchivedRowOverlay'] { display: contents; }
 [data-oods-component='ArchivedRowOverlay'][data-archived='true'] {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   align-items: center;
   gap: var(--space-2, 0.5rem);
   opacity: var(--status-archive-overlay-opacity, 0.6);
 }
+[data-oods-component='ArchivedRowOverlay'] > .oods-collection-row { flex: 1; min-width: 0; }
 .oods-archive-badge {
   display: inline-block;
+  white-space: nowrap;
+  flex-shrink: 0;
   padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
   border-radius: var(--radius-sm, 0.25rem);
   color: var(--status-archive-text, CanvasText);
   background: var(--status-archive-bg, ButtonFace);
 }
+
+[data-oods-component='CancellationSummary'] dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-4, 1rem);
+}
+[data-oods-component='CancellationSummary'] [data-summary-item] { min-width: 0; }
+[data-oods-component='CancellationSummary'] dd { margin: 0; overflow-wrap: break-word; }
+.oods-field-help { display: block; margin: 0.4rem 0 1rem; font-size: 0.875rem; color: var(--sys-text-subtle, GrayText); }
+.oods-cancellation-form { margin: 0; min-width: 0; }
+.oods-field:has(input[type='checkbox']) { display: block; }
+.oods-field label:has(input[type='checkbox']) { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; }
+
+/* Generated collection screens share one row/event presentation in both frameworks. */
+.oods-collection { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 8px; }
+.oods-collection-row { width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
+.oods-collection-row > :first-child { min-width: 50%; flex: 1 1 140px; font-weight: 600; }
+.oods-collection-row [data-oods-component="StatusBadge"] { max-width: 100%; text-transform: none; }
+[data-oods-collection="events"] time { display: block; margin-top: 8px; font-size: 13px; }
+.oods-pagination-bar__pages { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
+@media (max-width: 600px) { .oods-collection-row { flex-direction: column; align-items: flex-start; } .oods-collection-row > :first-child { flex-basis: auto; width: 100%; } }

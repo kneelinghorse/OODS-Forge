@@ -173,7 +173,7 @@ export function getBannerToneTokenSet(tone: StatusTone): StatusTokenSet {
 const ICON_GLYPHS: Record<string, string> = {
   success: '✔︎', warning: '⚠︎', critical: '⨯', danger: '⨯', error: '⨯', negative: '⨯',
   pending: '…', processing: '⟳', paused: '⏸', canceled: '∅', cancelled: '∅', draft: '✎',
-  void: '∅', paid: '✔︎', info: 'ℹ︎', trial: '★', future: '⏲', refunded: '↺', locked: '🔒',
+  void: '∅', paid: '✔︎', info: 'ℹ︎', trial: '★', future: '⏲', scheduled: '⏲', refunded: '↺', locked: '🔒',
   unlocked: '🔓', default: '•',
 };
 

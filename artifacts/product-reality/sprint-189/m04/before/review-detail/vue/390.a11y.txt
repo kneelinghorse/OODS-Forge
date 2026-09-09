@@ -1,0 +1,65 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Team annual" [level=1]
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - group "Cancellation details":
+      - text: Cancellation details Reason
+      - textbox "Reason": Budget changed for next year
+      - text: Reason code
+      - textbox "Reason code": customer_request
+      - checkbox "Cancel at period end" [checked]
+      - text: Cancel at period end
+    - log "Status Timeline":
+      - heading "Status Timeline" [level=3]
+      - paragraph: "Current status: Pending Cancellation"
+      - list:
+        - listitem:
+          - article:
+            - paragraph: Event
+            - time: 2026-01-01T00:00:00.000Z
+            - paragraph: active
+            - paragraph: "Reason: Sample record created"
+        - listitem:
+          - article:
+            - paragraph: active → pending_cancellation
+            - time: 2026-09-08T12:00:00.000Z
+            - paragraph: active
+            - paragraph: "Reason: Budget changed for next year"
+    - heading "Cancellation Summary" [level=3]
+    - term: Cancel at period end
+    - definition: "Yes"
+    - term: Requested at
+    - definition:
+      - time: 2026-09-08T12:00:00.000Z
+    - term: Reason
+    - definition: Budget changed for next year
+    - term: Code
+    - definition: customer_request
+    - heading "Archive Summary" [level=3]
+    - term: Archived
+    - definition: "false"
+    - tablist "Tabs":
+      - tab "Billing" [selected]
+      - button "More tabs": More
+    - tabpanel "Billing":
+      - region "Billing cycle":
+        - heading "Billing cycle" [level=3]
+        - paragraph: 100% complete · 0 days remaining
+        - progressbar "100% complete · 0 days remaining"
+        - paragraph: yearly
+    - complementary:
+      - log "Audit Timeline":
+        - heading "Audit Timeline" [level=3]
+        - list:
+          - listitem: No events
+    - group "Screen actions":
+      - button "Cancel subscription"
+      - button "Archive"
+      - button "Edit"
+      - button "View timeline"
+  - status: Changes saved in this session.

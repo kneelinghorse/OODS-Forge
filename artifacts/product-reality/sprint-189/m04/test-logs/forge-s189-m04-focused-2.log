@@ -1,0 +1,144 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server
+
+ ✓ test/codegen/collections.s189.spec.ts (12 tests) 12691ms
+   ✓ collection screens own the data presentation > react standalone collection props compile without a workflow or invented records  3114ms
+   ✓ collection screens own the data presentation > vue standalone collection props compile without a workflow or invented records  5844ms
+   ✓ collection screens own the data presentation > react JavaScript collection output has real runtime props and no TypeScript-only imports  1372ms
+   ✓ collection screens own the data presentation > vue JavaScript collection output has real runtime props and no TypeScript-only imports  2176ms
+ ❯ test/product-reality/workflow.s188.spec.ts (11 tests | 4 failed) 5261ms
+   × Subscription workflow composition > derives routes and six transition meanings from the public source screens 7ms
+     → expected [ …(6) ] to deeply equal ArrayContaining{…}
+   ✓ Subscription workflow composition > keeps exactly four canonical branches on every react screen 1ms
+   ✓ Subscription workflow composition > keeps exactly four canonical branches on every vue screen 0ms
+   × Subscription workflow composition > adds actions in the trait mapping, including no additions for Plan carrying neither trait 23ms
+     → expected undefined to be 'handleCancel' // Object.is equality
+   ✓ Generated applications close their own contracts > accepts workflow through pipeline and makes unsupported JavaScript-only emission explicit 35ms
+   ✓ Generated applications close their own contracts > rejects noncanonical object names before interpolating an application shell 1ms
+   × Generated applications close their own contracts > react ships every source file and rejects missing imports or disconnected actions 7ms
+     → expected [ 'detail-screen' ] to deeply equal [ 'detail-screen', 'form-screen' ]
+   × Generated applications close their own contracts > vue ships every source file and rejects missing imports or disconnected actions 8ms
+     → expected [ 'detail-screen' ] to deeply equal [ 'detail-screen', 'form-screen' ]
+   ✓ Generated applications close their own contracts > react application typechecks strict against the built component packages  1596ms
+   ✓ Generated applications close their own contracts > vue application typechecks strict against the built component packages  3301ms
+   ✓ Generated store drives the lifecycle without consumer wiring > covers deterministic seeds, query boundaries, save, cancellation history, archive/restore and failure modes 109ms
+ ✓ test/product-reality/archive-workflow.s188.spec.ts (2 tests) 4958ms
+   ✓ generated archive-view integration > react carries the authored archive label into governed Tabs and row overlays, and typechecks  1664ms
+   ✓ generated archive-view integration > vue carries the authored archive label into governed Tabs and row overlays, and typechecks  3292ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/workflow.s188.spec.ts > Subscription workflow composition > derives routes and six transition meanings from the public source screens
+AssertionError: expected [ …(6) ] to deeply equal ArrayContaining{…}
+
+- Expected
++ Received
+
+@@ -1,6 +1,6 @@
+- ArrayContaining [
++ [
+    {
+      "action": "handleRowClick",
+      "effect": "navigate",
+      "from": "list",
+      "to": "detail",
+@@ -10,35 +10,29 @@
+      "effect": "navigate",
+      "from": "detail",
+      "to": "form",
+    },
+    {
+-     "action": "handleSubmit",
+-     "effect": "save",
+-     "from": "form",
+-     "to": "detail",
++     "action": "handleDelete",
++     "effect": "archive",
++     "from": "detail",
++     "to": "list",
+    },
+    {
+      "action": "handleCancel",
+      "effect": "pending_cancellation",
+      "from": "detail",
+-     "to": "detail",
+-   },
+-   {
+-     "action": "handleCancel",
+-     "effect": "pending_cancellation",
+-     "from": "form",
+      "to": "detail",
+    },
+    {
+      "action": "handleViewTimeline",
+      "effect": "navigate",
+      "from": "detail",
+      "to": "timeline",
+    },
+    {
+-     "action": "handleDelete",
+-     "effect": "archive",
+-     "from": "detail",
+-     "to": "list",
++     "action": "handleSubmit",
++     "effect": "save",
++     "from": "form",
++     "to": "detail",
+    },
+  ]
+
+ ❯ test/product-reality/workflow.s188.spec.ts:69:42
+     67|     ]);
+     68|     expect(schema.screens.map(({ route }) => route)).toEqual(['/', '/:…
+     69|     expect(schema.workflow?.transitions).toEqual(expect.arrayContainin…
+       |                                          ^
+     70|       { action: 'handleRowClick', from: 'list', to: 'detail', effect: …
+     71|       { action: 'handleEdit', from: 'detail', to: 'form', effect: 'nav…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  test/product-reality/workflow.s188.spec.ts > Subscription workflow composition > adds actions in the trait mapping, including no additions for Plan carrying neither trait
+AssertionError: expected undefined to be 'handleCancel' // Object.is equality
+
+- Expected: 
+"handleCancel"
+
++ Received: 
+undefined
+
+ ❯ test/product-reality/workflow.s188.spec.ts:103:65
+    101|     for (const context of ['detail', 'form'] as const) {
+    102|       const subscription = await compose({ object: 'Subscription', con…
+    103|       expect(subscription.schema.screens[0].bindings?.onCancel).toBe('…
+       |                                                                 ^
+    104|       expect(subscription.schema.screens[0].bindings?.onViewTimeline).…
+    105|       const plan = await compose({ object: 'Plan', context });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  test/product-reality/workflow.s188.spec.ts > Generated applications close their own contracts > react ships every source file and rejects missing imports or disconnected actions
+ FAIL  test/product-reality/workflow.s188.spec.ts > Generated applications close their own contracts > vue ships every source file and rejects missing imports or disconnected actions
+AssertionError: expected [ 'detail-screen' ] to deeply equal [ 'detail-screen', 'form-screen' ]
+
+- Expected
++ Received
+
+  [
+    "detail-screen",
+-   "form-screen",
+  ]
+
+ ❯ test/product-reality/workflow.s188.spec.ts:152:118
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  4 failed | 21 passed (25)
+   Start at  21:46:02
+   Duration  25.10s (transform 617ms, setup 18ms, collect 1.67s, tests 22.91s, environment 0ms, prepare 154ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/compose/label-generator.test.ts test/codegen/collections.s189.spec.ts test/product-reality/workflow.s188.spec.ts test/product-reality/archive-workflow.s188.spec.ts

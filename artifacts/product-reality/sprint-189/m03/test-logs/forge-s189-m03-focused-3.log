@@ -1,0 +1,123 @@
+
+> @oods/mcp-server@0.1.0 test /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server
+> vitest run "test/codegen/collections.s189.spec.ts" "test/product-reality/workflow.s188.spec.ts" "test/product-reality/archive-workflow.s188.spec.ts"
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server
+
+ ❯ test/codegen/collections.s189.spec.ts (12 tests | 4 failed) 3883ms
+   ✓ collection screens own the data presentation > declares one row template and moves the billing and archive recipes into it 117ms
+   ✓ collection screens own the data presentation > replaces fixed timeline slots with an event template and keeps the declared payment recipe 11ms
+   ✓ collection screens own the data presentation > rejects a dangling record key instead of generating navigation with an undefined ID 6ms
+   ✓ collection screens own the data presentation > rejects a mismatched control so its declared component cannot be silently discarded 5ms
+   × collection screens own the data presentation > react standalone collection props compile without a workflow or invented records 10ms
+     → [{"code":"OODS-V007","message":"Tabs \"list-items-5-archive-tabs\" cannot combine explicit items with children; normalization would discard the child tree.","nodeId":"list-items-5-archive-tabs","component":"Tabs"}]: expected 'error' to be 'ok' // Object.is equality
+   × collection screens own the data presentation > vue standalone collection props compile without a workflow or invented records 9ms
+     → [{"code":"OODS-V007","message":"Tabs \"list-items-5-archive-tabs\" cannot combine explicit items with children; normalization would discard the child tree.","nodeId":"list-items-5-archive-tabs","component":"Tabs"}]: expected 'error' to be 'ok' // Object.is equality
+   × collection screens own the data presentation > react App binds the composed collection instead of shipping a competing presentation 28ms
+     → expected 'error' to be 'ok' // Object.is equality
+   × collection screens own the data presentation > vue App binds the composed collection instead of shipping a competing presentation 24ms
+     → expected 'error' to be 'ok' // Object.is equality
+   ✓ collection screens own the data presentation > react JavaScript collection output has real runtime props and no TypeScript-only imports  1533ms
+   ✓ collection screens own the data presentation > vue JavaScript collection output has real runtime props and no TypeScript-only imports  2132ms
+   ✓ collection screens own the data presentation > formats instants with an explicit UTC policy and allows callers to select their locale and zone 6ms
+   ✓ collection screens own the data presentation > merges event sources chronologically, preserves ties and does not mutate the caller 0ms
+ ❯ test/product-reality/workflow.s188.spec.ts (11 tests | 11 skipped) 124ms
+   ↓ Subscription workflow composition > derives routes and six transition meanings from the public source screens
+   ↓ Subscription workflow composition > keeps exactly four canonical branches on every react screen
+   ↓ Subscription workflow composition > keeps exactly four canonical branches on every vue screen
+   ↓ Subscription workflow composition > adds actions in the trait mapping, including no additions for Plan carrying neither trait
+   ↓ Generated applications close their own contracts > accepts workflow through pipeline and makes unsupported JavaScript-only emission explicit
+   ↓ Generated applications close their own contracts > rejects noncanonical object names before interpolating an application shell
+   ↓ Generated applications close their own contracts > react ships every source file and rejects missing imports or disconnected actions
+   ↓ Generated applications close their own contracts > vue ships every source file and rejects missing imports or disconnected actions
+   ↓ Generated applications close their own contracts > react application typechecks strict against the built component packages
+   ↓ Generated applications close their own contracts > vue application typechecks strict against the built component packages
+   ↓ Generated store drives the lifecycle without consumer wiring > covers deterministic seeds, query boundaries, save, cancellation history, archive/restore and failure modes
+ ❯ test/product-reality/archive-workflow.s188.spec.ts (2 tests | 2 failed) 105ms
+   × generated archive-view integration > react carries the authored archive label into governed Tabs and row overlays, and typechecks 81ms
+     → [{"code":"OODS-V007","message":"Tabs \"list-list-items-5-archive-tabs\" cannot combine explicit items with children; normalization would discard the child tree.","nodeId":"list-list-items-5-archive-tabs","component":"Tabs"}]: expected 'error' to be 'ok' // Object.is equality
+   × generated archive-view integration > vue carries the authored archive label into governed Tabs and row overlays, and typechecks 24ms
+     → [{"code":"OODS-V007","message":"Tabs \"list-list-items-5-archive-tabs\" cannot combine explicit items with children; normalization would discard the child tree.","nodeId":"list-list-items-5-archive-tabs","component":"Tabs"}]: expected 'error' to be 'ok' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/workflow.s188.spec.ts [ test/product-reality/workflow.s188.spec.ts ]
+AssertionError: [{"code":"OODS-V007","message":"Tabs \"list-list-items-5-archive-tabs\" cannot combine explicit items with children; normalization would discard the child tree.","nodeId":"list-list-items-5-archive-tabs","component":"Tabs"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/workflow.s188.spec.ts:58:58
+     56|     const validateOutput = getAjv().compile(generateOutput);
+     57|     expect(validateOutput(result), JSON.stringify(validateOutput.error…
+     58|     expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+       |                                                          ^
+     59|     artifacts.set(framework, result.artifact!);
+     60|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > react standalone collection props compile without a workflow or invented records
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > vue standalone collection props compile without a workflow or invented records
+AssertionError: [{"code":"OODS-V007","message":"Tabs \"list-items-5-archive-tabs\" cannot combine explicit items with children; normalization would discard the child tree.","nodeId":"list-items-5-archive-tabs","component":"Tabs"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/codegen/collections.s189.spec.ts:62:60
+     60|       const composition = await compose({ object: 'Subscription', cont…
+     61|       const result = await generate({ schema: composition.schema, fram…
+     62|       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+       |                                                            ^
+     63|       expect(validateGeneratedArtifact(result.artifact!)).toEqual([]);
+     64|       expect(result.code).toContain(context === 'list' ? 'rows?: Array…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > react App binds the composed collection instead of shipping a competing presentation
+ FAIL  test/codegen/collections.s189.spec.ts > collection screens own the data presentation > vue App binds the composed collection instead of shipping a competing presentation
+AssertionError: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/codegen/collections.s189.spec.ts:77:27
+     75|     const composition = await compose({ object: 'Subscription', contex…
+     76|     const result = await generate({ schema: composition.schema, framew…
+     77|     expect(result.status).toBe('ok');
+       |                           ^
+     78|     const app = result.artifact!.files.find(file => /src\/App\./.test(…
+     79|     expect(app).not.toMatch(/workflow-toolbar|workflow-records|workflo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  test/product-reality/archive-workflow.s188.spec.ts > generated archive-view integration > react carries the authored archive label into governed Tabs and row overlays, and typechecks
+ FAIL  test/product-reality/archive-workflow.s188.spec.ts > generated archive-view integration > vue carries the authored archive label into governed Tabs and row overlays, and typechecks
+AssertionError: [{"code":"OODS-V007","message":"Tabs \"list-list-items-5-archive-tabs\" cannot combine explicit items with children; normalization would discard the child tree.","nodeId":"list-list-items-5-archive-tabs","component":"Tabs"}]: expected 'error' to be 'ok' // Object.is equality
+
+Expected: "ok"
+Received: "error"
+
+ ❯ test/product-reality/archive-workflow.s188.spec.ts:24:64
+     22|     visit(fixture.screens[0]);
+     23|     const generated = await generate({ schema: fixture, framework, pro…
+     24|     expect(generated.status, JSON.stringify(generated.errors)).toBe('o…
+       |                                                                ^
+     25|     const files = generated.artifact!.files;
+     26|     const controller = files.find((file) => file.path === 'src/applica…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  6 failed | 8 passed | 11 skipped (25)
+   Start at  21:21:24
+   Duration  6.15s (transform 512ms, setup 20ms, collect 1.52s, tests 4.11s, environment 0ms, prepare 150ms)
+
+/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/mcp-server@0.1.0 test: `vitest run "test/codegen/collections.s189.spec.ts" "test/product-reality/workflow.s188.spec.ts" "test/product-reality/archive-workflow.s188.spec.ts"`
+Exit status 1

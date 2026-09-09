@@ -13,7 +13,7 @@ export const BillingSummaryBadge = defineComponent({
 
 export const BillingAmountInput = defineComponent({
   name: 'BillingAmountInput',
-  props: { ...amountProps, label: { type: String, default: 'Billing amount' }, name: String, disabled: Boolean },
+  props: { ...amountProps, label: { type: String, default: 'Billing amount' }, name: String, disabled: Boolean, help: String },
   emits: { change: (value: number | undefined) => value === undefined || Number.isSafeInteger(value) },
   setup(props, { emit }) {
     const generatedId = useId();
@@ -35,6 +35,7 @@ export const BillingAmountInput = defineComponent({
             if (result.valid) emit('change', result.value);
           },
         }),
+        props.help ? h('p', { class: 'oods-field-help' }, props.help) : null,
         error.value ? h('p', { id: `${id}-error`, role: 'alert' }, error.value) : null,
       ]);
     };
@@ -43,7 +44,7 @@ export const BillingAmountInput = defineComponent({
 
 export const BillingIntervalSelector = defineComponent({
   name: 'BillingIntervalSelector',
-  props: { id: String, interval: String, intervals: { type: Array as PropType<readonly string[]>, default: () => [...BILLING_INTERVALS] }, label: { type: String, default: 'Billing interval' }, name: String, disabled: Boolean },
+  props: { id: String, interval: String, intervals: { type: Array as PropType<readonly string[]>, default: () => [...BILLING_INTERVALS] }, label: { type: String, default: 'Billing interval' }, name: String, disabled: Boolean, help: String },
   emits: { change: (value: string) => typeof value === 'string' },
   setup(props, { emit }) {
     const generatedId = useId();
@@ -61,6 +62,7 @@ export const BillingIntervalSelector = defineComponent({
           !props.intervals.includes(value.value) ? h('option', { value: value.value, disabled: true, selected: true }, value.value || 'Choose interval') : null,
           ...props.intervals.map((option) => h('option', { value: option, selected: option === value.value }, option)),
         ]),
+        props.help ? h('p', { class: 'oods-field-help' }, props.help) : null,
         error ? h('p', { id: `${id}-error`, role: 'alert' }, error) : null,
       ]);
     };

@@ -1,0 +1,72 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Team annual" [level=1]
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - text: Human-readable plan label shown in headers.
+    - textbox "Human-readable plan label shown in headers.": Team annual
+    - text: Current lifecycle status of the subscription.
+    - combobox "Current lifecycle status of the subscription.":
+      - option "Future"
+      - option "Trialing"
+      - option "Active"
+      - option "Paused"
+      - option "Pending Cancellation" [selected]
+      - option "Past Due"
+      - option "Unpaid"
+      - option "Terminated"
+    - heading "Cancellation Form" [level=3]
+    - text: Reason Code
+    - combobox "Reason Code":
+      - option "no_longer_needed"
+      - option "budget"
+      - option "duplicate"
+    - text: Reason
+    - textbox "Reason": Budget changed for next year
+    - text: Billing interval
+    - combobox "Billing interval":
+      - option "monthly"
+      - option "yearly" [selected]
+    - text: Billing amount USD
+    - textbox "Billing amount": "19.99"
+    - checkbox "Whether the subscription will cancel at the natural billing period end." [checked]
+    - text: Whether the subscription will cancel at the natural billing period end. Free-form explanation captured during cancellation workflows.
+    - textbox "Free-form explanation captured during cancellation workflows.": Budget changed for next year
+    - text: Timestamp when cancellation was initiated.
+    - textbox "Timestamp when cancellation was initiated."
+    - text: ISO 4217 currency code used for billing.
+    - textbox "ISO 4217 currency code used for billing.":
+      - /placeholder: Enter currency
+      - text: usd
+    - text: Payment instrument category used for collection.
+    - combobox "Payment instrument category used for collection.":
+      - option "Enter payment method type" [disabled]
+      - option "card"
+      - option "ach"
+      - option "wire" [selected]
+      - option "invoice"
+      - option "other"
+    - text: Billing contact email address.
+    - textbox "Billing contact email address.":
+      - /placeholder: Enter customer email
+      - text: customer3@example.com
+    - text: Lifecycle event associated with the most recent timestamp mutation.
+    - textbox "Lifecycle event associated with the most recent timestamp mutation.":
+      - /placeholder: Enter last event
+      - text: payment_received
+    - text: Recurring price expressed in minor units (e.g., cents).
+    - spinbutton "Recurring price expressed in minor units (e.g., cents).": "1999"
+    - text: Recurrence cadence (monthly, yearly, quarterly, etc.).
+    - textbox "Recurrence cadence (monthly, yearly, quarterly, etc.).":
+      - /placeholder: Enter billing interval
+      - text: yearly
+    - button "Save"
+    - group "Screen actions":
+      - button "Cancel subscription"
+      - button "Change"
+      - button "Submit"
+  - status: Changes saved in this session.

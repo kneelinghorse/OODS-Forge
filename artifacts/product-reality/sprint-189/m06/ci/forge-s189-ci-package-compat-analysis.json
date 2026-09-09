@@ -1,0 +1,41 @@
+{
+  "observedAt": "2026-09-09T04:14:38.446053+00:00",
+  "runId": 34309736127,
+  "status": "failed",
+  "cause": "Storybook cannot resolve the missing built entry for @oods/component-contracts.",
+  "scope": "Remote Package Compatibility job; independent of the four-suite capture.",
+  "baselineEvidence": [
+    {
+      "path": "scripts/pkg/compat.ts",
+      "baseSha256": "63d0ea4e93341bbfc5f34194d30a46a2be92edb78fdccf9fc2bc474af4960f4f",
+      "headSha256": "63d0ea4e93341bbfc5f34194d30a46a2be92edb78fdccf9fc2bc474af4960f4f",
+      "unchanged": true
+    },
+    {
+      "path": ".github/workflows/pkg-compat.yml",
+      "baseSha256": "24b0d9467153f817ad2ce13aa22ae502af8abf7c328e0291c3700569776fad4f",
+      "headSha256": "24b0d9467153f817ad2ce13aa22ae502af8abf7c328e0291c3700569776fad4f",
+      "unchanged": true
+    },
+    {
+      "path": "packages/component-contracts/package.json",
+      "baseSha256": "2de78b3fd5238c1245700b4bf1ad764a3ef8ac47c97971c9baca652fe0d73dde",
+      "headSha256": "2de78b3fd5238c1245700b4bf1ad764a3ef8ac47c97971c9baca652fe0d73dde",
+      "unchanged": true
+    },
+    {
+      "path": "packages/components-react/src/billing.tsx",
+      "baseSha256": "a027c8f1fd3e9b83317fef4d6375cc10de2f320cdac1e809425b0e2e992070c4",
+      "headSha256": "1d06fa9385c9e03dd878811e6f4f64a8653f47f5395676d6237e21c27ae7616b",
+      "unchanged": false
+    },
+    {
+      "path": "packages/components-react/src/index.ts",
+      "baseSha256": "7302aafecd368a9455f9e7f3aec593f12a106b1fc6a037a47c0324b2829e21de",
+      "headSha256": "7302aafecd368a9455f9e7f3aec593f12a106b1fc6a037a47c0324b2829e21de",
+      "unchanged": true
+    }
+  ],
+  "inference": "The compatibility runner and workflow omit the contracts build at both the build base and implementation. The React billing runtime import and package entry already exist at the base. This is evidence of a pre-existing prerequisite gap; no base CI execution is claimed.",
+  "action": "Retain failed log and expose prerequisite gap in independent review; no source change or recapture is authorized by the m06 remote-observation criterion."
+}

@@ -189,12 +189,9 @@ describe('object-aware compose — pipeline tab label wiring (s86-m01)', () => {
       expect(label.length).toBeGreaterThan(0);
     }
 
-    // First N labels should match trait-category-derived labels
-    const composed = composeObject(loadObject('Subscription'));
-    const generated = generateLabels(composed, 'detail');
-    for (let i = 0; i < generated.labels.length; i++) {
-      expect(labels[i]).toBe(generated.labels[i]);
-    }
+    // Decision 1832: label the populated panels, without the old empty category tabs.
+    expect(labels).toEqual(['Billing', 'Details']);
+    expect(new Set(labels).size).toBe(labels.length);
   });
 
   it('user-provided tabLabels override generated labels', async () => {

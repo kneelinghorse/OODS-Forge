@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { handle } from '../../../../packages/mcp-server/src/tools/design.preview.js';
+import { render } from '../../../../scripts/design-loop/render.js';
+const root = path.dirname(new URL(import.meta.url).pathname);
+const preview = await handle({ object: 'Subscription', context: 'list', framework: 'react' });
+const direct = await render({ compose: { object: 'Subscription', context: 'list' }, framework: 'react', output: path.join(root, 'preview-direct') });
+assert.equal(preview.schemaHash, direct.schemaHash);
+assert.equal(preview.receipts[0]!.artifactContentHash, direct.receipts[0]!.artifactContentHash);
+for (const receipt of preview.receipts) await fs.cp(String(receipt.output), path.join(root, 'preview-tool', String(receipt.framework)), { recursive: true });
+await fs.writeFile(path.join(root, 'preview-running.json'), JSON.stringify({ status: 'passed', schemaHash: preview.schemaHash, artifactContentHash: preview.receipts[0]!.artifactContentHash, exactPublicResult: preview, directReceipt: path.join(root, 'preview-direct/react/receipt.json'), retainedCopy: 'preview-tool/react/receipt.json' }, null, 2) + '\n');
+console.log('Public preview matches direct render schema and artifact hashes.');

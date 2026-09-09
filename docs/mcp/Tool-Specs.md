@@ -6,7 +6,7 @@ For exhaustive per-tool parameter tables across the full live tool surface, also
 
 ## Registration + enablement
 
-Auto tools are registered by default (20 at the time of writing). On-demand tools are only registered when enabled (6 at the time of writing).
+Auto tools are registered by default (21 at the time of writing). On-demand tools are only registered when enabled (6 at the time of writing).
 
 - Enable every on-demand tool: `MCP_TOOLSET=all`
 - Enable a subset: `MCP_EXTRA_TOOLS=a11y.scan,diag.snapshot`
@@ -86,9 +86,9 @@ Response (error):
 
 ---
 
-## Auto tool contracts (20 registry entries)
+## Auto tool contracts (21 registry entries)
 
-The 20 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
+The 21 default entries come from `packages/mcp-server/src/tools/registry.json`. The expanded narrative sections below cover heavily used tools and grouped-tool actions; additional contracts are summarized near the end of this section and link to the maintained `docs/api/*` pages.
 
 ### `tokens.build`
 
@@ -640,6 +640,12 @@ forwards `profile` and `releaseEvidence` unchanged, retains the code-generation 
 adds target-resolution provenance (`explicit`, `options-alias`, `.oodsrc`, or default).
 
 ---
+
+### `design.preview`
+
+Capture an object/context (including workflow) using the running local design loop. Optional framework is react, vue or both; widths default to 390/820/1440. Preferences are the public compose preferences. The tool invokes the same render command and returns validated receipts with screenshot paths, accessibility text, layout measurements, browser errors and schema/artifact hashes. It writes isolated receipt files and never saves a schema.
+
+Start the loop in this checkout with `pnpm design:loop serve`. An unavailable or starting server returns retryable `OODS-N019` before creating partial output. See [the generated API contract](../api/design-preview.md) and [the runnable instructions](../../scripts/design-loop/README.md).
 
 ### `design.compose`
 

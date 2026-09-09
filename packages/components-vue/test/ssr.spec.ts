@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  ArchivedRowOverlay, BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector, CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta,
   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
   LabelCell, InlineLabel, FormLabelGroup, ClassificationBadge, ClassificationEditor,
@@ -142,6 +143,15 @@ const ServerShowcase = defineComponent({
       }),
       h(Text, { as: 'strong', content: 'Account owner' }),
       h(Textarea, { id: 'notes', label: 'Notes', value: 'Call before renewal' }),
+      // Sprint 188 added these eight families to the nucleus inventory.
+      h(ArchivedRowOverlay, { isArchived: true, label: 'Retained subscription' }, { default: () => 'Archived record' }),
+      h(BillingSummaryBadge, { amount: 1900, currency: 'usd', interval: 'monthly' }),
+      h(BillingAmountInput, { amount: 1900, currency: 'usd' }),
+      h(BillingIntervalSelector, { interval: 'monthly' }),
+      h(CycleProgressCard, { periodStart: '2026-09-01T00:00:00Z', periodEnd: '2026-10-01T00:00:00Z', now: '2026-09-15T00:00:00Z' }),
+      h(PaymentTimeline, { lastPayment: '2026-09-01T00:00:00Z', nextPayment: '2026-10-01T00:00:00Z' }),
+      h(PaymentEventTimeline, { lastPayment: '2026-09-01T00:00:00Z', nextPayment: '2026-10-01T00:00:00Z' }),
+      h(BillingCardMeta, { amount: 1900, currency: 'usd' }),
     ]);
   },
 });

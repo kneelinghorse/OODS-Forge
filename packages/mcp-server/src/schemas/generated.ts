@@ -144,6 +144,13 @@ export namespace A11yScanInputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -1289,6 +1296,13 @@ export namespace CodeGenerateInputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -3034,6 +3048,13 @@ export namespace DesignComposeOutputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -3139,6 +3160,102 @@ export namespace DesignComposeOutputSchema {
   }
 }
 export type DesignComposeOutput = DesignComposeOutputSchema.DesignComposeOutput;
+
+// Source: design.preview.input.json
+export namespace DesignPreviewInputSchema {
+  /**
+   * Capture real generated React/Vue screens through the running local design loop. Start it in this checkout with pnpm design:loop serve.
+   */
+  export interface DesignPreviewInput {
+    /**
+     * Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions.
+     */
+    object: string;
+    /**
+     * View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data.
+     */
+    context: 'detail' | 'list' | 'form' | 'timeline' | 'card' | 'inline' | 'workflow';
+    framework?: 'react' | 'vue' | 'both';
+    /**
+     * @minItems 1
+     * @maxItems 10
+     */
+    widths?:
+      | [number]
+      | [number, number]
+      | [number, number, number]
+      | [number, number, number, number]
+      | [number, number, number, number, number]
+      | [number, number, number, number, number, number]
+      | [number, number, number, number, number, number, number]
+      | [number, number, number, number, number, number, number, number]
+      | [number, number, number, number, number, number, number, number, number]
+      | [number, number, number, number, number, number, number, number, number, number];
+    preferences?: {
+      /**
+       * Theme token (e.g., 'light', 'dark').
+       */
+      theme?: string;
+      /**
+       * Number of metric columns for dashboard layout.
+       */
+      metricColumns?: number;
+      /**
+       * Number of field groups for form layout.
+       */
+      fieldGroups?: number;
+      /**
+       * Number of tabs for detail layout.
+       */
+      tabCount?: number;
+      /**
+       * Custom tab labels for detail layout.
+       */
+      tabLabels?: string[];
+      /**
+       * Slot-name → component-name overrides (e.g., { 'items': 'Table' }).
+       */
+      componentOverrides?: {
+        [k: string]: string;
+      };
+    };
+  }
+}
+export type DesignPreviewInput = DesignPreviewInputSchema.DesignPreviewInput;
+
+// Source: design.preview.output.json
+export namespace DesignPreviewOutputSchema {
+  /**
+   * Validated browser receipts, including local paths, accessibility text, measurements, errors, source and artifact hashes. An unavailable loop throws OODS-N019 before writing partial output.
+   */
+  export interface DesignPreviewOutput {
+    status: 'ok';
+    schemaHash: string;
+    /**
+     * Exact receipts validated against scripts/design-loop/receipt.schema.json by the shared render leg.
+     *
+     * @minItems 1
+     * @maxItems 2
+     */
+    receipts:
+      | [
+          {
+            [k: string]: any;
+          }
+        ]
+      | [
+          {
+            [k: string]: any;
+          },
+          {
+            [k: string]: any;
+          }
+        ];
+    receiptPaths: string[];
+    durationMs: number;
+  }
+}
+export type DesignPreviewOutput = DesignPreviewOutputSchema.DesignPreviewOutput;
 
 // Source: fidelity.preview.input.json
 export namespace FidelityPreviewInputSchema {
@@ -5503,6 +5620,13 @@ export namespace ReplOutputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -5792,6 +5916,13 @@ export namespace ReplRenderInputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -6035,6 +6166,13 @@ export namespace ReplRenderOutputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -6195,6 +6333,13 @@ export namespace UiSchemaSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -6375,6 +6520,13 @@ export namespace ReplValidateInputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -6598,6 +6750,13 @@ export namespace ReplValidateOutputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }

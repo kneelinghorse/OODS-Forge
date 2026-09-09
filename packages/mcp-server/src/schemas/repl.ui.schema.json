@@ -267,6 +267,48 @@
         "style": { "$ref": "#/$defs/style" },
         "props": { "$ref": "#/$defs/props" },
         "bindings": { "$ref": "#/$defs/bindings" },
+        "collection": {
+          "type": "object",
+          "required": [
+            "source",
+            "keyField",
+            "labelField"
+          ],
+          "properties": {
+            "source": {
+              "enum": [
+                "rows",
+                "events"
+              ]
+            },
+            "keyField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "labelField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "historyField": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "collectionControl": {
+          "enum": [
+            "search",
+            "filter",
+            "sort",
+            "page",
+            "archive",
+            "open",
+            "event",
+            "payment-event",
+            "empty"
+          ]
+        },
         "children": {
           "type": "array",
           "items": { "$ref": "#/$defs/uiElement" }

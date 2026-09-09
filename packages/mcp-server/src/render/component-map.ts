@@ -1,3 +1,4 @@
+import { dateTimeInputValue, formatDateTime, summaryValue } from '@oods/component-contracts';
 import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
@@ -308,7 +309,7 @@ function renderBillingAmountInput(node: UiElement): string {
   const minorUnits = typeof props.minorUnits === 'number' ? props.minorUnits : BILLING_MINOR_UNITS;
   const error = billingAmountMessage(amount, minorUnits);
   const description = `${id}-currency${error ? ` ${id}-error` : ''}`;
-  return `<div class="oods-billing-field" data-oods-component="BillingAmountInput" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing amount')}</label><span id="${escapeHtml(id)}-currency">${escapeHtml((asString(props.currency) ?? 'usd').toUpperCase())}</span><input id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''} type="text" inputmode="decimal" value="${escapeHtml(billingAmountText(amount, minorUnits))}" data-billing-minor-units="${minorUnits}" aria-describedby="${escapeHtml(description)}"${error ? ' aria-invalid="true"' : ''}${props.disabled ? ' disabled' : ''}>${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
+  return `<div class="oods-billing-field" data-oods-component="BillingAmountInput" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing amount')}</label><span id="${escapeHtml(id)}-currency">${escapeHtml((asString(props.currency) ?? 'usd').toUpperCase())}</span><input id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''} type="text" inputmode="decimal" value="${escapeHtml(billingAmountText(amount, minorUnits))}" data-billing-minor-units="${minorUnits}" aria-describedby="${escapeHtml(description)}"${error ? ' aria-invalid="true"' : ''}${props.disabled ? ' disabled' : ''}>${props.help ? `<p class="oods-field-help">${escapeHtml(String(props.help))}</p>` : ''}${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
 }
 
 function renderBillingIntervalSelector(node: UiElement): string {
@@ -319,7 +320,7 @@ function renderBillingIntervalSelector(node: UiElement): string {
   const error = billingIntervalMessage(value || undefined, intervals);
   const placeholder = intervals.includes(value) ? '' : `<option value="${escapeHtml(value)}" disabled selected>${escapeHtml(value || 'Choose interval')}</option>`;
   const options = intervals.map((interval) => `<option value="${escapeHtml(interval)}"${interval === value ? ' selected' : ''}>${escapeHtml(interval)}</option>`).join('');
-  return `<div class="oods-billing-field" data-oods-component="BillingIntervalSelector" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing interval')}</label><select id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''}${props.disabled ? ' disabled' : ''}${error ? ` aria-invalid="true" aria-describedby="${escapeHtml(id)}-error"` : ''}>${placeholder}${options}</select>${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
+  return `<div class="oods-billing-field" data-oods-component="BillingIntervalSelector" data-state="${error ? 'invalid' : 'editing'}"><label for="${escapeHtml(id)}">${escapeHtml(asString(props.label) ?? 'Billing interval')}</label><select id="${escapeHtml(id)}"${typeof props.name === 'string' ? ` name="${escapeHtml(props.name)}"` : ''}${props.disabled ? ' disabled' : ''}${error ? ` aria-invalid="true" aria-describedby="${escapeHtml(id)}-error"` : ''}>${placeholder}${options}</select>${props.help ? `<p class="oods-field-help">${escapeHtml(String(props.help))}</p>` : ''}${error ? `<p id="${escapeHtml(id)}-error" role="alert">${escapeHtml(error)}</p>` : ''}</div>`;
 }
 
 function renderCycleProgressCard(node: UiElement): string {
@@ -365,6 +366,7 @@ function renderInput(node: UiElement): string {
     allowedHtmlAttrs: INPUT_HTML_ATTRS,
     consumedProps: new Set([
       'defaultValue',
+      ...(props.type === 'datetime-local' ? ['value'] : []),
       'help',
       'label',
       'readOnly',
@@ -373,7 +375,8 @@ function renderInput(node: UiElement): string {
     ]),
     htmlOverrides: {
       type: asString(props.type) ?? 'text',
-      ...(props.value === undefined && props.defaultValue !== undefined
+      ...(props.type === 'datetime-local' ? { value: dateTimeInputValue(props.value ?? props.defaultValue) } : {}),
+      ...(props.type !== 'datetime-local' && props.value === undefined && props.defaultValue !== undefined
         ? { value: props.defaultValue }
         : {}),
       ...(props.readOnly !== undefined ? { readonly: props.readOnly } : {}),
@@ -395,11 +398,14 @@ function renderInput(node: UiElement): string {
 }
 
 function renderCheckbox(node: UiElement): string {
+  const props = node.props ?? {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: CHECKBOX_HTML_ATTRS,
     htmlOverrides: { type: 'checkbox' },
   });
-  return `<input${attrs} />`;
+  const label = props.label ? `<span>${escapeHtml(String(props.label))}</span>` : '';
+  const help = props.help ? `<p class="oods-field-help">${escapeHtml(String(props.help))}</p>` : '';
+  return `${label ? `<label><input${attrs} />${label}</label>` : `<input${attrs} />`}${help}`;
 }
 
 function renderDatePicker(node: UiElement): string {
@@ -966,13 +972,18 @@ function renderRoleAssignmentForm(node: UiElement, childrenHtml = ''): string {
 
 function renderCancellationForm(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
-  const reasons = props.allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate'];
+  const reasons = normalizeSelectOptions(props.allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate'], props.reasonCode);
+  if (typeof props.reasonCode === 'string' && props.reasonCode && !reasons.some(reason => reason.value === props.reasonCode)) reasons.unshift({ value: props.reasonCode, label: props.reasonCode, selected: true });
   const body = [
-    renderSelectControl('Reason Code', 'reasonCode', reasons, props.reasonCode),
+    Array.isArray(props.allowedReasons) && props.allowedReasons.length === 0
+      ? renderInputControl('Reason Code', 'reasonCode', asString(props.reasonCode))
+      : renderSelectControl('Reason Code', 'reasonCode', reasons, props.reasonCode),
+    props.codeHelp ? `<p class="oods-field-help">${escapeHtml(String(props.codeHelp))}</p>` : '',
     renderTextareaControl('Reason', 'reason', firstSerialized(props, ['reason', 'cancellationReason'])),
+    props.reasonHelp ? `<p class="oods-field-help">${escapeHtml(String(props.reasonHelp))}</p>` : '',
   ].join('');
   return renderFormContainer(node, childrenHtml, body, {
-    tag: 'form',
+    tag: props.embedded ? 'fieldset' : 'form',
     defaultTitle: 'Cancellation Form',
     formType: 'cancellation',
   });
@@ -1052,6 +1063,8 @@ type TimelineItem = {
   label: string;
   timestamp?: string;
   detail?: string;
+  actor?: string;
+  reason?: string;
 };
 
 type TimelineOptions = {
@@ -1060,16 +1073,17 @@ type TimelineOptions = {
   eventKeys?: string[];
 };
 
-function normalizeTimelineItems(raw: unknown): TimelineItem[] {
+function normalizeTimelineItems(raw: unknown, lifecycle = false): TimelineItem[] {
   if (!Array.isArray(raw)) return [];
   const items: TimelineItem[] = [];
   for (const entry of raw) {
     if (entry === undefined || entry === null) continue;
     if (isRecord(entry)) {
-      const label = firstSerialized(entry, ['label', 'title', 'event', 'status', 'state', 'text', 'name']) ?? 'Event';
+      const from = firstSerialized(entry, ['from']), to = firstSerialized(entry, ['to']);
+      const label = firstSerialized(entry, ['label', 'title', 'event', 'status', 'state', 'text', 'name']) ?? (lifecycle && from && to ? `${from} → ${to}` : 'Event');
       const timestamp = firstSerialized(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']);
-      const detail = firstSerialized(entry, ['detail', 'description', 'reason', 'message', 'from', 'to']);
-      items.push({ label, timestamp, detail });
+      const detail = firstSerialized(entry, lifecycle ? ['detail', 'description', 'message', 'from', 'to'] : ['detail', 'description', 'reason', 'message', 'from', 'to']);
+      items.push({ label, timestamp, detail, ...(lifecycle ? { actor: firstSerialized(entry, ['actorId', 'actor_id', 'actor']), reason: firstSerialized(entry, ['reason']) } : {}) });
       continue;
     }
     items.push({ label: serializePropValue(entry) });
@@ -1082,7 +1096,9 @@ function renderTimelineContainer(node: UiElement, childrenHtml: string, options:
   const title = firstSerialized(props, ['title', 'label', 'heading', 'name']) ?? node.meta?.label ?? options.defaultTitle;
   const keys = options.eventKeys ?? ['events', 'history', 'entries', 'items'];
   const rawEvents = keys.map((key) => props[key]).find((value) => Array.isArray(value));
-  const events = normalizeTimelineItems(rawEvents);
+  const lifecycle = ['status', 'audit'].includes(options.timelineType);
+  const allEvents = normalizeTimelineItems(rawEvents, lifecycle);
+  const events = lifecycle && typeof props.maxVisible === 'number' && Number.isFinite(props.maxVisible) ? allEvents.slice(0, Math.max(0, Math.floor(props.maxVisible))) : allEvents;
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
     consumedProps: new Set(['title', 'label', 'heading', 'name', ...keys]),
@@ -1096,15 +1112,19 @@ function renderTimelineContainer(node: UiElement, childrenHtml: string, options:
       ? events
         .map((item) => {
           const timeHtml = item.timestamp
-            ? `<time data-timeline-time="true" datetime="${escapeHtml(item.timestamp)}">${escapeHtml(item.timestamp)}</time>`
+            ? `<time data-timeline-time="true" datetime="${escapeHtml(item.timestamp)}">${escapeHtml(formatDateTime(item.timestamp))}</time>`
             : '';
           const detailHtml = item.detail ? `<p data-timeline-detail="true">${escapeHtml(item.detail)}</p>` : '';
-          return `<li><article data-timeline-event="true"><p data-timeline-label="true">${escapeHtml(item.label)}</p>${timeHtml}${detailHtml}</article></li>`;
+          const actorHtml = item.actor && props.showActorId !== false ? `<p>Actor: ${escapeHtml(item.actor)}</p>` : '';
+          const reasonHtml = item.reason && props.showReason !== false ? `<p>Reason: ${escapeHtml(item.reason)}</p>` : '';
+          return `<li><article data-timeline-event="true"><p data-timeline-label="true">${escapeHtml(item.label)}</p>${timeHtml}${detailHtml}${actorHtml}${reasonHtml}</article></li>`;
         })
         .join('')
       : '<li data-timeline-empty="true">No events</li>';
 
-  return `<div${attrs}><h3 data-timeline-title="true">${escapeHtml(title)}</h3><ol data-timeline-events="true">${eventHtml}</ol></div>`;
+  const statusHtml = options.timelineType === 'status' && props.status ? `<p>Current status: ${escapeHtml(String(props.status).split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' '))}</p>` : '';
+  const transitionsHtml = lifecycle && Array.isArray(props.allowedTransitions) && props.allowedTransitions.length ? `<p>Allowed transitions: ${escapeHtml(props.allowedTransitions.join(', '))}</p>` : '';
+  return `<div${attrs}><h3 data-timeline-title="true">${escapeHtml(title)}</h3>${statusHtml}${transitionsHtml}<ol data-timeline-events="true">${eventHtml}</ol></div>`;
 }
 
 type EventOptions = {
@@ -1127,7 +1147,7 @@ function renderEventArticle(node: UiElement, childrenHtml: string, options: Even
     return `<article${attrs}>${childrenHtml}</article>`;
   }
 
-  const timeHtml = timestamp ? `<time data-event-time="true" datetime="${escapeHtml(timestamp)}">${escapeHtml(timestamp)}</time>` : '';
+  const timeHtml = timestamp ? `<time data-event-time="true" datetime="${escapeHtml(timestamp)}">${escapeHtml(formatDateTime(timestamp))}</time>` : '';
   const detailHtml = detail ? `<p data-event-detail="true">${escapeHtml(detail)}</p>` : '';
   return `<article${attrs}>${timeHtml}<p data-event-label="true">${escapeHtml(label)}</p>${detailHtml}</article>`;
 }
@@ -1136,7 +1156,7 @@ function renderAuditTimeline(node: UiElement, childrenHtml = ''): string {
   return renderTimelineContainer(node, childrenHtml, {
     defaultTitle: 'Audit Timeline',
     timelineType: 'audit',
-    eventKeys: ['events', 'history', 'entries'],
+    eventKeys: ['auditLog', 'events', 'history', 'entries', 'stateHistory'],
   });
 }
 
@@ -1176,7 +1196,7 @@ function renderStatusTimeline(node: UiElement, childrenHtml = ''): string {
   return renderTimelineContainer(node, childrenHtml, {
     defaultTitle: 'Status Timeline',
     timelineType: 'status',
-    eventKeys: ['events', 'history', 'stateHistory'],
+    eventKeys: ['events', 'history', 'entries', 'stateHistory'],
   });
 }
 
@@ -1252,7 +1272,7 @@ function renderSummarySection(node: UiElement, childrenHtml: string, options: Su
         .find((value) => value !== undefined && value !== null);
       const value = field.format
         ? field.format(rawValue)
-        : firstSerialized(props, field.keys);
+        : summaryValue(rawValue);
       if (!value) return '';
       return `<div data-summary-item="true"><dt>${escapeHtml(field.term)}</dt><dd>${escapeHtml(value)}</dd></div>`;
     })
@@ -1297,7 +1317,7 @@ function renderArchiveSummary(node: UiElement, childrenHtml = ''): string {
     summaryType: 'archive',
     fields: [
       { term: 'Archived', keys: ['isArchived', 'archived', 'status'] },
-      { term: 'Archived At', keys: ['archivedAt', 'archivedAtField'] },
+      { term: 'Archived At', keys: ['archivedAt', 'archivedAtField'], format: value => typeof value === 'string' ? formatDateTime(value) : undefined },
       { term: 'Reason', keys: ['reason', 'archiveReason', 'reasonField'] },
     ],
   });
@@ -1309,14 +1329,15 @@ function renderCancellationSummary(node: UiElement, childrenHtml = ''): string {
     summaryType: 'cancellation',
     fields: [
       {
-        term: 'Cancel at Period End',
+        term: 'Cancel at period end',
         keys: ['cancelAtPeriodEnd', 'cancelAtPeriodEndField'],
         format: (value) => typeof value === 'boolean'
           ? (value ? 'Yes' : 'No')
           : (value === undefined || value === null ? undefined : serializePropValue(value)),
       },
-      { term: 'Requested At', keys: ['requestedAt', 'requestedAtField'] },
+      { term: 'Requested at', keys: ['requestedAt', 'requestedAtField'], format: value => typeof value === 'string' ? formatDateTime(value) : undefined },
       { term: 'Reason', keys: ['reason', 'cancellationReason', 'reasonField'] },
+      { term: 'Code', keys: ['code', 'codeField'] },
     ],
   });
 }
@@ -1421,7 +1442,7 @@ function renderStatusSelector(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
-    consumedProps: new Set(['label', 'title', 'options', 'states', 'value', 'status']),
+    consumedProps: new Set(['help', 'label', 'title', 'options', 'states', 'value', 'status']),
     dataOverrides: { 'data-summary-type': 'status-selector' },
   });
   const label = firstSerialized(props, ['label', 'title']) ?? node.meta?.label ?? 'Status';
@@ -1429,7 +1450,7 @@ function renderStatusSelector(node: UiElement, childrenHtml = ''): string {
   const selected = props.value ?? props.status;
   const control = renderSelectControl(label, 'status', options, selected);
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : control;
-  return `<div${attrs}>${content}</div>`;
+  return `<div${attrs}>${content}${props.help ? `<p class="oods-field-help">${escapeHtml(String(props.help))}</p>` : ''}</div>`;
 }
 
 function renderColorSwatch(node: UiElement, childrenHtml = ''): string {

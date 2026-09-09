@@ -1,0 +1,100 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/components-react
+
+ ✓ test/ported-ssr.spec.tsx (1 test) 74ms
+ ✓ test/billing-views.spec.tsx (7 tests) 172ms
+ ❯ test/breadth.s187.spec.tsx (19 tests | 1 failed) 240ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell preserves alias precedence, truncation edge cases and authored override 48ms
+   ✓ Sprint 187 naming and classification semantics > InlineLabel preserves alias precedence, truncation edge cases and authored override 6ms
+   ✓ Sprint 187 naming and classification semantics > LabelCell keeps supporting aliases and defaults truncation to forty characters 12ms
+   ✓ Sprint 187 naming and classification semantics > FormLabelGroup preserves native association and hint precedence around children 7ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationBadge exposes classification status and honors authored labels 12ms
+   ✓ Sprint 187 naming and classification semantics > ClassificationEditor labels native editable controls but prevents unwired submission 28ms
+   ✓ Sprint 187 ownership and summary semantics > OwnerBadge preserves principal aliases, status metadata and authored precedence 5ms
+   ✓ Sprint 187 ownership and summary semantics > OwnershipSummary associates owner data with terms and consumes role as data, not ARIA 10ms
+   ✓ Sprint 187 ownership and summary semantics > OwnershipMeta keeps literal term separators and lets authored children replace its entire body 5ms
+   ✓ Sprint 187 ownership and summary semantics > TagSummary preserves zero counts and scalar text, and shows the trait array using existing tag normalization 7ms
+   ✓ Sprint 187 lifecycle and financial semantics > ArchivePill keeps false/true, absent aliases and authored content distinct 20ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationBadge keeps false/true, absent aliases and authored content distinct 11ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationBadge uses isCancelled as status only without inventing a label 1ms
+   × Sprint 187 lifecycle and financial semantics > ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics 28ms
+     → expected [ 'Yes', 'Alias' ] to deeply equal [ 'true', 'Alias' ]
+   ✓ Sprint 187 lifecycle and financial semantics > PriceCardMeta retains model/interval precedence and literal inline labels 2ms
+   ✓ Sprint 187 lifecycle and financial semantics > CancellationForm initializes and labels native controls, supports local input, and prevents unwired submission 7ms
+   ✓ form/detail value preservation > shows a seeded reason code even when it is outside the offered choices 2ms
+   ✓ form/detail value preservation > shows present UTC datetimes in the native datetime-local control 3ms
+   ✓ form/detail value preservation > renders both audit history entries and readable timestamps 3ms
+ ❯ test/ported-scenarios.spec.tsx (10 tests | 2 failed) 257ms
+   × @oods/components-react ported scenarios > audit-timeline-transitions renders transition evidence from the shared timeline primitive 124ms
+     → expected 'Audit Timelinetrialing → activeSep 5,…' to contain 'Trialing → Active'
+   ✓ @oods/components-react ported scenarios > cancellation-summary-boolean renders a boolean child under its declared label 5ms
+   ✓ @oods/components-react ported scenarios > renders the cancellation field as a named value rather than the literal boolean 2ms
+   ✓ @oods/components-react ported scenarios > pagination-bar-navigation reconciles totals and emits page changes 60ms
+   ✓ @oods/components-react ported scenarios > price-badge-currency formats minor units and preserves the price marker 6ms
+   ✓ @oods/components-react ported scenarios > relative-timestamp-fixed renders deterministic relative and machine-readable time 1ms
+   ✓ @oods/components-react ported scenarios > search-input-clear supports immediate updates, Escape, and clear button 43ms
+   ✓ @oods/components-react ported scenarios > status-badge-mapped reuses status presentation title, tone, and icon semantics 2ms
+   × @oods/components-react ported scenarios > status-timeline-history renders current status and transition count 6ms
+     → expected 'Status TimelineCurrent status: Active…' to contain 'Current status: Active. 2 transitions…'
+   ✓ @oods/components-react ported scenarios > search-input-clear honors debounce and minimum query length 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/breadth.s187.spec.tsx > Sprint 187 lifecycle and financial semantics > ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics
+AssertionError: expected [ 'Yes', 'Alias' ] to deeply equal [ 'true', 'Alias' ]
+
+- Expected
++ Received
+
+  [
+-   "true",
++   "Yes",
+    "Alias",
+  ]
+
+ ❯ test/breadth.s187.spec.tsx:137:95
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  test/ported-scenarios.spec.tsx > @oods/components-react ported scenarios > audit-timeline-transitions renders transition evidence from the shared timeline primitive
+AssertionError: expected 'Audit Timelinetrialing → activeSep 5,…' to contain 'Trialing → Active'
+
+Expected: "Trialing → Active"
+Received: "Audit Timelinetrialing → activeSep 5, 2026, 12:00 PMtrialingActor: user-7Reason: Payment cleared"
+
+ ❯ test/ported-scenarios.spec.tsx:39:34
+     37|     const timeline = screen.getByRole('log', { name: 'Audit Timeline' …
+     38|     expect(timeline.getAttribute('data-oods-component')).toBe('AuditTi…
+     39|     expect(timeline.textContent).toContain('Trialing → Active');
+       |                                  ^
+     40|     expect(timeline.textContent).toContain('Actor: user-7');
+     41|     expect(timeline.textContent).toContain('Payment cleared');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/ported-scenarios.spec.tsx > @oods/components-react ported scenarios > status-timeline-history renders current status and transition count
+AssertionError: expected 'Status TimelineCurrent status: Active…' to contain 'Current status: Active. 2 transitions…'
+
+Expected: "Current status: Active. 2 transitions available."
+Received: "Status TimelineCurrent status: ActiveAllowed transitions: paused, canceledtrialing → activeSep 5, 2026, 12:00 PMtrialing"
+
+ ❯ test/ported-scenarios.spec.tsx:141:34
+    139|     const timeline = screen.getByRole('log', { name: 'Status Timeline'…
+    140|     expect(timeline.getAttribute('data-oods-component')).toBe('StatusT…
+    141|     expect(timeline.textContent).toContain('Current status: Active. 2 …
+       |                                  ^
+    142|     expect(timeline.textContent).toContain('Trialing → Active');
+    143|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  3 failed | 34 passed (37)
+   Start at  21:49:45
+   Duration  4.00s (transform 850ms, setup 0ms, collect 6.42s, tests 743ms, environment 3.18s, prepare 579ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/components-react:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/breadth.s187.spec.tsx test/ported-scenarios.spec.tsx test/ported-ssr.spec.tsx test/billing-views.spec.tsx

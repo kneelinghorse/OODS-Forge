@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "framework": "react",
+  "artifact": {
+    "schemaVersion": "1.0.0",
+    "framework": "react",
+    "files": [
+      {
+        "path": "src/GeneratedUI.tsx",
+        "contents": "import React from 'react';\nimport { Button, InlineLabel, PaginationBar, SearchInput, Select, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Directionality applied when traversing the relationship. */\n  direction: 'unidirectional' | 'bidirectional';\n  /** Flag indicating whether the relationship is symmetric. */\n  isBidirectional: boolean;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** System that originated or inferred the relationship. */\n  originSource?: 'manual' | 'ingestion' | 'analytics' | 'integration';\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Primary identifier for the relationship edge. */\n  relationshipId: string;\n  /** Semantic type describing the edge between the source and target. */\n  relationshipType: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';\n  /** Identifier of the source node in the relationship. */\n  sourceId: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Signal representing how strongly the entities are connected. */\n  strength?: 'low' | 'medium' | 'high';\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Identifier of the target node in the relationship. */\n  targetId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InlineLabelProps = React.ComponentPropsWithoutRef<typeof InlineLabel>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ allowedTransitions, createdAt, description, direction, isBidirectional, label, lastEvent, lastEventAt, originSource, ownerId, ownerType, ownershipRole, ownershipTransferredAt, placeholder, relationshipId, relationshipType, sourceId, stateHistory, status, strength, tagCount, tagMetadata, tags, targetId, updatedAt }) => {\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                    <Select id=\"slot-filters-2\" data-oods-component=\"Select\" label=\"Is bidirectional\" placeholder=\"Enter is bidirectional\" required value={String(isBidirectional)} />\n                    <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" maxLength={40} label={label} />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+        "contentHash": "sha256:bc18debc9fc447d951afb3fa620b659167e81bb0bc8691afc443c9195edd5994"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@oods/component-styles",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "@oods/components-react",
+        "version": "0.1.0",
+        "kind": "dependency"
+      },
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "kind": "peerDependency"
+      }
+    ],
+    "actions": [],
+    "contentHash": "sha256:3290ba58b8a2c57796f062a7bf42c0a33f1a679c36db483356ae91ddca439490"
+  },
+  "code": "import React from 'react';\nimport { Button, InlineLabel, PaginationBar, SearchInput, Select, Stack } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** Supporting description used in detail and card contexts. */\n  description?: string;\n  /** Directionality applied when traversing the relationship. */\n  direction: 'unidirectional' | 'bidirectional';\n  /** Flag indicating whether the relationship is symmetric. */\n  isBidirectional: boolean;\n  /** Human-readable display name rendered in primary surfaces. */\n  label: string;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: string;\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** System that originated or inferred the relationship. */\n  originSource?: 'manual' | 'ingestion' | 'analytics' | 'integration';\n  /** Identifier of the owning principal scoped by owner_type. */\n  ownerId: string;\n  /** Categorical owner type sourced from the ownerTypes parameter. */\n  ownerType: string;\n  /** Optional role name describing how the owner governs the entity. */\n  ownershipRole?: string;\n  /** Timestamp recording when ownership was last transferred. */\n  ownershipTransferredAt?: string;\n  /** Hint copy surfaced in form fields when the label is empty. */\n  placeholder?: string;\n  /** Primary identifier for the relationship edge. */\n  relationshipId: string;\n  /** Semantic type describing the edge between the source and target. */\n  relationshipType: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';\n  /** Identifier of the source node in the relationship. */\n  sourceId: string;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n */\n  status: string;\n  /** Signal representing how strongly the entities are connected. */\n  strength?: 'low' | 'medium' | 'high';\n  /** Computed number of tags assigned to the entity. */\n  tagCount: number;\n  /** Per-tag governance metadata. Each entry corresponds to a tag in the tags array and\ntracks provenance and usage for taxonomy health monitoring.\n\nEntry structure:\n  - tag: string (the tag value, matches entry in tags array)\n  - created_at: ISO 8601 datetime\n  - created_by: string (user ID or \"system\" for allow-list tags)\n  - usage_count: number (how many entities use this tag, computed)\n  - moderation_status: \"approved\" | \"pending\" | \"rejected\" (when allowTagModeration is true)\n  - canonical_form: string (resolved synonym target, when synonymResolution is enabled)\n */\n  tagMetadata?: Record<string, unknown>[];\n  /** Ordered list of tags assigned to the entity. */\n  tags?: string[];\n  /** Identifier of the target node in the relationship. */\n  targetId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;\ntype InlineLabelProps = React.ComponentPropsWithoutRef<typeof InlineLabel>;\ntype PaginationBarProps = React.ComponentPropsWithoutRef<typeof PaginationBar>;\ntype SearchInputProps = React.ComponentPropsWithoutRef<typeof SearchInput>;\ntype SelectProps = React.ComponentPropsWithoutRef<typeof Select>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ allowedTransitions, createdAt, description, direction, isBidirectional, label, lastEvent, lastEventAt, originSource, ownerId, ownerType, ownershipRole, ownershipTransferredAt, placeholder, relationshipId, relationshipType, sourceId, stateHistory, status, strength, tagCount, tagMetadata, tags, targetId, updatedAt }) => {\n  return (\n    <>\n      <Stack id=\"screen-list-9\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"list-toolbar-4\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-default)' }}>\n                    <SearchInput id=\"slot-search-1\" data-oods-component=\"SearchInput\" />\n                    <Select id=\"slot-filters-2\" data-oods-component=\"Select\" label=\"Is bidirectional\" placeholder=\"Enter is bidirectional\" required value={String(isBidirectional)} />\n                    <Button id=\"slot-toolbar-actions-3\" data-oods-component=\"Button\" />\n                  </Stack>\n            <Stack id=\"list-items-5\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)' }}>\n                    <InlineLabel id=\"slot-items-6\" data-oods-component=\"InlineLabel\" maxLength={40} label={label} />\n                  </Stack>\n            <Stack id=\"list-pagination-7\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 'var(--ref-space-inset-default)' }}>\n                    <PaginationBar id=\"slot-pagination-8\" data-oods-component=\"PaginationBar\" />\n                  </Stack>\n          </Stack>\n    </>\n  );\n};\n",
+  "fileExtension": ".tsx",
+  "imports": [
+    "react",
+    "@oods/components-react",
+    "@oods/component-styles/css"
+  ],
+  "warnings": [],
+  "validationReceipt": {
+    "profile": "build",
+    "defaulted": false,
+    "rationale": "Build is the default minimum gate for a runnable artifact: target, bindings, dependencies, and fallbacks must resolve.",
+    "axes": {
+      "scope": "generated-artifact",
+      "enforcement": "blocking",
+      "fallback": "forbidden",
+      "target": {
+        "requested": "react",
+        "resolved": "react",
+        "source": "explicit"
+      }
+    },
+    "checks": [
+      "schema-structure",
+      "component-registry",
+      "state-contract",
+      "target-readiness",
+      "normalization-fidelity",
+      "binding-contract",
+      "props-contract",
+      "slots-contract",
+      "events-contract",
+      "dependency-closure",
+      "fallback-policy"
+    ],
+    "notChecked": [
+      "rendered-evidence",
+      "interaction-evidence",
+      "accessibility-evidence",
+      "theme-evidence",
+      "determinism-evidence",
+      "performance-evidence",
+      "certification-evidence"
+    ],
+    "evidence": {
+      "required": [],
+      "provided": [],
+      "missing": [],
+      "mismatched": [],
+      "accepted": [],
+      "notApplicable": [],
+      "artifactContentHash": "sha256:3290ba58b8a2c57796f062a7bf42c0a33f1a679c36db483356ae91ddca439490"
+    }
+  },
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 6
+  }
+}

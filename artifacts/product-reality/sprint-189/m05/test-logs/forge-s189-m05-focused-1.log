@@ -1,0 +1,60 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server
+
+ ❯ test/codegen/component-carries.s189.spec.ts (7 tests | 1 failed) 5089ms
+   ✓ component carries preserve the same meaning in every target > StatusTimeline has identical two-entry labels, dates, actors and reasons in all three targets 23ms
+   × component carries preserve the same meaning in every target > AuditTimeline has identical two-entry labels, dates, actors and reasons in all three targets 5ms
+     → expected 'Audit Timeline Current status: Pendin…' to be 'Audit Timeline Allowed transitions: a…' // Object.is equality
+   ✓ component carries preserve the same meaning in every target > uses the correct noun for 1 records in both generated targets 1ms
+   ✓ component carries preserve the same meaning in every target > uses the correct noun for 9 records in both generated targets 1ms
+   ✓ ten seeded records describe plausible subscription periods > enumerates every record against the declared clock, interval, lifecycle and event vocabulary 102ms
+   ✓ ten seeded records describe plausible subscription periods > react workflow accepts optional absent cancellation metadata  1658ms
+   ✓ ten seeded records describe plausible subscription periods > vue workflow accepts optional absent cancellation metadata  3298ms
+ ❯ test/tools/design.preview.spec.ts (5 tests | 1 failed) 27ms
+   ✓ design.preview uses the existing loop and fails before allocating output > validates object/context, supported targets and bounded widths without accepting paths 22ms
+   ✓ design.preview uses the existing loop and fails before allocating output > returns a retryable typed gap for stopped without partial files 2ms
+   ✓ design.preview uses the existing loop and fails before allocating output > returns a retryable typed gap for starting without partial files 0ms
+   ✓ design.preview uses the existing loop and fails before allocating output > returns a retryable typed gap for bad-response without partial files 0ms
+   × design.preview uses the existing loop and fails before allocating output > advertises the same tool in the registry, both policies, description and generated API page 3ms
+     → ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/mcp-server/src/security/policy.json'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/codegen/component-carries.s189.spec.ts > component carries preserve the same meaning in every target > AuditTimeline has identical two-entry labels, dates, actors and reasons in all three targets
+AssertionError: expected 'Audit Timeline Current status: Pendin…' to be 'Audit Timeline Allowed transitions: a…' // Object.is equality
+
+Expected: "Audit Timeline Allowed transitions: active, terminated Event Sep 1, 2026, 12:00 PM active Actor: operator-1 Reason: Created active → pending_cancellation Sep 8, 2026, 12:00 PM active Actor: operator-2 Reason: Budget"
+Received: "Audit Timeline Current status: Pending Cancellation Allowed transitions: active, terminated Event Sep 1, 2026, 12:00 PM active Actor: operator-1 Reason: Created active → pending_cancellation Sep 8, 2026, 12:00 PM active Actor: operator-2 Reason: Budget"
+
+ ❯ test/codegen/component-carries.s189.spec.ts:28:79
+     26|       const html = text(renderMappedComponent({ id: 'history', compone…
+     27|       expect(text(renderToStaticMarkup(createElement(ReactComponents[c…
+     28|       expect(text(await renderToString(h(VueComponents[component], val…
+       |                                                                               ^
+     29|       if (!Object.keys(options).length) { expect(html).toContain('acti…
+     30|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/tools/design.preview.spec.ts > design.preview uses the existing loop and fails before allocating output > advertises the same tool in the registry, both policies, description and generated API page
+Error: ENOENT: no such file or directory, open '/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/mcp-server/src/security/policy.json'
+ ❯ json test/tools/design.preview.spec.ts:8:47
+      6| import { loadToolRegistry } from '../../src/tools/registry.js';
+      7| import { getDefinition } from '../../src/errors/registry.js';
+      8| const json = (relative: string) => JSON.parse(readFileSync(new URL(rel…
+       |                                               ^
+      9| afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+     10| describe('design.preview uses the existing loop and fails before alloc…
+ ❯ test/tools/design.preview.spec.ts:24:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 10 passed (12)
+   Start at  22:37:40
+   Duration  6.29s (transform 466ms, setup 15ms, collect 880ms, tests 5.12s, environment 0ms, prepare 72ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s189/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/codegen/component-carries.s189.spec.ts test/tools/design.preview.spec.ts

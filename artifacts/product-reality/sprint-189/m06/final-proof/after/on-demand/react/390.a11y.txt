@@ -1,0 +1,73 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Subscription 03" [level=1]
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - region "Cancel subscription":
+      - heading "Cancellation Form" [level=3]
+      - text: Reason Code
+      - textbox "Reason Code"
+      - paragraph: Structured reason code chosen from the allowedReasons parameter.
+      - text: Reason
+      - textbox "Reason"
+      - paragraph: Free-form explanation captured during cancellation workflows.
+      - checkbox "Cancel at period end"
+      - text: Cancel at period end
+      - button "Confirm cancellation"
+      - button "Keep subscription"
+    - log "Status Timeline":
+      - heading "Status Timeline" [level=3]
+      - paragraph: "Current status: Active"
+      - list:
+        - listitem:
+          - article:
+            - paragraph: billing_cycle_started
+            - time: Sep 1, 2026, 12:00 PM
+            - paragraph: active
+            - paragraph: "Reason: Sample record created"
+    - heading "Cancellation Summary" [level=3]
+    - term: Cancel at period end
+    - definition: "No"
+    - heading "Archive Summary" [level=3]
+    - term: Archived
+    - definition: "No"
+    - tablist "Record details":
+      - tab "Billing" [selected]
+      - tab "Details"
+    - tabpanel "Billing":
+      - region "Billing cycle":
+        - heading "Billing cycle" [level=3]
+        - paragraph: 23% complete · 23 days remaining
+        - progressbar "23% complete · 23 days remaining"
+        - paragraph: monthly
+      - log "Payments":
+        - heading "Payments" [level=3]
+        - paragraph: $57.00 USD · failed
+        - paragraph: "Payment method: wire"
+        - list:
+          - listitem:
+            - strong: Last payment
+            - time: Sep 1, 2026
+          - listitem:
+            - strong: Next payment
+            - time: Oct 1, 2026
+    - complementary:
+      - log "Audit Timeline":
+        - heading "Audit Timeline" [level=3]
+        - list:
+          - listitem:
+            - article:
+              - paragraph: billing_cycle_started
+              - time: Sep 1, 2026, 12:00 PM
+              - paragraph: active
+              - paragraph: "Reason: Sample record created"
+    - group "Screen actions":
+      - button "Cancel subscription"
+      - button "Archive"
+      - button "Edit"
+      - button "View timeline"
+  - status

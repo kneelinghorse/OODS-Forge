@@ -1,0 +1,941 @@
+# Render receipt diff
+
+27 differences.
+
+## schemaHash
+
+Before:
+```json
+"sha256:6aca09f3fe5d622fb23c7a4f155b590f0d80575f3e853abe8d16b5fa3094aea3"
+```
+After:
+```json
+"sha256:1c047ae408a6c8724958b82eb3752e17665a8e77ee902071cd5cd46468de5f5f"
+```
+
+## artifactContentHash
+
+Before:
+```json
+"sha256:5b4f6d81fd2b2c9ff5171999fcc2521a0e9fa5fb61404507a8b33957d2ca3137"
+```
+After:
+```json
+"sha256:83d27f1ddcfa33d9d3d1546fc2a920d276caca50c9b5ad3ea41619c70fef86d0"
+```
+
+## files.src/App.vue
+
+Before:
+```json
+"sha256:09259224d146483fcc9489a93e2052e0c26e22d06b42bafbfbb1373ef5d46c1d"
+```
+After:
+```json
+"sha256:f2b1d285bf9dea14f1c2e8568f9d47b542abcfb9c9bfcabc1dd7bd3ed6bf8f81"
+```
+
+## files.src/actions.ts
+
+Before:
+```json
+"sha256:358299998a1455f2679149c5eb40da0b9747a19283a82eaa594f49f576436fb6"
+```
+After:
+```json
+"sha256:7885a54420c4faa0f50c1926de2469fca71ade8bda029b87618003a0572ddbee"
+```
+
+## files.src/app.css
+
+Before:
+```json
+"sha256:f43b46c08d98bf049ae9f72ff1822072fe725670d1b7ce47e77d75bf3863ecf1"
+```
+After:
+```json
+"sha256:142fce8b38ccc442764efa88cb15dc3e8c6293fbad34a9f787a47d5529e34dca"
+```
+
+## files.src/application.ts
+
+Before:
+```json
+"sha256:3b26488a83aabbe088afc2e5d257bd8ffa15d8993c1a55e34f90d791cc2037c7"
+```
+After:
+```json
+"sha256:78caf7f46e197dff42bd50d0871b7520cd7db624381e8594adc443e882d9902c"
+```
+
+## files.src/sample-data.ts
+
+Before:
+```json
+"sha256:94e8c77058e9cf40b3c0560e2d96fc782447de291f3045ba7359abdce6682529"
+```
+After:
+```json
+"sha256:158948fec9e9aa2b84939ebdb4a0486a2833b6de5e19a27668d953c744a9f695"
+```
+
+## files.src/screens/Detail.vue
+
+Before:
+```json
+"sha256:661c9dfd9d370492b4525a9ac0e1374b04e036048930f838bc65d980da16d95a"
+```
+After:
+```json
+"sha256:07d48b2f6d11c0c436f5fbca095cb46b574d35327205e436d6aabc74dcc5e68a"
+```
+
+## files.src/screens/Form.vue
+
+Before:
+```json
+"sha256:6ea3d61b2c361ec1f0f336cb5ca4d69c9f9d7c86bfd2ae3b9b060710545d4bba"
+```
+After:
+```json
+"sha256:632a11dcff21f70149dc62d390a108a0c3d1a8a56178a49b6a373f03c9455da0"
+```
+
+## files.src/screens/List.vue
+
+Before:
+```json
+"sha256:5210d4e7277e7688b59239397fdf867fc96dfd4563dccdadbcc8b2b0b2b396e7"
+```
+After:
+```json
+"sha256:2d7b3c369d58a6521b1a2f5632cec3ea5ff5385a6cb14b27e7111a986ae57e97"
+```
+
+## files.src/screens/Timeline.vue
+
+Before:
+```json
+"sha256:d3e199393d7de6594d6866c0255911ff67139ef89e1757a8b3f681eef456230c"
+```
+After:
+```json
+"sha256:29a25a6ba0fac593c98ce5d07e8d693f591ab045678da6c19afccf711f4d6b09"
+```
+
+## files.src/store.ts
+
+Before:
+```json
+"sha256:28b00d7da7aa41fb566cf104836cca4a2b7f17e1ffda06d23c5d7b5f8a10a452"
+```
+After:
+```json
+"sha256:6e28fff21ef055e6ca3fe8514c08da6da6f50f1d237375a94d94d2c6abf3a99a"
+```
+
+## views.390.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Team annual\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - group \"Cancellation details\":\n      - text: Cancellation details Reason\n      - textbox \"Reason\": Budget changed for next year\n      - text: Reason code\n      - textbox \"Reason code\": customer_request\n      - checkbox \"Cancel at period end\" [checked]\n      - text: Cancel at period end\n    - log \"Status Timeline\":\n      - heading \"Status Timeline\" [level=3]\n      - paragraph: \"Current status: Pending Cancellation\"\n      - list:\n        - listitem:\n          - article:\n            - paragraph: Event\n            - time: 2026-01-01T00:00:00.000Z\n            - paragraph: active\n            - paragraph: \"Reason: Sample record created\"\n        - listitem:\n          - article:\n            - paragraph: active → pending_cancellation\n            - time: 2026-09-08T12:00:00.000Z\n            - paragraph: active\n            - paragraph: \"Reason: Budget changed for next year\"\n    - heading \"Cancellation Summary\" [level=3]\n    - term: Cancel at period end\n    - definition: \"Yes\"\n    - term: Requested at\n    - definition:\n      - time: 2026-09-08T12:00:00.000Z\n    - term: Reason\n    - definition: Budget changed for next year\n    - term: Code\n    - definition: customer_request\n    - heading \"Archive Summary\" [level=3]\n    - term: Archived\n    - definition: \"false\"\n    - tablist \"Tabs\":\n      - tab \"Billing\" [selected]\n      - button \"More tabs\": More\n    - tabpanel \"Billing\":\n      - region \"Billing cycle\":\n        - heading \"Billing cycle\" [level=3]\n        - paragraph: 100% complete · 0 days remaining\n        - progressbar \"100% complete · 0 days remaining\"\n        - paragraph: yearly\n    - complementary:\n      - log \"Audit Timeline\":\n        - heading \"Audit Timeline\" [level=3]\n        - list:\n          - listitem: No events\n    - group \"Screen actions\":\n      - button \"Cancel subscription\"\n      - button \"Archive\"\n      - button \"Edit\"\n      - button \"View timeline\"\n  - status: Changes saved in this session."
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Team annual\" [level=1]\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - log \"Status Timeline\":\n      - heading \"Status Timeline\" [level=3]\n      - paragraph: \"Current status: Pending Cancellation\"\n      - list:\n        - listitem:\n          - article:\n            - paragraph: billing_cycle_started\n            - time: Sep 1, 2026, 12:00 PM\n            - paragraph: active\n            - paragraph: \"Reason: Sample record created\"\n        - listitem:\n          - article:\n            - paragraph: active → pending_cancellation\n            - time: Sep 8, 2026, 12:00 PM\n            - paragraph: active\n            - paragraph: \"Reason: Budget changed for next year\"\n    - heading \"Cancellation Summary\" [level=3]\n    - term: Cancel at period end\n    - definition: \"Yes\"\n    - term: Requested at\n    - definition:\n      - time: Sep 8, 2026, 12:00 PM\n    - term: Reason\n    - definition: Budget changed for next year\n    - term: Code\n    - definition: customer_request\n    - heading \"Archive Summary\" [level=3]\n    - term: Archived\n    - definition: \"No\"\n    - tablist \"Record details\":\n      - tab \"Billing\" [selected]\n      - tab \"Details\"\n    - tabpanel \"Billing\":\n      - region \"Billing cycle\":\n        - heading \"Billing cycle\" [level=3]\n        - paragraph: 23% complete · 23 days remaining\n        - progressbar \"23% complete · 23 days remaining\"\n        - paragraph: yearly\n      - log \"Payments\":\n        - heading \"Payments\" [level=3]\n        - paragraph: $19.99 USD · failed\n        - paragraph: \"Payment method: wire\"\n        - list:\n          - listitem:\n            - strong: Last payment\n            - time: Sep 1, 2026\n          - listitem:\n            - strong: Next payment\n            - time: Oct 1, 2026\n    - complementary:\n      - log \"Audit Timeline\":\n        - heading \"Audit Timeline\" [level=3]\n        - list:\n          - listitem:\n            - article:\n              - paragraph: billing_cycle_started\n              - time: Sep 1, 2026, 12:00 PM\n              - paragraph: active\n              - paragraph: \"Reason: Sample record created\"\n          - listitem:\n            - article:\n              - paragraph: active → pending_cancellation\n              - time: Sep 8, 2026, 12:00 PM\n              - paragraph: active\n              - paragraph: \"Reason: Budget changed for next year\"\n    - group \"Screen actions\":\n      - button \"Cancel subscription\"\n      - button \"Archive\"\n      - button \"Edit\"\n      - button \"View timeline\"\n  - status: Changes saved in this session."
+```
+
+## views.390.visibleText
+
+Before:
+```json
+null
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nTeam annual\nList\nDetail\nEdit\nTimeline\nStatus Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancel subscription\nArchive\nEdit\nView timeline\n\nChanges saved in this session."
+```
+
+## views.390.values
+
+Before:
+```json
+[
+  {
+    "element": "input",
+    "name": "Reason",
+    "value": "Budget changed for next year",
+    "checked": false
+  },
+  {
+    "element": "input",
+    "name": "Reason code",
+    "value": "customer_request",
+    "checked": false
+  },
+  {
+    "element": "input",
+    "name": "Cancel at period end",
+    "value": "on",
+    "checked": true
+  }
+]
+```
+After:
+```json
+[]
+```
+
+## views.390.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 390,
+  "documentWidth": 390,
+  "elementCount": 87,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "p",
+      "text": "Reason: Sample record created",
+      "lines": [
+        "Reason: Sample record",
+        "created"
+      ]
+    },
+    {
+      "element": "p",
+      "text": "Reason: Budget changed for next year",
+      "lines": [
+        "Reason: Budget changed for",
+        "next year"
+      ]
+    },
+    {
+      "element": "dt",
+      "text": "Requested at",
+      "lines": [
+        "R",
+        "e",
+        "q",
+        "u",
+        "e",
+        "s",
+        "t",
+        "e",
+        "d",
+        "a",
+        "t"
+      ]
+    },
+    {
+      "element": "time",
+      "text": "2026-09-08T12:00:00.000Z",
+      "lines": [
+        "2",
+        "0",
+        "2",
+        "6",
+        "-",
+        "0",
+        "9",
+        "-",
+        "0",
+        "8",
+        "T",
+        "1",
+        "2",
+        ":",
+        "0",
+        "0",
+        ":",
+        "0",
+        "0",
+        ".",
+        "0",
+        "0",
+        "0",
+        "Z"
+      ]
+    },
+    {
+      "element": "dt",
+      "text": "Code",
+      "lines": [
+        "C",
+        "o",
+        "d",
+        "e"
+      ]
+    },
+    {
+      "element": "dd",
+      "text": "customer_request",
+      "lines": [
+        "c",
+        "u",
+        "s",
+        "t",
+        "o",
+        "m",
+        "e",
+        "r",
+        "_",
+        "r",
+        "e",
+        "q",
+        "u",
+        "e",
+        "s",
+        "t"
+      ]
+    }
+  ]
+}
+```
+After:
+```json
+{
+  "viewportWidth": 390,
+  "documentWidth": 390,
+  "elementCount": 100,
+  "overflow": [],
+  "glyphWraps": [
+    {
+      "element": "p",
+      "text": "Reason: Sample record created",
+      "lines": [
+        "Reason: Sample record",
+        "created"
+      ]
+    },
+    {
+      "element": "p",
+      "text": "Reason: Budget changed for next year",
+      "lines": [
+        "Reason: Budget changed for",
+        "next year"
+      ]
+    },
+    {
+      "element": "p",
+      "text": "Reason: Sample record created",
+      "lines": [
+        "Reason: Sample record",
+        "created"
+      ]
+    },
+    {
+      "element": "p",
+      "text": "active → pending_cancellation",
+      "lines": [
+        "active →",
+        "pending_cancellation"
+      ]
+    },
+    {
+      "element": "p",
+      "text": "Reason: Budget changed for next year",
+      "lines": [
+        "Reason: Budget changed",
+        "for next year"
+      ]
+    }
+  ]
+}
+```
+
+## views.390.regions
+
+Before:
+```json
+[
+  {
+    "id": "detail-screen",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse\nBilling\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-screen-detail-13",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse\nBilling\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-detail-header-1",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-slot-header-2",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-ve-header-26",
+    "component": "StatusTimeline",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-ve-header-27",
+    "component": "CancellationSummary",
+    "text": "Cancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request"
+  },
+  {
+    "id": "detail-ve-header-28",
+    "component": "ArchiveSummary",
+    "text": "Archive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-detail-body-10",
+    "component": "Card",
+    "text": "Billing\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-detail-tabs-9",
+    "component": "Tabs",
+    "text": "Billing\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-detail-tab-panel-3",
+    "component": "Stack",
+    "text": "Billing cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-slot-tab-0-4",
+    "component": "CycleProgressCard",
+    "text": "Billing cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-detail-meta-11",
+    "component": "Stack",
+    "text": "Audit Timeline\nNo events"
+  },
+  {
+    "id": "detail-slot-metadata-12",
+    "component": "AuditTimeline",
+    "text": "Audit Timeline\nNo events"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "detail-screen",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-screen-detail-13",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-detail-header-1",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-slot-header-2",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-ve-header-26",
+    "component": "StatusTimeline",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-ve-header-27",
+    "component": "CancellationSummary",
+    "text": "Cancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request"
+  },
+  {
+    "id": "detail-ve-header-28",
+    "component": "ArchiveSummary",
+    "text": "Archive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-detail-body-10",
+    "component": "Card",
+    "text": "Billing\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-detail-tabs-9",
+    "component": "Tabs",
+    "text": "Billing\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-detail-tab-panel-3",
+    "component": "Stack",
+    "text": "Billing cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-slot-tab-0-4",
+    "component": "CycleProgressCard",
+    "text": "Billing cycle\n\n23% complete · 23 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-slot-tab-1-6",
+    "component": "PaymentTimeline",
+    "text": "Payments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-detail-meta-11",
+    "component": "Stack",
+    "text": "Audit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-slot-metadata-12",
+    "component": "AuditTimeline",
+    "text": "Audit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  }
+]
+```
+
+## views.820.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Team annual\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - group \"Cancellation details\":\n      - text: Cancellation details Reason\n      - textbox \"Reason\": Budget changed for next year\n      - text: Reason code\n      - textbox \"Reason code\": customer_request\n      - checkbox \"Cancel at period end\" [checked]\n      - text: Cancel at period end\n    - log \"Status Timeline\":\n      - heading \"Status Timeline\" [level=3]\n      - paragraph: \"Current status: Pending Cancellation\"\n      - list:\n        - listitem:\n          - article:\n            - paragraph: Event\n            - time: 2026-01-01T00:00:00.000Z\n            - paragraph: active\n            - paragraph: \"Reason: Sample record created\"\n        - listitem:\n          - article:\n            - paragraph: active → pending_cancellation\n            - time: 2026-09-08T12:00:00.000Z\n            - paragraph: active\n            - paragraph: \"Reason: Budget changed for next year\"\n    - heading \"Cancellation Summary\" [level=3]\n    - term: Cancel at period end\n    - definition: \"Yes\"\n    - term: Requested at\n    - definition:\n      - time: 2026-09-08T12:00:00.000Z\n    - term: Reason\n    - definition: Budget changed for next year\n    - term: Code\n    - definition: customer_request\n    - heading \"Archive Summary\" [level=3]\n    - term: Archived\n    - definition: \"false\"\n    - tablist \"Tabs\":\n      - tab \"Billing\" [selected]\n      - button \"More tabs\": More\n    - tabpanel \"Billing\":\n      - region \"Billing cycle\":\n        - heading \"Billing cycle\" [level=3]\n        - paragraph: 100% complete · 0 days remaining\n        - progressbar \"100% complete · 0 days remaining\"\n        - paragraph: yearly\n    - complementary:\n      - log \"Audit Timeline\":\n        - heading \"Audit Timeline\" [level=3]\n        - list:\n          - listitem: No events\n    - group \"Screen actions\":\n      - button \"Cancel subscription\"\n      - button \"Archive\"\n      - button \"Edit\"\n      - button \"View timeline\"\n  - status: Changes saved in this session."
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Team annual\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - log \"Status Timeline\":\n      - heading \"Status Timeline\" [level=3]\n      - paragraph: \"Current status: Pending Cancellation\"\n      - list:\n        - listitem:\n          - article:\n            - paragraph: billing_cycle_started\n            - time: Sep 1, 2026, 12:00 PM\n            - paragraph: active\n            - paragraph: \"Reason: Sample record created\"\n        - listitem:\n          - article:\n            - paragraph: active → pending_cancellation\n            - time: Sep 8, 2026, 12:00 PM\n            - paragraph: active\n            - paragraph: \"Reason: Budget changed for next year\"\n    - heading \"Cancellation Summary\" [level=3]\n    - term: Cancel at period end\n    - definition: \"Yes\"\n    - term: Requested at\n    - definition:\n      - time: Sep 8, 2026, 12:00 PM\n    - term: Reason\n    - definition: Budget changed for next year\n    - term: Code\n    - definition: customer_request\n    - heading \"Archive Summary\" [level=3]\n    - term: Archived\n    - definition: \"No\"\n    - tablist \"Record details\":\n      - tab \"Billing\" [selected]\n      - tab \"Details\"\n    - tabpanel \"Billing\":\n      - region \"Billing cycle\":\n        - heading \"Billing cycle\" [level=3]\n        - paragraph: 23% complete · 23 days remaining\n        - progressbar \"23% complete · 23 days remaining\"\n        - paragraph: yearly\n      - log \"Payments\":\n        - heading \"Payments\" [level=3]\n        - paragraph: $19.99 USD · failed\n        - paragraph: \"Payment method: wire\"\n        - list:\n          - listitem:\n            - strong: Last payment\n            - time: Sep 1, 2026\n          - listitem:\n            - strong: Next payment\n            - time: Oct 1, 2026\n    - complementary:\n      - log \"Audit Timeline\":\n        - heading \"Audit Timeline\" [level=3]\n        - list:\n          - listitem:\n            - article:\n              - paragraph: billing_cycle_started\n              - time: Sep 1, 2026, 12:00 PM\n              - paragraph: active\n              - paragraph: \"Reason: Sample record created\"\n          - listitem:\n            - article:\n              - paragraph: active → pending_cancellation\n              - time: Sep 8, 2026, 12:00 PM\n              - paragraph: active\n              - paragraph: \"Reason: Budget changed for next year\"\n    - group \"Screen actions\":\n      - button \"Cancel subscription\"\n      - button \"Archive\"\n      - button \"Edit\"\n      - button \"View timeline\"\n  - status: Changes saved in this session."
+```
+
+## views.820.visibleText
+
+Before:
+```json
+null
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nTeam annual\nLocal workspace\nList\nDetail\nEdit\nTimeline\nStatus Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancel subscription\nArchive\nEdit\nView timeline\n\nChanges saved in this session."
+```
+
+## views.820.values
+
+Before:
+```json
+[
+  {
+    "element": "input",
+    "name": "Reason",
+    "value": "Budget changed for next year",
+    "checked": false
+  },
+  {
+    "element": "input",
+    "name": "Reason code",
+    "value": "customer_request",
+    "checked": false
+  },
+  {
+    "element": "input",
+    "name": "Cancel at period end",
+    "value": "on",
+    "checked": true
+  }
+]
+```
+After:
+```json
+[]
+```
+
+## views.820.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 820,
+  "documentWidth": 820,
+  "elementCount": 88,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+After:
+```json
+{
+  "viewportWidth": 820,
+  "documentWidth": 820,
+  "elementCount": 101,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+
+## views.820.regions
+
+Before:
+```json
+[
+  {
+    "id": "detail-screen",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse\nBilling\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-screen-detail-13",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse\nBilling\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-detail-header-1",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-slot-header-2",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-ve-header-26",
+    "component": "StatusTimeline",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-ve-header-27",
+    "component": "CancellationSummary",
+    "text": "Cancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request"
+  },
+  {
+    "id": "detail-ve-header-28",
+    "component": "ArchiveSummary",
+    "text": "Archive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-detail-body-10",
+    "component": "Card",
+    "text": "Billing\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-detail-tabs-9",
+    "component": "Tabs",
+    "text": "Billing\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-detail-tab-panel-3",
+    "component": "Stack",
+    "text": "Billing cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-slot-tab-0-4",
+    "component": "CycleProgressCard",
+    "text": "Billing cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-detail-meta-11",
+    "component": "Stack",
+    "text": "Audit Timeline\nNo events"
+  },
+  {
+    "id": "detail-slot-metadata-12",
+    "component": "AuditTimeline",
+    "text": "Audit Timeline\nNo events"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "detail-screen",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-screen-detail-13",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-detail-header-1",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-slot-header-2",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-ve-header-26",
+    "component": "StatusTimeline",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-ve-header-27",
+    "component": "CancellationSummary",
+    "text": "Cancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request"
+  },
+  {
+    "id": "detail-ve-header-28",
+    "component": "ArchiveSummary",
+    "text": "Archive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-detail-body-10",
+    "component": "Card",
+    "text": "Billing\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-detail-tabs-9",
+    "component": "Tabs",
+    "text": "Billing\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-detail-tab-panel-3",
+    "component": "Stack",
+    "text": "Billing cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-slot-tab-0-4",
+    "component": "CycleProgressCard",
+    "text": "Billing cycle\n\n23% complete · 23 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-slot-tab-1-6",
+    "component": "PaymentTimeline",
+    "text": "Payments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-detail-meta-11",
+    "component": "Stack",
+    "text": "Audit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-slot-metadata-12",
+    "component": "AuditTimeline",
+    "text": "Audit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  }
+]
+```
+
+## views.1440.accessibility
+
+Before:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Team annual\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - group \"Cancellation details\":\n      - text: Cancellation details Reason\n      - textbox \"Reason\": Budget changed for next year\n      - text: Reason code\n      - textbox \"Reason code\": customer_request\n      - checkbox \"Cancel at period end\" [checked]\n      - text: Cancel at period end\n    - log \"Status Timeline\":\n      - heading \"Status Timeline\" [level=3]\n      - paragraph: \"Current status: Pending Cancellation\"\n      - list:\n        - listitem:\n          - article:\n            - paragraph: Event\n            - time: 2026-01-01T00:00:00.000Z\n            - paragraph: active\n            - paragraph: \"Reason: Sample record created\"\n        - listitem:\n          - article:\n            - paragraph: active → pending_cancellation\n            - time: 2026-09-08T12:00:00.000Z\n            - paragraph: active\n            - paragraph: \"Reason: Budget changed for next year\"\n    - heading \"Cancellation Summary\" [level=3]\n    - term: Cancel at period end\n    - definition: \"Yes\"\n    - term: Requested at\n    - definition:\n      - time: 2026-09-08T12:00:00.000Z\n    - term: Reason\n    - definition: Budget changed for next year\n    - term: Code\n    - definition: customer_request\n    - heading \"Archive Summary\" [level=3]\n    - term: Archived\n    - definition: \"false\"\n    - tablist \"Tabs\":\n      - tab \"Billing\" [selected]\n      - tab \"Status & History\"\n      - tab \"Details\"\n      - tab \"Status\"\n      - button \"More tabs\": More\n    - tabpanel \"Billing\":\n      - region \"Billing cycle\":\n        - heading \"Billing cycle\" [level=3]\n        - paragraph: 100% complete · 0 days remaining\n        - progressbar \"100% complete · 0 days remaining\"\n        - paragraph: yearly\n    - complementary:\n      - log \"Audit Timeline\":\n        - heading \"Audit Timeline\" [level=3]\n        - list:\n          - listitem: No events\n    - group \"Screen actions\":\n      - button \"Cancel subscription\"\n      - button \"Archive\"\n      - button \"Edit\"\n      - button \"View timeline\"\n  - status: Changes saved in this session."
+```
+After:
+```json
+"- main:\n  - paragraph: SUBSCRIPTION WORKSPACE\n  - heading \"Team annual\" [level=1]\n  - text: Local workspace\n  - navigation \"Workflow screens\":\n    - button \"List\"\n    - button \"Detail\"\n    - button \"Edit\"\n    - button \"Timeline\"\n  - region \"Subscription screen\":\n    - log \"Status Timeline\":\n      - heading \"Status Timeline\" [level=3]\n      - paragraph: \"Current status: Pending Cancellation\"\n      - list:\n        - listitem:\n          - article:\n            - paragraph: billing_cycle_started\n            - time: Sep 1, 2026, 12:00 PM\n            - paragraph: active\n            - paragraph: \"Reason: Sample record created\"\n        - listitem:\n          - article:\n            - paragraph: active → pending_cancellation\n            - time: Sep 8, 2026, 12:00 PM\n            - paragraph: active\n            - paragraph: \"Reason: Budget changed for next year\"\n    - heading \"Cancellation Summary\" [level=3]\n    - term: Cancel at period end\n    - definition: \"Yes\"\n    - term: Requested at\n    - definition:\n      - time: Sep 8, 2026, 12:00 PM\n    - term: Reason\n    - definition: Budget changed for next year\n    - term: Code\n    - definition: customer_request\n    - heading \"Archive Summary\" [level=3]\n    - term: Archived\n    - definition: \"No\"\n    - tablist \"Record details\":\n      - tab \"Billing\" [selected]\n      - tab \"Details\"\n    - tabpanel \"Billing\":\n      - region \"Billing cycle\":\n        - heading \"Billing cycle\" [level=3]\n        - paragraph: 23% complete · 23 days remaining\n        - progressbar \"23% complete · 23 days remaining\"\n        - paragraph: yearly\n      - log \"Payments\":\n        - heading \"Payments\" [level=3]\n        - paragraph: $19.99 USD · failed\n        - paragraph: \"Payment method: wire\"\n        - list:\n          - listitem:\n            - strong: Last payment\n            - time: Sep 1, 2026\n          - listitem:\n            - strong: Next payment\n            - time: Oct 1, 2026\n    - complementary:\n      - log \"Audit Timeline\":\n        - heading \"Audit Timeline\" [level=3]\n        - list:\n          - listitem:\n            - article:\n              - paragraph: billing_cycle_started\n              - time: Sep 1, 2026, 12:00 PM\n              - paragraph: active\n              - paragraph: \"Reason: Sample record created\"\n          - listitem:\n            - article:\n              - paragraph: active → pending_cancellation\n              - time: Sep 8, 2026, 12:00 PM\n              - paragraph: active\n              - paragraph: \"Reason: Budget changed for next year\"\n    - group \"Screen actions\":\n      - button \"Cancel subscription\"\n      - button \"Archive\"\n      - button \"Edit\"\n      - button \"View timeline\"\n  - status: Changes saved in this session."
+```
+
+## views.1440.visibleText
+
+Before:
+```json
+null
+```
+After:
+```json
+"SUBSCRIPTION WORKSPACE\n\nTeam annual\nLocal workspace\nList\nDetail\nEdit\nTimeline\nStatus Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancel subscription\nArchive\nEdit\nView timeline\n\nChanges saved in this session."
+```
+
+## views.1440.values
+
+Before:
+```json
+[
+  {
+    "element": "input",
+    "name": "Reason",
+    "value": "Budget changed for next year",
+    "checked": false
+  },
+  {
+    "element": "input",
+    "name": "Reason code",
+    "value": "customer_request",
+    "checked": false
+  },
+  {
+    "element": "input",
+    "name": "Cancel at period end",
+    "value": "on",
+    "checked": true
+  }
+]
+```
+After:
+```json
+[]
+```
+
+## views.1440.measurements
+
+Before:
+```json
+{
+  "viewportWidth": 1440,
+  "documentWidth": 1440,
+  "elementCount": 91,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+After:
+```json
+{
+  "viewportWidth": 1440,
+  "documentWidth": 1440,
+  "elementCount": 101,
+  "overflow": [],
+  "glyphWraps": []
+}
+```
+
+## views.1440.regions
+
+Before:
+```json
+[
+  {
+    "id": "detail-screen",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse\nBilling\nStatus & History\nDetails\nStatus\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-screen-detail-13",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse\nBilling\nStatus & History\nDetails\nStatus\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-detail-header-1",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-slot-header-2",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-ve-header-26",
+    "component": "StatusTimeline",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nEvent\n\n2026-01-01T00:00:00.000Z\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\n2026-09-08T12:00:00.000Z\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-ve-header-27",
+    "component": "CancellationSummary",
+    "text": "Cancellation Summary\nCancel at period end\nYes\nRequested at\n2026-09-08T12:00:00.000Z\nReason\nBudget changed for next year\nCode\ncustomer_request"
+  },
+  {
+    "id": "detail-ve-header-28",
+    "component": "ArchiveSummary",
+    "text": "Archive Summary\nArchived\nfalse"
+  },
+  {
+    "id": "detail-detail-body-10",
+    "component": "Card",
+    "text": "Billing\nStatus & History\nDetails\nStatus\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly\n\nAudit Timeline\nNo events"
+  },
+  {
+    "id": "detail-detail-tabs-9",
+    "component": "Tabs",
+    "text": "Billing\nStatus & History\nDetails\nStatus\nMore\nBilling cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-detail-tab-panel-3",
+    "component": "Stack",
+    "text": "Billing cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-slot-tab-0-4",
+    "component": "CycleProgressCard",
+    "text": "Billing cycle\n\n100% complete · 0 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-detail-meta-11",
+    "component": "Stack",
+    "text": "Audit Timeline\nNo events"
+  },
+  {
+    "id": "detail-slot-metadata-12",
+    "component": "AuditTimeline",
+    "text": "Audit Timeline\nNo events"
+  }
+]
+```
+After:
+```json
+[
+  {
+    "id": "detail-screen",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-screen-detail-13",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo\nBilling\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-detail-header-1",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-slot-header-2",
+    "component": "Stack",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year\n\nCancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request\nArchive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-ve-header-26",
+    "component": "StatusTimeline",
+    "text": "Status Timeline\n\nCurrent status: Pending Cancellation\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-ve-header-27",
+    "component": "CancellationSummary",
+    "text": "Cancellation Summary\nCancel at period end\nYes\nRequested at\nSep 8, 2026, 12:00 PM\nReason\nBudget changed for next year\nCode\ncustomer_request"
+  },
+  {
+    "id": "detail-ve-header-28",
+    "component": "ArchiveSummary",
+    "text": "Archive Summary\nArchived\nNo"
+  },
+  {
+    "id": "detail-detail-body-10",
+    "component": "Card",
+    "text": "Billing\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026\nAudit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-detail-tabs-9",
+    "component": "Tabs",
+    "text": "Billing\nDetails\nBilling cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-detail-tab-panel-3",
+    "component": "Stack",
+    "text": "Billing cycle\n\n23% complete · 23 days remaining\n\nyearly\n\nPayments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-slot-tab-0-4",
+    "component": "CycleProgressCard",
+    "text": "Billing cycle\n\n23% complete · 23 days remaining\n\nyearly"
+  },
+  {
+    "id": "detail-slot-tab-1-6",
+    "component": "PaymentTimeline",
+    "text": "Payments\n\n$19.99 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+  },
+  {
+    "id": "detail-detail-meta-11",
+    "component": "Stack",
+    "text": "Audit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  },
+  {
+    "id": "detail-slot-metadata-12",
+    "component": "AuditTimeline",
+    "text": "Audit Timeline\n\nbilling_cycle_started\n\nSep 1, 2026, 12:00 PM\n\nactive\n\nReason: Sample record created\n\nactive → pending_cancellation\n\nSep 8, 2026, 12:00 PM\n\nactive\n\nReason: Budget changed for next year"
+  }
+]
+```
