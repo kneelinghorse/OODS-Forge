@@ -1,4 +1,4 @@
-import type { UiSchema, FieldSchemaEntry } from '../schemas/generated.js';
+import type { UiSchema, UiElement, FieldSchemaEntry } from '../schemas/generated.js';
 import { mapFieldType, snakeToCamel } from './binding-utils.js';
 
 /** Seed every declared field; enum values and trait parameters remain the authority. */
@@ -29,6 +29,15 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
     }
     return field.type.endsWith('?') ? null : '';
   };
+  const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);
+  const timeline = schema.screens.find(node => node.id === workflow.screens.find(screen => screen.context === 'timeline')?.id);
+  const timelineNodes = nodes(timeline ? [timeline] : []);
+  const eventCollection = timelineNodes.find(node => node.collection?.source === 'events')?.collection;
+  const payment = timelineNodes.find(node => node.component === 'PaymentEventTimeline');
+  const paymentSources = payment ? [
+    { field: payment.props?.lastPaymentField, title: 'Last payment' },
+    { field: payment.props?.nextPaymentField, title: 'Next payment' },
+  ].filter(source => typeof source.field === 'string') : [];
   const records = Array.from({ length: sampleCount }, (_, index) => Object.fromEntries(
     Object.entries(fields).map(([name, field]) => [name, seedValue(name, field, index)]),
   ));
@@ -36,7 +45,8 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const camelProps = Object.keys(fields).map((name) => `  ${snakeToCamel(name)}: record[${JSON.stringify(name)}],`).join('\n');
   return [
     { path: 'src/sample-data.ts', contents: `import type { DomainRecord } from './store';\n\nexport const sampleData: DomainRecord[] = ${JSON.stringify(records, null, 2)};\n` },
-    { path: 'src/store.ts', contents: `import { sampleData } from './sample-data';
+    { path: 'src/store.ts', contents: `import { chronologicalEvents, billingSummary, type CollectionEvent } from '@oods/component-contracts';
+import { sampleData } from './sample-data';
 
 export type DomainRecord = {
 ${types}
@@ -56,6 +66,19 @@ ${camelProps}
 export function history(record: DomainRecord): HistoryEntry[] {
   const value = (record as Record<string, unknown>).state_history;
   return Array.isArray(value) ? value.filter((entry): entry is HistoryEntry => !!entry && typeof entry === 'object' && typeof entry.to === 'string' && typeof entry.at === 'string') : [];
+}
+export function collectionEvents(record: DomainRecord): CollectionEvent[] {
+  const values = record as Record<string, unknown>;
+  const source = values[${JSON.stringify(eventCollection?.historyField ?? '')}];
+  const events: CollectionEvent[] = Array.isArray(source) ? source.flatMap((entry, index) => {
+    if (!entry || typeof entry !== 'object' || typeof entry.at !== 'string' || typeof entry.to !== 'string') return [];
+    return [{ id: 'state-' + index, title: entry.to.replaceAll('_', ' '), at: entry.at, description: String(entry.reason ?? ''), kind: 'state' as const }];
+  }) : [];
+  for (const source of ${JSON.stringify(paymentSources)} as Array<{ field: string; title: string }>) {
+    const at = values[source.field];
+    if (typeof at === 'string') events.push({ id: 'payment-' + source.field, title: source.title, at, description: billingSummary(Number(values.amount), String(values.currency), ${workflow.data.minorUnits}, String(values.billing_interval)), kind: 'payment' });
+  }
+  return chronologicalEvents(events);
 }
 export function createStore(options: StoreOptions = {}) {
   let records = structuredClone(options.seed ?? (options.empty ? [] : sampleData));

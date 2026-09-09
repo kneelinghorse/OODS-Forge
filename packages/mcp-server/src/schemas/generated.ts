@@ -144,6 +144,13 @@ export namespace A11yScanInputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -1289,6 +1296,13 @@ export namespace CodeGenerateInputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -3034,6 +3048,13 @@ export namespace DesignComposeOutputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -5503,6 +5524,13 @@ export namespace ReplOutputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -5792,6 +5820,13 @@ export namespace ReplRenderInputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -6035,6 +6070,13 @@ export namespace ReplRenderOutputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -6195,6 +6237,13 @@ export namespace UiSchemaSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -6375,6 +6424,13 @@ export namespace ReplValidateInputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }
@@ -6598,6 +6654,13 @@ export namespace ReplValidateOutputSchema {
     style?: Style;
     props?: Props;
     bindings?: Bindings;
+    collection?: {
+      source: 'rows' | 'events';
+      keyField: string;
+      labelField: string;
+      historyField?: string;
+    };
+    collectionControl?: 'search' | 'filter' | 'sort' | 'page' | 'archive' | 'open' | 'event' | 'payment-event' | 'empty';
     children?: UiElement[];
     meta?: Meta;
   }

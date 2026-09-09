@@ -1,3 +1,4 @@
+import { emitCollectionNode, collectionProps, collectionParameters, collectionSources, wiredCollectionAction } from './collection-emitter.js';
 import { emitWorkflow } from './workflow-emitter.js';
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
@@ -339,7 +340,7 @@ function vueScreenActionSurface(
 ): string {
   const occurrences = bindingsForNode(analysis, node.id).filter(
     (occurrence): occurrence is DomainBindingOccurrence => (
-      occurrence.kind === 'domain' && occurrence.scope === 'screen'
+      occurrence.kind === 'domain' && occurrence.scope === 'screen' && !wiredCollectionAction(node, occurrence.event)
     ),
   );
   if (occurrences.length === 0) return '';
@@ -411,7 +412,7 @@ function emitTemplateNode(
   const code = actionSurface ? `${nodeBody}\n${actionSurface}` : nodeBody;
   if (node.state === undefined) return code;
   const condition = escapeDoubleQuotedAttr(
-    `uiState === ${javascriptSingleQuotedString(node.state)}`,
+    `uiState === ${javascriptSingleQuotedString(node.state)}${node.state === 'success' && collectionSources([node]).has('rows') ? " || uiState === 'empty'" : ''}`,
   );
   return `<template v-if="${condition}">\n${ind(code, 1)}\n</template>`;
 }
@@ -427,6 +428,8 @@ function emitTemplateNodeBody(
   /** Form-mode fields are writable refs; list/display fields are read-only props. */
   formMode = false,
 ): string {
+  const collectionCode = emitCollectionNode(node, 'vue', objectSchema ?? {}, child => emitTemplateNode(child, depth, warnings, options, tailwindVariants, bindingAnalysis, objectSchema, formMode));
+  if (collectionCode !== undefined) return collectionCode;
   const tag = node.component;
   const children = Array.isArray(node.children) ? node.children : [];
   const computedStyle = mergeDecl(
@@ -499,7 +502,7 @@ function emitTemplateNodeBody(
   attrParts.push(`id="${escapeDoubleQuotedAttr(emittedId)}"`);
   attrParts.push(`data-oods-component="${tag}"`);
   if (node.state !== undefined) {
-    attrParts.push(`data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
+    attrParts.push(node.state === 'success' && collectionSources([node]).has('rows') ? `:data-oods-state="uiState === 'success' ? 'success' : undefined"` : `data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
   }
 
   if (node.layout?.type) {
@@ -1108,6 +1111,8 @@ function buildScriptSetup(
     lines.push(`<script setup>`);
   }
 
+  if (collectionSources(screens).has('events')) lines.push(`import { chronologicalEvents, formatDateTime${options.typescript ? ', type CollectionEvent' : ''} } from '@oods/component-contracts';`);
+
   // Vue reactivity imports
   if (shouldImportVueRuntime(objectSchema, screens, bindingAnalysis)) {
     const computedProps = hasObjectSchema ? detectComputedProperties(objectSchema!) : [];
@@ -1190,7 +1195,7 @@ function buildScriptSetup(
   } else if (options.typescript && hasObjectSchema) {
     // Non-form: use defineProps for display components
     lines.push('');
-    lines.push('interface Props {');
+    lines.push('interface Props {', ...collectionProps(screens, objectSchema ?? {}).map(field => '  ' + field));
     if (hasDomainActions) lines.push('  actions: GeneratedUIActions;');
     if (hasStateBranches) lines.push('  uiState: GeneratedUIState;');
     for (const [fieldName, entry] of Object.entries(objectSchema!).sort(([a], [b]) => a.localeCompare(b))) {
@@ -1211,6 +1216,7 @@ function buildScriptSetup(
       ...(hasDomainActions ? ['actions'] : []),
       ...(hasStateBranches ? ['uiState'] : []),
       ...fieldNames,
+      ...collectionParameters(screens),
     ];
     lines.push(`const { ${propNames.join(', ')} } = defineProps<Props>();`);
   } else if (options.typescript) {
@@ -1237,6 +1243,10 @@ function buildScriptSetup(
           '}>();');
       }
     }
+  } else if (hasObjectSchema && collectionSources(screens).size > 0) {
+    const names = [...(hasDomainActions ? ['actions'] : []), ...(hasStateBranches ? ['uiState'] : []), ...Object.keys(objectSchema!).map(snakeToCamel), ...collectionParameters(screens)];
+    const keys = names.map(name => javascriptSingleQuotedString(name.split('=')[0]!.trim()));
+    lines.push(`const { ${names.join(', ')} } = defineProps([${keys.join(', ')}]);`);
   } else if (hasDomainActions || hasStateBranches) {
     lines.push('');
     const runtimeProps = [
@@ -1391,6 +1401,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   const code = blocks.join('\n');
   const imports = [
+    ...(collectionSources(ctx.tree).has('events') ? ['@oods/component-contracts'] : []),
     ...(shouldImportVueRuntime(ctx.objectSchema, ctx.tree, ctx.bindingAnalysis) ? ['vue'] : []),
     ...(ctx.components.size > 0 ? ['@oods/components-vue', '@oods/component-styles/css'] : []),
     ...(tailwindVariants.size > 0 ? ['class-variance-authority'] : []),

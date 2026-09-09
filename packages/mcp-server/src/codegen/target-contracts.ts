@@ -29,7 +29,7 @@ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   CycleProgressCard: new Set(['progressField', 'periodStartField', 'periodEndField', 'intervalField']),
   PaymentTimeline: new Set(['lastPaymentField', 'nextPaymentField', 'paymentStatusField', 'paymentMethodField', 'amountField', 'currencyField']),
   PaymentEventTimeline: new Set(['lastPaymentField', 'nextPaymentField', 'paymentStatusField', 'amountField', 'currencyField']),
-  ArchivedRowOverlay: new Set(['archivedField', 'style']),
+  ArchivedRowOverlay: new Set(['archivedField', 'labelField', 'style']),
   CardHeader: new Set(['titleField', 'supportingField']),
   ArchiveSummary: new Set(['archivedField', 'archivedAtField', 'reasonField', 'restoredAtField', 'archivedByField', 'metadataField', 'retainHistoryParameter', 'restoreWindowParameter', 'allowPartialRestoreParameter']),
   ArchivePill: new Set(['archivedAtField']),

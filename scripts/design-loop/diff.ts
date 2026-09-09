@@ -15,7 +15,7 @@ export function compareReceipts(before: any, after: any) {
   const widths = [...new Set([...before.views, ...after.views].map(view => view.width))].sort((x, y) => x - y);
   for (const width of widths) {
     const left = before.views.find((view: any) => view.width === width), right = after.views.find((view: any) => view.width === width);
-    for (const key of ['accessibility', 'values', 'measurements', 'regions']) compare(`views.${width}.${key}`, left?.[key] ?? null, right?.[key] ?? null);
+    for (const key of ['accessibility', 'visibleText', 'values', 'measurements', 'regions']) compare(`views.${width}.${key}`, left?.[key] ?? null, right?.[key] ?? null);
   }
   return { differenceCount: differences.length, differences };
 }

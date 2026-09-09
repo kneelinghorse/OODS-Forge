@@ -232,7 +232,7 @@ function normalizeNode(node: UiElement, framework: FrameworkTarget): UiElement {
     delete props.tabs;
     delete props.active;
     delete props.activeTab;
-    children = preservePanelTrees
+    children = node.collectionControl === 'archive' ? children : preservePanelTrees
       ? children?.map(tabPanelFromChild)
       : undefined;
   }

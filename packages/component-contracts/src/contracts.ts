@@ -334,7 +334,7 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
   },
   PaymentEventTimeline: {
     id: 'PaymentEventTimeline', version: COMPONENT_CONTRACT_VERSION,
-    props: ["lastPayment", "nextPayment", "paymentStatus", "amount", "currency", "minorUnits", "title"], slots: [], events: [],
+    props: ['event', "lastPayment", "nextPayment", "paymentStatus", "amount", "currency", "minorUnits", "title"], slots: [], events: [],
     states: ["populated", "empty"], tokenRoles: ['billing.text', 'billing.surface', 'billing.border'],
     accessibility: ["Native semantic elements retain their names and content", "Public payment-event ID over the same shared payment timeline primitive as PaymentTimeline, without a payment-method term. Last and next payment are chronological UTC dates. Missing next payment is No payment scheduled; missing last is No previous payment. Amount, currency and payment status remain visible."],
     compatibility: "Public payment-event ID over the same shared payment timeline primitive as PaymentTimeline, without a payment-method term. Last and next payment are chronological UTC dates. Missing next payment is No payment scheduled; missing last is No previous payment. Amount, currency and payment status remain visible.",

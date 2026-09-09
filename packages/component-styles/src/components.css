@@ -1196,3 +1196,12 @@
   color: var(--status-archive-text, CanvasText);
   background: var(--status-archive-bg, ButtonFace);
 }
+
+/* Generated collection screens share one row/event presentation in both frameworks. */
+.oods-collection { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 8px; }
+.oods-collection-row { width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
+.oods-collection-row > :first-child { flex: 1 1 140px; font-weight: 600; }
+.oods-collection-row [data-oods-component="StatusBadge"] { max-width: 100%; text-transform: none; }
+[data-oods-collection="events"] time { display: block; margin-top: 8px; font-size: 13px; }
+.oods-pagination-bar__pages { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
+@media (max-width: 600px) { .oods-collection-row { flex-direction: column; align-items: flex-start; } .oods-collection-row > :first-child { flex-basis: auto; } }

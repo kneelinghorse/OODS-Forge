@@ -1,3 +1,4 @@
+import { emitCollectionNode, collectionProps, collectionParameters, collectionSources, wiredCollectionAction } from './collection-emitter.js';
 import { emitWorkflow } from './workflow-emitter.js';
 import type { UiElement, UiLayout, UiSchema, UiStyle, FieldSchemaEntry } from '../schemas/generated.js';
 import type { CodegenIssue, CodegenOptions, CodegenResult } from './types.js';
@@ -317,7 +318,7 @@ function reactScreenActionSurface(
 ): string {
   const occurrences = bindingsForNode(analysis, node.id).filter(
     (occurrence): occurrence is DomainBindingOccurrence => (
-      occurrence.kind === 'domain' && occurrence.scope === 'screen'
+      occurrence.kind === 'domain' && occurrence.scope === 'screen' && !wiredCollectionAction(node, occurrence.event)
     ),
   );
   if (occurrences.length === 0) return '';
@@ -362,12 +363,14 @@ function wrapReactStateNode(
   code: string,
   state: string | undefined,
   occurrence: LocalBindingOccurrence | undefined,
+  keepCollectionControls = false,
 ): string {
   if (state === undefined) return wrapReactLocalNode(code, occurrence);
   const stateBody = occurrence?.component === 'Banner'
     ? `${occurrence.localSymbols.state} && (\n${indent(code, 1)}\n)`
     : code;
-  return `{uiState === ${javascriptSingleQuotedString(state)} && (\n${indent(stateBody, 1)}\n)}`;
+  const condition = `uiState === ${javascriptSingleQuotedString(state)}`;
+  return `{${keepCollectionControls ? `(${condition} || uiState === 'empty')` : condition} && (\n${indent(stateBody, 1)}\n)}`;
 }
 
 function reactFieldExpression(
@@ -410,6 +413,8 @@ function emitNode(
   bindingAnalysis: BindingAnalysis,
   objectSchema?: Record<string, FieldSchemaEntry>,
 ): string {
+  const collectionCode = emitCollectionNode(node, 'react', objectSchema ?? {}, child => emitNode(child, depth, warnings, options, tailwindVariants, bindingAnalysis, objectSchema));
+  if (collectionCode !== undefined) return collectionCode;
   const tag = node.component;
   const children = Array.isArray(node.children) ? node.children : [];
   const computedStyle = mergeStyleObjects(
@@ -428,6 +433,7 @@ function emitNode(
     wrapReactScreenActionSurface(code, node, bindingAnalysis, objectSchema),
     node.state,
     localBinding,
+    node.state === 'success' && collectionSources([node]).has('rows'),
   );
   if (localBinding?.component === 'Banner' && propsObject?.dismissLabel === undefined) {
     propsObject = { ...(propsObject ?? {}), dismissLabel: 'Dismiss notification' };
@@ -481,7 +487,7 @@ function emitNode(
   // data-oods-component for runtime identification
   attrParts.push(`data-oods-component="${tag}"`);
   if (node.state !== undefined) {
-    attrParts.push(`data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
+    attrParts.push(node.state === 'success' && collectionSources([node]).has('rows') ? `data-oods-state={uiState === 'success' ? 'success' : undefined}` : `data-oods-state="${escapeDoubleQuotedAttr(node.state)}"`);
   }
 
   // layout data attribute
@@ -762,8 +768,9 @@ function generatePagePropsInterface(
   objectSchema: Record<string, FieldSchemaEntry>,
   includeActions = false,
   includeState = false,
+  collectionFields: string[] = [],
 ): string {
-  const lines: string[] = ['export interface PageProps {'];
+  const lines: string[] = ['export interface PageProps {', ...collectionFields.map(field => '  ' + field)];
 
   if (includeActions) lines.push('  actions: GeneratedUIActions;');
   if (includeState) lines.push('  uiState: GeneratedUIState;');
@@ -1079,6 +1086,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
   // Build the complete file
   const importBlock = buildImportBlock(components, tailwindVariants.size > 0);
   const imports = buildImportList(components, tailwindVariants.size > 0);
+  if (collectionSources(ctx.tree).has('events')) imports.push('@oods/component-contracts');
 
   const typeAnnotations = options.typescript ? generatePropTypes(components) : '';
   const hasObjectSchema = normalizedSchema.objectSchema && Object.keys(normalizedSchema.objectSchema).length > 0;
@@ -1104,6 +1112,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
       normalizedSchema.objectSchema!,
       hasDomainActions,
       hasStateBranches,
+      collectionProps(ctx.tree, ctx.objectSchema ?? {}),
     )
     : '';
   const returnType = options.typescript
@@ -1116,6 +1125,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
 
   const lines: string[] = [
     importBlock,
+    ...(collectionSources(ctx.tree).has('events') ? [`import { chronologicalEvents, formatDateTime${options.typescript ? ', type CollectionEvent' : ''} } from '@oods/component-contracts';`] : []),
     '',
   ];
 
@@ -1168,6 +1178,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
       ...(hasDomainActions ? ['actions'] : []),
       ...(hasStateBranches ? ['uiState'] : []),
       ...fieldNames,
+      ...collectionParameters(ctx.tree),
     ];
     const destructure = `{ ${parameterNames.join(', ')} }`;
     if (!options.typescript && (hasDomainActions || hasStateBranches)) {

@@ -28,7 +28,7 @@ export async function render(input: RenderInput) {
     if (issues.length) throw new Error(issues.join('\n'));
     const receipt = await loopRequest(port, '/render', {
       framework, artifact: generated.artifact, schemaHash, compose: input.compose,
-      model: deriveConsumerModel(composition.schema, input.model), steps: input.steps ?? [], widths,
+      model: { ...deriveConsumerModel(composition.schema, input.model), ...Object.fromEntries(['rows', 'events', 'collectionQuery'].filter(key => input.model && Object.hasOwn(input.model, key)).map(key => [key, input.model![key]])) }, steps: input.steps ?? [], widths,
       output: path.join(output, framework), sourceHead,
       timings: { composeMs, generateMs: performance.now() - generationStarted },
     });

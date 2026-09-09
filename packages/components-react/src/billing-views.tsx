@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { billingCycle, billingPaymentRows, billingPaymentSummary, billingSummary, type BillingCycleValues, type BillingPaymentValues } from '@oods/component-contracts';
+import { formatDateTime, type CollectionEvent, billingCycle, billingPaymentRows, billingPaymentSummary, billingSummary, type BillingCycleValues, type BillingPaymentValues } from '@oods/component-contracts';
 
 export interface CycleProgressCardProps extends BillingCycleValues { id?: string; title?: string }
 export function CycleProgressCard({ id, title = 'Billing cycle', ...values }: CycleProgressCardProps) {
@@ -21,8 +21,10 @@ function BillingTimeline({ id, title, component, includeMethod, ...values }: Pay
   </section>;
 }
 export function PaymentTimeline(props: PaymentTimelineProps) { return <BillingTimeline {...props} component="PaymentTimeline" includeMethod />; }
-export type PaymentEventTimelineProps = Omit<PaymentTimelineProps, 'paymentMethod'>;
-export function PaymentEventTimeline(props: PaymentEventTimelineProps) { return <BillingTimeline {...props} component="PaymentEventTimeline" includeMethod={false} />; }
+export type PaymentEventTimelineProps = Omit<PaymentTimelineProps, 'paymentMethod'> & { event?: CollectionEvent };
+export function PaymentEventTimeline(props: PaymentEventTimelineProps) {
+  if (props.event) return <section id={props.id} data-oods-component="PaymentEventTimeline" aria-label="Payment event"><strong>{props.event.title}</strong><time dateTime={props.event.at}>{formatDateTime(props.event.at)}</time><p>{props.event.description}</p></section>;
+  return <BillingTimeline {...props} component="PaymentEventTimeline" includeMethod={false} />; }
 
 export interface BillingCardMetaProps { id?: string; amount?: number; currency?: string; minorUnits?: number; interval?: string }
 export function BillingCardMeta({ id, amount, currency, minorUnits, interval }: BillingCardMetaProps) {

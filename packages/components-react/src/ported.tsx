@@ -1,3 +1,4 @@
+import { formatDateTime } from '@oods/component-contracts';
 import * as React from 'react';
 
 import { Input } from './fields.js';
@@ -565,6 +566,7 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <div
         role="search"
+        aria-label={label}
         className={classes('oods-search-input', className)}
         data-oods-component="SearchInput"
         data-behavioral="search"
@@ -692,8 +694,6 @@ export const PaginationBar = React.forwardRef<HTMLElement, PaginationBarProps>(
       onChange?.(target);
       onUpdate?.(target);
     };
-    const rangeStart = totalItems === 0 ? 0 : (currentPage - 1) * safePageSize + 1;
-    const rangeEnd = Math.min(currentPage * safePageSize, totalItems);
 
     return (
       <nav
@@ -705,9 +705,10 @@ export const PaginationBar = React.forwardRef<HTMLElement, PaginationBarProps>(
         {...rest}
       >
         {showItemRange ? (
-          <span data-pagination-range="true">
-            {totalItems > 0 ? `Showing ${rangeStart}–${rangeEnd} of ${totalItems}` : 'No items'}
-          </span>
+          <>
+            <span data-pagination-count="true">{`${totalItems} ${totalItems === 1 ? 'record' : 'records'}`}</span>
+            {totalItems > 0 && <span data-pagination-range="true">{`Showing ${(currentPage - 1) * safePageSize + 1}–${Math.min(currentPage * safePageSize, totalItems)} of ${totalItems}`}</span>}
+          </>
         ) : null}
         <button
           type="button"
@@ -744,6 +745,7 @@ export const PaginationBar = React.forwardRef<HTMLElement, PaginationBarProps>(
         >
           ›
         </button>
+        <span data-pagination-current="true">{`Page ${currentPage} of ${Math.max(1, totalPages)}`}</span>
         {showPageSizeSelector ? (
           <label>
             Items per page
@@ -847,20 +849,9 @@ export const RelativeTimestamp = React.forwardRef<HTMLTimeElement, RelativeTimes
     const date = asDate(raw);
     const nowDate = asDate(now) ?? new Date();
     const iso = date?.toISOString() ?? (raw === undefined ? undefined : String(raw));
-    let absolute = iso;
-    if (date) {
-      try {
-        absolute = new Intl.DateTimeFormat(undefined, {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-          timeZone: timezone,
-        }).format(date);
-      } catch {
-        absolute = iso;
-      }
-    }
+    const absolute = formatDateTime(date, { timeZone: timezone });
     const content = relative ?? label ?? text
-      ?? (date ? relativeLabel(date, nowDate) : children ?? iso ?? 'Unknown time');
+      ?? (now !== undefined && date ? relativeLabel(date, nowDate) : absolute || children || 'Unknown time');
     return (
       <time
         ref={ref}

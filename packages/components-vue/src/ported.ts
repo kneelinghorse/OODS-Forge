@@ -1,3 +1,4 @@
+import { formatDateTime } from '@oods/component-contracts';
 import {
   computed,
   defineComponent,
@@ -629,9 +630,6 @@ export const PaginationBar = defineComponent({
 
     return () => {
       const { page, count: totalPages, items } = pagination.value;
-      const pageSize = Math.max(1, Math.floor(props.pageSize));
-      const start = Math.min((page - 1) * pageSize + 1, props.totalItems);
-      const end = Math.min(page * pageSize, props.totalItems);
       return h('nav', {
         ...attrs,
         class: mergedClass('oods-pagination-bar', attrs.class),
@@ -639,9 +637,10 @@ export const PaginationBar = defineComponent({
         'data-oods-component': 'PaginationBar',
         'data-behavioral': 'pagination',
       }, [
-        props.showItemRange && props.totalItems > 0
-          ? h('span', { 'data-pagination-range': 'true' }, `Showing ${start}–${end} of ${props.totalItems}`)
+        props.showItemRange
+          ? h('span', { 'data-pagination-count': 'true' }, `${props.totalItems} ${props.totalItems === 1 ? 'record' : 'records'}`)
           : null,
+        props.showItemRange && props.totalItems > 0 ? h('span', { 'data-pagination-range': 'true' }, `Showing ${(page - 1) * Math.max(1, props.pageSize) + 1}–${Math.min(page * Math.max(1, props.pageSize), props.totalItems)} of ${props.totalItems}`) : null,
         h('ul', { class: 'oods-pagination-items' }, items.map((item, index) => {
           if (item.type === 'ellipsis') {
             return h('li', { key: `ellipsis-${item.index ?? index}`, 'aria-hidden': 'true' }, '…');
@@ -667,8 +666,7 @@ export const PaginationBar = defineComponent({
             }, content),
           ]);
         })),
-        h('span', { 'data-pagination-current': 'true' }, String(page)),
-        h('span', { 'data-pagination-total': 'true' }, ` / ${totalPages}`),
+        h('span', { 'data-pagination-current': 'true' }, `Page ${page} of ${Math.max(1, totalPages)}`),
         props.showPageSizeSelector
           ? h('label', { class: 'oods-pagination-size' }, [
               h('span', 'Items per page'),
@@ -733,13 +731,13 @@ export const RelativeTimestamp = defineComponent({
         props.relative,
         props.label,
         props.text,
-        relativeTimestampLabel(datetime, props.now),
+        props.now === undefined ? formatDateTime(datetime, { timeZone: props.timezone }) : relativeTimestampLabel(datetime, props.now),
       ) ?? '';
       return h('time', {
         ...attrs,
         class: mergedClass('oods-relative-timestamp', attrs.class),
         datetime: datetime || undefined,
-        title: stringValue(attrs.title) ?? (props.timezone ? `${datetime} (${props.timezone})` : datetime || undefined),
+        title: stringValue(attrs.title) ?? formatDateTime(datetime, { timeZone: props.timezone }),
         'data-oods-component': 'RelativeTimestamp',
       }, content);
     };

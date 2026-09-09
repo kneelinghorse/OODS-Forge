@@ -1,5 +1,5 @@
-import { defineComponent, h } from 'vue';
-import { billingCycle, billingPaymentRows, billingPaymentSummary, billingSummary, type BillingPaymentValues } from '@oods/component-contracts';
+import { defineComponent, h, type PropType } from 'vue';
+import { formatDateTime, type CollectionEvent, billingCycle, billingPaymentRows, billingPaymentSummary, billingSummary, type BillingPaymentValues } from '@oods/component-contracts';
 
 export const CycleProgressCard = defineComponent({
   name: 'CycleProgressCard', props: { id: String, title: { type: String, default: 'Billing cycle' }, progress: Number, periodStart: String, periodEnd: String, interval: String, now: String },
@@ -21,7 +21,9 @@ function renderBillingTimeline(props: BillingPaymentValues & { id?: string; titl
   ]);
 }
 export const PaymentTimeline = defineComponent({ name: 'PaymentTimeline', props: { ...paymentProps, paymentMethod: String }, setup: (props) => () => renderBillingTimeline(props, 'PaymentTimeline', true) });
-export const PaymentEventTimeline = defineComponent({ name: 'PaymentEventTimeline', props: paymentProps, setup: (props) => () => renderBillingTimeline(props, 'PaymentEventTimeline', false) });
+export const PaymentEventTimeline = defineComponent({ name: 'PaymentEventTimeline', props: { ...paymentProps, event: Object as PropType<CollectionEvent> }, setup: (props) => () => props.event
+  ? h('section', { id: props.id, 'data-oods-component': 'PaymentEventTimeline', 'aria-label': 'Payment event' }, [h('strong', props.event.title), h('time', { datetime: props.event.at }, formatDateTime(props.event.at)), h('p', props.event.description)])
+  : renderBillingTimeline(props, 'PaymentEventTimeline', false) });
 
 export const BillingCardMeta = defineComponent({
   name: 'BillingCardMeta', props: { id: String, amount: Number, currency: String, minorUnits: Number, interval: String },

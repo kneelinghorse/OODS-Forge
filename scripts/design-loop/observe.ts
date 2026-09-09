@@ -49,7 +49,7 @@ export async function observeView(page: Page, width: number, output: string) {
     });
     const regions = all.filter(element => element.hasAttribute('data-oods-component') || /(?:toolbar|items|pagination|entry)-?\d*$/.test(element.id))
       .map(element => ({ id: element.id, component: element.getAttribute('data-oods-component') ?? element.tagName.toLowerCase(), text: (element as HTMLElement).innerText?.trim() ?? '' }));
-    return { measurements: { viewportWidth: innerWidth, documentWidth: document.documentElement.scrollWidth, elementCount: all.length, overflow, glyphWraps }, values, regions };
+    return { visibleText: document.body.innerText.trim(), measurements: { viewportWidth: innerWidth, documentWidth: document.documentElement.scrollWidth, elementCount: all.length, overflow, glyphWraps }, values, regions };
   });
   const screenshot = `${width}.png`, dump = `${width}.a11y.txt`;
   await fs.writeFile(path.join(output, dump), accessibility + '\n');

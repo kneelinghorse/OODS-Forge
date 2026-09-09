@@ -1,3 +1,4 @@
+import { preflightCollections } from '../codegen/collection-emitter.js';
 import { loadComponentRegistry, validateSchema } from './repl.utils.js';
 import { emit as emitHtml } from '../codegen/html-emitter.js';
 import { emit as emitReact } from '../codegen/react-emitter.js';
@@ -210,6 +211,7 @@ export async function handle(
   );
   const earlyContractIssues = [
     ...registryIssues,
+    ...preflightCollections(schema.screens, schema.objectSchema),
     ...stateContractIssues,
     ...readinessErrors,
   ];

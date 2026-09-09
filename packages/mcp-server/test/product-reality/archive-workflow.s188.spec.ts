@@ -18,7 +18,7 @@ describe('generated archive-view integration', () => {
     const fixture = structuredClone(prior);
     const current = await compose({ object: 'Subscription', context: 'workflow' });
     fixture.screens[0] = current.schema.screens[0];
-    const visit = (node: UiElement) => { if (node.component === 'ArchivedRowOverlay') node.props!.tabLabel = 'Past subscriptions'; node.children?.forEach(visit); };
+    const visit = (node: UiElement) => { if (node.component === 'ArchivedRowOverlay') node.props!.tabLabel = 'Past subscriptions'; if (node.collectionControl === 'archive') (node.props!.items as Array<{ id: string; label: string }>).find(item => item.id === 'archived')!.label = 'Past subscriptions'; node.children?.forEach(visit); };
     visit(fixture.screens[0]);
     const generated = await generate({ schema: fixture, framework, profile: 'build' });
     expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
@@ -26,8 +26,10 @@ describe('generated archive-view integration', () => {
     const controller = files.find((file) => file.path === 'src/application.ts')!.contents;
     expect(controller).toContain('"tabLabel":"Past subscriptions"');
     const app = files.find((file) => file.path === (framework === 'react' ? 'src/App.tsx' : 'src/App.vue'))!.contents;
-    expect(app).toContain('<Tabs '); expect(app).toContain('<ArchivedRowOverlay ');
-    expect(app).toContain('archivePresentation.tabLabel'); expect(app).toContain('archivePresentation.archivedField');
+    expect(app).not.toContain('<Tabs '); expect(app).not.toContain('<ArchivedRowOverlay ');
+    const list = files.find(file => file.path === (framework === 'react' ? 'src/screens/List.tsx' : 'src/screens/List.vue'))!.contents;
+    expect(list).toContain('<Tabs '); expect(list).toContain('<ArchivedRowOverlay ');
+    expect(list).toContain('Past subscriptions'); expect(list).toContain('isArchived');
     const result = typecheckWorkflow(generated.artifact!);
     expect(result.status, result.stdout + result.stderr).toBe(0);
   }, 70_000);
