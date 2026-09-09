@@ -1,10 +1,12 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`
 
-**Updated:** 2026-09-09 — Sprint 189 build session `PS-2026-09-09-001`; BUILT, REVIEW PENDING
+**Updated:** 2026-09-09 — Sprint 189 review session `PS-2026-09-09-002`; independently certified and closed; criterion 8 usable certified for the Subscription app
 
 **Sprint 188:** CERTIFIED AND CLOSED. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 froze the final proof and handed off. Review `PS-2026-09-08-011` (decision `#1831`) inspected all 36 frozen-head screenshots in both frameworks: the workflow runs end to end with all four states and criterion 8 is opened; usable is not certified, and the ranked craft carries are preserved by `#1832`. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--certified-and-closed).
+
+**Sprint 189:** CERTIFIED AND CLOSED. Build base `f4cd1ba3`; Mission 1 delivered that merged head to the live bridge and sent the Sprint 188 reconnect. Missions 2–5 built the browser design loop (`scripts/design-loop`, public `design.preview`) and used it to retire all seven `#1832` carries at the producer. Mission 6 froze the final proof and handed off. Review `PS-2026-09-09-002` (decision `#1844`) inspected the 24 frozen-head receipts and 72 screenshots in both frameworks: every `#1832` item is resolved by exact receipt lines and criterion 8 is certified for the Subscription app; the residual craft list is `#1845`. See [Increment 8](#increment-8--sprint-189-browser-design-loop--certified-and-closed).
 
 **PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`. Sprint 188 merged through PR #86 (`33a20d0e`) and PR #87 (`ed0d5750`); remote CI on the frozen head `7fc3c9e0` passed all three workflows before the review.
 
@@ -274,17 +276,35 @@ remains named and unabsorbed before integrated public release. PR83 CI follow-up
 its ECharts soak skip remains disclosed.
 
 The historical Sprint 189 delivery draft was sent by Sprint 189 m01 after reviewed `f4cd1ba3` was delivered.
-The independent review must inspect the new craft screenshots, including duplicate source/application
-controls, raw timestamps and narrow summary terms, the wrapped archive badge and surplus empty cards.
-Functional build evidence does not settle whether the application is usable.
+The Sprint 189 review (`#1844`) inspected the AFTER receipts and screenshots: the duplicate source/application
+controls, raw timestamps, narrow summary terms, wrapped archive badge and surplus empty cards are gone, and the
+Subscription app is certified usable; the residual craft list is `#1845`. Sprint 190 m01 delivers that merged head.
 
 
-## Increment 8 — Sprint 189: Browser design loop — BUILT, REVIEW PENDING
+## Increment 8 — Sprint 189: Browser design loop — CERTIFIED AND CLOSED
 
-Sprint 189 remains Active under decisions #1832–#1834. Mission 1 delivered reviewed `f4cd1ba3` from the primary checkout, rebuilt and restarted PM2, verified its build-stamped revision and sent the prepared reconnect to aquex-mcp and forge-demos. All 17 served-store hashes stayed unchanged.
+Sprint 189 is **Completed**, independently certified by review `PS-2026-09-09-002` and decision `#1844`. It was built under decisions #1832–#1834. Mission 1 delivered reviewed `f4cd1ba3` from the primary checkout, rebuilt and restarted PM2, verified its build-stamped revision and sent the prepared reconnect to aquex-mcp and forge-demos. All 17 served-store hashes stayed unchanged.
 
 The build worktree now has a persistent exact-tarball React/Vue preview loop with screenshots, accessibility text, layout measurements and source hashes. Composed list and timeline contexts own their collections and controls. Forms use short labels with help, one owner per field and native Save; detail is read-only with cancellation on demand and populated, uniquely labeled tabs. Summary values, timestamps, archived badges and deterministic billing seeds are reconciled. The public `design.preview` tool uses the same loop and reports OODS-N019 when it is stopped. The served primary bridge still has the delivered Sprint 188 implementation; the Sprint 189 preview tool is proven on the worktree bridge.
 
 The final packet retains the 77-schema census with the 66/66 and 132/132 single-screen population plus Subscription/workflow 2/2. The wider generation result remains 75/77 and 150/154, with the existing User/workflow and Organization/workflow gaps disclosed. Saved-corpus results remain separate: original 15/16, successor 16/16. The final four-suite capture follows #1833; exact counts and all failures/skips belong to its raw receipts and file-attributed accounting.
 
-[The Sprint 189 handoff](../../../artifacts/product-reality/sprint-189/m06/README.md) binds the frozen implementation, execution and evidence commits, the BEFORE/AFTER browser receipts and all seven craft dispositions. The Sprint 190 reconnect is prepared and remains unsent. `builderSelfCertified:false`; `separateReviewRequired:true`. Independent review must inspect the receipts and decide usability and sprint closure. This build does not certify accessibility, theme maturity or every object/context at runtime.
+[The Sprint 189 handoff](../../../artifacts/product-reality/sprint-189/m06/README.md) binds the frozen implementation, execution and evidence commits, the BEFORE/AFTER browser receipts and all seven craft dispositions. The Sprint 190 reconnect is prepared and remains unsent. Historical builder receipts retain `builderSelfCertified:false`; they are not relabeled. This build does not certify accessibility, theme maturity or every object/context at runtime.
+
+**Review verdict (`PS-2026-09-09-002`, decision `#1844`):** all 24 receipts and 72 screenshots at 390/820/1440 in both
+frameworks were inspected against the seven-item `#1832` mapping. Every Sprint 188 defect is resolved by exact receipt
+lines: one bound search, filter, sort and paginator over nine real rows with Active/Archived tabs; a chronological
+timeline with formatted timestamps and a formatted billing header; short form labels with help text, one owner per
+field, seeded datetime and reason code, one Save; a read-only detail with cancellation on demand, populated unique
+tabs, history-bound audit entries and Yes/No summary terms; an unbroken archived badge with `1 record`; identical
+StatusTimeline text across HTML, React and Vue; mid-cycle seeds. Zero page or console errors, zero overflow, zero
+React/Vue lifecycle text differences. A person can list, search, filter, open, edit, save, cancel and read the
+timeline in both frameworks at all three widths, so criterion 8 is certified for the Subscription app. Six residual
+craft items found by the screenshot pass (Vue Search label wrap and pagination bullets at 390 px, raw event codes
+and a duplicated two-entry history on detail, a wide-badge row wrap at 1440 px, the minor-units help text beside a
+major-units amount, the Vue archived badge outside its row card) are ranked in `#1845`; none blocks usability. The
+four-suite capture followed `#1833`: the first capture failed on 26 stale schema-shape assertions, one corrective
+capture passed with zero failures and zero timeouts. The Package Compatibility CI failure on PR #90 was a
+pre-existing workflow gap (the compat runner never built `@oods/component-contracts` before Storybook and had not run
+since those imports landed); the review closure commit adds that build step to `scripts/pkg/compat.ts`, mirroring the
+a11y-contract job, with public runtime bytes unchanged.

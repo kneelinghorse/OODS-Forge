@@ -93,6 +93,18 @@ describe("Sprint 177 prose truth carriers", () => {
     expect(normalizedNear).toContain(
       "so usable is not certified. The ranked carries are decision `#1832`",
     );
+
+    // Sprint 189 closes under its independent review (PS-2026-09-09-002);
+    // criterion 8 (usable) is certified for the Subscription app; residual craft is #1845.
+    expect(near).toContain(
+      "Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`",
+    );
+    expect(normalizedNear).toContain(
+      "Sprint 189 is **Completed**, independently certified by review `PS-2026-09-09-002` and decision `#1844`.",
+    );
+    expect(normalizedNear).toContain(
+      "so criterion 8 is certified for the Subscription app",
+    );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
     );
