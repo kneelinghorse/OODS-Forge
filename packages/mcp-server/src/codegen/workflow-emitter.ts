@@ -130,6 +130,9 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
     if (state.screen !== 'form' && state.screen !== 'detail') return;
     const target = event.target;
     if (!(target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement)) return;
+    // A native select commits on change. Publishing during input can redraw its
+    // old controlled value before change reads the keyboard selection in Vue.
+    if (target instanceof HTMLSelectElement && event.type === 'input') return;
     let field = target.name;
     if (target.closest('[data-oods-component="CancellationForm"]')) field = ({ reason: 'cancellation_reason', reasonCode: 'cancellation_reason_code' } as Record<string, string>)[field] ?? field;
     let element: HTMLElement | null = target;
