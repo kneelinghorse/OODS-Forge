@@ -18,6 +18,8 @@ const nodes = (schema: UiSchema) => {
 };
 const baseline = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-188/m05/baseline-schemas.json', import.meta.url), 'utf8')) as { head: string; workflow: UiSchema; rows: Array<{ object: string; context: 'list' | 'detail' | 'form' | 'timeline' | 'card' | 'inline'; schema: UiSchema }> };
 
+const historical = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-188/m05/resolved-schemas.json', import.meta.url), 'utf8')) as typeof baseline;
+
 // These are the complete authorized changes from the M04 schema, including allocator shifts.
 function expectedSchema(row: typeof baseline.rows[number], prefix = ''): UiSchema {
   const schema = structuredClone(row.schema);
@@ -57,14 +59,17 @@ describe('Sprint 188 remaining trait placement obligations', () => {
       expect(result.status).toBe('ok'); expect(nodes(result.schema).filter((node) => families.includes(node.component))).toEqual([]);
     }
   });
-  it('preserves the entire generic pattern-grouped slot exactly as at the M04 head', async () => {
+  it('retains historical grouped-slot bytes and current status fields after detail reconciliation', async () => {
     const original = baseline.rows.find((row) => row.object === 'Article' && row.context === 'detail')!;
     const expected = nodes(original.schema).find((node) => node.meta?.notes === 'pattern-group:status-timeline')!;
     expect(expected.component).toBe('Stack');
     expect(expected.props).toEqual({ patternComponent: 'StatusTimeline', fields: ['status', 'allowed_transitions'] });
     expect(expected.children?.map((node) => node.props?.field)).toEqual(['status', 'allowed_transitions']);
     const current = await compose({ object: 'Article', context: 'detail' });
-    expect(nodes(current.schema).find((node) => node.id === expected.id)).toEqual(expected);
+    expect(nodes(historical.rows.find(row => row.object === 'Article' && row.context === 'detail')!.schema).find(node => node.id === expected.id)).toEqual(expected);
+    const group = nodes(current.schema).find(node => node.meta?.notes === 'pattern-group:status-timeline')!;
+    expect(group).toMatchObject({ component: 'Stack', props: { patternComponent: 'StatusTimeline', fields: ['status', 'allowed_transitions'] } });
+    expect(group.children?.map(node => node.props?.field)).toEqual(['status', 'allowed_transitions']);
   });
   it('leaves an unroutable generic main extension unplaced, with the existing warning and no timeline fallback', async () => {
     const catalog = await loadCatalog();
@@ -74,18 +79,21 @@ describe('Sprint 188 remaining trait placement obligations', () => {
     expect(withGeneric.placements).toEqual(without.placements);
     expect(withGeneric.warnings).toEqual(['No matching slot for position "main" from test/Generic/Text.', ...without.warnings]);
   });
-  it('allows only the enumerated trait placements across all 66 schemas, 132 artifacts and the workflow', async () => {
+  it('preserves the historical placement diff and current declared recipes across 66 schemas, 132 artifacts and workflow', async () => {
     const placements: Array<{ object: string; context: string; trait: string; component: string; nodeId: string; parameters: Record<string, unknown>; props: UiElement['props'] }> = [];
     let unchanged = 0;
     expect(baseline.head).toBe('8561d83c');
     for (const row of baseline.rows) {
       const current = await compose({ object: row.object, context: row.context });
-      expect(current.schema, `${row.object}/${row.context} unauthorized change`).toEqual(expectedSchema(row));
-      if (JSON.stringify(current.schema) === JSON.stringify(row.schema)) unchanged++;
+      const retained = historical.rows.find(candidate => candidate.object === row.object && candidate.context === row.context)!;
+      expect(retained.schema, `${row.object}/${row.context} historical placement diff changed`).toEqual(expectedSchema(row));
+      expect(current.schema.objectSchema).toEqual(row.schema.objectSchema);
+      if (JSON.stringify(retained.schema) === JSON.stringify(row.schema)) unchanged++;
       const plan = collectViewExtensions(composeObject(loadObject(row.object)), row.context).plan;
       for (const node of nodes(current.schema).filter((node) => families.includes(node.component))) {
         const declaration = plan.find((entry) => entry.component === node.component)!;
-        expect(declaration).toBeDefined(); expect(node.props).toEqual(declaration.props);
+        expect(declaration).toBeDefined(); expect(node.props).toMatchObject(declaration.props);
+        expect(Object.keys(node.props ?? {}).filter(key => !Object.hasOwn(declaration.props ?? {}, key))).toEqual(node.component === 'ArchivedRowOverlay' ? ['labelField'] : []);
         placements.push({ object: row.object, context: row.context, trait: declaration.sourceTrait, component: node.component, nodeId: node.id, parameters: Object.fromEntries(Object.entries(node.props ?? {}).filter(([key]) => key.endsWith('Parameter') || key === 'minorUnits')), props: node.props });
       }
       for (const framework of ['react', 'vue'] as const) {
@@ -97,7 +105,8 @@ describe('Sprint 188 remaining trait placement obligations', () => {
     let expected = baseline.workflow;
     for (const context of ['list', 'detail', 'timeline'] as const) expected = expectedSchema({ object: 'Subscription', context, schema: expected }, `${context}-`);
     const workflow = await compose({ object: 'Subscription', context: 'workflow' });
-    expect(workflow.schema).toEqual(expected);
+    expect(historical.workflow).toEqual(expected);
+    expect(nodes(workflow.schema).filter(node => families.includes(node.component)).map(node => node.component).sort()).toEqual(['ArchivedRowOverlay', 'CycleProgressCard', 'PaymentEventTimeline', 'PaymentTimeline']);
     for (const framework of ['react', 'vue'] as const) {
       const generated = await generate({ schema: workflow.schema, framework, profile: 'build' });
       expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');

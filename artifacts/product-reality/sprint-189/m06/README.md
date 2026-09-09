@@ -23,3 +23,7 @@ The literal prose contract selection passes 47/47 across 12 files. The broader p
 The first `browser-receipts` command rendered the list successfully, then failed because the old direct baseline folder is `standalone-list`, not `list`. Its log and receipt remain under `commands/`; the corrected `browser-receipts-final` resumes the existing unchanged output and passes. Its helper input hash discloses the local path-only correction at the actual implementation execution head. No four-suite capture was used for this correction.
 
 PR #90 targets OODS-pro. `ci/observed.json` retains the actual `gh pr view` and `gh run list` observation, including run IDs and statuses at observation time. Remote results are updated in separately retained CI observations. No reconnect has been sent in m06. The sprint-wide mover declaration contains 10 canonical and 60 public paths from f4cd1ba3 to the frozen implementation; the Sprint 190 draft lists them all.
+
+## Corrective freeze
+
+The initial full capture failed with 15 MCP and 11 root assertion failures; its raw reports remain under `four-suite-closeout-attempt-1`. See [correction/README.md](correction/README.md) for each class of correction and the TS6133 fix. Final closeout will bind `corrective-proof/`, `before-after/corrective-mapping.json`, and the second full capture, while retaining the first freeze and all its receipts. No independent-review verdict or Sprint closure is implied.

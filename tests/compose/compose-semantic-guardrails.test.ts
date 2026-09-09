@@ -35,7 +35,7 @@ describe('design.compose semantic guardrails', () => {
     expect(fieldSelections).toContain('Select');
   });
 
-  it('preserves explicit Product list bindings instead of rebinding to weaker fields', async () => {
+  it('separates Product collection query controls from record fields', async () => {
     const result = await composeHandle({
       object: 'Product',
       context: 'list',
@@ -49,10 +49,12 @@ describe('design.compose semantic guardrails', () => {
     const timestamp = collectComponents(result.schema, 'RelativeTimestamp')[0];
     const toolbarButton = collectComponents(result.schema, 'Button')[0];
 
-    expect(searchInput?.props?.field).toBe('searchQuery');
+    expect(searchInput?.collectionControl).toBe('search');
+    expect(searchInput?.props?.field).toBeUndefined();
     expect(labelCell?.props?.field).toBe('label');
     expect(timestamp?.props?.field).toBe('updated_at');
-    expect(toolbarButton?.props?.field).toBeUndefined();
+    expect(toolbarButton?.collectionControl).toBe('open');
+    expect(toolbarButton?.props?.field).toBe('product_id');
   });
 
   it('blocks non-status fallback bindings in expanded User detail tabs', async () => {

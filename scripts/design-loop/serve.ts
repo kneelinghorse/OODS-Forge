@@ -11,7 +11,7 @@ import { handle as generate } from '../../packages/mcp-server/src/tools/code.gen
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import { packFoundationPackages } from '../product-reality/s182-m04-consumer-harness.mjs';
 import { prepareManifest, commandResult, requireGreen, isolatedNpmEnvironment, assertInstalledIsolation, resolveImports, launchProofBrowser, type PackedPackageRecord } from '../product-reality/s184-m06-live-consumers.js';
-import { DEFAULT_PORT, DEFAULT_STATE, digest, outputDirectory, relativeFile, validateReceipt, writeJson, type CaptureRequest, type Framework } from './common.js';
+import { DEFAULT_PORT, DEFAULT_STATE, outputDirectory, relativeFile, validateReceipt, writeJson, type CaptureRequest, type Framework } from './common.js';
 import { applySteps, observeView } from './observe.js';
 
 interface LoopVite {

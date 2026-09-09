@@ -307,14 +307,14 @@ describe('design.compose — context bindings', () => {
     expect(rootBindings!.onFilter).toBe('handleFilter');
   });
 
-  it('form context adds onSubmit and onChange', async () => {
+  it('form submit belongs to Save while fields own their edits', async () => {
     const result = await handle({
       object: 'Subscription',
       context: 'form',
     });
     const rootBindings = result.schema.screens[0].bindings;
     expect(rootBindings!.onSubmit).toBe('handleSubmit');
-    expect(rootBindings!.onChange).toBe('handleChange');
+    expect(rootBindings!.onChange).toBeUndefined();
   });
 
   it('intent-only path has no bindings (backward compatible)', async () => {

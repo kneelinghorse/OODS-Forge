@@ -404,6 +404,15 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     role: 'Retained initial capture only. These executions are neither final closeout comparisons nor historical failure candidates.',
     ...loadCapture(attempt.path, `closeout-attempt-${index + 1}`, attempt.originalReferenceRoot) };
   });
+  if (sprintId === 'sprint-189') {
+    assert(closeout.runs.length === 1 && closeoutAttempts.length <= 1, 'Decision 1833 allows one capture and at most one corrective capture.');
+    for (const [index, attempt] of closeoutAttempts.entries()) {
+      const failures = observedFailures.filter(row => row.cohort === `closeout-attempt-${index + 1}`);
+      assert.equal(attempt.runs.length, 1); assert.equal(attempt.suiteSelection, 'all');
+      assert(failures.some(row => row.messages.some(message => message.includes('AssertionError'))), 'This corrective capture must retain its triggering assertion failure.');
+      assert(changedPaths(attempt.measuredHead, executionHead).some(row => /\.[cm]?[jt]sx?$/.test(row.path) && !row.path.startsWith('artifacts/')), 'A corrective capture requires a code fix after the failed attempt.');
+    }
+  }
   assertUniqueExecutions(executions);
   const historicalFailures = observedFailures.filter(row => Object.hasOwn(baselinePaths, row.cohort));
   const closeoutFailures = observedFailures.filter(row => row.cohort === 'closeout').map(failure => {

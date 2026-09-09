@@ -53,7 +53,8 @@ describe('Sprint 187 fresh composition binding intent', () => {
     const nodes = schemaNodes(schema);
     if (context === 'list') {
       expect(nodes.find((node) => node.component === 'LabelCell')?.props).toMatchObject({ field: 'label', descriptionField: 'description' });
-      expect(nodes.find((node) => node.component === 'FilterPanel')?.props?.maxActiveParameter).toBe('maxActiveFilters');
+      expect(nodes.find(node => node.collectionControl === 'filter')).toMatchObject({ component: 'Select', props: { label: 'Status' } });
+      expect(nodes.find(node => node.collection?.source === 'rows')?.collection?.keyField).toBe('product_id');
     } else if (context === 'form') {
       const editor = nodes.find((node) => node.component === 'ClassificationEditor')!;
       expect(editor.props?.field).toBe('description');
@@ -67,7 +68,7 @@ describe('Sprint 187 fresh composition binding intent', () => {
       expect(generated.status, JSON.stringify(generated.errors)).toBe('ok');
       if (context === 'form') {
         expect(generated.code).toMatch(/description=\{description\}|:description="description"/);
-        if (framework === 'react') expect(generated.code).toContain('React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>');
+        expect(schema.screens[0].bindings?.onChange).toBeUndefined(); // Native field events must not also dispatch a root-level change.
       }
     }
   });
@@ -99,7 +100,7 @@ describe('Sprint 187 fresh composition binding intent', () => {
       const form = nodes.find((node) => node.component === 'CancellationForm')!;
       expect(form.props).toMatchObject({ reasonField: 'cancellation_reason', codeField: 'cancellation_reason_code', allowedReasonsParameter: 'allowedReasons' });
       expect(form.bindings).toBeUndefined();
-      expect(deriveConsumerModel(schema).cancellationReasonCode).toBe('budget');
+      expect(deriveConsumerModel(schema).cancellationReasonCode).toBe('Consumer cancellation reason code');
     }
     if (context === 'card') {
       for (const component of ['ArchivePill', 'CancellationBadge']) {
@@ -163,7 +164,7 @@ describe('Sprint 187 fresh composition binding intent', () => {
     expect(schema.screens[2]).toMatchObject({ component: 'Select', props: { options: [{ value: 'active', label: 'active' }, { value: 'ended', label: 'ended' }] } });
   });
 
-  it.each(['react', 'vue'] as const)('renders real typed zero/nonzero and false/true in generated %s', async (framework) => {
+  it.each(['react', 'vue'] as const)('renders typed values and explicit empty/nonempty collections in generated %s', async (framework) => {
     for (const [object, context] of [...operands.slice(4), ['Subscription', 'card'] as const, ['Subscription', 'detail'] as const]) {
       const schema = (await compose({ object, context })).schema!;
       const result = await generate({ schema, framework, profile: 'build', options: { typescript: true, styling: 'tokens' } });
@@ -191,6 +192,11 @@ describe('Sprint 187 fresh composition binding intent', () => {
         }
         if (context === 'card') { models[1]!.isArchived = true; models[1]!.cancelAtPeriodEnd = true; }
         if (context === 'detail') models.push({ ...deriveConsumerModel(schema), archivedAt: null });
+        const collection = schemaNodes(schema).find(node => node.collection)?.collection;
+        if (collection) {
+          models[0][collection.source] = [];
+          models[1][collection.source] = collection.source === 'rows' ? [{ ...models[1] }] : [{ id: 'consumer-event', title: 'Consumer lifecycle event', at: '2026-09-08T12:00:00Z' }];
+        }
         const expectedModels = [...models];
         if (framework === 'vue' && result.code!.includes('const generatedProps = defineProps<Props>();')) {
           models.push({});
@@ -202,7 +208,8 @@ const { JSDOM } = require('jsdom');
 const generated = require('./GeneratedUI.cjs');
 const framework = ${JSON.stringify(framework)};
 const models = ${JSON.stringify(models)};
-const probes = ${JSON.stringify(expectedModels.map((model) => deriveValueProbes(schema, model)))};
+const probes = ${JSON.stringify(expectedModels.map((model) => collection ? [] : deriveValueProbes(schema, model)))};
+const collection = ${JSON.stringify(collection ?? null)};
 const actionNames = ${JSON.stringify(result.artifact!.actions.map(({ name }) => name))};
 (async () => {
   for (let i = 0; i < models.length; i++) {
@@ -212,7 +219,14 @@ const actionNames = ${JSON.stringify(result.artifact!.actions.map(({ name }) => 
       : await require('@vue/server-renderer').renderToString(require('vue').createSSRApp(generated.default, props));
     const document = JSDOM.fragment(html);
     if (models[i].archivedAt === null) assert.ok(![...document.querySelectorAll('[data-oods-component=ArchiveSummary] dt')].some(node => node.textContent === 'Archived At'), 'null archive timestamp must omit its date term');
-    assert.ok(probes[i].length, 'a typed value must actually be exercised');
+    if (collection) {
+      const items = models[i][collection.source] || [];
+      const region = document.querySelector('[data-oods-collection=' + JSON.stringify(collection.source) + ']');
+      assert.ok(region, 'the declared collection must render');
+      assert.equal(region.querySelectorAll('ol > li').length, items.length, 'empty and populated operands must drive the real collection');
+      if (items.length) assert.ok(region.textContent.includes(collection.source === 'events' ? 'Consumer lifecycle event' : String(items[0][collection.keyField.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())])), 'the row or event operand must supply the visible label');
+      else assert.match(region.textContent, /No records found|No events yet/);
+    } else assert.ok(probes[i].length, 'a typed value must actually be exercised');
     for (const probe of probes[i]) {
       const node = document.querySelector('[id=' + JSON.stringify(probe.nodeId) + ']');
       assert.ok(node, probe.nodeId);

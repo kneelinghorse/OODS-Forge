@@ -67,7 +67,7 @@ describe('Sprint 187 built package export cells', () => {
       expect(root.textContent).toBe('false');
       expect(root.getAttribute('data-badge-status')).toBe('false');
     } else if (component === 'ArchiveSummary') {
-      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['No', 'Sep 5, 2026, 12:00 PM', 'Retention policy']);
     } else if (component === 'CancellationForm') {
       expect(root.querySelector('option[selected]')?.textContent).toBe('budget');
       expect(root.querySelector('textarea')?.textContent).toBe('Costs changed');

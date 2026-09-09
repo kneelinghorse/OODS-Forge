@@ -302,6 +302,17 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
     assert.equal(actual.cleanBefore, receipt.cleanBefore.clean); assert.equal(actual.cleanAfter, receipt.cleanAfter.clean);
     assert.deepEqual(actual.counts, receipt.vitest.tests, 'Suite counts differ from the retained actual receipt.');
   }
+  if (browser) {
+    assert(accounting.closeoutAttempts.length <= 1, 'Decision 1833 capture budget exceeded.');
+    for (const attempt of accounting.closeoutAttempts) {
+      assert.equal(attempt.runs.length, 1); assert.equal(attempt.suiteSelection, 'all');
+      const rows = attempt.runs[0].suiteExecutionIds.map(id => executions.get(id));
+      assert.equal(rows.length, 4); assert(rows.every(row => row.measuredHead === attempt.measuredHead));
+      const failures = rows.flatMap(row => row.observedFailures);
+      assert(failures.some(row => row.messages.some(message => message.includes('AssertionError'))));
+      assert(failures.some(row => digest(readHistorical(attempt.measuredHead, row.file)) !== digest(readHistorical(executionHead, row.file))), 'The failed test source must be reconciled before the corrective capture.');
+    }
+  }
   const supplementalLogs = new Set();
   for (const actual of manifest.executions) {
     assert(!actualIds.has(actual.id)); actualIds.add(actual.id);

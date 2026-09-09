@@ -1,4 +1,4 @@
-import { BILLING_INTERVALS, billingSummary } from '@oods/component-contracts';
+import { BILLING_INTERVALS, billingSummary, summaryValue, formatDateTime } from '@oods/component-contracts';
 import { createRequire } from 'node:module';
 import type { GeneratedArtifactAction } from '../../packages/mcp-server/src/codegen/types.js';
 import type { UiElement, UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
@@ -78,12 +78,12 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
     if (node.component === 'ArchiveSummary') return ['archivedField', 'archivedAtField', 'reasonField']
       .filter((key) => typeof node.props?.[key] === 'string' && model[camel(node.props[key] as string)] != null)
       .flatMap((key, index) =>
-      textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`));
+      textProbe(node.props?.[key], `dl > [data-summary-item]:nth-child(${index + 1}) > dd`).map(probe => ({ ...probe, expected: key === 'archivedAtField' ? formatDateTime(String(model[camel(probe.field)])) : summaryValue(model[camel(probe.field)]) ?? '' })));
     if (node.component === 'PriceCardMeta') return textProbe(node.props?.intervalField, '[data-meta-item]:last-child')
       .map((probe) => ({ ...probe, expected: `Interval: ${probe.expected}` }));
     if (node.component === 'CancellationForm') return [
       ...textProbe(node.props?.reasonField, 'textarea[name="reason"]'),
-      ...textProbe(node.props?.codeField, 'select[name="reasonCode"]'),
+      ...textProbe(node.props?.codeField, '[name="reasonCode"]'),
     ].map((probe) => ({ ...probe, kind: 'native-value' }));
     if (node.component === 'OwnerBadge') return textProbe(node.props?.ownerIdField ?? node.props?.ownerTypeField, '[data-oods-badge-label]');
     if (node.component === 'OwnershipSummary') return ['ownerIdField', 'ownerTypeField', 'roleField'].flatMap((key, index) =>

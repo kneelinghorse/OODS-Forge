@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
 import { composeObject } from '../../src/objects/trait-composer.js';
@@ -9,21 +9,10 @@ import { isTraitRecipe, resolveTraitRecipeProps } from '../../src/compose/trait-
 import type { UiElement, UiSchema } from '../../src/schemas/generated.js';
 
 const families = ['BillingSummaryBadge', 'BillingAmountInput', 'BillingIntervalSelector'];
-// Keep this mission's measured catalog fixed when Mission 5 extends the declaration.
-vi.mock('../../src/render/component-map.js', async (importOriginal) => {
-  const original = await importOriginal<typeof import('../../src/render/component-map.js')>();
-  const { isTraitRecipe } = await import('../../src/compose/trait-recipes.js');
-  return { ...original, hasMappedRenderer: (name: string) => (!isTraitRecipe(name) || ['BillingSummaryBadge', 'BillingAmountInput', 'BillingIntervalSelector'].includes(name)) && original.hasMappedRenderer(name) };
-});
-
-// Future recipe parameter resolutions are outside this historical M04 cohort too.
-vi.mock('../../src/compose/trait-recipes.js', async (importOriginal) => {
-  const original = await importOriginal<typeof import('../../src/compose/trait-recipes.js')>();
-  return { ...original, resolveTraitRecipeProps: (trait: Parameters<typeof original.resolveTraitRecipeProps>[0], extension: Parameters<typeof original.resolveTraitRecipeProps>[1]) => ['BillingSummaryBadge', 'BillingAmountInput', 'BillingIntervalSelector'].includes(extension.component) ? original.resolveTraitRecipeProps(trait, extension) : { ...extension.props } };
-});
-
+// Historical whole-schema promises bind historical receipts; current recipes are checked below.
 type Context = 'list' | 'detail' | 'form' | 'timeline' | 'card' | 'inline';
 const baseline = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-188/m04/baseline-schemas.json', import.meta.url), 'utf8')) as { head: string; rows: Array<{ object: string; context: Context; schema: UiSchema }> };
+const historical = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-188/m04/resolved-schemas.json', import.meta.url), 'utf8')) as typeof baseline;
 function nodes(schema: UiSchema): UiElement[] {
   const result: UiElement[] = [];
   const visit = (node: UiElement) => { result.push(node); node.children?.forEach(visit); };
@@ -86,7 +75,7 @@ describe('Decision 1822 bounded recipe composition', () => {
     }
   });
 
-  it('allows only enumerated trait placements and resolved parameters across the 66 schemas and 132 artifacts', async () => {
+  it('preserves the historical exact diff and current declared recipes across 66 schemas and 132 artifacts', async () => {
     expect(baseline.head).toBe('569f5a5f');
     expect(baseline.rows).toHaveLength(66);
     const placements = [];
@@ -94,14 +83,23 @@ describe('Decision 1822 bounded recipe composition', () => {
     for (const row of baseline.rows) {
       const result = await compose({ object: row.object, context: row.context });
       expect(result.status).toBe('ok');
-      expect(result.schema, `${row.object}/${row.context} has an unauthorized difference`).toEqual(expectedSchema(row));
-      if (JSON.stringify(result.schema) === JSON.stringify(row.schema)) unchanged++;
+      const retained = historical.rows.find(candidate => candidate.object === row.object && candidate.context === row.context)!;
+      expect(retained.schema, `${row.object}/${row.context} historical recipe diff changed`).toEqual(expectedSchema(row));
+      expect(result.schema.objectSchema).toEqual(row.schema.objectSchema);
+      if (JSON.stringify(retained.schema) === JSON.stringify(row.schema)) unchanged++;
       const composed = composeObject(loadObject(row.object));
       const plan = collectViewExtensions(composed, row.context).plan;
       for (const node of nodes(result.schema).filter((node) => families.includes(node.component))) {
         const declaration = plan.find((entry) => entry.component === node.component)!;
-        expect(declaration).toBeDefined();
-        expect(node.props).toEqual(declaration.props);
+        if (!declaration) {
+          // Decision 1832 adds an explicit monetary header to timeline collections.
+          expect(row.context).toBe('timeline'); expect(node.component).toBe('BillingSummaryBadge');
+          expect(node.props).toEqual({ amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnits: 100 });
+          continue;
+        }
+        expect(node.props).toMatchObject(declaration.props);
+        expect(Object.keys(node.props ?? {}).filter(key => !Object.hasOwn(declaration.props ?? {}, key))).toEqual(row.context === 'form' ? ['help'] : []);
+        if (row.context === 'form') expect(node.props?.help).toBe(row.schema.objectSchema?.[String(node.props?.amountField ?? node.props?.intervalField)]?.description);
         placements.push({ object: row.object, context: row.context, trait: declaration.sourceTrait, component: node.component, nodeId: node.id, parameters: Object.fromEntries(Object.entries(node.props ?? {}).filter(([key]) => key.endsWith('Parameter') || key === 'minorUnits' || key === 'intervals')) });
       }
       for (const framework of ['react', 'vue'] as const) {
@@ -114,7 +112,9 @@ describe('Decision 1822 bounded recipe composition', () => {
     const originalWorkflow = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-188/m03/final-verified/composition.json', import.meta.url), 'utf8')).schema as UiSchema;
     const withList = expectedSchema({ object: 'Subscription', context: 'list', schema: originalWorkflow }, 'list-');
     const expectedWorkflow = expectedSchema({ object: 'Subscription', context: 'form', schema: withList }, 'form-');
-    expect(workflow.schema, 'workflow differs only by the same trait-declared source placements').toEqual(expectedWorkflow);
+    const retainedWorkflow = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-188/m04/resolved-app-consumers-final/composition.json', import.meta.url), 'utf8')).schema;
+    expect(retainedWorkflow, 'historical workflow differs only by its declared source placements').toEqual(expectedWorkflow);
+    expect(nodes(workflow.schema).filter(node => families.includes(node.component)).map(node => node.component).sort()).toEqual([...families, 'BillingSummaryBadge'].sort());
     for (const framework of ['react', 'vue'] as const) {
       const result = await generate({ schema: workflow.schema, framework, profile: 'build' });
       expect(result.status, JSON.stringify(result.errors)).toBe('ok');
