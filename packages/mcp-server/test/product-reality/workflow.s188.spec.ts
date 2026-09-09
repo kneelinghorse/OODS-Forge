@@ -1,3 +1,8 @@
+import { vi } from 'vitest';
+
+// Decision #1833: git-range/census work has an explicit serial execution budget.
+vi.setConfig({ testTimeout: 60_000 });
+
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
