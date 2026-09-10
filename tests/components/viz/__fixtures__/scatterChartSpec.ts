@@ -1,4 +1,4 @@
-import type { NormalizedVizSpec } from '../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { mergeSpec } from './mergeSpec.js';
 
 const BASE_SCATTER_SPEC: NormalizedVizSpec = {

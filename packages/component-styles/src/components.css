@@ -1132,6 +1132,8 @@
 /* Billable list/form surfaces share the trait's semantic token roles. */
 [data-oods-component='BillingSummaryBadge'] {
   display: inline-block;
+  flex-shrink: 0;
+  white-space: nowrap;
   color: var(--cmp-billing-amount-text, var(--sys-text-strong));
   font-variant-numeric: tabular-nums;
 }
@@ -1207,6 +1209,15 @@
   opacity: var(--status-archive-overlay-opacity, 0.6);
 }
 [data-oods-component='ArchivedRowOverlay'] > .oods-collection-row { flex: 1; min-width: 0; }
+/* The archived card owns both the interactive row and its status badge. */
+[data-oods-component='ArchivedRowOverlay'][data-archived='true']:has(> .oods-collection-row) {
+  box-sizing: border-box;
+  border: 1px solid var(--sys-border-strong, CanvasText);
+  border-radius: var(--cmp-button-radius, 0.5rem);
+  background: var(--sys-surface-raised, Canvas);
+  padding-inline-end: var(--space-4, 1rem);
+}
+[data-oods-component='ArchivedRowOverlay'][data-archived='true'] > .oods-collection-row { border: 0; background: transparent; }
 .oods-archive-badge {
   display: inline-block;
   white-space: nowrap;
@@ -1232,7 +1243,7 @@
 /* Generated collection screens share one row/event presentation in both frameworks. */
 .oods-collection { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 8px; }
 .oods-collection-row { width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
-.oods-collection-row > :first-child { min-width: 50%; flex: 1 1 140px; font-weight: 600; }
+.oods-collection-row > :first-child { min-width: 0; flex: 1 1 140px; font-weight: 600; }
 .oods-collection-row [data-oods-component="StatusBadge"] { max-width: 100%; text-transform: none; }
 [data-oods-collection="events"] time { display: block; margin-top: 8px; font-size: 13px; }
 .oods-pagination-bar__pages { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }

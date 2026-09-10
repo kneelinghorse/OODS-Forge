@@ -24,12 +24,14 @@ interface Consumer { framework: Framework; root: string; port: number; vite: Loo
 export function consumerEntries(framework: Framework, request: CaptureRequest): Record<string, string> {
   const files = Object.fromEntries(request.artifact.files.map(file => [file.path, file.contents]));
   if (files['package.json']) return files; // Workflow carries its own untouched mount and wiring.
+  const theme = request.theme ?? 'light', brand = request.brand ?? 'A';
+  assert(['light', 'dark'].includes(theme) && ['A', 'B'].includes(brand), 'Unsupported theme or brand.');
   const page = request.artifact.files[0]!.path;
   const model = JSON.stringify(request.model);
   // Standalone pages require action operands. Observe calls without inventing workflow state.
   const actions = `{${request.artifact.actions.map(action => `${JSON.stringify(action.name)}: (...args: unknown[]) => window.dispatchEvent(new CustomEvent('oods-design-loop-action', { detail: { name: ${JSON.stringify(action.name)}, args } }))`).join(',')}}`;
   return { ...files,
-    'index.html': '<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div id="app"></div><script type="module" src="/src/main.' + (framework === 'react' ? 'tsx' : 'ts') + '"></script></body></html>',
+    'index.html': '<!doctype html><html lang="en" data-theme="' + theme + '" data-brand="' + brand + '"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body data-theme="' + theme + '" data-brand="' + brand + '" style="color-scheme:' + theme + ';margin:0;background:var(--sys-surface-canvas);color:var(--sys-text-primary)"><div id="app"></div><script type="module" src="/src/main.' + (framework === 'react' ? 'tsx' : 'ts') + '"></script></body></html>',
     [framework === 'react' ? 'src/main.tsx' : 'src/main.ts']: framework === 'react'
       ? `import React from 'react';\nimport { createRoot } from 'react-dom/client';\nimport { GeneratedUI as Page } from './${path.basename(page)}';\nconst actions = ${actions};\ncreateRoot(document.getElementById('app')!).render(<Page {...${model}} actions={actions} />);\n`
       : `import { createApp } from 'vue';\nimport Page from './${path.basename(page)}';\nconst actions = ${actions};\ncreateApp(Page, { ...${model}, actions }).mount('#app');\n`,
@@ -70,7 +72,7 @@ async function capture(consumer: Consumer, browser: Browser, request: CaptureReq
     const views = [];
     for (const width of request.widths) views.push(await observeView(page, width, output));
     const receipt = {
-      version: '1.0', framework: consumer.framework, compose: request.compose,
+      version: '1.1', theme: request.theme, brand: request.brand, framework: consumer.framework, compose: request.compose,
       schemaHash: request.schemaHash, artifactContentHash: request.artifact.contentHash,
       files: request.artifact.files.map(({ path, contentHash }) => ({ path, contentHash })),
       sourceHead: request.sourceHead, model: request.model, steps: request.steps,

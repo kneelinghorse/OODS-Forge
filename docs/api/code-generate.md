@@ -21,6 +21,8 @@
 | `releaseEvidence.determinism` | _ref_ | No |  |  |
 | `releaseEvidence.performance` | _ref_ | No |  |  |
 | `options` | object | No | `{}` |  |
+| `options.theme` | `light` \| `dark` | No |  | Application and embedded chart theme. React/Vue app shells default to light and set the scope on html and body, including at mount. Unscoped HTML preserves the schema theme and existing repl.render document defaults. |
+| `options.brand` | `A` \| `B` | No |  | Token brand shared by the generated shell and embedded charts. React/Vue app shells default to A. Unscoped HTML preserves the existing document default brand; an explicit HTML theme without a brand selects A. |
 | `options.typescript` | boolean | No | `true` | When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML. |
 | `options.styling` | `inline` \| `tokens` \| `tailwind` | No | `"tokens"` | React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error. |
 
@@ -53,7 +55,7 @@
 | `OODS-V163` | Release evidence artifact hash does not match generated artifact |
 | `OODS-N003` | SchemaRef was not found |
 | `OODS-N004` | SchemaRef has expired |
-| `OODS-N013` | HTML target has no mapped renderer or generated fallback output |
+| `OODS-N013` | HTML renderer unavailable; fallback output is forbidden at build or release confidence |
 | `OODS-N015` | Component is unavailable for the requested React or Vue target |
 | `OODS-N016` | Generated artifact dependency closure is invalid |
 | `OODS-S006` | HTML rendering failed |

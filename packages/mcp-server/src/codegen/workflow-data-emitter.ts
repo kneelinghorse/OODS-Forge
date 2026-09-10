@@ -14,11 +14,13 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
       currency: 'USD',
       sampleCount: 1,
       recordedEvents: [],
+      addressRoles: [] as string[],
+      defaultAddressRole: 'primary',
       cancellationReasonCodes: [],
     },
   };
   const { idField, lifecycleStates, billingIntervals, currency, sampleCount } = workflow.data;
-  const titleField = ['plan_name', 'name', 'title', 'display_name'].find((name) => fields[name]) ?? idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? idField;
   const seedValue = (name: string, field: FieldSchemaEntry, index: number): unknown => {
     if (name === idField) return `${workflow.object.toLowerCase()}-${String(index + 1).padStart(3, '0')}`;
     if (name === titleField) return `${workflow.object} ${String(index + 1).padStart(2, '0')}`;
@@ -29,6 +31,9 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
     if (name === 'amount') return (index + 1) * 1900;
     if (name === 'is_archived') return index === sampleCount - 1;
     if (name === 'state_history') return [{ from: null, to: lifecycleStates[index % Math.max(1, lifecycleStates.length)] ?? 'created', at: '2026-01-01T00:00:00.000Z', reason: 'Sample record created' }];
+    if (field.type === 'AddressableEntry[]') return [{ role: workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary', address: { countryCode: 'US', addressLines: [`${100 + index} Main Street`], locality: 'Springfield', administrativeArea: 'IL', postalCode: '62701' }, isDefault: true, updatedAt: '2026-09-01T12:00:00.000Z' }];
+    if (schema.workflow && name === 'default_address_role') return workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary';
+    if (schema.workflow && name === 'address_roles') return [workflow.data.defaultAddressRole ?? workflow.data.addressRoles?.[0] ?? 'primary'];
     if (field.enum?.length) return field.enum[index % field.enum.length];
     if (field.type.endsWith('[]') || field.type === 'array') return [];
     if (field.type === 'object') return {};
@@ -39,9 +44,12 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
       if (name === 'archived_at') return index === sampleCount - 1 ? '2026-01-15T00:00:00.000Z' : null;
       return name.endsWith('_end') ? '2026-02-01T00:00:00.000Z' : '2026-01-01T00:00:00.000Z';
     }
+    if (field.required && field.type === 'string') return `${name.replace(/_/g, '-')} sample ${index + 1}`;
     return field.type.endsWith('?') ? null : '';
   };
   const seedAt = '2026-09-08T12:00:00.000Z';
+  const humanize = (value: string) => value.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+  const chart = chartNodes(schema.screens)[0]?.chart;
   const creationEvent = workflow.data.recordedEvents?.find(event => /creat|start/.test(event)) ?? workflow.data.recordedEvents?.[0] ?? 'created';
   const records = Array.from({ length: sampleCount }, (_, index) => {
     const record = Object.fromEntries(Object.entries(fields).map(([name, field]) => [name, seedValue(name, field, index)]));
@@ -64,7 +72,7 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
     assign('current_period_start', startAt);
     assign('current_period_end', endAt);
     assign('current_period_progress', ended ? 1 : (Date.parse(seedAt) - start.getTime()) / (end.getTime() - start.getTime()));
-    assign('state_history', [{ from: null, to: record.status ?? lifecycleStates[0] ?? 'created', at: startAt, event: creationEvent, reason: 'Sample record created' }]);
+    assign('state_history', [{ from: null, to: record.status ?? lifecycleStates[0] ?? 'created', at: startAt, event: creationEvent, title: humanize(creationEvent), reason: 'Sample record created' }]);
     assign('cancel_at_period_end', record.status === 'pending_cancellation');
     for (const name of Object.keys(fields).filter(name => name.startsWith('cancellation_'))) delete record[name];
     if (cancelling) {
@@ -73,6 +81,14 @@ export function workflowSampleRecords(schema: UiSchema): Array<Record<string, un
       assign('cancellation_requested_at', ended ? endAt : startAt);
     }
     if (record.is_archived) assign('archived_at', '2026-09-07T12:00:00.000Z');
+    if (chart) {
+      // Four recorded payments, in minor units, ending at the last payment date.
+      record.payment_history = [0.8, 1.1, 0.9, 1].map((factor, paymentIndex) => {
+        const at = new Date(String(record[chart.dateFields[0]!]));
+        at.setUTCMonth(at.getUTCMonth() - (3 - paymentIndex));
+        return { at: at.toISOString(), amount: Math.round(Number(record[chart.amountField]) * factor) };
+      });
+    }
     return record;
   });
   return records;
@@ -82,7 +98,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const workflow = schema.workflow!;
   const fields = schema.objectSchema!;
   const { idField } = workflow.data;
-  const titleField = ['plan_name', 'name', 'title', 'display_name'].find((name) => fields[name]) ?? idField;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find((name) => fields[name]) ?? idField;
   const records = workflowSampleRecords(schema);
   const nodes = (elements: UiElement[]): UiElement[] => elements.flatMap(node => [node, ...nodes(node.children ?? [])]);
   const timeline = schema.screens.find(node => node.id === workflow.screens.find(screen => screen.context === 'timeline')?.id);
@@ -103,14 +119,25 @@ ${chartNodes(schema.screens).length ? "import { chartSvgByRecord } from './chart
 
 export type DomainRecord = {
 ${types}
-};
+${chartNodes(schema.screens).length ? '  payment_history: Array<{ at: string; amount: number }>;\n' : ''}};
+${Object.values(fields).some(field => field.type === 'AddressableEntry[]') ? `
+const asRecord = (value: unknown): Record<string, unknown> => value && typeof value === 'object' ? value as Record<string, unknown> : {};
+export function collectionAddress(entries: unknown[] | undefined, role?: string) {
+  const entry = asRecord(entries?.find(value => asRecord(value).role === role) ?? entries?.[0]);
+  const address = asRecord(entry.address);
+  return { street: Array.isArray(address.addressLines) ? address.addressLines.map(String).join(', ') : '', city: String(address.locality ?? ''), region: String(address.administrativeArea ?? ''), postalCode: String(address.postalCode ?? '') };
+}
+export function collectionSummary(entries: unknown[] | undefined): string {
+  return (entries ?? []).map(entry => { const address = collectionAddress([entry]); return [asRecord(entry).role, address.street, address.city, address.region, address.postalCode].filter(Boolean).join(', '); }).join('; ');
+}
+` : ''}
 export const idField = ${JSON.stringify(idField)} as const;
 export const titleField = ${JSON.stringify(titleField)} as const;
 export const fieldTypes: Record<string, string> = ${JSON.stringify(Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, value.type])))};
 export const traits: readonly string[] = ${JSON.stringify(workflow.data.traits.map((name) => name.split('/').pop()))};
 export interface StoreOptions { empty?: boolean; fail?: boolean; latency?: number; now?: () => string; seed?: DomainRecord[] }
 export interface ListQuery { search?: string; status?: string; archived?: boolean; sort?: keyof DomainRecord; descending?: boolean; page?: number; pageSize?: number }
-export interface HistoryEntry { from: string | null; to: string; at: string; reason: string; code?: string; atPeriodEnd?: boolean }
+export interface HistoryEntry { title?: string; from: string | null; to: string; at: string; reason: string; code?: string; atPeriodEnd?: boolean }
 export function screenProps(record: DomainRecord) {
   return {
 ${camelProps}
@@ -126,7 +153,7 @@ export function collectionEvents(record: DomainRecord): CollectionEvent[] {
   const source = values[${JSON.stringify(eventCollection?.historyField ?? '')}];
   const events: CollectionEvent[] = Array.isArray(source) ? source.flatMap((entry, index) => {
     if (!entry || typeof entry !== 'object' || typeof entry.at !== 'string' || typeof entry.to !== 'string') return [];
-    return [{ id: 'state-' + index, title: entry.to.replaceAll('_', ' '), at: entry.at, description: String(entry.reason ?? ''), kind: 'state' as const }];
+    return [{ id: 'state-' + index, title: entry.title ?? entry.to.split(/[_-]/).filter(Boolean).map((part: string) => part.charAt(0).toUpperCase() + part.slice(1)).join(' '), at: entry.at, description: String(entry.reason ?? ''), kind: 'state' as const }];
   }) : [];
   for (const source of ${JSON.stringify(paymentSources)} as Array<{ field: string; title: string }>) {
     const at = values[source.field];
@@ -189,7 +216,7 @@ export function createStore(options: StoreOptions = {}) {
       ${workflow.data.cancellationRequiresReason ? `if (!reason.trim()) throw new Error('Enter a cancellation reason');
       if (!code || (${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])}.length > 0 && !(${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])} as readonly string[]).includes(code))) throw new Error('Choose an allowed cancellation reason code');` : ''}
       const at = now();
-      const entry: HistoryEntry = { from: String(values.status), to: 'pending_cancellation', at, reason: reason.trim(), code, atPeriodEnd };
+      const entry: HistoryEntry = { title: 'Pending Cancellation', from: String(values.status), to: 'pending_cancellation', at, reason: reason.trim(), code, atPeriodEnd };
       Object.assign(record, { status: 'pending_cancellation', cancellation_reason: reason.trim(), cancellation_reason_code: code, cancel_at_period_end: atPeriodEnd, cancellation_requested_at: at, state_history: [...history(record), entry], updated_at: at });
       return save(record);
     },

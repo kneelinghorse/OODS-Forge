@@ -1,0 +1,59 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/mcp-server
+
+ ❯ test/contracts/dtcg-intake.s180.spec.ts (21 tests | 1 failed | 20 skipped) 45ms
+   ↓ s180 m03 DTCG intake fixture provenance > pins the delivered envelope, consumer revision, and all four vendored document byte identities
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > pins the 61-entry token guardrail baseline and excludes the 27-entry explorer literal-colour baseline
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > publishes the named scalar subset without applying the repository lint baseline
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > grammar description discloses the $type:"content" brace carve-out and its 18-of-1,359 dependence
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > accepts scalar CSS keyframe content with literal braces and preserves leaf identity separately from location
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > still resolves syntactically complete aliases carried by content tokens
+   ↓ FORGE-SCALAR-DTCG-1 acceptance grammar > reports scalar, structure, alias, cycle, name, and duplicate-leaf failures by exact rule and location
+   ↓ DTCG intake request schema boundary > requires the complete request level, including explicit apply:false
+   ↓ s180 m03 dry-run intake reconciliation > reconciles all 1,812 submitted instances into 1,359 accepted and 453 explicitly unmapped
+   ↓ s180 m03 dry-run intake reconciliation > B-04 catches a silently dropped submitted member through totals, identity, and difference sets
+   × s180 m03 dry-run intake reconciliation > B-05 requires every not-accepted member to carry non-blank rule, location, and reason fields 45ms
+     → expected [ 'blank-reason' ] to deeply equal []
+   ↓ s180 m03 dry-run intake reconciliation > keeps the reason denominator exactly one-to-one when one member violates multiple rules
+   ↓ s180 m03 typed rejection boundaries > rejects missing apply at the request level and fans the typed reason out to discoverable members
+   ↓ s180 m03 typed rejection boundaries > rejects apply:true without applying, creating a brand, or emitting artifacts
+   ↓ s180 m03 typed rejection boundaries > rejects an unknown profile without silently defaulting the requested value
+   ↓ s180 m03 typed rejection boundaries > rejects non-canonical source IDs without trimming two submitted identities into one
+   ↓ s180 m03 typed rejection boundaries > keeps fallback identities disjoint from submitted reserved-prefix IDs
+   ↓ s180 m03 typed rejection boundaries > accepts the content-reference shape but returns memberful unresolved-content-reference receipts
+   ↓ s180 m03 typed rejection boundaries > rejects a consumer-local filesystem path as non-portable at both schema and member receipt boundaries
+   ↓ s180 m03 typed rejection boundaries > does not accept members when a local path is smuggled beside an inline document
+   ↓ s180 m03 typed rejection boundaries > rejects compact-JSON integrity mutations per member while treating raw-source identity as provenance
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/contracts/dtcg-intake.s180.spec.ts > s180 m03 dry-run intake reconciliation > B-05 requires every not-accepted member to carry non-blank rule, location, and reason fields
+AssertionError: expected [ 'blank-reason' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "blank-reason",
++ ]
+
+ ❯ test/contracts/dtcg-intake.s180.spec.ts:889:46
+    887|   it("B-05 requires every not-accepted member to carry non-blank rule,…
+    888|     const receipt = validateDtcgIntake(corpusRequest);
+    889|     expect(reasonIntegrityFailures(receipt)).toEqual([]);
+       |                                              ^
+    890| 
+    891|     const mutant = structuredClone(receipt);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 20 skipped (21)
+   Start at  00:25:34
+   Duration  305ms (transform 66ms, setup 14ms, collect 100ms, tests 45ms, environment 0ms, prepare 37ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/contracts/dtcg-intake.s180.spec.ts -t B-05

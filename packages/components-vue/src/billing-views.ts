@@ -31,7 +31,7 @@ export const BillingCardMeta = defineComponent({
 });
 
 export const ArchivedRowOverlay = defineComponent({
-  name: 'ArchivedRowOverlay', props: { id: String, isArchived: Boolean, style: String, showBadge: { type: Boolean, default: true }, separateTab: { type: Boolean, default: true }, tabLabel: { type: String, default: 'Archived' }, label: String },
+  name: 'ArchivedRowOverlay', props: { id: String, isArchived: Boolean, showBadge: { type: Boolean, default: true }, separateTab: { type: Boolean, default: true }, tabLabel: { type: String, default: 'Archived' }, label: String },
   setup: (props, { slots }) => () => h('span', { id: props.id, class: 'oods-archived-row', 'data-oods-component': 'ArchivedRowOverlay', 'data-archived': props.isArchived ? 'true' : undefined,
     'data-archive-tab': props.separateTab ? props.tabLabel : undefined, role: props.isArchived ? 'group' : undefined, 'aria-hidden': props.isArchived ? false : undefined,
     'aria-label': props.isArchived ? `${props.tabLabel}${props.label ? `: ${props.label}` : ''}` : undefined,

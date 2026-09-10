@@ -165,8 +165,10 @@ export function normalizeTimelineEvents(raw: unknown): TimelineEvent[] {
     const from = firstText(entry, ['from']);
     const to = firstText(entry, ['to']);
     events.push({
-      label: firstText(entry, ['label', 'title', 'event', 'status', 'state', 'text', 'name'])
-        ?? (from && to ? `${from} → ${to}` : undefined)
+      label: firstText(entry, ['label', 'title'])
+        ?? (firstText(entry, ['event', 'status', 'state']) ? statusLabel(firstText(entry, ['event', 'status', 'state'])!) : undefined)
+        ?? firstText(entry, ['text', 'name'])
+        ?? (to ? (from ? `${statusLabel(from)} → ${statusLabel(to)}` : statusLabel(to)) : undefined)
         ?? 'Event',
       timestamp: firstText(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']),
       detail: firstText(entry, ['detail', 'description', 'message', 'from', 'to']),

@@ -32,6 +32,13 @@ describe('one executable visualization registry (s190 m05)', () => {
       if (scope.coverage === 'uncertified') expect(scope.conformant).toBeNull();
       expect(scope.contrast).toMatchObject({ theme: scope.theme, brand: scope.brand });
     }
+    for (const row of result.registry) {
+      const exempt = ['heatmap', 'choropleth', 'bubble_map', 'flow_map'].includes(row.chartType);
+      expect(row.contrastPassed).toEqual(exempt ? [] : ['light', 'dark']);
+      if (exempt) expect(row.notes.join(' ')).toContain('exempt');
+    }
+    const contrastMutant = structuredClone(source); contrastMutant[0].contrastPassed = [];
+    expect(canonical(contrastMutant)).not.toBe(canonical(result.registry));
     // A stale advertised cell must be rejected even when all other cells are right.
     const mutant = structuredClone(source); mutant[0].publicSvg = false;
     expect(canonical(mutant)).not.toBe(canonical(result.registry));

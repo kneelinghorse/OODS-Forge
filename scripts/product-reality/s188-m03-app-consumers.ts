@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Page } from 'playwright';
 import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
+import { fieldLabel } from '../../packages/mcp-server/src/compose/label-generator.js';
 import { isTraitRecipe } from '../../packages/mcp-server/src/compose/trait-recipes.js';
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
@@ -27,7 +28,7 @@ async function observe(rows: Row[], name: string, action: () => Promise<unknown>
   try { const detail = await action(); rows.push({ name, status: 'passed', detail }); }
   catch (error) { rows.push({ name, status: 'failed', error: error instanceof Error ? error.message : String(error) }); throw error; }
 }
-const screen = (page: Page) => page.locator('[data-oods-workflow="Subscription"]');
+const screen = (page: Page) => page.locator('[data-oods-workflow]');
 async function ready(page: Page, name: string, state = 'success') { await page.locator(`[data-screen="${name}"][data-ui-state="${state}"]`).waitFor({ timeout: 8000 }); }
 async function go(page: Page, context: string) {
   const label = context === 'form' ? 'Edit' : context[0]!.toUpperCase() + context.slice(1);
@@ -53,8 +54,10 @@ async function mountedRecipes(page: Page) {
   return roots.filter((root) => isTraitRecipe(root.component));
 }
 
-export async function observeFlow(page: Page, url: string, requireBillingViews = false): Promise<Row[]> {
+export async function observeFlow(page: Page, url: string, requireBillingViews = false, object = 'Subscription', titleField = 'plan_name'): Promise<Row[]> {
   const rows: Row[] = [];
+  const selectedId = `${object.toLowerCase()}-003`;
+  const titleInput = () => page.getByRole('textbox', { name: fieldLabel(titleField), exact: true });
   try {
     await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
     await ready(page, 'list');
@@ -67,7 +70,8 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         assert.equal(await page.locator(':is([data-oods-collection="rows"], .workflow-records) [data-archived="true"]').count(), 0);
         await archiveTabs.getByRole('tab', { name: 'Active', exact: true }).focus();
         await page.keyboard.press('ArrowRight'); await page.keyboard.press('Enter');
-      } else await page.getByRole('button', { name: 'Archived', exact: true }).click();
+      } else if (await page.getByRole('button', { name: 'Archived', exact: true }).count()) await page.getByRole('button', { name: 'Archived', exact: true }).click();
+      else { assert.equal(active.length, 10); return { active, archived: [], total: 10, disposition: 'ten active records; object has no Archivable trait' }; }
       await ready(page, 'list');
       const archived = await page.locator(':is([data-oods-collection="rows"], .workflow-records) [data-record-id]').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-record-id')));
       assert.equal(active.length, 9); assert.equal(archived.length, 1); assert.equal(new Set([...active, ...archived]).size, 10);
@@ -78,7 +82,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         assert.equal(await overlay.count(), 1);
         assert.equal(await overlay.getAttribute('role'), 'group');
         assert.equal(await overlay.getAttribute('aria-hidden'), 'false');
-        assert.match(await overlay.getAttribute('aria-label') ?? '', /^Archived: Subscription/);
+        assert.ok((await overlay.getAttribute('aria-label') ?? '').startsWith(`Archived: ${object}`));
         assert.equal(await overlay.locator('.oods-archive-badge').innerText(), 'Archived');
         const opacity = await overlay.evaluate((node) => getComputedStyle(node).opacity);
         assert.equal(opacity, '0.6');
@@ -89,9 +93,9 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       return { active, archived, archivePresentation, mounts, total: 10, disposition: 'nine active and one in the generated Archived view' };
     });
     await observe(rows, 'detail-navigation', async () => {
-      await page.locator(':is([data-oods-collection="rows"], .workflow-records) [data-record-id="subscription-003"]').click();
+      await page.locator(`:is([data-oods-collection="rows"], .workflow-records) [data-record-id="${selectedId}"]`).click();
       await ready(page, 'detail');
-      assert.equal(await screen(page).getAttribute('data-selected-id'), 'subscription-003');
+      assert.equal(await screen(page).getAttribute('data-selected-id'), selectedId);
       const cycle = page.locator('[data-oods-component="CycleProgressCard"]');
       const payments = page.locator('[data-oods-component="PaymentTimeline"]');
       const mounts = await mountedRecipes(page);
@@ -108,14 +112,15 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         mounts.push(...await mountedRecipes(page));
         billingViews = { cycle: cycleText, payments: await payments.innerText() };
       }
-      return { id: await screen(page).getAttribute('data-selected-id'), heading: await page.locator('h1').innerText(), billingViews, mounts };
+      return { id: await screen(page).getAttribute('data-selected-id'), heading: await page.locator('.workflow-heading h1').innerText(), billingViews, mounts };
     });
     await observe(rows, 'edit-seeded-values', async () => {
       await page.locator('[data-oods-action="handleEdit"]').click(); await ready(page, 'form');
-      const plan = await page.locator('input[name="plan_name"]').inputValue();
-      assert.equal(plan, 'Subscription 03');
+      const plan = await titleInput().inputValue();
+      assert.equal(plan, `${object} 03`);
       return { id: await screen(page).getAttribute('data-selected-id'), plan };
     });
+    const hasAddress = await page.locator('[data-oods-component="AddressEditor"]').count() > 0;
     const hasBilling = await page.locator('[data-oods-component="BillingAmountInput"]').count() > 0;
     if (hasBilling) await observe(rows, 'billing-edit-values', async () => {
       const amount = page.locator('[data-billing-minor-units]');
@@ -124,16 +129,17 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       assert.deepEqual(options, ['monthly', 'yearly']);
       await amount.fill('-1'); assert.equal(await amount.getAttribute('aria-invalid'), 'true');
       await page.getByRole('button', { name: 'Save', exact: true }).click(); await ready(page, 'form');
+      // Learning #548: preserve this native keyboard proof and run it on pinned Linux Chromium.
       await amount.fill('19.99'); await interval.focus(); await interval.press('Home'); await interval.press('ArrowDown');
       assert.equal(await interval.inputValue(), 'yearly');
       return { options, amount: await amount.inputValue(), interval: await interval.inputValue(), invalidSaveStayedOnForm: true };
     });
-    await observe(rows, 'save-plan-name', async () => {
-      await page.locator('input[name="plan_name"]').fill('Team annual');
+    await observe(rows, titleField === 'plan_name' ? 'save-plan-name' : 'save-record-title', async () => {
+      await titleInput().fill('Team annual');
       await page.getByRole('button', { name: 'Save', exact: true }).click(); await ready(page, 'detail');
-      assert.equal(await page.locator('h1').innerText(), 'Team annual');
+      assert.equal(await page.locator('.workflow-heading h1').innerText(), 'Team annual');
       assert.equal(await page.locator('.workflow-notice').innerText(), 'Changes saved in this session.');
-      return { heading: await page.locator('h1').innerText() };
+      return { heading: await page.locator('.workflow-heading h1').innerText() };
     });
     if (hasBilling) await observe(rows, 'billing-save-persists', async () => {
       await page.locator('[data-oods-action="handleEdit"]').click(); await ready(page, 'form');
@@ -143,7 +149,28 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       await go(page, 'detail'); await ready(page, 'detail');
       return { id: await screen(page).getAttribute('data-selected-id'), storedMinorUnits: 1999, majorUnitEditorValue: amount, interval };
     });
-    await observe(rows, 'cancel-detail', async () => {
+    if (hasAddress) await observe(rows, 'address-save-persists', async () => {
+      await go(page, 'form'); await ready(page, 'form');
+      const editor = page.locator('[data-oods-component="AddressEditor"]');
+      assert.equal(await editor.getByRole('textbox', { name: 'Street', exact: true }).inputValue(), '102 Main Street');
+      assert.equal(await editor.getByRole('textbox', { name: 'City', exact: true }).inputValue(), 'Springfield');
+      await editor.getByRole('textbox', { name: 'Street', exact: true }).fill('42 Lake Road');
+      await editor.getByRole('textbox', { name: 'City', exact: true }).fill('Madison');
+      await page.getByRole('button', { name: 'Save', exact: true }).click(); await ready(page, 'detail');
+      const panel = page.locator('[data-oods-component="AddressCollectionPanel"]');
+      if (!await panel.isVisible()) {
+        for (const tab of await page.getByRole('tab').all()) { await tab.click(); if (await panel.isVisible()) break; }
+      }
+      assert.equal(await panel.isVisible(), true);
+      const text = await panel.innerText(); assert.match(text, /42 Lake Road, Madison/);
+      await go(page, 'form'); await ready(page, 'form');
+      assert.equal(await editor.getByRole('textbox', { name: 'Street', exact: true }).inputValue(), '42 Lake Road');
+      assert.equal(await editor.getByRole('textbox', { name: 'City', exact: true }).inputValue(), 'Madison');
+      await go(page, 'detail'); await ready(page, 'detail');
+      return { selectedId, seededStreet: '102 Main Street', savedStreet: '42 Lake Road', savedCity: 'Madison', detail: text };
+    });
+    const cancellable = await page.locator('[data-oods-action="handleCancel"]').count() > 0;
+    if (cancellable) await observe(rows, 'cancel-detail', async () => {
       const onDemand = await page.locator('input[name="cancellation_reason"]').count() === 0;
       if (onDemand) {
         assert.equal(await page.locator('[data-oods-component="CancellationForm"]').count(), 0);
@@ -168,17 +195,19 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       if (onDemand) assert.equal(await page.locator('[data-oods-component="CancellationForm"]').count(), 0);
       return { text, id: await screen(page).getAttribute('data-selected-id'), onDemand, readOnlyBeforeActivation: onDemand };
     });
-    await observe(rows, 'cancel-list-badge', async () => {
+    if (cancellable) await observe(rows, 'cancel-list-badge', async () => {
       await go(page, 'list'); await ready(page, 'list');
-      const text = await page.locator(':is([data-oods-collection="rows"], .workflow-records) [data-record-id="subscription-003"] [data-oods-component="StatusBadge"]').innerText();
+      const text = await page.locator(`:is([data-oods-collection="rows"], .workflow-records) [data-record-id="${selectedId}"] [data-oods-component="StatusBadge"]`).innerText();
       assert.match(text, /pending[ _]cancellation/i);
       return { text };
     });
     await observe(rows, 'timeline-navigation-and-history', async () => {
-      await page.locator(':is([data-oods-collection="rows"], .workflow-records) [data-record-id="subscription-003"]').click(); await ready(page, 'detail');
+      await go(page, 'list'); await ready(page, 'list');
+      await page.locator(`:is([data-oods-collection="rows"], .workflow-records) [data-record-id="${selectedId}"]`).click(); await ready(page, 'detail');
       await page.locator('[data-oods-action="handleViewTimeline"]').click(); await ready(page, 'timeline');
       const text = await page.getByRole('list', { name: 'Lifecycle history' }).innerText();
-      assert.match(text, /pending[ _]cancellation/i); assert.match(text, /Budget changed for next year/);
+      if (cancellable) { assert.match(text, /pending[ _]cancellation/i); assert.match(text, /Budget changed for next year/); }
+      else assert.ok(text.trim().length > 0, 'Declared lifecycle history must contain the seeded event');
       const events = page.locator('[data-oods-component="PaymentEventTimeline"]');
       let paymentEvents: string | undefined;
       const composedEvents = await page.locator('[data-oods-collection="events"]').count() > 0;
@@ -222,12 +251,14 @@ async function observeStates(page: Page, url: string, framework: Framework) {
 }
 
 /** Query controls stay usable through empty results; a refresh must not steal typing focus. */
-async function observeCollectionControls(page: Page, url: string) {
+export async function observeCollectionControls(page: Page, url: string, object = 'Subscription') {
   await page.goto(`${url}/?latency=60`, { waitUntil: 'domcontentloaded' });
   await ready(page, 'list');
   if (!await page.locator('[data-oods-collection="rows"]').count()) return [];
   const rows: Row[] = [];
   const records = page.locator('[data-oods-collection="rows"] [data-record-id]');
+  const total = await records.count();
+  const activeIds = await records.evaluateAll(nodes => nodes.filter(node => node.querySelector('[data-oods-component="StatusBadge"]')?.getAttribute('data-status') === 'active').map(node => node.getAttribute('data-record-id')));
   const search = page.getByRole('searchbox', { name: 'Search', exact: true });
   await observe(rows, 'type-through-empty-results', async () => {
     await search.focus(); await search.pressSequentially('not-a-record');
@@ -236,45 +267,46 @@ async function observeCollectionControls(page: Page, url: string) {
     assert.equal(await records.count(), 0);
     await ready(page, 'list', 'empty');
     await page.getByRole('button', { name: 'Clear search', exact: true }).click();
-    assert.equal(await search.inputValue(), ''); assert.equal(await records.count(), 9);
-    return { typed: 'not-a-record', retainedFocus: true, emptyCount: 0, restoredCount: 9 };
+    assert.equal(await search.inputValue(), ''); assert.equal(await records.count(), total);
+    return { typed: 'not-a-record', retainedFocus: true, emptyCount: 0, restoredCount: total };
   });
   await observe(rows, 'filter-composed-rows', async () => {
     await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption('active');
-    assert.equal(await records.count(), 1);
-    assert.equal(await records.first().getAttribute('data-record-id'), 'subscription-003');
+    assert.equal(await records.count(), activeIds.length);
+    assert.deepEqual(await records.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-record-id'))), activeIds);
     await page.getByRole('combobox', { name: 'Status', exact: true }).selectOption('');
-    assert.equal(await records.count(), 9);
-    return { activeCount: 1, restoredCount: 9 };
+    assert.equal(await records.count(), total);
+    return { activeCount: activeIds.length, restoredCount: total };
   });
   await observe(rows, 'sort-composed-rows', async () => {
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('desc');
-    assert.equal(await records.first().getAttribute('data-record-id'), 'subscription-009');
+    assert.equal(await records.first().getAttribute('data-record-id'), `${object.toLowerCase()}-${String(total).padStart(3, '0')}`);
     await page.getByRole('combobox', { name: 'Sort', exact: true }).selectOption('asc');
-    assert.equal(await records.first().getAttribute('data-record-id'), 'subscription-001');
-    return { descendingFirst: 'subscription-009', ascendingFirst: 'subscription-001' };
+    assert.equal(await records.first().getAttribute('data-record-id'), `${object.toLowerCase()}-001`);
+    return { descendingFirst: `${object.toLowerCase()}-${String(total).padStart(3, '0')}`, ascendingFirst: `${object.toLowerCase()}-001` };
   });
   await observe(rows, 'pagination-uses-real-boundaries', async () => {
     const pagination = page.getByRole('navigation', { name: 'Pagination', exact: true });
     assert.equal(await pagination.count(), 1);
-    assert.match(await pagination.innerText(), /9 records/);
+    assert.ok((await pagination.innerText()).includes(`${total} records`));
     assert.match(await pagination.innerText(), /Page 1 of 1/);
     assert.equal(await pagination.getByRole('button', { name: 'Previous page' }).isDisabled(), true);
     assert.equal(await pagination.getByRole('button', { name: 'Next page' }).isDisabled(), true);
-    return { total: 9, page: 1, pages: 1, previousDisabled: true, nextDisabled: true };
+    return { total, page: 1, pages: 1, previousDisabled: true, nextDisabled: true };
   });
   return rows;
 }
 
-export async function screenshots(page: Page, url: string, output: string, framework: Framework, artifactHash: string, requireBillingViews: boolean) {
+export async function screenshots(page: Page, url: string, output: string, framework: Framework, artifactHash: string, requireBillingViews: boolean, object = 'Subscription', titleField = 'plan_name') {
   const rows: Array<Record<string, unknown>> = [];
-  const flow = await observeFlow(page, url, requireBillingViews);
-  assert.equal(flow.length, flow.some((row) => row.name === 'billing-edit-values') ? 9 : 7); assert.ok(flow.every((row) => row.status === 'passed'));
+  const selectedId = `${object.toLowerCase()}-003`;
+  const flow = await observeFlow(page, url, requireBillingViews, object, titleField);
+  assert.equal(flow.length, object === 'Subscription' ? (flow.some(row => row.name === 'billing-edit-values') ? 9 : 7) : 6); assert.ok(flow.every((row) => row.status === 'passed'));
   await go(page, 'list'); await ready(page, 'list');
   for (const width of [390, 820, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const context of contexts) {
-      if (context === 'detail') await page.locator(':is([data-oods-collection="rows"], .workflow-records) [data-record-id="subscription-003"]').click();
+      if (context === 'detail') await page.locator(`:is([data-oods-collection="rows"], .workflow-records) [data-record-id="${selectedId}"]`).click();
       else await go(page, context);
       await ready(page, context);
       const file = `screenshots/${framework}-${context}-${width}.png`;
@@ -303,12 +335,15 @@ export async function screenshots(page: Page, url: string, output: string, frame
   return rows;
 }
 
-export async function runAppConsumers(output: string, mission = 's188-m03') {
+export async function runAppConsumers(output: string, mission = 's188-m03', object = 'Subscription', packedPackages?: PackedPackageRecord[]) {
   await fs.mkdir(output, { recursive: true });
-  const composition = await compose({ object: 'Subscription', context: 'workflow' });
+  const composition = await compose({ object, context: 'workflow' });
   assert.equal(composition.status, 'ok');
   await json(path.join(output, 'composition.json'), composition);
+  const fields = composition.schema.objectSchema!;
+  const titleField = ['plan_name', 'name', 'title', 'display_name', 'label'].find(name => fields[name]) ?? composition.schema.workflow!.data.idField;
   const requireBillingViews = JSON.stringify(composition.schema).includes('CycleProgressCard');
+  const requireAddressViews = JSON.stringify(composition.schema).includes('AddressEditor');
   const artifacts = new Map<Framework, GeneratedArtifact>();
   for (const framework of ['react', 'vue'] as const) {
     const generated = await generate({ schema: composition.schema, framework, profile: 'build' });
@@ -317,7 +352,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
     artifacts.set(framework, generated.artifact!);
     await json(path.join(output, `${framework}-generation.json`), generated);
   }
-  const tarballs = await packFoundationPackages(output) as PackedPackageRecord[];
+  const tarballs = packedPackages ?? await packFoundationPackages(output) as PackedPackageRecord[];
   const browser = await launchProofBrowser();
   const cells: Array<Record<string, unknown>> = [];
   const allStates: Array<Record<string, unknown>> = [];
@@ -377,7 +412,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
         const rendered = commandResult('node', ['ssr-observer.mjs'], consumer, { environment, scrubNpmCredentials: true });
         await json(path.join(cellRoot, 'logs/ssr-render.json'), rendered); requireGreen(rendered, 'SSR root');
         const { html } = JSON.parse(rendered.stdout) as { html: string };
-        assert.match(html, /data-screen="list"/); assert.match(html, /Subscriptions/);
+        assert.match(html, /data-screen="list"/); assert.ok(html.includes(`${object}s`));
         await fs.writeFile(path.join(cellRoot, 'server-render.html'), html);
         pass(activeGate, { htmlHash: digest(html), generatedEntry: `src/ssr.${framework === 'react' ? 'tsx' : 'ts'}` });
         activeGate = 'shared-css-resolution'; pass(activeGate, await cssProof(path.join(consumer, 'dist'), true));
@@ -401,15 +436,16 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
           pass(activeGate, { preservesSsrRoot: true, errors: [...errors] });
           await fs.writeFile(index, original);
           activeGate = 'interaction-evidence';
-          const flow = await observeFlow(page, url, requireBillingViews); cell.flow = flow;
+          const flow = await observeFlow(page, url, requireBillingViews, object, titleField); cell.flow = flow;
+          assert.equal(flow.some(row => row.name === 'address-save-persists' && row.status === 'passed'), requireAddressViews, 'Declared address editor must pass save and detail readback');
           await json(path.join(cellRoot, 'flow.json'), flow);
-          assert.equal(flow.length, flow.some((row) => row.name === 'billing-edit-values') ? 9 : 7); assert.equal(flow.filter((row) => row.status !== 'passed').length, 0, JSON.stringify(flow));
+          assert.equal(flow.length, object === 'Subscription' ? (flow.some(row => row.name === 'billing-edit-values') ? 9 : 7) : 6); assert.equal(flow.filter((row) => row.status !== 'passed').length, 0, JSON.stringify(flow));
           const states = await observeStates(page, url, framework); allStates.push(...states);
           await json(path.join(cellRoot, 'states.json'), states);
-          const collectionControls = await observeCollectionControls(page, url);
+          const collectionControls = await observeCollectionControls(page, url, object);
           await json(path.join(cellRoot, 'collection-controls.json'), collectionControls);
           assert.ok(collectionControls.every(row => row.status === 'passed'), JSON.stringify(collectionControls));
-          const images = await screenshots(page, url, output, framework, artifact.contentHash, requireBillingViews); allScreenshots.push(...images);
+          const images = await screenshots(page, url, output, framework, artifact.contentHash, requireBillingViews, object, titleField); allScreenshots.push(...images);
           assert.deepEqual(errors, []);
           pass(activeGate, { flowRows: flow.length, stateObservations: states.length, screenshots: images.length, errors });
           await page.close();
@@ -432,20 +468,20 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
       const build = commandResult('npm', ['exec', '--', 'vite', 'build'], consumer, { scrubNpmCredentials: true });
       await json(path.join(output, 'bite-build.json'), build); requireGreen(build, 'navigation bite build');
       const page = await browser.newPage();
-      const red = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews));
+      const red = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField));
       assert.deepEqual(red.filter((row) => row.status === 'failed').map((row) => row.name), ['detail-navigation']);
       await fs.writeFile(file, original); assert.equal(digest(await fs.readFile(file)), digest(original));
       const restore = commandResult('npm', ['exec', '--', 'vite', 'build'], consumer, { scrubNpmCredentials: true }); requireGreen(restore, 'restore navigation');
       await json(path.join(output, 'bite-restore-build.json'), restore);
-      const green = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews));
-      assert.equal(green.length, green.some((row) => row.name === 'billing-edit-values') ? 9 : 7); assert.ok(green.every((row) => row.status === 'passed'));
-      const unaffected = await withStaticServer(path.join(consumers.get('vue')!, 'dist'), (url) => observeFlow(page, url, requireBillingViews));
-      assert.equal(unaffected.length, unaffected.some((row) => row.name === 'billing-edit-values') ? 9 : 7); assert.ok(unaffected.every((row) => row.status === 'passed'));
+      const green = await withStaticServer(path.join(consumer, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField));
+      assert.equal(green.length, object === 'Subscription' ? (green.some(row => row.name === 'billing-edit-values') ? 9 : 7) : 6); assert.ok(green.every((row) => row.status === 'passed'));
+      const unaffected = await withStaticServer(path.join(consumers.get('vue')!, 'dist'), (url) => observeFlow(page, url, requireBillingViews, object, titleField));
+      assert.equal(unaffected.length, object === 'Subscription' ? (unaffected.some(row => row.name === 'billing-edit-values') ? 9 : 7) : 6); assert.ok(unaffected.every((row) => row.status === 'passed'));
       await json(path.join(output, 'navigation-bite.json'), { framework: 'react', source: 'src/application.ts', beforeHash: digest(original), afterHash: digest(mutated), restoredHash: digest(await fs.readFile(file)), red, restored: green, unaffectedFramework: 'vue', unaffected });
       await page.close();
     }
     const cellReports = await Promise.all(cells.map(async (cell) => ({ framework: cell.framework, report: `${cell.framework}/receipt.json`, sha256: digest(await fs.readFile(path.join(output, `${cell.framework}/receipt.json`))) })));
-    const report = { mission, cellReports, sourceHead: commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim(), builderSelfCertified: false, cells, stateObservations: allStates, screenshots: allScreenshots };
+    const report = { mission, object, cellReports, sourceHead: commandResult('git', ['rev-parse', 'HEAD'], REPOSITORY_ROOT).stdout.trim(), builderSelfCertified: false, cells, stateObservations: allStates, screenshots: allScreenshots };
     await json(path.join(output, 'report.json'), report);
     return report;
   } finally { await browser.close(); }
@@ -453,5 +489,5 @@ export async function runAppConsumers(output: string, mission = 's188-m03') {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const output = path.resolve(process.argv[2] ?? path.join(REPOSITORY_ROOT, 'artifacts/product-reality/sprint-188/m03/live'));
-  runAppConsumers(output, process.argv[3]).then((report) => { if (report.cells.some((cell) => (cell.gates as Row[]).some((gate) => gate.status !== 'passed'))) process.exitCode = 1; }).catch((error) => { process.stderr.write(String(error.stack ?? error) + '\n'); process.exitCode = 1; });
+  runAppConsumers(output, process.argv[3], process.argv[4]).then((report) => { if (report.cells.some((cell) => (cell.gates as Row[]).some((gate) => gate.status !== 'passed'))) process.exitCode = 1; }).catch((error) => { process.stderr.write(String(error.stack ?? error) + '\n'); process.exitCode = 1; });
 }

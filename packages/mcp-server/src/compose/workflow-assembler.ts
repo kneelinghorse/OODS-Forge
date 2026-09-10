@@ -27,6 +27,7 @@ export async function assembleWorkflow(
   const billing = parameters('Billable');
   const timestamps = parameters('Timestampable');
   const cancellation = parameters('Cancellable');
+  const addressable = parameters('Addressable');
   const fields = first.schema.objectSchema ?? {};
   const idField = Object.keys(fields).find((field) => field === `${object.object.name.toLowerCase()}_id`)
     ?? Object.keys(fields).find((field) => field === 'id' || field.endsWith('_id'))
@@ -36,6 +37,7 @@ export async function assembleWorkflow(
     object: object.object.name, screens: (Object.keys(ROUTES) as Array<keyof typeof ROUTES>).map((context) => ({ id: `${context}-screen`, context, route: ROUTES[context] })) as NonNullable<UiSchema['workflow']>['screens'], transitions: [], states: [...UI_WORKFLOW_STATES],
     data: {
       idField, traits: first.objectUsed.traits, sampleCount: 10,
+      ...(Array.isArray(addressable.roles) ? { addressRoles: addressable.roles.map(String), defaultAddressRole: String(addressable.defaultRole ?? addressable.roles[0]) } : {}),
       recordedEvents: Array.isArray(timestamps.recordedEvents) ? timestamps.recordedEvents.map(String) : [],
       cancellationRequiresReason: cancellation.requireReason === true,
       cancellationReasonCodes: Array.isArray(cancellation.allowedReasons) ? cancellation.allowedReasons.map(String) : [],

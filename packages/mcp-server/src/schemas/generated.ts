@@ -120,6 +120,8 @@ export namespace A11yScanInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -1245,6 +1247,14 @@ export namespace CodeGenerateInputSchema {
     };
     options?: {
       /**
+       * Application and embedded chart theme. React/Vue app shells default to light and set the scope on html and body, including at mount. Unscoped HTML preserves the schema theme and existing repl.render document defaults.
+       */
+      theme?: 'light' | 'dark';
+      /**
+       * Token brand shared by the generated shell and embedded charts. React/Vue app shells default to A. Unscoped HTML preserves the existing document default brand; an explicit HTML theme without a brand selects A.
+       */
+      brand?: 'A' | 'B';
+      /**
        * When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML.
        */
       typescript?: boolean;
@@ -1316,6 +1326,8 @@ export namespace CodeGenerateInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -3096,6 +3108,8 @@ export namespace DesignComposeOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -5684,6 +5698,8 @@ export namespace ReplOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -5996,6 +6012,8 @@ export namespace ReplRenderInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6262,6 +6280,8 @@ export namespace ReplRenderOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6445,6 +6465,8 @@ export namespace UiSchemaSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6648,6 +6670,8 @@ export namespace ReplValidateInputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];
@@ -6894,6 +6918,8 @@ export namespace ReplValidateOutputSchema {
     }[];
     states: ('loading' | 'empty' | 'error' | 'success')[];
     data: {
+      addressRoles?: string[];
+      defaultAddressRole?: string;
       recordedEvents?: string[];
       cancellationRequiresReason?: boolean;
       cancellationReasonCodes?: string[];

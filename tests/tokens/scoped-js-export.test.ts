@@ -43,3 +43,22 @@ describe('scoped JavaScript token export matches shipped CSS', () => {
     }
   });
 });
+
+describe('categorical theme overrides follow the shipped CSS cascade (s191)', () => {
+  for (const brand of ['A', 'B']) for (const theme of ['light', 'dark']) {
+    it(`${brand}/${theme} matches all six CSS values, with a distinct dark palette`, () => {
+      const declarations: Record<string, string> = {};
+      for (const block of css.split('}')) {
+        const split = block.lastIndexOf('{');
+        const selector = block.slice(0, split);
+        if (!selector.includes(':root') && !selector.includes(`[data-brand='${brand}']:not([data-theme])`) && !selector.includes(`[data-brand='${brand}'][data-theme='${theme}']`)) continue;
+        for (const match of block.slice(split + 1).matchAll(/(--oods-viz-scale-categorical-\d+):\s*([^;]+);/g)) declarations[match[1]!] = match[2]!;
+      }
+      for (let slot = 1; slot <= 6; slot++) {
+        const key = `--oods-viz-scale-categorical-0${slot}`;
+        expect(bundle.cssVariablesByScope[brand]![theme]![key]).toBe(declarations[key]);
+        expect(bundle.cssVariablesByScope[brand]!.dark![key]).not.toBe(bundle.cssVariablesByScope[brand]!.light![key]);
+      }
+    });
+  }
+});

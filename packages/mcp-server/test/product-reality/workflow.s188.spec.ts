@@ -187,7 +187,8 @@ describe('Generated store drives the lifecycle without consumer wiring', () => {
       expect(store.get('subscription-003').plan_name).toBe('Team annual');
       const cancelled = store.cancel('subscription-003', 'Budget change', 'budget', true);
       expect(cancelled).toMatchObject({ status: 'pending_cancellation', cancellation_reason: 'Budget change', cancellation_reason_code: 'budget', cancel_at_period_end: true });
-      expect(cancelled.state_history.at(-1)).toEqual({ from: 'active', to: 'pending_cancellation', reason: 'Budget change', code: 'budget', atPeriodEnd: true, at: '2026-01-20T12:00:00.000Z' });
+      // s191-m03 A2: persist the display title alongside unchanged lifecycle evidence.
+      expect(cancelled.state_history.at(-1)).toEqual({ title: 'Pending Cancellation', from: 'active', to: 'pending_cancellation', reason: 'Budget change', code: 'budget', atPeriodEnd: true, at: '2026-01-20T12:00:00.000Z' });
       expect(store.list({ search: 'Team annual' }).records[0].status).toBe('pending_cancellation');
       expect(() => store.cancel('subscription-003', 'Again', 'budget', false)).toThrow(/current state/);
       expect(() => store.cancel('subscription-008', 'Ended', 'budget', false)).toThrow(/current state/);

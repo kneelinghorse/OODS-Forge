@@ -1,0 +1,20 @@
+--- /private/tmp/oods-s191-m04-cu8uateo/source/scripts/runtime/e2e.mjs	2026-09-10 00:31:02
++++ /private/tmp/oods-s191-m04-cu8uateo/source/scripts/runtime/s191-missing-schema-observer.mjs	2026-09-10 00:36:48
+@@ -290,6 +290,7 @@
+     this.callCount += 1;
+     const result = await this.request("tools/call", { name, arguments: args });
+     if (result?.isError) {
++      process.stdout.write(JSON.stringify({ s191: "tool-error", name, result }) + "\n");
+       throw new Error(
+         `MCP tool failed: ${name}: ${result.content?.[0]?.text ?? "unknown error"}`,
+       );
+@@ -543,7 +544,8 @@
+   let primaryTermination = null;
+   let calls;
+   try {
+-    await initializeAndList(primary, adapterPackage.version, expectedToolNames);
++    const listedProof = await initializeAndList(primary, adapterPackage.version, expectedToolNames);
++    process.stdout.write(JSON.stringify({ s191: "tools-list", names: listedProof.names }) + "\n");
+     const health = await primary.callTool("health", {}); // 1
+     assert.equal(health.status, "ok");
+     assert.deepEqual(

@@ -165,7 +165,7 @@ export const VizAreaPreview = React.forwardRef<HTMLElement, VizAreaPreviewProps>
         data-oods-component="VizAreaPreview" data-viz-preview-type="area" data-viz-rendered="true"
         data-viz-width={width} data-viz-height={height} role="img" aria-label={title ?? description ?? 'Payment amounts'}
         style={style} {...rest}>
-        {title ? <figcaption>{title}</figcaption> : null}
+        {title && !svg.includes('role-title-text') ? <figcaption>{title}</figcaption> : null}
         <div data-viz-svg="true" dangerouslySetInnerHTML={{ __html: assertStaticSvg(svg) }} />
         {description ? <p data-viz-description="true">{description}</p> : null}
       </figure>;

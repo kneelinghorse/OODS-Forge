@@ -1,0 +1,95 @@
+[
+  {
+    "name": "ten-sample-records",
+    "status": "passed",
+    "detail": {
+      "active": [
+        "subscription-001",
+        "subscription-002",
+        "subscription-003",
+        "subscription-004",
+        "subscription-005",
+        "subscription-006",
+        "subscription-007",
+        "subscription-008",
+        "subscription-009"
+      ],
+      "archived": [
+        "subscription-010"
+      ],
+      "archivePresentation": {
+        "opacity": "0.6",
+        "accessibleName": "Archived: Subscription 10",
+        "tabLabel": "Archived",
+        "keyboardNavigation": true
+      },
+      "mounts": [
+        {
+          "nodeId": "list-ve-items-13-0",
+          "component": "ArchivedRowOverlay",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "list-slot-toolbar-actions-3-0",
+          "component": "BillingSummaryBadge",
+          "present": true,
+          "passed": true
+        }
+      ],
+      "total": 10,
+      "disposition": "nine active and one in the generated Archived view"
+    }
+  },
+  {
+    "name": "detail-navigation",
+    "status": "passed",
+    "detail": {
+      "id": "subscription-003",
+      "heading": "Subscription 03",
+      "billingViews": {
+        "cycle": "Billing cycle\n\n23% complete · 22 days remaining\n\nmonthly",
+        "payments": "Payments\n\n$57.00 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+      },
+      "mounts": [
+        {
+          "nodeId": "detail-slot-tab-0-4",
+          "component": "CycleProgressCard",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "detail-slot-tab-1-6",
+          "component": "PaymentTimeline",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "detail-slot-tab-0-4",
+          "component": "CycleProgressCard",
+          "present": true,
+          "passed": true
+        },
+        {
+          "nodeId": "detail-slot-tab-1-6",
+          "component": "PaymentTimeline",
+          "present": true,
+          "passed": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "edit-seeded-values",
+    "status": "passed",
+    "detail": {
+      "id": "subscription-003",
+      "plan": "Subscription 03"
+    }
+  },
+  {
+    "name": "billing-edit-values",
+    "status": "failed",
+    "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'monthly'\n- 'yearly'\n"
+  }
+]

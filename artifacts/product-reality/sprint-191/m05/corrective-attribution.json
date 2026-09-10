@@ -1,0 +1,25 @@
+{
+  "initialExecutionHead": "804e5051d031062a7078f5b095804f23ec6c7d66",
+  "capture": "four-suite-closeout-attempt-1/four-suite-baseline.json",
+  "uniqueAssertionFailures": 8,
+  "failedExecutions": 12,
+  "realFix": {
+    "files": [
+      "packages/mcp-server/src/tools/code.generate.ts",
+      "packages/mcp-server/src/codegen/html-emitter.ts"
+    ],
+    "reason": "Unscoped HTML must retain repl.render byte parity. Explicit scope adds only color-scheme after renderDocument emits its default component CSS. The existing four parity checks remain unchanged; two new explicit scope tests reject duplicate CSS."
+  },
+  "expectations": {
+    "packages/mcp-server/test/contracts/fragment-anchor-contract.spec.ts": "m03 removes phantom audit metadata. Pin the surviving tab-3 label instead, retaining the header and generic durable-label/shifted-id assertions.",
+    "packages/mcp-server/test/codegen/component-carries.s189.spec.ts": "m03 humanizes timeline event values consistently in HTML/React/Vue; assert readable labels and preserve raw props with an immutability guard.",
+    "packages/mcp-server/test/product-reality/billing-composition.s188.spec.ts": "m03 labels the major-unit BillingAmountInput as Amount in USD; the interval help and historical immutable composition fixtures remain unchanged.",
+    "packages/mcp-server/test/product-reality/theme.s191.spec.ts": "Corrective m05 restores legacy unscoped HTML brand=default and one CSS copy. Explicit light selects A; explicit dark/B remains supported. React/Vue app defaults stay light/A."
+  },
+  "remoteRuns": {
+    "ci": 34444782946,
+    "packageCompatibility": 34444779441
+  },
+  "remoteFailures": "CI coverage and viz-determinism reproduce the same eight unique local failures. Package Compatibility and portable-runtime passed. The conditional echarts-render-soak job was skipped.",
+  "typecheckCommandCorrection": "Root tsc is5.3.3 and rejects two pre-existing indexed-access narrowings in dtcg-intake. Use the MCP package compiler5.9.3, matching its build and CI; retain the failed root invocation log."
+}

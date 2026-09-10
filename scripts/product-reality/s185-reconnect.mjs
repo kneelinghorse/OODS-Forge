@@ -20,6 +20,23 @@ const array = (text, name) => {
 
 export function buildNotices(movers, root = ROOT, options = {}) {
   assert(movers.status === 'passed', 'A checked Git-derived mover record is required.');
+  if (movers.missionId === 's191-m05') {
+    const head = movers.s191.head;
+    const targets = ['cmos-dashboard', 'forge-demos', 'aquex-mcp'];
+    const body = [
+      `Sprint 191 candidate ${head}; prepared only for Sprint 192 after independent review.`,
+      'Categorical contrastPassed is light,dark for nine chart types in both brands; four types remain exempt. Public SVG 13/13; dashboard 11/11 with chord and flow_map excluded under #881. HC pixels remain deferred and eight ECharts types remain uncertified.',
+      'Generation reaches 77/77 schemas and 154/154 framework cells. Subscription, Organization and User workflows have packed React/Vue proof. Theme shell attributes and shared craft changes, human-readable history, archive frames, amount units and recorded-payment charts are included. Editing amounts does not regenerate recorded-payment SVGs.',
+      'Maintenance: adapter executable-path portability checks and OODS-N013 description repaired; package pins must use the separately prepared final bundle notice. Live bridge delivery and reconnect remain pending.',
+      `Advertised and public movers from ${movers.s191.base}..${head}:\n${movers.s191.publicPaths.join('\n')}`,
+    ].join('\n\n');
+    return { missionId: 's191-m05', implementationHead: head, status: 'prepared-unsent', sent: false,
+      sendsExecuted: 0, deliverySprint: 'sprint-192', targets, notices: targets.map(target => {
+        const request = { type: 'info_push', targetAddress: `cmos://derek/${target}`,
+          summary: `Forge Sprint 191 ${head}; reconnect after reviewed delivery`, body };
+        return { request, requestSha256: requestHash(request) };
+      }) };
+  }
   if (movers.missionId === 's187-m06') {
     const head = movers.s187.head;
     const types = 'packages/component-contracts/src/types.ts';

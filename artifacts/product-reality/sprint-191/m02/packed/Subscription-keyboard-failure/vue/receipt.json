@@ -1,0 +1,232 @@
+{
+  "framework": "vue",
+  "artifactHash": "sha256:1dca239c6809ad5990cafe4047a7f38b0a4a6a7fedaf2e42ea3b02653654c763",
+  "gates": [
+    {
+      "name": "fresh-exact-tarball-install",
+      "status": "passed",
+      "detail": {
+        "isolation": {
+          "outsidePnpmWorkspace": true,
+          "freshNodeModules": true,
+          "emptyVerifierOwnedNpmConfiguration": true,
+          "installScripts": false,
+          "localPackagesFromBuiltTarballsOnly": true,
+          "workspaceAliases": false,
+          "workspaceSymlinks": false,
+          "repositorySourceImports": false,
+          "inheritedNodeModules": false,
+          "allResolvedPathsOutsideRepository": true,
+          "installed": [
+            {
+              "name": "@oods/tokens",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/tokens"
+            },
+            {
+              "name": "@oods/component-contracts",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-contracts"
+            },
+            {
+              "name": "@oods/component-styles",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/component-styles"
+            },
+            {
+              "name": "@oods/components-vue",
+              "version": "0.1.0",
+              "consumerRelative": "node_modules/@oods/components-vue"
+            }
+          ]
+        },
+        "resolutions": [
+          {
+            "specifier": "@oods/component-contracts",
+            "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+          },
+          {
+            "specifier": "@oods/component-styles/css",
+            "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+          },
+          {
+            "specifier": "@oods/components-vue",
+            "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+          },
+          {
+            "specifier": "@vitejs/plugin-vue",
+            "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+          },
+          {
+            "specifier": "@vue/server-renderer",
+            "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+          },
+          {
+            "specifier": "vue",
+            "consumerRelative": "node_modules/vue/index.mjs"
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-typecheck",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "vue/logs/typecheck.log"
+      }
+    },
+    {
+      "name": "production-build",
+      "status": "passed",
+      "detail": {
+        "exitCode": 0,
+        "log": "vue/logs/build.log"
+      }
+    },
+    {
+      "name": "server-render",
+      "status": "passed",
+      "detail": {
+        "htmlHash": "sha256:ed3c63a3bf11cad4ec0af23a22d7046f7444d374255425312e031743e67f9026",
+        "generatedEntry": "src/ssr.ts"
+      }
+    },
+    {
+      "name": "mount",
+      "status": "passed",
+      "detail": {
+        "screenCount": 1,
+        "errors": []
+      }
+    },
+    {
+      "name": "hydration",
+      "status": "passed",
+      "detail": {
+        "preservesSsrRoot": true,
+        "errors": []
+      }
+    },
+    {
+      "name": "shared-css-resolution",
+      "status": "passed",
+      "detail": {
+        "files": [
+          "index-BIHuZ_sV.css"
+        ],
+        "bytes": 135768,
+        "sha256": "sha256:eabc29556350ad9d5fec7f01aa0d7862e37fa9a9ce33402ef22a331165982225",
+        "core": true,
+        "ported": true,
+        "requiresPorted": true,
+        "tokens": true
+      }
+    },
+    {
+      "name": "interaction-evidence",
+      "status": "failed",
+      "error": "Expected values to be strictly equal:\n\n4 !== 9\n"
+    }
+  ],
+  "consumerAuthoredComponents": 0,
+  "consumerAuthoredActions": 0,
+  "generation": "current-in-run-public-output",
+  "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-vue-WuJ9lX",
+  "flow": [
+    {
+      "name": "ten-sample-records",
+      "status": "passed",
+      "detail": {
+        "active": [
+          "subscription-001",
+          "subscription-002",
+          "subscription-003",
+          "subscription-004",
+          "subscription-005",
+          "subscription-006",
+          "subscription-007",
+          "subscription-008",
+          "subscription-009"
+        ],
+        "archived": [
+          "subscription-010"
+        ],
+        "archivePresentation": {
+          "opacity": "0.6",
+          "accessibleName": "Archived: Subscription 10",
+          "tabLabel": "Archived",
+          "keyboardNavigation": true
+        },
+        "mounts": [
+          {
+            "nodeId": "list-ve-items-13-0",
+            "component": "ArchivedRowOverlay",
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "list-slot-toolbar-actions-3-0",
+            "component": "BillingSummaryBadge",
+            "present": true,
+            "passed": true
+          }
+        ],
+        "total": 10,
+        "disposition": "nine active and one in the generated Archived view"
+      }
+    },
+    {
+      "name": "detail-navigation",
+      "status": "passed",
+      "detail": {
+        "id": "subscription-003",
+        "heading": "Subscription 03",
+        "billingViews": {
+          "cycle": "Billing cycle\n\n23% complete · 22 days remaining\n\nmonthly",
+          "payments": "Payments\n\n$57.00 USD · failed\n\nPayment method: wire\n\nLast payment\nSep 1, 2026\nNext payment\nOct 1, 2026"
+        },
+        "mounts": [
+          {
+            "nodeId": "detail-slot-tab-0-4",
+            "component": "CycleProgressCard",
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "detail-slot-tab-1-6",
+            "component": "PaymentTimeline",
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "detail-slot-tab-0-4",
+            "component": "CycleProgressCard",
+            "present": true,
+            "passed": true
+          },
+          {
+            "nodeId": "detail-slot-tab-1-6",
+            "component": "PaymentTimeline",
+            "present": true,
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "edit-seeded-values",
+      "status": "passed",
+      "detail": {
+        "id": "subscription-003",
+        "plan": "Subscription 03"
+      }
+    },
+    {
+      "name": "billing-edit-values",
+      "status": "failed",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'monthly'\n- 'yearly'\n"
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n4 !== 9\n\n    at <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:441:18)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:418:9)\n    at async <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/artifacts/product-reality/sprint-191/m02/run-packed.ts:11:16)"
+}

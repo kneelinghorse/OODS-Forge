@@ -38,6 +38,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
           if (description) node.props[node.component === 'CancellationForm' ? directive === 'codeField' ? 'codeHelp' : 'reasonHelp' : 'help'] = description;
         }
       }
+      if (node.component === 'BillingAmountInput') node.props = { ...node.props, help: `Amount in ${String(node.props?.currency ?? schema.workflow?.data.currency ?? schema.objectSchema?.[String(node.props?.currencyField)]?.enum?.[0] ?? 'USD').toUpperCase()}` };
       if (node.component === 'CancellationForm') node.props = { ...node.props, embedded: true, allowedReasons: composed.traits.find(trait => trait.ref.name.split('/').pop() === 'Cancellable')?.ref.parameters?.allowedReasons ?? [] };
     });
     // The native Save owns submit; field controls own edits. Cancellation belongs to detail.
@@ -53,14 +54,9 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
   }
   const hasContent = (node: UiElement): boolean => ['Stack', 'Card'].includes(node.component)
     ? Boolean(node.children?.some(hasContent)) : Boolean(node.props && Object.keys(node.props).some(key => !['label', 'title'].includes(key))) || Boolean(node.children?.length);
-  let historyField: string | undefined;
-  for (const screen of schema.screens) walk(screen, node => {
-    if (node.component === 'StatusTimeline' && typeof node.props?.historyField === 'string') historyField = node.props.historyField;
-  });
   for (const screen of schema.screens) walk(screen, node => {
     if (node.id.includes('detail-header')) node.children = node.children?.filter(child => !controls.has(child.component));
-    node.children = node.children?.filter(child => child.component !== 'AuditTimeline' || Boolean(historyField || child.props?.auditLogField));
-    if (node.component === 'AuditTimeline' && historyField) node.props = { ...node.props, auditLogField: historyField };
+    node.children = node.children?.filter(child => child.component !== 'AuditTimeline' || (typeof child.props?.auditLogField === 'string' && Boolean(schema.objectSchema?.[child.props.auditLogField])));
     if (node.component !== 'Tabs' || !node.children) return;
     node.props = { ...node.props, ariaLabel: node.props?.ariaLabel ?? 'Record details' };
     const groups = new Map<string, UiElement>();

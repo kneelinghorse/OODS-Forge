@@ -67,7 +67,7 @@ describe("Sprint 177 prose truth carriers", () => {
     // Sprint 187 closes under its independent review while the program stays
     // Active. Frozen builder receipts and remote CI remain separate evidence.
     expect(near).toContain(
-      "**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`",
+      "**Status:** ACTIVE — Sprint 191 Increment 10 BUILT, REVIEW PENDING (#1862); program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`",
     );
     expect(normalizedNear).toContain(
       "locked by decision `#1724` at build base `1118f436`",
@@ -133,13 +133,13 @@ describe("Sprint 177 prose truth carriers", () => {
       "`foundation-v1` promoted by Derek (decision `#1663`). The 14-component nucleus is real in React and Vue with clean packed-consumer proof.",
     );
     expect(normalizedNear).toContain(
-      "Sprint-181 follow-ups `#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt under decision `#1651`",
+      "Sprint 191 m04 closes maintenance `#1318`–`#1322`",
     );
     expect(normalizedNear).toContain(
       "## Increment 2 — Sprint 183: Runnable Generation — CLOSED 2026-09-05",
     );
     expect(normalizedNear).toContain(
-      "they are named at every closeout and must close before an integrated public release",
+      "`#1315` remains pending: the reproducible bundle and exact re-pin notices are prepared for Sprint 192 delivery after review, with zero sends.",
     );
     expect(normalizedNear).toContain(
       "Numbered because Sprint 184 is independently reviewed and closed.",

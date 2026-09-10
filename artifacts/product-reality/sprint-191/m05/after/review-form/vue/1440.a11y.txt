@@ -1,0 +1,73 @@
+- main:
+  - paragraph: SUBSCRIPTION WORKSPACE
+  - heading "Team annual" [level=1]
+  - text: Local workspace
+  - navigation "Workflow screens":
+    - button "List"
+    - button "Detail"
+    - button "Edit"
+    - button "Timeline"
+  - region "Subscription screen":
+    - text: Plan name
+    - textbox "Plan name": Team annual
+    - text: Human-readable plan label shown in headers. Status
+    - combobox "Status":
+      - option "Future"
+      - option "Trialing"
+      - option "Active"
+      - option "Paused"
+      - option "Pending Cancellation" [selected]
+      - option "Past Due"
+      - option "Unpaid"
+      - option "Terminated"
+    - paragraph: Current lifecycle status of the subscription.
+    - group:
+      - heading "Cancellation Form" [level=3]
+      - text: Reason Code
+      - textbox "Reason Code": customer_request
+      - paragraph: Structured reason code chosen from the allowedReasons parameter.
+      - text: Reason
+      - textbox "Reason": Budget changed for next year
+      - paragraph: Free-form explanation captured during cancellation workflows.
+    - text: Billing interval
+    - combobox "Billing interval":
+      - option "monthly"
+      - option "yearly" [selected]
+    - paragraph: Recurrence cadence (monthly, yearly, quarterly, etc.).
+    - text: Billing amount USD
+    - textbox "Billing amount": "19.99"
+    - paragraph: Amount in USD
+    - checkbox "Cancel at period end" [checked]
+    - text: Cancel at period end
+    - paragraph: Whether the subscription will cancel at the natural billing period end.
+    - text: Cancellation requested at
+    - textbox "Cancellation requested at":
+      - /placeholder: Timestamp when cancellation was initiated.
+      - text: 2026-09-08T12:00
+    - paragraph: Timestamp when cancellation was initiated.
+    - text: Currency
+    - textbox "Currency":
+      - /placeholder: Enter currency
+      - text: usd
+    - paragraph: ISO 4217 currency code used for billing.
+    - text: Payment method type
+    - combobox "Payment method type":
+      - option "Enter payment method type" [disabled]
+      - option "card"
+      - option "ach"
+      - option "wire" [selected]
+      - option "invoice"
+      - option "other"
+    - paragraph: Payment instrument category used for collection.
+    - text: Customer email
+    - textbox "Customer email":
+      - /placeholder: Enter customer email
+      - text: customer3@example.com
+    - paragraph: Billing contact email address.
+    - text: Last event
+    - textbox "Last event":
+      - /placeholder: Enter last event
+      - text: billing_cycle_started
+    - paragraph: Lifecycle event associated with the most recent timestamp mutation.
+    - button "Save"
+  - status: Changes saved in this session.

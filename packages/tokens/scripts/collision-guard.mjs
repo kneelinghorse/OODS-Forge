@@ -27,9 +27,10 @@
  * restate all 41 of brand A's base slots with different values. A guard that red-flags
  * "any intra-scope duplicate" could never go green, because the prescribed structure
  * produces duplicates by design. The exemption is narrow — every declaration in the
- * group must live under ONE brand's directory. A duplicate that mixes a brand file
- * with a non-brand file (or two different brands) is NOT the declared chain and is
- * reported.
+ * group must live under ONE brand's directory. The separate s191 exception allows
+ * only viz.scale.categorical.01..06 from src/viz-scales.json into one brand dark.json,
+ * plus slot 04 in hc.json to retain its old bytes. Other mixed shared/brand or
+ * cross-brand declarations are reported.
  *
  * Duplicates whose values are IDENTICAL are not reported: they cannot change the
  * resolved output regardless of which one wins.
@@ -119,6 +120,15 @@ function isDeclaredOverlayChain(declarations) {
   return brands.every((b) => b !== null) && new Set(brands).size === 1;
 }
 
+/** Only the six dark categorical overrides and the preserved HC slot 04 are declared. */
+function isCategoricalThemeOverlay(tokenPath, declarations) {
+  return /^viz\.scale\.categorical\.0[1-6]$/.test(tokenPath)
+    && declarations.length === 2
+    && declarations[0].file === 'src/viz-scales.json'
+    && (/^src\/tokens\/brands\/[AB]\/dark\.json$/.test(declarations[1].file)
+      || (tokenPath === 'viz.scale.categorical.04' && /^src\/tokens\/brands\/[AB]\/hc\.json$/.test(declarations[1].file)));
+}
+
 /** Non-exempt collisions within a single ordered file list. */
 export function findCollisions(files, root = PACKAGE_ROOT) {
   const byPath = new Map();
@@ -135,7 +145,7 @@ export function findCollisions(files, root = PACKAGE_ROOT) {
     if (declarations.length < 2) continue;
     const distinct = new Set(declarations.map((d) => JSON.stringify(d.value)));
     if (distinct.size < 2) continue; // identical values cannot change the output
-    if (isDeclaredOverlayChain(declarations)) continue;
+    if (isDeclaredOverlayChain(declarations) || isCategoricalThemeOverlay(tokenPath, declarations)) continue;
     violations.push({ tokenPath, declarations });
   }
   return violations;

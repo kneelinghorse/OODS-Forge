@@ -400,7 +400,7 @@ function buildComponentSource(
       : `const interactions = useMemo(() => BASE_SPEC.interactions ?? [], []);`;
 
   return `import { useMemo, type JSX } from 'react';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { ${componentMeta.component} } from '${componentMeta.importPath}';
 ${hookImports ? `${hookImports}\n` : ''}
 

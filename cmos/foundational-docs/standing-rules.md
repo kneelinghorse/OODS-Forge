@@ -13,7 +13,7 @@ labels to the canonical numbers here.
 Rule numbers in this file are stable. New rules append; existing numbers are not
 reused. A refinement that preserves the same requirement is folded into the
 existing rule and recorded in its origin or concordance entry.
-Use `SR-01` through `SR-26` when citing this canon so the repository standing
+Use `SR-01` through `SR-27` when citing this canon so the repository standing
 rules cannot be confused with another document's local `Rule N` labels.
 
 ---
@@ -408,6 +408,24 @@ p99, timeout, and timing-sensitive suites red without a product change.
 **Application:** Use the established order: viz-core, MCP-server, root core,
 then scale. Record any isolation rerun beside the first result.
 
+
+### Rule 27 — Regenerate declared movers from the closeout diff
+
+**Origin:** Sprint 181 carry #1318; enforced operationally in Sprints 185 and 190,
+written into the canon in Sprint 191.
+
+**Rule:** At closeout, regenerate declared movers from
+`git diff --name-only <base>..<head>` over the advertised path set. A hand-written
+movement list cannot substitute for the actual committed range.
+
+**Why:** Copied movement lists drifted from the files that consumers must re-pin.
+
+**Application:** `scripts/product-reality/s185-sprint-wide-movers.mjs`
+`deriveRange` derives the committed range and `deriveMovers` rejects declaration
+drift. `packages/mcp-server/test/product-reality/closeout.s190.spec.ts` exercises
+the enforcement. Retain the derived list and the base/head identities beside the
+closeout receipt.
+
 ---
 
 ## Old-number → canonical-number concordance
@@ -499,6 +517,8 @@ rules: Sprint 177's locked memo assigns them to
 - Rules 22–23: Sprint 174 review and Sprint 175
   [standing-rule candidates](../planning/forge-s175-correctives-decision-memo.md#3-standing-rule-candidates-recorded-unnumbered-s176-m01-writes-the-list-into-the-repo-with-one-numbering).
 - Rule 24: Sprint 176 [method rule](../planning/forge-s176-render-grading-decision-memo.md#1d-m04--forced-block-m).
+- Rule 27: Sprint 181 carry #1318, operational enforcement in Sprints 185/190,
+  and Sprint 191 maintenance closeout.
 - Rules 25–26: Sprint 169 literal-gate review and Sprint 156 sequential-suite
   review, reaffirmed by the Sprint 177 locked memo.
 

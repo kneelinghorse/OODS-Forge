@@ -79,7 +79,17 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     const normalizedSchema = normalizeSchemaForFramework(ctx.schema, 'html');
     const processedSchema = injectFieldPlaceholders(normalizedSchema);
     const screenHtml = renderTree(processedSchema);
-    const html = renderDocument({ screenHtml, schema: processedSchema });
+    const scoped = options.theme !== undefined || options.brand !== undefined;
+    const html = renderDocument({
+      screenHtml,
+      schema: processedSchema,
+      ...(scoped ? {
+        theme: options.theme,
+        brand: options.brand ?? 'A',
+        // renderDocument already emits the default component CSS exactly once.
+        componentCss: `:root { color-scheme: ${options.theme ?? (schema.theme === 'dark' ? 'dark' : 'light')}; }`,
+      } : {}),
+    });
 
     return {
       status: 'ok',

@@ -82,6 +82,14 @@ describe('Error Registry', () => {
     });
   });
 
+  it('describes OODS-N013 as the unavailable HTML target, preserving the N-code category', () => {
+    expect(getDefinition('OODS-N013')).toEqual({
+      code: 'OODS-N013', category: 'not_found',
+      message: 'HTML renderer unavailable; fallback output is forbidden at build or release confidence',
+      retryable: false,
+    });
+  });
+
   it('registers unavailable HTML Tailwind output as a non-retryable target gap', () => {
     expect(getDefinition('OODS-N018')).toEqual({
       code: 'OODS-N018',

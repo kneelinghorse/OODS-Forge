@@ -313,7 +313,7 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-N010', { code: 'OODS-N010', category: 'not_found', message: 'Registry unavailable', retryable: false }],
   ['OODS-N011', { code: 'OODS-N011', category: 'not_found', message: 'Token data missing', retryable: false }],
   ['OODS-N012', { code: 'OODS-N012', category: 'not_found', message: 'A11y token data missing', retryable: false }],
-  ['OODS-N013', { code: 'OODS-N013', category: 'not_found', message: 'Registry fallback used', retryable: false }],
+  ['OODS-N013', { code: 'OODS-N013', category: 'not_found', message: 'HTML renderer unavailable; fallback output is forbidden at build or release confidence', retryable: false }],
   ['OODS-N014', { code: 'OODS-N014', category: 'not_found', message: 'Registry snapshot payload missing', retryable: false }],
   ['OODS-N015', { code: 'OODS-N015', category: 'not_found', message: 'Component target unavailable', retryable: false }],
   ['OODS-N016', { code: 'OODS-N016', category: 'not_found', message: 'Generated artifact dependency closure is invalid', retryable: false }],

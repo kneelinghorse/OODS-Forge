@@ -202,8 +202,10 @@ function normalizeTimelineEvents(values: readonly unknown[]): TimelineEvent[] {
     const to = eventText(value, ['to']);
     return [{
       id: eventText(value, ['id']) ?? `event-${index}`,
-      label: eventText(value, ['label', 'title', 'event', 'status', 'state', 'text', 'name'])
-        ?? (from && to ? `${from} → ${to}` : undefined)
+      label: eventText(value, ['label', 'title'])
+        ?? (eventText(value, ['event', 'status', 'state']) ? humanize(eventText(value, ['event', 'status', 'state'])!) : undefined)
+        ?? eventText(value, ['text', 'name'])
+        ?? (to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : undefined)
         ?? 'Event',
       from,
       to,

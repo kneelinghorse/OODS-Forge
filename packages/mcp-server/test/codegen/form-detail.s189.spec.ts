@@ -53,7 +53,9 @@ describe('form and detail reconcile their declared semantics', () => {
     expect(new Set(labels).size).toBe(labels.length);
     expect(labels.every(label => typeof label === 'string' && !/\d/.test(label))).toBe(true);
     expect(panels.every(panel => walk(panel.children ?? []).some(node => !['Stack', 'Card'].includes(node.component)))).toBe(true);
-    expect(nodes.find(node => node.component === 'AuditTimeline')?.props?.auditLogField).toBe('state_history');
+    // s191-m03 A3: lifecycle history is not a substitute for a declared audit log.
+    expect(nodes.filter(node => node.component === 'AuditTimeline')).toHaveLength(0);
+    expect(nodes.filter(node => node.component === 'StatusTimeline')).toHaveLength(1);
     expect(nodes.some(node => ['Input', 'Textarea', 'Checkbox', 'CancellationForm'].includes(node.component))).toBe(false);
   });
 

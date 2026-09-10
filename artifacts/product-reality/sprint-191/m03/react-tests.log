@@ -1,0 +1,65 @@
+
+> @oods/components-react@0.1.0 test /Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/components-react
+> vitest run --config vitest.config.ts "test/ported-scenarios.spec.tsx" "test/billing-views.spec.tsx"
+
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/components-react
+
+ ✓ test/billing-views.spec.tsx (7 tests) 87ms
+ ❯ test/ported-scenarios.spec.tsx (10 tests | 2 failed) 164ms
+   × @oods/components-react ported scenarios > audit-timeline-transitions renders transition evidence from the shared timeline primitive 59ms
+     → expected 'Audit TimelineTrialing → ActiveSep 5,…' to contain 'trialing → active'
+   ✓ @oods/components-react ported scenarios > cancellation-summary-boolean renders a boolean child under its declared label 2ms
+   ✓ @oods/components-react ported scenarios > renders the cancellation field as a named value rather than the literal boolean 2ms
+   ✓ @oods/components-react ported scenarios > pagination-bar-navigation reconciles totals and emits page changes 42ms
+   ✓ @oods/components-react ported scenarios > price-badge-currency formats minor units and preserves the price marker 4ms
+   ✓ @oods/components-react ported scenarios > relative-timestamp-fixed renders deterministic relative and machine-readable time 3ms
+   ✓ @oods/components-react ported scenarios > search-input-clear supports immediate updates, Escape, and clear button 42ms
+   ✓ @oods/components-react ported scenarios > status-badge-mapped reuses status presentation title, tone, and icon semantics 2ms
+   × @oods/components-react ported scenarios > status-timeline-history renders current status and transition count 3ms
+     → expected 'Status TimelineCurrent status: Active…' to contain 'trialing → active'
+   ✓ @oods/components-react ported scenarios > search-input-clear honors debounce and minimum query length 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/ported-scenarios.spec.tsx > @oods/components-react ported scenarios > audit-timeline-transitions renders transition evidence from the shared timeline primitive
+AssertionError: expected 'Audit TimelineTrialing → ActiveSep 5,…' to contain 'trialing → active'
+
+Expected: "trialing → active"
+Received: "Audit TimelineTrialing → ActiveSep 5, 2026, 12:00 PMtrialingActor: user-7Reason: Payment cleared"
+
+ ❯ test/ported-scenarios.spec.tsx:39:34
+     37|     const timeline = screen.getByRole('log', { name: 'Audit Timeline' …
+     38|     expect(timeline.getAttribute('data-oods-component')).toBe('AuditTi…
+     39|     expect(timeline.textContent).toContain('trialing → active');
+       |                                  ^
+     40|     expect(timeline.textContent).toContain('Actor: user-7');
+     41|     expect(timeline.textContent).toContain('Payment cleared');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/ported-scenarios.spec.tsx > @oods/components-react ported scenarios > status-timeline-history renders current status and transition count
+AssertionError: expected 'Status TimelineCurrent status: Active…' to contain 'trialing → active'
+
+Expected: "trialing → active"
+Received: "Status TimelineCurrent status: ActiveAllowed transitions: paused, canceledTrialing → ActiveSep 5, 2026, 12:00 PMtrialing"
+
+ ❯ test/ported-scenarios.spec.tsx:143:34
+    141|     expect(timeline.textContent).toContain('Current status: Active');
+    142|     expect(timeline.textContent).toContain('Allowed transitions: pause…
+    143|     expect(timeline.textContent).toContain('trialing → active');
+       |                                  ^
+    144|   });
+    145| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 15 passed (17)
+   Start at  00:05:48
+   Duration  1.13s (transform 241ms, setup 0ms, collect 610ms, tests 251ms, environment 859ms, prepare 99ms)
+
+/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/components-react:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/components-react@0.1.0 test: `vitest run --config vitest.config.ts "test/ported-scenarios.spec.tsx" "test/billing-views.spec.tsx"`
+Exit status 1

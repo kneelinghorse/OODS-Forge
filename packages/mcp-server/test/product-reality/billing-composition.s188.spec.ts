@@ -99,7 +99,9 @@ describe('Decision 1822 bounded recipe composition', () => {
         }
         expect(node.props).toMatchObject(declaration.props);
         expect(Object.keys(node.props ?? {}).filter(key => !Object.hasOwn(declaration.props ?? {}, key))).toEqual(row.context === 'form' ? ['help'] : []);
-        if (row.context === 'form') expect(node.props?.help).toBe(row.schema.objectSchema?.[String(node.props?.amountField ?? node.props?.intervalField)]?.description);
+        // Amount is stored in minor units but displayed in major currency units (s191-m03).
+        if (row.context === 'form') expect(node.props?.help).toBe(node.component === 'BillingAmountInput'
+          ? 'Amount in USD' : row.schema.objectSchema?.[String(node.props?.intervalField)]?.description);
         placements.push({ object: row.object, context: row.context, trait: declaration.sourceTrait, component: node.component, nodeId: node.id, parameters: Object.fromEntries(Object.entries(node.props ?? {}).filter(([key]) => key.endsWith('Parameter') || key === 'minorUnits' || key === 'intervals')) });
       }
       for (const framework of ['react', 'vue'] as const) {

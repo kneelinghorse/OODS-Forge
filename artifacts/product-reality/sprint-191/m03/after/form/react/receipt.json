@@ -1,0 +1,790 @@
+{
+  "version": "1.1",
+  "theme": "light",
+  "brand": "A",
+  "framework": "react",
+  "compose": {
+    "object": "Subscription",
+    "context": "form"
+  },
+  "schemaHash": "sha256:6827a1961aeeeaeb93a500e6bac9e8a7d8776dd6e5efd16be5711d767640f234",
+  "artifactContentHash": "sha256:38c95a6e4204db2b46da8d872740404005affd5a057197a70a8f5ebdc1e8b0a2",
+  "files": [
+    {
+      "path": "src/GeneratedUI.tsx",
+      "contentHash": "sha256:c471c92bd7f74b2cf20529dd6cce50b56defc5060cc73c8719b0af9a241a51a0"
+    }
+  ],
+  "sourceHead": "ea1c66ce75cc3c8551c4790634b7b0222deb29a0",
+  "model": {
+    "allowedTransitions": [],
+    "amount": 1999,
+    "archiveMetadata": {},
+    "archiveReason": "Consumer archive reason",
+    "archivedAt": "2026-09-05T12:00:00.000Z",
+    "archivedBy": "Consumer archived by",
+    "billingInterval": "monthly",
+    "cancelAtPeriodEnd": false,
+    "cancellationReason": "Consumer cancellation reason",
+    "cancellationReasonCode": "Consumer cancellation reason code",
+    "cancellationRequestedAt": "2026-09-05T12:00:00.000Z",
+    "createdAt": "2026-09-05T12:00:00.000Z",
+    "currency": "usd",
+    "currentPeriodEnd": "2026-09-05T12:00:00.000Z",
+    "currentPeriodProgress": 0,
+    "currentPeriodStart": "2026-09-05T12:00:00.000Z",
+    "customerEmail": "consumer@example.test",
+    "customerName": "Consumer customer name",
+    "isArchived": false,
+    "lastEvent": "Consumer last event",
+    "lastEventAt": "2026-09-05T12:00:00.000Z",
+    "lastPaymentAt": "2026-09-05T12:00:00.000Z",
+    "nextPaymentDueAt": "2026-09-05T12:00:00.000Z",
+    "paymentMethodType": "card",
+    "paymentStatus": "pending",
+    "planCode": "Consumer plan code",
+    "planInterval": "Consumer plan interval",
+    "planName": "Consumer plan name",
+    "prorationAmount": 0,
+    "prorationDate": 0,
+    "restorationMetadata": {},
+    "restoredAt": "2026-09-05T12:00:00.000Z",
+    "stateHistory": [],
+    "status": "future",
+    "subscriptionId": "consumer-subscription-id",
+    "updatedAt": "2026-09-05T12:00:00.000Z"
+  },
+  "steps": [],
+  "clock": "2026-09-08T12:00:00.000Z",
+  "clockStepMs": 1,
+  "locale": "en-US",
+  "timezone": "UTC",
+  "packages": [
+    {
+      "name": "@oods/tokens",
+      "version": "0.1.0",
+      "installSpec": "file:./tarballs/oods-tokens-0.1.0.tgz",
+      "sha256": "sha256:98684ea81d02abbd006943b615401e537083053747a6b65c9a765573500bbba4",
+      "bytes": 210361
+    },
+    {
+      "name": "@oods/component-contracts",
+      "version": "0.1.0",
+      "installSpec": "file:./tarballs/oods-component-contracts-0.1.0.tgz",
+      "sha256": "sha256:1f7583667697d55e09daddec006133f7bd35f14793a4860ac00022b796a1f629",
+      "bytes": 104196
+    },
+    {
+      "name": "@oods/component-styles",
+      "version": "0.1.0",
+      "installSpec": "file:./tarballs/oods-component-styles-0.1.0.tgz",
+      "sha256": "sha256:00d820175c4bc5d3be4bb13f7818fe0a4690cb51b2eea074dc3a7a11422f7e80",
+      "bytes": 11460
+    },
+    {
+      "name": "@oods/components-react",
+      "version": "0.1.0",
+      "installSpec": "file:./tarballs/oods-components-react-0.1.0.tgz",
+      "sha256": "sha256:fe5d70cc942fc74869d06ba3c66dbaef71a514e923c726e722680383c55eba99",
+      "bytes": 81682
+    }
+  ],
+  "views": [
+    {
+      "width": 390,
+      "accessibility": "- text: Status\n- combobox \"Status\":\n  - option \"Future\" [selected]\n  - option \"Trialing\"\n  - option \"Active\"\n  - option \"Paused\"\n  - option \"Pending Cancellation\"\n  - option \"Past Due\"\n  - option \"Unpaid\"\n  - option \"Terminated\"\n- paragraph: Current lifecycle status of the subscription.\n- group:\n  - banner:\n    - heading \"Cancellation Form\" [level=3]\n  - text: Reason Code\n  - textbox \"Reason Code\": Consumer cancellation reason code\n  - paragraph: Structured reason code chosen from the allowedReasons parameter.\n  - text: Reason\n  - textbox \"Reason\": Consumer cancellation reason\n  - paragraph: Free-form explanation captured during cancellation workflows.\n- text: Billing interval\n- combobox \"Billing interval\":\n  - option \"monthly\" [selected]\n  - option \"yearly\"\n- paragraph: Recurrence cadence (monthly, yearly, quarterly, etc.).\n- text: Billing amount USD\n- textbox \"Billing amount\": \"19.99\"\n- paragraph: Amount in USD\n- checkbox \"Cancel at period end\"\n- text: Cancel at period end\n- paragraph: Whether the subscription will cancel at the natural billing period end.\n- text: Cancellation requested at\n- textbox \"Cancellation requested at\":\n  - /placeholder: Timestamp when cancellation was initiated.\n  - text: 2026-09-05T12:00\n- paragraph: Timestamp when cancellation was initiated.\n- text: Currency\n- textbox \"Currency\":\n  - /placeholder: Enter currency\n  - text: usd\n- paragraph: ISO 4217 currency code used for billing.\n- text: Payment method type\n- combobox \"Payment method type\":\n  - option \"Enter payment method type\" [disabled]\n  - option \"card\" [selected]\n  - option \"ach\"\n  - option \"wire\"\n  - option \"invoice\"\n  - option \"other\"\n- paragraph: Payment instrument category used for collection.\n- text: Customer email\n- textbox \"Customer email\":\n  - /placeholder: Enter customer email\n  - text: consumer@example.test\n- paragraph: Billing contact email address.\n- text: Last event\n- textbox \"Last event\":\n  - /placeholder: Enter last event\n  - text: Consumer last event\n- paragraph: Lifecycle event associated with the most recent timestamp mutation.\n- button \"Save\"",
+      "visibleText": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.967 0.03 86)",
+        "chartCanvasFills": [],
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "elementCount": 80,
+        "overflow": [],
+        "glyphWraps": [
+          {
+            "element": "p",
+            "text": "Structured reason code chosen from the allowedReasons parameter.",
+            "lines": [
+              "Structured reason code chosen from the",
+              "allowedReasons parameter."
+            ]
+          },
+          {
+            "element": "p",
+            "text": "Free-form explanation captured during cancellation workflows.",
+            "lines": [
+              "Free-form explanation captured during cancellation",
+              "workflows."
+            ]
+          },
+          {
+            "element": "slot-field-1-5-description",
+            "text": "Whether the subscription will cancel at the natural billing period end.",
+            "lines": [
+              "Whether the subscription will cancel at the natural billing",
+              "period end."
+            ]
+          },
+          {
+            "element": "slot-field-7-21-description",
+            "text": "Lifecycle event associated with the most recent timestamp mutation.",
+            "lines": [
+              "Lifecycle event associated with the most recent timestamp",
+              "mutation."
+            ]
+          }
+        ]
+      },
+      "values": [
+        {
+          "element": "select",
+          "name": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+          "value": "future",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Reason Code",
+          "value": "Consumer cancellation reason code",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "ReasonConsumer cancellation reason",
+          "value": "Consumer cancellation reason",
+          "checked": false
+        },
+        {
+          "element": "ve-field-0-26",
+          "name": "Billing interval",
+          "value": "monthly",
+          "checked": false
+        },
+        {
+          "element": "ve-field-0-27",
+          "name": "Billing amount",
+          "value": "19.99",
+          "checked": false
+        },
+        {
+          "element": "slot-field-1-5",
+          "name": "Cancel at period end",
+          "value": "on",
+          "checked": false
+        },
+        {
+          "element": "slot-field-3-13",
+          "name": "Cancellation requested at",
+          "value": "2026-09-05T12:00",
+          "checked": false
+        },
+        {
+          "element": "slot-field-4-15",
+          "name": "Currency*",
+          "value": "usd",
+          "checked": false
+        },
+        {
+          "element": "slot-field-5-17",
+          "name": "Payment method type",
+          "value": "card",
+          "checked": false
+        },
+        {
+          "element": "slot-field-6-19",
+          "name": "Customer email",
+          "value": "consumer@example.test",
+          "checked": false
+        },
+        {
+          "element": "slot-field-7-21",
+          "name": "Last event*",
+          "value": "Consumer last event",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "screen-form-11",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-title-1",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "ve-title-28",
+          "component": "StatusSelector",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription."
+        },
+        {
+          "id": "ve-title-29",
+          "component": "CancellationForm",
+          "text": "Cancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-fields-8",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-field-group-2",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "slot-field-0-3",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "",
+          "component": "BillingIntervalSelector",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.)."
+        },
+        {
+          "id": "",
+          "component": "BillingAmountInput",
+          "text": "Billing amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-field-group-4",
+          "component": "Stack",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "slot-field-1-5",
+          "component": "Checkbox",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-6",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-12",
+          "component": "Stack",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "slot-field-3-13",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-14",
+          "component": "Stack",
+          "text": "Currency*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "slot-field-4-15",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-16",
+          "component": "Stack",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "slot-field-5-17",
+          "component": "Select",
+          "text": "Enter payment method type\ncard\nach\nwire\ninvoice\nother"
+        },
+        {
+          "id": "form-field-group-18",
+          "component": "Stack",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "slot-field-6-19",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-20",
+          "component": "Stack",
+          "text": "Last event*\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "slot-field-7-21",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-22",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-24",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "390.png",
+      "screenshotHash": "sha256:93ba164d3b3293d58db875a0d86e1f36547c05576ff772b7edbb9315a74e2ed9",
+      "dump": "390.a11y.txt"
+    },
+    {
+      "width": 820,
+      "accessibility": "- text: Status\n- combobox \"Status\":\n  - option \"Future\" [selected]\n  - option \"Trialing\"\n  - option \"Active\"\n  - option \"Paused\"\n  - option \"Pending Cancellation\"\n  - option \"Past Due\"\n  - option \"Unpaid\"\n  - option \"Terminated\"\n- paragraph: Current lifecycle status of the subscription.\n- group:\n  - banner:\n    - heading \"Cancellation Form\" [level=3]\n  - text: Reason Code\n  - textbox \"Reason Code\": Consumer cancellation reason code\n  - paragraph: Structured reason code chosen from the allowedReasons parameter.\n  - text: Reason\n  - textbox \"Reason\": Consumer cancellation reason\n  - paragraph: Free-form explanation captured during cancellation workflows.\n- text: Billing interval\n- combobox \"Billing interval\":\n  - option \"monthly\" [selected]\n  - option \"yearly\"\n- paragraph: Recurrence cadence (monthly, yearly, quarterly, etc.).\n- text: Billing amount USD\n- textbox \"Billing amount\": \"19.99\"\n- paragraph: Amount in USD\n- checkbox \"Cancel at period end\"\n- text: Cancel at period end\n- paragraph: Whether the subscription will cancel at the natural billing period end.\n- text: Cancellation requested at\n- textbox \"Cancellation requested at\":\n  - /placeholder: Timestamp when cancellation was initiated.\n  - text: 2026-09-05T12:00\n- paragraph: Timestamp when cancellation was initiated.\n- text: Currency\n- textbox \"Currency\":\n  - /placeholder: Enter currency\n  - text: usd\n- paragraph: ISO 4217 currency code used for billing.\n- text: Payment method type\n- combobox \"Payment method type\":\n  - option \"Enter payment method type\" [disabled]\n  - option \"card\" [selected]\n  - option \"ach\"\n  - option \"wire\"\n  - option \"invoice\"\n  - option \"other\"\n- paragraph: Payment instrument category used for collection.\n- text: Customer email\n- textbox \"Customer email\":\n  - /placeholder: Enter customer email\n  - text: consumer@example.test\n- paragraph: Billing contact email address.\n- text: Last event\n- textbox \"Last event\":\n  - /placeholder: Enter last event\n  - text: Consumer last event\n- paragraph: Lifecycle event associated with the most recent timestamp mutation.\n- button \"Save\"",
+      "visibleText": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.967 0.03 86)",
+        "chartCanvasFills": [],
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "elementCount": 80,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [
+        {
+          "element": "select",
+          "name": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+          "value": "future",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Reason Code",
+          "value": "Consumer cancellation reason code",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "ReasonConsumer cancellation reason",
+          "value": "Consumer cancellation reason",
+          "checked": false
+        },
+        {
+          "element": "ve-field-0-26",
+          "name": "Billing interval",
+          "value": "monthly",
+          "checked": false
+        },
+        {
+          "element": "ve-field-0-27",
+          "name": "Billing amount",
+          "value": "19.99",
+          "checked": false
+        },
+        {
+          "element": "slot-field-1-5",
+          "name": "Cancel at period end",
+          "value": "on",
+          "checked": false
+        },
+        {
+          "element": "slot-field-3-13",
+          "name": "Cancellation requested at",
+          "value": "2026-09-05T12:00",
+          "checked": false
+        },
+        {
+          "element": "slot-field-4-15",
+          "name": "Currency*",
+          "value": "usd",
+          "checked": false
+        },
+        {
+          "element": "slot-field-5-17",
+          "name": "Payment method type",
+          "value": "card",
+          "checked": false
+        },
+        {
+          "element": "slot-field-6-19",
+          "name": "Customer email",
+          "value": "consumer@example.test",
+          "checked": false
+        },
+        {
+          "element": "slot-field-7-21",
+          "name": "Last event*",
+          "value": "Consumer last event",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "screen-form-11",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-title-1",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "ve-title-28",
+          "component": "StatusSelector",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription."
+        },
+        {
+          "id": "ve-title-29",
+          "component": "CancellationForm",
+          "text": "Cancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-fields-8",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-field-group-2",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "slot-field-0-3",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "",
+          "component": "BillingIntervalSelector",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.)."
+        },
+        {
+          "id": "",
+          "component": "BillingAmountInput",
+          "text": "Billing amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-field-group-4",
+          "component": "Stack",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "slot-field-1-5",
+          "component": "Checkbox",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-6",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-12",
+          "component": "Stack",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "slot-field-3-13",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-14",
+          "component": "Stack",
+          "text": "Currency*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "slot-field-4-15",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-16",
+          "component": "Stack",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "slot-field-5-17",
+          "component": "Select",
+          "text": "Enter payment method type\ncard\nach\nwire\ninvoice\nother"
+        },
+        {
+          "id": "form-field-group-18",
+          "component": "Stack",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "slot-field-6-19",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-20",
+          "component": "Stack",
+          "text": "Last event*\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "slot-field-7-21",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-22",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-24",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "820.png",
+      "screenshotHash": "sha256:ccfdf2ef3525c806cf5483c8e4c256e6807f1eb52b519f2addd65ff2daad64bb",
+      "dump": "820.a11y.txt"
+    },
+    {
+      "width": 1440,
+      "accessibility": "- text: Status\n- combobox \"Status\":\n  - option \"Future\" [selected]\n  - option \"Trialing\"\n  - option \"Active\"\n  - option \"Paused\"\n  - option \"Pending Cancellation\"\n  - option \"Past Due\"\n  - option \"Unpaid\"\n  - option \"Terminated\"\n- paragraph: Current lifecycle status of the subscription.\n- group:\n  - banner:\n    - heading \"Cancellation Form\" [level=3]\n  - text: Reason Code\n  - textbox \"Reason Code\": Consumer cancellation reason code\n  - paragraph: Structured reason code chosen from the allowedReasons parameter.\n  - text: Reason\n  - textbox \"Reason\": Consumer cancellation reason\n  - paragraph: Free-form explanation captured during cancellation workflows.\n- text: Billing interval\n- combobox \"Billing interval\":\n  - option \"monthly\" [selected]\n  - option \"yearly\"\n- paragraph: Recurrence cadence (monthly, yearly, quarterly, etc.).\n- text: Billing amount USD\n- textbox \"Billing amount\": \"19.99\"\n- paragraph: Amount in USD\n- checkbox \"Cancel at period end\"\n- text: Cancel at period end\n- paragraph: Whether the subscription will cancel at the natural billing period end.\n- text: Cancellation requested at\n- textbox \"Cancellation requested at\":\n  - /placeholder: Timestamp when cancellation was initiated.\n  - text: 2026-09-05T12:00\n- paragraph: Timestamp when cancellation was initiated.\n- text: Currency\n- textbox \"Currency\":\n  - /placeholder: Enter currency\n  - text: usd\n- paragraph: ISO 4217 currency code used for billing.\n- text: Payment method type\n- combobox \"Payment method type\":\n  - option \"Enter payment method type\" [disabled]\n  - option \"card\" [selected]\n  - option \"ach\"\n  - option \"wire\"\n  - option \"invoice\"\n  - option \"other\"\n- paragraph: Payment instrument category used for collection.\n- text: Customer email\n- textbox \"Customer email\":\n  - /placeholder: Enter customer email\n  - text: consumer@example.test\n- paragraph: Billing contact email address.\n- text: Last event\n- textbox \"Last event\":\n  - /placeholder: Enter last event\n  - text: Consumer last event\n- paragraph: Lifecycle event associated with the most recent timestamp mutation.\n- button \"Save\"",
+      "visibleText": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave",
+      "measurements": {
+        "bodyBackground": "oklch(0.967 0.03 86)",
+        "chartCanvasFills": [],
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "elementCount": 80,
+        "overflow": [],
+        "glyphWraps": []
+      },
+      "values": [
+        {
+          "element": "select",
+          "name": "StatusFutureTrialingActivePausedPending CancellationPast DueUnpaidTerminated",
+          "value": "future",
+          "checked": false
+        },
+        {
+          "element": "input",
+          "name": "Reason Code",
+          "value": "Consumer cancellation reason code",
+          "checked": false
+        },
+        {
+          "element": "textarea",
+          "name": "ReasonConsumer cancellation reason",
+          "value": "Consumer cancellation reason",
+          "checked": false
+        },
+        {
+          "element": "ve-field-0-26",
+          "name": "Billing interval",
+          "value": "monthly",
+          "checked": false
+        },
+        {
+          "element": "ve-field-0-27",
+          "name": "Billing amount",
+          "value": "19.99",
+          "checked": false
+        },
+        {
+          "element": "slot-field-1-5",
+          "name": "Cancel at period end",
+          "value": "on",
+          "checked": false
+        },
+        {
+          "element": "slot-field-3-13",
+          "name": "Cancellation requested at",
+          "value": "2026-09-05T12:00",
+          "checked": false
+        },
+        {
+          "element": "slot-field-4-15",
+          "name": "Currency*",
+          "value": "usd",
+          "checked": false
+        },
+        {
+          "element": "slot-field-5-17",
+          "name": "Payment method type",
+          "value": "card",
+          "checked": false
+        },
+        {
+          "element": "slot-field-6-19",
+          "name": "Customer email",
+          "value": "consumer@example.test",
+          "checked": false
+        },
+        {
+          "element": "slot-field-7-21",
+          "name": "Last event*",
+          "value": "Consumer last event",
+          "checked": false
+        }
+      ],
+      "regions": [
+        {
+          "id": "screen-form-11",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows.\n\nBilling interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation.\n\nSave"
+        },
+        {
+          "id": "form-title-1",
+          "component": "Stack",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription.\n\nCancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "ve-title-28",
+          "component": "StatusSelector",
+          "text": "Status\nFuture\nTrialing\nActive\nPaused\nPending Cancellation\nPast Due\nUnpaid\nTerminated\n\nCurrent lifecycle status of the subscription."
+        },
+        {
+          "id": "ve-title-29",
+          "component": "CancellationForm",
+          "text": "Cancellation Form\nReason Code\n\nStructured reason code chosen from the allowedReasons parameter.\n\nReason\n\nFree-form explanation captured during cancellation workflows."
+        },
+        {
+          "id": "form-fields-8",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD\n\nCancel at period end\n\nWhether the subscription will cancel at the natural billing period end.\n\nCancellation requested at\n\nTimestamp when cancellation was initiated.\n\nCurrency*\n\nISO 4217 currency code used for billing.\n\nPayment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection.\n\nCustomer email\n\nBilling contact email address.\n\nLast event*\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "form-field-group-2",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "slot-field-0-3",
+          "component": "Stack",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.).\n\nBilling amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "",
+          "component": "BillingIntervalSelector",
+          "text": "Billing interval\nmonthly\nyearly\n\nRecurrence cadence (monthly, yearly, quarterly, etc.)."
+        },
+        {
+          "id": "",
+          "component": "BillingAmountInput",
+          "text": "Billing amount\nUSD\n\nAmount in USD"
+        },
+        {
+          "id": "form-field-group-4",
+          "component": "Stack",
+          "text": "Cancel at period end\n\nWhether the subscription will cancel at the natural billing period end."
+        },
+        {
+          "id": "slot-field-1-5",
+          "component": "Checkbox",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-6",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-12",
+          "component": "Stack",
+          "text": "Cancellation requested at\n\nTimestamp when cancellation was initiated."
+        },
+        {
+          "id": "slot-field-3-13",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-14",
+          "component": "Stack",
+          "text": "Currency*\n\nISO 4217 currency code used for billing."
+        },
+        {
+          "id": "slot-field-4-15",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-16",
+          "component": "Stack",
+          "text": "Payment method type\nEnter payment method type\ncard\nach\nwire\ninvoice\nother\n\nPayment instrument category used for collection."
+        },
+        {
+          "id": "slot-field-5-17",
+          "component": "Select",
+          "text": "Enter payment method type\ncard\nach\nwire\ninvoice\nother"
+        },
+        {
+          "id": "form-field-group-18",
+          "component": "Stack",
+          "text": "Customer email\n\nBilling contact email address."
+        },
+        {
+          "id": "slot-field-6-19",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-20",
+          "component": "Stack",
+          "text": "Last event*\n\nLifecycle event associated with the most recent timestamp mutation."
+        },
+        {
+          "id": "slot-field-7-21",
+          "component": "Input",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-22",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-field-group-24",
+          "component": "Stack",
+          "text": ""
+        },
+        {
+          "id": "form-actions-9",
+          "component": "Stack",
+          "text": "Save"
+        },
+        {
+          "id": "form-submit-10",
+          "component": "Button",
+          "text": "Save"
+        }
+      ],
+      "screenshot": "1440.png",
+      "screenshotHash": "sha256:12aab96d6fac8f9d780dae35c92cd1a1c23ce7b04b8bd0de9e7373a632c169bd",
+      "dump": "1440.a11y.txt"
+    }
+  ],
+  "errors": [],
+  "timings": {
+    "composeMs": 18.037666000000172,
+    "generateMs": 7.022832999999082,
+    "captureMs": 971.2070419999945
+  },
+  "output": "/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/artifacts/product-reality/sprint-191/m03/after/form/react",
+  "consumer": {
+    "root": "/private/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-design-loop-react-o0Q8iz",
+    "port": 4478,
+    "pid": 86220
+  }
+}

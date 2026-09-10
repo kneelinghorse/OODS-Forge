@@ -232,7 +232,7 @@ describe('viz.render handler — F5 explicit color range validation (sprint-147 
       encodings: {
         x: { field: 'region' },
         y: { field: 'value', aggregate: 'sum' },
-        color: { field: 'region', type: 'nominal', range: ['#1F6FEB', '#D1242F', '#279669', '#B78827'] },
+        color: { field: 'region', type: 'nominal', range: ['#1F6FEB', '#D1242F', '#279669', '#B58525'] },
       },
     });
     expect(out.status).toBe('ok');
@@ -241,7 +241,7 @@ describe('viz.render handler — F5 explicit color range validation (sprint-147 
       '#1F6FEB',
       '#D1242F',
       '#279669',
-      '#B78827',
+      '#B58525',
     ]);
     expect(out.warnings.filter((w) => w.code.startsWith('OODS-V14'))).toEqual([]);
   });
@@ -378,7 +378,7 @@ describe('viz.render handler — F5 explicit color range validation (sprint-147 
 describe('viz.render — cartesianColorRangeWarnings V145 misattribution (s149 #853b)', () => {
   const ROWS3 = [{ region: 'N' }, { region: 'S' }, { region: 'E' }];
   // What #853a bakes for an empty range: the fixed 6-slot OODS palette.
-  const BAKED_6 = ['#416CD9', '#3E44BE', '#279669', '#B78827', '#CA4948', '#993B00'];
+  const BAKED_6 = ['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4948', '#993B00'];
 
   it('empty range => no warnings even when the palette was baked (no false V145)', () => {
     // Post-#853a, range:[] bakes the 6-slot palette, so compiledColorRange has 6 entries

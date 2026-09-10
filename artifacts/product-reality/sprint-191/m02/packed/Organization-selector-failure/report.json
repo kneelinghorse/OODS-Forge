@@ -1,0 +1,370 @@
+{
+  "mission": "s191-m02",
+  "object": "Organization",
+  "cellReports": [
+    {
+      "framework": "react",
+      "report": "react/receipt.json",
+      "sha256": "sha256:dac7a259956fdd1e21917265e1a3d812a3f51fcc64314d8ffcdddec716772779"
+    },
+    {
+      "framework": "vue",
+      "report": "vue/receipt.json",
+      "sha256": "sha256:59e8b1502ad3060beedb66bc9b9107065634bb21b3f8a87486b927e2c735ec64"
+    }
+  ],
+  "sourceHead": "e7aa31e2cf6475b569f96c170ef4d4959acc02f3",
+  "builderSelfCertified": false,
+  "cells": [
+    {
+      "framework": "react",
+      "artifactHash": "sha256:59d1f8edf318767244a0fb2cded487fe8a09e6291dae3cfaacef1e60426ebc7e",
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "detail": {
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-contracts",
+                "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+              },
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "react/logs/typecheck.log"
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "react/logs/build.log"
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "detail": {
+            "htmlHash": "sha256:13d22ab0c43d75598f03a3df2ea581477107c1db9dc42096cd0dc5dba4a4ce5e",
+            "generatedEntry": "src/ssr.tsx"
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "detail": {
+            "screenCount": 1,
+            "errors": []
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "detail": {
+            "preservesSsrRoot": true,
+            "errors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "detail": {
+            "files": [
+              "index-BIHuZ_sV.css"
+            ],
+            "bytes": 135768,
+            "sha256": "sha256:eabc29556350ad9d5fec7f01aa0d7862e37fa9a9ce33402ef22a331165982225",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "failed",
+          "error": "Expected values to be strictly equal:\n\n3 !== 6\n"
+        }
+      ],
+      "consumerAuthoredComponents": 0,
+      "consumerAuthoredActions": 0,
+      "generation": "current-in-run-public-output",
+      "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-react-kYN2Ko",
+      "flow": [
+        {
+          "name": "ten-sample-records",
+          "status": "passed",
+          "detail": {
+            "active": [
+              "organization-001",
+              "organization-002",
+              "organization-003",
+              "organization-004",
+              "organization-005",
+              "organization-006",
+              "organization-007",
+              "organization-008",
+              "organization-009",
+              "organization-010"
+            ],
+            "archived": [],
+            "total": 10,
+            "disposition": "ten active records; object has no Archivable trait"
+          }
+        },
+        {
+          "name": "detail-navigation",
+          "status": "passed",
+          "detail": {
+            "id": "organization-003",
+            "heading": "Organization 03",
+            "mounts": []
+          }
+        },
+        {
+          "name": "edit-seeded-values",
+          "status": "failed",
+          "error": "locator.inputValue: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"label\"]')\u001b[22m\n"
+        }
+      ],
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n3 !== 6\n\n    at <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:437:18)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:415:9)"
+    },
+    {
+      "framework": "vue",
+      "artifactHash": "sha256:9f9a49bc394b792580ab85d8b75a99dc818745ab96b6ea9f63196e12ec79ae75",
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "detail": {
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-contracts",
+                "consumerRelative": "node_modules/@oods/component-contracts/dist/index.js"
+              },
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "vue/logs/typecheck.log"
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "detail": {
+            "exitCode": 0,
+            "log": "vue/logs/build.log"
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "detail": {
+            "htmlHash": "sha256:84ed401d098e1cb7f387a4427a83dd7157dc39a1dcc4dda60a8c3e7baab3d1cb",
+            "generatedEntry": "src/ssr.ts"
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "detail": {
+            "screenCount": 1,
+            "errors": []
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "detail": {
+            "preservesSsrRoot": true,
+            "errors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "detail": {
+            "files": [
+              "index-BIHuZ_sV.css"
+            ],
+            "bytes": 135768,
+            "sha256": "sha256:eabc29556350ad9d5fec7f01aa0d7862e37fa9a9ce33402ef22a331165982225",
+            "core": true,
+            "ported": true,
+            "requiresPorted": true,
+            "tokens": true
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "failed",
+          "error": "Expected values to be strictly equal:\n\n3 !== 6\n"
+        }
+      ],
+      "consumerAuthoredComponents": 0,
+      "consumerAuthoredActions": 0,
+      "generation": "current-in-run-public-output",
+      "consumerRoot": "/var/folders/gd/rty3217130vdbr9_q713nvg80000gn/T/oods-s188-app-vue-DefDVw",
+      "flow": [
+        {
+          "name": "ten-sample-records",
+          "status": "passed",
+          "detail": {
+            "active": [
+              "organization-001",
+              "organization-002",
+              "organization-003",
+              "organization-004",
+              "organization-005",
+              "organization-006",
+              "organization-007",
+              "organization-008",
+              "organization-009",
+              "organization-010"
+            ],
+            "archived": [],
+            "total": 10,
+            "disposition": "ten active records; object has no Archivable trait"
+          }
+        },
+        {
+          "name": "detail-navigation",
+          "status": "passed",
+          "detail": {
+            "id": "organization-003",
+            "heading": "Organization 03",
+            "mounts": []
+          }
+        },
+        {
+          "name": "edit-seeded-values",
+          "status": "failed",
+          "error": "locator.inputValue: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"label\"]')\u001b[22m\n"
+        }
+      ],
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n3 !== 6\n\n    at <anonymous> (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:437:18)\n    at async withStaticServer (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s184-m06-live-consumers.ts:1103:12)\n    at async runAppConsumers (/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/scripts/product-reality/s188-m03-app-consumers.ts:415:9)"
+    }
+  ],
+  "stateObservations": [],
+  "screenshots": []
+}

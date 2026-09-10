@@ -1,0 +1,2 @@
+import {launchProofBrowser} from '../../../../scripts/product-reality/s184-m06-live-consumers.js';
+const browser=await launchProofBrowser();try{const page=await browser.newPage();await page.goto('http://127.0.0.1:4478');await page.locator('[data-ui-state="success"]').waitFor();console.log(await page.locator('[data-record-id="organization-003"]').evaluate(node=>node.outerHTML));}finally{await browser.close();}

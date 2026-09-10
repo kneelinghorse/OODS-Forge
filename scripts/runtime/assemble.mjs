@@ -601,7 +601,7 @@ async function scanPayload(payloadRoot, { workRoot }) {
       cmosProvenanceFindings.push(entry.relative);
     }
     if (
-      /^packages\/[^/]+\/dist\/.*\.js$/.test(entry.relative) &&
+      /^packages\/(?:[^/]+\/dist\/.*|mcp-adapter\/[^/]+)\.js$/.test(entry.relative) &&
       /["']cmos["']/.test(text)
     ) {
       executableCmosFindings.push(entry.relative);

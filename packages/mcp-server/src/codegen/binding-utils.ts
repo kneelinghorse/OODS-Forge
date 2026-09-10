@@ -1173,12 +1173,26 @@ export const RECIPE_UNBOUND_DIRECTIVES: Readonly<Record<string, readonly string[
 export function resolveFrameworkRecipeProps(
   node: UiElement,
   objectSchema?: Record<string, FieldSchemaEntry>,
+  workflowCollections = false,
 ): FrameworkRecipePropResolution {
   const props = (node.props ?? {}) as Record<string, unknown>;
   const mappings = RECIPE_FIELD_TARGETS[node.component] ?? {};
   const bindings: FrameworkRecipePropBinding[] = [];
   const consumedProps = new Set<string>();
   const boundTargets = new Set<string>();
+  // Workflows own the collection record; single-screen consumer contracts stay unchanged.
+  const collectionField = props.field;
+  if (workflowCollections && typeof collectionField === 'string' && ownFieldSchemaEntry(objectSchema, collectionField)?.type === 'AddressableEntry[]') {
+    const source = snakeToCamel(collectionField);
+    const roleField = props.defaultRoleField;
+    const role = typeof roleField === 'string' && ownFieldSchemaEntry(objectSchema, roleField) ? snakeToCamel(roleField) : 'undefined';
+    const targets = node.component === 'AddressEditor' ? ['street', 'city', 'region', 'postalCode'] : node.component === 'AddressCollectionPanel' ? ['summary'] : [];
+    for (const targetProp of targets) {
+      if (props[targetProp] !== undefined) continue;
+      bindings.push({ sourceProp: 'field', targetProp, expression: targetProp === 'summary' ? `collectionSummary(${source})` : `collectionAddress(${source}, ${role}).${targetProp}` });
+      boundTargets.add(targetProp);
+    }
+  }
 
   for (const [sourceProp, defaultTarget] of Object.entries(mappings)) {
     if (!Object.hasOwn(props, sourceProp)) continue;

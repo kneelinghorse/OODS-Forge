@@ -14,7 +14,7 @@ describe('canonical payment-chart trait projection', () => {
     expect(bound.definition.semantics).toEqual({});
     expect(bound.definition.dependencies).toEqual([]);
     expect(Object.keys(bound.definition.view_extensions!)).toEqual(['detail']);
-    expect(bound.definition.view_extensions!.detail).toEqual([{ component: 'VizAreaPreview', position: 'top', priority: 55, props: { chart, title: 'Payment amounts', description: 'Recorded and scheduled sample payments in major currency units.' } }]);
+    expect(bound.definition.view_extensions!.detail).toEqual([{ component: 'VizAreaPreview', position: 'top', priority: 55, props: { chart, title: 'Payment amounts', description: 'Recorded sample payments in major currency units.' } }]);
     const [standalone] = await resolver().resolveReferences([{ name: 'viz/MarkArea' }]);
     expect(standalone.definition.schema.viz_mark_type).toBeDefined();
     expect(standalone.definition.dependencies).toEqual(expect.arrayContaining(['EncodingPositionX', 'EncodingPositionY']));
