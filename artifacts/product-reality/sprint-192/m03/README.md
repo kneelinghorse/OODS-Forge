@@ -26,4 +26,6 @@ Each source hash is identical before mutation and after restoration; the final p
 
 The first framework runs passed all axe scenarios but could not import the new shared DOM helper; `@testing-library/dom` is now an explicit development dependency at its already-locked version 10.4.1. The second interaction runs exposed the inaccurate SearchInput aria-label declaration; the fixture now provides an explicit visible label and the contract uses the label strategy. All attempt logs remain. `component-packages-build-race.*` records an orchestration mistake: rebuilding framework dist concurrently with package-contract tests removed declaration files while those tests read them. The rerun after the completed build passes all 1042 tests. CI builds before testing.
 
-CI execution on the mission head is pending; m03 remains In Progress until its package gate runs green. No full-suite capture was run. The separately retained ECharts soak failure from m02 remains open for investigation before final handoff.
+CI run `34514433128` at `91a5a465`, component-packages job `102996346566`, passes all **1042 tests with 0 failures/skips**; the full job log and run snapshot are retained. The mission package-gate criterion is met. No full-suite capture was run. The separately retained ECharts soak failure from m02 remains open for investigation before final handoff.
+
+Unchanged-base CI comparison launched as `34514682074` on OODS-pro to attribute the repeating optional ECharts soak failure; no threshold or source change was made for that investigation.
