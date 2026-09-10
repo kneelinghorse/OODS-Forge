@@ -1,8 +1,8 @@
 # Near Roadmap
 
-**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`; Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`; Sprint 191 independently certified and closed by `#1880`; residual carries `#1881`
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`; Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`; Sprint 191 independently certified and closed by `#1880`; residual carries `#1881`; Sprint 192 (Increment 11) locked by `#1882`
 
-**Updated:** 2026-09-10 — Sprint 191 review session `PS-2026-09-10-008`; independently certified and closed; the carry-forward is paid down: zero measured contrast failures across 13 × light/dark × A/B, the generated app takes its theme, 77/77 and 154/154 with three packed workflow apps, every `#1845` item resolved, `#1318`–`#1322` closed
+**Updated:** 2026-09-10 — Sprint 192 planning session `PS-2026-09-10-009`; the roadmap was revisited and the measured-state table re-baselined at the Sprint 191 merged head `5fdf8a18`; Increment 11 locked (`#1882`), Increments 12–14 named
 
 **Sprint 188:** CERTIFIED AND CLOSED. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 froze the final proof and handed off. Review `PS-2026-09-08-011` (decision `#1831`) inspected all 36 frozen-head screenshots in both frameworks: the workflow runs end to end with all four states and criterion 8 is opened; usable is not certified, and the ranked craft carries are preserved by `#1832`. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--certified-and-closed).
 
@@ -14,7 +14,7 @@
 
 **PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`. Sprint 188 merged through PR #86 (`33a20d0e`) and PR #87 (`ed0d5750`); remote CI on the frozen head `7fc3c9e0` passed all three workflows before the review.
 
-**Scope:** The next three independently reviewed increments
+**Scope:** The next three independently reviewed increments — Increment 11 (Sprint 192, locked), Increment 12 (Sprint 193) and Increment 13 (Sprint 194); see [Program position](#program-position-and-the-next-three-increments)
 
 **Program authority:** [Forge Product Reality Program](product-reality-program.md)
 
@@ -36,16 +36,20 @@ through the existing public object/context inputs; saved-corpus success does not
 The current program does not ratify MCP Apps, Figma, Penpot, or a custom canvas; surface selection
 follows runnable product foundations.
 
-## Current measured state — Sprint 187 implementation `a9c02b7d`; independently certified and closed
+## Current measured state — Sprint 191 merged head `5fdf8a18`; re-baselined 2026-09-10 for Sprint 192 planning
 
 | Claim area | Current evidence | Remaining obligation |
 |---|---|---|
-| Component catalog | 109 obligation IDs retained under #1788; 64 unique governed root IDs; fourteen families added with 28 discriminating export bites and 778 resolved readiness references | The eleven disputed rows have individual dispositions; nine retain implementation work and two alias/merge proposals need product decisions. Old 98-runtime split remains unapproved |
-| React and Vue | Workflow **6/6**: Subscription, Organization and User in both frameworks (Sprint 191 packed proof). Historical breadth: all 14 locked fresh paths run in both frameworks: 28 packed-consumer cells, 218 passed gates, 6 N/A, zero failed or skipped | Selected local controls, typed values, hydration and token CSS are proven. Accessibility, theme and interaction baseline maturity stays unverified; no connected workflow or responsive-craft claim |
-| Fresh composition | **77/77 schemas and 154/154 build generation cells**, including 66/66 single-screen schemas and 132/132 cells; all public workflow schemas generate | Packed workflow coverage is 6/6 across Subscription, Organization and User; other generating paths retain their named runtime evidence |
-| Saved designs | Unchanged original store remains 15/16 and 30 generation cells; exact authentic successor remains 16/16 and 32 cells | Historical negative retained; the successor is a distinct store. Served adoption remains explicit delivery work |
-| Delivery and discovery | Current Forge-source refresh dated 2026-09-07; optional obligationScope explains retain-109. Actual governed/unavailable catalog cases verified. Isolated bridge, schema-save/load and rollback rehearsal passed | PM2 serves a separate older checkout; generic health does not identify compiled revision. Its public schema-load failure is retained. Deployment/adoption/reconnect #1374/#1379/#1384 remain pending |
-| Visualization | 13/13 public SVG in light/dark × A/B; 11/11 admitted types drawn; contrastPassed light/dark for 9 categorical types, [] for 4 exempt; 5 certified / 8 uncertified; area placed on Subscription/detail | Sprint 191 certified and closed by `#1880`; HC pixels deferred (#1851); the Role-A caution and eight uncertified ECharts types carried by `#1881`; registry/census is the capability source |
+| Component catalog | 109 obligations retained under #1788; React and Vue implement **72/109** (37 unavailable: 25 `Viz*` control rows and 12 others); HTML maps 106/109 with 3 fallbacks (AuditSummaryCard, SortIndicator, TimelineEntryLabel — the residue of the eleven disputed rows); generated-consumer evidence 58/109; versioned contracts 22/109 | All 109 classifications remain proposed-awaiting-approval and `approvedRuntimeCensus` is null while 8 of the 11 authoring-only rows have governed runtime; the export `catalog_list` serves is pinned to the Sprint 188 refresh and the `./registry/capabilities` baseline is 44 cells stale (Sprint 192 m05–m06) |
+| Component maturity | Nine ledger cells per row; accessibility, theme and interaction read `unverified` for 109/109; foundation-v1 covers 28 of 218 target cells; axe reaches 50/72 (React) and 17/72 (Vue); interaction tests 17/72 in each framework, keyboard assertions 4 (React) and 3 (Vue); the six-cell brand × theme × hc harness renders 14/72 and runs in no CI job; the four component package suites run in no CI gate; component CSS references 174 custom properties, 42 token-defined, 80 unresolved, 26 falling back to CSS system colours, `--sys-focus-ring` undefined | Sprint 192 m02–m04: the suites in the gate, a token-resolution contract, accessibility/interaction/theme measured 72/72 in both frameworks |
+| React and Vue | Workflow **6/6**: Subscription, Organization and User in both frameworks (Sprint 191 packed proof). Historical breadth: all 14 locked fresh paths run in both frameworks: 28 packed-consumer cells, 218 passed gates, 6 N/A, zero failed or skipped (captured at `a9c02b7d`) | Packed runtime proof covers 34/154 cells; 120 cells are generation-only and Article, Invoice, Media, Plan and Relationship have no runtime cell (Sprint 193); the single-screen harness is already generic over object/context |
+| Fresh composition | **77/77 schemas and 154/154 build generation cells**, including 66/66 single-screen schemas and 132/132 cells; zero typed generation gaps | Four Invoice cells carry an `OODS-V007` binding warning (Sprint 192 m05); generation counts do not assert runtime maturity |
+| Saved designs | The served store carries the adopted User-form successor (version 2, byte-identical to the Sprint 187 successor), so the live store is 16/16-capable; the retained original store's 15/16 is a historical negative | None on the served store; the original store is retained, not relabeled |
+| Delivery and discovery | The bridge serves `d3a99d39` (Sprint 190 head) and `/health.revision` identifies the compiled revision; Sprint 191's reconnect and `#1315` re-pin notices are prepared-unsent | Sprint 192 m01 delivers `5fdf8a18` and sends the six messages, closing `#1315` |
+| Visualization | 13/13 public SVG in light/dark × A/B; 11/11 admitted types drawn; contrastPassed light/dark for 9 categorical types, [] for 4 exempt; 5 certified / 8 uncertified; area placed on Subscription/detail | Sprint 191 certified and closed by `#1880`; the 8 ECharts types are uncertified by architecture (no compile leg); the 21 patterns all sit on the 5 certified types and no taxonomy or Core Analytics Profile artifact exists; HC pixels deferred (#1851); the Role-A caution and residue are carried by `#1881` (Sprint 194) |
+| Release proof | Portable runtime: 12 packages, deterministic, SBOM 245, double-assembled in CI; `docs/api` (28 files) generated with `--check` | The bridge is not in the bundle; only Subscription is a harness-driven reference app; `docs/components` (33 files) and the Tool-Specs counts are hand-written; mutation bites cover consumer gates only (Increment 14) |
+
+The Sprint 187 evidence below is retained as this table's historical baseline.
 
 The exact runtime and saved-store hashes are in
 [the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md).
@@ -63,6 +67,23 @@ review lessons, delivery work and explicit product limits. Master-context milest
 Counts describe the named surface only. HTML evidence is not React or Vue evidence, a source emitter
 is not a runtime package, an admitted chart name is not rendered output, and a preview frame is not a
 chart.
+
+## Program position and the next three increments
+
+Measured 2026-09-10 at `70e41570` (public bytes identical to `5fdf8a18`) by four read-only probes and direct measurement; the numbers are in the table above and in [the Sprint 192 memo](../../planning/forge-s192-component-truth-decision-memo.md), section 2.
+
+Program sequence rows done: the direction reset; component foundation (Sprint 182); runnable generation (183); the first greenfield workflow (184, usable certified in 189); component breadth waves 1–2 with fresh composition and the Subscription rows (185–188); current visualization closure (190–191). Open: the breadth waves' own exit gate — every reconciled native/recipe claim resolving truthfully in React and Vue — because 72 of 109 rows resolve and none of them carries measured accessibility, theme or interaction evidence; visualization breadth; the design-surface adapter decision; integrated release proof. Program exit criteria 1–2 (an approved classification and a runtime census derived from memberships) have waited since Sprint 182.
+
+The binding debt is therefore truth about the breadth already built, and the scalable answer is machinery: proof that runs in a gate and a ledger regenerated from it, so that each later wave is born measured.
+
+| Increment | Sprint | Outcome | Exit |
+|---|---|---|---|
+| 11 — Component truth | 192, locked `#1882` | Proof in the gate; token-resolution contract; accessibility, interaction and theme measured 72/72 in both frameworks; the three disputed rows; the ledger regenerated and served; the 109-row classification proposal | Every governed root has measured cells from suites that run in CI; `catalog_list` serves them; Derek's approval is the only open step to a non-null runtime census |
+| 12 — Runtime at scale and the visualization-controls wave | 193 | The generic single-screen harness over all 132 single-screen cells (one pack per sweep) and the workflow harness over all 11 workflows, so runtime-proven cells become a gated ratio moving from 34 toward 154 with typed gaps; the 9 remaining non-viz rows and the 25 `Viz*` control rows implemented on the Sprint 192 machinery; the design loop gains a mount/interaction/no-console-error tier | Runtime coverage is a gate, not prose; React and Vue implement 109/109 or carry a typed gap per row |
+| 13 — Visualization breadth and certification | 194 | A versioned taxonomy and Core Analytics Profile across the eight families; the 21 patterns promoted to recipe identities in the registry; extension gaps typed (financial, scientific); the ECharts certification architecture decision (a compile leg or a declared uncertified profile); the HC palette decision (`#1851`); the Role-A hue revision; viz mutation bites | 100% of the census classified; the core profile surface-complete; no untyped gap |
+| 14 — Integrated release proof | 195 | The bridge in the portable bundle; Subscription, Organization and User exercised from the bundle as reference apps; `docs/components` and the Tool-Specs counts generated from the ledger with `--check`; doc and viz mutation bites; the gate-2 decisions | Every published claim is generated from current executable evidence; no false green survives mutation |
+
+The design-surface adapter decision remains Derek's gate and can be taken after Increment 11 without displacing the sequence. Sprint numbers after 192 are assigned only after each preceding increment's independent review.
 
 ## Increment 1 — Sprint 182: Product Reality Foundation — CLOSED 2026-09-04
 
@@ -401,3 +422,9 @@ surfaces (CancellationSummary and the Billing tab panel) unthemed against the ca
 truncating its Sort select at 390 and carrying no rows; raw lifecycle words on timeline entries and sample payment
 amounts unrelated to the record price; Organization and User workflows generated and gate-green but below
 Subscription's craft bar.
+
+## Increment 11 — Sprint 192: Component truth — PLANNED, LOCKED
+
+Build base `5fdf8a18`; authority `#1882`; memo [forge-s192-component-truth-decision-memo.md](../../planning/forge-s192-component-truth-decision-memo.md); handoff [forge-s192-build-handoff.md](../../planning/forge-s192-build-handoff.md). Seven serial missions: m01 delivers the reviewed Sprint 191 head to the live bridge and sends the six prepared messages, closing `#1315`; m02 puts the four component package suites in CI and in a fifth capture suite and adds a token-resolution contract (every colour role resolves in all six scopes, no system-colour fallback outside forced-colors, the focus ring defined); m03 measures accessibility and interaction for 72/72 governed roots in React and Vue from structured contracts and scenario triggers; m04 measures theme for 72/72 across A/B × light/dark/hc in both frameworks inside the CI job; m05 implements AuditSummaryCard, SortIndicator and TimelineEntryLabel on that proof and clears the Invoice warnings; m06 regenerates the ledger from evidence, refreshes the export `catalog_list` serves, replaces the stale baseline and writes the 109-row classification proposal for Derek's approval; m07 freezes the proof with one five-suite capture, the censuses, the advertised diff from `5fdf8a18`, the prepared reconnect, this section at BUILT, REVIEW PENDING, a PR and the handoff with `builderSelfCertified:false`.
+
+Exit: the four suites run in the gate; zero unresolved colour roles and zero reachable system-colour fallbacks outside forced-colors; accessibility, interaction and theme measured 72/72 in both frameworks; HTML maps 109/109 and React/Vue implement 75/109; `catalog_list` serves the regenerated ledger with no `unverified` governed row; the classification proposal waits only on Derek; one green capture; closed by the independent review. The sprint does not claim a non-null `approvedRuntimeCensus`, runtime coverage beyond 34/154, any visualization change, or any public release. The descope ladder and the never-cut list are memo section 8.
