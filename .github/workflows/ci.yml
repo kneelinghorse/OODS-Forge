@@ -444,6 +444,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Historical baseline-fold contracts use git show.
       - uses: pnpm/action-setup@v4
         with:
           run_install: false
@@ -453,7 +455,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @oods/tokens run build
-      - run: pnpm --filter @oods/component-contracts --filter @oods/component-styles --filter @oods/components-react --filter @oods/components-vue run build
+      # Historical component contracts import the built MCP readiness resolver.
+      - run: pnpm run build:packages
       - run: pnpm exec playwright install chromium
       - name: Four component package suites (includes shared styles browser proof)
         run: node scripts/product-reality/component-package-suite.mjs component-contracts component-styles components-react components-vue

@@ -63,6 +63,9 @@ Red implementation attempts are also retained: `component-packages-cwd-attempt.l
 - MCP generated-application theme suite: 3 passed.
 - Token validation, collision guard across six scopes, root typecheck and frozen offline install: passed.
 - Six theme cells in each framework and all 24 AFTER design-loop views: passed.
-- CI branch run and job identities: pending remote execution; m02 remains In Progress until recorded green.
+- First branch CI run `34511941202` on `457dfc79`: a11y-contract job `102987957052` passed, including both six-scope runs and shared styles browser proof. The package job `102987957156` exposed missing clean-checkout prerequisites: its historical baseline-fold suite imports built MCP readiness code and uses historical Git objects. The job now builds the workspace packages and checks out full history.
+- The same run's lint job `102987956921` rejected the new shadow's string type. Both authored shadow roles now use approved `$type: shadow`; the literal CSS value is preserved, avoiding composite expansion and keeping generated CSS and flat-value hashes byte-identical to the retained browser evidence. Token lint and token validation pass. `ci-*-first-failure.log` retains the failures.
+- The unrelated ECharts soak job `102987957128` also failed its post-warmup heap-slope assertion (2007.575 bytes/render versus ceiling 0); no soak source or threshold is changed. The next branch run will establish its current result.
+- Corrected CI run/job identities are pending; m02 remains In Progress until its package and browser gate execute green.
 
 No full-suite capture was run; one five-suite capture is reserved for m07. Live bridge delivery remains the reviewed Sprint 191 head from m01.
