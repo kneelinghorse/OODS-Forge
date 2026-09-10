@@ -178,6 +178,21 @@ export const Banner = defineComponent({
   },
 });
 
+const BUTTON_INTENT_CLASSES: Record<string, string> = {
+  neutral: 'bg-slate-900 text-white hover:bg-slate-800 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white',
+  primary: 'bg-slate-900 text-white hover:bg-slate-800 focus-visible:outline-slate-900',
+  secondary: 'bg-slate-100 text-slate-950 hover:bg-slate-200 focus-visible:outline-slate-900',
+  success: 'bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:outline-emerald-600',
+  warning: 'bg-amber-500 text-slate-900 hover:bg-amber-400 focus-visible:outline-amber-500',
+  danger: 'bg-rose-600 text-white hover:bg-rose-500 focus-visible:outline-rose-600',
+};
+
+const BUTTON_SIZE_CLASSES: Record<string, string> = {
+  sm: 'h-8 px-3 text-sm',
+  md: 'h-10 px-4 text-sm',
+  lg: 'h-12 px-6 text-base',
+};
+
 export const Button = defineComponent({
   name: 'OodsButton',
   props: {
@@ -194,7 +209,7 @@ export const Button = defineComponent({
     return () => h('button', {
       type: props.type,
       disabled: props.disabled,
-      class: 'oods-button',
+      class: ['oods-button', 'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50', BUTTON_INTENT_CLASSES[props.intent], BUTTON_SIZE_CLASSES[props.size]],
       'data-oods-component': 'Button',
       'data-intent': props.intent,
       'data-size': props.size,

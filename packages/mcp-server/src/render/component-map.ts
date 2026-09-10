@@ -1081,7 +1081,9 @@ function normalizeTimelineItems(raw: unknown, lifecycle = false): TimelineItem[]
     if (entry === undefined || entry === null) continue;
     if (isRecord(entry)) {
       const from = firstSerialized(entry, ['from']), to = firstSerialized(entry, ['to']);
-      const label = firstSerialized(entry, ['label', 'title', 'event', 'status', 'state', 'text', 'name']) ?? (lifecycle && from && to ? `${from} → ${to}` : 'Event');
+      const humanize = (value: string) => value.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+      const code = firstSerialized(entry, ['event', 'status', 'state']);
+      const label = firstSerialized(entry, ['label', 'title']) ?? (code ? humanize(code) : undefined) ?? firstSerialized(entry, ['text', 'name']) ?? (lifecycle && to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : 'Event');
       const timestamp = firstSerialized(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']);
       const detail = firstSerialized(entry, lifecycle ? ['detail', 'description', 'message', 'from', 'to'] : ['detail', 'description', 'reason', 'message', 'from', 'to']);
       items.push({ label, timestamp, detail, ...(lifecycle ? { actor: firstSerialized(entry, ['actorId', 'actor_id', 'actor']), reason: firstSerialized(entry, ['reason']) } : {}) });
@@ -1510,7 +1512,7 @@ function renderVizPreview(node: UiElement, childrenHtml: string, previewType: st
       ...(svg !== undefined ? { 'data-viz-rendered': 'true' } : {}),
     },
   });
-  if (svg !== undefined) return `<figure${attrs}>${title ? `<figcaption>${escapeHtml(title)}</figcaption>` : ''}<div data-viz-svg="true">${svg}</div>${description ? `<p data-viz-description="true">${escapeHtml(description)}</p>` : ''}</figure>`;
+  if (svg !== undefined) return `<figure${attrs}>${title && !svg.includes('role-title-text') ? `<figcaption>${escapeHtml(title)}</figcaption>` : ''}<div data-viz-svg="true">${svg}</div>${description ? `<p data-viz-description="true">${escapeHtml(description)}</p>` : ''}</figure>`;
   const content = hasChildrenHtml(childrenHtml)
     ? childrenHtml
     : `<div data-viz-preview-placeholder="true">${escapeHtml(defaultLabel)} preview (${escapeHtml(width)} x ${escapeHtml(height)})</div>`;

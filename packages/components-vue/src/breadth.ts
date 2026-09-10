@@ -174,7 +174,7 @@ export const VizAreaPreview = defineComponent({
         'data-viz-width': props.width, 'data-viz-height': props.height,
         role: 'img', 'aria-label': props.title ?? props.description ?? 'Payment amounts',
       }, [
-        ...(props.title ? [h('figcaption', props.title)] : []),
+        ...(props.title && !props.svg.includes('role-title-text') ? [h('figcaption', props.title)] : []),
         h('div', { 'data-viz-svg': 'true', innerHTML: assertStaticSvg(props.svg) }),
         ...(props.description ? [h('p', { 'data-viz-description': 'true' }, props.description)] : []),
       ]);

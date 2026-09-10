@@ -34,11 +34,16 @@ describe('Subscription payment chart is an actual public render', () => {
     const rendered = vi.spyOn(viz, 'handle');
     const { schema } = await compose({ object: 'Subscription', context: 'workflow', preferences: { theme: 'dark', brand: 'B' } });
     expect(chartNodes(schema.screens)).toHaveLength(1);
-    const first = await generate({ schema, framework, profile: 'build' });
+    const first = await generate({ schema, framework, profile: 'build', options: { theme: 'dark', brand: 'B' } });
     expect(first.status, JSON.stringify(first.errors)).toBe('ok');
     expect(rendered).toHaveBeenCalledTimes(schema.workflow!.data.sampleCount);
     const requests = rendered.mock.calls.map(([input]) => input);
-    expect(requests[2]).toMatchObject({ chartType: 'area', theme: 'dark', brand: 'B', rows: [{ date: '2026-09-01T12:00:00.000Z', amount: 57 }, { date: '2026-10-01T12:00:00.000Z', amount: 57 }] });
+    // s191-m03 B7: a recorded payment series replaces the two identical scheduled samples.
+    expect(requests[2]).toMatchObject({ chartType: 'area', name: 'Payment amounts', theme: 'dark', brand: 'B', rows: [{ date: '2026-06-01T12:00:00.000Z', amount: 45.6 }, { date: '2026-07-01T12:00:00.000Z', amount: 62.7 }, { date: '2026-08-01T12:00:00.000Z', amount: 51.3 }, { date: '2026-09-01T12:00:00.000Z', amount: 57 }] });
+    for (const request of requests) {
+      expect(request.rows).toHaveLength(4);
+      expect(new Set(request.rows!.map(row => row.amount)).size).toBeGreaterThanOrEqual(3);
+    }
     const files = first.artifact!.files;
     const assets = files.filter(file => file.path.endsWith('.svg'));
     expect(assets).toHaveLength(schema.workflow!.data.sampleCount);
@@ -56,7 +61,7 @@ describe('Subscription payment chart is an actual public render', () => {
     expect(files.find(file => file.path === 'src/chart-assets.ts')!.contents).toContain('subscription-003');
     const checked = typecheckWorkflow(first.artifact!);
     expect(checked.status, checked.stdout + checked.stderr).toBe(0);
-    const second = await generate({ schema, framework, profile: 'build' });
+    const second = await generate({ schema, framework, profile: 'build', options: { theme: 'dark', brand: 'B' } });
     expect(second.artifact).toEqual(first.artifact);
   });
 

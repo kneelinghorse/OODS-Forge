@@ -36,7 +36,8 @@ describe('@oods/components-react ported scenarios', () => {
     );
     const timeline = screen.getByRole('log', { name: 'Audit Timeline' });
     expect(timeline.getAttribute('data-oods-component')).toBe('AuditTimeline');
-    expect(timeline.textContent).toContain('trialing → active');
+    // s191-m03 A2: transition titles are human-readable; stored state codes stay unchanged.
+    expect(timeline.textContent).toContain('Trialing → Active');
     expect(timeline.textContent).toContain('Actor: user-7');
     expect(timeline.textContent).toContain('Payment cleared');
   });
@@ -140,7 +141,8 @@ describe('@oods/components-react ported scenarios', () => {
     expect(timeline.getAttribute('data-oods-component')).toBe('StatusTimeline');
     expect(timeline.textContent).toContain('Current status: Active');
     expect(timeline.textContent).toContain('Allowed transitions: paused, canceled');
-    expect(timeline.textContent).toContain('trialing → active');
+    // s191-m03 A2: transition titles are human-readable; stored state codes stay unchanged.
+    expect(timeline.textContent).toContain('Trialing → Active');
   });
 
   it('search-input-clear honors debounce and minimum query length', () => {

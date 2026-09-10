@@ -13,6 +13,7 @@ import {
 } from 'vue';
 
 import { Badge } from './primitives.js';
+import { Input } from './fields.js';
 import {
   buildPaginationItems,
   formatPrice,
@@ -549,15 +550,15 @@ export const SearchInput = defineComponent({
         'data-behavioral': 'search',
         onSubmit: submit,
       }, [
-        props.label ? h('label', { for: id }, props.label) : null,
-        h('input', {
+        h(Input, {
           id,
+          label: props.label,
           type: 'search',
           value: currentValue.value,
           placeholder: props.placeholder,
           disabled: props.disabled,
           'aria-label': props.label ? undefined : ariaLabel,
-          onInput: (event: Event) => updateValue(inputValue(event)),
+          onInput: (value: string) => updateValue(value),
           onKeydown: (event: KeyboardEvent) => {
             if (event.key === 'Escape') clear();
           },
@@ -641,7 +642,7 @@ export const PaginationBar = defineComponent({
           ? h('span', { 'data-pagination-count': 'true' }, `${props.totalItems} ${props.totalItems === 1 ? 'record' : 'records'}`)
           : null,
         props.showItemRange && props.totalItems > 0 ? h('span', { 'data-pagination-range': 'true' }, `Showing ${(page - 1) * Math.max(1, props.pageSize) + 1}–${Math.min(page * Math.max(1, props.pageSize), props.totalItems)} of ${props.totalItems}`) : null,
-        h('ul', { class: 'oods-pagination-items' }, items.map((item, index) => {
+        h('ul', { class: 'oods-pagination-bar__pages' }, items.map((item, index) => {
           if (item.type === 'ellipsis') {
             return h('li', { key: `ellipsis-${item.index ?? index}`, 'aria-hidden': 'true' }, '…');
           }

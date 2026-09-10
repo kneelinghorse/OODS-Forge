@@ -70,7 +70,7 @@ export function applyTraitParameters(
       detail: [{ component: 'VizAreaPreview', position: 'top', priority: 55, props: {
         chart: resolvedParameters.chart,
         title: 'Payment amounts',
-        description: 'Recorded and scheduled sample payments in major currency units.',
+        description: 'Recorded sample payments in major currency units.',
       } }],
     };
   }

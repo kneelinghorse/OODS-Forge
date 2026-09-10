@@ -82,7 +82,7 @@ export function composeObject(objectDef: ObjectDefinition): ComposedObject {
         view_extensions: {
           detail: (traitDef.view_extensions?.detail ?? []).map(extension => ({
             ...extension,
-            props: { chart: ref.parameters!.chart, title: 'Payment amounts', description: 'Recorded and scheduled sample payments in major currency units.' },
+            props: { chart: ref.parameters!.chart, title: 'Payment amounts', description: 'Recorded sample payments in major currency units.' },
           })),
         },
       };
