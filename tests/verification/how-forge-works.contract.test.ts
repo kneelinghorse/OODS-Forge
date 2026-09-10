@@ -257,6 +257,10 @@ describe("how Forge works narrative truth", () => {
     );
     expect(nearRoadmap).not.toContain("Browser design loop — BUILT, REVIEW PENDING");
     expect(normalizedNear).toContain(
+      "## Increment 9 — Sprint 190: Visualization public render — CERTIFIED AND CLOSED",
+    );
+    expect(nearRoadmap).not.toContain("Visualization public render — BUILT, REVIEW PENDING");
+    expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",
     );
     expect(normalizedNear).toContain("`#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt");

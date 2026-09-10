@@ -105,6 +105,18 @@ describe("Sprint 177 prose truth carriers", () => {
     expect(normalizedNear).toContain(
       "so criterion 8 is certified for the Subscription app",
     );
+
+    // Sprint 190 closes under its independent review (PS-2026-09-10-001);
+    // the visualization public-render surface is closed; residual carries are #1860.
+    expect(near).toContain(
+      "Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`",
+    );
+    expect(normalizedNear).toContain(
+      "Sprint 190 is **Completed**, independently certified by review `PS-2026-09-10-001` and decision `#1859`.",
+    );
+    expect(normalizedNear).toContain(
+      "so the visualization public-render surface is closed",
+    );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
     );
