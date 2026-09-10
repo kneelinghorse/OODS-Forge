@@ -4,6 +4,7 @@ export const COMPONENT_STYLE_IDS = [
   'AddressCollectionPanel', 'AddressEditor', 'AddressSummaryBadge', 'AddressValidationTimeline', 'ArchivePill',
   'ArchiveSummary', 'AuditEvent', 'AuditTimeline', 'Badge', 'Banner',
   'ArchivedRowOverlay', 'BillingSummaryBadge', 'BillingAmountInput', 'BillingIntervalSelector', 'BillingCardMeta',
+  'AuditSummaryCard', 'SortIndicator', 'TimelineEntryLabel',
   'CycleProgressCard', 'PaymentTimeline', 'PaymentEventTimeline',
   'Button', 'CancellationBadge', 'CancellationForm', 'CancellationSummary', 'Card',
   'CardHeader', 'Checkbox', 'ClassificationBadge', 'ClassificationEditor', 'ClassificationPanel',

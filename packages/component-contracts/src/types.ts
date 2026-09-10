@@ -18,6 +18,7 @@ export const NUCLEUS_COMPONENT_IDS = [
   'ArchiveSummary',
   'ArchivedRowOverlay',
   'AuditEvent',
+  'AuditSummaryCard',
   'AuditTimeline',
   'Badge',
   'Banner',
@@ -68,6 +69,7 @@ export const NUCLEUS_COMPONENT_IDS = [
   'RoleBadgeList',
   'SearchInput',
   'Select',
+  'SortIndicator',
   'Stack',
   'StatusBadge',
   'StatusSelector',
@@ -81,6 +83,7 @@ export const NUCLEUS_COMPONENT_IDS = [
   'TemplatePicker',
   'Text',
   'Textarea',
+  'TimelineEntryLabel',
   'VizAreaPreview',
 ] as const;
 

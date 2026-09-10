@@ -1,4 +1,4 @@
-import { BILLING_INTERVALS, billingSummary, summaryValue, formatDateTime } from '@oods/component-contracts';
+import { BILLING_INTERVALS, billingSummary, summaryValue, formatDateTime, auditSummary } from '@oods/component-contracts';
 import { createRequire } from 'node:module';
 import type { GeneratedArtifactAction } from '../../packages/mcp-server/src/codegen/types.js';
 import type { UiElement, UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
@@ -61,16 +61,21 @@ export type ValueProbe = { nodeId: string; field: string; kind: 'numeric-input' 
 
 /** Repaired bindings must visibly represent the supplied datum, including zero and false. */
 export function deriveValueProbes(schema: UiSchema, model: Record<string, unknown>): ValueProbe[] {
-  return schemaNodes(schema).flatMap((node): ValueProbe[] => {
+  const probes = schemaNodes(schema).flatMap((node): ValueProbe[] => {
     const textProbe = (field: unknown, selector?: string, truncate = false): ValueProbe[] => {
       if (typeof field !== 'string' || !schema.objectSchema?.[field]) return [];
       let expected = String(model[camel(field)] ?? '');
       if (truncate) {
-        const limit = Number(node.props?.maxLength ?? (node.props?.truncate ? 40 : NaN));
+        const limit = Number(node.props?.maxLength ?? (node.props?.truncate || node.component === 'TimelineEntryLabel' && node.props?.compact !== false ? 40 : NaN));
         if (Number.isFinite(limit) && limit > 0 && expected.length > limit) expected = expected.slice(0, Math.max(0, limit - 1)).trimEnd() + '...';
       }
       return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
     };
+    if (node.component === 'AuditSummaryCard') {
+      const field = String(node.props?.auditLogField ?? 'audit_log');
+      const summary = auditSummary({ auditLog: model[camel(field)] as unknown[] });
+      return [String(summary.count), summary.actor, summary.timestamp].map((expected, index) => ({ nodeId: node.id, field, kind: 'family-text', selector: `dl > dd:nth-of-type(${index + 1})`, expected, editable: false }));
+    }
     if (node.component === 'BillingSummaryBadge') return [{ nodeId: node.id, field: String(node.props?.amountField), kind: 'family-text', expected: billingSummary(model[camel(String(node.props?.amountField))] as number | undefined, model[camel(String(node.props?.currencyField))] as string | undefined, node.props?.minorUnits as number | undefined, model[camel(String(node.props?.intervalField))] as string | undefined), editable: false }];
     if (node.component === 'BillingAmountInput') return [{ nodeId: node.id, field: String(node.props?.amountField), kind: 'native-value', expected: String(Number(model[camel(String(node.props?.amountField))]) / Number(node.props?.minorUnits ?? 100)), editable: true }];
     if (node.component === 'BillingIntervalSelector') return [{ nodeId: node.id, field: String(node.props?.intervalField), kind: 'native-value', expected: String(model[camel(String(node.props?.intervalField))]), editable: true, options: Array.isArray(node.props?.intervals) ? node.props.intervals as string[] : BILLING_INTERVALS }];
@@ -104,6 +109,7 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
       ...textProbe(node.props?.field, '[data-oods-label-cell-primary]', true),
       ...textProbe(node.props?.descriptionField, '[data-oods-label-cell-description]', true),
     ];
+    if (node.component === 'TimelineEntryLabel') return textProbe(node.props?.field, undefined, node.props?.compact !== false);
     if (node.component === 'InlineLabel') return textProbe(node.props?.field, undefined, true);
     if (node.component === 'FormLabelGroup') return [
       ...textProbe(node.props?.labelField, '[data-oods-form-label]'),
@@ -129,6 +135,9 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
     }
     return [];
   });
+  const repeated = new Set(schemaNodes(schema).filter(node => node.collection).flatMap(node =>
+    (node.children ?? []).filter(child => child.collectionControl !== 'empty').flatMap(child => schemaNodes({ version: '1.0', screens: [child] }).map(entry => entry.id))));
+  return probes.map(probe => repeated.has(probe.nodeId) ? { ...probe, nodeId: `${probe.nodeId}-0` } : probe);
 }
 
 export type SharedNativeFieldProbe = { field: string; inputId: string; selectId: string; selectContainer: boolean };
@@ -149,7 +158,7 @@ export function deriveSharedNativeFieldProbes(schema: UiSchema): SharedNativeFie
 export type MountObligation = { nodeId: string; component: string; requiredInitially: boolean; reason?: string };
 
 /** Canonical emitted ids/markers define the obligations; SSR output cannot erase them. */
-export function deriveMountObligations(schema: UiSchema, source: string): MountObligation[] {
+export function deriveMountObligations(schema: UiSchema, source: string, model: Record<string, unknown> = {}): MountObligation[] {
   const inactive = new Map<string, string>();
   const visit = (node: UiElement, inherited?: string) => {
     if (inherited) inactive.set(node.id, inherited);
@@ -162,10 +171,37 @@ export function deriveMountObligations(schema: UiSchema, source: string): MountO
       ? `inactive initial Tabs panel ${child.id} under ${node.id}` : undefined));
   };
   schema.screens.forEach((node) => visit(node));
-  const obligations = Array.from(source.matchAll(/\bid="([^"]+)"\s+data-oods-component="([^"]+)"/g), (match) => ({
-    nodeId: match[1]!, component: match[2]!, requiredInitially: !inactive.has(match[1]!),
-    ...(inactive.has(match[1]!) ? { reason: inactive.get(match[1]!) } : {}),
-  }));
+  const collections = new Map<string, number>();
+  for (const collection of schemaNodes(schema).filter(node => node.collection)) {
+    const items = model[collection.collection!.source];
+    const count = Array.isArray(items) ? items.length : 0;
+    for (const child of collection.children ?? []) {
+      if (child.collectionControl === 'empty') {
+        if (count) inactive.set(child.id, `populated collection ${collection.id}`);
+      } else {
+        for (const node of schemaNodes({ version: '1.0', screens: [child] })) collections.set(node.id, count);
+      }
+    }
+  }
+  const obligation = (nodeId: string, component: string, original = nodeId): MountObligation => ({
+    nodeId, component, requiredInitially: !inactive.has(original),
+    ...(inactive.has(original) ? { reason: inactive.get(original) } : {}),
+  });
+  const obligations = Array.from(source.matchAll(/(?<=\s)id="([^"]+)"\s+data-oods-component="([^"]+)"/g), (match) => obligation(match[1]!, match[2]!));
+  // Recognize the producer's two indexed-id spellings, never treating a Vue
+  // expression as a literal or silently losing the corresponding React node.
+  for (const pattern of [
+    /\bid=\{'([^']+)-' \+ collectionIndex\}\s+data-oods-component="([^"]+)"/g,
+    /:id="'([^']+)-' \+ collectionIndex"\s+data-oods-component="([^"]+)"/g,
+  ]) {
+    for (const match of source.matchAll(pattern)) {
+      const original = match[1]!;
+      const count = collections.get(original);
+      if (count === undefined) throw new Error(`Indexed source node ${original} has no schema collection owner.`);
+      if (!count) inactive.set(original, `empty collection for ${original}`);
+      for (let index = 0; index < Math.max(1, count); index++) obligations.push(obligation(`${original}-${index}`, match[2]!, original));
+    }
+  }
   if (!obligations.length) throw new Error('Generated source has no canonical node/component mount obligations.');
   return [...new Map(obligations.map((entry) => [`${entry.nodeId}/${entry.component}`, entry])).values()];
 }
@@ -182,7 +218,7 @@ export function observeMountObligations(obligations: MountObligation[], html: st
 
 /** Fill the actual public object shape, retaining established fixture values where compatible. */
 export function deriveConsumerModel(schema: UiSchema, established: Record<string, unknown> = {}): Record<string, unknown> {
-  return Object.fromEntries(Object.entries(schema.objectSchema ?? {}).sort(([a], [b]) => a.localeCompare(b)).map(([name, field]) => {
+  const model = Object.fromEntries(Object.entries(schema.objectSchema ?? {}).sort(([a], [b]) => a.localeCompare(b)).map(([name, field]) => {
     const key = camel(name);
     const previous = established[key];
     let value: unknown;
@@ -200,7 +236,7 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
       && node.props?.codeField === name && node.props?.allowedReasons === undefined)) value = 'budget';
     else if (field.type === 'array' || field.type.endsWith('[]')) {
       // The fresh summary cohort must exercise a real, nonempty tag datum.
-      value = schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
+      value = schemaNodes(schema).some(node => node.component === 'AuditSummaryCard' && node.props?.auditLogField === name) ? [{ to_state: 'active', transitioned_at: '2026-09-05T12:00:00Z', actor_id: 'consumer-actor-1' }, { to_state: 'paused', transitioned_at: '2026-09-06T12:00:00Z', actor_id: 'consumer-actor-2' }] : schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
     }
     else if (field.type === 'object' || field.type.startsWith('Record<')) value = {};
     else if (field.type === 'integer' || field.type === 'number') value = 0;
@@ -212,7 +248,38 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
     else value = name.endsWith('_id') ? `consumer-${name.replace(/_/g, '-')}` : `Consumer ${name.replace(/_/g, ' ')}`;
     return [key, value];
   }));
+  // Exercise actual collection content through the public consumer API.
+  const sources = new Set(schemaNodes(schema).flatMap(node => node.collection ? [node.collection.source] : []));
+  if (sources.has('rows')) { model.rows = [{ ...model }]; model.collectionQuery = { page: 1, pageSize: 10, total: 20 }; }
+  if (sources.has('events')) model.events = [
+    { id: 'consumer-event-1', kind: 'state', at: '2026-09-05T12:00:00Z', title: 'Created', description: 'Initial state' },
+    { id: 'consumer-event-2', kind: 'state', at: '2026-09-06T12:00:00Z', title: 'Updated', description: 'Next state' },
+  ];
+  return model;
 }
+
+export type CollectionActionControl = { nodeId: string; selector: string; operation: 'click' | 'type' | 'select'; value?: string };
+/** The collection producer wires real controls instead of synthetic screen action buttons. */
+export function collectionActionControl(schema: UiSchema, action: GeneratedArtifactAction): CollectionActionControl | undefined {
+  const controlNames: Record<string, string> = { onFilter: 'search', onPageChange: 'page', onRowClick: 'open', onSort: 'sort' };
+  for (const source of action.sources) {
+    const screen = schema.screens.find(node => node.id === source.nodeId);
+    if (!screen || !controlNames[source.event]) continue;
+    const node = schemaNodes({ version: '1.0', screens: [screen] }).find(node => node.collectionControl === controlNames[source.event]);
+    if (!node) continue;
+    const kind = node.collectionControl;
+    return { nodeId: node.id, selector: selectorForNode(kind === 'open' ? `${node.id}-0` : node.id) + (kind === 'page' ? ' button[aria-label="Next page"]' : ''),
+      operation: kind === 'search' ? 'type' : kind === 'sort' ? 'select' : 'click',
+      ...(kind === 'search' ? { value: 'generated' } : kind === 'sort' ? { value: 'desc' } : {}) };
+  }
+  return undefined;
+}
+
+export function sourceOwnsControl(source: string, nodeId: string): boolean {
+  return source.includes(`id="${nodeId}"`) || source.includes(`'${nodeId}-' + collectionIndex`);
+}
+
+export function htmlHasSelector(html: string, selector: string): boolean { return !!JSDOM.fragment(html).querySelector(selector); }
 
 /** Choose behavior declared by the saved tree, never a control invented by the consumer. */
 /** Text the live consumer types into an editor-owned action's first text input. */
@@ -223,6 +290,8 @@ export const TYPED_ADDRESS_RECORD = Object.freeze({ street: EDITOR_TYPED_TEXT, c
 
 export function deriveInteraction(schema: UiSchema, actions: GeneratedArtifactAction[]): ConsumerInteraction {
   const nodes = schemaNodes(schema);
+  const openAction = actions.find(action => action.sources.some(source => source.event === 'onRowClick') && collectionActionControl(schema, action));
+  if (openAction) { const control = collectionActionControl(schema, openAction)!; return { kind: 'action', nodeId: control.nodeId, component: 'Button', selector: control.selector, action: openAction.name }; }
   const tabs = nodes.find((node) => node.component === 'Tabs' && node.props?.disabled !== true
     && ((node.children?.length ?? 0) > 1 || (Array.isArray(node.props?.items) && node.props.items.length > 1)));
   if (tabs) return { kind: 'tabs', nodeId: tabs.id, component: 'Tabs', selector: selectorForNode(tabs.id) };
@@ -274,6 +343,16 @@ export function deriveActionArguments(
   });
   const rowId = stringFields.find((name) => name === 'id') ?? stringFields.find((name) => name.endsWith('_id'));
   return Object.fromEntries(actions.map((action) => [action.name, [action.parameters.map((parameter) => {
+    const control = collectionActionControl(schema, action);
+    const collection = schemaNodes(schema).find(node => node.collection?.source === 'rows')?.collection;
+    if (control && parameter.name === 'rowId' && collection) return model[camel(collection.keyField)];
+    if (control && parameter.name === 'criteria') return { ...(model.collectionQuery as Record<string, unknown> ?? {}), search: 'generated' };
+    if (control && parameter.name === 'page') return 2;
+    if (control && parameter.name === 'column') return schemaNodes(schema).find(node => node.id === control.nodeId)?.props?.field;
+    if (parameter.name === 'sort' && action.sources.some(source => source.component === 'SortIndicator')) {
+      const node = schemaNodes(schema).find(node => node.id === action.sources[0]?.nodeId);
+      return { field: model[camel(String(node?.props?.sortFieldProp ?? 'sort_field'))] ?? node?.props?.defaultSortField ?? 'name', direction: 'asc', active: true };
+    }
     if (parameter.name === 'rowId') return rowId ? model[camel(rowId)] : 'generated-row';
     if (parameter.name === 'column') return names.includes('status') ? 'status' : names[0] ?? 'column';
     if (parameter.name === 'criteria') return {};

@@ -102,3 +102,6 @@ export type { BillingSummaryBadgeProps, BillingAmountInputProps, BillingInterval
 
 export { CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay } from './billing-views.js';
 export type { CycleProgressCardProps, PaymentTimelineProps, PaymentEventTimelineProps, BillingCardMetaProps, ArchivedRowOverlayProps } from './billing-views.js';
+
+export { AuditSummaryCard, SortIndicator, TimelineEntryLabel } from './disputed.js';
+export type { AuditSummaryCardProps, SortIndicatorProps, TimelineEntryLabelProps } from './disputed.js';

@@ -21,6 +21,8 @@ const GENERIC_PROPS = new Set(['field', 'id']);
 const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
   Partial<Record<GovernedComponentId, ReadonlySet<string>>>
 > = {
+  AuditSummaryCard: new Set(['auditLogField']),
+  SortIndicator: new Set(['sortFieldProp', 'sortDirectionProp', 'sortableFieldsParameter', 'triStateSortParameter', 'defaultSortFieldParameter', 'defaultSortDirectionParameter']),
   // Labelled trait recipe directives lower into title/supporting; they are
   // authoring metadata rather than additions to the public component API.
   BillingSummaryBadge: new Set(['amountField', 'currencyField', 'intervalField', 'minorUnitsParameter']),
@@ -442,6 +444,9 @@ const PROP_VALUE_CONTRACTS: Readonly<
     tags: TAG_ITEMS_VALUE,
     value: TAG_ITEMS_VALUE,
   },
+  AuditSummaryCard: { title: STRING_VALUE, auditLog: RECORD_ARRAY_VALUE, lastN: NUMBER_VALUE, showTransitionCount: BOOLEAN_VALUE, showLastTransitionTime: BOOLEAN_VALUE, showLastActor: BOOLEAN_VALUE },
+  SortIndicator: { label: STRING_VALUE, sortField: STRING_VALUE, sortDirection: STRING_VALUE, sortActive: BOOLEAN_VALUE, triStateSort: BOOLEAN_VALUE, sortableFields: STRING_ARRAY_VALUE, defaultSortField: STRING_VALUE, defaultSortDirection: STRING_VALUE },
+  TimelineEntryLabel: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, maxLength: STRING_OR_NUMBER_VALUE, compact: BOOLEAN_VALUE },
   AuditTimeline: {
     title: STRING_VALUE,
     events: RECORD_ARRAY_VALUE,
@@ -918,7 +923,7 @@ function acceptedFieldKinds(
   }
   if (propName === 'content') return ['string', 'number'];
   if (propName === 'description' && component === 'ClassificationEditor') return ['string'];
-  if (propName === 'label' && ['LabelCell', 'InlineLabel', 'FormLabelGroup'].includes(component)) return ['string'];
+  if (propName === 'label' && ['LabelCell', 'InlineLabel', 'TimelineEntryLabel', 'FormLabelGroup'].includes(component)) return ['string'];
   if (propName === 'label' && component === 'PriceBadge') return ['string', 'number'];
   if (propName === 'datetime' && component === 'RelativeTimestamp') return ['string'];
   if (propName === 'status') return ['string'];

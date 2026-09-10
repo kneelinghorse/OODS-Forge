@@ -1,0 +1,2462 @@
+diff --git a/packages/component-contracts/src/behaviors.ts b/packages/component-contracts/src/behaviors.ts
+index 21b3de8a..8626749a 100644
+--- a/packages/component-contracts/src/behaviors.ts
++++ b/packages/component-contracts/src/behaviors.ts
+@@ -2,6 +2,10 @@ import type { ComponentBehavior, NucleusComponentId } from './types.js';
+ 
+ // Every public root is authored here; missing roots are a type and contract failure.
+ export const componentBehaviors = {
++  AuditSummaryCard: {"role": "region", "name": {"strategy": "aria-label", "target": "[data-oods-component=\"AuditSummaryCard\"]"}, "keyboard": {}, "interaction": "none", "interactionReason": "AuditSummaryCard presents derived content and owns no focusable control or consumer action.", "event": []},
++  TimelineEntryLabel: {"role": "none", "name": {"strategy": "none", "target": ":root"}, "keyboard": {}, "interaction": "none", "interactionReason": "TimelineEntryLabel presents derived content and owns no focusable control or consumer action.", "event": []},
++  SortIndicator: {"role": "button", "name": {"strategy": "aria-label", "target": "button"}, "keyboard": {"Tab": "Focus the sort control", "Enter": "Cycle sort state", " ": "Cycle sort state"}, "interaction": "interactive", "event": [{"trigger": "keyboard", "target": "button", "key": "Tab", "effect": {"kind": "focus"}}, {"trigger": "keyboard", "target": "button", "key": "Enter", "effect": {"kind": "event", "value": {"field": "name", "direction": "asc", "active": true}}}, {"trigger": "keyboard", "target": "button", "key": " ", "effect": {"kind": "event", "value": {"field": "name", "direction": "asc", "active": true}}}, {"trigger": "pointer", "target": "button", "action": "click", "effect": {"kind": "event", "value": {"field": "name", "direction": "asc", "active": true}}}]},
++
+   AddressCollectionPanel: {"role": "none", "name": {"strategy": "heading", "target": "h1,h2,h3,h4,h5,h6"}, "keyboard": {}, "interaction": "none", "interactionReason": "AddressCollectionPanel presents content and owns no focusable control or action; authored child actions remain the consumer's responsibility.", "event": []},
+   AddressEditor: {"role": "textbox", "name": {"strategy": "label", "target": "input[name=\"city\"]"}, "keyboard": {"Tab": "Move focus to the named native control", "x": "Edit the named control"}, "interaction": "interactive", "event": [{"trigger": "keyboard", "target": "input[name=\"city\"]", "key": "Tab", "effect": {"kind": "focus"}}, {"trigger": "keyboard", "target": "input[name=\"city\"]", "effect": {"kind": "event", "value": {"street": "1 Main St", "city": "Springfieldx", "region": "IL", "postalCode": "62701"}}, "key": "x"}]},
+   AddressSummaryBadge: {"role": "none", "name": {"strategy": "none", "target": ":root"}, "keyboard": {}, "interaction": "none", "interactionReason": "AddressSummaryBadge presents content and owns no focusable control or action; authored child actions remain the consumer's responsibility.", "event": []},
+diff --git a/packages/component-contracts/src/contracts.ts b/packages/component-contracts/src/contracts.ts
+index e37a0f26..b4198b35 100644
+--- a/packages/component-contracts/src/contracts.ts
++++ b/packages/component-contracts/src/contracts.ts
+@@ -5,6 +5,7 @@ export const COMPONENT_CONTRACT_VERSION = '1.1.0' as const;
+ export const COMPONENT_CONTRACT_VERSION_1_1 = '1.1.0' as const;
+ 
+ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>> = {
++
+   AddressCollectionPanel: {
+     id: 'AddressCollectionPanel', version: COMPONENT_CONTRACT_VERSION,
+     props: ['title', 'label', 'heading', 'name', 'subtitle', 'description', 'metadata', 'summary', 'text', 'body', 'emptyMessage'], slots: ['default'], events: [],
+@@ -61,6 +62,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
+     accessibility: ['One article per event with visible label text', 'A timestamp is a time element with a machine-readable datetime'],
+     compatibility: 'Mirrors renderAuditEvent over renderEventArticle with data-event-type=audit: the label reads label/title/event/status/state/reason/text (default Audit Event), the timestamp reads timestamp/datetime/time/at/createdAt/updatedAt, and the detail reads detail/description/reason/message/from/to/code, so a lone reason is both label and detail exactly as the HTML renderer shows it; authored children replace the generated article body. typeField lowers to event and timestampField to timestamp; timezoneParameter is consumed.',
+   },
++  AuditSummaryCard: {"id": "AuditSummaryCard", "version": "1.1.0", "props": ["auditLog", "lastN", "title", "showTransitionCount", "showLastTransitionTime", "showLastActor"], "slots": [], "events": [], "states": ["empty", "summary"], "tokenRoles": ["surface.panel", "text.body"], "accessibility": ["Named region with a heading and associated summary terms", "Latest valid UTC timestamp has a machine-readable time"], "compatibility": "Auditable summary counts object records, sorts valid transitioned_at instants descending with stable ties, and shows the latest actor_id. lastN limits recent transition labels, never the total. Invalid timestamps remain counted but cannot become latest; absent values say Not recorded."},
+   AuditTimeline: {
+     id: 'AuditTimeline', version: COMPONENT_CONTRACT_VERSION,
+     props: [
+@@ -446,6 +448,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
+     accessibility: ['Native select semantics', 'Label and descriptions are associated', 'Placeholder is an explicit empty-value option'],
+     compatibility: 'Native select only; no custom combobox claim.',
+   },
++  SortIndicator: {"id": "SortIndicator", "version": "1.1.0", "props": ["label", "sortField", "sortDirection", "sortActive", "triStateSort", "sortableFields", "defaultSortField", "defaultSortDirection"], "slots": [], "events": ["change"], "states": ["none", "ascending", "descending"], "tokenRoles": ["button.background", "button.text", "focus.outer"], "accessibility": ["A labelled native button inside a scoped column header exposes aria-sort", "Tab reaches the button; Enter and Space cycle the state"], "compatibility": "The component owns its indicator state and emits {field,direction,active}; the consumer owns record sorting. Tri-state cycle is none/ascending/descending/none; binary mode cycles ascending/descending. Authored state prop changes resynchronise the indicator."},
+   Stack: {
+     id: 'Stack', version: COMPONENT_CONTRACT_VERSION_1_1,
+     props: ['direction', 'gap', 'align', 'justify', 'wrap', 'patternComponent', 'fields'], slots: ['default'], events: [],
+@@ -543,6 +546,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
+     accessibility: ['Native textarea semantics', 'Label and help/error descriptions are programmatically associated'],
+     compatibility: 'Shares the canonical field metadata and validation contract.',
+   },
++  TimelineEntryLabel: {"id": "TimelineEntryLabel", "version": "1.1.0", "props": ["label", "text", "value", "maxLength", "compact"], "slots": ["default"], "events": [], "states": ["compact", "full"], "tokenRoles": ["text.body"], "accessibility": ["Compact noninteractive timeline label preserves InlineLabel content and truncation"], "compatibility": "Recipe over InlineLabel: compact defaults true and maxLength defaults40 only in compact mode. Explicit maxLength and authored children retain InlineLabel precedence and three-dot truncation; public ID remains TimelineEntryLabel."},
+   VizAreaPreview: {
+     id: 'VizAreaPreview', version: COMPONENT_CONTRACT_VERSION_1_1,
+     props: ['svg', 'title', 'description', 'width', 'height'], slots: ['default'], events: [], states: ['placeholder', 'content'],
+diff --git a/packages/component-contracts/src/index.ts b/packages/component-contracts/src/index.ts
+index c30c1764..1802135b 100644
+--- a/packages/component-contracts/src/index.ts
++++ b/packages/component-contracts/src/index.ts
+@@ -54,3 +54,5 @@ export * from './date-time.js';
+ export * from './static-svg.js';
+ 
+ export * from './behaviors.js';
++
++export * from './disputed.js';
+diff --git a/packages/component-contracts/src/scenarios.ts b/packages/component-contracts/src/scenarios.ts
+index f7aae713..55f44e21 100644
+--- a/packages/component-contracts/src/scenarios.ts
++++ b/packages/component-contracts/src/scenarios.ts
+@@ -2,6 +2,10 @@ import { componentBehaviors } from './behaviors.js';
+ import type { SharedScenario } from './types.js';
+ 
+ const authoredScenarios: readonly Omit<SharedScenario, 'interaction' | 'interactionReason' | 'event'>[] = [
++  {"id": "AuditSummaryCard", "oodsComponentId": "AuditSummaryCard", "props": {"auditLog": [{"to_state": "active", "transitioned_at": "2026-09-05T12:00:00Z", "actor_id": "user-1"}, {"to_state": "paused", "transitioned_at": "2026-09-06T12:00:00Z", "actor_id": "user-2"}]}, "slots": {}, "initialState": {}, "renderExpectation": {"name": "render", "trigger": "mount", "expected": "Auditable summary counts object records, sorts valid transitioned_at instants descending with stable ties, and shows the latest actor_id. lastN limits recent transition labels, never the total. Invalid timestamps remain counted but cannot become latest; absent values say Not recorded."}, "assertions": ["Named region with a heading and associated summary terms", "Latest valid UTC timestamp has a machine-readable time"]},
++  {"id": "SortIndicator", "oodsComponentId": "SortIndicator", "props": {"sortField": "name", "sortActive": false}, "slots": {}, "initialState": {}, "renderExpectation": {"name": "render", "trigger": "mount", "expected": "The component owns its indicator state and emits {field,direction,active}; the consumer owns record sorting. Tri-state cycle is none/ascending/descending/none; binary mode cycles ascending/descending. Authored state prop changes resynchronise the indicator."}, "assertions": ["A labelled native button inside a scoped column header exposes aria-sort", "Tab reaches the button; Enter and Space cycle the state"]},
++  {"id": "TimelineEntryLabel", "oodsComponentId": "TimelineEntryLabel", "props": {"label": "Long inline label", "maxLength": 8, "compact": true}, "slots": {}, "initialState": {}, "renderExpectation": {"name": "render", "trigger": "mount", "expected": "Recipe over InlineLabel: compact defaults true and maxLength defaults40 only in compact mode. Explicit maxLength and authored children retain InlineLabel precedence and three-dot truncation; public ID remains TimelineEntryLabel."}, "assertions": ["Compact noninteractive timeline label preserves InlineLabel content and truncation"]},
++
+   { id: 'address-collection-panel-title-and-summary', oodsComponentId: 'AddressCollectionPanel', props: { title: 'Addresses', subtitle: 'Billing and shipping', summary: '2 addresses on file' }, slots: {}, initialState: { content: 'summary' }, renderExpectation: { name: 'render', trigger: 'mount without authored children', expected: 'h3 heading, visible subtitle and the summary text inside the content area' }, assertions: ['title is a real h3 heading', 'data-panel-type is address', 'summary text is visible', 'panel is noninteractive'] },
+   { id: 'address-editor-fields-and-change', oodsComponentId: 'AddressEditor', props: { title: 'Shipping address', street: '1 Main St', city: 'Springfield', region: 'IL', postalCode: '62701' }, slots: {}, initialState: { street: '1 Main St' }, renderExpectation: { name: 'change', trigger: 'type into the City input', expected: 'change emitted with the current street/city/region/postalCode record' }, assertions: ['title is a real h3 heading', 'four labelled inputs are prefilled', 'change carries the whole address record', 'submitting is a no-op'] },
+   { id: 'address-summary-badge-role', oodsComponentId: 'AddressSummaryBadge', props: { label: 'Billing address', role: 'billing' }, slots: {}, initialState: { status: 'billing' }, renderExpectation: { name: 'render', trigger: 'mount', expected: 'visible Billing address label with data-badge-status billing and the address variant' }, assertions: ['label is visible text', 'data-badge-status is billing', 'data-badge-variant is address', 'badge is noninteractive'] },
+@@ -124,7 +128,7 @@ const authoredScenarios: readonly Omit<SharedScenario, 'interaction' | 'interact
+   { id: 'viz-area-preview-frame-placeholder-and-slot', oodsComponentId: 'VizAreaPreview', props: { width: 640, height: 360 }, slots: { default: 'Authored area preview content' }, initialState: { hasContent: true }, renderExpectation: { name: 'render', trigger: 'remove the default slot and then restore it', expected: 'empty frame shows Area preview (640 x 360); authored content replaces the placeholder' }, assertions: ['data-viz-preview-type is area', 'dimensions are exposed on the frame', 'placeholder appears only without authored content', 'renders no chart pixels', 'not visualization evidence'] },
+ ];
+ 
+-export const sharedScenarios: readonly SharedScenario[] = authoredScenarios.map(scenario => {
++export const sharedScenarios: readonly SharedScenario[] = [...authoredScenarios].sort((a, b) => a.oodsComponentId < b.oodsComponentId ? -1 : a.oodsComponentId > b.oodsComponentId ? 1 : 0).map(scenario => {
+   const behavior = componentBehaviors[scenario.oodsComponentId];
+   return { ...scenario, interaction: behavior.interaction,
+     interactionReason: 'interactionReason' in behavior ? behavior.interactionReason : undefined,
+diff --git a/packages/component-contracts/src/types.ts b/packages/component-contracts/src/types.ts
+index 4ffb5ec1..bbb44f35 100644
+--- a/packages/component-contracts/src/types.ts
++++ b/packages/component-contracts/src/types.ts
+@@ -18,6 +18,7 @@ export const NUCLEUS_COMPONENT_IDS = [
+   'ArchiveSummary',
+   'ArchivedRowOverlay',
+   'AuditEvent',
++  'AuditSummaryCard',
+   'AuditTimeline',
+   'Badge',
+   'Banner',
+@@ -68,6 +69,7 @@ export const NUCLEUS_COMPONENT_IDS = [
+   'RoleBadgeList',
+   'SearchInput',
+   'Select',
++  'SortIndicator',
+   'Stack',
+   'StatusBadge',
+   'StatusSelector',
+@@ -81,6 +83,7 @@ export const NUCLEUS_COMPONENT_IDS = [
+   'TemplatePicker',
+   'Text',
+   'Textarea',
++  'TimelineEntryLabel',
+   'VizAreaPreview',
+ ] as const;
+ 
+diff --git a/packages/component-styles/src/components.css b/packages/component-styles/src/components.css
+index 2342fbc0..0be64a53 100644
+--- a/packages/component-styles/src/components.css
++++ b/packages/component-styles/src/components.css
+@@ -1260,3 +1260,11 @@
+ [data-oods-collection="events"] time { display: block; margin-top: 8px; font-size: 13px; }
+ .oods-pagination-bar__pages { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
+ @media (max-width: 600px) { .oods-collection-row { flex-direction: column; align-items: flex-start; } .oods-collection-row > :first-child { flex-basis: auto; width: 100%; } }
++
++:where(.oods-audit-summary, [data-oods-component='AuditSummaryCard']) { padding: var(--cmp-spacing-inset-default); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-input-radius); background: var(--cmp-surface-panel); color: var(--cmp-text-body); }
++.oods-audit-summary h3 { margin-top: 0; }
++.oods-audit-summary dl { display: grid; grid-template-columns: auto 1fr; gap: var(--cmp-spacing-inline-sm); }
++.oods-audit-summary dd { margin: 0; }
++:where(.oods-sort-indicator, [data-oods-component='SortIndicator']) { border-collapse: collapse; color: var(--cmp-text-body); }
++.oods-sort-indicator button { padding: var(--cmp-spacing-inline-sm); background: var(--cmp-surface-panel); color: var(--cmp-text-body); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-input-radius); cursor: pointer; }
++[data-oods-component='TimelineEntryLabel'] { color: var(--cmp-text-body); }
+diff --git a/packages/component-styles/src/index.ts b/packages/component-styles/src/index.ts
+index 0af0d62d..6e08bd95 100644
+--- a/packages/component-styles/src/index.ts
++++ b/packages/component-styles/src/index.ts
+@@ -4,6 +4,7 @@ export const COMPONENT_STYLE_IDS = [
+   'AddressCollectionPanel', 'AddressEditor', 'AddressSummaryBadge', 'AddressValidationTimeline', 'ArchivePill',
+   'ArchiveSummary', 'AuditEvent', 'AuditTimeline', 'Badge', 'Banner',
+   'ArchivedRowOverlay', 'BillingSummaryBadge', 'BillingAmountInput', 'BillingIntervalSelector', 'BillingCardMeta',
++  'AuditSummaryCard', 'SortIndicator', 'TimelineEntryLabel',
+   'CycleProgressCard', 'PaymentTimeline', 'PaymentEventTimeline',
+   'Button', 'CancellationBadge', 'CancellationForm', 'CancellationSummary', 'Card',
+   'CardHeader', 'Checkbox', 'ClassificationBadge', 'ClassificationEditor', 'ClassificationPanel',
+diff --git a/packages/components-react/evidence/react-readiness.v1.json b/packages/components-react/evidence/react-readiness.v1.json
+index a7eb5e93..487a4f45 100644
+--- a/packages/components-react/evidence/react-readiness.v1.json
++++ b/packages/components-react/evidence/react-readiness.v1.json
+@@ -1,9 +1,9 @@
+ {
+   "schemaVersion": "1.0.0",
+-  "mission": "s192-m04",
++  "mission": "s192-m05",
+   "target": "react",
+   "contractVersion": "1.1.0",
+-  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 additions have built public declarations and passing shared scenarios, breadth, server-render and accessibility tests; prior nucleus row evidence is preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed. Sprint 187 m03 adds OwnerBadge, OwnershipSummary, OwnershipMeta and TagSummary with the same six reference classes and explicit scalar/trait-array semantics. No ownership transfer or tagging action is claimed. Sprint 192 m03 projects passing per-root axe and executable scenario results into accessibility and interaction evidence; native unwired controls are measured without claiming a domain action. Sprint 192 m04 projects per-root six-cell browser contrast/token checks and screenshot hashes into visualThemes.",
++  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 additions have built public declarations and passing shared scenarios, breadth, server-render and accessibility tests; prior nucleus row evidence is preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed. Sprint 187 m03 adds OwnerBadge, OwnershipSummary, OwnershipMeta and TagSummary with the same six reference classes and explicit scalar/trait-array semantics. No ownership transfer or tagging action is claimed. Sprint 192 m03 projects passing per-root axe and executable scenario results into accessibility and interaction evidence; native unwired controls are measured without claiming a domain action. Sprint 192 m04 projects per-root six-cell browser contrast/token checks and screenshot hashes into visualThemes. Sprint 192 m05 adds the three retained roots and derives all accessibility, interaction and theme claims from passing 75-root measurements.",
+   "rows": [
+     {
+       "componentId": "AddressCollectionPanel",
+@@ -73,7 +73,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#AddressCollectionPanel"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#AddressCollectionPanel"
+           ]
+         }
+       }
+@@ -145,7 +145,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#AddressEditor"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#AddressEditor"
+           ]
+         }
+       }
+@@ -218,7 +218,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#AddressSummaryBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#AddressSummaryBadge"
+           ]
+         }
+       }
+@@ -291,7 +291,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#AddressValidationTimeline"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#AddressValidationTimeline"
+           ]
+         }
+       }
+@@ -364,7 +364,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#ArchivePill"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#ArchivePill"
+           ]
+         }
+       }
+@@ -437,7 +437,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#ArchiveSummary"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#ArchiveSummary"
+           ]
+         }
+       }
+@@ -510,7 +510,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#ArchivedRowOverlay"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#ArchivedRowOverlay"
+           ]
+         }
+       }
+@@ -583,7 +583,80 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#AuditEvent"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#AuditEvent"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "AuditSummaryCard",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#AuditSummaryCard"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/disputed.tsx#AuditSummaryCard"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#AuditSummaryCard"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#AuditSummaryCard"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#AuditSummaryCard"
++          ]
++        },
++        "accessibility": {
++          "status": "passed",
++          "classification": "verified",
++          "refs": [
++            "packages/components-react/test/accessibility.spec.tsx#AuditSummaryCard"
++          ]
++        },
++        "interaction": {
++          "status": "passed",
++          "classification": "not-applicable",
++          "reason": "AuditSummaryCard presents derived content and owns no focusable control or consumer action.",
++          "refs": [
++            "packages/components-react/test/scenario-interactions.spec.tsx#AuditSummaryCard"
++          ]
++        },
++        "visualThemes": {
++          "status": "passed",
++          "classification": "verified",
++          "cells": [
++            "A-light",
++            "A-dark",
++            "A-hc",
++            "B-light",
++            "B-dark",
++            "B-hc"
++          ],
++          "refs": [
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#AuditSummaryCard"
+           ]
+         }
+       }
+@@ -656,7 +729,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#AuditTimeline"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#AuditTimeline"
+           ]
+         }
+       }
+@@ -729,7 +802,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Badge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Badge"
+           ]
+         }
+       }
+@@ -801,7 +874,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Banner"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Banner"
+           ]
+         }
+       }
+@@ -873,7 +946,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#BillingAmountInput"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#BillingAmountInput"
+           ]
+         }
+       }
+@@ -946,7 +1019,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#BillingCardMeta"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#BillingCardMeta"
+           ]
+         }
+       }
+@@ -1018,7 +1091,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#BillingIntervalSelector"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#BillingIntervalSelector"
+           ]
+         }
+       }
+@@ -1091,7 +1164,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#BillingSummaryBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#BillingSummaryBadge"
+           ]
+         }
+       }
+@@ -1163,7 +1236,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Button"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Button"
+           ]
+         }
+       }
+@@ -1236,7 +1309,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#CancellationBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#CancellationBadge"
+           ]
+         }
+       }
+@@ -1308,7 +1381,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#CancellationForm"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#CancellationForm"
+           ]
+         }
+       }
+@@ -1381,7 +1454,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#CancellationSummary"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#CancellationSummary"
+           ]
+         }
+       }
+@@ -1454,7 +1527,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Card"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Card"
+           ]
+         }
+       }
+@@ -1527,7 +1600,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#CardHeader"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#CardHeader"
+           ]
+         }
+       }
+@@ -1599,7 +1672,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Checkbox"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Checkbox"
+           ]
+         }
+       }
+@@ -1672,7 +1745,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#ClassificationBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#ClassificationBadge"
+           ]
+         }
+       }
+@@ -1744,7 +1817,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#ClassificationEditor"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#ClassificationEditor"
+           ]
+         }
+       }
+@@ -1817,7 +1890,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#ClassificationPanel"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#ClassificationPanel"
+           ]
+         }
+       }
+@@ -1890,7 +1963,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#ColorSwatch"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#ColorSwatch"
+           ]
+         }
+       }
+@@ -1963,7 +2036,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#ColorizedBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#ColorizedBadge"
+           ]
+         }
+       }
+@@ -2036,7 +2109,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#CycleProgressCard"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#CycleProgressCard"
+           ]
+         }
+       }
+@@ -2108,7 +2181,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#DatePicker"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#DatePicker"
+           ]
+         }
+       }
+@@ -2181,7 +2254,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#DetailHeader"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#DetailHeader"
+           ]
+         }
+       }
+@@ -2253,7 +2326,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#FilterPanel"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#FilterPanel"
+           ]
+         }
+       }
+@@ -2326,7 +2399,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#FormLabelGroup"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#FormLabelGroup"
+           ]
+         }
+       }
+@@ -2399,7 +2472,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Grid"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Grid"
+           ]
+         }
+       }
+@@ -2472,7 +2545,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#InlineLabel"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#InlineLabel"
+           ]
+         }
+       }
+@@ -2544,7 +2617,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Input"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Input"
+           ]
+         }
+       }
+@@ -2617,7 +2690,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#LabelCell"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#LabelCell"
+           ]
+         }
+       }
+@@ -2690,7 +2763,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#MembershipAuditTimeline"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#MembershipAuditTimeline"
+           ]
+         }
+       }
+@@ -2763,7 +2836,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#MembershipPanel"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#MembershipPanel"
+           ]
+         }
+       }
+@@ -2836,7 +2909,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#MessageEventTimeline"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#MessageEventTimeline"
+           ]
+         }
+       }
+@@ -2909,7 +2982,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#MessageStatusBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#MessageStatusBadge"
+           ]
+         }
+       }
+@@ -2982,7 +3055,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#OwnerBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#OwnerBadge"
+           ]
+         }
+       }
+@@ -3055,7 +3128,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#OwnershipMeta"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#OwnershipMeta"
+           ]
+         }
+       }
+@@ -3128,7 +3201,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#OwnershipSummary"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#OwnershipSummary"
+           ]
+         }
+       }
+@@ -3200,7 +3273,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PaginationBar"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PaginationBar"
+           ]
+         }
+       }
+@@ -3273,7 +3346,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PaymentEventTimeline"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PaymentEventTimeline"
+           ]
+         }
+       }
+@@ -3346,7 +3419,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PaymentTimeline"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PaymentTimeline"
+           ]
+         }
+       }
+@@ -3418,7 +3491,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PreferenceEditor"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PreferenceEditor"
+           ]
+         }
+       }
+@@ -3491,7 +3564,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PreferencePanel"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PreferencePanel"
+           ]
+         }
+       }
+@@ -3564,7 +3637,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PreferenceSummaryBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PreferenceSummaryBadge"
+           ]
+         }
+       }
+@@ -3637,7 +3710,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PreferenceTimeline"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PreferenceTimeline"
+           ]
+         }
+       }
+@@ -3710,7 +3783,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PriceBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PriceBadge"
+           ]
+         }
+       }
+@@ -3783,7 +3856,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PriceCardMeta"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PriceCardMeta"
+           ]
+         }
+       }
+@@ -3856,7 +3929,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#PriceSummary"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#PriceSummary"
+           ]
+         }
+       }
+@@ -3929,7 +4002,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#RelativeTimestamp"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#RelativeTimestamp"
+           ]
+         }
+       }
+@@ -4001,7 +4074,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#RoleAssignmentForm"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#RoleAssignmentForm"
+           ]
+         }
+       }
+@@ -4074,7 +4147,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#RoleBadgeList"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#RoleBadgeList"
+           ]
+         }
+       }
+@@ -4146,7 +4219,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#SearchInput"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#SearchInput"
+           ]
+         }
+       }
+@@ -4218,7 +4291,79 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Select"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Select"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "SortIndicator",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#SortIndicator"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/disputed.tsx#SortIndicator"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#SortIndicator"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#SortIndicator"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#SortIndicator"
++          ]
++        },
++        "accessibility": {
++          "status": "passed",
++          "classification": "verified",
++          "refs": [
++            "packages/components-react/test/accessibility.spec.tsx#SortIndicator"
++          ]
++        },
++        "interaction": {
++          "status": "passed",
++          "classification": "verified",
++          "refs": [
++            "packages/components-react/test/scenario-interactions.spec.tsx#SortIndicator"
++          ]
++        },
++        "visualThemes": {
++          "status": "passed",
++          "classification": "verified",
++          "cells": [
++            "A-light",
++            "A-dark",
++            "A-hc",
++            "B-light",
++            "B-dark",
++            "B-hc"
++          ],
++          "refs": [
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#SortIndicator"
+           ]
+         }
+       }
+@@ -4291,7 +4436,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Stack"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Stack"
+           ]
+         }
+       }
+@@ -4364,7 +4509,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#StatusBadge"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#StatusBadge"
+           ]
+         }
+       }
+@@ -4436,7 +4581,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#StatusSelector"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#StatusSelector"
+           ]
+         }
+       }
+@@ -4509,7 +4654,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#StatusTimeline"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#StatusTimeline"
+           ]
+         }
+       }
+@@ -4581,7 +4726,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Table"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Table"
+           ]
+         }
+       }
+@@ -4653,7 +4798,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Tabs"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Tabs"
+           ]
+         }
+       }
+@@ -4725,7 +4870,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#TagInput"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#TagInput"
+           ]
+         }
+       }
+@@ -4797,7 +4942,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#TagManager"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#TagManager"
+           ]
+         }
+       }
+@@ -4870,7 +5015,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#TagPills"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#TagPills"
+           ]
+         }
+       }
+@@ -4943,7 +5088,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#TagSummary"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#TagSummary"
+           ]
+         }
+       }
+@@ -5015,7 +5160,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#TemplatePicker"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#TemplatePicker"
+           ]
+         }
+       }
+@@ -5088,7 +5233,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Text"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Text"
+           ]
+         }
+       }
+@@ -5160,7 +5305,80 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#Textarea"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#Textarea"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "TimelineEntryLabel",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#TimelineEntryLabel"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/disputed.tsx#TimelineEntryLabel"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/src/index.ts#TimelineEntryLabel"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/dist/index.d.ts#TimelineEntryLabel"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-react/test/scenarios.spec.tsx#TimelineEntryLabel"
++          ]
++        },
++        "accessibility": {
++          "status": "passed",
++          "classification": "verified",
++          "refs": [
++            "packages/components-react/test/accessibility.spec.tsx#TimelineEntryLabel"
++          ]
++        },
++        "interaction": {
++          "status": "passed",
++          "classification": "not-applicable",
++          "reason": "TimelineEntryLabel presents derived content and owns no focusable control or consumer action.",
++          "refs": [
++            "packages/components-react/test/scenario-interactions.spec.tsx#TimelineEntryLabel"
++          ]
++        },
++        "visualThemes": {
++          "status": "passed",
++          "classification": "verified",
++          "cells": [
++            "A-light",
++            "A-dark",
++            "A-hc",
++            "B-light",
++            "B-dark",
++            "B-hc"
++          ],
++          "refs": [
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#TimelineEntryLabel"
+           ]
+         }
+       }
+@@ -5233,7 +5451,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/react/report.json#VizAreaPreview"
++            "artifacts/product-reality/sprint-192/m05/react-theme/report.json#VizAreaPreview"
+           ]
+         }
+       }
+diff --git a/packages/components-react/src/index.ts b/packages/components-react/src/index.ts
+index a0183360..1d5c6e06 100644
+--- a/packages/components-react/src/index.ts
++++ b/packages/components-react/src/index.ts
+@@ -102,3 +102,6 @@ export type { BillingSummaryBadgeProps, BillingAmountInputProps, BillingInterval
+ 
+ export { CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay } from './billing-views.js';
+ export type { CycleProgressCardProps, PaymentTimelineProps, PaymentEventTimelineProps, BillingCardMetaProps, ArchivedRowOverlayProps } from './billing-views.js';
++
++export { AuditSummaryCard, SortIndicator, TimelineEntryLabel } from './disputed.js';
++export type { AuditSummaryCardProps, SortIndicatorProps, TimelineEntryLabelProps } from './disputed.js';
+diff --git a/packages/components-react/test/accessibility.spec.tsx b/packages/components-react/test/accessibility.spec.tsx
+index 585ee11f..67a49135 100644
+--- a/packages/components-react/test/accessibility.spec.tsx
++++ b/packages/components-react/test/accessibility.spec.tsx
+@@ -30,7 +30,7 @@ describe('@oods/components-react accessibility', () => {
+   const axeScenarios = sharedScenarios;
+   it('runs every governed root through the axe loop exactly once', () => {
+     expect(axeScenarios.map(scenario => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);
+-    expect(axeScenarios).toHaveLength(72);
++    expect(axeScenarios).toHaveLength(NUCLEUS_COMPONENT_IDS.length);
+   });
+   for (const scenario of axeScenarios) {
+     it(`passes axe for the ${scenario.oodsComponentId} shared scenario with visible text semantics`, async () => {
+diff --git a/packages/components-react/test/scenario-fixtures.tsx b/packages/components-react/test/scenario-fixtures.tsx
+index a30fa0a8..062e25f1 100644
+--- a/packages/components-react/test/scenario-fixtures.tsx
++++ b/packages/components-react/test/scenario-fixtures.tsx
+@@ -8,6 +8,7 @@ import type {
+ } from '../src/index.js';
+ 
+ import {
++  AuditSummaryCard, SortIndicator, TimelineEntryLabel,
+   CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay,
+   BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
+   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+@@ -75,6 +76,9 @@ export function renderSharedScenario(
+ ): ReactElement {
+   const { onEvent } = handlers;
+   switch (scenario.id) {
++    case 'AuditSummaryCard': return <AuditSummaryCard {...scenario.props} />;
++    case 'SortIndicator': return <SortIndicator {...scenario.props} onChange={onEvent} />;
++    case 'TimelineEntryLabel': return <TimelineEntryLabel {...scenario.props} />;
+     case 'billing-cycle-progress': return <CycleProgressCard {...scenario.props} />;
+     case 'billing-payment-detail': return <PaymentTimeline {...scenario.props} />;
+     case 'billing-payment-events': return <PaymentEventTimeline {...scenario.props} />;
+diff --git a/packages/components-react/test/scenario-interactions.spec.tsx b/packages/components-react/test/scenario-interactions.spec.tsx
+index ecae713a..cb09928b 100644
+--- a/packages/components-react/test/scenario-interactions.spec.tsx
++++ b/packages/components-react/test/scenario-interactions.spec.tsx
+@@ -8,7 +8,7 @@ afterEach(cleanup);
+ describe('React measured scenario interactions', () => {
+   it('accounts for every root as interactive or not applicable', () => {
+     expect(sharedScenarios.map(scenario => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);
+-    expect(sharedScenarios).toHaveLength(72);
++    expect(sharedScenarios).toHaveLength(NUCLEUS_COMPONENT_IDS.length);
+   });
+   for (const scenario of sharedScenarios) {
+     it(`${scenario.oodsComponentId}: structured role and name`, () => {
+diff --git a/packages/components-react/test/scenarios.spec.tsx b/packages/components-react/test/scenarios.spec.tsx
+index d29569a5..1baa380c 100644
+--- a/packages/components-react/test/scenarios.spec.tsx
++++ b/packages/components-react/test/scenarios.spec.tsx
+@@ -30,7 +30,18 @@ describe('@oods/components-react shared scenarios', () => {
+       expect(container.textContent?.trim().length).toBeGreaterThan(0);
+ 
+       switch (scenario.id) {
+-        case 'billing-cycle-progress':
++        case 'AuditSummaryCard':
++            expect([...component!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
++            break;
++          case 'SortIndicator':
++            expect(component!.querySelector('th')?.getAttribute('aria-sort')).toBe('none');
++            expect(component!.querySelector('button')?.getAttribute('aria-label')).toBe('Sort name');
++            break;
++          case 'TimelineEntryLabel':
++            expect(component!.textContent).toBe('Long in...');
++            expect(component!.getAttribute('data-compact')).toBe('true');
++            break;
++          case 'billing-cycle-progress':
+           expect(screen.getByRole('progressbar').getAttribute('value')).toBe('40');
+           expect(screen.getByRole('progressbar').getAttribute('aria-label')).toBe('40% complete · 18 days remaining');
+           break;
+diff --git a/packages/components-vue/evidence/vue-readiness.v1.json b/packages/components-vue/evidence/vue-readiness.v1.json
+index 5fc0bbc1..99b4c158 100644
+--- a/packages/components-vue/evidence/vue-readiness.v1.json
++++ b/packages/components-vue/evidence/vue-readiness.v1.json
+@@ -1,9 +1,9 @@
+ {
+   "schemaVersion": "1.0.0",
+-  "mission": "s192-m04",
++  "mission": "s192-m05",
+   "target": "vue",
+   "contractVersion": "1.1.0",
+-  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 adds five root exports; the original Sprint 182 row objects are preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed. Sprint 187 m03 adds OwnerBadge, OwnershipSummary, OwnershipMeta and TagSummary with the same six reference classes and explicit scalar/trait-array semantics. No ownership transfer or tagging action is claimed. Sprint 192 m03 projects passing per-root axe and executable scenario results into accessibility and interaction evidence; native unwired controls are measured without claiming a domain action. Sprint 192 m04 projects per-root six-cell browser contrast/token checks and screenshot hashes into visualThemes.",
++  "derivation": "Each emissionEligible value is asserted with @oods/component-contracts evaluateEmissionEligibility. Sprint 185 adds five root exports; the original Sprint 182 row objects are preserved. Sprint 186 wave 2 appends ClassificationPanel, FilterPanel, PriceSummary, AddressCollectionPanel, MembershipPanel, PreferencePanel, TagManager, AddressSummaryBadge, MessageStatusBadge, PreferenceSummaryBadge, RoleBadgeList, TagPills, AddressValidationTimeline, AuditEvent, MembershipAuditTimeline, MessageEventTimeline, PreferenceTimeline, AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput and TemplatePicker root exports with the same six evidence classes; prior rows are preserved. Sprint 186 m06 folds the former eight ported families into the root contract, exports, declarations and shared scenarios. Historical readiness files remain as evidence; readiness-ported resolves to this root document for one sprint. Sprint 187 m02 adds five naming/classification families with the same six evidence classes. Native classification controls are presentational; no save or domain-change action is claimed. Sprint 187 m03 adds OwnerBadge, OwnershipSummary, OwnershipMeta and TagSummary with the same six reference classes and explicit scalar/trait-array semantics. No ownership transfer or tagging action is claimed. Sprint 192 m03 projects passing per-root axe and executable scenario results into accessibility and interaction evidence; native unwired controls are measured without claiming a domain action. Sprint 192 m04 projects per-root six-cell browser contrast/token checks and screenshot hashes into visualThemes. Sprint 192 m05 adds the three retained roots and derives all accessibility, interaction and theme claims from passing 75-root measurements.",
+   "rows": [
+     {
+       "componentId": "AddressCollectionPanel",
+@@ -73,7 +73,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#AddressCollectionPanel"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#AddressCollectionPanel"
+           ]
+         }
+       }
+@@ -145,7 +145,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#AddressEditor"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#AddressEditor"
+           ]
+         }
+       }
+@@ -218,7 +218,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#AddressSummaryBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#AddressSummaryBadge"
+           ]
+         }
+       }
+@@ -291,7 +291,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#AddressValidationTimeline"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#AddressValidationTimeline"
+           ]
+         }
+       }
+@@ -364,7 +364,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#ArchivePill"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#ArchivePill"
+           ]
+         }
+       }
+@@ -437,7 +437,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#ArchiveSummary"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#ArchiveSummary"
+           ]
+         }
+       }
+@@ -510,7 +510,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#ArchivedRowOverlay"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#ArchivedRowOverlay"
+           ]
+         }
+       }
+@@ -583,7 +583,80 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#AuditEvent"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#AuditEvent"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "AuditSummaryCard",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#AuditSummaryCard"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/disputed.ts#AuditSummaryCard"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#AuditSummaryCard"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#AuditSummaryCard"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#AuditSummaryCard"
++          ]
++        },
++        "accessibility": {
++          "status": "passed",
++          "classification": "verified",
++          "refs": [
++            "packages/components-vue/test/accessibility.spec.ts#AuditSummaryCard"
++          ]
++        },
++        "interaction": {
++          "status": "passed",
++          "classification": "not-applicable",
++          "reason": "AuditSummaryCard presents derived content and owns no focusable control or consumer action.",
++          "refs": [
++            "packages/components-vue/test/scenario-interactions.spec.ts#AuditSummaryCard"
++          ]
++        },
++        "visualThemes": {
++          "status": "passed",
++          "classification": "verified",
++          "cells": [
++            "A-light",
++            "A-dark",
++            "A-hc",
++            "B-light",
++            "B-dark",
++            "B-hc"
++          ],
++          "refs": [
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#AuditSummaryCard"
+           ]
+         }
+       }
+@@ -656,7 +729,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#AuditTimeline"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#AuditTimeline"
+           ]
+         }
+       }
+@@ -729,7 +802,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Badge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Badge"
+           ]
+         }
+       }
+@@ -802,7 +875,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Banner"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Banner"
+           ]
+         }
+       }
+@@ -874,7 +947,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#BillingAmountInput"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#BillingAmountInput"
+           ]
+         }
+       }
+@@ -947,7 +1020,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#BillingCardMeta"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#BillingCardMeta"
+           ]
+         }
+       }
+@@ -1019,7 +1092,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#BillingIntervalSelector"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#BillingIntervalSelector"
+           ]
+         }
+       }
+@@ -1092,7 +1165,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#BillingSummaryBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#BillingSummaryBadge"
+           ]
+         }
+       }
+@@ -1165,7 +1238,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Button"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Button"
+           ]
+         }
+       }
+@@ -1238,7 +1311,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#CancellationBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#CancellationBadge"
+           ]
+         }
+       }
+@@ -1310,7 +1383,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#CancellationForm"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#CancellationForm"
+           ]
+         }
+       }
+@@ -1383,7 +1456,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#CancellationSummary"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#CancellationSummary"
+           ]
+         }
+       }
+@@ -1456,7 +1529,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Card"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Card"
+           ]
+         }
+       }
+@@ -1529,7 +1602,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#CardHeader"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#CardHeader"
+           ]
+         }
+       }
+@@ -1602,7 +1675,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Checkbox"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Checkbox"
+           ]
+         }
+       }
+@@ -1675,7 +1748,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#ClassificationBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#ClassificationBadge"
+           ]
+         }
+       }
+@@ -1747,7 +1820,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#ClassificationEditor"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#ClassificationEditor"
+           ]
+         }
+       }
+@@ -1820,7 +1893,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#ClassificationPanel"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#ClassificationPanel"
+           ]
+         }
+       }
+@@ -1893,7 +1966,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#ColorSwatch"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#ColorSwatch"
+           ]
+         }
+       }
+@@ -1966,7 +2039,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#ColorizedBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#ColorizedBadge"
+           ]
+         }
+       }
+@@ -2039,7 +2112,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#CycleProgressCard"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#CycleProgressCard"
+           ]
+         }
+       }
+@@ -2112,7 +2185,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#DatePicker"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#DatePicker"
+           ]
+         }
+       }
+@@ -2185,7 +2258,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#DetailHeader"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#DetailHeader"
+           ]
+         }
+       }
+@@ -2257,7 +2330,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#FilterPanel"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#FilterPanel"
+           ]
+         }
+       }
+@@ -2330,7 +2403,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#FormLabelGroup"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#FormLabelGroup"
+           ]
+         }
+       }
+@@ -2403,7 +2476,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Grid"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Grid"
+           ]
+         }
+       }
+@@ -2476,7 +2549,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#InlineLabel"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#InlineLabel"
+           ]
+         }
+       }
+@@ -2550,7 +2623,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Input"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Input"
+           ]
+         }
+       }
+@@ -2623,7 +2696,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#LabelCell"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#LabelCell"
+           ]
+         }
+       }
+@@ -2696,7 +2769,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#MembershipAuditTimeline"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#MembershipAuditTimeline"
+           ]
+         }
+       }
+@@ -2769,7 +2842,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#MembershipPanel"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#MembershipPanel"
+           ]
+         }
+       }
+@@ -2842,7 +2915,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#MessageEventTimeline"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#MessageEventTimeline"
+           ]
+         }
+       }
+@@ -2915,7 +2988,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#MessageStatusBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#MessageStatusBadge"
+           ]
+         }
+       }
+@@ -2988,7 +3061,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#OwnerBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#OwnerBadge"
+           ]
+         }
+       }
+@@ -3061,7 +3134,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#OwnershipMeta"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#OwnershipMeta"
+           ]
+         }
+       }
+@@ -3134,7 +3207,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#OwnershipSummary"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#OwnershipSummary"
+           ]
+         }
+       }
+@@ -3206,7 +3279,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PaginationBar"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PaginationBar"
+           ]
+         }
+       }
+@@ -3279,7 +3352,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PaymentEventTimeline"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PaymentEventTimeline"
+           ]
+         }
+       }
+@@ -3352,7 +3425,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PaymentTimeline"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PaymentTimeline"
+           ]
+         }
+       }
+@@ -3424,7 +3497,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PreferenceEditor"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PreferenceEditor"
+           ]
+         }
+       }
+@@ -3497,7 +3570,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PreferencePanel"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PreferencePanel"
+           ]
+         }
+       }
+@@ -3570,7 +3643,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PreferenceSummaryBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PreferenceSummaryBadge"
+           ]
+         }
+       }
+@@ -3643,7 +3716,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PreferenceTimeline"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PreferenceTimeline"
+           ]
+         }
+       }
+@@ -3716,7 +3789,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PriceBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PriceBadge"
+           ]
+         }
+       }
+@@ -3789,7 +3862,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PriceCardMeta"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PriceCardMeta"
+           ]
+         }
+       }
+@@ -3862,7 +3935,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#PriceSummary"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#PriceSummary"
+           ]
+         }
+       }
+@@ -3935,7 +4008,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#RelativeTimestamp"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#RelativeTimestamp"
+           ]
+         }
+       }
+@@ -4007,7 +4080,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#RoleAssignmentForm"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#RoleAssignmentForm"
+           ]
+         }
+       }
+@@ -4080,7 +4153,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#RoleBadgeList"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#RoleBadgeList"
+           ]
+         }
+       }
+@@ -4152,7 +4225,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#SearchInput"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#SearchInput"
+           ]
+         }
+       }
+@@ -4225,7 +4298,79 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Select"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Select"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "SortIndicator",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#SortIndicator"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/disputed.ts#SortIndicator"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#SortIndicator"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#SortIndicator"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#SortIndicator"
++          ]
++        },
++        "accessibility": {
++          "status": "passed",
++          "classification": "verified",
++          "refs": [
++            "packages/components-vue/test/accessibility.spec.ts#SortIndicator"
++          ]
++        },
++        "interaction": {
++          "status": "passed",
++          "classification": "verified",
++          "refs": [
++            "packages/components-vue/test/scenario-interactions.spec.ts#SortIndicator"
++          ]
++        },
++        "visualThemes": {
++          "status": "passed",
++          "classification": "verified",
++          "cells": [
++            "A-light",
++            "A-dark",
++            "A-hc",
++            "B-light",
++            "B-dark",
++            "B-hc"
++          ],
++          "refs": [
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#SortIndicator"
+           ]
+         }
+       }
+@@ -4298,7 +4443,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Stack"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Stack"
+           ]
+         }
+       }
+@@ -4371,7 +4516,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#StatusBadge"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#StatusBadge"
+           ]
+         }
+       }
+@@ -4443,7 +4588,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#StatusSelector"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#StatusSelector"
+           ]
+         }
+       }
+@@ -4516,7 +4661,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#StatusTimeline"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#StatusTimeline"
+           ]
+         }
+       }
+@@ -4589,7 +4734,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Table"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Table"
+           ]
+         }
+       }
+@@ -4662,7 +4807,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Tabs"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Tabs"
+           ]
+         }
+       }
+@@ -4734,7 +4879,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#TagInput"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#TagInput"
+           ]
+         }
+       }
+@@ -4806,7 +4951,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#TagManager"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#TagManager"
+           ]
+         }
+       }
+@@ -4879,7 +5024,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#TagPills"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#TagPills"
+           ]
+         }
+       }
+@@ -4952,7 +5097,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#TagSummary"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#TagSummary"
+           ]
+         }
+       }
+@@ -5024,7 +5169,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#TemplatePicker"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#TemplatePicker"
+           ]
+         }
+       }
+@@ -5097,7 +5242,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Text"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Text"
+           ]
+         }
+       }
+@@ -5170,7 +5315,80 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#Textarea"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#Textarea"
++          ]
++        }
++      }
++    },
++    {
++      "componentId": "TimelineEntryLabel",
++      "state": "implemented-evidence-complete",
++      "emissionEligible": true,
++      "evidence": {
++        "versionedContract": {
++          "status": "passed",
++          "refs": [
++            "packages/component-contracts/src/contracts.ts#TimelineEntryLabel"
++          ]
++        },
++        "targetImplementation": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/disputed.ts#TimelineEntryLabel"
++          ]
++        },
++        "packageExport": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/src/index.ts#TimelineEntryLabel"
++          ]
++        },
++        "publicDeclaration": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/dist/index.d.ts#TimelineEntryLabel"
++          ]
++        },
++        "dependencyClosure": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/package-contract.spec.ts#dependency-closure"
++          ]
++        },
++        "frameworkScenario": {
++          "status": "passed",
++          "refs": [
++            "packages/components-vue/test/scenarios.spec.ts#TimelineEntryLabel"
++          ]
++        },
++        "accessibility": {
++          "status": "passed",
++          "classification": "verified",
++          "refs": [
++            "packages/components-vue/test/accessibility.spec.ts#TimelineEntryLabel"
++          ]
++        },
++        "interaction": {
++          "status": "passed",
++          "classification": "not-applicable",
++          "reason": "TimelineEntryLabel presents derived content and owns no focusable control or consumer action.",
++          "refs": [
++            "packages/components-vue/test/scenario-interactions.spec.ts#TimelineEntryLabel"
++          ]
++        },
++        "visualThemes": {
++          "status": "passed",
++          "classification": "verified",
++          "cells": [
++            "A-light",
++            "A-dark",
++            "A-hc",
++            "B-light",
++            "B-dark",
++            "B-hc"
++          ],
++          "refs": [
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#TimelineEntryLabel"
+           ]
+         }
+       }
+@@ -5243,7 +5461,7 @@
+             "B-hc"
+           ],
+           "refs": [
+-            "artifacts/product-reality/sprint-192/m04/vue/report.json#VizAreaPreview"
++            "artifacts/product-reality/sprint-192/m05/vue-theme/report.json#VizAreaPreview"
+           ]
+         }
+       }
+diff --git a/packages/components-vue/src/index.ts b/packages/components-vue/src/index.ts
+index 3efd3133..1a0efb3c 100644
+--- a/packages/components-vue/src/index.ts
++++ b/packages/components-vue/src/index.ts
+@@ -83,3 +83,5 @@ export type { ArchiveSummaryProps, ArchivePillProps, CancellationFormProps, Canc
+ export { BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector } from './billing.js';
+ 
+ export { CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay } from './billing-views.js';
++
++export { AuditSummaryCard, SortIndicator, TimelineEntryLabel } from './disputed.js';
+diff --git a/packages/components-vue/test/accessibility.spec.ts b/packages/components-vue/test/accessibility.spec.ts
+index fdeccb54..9a33611b 100644
+--- a/packages/components-vue/test/accessibility.spec.ts
++++ b/packages/components-vue/test/accessibility.spec.ts
+@@ -76,7 +76,7 @@ describe('@oods/components-vue accessibility outcomes', () => {
+   const axeScenarios = sharedScenarios;
+   it('runs every governed root through the axe loop exactly once', () => {
+     expect(axeScenarios.map(scenario => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);
+-    expect(axeScenarios).toHaveLength(72);
++    expect(axeScenarios).toHaveLength(NUCLEUS_COMPONENT_IDS.length);
+   });
+   for (const scenario of axeScenarios) {
+     it(`passes axe for the ${scenario.oodsComponentId} shared scenario`, async () => {
+diff --git a/packages/components-vue/test/scenario-interactions.spec.ts b/packages/components-vue/test/scenario-interactions.spec.ts
+index 8222729d..1a6c5478 100644
+--- a/packages/components-vue/test/scenario-interactions.spec.ts
++++ b/packages/components-vue/test/scenario-interactions.spec.ts
+@@ -8,7 +8,7 @@ import { renderSharedScenario } from './scenario-fixtures.js';
+ describe('Vue measured scenario interactions', () => {
+   it('accounts for every root as interactive or not applicable', () => {
+     expect(sharedScenarios.map(scenario => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);
+-    expect(sharedScenarios).toHaveLength(72);
++    expect(sharedScenarios).toHaveLength(NUCLEUS_COMPONENT_IDS.length);
+   });
+   for (const scenario of sharedScenarios) {
+     it(`${scenario.oodsComponentId}: structured role and name`, () => {
+diff --git a/packages/components-vue/test/scenarios.spec.ts b/packages/components-vue/test/scenarios.spec.ts
+index 319e7f14..1712388b 100644
+--- a/packages/components-vue/test/scenarios.spec.ts
++++ b/packages/components-vue/test/scenarios.spec.ts
+@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
+ import { describe, expect, it } from 'vitest';
+ 
+ import {
++  AuditSummaryCard, SortIndicator, TimelineEntryLabel,
+   CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay,
+   BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
+   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+@@ -62,6 +63,7 @@ import {
+ } from '../src/index.js';
+ 
+ const implementations: Readonly<Record<string, Component>> = {
++  AuditSummaryCard, SortIndicator, TimelineEntryLabel,
+   CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay,
+   BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
+   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+@@ -151,6 +153,17 @@ describe('@oods/components-vue shared scenarios', () => {
+         expect(component.text().trim().length, `${scenario.id} non-empty content`).toBeGreaterThan(0);
+ 
+         switch (scenario.id) {
++          case 'AuditSummaryCard':
++            expect([...component.element!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
++            break;
++          case 'SortIndicator':
++            expect(component.element!.querySelector('th')?.getAttribute('aria-sort')).toBe('none');
++            expect(component.element!.querySelector('button')?.getAttribute('aria-label')).toBe('Sort name');
++            break;
++          case 'TimelineEntryLabel':
++            expect(component.element!.textContent).toBe('Long in...');
++            expect(component.element!.getAttribute('data-compact')).toBe('true');
++            break;
+           case 'billing-cycle-progress':
+             expect(component.get('progress').attributes('value')).toBe('40');
+             expect(component.get('progress').attributes('aria-label')).toBe('40% complete · 18 days remaining');
+diff --git a/packages/components-vue/test/ssr.spec.ts b/packages/components-vue/test/ssr.spec.ts
+index dddb3e33..34e555e6 100644
+--- a/packages/components-vue/test/ssr.spec.ts
++++ b/packages/components-vue/test/ssr.spec.ts
+@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue';
+ import { describe, expect, it } from 'vitest';
+ 
+ import {
++  AuditSummaryCard, SortIndicator, TimelineEntryLabel,
+   ArchivedRowOverlay, BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector, CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta,
+   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
+   OwnerBadge, OwnershipSummary, OwnershipMeta, TagSummary,
+@@ -143,6 +144,9 @@ const ServerShowcase = defineComponent({
+       }),
+       h(Text, { as: 'strong', content: 'Account owner' }),
+       h(Textarea, { id: 'notes', label: 'Notes', value: 'Call before renewal' }),
++      h(AuditSummaryCard, { auditLog: [] }),
++      h(SortIndicator, { sortField: 'name' }),
++      h(TimelineEntryLabel, { label: 'Timeline label' }),
+       // Sprint 188 added these eight families to the nucleus inventory.
+       h(ArchivedRowOverlay, { isArchived: true, label: 'Retained subscription' }, { default: () => 'Archived record' }),
+       h(BillingSummaryBadge, { amount: 1900, currency: 'usd', interval: 'monthly' }),
+diff --git a/packages/mcp-server/src/codegen/binding-utils.ts b/packages/mcp-server/src/codegen/binding-utils.ts
+index f3931940..50a279fa 100644
+--- a/packages/mcp-server/src/codegen/binding-utils.ts
++++ b/packages/mcp-server/src/codegen/binding-utils.ts
+@@ -212,6 +212,7 @@ const ADDRESS_RECORD: BindingSemanticSignature = {
+  * domain callback.
+  */
+ export const SUPPORTED_BINDING_DEFINITIONS: readonly SupportedBindingDefinition[] = [
++  { id: 'component:SortIndicator.onChange', scope: 'component', component: 'SortIndicator', event: 'onChange', kind: 'domain', signature: { parameters: [{ name: 'sort', type: "{ field: string; direction: 'asc' | 'desc'; active: boolean }" }] } },
+   { id: 'component:Banner.onDismiss', scope: 'component', component: 'Banner', event: 'onDismiss', kind: 'local', signature: NO_PARAMETERS },
+   { id: 'component:Button.onActivate', scope: 'component', component: 'Button', event: 'onActivate', kind: 'domain', signature: NO_PARAMETERS },
+   { id: 'component:Checkbox.onChange', scope: 'component', component: 'Checkbox', event: 'onChange', kind: 'local', signature: BOOLEAN_CHECKED },
+@@ -938,7 +939,7 @@ export function resolveFrameworkChildContent(
+     return { strategy: 'value-prop', fieldName: snakeToCamel(sourceField), propName: 'description', isChildren: false };
+   }
+ 
+-  if (['LabelCell', 'InlineLabel'].includes(node.component)
++  if (['LabelCell', 'InlineLabel', 'TimelineEntryLabel'].includes(node.component)
+     && typeof sourceField === 'string' && ownFieldSchemaEntry(objectSchema, sourceField)) {
+     // Bound labels use the real value prop; authored children keep their HTML
+     // override semantics and are not confused with text that needs truncation.
+@@ -1001,6 +1002,8 @@ export type FrameworkRecipePropResolution = {
+ };
+ 
+ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
++  AuditSummaryCard: { auditLogField: 'auditLog' },
++  SortIndicator: { sortFieldProp: 'sortField', sortDirectionProp: 'sortDirection' },
+   BillingSummaryBadge: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
+   BillingCardMeta: { amountField: 'amount', currencyField: 'currency', intervalField: 'interval' },
+   CycleProgressCard: { progressField: 'progress', periodStartField: 'periodStart', periodEndField: 'periodEnd', intervalField: 'interval' },
+@@ -1090,6 +1093,7 @@ const RECIPE_FIELD_TARGETS: Readonly<Record<string, Readonly<Record<string, stri
+ };
+ 
+ const RECIPE_PARAMETER_PROPS = new Set([
++  'sortableFieldsParameter', 'triStateSortParameter', 'defaultSortFieldParameter', 'defaultSortDirectionParameter',
+   'intervalsParameter',
+   'allowCustomParameter',
+   'allowDynamicParameter',
+diff --git a/packages/mcp-server/src/codegen/collection-emitter.ts b/packages/mcp-server/src/codegen/collection-emitter.ts
+index b0377032..fd210733 100644
+--- a/packages/mcp-server/src/codegen/collection-emitter.ts
++++ b/packages/mcp-server/src/codegen/collection-emitter.ts
+@@ -98,7 +98,8 @@ export function emitCollectionNode(
+     }
+     case 'event': {
+       const payment = node.children?.find(child => child.collectionControl === 'payment-event');
+-      const state = `<strong>${value('collectionEvent.title')}</strong><time ${attr(react ? 'dateTime' : 'datetime', 'collectionEvent.at')}>${value('formatDateTime(collectionEvent.at)')}</time><p>${value('collectionEvent.description')}</p>`;
++      const label = node.children?.find(child => child.component === 'TimelineEntryLabel');
++      const state = `${label ? emit(label) : ''}<strong>${value('collectionEvent.title')}</strong><time ${attr(react ? 'dateTime' : 'datetime', 'collectionEvent.at')}>${value('formatDateTime(collectionEvent.at)')}</time><p>${value('collectionEvent.description')}</p>`;
+       const body = payment ? (react ? `{collectionEvent.kind === 'payment' ? (${emit(payment)}) : (<>${state}</>)}` : `<template v-if="collectionEvent.kind === 'payment'">${emit(payment)}</template><template v-else>${state}</template>`) : state;
+       return `<Card ${id}>${body}</Card>`;
+     }
+diff --git a/packages/mcp-server/src/codegen/content-strategy.ts b/packages/mcp-server/src/codegen/content-strategy.ts
+index 0fa67311..5f3c4d5a 100644
+--- a/packages/mcp-server/src/codegen/content-strategy.ts
++++ b/packages/mcp-server/src/codegen/content-strategy.ts
+@@ -84,6 +84,7 @@ const STRATEGY_MAP: Record<string, ContentStrategy> = {
+   ArchivedRowOverlay: 'none',
+   AuditEvent: 'none',
+   AuditSummaryCard: 'none',
++  SortIndicator: 'none',
+   AuditTimeline: 'none',
+   CancellationBadge: 'label-prop',
+   CancellationEvent: 'none',
+diff --git a/packages/mcp-server/src/codegen/target-contracts.ts b/packages/mcp-server/src/codegen/target-contracts.ts
+index c7ad686a..4c66bb2d 100644
+--- a/packages/mcp-server/src/codegen/target-contracts.ts
++++ b/packages/mcp-server/src/codegen/target-contracts.ts
+@@ -21,6 +21,8 @@ const GENERIC_PROPS = new Set(['field', 'id']);
+ const CROSS_TARGET_PROP_EXTENSIONS: Readonly<
+   Partial<Record<GovernedComponentId, ReadonlySet<string>>>
+ > = {
++  AuditSummaryCard: new Set(['auditLogField']),
++  SortIndicator: new Set(['sortFieldProp', 'sortDirectionProp', 'sortableFieldsParameter', 'triStateSortParameter', 'defaultSortFieldParameter', 'defaultSortDirectionParameter']),
+   // Labelled trait recipe directives lower into title/supporting; they are
+   // authoring metadata rather than additions to the public component API.
+   BillingSummaryBadge: new Set(['amountField', 'currencyField', 'intervalField', 'minorUnitsParameter']),
+@@ -442,6 +444,9 @@ const PROP_VALUE_CONTRACTS: Readonly<
+     tags: TAG_ITEMS_VALUE,
+     value: TAG_ITEMS_VALUE,
+   },
++  AuditSummaryCard: { title: STRING_VALUE, auditLog: RECORD_ARRAY_VALUE, lastN: NUMBER_VALUE, showTransitionCount: BOOLEAN_VALUE, showLastTransitionTime: BOOLEAN_VALUE, showLastActor: BOOLEAN_VALUE },
++  SortIndicator: { label: STRING_VALUE, sortField: STRING_VALUE, sortDirection: STRING_VALUE, sortActive: BOOLEAN_VALUE, triStateSort: BOOLEAN_VALUE, sortableFields: STRING_ARRAY_VALUE, defaultSortField: STRING_VALUE, defaultSortDirection: STRING_VALUE },
++  TimelineEntryLabel: { label: STRING_VALUE, text: STRING_VALUE, value: STRING_VALUE, maxLength: STRING_OR_NUMBER_VALUE, compact: BOOLEAN_VALUE },
+   AuditTimeline: {
+     title: STRING_VALUE,
+     events: RECORD_ARRAY_VALUE,
+@@ -918,7 +923,7 @@ function acceptedFieldKinds(
+   }
+   if (propName === 'content') return ['string', 'number'];
+   if (propName === 'description' && component === 'ClassificationEditor') return ['string'];
+-  if (propName === 'label' && ['LabelCell', 'InlineLabel', 'FormLabelGroup'].includes(component)) return ['string'];
++  if (propName === 'label' && ['LabelCell', 'InlineLabel', 'TimelineEntryLabel', 'FormLabelGroup'].includes(component)) return ['string'];
+   if (propName === 'label' && component === 'PriceBadge') return ['string', 'number'];
+   if (propName === 'datetime' && component === 'RelativeTimestamp') return ['string'];
+   if (propName === 'status') return ['string'];
+diff --git a/packages/mcp-server/src/compose/collections.ts b/packages/mcp-server/src/compose/collections.ts
+index e9545297..8899a9ef 100644
+--- a/packages/mcp-server/src/compose/collections.ts
++++ b/packages/mcp-server/src/compose/collections.ts
+@@ -19,7 +19,8 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
+       if (!items || !toolbar) continue;
+       const rowContent = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => node.component === 'Stack' ? rowContent(node.children ?? []) : [node]);
+       const toolbarRecipes = rowContent(toolbar.children ?? []).flatMap(node => node.meta?.intent === 'slot:search' ? rowContent(node.children ?? []) : [node]).filter(node => !['SearchInput', 'PaginationBar'].includes(node.component) && node.meta?.intent !== 'slot:filters' && !['Input', 'Select', 'Button'].includes(node.component));
+-      const rowNodes = [...rowContent(items.children ?? []), ...toolbarRecipes];
++      const sortIndicator = nodes.find(node => node.component === 'SortIndicator');
++      const rowNodes = [...rowContent(items.children ?? []), ...toolbarRecipes].filter(node => node !== sortIndicator);
+       const overlay = rowNodes.find(node => node.component === 'ArchivedRowOverlay');
+       const billing = nodes.find(node => node.component === 'BillingSummaryBadge');
+       const content: UiElement[] = [
+@@ -44,9 +45,13 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
+         filter.component = 'Select'; filter.children = undefined; filter.bindings = undefined; filter.collectionControl = 'filter';
+         filter.props = { label: shortName(filterField), options: [{ value: '', label: 'All states' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: String(value).replaceAll('_', ' ') }))] };
+       }
++      if (sortIndicator) {
++        sortIndicator.bindings = { ...sortIndicator.bindings, onChange: 'handleSortChange' };
++        if (screen.bindings) delete screen.bindings.onSort;
++      }
+       toolbar.children = [
+-        ...(search ? [search] : []), ...(filter && filterField ? [filter] : []),
+-        { id: `${toolbar.id}-sort`, component: 'Select', collectionControl: 'sort', props: { field: labelField, label: 'Sort', options: [{ value: 'asc', label: 'Name A–Z' }, { value: 'desc', label: 'Name Z–A' }] } },
++        ...(search ? [search] : []), ...(filter && filterField ? [filter] : []), ...(sortIndicator ? [sortIndicator] : []),
++        ...(sortIndicator ? [] : [{ id: `${toolbar.id}-sort`, component: 'Select', collectionControl: 'sort' as const, props: { field: labelField, label: 'Sort', options: [{ value: 'asc', label: 'Name A–Z' }, { value: 'desc', label: 'Name Z–A' }] } }]),
+       ];
+       if (overlay?.props?.separateTab) screen.children!.splice(screen.children!.indexOf(items), 1, {
+         id: `${items.id}-archive-tabs`, component: 'Tabs', collectionControl: 'archive',
+@@ -62,12 +67,13 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
+       const entries = nodes.find(node => node.id.startsWith('timeline-entries-'));
+       if (!header || !entries) continue;
+       const payment = nodes.find(node => node.component === 'PaymentEventTimeline');
++      const label = nodes.find(node => node.component === 'TimelineEntryLabel');
+       header.children = [{ id: `${header.id}-title`, component: 'Text', props: { field: labelField } }];
+       if (fields.amount && fields.currency) header.children.push({ id: `${header.id}-billing`, component: 'BillingSummaryBadge', props: { amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnits } });
+       entries.collection = { source: 'events', keyField: 'id', labelField: 'title', historyField: fields.state_history ? 'state_history' : undefined };
+       if (payment) payment.collectionControl = 'payment-event';
+       entries.children = [
+-        { id: `${entries.id}-entry`, component: 'Card', collectionControl: 'event', children: payment ? [payment] : [] },
++        { id: `${entries.id}-entry`, component: 'Card', collectionControl: 'event', children: [...(label ? [label] : []), ...(payment ? [payment] : [])] },
+         { id: `${entries.id}-empty`, component: 'Banner', props: { message: 'No events yet.' }, collectionControl: 'empty' },
+       ];
+     }
+diff --git a/packages/mcp-server/src/compose/object-slot-filler.ts b/packages/mcp-server/src/compose/object-slot-filler.ts
+index 6724ce3b..8fc71a77 100644
+--- a/packages/mcp-server/src/compose/object-slot-filler.ts
++++ b/packages/mcp-server/src/compose/object-slot-filler.ts
+@@ -551,8 +551,8 @@ function populateFormFieldBindings(el: UiElement, fieldNames: string[]): void {
+   const walk = (node: UiElement): void => {
+     // If this element has a `field` prop matching a known field, add onChange binding
+     const fieldProp = node.props?.field;
+-    // ClassificationEditor exposes presentational native controls, not a generic field edit.
+-    if (node.component !== 'ClassificationEditor' && !node.bindings?.onUpdate && typeof fieldProp === 'string' && fieldSet.has(fieldProp)) {
++    // Display headers own no edit event; ClassificationEditor has no generic field writer.
++    if (!['ClassificationEditor', 'DetailHeader'].includes(node.component) && !node.bindings?.onUpdate && typeof fieldProp === 'string' && fieldSet.has(fieldProp)) {
+       node.bindings = {
+         ...node.bindings,
+         onChange: `handleChange_${fieldProp}`,
+diff --git a/packages/mcp-server/src/compose/trait-recipes.json b/packages/mcp-server/src/compose/trait-recipes.json
+index 0421a8e9..6501de29 100644
+--- a/packages/mcp-server/src/compose/trait-recipes.json
++++ b/packages/mcp-server/src/compose/trait-recipes.json
+@@ -14,5 +14,13 @@
+   "BillingCardMeta": {
+     "minorUnitsParameter": "minorUnits"
+   },
+-  "ArchivedRowOverlay": {}
++  "ArchivedRowOverlay": {},
++  "AuditSummaryCard": {},
++  "SortIndicator": {
++    "sortableFieldsParameter": "sortableFields",
++    "triStateSortParameter": "triStateSort",
++    "defaultSortFieldParameter": "defaultSortField",
++    "defaultSortDirectionParameter": "defaultSortDirection"
++  },
++  "TimelineEntryLabel": {}
+ }
+diff --git a/packages/mcp-server/src/render/component-map.ts b/packages/mcp-server/src/render/component-map.ts
+index 1f57ea89..bebbbaed 100644
+--- a/packages/mcp-server/src/render/component-map.ts
++++ b/packages/mcp-server/src/render/component-map.ts
+@@ -1,4 +1,4 @@
+-import { assertStaticSvg } from '@oods/component-contracts';
++import { auditSummary, initialSort, ariaSort, assertStaticSvg } from '@oods/component-contracts';
+ import { dateTimeInputValue, formatDateTime, summaryValue } from '@oods/component-contracts';
+ import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary } from '@oods/component-contracts';
+ import type { UiElement } from '../schemas/generated.js';
+@@ -1203,6 +1203,32 @@ function renderStatusTimeline(node: UiElement, childrenHtml = ''): string {
+   });
+ }
+ 
++function renderAuditSummaryCard(node: UiElement): string {
++  const props = node.props ?? {};
++  const title = asString(props.title) ?? 'Audit summary';
++  const summary = auditSummary({ auditLog: Array.isArray(props.auditLog) ? props.auditLog : [], lastN: asNumber(props.lastN) });
++  const attrs = buildAttributes(node, { allowedHtmlAttrs: GENERIC_HTML_ATTRS, consumedProps: new Set(['title', 'auditLog', 'auditLogField', 'lastN', 'showTransitionCount', 'showLastTransitionTime', 'showLastActor']), htmlOverrides: { class: 'oods-audit-summary', 'aria-label': title } });
++  const count = props.showTransitionCount === false ? '' : `<dt>Transitions</dt><dd>${summary.count}</dd>`;
++  const actor = props.showLastActor === false ? '' : `<dt>Last actor</dt><dd>${escapeHtml(summary.actor)}</dd>`;
++  const time = props.showLastTransitionTime === false ? '' : `<dt>Last transition</dt><dd>${summary.at ? `<time datetime="${escapeHtml(summary.at)}">${escapeHtml(summary.timestamp)}</time>` : summary.timestamp}</dd>`;
++  const recent = summary.recent.length ? `<ol aria-label="Recent transitions">${summary.recent.map(entry => `<li>${escapeHtml(String(entry.to_state ?? 'Transition'))}</li>`).join('')}</ol>` : '';
++  return `<section${attrs}><h3>${escapeHtml(title)}</h3><dl>${count}${actor}${time}</dl>${recent}</section>`;
++}
++
++function renderSortIndicator(node: UiElement): string {
++  const props = node.props ?? {};
++  const state = initialSort({ sortField: asString(props.sortField), sortDirection: asString(props.sortDirection), sortActive: props.sortActive === true, defaultSortField: asString(props.defaultSortField), defaultSortDirection: asString(props.defaultSortDirection), sortableFields: Array.isArray(props.sortableFields) ? props.sortableFields.filter((field): field is string => typeof field === 'string') : undefined });
++  const label = asString(props.label) ?? 'Sort';
++  const attrs = buildAttributes(node, { allowedHtmlAttrs: GENERIC_HTML_ATTRS, consumedProps: new Set(['sortField', 'sortDirection', 'sortActive', 'sortableFields', 'triStateSort', 'defaultSortField', 'defaultSortDirection', 'label']), htmlOverrides: { class: 'oods-sort-indicator', 'aria-label': label } });
++  return `<table${attrs}><thead><tr><th scope="col" aria-sort="${ariaSort(state)}"><button type="button" aria-label="${escapeHtml(`${label} ${state.field}`)}">${escapeHtml(`${state.field}: ${ariaSort(state)}`)}</button></th></tr></thead></table>`;
++}
++
++function renderTimelineEntryLabel(node: UiElement, childrenHtml = ''): string {
++  const props = node.props ?? {};
++  const { compact = true, ...rest } = props;
++  return renderInlineLabel({ ...node, props: { ...rest, maxLength: props.maxLength ?? (compact ? 40 : undefined), 'data-timeline-label': 'true', 'data-compact': compact } }, childrenHtml);
++}
++
+ function renderAuditEvent(node: UiElement, childrenHtml = ''): string {
+   return renderEventArticle(node, childrenHtml, {
+     defaultLabel: 'Audit Event',
+@@ -2039,6 +2065,9 @@ function renderFilterPanel(node: UiElement, childrenHtml = ''): string {
+ }
+ 
+ export const componentRenderers: Record<string, ComponentRenderer> = {
++  AuditSummaryCard: renderAuditSummaryCard,
++  SortIndicator: renderSortIndicator,
++  TimelineEntryLabel: renderTimelineEntryLabel,
+   Button: renderButton,
+   Card: renderCard,
+   CardHeader: renderCardHeader,
+diff --git a/packages/mcp-server/test/product-reality/consumer-contract.s185.spec.ts b/packages/mcp-server/test/product-reality/consumer-contract.s185.spec.ts
+index 42cc1fda..9b304e68 100644
+--- a/packages/mcp-server/test/product-reality/consumer-contract.s185.spec.ts
++++ b/packages/mcp-server/test/product-reality/consumer-contract.s185.spec.ts
+@@ -149,6 +149,27 @@ describe('Sprint 185 saved-schema consumer contract', () => {
+       .find(({ nodeId }) => nodeId === 'preview')?.passed).toBe(false);
+   });
+ 
++  it.each(['react', 'vue'])('%s checks every populated repeated node and rejects its removal or wrong marker', (framework) => {
++    const schema: UiSchema = { version: '1.0', screens: [{ id: 'events', component: 'Stack', collection: { source: 'events' }, children: [
++      { id: 'empty', component: 'Banner', collectionControl: 'empty' },
++      { id: 'event', component: 'Card', collectionControl: 'event', children: [{ id: 'label', component: 'TimelineEntryLabel' }] },
++    ] }] };
++    const id = framework === 'react' ? "id={'label-' + collectionIndex}" : `:id="'label-' + collectionIndex"`;
++    const source = `<Banner id="empty" data-oods-component="Banner" /><TimelineEntryLabel ${id} data-oods-component="TimelineEntryLabel" />`;
++    const model = deriveConsumerModel(schema);
++    expect(model.events).toHaveLength(2);
++    const obligations = deriveMountObligations(schema, source, model);
++    expect(obligations.filter(row => row.requiredInitially).map(row => row.nodeId)).toEqual(['label-0', 'label-1']);
++    const first = '<span id="label-0" data-oods-component="TimelineEntryLabel">First</span>';
++    const second = '<span id="label-1" data-oods-component="TimelineEntryLabel">Second</span>';
++    expect(observeMountObligations(obligations, first + second).every(row => row.passed)).toBe(true);
++    expect(observeMountObligations(obligations, first).filter(row => !row.passed).map(row => row.nodeId)).toEqual(['label-1']);
++    expect(observeMountObligations(obligations, first + second.replace('TimelineEntryLabel', 'InlineLabel')).some(row => !row.passed)).toBe(true);
++    const empty = deriveMountObligations(schema, source, {});
++    expect(observeMountObligations(empty, '<section id="empty" data-oods-component="Banner"></section>').every(row => row.passed)).toBe(true);
++    expect(observeMountObligations(empty, '').some(row => !row.passed)).toBe(true);
++  });
++
+   it('names inactive initial Tabs panel obligations without relaxing the active panel or its content', () => {
+     const schema: UiSchema = { version: '1.0', screens: [{ id: 'tabs', component: 'Tabs', children: [
+       { id: 'first', component: 'Stack', children: [{ id: 'title', component: 'CardHeader' }] },
+diff --git a/scripts/product-reality/s184-m06-live-consumers.ts b/scripts/product-reality/s184-m06-live-consumers.ts
+index 35699125..a7ddbf2f 100644
+--- a/scripts/product-reality/s184-m06-live-consumers.ts
++++ b/scripts/product-reality/s184-m06-live-consumers.ts
+@@ -1694,7 +1694,7 @@ export async function runLiveConsumerCell({
+   const schema = generation.sourceSchema ?? savedSchema(schemaName, schemaStore).schema;
+   const interaction = generation.interaction ?? deriveInteraction(schema, artifact.actions);
+   const model = generation.model ?? deriveConsumerModel(schema, MODEL);
+-  const mountObligations = deriveMountObligations(schema, source);
++  const mountObligations = deriveMountObligations(schema, source, model);
+   const cellRelative = mutation
+     ? toPosix(path.join('gate-bites', ...(mission === 's184-m06' ? [] : [schemaName]), framework, mutation.gate))
+     : toPosix(path.join('cells', schemaName, framework));
+diff --git a/scripts/product-reality/s185-m04-consumer-contract.ts b/scripts/product-reality/s185-m04-consumer-contract.ts
+index 7177df35..82093c1b 100644
+--- a/scripts/product-reality/s185-m04-consumer-contract.ts
++++ b/scripts/product-reality/s185-m04-consumer-contract.ts
+@@ -66,7 +66,7 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
+       if (typeof field !== 'string' || !schema.objectSchema?.[field]) return [];
+       let expected = String(model[camel(field)] ?? '');
+       if (truncate) {
+-        const limit = Number(node.props?.maxLength ?? (node.props?.truncate ? 40 : NaN));
++        const limit = Number(node.props?.maxLength ?? (node.props?.truncate || node.component === 'TimelineEntryLabel' && node.props?.compact !== false ? 40 : NaN));
+         if (Number.isFinite(limit) && limit > 0 && expected.length > limit) expected = expected.slice(0, Math.max(0, limit - 1)).trimEnd() + '...';
+       }
+       return [{ nodeId: node.id, field, kind: 'family-text', ...(selector ? { selector } : {}), expected, editable: false }];
+@@ -104,6 +104,7 @@ export function deriveValueProbes(schema: UiSchema, model: Record<string, unknow
+       ...textProbe(node.props?.field, '[data-oods-label-cell-primary]', true),
+       ...textProbe(node.props?.descriptionField, '[data-oods-label-cell-description]', true),
+     ];
++    if (node.component === 'TimelineEntryLabel') return textProbe(node.props?.field, undefined, node.props?.compact !== false).map(probe => ({ ...probe, nodeId: `${node.id}-0` }));
+     if (node.component === 'InlineLabel') return textProbe(node.props?.field, undefined, true);
+     if (node.component === 'FormLabelGroup') return [
+       ...textProbe(node.props?.labelField, '[data-oods-form-label]'),
+@@ -149,7 +150,7 @@ export function deriveSharedNativeFieldProbes(schema: UiSchema): SharedNativeFie
+ export type MountObligation = { nodeId: string; component: string; requiredInitially: boolean; reason?: string };
+ 
+ /** Canonical emitted ids/markers define the obligations; SSR output cannot erase them. */
+-export function deriveMountObligations(schema: UiSchema, source: string): MountObligation[] {
++export function deriveMountObligations(schema: UiSchema, source: string, model: Record<string, unknown> = {}): MountObligation[] {
+   const inactive = new Map<string, string>();
+   const visit = (node: UiElement, inherited?: string) => {
+     if (inherited) inactive.set(node.id, inherited);
+@@ -162,10 +163,37 @@ export function deriveMountObligations(schema: UiSchema, source: string): MountO
+       ? `inactive initial Tabs panel ${child.id} under ${node.id}` : undefined));
+   };
+   schema.screens.forEach((node) => visit(node));
+-  const obligations = Array.from(source.matchAll(/\bid="([^"]+)"\s+data-oods-component="([^"]+)"/g), (match) => ({
+-    nodeId: match[1]!, component: match[2]!, requiredInitially: !inactive.has(match[1]!),
+-    ...(inactive.has(match[1]!) ? { reason: inactive.get(match[1]!) } : {}),
+-  }));
++  const collections = new Map<string, number>();
++  for (const collection of schemaNodes(schema).filter(node => node.collection)) {
++    const items = model[collection.collection!.source];
++    const count = Array.isArray(items) ? items.length : 0;
++    for (const child of collection.children ?? []) {
++      if (child.collectionControl === 'empty') {
++        if (count) inactive.set(child.id, `populated collection ${collection.id}`);
++      } else {
++        for (const node of schemaNodes({ version: '1.0', screens: [child] })) collections.set(node.id, count);
++      }
++    }
++  }
++  const obligation = (nodeId: string, component: string, original = nodeId): MountObligation => ({
++    nodeId, component, requiredInitially: !inactive.has(original),
++    ...(inactive.has(original) ? { reason: inactive.get(original) } : {}),
++  });
++  const obligations = Array.from(source.matchAll(/(?<=\s)id="([^"]+)"\s+data-oods-component="([^"]+)"/g), (match) => obligation(match[1]!, match[2]!));
++  // Recognize the producer's two indexed-id spellings, never treating a Vue
++  // expression as a literal or silently losing the corresponding React node.
++  for (const pattern of [
++    /\bid=\{'([^']+)-' \+ collectionIndex\}\s+data-oods-component="([^"]+)"/g,
++    /:id="'([^']+)-' \+ collectionIndex"\s+data-oods-component="([^"]+)"/g,
++  ]) {
++    for (const match of source.matchAll(pattern)) {
++      const original = match[1]!;
++      const count = collections.get(original);
++      if (count === undefined) throw new Error(`Indexed source node ${original} has no schema collection owner.`);
++      if (!count) inactive.set(original, `empty collection for ${original}`);
++      for (let index = 0; index < Math.max(1, count); index++) obligations.push(obligation(`${original}-${index}`, match[2]!, original));
++    }
++  }
+   if (!obligations.length) throw new Error('Generated source has no canonical node/component mount obligations.');
+   return [...new Map(obligations.map((entry) => [`${entry.nodeId}/${entry.component}`, entry])).values()];
+ }
+@@ -182,7 +210,7 @@ export function observeMountObligations(obligations: MountObligation[], html: st
+ 
+ /** Fill the actual public object shape, retaining established fixture values where compatible. */
+ export function deriveConsumerModel(schema: UiSchema, established: Record<string, unknown> = {}): Record<string, unknown> {
+-  return Object.fromEntries(Object.entries(schema.objectSchema ?? {}).sort(([a], [b]) => a.localeCompare(b)).map(([name, field]) => {
++  const model = Object.fromEntries(Object.entries(schema.objectSchema ?? {}).sort(([a], [b]) => a.localeCompare(b)).map(([name, field]) => {
+     const key = camel(name);
+     const previous = established[key];
+     let value: unknown;
+@@ -200,7 +228,7 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
+       && node.props?.codeField === name && node.props?.allowedReasons === undefined)) value = 'budget';
+     else if (field.type === 'array' || field.type.endsWith('[]')) {
+       // The fresh summary cohort must exercise a real, nonempty tag datum.
+-      value = schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
++      value = schemaNodes(schema).some(node => node.component === 'AuditSummaryCard' && node.props?.auditLogField === name) ? [{ to_state: 'active', transitioned_at: '2026-09-05T12:00:00Z', actor_id: 'consumer-actor-1' }, { to_state: 'paused', transitioned_at: '2026-09-06T12:00:00Z', actor_id: 'consumer-actor-2' }] : schemaNodes(schema).some((node) => node.component === 'TagSummary' && node.props?.field === name) ? ['Consumer tag'] : [];
+     }
+     else if (field.type === 'object' || field.type.startsWith('Record<')) value = {};
+     else if (field.type === 'integer' || field.type === 'number') value = 0;
+@@ -212,6 +240,14 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
+     else value = name.endsWith('_id') ? `consumer-${name.replace(/_/g, '-')}` : `Consumer ${name.replace(/_/g, ' ')}`;
+     return [key, value];
+   }));
++  // Exercise actual collection content through the public consumer API.
++  const sources = new Set(schemaNodes(schema).flatMap(node => node.collection ? [node.collection.source] : []));
++  if (sources.has('rows')) model.rows = [{ ...model }];
++  if (sources.has('events')) model.events = [
++    { id: 'consumer-event-1', kind: 'state', at: '2026-09-05T12:00:00Z', title: 'Created', description: 'Initial state' },
++    { id: 'consumer-event-2', kind: 'state', at: '2026-09-06T12:00:00Z', title: 'Updated', description: 'Next state' },
++  ];
++  return model;
+ }
+ 
+ /** Choose behavior declared by the saved tree, never a control invented by the consumer. */

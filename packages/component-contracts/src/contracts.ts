@@ -5,6 +5,7 @@ export const COMPONENT_CONTRACT_VERSION = '1.1.0' as const;
 export const COMPONENT_CONTRACT_VERSION_1_1 = '1.1.0' as const;
 
 const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>> = {
+
   AddressCollectionPanel: {
     id: 'AddressCollectionPanel', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'subtitle', 'description', 'metadata', 'summary', 'text', 'body', 'emptyMessage'], slots: ['default'], events: [],
@@ -61,6 +62,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     accessibility: ['One article per event with visible label text', 'A timestamp is a time element with a machine-readable datetime'],
     compatibility: 'Mirrors renderAuditEvent over renderEventArticle with data-event-type=audit: the label reads label/title/event/status/state/reason/text (default Audit Event), the timestamp reads timestamp/datetime/time/at/createdAt/updatedAt, and the detail reads detail/description/reason/message/from/to/code, so a lone reason is both label and detail exactly as the HTML renderer shows it; authored children replace the generated article body. typeField lowers to event and timestampField to timestamp; timezoneParameter is consumed.',
   },
+  AuditSummaryCard: {"id": "AuditSummaryCard", "version": "1.1.0", "props": ["auditLog", "lastN", "title", "showTransitionCount", "showLastTransitionTime", "showLastActor"], "slots": [], "events": [], "states": ["empty", "summary"], "tokenRoles": ["surface.panel", "text.body"], "accessibility": ["Named region with a heading and associated summary terms", "Latest valid UTC timestamp has a machine-readable time"], "compatibility": "Auditable summary counts object records, sorts valid transitioned_at instants descending with stable ties, and shows the latest actor_id. lastN limits recent transition labels, never the total. Invalid timestamps remain counted but cannot become latest; absent values say Not recorded."},
   AuditTimeline: {
     id: 'AuditTimeline', version: COMPONENT_CONTRACT_VERSION,
     props: [
@@ -446,6 +448,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     accessibility: ['Native select semantics', 'Label and descriptions are associated', 'Placeholder is an explicit empty-value option'],
     compatibility: 'Native select only; no custom combobox claim.',
   },
+  SortIndicator: {"id": "SortIndicator", "version": "1.1.0", "props": ["label", "sortField", "sortDirection", "sortActive", "triStateSort", "sortableFields", "defaultSortField", "defaultSortDirection"], "slots": [], "events": ["change"], "states": ["none", "ascending", "descending"], "tokenRoles": ["button.background", "button.text", "focus.outer"], "accessibility": ["A labelled native button inside a scoped column header exposes aria-sort", "Tab reaches the button; Enter and Space cycle the state"], "compatibility": "The component owns its indicator state and emits {field,direction,active}; the consumer owns record sorting. Tri-state cycle is none/ascending/descending/none; binary mode cycles ascending/descending. Authored state prop changes resynchronise the indicator."},
   Stack: {
     id: 'Stack', version: COMPONENT_CONTRACT_VERSION_1_1,
     props: ['direction', 'gap', 'align', 'justify', 'wrap', 'patternComponent', 'fields'], slots: ['default'], events: [],
@@ -543,6 +546,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     accessibility: ['Native textarea semantics', 'Label and help/error descriptions are programmatically associated'],
     compatibility: 'Shares the canonical field metadata and validation contract.',
   },
+  TimelineEntryLabel: {"id": "TimelineEntryLabel", "version": "1.1.0", "props": ["label", "text", "value", "maxLength", "compact"], "slots": ["default"], "events": [], "states": ["compact", "full"], "tokenRoles": ["text.body"], "accessibility": ["Compact noninteractive timeline label preserves InlineLabel content and truncation"], "compatibility": "Recipe over InlineLabel: compact defaults true and maxLength defaults40 only in compact mode. Explicit maxLength and authored children retain InlineLabel precedence and three-dot truncation; public ID remains TimelineEntryLabel."},
   VizAreaPreview: {
     id: 'VizAreaPreview', version: COMPONENT_CONTRACT_VERSION_1_1,
     props: ['svg', 'title', 'description', 'width', 'height'], slots: ['default'], events: [], states: ['placeholder', 'content'],

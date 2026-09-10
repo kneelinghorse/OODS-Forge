@@ -19,7 +19,8 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (!items || !toolbar) continue;
       const rowContent = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => node.component === 'Stack' ? rowContent(node.children ?? []) : [node]);
       const toolbarRecipes = rowContent(toolbar.children ?? []).flatMap(node => node.meta?.intent === 'slot:search' ? rowContent(node.children ?? []) : [node]).filter(node => !['SearchInput', 'PaginationBar'].includes(node.component) && node.meta?.intent !== 'slot:filters' && !['Input', 'Select', 'Button'].includes(node.component));
-      const rowNodes = [...rowContent(items.children ?? []), ...toolbarRecipes];
+      const sortIndicator = nodes.find(node => node.component === 'SortIndicator');
+      const rowNodes = [...rowContent(items.children ?? []), ...toolbarRecipes].filter(node => node !== sortIndicator);
       const overlay = rowNodes.find(node => node.component === 'ArchivedRowOverlay');
       const billing = nodes.find(node => node.component === 'BillingSummaryBadge');
       const content: UiElement[] = [
@@ -44,9 +45,13 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
         filter.component = 'Select'; filter.children = undefined; filter.bindings = undefined; filter.collectionControl = 'filter';
         filter.props = { label: shortName(filterField), options: [{ value: '', label: 'All states' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: String(value).replaceAll('_', ' ') }))] };
       }
+      if (sortIndicator) {
+        sortIndicator.bindings = { ...sortIndicator.bindings, onChange: 'handleSortChange' };
+        if (screen.bindings) delete screen.bindings.onSort;
+      }
       toolbar.children = [
-        ...(search ? [search] : []), ...(filter && filterField ? [filter] : []),
-        { id: `${toolbar.id}-sort`, component: 'Select', collectionControl: 'sort', props: { field: labelField, label: 'Sort', options: [{ value: 'asc', label: 'Name A–Z' }, { value: 'desc', label: 'Name Z–A' }] } },
+        ...(search ? [search] : []), ...(filter && filterField ? [filter] : []), ...(sortIndicator ? [sortIndicator] : []),
+        ...(sortIndicator ? [] : [{ id: `${toolbar.id}-sort`, component: 'Select', collectionControl: 'sort' as const, props: { field: labelField, label: 'Sort', options: [{ value: 'asc', label: 'Name A–Z' }, { value: 'desc', label: 'Name Z–A' }] } }]),
       ];
       if (overlay?.props?.separateTab) screen.children!.splice(screen.children!.indexOf(items), 1, {
         id: `${items.id}-archive-tabs`, component: 'Tabs', collectionControl: 'archive',
@@ -62,12 +67,13 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       const entries = nodes.find(node => node.id.startsWith('timeline-entries-'));
       if (!header || !entries) continue;
       const payment = nodes.find(node => node.component === 'PaymentEventTimeline');
+      const label = nodes.find(node => node.component === 'TimelineEntryLabel');
       header.children = [{ id: `${header.id}-title`, component: 'Text', props: { field: labelField } }];
       if (fields.amount && fields.currency) header.children.push({ id: `${header.id}-billing`, component: 'BillingSummaryBadge', props: { amountField: 'amount', currencyField: 'currency', intervalField: 'billing_interval', minorUnits } });
       entries.collection = { source: 'events', keyField: 'id', labelField: 'title', historyField: fields.state_history ? 'state_history' : undefined };
       if (payment) payment.collectionControl = 'payment-event';
       entries.children = [
-        { id: `${entries.id}-entry`, component: 'Card', collectionControl: 'event', children: payment ? [payment] : [] },
+        { id: `${entries.id}-entry`, component: 'Card', collectionControl: 'event', children: [...(label ? [label] : []), ...(payment ? [payment] : [])] },
         { id: `${entries.id}-empty`, component: 'Banner', props: { message: 'No events yet.' }, collectionControl: 'empty' },
       ];
     }

@@ -85,7 +85,7 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         assert.ok((await overlay.getAttribute('aria-label') ?? '').startsWith(`Archived: ${object}`));
         assert.equal(await overlay.locator('.oods-archive-badge').innerText(), 'Archived');
         const opacity = await overlay.evaluate((node) => getComputedStyle(node).opacity);
-        assert.equal(opacity, '0.6');
+        assert.equal(opacity, '0.7'); // s192-m04 measured contrast correction (#1887)
         archivePresentation = { opacity, accessibleName: await overlay.getAttribute('aria-label'), tabLabel: await overlay.getAttribute('data-archive-tab'), keyboardNavigation: true };
         await archiveTabs.getByRole('tab', { name: 'Active', exact: true }).click();
       } else await page.getByRole('button', { name: 'Show active', exact: true }).click();

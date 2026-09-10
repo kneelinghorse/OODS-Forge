@@ -84,6 +84,7 @@ const STRATEGY_MAP: Record<string, ContentStrategy> = {
   ArchivedRowOverlay: 'none',
   AuditEvent: 'none',
   AuditSummaryCard: 'none',
+  SortIndicator: 'none',
   AuditTimeline: 'none',
   CancellationBadge: 'label-prop',
   CancellationEvent: 'none',

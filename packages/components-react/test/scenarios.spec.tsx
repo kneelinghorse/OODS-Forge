@@ -30,7 +30,18 @@ describe('@oods/components-react shared scenarios', () => {
       expect(container.textContent?.trim().length).toBeGreaterThan(0);
 
       switch (scenario.id) {
-        case 'billing-cycle-progress':
+        case 'AuditSummaryCard':
+            expect([...component!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
+            break;
+          case 'SortIndicator':
+            expect(component!.querySelector('th')?.getAttribute('aria-sort')).toBe('none');
+            expect(component!.querySelector('button')?.getAttribute('aria-label')).toBe('Sort name');
+            break;
+          case 'TimelineEntryLabel':
+            expect(component!.textContent).toBe('Long in...');
+            expect(component!.getAttribute('data-compact')).toBe('true');
+            break;
+          case 'billing-cycle-progress':
           expect(screen.getByRole('progressbar').getAttribute('value')).toBe('40');
           expect(screen.getByRole('progressbar').getAttribute('aria-label')).toBe('40% complete · 18 days remaining');
           break;

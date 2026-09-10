@@ -22,7 +22,7 @@ import {
   EDITOR_TYPED_TEXT,
   S185_SCHEMA_NAMES,
   S186_SCHEMA_NAMES,
-  deriveActionArguments,
+  deriveActionArguments, collectionActionControl, sourceOwnsControl, htmlHasSelector, type CollectionActionControl,
   deriveBoundFieldProbe,
   deriveValueProbes,
   schemaNodes,
@@ -443,13 +443,15 @@ function sourceOwnership(
   actions: GeneratedArtifactAction[],
   consumerFiles: Record<string, string> = {},
   interaction?: ConsumerInteraction,
+  schema?: UiSchema,
 ): SourceOwnership {
   const actionSelectors = actions.map((action) => {
     const escaped = escapeRegExp(action.name);
+    const control = schema && collectionActionControl(schema, action);
     return {
       action: action.name,
-      selector: selectorFor(action.name),
-      generatedSourceOccurrences: occurrenceCount(
+      selector: control?.selector ?? selectorFor(action.name),
+      generatedSourceOccurrences: control ? Number(sourceOwnsControl(source, control.nodeId)) : occurrenceCount(
         source,
         new RegExp(`data-oods-action=["']${escaped}["']`, 'g'),
       ),
@@ -483,7 +485,7 @@ function sourceOwnership(
     consumerComponentDeclarations,
     interaction,
     generatedInteractionNodeOccurrences: interaction && interaction.kind !== 'none'
-      ? occurrenceCount(source, new RegExp(`\\bid=["']${escapeRegExp(interaction.nodeId)}["']`, 'g'))
+      ? Number(sourceOwnsControl(source, interaction.nodeId))
       : 0,
   };
 }
@@ -649,7 +651,7 @@ export async function runLiveGenerationOnly({
       };
       const interaction = deriveInteraction(record.schema, artifact.actions);
       const model = deriveConsumerModel(record.schema, composition ? {} : MODEL);
-      const ownership = sourceOwnership(source, file.path, artifact.actions, {}, interaction);
+      const ownership = sourceOwnership(source, file.path, artifact.actions, {}, interaction, record.schema);
       assertGeneratedOwnership(ownership, schemaName, framework);
       await writeLog(path.join(artifactRoot, generationLog), [
         'handler=code.generate',
@@ -1129,6 +1131,8 @@ async function browserProof({
   cancellationFormIds = [],
   viewport = { width: 1280, height: 800 },
   mountObligations,
+  collectionControls = {},
+  screenshotPath,
 }: {
   framework: S184M06Framework;
   schemaName: S184M06SchemaName;
@@ -1143,6 +1147,8 @@ async function browserProof({
   cancellationFormIds?: string[];
   viewport?: { width: number; height: number };
   mountObligations: MountObligation[];
+  collectionControls?: Record<string, CollectionActionControl>;
+  screenshotPath?: string;
 }): Promise<Record<string, unknown>> {
   const browser = await launchProofBrowser();
   try {
@@ -1155,6 +1161,7 @@ async function browserProof({
       });
       await page.goto(url, { waitUntil: 'networkidle' });
       const rootCount = await page.locator(`#${rootId}`).count();
+      if (screenshotPath) await page.screenshot({ path: screenshotPath, fullPage: true });
       const requiredMounts = observeMountObligations(mountObligations, await page.locator('#app').innerHTML());
       const componentCounts = await page.evaluate((ids) => Object.fromEntries(
         ids.map((id) => [id, document.querySelectorAll(`[data-oods-component="${id}"]`).length]),
@@ -1396,7 +1403,8 @@ async function browserProof({
       };
       const selectorEvidence = [];
       for (const action of actions) {
-        const selector = selectorFor(action.name);
+        const control = collectionControls[action.name];
+        const selector = control?.selector ?? selectorFor(action.name);
         const owner = page.locator(selector);
         const count = await owner.count();
         // A screen surface button or a Button is clicked. An editor that owns
@@ -1405,7 +1413,9 @@ async function browserProof({
         const mode = count > 0 && await owner.first().evaluate((element) => (
           element.tagName !== 'BUTTON' && element.querySelector('input[type="text"]') !== null
         )) ? 'typed' : 'clicked';
-        if (count > 0 && mode === 'typed') await owner.first().locator('input[type="text"]').first().fill(EDITOR_TYPED_TEXT);
+        if (count > 0 && control?.operation === 'type') await owner.first().fill(control.value!);
+        else if (count > 0 && control?.operation === 'select') await owner.first().selectOption(control.value!);
+        else if (count > 0 && mode === 'typed') await owner.first().locator('input[type="text"]').first().fill(EDITOR_TYPED_TEXT);
         else if (count > 0) await owner.first().click();
         selectorEvidence.push({ action: action.name, selector, count, clicked: count > 0, mode });
       }
@@ -1444,6 +1454,7 @@ async function browserProof({
       return {
         framework,
         schema: schemaName,
+        ...(screenshotPath ? { screenshot: { file: path.basename(screenshotPath), sha256: sha256Urn(await fsp.readFile(screenshotPath)) } } : {}),
         boundValues,
         viewport,
         mount: rootCount === 1 ? 'passed' : 'failed',
@@ -1694,7 +1705,7 @@ export async function runLiveConsumerCell({
   const schema = generation.sourceSchema ?? savedSchema(schemaName, schemaStore).schema;
   const interaction = generation.interaction ?? deriveInteraction(schema, artifact.actions);
   const model = generation.model ?? deriveConsumerModel(schema, MODEL);
-  const mountObligations = deriveMountObligations(schema, source);
+  const mountObligations = deriveMountObligations(schema, source, model);
   const cellRelative = mutation
     ? toPosix(path.join('gate-bites', ...(mission === 's184-m06' ? [] : [schemaName]), framework, mutation.gate))
     : toPosix(path.join('cells', schemaName, framework));
@@ -1720,7 +1731,7 @@ export async function runLiveConsumerCell({
     }
     const files = createConsumerFiles({ framework, source, actions: artifact.actions, schemaName, model, mission });
     const generatedPath = framework === 'react' ? 'src/GeneratedUI.tsx' : 'src/GeneratedUI.vue';
-    const ownership = sourceOwnership(source, generatedPath, artifact.actions, files, interaction);
+    const ownership = sourceOwnership(source, generatedPath, artifact.actions, files, interaction, schema);
     assertGeneratedOwnership(ownership, schemaName, framework);
     await writeLog(path.join(logRoot, 'source-ownership.log'), canonicalJson(ownership));
     await writeFiles(consumerRoot, files);
@@ -1855,7 +1866,8 @@ export async function runLiveConsumerCell({
       throw new Error(`${schemaName}/${framework}: server render omitted saved-schema root ${rootId}.`);
     }
     for (const action of artifact.actions) {
-      if (!ssr.html.includes(`data-oods-action=\\"${action.name}\\"`)
+      const control = collectionActionControl(schema, action);
+      if (control ? !htmlHasSelector(ssr.html, control.selector) : !ssr.html.includes(`data-oods-action=\\"${action.name}\\"`)
         && !ssr.html.includes(`data-oods-action="${action.name}"`)) {
         throw new Error(`${schemaName}/${framework}: server render omitted generated selector ${action.name}.`);
       }
@@ -1938,6 +1950,8 @@ export async function runLiveConsumerCell({
       // DOM hydration probe. Keep this proof at an explicit wide desktop size.
       ...(generation.composition ? { viewport: { width: 1920, height: 1080 } } : {}),
       mountObligations,
+      collectionControls: Object.fromEntries(artifact.actions.flatMap(action => { const control = collectionActionControl(schema, action); return control ? [[action.name, control]] : []; })),
+      screenshotPath: path.join(logRoot, 'mounted.png'),
     });
     await writeLog(path.join(logRoot, 'browser-proof.log'), canonicalJson(browser));
     const browserCss = browser.css as { primaryTextToken?: unknown; canvasToken?: unknown };

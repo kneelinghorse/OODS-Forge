@@ -4,6 +4,7 @@ import { h, nextTick, type Component, type Slot } from 'vue';
 import { describe, expect, it } from 'vitest';
 
 import {
+  AuditSummaryCard, SortIndicator, TimelineEntryLabel,
   CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay,
   BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
@@ -62,6 +63,7 @@ import {
 } from '../src/index.js';
 
 const implementations: Readonly<Record<string, Component>> = {
+  AuditSummaryCard, SortIndicator, TimelineEntryLabel,
   CycleProgressCard, PaymentTimeline, PaymentEventTimeline, BillingCardMeta, ArchivedRowOverlay,
   BillingSummaryBadge, BillingAmountInput, BillingIntervalSelector,
   ArchiveSummary, ArchivePill, CancellationBadge, CancellationForm, PriceCardMeta,
@@ -151,6 +153,17 @@ describe('@oods/components-vue shared scenarios', () => {
         expect(component.text().trim().length, `${scenario.id} non-empty content`).toBeGreaterThan(0);
 
         switch (scenario.id) {
+          case 'AuditSummaryCard':
+            expect([...component.element!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
+            break;
+          case 'SortIndicator':
+            expect(component.element!.querySelector('th')?.getAttribute('aria-sort')).toBe('none');
+            expect(component.element!.querySelector('button')?.getAttribute('aria-label')).toBe('Sort name');
+            break;
+          case 'TimelineEntryLabel':
+            expect(component.element!.textContent).toBe('Long in...');
+            expect(component.element!.getAttribute('data-compact')).toBe('true');
+            break;
           case 'billing-cycle-progress':
             expect(component.get('progress').attributes('value')).toBe('40');
             expect(component.get('progress').attributes('aria-label')).toBe('40% complete · 18 days remaining');

@@ -98,7 +98,8 @@ export function emitCollectionNode(
     }
     case 'event': {
       const payment = node.children?.find(child => child.collectionControl === 'payment-event');
-      const state = `<strong>${value('collectionEvent.title')}</strong><time ${attr(react ? 'dateTime' : 'datetime', 'collectionEvent.at')}>${value('formatDateTime(collectionEvent.at)')}</time><p>${value('collectionEvent.description')}</p>`;
+      const label = node.children?.find(child => child.component === 'TimelineEntryLabel');
+      const state = `${label ? emit(label) : ''}<strong>${value('collectionEvent.title')}</strong><time ${attr(react ? 'dateTime' : 'datetime', 'collectionEvent.at')}>${value('formatDateTime(collectionEvent.at)')}</time><p>${value('collectionEvent.description')}</p>`;
       const body = payment ? (react ? `{collectionEvent.kind === 'payment' ? (${emit(payment)}) : (<>${state}</>)}` : `<template v-if="collectionEvent.kind === 'payment'">${emit(payment)}</template><template v-else>${state}</template>`) : state;
       return `<Card ${id}>${body}</Card>`;
     }

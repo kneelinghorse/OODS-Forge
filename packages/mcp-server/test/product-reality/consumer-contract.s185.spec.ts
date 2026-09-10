@@ -8,7 +8,7 @@ import type { GeneratedArtifactAction } from '../../src/codegen/types.js';
 import {
   S185_SCHEMA_NAMES, deriveActionArguments, deriveBoundFieldProbe, deriveConsumerModel,
   EDITOR_TYPED_TEXT, deriveInteraction, inspectFrameworkAttachment, summarizeGateAccounting,
-  deriveMountObligations, observeMountObligations,
+  deriveMountObligations, observeMountObligations, collectionActionControl, sourceOwnsControl, htmlHasSelector,
 } from '../../../../scripts/product-reality/s185-m04-consumer-contract.js';
 import {
   REPOSITORY_ROOT, SCHEMA_NAMES, createConsumerFiles,
@@ -147,6 +147,48 @@ describe('Sprint 185 saved-schema consumer contract', () => {
     ]);
     expect(observeMountObligations(obligations, complete.replace('data-oods-component="VizAreaPreview"', 'data-oods-component="Card"'))
       .find(({ nodeId }) => nodeId === 'preview')?.passed).toBe(false);
+  });
+
+  it.each(['react', 'vue'])('%s checks every populated repeated node and rejects its removal or wrong marker', (framework) => {
+    const schema: UiSchema = { version: '1.0', screens: [{ id: 'events', component: 'Stack', collection: { source: 'events', keyField: 'id', labelField: 'title' }, children: [
+      { id: 'empty', component: 'Banner', collectionControl: 'empty' },
+      { id: 'event', component: 'Card', collectionControl: 'event', children: [{ id: 'label', component: 'TimelineEntryLabel' }] },
+    ] }] };
+    const id = framework === 'react' ? "id={'label-' + collectionIndex}" : `:id="'label-' + collectionIndex"`;
+    const source = `<Banner id="empty" data-oods-component="Banner" /><TimelineEntryLabel ${id} data-oods-component="TimelineEntryLabel" />`;
+    const model = deriveConsumerModel(schema);
+    expect(model.events).toHaveLength(2);
+    const obligations = deriveMountObligations(schema, source, model);
+    expect(obligations.filter(row => row.requiredInitially).map(row => row.nodeId)).toEqual(['label-0', 'label-1']);
+    const first = '<span id="label-0" data-oods-component="TimelineEntryLabel">First</span>';
+    const second = '<span id="label-1" data-oods-component="TimelineEntryLabel">Second</span>';
+    expect(observeMountObligations(obligations, first + second).every(row => row.passed)).toBe(true);
+    expect(observeMountObligations(obligations, first).filter(row => !row.passed).map(row => row.nodeId)).toEqual(['label-1']);
+    expect(observeMountObligations(obligations, first + second.replace('TimelineEntryLabel', 'InlineLabel')).some(row => !row.passed)).toBe(true);
+    const empty = deriveMountObligations(schema, source, {});
+    expect(observeMountObligations(empty, '<section id="empty" data-oods-component="Banner"></section>').every(row => row.passed)).toBe(true);
+    expect(observeMountObligations(empty, '').some(row => !row.passed)).toBe(true);
+  });
+
+  it('binds collection proof to producer-owned controls and their actual public callback operands', () => {
+    const schema: UiSchema = { version: '1.0', objectSchema: { record_id: { type: 'string', required: true } }, screens: [{ id: 'root', component: 'Stack', children: [
+      { id: 'search', component: 'SearchInput', collectionControl: 'search' },
+      { id: 'page', component: 'PaginationBar', collectionControl: 'page' },
+      { id: 'rows', component: 'Stack', collection: { source: 'rows', keyField: 'record_id', labelField: 'record_id' }, children: [{ id: 'open', component: 'Button', collectionControl: 'open' }] },
+    ] }] };
+    const actions = ['onFilter', 'onPageChange', 'onRowClick'].map((event, index) => ({ name: event, sources: [{ nodeId: 'root', component: 'Stack', event }], parameters: [{ name: ['criteria', 'page', 'rowId'][index]!, type: ['Record<string, unknown>', 'number', 'string'][index]! }] }));
+    expect(actions.map(action => collectionActionControl(schema, action))).toEqual([
+      { nodeId: 'search', selector: '[id="search"]', operation: 'type', value: 'generated' },
+      { nodeId: 'page', selector: '[id="page"] button[aria-label="Next page"]', operation: 'click' },
+      { nodeId: 'open', selector: '[id="open-0"]', operation: 'click' },
+    ]);
+    const model = deriveConsumerModel(schema);
+    expect(deriveActionArguments(schema, actions, model)).toEqual({ onFilter: [[{ page: 1, pageSize: 10, total: 20, search: 'generated' }]], onPageChange: [[2]], onRowClick: [['consumer-record-id']] });
+    expect(deriveInteraction(schema, actions)).toMatchObject({ action: 'onRowClick', selector: '[id="open-0"]' });
+    expect(sourceOwnsControl("<Button id={'open-' + collectionIndex} />", 'open')).toBe(true);
+    expect(sourceOwnsControl('<Button id="other" />', 'open')).toBe(false);
+    expect(htmlHasSelector('<button id="open-0"></button>', '[id="open-0"]')).toBe(true);
+    expect(htmlHasSelector('<button id="other"></button>', '[id="open-0"]')).toBe(false);
   });
 
   it('names inactive initial Tabs panel obligations without relaxing the active panel or its content', () => {

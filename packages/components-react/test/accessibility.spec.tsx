@@ -30,7 +30,7 @@ describe('@oods/components-react accessibility', () => {
   const axeScenarios = sharedScenarios;
   it('runs every governed root through the axe loop exactly once', () => {
     expect(axeScenarios.map(scenario => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);
-    expect(axeScenarios).toHaveLength(72);
+    expect(axeScenarios).toHaveLength(NUCLEUS_COMPONENT_IDS.length);
   });
   for (const scenario of axeScenarios) {
     it(`passes axe for the ${scenario.oodsComponentId} shared scenario with visible text semantics`, async () => {

@@ -8,7 +8,7 @@ import { renderSharedScenario } from './scenario-fixtures.js';
 describe('Vue measured scenario interactions', () => {
   it('accounts for every root as interactive or not applicable', () => {
     expect(sharedScenarios.map(scenario => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);
-    expect(sharedScenarios).toHaveLength(72);
+    expect(sharedScenarios).toHaveLength(NUCLEUS_COMPONENT_IDS.length);
   });
   for (const scenario of sharedScenarios) {
     it(`${scenario.oodsComponentId}: structured role and name`, () => {
