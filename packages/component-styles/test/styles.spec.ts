@@ -183,3 +183,13 @@ describe('Sprint 182 shared component style contract', () => {
     );
   });
 });
+
+// s191-m03 A6: the visible border must contain the archive badge, not only the button.
+it('gives archived collection cards one outer border while retaining their button', () => {
+  expect(css).toContain("[data-oods-component='ArchivedRowOverlay'][data-archived='true']:has(> .oods-collection-row)");
+  expect(css).toContain("[data-oods-component='ArchivedRowOverlay'][data-archived='true'] > .oods-collection-row { border: 0; background: transparent; }");
+  const rule = css.match(/:has\(> \.oods-collection-row\) \{([^}]+)\}/)![1]!;
+  expect(rule).toContain('border: 1px solid');
+  expect(rule).toContain('box-sizing: border-box');
+  expect(rule).toContain('padding-inline-end:');
+});

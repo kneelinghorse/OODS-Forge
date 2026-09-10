@@ -1209,6 +1209,15 @@
   opacity: var(--status-archive-overlay-opacity, 0.6);
 }
 [data-oods-component='ArchivedRowOverlay'] > .oods-collection-row { flex: 1; min-width: 0; }
+/* The archived card owns both the interactive row and its status badge. */
+[data-oods-component='ArchivedRowOverlay'][data-archived='true']:has(> .oods-collection-row) {
+  box-sizing: border-box;
+  border: 1px solid var(--sys-border-strong, CanvasText);
+  border-radius: var(--cmp-button-radius, 0.5rem);
+  background: var(--sys-surface-raised, Canvas);
+  padding-inline-end: var(--space-4, 1rem);
+}
+[data-oods-component='ArchivedRowOverlay'][data-archived='true'] > .oods-collection-row { border: 0; background: transparent; }
 .oods-archive-badge {
   display: inline-block;
   white-space: nowrap;
