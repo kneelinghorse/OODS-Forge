@@ -71,3 +71,7 @@ Red implementation attempts are also retained: `component-packages-cwd-attempt.l
 `shadow-type-runtime-equivalence.json` rechecks the final source type correction against every retained runtime value hash.
 
 No full-suite capture was run; one five-suite capture is reserved for m07. Live bridge delivery remains the reviewed Sprint 191 head from m01.
+
+### Unchanged-base attribution for the optional ECharts soak
+
+The separately dispatched `echarts-render-soak` job failed on Node 24.20.0 / V8 13.6.233.17-node.53 / Linux x64. An unchanged OODS-pro `5fdf8a18` control, run **34514682074**, job **102997057612**, reproduced the exact positive 99% trend lower bound **2007.5753618961858**, also seen in the first branch run. See `ci-soak-unchanged-base.log` and `ci-unchanged-base-run.json`; CMOS learning #561. This is a carried baseline failure, not a green workflow claim. No threshold or exclusion changed. The component package and a11y job results are reported independently; the opt-in soak remains explicit in the final handoff.
