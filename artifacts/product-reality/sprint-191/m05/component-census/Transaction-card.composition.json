@@ -1,0 +1,417 @@
+{
+  "status": "ok",
+  "layout": "card",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-card-7",
+        "component": "Card",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "card-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-8",
+                    "component": "StatusBadge",
+                    "props": {
+                      "field": "status",
+                      "variant": "subtle",
+                      "label": "Status"
+                    }
+                  },
+                  {
+                    "id": "ve-header-10",
+                    "component": "CancellationBadge",
+                    "props": {
+                      "field": "cancel_at_period_end"
+                    }
+                  },
+                  {
+                    "id": "ve-header-11",
+                    "component": "ArchivePill",
+                    "props": {
+                      "field": "is_archived",
+                      "archivedAtField": "archived_at"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-body-3",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-tight"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-body-4",
+                "component": "Card",
+                "meta": {
+                  "intent": "slot:body",
+                  "label": "body"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-footer-5",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-footer-6",
+                "component": "PriceCardMeta",
+                "meta": {
+                  "intent": "slot:footer",
+                  "label": "footer"
+                },
+                "props": {
+                  "modelField": "pricing_model",
+                  "intervalField": "billing_interval"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "unit_amount_cents": {
+        "type": "number",
+        "required": true,
+        "description": "Base unit price expressed in the smallest currency denomination.",
+        "semanticType": "commerce.price.amount"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO currency code for the unit amount.",
+        "semanticType": "commerce.price.currency"
+      },
+      "pricing_model": {
+        "type": "string",
+        "required": true,
+        "description": "Monetization model applied to the entity.",
+        "semanticType": "commerce.price.model"
+      },
+      "billing_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Billing cadence when pricing_model indicates recurring revenue.",
+        "semanticType": "commerce.price.interval"
+      },
+      "tax_behavior": {
+        "type": "string",
+        "required": true,
+        "description": "Defines whether taxes are included in the displayed price.",
+        "enum": [
+          "exclusive",
+          "inclusive"
+        ],
+        "semanticType": "commerce.price.tax_behavior"
+      },
+      "cancel_at_period_end": {
+        "type": "boolean",
+        "required": true,
+        "description": "Whether cancellation occurs at the natural period end instead of immediately. When true the entity is in a REVERSIBLE pending-cancellation state: the schedule can be undone (set back to false) any time before period end, returning the entity to active. This is distinct from a terminal cancellation (a `terminated`/canceled subscription), which is irreversible and non-reactivatable. Mirrors Stripe's cancel_at_period_end flag (docs.stripe.com/billing/subscriptions/cancel).",
+        "semanticType": "status.cancel.deferred"
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Free-form detail describing why cancellation occurred.",
+        "semanticType": "status.cancel.reason"
+      },
+      "cancellation_reason_code": {
+        "type": "string",
+        "required": false,
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "semanticType": "status.cancel.reason_code"
+      },
+      "cancellation_requested_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp capturing when the cancellation workflow was initiated.",
+        "semanticType": "status.cancel.timestamp"
+      },
+      "is_archived": {
+        "type": "boolean",
+        "required": true,
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "semanticType": "status.archive.state"
+      },
+      "archived_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity entered the archived state.",
+        "semanticType": "status.archive.timestamp"
+      },
+      "restored_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "semanticType": "status.archive.restore_timestamp"
+      },
+      "archive_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "semanticType": "status.archive.reason"
+      },
+      "archived_by": {
+        "type": "string",
+        "required": false,
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "semanticType": "status.archive.actor"
+      },
+      "archive_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "semanticType": "status.archive.compliance"
+      },
+      "restoration_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "semanticType": "status.archive.restoration"
+      },
+      "transaction_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Unique identifier for the transaction record.",
+        "semanticType": "commerce.transaction.id"
+      },
+      "user_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Identifier of the user associated with the transaction.",
+        "semanticType": "identity.user.id"
+      },
+      "organization_id": {
+        "type": "uuid",
+        "required": false,
+        "description": "Tenant organization responsible for the transaction.",
+        "semanticType": "organization.id"
+      },
+      "occurred_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp when the transaction occurred in the source system.",
+        "semanticType": "commerce.transaction.timestamp"
+      },
+      "payment_method": {
+        "type": "string",
+        "required": true,
+        "description": "Funding source used to complete the transaction.",
+        "enum": [
+          "card",
+          "bank_transfer",
+          "digital_wallet",
+          "invoice"
+        ],
+        "semanticType": "commerce.payment.method"
+      },
+      "channel": {
+        "type": "string",
+        "required": true,
+        "description": "Sales channel through which the transaction was initiated.",
+        "enum": [
+          "online",
+          "in_app",
+          "point_of_sale",
+          "partner"
+        ],
+        "semanticType": "commerce.transaction.channel"
+      },
+      "payment_reference": {
+        "type": "string",
+        "required": false,
+        "description": "Provider reference code linking to the payment processor."
+      },
+      "risk_score": {
+        "type": "number",
+        "required": false,
+        "description": "Fraud assessment score assigned during authorization.",
+        "semanticType": "risk.transaction.score"
+      }
+    }
+  },
+  "schemaRef": "compose-bc0cfcc9",
+  "schemaRefCreatedAt": "2026-09-10T05:59:25.996Z",
+  "schemaRefExpiresAt": "2026-09-10T06:29:25.996Z",
+  "selections": [
+    {
+      "slotName": "header",
+      "intent": "page-header",
+      "selectedComponent": "StatusBadge",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "StatusBadge was selected for slot \"header\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "StatusBadge",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "CancellationBadge",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "ArchivePill",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "footer",
+      "intent": "action-button",
+      "selectedComponent": "PriceCardMeta",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "PriceCardMeta was selected for slot \"footer\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "PriceCardMeta",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "body",
+      "intent": "data-display",
+      "selectedComponent": "Card",
+      "confidence": 0.5,
+      "confidenceLevel": "medium",
+      "explanation": "Card was selected for slot \"body\" because fallback placement. Confidence is medium (0.50).",
+      "candidates": [
+        {
+          "name": "Card",
+          "confidence": 0.5,
+          "reason": "fallback placement"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [],
+  "objectUsed": {
+    "name": "Transaction",
+    "version": "1.0.0",
+    "traits": [
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "financial/Priceable",
+      "lifecycle/Cancellable",
+      "lifecycle/Archivable"
+    ],
+    "fieldsComposed": 31,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 5,
+      "form": 2,
+      "timeline": 4,
+      "card": 4
+    }
+  },
+  "meta": {
+    "intentParsed": "Transaction card view",
+    "layoutDetected": "context-inferred: card (from context=\"card\")",
+    "slotCount": 3,
+    "nodeCount": 10,
+    "intentSynthetic": true,
+    "intelligence": {
+      "fieldsExpanded": false,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.8
+    }
+  }
+}

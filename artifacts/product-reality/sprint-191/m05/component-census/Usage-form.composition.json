@@ -1,0 +1,983 @@
+{
+  "status": "ok",
+  "layout": "form",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-form-11",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "style": {
+          "spacingToken": "inset-default"
+        },
+        "children": [
+          {
+            "id": "form-title-1",
+            "component": "DetailHeader",
+            "props": {
+              "as": "h1"
+            },
+            "meta": {
+              "intent": "slot:title",
+              "label": "title",
+              "confidence": 0.7,
+              "confidenceLevel": "low"
+            }
+          },
+          {
+            "id": "form-fields-8",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "form-field-group-2",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-0-3",
+                    "component": "DatePicker",
+                    "meta": {
+                      "intent": "slot:field-0",
+                      "label": "field-0",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "period_start",
+                      "label": "Period start",
+                      "help": "Date the usage accumulation window began."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_period_start"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-1-5",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:field-1",
+                      "label": "field-1",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "status",
+                      "label": "Status",
+                      "placeholder": "Enter status",
+                      "options": [
+                        {
+                          "value": "ok",
+                          "label": "ok"
+                        },
+                        {
+                          "value": "delayed",
+                          "label": "delayed"
+                        },
+                        {
+                          "value": "investigating",
+                          "label": "investigating"
+                        }
+                      ],
+                      "help": "Health of the usage feed (ok, delayed, investigating)."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_status"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-6",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-2-7",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-2",
+                      "label": "field-2",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "meter_name",
+                      "label": "Meter name",
+                      "placeholder": "Enter meter name",
+                      "help": "Friendly metered feature name shown in UI (ex: Analytics Seats)."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_meter_name"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-12",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-3-13",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-3",
+                      "label": "field-3",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "included_quantity",
+                      "label": "Included quantity",
+                      "placeholder": "Enter included quantity",
+                      "type": "number",
+                      "help": "Quantity included in base plan before overages."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_included_quantity"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-14",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-4-15",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-4",
+                      "label": "field-4",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "consumed_quantity",
+                      "label": "Consumed quantity",
+                      "placeholder": "Enter consumed quantity",
+                      "type": "number",
+                      "help": "Actual quantity consumed in the active period."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_consumed_quantity"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-16",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-5-17",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-5",
+                      "label": "field-5",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "unit_label",
+                      "label": "Unit label",
+                      "placeholder": "Enter unit label",
+                      "help": "Label for display, defaults to the unit parameter."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_unit_label"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-18",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-6-19",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-6",
+                      "label": "field-6",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "rollover_strategy",
+                      "label": "Rollover strategy",
+                      "placeholder": "Enter rollover strategy",
+                      "help": "Strategy for unused units (inherits rolloverStrategy parameter)."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_rollover_strategy"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-20",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-7-21",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-7",
+                      "label": "field-7",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "overage_rate_minor",
+                      "label": "Overage rate minor",
+                      "placeholder": "Enter overage rate minor",
+                      "type": "number",
+                      "help": "Cost per additional unit expressed in minor currency units."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_overage_rate_minor"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-22",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-8-23",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-8",
+                      "label": "field-8",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "projected_overage_minor",
+                      "label": "Projected overage minor",
+                      "placeholder": "Enter projected overage minor",
+                      "type": "number",
+                      "help": "Forecasted overage spend derived from consumption trends."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_projected_overage_minor"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-24",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-9-25",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-9",
+                      "label": "field-9",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "last_event",
+                      "label": "Last event",
+                      "placeholder": "Enter last event",
+                      "help": "Lifecycle event associated with the most recent timestamp mutation."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_last_event"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "form-actions-9",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "form-submit-10",
+                "component": "Button",
+                "props": {
+                  "label": "Save",
+                  "type": "submit"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        }
+      }
+    ],
+    "objectSchema": {
+      "meter_name": {
+        "type": "string",
+        "required": true,
+        "description": "Friendly metered feature name shown in UI (ex: Analytics Seats).",
+        "semanticType": "billing.usage.meter_name"
+      },
+      "included_quantity": {
+        "type": "integer",
+        "required": true,
+        "description": "Quantity included in base plan before overages.",
+        "semanticType": "billing.usage.included_quantity"
+      },
+      "consumed_quantity": {
+        "type": "integer",
+        "required": true,
+        "description": "Actual quantity consumed in the active period.",
+        "semanticType": "billing.usage.consumed_quantity"
+      },
+      "unit_label": {
+        "type": "string",
+        "required": true,
+        "description": "Label for display, defaults to the unit parameter.",
+        "semanticType": "billing.usage.unit_label"
+      },
+      "period_start": {
+        "type": "date",
+        "required": true,
+        "description": "Date the usage accumulation window began.",
+        "semanticType": "billing.usage.period_start"
+      },
+      "period_end": {
+        "type": "date",
+        "required": true,
+        "description": "Date the usage accumulation window ends.",
+        "semanticType": "billing.usage.period_end"
+      },
+      "rollover_strategy": {
+        "type": "string",
+        "required": false,
+        "description": "Strategy for unused units (inherits rolloverStrategy parameter).",
+        "semanticType": "billing.usage.rollover_strategy"
+      },
+      "overage_rate_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Cost per additional unit expressed in minor currency units.",
+        "semanticType": "billing.usage.overage_rate_minor"
+      },
+      "projected_overage_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Forecasted overage spend derived from consumption trends.",
+        "semanticType": "billing.usage.projected_overage_minor"
+      },
+      "samples": {
+        "type": "UsageSample[]",
+        "required": false,
+        "description": "Rolling usage measurements for charts or anomaly detection.",
+        "semanticType": "billing.usage.samples"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "usage_id": {
+        "type": "string",
+        "required": true,
+        "description": "Identifier for this usage record.",
+        "semanticType": "billing.usage.id"
+      },
+      "subscription_id": {
+        "type": "string",
+        "required": true,
+        "description": "Subscription the usage belongs to.",
+        "semanticType": "billing.usage.subscription_id"
+      },
+      "meter_id": {
+        "type": "string",
+        "required": true,
+        "description": "Provider specific meter identifier.",
+        "semanticType": "billing.usage.meter_id"
+      },
+      "provider": {
+        "type": "string",
+        "required": true,
+        "description": "Source provider for usage data.",
+        "semanticType": "billing.usage.provider"
+      },
+      "status": {
+        "type": "string",
+        "required": false,
+        "description": "Health of the usage feed (ok, delayed, investigating).",
+        "enum": [
+          "ok",
+          "delayed",
+          "investigating"
+        ],
+        "semanticType": "billing.usage.status"
+      },
+      "trend_percent": {
+        "type": "number",
+        "required": false,
+        "description": "Percent delta compared to previous window.",
+        "semanticType": "billing.usage.trend_percent"
+      },
+      "variance_minor": {
+        "type": "integer",
+        "required": false,
+        "description": "Currency impact of usage variance calculated with overage rate.",
+        "semanticType": "billing.usage.variance_minor"
+      },
+      "last_reported_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp of the most recent provider usage payload.",
+        "semanticType": "billing.usage.last_reported_at"
+      },
+      "anomalies": {
+        "type": "UsageAnomaly[]",
+        "required": false,
+        "description": "Detected anomalies with context for investigation.",
+        "semanticType": "billing.usage.anomalies"
+      }
+    }
+  },
+  "schemaRef": "compose-5affab2e",
+  "schemaRefCreatedAt": "2026-09-10T05:59:26.055Z",
+  "schemaRefExpiresAt": "2026-09-10T06:29:26.055Z",
+  "selections": [
+    {
+      "slotName": "title",
+      "intent": "page-header",
+      "selectedComponent": "DetailHeader",
+      "confidence": 0.7,
+      "confidenceLevel": "medium",
+      "explanation": "DetailHeader was selected for slot \"title\" because preferred for \"page-header\" (rank 2); 1 context match(es); 1 trait(s); name contains \"header\"; position affinity: DetailHeader fits well in header. Confidence is medium (0.70).",
+      "candidates": [
+        {
+          "name": "DetailHeader",
+          "confidence": 1,
+          "reason": "preferred for \"page-header\" (rank 2); 1 context match(es); 1 trait(s); name contains \"header\"; position affinity: DetailHeader fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Text",
+          "confidence": 0.92,
+          "reason": "preferred for \"page-header\" (rank 1); 1 context match(es); 1 region match(es); position affinity: Text fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Badge",
+          "confidence": 0.3,
+          "reason": "1 context match(es); 1 region match(es); 1 trait(s); position affinity: Badge fits well in header",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-0",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-0\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "DatePicker",
+          "confidence": 1,
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 0.98,
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.56,
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-1",
+      "intent": "enum-input",
+      "selectedComponent": "Select",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Select was selected for slot \"field-1\" because preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 0.92,
+          "reason": "preferred for \"enum-input\" (rank 3); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagInput",
+          "confidence": 0.72,
+          "reason": "preferred for \"enum-input\" (rank 2); 1 context match(es); 1 region match(es); 1 category match(es); 1 trait(s); name contains \"input\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-2",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-2\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-3",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-3\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-4",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-4\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-5",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-5\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-6",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-6\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-7",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-7\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-8",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-8\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-9",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-9\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [
+    {
+      "code": "OODS-V121",
+      "message": "Object 'Usage' has maturity 'beta' — composed output may change.",
+      "hint": "Consider using stable objects for production compositions."
+    },
+    {
+      "code": "OODS-V119",
+      "message": "No view_extensions found for context \"form\" in object \"Usage\". Available contexts: detail, timeline, list"
+    }
+  ],
+  "objectUsed": {
+    "name": "Usage",
+    "version": "1.0.0",
+    "traits": [
+      "SaaSBillingMetered",
+      "lifecycle/Timestampable"
+    ],
+    "fieldsComposed": 23,
+    "viewExtensionsApplied": {
+      "detail": 1,
+      "timeline": 1,
+      "list": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Usage form view",
+    "layoutDetected": "context-inferred: form (from context=\"form\")",
+    "slotCount": 11,
+    "nodeCount": 25,
+    "intentSynthetic": true,
+    "warnings": [
+      "Object 'Usage' has maturity 'beta' — composed output may change.",
+      "No view_extensions found for context \"form\" in object \"Usage\". Available contexts: detail, timeline, list"
+    ],
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 7,
+      "expansionReason": "Expanded from 3 to 10 field groups for 21 fields",
+      "patternsApplied": 23,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.97
+    }
+  }
+}
