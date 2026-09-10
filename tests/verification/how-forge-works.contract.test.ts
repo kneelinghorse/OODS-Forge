@@ -261,6 +261,10 @@ describe("how Forge works narrative truth", () => {
     );
     expect(nearRoadmap).not.toContain("Visualization public render — BUILT, REVIEW PENDING");
     expect(normalizedNear).toContain(
+      "## Increment 10 — Sprint 191: Carry-forward pay-down — CERTIFIED AND CLOSED",
+    );
+    expect(nearRoadmap).not.toContain("Carry-forward pay-down — BUILT, REVIEW PENDING");
+    expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",
     );
     // Sprint 191 closes the maintenance implementation; delivery must stay pending.

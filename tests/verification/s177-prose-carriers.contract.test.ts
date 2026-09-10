@@ -67,7 +67,7 @@ describe("Sprint 177 prose truth carriers", () => {
     // Sprint 187 closes under its independent review while the program stays
     // Active. Frozen builder receipts and remote CI remain separate evidence.
     expect(near).toContain(
-      "**Status:** ACTIVE — Sprint 191 Increment 10 BUILT, REVIEW PENDING (#1862); program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`",
+      "**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`",
     );
     expect(normalizedNear).toContain(
       "locked by decision `#1724` at build base `1118f436`",
@@ -116,6 +116,18 @@ describe("Sprint 177 prose truth carriers", () => {
     );
     expect(normalizedNear).toContain(
       "so the visualization public-render surface is closed",
+    );
+
+    // Sprint 191 closes under its independent review (PS-2026-09-10-008);
+    // the carry-forward pay-down is complete; residual carries are #1881.
+    expect(near).toContain(
+      "Sprint 191 independently certified and closed by `#1880`; residual carries `#1881`",
+    );
+    expect(normalizedNear).toContain(
+      "Sprint 191 is **Completed**, independently certified by review `PS-2026-09-10-008` and decision `#1880`.",
+    );
+    expect(normalizedNear).toContain(
+      "so the carry-forward pay-down is complete and Sprint 191 is closed",
     );
     expect(near).toContain(
       "[Forge Product Reality Program](product-reality-program.md)",
