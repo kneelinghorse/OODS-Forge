@@ -1,6 +1,6 @@
 # Sprint 192 m07 — final proof and independent-review handoff
 
-Build status: **REVIEW PENDING**. Sprint 192 remains Active. The builder does not certify the sprint; `builderSelfCertified:false` and `separateReviewRequired:true`. Classification approval remains pending and `approvedRuntimeCensus` remains null. This packet prepares the Sprint 193 reconnect; it sends no messages.
+Build status: **m07 BLOCKED ON DERIVATION-FREEZE APPROVAL; REVIEW PENDING**. Sprint 192 remains Active. The builder does not certify the sprint; `builderSelfCertified:false` and `separateReviewRequired:true`. Classification approval remains pending and `approvedRuntimeCensus` remains null. This packet prepares the Sprint 193 reconnect; it sends no messages.
 
 ## Frozen heads and retained corrections
 
@@ -53,4 +53,4 @@ The sole corrective capture completed at fb56910b with these actual counts:
 
 The repeated MCP/root skips are the same 16 distinct Sprint 191 identities. No third capture ran.
 
-The receipt-reader correction and its separate derivation identity are awaiting the explicit freeze exception requested in this build session. Its proposal is closeout/receipt-reader-proposal.json. Twenty-five focused regression tests and typecheck passed. The accounting preflight rederived 14 retained suite receipts with zero unattributed deltas or issues, using the proposed uncommitted readers; it is diagnostic, not the final frozen-head handoff. CI coverage/determinism and the final claim ledger/audit remain pending.
+The receipt-reader correction and its separate derivation identity are awaiting the explicit freeze exception requested in this build session. Its proposal is closeout/receipt-reader-proposal.json. Thirty-eight focused regression tests and typecheck passed. The proposal covers three closeout derivation files, including the strict boolean census check. The accounting preflight rederived 14 retained suite receipts with zero unattributed deltas or issues, using the proposed uncommitted readers; it is diagnostic, not the final frozen-head handoff. CI coverage/determinism and the final claim ledger/audit remain pending.
