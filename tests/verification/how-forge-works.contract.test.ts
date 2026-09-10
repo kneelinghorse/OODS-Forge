@@ -263,7 +263,9 @@ describe("how Forge works narrative truth", () => {
     expect(normalizedNear).toContain(
       "A build session records evidence and stops. A separate review session decides genuine close",
     );
-    expect(normalizedNear).toContain("`#1315` and `#1318`–`#1322` remain Forge-owned maintenance debt");
+    // Sprint 191 closes the maintenance implementation; delivery must stay pending.
+    expect(normalizedNear).toContain("Sprint 191 m04 closes maintenance `#1318`–`#1322`");
+    expect(normalizedNear).toContain("`#1315` remains pending");
     expect(nearRoadmap).not.toContain(
       "Both targets import nonexistent `@oods/components`",
     );

@@ -67,7 +67,7 @@ describe("Sprint 177 prose truth carriers", () => {
     // Sprint 187 closes under its independent review while the program stays
     // Active. Frozen builder receipts and remote CI remain separate evidence.
     expect(near).toContain(
-      "**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`",
+      "**Status:** ACTIVE — Sprint 191 Increment 10 BUILT, REVIEW PENDING (#1862); program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`",
     );
     expect(normalizedNear).toContain(
       "locked by decision `#1724` at build base `1118f436`",
