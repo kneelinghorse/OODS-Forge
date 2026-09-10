@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { expectedWorkflowFlow, assertWorkflowFlow } from '../../../../scripts/product-reality/s188-m03-app-consumers.js';
 import { loadObject } from '../../src/objects/object-loader.js';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
@@ -43,6 +44,14 @@ describe('retained declared trait recipes and Invoice writer ownership', () => {
   it('uses real Auditable and Sortable declarations without changing the canonical objects', () => {
     expect(loadObject('Product').traits.some(trait => /Auditable|Sortable/.test(trait.name))).toBe(false);
     expect(loadObject('S192AuditSort').traits.map(trait => trait.name)).toEqual(expect.arrayContaining(['lifecycle/Auditable', 'behavioral/Sortable']));
+  });
+  it.each([['Article', 5], ['Organization', 6], ['Subscription', 9]] as const)('requires every declared %s workflow behavior without a three-object row-count assumption', async (object, count) => {
+    const result = await compose({ object, context: 'workflow' });
+    const expected = expectedWorkflowFlow(result.schema);
+    expect(expected).toHaveLength(count);
+    const rows = expected.map(name => ({ name, status: 'passed' as const }));
+    expect(() => assertWorkflowFlow(rows, expected)).not.toThrow();
+    expect(() => assertWorkflowFlow(rows.slice(0, -1), expected)).toThrow('Every declared flow obligation');
   });
   it('maps HTML summary aggregation, sort state and compact InlineLabel parity', () => {
     const summary = componentRenderers.AuditSummaryCard({ id: 'audit', component: 'AuditSummaryCard', props: { auditLog: [{ transitioned_at: '2026-09-06T12:00:00Z', actor_id: '<actor>', to_state: 'active' }] } });

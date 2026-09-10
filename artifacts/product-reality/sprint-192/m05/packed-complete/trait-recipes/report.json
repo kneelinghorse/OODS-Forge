@@ -1,0 +1,4177 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s192-m05",
+  "schemaStore": null,
+  "freshInputs": [
+    {
+      "object": "S192AuditSort",
+      "context": "detail"
+    },
+    {
+      "object": "S192AuditSort",
+      "context": "list"
+    }
+  ],
+  "kind": "live-schema-workflow-clean-consumer-proof",
+  "status": "passed",
+  "selected": 32,
+  "passed": 32,
+  "notApplicable": 0,
+  "applicable": 32,
+  "failed": 0,
+  "skipped": 0,
+  "schemaCount": 2,
+  "frameworkCount": 2,
+  "cellCount": 4,
+  "expectedCellCount": 4,
+  "equalityRule": "Every selected unchanged saved or freshly composed schema runs the eight named gates in React and Vue. Non-applicable interaction gates require schema-derived reasons, remain named, and are excluded from the applicable denominator; they never count as passed.",
+  "generationPolicy": "code.generate is invoked live once per schema/framework cell and only that in-run artifact is consumed.",
+  "consumerPolicy": "Consumers are outside the workspace, begin without node_modules, use empty npm configs, and install OODS packages only from exact tarballs produced by npm pack after each package prepack build.",
+  "logPathPolicy": "Every gate log path is relative to this report artifact root, including paths repeated in nested cell reports.",
+  "cells": [
+    {
+      "schema": "fresh-S192AuditSort-detail",
+      "schemaRef": "sha256:b959ec9ef2d2534b5f016d33028e03ea378e55a71700a0c1c7ba5f9b4de7bf02",
+      "composition": {
+        "handler": "design.compose",
+        "input": {
+          "object": "S192AuditSort",
+          "context": "detail"
+        },
+        "sourceHead": "edfbd1d0afadec0b4dd954ac490bbf672434e88f",
+        "sourceDiffSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sourceDiffPath": "live-generation/source.diff",
+        "schemaSha256": "sha256:b959ec9ef2d2534b5f016d33028e03ea378e55a71700a0c1c7ba5f9b4de7bf02",
+        "composedAt": "2026-09-10T19:38:13.896Z"
+      },
+      "framework": "react",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/react/logs/install.log",
+            "cells/fresh-S192AuditSort-detail/react/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/react/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/react/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/react/logs/server-render-build.log",
+            "cells/fresh-S192AuditSort-detail/react/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 6912,
+            "sha256": "sha256:4ced50070a25fa8f466a1fee0b351f902f459f384c9acffe9fd4fdacdb81535a",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-detail-13",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-header-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-header-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-25",
+                "component": "DetailHeader",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-26",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-28",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-30",
+                "component": "PriceSummary",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-body-10",
+                "component": "Card",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "component": "AuditSummaryCard",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-7",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-2-8",
+                "component": "Text",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-meta-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-metadata-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-27",
+                "component": "ClassificationPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-29",
+                "component": "FilterPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-detail-13",
+            "componentCounts": {
+              "AuditSummaryCard": 1,
+              "Card": 1,
+              "ClassificationPanel": 1,
+              "DetailHeader": 1,
+              "FilterPanel": 1,
+              "PriceSummary": 1,
+              "SearchInput": 2,
+              "Stack": 6,
+              "StatusTimeline": 1,
+              "Tabs": 1
+            },
+            "mountedExpectedComponents": [
+              "AuditSummaryCard",
+              "Card",
+              "ClassificationPanel",
+              "DetailHeader",
+              "FilterPanel",
+              "PriceSummary",
+              "SearchInput",
+              "Stack",
+              "StatusTimeline",
+              "Tabs"
+            ],
+            "generatedCoreComponents": [
+              "AuditSummaryCard",
+              "Card",
+              "ClassificationPanel",
+              "DetailHeader",
+              "FilterPanel",
+              "PriceSummary",
+              "SearchInput",
+              "Stack",
+              "StatusTimeline",
+              "Tabs",
+              "Text"
+            ],
+            "generatedPortedComponents": [],
+            "labelVisibility": [
+              {
+                "component": "DetailHeader",
+                "rootId": "ve-header-25",
+                "text": "Consumer label",
+                "visible": true,
+                "passed": true
+              }
+            ],
+            "boundValues": [
+              {
+                "nodeId": "ve-header-26",
+                "field": "status",
+                "editable": false,
+                "kind": "status",
+                "expected": "Current status: Consumer status",
+                "actual": "Current status: Consumer status",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-28",
+                "field": "searchQuery",
+                "editable": false,
+                "kind": "query-input",
+                "expected": "Consumer searchQuery",
+                "actual": "Consumer searchQuery",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "field": "audit_log",
+                "kind": "family-text",
+                "selector": "dl > dd:nth-of-type(1)",
+                "expected": "2",
+                "editable": false,
+                "actual": "2",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "field": "audit_log",
+                "kind": "family-text",
+                "selector": "dl > dd:nth-of-type(2)",
+                "expected": "consumer-actor-2",
+                "editable": false,
+                "actual": "consumer-actor-2",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "field": "audit_log",
+                "kind": "family-text",
+                "selector": "dl > dd:nth-of-type(3)",
+                "expected": "Sep 6, 2026, 12:00 PM",
+                "editable": false,
+                "actual": "Sep 6, 2026, 12:00 PM",
+                "visible": true,
+                "passed": true
+              }
+            ],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-detail-13",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-header-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-header-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-25",
+                "component": "DetailHeader",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-26",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-28",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-30",
+                "component": "PriceSummary",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-body-10",
+                "component": "Card",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "component": "AuditSummaryCard",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-7",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-2-8",
+                "component": "Text",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-meta-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-metadata-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-27",
+                "component": "ClassificationPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-29",
+                "component": "FilterPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-header-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-header-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "HEADER",
+                    "id": "ve-header-25",
+                    "component": "DetailHeader",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-header-26",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-header-28",
+                    "component": "SearchInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-header-30",
+                    "component": "PriceSummary",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-body-10",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tabs-9",
+                    "component": "Tabs",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "tablist",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_p_-tab-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "true",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_p_-tab-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_p_-panel-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "slot-tab-0-4",
+                    "component": "AuditSummaryCard",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_p_-panel-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-meta-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-metadata-27",
+                    "component": "ClassificationPanel",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "ASIDE",
+                    "id": "ve-metadata-29",
+                    "component": "FilterPanel",
+                    "role": "region",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-header-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-header-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "HEADER",
+                    "id": "ve-header-25",
+                    "component": "DetailHeader",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-header-26",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-header-28",
+                    "component": "SearchInput",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-header-30",
+                    "component": "PriceSummary",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-body-10",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tabs-9",
+                    "component": "Tabs",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "tablist",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_p_-tab-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "true",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "_R_p_-tab-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_p_-panel-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "slot-tab-0-4",
+                    "component": "AuditSummaryCard",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "_R_p_-panel-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-meta-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-metadata-27",
+                    "component": "ClassificationPanel",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "ASIDE",
+                    "id": "ve-metadata-29",
+                    "component": "FilterPanel",
+                    "role": "region",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/react/logs/css-proof.log",
+            "cells/fresh-S192AuditSort-detail/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-DrGsEZ-N.css"
+            ],
+            "bytes": 219156,
+            "sha256": "sha256:753939f0c3ef740bd6ea6b6704fab8c957d07668d740cccf968ab6de40995db4",
+            "core": true,
+            "ported": true,
+            "requiresPorted": false,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/react/logs/browser-proof.log",
+            "cells/fresh-S192AuditSort-detail/react/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "tabs",
+              "nodeId": "detail-tabs-9",
+              "component": "Tabs",
+              "selector": "[id=\"detail-tabs-9\"]",
+              "status": "passed",
+              "before": "_R_p_-tab-detail-tab-panel-3",
+              "after": "_R_p_-tab-detail-tab-panel-7",
+              "panelId": "_R_p_-panel-detail-tab-panel-7",
+              "panelVisible": true,
+              "selectedCount": 1
+            },
+            "selectorEvidence": [
+              {
+                "action": "handleDelete",
+                "selector": "[data-oods-action=\"handleDelete\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleEdit",
+                "selector": "[data-oods-action=\"handleEdit\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleViewTimeline",
+                "selector": "[data-oods-action=\"handleViewTimeline\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              }
+            ],
+            "actionCounts": {
+              "handleDelete": 1,
+              "handleEdit": 1,
+              "handleViewTimeline": 1
+            },
+            "actionArgs": {
+              "handleDelete": [
+                []
+              ],
+              "handleEdit": [
+                []
+              ],
+              "handleViewTimeline": [
+                []
+              ]
+            },
+            "expectedArguments": {
+              "handleDelete": [
+                []
+              ],
+              "handleEdit": [
+                []
+              ],
+              "handleViewTimeline": [
+                []
+              ]
+            },
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.tsx",
+              "bindingMarkerCount": 4,
+              "actionSelectors": [
+                {
+                  "action": "handleDelete",
+                  "selector": "[data-oods-action=\"handleDelete\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleEdit",
+                  "selector": "[data-oods-action=\"handleEdit\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleViewTimeline",
+                  "selector": "[data-oods-action=\"handleViewTimeline\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                }
+              ],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.tsx",
+                "src/ssr.tsx",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "tabs",
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "selector": "[id=\"detail-tabs-9\"]"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/fresh-S192AuditSort-detail/react/GeneratedUI.tsx",
+        "sourceSha256": "sha256:f985394f20c61587f19d36f981b6357855f4c3710d97f64b570777558b2fa0f0",
+        "artifactContentHash": "sha256:5feb9359bd934da9c13e189aff9b91bca98154f7dbbd890ff5beb372dd06d558",
+        "generationLog": "live-generation/fresh-S192AuditSort-detail/react/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:5feb9359bd934da9c13e189aff9b91bca98154f7dbbd890ff5beb372dd06d558",
+          "generatedAt": "2026-09-10T19:38:13.924Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.tsx",
+        "bindingMarkerCount": 4,
+        "actionSelectors": [
+          {
+            "action": "handleDelete",
+            "selector": "[data-oods-action=\"handleDelete\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleEdit",
+            "selector": "[data-oods-action=\"handleEdit\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleViewTimeline",
+            "selector": "[data-oods-action=\"handleViewTimeline\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          }
+        ],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.tsx",
+          "src/ssr.tsx",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "tabs",
+          "nodeId": "detail-tabs-9",
+          "component": "Tabs",
+          "selector": "[id=\"detail-tabs-9\"]"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/fresh-S192AuditSort-detail/react/report.json",
+      "reportSha256": "sha256:60795e70354b68cfe185e28dba4cfd10d036a016bb6e347c2aae2a16a0874de2"
+    },
+    {
+      "schema": "fresh-S192AuditSort-detail",
+      "schemaRef": "sha256:b959ec9ef2d2534b5f016d33028e03ea378e55a71700a0c1c7ba5f9b4de7bf02",
+      "composition": {
+        "handler": "design.compose",
+        "input": {
+          "object": "S192AuditSort",
+          "context": "detail"
+        },
+        "sourceHead": "edfbd1d0afadec0b4dd954ac490bbf672434e88f",
+        "sourceDiffSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sourceDiffPath": "live-generation/source.diff",
+        "schemaSha256": "sha256:b959ec9ef2d2534b5f016d33028e03ea378e55a71700a0c1c7ba5f9b4de7bf02",
+        "composedAt": "2026-09-10T19:38:13.896Z"
+      },
+      "framework": "vue",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/vue/logs/install.log",
+            "cells/fresh-S192AuditSort-detail/vue/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/vue/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/vue/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/vue/logs/server-render-build.log",
+            "cells/fresh-S192AuditSort-detail/vue/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 7099,
+            "sha256": "sha256:908ffc6d589dcbb016bf8ba1cc86088a6b52aa173d6aa5391dd196e41927256c",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-detail-13",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-header-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-header-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-25",
+                "component": "DetailHeader",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-26",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-28",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-30",
+                "component": "PriceSummary",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-body-10",
+                "component": "Card",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "component": "AuditSummaryCard",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-7",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-2-8",
+                "component": "Text",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-meta-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-metadata-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-27",
+                "component": "ClassificationPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-29",
+                "component": "FilterPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-detail-13",
+            "componentCounts": {
+              "AuditSummaryCard": 1,
+              "Card": 1,
+              "ClassificationPanel": 1,
+              "DetailHeader": 1,
+              "FilterPanel": 1,
+              "Input": 1,
+              "PriceSummary": 1,
+              "SearchInput": 1,
+              "Stack": 7,
+              "StatusTimeline": 1,
+              "Tabs": 1,
+              "Text": 1
+            },
+            "mountedExpectedComponents": [
+              "AuditSummaryCard",
+              "Card",
+              "ClassificationPanel",
+              "DetailHeader",
+              "FilterPanel",
+              "Input",
+              "PriceSummary",
+              "SearchInput",
+              "Stack",
+              "StatusTimeline",
+              "Tabs",
+              "Text"
+            ],
+            "generatedCoreComponents": [
+              "AuditSummaryCard",
+              "Card",
+              "ClassificationPanel",
+              "DetailHeader",
+              "FilterPanel",
+              "PriceSummary",
+              "SearchInput",
+              "Stack",
+              "StatusTimeline",
+              "Tabs",
+              "Text"
+            ],
+            "generatedPortedComponents": [],
+            "labelVisibility": [
+              {
+                "component": "DetailHeader",
+                "rootId": "ve-header-25",
+                "text": "Consumer label",
+                "visible": true,
+                "passed": true
+              }
+            ],
+            "boundValues": [
+              {
+                "nodeId": "ve-header-26",
+                "field": "status",
+                "editable": false,
+                "kind": "status",
+                "expected": "Current status: Consumer status",
+                "actual": "Current status: Consumer status",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-28",
+                "field": "searchQuery",
+                "editable": false,
+                "kind": "query-input",
+                "expected": "Consumer searchQuery",
+                "actual": "Consumer searchQuery",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "field": "audit_log",
+                "kind": "family-text",
+                "selector": "dl > dd:nth-of-type(1)",
+                "expected": "2",
+                "editable": false,
+                "actual": "2",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "field": "audit_log",
+                "kind": "family-text",
+                "selector": "dl > dd:nth-of-type(2)",
+                "expected": "consumer-actor-2",
+                "editable": false,
+                "actual": "consumer-actor-2",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "field": "audit_log",
+                "kind": "family-text",
+                "selector": "dl > dd:nth-of-type(3)",
+                "expected": "Sep 6, 2026, 12:00 PM",
+                "editable": false,
+                "actual": "Sep 6, 2026, 12:00 PM",
+                "visible": true,
+                "passed": true
+              }
+            ],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-detail-13",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-header-1",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-header-2",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-25",
+                "component": "DetailHeader",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-26",
+                "component": "StatusTimeline",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-28",
+                "component": "SearchInput",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-header-30",
+                "component": "PriceSummary",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-body-10",
+                "component": "Card",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-3",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-0-4",
+                "component": "AuditSummaryCard",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-tab-panel-7",
+                "component": "Stack",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-tab-2-8",
+                "component": "Text",
+                "requiredInitially": false,
+                "reason": "inactive initial Tabs panel detail-tab-panel-7 under detail-tabs-9",
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "detail-meta-11",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "slot-metadata-12",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-27",
+                "component": "ClassificationPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-metadata-29",
+                "component": "FilterPanel",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-header-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-header-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "HEADER",
+                    "id": "ve-header-25",
+                    "component": "DetailHeader",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-header-26",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-header-28",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-header-30",
+                    "component": "PriceSummary",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-body-10",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tabs-9",
+                    "component": "Tabs",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "tablist",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-2-tab-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "true",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-2-tab-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-2-panel-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "slot-tab-0-4",
+                    "component": "AuditSummaryCard",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-2-panel-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "slot-tab-2-8",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-meta-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-metadata-27",
+                    "component": "ClassificationPanel",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "ASIDE",
+                    "id": "ve-metadata-29",
+                    "component": "FilterPanel",
+                    "role": "region",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack"
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "",
+                    "component": null
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-detail-13",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-header-1",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-header-2",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "HEADER",
+                    "id": "ve-header-25",
+                    "component": "DetailHeader",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "ve-header-26",
+                    "component": "StatusTimeline",
+                    "role": "log",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-header-28",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-header-30",
+                    "component": "PriceSummary",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-body-10",
+                    "component": "Card",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tabs-9",
+                    "component": "Tabs",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "tablist",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-2-tab-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "true",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "oods-v-2-tab-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tab",
+                    "selected": "false",
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-2-panel-detail-tab-panel-3",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-3",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "slot-tab-0-4",
+                    "component": "AuditSummaryCard",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "oods-v-2-panel-detail-tab-panel-7",
+                    "component": null,
+                    "role": "tabpanel",
+                    "selected": null,
+                    "hidden": true
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-tab-panel-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "slot-tab-2-8",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "detail-meta-11",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "slot-metadata-12",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "ve-metadata-27",
+                    "component": "ClassificationPanel",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "ASIDE",
+                    "id": "ve-metadata-29",
+                    "component": "FilterPanel",
+                    "role": "region",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": null,
+                    "role": "group",
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/vue/logs/css-proof.log",
+            "cells/fresh-S192AuditSort-detail/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-5T-uhyJY.css"
+            ],
+            "bytes": 219268,
+            "sha256": "sha256:e569aede85b2bad0ee46fe3f8a8f7c4b9f978a15e69fcf535e0ac9bb38c241eb",
+            "core": true,
+            "ported": true,
+            "requiresPorted": false,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-detail/vue/logs/browser-proof.log",
+            "cells/fresh-S192AuditSort-detail/vue/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "tabs",
+              "nodeId": "detail-tabs-9",
+              "component": "Tabs",
+              "selector": "[id=\"detail-tabs-9\"]",
+              "status": "passed",
+              "before": "oods-v-2-tab-detail-tab-panel-3",
+              "after": "oods-v-2-tab-detail-tab-panel-7",
+              "panelId": "oods-v-2-panel-detail-tab-panel-7",
+              "panelVisible": true,
+              "selectedCount": 1
+            },
+            "selectorEvidence": [
+              {
+                "action": "handleDelete",
+                "selector": "[data-oods-action=\"handleDelete\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleEdit",
+                "selector": "[data-oods-action=\"handleEdit\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleViewTimeline",
+                "selector": "[data-oods-action=\"handleViewTimeline\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              }
+            ],
+            "actionCounts": {
+              "handleDelete": 1,
+              "handleEdit": 1,
+              "handleViewTimeline": 1
+            },
+            "actionArgs": {
+              "handleDelete": [
+                []
+              ],
+              "handleEdit": [
+                []
+              ],
+              "handleViewTimeline": [
+                []
+              ]
+            },
+            "expectedArguments": {
+              "handleDelete": [
+                []
+              ],
+              "handleEdit": [
+                []
+              ],
+              "handleViewTimeline": [
+                []
+              ]
+            },
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.vue",
+              "bindingMarkerCount": 4,
+              "actionSelectors": [
+                {
+                  "action": "handleDelete",
+                  "selector": "[data-oods-action=\"handleDelete\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleEdit",
+                  "selector": "[data-oods-action=\"handleEdit\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleViewTimeline",
+                  "selector": "[data-oods-action=\"handleViewTimeline\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                }
+              ],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.ts",
+                "src/ssr.ts",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "tabs",
+                "nodeId": "detail-tabs-9",
+                "component": "Tabs",
+                "selector": "[id=\"detail-tabs-9\"]"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/fresh-S192AuditSort-detail/vue/GeneratedUI.vue",
+        "sourceSha256": "sha256:94bad196e5ec2c87b02df0144c3ff0fd4d759fb0ac9132de366420cfe8f44438",
+        "artifactContentHash": "sha256:06fc0ed3a1df47dd94b387e4fe13647534b051fb105ecb9080658786c01a67b4",
+        "generationLog": "live-generation/fresh-S192AuditSort-detail/vue/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:06fc0ed3a1df47dd94b387e4fe13647534b051fb105ecb9080658786c01a67b4",
+          "generatedAt": "2026-09-10T19:38:13.935Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.vue",
+        "bindingMarkerCount": 4,
+        "actionSelectors": [
+          {
+            "action": "handleDelete",
+            "selector": "[data-oods-action=\"handleDelete\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleEdit",
+            "selector": "[data-oods-action=\"handleEdit\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleViewTimeline",
+            "selector": "[data-oods-action=\"handleViewTimeline\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          }
+        ],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.ts",
+          "src/ssr.ts",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "tabs",
+          "nodeId": "detail-tabs-9",
+          "component": "Tabs",
+          "selector": "[id=\"detail-tabs-9\"]"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/fresh-S192AuditSort-detail/vue/report.json",
+      "reportSha256": "sha256:6746bad427bc1dc983b1c4f08c7997d0bee31840c6323c24fb9d594bc2bb99de"
+    },
+    {
+      "schema": "fresh-S192AuditSort-list",
+      "schemaRef": "sha256:e1d79ee506a6043bdfd886600b7cce9414dedfa17e3d5fc201d76a3e47b1f2b0",
+      "composition": {
+        "handler": "design.compose",
+        "input": {
+          "object": "S192AuditSort",
+          "context": "list"
+        },
+        "sourceHead": "edfbd1d0afadec0b4dd954ac490bbf672434e88f",
+        "sourceDiffSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sourceDiffPath": "live-generation/source.diff",
+        "schemaSha256": "sha256:e1d79ee506a6043bdfd886600b7cce9414dedfa17e3d5fc201d76a3e47b1f2b0",
+        "composedAt": "2026-09-10T19:38:13.902Z"
+      },
+      "framework": "react",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/react/logs/install.log",
+            "cells/fresh-S192AuditSort-list/react/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-react",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-react"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-react",
+                "consumerRelative": "node_modules/@oods/components-react/dist/index.js"
+              },
+              {
+                "specifier": "react",
+                "consumerRelative": "node_modules/react/index.js"
+              },
+              {
+                "specifier": "react-dom/client",
+                "consumerRelative": "node_modules/react-dom/client.js"
+              },
+              {
+                "specifier": "react-dom/server",
+                "consumerRelative": "node_modules/react-dom/server.node.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/react/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/react/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/react/logs/server-render-build.log",
+            "cells/fresh-S192AuditSort-list/react/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 7466,
+            "sha256": "sha256:964a9d1979adf5c62e16e326db643b83c9d9f439762b9da6f20a5897afb5dd83",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-toolbar-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-search-14",
+                "component": "SortIndicator",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5-empty",
+                "component": "Banner",
+                "requiredInitially": false,
+                "reason": "populated collection list-items-5",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "list-pagination-7",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5-title-0",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-10-0",
+                "component": "LabelCell",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-15-0",
+                "component": "StatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-16-0",
+                "component": "RelativeTimestamp",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-17-0",
+                "component": "PriceBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-18-0",
+                "component": "ClassificationBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-list-9",
+            "componentCounts": {
+              "Button": 1,
+              "ClassificationBadge": 1,
+              "Input": 1,
+              "LabelCell": 1,
+              "PaginationBar": 1,
+              "PriceBadge": 1,
+              "RelativeTimestamp": 1,
+              "SearchInput": 1,
+              "Select": 1,
+              "SortIndicator": 1,
+              "Stack": 3,
+              "StatusBadge": 1,
+              "Text": 1
+            },
+            "mountedExpectedComponents": [
+              "Button",
+              "ClassificationBadge",
+              "Input",
+              "LabelCell",
+              "PaginationBar",
+              "PriceBadge",
+              "RelativeTimestamp",
+              "SearchInput",
+              "Select",
+              "SortIndicator",
+              "Stack",
+              "StatusBadge",
+              "Text"
+            ],
+            "generatedCoreComponents": [
+              "Banner",
+              "ClassificationBadge",
+              "LabelCell",
+              "PriceBadge",
+              "RelativeTimestamp",
+              "SortIndicator",
+              "Stack",
+              "StatusBadge",
+              "Text"
+            ],
+            "generatedPortedComponents": [],
+            "labelVisibility": [],
+            "boundValues": [
+              {
+                "nodeId": "ve-items-10-0",
+                "field": "label",
+                "kind": "family-text",
+                "selector": "[data-oods-label-cell-primary]",
+                "expected": "Consumer label",
+                "editable": false,
+                "actual": "Consumer label",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-10-0",
+                "field": "description",
+                "kind": "family-text",
+                "selector": "[data-oods-label-cell-description]",
+                "expected": "Consumer description",
+                "editable": false,
+                "actual": "Consumer description",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-18-0",
+                "field": "primary_category_id",
+                "kind": "family-text",
+                "selector": "[data-oods-badge-label]",
+                "expected": "consumer-primary-category-id",
+                "editable": false,
+                "actual": "consumer-primary-category-id",
+                "visible": true,
+                "passed": true
+              }
+            ],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-toolbar-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-search-14",
+                "component": "SortIndicator",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5-empty",
+                "component": "Banner",
+                "requiredInitially": false,
+                "reason": "populated collection list-items-5",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "list-pagination-7",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5-title-0",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-10-0",
+                "component": "LabelCell",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-15-0",
+                "component": "StatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-16-0",
+                "component": "RelativeTimestamp",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-17-0",
+                "component": "PriceBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-18-0",
+                "component": "ClassificationBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack"
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-toolbar-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-search-11",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-filters-2",
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TABLE",
+                    "id": "ve-search-14",
+                    "component": "SortIndicator",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "list-items-5",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "list-items-5-row-0",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "list-items-5-title-0",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-10-0",
+                    "component": "LabelCell",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-15-0",
+                    "component": "StatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TIME",
+                    "id": "ve-items-16-0",
+                    "component": "RelativeTimestamp",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-17-0",
+                    "component": "PriceBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-18-0",
+                    "component": "ClassificationBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-pagination-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "NAV",
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack"
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-toolbar-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-search-11",
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-filters-2",
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TABLE",
+                    "id": "ve-search-14",
+                    "component": "SortIndicator",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "list-items-5",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "list-items-5-row-0",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "list-items-5-title-0",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-10-0",
+                    "component": "LabelCell",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-15-0",
+                    "component": "StatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TIME",
+                    "id": "ve-items-16-0",
+                    "component": "RelativeTimestamp",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-17-0",
+                    "component": "PriceBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-18-0",
+                    "component": "ClassificationBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-pagination-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "NAV",
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/react/logs/css-proof.log",
+            "cells/fresh-S192AuditSort-list/react/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-DrGsEZ-N.css"
+            ],
+            "bytes": 219156,
+            "sha256": "sha256:753939f0c3ef740bd6ea6b6704fab8c957d07668d740cccf968ab6de40995db4",
+            "core": true,
+            "ported": true,
+            "requiresPorted": false,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/react/logs/browser-proof.log",
+            "cells/fresh-S192AuditSort-list/react/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "action",
+              "nodeId": "list-items-5-row",
+              "component": "Button",
+              "selector": "[id=\"list-items-5-row-0\"]",
+              "action": "handleRowClick",
+              "status": "passed"
+            },
+            "selectorEvidence": [
+              {
+                "action": "handleFilter",
+                "selector": "[id=\"ve-search-11\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handlePageChange",
+                "selector": "[id=\"slot-pagination-8\"] button[aria-label=\"Next page\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleRowClick",
+                "selector": "[id=\"list-items-5-row-0\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleSortChange",
+                "selector": "[data-oods-action=\"handleSortChange\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              }
+            ],
+            "actionCounts": {
+              "handleFilter": 1,
+              "handlePageChange": 1,
+              "handleRowClick": 1,
+              "handleSortChange": 1
+            },
+            "actionArgs": {
+              "handleFilter": [
+                [
+                  {
+                    "page": 1,
+                    "pageSize": 10,
+                    "total": 20,
+                    "search": "generated"
+                  }
+                ]
+              ],
+              "handlePageChange": [
+                [
+                  2
+                ]
+              ],
+              "handleRowClick": [
+                [
+                  "consumer-primary-category-id"
+                ]
+              ],
+              "handleSortChange": [
+                [
+                  {
+                    "field": "Consumer sortField",
+                    "direction": "asc",
+                    "active": true
+                  }
+                ]
+              ]
+            },
+            "expectedArguments": {
+              "handleFilter": [
+                [
+                  {
+                    "page": 1,
+                    "pageSize": 10,
+                    "total": 20,
+                    "search": "generated"
+                  }
+                ]
+              ],
+              "handlePageChange": [
+                [
+                  2
+                ]
+              ],
+              "handleRowClick": [
+                [
+                  "consumer-primary-category-id"
+                ]
+              ],
+              "handleSortChange": [
+                [
+                  {
+                    "field": "Consumer sortField",
+                    "direction": "asc",
+                    "active": true
+                  }
+                ]
+              ]
+            },
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.tsx",
+              "bindingMarkerCount": 4,
+              "actionSelectors": [
+                {
+                  "action": "handleFilter",
+                  "selector": "[id=\"ve-search-11\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handlePageChange",
+                  "selector": "[id=\"slot-pagination-8\"] button[aria-label=\"Next page\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleRowClick",
+                  "selector": "[id=\"list-items-5-row-0\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleSortChange",
+                  "selector": "[data-oods-action=\"handleSortChange\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                }
+              ],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.tsx",
+                "src/ssr.tsx",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "action",
+                "nodeId": "list-items-5-row",
+                "component": "Button",
+                "selector": "[id=\"list-items-5-row-0\"]",
+                "action": "handleRowClick"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/fresh-S192AuditSort-list/react/GeneratedUI.tsx",
+        "sourceSha256": "sha256:27c2940de35e34498f867a70ab70579e86581692d31a822ff165eb7f7536c3cf",
+        "artifactContentHash": "sha256:3a0e440637bec18aa3c696bdc46917b34ee068827f32cbbc398e33dc3ae953fe",
+        "generationLog": "live-generation/fresh-S192AuditSort-list/react/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:3a0e440637bec18aa3c696bdc46917b34ee068827f32cbbc398e33dc3ae953fe",
+          "generatedAt": "2026-09-10T19:38:13.940Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.tsx",
+        "bindingMarkerCount": 4,
+        "actionSelectors": [
+          {
+            "action": "handleFilter",
+            "selector": "[id=\"ve-search-11\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handlePageChange",
+            "selector": "[id=\"slot-pagination-8\"] button[aria-label=\"Next page\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleRowClick",
+            "selector": "[id=\"list-items-5-row-0\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleSortChange",
+            "selector": "[data-oods-action=\"handleSortChange\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          }
+        ],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.tsx",
+          "src/ssr.tsx",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "action",
+          "nodeId": "list-items-5-row",
+          "component": "Button",
+          "selector": "[id=\"list-items-5-row-0\"]",
+          "action": "handleRowClick"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/fresh-S192AuditSort-list/react/report.json",
+      "reportSha256": "sha256:6c85b59bcf58936cb2b7ee86c81d469800c48c6a172b8a1d55452bbb07830fee"
+    },
+    {
+      "schema": "fresh-S192AuditSort-list",
+      "schemaRef": "sha256:e1d79ee506a6043bdfd886600b7cce9414dedfa17e3d5fc201d76a3e47b1f2b0",
+      "composition": {
+        "handler": "design.compose",
+        "input": {
+          "object": "S192AuditSort",
+          "context": "list"
+        },
+        "sourceHead": "edfbd1d0afadec0b4dd954ac490bbf672434e88f",
+        "sourceDiffSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sourceDiffPath": "live-generation/source.diff",
+        "schemaSha256": "sha256:e1d79ee506a6043bdfd886600b7cce9414dedfa17e3d5fc201d76a3e47b1f2b0",
+        "composedAt": "2026-09-10T19:38:13.902Z"
+      },
+      "framework": "vue",
+      "status": "passed",
+      "selected": 8,
+      "passed": 8,
+      "notApplicable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "gates": [
+        {
+          "name": "fresh-exact-tarball-install",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/vue/logs/install.log",
+            "cells/fresh-S192AuditSort-list/vue/logs/isolation.log"
+          ],
+          "detail": {
+            "localTarballCount": 4,
+            "isolation": {
+              "outsidePnpmWorkspace": true,
+              "freshNodeModules": true,
+              "emptyVerifierOwnedNpmConfiguration": true,
+              "installScripts": false,
+              "localPackagesFromBuiltTarballsOnly": true,
+              "workspaceAliases": false,
+              "workspaceSymlinks": false,
+              "repositorySourceImports": false,
+              "inheritedNodeModules": false,
+              "allResolvedPathsOutsideRepository": true,
+              "installed": [
+                {
+                  "name": "@oods/tokens",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/tokens"
+                },
+                {
+                  "name": "@oods/component-contracts",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-contracts"
+                },
+                {
+                  "name": "@oods/component-styles",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/component-styles"
+                },
+                {
+                  "name": "@oods/components-vue",
+                  "version": "0.1.0",
+                  "consumerRelative": "node_modules/@oods/components-vue"
+                }
+              ]
+            },
+            "resolutions": [
+              {
+                "specifier": "@oods/component-styles/css",
+                "consumerRelative": "node_modules/@oods/component-styles/dist/components.css"
+              },
+              {
+                "specifier": "@oods/components-vue",
+                "consumerRelative": "node_modules/@oods/components-vue/dist/index.js"
+              },
+              {
+                "specifier": "@vitejs/plugin-vue",
+                "consumerRelative": "node_modules/@vitejs/plugin-vue/dist/index.mjs"
+              },
+              {
+                "specifier": "@vue/server-renderer",
+                "consumerRelative": "node_modules/@vue/server-renderer/index.js"
+              },
+              {
+                "specifier": "vite",
+                "consumerRelative": "node_modules/vite/dist/node/index.js"
+              },
+              {
+                "specifier": "vue",
+                "consumerRelative": "node_modules/vue/index.mjs"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strict-typecheck",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/vue/logs/typecheck.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "production-build",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/vue/logs/production-build.log"
+          ],
+          "detail": {
+            "exitCode": 0
+          }
+        },
+        {
+          "name": "server-render",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/vue/logs/server-render-build.log",
+            "cells/fresh-S192AuditSort-list/vue/logs/server-render-render.log"
+          ],
+          "detail": {
+            "bytes": 6489,
+            "sha256": "sha256:d3eff65221cf95329673a9b9c0377f99fbe76e490b53f924c57a641cb5b5a744",
+            "requiredSsrNodes": [
+              {
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-toolbar-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-search-14",
+                "component": "SortIndicator",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5-empty",
+                "component": "Banner",
+                "requiredInitially": false,
+                "reason": "populated collection list-items-5",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "list-pagination-7",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5-title-0",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-10-0",
+                "component": "LabelCell",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-15-0",
+                "component": "StatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-16-0",
+                "component": "RelativeTimestamp",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-17-0",
+                "component": "PriceBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-18-0",
+                "component": "ClassificationBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "mount",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "rootId": "screen-list-9",
+            "componentCounts": {
+              "Button": 1,
+              "ClassificationBadge": 1,
+              "Input": 1,
+              "LabelCell": 1,
+              "PaginationBar": 1,
+              "PriceBadge": 1,
+              "RelativeTimestamp": 1,
+              "SearchInput": 1,
+              "Select": 1,
+              "SortIndicator": 1,
+              "Stack": 3,
+              "StatusBadge": 1,
+              "Text": 1
+            },
+            "mountedExpectedComponents": [
+              "Button",
+              "ClassificationBadge",
+              "Input",
+              "LabelCell",
+              "PaginationBar",
+              "PriceBadge",
+              "RelativeTimestamp",
+              "SearchInput",
+              "Select",
+              "SortIndicator",
+              "Stack",
+              "StatusBadge",
+              "Text"
+            ],
+            "generatedCoreComponents": [
+              "Banner",
+              "ClassificationBadge",
+              "LabelCell",
+              "PriceBadge",
+              "RelativeTimestamp",
+              "SortIndicator",
+              "Stack",
+              "StatusBadge",
+              "Text"
+            ],
+            "generatedPortedComponents": [],
+            "labelVisibility": [],
+            "boundValues": [
+              {
+                "nodeId": "ve-items-10-0",
+                "field": "label",
+                "kind": "family-text",
+                "selector": "[data-oods-label-cell-primary]",
+                "expected": "Consumer label",
+                "editable": false,
+                "actual": "Consumer label",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-10-0",
+                "field": "description",
+                "kind": "family-text",
+                "selector": "[data-oods-label-cell-description]",
+                "expected": "Consumer description",
+                "editable": false,
+                "actual": "Consumer description",
+                "visible": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-18-0",
+                "field": "primary_category_id",
+                "kind": "family-text",
+                "selector": "[data-oods-badge-label]",
+                "expected": "consumer-primary-category-id",
+                "editable": false,
+                "actual": "consumer-primary-category-id",
+                "visible": true,
+                "passed": true
+              }
+            ],
+            "requiredMounts": [
+              {
+                "nodeId": "screen-list-9",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-toolbar-4",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-search-14",
+                "component": "SortIndicator",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5-empty",
+                "component": "Banner",
+                "requiredInitially": false,
+                "reason": "populated collection list-items-5",
+                "present": false,
+                "passed": true
+              },
+              {
+                "nodeId": "list-pagination-7",
+                "component": "Stack",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "list-items-5-title-0",
+                "component": "Text",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-10-0",
+                "component": "LabelCell",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-15-0",
+                "component": "StatusBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-16-0",
+                "component": "RelativeTimestamp",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-items-17-0",
+                "component": "PriceBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              },
+              {
+                "nodeId": "ve-toolbar-actions-18-0",
+                "component": "ClassificationBadge",
+                "requiredInitially": true,
+                "present": true,
+                "passed": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hydration",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "hydrationInvariant": {
+              "before": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack"
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-toolbar-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-search-11",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-filters-2",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TABLE",
+                    "id": "ve-search-14",
+                    "component": "SortIndicator",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "list-items-5",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "list-items-5-row-0",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "list-items-5-title-0",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-10-0",
+                    "component": "LabelCell",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-15-0",
+                    "component": "StatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TIME",
+                    "id": "ve-items-16-0",
+                    "component": "RelativeTimestamp",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-17-0",
+                    "component": "PriceBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-18-0",
+                    "component": "ClassificationBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-pagination-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "NAV",
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "after": {
+                "rootChildren": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack"
+                  }
+                ],
+                "elements": [
+                  {
+                    "tag": "DIV",
+                    "id": "screen-list-9",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-toolbar-4",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "FORM",
+                    "id": null,
+                    "component": "SearchInput",
+                    "role": "search",
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Input",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "INPUT",
+                    "id": "ve-search-11",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": null,
+                    "component": "Select",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SELECT",
+                    "id": "slot-filters-2",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TABLE",
+                    "id": "ve-search-14",
+                    "component": "SortIndicator",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SECTION",
+                    "id": "list-items-5",
+                    "component": null,
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "BUTTON",
+                    "id": "list-items-5-row-0",
+                    "component": "Button",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "list-items-5-title-0",
+                    "component": "Text",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-10-0",
+                    "component": "LabelCell",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-15-0",
+                    "component": "StatusBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "TIME",
+                    "id": "ve-items-16-0",
+                    "component": "RelativeTimestamp",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-items-17-0",
+                    "component": "PriceBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "SPAN",
+                    "id": "ve-toolbar-actions-18-0",
+                    "component": "ClassificationBadge",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "DIV",
+                    "id": "list-pagination-7",
+                    "component": "Stack",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  },
+                  {
+                    "tag": "NAV",
+                    "id": "slot-pagination-8",
+                    "component": "PaginationBar",
+                    "role": null,
+                    "selected": null,
+                    "hidden": false
+                  }
+                ]
+              },
+              "equal": true
+            },
+            "runtimeErrors": []
+          }
+        },
+        {
+          "name": "shared-css-resolution",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/vue/logs/css-proof.log",
+            "cells/fresh-S192AuditSort-list/vue/logs/browser-proof.log"
+          ],
+          "detail": {
+            "files": [
+              "index-5T-uhyJY.css"
+            ],
+            "bytes": 219268,
+            "sha256": "sha256:e569aede85b2bad0ee46fe3f8a8f7c4b9f978a15e69fcf535e0ac9bb38c241eb",
+            "core": true,
+            "ported": true,
+            "requiresPorted": false,
+            "tokens": true,
+            "browser": {
+              "primaryTextToken": "oklch(0.92 0.02 92)",
+              "canvasToken": "oklch(0.18 0.05 45)"
+            }
+          }
+        },
+        {
+          "name": "interaction-evidence",
+          "status": "passed",
+          "logs": [
+            "cells/fresh-S192AuditSort-list/vue/logs/browser-proof.log",
+            "cells/fresh-S192AuditSort-list/vue/logs/source-ownership.log"
+          ],
+          "detail": {
+            "interactionEvidence": {
+              "kind": "action",
+              "nodeId": "list-items-5-row",
+              "component": "Button",
+              "selector": "[id=\"list-items-5-row-0\"]",
+              "action": "handleRowClick",
+              "status": "passed"
+            },
+            "selectorEvidence": [
+              {
+                "action": "handleFilter",
+                "selector": "[id=\"ve-search-11\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handlePageChange",
+                "selector": "[id=\"slot-pagination-8\"] button[aria-label=\"Next page\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleRowClick",
+                "selector": "[id=\"list-items-5-row-0\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              },
+              {
+                "action": "handleSortChange",
+                "selector": "[data-oods-action=\"handleSortChange\"]",
+                "count": 1,
+                "clicked": true,
+                "mode": "clicked"
+              }
+            ],
+            "actionCounts": {
+              "handleFilter": 1,
+              "handlePageChange": 1,
+              "handleRowClick": 1,
+              "handleSortChange": 1
+            },
+            "actionArgs": {
+              "handleFilter": [
+                [
+                  {
+                    "page": 1,
+                    "pageSize": 10,
+                    "total": 20,
+                    "search": "generated"
+                  }
+                ]
+              ],
+              "handlePageChange": [
+                [
+                  2
+                ]
+              ],
+              "handleRowClick": [
+                [
+                  "consumer-primary-category-id"
+                ]
+              ],
+              "handleSortChange": [
+                [
+                  {
+                    "field": "Consumer sortField",
+                    "direction": "asc",
+                    "active": true
+                  }
+                ]
+              ]
+            },
+            "expectedArguments": {
+              "handleFilter": [
+                [
+                  {
+                    "page": 1,
+                    "pageSize": 10,
+                    "total": 20,
+                    "search": "generated"
+                  }
+                ]
+              ],
+              "handlePageChange": [
+                [
+                  2
+                ]
+              ],
+              "handleRowClick": [
+                [
+                  "consumer-primary-category-id"
+                ]
+              ],
+              "handleSortChange": [
+                [
+                  {
+                    "field": "Consumer sortField",
+                    "direction": "asc",
+                    "active": true
+                  }
+                ]
+              ]
+            },
+            "sourceOwnership": {
+              "generatedFile": "src/GeneratedUI.vue",
+              "bindingMarkerCount": 4,
+              "actionSelectors": [
+                {
+                  "action": "handleFilter",
+                  "selector": "[id=\"ve-search-11\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handlePageChange",
+                  "selector": "[id=\"slot-pagination-8\"] button[aria-label=\"Next page\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleRowClick",
+                  "selector": "[id=\"list-items-5-row-0\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                },
+                {
+                  "action": "handleSortChange",
+                  "selector": "[data-oods-action=\"handleSortChange\"]",
+                  "generatedSourceOccurrences": 1,
+                  "generatedRenderCallOccurrences": 1
+                }
+              ],
+              "generatedOwnsEverySelector": true,
+              "generatedForwardsEveryAction": true,
+              "consumerEntryFiles": [
+                "index.html",
+                "src/consumer-data.ts",
+                "src/consumer.css",
+                "src/main.ts",
+                "src/ssr.ts",
+                "src/window.d.ts",
+                "tsconfig.json",
+                "vite.config.mjs"
+              ],
+              "selectorOccurrencesInConsumerEntries": 0,
+              "consumerComponentDeclarations": [],
+              "interaction": {
+                "kind": "action",
+                "nodeId": "list-items-5-row",
+                "component": "Button",
+                "selector": "[id=\"list-items-5-row-0\"]",
+                "action": "handleRowClick"
+              },
+              "generatedInteractionNodeOccurrences": 1
+            }
+          }
+        }
+      ],
+      "accounting": {
+        "totalGateCount": 8,
+        "applicableGateCount": 8,
+        "provenCount": 8,
+        "notApplicableCount": 0,
+        "notApplicable": [],
+        "namedUnprovenCount": 0,
+        "namedUnproven": [],
+        "balanced": true
+      },
+      "generation": {
+        "sourcePath": "live-generation/fresh-S192AuditSort-list/vue/GeneratedUI.vue",
+        "sourceSha256": "sha256:5e028a540a71196b0253a8520427756b20c8edddbf3693b951204faa53f9f1e7",
+        "artifactContentHash": "sha256:f09326158c3d228ae4f2f7deb0b1781f2349a4a9d0a429ec7b9903ec6eb79ebf",
+        "generationLog": "live-generation/fresh-S192AuditSort-list/vue/generation.log",
+        "fingerprint": {
+          "handler": "code.generate",
+          "invocation": "live-in-process",
+          "profile": "build",
+          "sourceOfArtifact": "current-in-run-output",
+          "artifactContentHash": "sha256:f09326158c3d228ae4f2f7deb0b1781f2349a4a9d0a429ec7b9903ec6eb79ebf",
+          "generatedAt": "2026-09-10T19:38:13.944Z"
+        }
+      },
+      "sourceOwnership": {
+        "generatedFile": "src/GeneratedUI.vue",
+        "bindingMarkerCount": 4,
+        "actionSelectors": [
+          {
+            "action": "handleFilter",
+            "selector": "[id=\"ve-search-11\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handlePageChange",
+            "selector": "[id=\"slot-pagination-8\"] button[aria-label=\"Next page\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleRowClick",
+            "selector": "[id=\"list-items-5-row-0\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          },
+          {
+            "action": "handleSortChange",
+            "selector": "[data-oods-action=\"handleSortChange\"]",
+            "generatedSourceOccurrences": 1,
+            "generatedRenderCallOccurrences": 1
+          }
+        ],
+        "generatedOwnsEverySelector": true,
+        "generatedForwardsEveryAction": true,
+        "consumerEntryFiles": [
+          "index.html",
+          "src/consumer-data.ts",
+          "src/consumer.css",
+          "src/main.ts",
+          "src/ssr.ts",
+          "src/window.d.ts",
+          "tsconfig.json",
+          "vite.config.mjs"
+        ],
+        "selectorOccurrencesInConsumerEntries": 0,
+        "consumerComponentDeclarations": [],
+        "interaction": {
+          "kind": "action",
+          "nodeId": "list-items-5-row",
+          "component": "Button",
+          "selector": "[id=\"list-items-5-row-0\"]",
+          "action": "handleRowClick"
+        },
+        "generatedInteractionNodeOccurrences": 1
+      },
+      "report": "cells/fresh-S192AuditSort-list/vue/report.json",
+      "reportSha256": "sha256:3c3ed7553dcf793ca8db237093b819ff3668e90db6d006e828c821817f092383"
+    }
+  ]
+}

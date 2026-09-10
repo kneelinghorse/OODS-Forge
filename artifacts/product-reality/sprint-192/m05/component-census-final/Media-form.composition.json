@@ -1,0 +1,972 @@
+{
+  "status": "ok",
+  "layout": "form",
+  "schema": {
+    "version": "2026.02",
+    "screens": [
+      {
+        "id": "screen-form-11",
+        "component": "Stack",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "style": {
+          "spacingToken": "inset-default"
+        },
+        "children": [
+          {
+            "id": "form-title-1",
+            "component": "Stack",
+            "props": {
+              "as": "h1"
+            },
+            "meta": {
+              "intent": "slot:title",
+              "label": "title"
+            },
+            "children": [
+              {
+                "id": "ve-title-26",
+                "component": "FormLabelGroup",
+                "props": {
+                  "labelField": "label",
+                  "descriptionField": "description",
+                  "placeholderField": "placeholder",
+                  "maxLabelLengthParameter": "maxLabelLength",
+                  "maxDescriptionLengthParameter": "maxDescriptionLength",
+                  "requireDescriptionParameter": "requireDescription"
+                }
+              },
+              {
+                "id": "ve-title-27",
+                "component": "StatusSelector",
+                "props": {
+                  "field": "status",
+                  "optionsParameter": "states",
+                  "initialParameter": "initialState",
+                  "allowedTransitionsField": "allowed_transitions",
+                  "requireReasonParameter": "requireTransitionReason",
+                  "label": "Status",
+                  "help": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n"
+                },
+                "bindings": {
+                  "onChange": "handleChange_status"
+                }
+              }
+            ],
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            }
+          },
+          {
+            "id": "form-fields-8",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-default"
+            },
+            "children": [
+              {
+                "id": "form-field-group-2",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-0-3",
+                    "component": "ClassificationEditor",
+                    "meta": {
+                      "intent": "slot:field-0",
+                      "label": "field-0"
+                    },
+                    "props": {
+                      "modeParameter": "classification_mode",
+                      "tagPolicyParameter": "tag_policy",
+                      "maxTagsParameter": "max_tags",
+                      "field": "tag_preview",
+                      "label": "Tag preview"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-4",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": []
+              },
+              {
+                "id": "form-field-group-6",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-2-7",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-2",
+                      "label": "field-2",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "created_at",
+                      "label": "Created at",
+                      "help": "Timestamp recording when the entity was first created.",
+                      "type": "datetime-local"
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_created_at"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-12",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-3-13",
+                    "component": "Select",
+                    "meta": {
+                      "intent": "slot:field-3",
+                      "label": "field-3",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "asset_type",
+                      "label": "Asset type",
+                      "placeholder": "Enter asset type",
+                      "options": [
+                        {
+                          "value": "image",
+                          "label": "image"
+                        },
+                        {
+                          "value": "video",
+                          "label": "video"
+                        },
+                        {
+                          "value": "audio",
+                          "label": "audio"
+                        },
+                        {
+                          "value": "document",
+                          "label": "document"
+                        }
+                      ],
+                      "help": "Media form factor guiding viewer presentation."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_asset_type"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-14",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-4-15",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-4",
+                      "label": "field-4",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "label",
+                      "label": "Label",
+                      "placeholder": "Enter label",
+                      "help": "Human-readable display name rendered in primary surfaces."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_label"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-16",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-5-17",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-5",
+                      "label": "field-5",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "placeholder",
+                      "label": "Placeholder",
+                      "placeholder": "Enter placeholder",
+                      "help": "Hint copy surfaced in form fields when the label is empty."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_placeholder"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-18",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-6-19",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-6",
+                      "label": "field-6",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "last_event",
+                      "label": "Last event",
+                      "placeholder": "Enter last event",
+                      "help": "Lifecycle event associated with the most recent timestamp mutation."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_last_event"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-20",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-7-21",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-7",
+                      "label": "field-7",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "primary_category_id",
+                      "label": "Primary category id",
+                      "placeholder": "Enter primary category id",
+                      "help": "Identifier of the canonical taxonomy node."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_primary_category_id"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-22",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-8-23",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-8",
+                      "label": "field-8",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "primary_category_path",
+                      "label": "Primary category path",
+                      "placeholder": "Enter primary category path",
+                      "help": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_primary_category_path"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "form-field-group-24",
+                "component": "Stack",
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-tight"
+                },
+                "children": [
+                  {
+                    "id": "slot-field-9-25",
+                    "component": "Input",
+                    "meta": {
+                      "intent": "slot:field-9",
+                      "label": "field-9",
+                      "confidence": 1,
+                      "confidenceLevel": "low"
+                    },
+                    "props": {
+                      "field": "tag_count",
+                      "label": "Tag count",
+                      "placeholder": "Enter tag count",
+                      "type": "number",
+                      "help": "Number of canonical tags assigned to the object."
+                    },
+                    "bindings": {
+                      "onChange": "handleChange_tag_count"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "form-actions-9",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "form-submit-10",
+                "component": "Button",
+                "props": {
+                  "label": "Save",
+                  "type": "submit"
+                }
+              }
+            ]
+          }
+        ],
+        "bindings": {
+          "onSubmit": "handleSubmit"
+        }
+      }
+    ],
+    "objectSchema": {
+      "label": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable display name rendered in primary surfaces.",
+        "semanticType": "text.label"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Supporting description used in detail and card contexts.",
+        "semanticType": "text.description"
+      },
+      "placeholder": {
+        "type": "string",
+        "required": false,
+        "description": "Hint copy surfaced in form fields when the label is empty.",
+        "semanticType": "text.placeholder"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Canonical lifecycle state derived from the states parameter. This is the single source\nof truth for the entity's current lifecycle position. Consumed by Colorized to resolve\nvisual tokens, and by view extensions to render StatusBadge and StatusTimeline.\n",
+        "semanticType": "status.state"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "classification_metadata": {
+        "type": "ClassificationMetadata",
+        "required": true,
+        "description": "Operational metadata describing mode, storage model, governance rules, and audit timestamps.\n",
+        "semanticType": "classification.metadata"
+      },
+      "categories": {
+        "type": "CategoryNode[]",
+        "required": false,
+        "description": "Ordered taxonomy nodes scoped to the object.",
+        "semanticType": "classification.categories"
+      },
+      "primary_category_id": {
+        "type": "string",
+        "required": false,
+        "description": "Identifier of the canonical taxonomy node.",
+        "semanticType": "classification.primary"
+      },
+      "primary_category_path": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable breadcrumb path (Electronics > Mobile > Android)."
+      },
+      "tags": {
+        "type": "Tag[]",
+        "required": false,
+        "description": "Canonical tag collection after synonym collapse.",
+        "semanticType": "classification.tags"
+      },
+      "tag_count": {
+        "type": "number",
+        "required": false,
+        "description": "Number of canonical tags assigned to the object."
+      },
+      "tag_preview": {
+        "type": "string",
+        "required": false,
+        "description": "Denormalized comma-delimited preview for list renders."
+      },
+      "media_id": {
+        "type": "uuid",
+        "required": true,
+        "description": "Primary identifier for the media asset across services.",
+        "semanticType": "media.asset.id"
+      },
+      "asset_type": {
+        "type": "string",
+        "required": true,
+        "description": "Media form factor guiding viewer presentation.",
+        "enum": [
+          "image",
+          "video",
+          "audio",
+          "document"
+        ],
+        "semanticType": "media.asset.type"
+      },
+      "mime_type": {
+        "type": "string",
+        "required": true,
+        "description": "IANA MIME type recorded at ingestion.",
+        "semanticType": "media.asset.mime"
+      },
+      "storage_bucket": {
+        "type": "string",
+        "required": true,
+        "description": "Storage namespace (S3 bucket, GCS bucket) backing the asset."
+      },
+      "object_key": {
+        "type": "string",
+        "required": true,
+        "description": "Provider-specific path or key referencing the binary object."
+      },
+      "source_url": {
+        "type": "string",
+        "required": false,
+        "description": "Canonical CDN URL for public consumption."
+      },
+      "checksum": {
+        "type": "string",
+        "required": false,
+        "description": "Hex-encoded checksum (SHA-256) for deduplication."
+      },
+      "file_size_bytes": {
+        "type": "number",
+        "required": true,
+        "description": "Size of the binary payload in bytes.",
+        "semanticType": "media.asset.size"
+      },
+      "width_px": {
+        "type": "number",
+        "required": false,
+        "description": "Pixel width for images/videos when available."
+      },
+      "height_px": {
+        "type": "number",
+        "required": false,
+        "description": "Pixel height for images/videos when available."
+      },
+      "duration_seconds": {
+        "type": "number",
+        "required": false,
+        "description": "Media playback duration for video/audio assets.",
+        "semanticType": "media.asset.duration"
+      },
+      "transcoding_profiles": {
+        "type": "string[]",
+        "required": false,
+        "description": "List of transcoding profiles generated for the asset."
+      }
+    }
+  },
+  "schemaRef": "compose-e699003f",
+  "schemaRefCreatedAt": "2026-09-10T19:40:48.936Z",
+  "schemaRefExpiresAt": "2026-09-10T20:10:48.936Z",
+  "selections": [
+    {
+      "slotName": "title",
+      "intent": "page-header",
+      "selectedComponent": "FormLabelGroup",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "FormLabelGroup was selected for slot \"title\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "FormLabelGroup",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        },
+        {
+          "name": "StatusSelector",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "field-0",
+      "intent": "form-input",
+      "selectedComponent": "ClassificationEditor",
+      "confidence": 0.95,
+      "confidenceLevel": "high",
+      "explanation": "ClassificationEditor was selected for slot \"field-0\" because view_extension placement. Confidence is high (0.95).",
+      "candidates": [
+        {
+          "name": "ClassificationEditor",
+          "confidence": 0.95,
+          "reason": "view_extension placement"
+        }
+      ]
+    },
+    {
+      "slotName": "field-1",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-1\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-2",
+      "intent": "date-input",
+      "selectedComponent": "DatePicker",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "DatePicker was selected for slot \"field-2\" because preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "DatePicker",
+          "confidence": 1,
+          "reason": "preferred for \"date-input\" (rank 1); 3 tag match(es); tag match (date, input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"date\"; position affinity: DatePicker fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 0.98,
+          "reason": "preferred for \"date-input\" (rank 2); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.56,
+          "reason": "2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-3",
+      "intent": "enum-input",
+      "selectedComponent": "Select",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Select was selected for slot \"field-3\" because preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main. Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"enum-input\" (rank 1); 3 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Input",
+          "confidence": 0.92,
+          "reason": "preferred for \"enum-input\" (rank 3); 2 tag match(es); tag match (input); 1 context match(es); 1 region match(es); 1 category match(es); name contains \"input\"",
+          "keywordTagMatches": 1,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "TagInput",
+          "confidence": 0.72,
+          "reason": "preferred for \"enum-input\" (rank 2); 1 context match(es); 1 region match(es); 1 category match(es); 1 trait(s); name contains \"input\"",
+          "keywordTagMatches": 0,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-4",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-4\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-5",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-5\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-6",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-6\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-7",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-7\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-8",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-8\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    },
+    {
+      "slotName": "field-9",
+      "intent": "form-input",
+      "selectedComponent": "Input",
+      "confidence": 1,
+      "confidenceLevel": "high",
+      "explanation": "Input was selected for slot \"field-9\" because preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\". Confidence is high (1.00).",
+      "candidates": [
+        {
+          "name": "Input",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 1); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); name contains \"input\"",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Select",
+          "confidence": 1,
+          "reason": "preferred for \"form-input\" (rank 2); 2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Select fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        },
+        {
+          "name": "Checkbox",
+          "confidence": 0.78,
+          "reason": "2 tag match(es); tag match (form, input); 1 context match(es); context match (form); 1 region match(es); position affinity: Checkbox fits well in main",
+          "keywordTagMatches": 2,
+          "keywordTraitMatches": 0,
+          "contextTagMatches": 0,
+          "contextTraitMatches": 0
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "status": "ok",
+    "errors": [],
+    "warnings": []
+  },
+  "warnings": [],
+  "objectUsed": {
+    "name": "Media",
+    "version": "1.0.0",
+    "traits": [
+      "content/Labelled",
+      "lifecycle/Stateful",
+      "lifecycle/Timestampable",
+      "core/Classifiable"
+    ],
+    "fieldsComposed": 29,
+    "viewExtensionsApplied": {
+      "list": 4,
+      "detail": 4,
+      "form": 3,
+      "card": 2,
+      "timeline": 3,
+      "inline": 1
+    }
+  },
+  "meta": {
+    "intentParsed": "Media form view",
+    "layoutDetected": "context-inferred: form (from context=\"form\")",
+    "slotCount": 11,
+    "nodeCount": 26,
+    "intentSynthetic": true,
+    "intelligence": {
+      "fieldsExpanded": true,
+      "slotsExpanded": 7,
+      "expansionReason": "Expanded from 3 to 10 field groups for 23 fields",
+      "patternsApplied": 28,
+      "positionAffinityUsed": true,
+      "fieldAffinityUsed": true,
+      "compositionConfidence": 0.99
+    }
+  }
+}

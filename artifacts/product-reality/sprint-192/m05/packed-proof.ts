@@ -10,6 +10,10 @@ fs.mkdirSync(output, { recursive: true });
 const packages = process.argv[3] ? JSON.parse(fs.readFileSync(path.resolve(process.argv[3]), 'utf8')) as PackedPackageRecord[] : await packFoundationPackages(output) as PackedPackageRecord[];
 fs.writeFileSync(path.join(output, 'tarballs.json'), JSON.stringify(packages, null, 2) + '\n');
 const objects = ['Article', 'Media', 'Organization', 'Product', 'Relationship'];
+const appsOnly = process.argv[4] === '--apps-only';
+assert(!process.argv[4] || appsOnly, 'Unknown proof mode');
+let timelineCells: number | null = null;
+if (!appsOnly) {
 // Test-only object uses real declarations; no public object or output schema is edited.
 const fixture = structuredClone(loadObject('Product'));
 fixture.object.name = 'S192AuditSort';
@@ -25,6 +29,8 @@ try {
 } finally { fs.rmSync(fixturePath, { force: true }); clearObjectCache(); }
 const screens = await runLiveWorkflowProof({ artifactRoot: path.join(output, 'timelines'), tarballs: packages, freshInputs: objects.map(object => ({ object, context: 'timeline' as const })), mission: 's192-m05' });
 console.log('Canonical timeline packed gates:', screens.report.status);
+timelineCells = screens.cells.length;
+}
 const apps = [];
 // Five placed workflow cells per framework plus the two remaining baseline apps.
 for (const object of [...objects, 'Subscription', 'User']) {
@@ -33,4 +39,4 @@ for (const object of [...objects, 'Subscription', 'User']) {
   apps.push({ object, report: `apps/${object}/report.json`, cells: report.cells.length });
   console.log('Workflow packed gates:', object, 'passed');
 }
-fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify({ status: 'passed', timelineCells: screens.cells.length, traitRecipeCells: 4, apps, baselineWorkflowCells: 6, generatedSchemasEdited: 0 }, null, 2) + '\n');
+fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify({ status: 'passed', scope: appsOnly ? 'workflows' : 'all', timelineCells, traitRecipeCells: appsOnly ? null : 4, apps, baselineWorkflowCells: 6, generatedSchemasEdited: 0 }, null, 2) + '\n');
