@@ -1,0 +1,7 @@
+# Retained corrective runtime proof at bf7b9177
+
+The matrix, census, saved compatibility, app flows and twelve light/dark browser views all pass at `bf7b91774ab45b190dd837871f7b3a3bcc4064de`. Matrix: 52 repeated SVG identities and canvases, 13 omitted/light-A identities, four repeatable dashboards with eleven panels each. Census: 66/132 default and 75/77 wider schemas (150/154 cells), only Subscription/detail plus its assembled workflow changed. Saved compatibility:15/16 and16/16,17 live hashes unchanged. Flows:16 gates,18 flows,32 states,36 screenshots. Browser parity:zero differences, no overflow/errors across12 views. Prose:63/63 tests. All15 m03 goldens and flat/CSS hashes remain unchanged.
+
+CI run34418989517 passed typecheck but its build job102690078596 found a stale generated root MarkArea parameter interface after the root JSON schema correction. The raw log is retained in `../ci/corrective-runtime-build-failure.log`. Regenerating `generated/types/traits/mark-area.parameters.ts` changes only the missing chart interface. Root schema generation, schemas-tools freshness, typecheck and the ten bounded closeout checks pass after regeneration.
+
+The interface is included explicitly in both advertised-scope declarations. To keep final-head provenance literal, this packet is retained as an intermediate proof; `../final/` is the final frozen-head proof. No full corrective capture has run yet. The first failed complete capture remains retained under `../four-suite-closeout-attempt-1/`.

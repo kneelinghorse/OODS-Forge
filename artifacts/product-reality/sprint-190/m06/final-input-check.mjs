@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-const base='artifacts/product-reality/sprint-190/m06'+(process.argv.includes('--corrective')?'/corrective':''),proof=`${base}/proof`;
+const base='artifacts/product-reality/sprint-190/m06'+(process.argv.includes('--final')?'/final':process.argv.includes('--corrective')?'/corrective':''),proof=`${base}/proof`;
 const read=file=>JSON.parse(fs.readFileSync(file,'utf8'));
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const ref=file=>({path:file,sha256:sha(fs.readFileSync(file))});

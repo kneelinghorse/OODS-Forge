@@ -11,7 +11,7 @@ import { SALES, CASES } from '../../../../packages/mcp-server/src/tools/__fixtur
 import { ECHARTS_OPERAND_CASES, renderInputFor } from '../../../../packages/mcp-server/test/tools/s172-echarts-operands.js';
 import type { VizRenderInput, DashboardRenderInput } from '../../../../packages/mcp-server/src/schemas/generated.js';
 
-const out = new URL(process.argv.includes('--corrective') ? './corrective/matrix/' : './matrix/', import.meta.url);
+const out = new URL(process.argv.includes('--final') ? './final/matrix/' : process.argv.includes('--corrective') ? './corrective/matrix/' : './matrix/', import.meta.url);
 const attribution = JSON.parse(await fs.readFile(new URL('../m03/golden-attribution.json', import.meta.url), 'utf8'));
 for (const file of attribution.files) assert.equal(sha256(await fs.readFile(file.file, 'utf8')), file.afterSha256, `Golden moved after attribution: ${file.file}`);
 const inputs = [
