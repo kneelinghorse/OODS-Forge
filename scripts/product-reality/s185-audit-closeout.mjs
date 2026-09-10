@@ -164,7 +164,7 @@ export function auditBrowserReceipt(ref, readFrozen, head) {
 }
 
 export function auditFinalCloseout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath = defaultManifest }) {
-  if (manifestPath.startsWith('artifacts/product-reality/sprint-192/m07/')) return auditSprint192Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, publicGitEvidence, rangeGitEvidence, manifestPath });
+  if (manifestPath.startsWith('artifacts/product-reality/sprint-192/m07/')) return auditSprint192Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath });
   if (manifestPath.startsWith('artifacts/product-reality/sprint-190/m06/') || manifestPath.startsWith('artifacts/product-reality/sprint-191/m05/')) return auditSprint190Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, publicGitEvidence, rangeGitEvidence, manifestPath });
   assert(fullHead(executionHead) && fullHead(reviewHead), 'Audit requires actual full execution and review SHAs.');
   const browser = manifestPath.startsWith('artifacts/product-reality/sprint-189/m06/');
@@ -858,10 +858,11 @@ export function auditFinalCloseout({ executionHead, reviewHead, readOutput, read
 export function auditSprint190SkippedIdentities(current, baseline) {
   const collect = rows => {
     assert.deepEqual(rows.map(row => row.suite).sort(), ['mcp-server','root-core','viz-core','viz-render']);
-    return Object.fromEntries(rows.map(({suite, workspace, report}) => {
+    return Object.fromEntries(rows.map(({suite, workspace, report, platform}) => {
       const identities = [];
       for (const file of report.testResults) {
-        const relative = path.relative(workspace, file.name).replaceAll('\\', '/');
+        const canonical = value => platform === 'darwin' ? value.replace(/^\/private\/tmp(?=\/)/, '/tmp') : value;
+        const relative = path.relative(canonical(workspace), canonical(file.name)).replaceAll('\\', '/');
         assert(relative && !relative.startsWith('../') && !path.isAbsolute(relative));
         const occurrences = new Map();
         for (const test of file.assertionResults ?? []) {
@@ -997,8 +998,30 @@ export function auditSprint190Closeout({ executionHead, reviewHead, readOutput, 
   return {status:'passed',skipped,checkedCriteria:count,checkedExecutions:ledger.executions.length,checkedFrozenPaths:checked.size,executionHead,reviewHead,builderSelfCertified:false,separateReviewRequired:true};
 }
 
+// Independently check decision 1890 without trusting the producer's allowlist or booleans.
+export function auditSprint192Derivation({ approval, changes, executionHead, reviewHead, readHistorical }) {
+  const expected = ['scripts/product-reality/s185-audit-closeout.mjs',
+    'scripts/product-reality/s185-closeout.mjs', 'scripts/product-reality/s185-suite-accounting.mjs'];
+  assert.equal(approval.approved, true); assert.equal(approval.decisionId, 1890);
+  assert.equal(approval.userApproval, 'yes, approved. proceed'); assert.equal(approval.missionId, 's192-m07');
+  assert.equal(executionHead, 'fb56910b2364982a4913a5229798ba06f324370d'); assert.equal(approval.executionHead, executionHead);
+  assert.deepEqual(approval.files.map(row => row.path).sort(), expected);
+  const modified = changes.filter(row => row.status !== 'A');
+  assert.deepEqual(modified.map(row => row.path).sort(), expected);
+  for (const row of modified) assert.equal(row.status, 'M');
+  for (const row of changes.filter(row => row.status === 'A')) {
+    assert(/^artifacts\/product-reality\/sprint-192\/m07\/(?:(?:five-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)|README\.md)$/.test(row.path), row.path);
+  }
+  for (const row of approval.files) {
+    assert.match(row.beforeSha256, /^[a-f0-9]{64}$/); assert.match(row.afterSha256, /^[a-f0-9]{64}$/);
+    assert.equal(digest(readHistorical(executionHead, row.path)), row.beforeSha256, row.path);
+    assert.equal(digest(readHistorical(reviewHead, row.path)), row.afterSha256, row.path);
+  }
+  return { decisionId: 1890, derivationFiles: expected };
+}
+
 /** Read actual Sprint 192 output independently; never invoke the producer here. */
-export function auditSprint192Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, publicGitEvidence, rangeGitEvidence, manifestPath }) {
+export function auditSprint192Closeout({ executionHead, reviewHead, readOutput, readFrozen, readHistorical, gitEvidence, publicGitEvidence, rangeGitEvidence, manifestPath }) {
   const base = 'artifacts/product-reality/sprint-192/m07';
   const manifest = JSON.parse(readFrozen(manifestPath));
   const ledger = JSON.parse(readOutput(`${base}/closeout/claim-ledger.json`));
@@ -1012,6 +1035,19 @@ export function auditSprint192Closeout({ executionHead, reviewHead, readOutput, 
     assert.equal(result.executionHead, executionHead); assert.equal(result.reviewHead, reviewHead); assert.equal(result.implementationHead, manifest.implementationHead);
   }
   assert.equal(handoff.evidenceCommit, reviewHead); assert.equal(handoff.exportVersion, '2026-09-10');
+  assert.equal(gitEvidence.ancestor, true);
+  assert.equal(accounting.executionHead, executionHead); assert.equal(accounting.reviewHead, reviewHead);
+  assert.equal(accounting.headRelation.ancestor, true);
+  assert.deepEqual(accounting.headRelation.changedEvidencePaths, gitEvidence.changes);
+  assert.equal(accounting.headRelation.executableInputsUnchanged, false);
+  assert.equal(accounting.headRelation.capturedRuntimeAndTestSourcesUnchanged, true);
+  assert.equal(accounting.headRelation.postCaptureDerivationOnly, true);
+  assert.equal(accounting.headRelation.approval.path, manifest.accounting.postCaptureDerivation);
+  const derivation = auditSprint192Derivation({ approval: JSON.parse(verify(accounting.headRelation.approval)),
+    changes: gitEvidence.changes, executionHead, reviewHead, readHistorical });
+  assert.equal(accounting.headRelation.decisionId, derivation.decisionId);
+  assert.deepEqual(accounting.headRelation.derivationFiles, derivation.derivationFiles);
+
   for (const ref of [...ledger.references, ...accounting.references]) verify(ref);
   const expected = source('missions').missions.flatMap(mission => mission.successCriteria.map((criterion, index) => ({ missionId: mission.id, criterionIndex: index + 1, criterion })));
   assert.equal(expected.length, 43); assert.equal(ledger.claims.length, 43);
@@ -1046,7 +1082,7 @@ export function auditSprint192Closeout({ executionHead, reviewHead, readOutput, 
   assert.equal(source('originalStore').reachable, 15); assert.equal(source('successorStore').reachable, 16); assert.equal(source('compatibility').changedLiveFiles, 0); assert.equal(source('compatibility').liveStoreFiles, 17);
   const flows = source('flows'); assert.equal(flows.sourceHead, manifest.implementationHead); assert.equal(flows.cells.length, 6); for (const cell of flows.cells) { assert.equal(cell.gates.length, 8); assert(cell.gates.every(row => row.status === 'passed')); assert(cell.flow.every(row => row.status === 'passed')); }
   for (const shot of flows.screenshots) verify({ path: `${base}/${shot.file}`, sha256: shot.sha256 });
-  const registry = source('registry'); assert.deepEqual(registry, source('vizCensus')); assert.equal(registry.length, 13); assert.equal(registry.filter(row => row.dashboardDrawn).length, 11);
+  const registry = source('registry'); assert.deepEqual(registry, source('vizCensus')); assert.equal(registry.length, 13); assert.equal(registry.filter(row => row.dashboardDrawn === true).length, 11);
   const matrix = source('matrix'); assert.equal(matrix.table.length, 52); assert.deepEqual(matrix.table.map(row => row.svgHash), source('previousMatrix').table.map(row => row.svgHash));
   for (const row of matrix.table) verify({ path: `${base}/matrix/${row.file}`, sha256: row.svgHash });
   assert.equal(accounting.status, 'passed'); assert.deepEqual(accounting.validationIssues, []); assert.deepEqual(accounting.unattributedDeltas, []);
@@ -1061,14 +1097,14 @@ export function auditSprint192Closeout({ executionHead, reviewHead, readOutput, 
     assert.equal(timeout.rerun.attempts, 1); assert.equal(timeout.rerun.exitCode, 0); assert.equal(timeout.rerun.executionHead, executionHead);
     const raw = JSON.parse(verify(timeout.rerun.rawReport)); verify(timeout.rerun.log); assert.equal(raw.numFailedTests, 0); assert.equal(raw.numPassedTests, 1);
   } else assert.deepEqual(accounting.closeoutFailures, []);
-  const inputs = (cohort, capture) => { const aggregate = JSON.parse(verify(capture.aggregate)); return accounting.executions.filter(row => row.cohort === cohort && row.suite !== 'component-packages').map(row => ({ suite: row.suite, workspace: aggregate.workspace, report: JSON.parse(verify(row.rawReport)) })); };
+  const inputs = (cohort, capture) => { const aggregate = JSON.parse(verify(capture.aggregate)); return accounting.executions.filter(row => row.cohort === cohort && row.suite !== 'component-packages').map(row => ({ suite: row.suite, workspace: aggregate.workspace, platform: aggregate.host.platform, report: JSON.parse(verify(row.rawReport)) })); };
   const skipped = auditSprint190SkippedIdentities(inputs('closeout', accounting.closeout), inputs('sprint191Closeout', accounting.baselines.sprint191Closeout));
   assert.equal(runs.find(row => row.suite === 'component-packages').counts.skipped, 0);
   for (const row of accounting.goldenAttribution.files) { verify({ path: row.file, sha256: row.afterSha256 }); assert.equal(digest(readHistorical(accounting.goldenAttribution.beforeHead, row.file)), row.beforeSha256); assert(row.reason.trim()); }
   const notice = source('noticePlan'); assert.equal(notice.sent, false); assert.equal(notice.sendsExecuted, 0); assert.deepEqual(notice.targets, ['cmos-dashboard', 'forge-demos', 'aquex-mcp']); assert(notice.notices.every(row => row.request.body.includes('2026-09-10') && row.request.body.includes('catalog_list productReality.surfaces')));
   const ci = source('ci'); assert.equal(ci.baseRefName, 'OODS-pro'); for (const name of ['coverage', 'component-packages', 'a11y-contract', 'portable-runtime']) assert(ci.jobs.some(row => row.name === name && row.runId && row.conclusion === 'success'));
   assert.equal(source('prose').exitCode, 0);
-  return { status: 'passed', skipped, checkedCriteria: 43, checkedExecutions: executions.size, checkedFrozenPaths: checked.size, executionHead, reviewHead, builderSelfCertified: false, separateReviewRequired: true };
+  return { status: 'passed', skipped, derivation, gitEvidence, checkedCriteria: 43, checkedExecutions: executions.size, checkedFrozenPaths: checked.size, executionHead, reviewHead, builderSelfCertified: false, separateReviewRequired: true };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

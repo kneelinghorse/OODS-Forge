@@ -27,10 +27,18 @@ const countFiles = files => ({ total: files.length, passed: files.filter(row => 
   failed: files.filter(row => row.status === 'failed').length, skipped: files.filter(row => row.status === 'skipped').length });
 const status = value => ['pending', 'disabled', 'skipped'].includes(value) ? 'skipped' : value;
 
-export function projectVitest(raw, workspace) {
+function capturedRelativePath(file, workspace, platform) {
+  // macOS reports the physical /private/tmp path even when the captured cwd
+  // used its /tmp alias. Normalize only that host's known alias, not escapes.
+  const normalized = value => platform === 'darwin' ? value.replace(/^\/private\/tmp(?=\/)/, '/tmp') : value;
+  const relative = path.relative(normalized(workspace), normalized(path.resolve(workspace, file))).replaceAll('\\', '/');
+  assert(relative && !relative.startsWith('../') && !path.isAbsolute(relative), `Test path escapes the captured workspace: ${file}`);
+  return relative;
+}
+
+export function projectVitest(raw, workspace, platform) {
   const files = raw.testResults.map(file => {
-    const filePath = path.relative(workspace, file.name).replaceAll('\\', '/');
-    assert(filePath && !filePath.startsWith('../') && !path.isAbsolute(filePath), `Test path escapes the captured workspace: ${file.name}`);
+    const filePath = capturedRelativePath(file.name, workspace, platform);
     const occurrences = new Map();
     const assertions = (file.assertionResults ?? []).map(row => {
       const name = row.fullName ?? [...(row.ancestorTitles ?? []), row.title].join(' ');
@@ -228,6 +236,29 @@ export function assertEvidenceOnlyHeadChanges(changes, sprintId = 'sprint-185') 
     `Review descendant changes an executable input, fixture, or pre-existing evidence: ${row.status} ${row.path}`);
 }
 
+// Decision 1890 is a named derivation exception, not permission to move captured inputs.
+export function validateSprint192Derivation({ approval, changes, executionHead, reviewHead, readHistorical }) {
+  const files = ['s185-audit-closeout.mjs', 's185-closeout.mjs', 's185-suite-accounting.mjs']
+    .map(file => `scripts/product-reality/${file}`);
+  assert.equal(executionHead, 'fb56910b2364982a4913a5229798ba06f324370d');
+  assert.equal(approval.executionHead, executionHead);
+  assert.equal(approval.decisionId, 1890); assert.equal(approval.missionId, 's192-m07');
+  assert.equal(approval.approved, true); assert.equal(approval.userApproval, 'yes, approved. proceed');
+  assert.deepEqual(approval.files.map(row => row.path).sort(), files);
+  assert.deepEqual(changes.filter(row => files.includes(row.path)).map(row => row.path).sort(), files);
+  for (const change of changes) {
+    if (files.includes(change.path)) assert.equal(change.status, 'M');
+    else assertEvidenceOnlyHeadChanges([change], 'sprint-192');
+  }
+  for (const row of approval.files) {
+    assert.match(row.beforeSha256, /^[a-f0-9]{64}$/); assert.match(row.afterSha256, /^[a-f0-9]{64}$/);
+    assert.equal(hash(readHistorical(executionHead, row.path)), row.beforeSha256, row.path);
+    assert.equal(hash(readHistorical(reviewHead, row.path)), row.afterSha256, row.path);
+  }
+  return { decisionId: 1890, derivationFiles: files, capturedRuntimeAndTestSourcesUnchanged: true,
+    postCaptureDerivationOnly: true, executableInputsUnchanged: false };
+}
+
 // Decision 1830 accepts one already-captured observation, never a general retry waiver.
 export function validateSprint188Timeout({ approval, failures, executions, readBytes, readHistorical }) {
   assert.equal(approval.decisionId, 1830); assert.equal(approval.approved, true);
@@ -305,7 +336,7 @@ export function validateSprint190TimeoutRerun({ failures, rerun, readBytes, exec
 }
 
 export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, attributions = [], failureDispositions = [],
-  sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout, timeoutRerun,
+  sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout, timeoutRerun, postCaptureDerivation,
   capturePath = sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
   assert(executionHead && reviewHead, 'Both actual execution head and separate frozen review head are required.');
   assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192'].includes(sprintId), 'Unsupported sprint.');
@@ -343,7 +374,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
       assert.equal(aggregate.missionId, missionId, 'Closeout capture belongs to another mission.');
     }
     const captureRef = ref => retainedCaptureReference(file, ref, originalRoot);
-    assert(aggregate.host?.hostname && aggregate.host.node && aggregate.host.vitest, 'Captured host versions are missing.');
+    assert(aggregate.host?.hostname && aggregate.host.node, 'Captured host versions are missing.');
     const capture = { aggregate: refs.get(file), measuredHead: aggregate.measuredHead, status: aggregate.status, label: aggregate.captureLabel,
       host: aggregate.host, namedRetry: aggregate.namedRetry ?? false, suiteSelection: aggregate.suiteSelection ?? 'all',
       cleanBeforeSetup: aggregate.cleanBeforeSetup, cleanAfterSetup: aggregate.cleanAfterSetup, runs: [] };
@@ -366,15 +397,22 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
         const logPath = captureRef(receipt.log.path);
         const logText = bytes(logPath).toString('utf8');
         assert.equal(refs.get(logPath).sha256, receipt.log.sha256, 'Raw command log hash differs.');
+        if (!aggregate.host.vitest) {
+          const observedVersion = /\bRUN\s+v(\d+\.\d+\.\d+)\b/.exec(logText)?.[1];
+          assert(observedVersion, 'Missing Vitest version must be evidenced by the original suite log.');
+          capture.hostVersionEvidence ??= { vitest: observedVersion, source: 'raw-suite-logs', logs: [] };
+          assert.equal(observedVersion, capture.hostVersionEvidence.vitest);
+          capture.hostVersionEvidence.logs.push(refs.get(logPath));
+        }
         const rawPath = captureRef(receipt.retainedReport);
-        const projection = projectVitest(json(rawPath), aggregate.workspace);
+        const projection = projectVitest(json(rawPath), aggregate.workspace, aggregate.host.platform);
         assert.deepEqual(projection.tests, receipt.vitest.tests, 'Receipt test counts differ from raw assertions.');
         assert.deepEqual(projection.fileCounts, receipt.vitest.files, 'Receipt file counts differ from raw report.');
         assert.equal(receipt.vitest.success, projection.success, 'Receipt success differs from raw report.');
         const derivedStatus = receipt.exitCode === 0 && projection.success && receipt.cleanBefore.clean && receipt.cleanAfter.clean ? 'passed' : 'failed';
         assert.equal(receipt.status, derivedStatus, 'Receipt status differs from its actual exit, assertions, and clean-tree checks.');
         assert.deepEqual(projection.files.map(({ path, status, tests }) => ({ path, status, tests })),
-          [...receipt.vitest.fileResults].sort((a, b) => a.path.localeCompare(b.path)).map(({ path, status: observed, tests }) => ({ path, status: status(observed), tests })),
+          receipt.vitest.fileResults.map(({ path: file, status: observed, tests }) => ({ path: capturedRelativePath(file, aggregate.workspace, aggregate.host.platform), status: status(observed), tests })).sort((a, b) => a.path.localeCompare(b.path)),
         'Receipt per-file counts differ from raw report.');
         const id = `${cohort}:${run.run}:${receipt.suite}:${receipt.startedAt}`;
         const record = { id, cohort, run: run.run, suite: receipt.suite, measuredHead: receipt.measuredHead,
@@ -455,8 +493,14 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   const ancestor = spawnSync('git', ['merge-base', '--is-ancestor', executionHead, reviewHead], { cwd: root }).status === 0;
   assert(ancestor, 'The review head must descend from the actual execution head.');
   const headChanges = changedPaths(executionHead, reviewHead);
-  let timeoutAcceptance;
-  if (approvedTimeout) {
+  let timeoutAcceptance, derivationAcceptance;
+  if (postCaptureDerivation) {
+    assert.equal(sprintId, 'sprint-192'); assert(!approvedTimeout && !timeoutRerun);
+    derivationAcceptance = validateSprint192Derivation({ approval: json(postCaptureDerivation), changes: headChanges, executionHead, reviewHead,
+      readHistorical: (head, file) => execFileSync('git', ['show', `${head}:${file}`], { cwd: root }) });
+    for (const file of derivationAcceptance.derivationFiles) bytes(file);
+    derivationAcceptance.approval = refs.get(postCaptureDerivation);
+  } else if (approvedTimeout) {
     assert.equal(sprintId, 'sprint-188');
     const approval = json(approvedTimeout);
     assert.equal(approval.executionHead, executionHead);
@@ -557,9 +601,10 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   }
   return { schemaVersion: '1.0.0', mission: missionId, kind: sprintId === 'sprint-192' ? 'five-suite-execution-and-delta-accounting' : 'four-suite-execution-and-delta-accounting',
     status: issues.length ? 'failed' : 'passed', executionHead, reviewHead,
-    headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: !approvedTimeout,
+    headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: !approvedTimeout && !postCaptureDerivation,
+      ...(derivationAcceptance ?? {}),
       ...(approvedTimeout ? { capturedRuntimeAndTestSourcesUnchanged: true, postCaptureDerivationOnly: true, proposalHead: '0f6891e3b4a8decb0626d49dbf6fa870bb712276', derivationFiles: S188_DERIVATION_FILES } : {}),
-      limitation: approvedTimeout ? 'Actual capture and diagnostic heads remain unchanged. Decision 1830 permits separately frozen approval and audit derivation inputs; no captured runtime or test input changes.' : 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
+      limitation: postCaptureDerivation ? 'Decision 1890 permits exactly three hash-bound derivation files after capture; all product, test, package, configuration, schema and fixture inputs retain their actual execution identity.' : approvedTimeout ? 'Actual capture and diagnostic heads remain unchanged. Decision 1830 permits separately frozen approval and audit derivation inputs; no captured runtime or test input changes.' : 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
     ...(timeoutAcceptance ? { timeoutAcceptance } : {}),
     ...(goldenAttribution ? { goldenAttribution, goldenHistory } : {}),
     ...(sprintId === 'sprint-192' ? { addedSuite: { suite: 'component-packages', reason: 'Decision1884 adds the four-package runner as the fifth suite; root-core project membership is unchanged.', executionIds: executions.filter(row => row.cohort === 'closeout' && row.suite === 'component-packages').map(row => row.id) } } : {}),

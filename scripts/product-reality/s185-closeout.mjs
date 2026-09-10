@@ -842,12 +842,20 @@ export function deriveSprint192Closeout({ executionHead, reviewHead, manifest, r
   const flows = json('flows'); assert.equal(flows.sourceHead, manifest.implementationHead); assert.equal(flows.cells.length, 6);
   for (const cell of flows.cells) { assert.equal(cell.gates.length, 8); assert(cell.gates.every(row => row.status === 'passed')); assert(cell.flow.every(row => row.status === 'passed')); }
   for (const shot of flows.screenshots) assert.equal(sha256(bytes(`${base}/${shot.file}`)), digest(shot.sha256));
-  const registry = json('registry'); assert.deepEqual(registry, json('vizCensus')); assert.equal(registry.length, 13); assert.equal(registry.filter(row => row.dashboardDrawn).length, 11);
+  const registry = json('registry'); assert.deepEqual(registry, json('vizCensus')); assert.equal(registry.length, 13); assert.equal(registry.filter(row => row.dashboardDrawn === true).length, 11);
   const matrix = json('matrix'), previousMatrix = json('previousMatrix'); assert.equal(matrix.head, manifest.implementationHead); assert.equal(matrix.table.length, 52);
   assert.deepEqual(matrix.table.map(row => row.svgHash), previousMatrix.table.map(row => row.svgHash));
   for (const row of matrix.table) assert.equal(sha256(bytes(`${base}/matrix/${row.file}`)), row.svgHash);
   assert.equal(suiteAccounting.status, 'passed'); assert.deepEqual(suiteAccounting.validationIssues, []); assert.deepEqual(suiteAccounting.unattributedDeltas, []);
   assert.equal(suiteAccounting.closeout.runs.length, 1); assert.equal(suiteAccounting.closeout.runs[0].suiteExecutionIds.length, 5);
+  assert.equal(suiteAccounting.executionHead, executionHead); assert.equal(suiteAccounting.reviewHead, reviewHead);
+  assert.equal(suiteAccounting.headRelation.ancestor, true);
+  assert.equal(suiteAccounting.headRelation.decisionId, 1890);
+  assert.equal(suiteAccounting.headRelation.executableInputsUnchanged, false);
+  assert.equal(suiteAccounting.headRelation.capturedRuntimeAndTestSourcesUnchanged, true);
+  assert.equal(suiteAccounting.headRelation.postCaptureDerivationOnly, true);
+  for (const ref of suiteAccounting.references) assert.equal(sha256(bytes(ref.path)), digest(ref.sha256));
+
   assert(publicHeadEquivalence.ancestor); assert.deepEqual(publicHeadEquivalence.changedPaths, []);
   const notice = json('noticePlan'), movers = json('movers'); assert.equal(notice.sent, false); assert.equal(notice.sendsExecuted, 0);
   assert.deepEqual(notice.targets, ['cmos-dashboard', 'forge-demos', 'aquex-mcp']); assert.equal(notice.implementationHead, manifest.implementationHead); assert.equal(movers.s192.head, manifest.implementationHead);
@@ -872,7 +880,7 @@ export function deriveSprint192Closeout({ executionHead, reviewHead, manifest, r
   const shared = { missionId: 's192-m07', sprintStatus: 'Active', builderSelfCertified: false, separateReviewRequired: true, implementationHead: manifest.implementationHead, executionHead, reviewHead };
   return {
     [`${base}/closeout/claim-ledger.json`]: { ...shared, claims, executions, headline: { total: 43, proven: 43, unproven: 0 }, references: [...references.values()] },
-    [`${base}/closeout/review-handoff.json`]: { ...shared, evidenceCommit: reviewHead, state: 'BUILT, REVIEW PENDING', exportVersion: '2026-09-10', sources: manifest.sources, claims: `${base}/closeout/claim-ledger.json`, suiteAccounting: `${base}/closeout/suite-accounting.json`, reconnect: notice, pullRequest: ci, limitations: ['Classification approval remains pending; approvedRuntimeCensus:null.', '34 React/Vue implementations remain pending; generation154/154 is not runtime154/154.', 'Eight ECharts types remain uncertified; chart HC pixels deferred.', 'Optional workflow_dispatch soak failed on unchanged5fdf8a18 too; raw control retained in m02.'], arithmeticCorrection: 'm04 literal criterion says864perframework;72×6=432perframework/864combined. Final75×6=450perframework/900combined.' },
+    [`${base}/closeout/review-handoff.json`]: { ...shared, evidenceCommit: reviewHead, state: 'BUILT, REVIEW PENDING', postCaptureDerivation: suiteAccounting.headRelation, exportVersion: '2026-09-10', sources: manifest.sources, claims: `${base}/closeout/claim-ledger.json`, suiteAccounting: `${base}/closeout/suite-accounting.json`, reconnect: notice, pullRequest: ci, limitations: ['Classification approval remains pending; approvedRuntimeCensus:null.', '34 React/Vue implementations remain pending; generation154/154 is not runtime154/154.', 'Eight ECharts types remain uncertified; chart HC pixels deferred.', 'Optional workflow_dispatch soak failed on unchanged5fdf8a18 too; raw control retained in m02.'], arithmeticCorrection: 'm04 literal criterion says864perframework;72×6=432perframework/864combined. Final75×6=450perframework/900combined.' },
     [`${base}/closeout/suite-accounting.json`]: suiteAccounting,
   };
 }
