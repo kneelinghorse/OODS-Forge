@@ -1,12 +1,14 @@
 # Near Roadmap
 
-**Status:** ACTIVE — Sprint 191 Increment 10 BUILT, REVIEW PENDING (#1862); program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`
+**Status:** ACTIVE — Sprint 191 Increment 10 BUILT, REVIEW PENDING (#1862); program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`; Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`
 
 **Updated:** 2026-09-10 — Sprint 191 carry-forward pay-down; builder evidence awaits independent review
 
 **Sprint 188:** CERTIFIED AND CLOSED. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 froze the final proof and handed off. Review `PS-2026-09-08-011` (decision `#1831`) inspected all 36 frozen-head screenshots in both frameworks: the workflow runs end to end with all four states and criterion 8 is opened; usable is not certified, and the ranked craft carries are preserved by `#1832`. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--certified-and-closed).
 
 **Sprint 189:** CERTIFIED AND CLOSED. Build base `f4cd1ba3`; Mission 1 delivered that merged head to the live bridge and sent the Sprint 188 reconnect. Missions 2–5 built the browser design loop (`scripts/design-loop`, public `design.preview`) and used it to retire all seven `#1832` carries at the producer. Mission 6 froze the final proof and handed off. Review `PS-2026-09-09-002` (decision `#1844`) inspected the 24 frozen-head receipts and 72 screenshots in both frameworks: every `#1832` item is resolved by exact receipt lines and criterion 8 is certified for the Subscription app; the residual craft list is `#1845`. See [Increment 8](#increment-8--sprint-189-browser-design-loop--certified-and-closed).
+
+**Sprint 190:** CERTIFIED AND CLOSED. Build base `c3a68d5f`; Mission 1 delivered the merged Sprint 189 head `f19a654c` to the live bridge and sent the Sprint 189 reconnect. Missions 2–5 put the shared renderer on the public surface: `viz.render` returns SVG for all 13 types, dashboard HTML draws 11/11 admitted types, theme and brand resolve from the token scopes, `artifact.certify` grades the requested scope, VizAreaPreview renders a real chart on Subscription/detail, and one measured registry equals its public-handler census. Mission 6 froze the final proof and handed off. Review `PS-2026-09-10-001` (decision `#1859`) re-ran the registry contract test and the independent auditor at the frozen head and inspected the 52-cell matrix, contrast rows and browser receipts; the residual visualization carries are `#1860`. See [Increment 9](#increment-9--sprint-190-visualization-public-render--certified-and-closed).
 
 **PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`. Sprint 188 merged through PR #86 (`33a20d0e`) and PR #87 (`ed0d5750`); remote CI on the frozen head `7fc3c9e0` passed all three workflows before the review.
 
@@ -281,7 +283,10 @@ its ECharts soak skip remains disclosed.
 The historical Sprint 189 delivery draft was sent by Sprint 189 m01 after reviewed `f4cd1ba3` was delivered.
 The Sprint 189 review (`#1844`) inspected the AFTER receipts and screenshots: the duplicate source/application
 controls, raw timestamps, narrow summary terms, wrapped archive badge and surplus empty cards are gone, and the
-Subscription app is certified usable; the residual craft list is `#1845`. Sprint 190 m01 delivers that merged head.
+Subscription app is certified usable; the residual craft list is `#1845`. Sprint 190 m01 delivered that merged head
+(`f19a654c`). The Sprint 190 review (`#1859`) closed the visualization public-render surface. Decision `#1861`
+records that merged head `d3a99d39` was already delivered and the reconnect sent to cmos-dashboard,
+forge-demos and aquex-mcp before this build; archived dashboard-demos is excluded.
 
 
 ## Increment 8 — Sprint 189: Browser design loop — CERTIFIED AND CLOSED
@@ -312,15 +317,31 @@ pre-existing workflow gap (the compat runner never built `@oods/component-contra
 since those imports landed); the review closure commit adds that build step to `scripts/pkg/compat.ts`, mirroring the
 a11y-contract job, with public runtime bytes unchanged.
 
-## Increment 9 — Sprint 190: Visualization public render — BUILT, REVIEW PENDING
+## Increment 9 — Sprint 190: Visualization public render — CERTIFIED AND CLOSED
 
-Sprint 190 remains Active. `builderSelfCertified:false`; `separateReviewRequired:true`. The measured [visualization registry](../../../packages/viz-core/src/registry/viz-recipes.v1.json) reports 13/13 public SVG in light/dark × A/B; 5 certified / 8 uncertified; area placed on Subscription/detail. Dashboard HTML draws 11/11 admitted types; chord and flow_map remain excluded under #881. The public-tool census, two-run 52-SVG matrix, component and saved-store census, packed application flows and light/dark browser receipts are retained in the [m06 packet](../../../artifacts/product-reality/sprint-190/m06/README.md). Final review reads its frozen heads and CI observations from the [handoff](../../../artifacts/product-reality/sprint-190/m06/closeout/review-handoff.json).
+Sprint 190 is **Completed**, independently certified by review `PS-2026-09-10-001` and decision `#1859`. It was built under decisions #1847–#1858. Historical builder receipts retain `builderSelfCertified:false`; they are not relabeled. The measured [visualization registry](../../../packages/viz-core/src/registry/viz-recipes.v1.json) reports 13/13 public SVG in light/dark × A/B; 5 certified / 8 uncertified; area placed on Subscription/detail. Dashboard HTML draws 11/11 admitted types; chord and flow_map remain excluded under #881. The public-tool census, two-run 52-SVG matrix, component and saved-store census, packed application flows and light/dark browser receipts are retained in the [m06 packet](../../../artifacts/product-reality/sprint-190/m06/README.md). The [handoff](../../../artifacts/product-reality/sprint-190/m06/closeout/review-handoff.json) binds the frozen implementation `502e9bf7`, execution `81fb1a96` and evidence `b5b80d9d` commits; PR #92 merged into `OODS-pro` at `d3a99d39`.
 
 The default uses CSS light/A. The flat token export remains byte-identical; m03 contains the one-time golden migration and every flat-versus-light/A token difference (#1850). HC token scopes remain exported while HC pixels are deferred (#1851). Certification grades the requested scope and retains failures: the existing light categorical palettes on dark canvases can fail contrast. Heatmap and geo exemptions make no categorical canvas-ratio claim. Eight ECharts-primary types retain `conformant:null`.
 
 Subscription/detail includes a static sample-payment SVG above the timeline in HTML, React and Vue; workflow records each receive a seeded SVG. Editing the form does not regenerate the chart. This placement changes only Subscription/detail in the 66-schema population. The wider 77-schema population retains the Organization/User workflow OODS-N016 gaps. Generation coverage does not imply full runtime coverage for every context.
 
-Mission 1 delivered the reviewed Sprint 189 head and its authorized reconnects. Sprint 190 implementation stays in its build worktree. The Sprint 191 reconnect for cmos-dashboard, dashboard-demos, forge-demos and aquex-mcp is prepared and unsent. Independent review decides closure and later delivery.
+Mission 1 delivered the reviewed Sprint 189 head and its authorized reconnects. Decision `#1861` records later delivery of the merged Sprint 190 head `d3a99d39` and the sent reconnects to cmos-dashboard, forge-demos and aquex-mcp; archived dashboard-demos is excluded. The separate Sprint 191 candidate and Sprint 192 notice plan remain build-only and prepared-unsent.
+
+**Review verdict (`PS-2026-09-10-001`, decision `#1859`):** the registry-equals-census contract test and the Sprint 190
+prose tests were re-run at the frozen head (12/12), and the independent closeout auditor was re-run from a fresh
+invocation: 37/37 criteria, 13 executions, 296 frozen paths. The retained scope observations hold 52/52
+`svgHash == renderHash` identities across 13 types × light/dark × A/B, every one repeated byte-stable; dashboard HTML
+draws 11/11 admitted types with chord and flow_map excluded under #881 and answered in the registry notes. The light
+React 1440 and dark Vue 390 screenshots show the payment area chart as a named figure above Status Timeline with the
+dark scope applied to the chart pixels and no overflow. The corrective four-suite capture is zero failures (viz-core
+1397, viz-render 69, mcp-server 6091, root 6265) with the same 16 skip identities as Sprint 189; PR CI, pkg-compat and
+Token Governance all succeeded. The program exit gate, 13/13 current recipes rendering visible public output with
+truthful cells, is met, so the visualization public-render surface is closed. The truthful residue is ranked in `#1860`
+and none of it blocks closure: 14 dark-scope contrast failures (line, scatter, treemap, sunburst, sankey, chord,
+force_graph × A/B) because the light categorical palette is drawn on the dark canvas, so certified line and scatter
+report `conformant:false` for dark; HC pixels deferred (#1851); the generated app shell stays light under
+`theme:'dark'` while chart pixels follow the scope; the constant seeded payments draw the area chart as a flat block
+under a duplicated title; eight ECharts-primary types remain uncertified with `conformant:null`.
 
 
 ## Increment 10 — Sprint 191: Carry-forward pay-down — BUILT, REVIEW PENDING
