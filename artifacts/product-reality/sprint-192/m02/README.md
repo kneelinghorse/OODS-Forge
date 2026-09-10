@@ -65,7 +65,9 @@ Red implementation attempts are also retained: `component-packages-cwd-attempt.l
 - Six theme cells in each framework and all 24 AFTER design-loop views: passed.
 - First branch CI run `34511941202` on `457dfc79`: a11y-contract job `102987957052` passed, including both six-scope runs and shared styles browser proof. The package job `102987957156` exposed missing clean-checkout prerequisites: its historical baseline-fold suite imports built MCP readiness code and uses historical Git objects. The job now builds the workspace packages and checks out full history.
 - The same run's lint job `102987956921` rejected the new shadow's string type. Both authored shadow roles now use approved `$type: shadow`; the literal CSS value is preserved, avoiding composite expansion and keeping generated CSS and flat-value hashes byte-identical to the retained browser evidence. Token lint and token validation pass. `ci-*-first-failure.log` retains the failures.
-- The unrelated ECharts soak job `102987957128` also failed its post-warmup heap-slope assertion (2007.575 bytes/render versus ceiling 0); no soak source or threshold is changed. The next branch run will establish its current result.
-- Corrected CI run/job identities are pending; m02 remains In Progress until its package and browser gate execute green.
+- The separate ECharts soak job `102987957128` also failed its post-warmup heap-slope assertion (99% lower trend bound 2007.575 bytes per sample window versus ceiling 0); no soak source or threshold is changed. The corrected run repeats that failure (lower bound 1849.171); both logs are retained. This is unresolved broader CI debt to investigate before m07 handoff, not an overall-green CI claim.
+- Corrected branch run `34512553846` on `c5960dce`: **component-packages `102990242776` passed (579/0/0), a11y-contract `102990242550` passed, lint `102990242413` passed**. `ci-corrected-run.json` and the complete package/browser logs retain job and step identities. The m02 gate criteria are satisfied; the separate ECharts soak remains red as attributed above.
+
+`shadow-type-runtime-equivalence.json` rechecks the final source type correction against every retained runtime value hash.
 
 No full-suite capture was run; one five-suite capture is reserved for m07. Live bridge delivery remains the reviewed Sprint 191 head from m01.
