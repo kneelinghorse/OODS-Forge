@@ -51,12 +51,14 @@ describe('bounded Sprint 190 closeout rules',()=>{
     declaration.s190.publicPaths=declaration.s190.publicPaths.filter((path:string)=>path!=='packages/tokens/scripts/build-entry.mjs');
     expect(()=>deriveMovers('cd2a75a1',declaration,root,{sprintId:'sprint-190',missionId:'s190-m06',base:'c3a68d5f'})).toThrow();
   });
-  it('roadmap capability rows use the same registry counts and preserve review-pending status',()=>{
+  it('roadmap capability rows use the same registry counts and carry the certified-and-closed status',()=>{
     const read=(file:string)=>readFileSync(new URL(`../../../../${file}`,import.meta.url),'utf8');
     const registry=JSON.parse(read('packages/viz-core/src/registry/viz-recipes.v1.json'));
     const near=read('cmos/foundational-docs/roadmap/near.md'),program=read('cmos/foundational-docs/roadmap/product-reality-program.md');
     for(const prose of [near,program]) expect(prose).toContain(`${registry.filter((row:any)=>row.publicSvg).length}/13 public SVG`);
     expect(program).toContain(`${registry.filter((row:any)=>row.dashboardDrawn===true).length}/11 admitted types drawn`);
-    expect(near).toContain('## Increment 9 — Sprint 190: Visualization public render — BUILT, REVIEW PENDING');
+    expect(near).toContain('## Increment 9 — Sprint 190: Visualization public render — CERTIFIED AND CLOSED');
+    expect(near).not.toContain('Visualization public render — BUILT, REVIEW PENDING');
+    expect(near).toContain('Sprint 190 is **Completed**, independently certified by review `PS-2026-09-10-001` and decision `#1859`.');
   });
 });
