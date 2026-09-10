@@ -9,7 +9,8 @@ import {
   assertSurfaceOnlyDiff, BASELINE_PATH, deriveBaselineSurfaceFold, deriveReadinessSurface,
   FOLD_BASE, identityProjection, OVERLAY_PATH, resolveSurfaceEvidence, SURFACES, verifyBaselineSurfaceFold,
 } from '../../../scripts/product-reality/s185-baseline-surfaces.mjs';
-import { componentCapabilityBaseline, componentReconciliationProposal, NUCLEUS_COMPONENT_IDS, PORTED_COMPONENT_IDS } from '../src/index.js';
+import componentCapabilityBaseline from '../registry/historical/component-capability-baseline.v1.json';
+import { componentReconciliationProposal, NUCLEUS_COMPONENT_IDS, PORTED_COMPONENT_IDS } from '../src/index.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const readJson = (file: string) => JSON.parse(readFileSync(path.join(root, file), 'utf8'));

@@ -181,17 +181,10 @@ describe('Sprint 184 m03 contract-resolution closeout', () => {
     )).toBe('');
   });
 
-  it('versions Select, Stack, Text and VizAreaPreview at 1.1.0 without moving the nucleus key set', () => {
-    const entries = Object.entries(componentContracts);
-    const version11 = entries.filter(([, contract]) => contract.version === '1.1.0');
-    const version10 = entries.filter(([, contract]) => contract.version === '1.0.0');
-
-    expect(version11.map(([id]) => id).sort()).toEqual(['Select', 'Stack', 'Text', 'VizAreaPreview']);
-    expect(version10.map(([id]) => id).sort()).toEqual(
-      [...NUCLEUS_COMPONENT_IDS].filter((id) => !['Select', 'Stack', 'Text', 'VizAreaPreview'].includes(id)).sort(),
-    );
-    expect(entries).toHaveLength(version11.length + version10.length);
+  it('retains the original amended roots while Sprint 192 versions every governed contract at 1.1.0', () => {
     expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());
+    expect(NUCLEUS_COMPONENT_IDS).toEqual(expect.arrayContaining(['Select', 'Stack', 'Text', 'VizAreaPreview']));
+    for (const contract of Object.values(componentContracts)) expect(contract.version).toBe('1.1.0');
   });
 
   it('derives the exact advertised implementation movers in both directions for m07', () => {

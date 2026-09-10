@@ -541,6 +541,7 @@ function allowedCmosProvenance(relative) {
     relative === "packages/component-contracts/dist/index.js" ||
     relative ===
       "packages/component-contracts/registry/component-reconciliation.proposed.v1.json" ||
+    relative === "packages/component-contracts/registry/component-reconciliation.proposed.v2.json" ||
     /^artifacts\/structured-data\/oods-components-(?:\d{4}-\d{2}-\d{2}|s188-m04|s188-m05(?:-checkpoint)?)\.json$/.test(
       relative,
     ) ||

@@ -210,7 +210,7 @@ describe('s181 portable-runtime publish boundary', () => {
     expect(schema.required).not.toContain('obligationScope');
     expect(schema.properties.obligationScope.properties.approvedRuntimeCensus).toMatchObject({ type: 'null' });
     expect(createHash('sha256').update(runtimeBytes).digest('hex')).toBe(
-      '3a86283c441aaf8de5ef517cab0b9e83c6c9aaf564526ce7e03fb647d6f5a94f',
+      '6651359102fd2fc1a89b41f5e1076c5cc074ff3e6f26f59f3240f66740fb363f',
     );
   });
 

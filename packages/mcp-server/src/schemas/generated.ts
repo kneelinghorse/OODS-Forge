@@ -1029,7 +1029,7 @@ export namespace CatalogListOutputSchema {
       disposition: 'retain-all-obligations';
       controllingObligationDenominator: number;
       approvedRuntimeCensus: null;
-      classificationStatus: 'historical-proposals-unapproved';
+      classificationStatus: 'historical-proposals-unapproved' | 'proposed-awaiting-derek-approval';
     };
     /**
      * Array of component catalog entries
@@ -1202,6 +1202,10 @@ export namespace CatalogListOutputSchema {
      * Repo-relative evidence references supporting the state.
      */
     evidence: string[];
+    /**
+     * Explicit explanation for an unavailable, failed, or not-applicable capability surface.
+     */
+    reason?: string;
   }
 }
 export type CatalogListOutput = CatalogListOutputSchema.CatalogListOutput;

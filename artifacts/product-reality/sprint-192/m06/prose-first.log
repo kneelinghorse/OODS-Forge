@@ -1,0 +1,56 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge
+
+ ❯ |core| tests/verification/closeout-checklist.contract.test.ts (8 tests | 1 failed) 11ms
+   × Sprint 177 closeout carrier > covers the exact current set of 16 CI job keys once 6ms
+     → expected [ 'build', 'lint', 'typecheck', …(13) ] to deeply equal [ 'build', 'lint', 'typecheck', …(13) ]
+   ✓ Sprint 177 closeout carrier > keeps the historically dropped and commonly misstated CI operands visible 2ms
+   ✓ Sprint 177 closeout carrier > builds public-package declarations before the coverage contract reads them 0ms
+   ✓ Sprint 177 closeout carrier > serializes compiler and packaging proofs that can starve parallel readers 0ms
+   ✓ Sprint 177 closeout carrier > carries every closeout-only control and preserves the build-input run-last semantics 0ms
+   ✓ Sprint 177 closeout carrier > uses stable source blocks without prose shorthand 0ms
+   ✓ Sprint 177 closeout carrier > matches the eight lock-seeded s177-m07 success criteria byte for byte 1ms
+   ✓ Sprint 177 closeout carrier > wires all six quality-bar Application carriers to this checklist 0ms
+ ✓ |core| tests/verification/how-forge-works.contract.test.ts (6 tests) 28ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |core| tests/verification/closeout-checklist.contract.test.ts > Sprint 177 closeout carrier > covers the exact current set of 16 CI job keys once
+AssertionError: expected [ 'build', 'lint', 'typecheck', …(13) ] to deeply equal [ 'build', 'lint', 'typecheck', …(13) ]
+
+- Expected
++ Received
+
+@@ -5,14 +5,14 @@
+    "tenancy",
+    "tokens-validate",
+    "diagnostics-schema",
+    "tokens-governance",
+    "guardrails",
+-   "component-packages",
+    "a11y-contract",
+    "vr-test",
+    "coverage",
+    "scale-determinism",
+    "viz-determinism",
+    "echarts-render-soak",
+    "portable-runtime",
++   "component-packages",
+  ]
+
+ ❯ tests/verification/closeout-checklist.contract.test.ts:74:25
+     72|     ].map((match) => match[1]);
+     73| 
+     74|     expect(carrierRows).toEqual(workflowJobs);
+       |                         ^
+     75|     expect(workflowJobs).toHaveLength(16);
+     76|     expect(new Set(carrierRows).size).toBe(16);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 13 passed (14)
+   Start at  15:08:16
+   Duration  972ms (transform 254ms, setup 0ms, collect 534ms, tests 38ms, environment 0ms, prepare 223ms)
+

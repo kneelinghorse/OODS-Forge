@@ -467,12 +467,13 @@ Example output (truncated, default summary + pagination):
       "traits": ["Addressable"]
     }
   ],
-  "generatedAt": "2026-09-07T02:17:11Z",
+  "generatedAt": "2026-09-10T20:01:35Z",
   "stats": { "componentCount": 109, "traitCount": 41 }
 }
 ```
 
 Notes:
+- The `2026-09-10` export retains 109 obligations and 41 traits: 75 React/Vue implementations, 109 HTML mappings, 75 verified accessibility and theme rows; interaction is 24 verified and 51 explicitly not applicable. The remaining 34 rows are unavailable with reasons. These cells come from the generated capability ledger; classifications remain proposed and `approvedRuntimeCensus` stays null.
 - `status` and its filter retain legacy static-HTML mapping semantics: `stable` means mapped, `planned` means fallback. They do not advertise React/Vue availability or accessibility/theme/interaction maturity. Read each `productReality.surfaces` entry and its evidence.
 - Optional additive `obligationScope` exposes accepted retain-109 decision #1788 independently of historical per-row classification proposals. Its `approvedRuntimeCensus` is null: the old 98 split is unapproved. Missing runtime code does not exclude an ID. Existing filters, pagination and status values are unchanged; strict clients should accept the documented additive output field after reconnecting.
 - Unfiltered calls default to `detail: "summary"` with pagination (`pageSize: 25`). Use `page`/`pageSize` to navigate.
