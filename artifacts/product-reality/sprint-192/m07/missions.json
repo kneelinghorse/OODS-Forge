@@ -1,0 +1,99 @@
+{
+  "sprintStatus": "Active",
+  "builderSelfCertified": false,
+  "missionSnapshotAt": "2026-09-10",
+  "missions": [
+    {
+      "id": "s192-m01",
+      "name": "Deliver the reviewed Sprint 191 head to the live bridge and send the six prepared messages (closes #1315)",
+      "status": "Completed",
+      "successCriteria": [
+        "The primary checkout is at the delivered commit (5fdf8a18 or the PR #95 merge, recorded), the working tree is clean apart from pre-existing untracked delivery folders, and PM2 oods-forge-bridge was restarted and saved from it",
+        "/health through the bridge reports revision.commit equal to the delivered commit with 21 tools; the 17 live store file hashes are byte-identical before and after",
+        "viz_render brand A theme dark for line, scatter and treemap returns svgHash values equal to the Sprint 191 m05 matrix rows for those cells; code_generate Subscription/workflow with options.theme 'dark' and brand 'B' returns index.html carrying data-theme=\"dark\" data-brand=\"B\"",
+        "Exactly six messages were sent, each body byte-identical to its prepared request (requestSha256 matches), each message id recorded in the receipt; no other CMOS message was sent",
+        "Next-step #1315 is marked complete with the message ids as the reason; the mission README records the delivered commit, timestamps and the rollback path (previous checkout commit and pm2 dump)",
+        "No source file in the primary checkout was edited; the sprint worktree gained only artifacts/product-reality/sprint-192/m01/"
+      ]
+    },
+    {
+      "id": "s192-m02",
+      "name": "The component packages' proof runs in a gate, and every colour role the component CSS references resolves in all six scopes",
+      "status": "Completed",
+      "successCriteria": [
+        "A CI run on the branch executes the four component package suites and both packages' test:visual plus the component-styles browser spec, with run and job ids recorded; capture-s185-m01-baseline.mjs lists five suites and the component-packages suite's base run is retained green or attributed by file; root-core's project set is byte-unchanged",
+        "AMENDED (planning ruling, 2026-09-10, on the build session's baseline finding): the locked 174/42/52/80/26/7/1 were an artifact of the planning parser, which did not balance nested var() fallbacks; an independent re-measurement with a balanced parser reproduces the builder's inventory exactly. The base inventory at the m01 runtime head (stylesheets byte-identical to 5fdf8a18) is 191 distinct referenced names / 45 token-defined / 57 locally declared / 89 unresolved across all six scopes, 7 missing --sys-* names, and 6 unresolved names with at least one use without a fallback (--radius-md, --space-2, --space-3, --sys-focus-ring, --sys-surface-default, --sys-text-subtle; --sys-focus-ring is the only name never guarded). System-colour reachability is computed by the real resolver walking each fallback chain per scope (the planning figure 26 was a syntactic estimate: 19 names have a system colour as their direct fallback, 31 have one anywhere in the chain); the resolver's base count is retained with its definition. At the m02 head the script reports unresolved colour roles 0, reachable system-colour fallbacks outside forced-colors 0, all six unguarded names defined, and the non-colour unresolved count with its pinned value",
+        "The contract test passes at the m02 head and fails, naming the rule, when one authored cmp declaration is deleted (bite retained)",
+        "Every --cmp-* declaration added is an alias of a semantic token; dist/css/tokens.css scope blocks and the flat export change only by additive lines, each hash pair attributed; no light or dark pixel golden in viz-render or mcp-server moves",
+        "Design-loop receipts at 390/820/1440 in React and Vue for Subscription detail and workflow-detail, light/A and dark/A: computed Card background equals the resolved --sys-surface-raised of the scope, no element computes to a system colour, zero errors, zero overflow, computed parity empty; BEFORE receipts at the m01 head show the Canvas/CanvasText boxes",
+        "AMENDED (planning ruling, 2026-09-10): the base run of the four package suites is RED on three pre-existing assertions that never ran in a gate (components-react test/scenarios.spec.tsx:528,588 and components-vue test/scenarios.spec.ts:735: ArchiveSummary expecting false and raw ISO text, React StatusTimeline expecting '2 transitions available.'); they are stale expectations of pre-Sprint-189/191 output, not product defects. m02 updates them to the reviewed behaviour (Archived Yes/No, formatted timestamp, 'Current status: X') with attribution in the mission README, retains the red base logs, and records the corrected run green; nothing is skipped or declared green while red. Focused suites (component-styles, tokens, design-loop, the four package suites) pass; root typecheck passes; no full-suite capture"
+      ]
+    },
+    {
+      "id": "s192-m03",
+      "name": "Accessibility and interaction are measured for all 72 governed roots in React and Vue",
+      "status": "Completed",
+      "successCriteria": [
+        "Contracts v1.1: 72/72 carry role, name strategy and keyboard fields (keyboard may be an empty map only where the role is static and the scenario declares interaction 'none' with a reason); a contract test pins the count and rejects a contract with prose only",
+        "axe: React and Vue each run 72/72 governed roots through the shared scenarios with zero serious or critical violations at the m03 head (any pre-existing violation is fixed at the component or attributed with a typed reason, never filtered)",
+        "Interaction: every root is measured in both frameworks as verified (declared triggers executed with asserted effects) or not-applicable (with reason); counts per framework sum to 72; every root whose contract declares a keyboard map has an executed keyboard assertion in both frameworks",
+        "Bites retained: Tabs ArrowRight handler removal fails the interaction spec in React and Vue; dropping one scenario from the axe loop fails the 72 pin",
+        "packages/components-{react,vue}/evidence/{target}-readiness.v1.json carry accessibility and interaction evidence classes for 72/72 rows with refs to the executing spec files and passing states",
+        "Focused suites (component-contracts, components-react, components-vue) pass in the CI gate added by m02; root typecheck passes; no full-suite capture"
+      ]
+    },
+    {
+      "id": "s192-m04",
+      "name": "Theme is measured for all 72 governed roots across A/B × light/dark/hc in both frameworks, inside the CI job",
+      "status": "Completed",
+      "successCriteria": [
+        "Both harnesses render 72 roots × 6 cells (864 root-cells per framework) with per-root computed contrast and token assertions; the retained report lists every cell and screenshot hash",
+        "Light and dark cells: zero unattributed contrast failures below 4.5:1 text / 3:1 UI; any attributed failure names the root, pair, ratio and the carried reason; hc cells: every text pair resolves to visible system-colour text (no transparent or same-colour pair)",
+        "No computed colour in any light or dark cell is a CSS system colour (Canvas, CanvasText, Highlight, GrayText, ButtonFace, Field, FieldText)",
+        "The a11y-contract CI job executes test:visual for both packages and the styles browser spec on the branch, run and job ids recorded",
+        "Readiness documents carry visualThemes for 72/72 rows in both frameworks with refs to the retained report",
+        "Bite retained: forcing one cell's data-theme to a different value makes the harness fail naming the cell; focused suites pass; root typecheck passes; no full-suite capture"
+      ]
+    },
+    {
+      "id": "s192-m05",
+      "name": "The last three disputed rows are implemented on the new proof: AuditSummaryCard, SortIndicator, TimelineEntryLabel; the eleven-row disposition closes; the Invoice V007 warnings clear",
+      "status": "Completed",
+      "successCriteria": [
+        "The export and the built catalog_list report html mapped 109/109 (fallback 0) and react/vue implemented-evidence-complete 75/109 after m06's refresh; before it, the readiness documents already carry 75/75 rows in both frameworks",
+        "The three roots pass the m03 axe and interaction loops and the m04 six-cell theme harness in both frameworks with their contract v1.1 fields; SortIndicator's keyboard toggle and aria-sort states are asserted in both frameworks; TimelineEntryLabel truncation parity with InlineLabel is asserted",
+        "A fresh reachability census at the m05 head reports 77/77 schemas and 154/154 cells with zero OODS-V007 and zero OODS-N0*; the per-schema diff against the Sprint 191 m05 census enumerates only the schemas the three placements and the Invoice composer fix move, each by class",
+        "Packed-consumer gates pass for every cell where a new row is placed, in both frameworks, with screenshots retained; the workflow harness still passes 6/6",
+        "artifacts/product-reality/sprint-192/m05/README.md carries the eleven-row table with 11/11 resolved (9 implemented, TimelineEntryLabel implemented as a recipe, PaymentEventTimeline proposed alias) and the evidence path for each",
+        "Focused suites pass in the m02 gate; root typecheck passes; no full-suite capture"
+      ]
+    },
+    {
+      "id": "s192-m06",
+      "name": "The ledger tells the truth: regenerated from evidence, served by catalog_list, the stale baseline replaced, the 109-row classification proposal complete for Derek's approval",
+      "status": "Completed",
+      "successCriteria": [
+        "The built catalog_list (dist) returns, for every governed row, measured accessibility, interaction and theme cells (verified / not-applicable / fail) and returns unavailable with a reason for the 34 unimplemented rows; no governed row reads unverified; the retained call output is under the mission folder",
+        "artifacts/structured-data/manifest.json carries a new version tag and the export file name is admitted by scripts/runtime/assemble.mjs (regex unchanged, or widened with an attributed test); the structured-data boundary count change is attributed",
+        "@oods/component-contracts ./registry/capabilities resolves to the generated ledger; a test proves the ledger's react/vue/html cells equal the export's for 109/109 rows; the historical baseline file is retained byte-for-byte under its historical path",
+        "component-reconciliation.proposed.v2.json has 109 rows, each with a proposed class, evidence refs that exist at the head, a resolution and a compatibility note; approvedRuntimeCensus remains null in component-obligation-scope.v1.json, the schema and the export; the prepared approval request names every row whose class changes from v1",
+        "docs/how-forge-works.html, how-forge-works.contract.test.ts, docs/mcp/Tool-Specs.md and catalog.list.spec.ts carry the measured counts (109 obligations; 75 React/Vue; 109 HTML; the measured cell split) and pass",
+        "Focused suites (mcp-server contracts, component-contracts, prose tests) pass; python refresh tests pass; root typecheck passes; no full-suite capture"
+      ]
+    },
+    {
+      "id": "s192-m07",
+      "name": "Final proof, one five-suite capture under #1833, censuses, advertised diff from 5fdf8a18, reconnect prepared, near.md Increment 11, PR, review handoff",
+      "status": "In Progress",
+      "successCriteria": [
+        "Fresh component ledger census at the frozen implementation head equals the committed export: React/Vue implemented 75/109, HTML mapped 109/109, accessibility/interaction/theme measured for 75/75 governed rows in both frameworks with zero unverified, token-resolution census zero unresolved colour roles and zero reachable system-colour fallbacks; retained under artifacts/product-reality/sprint-192/m07/",
+        "Fresh composition census at the frozen head: 77/77 and 154/154 with zero OODS-V007; the per-schema diff from the Sprint 191 m05 census lists only the m05 placements and the Invoice fix, each by class; original and successor saved stores unchanged (15/16 and 16/16, 17 live hashes unchanged); workflow packed proof 6/6 at the frozen head",
+        "The visualization registry census equals the committed registry (13/13, 11/11, contrastPassed unchanged) and the 52-cell matrix hashes equal the Sprint 191 m05 hashes (no pixel movement)",
+        "One five-suite capture under #1833 (viz-core, viz-render, mcp-server, root-core, component-packages) with zero assertion failures; a lone wall-clock timeout receives exactly one isolated rerun retained beside the original and is disclosed; skips equal Sprint 191's 16 identities plus any attributed by file; every golden that moved in m02-m06 is attributed in the suite accounting; at most one corrective full capture, only after a code fix",
+        "Sprint-wide advertised-surface diff computed once from git diff --name-only 5fdf8a18..HEAD over the advertised path set; the reconnect draft names the catalog_list surface change, the export version and the three rows and is retained unsent for cmos-dashboard, forge-demos and aquex-mcp",
+        "A claim ledger binds every m01-m07 criterion to an execution with paths that exist at the frozen head and match their hashes, re-derived by the independent auditor; near.md gains an Increment 11 section at BUILT, REVIEW PENDING with the Status line and the measured-state rows updated from the ledger without relabeling the sprint as certified; the prose contract tests pass at the frozen head",
+        "The review handoff records builderSelfCertified:false, separateReviewRequired:true, the frozen implementation, execution and evidence commits, the export version, the ledger, the censuses, the theme and axe reports and the CI run ids (including the new component-packages job); Sprint 192 stays Active; a PR from codex/sprint-192-component-truth to OODS-pro is opened"
+      ]
+    }
+  ]
+}

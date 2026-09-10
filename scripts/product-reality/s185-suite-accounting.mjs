@@ -15,6 +15,7 @@ const BASELINES = {
 };
 const INITIAL_CLOSEOUT = 'artifacts/product-reality/sprint-185/m05/four-suite-closeout-attempt-1/four-suite-baseline.json';
 export const SUITES = Object.freeze(['viz-core', 'viz-render', 'mcp-server', 'root-core']);
+export const S192_SUITES = Object.freeze([...SUITES, 'component-packages']);
 const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const countTests = assertions => ({ total: assertions.length,
@@ -96,9 +97,9 @@ function meaningfulFailure(messages, workspace = '') {
  * @param {{text: string, suite: string, file: string, testKey: string|null, caption?: string|null, scopeCaptions?: string[], captionOccurrences?: number}} options
  */
 export function extractRawLogFailure({ text, suite, file, testKey, caption = null, scopeCaptions = [], captionOccurrences = 1 }) {
-  assert(SUITES.includes(suite), `Unknown captured suite: ${suite}`);
+  assert(S192_SUITES.includes(suite), `Unknown captured suite: ${suite}`);
   if (testKey !== null && captionOccurrences !== 1) return { status: 'unresolved', reason: 'ambiguous-assertion-caption' };
-  const prefix = suite === 'root-core' ? '' : `packages/${suite}/`;
+  const prefix = ['root-core', 'component-packages'].includes(suite) ? '' : `packages/${suite}/`;
   if (!file.startsWith(prefix)) return { status: 'unresolved', reason: 'file-outside-suite' };
   const reporterFile = file.slice(prefix.length);
   const rawLines = text.split('\n');
@@ -202,6 +203,7 @@ export function retainedCaptureReference(aggregatePath, ref, originalRoot) {
 
 /** Decision 1741 permits captured receipts and named derived outputs, never arbitrary artifact fixtures. */
 export function allowedReviewEvidence(file, sprintId = 'sprint-185') {
+  if (sprintId === 'sprint-192') return /^artifacts\/product-reality\/sprint-192\/m07\/(?:(?:five-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)|README\.md)$/.test(file);
   if (sprintId === 'sprint-191') return /^artifacts\/product-reality\/sprint-191\/m05\/(?:(?:four-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)|README\.md)$/.test(file);
   if (sprintId === 'sprint-190') return /^artifacts\/product-reality\/sprint-190\/m06\/(?:(?:four-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log|md)|README\.md)$/.test(file);
   if (sprintId === 'sprint-189') return /^artifacts\/product-reality\/sprint-189\/m06\/(?:four-suite-closeout[^/]*|closeout|ci)\/.*\.(?:json|log)$/.test(file);
@@ -306,9 +308,10 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   sprintId = 'sprint-185', missionId = 's185-m05', baselinePath, attempts, approvedTimeout, timeoutRerun,
   capturePath = sprintId !== 'sprint-185' ? `artifacts/product-reality/${sprintId}/m06/four-suite-closeout/four-suite-baseline.json` : `${EVIDENCE_ROOT}/four-suite-baseline.json` }) {
   assert(executionHead && reviewHead, 'Both actual execution head and separate frozen review head are required.');
-  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191'].includes(sprintId), 'Unsupported sprint.');
-  if (sprintId !== 'sprint-185') assert.equal(missionId, sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : 's186-m06');
-  const baselinePaths = sprintId === 'sprint-191'
+  assert(['sprint-185', 'sprint-186', 'sprint-187', 'sprint-188', 'sprint-189', 'sprint-190', 'sprint-191', 'sprint-192'].includes(sprintId), 'Unsupported sprint.');
+  if (sprintId !== 'sprint-185') assert.equal(missionId, sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : 's186-m06');
+  const baselinePaths = sprintId === 'sprint-192'
+    ? { sprint191Closeout: baselinePath ?? 'artifacts/product-reality/sprint-191/m05/four-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-191'
     ? { sprint190Closeout: baselinePath ?? 'artifacts/product-reality/sprint-190/m06/four-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-190'
     ? { sprint189Closeout: baselinePath ?? 'artifacts/product-reality/sprint-189/m06/four-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-189'
     ? { sprint188Closeout: baselinePath ?? 'artifacts/product-reality/sprint-188/m06/four-suite-closeout/four-suite-baseline.json' } : sprintId === 'sprint-188'
@@ -352,7 +355,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     });
     for (const run of aggregate.runs) {
       const runOutput = { run: run.run, cleanBefore: run.cleanBefore, cleanAfter: run.cleanAfter, suiteExecutionIds: [] };
-      const selected = capture.suiteSelection === 'all' ? SUITES : capture.suiteSelection;
+      const selected = capture.suiteSelection === 'all' ? (aggregate.sprintId === 'sprint-192' ? S192_SUITES : SUITES) : capture.suiteSelection;
       assert.deepEqual(run.suites.map(row => row.suite).sort(), [...selected].sort(), 'A captured suite is missing or duplicated.');
       for (const embedded of run.suites) {
         const receiptPath = captureRef(embedded.receipt.path);
@@ -412,7 +415,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   const baselines = Object.fromEntries(Object.entries(baselinePaths).map(([cohort, file]) => [cohort, loadCapture(file, cohort)]));
   const closeout = loadCapture(capturePath, 'closeout');
   assert.equal(closeout.measuredHead, executionHead, 'Requested execution head does not match actual capture.');
-  assert.equal(closeout.suiteSelection, 'all', 'Closeout must execute all four suites.');
+  assert.equal(closeout.suiteSelection, 'all', 'Closeout must execute every suite in its sprint profile.');
   assert(closeout.runs.length > 0, 'Closeout captured no suite runs.');
   if (!closeout.cleanBeforeSetup.clean || !closeout.cleanAfterSetup.clean || closeout.runs.some(run => !run.cleanBefore.clean || !run.cleanAfter.clean))
     issues.push({ kind: 'closeout-tree-not-clean' });
@@ -424,7 +427,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
     role: 'Retained initial capture only. These executions are neither final closeout comparisons nor historical failure candidates.',
     ...loadCapture(attempt.path, `closeout-attempt-${index + 1}`, attempt.originalReferenceRoot) };
   });
-  if (['sprint-189', 'sprint-190', 'sprint-191'].includes(sprintId)) {
+  if (['sprint-189', 'sprint-190', 'sprint-191', 'sprint-192'].includes(sprintId)) {
     assert(closeout.runs.length === 1 && closeoutAttempts.length <= 1, 'Decision 1833 allows one capture and at most one corrective capture.');
     for (const [index, attempt] of closeoutAttempts.entries()) {
       const failures = observedFailures.filter(row => row.cohort === `closeout-attempt-${index + 1}`);
@@ -466,7 +469,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
   } else {
     assertEvidenceOnlyHeadChanges(headChanges, sprintId);
     if (timeoutRerun) {
-      assert(['sprint-190','sprint-191'].includes(sprintId));
+      assert(['sprint-190','sprint-191','sprint-192'].includes(sprintId));
       timeoutAcceptance=validateSprint190TimeoutRerun({failures:closeoutFailures,rerun:json(timeoutRerun),readBytes:bytes,executionHead});
       closeoutFailures[0].status='isolated-timeout-disclosed';
     }
@@ -536,7 +539,7 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
         runs: report.runs.map(run => ({ run: run.run, suites: run.suites.map(row => ({ suite: row.suite, exitCode: row.exitCode,
           status: row.status, countsAsReportedHistorically: row.vitest?.tests ?? null, receipt: row.receipt })) })) };
     });
-  const goldenAttribution = sprintId === 'sprint-191' ? json('artifacts/product-reality/sprint-191/m05/golden-attribution.json') : sprintId === 'sprint-190' ? json('artifacts/product-reality/sprint-190/m03/golden-attribution.json') : undefined;
+  const goldenAttribution = sprintId === 'sprint-192' ? json('artifacts/product-reality/sprint-192/m07/golden-attribution.json') : sprintId === 'sprint-191' ? json('artifacts/product-reality/sprint-191/m05/golden-attribution.json') : sprintId === 'sprint-190' ? json('artifacts/product-reality/sprint-190/m03/golden-attribution.json') : undefined;
   if (goldenAttribution) for (const row of goldenAttribution.files) {
     assert.equal(hash(bytes(row.file)), row.afterSha256, `m03 golden changed: ${row.file}`);
     assert.equal(hash(execFileSync('git', ['show', `${goldenAttribution.beforeHead}:${row.file}`], { cwd: root, maxBuffer: 32 * 1024 * 1024 })), row.beforeSha256);
@@ -552,13 +555,14 @@ export function deriveSuiteAccounting({ root = ROOT, executionHead, reviewHead, 
       tokenDifferences: refs.get(tokenDifferences), files: goldenAttribution.files },
       laterPixelGoldenChanges: [], disclosure: 'The m02 dashboard migration precedes the one m03 scope migration. All 15 m03 file hashes are verified unchanged at closeout.' };
   }
-  return { schemaVersion: '1.0.0', mission: missionId, kind: 'four-suite-execution-and-delta-accounting',
+  return { schemaVersion: '1.0.0', mission: missionId, kind: sprintId === 'sprint-192' ? 'five-suite-execution-and-delta-accounting' : 'four-suite-execution-and-delta-accounting',
     status: issues.length ? 'failed' : 'passed', executionHead, reviewHead,
     headRelation: { decision: 1741, ancestor, changedEvidencePaths: headChanges, executableInputsUnchanged: !approvedTimeout,
       ...(approvedTimeout ? { capturedRuntimeAndTestSourcesUnchanged: true, postCaptureDerivationOnly: true, proposalHead: '0f6891e3b4a8decb0626d49dbf6fa870bb712276', derivationFiles: S188_DERIVATION_FILES } : {}),
       limitation: approvedTimeout ? 'Actual capture and diagnostic heads remain unchanged. Decision 1830 permits separately frozen approval and audit derivation inputs; no captured runtime or test input changes.' : 'Actual receipts retain executionHead. A later reviewHead is an evidence-only descendant, not a relabeled test execution.' },
     ...(timeoutAcceptance ? { timeoutAcceptance } : {}),
     ...(goldenAttribution ? { goldenAttribution, goldenHistory } : {}),
+    ...(sprintId === 'sprint-192' ? { addedSuite: { suite: 'component-packages', reason: 'Decision1884 adds the four-package runner as the fifth suite; root-core project membership is unchanged.', executionIds: executions.filter(row => row.cohort === 'closeout' && row.suite === 'component-packages').map(row => row.id) } } : {}),
     baselines, closeout, closeoutAttempts, executions, comparisons, historicalAttempts, closeoutFailures, unattributedDeltas, unusedAttributions,
     unusedFailureDispositions, validationIssues: issues,
     references: [...refs.values()].sort((a, b) => a.path.localeCompare(b.path)),
@@ -574,7 +578,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const failurePath = argument('--failures');
   const sprintId = argument('--sprint') ?? 'sprint-185';
   const report = deriveSuiteAccounting({ executionHead: argument('--execution-head'), reviewHead: argument('--review-head'),
-    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
+    sprintId, missionId: argument('--mission') ?? (sprintId === 'sprint-192' ? 's192-m07' : sprintId === 'sprint-191' ? 's191-m05' : sprintId === 'sprint-190' ? 's190-m06' : sprintId === 'sprint-189' ? 's189-m06' : sprintId === 'sprint-188' ? 's188-m06' : sprintId === 'sprint-187' ? 's187-m06' : sprintId === 'sprint-186' ? 's186-m06' : 's185-m05'),
     ...(argument('--capture') ? { capturePath: argument('--capture') } : {}),
     ...(argument('--baseline') ? { baselinePath: argument('--baseline') } : {}),
     ...(argument('--timeout-rerun') ? { timeoutRerun: argument('--timeout-rerun') } : {}),
