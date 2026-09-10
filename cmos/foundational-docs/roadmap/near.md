@@ -1,14 +1,16 @@
 # Near Roadmap
 
-**Status:** ACTIVE — Sprint 191 Increment 10 BUILT, REVIEW PENDING (#1862); program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`; Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`
+**Status:** ACTIVE — program decision `#1652`; Sprint 186 certified by `#1785`; Sprint 187 independently certified and closed by `#1809`; carries preserved by `#1810`; Sprint 188 independently certified and closed by `#1831`; craft carries preserved by `#1832`; capture policy `#1833`; Sprint 189 independently certified and closed by `#1844`; residual craft carries `#1845`; Sprint 190 independently certified and closed by `#1859`; residual visualization carries `#1860`; Sprint 191 independently certified and closed by `#1880`; residual carries `#1881`
 
-**Updated:** 2026-09-10 — Sprint 191 carry-forward pay-down; builder evidence awaits independent review
+**Updated:** 2026-09-10 — Sprint 191 review session `PS-2026-09-10-008`; independently certified and closed; the carry-forward is paid down: zero measured contrast failures across 13 × light/dark × A/B, the generated app takes its theme, 77/77 and 154/154 with three packed workflow apps, every `#1845` item resolved, `#1318`–`#1322` closed
 
 **Sprint 188:** CERTIFIED AND CLOSED. Build base `cd8ee986`; Mission 1 delivered that merged head and the authentic User-form successor. Missions 2–5 built the generated React/Vue Subscription workflow and eight declared billing/archive recipes. Mission 6 froze the final proof and handed off. Review `PS-2026-09-08-011` (decision `#1831`) inspected all 36 frozen-head screenshots in both frameworks: the workflow runs end to end with all four states and criterion 8 is opened; usable is not certified, and the ranked craft carries are preserved by `#1832`. See [Increment 7](#increment-7--sprint-188-ship-then-make-the-subscription-app-whole--certified-and-closed).
 
 **Sprint 189:** CERTIFIED AND CLOSED. Build base `f4cd1ba3`; Mission 1 delivered that merged head to the live bridge and sent the Sprint 188 reconnect. Missions 2–5 built the browser design loop (`scripts/design-loop`, public `design.preview`) and used it to retire all seven `#1832` carries at the producer. Mission 6 froze the final proof and handed off. Review `PS-2026-09-09-002` (decision `#1844`) inspected the 24 frozen-head receipts and 72 screenshots in both frameworks: every `#1832` item is resolved by exact receipt lines and criterion 8 is certified for the Subscription app; the residual craft list is `#1845`. See [Increment 8](#increment-8--sprint-189-browser-design-loop--certified-and-closed).
 
 **Sprint 190:** CERTIFIED AND CLOSED. Build base `c3a68d5f`; Mission 1 delivered the merged Sprint 189 head `f19a654c` to the live bridge and sent the Sprint 189 reconnect. Missions 2–5 put the shared renderer on the public surface: `viz.render` returns SVG for all 13 types, dashboard HTML draws 11/11 admitted types, theme and brand resolve from the token scopes, `artifact.certify` grades the requested scope, VizAreaPreview renders a real chart on Subscription/detail, and one measured registry equals its public-handler census. Mission 6 froze the final proof and handed off. Review `PS-2026-09-10-001` (decision `#1859`) re-ran the registry contract test and the independent auditor at the frozen head and inspected the 52-cell matrix, contrast rows and browser receipts; the residual visualization carries are `#1860`. See [Increment 9](#increment-9--sprint-190-visualization-public-render--certified-and-closed).
+
+**Sprint 191:** CERTIFIED AND CLOSED. Build base `d3a99d39`; no delivery mission, because the bridge already served that head. Mission 1 put a measured dark categorical palette into the A/B token scopes, repaired light slot 04, added the registry `contrastPassed` cell and gave `code.generate` theme/brand options so the generated app takes its theme. Mission 2 closed OODS-N016 generically so the Organization and User workflows generate (77/77, 154/154) with six packed cells green. Mission 3 retired the seven `#1845`/chart craft items and `#1274` at the producer with BEFORE/AFTER receipts. Mission 4 closed maintenance `#1318`–`#1322` on receipts and rebuilt the `#1315` bundle clean. Mission 5 froze the final proof and handed off. Review `PS-2026-09-10-008` (decision `#1880`) recomputed all 24 palette cells from the built CSS, re-ran the independent auditor and the contract specs at the head and inspected the dark and AFTER screenshots in both frameworks; the residual carries are `#1881`. See [Increment 10](#increment-10--sprint-191-carry-forward-pay-down--certified-and-closed).
 
 **PR integration:** PR #84's initial CI run failed three jobs after the frozen local proof. [CI follow-up](../../planning/forge-s187-ci-followup.md), session `PS-2026-09-07-003` / decision #1811, records the correction; remote acceptance is determined by the checks on the corrected PR head. PR #84 and PR #85 subsequently merged into `OODS-pro` at `cd8ee986`. Sprint 188 merged through PR #86 (`33a20d0e`) and PR #87 (`ed0d5750`); remote CI on the frozen head `7fc3c9e0` passed all three workflows before the review.
 
@@ -43,7 +45,7 @@ follows runnable product foundations.
 | Fresh composition | **77/77 schemas and 154/154 build generation cells**, including 66/66 single-screen schemas and 132/132 cells; all public workflow schemas generate | Packed workflow coverage is 6/6 across Subscription, Organization and User; other generating paths retain their named runtime evidence |
 | Saved designs | Unchanged original store remains 15/16 and 30 generation cells; exact authentic successor remains 16/16 and 32 cells | Historical negative retained; the successor is a distinct store. Served adoption remains explicit delivery work |
 | Delivery and discovery | Current Forge-source refresh dated 2026-09-07; optional obligationScope explains retain-109. Actual governed/unavailable catalog cases verified. Isolated bridge, schema-save/load and rollback rehearsal passed | PM2 serves a separate older checkout; generic health does not identify compiled revision. Its public schema-load failure is retained. Deployment/adoption/reconnect #1374/#1379/#1384 remain pending |
-| Visualization | 13/13 public SVG in light/dark × A/B; 11/11 admitted types drawn; contrastPassed light/dark for 9 categorical types, [] for 4 exempt; 5 certified / 8 uncertified; area placed on Subscription/detail | Sprint 191 BUILT, REVIEW PENDING; HC pixels deferred (#1851); registry/census is the capability source |
+| Visualization | 13/13 public SVG in light/dark × A/B; 11/11 admitted types drawn; contrastPassed light/dark for 9 categorical types, [] for 4 exempt; 5 certified / 8 uncertified; area placed on Subscription/detail | Sprint 191 certified and closed by `#1880`; HC pixels deferred (#1851); the Role-A caution and eight uncertified ECharts types carried by `#1881`; registry/census is the capability source |
 
 The exact runtime and saved-store hashes are in
 [the m06 evidence packet](../../../artifacts/product-reality/sprint-187/m06/README.md).
@@ -287,6 +289,10 @@ Subscription app is certified usable; the residual craft list is `#1845`. Sprint
 (`f19a654c`). The Sprint 190 review (`#1859`) closed the visualization public-render surface. Decision `#1861`
 records that merged head `d3a99d39` was already delivered and the reconnect sent to cmos-dashboard,
 forge-demos and aquex-mcp before this build; archived dashboard-demos is excluded.
+The Sprint 191 review (`#1880`) certified the carry-forward pay-down and closed the sprint; the residual carries
+are `#1881`. PR #94 merged into `OODS-pro` at `5fdf8a18`. Sprint 192 m01 delivers that merged head to the bridge,
+sends the prepared reconnect to cmos-dashboard, forge-demos and aquex-mcp, and sends the `#1315` re-pin notices to
+aquex-mcp, forge-demos and shopify-forge, which closes `#1315`.
 
 
 ## Increment 8 — Sprint 189: Browser design loop — CERTIFIED AND CLOSED
@@ -325,7 +331,7 @@ The default uses CSS light/A. The flat token export remains byte-identical; m03 
 
 Subscription/detail includes a static sample-payment SVG above the timeline in HTML, React and Vue; workflow records each receive a seeded SVG. Editing the form does not regenerate the chart. This placement changes only Subscription/detail in the 66-schema population. The wider 77-schema population retains the Organization/User workflow OODS-N016 gaps. Generation coverage does not imply full runtime coverage for every context.
 
-Mission 1 delivered the reviewed Sprint 189 head and its authorized reconnects. Decision `#1861` records later delivery of the merged Sprint 190 head `d3a99d39` and the sent reconnects to cmos-dashboard, forge-demos and aquex-mcp; archived dashboard-demos is excluded. The separate Sprint 191 candidate and Sprint 192 notice plan remain build-only and prepared-unsent.
+Mission 1 delivered the reviewed Sprint 189 head and its authorized reconnects. Decision `#1861` records later delivery of the merged Sprint 190 head `d3a99d39` and the sent reconnects to cmos-dashboard, forge-demos and aquex-mcp; archived dashboard-demos is excluded. Sprint 191 was certified by `#1880` and merged at `5fdf8a18`; the Sprint 192 reconnect and re-pin notice plans remain prepared-unsent until Sprint 192 m01 sends them.
 
 **Review verdict (`PS-2026-09-10-001`, decision `#1859`):** the registry-equals-census contract test and the Sprint 190
 prose tests were re-run at the frozen head (12/12), and the independent closeout auditor was re-run from a fresh
@@ -344,11 +350,14 @@ report `conformant:false` for dark; HC pixels deferred (#1851); the generated ap
 under a duplicated title; eight ECharts-primary types remain uncertified with `conformant:null`.
 
 
-## Increment 10 — Sprint 191: Carry-forward pay-down — BUILT, REVIEW PENDING
+## Increment 10 — Sprint 191: Carry-forward pay-down — CERTIFIED AND CLOSED
 
-Build base `d3a99d39`; authority `#1862`. The frozen implementation and execution commits are recorded
-in `artifacts/product-reality/sprint-191/m05/closeout/review-handoff.json`. Sprint 191 remains Active;
-`builderSelfCertified:false` and `separateReviewRequired:true`.
+Sprint 191 is **Completed**, independently certified by review `PS-2026-09-10-008` and decision `#1880`. Build base
+`d3a99d39`; authority `#1862`; built under decisions #1863–#1879. The
+[handoff](../../../artifacts/product-reality/sprint-191/m05/closeout/review-handoff.json) binds the frozen
+implementation `be5d2b30`, execution `e8027e64` and review-input `dc0f4789` commits; PR #94 merged into `OODS-pro` at
+`5fdf8a18`. Historical builder receipts retain `builderSelfCertified:false` and `separateReviewRequired:true`; they
+are not relabeled.
 
 The nine categorical chart types report `contrastPassed: [light, dark]` across brands A/B; the four
 exempt types retain `[]`. Role-C canvas contrast passes while Role-A cautions remain visible. HC pixels
@@ -370,5 +379,25 @@ Maintenance `#1318`–`#1322` is complete. `#1315` bundle re-pin delivery remain
 notices for cmos-dashboard, forge-demos and aquex-mcp, plus re-pin notices for aquex-mcp, forge-demos
 and shopify-forge, remain **prepared-unsent** for Sprint 192. Final proof includes one four-suite
 capture under `#1833`, the 52-cell matrix rendered twice, registry-derived censuses, the reproducible
-portable bundle, Git-derived advertised movers and the independent output audit. Independent review
-determines acceptance; this section does not certify the sprint.
+portable bundle, Git-derived advertised movers and the independent output audit.
+
+**Review verdict (`PS-2026-09-10-008`, decision `#1880`):** the six categorical slots were recomputed from the built
+`tokens.css` (oklch → sRGB → WCAG) for A/B × light/dark: 24/24 cells at or above 3:1 (minima 3.00 A/light slot 04,
+3.03 B/light slot 04, 3.16 B/dark slot 02), paints identical to the builder's token proof; the retained contrast table
+holds 52 scope observations, 36 pass / 16 exempt / 0 fail, and the 52-cell matrix plus four dashboards are byte-stable
+across two renders. The independent auditor was re-run from a fresh invocation, 33/33 criteria, 8 executions, 864
+frozen paths; the s190/s191 closeout, theme and collections specs (22/22) and the root prose and runtime-boundary
+tests (18/18) pass at the head. The census is 77/77 and 154/154 with exactly Organization/workflow and User/workflow
+changing status, 34 attributed and 0 unattributed artifact changes; the packed apps pass 6 cells and 48 gates. The
+dark Vue 390 detail and dark React 1440 list screenshots show the shell, chrome and chart on the dark/B canvas; the
+AFTER Vue 390 list, Vue 1440 detail, Vue 390 archived and Organization React 390 form screenshots show the search
+label unwrapped, no pagination bullets, humanized history with one timeline, a four-point payment series under one
+title, the archived badge inside its card and a seeded address entry. The corrective four-suite capture is zero
+failures (viz-core 1397, viz-render 69, mcp-server 6110, root 6301, the same 16 skip identities) and the merge-head
+CI run is green. Maintenance `#1318`–`#1322` close on their receipts, so the carry-forward pay-down is complete and
+Sprint 191 is closed. The truthful residue is ranked in `#1881` and none of it blocks closure: HC pixels deferred
+(#1851); eight ECharts-primary types uncertified; the Role-A pairwise minimum just under the clean target; two recipe
+surfaces (CancellationSummary and the Billing tab panel) unthemed against the canvas; the standalone list context
+truncating its Sort select at 390 and carrying no rows; raw lifecycle words on timeline entries and sample payment
+amounts unrelated to the record price; Organization and User workflows generated and gate-green but below
+Subscription's craft bar.
