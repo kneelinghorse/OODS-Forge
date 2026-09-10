@@ -14,6 +14,9 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   if (!schema.objectSchema || !schema.workflow) return failure('Workflow applications require an object schema and workflow contract.');
   if (!/^[A-Za-z][A-Za-z0-9]*$/.test(schema.workflow.object)) return failure('Workflow object must use a canonical alphanumeric registry name.');
   if (schema.workflow.screens.map((screen) => screen.context).join(',') !== CONTEXTS.join(',')) return failure('Workflow requires list, detail, form and timeline screens in order.');
+  const theme = options.theme ?? 'light';
+  const brand = options.brand ?? 'A';
+  const mountTheme = `for (const element of [document.documentElement, document.body]) { element.dataset.theme = ${JSON.stringify(theme)}; element.dataset.brand = ${JSON.stringify(brand)}; }\n`;
   const files: NonNullable<CodegenResult['files']> = [];
   const actionMap = new Map<string, GeneratedArtifactAction>();
   const imports = new Set<string>(['@oods/component-contracts']);
@@ -171,15 +174,15 @@ ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`
     imports.add('react-dom/client');
     imports.add('react-dom/server');
     files.push({ path: 'src/ssr.tsx', contents: "import React from 'react';\nimport { renderToString } from 'react-dom/server';\nimport App from './App';\nimport type { StoreOptions } from './store';\nexport function renderApp(options: StoreOptions = {}) { return renderToString(<App {...options} />); }\n" });
-    files.push({ path: 'src/main.tsx', contents: "import React from 'react';\nimport { createRoot, hydrateRoot } from 'react-dom/client';\nimport App from './App';\nconst query = new URLSearchParams(window.location.search);\nconst root = document.getElementById('app')!;\nconst app = <App empty={query.get('mode') === 'empty'} fail={query.get('mode') === 'error'} latency={Number(query.get('latency') ?? 180)} />;\nif (root.hasChildNodes()) hydrateRoot(root, app); else createRoot(root).render(app);\n" });
+    files.push({ path: 'src/main.tsx', contents: mountTheme + "import React from 'react';\nimport { createRoot, hydrateRoot } from 'react-dom/client';\nimport App from './App';\nconst query = new URLSearchParams(window.location.search);\nconst root = document.getElementById('app')!;\nconst app = <App empty={query.get('mode') === 'empty'} fail={query.get('mode') === 'error'} latency={Number(query.get('latency') ?? 180)} />;\nif (root.hasChildNodes()) hydrateRoot(root, app); else createRoot(root).render(app);\n" });
   } else {
     imports.add('@vitejs/plugin-vue');
     imports.add('@vue/server-renderer');
     files.push({ path: 'src/ssr.ts', contents: "import { createSSRApp } from 'vue';\nimport { renderToString } from '@vue/server-renderer';\nimport App from './App.vue';\nimport type { StoreOptions } from './store';\nexport function renderApp(options: StoreOptions = {}) { return renderToString(createSSRApp(App, { ...options })); }\n" });
-    files.push({ path: 'src/main.ts', contents: "import { createApp, createSSRApp } from 'vue';\nimport App from './App.vue';\nconst query = new URLSearchParams(window.location.search);\nconst root = document.getElementById('app')!;\n(root.hasChildNodes() ? createSSRApp : createApp)(App, { empty: query.get('mode') === 'empty', fail: query.get('mode') === 'error', latency: Number(query.get('latency') ?? 180) }).mount('#app');\n" });
+    files.push({ path: 'src/main.ts', contents: mountTheme + "import { createApp, createSSRApp } from 'vue';\nimport App from './App.vue';\nconst query = new URLSearchParams(window.location.search);\nconst root = document.getElementById('app')!;\n(root.hasChildNodes() ? createSSRApp : createApp)(App, { empty: query.get('mode') === 'empty', fail: query.get('mode') === 'error', latency: Number(query.get('latency') ?? 180) }).mount('#app');\n" });
     files.push({ path: 'vite.config.mjs', contents: "import vue from '@vitejs/plugin-vue';\nexport default { plugins: [vue()] };\n" });
   }
-  files.push({ path: 'index.html', contents: `<!doctype html>\n<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${schema.workflow.object} workspace</title></head><body><div id="app"></div><script type="module" src="/src/main.${framework === 'react' ? 'tsx' : 'ts'}"></script></body></html>\n` });
+  files.push({ path: 'index.html', contents: `<!doctype html>\n<html lang="en" data-theme="${theme}" data-brand="${brand}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${schema.workflow.object} workspace</title></head><body data-theme="${theme}" data-brand="${brand}"><div id="app"></div><script type="module" src="/src/main.${framework === 'react' ? 'tsx' : 'ts'}"></script></body></html>\n` });
   files.push({ path: 'src/app.css', contents: APP_CSS });
   files.push({ path: 'tsconfig.json', contents: JSON.stringify({ compilerOptions: { target: 'ES2022', module: 'ESNext', moduleResolution: 'Bundler', strict: true, jsx: 'react-jsx', esModuleInterop: true, skipLibCheck: false, noEmit: true, lib: ['ES2022', 'DOM', 'DOM.Iterable'] }, include: ['src'] }, null, 2) + '\n' });
   files.push({ path: 'package.json', contents: JSON.stringify({ name: `${schema.workflow.object.toLowerCase()}-workflow-${framework}`, version: '1.0.0', private: true, type: 'module', scripts: { dev: 'vite --host 127.0.0.1', build: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit && vite build`, typecheck: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit` }, dependencies: { '@oods/component-styles': '0.1.0', [`@oods/components-${framework}`]: '0.1.0', ...(imports.has('class-variance-authority') ? { 'class-variance-authority': '0.7.1' } : {}), ...(framework === 'react' ? { react: '19.2.0', 'react-dom': '19.2.0' } : { vue: '3.5.42', '@vue/server-renderer': '3.5.42' }) }, devDependencies: { '@types/node': '20.19.21', typescript: '5.9.3', vite: '6.4.1', ...(framework === 'react' ? { '@types/react': '19.2.2', '@types/react-dom': '19.2.1' } : { '@vitejs/plugin-vue': '5.2.4', 'vue-tsc': '3.3.11' }) } }, null, 2) + '\n' });
@@ -258,35 +261,37 @@ const values = computed(() => state.value.draft as Record<string, unknown>);
 `;
 }
 
-const APP_CSS = `* { box-sizing: border-box; }
-body { margin: 0; background: #f5f6f8; color: #1c2535; font-family: system-ui, sans-serif; }
+const APP_CSS = `:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--sys-surface-canvas); color: var(--sys-text-primary); font-family: system-ui, sans-serif; }
 .workflow-app { max-width: 1100px; margin: auto; padding: 40px 28px; }
 .workflow-heading, .workflow-pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.workflow-eyebrow { font-size: 11px; letter-spacing: .16em; color: #57657b; font-weight: 700; }
+.workflow-eyebrow { font-size: 11px; letter-spacing: .16em; color: var(--sys-text-secondary); font-weight: 700; }
 .workflow-heading h1 { margin: 8px 0 28px; font-size: clamp(24px, 4vw, 36px); letter-spacing: -.035em; }
-.workflow-mode { font-size: 12px; color: #57657b; }
+.workflow-mode { font-size: 12px; color: var(--sys-text-secondary); }
 .workflow-app nav { display: flex; gap: 6px; padding-bottom: 20px; flex-wrap: wrap; }
-.workflow-app button { cursor: pointer; font: inherit; border: 1px solid #cdd4df; padding: 9px 14px; background: white; border-radius: 6px; color: inherit; }
+.workflow-app button { cursor: pointer; font: inherit; border: 1px solid var(--sys-border-strong); padding: 9px 14px; background: var(--sys-surface-raised); border-radius: 6px; color: inherit; }
 .workflow-app button:disabled { opacity: .5; cursor: default; }
-.workflow-app button[aria-current="page"] { background: #213957; color: white; border-color: #213957; }
-.workflow-app :focus-visible { outline: 3px solid #3479c9; outline-offset: 3px; }
+.workflow-app button[aria-current="page"] { background: var(--sys-surface-interactive-primary-default); color: var(--sys-text-on-interactive); border-color: var(--sys-surface-interactive-primary-default); }
+.workflow-app :focus-visible { outline: 3px solid var(--sys-focus-ring-outer); outline-offset: 3px; }
 .workflow-app label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
-.workflow-app input:not([type="checkbox"]), .workflow-app select { font: inherit; max-width: 100%; border: 1px solid #cdd4df; border-radius: 5px; padding: 10px; background: white; }
-.workflow-content { padding: 24px; border: 1px solid #dce1e8; border-radius: 12px; background: white; min-width: 0; overflow-wrap: anywhere; }
+.workflow-app input:not([type="checkbox"]), .workflow-app select { font: inherit; max-width: 100%; border: 1px solid var(--sys-border-strong); border-radius: 5px; padding: 10px; color: inherit; background: var(--sys-surface-raised); }
+.workflow-content { padding: 24px; border: 1px solid var(--sys-border-subtle); border-radius: 12px; background: var(--sys-surface-raised); min-width: 0; overflow-wrap: anywhere; }
 .workflow-app label:has(input[type="checkbox"]) { display: flex; flex-direction: row; align-items: center; }
 .workflow-field { margin-bottom: 20px; }
 .workflow-content [data-layout="inline"] { flex-wrap: wrap; gap: 12px; }
 .workflow-content [data-layout="inline"] > [data-oods-component="SearchInput"], .workflow-content [data-layout="inline"] > [data-oods-component="Select"] { flex: 1 1 180px; min-width: 0; }
 .workflow-content [data-oods-component="PriceBadge"] { white-space: nowrap; }
-.workflow-content textarea { font: inherit; border: 1px solid #cdd4df; border-radius: 5px; padding: 10px; }
+.workflow-content textarea { font: inherit; border: 1px solid var(--sys-border-strong); border-radius: 5px; padding: 10px; color: inherit; background: var(--sys-surface-raised); }
 .workflow-content [data-oods-component="Stack"], .workflow-content [data-oods-component="Tabs"] { min-width: 0; }
 .workflow-content .oods-tab, .workflow-content .oods-tab-list [aria-haspopup="menu"] { flex-shrink: 0; white-space: nowrap; }
 .workflow-content .oods-tab-list { overflow: visible; }
 .workflow-content .oods-tabs__overflow, .workflow-content .oods-tabs-overflow { position: relative; flex-shrink: 0; }
-.workflow-content .oods-tab-list [role="menu"] { position: absolute; inset: 100% 0 auto auto; z-index: 2; min-width: max-content; display: grid; padding: 4px; background: white; border: 1px solid #dce1e8; border-radius: 6px; }
+.workflow-content .oods-tab-list [role="menu"] { position: absolute; inset: 100% 0 auto auto; z-index: 2; min-width: max-content; display: grid; padding: 4px; background: var(--sys-surface-raised); border: 1px solid var(--sys-border-subtle); border-radius: 6px; }
 
-.workflow-cancel { display: flex; gap: 16px; flex-wrap: wrap; border: 1px solid #dce1e8; padding: 16px; margin: 0 0 24px; border-radius: 6px; }
-.workflow-notice { min-height: 20px; color: #57657b; font-size: 13px; }
+.workflow-cancel { display: flex; gap: 16px; flex-wrap: wrap; border: 1px solid var(--sys-border-subtle); padding: 16px; margin: 0 0 24px; border-radius: 6px; }
+.workflow-notice { min-height: 20px; color: var(--sys-text-secondary); font-size: 13px; }
 [data-oods-screen-actions] { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
 @media (max-width: 600px) { .workflow-content [data-layout="sidebar"] { grid-template-columns: minmax(0, 1fr) !important; } .workflow-app { padding: 24px 16px; } .workflow-content { padding: 16px; } .workflow-mode { display: none; } }
 `;

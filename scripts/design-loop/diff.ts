@@ -8,7 +8,7 @@ export function compareReceipts(before: any, after: any) {
   const compare = (field: string, a: unknown, b: unknown) => {
     if (JSON.stringify(a) !== JSON.stringify(b)) differences.push({ field, before: a, after: b });
   };
-  for (const key of ['framework', 'schemaHash', 'artifactContentHash', 'errors']) compare(key, before[key], after[key]);
+  for (const key of ['framework', 'theme', 'brand', 'schemaHash', 'artifactContentHash', 'errors']) compare(key, before[key], after[key]);
   const files = (receipt: any) => Object.fromEntries(receipt.files.map((file: any) => [file.path, file.contentHash]));
   const a = files(before), b = files(after);
   for (const file of [...new Set([...Object.keys(a), ...Object.keys(b)])].sort()) compare(`files.${file}`, a[file] ?? null, b[file] ?? null);

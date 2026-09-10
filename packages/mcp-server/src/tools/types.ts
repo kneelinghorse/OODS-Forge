@@ -486,6 +486,8 @@ export type CodeGenerateInput = {
   options?: {
     typescript?: boolean;
     styling?: CodegenStyling;
+    theme?: 'light' | 'dark';
+    brand?: 'A' | 'B';
   };
 };
 

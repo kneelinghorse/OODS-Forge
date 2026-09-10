@@ -212,12 +212,12 @@ describe('artifact.certify — contrast pillar (s137/s138/s140)', () => {
   // flips MarkSankey's contrast verdict, so the invert lands in m02 (the code change that
   // causes it), not m03. Design A: contrast 'unchecked' → 'pass'; a11yEquivalence +
   // determinism STAY 'unchecked' (still no Vega compile); coverage STAYS 'uncertified'.
-  it('an ECharts-primary categorical IR (MarkSankey) → contrast graded (light/A Role-C failure #1852); a11yEquivalence + determinism STAY unchecked, coverage still uncertified', async () => {
+  it('an ECharts-primary categorical IR (MarkSankey) → contrast graded (s191 light/A Role-C repair); a11yEquivalence + determinism STAY unchecked, coverage still uncertified', async () => {
     const good = buildSpec(ROWS3);
     const sankey = { ...good, marks: [{ ...good.marks[0], trait: 'MarkSankey' }] } as unknown;
     const out = await certify(sankey);
     expect(out.coverage).toBe('uncertified');
-    expect(out.pillars).toEqual({ a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'fail', accuracy: 'unchecked' });
+    expect(out.pillars).toEqual({ a11yEquivalence: 'unchecked', determinism: 'unchecked', contrast: 'pass', accuracy: 'unchecked' });
     expect(validateOutput(out)).toBe(true);
   });
 });
@@ -475,7 +475,7 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
   };
 
   it.each(CATEGORICAL_TRAITS)(
-    '%s → contrast:fail (light/A slot04 below 3:1); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash',
+    '%s → contrast:pass (s191 light slot04 repair); coverage uncertified / conformant null / a11yEquivalence+determinism unchecked / no contentHash',
     async (trait) => {
       const out = await certify(withTrait(trait));
       expect(out.status).toBe('ok');
@@ -485,16 +485,15 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
       expect(out.determinism).toBeUndefined(); // no Vega compile → no determinism proof / hash
       expect(out.pillars?.a11yEquivalence).toBe('unchecked');
       expect(out.pillars?.determinism).toBe('unchecked');
-      // The graded verdict — the reconstructed default palette fails Role C at light/A (#1852).
-      expect(out.pillars?.contrast).toBe('fail');
+      // The graded verdict — the repaired default palette passes Role C at light/A (s191).
+      expect(out.pillars?.contrast).toBe('pass');
       // Mandatory caveats (memo §4): adjacency-ungraded + per-node data-color override.
       expect(out.contrastNote).toContain(
         'touching-mark/adjacency contrast not graded; relies on the separating stroke',
       );
       expect(out.contrastNote).toContain('Per-node data-color overrides are ungraded');
-      // Role-A is now a CLEAN pass (min-over-CVD ΔE ≥10) after the s146 F1 re-space, so
-      // NO distinguishability caution rides along (the pre-s146 palette sat at ~7.25).
-      expect(out.contrastNote).not.toContain('Distinguishability caution');
+      // s191 minimal lightness repair gives ΔE00 9.88: pass with the existing caution.
+      expect(out.contrastNote).toContain('Distinguishability caution');
       // The pre-s141 "contrast not checked" note is dropped; only the a11y note remains.
       expect(out.notes?.some((n) => n.includes(trait))).toBe(true);
       expect(out.notes?.some((n) => /contrast is not checked/i.test(n))).toBe(false);
@@ -520,8 +519,8 @@ describe('artifact.certify — ECharts categorical contrast (s141 m02)', () => {
     const b = await certify(greyOverride);
     // Grading the FIXED default palette (memo §3b) means a config.tokens override the
     // ECharts render ignores must NOT change the verdict — certified == rendered.
-    expect(a.pillars?.contrast).toBe('fail');
-    expect(b.pillars?.contrast).toBe('fail');
+    expect(a.pillars?.contrast).toBe('pass');
+    expect(b.pillars?.contrast).toBe('pass');
     expect(b.contrastNote).toBe(a.contrastNote);
   });
 });
@@ -574,11 +573,11 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
   };
 
   it('certify reconstructs the fixed default OODS 6-slot categorical palette', () => {
-    expect(CERTIFY_PALETTE).toEqual(['#416CD9', '#3E44BE', '#279669', '#B78827', '#CA4948', '#993B00']);
+    expect(CERTIFY_PALETTE).toEqual(['#416CD9', '#3E44BE', '#279669', '#B58525', '#CA4948', '#993B00']);
   });
 
-  // #1850/#1852: the corrected CSS light/A canvas exposes the existing gold-slot failure.
-  it('pins the light/A Role-C failure — gold falls below 3:1 (#1852)', () => {
+  // s191 repairs the gold slot against the actual CSS light/A canvas.
+  it('pins the light/A Role-C repair — every slot clears 3:1 (s191)', () => {
     // Derive the canvas from the SAME token the grader resolves — resolveSlotHex ->
     // resolveTokenToColor at certify-contrast.ts:407 (with no override this is exactly
     // normaliseColor(resolveTokenToColor('--oods-sys-surface-canvas'))). s142-review #2:
@@ -594,10 +593,10 @@ describe('artifact.certify — ECharts categorical consistency lock (s141 m02)',
       ...s,
       ratio: contrastRatio(s.hex, CANVAS),
     }));
-    expect(ratios.filter(({ ratio }) => ratio < 3).map(({ hex }) => hex)).toEqual(['#B78827']);
+    expect(ratios.filter(({ ratio }) => ratio < 3).map(({ hex }) => hex)).toEqual([]);
     const min = ratios.reduce((a, b) => (b.ratio < a.ratio ? b : a));
-    expect(min.hex).toBe('#B78827');
-    expect(min.ratio).toBeLessThan(3);
+    expect(min.hex).toBe('#B58525');
+    expect(min.ratio).toBeGreaterThanOrEqual(3);
   });
 
   it.each([
@@ -711,7 +710,7 @@ describe('artifact.certify — round-trip honesty floor: certify accepts viz.ren
     const certified = await certify(rendered.normalizedSpec);
     expect(certified.status).toBe('ok');
     expect(certified.errors).toBeUndefined();
-    expect(certified.pillars?.contrast).toBe('fail');
+    expect(certified.pillars?.contrast).toBe('pass');
     // Design A is preserved for the ECharts path — only contrast carries a verdict.
     expect(certified.coverage).toBe('uncertified');
     expect(certified.conformant).toBeNull();
@@ -796,10 +795,10 @@ describe('artifact.certify — round-trip honesty floor: certify accepts viz.ren
   };
 
   const ROUND_TRIP_CASES = [
-    { type: 'treemap', input: { chartType: 'treemap', hierarchy: HIER }, trait: 'MarkTreemap', contrast: 'fail' },
-    { type: 'sunburst', input: { chartType: 'sunburst', hierarchy: HIER }, trait: 'MarkSunburst', contrast: 'fail' },
-    { type: 'force_graph', input: { chartType: 'force_graph', network: NET }, trait: 'MarkGraph', contrast: 'fail' },
-    { type: 'chord', input: { chartType: 'chord', chord: CHORD }, trait: 'MarkChord', contrast: 'fail' },
+    { type: 'treemap', input: { chartType: 'treemap', hierarchy: HIER }, trait: 'MarkTreemap', contrast: 'pass' },
+    { type: 'sunburst', input: { chartType: 'sunburst', hierarchy: HIER }, trait: 'MarkSunburst', contrast: 'pass' },
+    { type: 'force_graph', input: { chartType: 'force_graph', network: NET }, trait: 'MarkGraph', contrast: 'pass' },
+    { type: 'chord', input: { chartType: 'chord', chord: CHORD }, trait: 'MarkChord', contrast: 'pass' },
     { type: 'bubble_map', input: { chartType: 'bubble_map', geo: BUBBLE_GEO }, trait: 'MarkBubble', contrast: 'exempt' },
     { type: 'flow_map', input: { chartType: 'flow_map', geo: FLOW_GEO }, trait: 'MarkFlow', contrast: 'exempt' },
   ] as const;

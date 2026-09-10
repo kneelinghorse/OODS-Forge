@@ -21,6 +21,8 @@
 | `releaseEvidence.determinism` | _ref_ | No |  |  |
 | `releaseEvidence.performance` | _ref_ | No |  |  |
 | `options` | object | No | `{}` |  |
+| `options.theme` | `light` \| `dark` | No | `"light"` | Application and embedded chart theme. Workflow shells set this scope on html and body, including at mount. |
+| `options.brand` | `A` \| `B` | No | `"A"` | Token brand shared by the generated shell and embedded charts. |
 | `options.typescript` | boolean | No | `true` | When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML. |
 | `options.styling` | `inline` \| `tokens` \| `tailwind` | No | `"tokens"` | React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error. |
 

@@ -185,4 +185,17 @@ describe('s167 m01 — the token collision guard', () => {
       fs.writeFileSync(target, original);
     }
   });
+  it('allows only the declared categorical overlays, never arbitrary shared-token shadows', () => {
+    const dark = path.join(sandbox, 'src/tokens/brands/A/dark.json');
+    const original = fs.readFileSync(dark, 'utf8');
+    try {
+      const doc = JSON.parse(original);
+      doc.viz.scale.sequential = { '01': { $type: 'color', $value: 'oklch(0.5 0.1 200)' } };
+      fs.writeFileSync(dark, JSON.stringify(doc));
+      expect(findCollisions(resolveScopeFiles({ brand: 'A', theme: 'dark' }, sandbox), sandbox).map((x: any) => x.tokenPath)).toContain('viz.scale.sequential.01');
+    } finally { fs.writeFileSync(dark, original); }
+    const files = ['src/viz-scales.json', 'src/tokens/brands/A/dark.json', 'src/tokens/brands/B/dark.json'];
+    expect(findCollisions(files, sandbox).map((x: any) => x.tokenPath)).toContain('viz.scale.categorical.01');
+  });
+
 });

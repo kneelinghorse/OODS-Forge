@@ -1,3 +1,4 @@
+import type { CodegenOptions } from './types.js';
 import { chartNodes } from './chart-declaration.js';
 import { handle as render } from '../tools/viz.render.js';
 import { assertStaticSvg } from '@oods/component-contracts';
@@ -5,7 +6,7 @@ import type { UiSchema } from '../schemas/generated.js';
 import { workflowSampleRecords } from './workflow-data-emitter.js';
 
 /** Render once at generation time; emitted consumers need no chart runtime. */
-export async function prepareChartAssets(input: UiSchema): Promise<{
+export async function prepareChartAssets(input: UiSchema, options: Pick<CodegenOptions, 'theme' | 'brand'> = {}): Promise<{
   schema: UiSchema;
   files: Array<{ path: string; contents: string }>;
 }> {
@@ -20,7 +21,7 @@ export async function prepareChartAssets(input: UiSchema): Promise<{
   for (const field of [...chart.dateFields, chart.amountField, chart.currencyField]) {
     if (!schema.objectSchema?.[field]) throw new Error(`Payment chart field '${field}' is absent from objectSchema.`);
   }
-  const theme = schema.theme ?? 'light';
+  const theme = options.theme ?? schema.theme ?? 'light';
   if (theme !== 'light' && theme !== 'dark') throw new Error(`Payment chart theme '${theme}' is not supported.`);
   const records = workflowSampleRecords(schema);
   const files: Array<{ path: string; contents: string }> = [];
@@ -37,7 +38,7 @@ export async function prepareChartAssets(input: UiSchema): Promise<{
       name: 'Sample payments',
       description: `Recorded and scheduled sample payments in ${String(record[chart.currencyField]).toUpperCase()}, shown in major currency units.`,
       theme,
-      brand: chart.brand ?? 'A',
+      brand: options.brand ?? chart.brand ?? 'A',
       rows: [rows[0]!, ...rows.slice(1)],
       encodings: { x: { field: 'date', scale: 'temporal' }, y: { field: 'amount', aggregate: 'sum' } },
       output: { svg: true, width: 360, height: 200 },

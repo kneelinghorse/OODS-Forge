@@ -10,10 +10,14 @@ Write an input JSON file, then run `pnpm design:loop render --input input.json`:
 {
   "compose": { "object": "Subscription", "context": "list" },
   "framework": "both",
+  "theme": "dark",
+  "brand": "B",
   "widths": [390, 820, 1440],
   "output": "/tmp/subscription-list"
 }
 ```
+
+Theme and brand default to light/A, or take compose.preferences.theme/brand; explicit top-level values take precedence. Both are passed to code.generate. Receipt version 1.1 records theme, brand, the computed body background, and each visible chart canvas fill; render verifies these colors against the resolved scope canvas. Existing version 1.0 receipts remain readable.
 
 Compose accepts the public handler's preferences. Framework defaults to both, widths to 390/820/1440. The exact composed schema and generated artifact are retained. Standalone artifacts mount with the existing consumer harness's deterministic field model; optional `model` supplies field values in the same way. Standalone required action callbacks dispatch observable `oods-design-loop-action` events; they do not claim store behavior. Workflow artifacts carry their own App, store and sample data, with no consumer-authored components or action wiring.
 

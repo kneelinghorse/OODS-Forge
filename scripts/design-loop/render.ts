@@ -4,7 +4,7 @@ import { handle as compose } from '../../packages/mcp-server/src/tools/design.co
 import { handle as generate } from '../../packages/mcp-server/src/tools/code.generate.js';
 import { validateGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import { deriveConsumerModel } from '../product-reality/s185-m04-consumer-contract.js';
-import { DEFAULT_PORT, ROOT, digest, loopRequest, outputDirectory, validateReceipt, writeJson, type RenderInput } from './common.js';
+import { DEFAULT_PORT, ROOT, digest, loopRequest, outputDirectory, validateReceipt, verifyTheme, writeJson, type RenderInput } from './common.js';
 
 /** Composition/generation run in the caller so producer edits take effect without restarting consumers. */
 export async function render(input: RenderInput) {
@@ -14,7 +14,10 @@ export async function render(input: RenderInput) {
   const output = await outputDirectory(input.output);
   const widths = input.widths ?? [390, 820, 1440];
   if (!widths.length || widths.some(width => !Number.isInteger(width) || width < 200 || width > 3840)) throw new Error('Invalid capture widths.');
-  const composition = await compose(input.compose);
+  const theme = input.theme ?? input.compose.preferences?.theme ?? 'light';
+  const brand = input.brand ?? input.compose.preferences?.brand ?? 'A';
+  if ((theme !== 'light' && theme !== 'dark') || (brand !== 'A' && brand !== 'B')) throw new Error('Unsupported render theme or brand.');
+  const composition = await compose({ ...input.compose, preferences: { ...input.compose.preferences, theme, brand } });
   if (composition.status !== 'ok' || !composition.schema) throw new Error(`Composition failed: ${JSON.stringify(composition)}`);
   const composeMs = performance.now() - started;
   const schemaHash = digest(JSON.stringify(composition.schema));
@@ -22,17 +25,18 @@ export async function render(input: RenderInput) {
   const receipts = [];
   for (const framework of input.framework && input.framework !== 'both' ? [input.framework] : ['react', 'vue'] as const) {
     const generationStarted = performance.now();
-    const generated = await generate({ schema: composition.schema, framework, profile: 'build' });
+    const generated = await generate({ schema: composition.schema, framework, profile: 'build', options: { theme, brand } });
     if (generated.status !== 'ok' || !generated.artifact) throw new Error(`Generation failed: ${JSON.stringify(generated.errors)}`);
     const issues = validateGeneratedArtifact(generated.artifact);
     if (issues.length) throw new Error(issues.join('\n'));
     const receipt = await loopRequest(port, '/render', {
-      framework, artifact: generated.artifact, schemaHash, compose: input.compose,
+      framework, theme, brand, artifact: generated.artifact, schemaHash, compose: input.compose,
       model: { ...deriveConsumerModel(composition.schema, input.model), ...Object.fromEntries(['rows', 'events', 'collectionQuery'].filter(key => input.model && Object.hasOwn(input.model, key)).map(key => [key, input.model![key]])) }, steps: input.steps ?? [], widths,
       output: path.join(output, framework), sourceHead,
       timings: { composeMs, generateMs: performance.now() - generationStarted },
     });
     await validateReceipt(receipt);
+    verifyTheme(receipt);
     receipts.push(receipt);
   }
   await writeJson(path.join(output, 'composition.json'), composition);

@@ -1,4 +1,4 @@
-// s190 #1850/#1856: literal pins admit the light/A Role-C failure and scoped caveat; historical fixture bytes are untouched.
+// s190 #1850/#1856: s191 literal pins admit the light slot-04 repair with its Role-A caution and scoped caveat; historical fixture bytes are untouched.
 // D11 path-scoped byte pin for the ECharts SPEC-ONLY fallback.
 //
 // Operand-backed ECharts calls now replace these notes with render-evidence wording in
@@ -52,8 +52,8 @@ const FROZEN_ECHARTS_GEO_EXEMPT_NOTE =
 describe('certify-contrast — D11 keeps the ECharts spec-only fallback byte-frozen', () => {
   it('the spec-only categorical fallback is byte-identical to the baked-palette text', () => {
     const out = evaluateEChartsCategoricalContrast();
-    expect(out.contrast).toBe('fail');
-    expect(out.contrastNote).toBe('Role-C (WCAG 1.4.11) fail: --viz-scale-categorical-04 below 3:1 vs the canvas. ' + FROZEN_ECHARTS_CATEGORICAL_NOTE);
+    expect(out.contrast).toBe('pass');
+    expect(out.contrastNote).toBe('Distinguishability caution: min-pairwise CIEDE2000 (min-over-CVD) = 9.88 (below the 10 best-practice target but >= 2, so not a failure). ' + FROZEN_ECHARTS_CATEGORICAL_NOTE);
   });
 
   it('the spec-only geo fallback is byte-identical to the baked-palette text', () => {

@@ -77,7 +77,9 @@ export async function measureVizCensus() {
     assert.equal(hcAdmitted, false, 'HC pixels deferred under #1851; remeasure if admitted');
     const places = placements.filter(place => place.chartType === input.chartType);
     const measured = (['light', 'dark'] as const).filter(theme => scopes.filter(scope => scope.theme === theme).every(scope => scope.contrast.measured));
-    const notes = ['HC pixels deferred (#1851); HC token scopes retained.', 'Light palette on dark canvas; no separate dark viz-scale token overrides.'];
+    const passed = measured.filter(theme => scopes.filter(scope => scope.theme === theme).every(scope => scope.contrast.verdict === 'pass'));
+    const notes = ['HC pixels deferred (#1851); HC token scopes retained.'];
+    if (measured.length) notes.push(`Categorical contrast passes both brands in: ${passed.join(', ') || 'none'}.`);
     if (!dashboardAdmitted) notes.push('Dashboard exclusion (#881): the public panel schema does not admit this type.');
     if (!measured.length) notes.push(`Contrast verdict ${scopes[0].contrast.verdict}; no categorical canvas-ratio measurement claimed.`);
     if (places.length) notes.push(`Static sample chart placement: ${places.map(place => `${place.object}/${place.context}`).join(', ')}; edited form data does not regenerate SVG.`);
@@ -86,7 +88,7 @@ export async function measureVizCensus() {
       dashboardDrawn: drawn ? true : 'excluded (#881)', themes: { light: scopes.filter(scope => scope.theme === 'light').every(scope => !!scope.svgHash), dark: scopes.filter(scope => scope.theme === 'dark').every(scope => !!scope.svgHash), hc: hcAdmitted },
       brands: ['A', 'B'].filter(brand => scopes.filter(scope => scope.brand === brand).every(scope => !!scope.svgHash)),
       a11yDescription: scopes.every(scope => scope.a11yDescription), accuracyRules: first.accuracyRules,
-      certifyCoverage: first.coverage, contrastMeasured: measured, chartInApp: places.length ? 'placed' : 'not-placed', notes });
+      certifyCoverage: first.coverage, contrastMeasured: measured, contrastPassed: passed, chartInApp: places.length ? 'placed' : 'not-placed', notes });
     observations.push({ chartType: input.chartType, defaultEqualsLightA: true, scopes, dashboardAdmitted, dashboardErrors, dashboardDrawn: drawn, placements: places, hcAdmitted });
   }
   return { registry, observations, placementCompositions: 66, placements };

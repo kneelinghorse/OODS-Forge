@@ -108,3 +108,27 @@ describe('Design-loop observations remain evidence rather than repaired output',
     expect(await fs.readFile(path.join(output, 'diff.md'), 'utf8')).toContain('0 differences.');
   });
 });
+
+describe('theme receipts (s191)', () => {
+  it('requires measured colors for version 1.1 while preserving version 1.0 readers', async () => {
+    const updated: any = { ...receipt(), version: '1.1', theme: 'dark', brand: 'B' };
+    await expect(validateReceipt(updated)).rejects.toThrow();
+    updated.views[0].measurements.bodyBackground = 'rgb(4, 22, 32)';
+    updated.views[0].measurements.chartCanvasFills = ['#041620'];
+    await expect(validateReceipt(updated)).resolves.toBeUndefined();
+    const { verifyTheme } = await import('../../scripts/design-loop/common.js');
+    expect(() => verifyTheme(updated)).not.toThrow();
+    updated.views[0].measurements.chartCanvasFills = ['#FDF3DE'];
+    expect(() => verifyTheme(updated)).toThrow('Chart canvas');
+    updated.views[0].measurements.chartCanvasFills = [];
+    updated.views[0].measurements.bodyBackground = 'rgb(255,255,255)';
+    expect(() => verifyTheme(updated)).toThrow('Body background');
+  });
+  it.each(['react', 'vue'] as const)('selects the scope on %s standalone hosts', framework => {
+    const artifact = buildGeneratedArtifact({ framework, imports: [], code: 'contents', fileExtension: framework === 'react' ? '.tsx' : '.vue' });
+    const files = consumerEntries(framework, { artifact, model: {}, theme: 'dark', brand: 'B' } as CaptureRequest);
+    expect(files['index.html']).toContain('data-theme="dark" data-brand="B"');
+    expect(files['index.html']).toContain('background:var(--sys-surface-canvas)');
+    expect(files['index.html']).toContain('color-scheme:dark');
+  });
+});

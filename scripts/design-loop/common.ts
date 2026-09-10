@@ -1,4 +1,6 @@
 import { createHash } from 'node:crypto';
+import Color from 'colorjs.io';
+import { resolveTokenToColor } from '@oods/viz-core';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -16,6 +18,8 @@ export type BrowserStep = { action: 'click' | 'fill' | 'select' | 'check'; selec
 export interface RenderInput {
   compose: ComposeInput;
   framework?: Framework | 'both';
+  theme?: 'light' | 'dark';
+  brand?: 'A' | 'B';
   widths?: number[];
   output: string;
   model?: Record<string, unknown>;
@@ -55,6 +59,7 @@ export async function loopRequest(port: number, route: string, body?: unknown): 
   return result;
 }
 export interface CaptureRequest {
+  theme: 'light' | 'dark'; brand: 'A' | 'B';
   framework: Framework; artifact: GeneratedArtifact; schemaHash: string;
   compose: ComposeInput; model: Record<string, unknown>; steps: BrowserStep[];
   widths: number[]; output: string; sourceHead: string; timings: Record<string, number>;
@@ -63,4 +68,21 @@ let validate: ValidateFunction | undefined;
 export async function validateReceipt(receipt: unknown): Promise<void> {
   validate ??= new Ajv({ allErrors: true }).compile(JSON.parse(await fs.readFile(new URL('./receipt.schema.json', import.meta.url), 'utf8')));
   if (!validate(receipt)) throw new Error(`Invalid design-loop receipt: ${JSON.stringify(validate.errors)}`);
+}
+
+/** Compare computed browser colors to the same sRGB scope used by chart rendering. */
+export function verifyTheme(receipt: any): void {
+  if (receipt.version !== '1.1') return;
+  const hex = (value: string) => {
+    const color = new Color(value);
+    if (color.alpha !== 1) throw new Error('Theme surfaces must be opaque.');
+    return '#' + color.to('srgb').coords.map(channel => Math.round(Math.max(0, Math.min(1, channel!)) * 255).toString(16).padStart(2, '0')).join('').toUpperCase();
+  };
+  const canvas = hex(resolveTokenToColor('--sys-surface-canvas', { theme: receipt.theme, brand: receipt.brand })!);
+  for (const view of receipt.views) {
+    if (hex(view.measurements.bodyBackground) !== canvas) throw new Error(`Body background does not match ${receipt.brand}/${receipt.theme} canvas at ${view.width}.`);
+    for (const fill of view.measurements.chartCanvasFills) {
+      if (hex(fill) !== canvas) throw new Error(`Chart canvas does not match ${receipt.brand}/${receipt.theme} at ${view.width}.`);
+    }
+  }
 }

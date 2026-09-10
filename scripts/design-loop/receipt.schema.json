@@ -26,7 +26,10 @@
   ],
   "properties": {
     "version": {
-      "const": "1.0"
+      "enum": [
+        "1.0",
+        "1.1"
+      ]
     },
     "framework": {
       "enum": [
@@ -228,6 +231,15 @@
                     }
                   }
                 }
+              },
+              "bodyBackground": {
+                "type": "string"
+              },
+              "chartCanvasFills": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -349,6 +361,52 @@
     "clockStepMs": {
       "const": 1,
       "description": "Deterministic 1 ms advance before each interaction preserves event ordering."
+    },
+    "theme": {
+      "enum": [
+        "light",
+        "dark"
+      ]
+    },
+    "brand": {
+      "enum": [
+        "A",
+        "B"
+      ]
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "version": {
+            "const": "1.1"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "theme",
+          "brand"
+        ],
+        "properties": {
+          "views": {
+            "items": {
+              "properties": {
+                "measurements": {
+                  "required": [
+                    "bodyBackground",
+                    "chartCanvasFills"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        }
+      }
+    }
+  ]
 }

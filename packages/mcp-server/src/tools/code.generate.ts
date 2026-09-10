@@ -244,6 +244,8 @@ export async function handle(
   const options: CodegenOptions = {
     typescript: input.options?.typescript ?? rc.typescript ?? true,
     styling: input.options?.styling ?? rc.styling ?? 'tokens',
+    theme: input.options?.theme ?? 'light',
+    brand: input.options?.brand ?? 'A',
   };
 
   if (framework === 'html' && options.styling === 'tailwind') {
@@ -362,7 +364,7 @@ export async function handle(
   // Dispatch to framework emitter
   let prepared: Awaited<ReturnType<typeof prepareChartAssets>>;
   try {
-    prepared = await prepareChartAssets(schema);
+    prepared = await prepareChartAssets(schema, options);
   } catch (error) {
     return { status: 'error', framework, code: '', fileExtension: '', imports: [], warnings, validationReceipt, meta,
       errors: [{ code: 'OODS-N016', message: error instanceof Error ? error.message : String(error) }] };

@@ -19,9 +19,9 @@ describe('certification describes the pixels at the requested scope', () => {
       const light = await certify({ ...input, theme: 'light', brand });
       const dark = await certify({ ...input, theme: 'dark', brand });
       expect(light.contrastResults).toEqual([{ theme: 'light', brand, verdict: 'pass', measured: true, evidence: 'render', note: light.contrastNote }]);
-      // Dark slot 02 is below 3:1; this proves the canvas used by the grader changed.
-      expect(dark.contrastResults).toEqual([{ theme: 'dark', brand, verdict: 'fail', measured: true, evidence: 'render', note: dark.contrastNote }]);
-      expect(dark.conformant).toBe(false);
+      // s191 dark token overrides now clear Role-C; differing hashes still prove scope isolation.
+      expect(dark.contrastResults).toEqual([{ theme: 'dark', brand, verdict: 'pass', measured: true, evidence: 'render', note: dark.contrastNote }]);
+      expect(dark.conformant).toBe(true);
       expect(dark.contrastNote).toContain(`Scope: dark/${brand}.`);
       expect(dark.determinism?.renderHash).not.toBe(light.determinism?.renderHash);
       expect(validateOutput(dark), JSON.stringify(validateOutput.errors)).toBe(true);

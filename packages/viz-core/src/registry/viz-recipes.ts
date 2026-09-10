@@ -13,6 +13,8 @@ export interface VizRecipeCapability {
   certifyCoverage: 'certified' | 'uncertified';
   /** Actual categorical canvas grades, including failures; never exempt/unchecked. */
   contrastMeasured: Array<'light' | 'dark'>;
+  /** Every brand has a measured pass in this theme; exemptions are not passes. */
+  contrastPassed: Array<'light' | 'dark'>;
   chartInApp: 'placed' | 'not-placed';
   notes: string[];
 }

@@ -101,9 +101,9 @@ describe('artifact.certify — contrast engine fault degrades, never errors', ()
       expect(validateOutput(cartesian)).toBe(true);
 
       const echarts = await handle({ spec: buildSankeySpec() });
-      // Light/A exposes slot 04's actual Role-C failure (#1850); this is a grade, not a fault.
-      expect(echarts.pillars?.contrast).toBe('fail');
-      expect(echarts.contrastNote).toContain('Role-C (WCAG 1.4.11) fail');
+      // s191 repairs light/A slot 04; this is a measured pass, not a masked evaluator fault.
+      expect(echarts.pillars?.contrast).toBe('pass');
+      expect(echarts.contrastNote).toContain('Distinguishability caution');
       expect(echarts.contrastNote).not.toContain('synthetic contrast-engine fault');
       expect(validateOutput(echarts)).toBe(true);
     } finally {

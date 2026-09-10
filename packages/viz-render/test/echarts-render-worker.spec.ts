@@ -28,8 +28,9 @@ type ProjectedOption = Record<string, unknown>;
 // A same-seed immediate first frame hashes to
 // fa27909961c5ab8acab6769e9ffb15a61227e47ce0b21ac754394b17cbf6a40c instead,
 // so this pin bites removal of convergence policy, not merely seeded equality.
+// s191 light slot 04 changes categorical paint only; force geometry remains deterministic.
 const CONVERGED_CANONICAL_FORCE_HASH =
-  "b0fcf364daaf84abf4c3ab2839a75ec80ea2e85a8ff0ecdab592369cbe210590";
+  "3b947d90250a98838aad801be4f98ea8e5095528618296083b8644075ff6a331";
 
 const optionFor = (chartType: string): ProjectedOption => {
   const operand = ECHARTS_OPERAND_CASES.find(

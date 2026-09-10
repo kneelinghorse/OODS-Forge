@@ -1245,6 +1245,14 @@ export namespace CodeGenerateInputSchema {
     };
     options?: {
       /**
+       * Application and embedded chart theme. Workflow shells set this scope on html and body, including at mount.
+       */
+      theme?: 'light' | 'dark';
+      /**
+       * Token brand shared by the generated shell and embedded charts.
+       */
+      brand?: 'A' | 'B';
+      /**
        * When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML.
        */
       typescript?: boolean;

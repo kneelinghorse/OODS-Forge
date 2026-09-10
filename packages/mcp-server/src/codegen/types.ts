@@ -96,6 +96,8 @@ export type CodegenValidationReceipt = {
 export type CodegenOptions = {
   typescript: boolean;
   styling: CodegenStyling;
+  theme?: 'light' | 'dark';
+  brand?: 'A' | 'B';
 };
 
 export type CodegenIssue = {

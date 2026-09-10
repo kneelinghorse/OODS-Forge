@@ -160,10 +160,11 @@ function runCollisionGuard() {
  * Assemble dist/css/tokens.css from the six scope runs.
  *
  * Block 1 is the DEFAULT_SCOPE's FULL dictionary under `:root` (memo SS3 D2/D3 — one
- * file, because document.ts:20 inlines exactly one path). Blocks 2..7 carry only the
- * `color.brand.<X>.*` literals for their cell, under the D9 two-attribute selectors.
+ * file, because document.ts:20 inlines exactly one path). Blocks 2..7 carry the
+ * `color.brand.<X>.*` literals and declared categorical theme overrides for their cell,
+ * under the D9 two-attribute selectors.
  *
- * Only the brand literals are re-emitted per scope. The `brand.<X>.*` aliases are
+ * Brand literals and declared categorical overrides are re-emitted per scope. The `brand.<X>.*` aliases are
  * emitted once at `:root` as `var(--oods-color-brand-...)` references, and a `var()`
  * resolves at computed-value time on the element, so they pick up the scoped override
  * through the cascade without being restated.
@@ -187,7 +188,10 @@ async function renderCssBundle() {
       cssPlatformWith({
         destination: 'tokens.css',
         format: 'css/variables',
-        filter: (token) => oodsScoping.isBrandToken(token, scope.brand),
+        filter: (token) => oodsScoping.isBrandToken(token, scope.brand)
+          || (scope.theme !== 'base'
+            && /^viz\.scale\.categorical\.0[1-6]$/.test(token.path.join('.'))
+            && token.filePath === `src/tokens/brands/${scope.brand}/${scope.theme}.json`),
         options: {
           selector: selectors.join(',\n'),
           outputReferences: false,

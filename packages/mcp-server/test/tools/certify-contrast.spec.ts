@@ -65,14 +65,14 @@ describe('certify-contrast — role-C (WCAG mark-vs-canvas) + default palette', 
     expect(out.contrastNote).toContain('series-to-paint assignment of the rendered chart');
   });
 
-  it('the default six-slot palette exposes slot 04 below 3:1 on the corrected light/A canvas (#1850)', async () => {
-    // The palette did not change; the old neutral canvas was not the CSS light/A theme.
+  it('the repaired six-slot palette clears light/A Role-C with an honest Role-A caution (s191)', async () => {
+    // Fixed hue/chroma, minimal lightness repair: Role-C passes; ΔE00 9.88 stays below the clean target.
     const out = await grade(
       mk({ color: { field: 'series', type: 'nominal' }, values: seriesRows(['a', 'b', 'c', 'd', 'e', 'f']) }),
     );
-    expect(out.contrast).toBe('fail');
-    expect(out.contrastNote).toContain('categorical-04 below 3:1');
-    expect(out.contrastNote).not.toContain('Distinguishability caution');
+    expect(out.contrast).toBe('pass');
+    expect(out.contrastNote).not.toContain('below 3:1');
+    expect(out.contrastNote).toContain('Distinguishability caution');
   });
 
   it('a near-white config.tokens override on the consumed slot -> role-C fail (WCAG-normative path)', async () => {

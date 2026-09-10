@@ -99,8 +99,8 @@ const baseline = JSON.parse(baselineBytes.toString("utf8")) as Record<
   BaselineCell
 >;
 
-// #1850: reuse the immutable m03 SVG receipt, never recapture pixels in m05.
-const m03 = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-190/m03/matrix.json', import.meta.url), 'utf8'));
+// s191: reuse the attributed m01 matrix; only force_graph light pixels move for slot 04.
+const m03 = JSON.parse(readFileSync(new URL('../../../../artifacts/product-reality/sprint-191/m01/matrix/matrix.json', import.meta.url), 'utf8'));
 const scopedHash = (chartType: string): string => m03.table.find((row: any) => row.chartType === chartType && row.brand === 'A' && row.theme === 'light').svgHash;
 function expectedCurrentCell(chartType: string, contentHash: string): BaselineCell {
   const cell = baseline[chartType];
