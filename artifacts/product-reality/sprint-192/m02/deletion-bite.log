@@ -1,0 +1,66 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/component-styles
+
+ ❯ test/token-resolution.spec.ts (5 tests | 1 failed) 47ms
+   × component token-resolution contract (#1884) > resolves every colour role and every unguarded legacy name in all six scopes 28ms
+     → expected [ …(24) ] to deeply equal []
+   ✓ component token-resolution contract (#1884) > follows only selected fallbacks, including nested functions and cycles 0ms
+   ✓ component token-resolution contract (#1884) > does not count unreachable nested colours or forced-colors declarations as leaks 0ms
+   ✓ component token-resolution contract (#1884) > deleting an authored Card token makes the contract fail at the affected rule 16ms
+   ✓ component token-resolution contract (#1884) > authors component defaults as aliases of semantic tokens 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/token-resolution.spec.ts > component token-resolution contract (#1884) > resolves every colour role and every unguarded legacy name in all six scopes
+AssertionError: expected [ …(24) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "A/light: system-colour fallback Canvas at packages/component-styles/src/components.css:170 :where(.oods-card, [data-oods-component='Card']): var(--cmp-surface-panel, Canvas)",
++   "A/light: system-colour fallback Canvas at packages/component-styles/src/components.css:768 :where(.oods-table, [data-oods-component='Table']): var(--cmp-surface-panel, Canvas)",
++   "A/light: system-colour fallback Canvas at packages/component-styles/src/components.css:1013 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "A/light: system-colour fallback Canvas at packages/component-styles/src/components-ported.css:77 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "A/dark: system-colour fallback Canvas at packages/component-styles/src/components.css:170 :where(.oods-card, [data-oods-component='Card']): var(--cmp-surface-panel, Canvas)",
++   "A/dark: system-colour fallback Canvas at packages/component-styles/src/components.css:768 :where(.oods-table, [data-oods-component='Table']): var(--cmp-surface-panel, Canvas)",
++   "A/dark: system-colour fallback Canvas at packages/component-styles/src/components.css:1013 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "A/dark: system-colour fallback Canvas at packages/component-styles/src/components-ported.css:77 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "A/hc: system-colour fallback Canvas at packages/component-styles/src/components.css:170 :where(.oods-card, [data-oods-component='Card']): var(--cmp-surface-panel, Canvas)",
++   "A/hc: system-colour fallback Canvas at packages/component-styles/src/components.css:768 :where(.oods-table, [data-oods-component='Table']): var(--cmp-surface-panel, Canvas)",
++   "A/hc: system-colour fallback Canvas at packages/component-styles/src/components.css:1013 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "A/hc: system-colour fallback Canvas at packages/component-styles/src/components-ported.css:77 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "B/light: system-colour fallback Canvas at packages/component-styles/src/components.css:170 :where(.oods-card, [data-oods-component='Card']): var(--cmp-surface-panel, Canvas)",
++   "B/light: system-colour fallback Canvas at packages/component-styles/src/components.css:768 :where(.oods-table, [data-oods-component='Table']): var(--cmp-surface-panel, Canvas)",
++   "B/light: system-colour fallback Canvas at packages/component-styles/src/components.css:1013 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "B/light: system-colour fallback Canvas at packages/component-styles/src/components-ported.css:77 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "B/dark: system-colour fallback Canvas at packages/component-styles/src/components.css:170 :where(.oods-card, [data-oods-component='Card']): var(--cmp-surface-panel, Canvas)",
++   "B/dark: system-colour fallback Canvas at packages/component-styles/src/components.css:768 :where(.oods-table, [data-oods-component='Table']): var(--cmp-surface-panel, Canvas)",
++   "B/dark: system-colour fallback Canvas at packages/component-styles/src/components.css:1013 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "B/dark: system-colour fallback Canvas at packages/component-styles/src/components-ported.css:77 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "B/hc: system-colour fallback Canvas at packages/component-styles/src/components.css:170 :where(.oods-card, [data-oods-component='Card']): var(--cmp-surface-panel, Canvas)",
++   "B/hc: system-colour fallback Canvas at packages/component-styles/src/components.css:768 :where(.oods-table, [data-oods-component='Table']): var(--cmp-surface-panel, Canvas)",
++   "B/hc: system-colour fallback Canvas at packages/component-styles/src/components.css:1013 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++   "B/hc: system-colour fallback Canvas at packages/component-styles/src/components-ported.css:77 :where([data-oods-component='CancellationSummary']): var(--cmp-surface-panel, Canvas)",
++ ]
+
+ ❯ test/token-resolution.spec.ts:12:42
+     10|     const report = census();
+     11|     expect(report.rows.map(row => `${row.brand}/${row.theme}`)).toEqua…
+     12|     expect(contractFailures(report, 14)).toEqual([]);
+       |                                          ^
+     13|   });
+     14| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  12:57:53
+   Duration  346ms (transform 28ms, setup 0ms, collect 43ms, tests 47ms, environment 0ms, prepare 70ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/component-styles:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/token-resolution.spec.ts

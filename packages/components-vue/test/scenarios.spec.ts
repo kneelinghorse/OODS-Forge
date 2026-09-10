@@ -732,7 +732,8 @@ describe('@oods/components-vue shared scenarios', () => {
           break;
         }
         case 'archive-summary-false-and-reason': {
-          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+          // Preserve false as the human-readable Archived answer and format the associated timestamp.
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['No', 'Sep 5, 2026, 12:00 PM', 'Retention policy']);
           break;
         }
         case 'cancellation-form-presentational-controls': {

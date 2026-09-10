@@ -1,6 +1,14 @@
 @import "@oods/tokens/css";
 @import "./statusables.css";
 
+/* Legacy unprefixed geometry used by billing recipes. Values come from the
+ * semantic layer; preserve these names until their authored callers migrate. */
+:root {
+  --space-2: var(--sys-control-gap);
+  --space-3: var(--sys-field-padding-inline);
+  --radius-md: var(--sys-radius-control);
+}
+
 :where(.oods-badge, [data-oods-component='Badge']) {
   display: inline-flex;
   align-items: center;
@@ -1224,8 +1232,8 @@
   flex-shrink: 0;
   padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
   border-radius: var(--radius-sm, 0.25rem);
-  color: var(--status-archive-text, CanvasText);
-  background: var(--status-archive-bg, ButtonFace);
+  color: var(--status-archive-text, var(--sys-text-primary));
+  background: var(--status-archive-bg, var(--sys-surface-raised));
 }
 
 [data-oods-component='CancellationSummary'] dl {

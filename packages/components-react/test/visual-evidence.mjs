@@ -8,7 +8,8 @@ import { createServer } from 'vite';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const repositoryRoot = resolve(packageRoot, '../..');
-const artifactRoot = resolve(repositoryRoot, 'artifacts/product-reality/sprint-182/m02/visual-regression');
+const outputArgument = process.argv.find(argument => argument.startsWith('--output='));
+const artifactRoot = resolve(repositoryRoot, outputArgument?.slice('--output='.length) ?? 'artifacts/product-reality/sprint-182/m02/visual-regression');
 const canonicalIds = [
   'Badge', 'Banner', 'Button', 'Card', 'Checkbox', 'DatePicker', 'Grid',
   'Input', 'Select', 'Stack', 'Table', 'Tabs', 'Text', 'Textarea',

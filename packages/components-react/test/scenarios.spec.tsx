@@ -524,8 +524,8 @@ describe('@oods/components-react shared scenarios', () => {
           break;
         }
         case 'status-timeline-history': {
-          expect(component?.querySelector('[data-timeline-current]')?.textContent).toContain('Current status: Active');
-          expect(component?.querySelector('[data-timeline-current]')?.textContent).toContain('2 transitions available.');
+          // The reviewed timeline names the current status; transition actions are not summary copy.
+          expect(component?.querySelector('[data-timeline-current]')?.textContent).toBe('Current status: Active');
           expect(component?.querySelector('[data-timeline-empty]')?.textContent).toBe('No events');
           break;
         }
@@ -585,7 +585,8 @@ describe('@oods/components-react shared scenarios', () => {
           break;
         }
         case 'archive-summary-false-and-reason': {
-          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['false', '2026-09-05T12:00:00Z', 'Retention policy']);
+          // Preserve false as the human-readable Archived answer and format the associated timestamp.
+          expect([...component!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['No', 'Sep 5, 2026, 12:00 PM', 'Retention policy']);
           break;
         }
         case 'cancellation-form-presentational-controls': {

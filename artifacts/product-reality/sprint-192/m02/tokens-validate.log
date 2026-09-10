@@ -1,0 +1,55 @@
+
+> @oods/foundry-mcp@0.1.0 tokens-validate /Users/systemsystems/.codex/worktrees/s192/OODS-Forge
+> pnpm run tokens:validate && pnpm run tokens:lint-semantic && pnpm run tokens:guardrails -- --quiet --no-diagnostics && pnpm run tokens:validate-viz
+
+
+> @oods/foundry-mcp@0.1.0 tokens:validate /Users/systemsystems/.codex/worktrees/s192/OODS-Forge
+> tsx scripts/tokens/transform.ts --check
+
+✔︎ DTCG tokens validated successfully (322 tokens, 11ms)
+
+> @oods/foundry-mcp@0.1.0 tokens:lint-semantic /Users/systemsystems/.codex/worktrees/s192/OODS-Forge
+> tsx scripts/tokens/lint-semantic.ts
+
+✔ Semantic lint passed (no NEW literal colour usage detected) (29 pre-existing suppressed by baseline).
+
+> @oods/foundry-mcp@0.1.0 tokens:guardrails /Users/systemsystems/.codex/worktrees/s192/OODS-Forge
+> tsx scripts/tokens/color-guardrails.ts "--" "--quiet" "--no-diagnostics"
+
+
+> @oods/foundry-mcp@0.1.0 tokens:validate-viz /Users/systemsystems/.codex/worktrees/s192/OODS-Forge
+> tsx scripts/tokens/validate-viz-scales.ts
+
+✓ sequential/count — All 9 sequential steps detected.
+✓ sequential/step-01-to-02 — ΔL=0.100 (required ≥ 0.10)
+✓ sequential/step-02-to-03 — ΔL=0.100 (required ≥ 0.10)
+✓ sequential/step-03-to-04 — ΔL=0.100 (required ≥ 0.10)
+✓ sequential/step-04-to-05 — ΔL=0.100 (required ≥ 0.10)
+✓ sequential/step-05-to-06 — ΔL=0.100 (required ≥ 0.10)
+✓ sequential/step-06-to-07 — ΔL=0.100 (required ≥ 0.10)
+✓ sequential/step-07-to-08 — ΔL=0.100 (required ≥ 0.10)
+✓ sequential/step-08-to-09 — ΔL=0.100 (required ≥ 0.10)
+✓ diverging/count — All 11 diverging steps detected.
+✓ diverging/neg-05-to-neg-04 — ΔL=0.100 (increasing toward neutral)
+✓ diverging/neg-04-to-neg-03 — ΔL=0.100 (increasing toward neutral)
+✓ diverging/neg-03-to-neg-02 — ΔL=0.100 (increasing toward neutral)
+✓ diverging/neg-02-to-neg-01 — ΔL=0.100 (increasing toward neutral)
+✓ diverging/neg-01-to-neutral — ΔL=0.200 (increasing toward neutral)
+✓ diverging/neutral-to-pos-01 — ΔL=0.200 (decreasing away from neutral)
+✓ diverging/pos-01-to-pos-02 — ΔL=0.100 (decreasing away from neutral)
+✓ diverging/pos-02-to-pos-03 — ΔL=0.100 (decreasing away from neutral)
+✓ diverging/pos-03-to-pos-04 — ΔL=0.100 (decreasing away from neutral)
+✓ diverging/pos-04-to-pos-05 — ΔL=0.100 (decreasing away from neutral)
+✓ diverging/symmetry-neg-05|pos-05 — |ΔL|=0.000 (allowed ≤ 0.02)
+✓ diverging/symmetry-neg-04|pos-04 — |ΔL|=0.000 (allowed ≤ 0.02)
+✓ diverging/symmetry-neg-03|pos-03 — |ΔL|=0.000 (allowed ≤ 0.02)
+✓ diverging/symmetry-neg-02|pos-02 — |ΔL|=0.000 (allowed ≤ 0.02)
+✓ diverging/symmetry-neg-01|pos-01 — |ΔL|=0.000 (allowed ≤ 0.02)
+✓ categorical/count — 6 categorical entries detected.
+✓ categorical/01 — Inline oklch literal, chroma 0.174 ≥ 0.045.
+✓ categorical/02 — Inline oklch literal, chroma 0.188 ≥ 0.045.
+✓ categorical/03 — Inline oklch literal, chroma 0.119 ≥ 0.045.
+✓ categorical/04 — Inline oklch literal, chroma 0.122 ≥ 0.045.
+✓ categorical/05 — Inline oklch literal, chroma 0.166 ≥ 0.045.
+✓ categorical/06 — Inline oklch literal, chroma 0.142 ≥ 0.045.
+✔ Viz scale validation passed (32 checks).

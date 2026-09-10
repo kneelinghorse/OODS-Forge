@@ -8,7 +8,8 @@ import { createServer } from 'vite';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const repositoryRoot = resolve(packageRoot, '../..');
-const artifactRoot = resolve(repositoryRoot, 'artifacts/product-reality/sprint-182/m03/visual-regression');
+const outputArgument = process.argv.find(argument => argument.startsWith('--output='));
+const artifactRoot = resolve(repositoryRoot, outputArgument?.slice('--output='.length) ?? 'artifacts/product-reality/sprint-182/m03/visual-regression');
 const canonicalIds = [
   'Badge', 'Banner', 'Button', 'Card', 'Checkbox', 'DatePicker', 'Grid',
   'Input', 'Select', 'Stack', 'Table', 'Tabs', 'Text', 'Textarea',
@@ -352,7 +353,7 @@ try {
       `${cell}: section headings are incomplete: ${JSON.stringify(proof.content.sectionHeadings)}.`,
     );
     assert(
-      JSON.stringify(proof.content.fieldLabels) === JSON.stringify(['Email', 'Renewal date', 'Plan', 'Notes', 'Product updates*']),
+      JSON.stringify(proof.content.fieldLabels) === JSON.stringify(['Email*', 'Renewal date', 'Plan', 'Notes', 'Product updates*']),
       `${cell}: field labels are incomplete: ${JSON.stringify(proof.content.fieldLabels)}.`,
     );
     assert(
