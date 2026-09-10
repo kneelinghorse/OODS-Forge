@@ -10,8 +10,9 @@ describe('the last three retained component obligations', () => {
     await wrapper.setProps({ auditLog: [], showLastActor: false }); expect(wrapper.text()).not.toContain('Last actor'); expect(wrapper.text()).toContain('Not recorded'); wrapper.unmount();
   });
   it('cycles aria-sort using Enter, Space and pointer and emits exactly one state per activation', async () => {
-    const user = userEvent.setup(); const wrapper = mount(SortIndicator, { attachTo: document.body, props: { sortField: 'name' } });
+    const user = userEvent.setup(); const wrapper = mount(SortIndicator, { attachTo: document.body, props: { sortField: 'name' }, attrs: { 'data-oods-action': 'sortRows' } });
     try {
+      expect(wrapper.findAll('[data-oods-action]')).toHaveLength(1); expect(wrapper.get('[data-oods-action="sortRows"]').element.tagName).toBe('BUTTON');
       const button = wrapper.get('button').element; await user.tab(); expect(document.activeElement).toBe(button); expect(wrapper.get('th').attributes('aria-sort')).toBe('none');
       await user.keyboard('{Enter}'); expect(wrapper.get('th').attributes('aria-sort')).toBe('ascending');
       await user.keyboard(' '); expect(wrapper.get('th').attributes('aria-sort')).toBe('descending');

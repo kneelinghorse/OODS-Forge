@@ -11,7 +11,8 @@ describe('the last three retained component obligations', () => {
     rerender(<AuditSummaryCard showLastActor={false} />); expect(screen.queryByText('Last actor')).toBeNull(); expect(screen.getByText('Not recorded')).toBeTruthy();
   });
   it('cycles aria-sort using Enter, Space and pointer and emits exactly one state per activation', async () => {
-    const changed = vi.fn(); const user = userEvent.setup(); const { rerender } = render(<SortIndicator sortField="name" onChange={changed} />);
+    const changed = vi.fn(); const user = userEvent.setup(); const { rerender } = render(<SortIndicator sortField="name" onChange={changed} data-oods-action="sortRows" />);
+    expect(document.querySelectorAll('[data-oods-action]')).toHaveLength(1); expect(document.querySelector('[data-oods-action="sortRows"]')?.tagName).toBe('BUTTON');
     const button = screen.getByRole('button'); await user.tab(); expect(document.activeElement).toBe(button);
     expect(screen.getByRole('columnheader').getAttribute('aria-sort')).toBe('none');
     await user.keyboard('{Enter}'); expect(screen.getByRole('columnheader').getAttribute('aria-sort')).toBe('ascending');

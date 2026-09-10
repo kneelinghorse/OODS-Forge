@@ -14,13 +14,13 @@ export const AuditSummaryCard = defineComponent({
   },
 });
 export const SortIndicator = defineComponent({
-  name: 'SortIndicator', props: { id: String, 'data-oods-action': String, label: { type: String, default: 'Sort' }, sortField: String, sortDirection: String, sortActive: { type: Boolean, default: false }, triStateSort: { type: Boolean, default: true }, sortableFields: Array as PropType<readonly string[]>, defaultSortField: String, defaultSortDirection: String },
+  name: 'SortIndicator', inheritAttrs: false, props: { id: String, label: { type: String, default: 'Sort' }, sortField: String, sortDirection: String, sortActive: { type: Boolean, default: false }, triStateSort: { type: Boolean, default: true }, sortableFields: Array as PropType<readonly string[]>, defaultSortField: String, defaultSortDirection: String },
   emits: { change: (_state: SortState) => true },
-  setup(props, { emit }) {
+  setup(props, { emit, attrs }) {
     const state = ref(initialSort(props));
     watch(() => [props.sortField, props.sortDirection, props.sortActive, props.defaultSortField, props.defaultSortDirection], () => { state.value = initialSort(props); });
-    return () => h('table', { id: props.id, class: 'oods-sort-indicator', 'data-oods-component': 'SortIndicator', 'aria-label': props.label }, [h('thead', [h('tr', [h('th', { scope: 'col', 'aria-sort': ariaSort(state.value) }, [
-      h('button', { type: 'button', 'data-oods-action': props['data-oods-action'], 'aria-label': `${props.label} ${state.value.field}`, onClick: () => { state.value = nextSort(state.value, props.triStateSort); emit('change', state.value); } }, `${state.value.field}: ${ariaSort(state.value)}`),
+    return () => h('table', { ...attrs, 'data-oods-action': undefined, id: props.id, class: 'oods-sort-indicator', 'data-oods-component': 'SortIndicator', 'aria-label': props.label }, [h('thead', [h('tr', [h('th', { scope: 'col', 'aria-sort': ariaSort(state.value) }, [
+      h('button', { type: 'button', 'data-oods-action': attrs['data-oods-action'], 'aria-label': `${props.label} ${state.value.field}`, onClick: () => { state.value = nextSort(state.value, props.triStateSort); emit('change', state.value); } }, `${state.value.field}: ${ariaSort(state.value)}`),
     ])])])]);
   },
 });
