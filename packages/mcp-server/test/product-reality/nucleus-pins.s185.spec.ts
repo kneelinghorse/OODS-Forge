@@ -152,7 +152,13 @@ describe('Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONE
   });
 
   it('the hand-written 14-family list survives only in declared showcase fixtures and history scripts', () => {
-    const allowlist = new Map(inventory.literalListAllowlist.map((entry) => [entry.file, entry.reason]));
+    // s192 widens both live harnesses; retain the historical inventory verbatim.
+    const widenedHarnesses = ['packages/components-react/test/visual-evidence.mjs', 'packages/components-vue/test/visual-evidence.mjs'];
+    for (const file of widenedHarnesses) {
+      expect(read(file)).toContain('NUCLEUS_COMPONENT_IDS');
+      expect(HAND_WRITTEN_NUCLEUS_LIST.test(read(file))).toBe(false);
+    }
+    const allowlist = new Map(inventory.literalListAllowlist.filter(entry => !widenedHarnesses.includes(entry.file)).map((entry) => [entry.file, entry.reason]));
     const offenders: string[] = [];
     for (const file of liveScopeFiles()) {
       if (!HAND_WRITTEN_NUCLEUS_LIST.test(read(file))) continue;

@@ -1,0 +1,1358 @@
+﻿2026-09-10T18:48:24.7691092Z Current runner version: '2.337.0'
+2026-09-10T18:48:24.7727291Z ##[group]Runner Image Provisioner
+2026-09-10T18:48:24.7728797Z Hosted Compute Agent
+2026-09-10T18:48:24.7729805Z Version: 20260828.587
+2026-09-10T18:48:24.7730843Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-10T18:48:24.7732244Z Build Date: 2026-08-28T16:44:25Z
+2026-09-10T18:48:24.7733356Z Worker ID: {7a431f4c-1651-4701-aeb7-4781f98f4769}
+2026-09-10T18:48:24.7734917Z Azure Region: eastus
+2026-09-10T18:48:24.7735971Z ##[endgroup]
+2026-09-10T18:48:24.7738843Z ##[group]Operating System
+2026-09-10T18:48:24.7739991Z Ubuntu
+2026-09-10T18:48:24.7740813Z 24.04.5
+2026-09-10T18:48:24.7742233Z LTS
+2026-09-10T18:48:24.7743153Z ##[endgroup]
+2026-09-10T18:48:24.7744007Z ##[group]Runner Image
+2026-09-10T18:48:24.7745778Z Image: ubuntu-24.04
+2026-09-10T18:48:24.7746789Z Version: 20260907.300.1
+2026-09-10T18:48:24.7749152Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260907.300/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-10T18:48:24.7752001Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260907.300
+2026-09-10T18:48:24.7753843Z ##[endgroup]
+2026-09-10T18:48:24.7756262Z ##[group]GITHUB_TOKEN Permissions
+2026-09-10T18:48:24.7759416Z Contents: read
+2026-09-10T18:48:24.7760382Z Metadata: read
+2026-09-10T18:48:24.7761393Z PullRequests: write
+2026-09-10T18:48:24.7762362Z ##[endgroup]
+2026-09-10T18:48:24.7766024Z Secret source: Actions
+2026-09-10T18:48:24.7767668Z Cache mode: write
+2026-09-10T18:48:24.7769167Z Prepare workflow directory
+2026-09-10T18:48:24.8354161Z Prepare all required actions
+2026-09-10T18:48:24.8426701Z Getting action download info
+2026-09-10T18:48:25.1517446Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-10T18:48:25.2669248Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-09-10T18:48:25.4583732Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-09-10T18:48:25.5548936Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+2026-09-10T18:48:25.6847680Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-09-10T18:48:25.9460415Z Complete job name: a11y-contract
+2026-09-10T18:48:26.0438669Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:48:26.0450294Z ##[group]Run actions/checkout@v4
+2026-09-10T18:48:26.0451461Z with:
+2026-09-10T18:48:26.0452245Z   repository: kneelinghorse/OODS-Forge
+2026-09-10T18:48:26.0461830Z   token: ***
+2026-09-10T18:48:26.0462581Z   ssh-strict: true
+2026-09-10T18:48:26.0463355Z   ssh-user: git
+2026-09-10T18:48:26.0464135Z   persist-credentials: true
+2026-09-10T18:48:26.0465171Z   clean: true
+2026-09-10T18:48:26.0465965Z   sparse-checkout-cone-mode: true
+2026-09-10T18:48:26.0466907Z   fetch-depth: 1
+2026-09-10T18:48:26.0467661Z   fetch-tags: false
+2026-09-10T18:48:26.0468448Z   show-progress: true
+2026-09-10T18:48:26.0469250Z   lfs: false
+2026-09-10T18:48:26.0470011Z   submodules: false
+2026-09-10T18:48:26.0470793Z   set-safe-directory: true
+2026-09-10T18:48:26.0471694Z   allow-unsafe-pr-checkout: false
+2026-09-10T18:48:26.0472899Z env:
+2026-09-10T18:48:26.0473593Z   NODE_VERSION: 24
+2026-09-10T18:48:26.0474340Z ##[endgroup]
+2026-09-10T18:48:26.1712040Z Syncing repository: kneelinghorse/OODS-Forge
+2026-09-10T18:48:26.1717730Z ##[group]Getting Git version info
+2026-09-10T18:48:26.1720889Z Working directory is '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-10T18:48:26.1816486Z [command]/usr/bin/git version
+2026-09-10T18:48:26.1912302Z git version 2.55.0
+2026-09-10T18:48:26.1922917Z ##[endgroup]
+2026-09-10T18:48:26.1935688Z Temporarily overriding HOME='/home/runner/work/_temp/8b38c15d-dbd9-498f-a9df-aed99971d7b4' before making global git config changes
+2026-09-10T18:48:26.1941155Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-10T18:48:26.1959347Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:48:26.2038344Z Deleting the contents of '/home/runner/work/OODS-Forge/OODS-Forge'
+2026-09-10T18:48:26.2046803Z ##[group]Initializing the repository
+2026-09-10T18:48:26.2049872Z [command]/usr/bin/git init /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:48:26.2207602Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-10T18:48:26.2211448Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-10T18:48:26.2215499Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-10T18:48:26.2218339Z hint: call:
+2026-09-10T18:48:26.2220214Z hint:
+2026-09-10T18:48:26.2222225Z hint: 	git config --global init.defaultBranch <name>
+2026-09-10T18:48:26.2225353Z hint:
+2026-09-10T18:48:26.2229549Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-10T18:48:26.2232482Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-10T18:48:26.2237771Z hint:
+2026-09-10T18:48:26.2238991Z hint: 	git branch -m <name>
+2026-09-10T18:48:26.2240372Z hint:
+2026-09-10T18:48:26.2242312Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-10T18:48:26.2248611Z Initialized empty Git repository in /home/runner/work/OODS-Forge/OODS-Forge/.git/
+2026-09-10T18:48:26.2254421Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Forge
+2026-09-10T18:48:26.2293062Z ##[endgroup]
+2026-09-10T18:48:26.2296125Z ##[group]Disabling automatic garbage collection
+2026-09-10T18:48:26.2298921Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-10T18:48:26.2356612Z ##[endgroup]
+2026-09-10T18:48:26.2363155Z ##[group]Setting up auth
+2026-09-10T18:48:26.2366315Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-10T18:48:26.2418398Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-10T18:48:26.3128306Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-10T18:48:26.3139341Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-10T18:48:26.3367190Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-10T18:48:26.3398373Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-10T18:48:26.3655948Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-10T18:48:26.3698706Z ##[endgroup]
+2026-09-10T18:48:26.3701849Z ##[group]Fetching the repository
+2026-09-10T18:48:26.3713509Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9f5ae18ed20904cff8a9e785b75aaab1099f2fd6:refs/remotes/origin/codex/sprint-192-component-truth
+2026-09-10T18:48:32.3086916Z From https://github.com/kneelinghorse/OODS-Forge
+2026-09-10T18:48:32.3091087Z  * [new ref]           9f5ae18ed20904cff8a9e785b75aaab1099f2fd6 -> origin/codex/sprint-192-component-truth
+2026-09-10T18:48:32.3135022Z ##[endgroup]
+2026-09-10T18:48:32.3136768Z ##[group]Determining the checkout info
+2026-09-10T18:48:32.3137835Z ##[endgroup]
+2026-09-10T18:48:32.3138928Z [command]/usr/bin/git sparse-checkout disable
+2026-09-10T18:48:32.3185930Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-10T18:48:32.3206111Z ##[group]Checking out the ref
+2026-09-10T18:48:32.3212135Z [command]/usr/bin/git checkout --progress --force -B codex/sprint-192-component-truth refs/remotes/origin/codex/sprint-192-component-truth
+2026-09-10T18:48:33.3576084Z Updating files:  38% (10311/26499)
+2026-09-10T18:48:33.3905361Z Updating files:  39% (10335/26499)
+2026-09-10T18:48:33.4087838Z Updating files:  40% (10600/26499)
+2026-09-10T18:48:33.4310428Z Updating files:  41% (10865/26499)
+2026-09-10T18:48:33.4629728Z Updating files:  42% (11130/26499)
+2026-09-10T18:48:33.4795147Z Updating files:  43% (11395/26499)
+2026-09-10T18:48:33.5068636Z Updating files:  44% (11660/26499)
+2026-09-10T18:48:33.5503673Z Updating files:  45% (11925/26499)
+2026-09-10T18:48:33.5793395Z Updating files:  46% (12190/26499)
+2026-09-10T18:48:33.6215399Z Updating files:  47% (12455/26499)
+2026-09-10T18:48:33.6712873Z Updating files:  48% (12720/26499)
+2026-09-10T18:48:33.7179110Z Updating files:  49% (12985/26499)
+2026-09-10T18:48:33.7685042Z Updating files:  50% (13250/26499)
+2026-09-10T18:48:33.8037323Z Updating files:  51% (13515/26499)
+2026-09-10T18:48:33.8315812Z Updating files:  52% (13780/26499)
+2026-09-10T18:48:33.8703617Z Updating files:  53% (14045/26499)
+2026-09-10T18:48:33.9050731Z Updating files:  54% (14310/26499)
+2026-09-10T18:48:33.9345179Z Updating files:  55% (14575/26499)
+2026-09-10T18:48:33.9766451Z Updating files:  56% (14840/26499)
+2026-09-10T18:48:34.0104946Z Updating files:  57% (15105/26499)
+2026-09-10T18:48:34.0540584Z Updating files:  58% (15370/26499)
+2026-09-10T18:48:34.0839430Z Updating files:  59% (15635/26499)
+2026-09-10T18:48:34.1150138Z Updating files:  60% (15900/26499)
+2026-09-10T18:48:34.1489914Z Updating files:  61% (16165/26499)
+2026-09-10T18:48:34.1740345Z Updating files:  62% (16430/26499)
+2026-09-10T18:48:34.2090644Z Updating files:  63% (16695/26499)
+2026-09-10T18:48:34.2283342Z Updating files:  64% (16960/26499)
+2026-09-10T18:48:34.2652335Z Updating files:  65% (17225/26499)
+2026-09-10T18:48:34.2833786Z Updating files:  66% (17490/26499)
+2026-09-10T18:48:34.3285682Z Updating files:  67% (17755/26499)
+2026-09-10T18:48:34.3465822Z Updating files:  68% (18020/26499)
+2026-09-10T18:48:34.3492150Z Updating files:  69% (18285/26499)
+2026-09-10T18:48:34.3799099Z Updating files:  69% (18327/26499)
+2026-09-10T18:48:34.4346288Z Updating files:  70% (18550/26499)
+2026-09-10T18:48:34.4685860Z Updating files:  71% (18815/26499)
+2026-09-10T18:48:34.5135739Z Updating files:  72% (19080/26499)
+2026-09-10T18:48:34.5446609Z Updating files:  73% (19345/26499)
+2026-09-10T18:48:34.5730256Z Updating files:  74% (19610/26499)
+2026-09-10T18:48:34.6156439Z Updating files:  75% (19875/26499)
+2026-09-10T18:48:34.6543207Z Updating files:  76% (20140/26499)
+2026-09-10T18:48:34.6938602Z Updating files:  77% (20405/26499)
+2026-09-10T18:48:34.7302730Z Updating files:  78% (20670/26499)
+2026-09-10T18:48:34.7660184Z Updating files:  79% (20935/26499)
+2026-09-10T18:48:34.8074022Z Updating files:  80% (21200/26499)
+2026-09-10T18:48:34.8477009Z Updating files:  81% (21465/26499)
+2026-09-10T18:48:34.8808496Z Updating files:  82% (21730/26499)
+2026-09-10T18:48:34.9285742Z Updating files:  83% (21995/26499)
+2026-09-10T18:48:35.2186854Z Updating files:  84% (22260/26499)
+2026-09-10T18:48:35.2498903Z Updating files:  85% (22525/26499)
+2026-09-10T18:48:35.2856466Z Updating files:  86% (22790/26499)
+2026-09-10T18:48:35.3079385Z Updating files:  87% (23055/26499)
+2026-09-10T18:48:35.3242105Z Updating files:  88% (23320/26499)
+2026-09-10T18:48:35.3388145Z Updating files:  89% (23585/26499)
+2026-09-10T18:48:35.3492391Z Updating files:  90% (23850/26499)
+2026-09-10T18:48:35.3572801Z Updating files:  90% (24012/26499)
+2026-09-10T18:48:35.3806636Z Updating files:  91% (24115/26499)
+2026-09-10T18:48:35.3992966Z Updating files:  92% (24380/26499)
+2026-09-10T18:48:35.4175166Z Updating files:  93% (24645/26499)
+2026-09-10T18:48:35.4395440Z Updating files:  94% (24910/26499)
+2026-09-10T18:48:35.4653013Z Updating files:  95% (25175/26499)
+2026-09-10T18:48:35.4925333Z Updating files:  96% (25440/26499)
+2026-09-10T18:48:35.5078626Z Updating files:  97% (25705/26499)
+2026-09-10T18:48:35.5278759Z Updating files:  98% (25970/26499)
+2026-09-10T18:48:35.5476825Z Updating files:  99% (26235/26499)
+2026-09-10T18:48:35.5477975Z Updating files: 100% (26499/26499)
+2026-09-10T18:48:35.5481211Z Updating files: 100% (26499/26499), done.
+2026-09-10T18:48:35.6843623Z Switched to a new branch 'codex/sprint-192-component-truth'
+2026-09-10T18:48:35.6848639Z branch 'codex/sprint-192-component-truth' set up to track 'origin/codex/sprint-192-component-truth'.
+2026-09-10T18:48:35.6987843Z ##[endgroup]
+2026-09-10T18:48:35.7395997Z [command]/usr/bin/git log -1 --format=%H
+2026-09-10T18:48:35.7396704Z 9f5ae18ed20904cff8a9e785b75aaab1099f2fd6
+2026-09-10T18:48:35.7827971Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:48:35.7831307Z ##[group]Run pnpm/action-setup@v4
+2026-09-10T18:48:35.7831738Z with:
+2026-09-10T18:48:35.7832074Z   run_install: false
+2026-09-10T18:48:35.7832467Z   dest: ~/setup-pnpm
+2026-09-10T18:48:35.7832825Z   cache: false
+2026-09-10T18:48:35.7833203Z   cache_dependency_path: pnpm-lock.yaml
+2026-09-10T18:48:35.7833630Z   package_json_file: package.json
+2026-09-10T18:48:35.7833893Z   standalone: false
+2026-09-10T18:48:35.7834103Z env:
+2026-09-10T18:48:35.7834282Z   NODE_VERSION: 24
+2026-09-10T18:48:35.7834477Z ##[endgroup]
+2026-09-10T18:48:35.9701743Z ##[group]Running self-installer...
+2026-09-10T18:48:36.5096223Z (node:2045) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-10T18:48:36.5119243Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:48:36.6821523Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-10T18:48:36.6968872Z Packages: +1
+2026-09-10T18:48:36.6971191Z +
+2026-09-10T18:48:37.1136307Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-09-10T18:48:37.1650324Z 
+2026-09-10T18:48:37.1655123Z dependencies:
+2026-09-10T18:48:37.1655822Z + pnpm 9.12.2 (12.3.4 is available)
+2026-09-10T18:48:37.1658218Z 
+2026-09-10T18:48:37.1680776Z Done in 912ms
+2026-09-10T18:48:37.1836461Z ##[endgroup]
+2026-09-10T18:48:37.1837833Z Installation Completed!
+2026-09-10T18:48:37.2022714Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:48:37.2023978Z ##[group]Run actions/setup-node@v4
+2026-09-10T18:48:37.2024232Z with:
+2026-09-10T18:48:37.2024433Z   node-version: 24
+2026-09-10T18:48:37.2024835Z   cache: pnpm
+2026-09-10T18:48:37.2025035Z   always-auth: false
+2026-09-10T18:48:37.2025252Z   check-latest: false
+2026-09-10T18:48:37.2027756Z   token: ***
+2026-09-10T18:48:37.2027949Z env:
+2026-09-10T18:48:37.2028132Z   NODE_VERSION: 24
+2026-09-10T18:48:37.2028406Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:48:37.2028719Z ##[endgroup]
+2026-09-10T18:48:37.5832989Z (node:2058) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-10T18:48:37.5844142Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:48:37.5853279Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+2026-09-10T18:48:37.5892265Z ##[group]Environment details
+2026-09-10T18:48:38.0598343Z node: v24.20.0
+2026-09-10T18:48:38.0599226Z npm: 11.19.0
+2026-09-10T18:48:38.0599930Z yarn: 1.22.22
+2026-09-10T18:48:38.0601068Z ##[endgroup]
+2026-09-10T18:48:38.0661579Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2026-09-10T18:48:38.5367304Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-09-10T18:48:38.6294365Z Cache hit for: node-cache-Linux-x64-pnpm-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-10T18:48:38.6466424Z (node:2058) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-10T18:48:39.5420137Z Received 125383733 of 125383733 (100.0%), 140.0 MBs/sec
+2026-09-10T18:48:39.5420891Z Cache Size: ~120 MB (125383733 B)
+2026-09-10T18:48:39.5453792Z [command]/usr/bin/tar -xf /home/runner/work/_temp/eef71caa-7356-4ae8-9ebb-186e0d870819/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-10T18:48:42.5389639Z Cache restored successfully
+2026-09-10T18:48:42.7757932Z Cache restored from key: node-cache-Linux-x64-pnpm-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-10T18:48:42.8040061Z ##[group]Run pnpm install --frozen-lockfile
+2026-09-10T18:48:42.8040491Z [36;1mpnpm install --frozen-lockfile[0m
+2026-09-10T18:48:42.8256642Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:48:42.8257066Z env:
+2026-09-10T18:48:42.8257385Z   NODE_VERSION: 24
+2026-09-10T18:48:42.8257855Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:48:42.8258358Z ##[endgroup]
+2026-09-10T18:48:43.4818173Z Scope: all 22 workspace projects
+2026-09-10T18:48:43.6077068Z Lockfile is up to date, resolution step is skipped
+2026-09-10T18:48:43.6485660Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-09-10T18:48:43.8210596Z Packages: +946
+2026-09-10T18:48:43.8211295Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-09-10T18:48:44.6506072Z Progress: resolved 946, reused 736, downloaded 0, added 0
+2026-09-10T18:48:45.6497932Z Progress: resolved 946, reused 945, downloaded 0, added 427
+2026-09-10T18:48:46.5636290Z Progress: resolved 946, reused 945, downloaded 0, added 946, done
+2026-09-10T18:48:47.8955464Z 
+2026-09-10T18:48:47.8956313Z dependencies:
+2026-09-10T18:48:47.8957091Z + @radix-ui/react-slot 1.2.3
+2026-09-10T18:48:47.8957804Z + @rjsf/core 5.24.13
+2026-09-10T18:48:47.8958480Z + @rjsf/utils 5.24.13
+2026-09-10T18:48:47.8959339Z + @rjsf/validator-ajv8 5.24.13
+2026-09-10T18:48:47.8965462Z + @types/geojson 7946.0.16
+2026-09-10T18:48:47.8965864Z + @types/topojson-client 3.1.5
+2026-09-10T18:48:47.8966204Z + @types/topojson-specification 1.0.5
+2026-09-10T18:48:47.8966503Z + ajv 8.17.1
+2026-09-10T18:48:47.8966736Z + ajv-formats 3.0.1
+2026-09-10T18:48:47.8966953Z + d3-geo 3.1.1
+2026-09-10T18:48:47.8967158Z + d3-scale 4.0.2
+2026-09-10T18:48:47.8967370Z + echarts 6.0.0
+2026-09-10T18:48:47.8967573Z + js-yaml 4.1.0
+2026-09-10T18:48:47.8967778Z + luxon 3.7.2
+2026-09-10T18:48:47.8967980Z + pg 8.16.3
+2026-09-10T18:48:47.8968190Z + react 19.2.0
+2026-09-10T18:48:47.8968405Z + react-dom 19.2.0
+2026-09-10T18:48:47.8968925Z + react-window 1.8.11
+2026-09-10T18:48:47.8969382Z + topojson-client 3.1.0
+2026-09-10T18:48:47.8969795Z + vega 6.2.0
+2026-09-10T18:48:47.8970191Z + vega-embed 7.1.0
+2026-09-10T18:48:47.8970555Z + zod 4.1.12
+2026-09-10T18:48:47.8970768Z 
+2026-09-10T18:48:47.8970940Z devDependencies:
+2026-09-10T18:48:47.8971692Z + @chromatic-com/storybook 4.1.1
+2026-09-10T18:48:47.8972428Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2026-09-10T18:48:47.8976186Z + @oods/component-contracts 0.1.0 <- packages/component-contracts
+2026-09-10T18:48:47.8990451Z + @oods/tokens 0.1.0 <- packages/tokens
+2026-09-10T18:48:47.8996513Z + @oods/viz-core 0.1.0 <- packages/viz-core
+2026-09-10T18:48:47.9005568Z + @playwright/test 1.56.1
+2026-09-10T18:48:47.9006367Z + @storybook/addon-a11y 9.1.10
+2026-09-10T18:48:47.9007118Z + @storybook/addon-docs 9.1.10
+2026-09-10T18:48:47.9007883Z + @storybook/addon-onboarding 9.1.10
+2026-09-10T18:48:47.9013753Z + @storybook/mdx2-csf 1.1.0
+2026-09-10T18:48:47.9030336Z + @storybook/react 9.1.10
+2026-09-10T18:48:47.9041503Z + @storybook/react-vite 9.1.10
+2026-09-10T18:48:47.9043370Z + @testing-library/dom 10.4.1
+2026-09-10T18:48:47.9044092Z + @testing-library/jest-dom 6.9.1
+2026-09-10T18:48:47.9045059Z + @testing-library/react 16.3.0
+2026-09-10T18:48:47.9045852Z + @testing-library/user-event 14.6.1
+2026-09-10T18:48:47.9047403Z + @tokens-studio/sd-transforms 1.3.0
+2026-09-10T18:48:47.9048136Z + @types/d3-geo 3.1.0
+2026-09-10T18:48:47.9048677Z + @types/d3-scale 4.0.9
+2026-09-10T18:48:47.9049255Z + @types/js-yaml 4.0.9
+2026-09-10T18:48:47.9049823Z + @types/luxon 3.7.1
+2026-09-10T18:48:47.9050372Z + @types/node 20.19.21
+2026-09-10T18:48:47.9050947Z + @types/pg 8.15.6
+2026-09-10T18:48:47.9051473Z + @types/react 19.2.2
+2026-09-10T18:48:47.9052049Z + @types/react-dom 19.2.2
+2026-09-10T18:48:47.9052675Z + @types/react-window 1.8.8
+2026-09-10T18:48:47.9053284Z + @types/semver 7.7.1
+2026-09-10T18:48:47.9053845Z + @types/sql.js 1.4.9
+2026-09-10T18:48:47.9054767Z + @typescript-eslint/eslint-plugin 6.21.0
+2026-09-10T18:48:47.9058503Z + @typescript-eslint/parser 6.21.0
+2026-09-10T18:48:47.9068385Z + @vitejs/plugin-react 5.0.4
+2026-09-10T18:48:47.9075801Z + @vitest/browser 3.2.4
+2026-09-10T18:48:47.9093739Z + @vitest/coverage-v8 3.2.4
+2026-09-10T18:48:47.9103005Z + axe-core 4.11.0
+2026-09-10T18:48:47.9119281Z + colorjs.io 0.5.2
+2026-09-10T18:48:47.9132974Z + dotenv 17.4.2
+2026-09-10T18:48:47.9142456Z + eslint 8.57.1
+2026-09-10T18:48:47.9168389Z + eslint-plugin-storybook 9.1.10
+2026-09-10T18:48:47.9180527Z + globals 17.6.0
+2026-09-10T18:48:47.9182857Z + jsdom 24.1.3
+2026-09-10T18:48:47.9186077Z + json-schema-to-typescript 13.1.2
+2026-09-10T18:48:47.9186931Z + markdown-to-jsx 7.7.15
+2026-09-10T18:48:47.9187976Z + pg-mem 3.0.5
+2026-09-10T18:48:47.9188668Z + playwright 1.56.1
+2026-09-10T18:48:47.9189813Z + postcss 8.5.28
+2026-09-10T18:48:47.9192752Z + prettier 3.6.2
+2026-09-10T18:48:47.9196244Z + rimraf 5.0.10
+2026-09-10T18:48:47.9197178Z + semver 7.7.3
+2026-09-10T18:48:47.9198363Z + sql.js 1.13.0
+2026-09-10T18:48:47.9199322Z + storybook 9.1.10
+2026-09-10T18:48:47.9200527Z + style-dictionary 4.4.0
+2026-09-10T18:48:47.9201439Z + tailwindcss 3.4.18
+2026-09-10T18:48:47.9202525Z + tsup 8.5.0
+2026-09-10T18:48:47.9203349Z + tsx 4.20.6
+2026-09-10T18:48:47.9204344Z + typescript 5.3.3
+2026-09-10T18:48:47.9205809Z + vega-lite 6.4.1
+2026-09-10T18:48:47.9208267Z + vite-tsconfig-paths 5.1.4
+2026-09-10T18:48:47.9212725Z + vitest 3.2.4
+2026-09-10T18:48:47.9213141Z + vitest-axe 0.1.0
+2026-09-10T18:48:47.9213376Z 
+2026-09-10T18:48:47.9629590Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2026-09-10T18:48:48.0026868Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2026-09-10T18:48:48.0054468Z . prepare: Done
+2026-09-10T18:48:48.0173135Z Done in 5.1s
+2026-09-10T18:48:48.0583490Z ##[group]Run pnpm run build:tokens
+2026-09-10T18:48:48.0583838Z [36;1mpnpm run build:tokens[0m
+2026-09-10T18:48:48.0620112Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:48:48.0620369Z env:
+2026-09-10T18:48:48.0620580Z   NODE_VERSION: 24
+2026-09-10T18:48:48.0620849Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:48:48.0621163Z ##[endgroup]
+2026-09-10T18:48:48.5515462Z 
+2026-09-10T18:48:48.5525843Z > @oods/foundry-mcp@0.1.0 build:tokens /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:48:48.5566196Z > node packages/tokens/scripts/build.mjs
+2026-09-10T18:48:48.5566832Z 
+2026-09-10T18:48:48.8576627Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-10T18:48:48.8577995Z Building design tokens with Style Dictionary…
+2026-09-10T18:48:48.9385481Z 
+2026-09-10T18:48:48.9397957Z Token collisions detected (2):
+2026-09-10T18:48:48.9398472Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:48.9399107Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:49.1802036Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:48:49.1807776Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:48:49.1893168Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:48:49.1895202Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:48:49.1896987Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:48:49.1907672Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:48:49.1911461Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:48:49.1913332Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:48:49.1915410Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:48:49.1917234Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:48:49.1919016Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:48:49.1920784Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:48:49.1922525Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:48:49.1924290Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:48:49.1926336Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:48:49.1928059Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:48:49.1929687Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.1931282Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.1933497Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:48:49.1935248Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:48:49.1936760Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:48:49.1964918Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:48:49.1967174Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.1968812Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.1970379Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:48:49.1971923Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:48:49.1973473Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:48:49.2008477Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:48:49.2010050Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.2011525Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.2012990Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:48:49.2014495Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:48:49.2016341Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:48:49.2018253Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:48:49.2019927Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:48:49.2021562Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:48:49.5153917Z 
+2026-09-10T18:48:49.5155051Z ios-swift
+2026-09-10T18:48:49.5268742Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-10T18:48:49.5496381Z 
+2026-09-10T18:48:49.5515587Z compose
+2026-09-10T18:48:49.5806776Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-10T18:48:49.6797131Z 
+2026-09-10T18:48:49.6798035Z ts
+2026-09-10T18:48:49.6799310Z ! dist/ts/tokens.ts, does not exist
+2026-09-10T18:48:49.6808760Z 
+2026-09-10T18:48:49.6809225Z tailwind
+2026-09-10T18:48:49.6810395Z ! dist/tailwind/tokens.json, does not exist
+2026-09-10T18:48:49.7670727Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:48:49.7672928Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:48:49.7677233Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:48:49.7679233Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:48:49.7680968Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:48:49.7682677Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:48:49.7684473Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:48:49.7686506Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:48:49.7688244Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:48:49.7690002Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:48:49.7692611Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:48:49.7695172Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:48:49.7697720Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:48:49.7700386Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:48:49.7703012Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:48:49.7705520Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:48:49.7707991Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.7709960Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.7712223Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:48:49.7714239Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:48:49.7716759Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:48:49.7718771Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:48:49.7721120Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.7723183Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.7726115Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:48:49.7728180Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:48:49.7730475Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:48:49.7732377Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:48:49.7741289Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.7743378Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:48:49.7745989Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:48:49.7747897Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:48:49.7750268Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:48:49.7752409Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:48:49.7755081Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:48:49.7759902Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:48:50.0541974Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:48:50.0550288Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:48:50.0552962Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:48:50.0555395Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:48:50.0557874Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:48:50.0563122Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:48:50.0565955Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:48:50.0568262Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:48:50.0571190Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:48:50.0574002Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:48:50.0577006Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:48:50.0579294Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:48:50.0581858Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:48:50.0584000Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:48:50.0586791Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:48:50.0589038Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:48:50.0591469Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:48:50.0593575Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:48:50.0596160Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:48:50.0598165Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:48:50.0600879Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:48:50.0602867Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:48:50.0605447Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:48:50.0607548Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:48:50.0609798Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:48:50.0611790Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:48:50.0614129Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:48:50.0616446Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:48:50.0618806Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:48:50.0620771Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:48:50.0623149Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:48:50.0625260Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:48:50.0627643Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:48:50.0631828Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:48:50.0633465Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:48:50.0635300Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:48:50.5891883Z 
+2026-09-10T18:48:50.5902836Z ios-swift
+2026-09-10T18:48:50.5904809Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-10T18:48:50.5905590Z 
+2026-09-10T18:48:50.5906432Z compose
+2026-09-10T18:48:50.5907434Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-10T18:48:50.6536166Z 
+2026-09-10T18:48:50.6537120Z ts
+2026-09-10T18:48:50.6538666Z ✔︎ dist/ts/tokens.ts
+2026-09-10T18:48:50.6539364Z 
+2026-09-10T18:48:50.6540164Z tailwind
+2026-09-10T18:48:50.6541325Z ✔︎ dist/tailwind/tokens.json
+2026-09-10T18:48:50.7449311Z 
+2026-09-10T18:48:50.7450233Z Token collisions detected (2):
+2026-09-10T18:48:50.7451718Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:50.7453492Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:50.9545242Z 
+2026-09-10T18:48:50.9546104Z css
+2026-09-10T18:48:50.9547225Z ✔︎ dist/css/tokens.css
+2026-09-10T18:48:50.9980860Z 
+2026-09-10T18:48:50.9981723Z Token collisions detected (2):
+2026-09-10T18:48:50.9983127Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:50.9984361Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:51.1535044Z 
+2026-09-10T18:48:51.1535912Z css
+2026-09-10T18:48:51.1536997Z ✔︎ dist/css/tokens.css
+2026-09-10T18:48:51.3092429Z 
+2026-09-10T18:48:51.3145844Z Token collisions detected (252):
+2026-09-10T18:48:51.3161046Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:51.3162307Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:51.4628470Z 
+2026-09-10T18:48:51.4629219Z css
+2026-09-10T18:48:51.4630331Z ✔︎ dist/css/tokens.css
+2026-09-10T18:48:51.6034028Z 
+2026-09-10T18:48:51.6035084Z Token collisions detected (227):
+2026-09-10T18:48:51.6036279Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:51.6037511Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:51.7640153Z 
+2026-09-10T18:48:51.7641415Z css
+2026-09-10T18:48:51.7642414Z ✔︎ dist/css/tokens.css
+2026-09-10T18:48:51.9151228Z 
+2026-09-10T18:48:51.9152797Z Token collisions detected (2):
+2026-09-10T18:48:51.9154009Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:51.9155456Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:52.0697054Z 
+2026-09-10T18:48:52.0699286Z css
+2026-09-10T18:48:52.0700369Z ✔︎ dist/css/tokens.css
+2026-09-10T18:48:52.2011617Z 
+2026-09-10T18:48:52.2012478Z Token collisions detected (252):
+2026-09-10T18:48:52.2013663Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:52.2015159Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:52.3514330Z 
+2026-09-10T18:48:52.3515334Z css
+2026-09-10T18:48:52.3516447Z ✔︎ dist/css/tokens.css
+2026-09-10T18:48:52.5336390Z 
+2026-09-10T18:48:52.5340666Z Token collisions detected (227):
+2026-09-10T18:48:52.5345493Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:52.5349682Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:52.7635270Z 
+2026-09-10T18:48:52.7655761Z css
+2026-09-10T18:48:52.7675609Z ✔︎ dist/css/tokens.css
+2026-09-10T18:48:52.9650362Z 
+2026-09-10T18:48:52.9675619Z Token collisions detected (2):
+2026-09-10T18:48:52.9676690Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:48:52.9695402Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:48:53.1915970Z ✔︎ tokens built successfully in 4.34s
+2026-09-10T18:48:53.1955773Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-10T18:48:53.1975211Z    types:    dist/ts/tokens.ts
+2026-09-10T18:48:53.1975781Z    tailwind: dist/tailwind/tokens.json
+2026-09-10T18:48:53.1976346Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-10T18:48:53.1976906Z    compose:  dist/compose/OodsTokens.kt
+2026-09-10T18:48:53.2543327Z ##[group]Run pnpm --filter @oods/tw-variants run build
+2026-09-10T18:48:53.2544026Z [36;1mpnpm --filter @oods/tw-variants run build[0m
+2026-09-10T18:48:53.2592204Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:48:53.2592622Z env:
+2026-09-10T18:48:53.2592933Z   NODE_VERSION: 24
+2026-09-10T18:48:53.2593379Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:48:53.2593901Z ##[endgroup]
+2026-09-10T18:48:54.0015810Z 
+2026-09-10T18:48:54.0036271Z > @oods/tw-variants@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/tw-variants
+2026-09-10T18:48:54.0055705Z > rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:48:54.0062877Z 
+2026-09-10T18:48:54.5436031Z [34mCLI[39m Building entry: src/context-matrix.ts, src/index.ts
+2026-09-10T18:48:54.5441114Z [34mCLI[39m Using tsconfig: ../../tsconfig.json
+2026-09-10T18:48:54.5442314Z [34mCLI[39m tsup v8.5.0
+2026-09-10T18:48:54.5444147Z [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/tw-variants/tsup.config.ts
+2026-09-10T18:48:54.5734759Z [34mCLI[39m Target: node20
+2026-09-10T18:48:54.5775551Z [34mCLI[39m Cleaning output folder
+2026-09-10T18:48:54.5985886Z [34mESM[39m Build start
+2026-09-10T18:48:54.5995292Z [34mCJS[39m Build start
+2026-09-10T18:48:55.1739898Z [32mESM[39m [1mdist/context-matrix.js     [22m[32m139.00 B[39m
+2026-09-10T18:48:55.1765525Z [32mESM[39m [1mdist/chunk-IHQKAR2X.js     [22m[32m6.39 KB[39m
+2026-09-10T18:48:55.1966962Z [32mESM[39m [1mdist/index.js              [22m[32m8.03 KB[39m
+2026-09-10T18:48:55.1983264Z [32mESM[39m [1mdist/context-matrix.js.map [22m[32m78.00 B[39m
+2026-09-10T18:48:55.2166759Z [32mESM[39m [1mdist/chunk-IHQKAR2X.js.map [22m[32m13.51 KB[39m
+2026-09-10T18:48:55.2185004Z [32mESM[39m [1mdist/index.js.map          [22m[32m19.16 KB[39m
+2026-09-10T18:48:55.2386740Z [32mESM[39m ⚡️ Build success in 604ms
+2026-09-10T18:48:55.2388252Z [32mCJS[39m [1mdist/context-matrix.cjs     [22m[32m6.42 KB[39m
+2026-09-10T18:48:55.2587643Z [32mCJS[39m [1mdist/index.cjs              [22m[32m14.54 KB[39m
+2026-09-10T18:48:55.2590084Z [32mCJS[39m [1mdist/context-matrix.cjs.map [22m[32m13.51 KB[39m
+2026-09-10T18:48:55.2792870Z [32mCJS[39m [1mdist/index.cjs.map          [22m[32m32.63 KB[39m
+2026-09-10T18:48:55.2805534Z [32mCJS[39m ⚡️ Build success in 604ms
+2026-09-10T18:48:55.3436596Z [34mDTS[39m Build start
+2026-09-10T18:48:59.4903292Z [32mDTS[39m ⚡️ Build success in 4169ms
+2026-09-10T18:48:59.4916867Z [32mDTS[39m [1mdist/index.d.ts           [22m[32m685.00 B[39m
+2026-09-10T18:48:59.4918212Z [32mDTS[39m [1mdist/context-matrix.d.ts  [22m[32m573.00 B[39m
+2026-09-10T18:48:59.4949181Z [32mDTS[39m [1mdist/index.d.cts          [22m[32m685.00 B[39m
+2026-09-10T18:48:59.4965540Z [32mDTS[39m [1mdist/context-matrix.d.cts [22m[32m573.00 B[39m
+2026-09-10T18:48:59.5901510Z ##[group]Run pnpm --filter @oods/component-contracts run build
+2026-09-10T18:48:59.5902284Z [36;1mpnpm --filter @oods/component-contracts run build[0m
+2026-09-10T18:48:59.5994070Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:48:59.5994520Z env:
+2026-09-10T18:48:59.5995049Z   NODE_VERSION: 24
+2026-09-10T18:48:59.5995502Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:48:59.5996025Z ##[endgroup]
+2026-09-10T18:49:00.1644087Z 
+2026-09-10T18:49:00.1645631Z > @oods/component-contracts@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts
+2026-09-10T18:49:00.1647195Z > rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:49:00.1647865Z 
+2026-09-10T18:49:00.5404948Z [34mCLI[39m Building entry: src/index.ts
+2026-09-10T18:49:00.5412930Z [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:49:00.5413743Z [34mCLI[39m tsup v8.5.0
+2026-09-10T18:49:00.5415538Z [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-contracts/tsup.config.ts
+2026-09-10T18:49:00.5566524Z [34mCLI[39m Target: es2022
+2026-09-10T18:49:00.5575419Z [34mCLI[39m Cleaning output folder
+2026-09-10T18:49:00.5672196Z [34mESM[39m Build start
+2026-09-10T18:49:00.5682612Z [34mCJS[39m Build start
+2026-09-10T18:49:01.5641605Z [34mDTS[39m Build start
+2026-09-10T18:49:01.5642508Z [32mCJS[39m [1mdist/index.cjs [22m[32m410.54 KB[39m
+2026-09-10T18:49:01.5643381Z [32mCJS[39m ⚡️ Build success in 1008ms
+2026-09-10T18:49:01.5644302Z [32mESM[39m [1mdist/index.js [22m[32m409.23 KB[39m
+2026-09-10T18:49:01.5645476Z [32mESM[39m ⚡️ Build success in 1009ms
+2026-09-10T18:49:04.0085235Z [32mDTS[39m ⚡️ Build success in 2769ms
+2026-09-10T18:49:04.0087642Z [32mDTS[39m [1mdist/index.d.ts  [22m[32m59.71 KB[39m
+2026-09-10T18:49:04.0088951Z [32mDTS[39m [1mdist/index.d.cts [22m[32m59.71 KB[39m
+2026-09-10T18:49:04.0772477Z ##[group]Run pnpm run build-storybook
+2026-09-10T18:49:04.0772833Z [36;1mpnpm run build-storybook[0m
+2026-09-10T18:49:04.0809625Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:49:04.0809887Z env:
+2026-09-10T18:49:04.0810084Z   NODE_VERSION: 24
+2026-09-10T18:49:04.0810369Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:49:04.0810706Z ##[endgroup]
+2026-09-10T18:49:04.5773711Z 
+2026-09-10T18:49:04.5775063Z > @oods/foundry-mcp@0.1.0 build-storybook /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:49:04.5776318Z > storybook build
+2026-09-10T18:49:04.5776977Z 
+2026-09-10T18:49:05.1799757Z [1mstorybook v9.1.10
+2026-09-10T18:49:05.1800666Z [22m
+2026-09-10T18:49:05.1823017Z info => Cleaning outputDir: [36mstorybook-static[39m
+2026-09-10T18:49:05.4349475Z info => Loading presets
+2026-09-10T18:49:06.4165033Z info => Building manager..
+2026-09-10T18:49:06.9283444Z info => Building preview..
+2026-09-10T18:49:07.1855217Z info Using tsconfig paths for react-docgen
+2026-09-10T18:49:07.1911676Z No story files found for the specified pattern: [34msrc/stories/**/*.mdx[39m
+2026-09-10T18:49:07.7049694Z 
+2026-09-10T18:49:07.7050877Z > @oods/tokens@0.1.0 build /home/runner/work/OODS-Forge/OODS-Forge/packages/tokens
+2026-09-10T18:49:07.7052443Z > rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs
+2026-09-10T18:49:07.7053965Z 
+2026-09-10T18:49:08.0649047Z ✔︎ collision guard: no non-exempt collisions across 6 scopes
+2026-09-10T18:49:08.0651988Z Building design tokens with Style Dictionary…
+2026-09-10T18:49:08.1442377Z 
+2026-09-10T18:49:08.1445669Z Token collisions detected (2):
+2026-09-10T18:49:08.1446923Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:08.1448215Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:08.3439481Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:49:08.3456311Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:49:08.3486180Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:49:08.3488171Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:49:08.3495223Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:49:08.3497319Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:49:08.3499650Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:49:08.3501821Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:49:08.3503992Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:49:08.3506352Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:49:08.3508419Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:49:08.3510501Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:49:08.3512597Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:49:08.3514906Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:49:08.3516999Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:49:08.3519076Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:49:08.3521573Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.3523506Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.3525817Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:49:08.3527725Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:49:08.3529577Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:49:08.3531415Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:49:08.3533268Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.3548018Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.3550302Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:49:08.3552127Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:49:08.3553983Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:49:08.3556134Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:49:08.3558345Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.3560236Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.3562207Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:49:08.3564028Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:49:08.3566291Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:49:08.3568289Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:49:08.3570247Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:49:08.3572461Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:49:08.6849766Z 
+2026-09-10T18:49:08.6850538Z ios-swift
+2026-09-10T18:49:08.6851501Z ! dist/ios-swift/OodsTokens.swift, does not exist
+2026-09-10T18:49:08.6864041Z 
+2026-09-10T18:49:08.6864465Z compose
+2026-09-10T18:49:08.6865519Z ! dist/compose/OodsTokens.kt, does not exist
+2026-09-10T18:49:08.8224447Z 
+2026-09-10T18:49:08.8225551Z ts
+2026-09-10T18:49:08.8226436Z ! dist/ts/tokens.ts, does not exist
+2026-09-10T18:49:08.8238028Z 
+2026-09-10T18:49:08.8238404Z tailwind
+2026-09-10T18:49:08.8239212Z ! dist/tailwind/tokens.json, does not exist
+2026-09-10T18:49:08.9089160Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:49:08.9093235Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:49:08.9095402Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:49:08.9097212Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:49:08.9099019Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:49:08.9100767Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:49:08.9103376Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:49:08.9105841Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:49:08.9108798Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:49:08.9110333Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:49:08.9111783Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:49:08.9113248Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:49:08.9115009Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:49:08.9116954Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:49:08.9120164Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:49:08.9122193Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:49:08.9124057Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.9126738Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.9128129Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:49:08.9130166Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:49:08.9132035Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:49:08.9133835Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:49:08.9135873Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.9137623Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.9139367Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:49:08.9141103Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:49:08.9142823Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:49:08.9144794Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:49:08.9147427Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.9149365Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:49:08.9151694Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:49:08.9153597Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:49:08.9156385Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:49:08.9157850Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:49:08.9159646Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:49:08.9165850Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:49:09.1925040Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:49:09.1926926Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap ("0.5rem") — passed through
+2026-09-10T18:49:09.1928685Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:49:09.1930392Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-compact ("0.25rem") — passed through
+2026-09-10T18:49:09.1932439Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:49:09.1934213Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-gap-tight ("0.375rem") — passed through
+2026-09-10T18:49:09.1936272Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:49:09.1938391Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-block ("0.625rem") — passed through
+2026-09-10T18:49:09.1940154Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:49:09.1941889Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.control-padding-inline ("1rem") — passed through
+2026-09-10T18:49:09.1943654Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:49:09.1945785Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.field-padding-inline ("0.75rem") — passed through
+2026-09-10T18:49:09.1947565Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:49:09.1949301Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-block ("0.125rem") — passed through
+2026-09-10T18:49:09.1956281Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:49:09.1959379Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.badge-padding-inline ("0.5rem") — passed through
+2026-09-10T18:49:09.1963347Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:49:09.1965152Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-sm ("0.75rem") — passed through
+2026-09-10T18:49:09.1966692Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:49:09.1968231Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inset-md ("1rem") — passed through
+2026-09-10T18:49:09.1969743Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:49:09.1971253Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-xs ("0.5rem") — passed through
+2026-09-10T18:49:09.1972780Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:49:09.1974341Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-sm ("0.75rem") — passed through
+2026-09-10T18:49:09.1976121Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:49:09.1977595Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.stack-md ("1rem") — passed through
+2026-09-10T18:49:09.1979135Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:49:09.1980687Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-xs ("0.5rem") — passed through
+2026-09-10T18:49:09.1982239Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:49:09.1983754Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-sm ("0.75rem") — passed through
+2026-09-10T18:49:09.1985511Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:49:09.1987052Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.inline-md ("1rem") — passed through
+2026-09-10T18:49:09.1988609Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:49:09.1990244Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.progress-height ("0.5rem") — passed through
+2026-09-10T18:49:09.1991871Z ⚠︎ oods/size/ios-swift: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:49:09.1993705Z ⚠︎ oods/size/compose: path not in mobile-manifest at sys.radius-control ("0.5rem") — passed through
+2026-09-10T18:49:09.7017563Z 
+2026-09-10T18:49:09.7018213Z ios-swift
+2026-09-10T18:49:09.7021136Z ✔︎ dist/ios-swift/OodsTokens.swift
+2026-09-10T18:49:09.7021516Z 
+2026-09-10T18:49:09.7021680Z compose
+2026-09-10T18:49:09.7022223Z ✔︎ dist/compose/OodsTokens.kt
+2026-09-10T18:49:09.7650667Z 
+2026-09-10T18:49:09.7651486Z ts
+2026-09-10T18:49:09.7653494Z ✔︎ dist/ts/tokens.ts
+2026-09-10T18:49:09.7654255Z 
+2026-09-10T18:49:09.7655332Z tailwind
+2026-09-10T18:49:09.7656626Z ✔︎ dist/tailwind/tokens.json
+2026-09-10T18:49:09.8494286Z 
+2026-09-10T18:49:09.8495540Z Token collisions detected (2):
+2026-09-10T18:49:09.8497123Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:09.8498353Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:10.0560609Z 
+2026-09-10T18:49:10.0561421Z css
+2026-09-10T18:49:10.0562833Z ✔︎ dist/css/tokens.css
+2026-09-10T18:49:10.0992215Z 
+2026-09-10T18:49:10.0993166Z Token collisions detected (2):
+2026-09-10T18:49:10.0994954Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:10.0996324Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:10.2510869Z 
+2026-09-10T18:49:10.2512106Z css
+2026-09-10T18:49:10.2513083Z ✔︎ dist/css/tokens.css
+2026-09-10T18:49:10.4095235Z 
+2026-09-10T18:49:10.4145829Z Token collisions detected (252):
+2026-09-10T18:49:10.4175676Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:10.4185417Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:10.5605271Z 
+2026-09-10T18:49:10.5606215Z css
+2026-09-10T18:49:10.5607221Z ✔︎ dist/css/tokens.css
+2026-09-10T18:49:10.6956606Z 
+2026-09-10T18:49:10.6957447Z Token collisions detected (227):
+2026-09-10T18:49:10.6958625Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:10.6959846Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:10.8411711Z 
+2026-09-10T18:49:10.8412547Z css
+2026-09-10T18:49:10.8413598Z ✔︎ dist/css/tokens.css
+2026-09-10T18:49:10.9903548Z 
+2026-09-10T18:49:10.9905571Z Token collisions detected (2):
+2026-09-10T18:49:10.9906739Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:10.9907901Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:11.1346593Z 
+2026-09-10T18:49:11.1348591Z css
+2026-09-10T18:49:11.1349679Z ✔︎ dist/css/tokens.css
+2026-09-10T18:49:11.2636561Z 
+2026-09-10T18:49:11.2637384Z Token collisions detected (252):
+2026-09-10T18:49:11.2638533Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:11.2639758Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:11.4082939Z 
+2026-09-10T18:49:11.4083608Z css
+2026-09-10T18:49:11.4084875Z ✔︎ dist/css/tokens.css
+2026-09-10T18:49:11.5380892Z 
+2026-09-10T18:49:11.5381692Z Token collisions detected (227):
+2026-09-10T18:49:11.5382942Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:11.5384174Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:11.6842695Z 
+2026-09-10T18:49:11.6843407Z css
+2026-09-10T18:49:11.6844452Z ✔︎ dist/css/tokens.css
+2026-09-10T18:49:11.8142000Z 
+2026-09-10T18:49:11.8143411Z Token collisions detected (2):
+2026-09-10T18:49:11.8144775Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2026-09-10T18:49:11.8146009Z Refer to: https://styledictionary.com/reference/logging/
+2026-09-10T18:49:11.9596861Z ✔︎ tokens built successfully in 3.89s
+2026-09-10T18:49:11.9597958Z    css:      dist/css/tokens.css (6 brand × theme scopes)
+2026-09-10T18:49:11.9598803Z    types:    dist/ts/tokens.ts
+2026-09-10T18:49:11.9599605Z    tailwind: dist/tailwind/tokens.json
+2026-09-10T18:49:11.9600359Z    ios:      dist/ios-swift/OodsTokens.swift
+2026-09-10T18:49:11.9601062Z    compose:  dist/compose/OodsTokens.kt
+2026-09-10T18:49:14.3762492Z [36mvite v6.4.1 [32mbuilding for production...[36m[39m
+2026-09-10T18:49:14.4982554Z [34mAttention:[39m Storybook now collects completely anonymous telemetry regarding usage. This information is used to shape Storybook's roadmap and prioritize features.
+2026-09-10T18:49:14.4985254Z You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+2026-09-10T18:49:14.4987364Z [36mhttps://storybook.js.org/telemetry[39m
+2026-09-10T18:49:14.4987994Z 
+2026-09-10T18:49:14.5397076Z transforming...
+2026-09-10T18:49:15.4486311Z [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+2026-09-10T18:49:26.6062852Z (node:2308) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+2026-09-10T18:49:26.6136010Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:49:39.1698925Z [33m[plugin vite:resolve] Module "node:crypto" has been externalized for browser compatibility, imported by "/home/runner/work/OODS-Forge/OODS-Forge/src/utils/hash/sha256.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+2026-09-10T18:49:51.6791961Z [32m✓[39m 2651 modules transformed.
+2026-09-10T18:49:52.9594004Z rendering chunks...
+2026-09-10T18:49:55.9989521Z computing gzip size...
+2026-09-10T18:49:57.3042209Z [2mstorybook-static/[22m[32miframe.html                                                    [39m[1m[2m   19.58 kB[22m[1m[22m[2m │ gzip:   5.30 kB[22m
+2026-09-10T18:49:57.3066831Z [2mstorybook-static/[22m[2massets/[22m[35mProgress-BmiqskSx.css                                   [39m[1m[2m    1.66 kB[22m[1m[22m[2m │ gzip:   0.52 kB[22m
+2026-09-10T18:49:57.3086792Z [2mstorybook-static/[22m[2massets/[22m[35mStepper-BH9kROQA.css                                    [39m[1m[2m    3.17 kB[22m[1m[22m[2m │ gzip:   0.85 kB[22m
+2026-09-10T18:49:57.3106408Z [2mstorybook-static/[22m[2massets/[22m[35mPagination-Ds7DCwF1.css                                 [39m[1m[2m    3.41 kB[22m[1m[22m[2m │ gzip:   0.87 kB[22m
+2026-09-10T18:49:57.3116365Z [2mstorybook-static/[22m[2massets/[22m[35mBreadcrumbs-CRpeVKzG.css                                [39m[1m[2m    3.46 kB[22m[1m[22m[2m │ gzip:   0.85 kB[22m
+2026-09-10T18:49:57.3126379Z [2mstorybook-static/[22m[2massets/[22m[35mTagPill-BkAHZaKK.css                                    [39m[1m[2m    4.12 kB[22m[1m[22m[2m │ gzip:   1.13 kB[22m
+2026-09-10T18:49:57.3141376Z [2mstorybook-static/[22m[2massets/[22m[35mTabs-M6rjellP.css                                       [39m[1m[2m    4.38 kB[22m[1m[22m[2m │ gzip:   1.12 kB[22m
+2026-09-10T18:49:57.3143736Z [2mstorybook-static/[22m[2massets/[22m[35maddress-types-DXNV0PwR.css                              [39m[1m[2m    6.12 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+2026-09-10T18:49:57.3148295Z [2mstorybook-static/[22m[2massets/[22m[35mCategoryTree-BLEO57eG.css                               [39m[1m[2m    7.04 kB[22m[1m[22m[2m │ gzip:   1.45 kB[22m
+2026-09-10T18:49:57.3150960Z [2mstorybook-static/[22m[2massets/[22m[35mforms-DhyefL6t.css                                      [39m[1m[2m    8.66 kB[22m[1m[22m[2m │ gzip:   1.55 kB[22m
+2026-09-10T18:49:57.3153419Z [2mstorybook-static/[22m[2massets/[22m[35miframe-DEME8l_W.css                                     [39m[1m[2m  285.17 kB[22m[1m[22m[2m │ gzip:  37.15 kB[22m
+2026-09-10T18:49:57.3156223Z [2mstorybook-static/[22m[2massets/[22m[36m__vite-browser-external-BIHI7g3E.js                     [39m[1m[2m    0.03 kB[22m[1m[22m[2m │ gzip:   0.05 kB[22m
+2026-09-10T18:49:57.3158785Z [2mstorybook-static/[22m[2massets/[22m[36mdesign-tokens-BzU9NyEB.js                               [39m[1m[2m    0.11 kB[22m[1m[22m[2m │ gzip:   0.12 kB[22m
+2026-09-10T18:49:57.3161836Z [2mstorybook-static/[22m[2massets/[22m[36mformat-compact-Cjy90nd7.js                              [39m[1m[2m    0.12 kB[22m[1m[22m[2m │ gzip:   0.12 kB[22m
+2026-09-10T18:49:57.3164205Z [2mstorybook-static/[22m[2massets/[22m[36mTable-Bo04hq9I.js                                       [39m[1m[2m    0.17 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+2026-09-10T18:49:57.3167533Z [2mstorybook-static/[22m[2massets/[22m[36mOverlayRoot-Dui1RRJY.js                                 [39m[1m[2m    0.17 kB[22m[1m[22m[2m │ gzip:   0.16 kB[22m
+2026-09-10T18:49:57.3170475Z [2mstorybook-static/[22m[2massets/[22m[36mBubbleChart-Sopb2PIA.js                                 [39m[1m[2m    0.23 kB[22m[1m[22m[2m │ gzip:   0.20 kB[22m
+2026-09-10T18:49:57.3172644Z [2mstorybook-static/[22m[2massets/[22m[36mobject-Cw4FR3UP.js                                      [39m[1m[2m    0.35 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+2026-09-10T18:49:57.3174994Z [2mstorybook-static/[22m[2massets/[22m[36mshared-Mn1dbhYh.js                                      [39m[1m[2m    0.38 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+2026-09-10T18:49:57.3177379Z [2mstorybook-static/[22m[2massets/[22m[36mindex-DAHwrdaV.js                                       [39m[1m[2m    0.46 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+2026-09-10T18:49:57.3179787Z [2mstorybook-static/[22m[2massets/[22m[36mobject-4tbxUxYb.js                                      [39m[1m[2m    0.51 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+2026-09-10T18:49:57.3183178Z [2mstorybook-static/[22m[2massets/[22m[36mBadge.stories-ooWhcFSx.js                               [39m[1m[2m    0.61 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+2026-09-10T18:49:57.3185605Z [2mstorybook-static/[22m[2massets/[22m[36mButton.stories-Bf3eFFWf.js                              [39m[1m[2m    0.61 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+2026-09-10T18:49:57.3187873Z [2mstorybook-static/[22m[2massets/[22m[36mInput.stories-wQs9cJTb.js                               [39m[1m[2m    0.65 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+2026-09-10T18:49:57.3205890Z [2mstorybook-static/[22m[2massets/[22m[36mBanner.stories-DDjsSmIZ.js                              [39m[1m[2m    0.65 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+2026-09-10T18:49:57.3207948Z [2mstorybook-static/[22m[2massets/[22m[36mToggle.stories-DvNHxI0O.js                              [39m[1m[2m    0.69 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+2026-09-10T18:49:57.3210226Z [2mstorybook-static/[22m[2massets/[22m[36mCheckbox.stories-DHzPtrqY.js                            [39m[1m[2m    0.70 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+2026-09-10T18:49:57.3213127Z [2mstorybook-static/[22m[2massets/[22m[36mTextArea.stories-DyTWKEUF.js                            [39m[1m[2m    0.71 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+2026-09-10T18:49:57.3215792Z [2mstorybook-static/[22m[2massets/[22m[36mjsx-runtime-D_zvdyIk.js                                 [39m[1m[2m    0.73 kB[22m[1m[22m[2m │ gzip:   0.46 kB[22m
+2026-09-10T18:49:57.3218752Z [2mstorybook-static/[22m[2massets/[22m[36mwithPage-DAPUertW.js                                    [39m[1m[2m    0.79 kB[22m[1m[22m[2m │ gzip:   0.50 kB[22m
+2026-09-10T18:49:57.3221584Z [2mstorybook-static/[22m[2massets/[22m[36mTooltip.stories-DRLQQ3US.js                             [39m[1m[2m    0.84 kB[22m[1m[22m[2m │ gzip:   0.49 kB[22m
+2026-09-10T18:49:57.3232003Z [2mstorybook-static/[22m[2massets/[22m[36mfieldUtils-D3i5JNgY.js                                  [39m[1m[2m    0.87 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+2026-09-10T18:49:57.3235929Z [2mstorybook-static/[22m[2massets/[22m[36museTooltip-BMYHEICo.js                                  [39m[1m[2m    0.88 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+2026-09-10T18:49:57.3238503Z [2mstorybook-static/[22m[2massets/[22m[36mprofiler-D57GTmHF.js                                    [39m[1m[2m    0.90 kB[22m[1m[22m[2m │ gzip:   0.47 kB[22m
+2026-09-10T18:49:57.3241061Z [2mstorybook-static/[22m[2massets/[22m[36mtoken-values-DiYmCob4.js                                [39m[1m[2m    0.94 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+2026-09-10T18:49:57.3243591Z [2mstorybook-static/[22m[2massets/[22m[36muserTiming-Di4SONa0.js                                  [39m[1m[2m    1.00 kB[22m[1m[22m[2m │ gzip:   0.39 kB[22m
+2026-09-10T18:49:57.3246615Z [2mstorybook-static/[22m[2massets/[22m[36mPopover.stories-DpH1GtPk.js                             [39m[1m[2m    1.02 kB[22m[1m[22m[2m │ gzip:   0.58 kB[22m
+2026-09-10T18:49:57.3252210Z [2mstorybook-static/[22m[2massets/[22m[36mCard.stories-BZO02hIA.js                                [39m[1m[2m    1.03 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+2026-09-10T18:49:57.3256555Z [2mstorybook-static/[22m[2massets/[22m[36mDetail.stories-B8k7x7yF.js                              [39m[1m[2m    1.03 kB[22m[1m[22m[2m │ gzip:   0.60 kB[22m
+2026-09-10T18:49:57.3260932Z [2mstorybook-static/[22m[2massets/[22m[36mList.stories-BvB8oFNG.js                                [39m[1m[2m    1.04 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+2026-09-10T18:49:57.3262755Z [2mstorybook-static/[22m[2massets/[22m[36mInline.stories-Dq-n4zqP.js                              [39m[1m[2m    1.04 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+2026-09-10T18:49:57.3264332Z [2mstorybook-static/[22m[2massets/[22m[36mForm.stories-DfM_Uk-g.js                                [39m[1m[2m    1.06 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+2026-09-10T18:49:57.3266239Z [2mstorybook-static/[22m[2massets/[22m[36mTimeline.stories-CLGxNE_c.js                            [39m[1m[2m    1.08 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+2026-09-10T18:49:57.3268113Z [2mstorybook-static/[22m[2massets/[22m[36mForcedColors.stories-BOz1hIsq.js                        [39m[1m[2m    1.13 kB[22m[1m[22m[2m │ gzip:   0.64 kB[22m
+2026-09-10T18:49:57.3270495Z [2mstorybook-static/[22m[2massets/[22m[36mactive-WriDRwKw.js                                      [39m[1m[2m    1.20 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+2026-09-10T18:49:57.3272690Z [2mstorybook-static/[22m[2massets/[22m[36mpreload-helper-Dp1pzeXC.js                              [39m[1m[2m    1.27 kB[22m[1m[22m[2m │ gzip:   0.73 kB[22m
+2026-09-10T18:49:57.3275161Z [2mstorybook-static/[22m[2massets/[22m[36mDocsRenderer-PQXLIZUC-BNGFEZyl.js                       [39m[1m[2m    1.30 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+2026-09-10T18:49:57.3277345Z [2mstorybook-static/[22m[2massets/[22m[36mhierarchy-utils-BsVLmEIJ.js                             [39m[1m[2m    1.40 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+2026-09-10T18:49:57.3279509Z [2mstorybook-static/[22m[2massets/[22m[36mPatterns.Form-C2ug0hoL.js                               [39m[1m[2m    1.46 kB[22m[1m[22m[2m │ gzip:   0.71 kB[22m
+2026-09-10T18:49:57.3281157Z [2mstorybook-static/[22m[2massets/[22m[36mBadge-Cu0vRZJu.js                                       [39m[1m[2m    1.47 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+2026-09-10T18:49:57.3282509Z [2mstorybook-static/[22m[2massets/[22m[36mSheet-DKj4xTqE.js                                       [39m[1m[2m    1.47 kB[22m[1m[22m[2m │ gzip:   0.76 kB[22m
+2026-09-10T18:49:57.3283828Z [2mstorybook-static/[22m[2massets/[22m[36mToggle-B6OuPzX8.js                                      [39m[1m[2m    1.47 kB[22m[1m[22m[2m │ gzip:   0.68 kB[22m
+2026-09-10T18:49:57.3285327Z [2mstorybook-static/[22m[2massets/[22m[36mCheckbox-eUXNZec-.js                                    [39m[1m[2m    1.51 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+2026-09-10T18:49:57.3286751Z [2mstorybook-static/[22m[2massets/[22m[36mCategoryBreadcrumb-C9XtHKXv.js                          [39m[1m[2m    1.60 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+2026-09-10T18:49:57.3288290Z [2mstorybook-static/[22m[2massets/[22m[36msubscription-C1kagOOH.js                                [39m[1m[2m    1.61 kB[22m[1m[22m[2m │ gzip:   0.77 kB[22m
+2026-09-10T18:49:57.3289637Z [2mstorybook-static/[22m[2massets/[22m[36mactive-Ezbq0kJo.js                                      [39m[1m[2m    1.66 kB[22m[1m[22m[2m │ gzip:   0.79 kB[22m
+2026-09-10T18:49:57.3290949Z [2mstorybook-static/[22m[2massets/[22m[36mstatusMap-vNRpwO6a.js                                   [39m[1m[2m    1.76 kB[22m[1m[22m[2m │ gzip:   0.75 kB[22m
+2026-09-10T18:49:57.3292591Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Toggle-BkBqy7Kp.js                           [39m[1m[2m    1.83 kB[22m[1m[22m[2m │ gzip:   0.90 kB[22m
+2026-09-10T18:49:57.3293981Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Radio-CTvvbqrg.js                            [39m[1m[2m    1.84 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+2026-09-10T18:49:57.3295729Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Checkbox-pcZDDrxE.js                         [39m[1m[2m    1.86 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+2026-09-10T18:49:57.3298350Z [2mstorybook-static/[22m[2massets/[22m[36mTextArea-CXsHyW9O.js                                    [39m[1m[2m    1.91 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+2026-09-10T18:49:57.3300417Z [2mstorybook-static/[22m[2massets/[22m[36mPopover-DnaHmfKX.js                                     [39m[1m[2m    1.99 kB[22m[1m[22m[2m │ gzip:   1.00 kB[22m
+2026-09-10T18:49:57.3302275Z [2mstorybook-static/[22m[2massets/[22m[36mscale-token-mapper-O3Lj-JOz.js                          [39m[1m[2m    2.01 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+2026-09-10T18:49:57.3303730Z [2mstorybook-static/[22m[2massets/[22m[36mButton-Brv8-oFG.js                                      [39m[1m[2m    2.02 kB[22m[1m[22m[2m │ gzip:   0.72 kB[22m
+2026-09-10T18:49:57.3305526Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Tooltip-CQijKao7.js                          [39m[1m[2m    2.11 kB[22m[1m[22m[2m │ gzip:   0.91 kB[22m
+2026-09-10T18:49:57.3307149Z [2mstorybook-static/[22m[2massets/[22m[36maddress-formatter-jjX4-Rcg.js                           [39m[1m[2m    2.12 kB[22m[1m[22m[2m │ gzip:   0.99 kB[22m
+2026-09-10T18:49:57.3308548Z [2mstorybook-static/[22m[2massets/[22m[36mview-ByNxTz1D.js                                        [39m[1m[2m    2.14 kB[22m[1m[22m[2m │ gzip:   0.93 kB[22m
+2026-09-10T18:49:57.3309872Z [2mstorybook-static/[22m[2massets/[22m[36mBrandA-DjE7VZQR.js                                      [39m[1m[2m    2.17 kB[22m[1m[22m[2m │ gzip:   1.02 kB[22m
+2026-09-10T18:49:57.3311199Z [2mstorybook-static/[22m[2massets/[22m[36mPageHeader-Ce3YrCp5.js                                  [39m[1m[2m    2.17 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+2026-09-10T18:49:57.3312533Z [2mstorybook-static/[22m[2massets/[22m[36mBarChart-BavgLnmW.js                                    [39m[1m[2m    2.20 kB[22m[1m[22m[2m │ gzip:   1.06 kB[22m
+2026-09-10T18:49:57.3314013Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Toast-BVELxMeq.js                            [39m[1m[2m    2.20 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+2026-09-10T18:49:57.3315570Z [2mstorybook-static/[22m[2massets/[22m[36mAccessibleTable-C_fzpkVm.js                             [39m[1m[2m    2.24 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+2026-09-10T18:49:57.3316989Z [2mstorybook-static/[22m[2massets/[22m[36mPageHeader.stories-Bt7q0Pc3.js                          [39m[1m[2m    2.31 kB[22m[1m[22m[2m │ gzip:   0.97 kB[22m
+2026-09-10T18:49:57.3318365Z [2mstorybook-static/[22m[2massets/[22m[36mindex-BoRlhAYW.js                                       [39m[1m[2m    2.35 kB[22m[1m[22m[2m │ gzip:   0.96 kB[22m
+2026-09-10T18:49:57.3319729Z [2mstorybook-static/[22m[2massets/[22m[36moverlay-manager.stories-B3vZmuZv.js                     [39m[1m[2m    2.37 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+2026-09-10T18:49:57.3321311Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.TextArea-b-0OYdYI.js                         [39m[1m[2m    2.45 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+2026-09-10T18:49:57.3323425Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Badge-DwcSDU8c.js                            [39m[1m[2m    2.46 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+2026-09-10T18:49:57.3325347Z [2mstorybook-static/[22m[2massets/[22m[36mhooks-Cd-kVofq.js                                       [39m[1m[2m    2.49 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+2026-09-10T18:49:57.3326517Z [2mstorybook-static/[22m[2massets/[22m[36mInput-DmCql3uH.js                                       [39m[1m[2m    2.50 kB[22m[1m[22m[2m │ gzip:   0.97 kB[22m
+2026-09-10T18:49:57.3329117Z [2mstorybook-static/[22m[2massets/[22m[36mLayeredCharts.stories-OqDYzyRe.js                       [39m[1m[2m    2.50 kB[22m[1m[22m[2m │ gzip:   1.04 kB[22m
+2026-09-10T18:49:57.3331268Z [2mstorybook-static/[22m[2massets/[22m[36mToast.stories-CJYefITB.js                               [39m[1m[2m    2.50 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+2026-09-10T18:49:57.3333322Z [2mstorybook-static/[22m[2massets/[22m[36mSheet.stories-DiXh1BoV.js                               [39m[1m[2m    2.54 kB[22m[1m[22m[2m │ gzip:   0.82 kB[22m
+2026-09-10T18:49:57.3335780Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.StatusShowcase-BqTdlJnr.js                   [39m[1m[2m    2.55 kB[22m[1m[22m[2m │ gzip:   1.10 kB[22m
+2026-09-10T18:49:57.3338008Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Select-BxmCO5TB.js                           [39m[1m[2m    2.58 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+2026-09-10T18:49:57.3340094Z [2mstorybook-static/[22m[2massets/[22m[36mTooltip--qkzikib.js                                     [39m[1m[2m    2.62 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+2026-09-10T18:49:57.3342184Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Tabs-CWjiTI4O.js                             [39m[1m[2m    2.65 kB[22m[1m[22m[2m │ gzip:   1.11 kB[22m
+2026-09-10T18:49:57.3344290Z [2mstorybook-static/[22m[2massets/[22m[36mBadge.stories-CLFUf6iq.js                               [39m[1m[2m    2.67 kB[22m[1m[22m[2m │ gzip:   1.10 kB[22m
+2026-09-10T18:49:57.3346553Z [2mstorybook-static/[22m[2massets/[22m[36mTagList-BB7YpJyF.js                                     [39m[1m[2m    2.68 kB[22m[1m[22m[2m │ gzip:   1.01 kB[22m
+2026-09-10T18:49:57.3348649Z [2mstorybook-static/[22m[2massets/[22m[36mkeyboard-nav-CXH71Uyn.js                                [39m[1m[2m    2.69 kB[22m[1m[22m[2m │ gzip:   1.36 kB[22m
+2026-09-10T18:49:57.3350822Z [2mstorybook-static/[22m[2massets/[22m[36mTagList.stories-m-uJ5yZj.js                             [39m[1m[2m    2.75 kB[22m[1m[22m[2m │ gzip:   1.06 kB[22m
+2026-09-10T18:49:57.3352991Z [2mstorybook-static/[22m[2massets/[22m[36mInvoice.stories-DCPdMmuJ.js                             [39m[1m[2m    2.78 kB[22m[1m[22m[2m │ gzip:   0.91 kB[22m
+2026-09-10T18:49:57.3355259Z [2mstorybook-static/[22m[2massets/[22m[36mBanner.stories-CMcaqYbm.js                              [39m[1m[2m    2.78 kB[22m[1m[22m[2m │ gzip:   1.15 kB[22m
+2026-09-10T18:49:57.3357389Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Button-x8Vv5m86.js                           [39m[1m[2m    2.81 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+2026-09-10T18:49:57.3359538Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Input-DjPifuAt.js                            [39m[1m[2m    2.84 kB[22m[1m[22m[2m │ gzip:   1.33 kB[22m
+2026-09-10T18:49:57.3361698Z [2mstorybook-static/[22m[2massets/[22m[36mSubscription.stories-d2NuWxRc.js                        [39m[1m[2m    2.84 kB[22m[1m[22m[2m │ gzip:   0.92 kB[22m
+2026-09-10T18:49:57.3364013Z [2mstorybook-static/[22m[2massets/[22m[36mtag-CiDFr6a8.js                                         [39m[1m[2m    2.86 kB[22m[1m[22m[2m │ gzip:   1.31 kB[22m
+2026-09-10T18:49:57.3366247Z [2mstorybook-static/[22m[2massets/[22m[36mview-DSnEn3rt.js                                        [39m[1m[2m    2.87 kB[22m[1m[22m[2m │ gzip:   1.09 kB[22m
+2026-09-10T18:49:57.3368347Z [2mstorybook-static/[22m[2massets/[22m[36mComponents.Banner-sChh-SrP.js                           [39m[1m[2m    2.87 kB[22m[1m[22m[2m │ gzip:   1.33 kB[22m
+2026-09-10T18:49:57.3370704Z [2mstorybook-static/[22m[2massets/[22m[36mFacetedCharts.stories-D2WJa2DS.js                       [39m[1m[2m    2.93 kB[22m[1m[22m[2m │ gzip:   1.09 kB[22m
+2026-09-10T18:49:57.3372899Z [2mstorybook-static/[22m[2massets/[22m[36mCompositorHarness.stories-1bDHfe4v.js                   [39m[1m[2m    2.95 kB[22m[1m[22m[2m │ gzip:   1.36 kB[22m
+2026-09-10T18:49:57.3375411Z [2mstorybook-static/[22m[2massets/[22m[36mAddressDisplay.stories-CjYtEAJR.js                      [39m[1m[2m    2.98 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+2026-09-10T18:49:57.3377696Z [2mstorybook-static/[22m[2massets/[22m[36moverlay-contract.stories-DO8iyufE.js                    [39m[1m[2m    3.03 kB[22m[1m[22m[2m │ gzip:   1.35 kB[22m
+2026-09-10T18:49:57.3379969Z [2mstorybook-static/[22m[2massets/[22m[36mPatterns.stories-DUS38gFd.js                            [39m[1m[2m    3.07 kB[22m[1m[22m[2m │ gzip:   1.45 kB[22m
+2026-09-10T18:49:57.3382159Z [2mstorybook-static/[22m[2massets/[22m[36mButton.stories-D71FsWH4.js                              [39m[1m[2m    3.25 kB[22m[1m[22m[2m │ gzip:   1.02 kB[22m
+2026-09-10T18:49:57.3384204Z [2mstorybook-static/[22m[2massets/[22m[36mDialog.stories-C1UzT5fy.js                              [39m[1m[2m    3.29 kB[22m[1m[22m[2m │ gzip:   1.39 kB[22m
+2026-09-10T18:49:57.3386746Z [2mstorybook-static/[22m[2massets/[22m[36mcontext-gallery.stories-oDuVRCgQ.js                     [39m[1m[2m    3.48 kB[22m[1m[22m[2m │ gzip:   1.53 kB[22m
+2026-09-10T18:49:57.3389081Z [2mstorybook-static/[22m[2massets/[22m[36mUserWithAddresses.stories-BCkuwTbz.js                   [39m[1m[2m    3.50 kB[22m[1m[22m[2m │ gzip:   1.48 kB[22m
+2026-09-10T18:49:57.3391342Z [2mstorybook-static/[22m[2massets/[22m[36maddress-types-CEmBN_jV.js                               [39m[1m[2m    3.51 kB[22m[1m[22m[2m │ gzip:   1.33 kB[22m
+2026-09-10T18:49:57.3394016Z [2mstorybook-static/[22m[2massets/[22m[36mBanner-ZdzQyaOX.js                                      [39m[1m[2m    3.58 kB[22m[1m[22m[2m │ gzip:   1.24 kB[22m
+2026-09-10T18:49:57.3396671Z [2mstorybook-static/[22m[2massets/[22m[36mComponentSetIV-Br_21VRa.js                              [39m[1m[2m    3.80 kB[22m[1m[22m[2m │ gzip:   1.29 kB[22m
+2026-09-10T18:49:57.3399009Z [2mstorybook-static/[22m[2massets/[22m[36mCheckbox.stories-6Sch2lcS.js                            [39m[1m[2m    3.85 kB[22m[1m[22m[2m │ gzip:   1.24 kB[22m
+2026-09-10T18:49:57.3401512Z [2mstorybook-static/[22m[2massets/[22m[36mOrganizationLocations.stories-B7S-xKoS.js               [39m[1m[2m    3.91 kB[22m[1m[22m[2m │ gzip:   1.63 kB[22m
+2026-09-10T18:49:57.3403842Z [2mstorybook-static/[22m[2massets/[22m[36mToast-xqDixdnT.js                                       [39m[1m[2m    3.92 kB[22m[1m[22m[2m │ gzip:   1.53 kB[22m
+2026-09-10T18:49:57.3406335Z [2mstorybook-static/[22m[2massets/[22m[36mLineChart-CWMTiV5J.js                                   [39m[1m[2m    3.97 kB[22m[1m[22m[2m │ gzip:   1.77 kB[22m
+2026-09-10T18:49:57.3409004Z [2mstorybook-static/[22m[2massets/[22m[36mToast.stories-CClCB8_J.js                               [39m[1m[2m    3.98 kB[22m[1m[22m[2m │ gzip:   1.53 kB[22m
+2026-09-10T18:49:57.3411321Z [2mstorybook-static/[22m[2massets/[22m[36maddress-display-BaNQB-i2.js                             [39m[1m[2m    4.20 kB[22m[1m[22m[2m │ gzip:   1.43 kB[22m
+2026-09-10T18:49:57.3413012Z [2mstorybook-static/[22m[2massets/[22m[36mUsageAggregationHarness.stories-DAcU_8bM.js             [39m[1m[2m    4.24 kB[22m[1m[22m[2m │ gzip:   1.57 kB[22m
+2026-09-10T18:49:57.3414372Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.List-BEUEiNwG.js                               [39m[1m[2m    4.27 kB[22m[1m[22m[2m │ gzip:   1.65 kB[22m
+2026-09-10T18:49:57.3415945Z [2mstorybook-static/[22m[2massets/[22m[36mTagPill-Co1c2sv1.js                                     [39m[1m[2m    4.41 kB[22m[1m[22m[2m │ gzip:   1.04 kB[22m
+2026-09-10T18:49:57.3417453Z [2mstorybook-static/[22m[2massets/[22m[36mCommunication.DeliveryHealthWidget.stories-DjA2WxoC.js  [39m[1m[2m    4.42 kB[22m[1m[22m[2m │ gzip:   1.67 kB[22m
+2026-09-10T18:49:57.3418772Z [2mstorybook-static/[22m[2massets/[22m[36mAddressFormatting.stories-BMGAfYeE.js                   [39m[1m[2m    4.42 kB[22m[1m[22m[2m │ gzip:   1.65 kB[22m
+2026-09-10T18:49:57.3419996Z [2mstorybook-static/[22m[2massets/[22m[36mToastPortal-CX-_kaNA.js                                 [39m[1m[2m    4.47 kB[22m[1m[22m[2m │ gzip:   1.99 kB[22m
+2026-09-10T18:49:57.3421232Z [2mstorybook-static/[22m[2massets/[22m[36mOrganizationMembers.stories-C5AkefPs.js                 [39m[1m[2m    4.48 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+2026-09-10T18:49:57.3422517Z [2mstorybook-static/[22m[2massets/[22m[36mTabs.stories-DchtLCjE.js                                [39m[1m[2m    4.52 kB[22m[1m[22m[2m │ gzip:   1.90 kB[22m
+2026-09-10T18:49:57.3424275Z [2mstorybook-static/[22m[2massets/[22m[36mcontext-matrix-DnLCejKW.js                              [39m[1m[2m    4.59 kB[22m[1m[22m[2m │ gzip:   0.50 kB[22m
+2026-09-10T18:49:57.3425848Z [2mstorybook-static/[22m[2massets/[22m[36mTokenTransformHarness.stories-BipYigLH.js               [39m[1m[2m    4.63 kB[22m[1m[22m[2m │ gzip:   1.66 kB[22m
+2026-09-10T18:49:57.3427168Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.Timeline-Bz4mvyRo.js                           [39m[1m[2m    4.74 kB[22m[1m[22m[2m │ gzip:   1.78 kB[22m
+2026-09-10T18:49:57.3428414Z [2mstorybook-static/[22m[2massets/[22m[36mRadio.stories-BoC3z4Oh.js                               [39m[1m[2m    4.75 kB[22m[1m[22m[2m │ gzip:   1.75 kB[22m
+2026-09-10T18:49:57.3429668Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Shadows--BRIqRMV.js                         [39m[1m[2m    4.91 kB[22m[1m[22m[2m │ gzip:   1.84 kB[22m
+2026-09-10T18:49:57.3430924Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.Form-C1NKjEu6.js                               [39m[1m[2m    4.92 kB[22m[1m[22m[2m │ gzip:   1.83 kB[22m
+2026-09-10T18:49:57.3432173Z [2mstorybook-static/[22m[2massets/[22m[36mpreview-wiring-sanity.stories-CHtRkgVS.js               [39m[1m[2m    4.97 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+2026-09-10T18:49:57.3433433Z [2mstorybook-static/[22m[2massets/[22m[36mtabs-BBMZFE6b.js                                        [39m[1m[2m    4.97 kB[22m[1m[22m[2m │ gzip:   2.04 kB[22m
+2026-09-10T18:49:57.3434695Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.Detail-tlLZlSZ7.js                             [39m[1m[2m    5.05 kB[22m[1m[22m[2m │ gzip:   1.95 kB[22m
+2026-09-10T18:49:57.3435871Z [2mstorybook-static/[22m[2massets/[22m[36mBreadcrumbs.docs-ZhAYdFP2.js                            [39m[1m[2m    5.09 kB[22m[1m[22m[2m │ gzip:   1.89 kB[22m
+2026-09-10T18:49:57.3437058Z [2mstorybook-static/[22m[2massets/[22m[36mListHarness.stories-D1DSE6UJ.js                         [39m[1m[2m    5.15 kB[22m[1m[22m[2m │ gzip:   2.07 kB[22m
+2026-09-10T18:49:57.3438243Z [2mstorybook-static/[22m[2massets/[22m[36mVizTokens.stories-DBvUqYHs.js                           [39m[1m[2m    5.16 kB[22m[1m[22m[2m │ gzip:   1.96 kB[22m
+2026-09-10T18:49:57.3439500Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Borders-CTHjxmZv.js                         [39m[1m[2m    5.18 kB[22m[1m[22m[2m │ gzip:   1.93 kB[22m
+2026-09-10T18:49:57.3441131Z [2mstorybook-static/[22m[2massets/[22m[36mSelect.stories-dwc816uf.js                              [39m[1m[2m    5.26 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+2026-09-10T18:49:57.3442509Z [2mstorybook-static/[22m[2massets/[22m[36mPagination.docs-pRTG_98j.js                             [39m[1m[2m    5.30 kB[22m[1m[22m[2m │ gzip:   1.94 kB[22m
+2026-09-10T18:49:57.3443805Z [2mstorybook-static/[22m[2massets/[22m[36mTooltip.stories-CLMrIGrU.js                             [39m[1m[2m    5.38 kB[22m[1m[22m[2m │ gzip:   1.56 kB[22m
+2026-09-10T18:49:57.3445112Z [2mstorybook-static/[22m[2massets/[22m[36mVizLayeredView-gY4p_Sih.js                              [39m[1m[2m    5.44 kB[22m[1m[22m[2m │ gzip:   2.22 kB[22m
+2026-09-10T18:49:57.3446265Z [2mstorybook-static/[22m[2massets/[22m[36mTabs.docs-CTJX3t7a.js                                   [39m[1m[2m    5.47 kB[22m[1m[22m[2m │ gzip:   1.98 kB[22m
+2026-09-10T18:49:57.3447422Z [2mstorybook-static/[22m[2massets/[22m[36mStepper.docs-kesIS44K.js                                [39m[1m[2m    5.53 kB[22m[1m[22m[2m │ gzip:   1.96 kB[22m
+2026-09-10T18:49:57.3448576Z [2mstorybook-static/[22m[2massets/[22m[36mProgress.docs-D5_h4sUy.js                               [39m[1m[2m    5.56 kB[22m[1m[22m[2m │ gzip:   1.99 kB[22m
+2026-09-10T18:49:57.3449788Z [2mstorybook-static/[22m[2massets/[22m[36mObjectMatrix.stories-DtKU7oHP.js                        [39m[1m[2m    5.57 kB[22m[1m[22m[2m │ gzip:   2.24 kB[22m
+2026-09-10T18:49:57.3450979Z [2mstorybook-static/[22m[2massets/[22m[36mstate-guards-BumdKES3.js                                [39m[1m[2m    5.57 kB[22m[1m[22m[2m │ gzip:   1.52 kB[22m
+2026-09-10T18:49:57.3452172Z [2mstorybook-static/[22m[2massets/[22m[36mMembershipManager.stories-CXyyTk2D.js                   [39m[1m[2m    5.69 kB[22m[1m[22m[2m │ gzip:   2.34 kB[22m
+2026-09-10T18:49:57.3453466Z [2mstorybook-static/[22m[2massets/[22m[36mCommunication.ConversationThread.stories-Bimcpxnm.js    [39m[1m[2m    5.72 kB[22m[1m[22m[2m │ gzip:   2.06 kB[22m
+2026-09-10T18:49:57.3454833Z [2mstorybook-static/[22m[2massets/[22m[36mpreference-store-H5oHjFZW.js                            [39m[1m[2m    5.88 kB[22m[1m[22m[2m │ gzip:   2.09 kB[22m
+2026-09-10T18:49:57.3456037Z [2mstorybook-static/[22m[2massets/[22m[36mview-collapse.stories-Czh-RD4G.js                       [39m[1m[2m    5.90 kB[22m[1m[22m[2m │ gzip:   2.31 kB[22m
+2026-09-10T18:49:57.3457280Z [2mstorybook-static/[22m[2massets/[22m[36mToast.stories-BzRbfYMT.js                               [39m[1m[2m    5.91 kB[22m[1m[22m[2m │ gzip:   2.21 kB[22m
+2026-09-10T18:49:57.3458433Z [2mstorybook-static/[22m[2massets/[22m[36mToast.docs-CFraedb1.js                                  [39m[1m[2m    5.98 kB[22m[1m[22m[2m │ gzip:   2.18 kB[22m
+2026-09-10T18:49:57.3459704Z [2mstorybook-static/[22m[2massets/[22m[36mCategoryTree.stories-BXjIekLY.js                        [39m[1m[2m    6.06 kB[22m[1m[22m[2m │ gzip:   1.87 kB[22m
+2026-09-10T18:49:57.3461418Z [2mstorybook-static/[22m[2massets/[22m[36mBrandA.stories-DAXom44v.js                              [39m[1m[2m    6.12 kB[22m[1m[22m[2m │ gzip:   2.48 kB[22m
+2026-09-10T18:49:57.3462772Z [2mstorybook-static/[22m[2massets/[22m[36mLifecycle.docs-BUzWlFNX.js                              [39m[1m[2m    6.17 kB[22m[1m[22m[2m │ gzip:   1.92 kB[22m
+2026-09-10T18:49:57.3463938Z [2mstorybook-static/[22m[2massets/[22m[36mIntro-ZAaQeMYy.js                                       [39m[1m[2m    6.29 kB[22m[1m[22m[2m │ gzip:   2.37 kB[22m
+2026-09-10T18:49:57.3465278Z [2mstorybook-static/[22m[2massets/[22m[36mSelect.stories-PQ5QVtKi.js                              [39m[1m[2m    6.36 kB[22m[1m[22m[2m │ gzip:   2.54 kB[22m
+2026-09-10T18:49:57.3466707Z [2mstorybook-static/[22m[2massets/[22m[36mStatusChip.stories-DXIG-Fka.js                          [39m[1m[2m    6.40 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+2026-09-10T18:49:57.3467928Z [2mstorybook-static/[22m[2massets/[22m[36mUserDetail.stories-Ctr_HKUP.js                          [39m[1m[2m    6.42 kB[22m[1m[22m[2m │ gzip:   2.05 kB[22m
+2026-09-10T18:49:57.3469125Z [2mstorybook-static/[22m[2massets/[22m[36mScatterChart.stories-N4ueni2D.js                        [39m[1m[2m    6.48 kB[22m[1m[22m[2m │ gzip:   1.95 kB[22m
+2026-09-10T18:49:57.3470442Z [2mstorybook-static/[22m[2massets/[22m[36mTextField.stories-DUNYIm9h.js                           [39m[1m[2m    6.60 kB[22m[1m[22m[2m │ gzip:   1.89 kB[22m
+2026-09-10T18:49:57.3471638Z [2mstorybook-static/[22m[2massets/[22m[36mEmptyState.docs-Tzkajchc.js                             [39m[1m[2m    6.64 kB[22m[1m[22m[2m │ gzip:   2.38 kB[22m
+2026-09-10T18:49:57.3472806Z [2mstorybook-static/[22m[2massets/[22m[36maddress-IO7OCl_P.js                                     [39m[1m[2m    6.85 kB[22m[1m[22m[2m │ gzip:   2.23 kB[22m
+2026-09-10T18:49:57.3473956Z [2mstorybook-static/[22m[2massets/[22m[36mScatterChart-rWwZjVwl.js                                [39m[1m[2m    6.85 kB[22m[1m[22m[2m │ gzip:   2.22 kB[22m
+2026-09-10T18:49:57.3475251Z [2mstorybook-static/[22m[2massets/[22m[36mstatus-JQOYCq9x.js                                      [39m[1m[2m    7.10 kB[22m[1m[22m[2m │ gzip:   1.85 kB[22m
+2026-09-10T18:49:57.3476428Z [2mstorybook-static/[22m[2massets/[22m[36mTable.stories-BPwsju6h.js                               [39m[1m[2m    7.24 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+2026-09-10T18:49:57.3477664Z [2mstorybook-static/[22m[2massets/[22m[36mHighContrast.Guardrails-hc.stories-CnEQyDhv.js          [39m[1m[2m    7.36 kB[22m[1m[22m[2m │ gzip:   2.31 kB[22m
+2026-09-10T18:49:57.3478872Z [2mstorybook-static/[22m[2massets/[22m[36mtable-Btc3S8fp.js                                       [39m[1m[2m    7.39 kB[22m[1m[22m[2m │ gzip:   1.99 kB[22m
+2026-09-10T18:49:57.3480047Z [2mstorybook-static/[22m[2massets/[22m[36mUserPreferences.stories-CB3nSGUv.js                     [39m[1m[2m    7.90 kB[22m[1m[22m[2m │ gzip:   2.78 kB[22m
+2026-09-10T18:49:57.3481279Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Typography-DR2zVvbF.js                      [39m[1m[2m    8.61 kB[22m[1m[22m[2m │ gzip:   2.66 kB[22m
+2026-09-10T18:49:57.3482505Z [2mstorybook-static/[22m[2massets/[22m[36mAreaChart.stories-BnTJEzpG.js                           [39m[1m[2m    8.62 kB[22m[1m[22m[2m │ gzip:   2.30 kB[22m
+2026-09-10T18:49:57.3483686Z [2mstorybook-static/[22m[2massets/[22m[36mContexts.Dark-L1NmzIUO.js                               [39m[1m[2m    8.69 kB[22m[1m[22m[2m │ gzip:   3.22 kB[22m
+2026-09-10T18:49:57.3484999Z [2mstorybook-static/[22m[2massets/[22m[36mHeatmap.stories-B7Mt3yZ9.js                             [39m[1m[2m    8.92 kB[22m[1m[22m[2m │ gzip:   2.50 kB[22m
+2026-09-10T18:49:57.3486345Z [2mstorybook-static/[22m[2massets/[22m[36mVizFacetGrid-BVvMV39f.js                                [39m[1m[2m    9.03 kB[22m[1m[22m[2m │ gzip:   3.42 kB[22m
+2026-09-10T18:49:57.3487528Z [2mstorybook-static/[22m[2massets/[22m[36mMembershipManager-DrOJ9UIu.js                           [39m[1m[2m    9.34 kB[22m[1m[22m[2m │ gzip:   2.70 kB[22m
+2026-09-10T18:49:57.3488734Z [2mstorybook-static/[22m[2massets/[22m[36mPreferenceForm.stories-CXyxnYeV.js                      [39m[1m[2m    9.41 kB[22m[1m[22m[2m │ gzip:   3.14 kB[22m
+2026-09-10T18:49:57.3489964Z [2mstorybook-static/[22m[2massets/[22m[36mUserWithAuthable.stories-CoENPPa0.js                    [39m[1m[2m    9.51 kB[22m[1m[22m[2m │ gzip:   3.23 kB[22m
+2026-09-10T18:49:57.3491169Z [2mstorybook-static/[22m[2massets/[22m[36mLineChart.stories-H2LubBB5.js                           [39m[1m[2m    9.62 kB[22m[1m[22m[2m │ gzip:   2.67 kB[22m
+2026-09-10T18:49:57.3492427Z [2mstorybook-static/[22m[2massets/[22m[36mCommunication.ChannelPlanEditor.stories-DOHQ9OOZ.js     [39m[1m[2m    9.66 kB[22m[1m[22m[2m │ gzip:   3.03 kB[22m
+2026-09-10T18:49:57.3493709Z [2mstorybook-static/[22m[2massets/[22m[36mCategoryPicker.stories-DXR8bvqF.js                      [39m[1m[2m    9.96 kB[22m[1m[22m[2m │ gzip:   2.99 kB[22m
+2026-09-10T18:49:57.3495038Z [2mstorybook-static/[22m[2massets/[22m[36m1-philosophy-ItjiXnZq.js                                [39m[1m[2m   10.05 kB[22m[1m[22m[2m │ gzip:   3.16 kB[22m
+2026-09-10T18:49:57.3496366Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Motion-DerPhk8s.js                          [39m[1m[2m   10.09 kB[22m[1m[22m[2m │ gzip:   3.32 kB[22m
+2026-09-10T18:49:57.3497562Z [2mstorybook-static/[22m[2massets/[22m[36msample-entitlements-BdR_uNzy.js                         [39m[1m[2m   10.11 kB[22m[1m[22m[2m │ gzip:   3.53 kB[22m
+2026-09-10T18:49:57.3498757Z [2mstorybook-static/[22m[2massets/[22m[36mBarChart.stories-53pTQJuX.js                            [39m[1m[2m   10.52 kB[22m[1m[22m[2m │ gzip:   2.75 kB[22m
+2026-09-10T18:49:57.3499938Z [2mstorybook-static/[22m[2massets/[22m[36m4-getting-started-C_ugX542.js                           [39m[1m[2m   10.71 kB[22m[1m[22m[2m │ gzip:   3.08 kB[22m
+2026-09-10T18:49:57.3501157Z [2mstorybook-static/[22m[2massets/[22m[36mSubscriptionContexts.stories-BcBJjaSZ.js                [39m[1m[2m   10.92 kB[22m[1m[22m[2m │ gzip:   2.67 kB[22m
+2026-09-10T18:49:57.3502397Z [2mstorybook-static/[22m[2massets/[22m[36m7-token-architecture-BBNdiHQA.js                        [39m[1m[2m   10.96 kB[22m[1m[22m[2m │ gzip:   2.93 kB[22m
+2026-09-10T18:49:57.3503627Z [2mstorybook-static/[22m[2massets/[22m[36mInvoice.lifecycle.stories-BgoiAAWh.js                   [39m[1m[2m   11.05 kB[22m[1m[22m[2m │ gzip:   3.05 kB[22m
+2026-09-10T18:49:57.3504973Z [2mstorybook-static/[22m[2massets/[22m[36m5-visualization-system-Doi7_fVf.js                      [39m[1m[2m   11.24 kB[22m[1m[22m[2m │ gzip:   3.02 kB[22m
+2026-09-10T18:49:57.3506215Z [2mstorybook-static/[22m[2massets/[22m[36m6-accessibility-approach-UVI0vTP1.js                    [39m[1m[2m   11.34 kB[22m[1m[22m[2m │ gzip:   3.19 kB[22m
+2026-09-10T18:49:57.3507414Z [2mstorybook-static/[22m[2massets/[22m[36mAreaChart-DfzNmAQo.js                                   [39m[1m[2m   11.49 kB[22m[1m[22m[2m │ gzip:   4.28 kB[22m
+2026-09-10T18:49:57.3508589Z [2mstorybook-static/[22m[2massets/[22m[36mReactNucleus.stories-DiMAkI0g.js                        [39m[1m[2m   11.63 kB[22m[1m[22m[2m │ gzip:   3.16 kB[22m
+2026-09-10T18:49:57.3509829Z [2mstorybook-static/[22m[2massets/[22m[36mSubscription.lifecycle.stories-BIUU43SJ.js              [39m[1m[2m   12.25 kB[22m[1m[22m[2m │ gzip:   3.44 kB[22m
+2026-09-10T18:49:57.3511122Z [2mstorybook-static/[22m[2massets/[22m[36mRolePermissionMatrix.stories-EB2YAGka.js                [39m[1m[2m   12.50 kB[22m[1m[22m[2m │ gzip:   4.48 kB[22m
+2026-09-10T18:49:57.3512447Z [2mstorybook-static/[22m[2massets/[22m[36mTabs.stories-e9vCvADk.js                                [39m[1m[2m   12.75 kB[22m[1m[22m[2m │ gzip:   3.64 kB[22m
+2026-09-10T18:49:57.3513637Z [2mstorybook-static/[22m[2massets/[22m[36mStatusChip-Be6ZEBII.js                                  [39m[1m[2m   13.08 kB[22m[1m[22m[2m │ gzip:   2.94 kB[22m
+2026-09-10T18:49:57.3514954Z [2mstorybook-static/[22m[2massets/[22m[36mFoundations.Colors-ChJMx1wP.js                          [39m[1m[2m   13.39 kB[22m[1m[22m[2m │ gzip:   3.50 kB[22m
+2026-09-10T18:49:57.3516175Z [2mstorybook-static/[22m[2massets/[22m[36mPatterns.Form.stories-aXPG-BnS.js                       [39m[1m[2m   13.48 kB[22m[1m[22m[2m │ gzip:   3.75 kB[22m
+2026-09-10T18:49:57.3517350Z [2mstorybook-static/[22m[2massets/[22m[36mHeatmap-BWOE9nFi.js                                     [39m[1m[2m   14.00 kB[22m[1m[22m[2m │ gzip:   5.27 kB[22m
+2026-09-10T18:49:57.3518509Z [2mstorybook-static/[22m[2massets/[22m[36mpresentational-Dv5jp75C.js                              [39m[1m[2m   14.10 kB[22m[1m[22m[2m │ gzip:   3.60 kB[22m
+2026-09-10T18:49:57.3519689Z [2mstorybook-static/[22m[2massets/[22m[36mStatusable.stories-7WM_u5v7.js                          [39m[1m[2m   14.27 kB[22m[1m[22m[2m │ gzip:   3.72 kB[22m
+2026-09-10T18:49:57.3521026Z [2mstorybook-static/[22m[2massets/[22m[36mEmptyState.stories-CtWXKmfg.js                          [39m[1m[2m   14.56 kB[22m[1m[22m[2m │ gzip:   4.32 kB[22m
+2026-09-10T18:49:57.3522221Z [2mstorybook-static/[22m[2massets/[22m[36mBrownfield.adoption-GqZebHSh.js                         [39m[1m[2m   15.29 kB[22m[1m[22m[2m │ gzip:   3.89 kB[22m
+2026-09-10T18:49:57.3523417Z [2mstorybook-static/[22m[2massets/[22m[36mSunburst.stories-DdL31QGH.js                            [39m[1m[2m   15.42 kB[22m[1m[22m[2m │ gzip:   5.71 kB[22m
+2026-09-10T18:49:57.3524797Z [2mstorybook-static/[22m[2massets/[22m[36mPatternGalleryV2.stories-CVDWAumv.js                    [39m[1m[2m   15.50 kB[22m[1m[22m[2m │ gzip:   5.57 kB[22m
+2026-09-10T18:49:57.3526010Z [2mstorybook-static/[22m[2massets/[22m[36mTreemap.stories-BbKSJZDt.js                             [39m[1m[2m   15.94 kB[22m[1m[22m[2m │ gzip:   5.79 kB[22m
+2026-09-10T18:49:57.3527166Z [2mstorybook-static/[22m[2massets/[22m[36minvoice-kMl-XpS6.js                                     [39m[1m[2m   16.60 kB[22m[1m[22m[2m │ gzip:   4.71 kB[22m
+2026-09-10T18:49:57.3528392Z [2mstorybook-static/[22m[2massets/[22m[36mCommunication.MessageTimeline.stories-Cid5OwAl.js       [39m[1m[2m   17.00 kB[22m[1m[22m[2m │ gzip:   6.28 kB[22m
+2026-09-10T18:49:57.3529681Z [2mstorybook-static/[22m[2massets/[22m[36mProductCategoryBrowser.stories-iTHSt8uJ.js              [39m[1m[2m   17.20 kB[22m[1m[22m[2m │ gzip:   5.85 kB[22m
+2026-09-10T18:49:57.3530899Z [2mstorybook-static/[22m[2massets/[22m[36mPlan.stories-CKnb6vvK.js                                [39m[1m[2m   18.79 kB[22m[1m[22m[2m │ gzip:   4.64 kB[22m
+2026-09-10T18:49:57.3532066Z [2mstorybook-static/[22m[2massets/[22m[36mPagination.stories-B1wbA_X2.js                          [39m[1m[2m   18.99 kB[22m[1m[22m[2m │ gzip:   5.18 kB[22m
+2026-09-10T18:49:57.3533255Z [2mstorybook-static/[22m[2massets/[22m[36mrenderer-selector-CPlvhR19.js                           [39m[1m[2m   19.01 kB[22m[1m[22m[2m │ gzip:   6.66 kB[22m
+2026-09-10T18:49:57.3534445Z [2mstorybook-static/[22m[2massets/[22m[36mProgress.stories-BVle7rF3.js                            [39m[1m[2m   19.11 kB[22m[1m[22m[2m │ gzip:   3.90 kB[22m
+2026-09-10T18:49:57.3535737Z [2mstorybook-static/[22m[2massets/[22m[36mCategoryTree-BxKxn_Ec.js                                [39m[1m[2m   19.25 kB[22m[1m[22m[2m │ gzip:   5.31 kB[22m
+2026-09-10T18:49:57.3537033Z [2mstorybook-static/[22m[2massets/[22m[36mStepper.stories-BHFq9Paq.js                             [39m[1m[2m   19.63 kB[22m[1m[22m[2m │ gzip:   5.13 kB[22m
+2026-09-10T18:49:57.3538240Z [2mstorybook-static/[22m[2massets/[22m[36mTemporalHygiene.stories-sO131r_q.js                     [39m[1m[2m   19.83 kB[22m[1m[22m[2m │ gzip:   4.15 kB[22m
+2026-09-10T18:49:57.3539440Z [2mstorybook-static/[22m[2massets/[22m[36mAuthable.stories-C6jGfUSD.js                            [39m[1m[2m   19.93 kB[22m[1m[22m[2m │ gzip:   4.42 kB[22m
+2026-09-10T18:49:57.3540652Z [2mstorybook-static/[22m[2massets/[22m[36mTimestampable.stories-Dbmb6lsA.js                       [39m[1m[2m   20.41 kB[22m[1m[22m[2m │ gzip:   4.35 kB[22m
+2026-09-10T18:49:57.3541853Z [2mstorybook-static/[22m[2massets/[22m[36mTagInput.stories-7Cc97ebK.js                            [39m[1m[2m   20.49 kB[22m[1m[22m[2m │ gzip:   6.98 kB[22m
+2026-09-10T18:49:57.3543046Z [2mstorybook-static/[22m[2massets/[22m[36mArticle.stories-Z6Ww6r2d.js                             [39m[1m[2m   20.89 kB[22m[1m[22m[2m │ gzip:   5.02 kB[22m
+2026-09-10T18:49:57.3544221Z [2mstorybook-static/[22m[2massets/[22m[36m3-trait-engine-D9PmpgFp.js                              [39m[1m[2m   20.89 kB[22m[1m[22m[2m │ gzip:   4.76 kB[22m
+2026-09-10T18:49:57.3546117Z [2mstorybook-static/[22m[2massets/[22m[36m2-core-concepts-Cos-Smby.js                             [39m[1m[2m   20.93 kB[22m[1m[22m[2m │ gzip:   5.03 kB[22m
+2026-09-10T18:49:57.3547761Z [2mstorybook-static/[22m[2massets/[22m[36mTransaction.stories-BHdG30Td.js                         [39m[1m[2m   20.97 kB[22m[1m[22m[2m │ gzip:   5.04 kB[22m
+2026-09-10T18:49:57.3549166Z [2mstorybook-static/[22m[2massets/[22m[36mAddressForm.stories-CeRYhXK8.js                         [39m[1m[2m   21.36 kB[22m[1m[22m[2m │ gzip:   6.14 kB[22m
+2026-09-10T18:49:57.3550564Z [2mstorybook-static/[22m[2massets/[22m[36mMedia.stories-CHl5cKJ4.js                               [39m[1m[2m   21.76 kB[22m[1m[22m[2m │ gzip:   5.45 kB[22m
+2026-09-10T18:49:57.3551969Z [2mstorybook-static/[22m[2massets/[22m[36mCancellable.stories-CNzuYgAZ.js                         [39m[1m[2m   21.76 kB[22m[1m[22m[2m │ gzip:   4.96 kB[22m
+2026-09-10T18:49:57.3553501Z [2mstorybook-static/[22m[2massets/[22m[36mTokensRoundtrip.stories-CCYqR-tk.js                     [39m[1m[2m   21.85 kB[22m[1m[22m[2m │ gzip:   6.21 kB[22m
+2026-09-10T18:49:57.3555010Z [2mstorybook-static/[22m[2massets/[22m[36mBillable.stories-mYZqhoN4.js                            [39m[1m[2m   22.01 kB[22m[1m[22m[2m │ gzip:   4.76 kB[22m
+2026-09-10T18:49:57.3557031Z [2mstorybook-static/[22m[2massets/[22m[36mArchivable.stories-DFBBiY6x.js                          [39m[1m[2m   22.26 kB[22m[1m[22m[2m │ gzip:   4.46 kB[22m
+2026-09-10T18:49:57.3559867Z [2mstorybook-static/[22m[2massets/[22m[36mStateful.stories-Dw87CVqa.js                            [39m[1m[2m   22.51 kB[22m[1m[22m[2m │ gzip:   5.28 kB[22m
+2026-09-10T18:49:57.3561249Z [2mstorybook-static/[22m[2massets/[22m[36mAccountArchetypes.stories-BP7-uftx.js                   [39m[1m[2m   22.92 kB[22m[1m[22m[2m │ gzip:   5.78 kB[22m
+2026-09-10T18:49:57.3562531Z [2mstorybook-static/[22m[2massets/[22m[36mBreadcrumbs.stories-DrqKGqKG.js                         [39m[1m[2m   23.34 kB[22m[1m[22m[2m │ gzip:   5.63 kB[22m
+2026-09-10T18:49:57.3563757Z [2mstorybook-static/[22m[2massets/[22m[36mForceGraph.stories-D_31vmcI.js                          [39m[1m[2m   23.61 kB[22m[1m[22m[2m │ gzip:   7.49 kB[22m
+2026-09-10T18:49:57.3565106Z [2mstorybook-static/[22m[2massets/[22m[36mUsage.metered.stories-4RgSgAzb.js                       [39m[1m[2m   23.94 kB[22m[1m[22m[2m │ gzip:   4.64 kB[22m
+2026-09-10T18:49:57.3566321Z [2mstorybook-static/[22m[2massets/[22m[36mSankey.stories-DHDa-7Qj.js                              [39m[1m[2m   24.12 kB[22m[1m[22m[2m │ gzip:   7.48 kB[22m
+2026-09-10T18:49:57.3567689Z [2mstorybook-static/[22m[2massets/[22m[36mSaaSBillingFlow.stories-C9MAd95l.js                     [39m[1m[2m   25.24 kB[22m[1m[22m[2m │ gzip:   4.08 kB[22m
+2026-09-10T18:49:57.3568922Z [2mstorybook-static/[22m[2massets/[22m[36mcompliance.stories-6UjDEzA7.js                          [39m[1m[2m   25.43 kB[22m[1m[22m[2m │ gzip:   7.92 kB[22m
+2026-09-10T18:49:57.3570100Z [2mstorybook-static/[22m[2massets/[22m[36mPayable.stories-BO1HNdwH.js                             [39m[1m[2m   25.65 kB[22m[1m[22m[2m │ gzip:   6.04 kB[22m
+2026-09-10T18:49:57.3571277Z [2mstorybook-static/[22m[2massets/[22m[36mTaggable.stories-CTxRhr1m.js                            [39m[1m[2m   26.37 kB[22m[1m[22m[2m │ gzip:   6.20 kB[22m
+2026-09-10T18:49:57.3572478Z [2mstorybook-static/[22m[2massets/[22m[36mDashboardContexts.stories-CY6_UKP8.js                   [39m[1m[2m   27.39 kB[22m[1m[22m[2m │ gzip:   6.70 kB[22m
+2026-09-10T18:49:57.3573674Z [2mstorybook-static/[22m[2massets/[22m[36mMetered.stories-DR8EMkQf.js                             [39m[1m[2m   28.62 kB[22m[1m[22m[2m │ gzip:   6.41 kB[22m
+2026-09-10T18:49:57.3574961Z [2mstorybook-static/[22m[36mvite-inject-mocker-entry.js                                    [39m[1m[2m   29.18 kB[22m[1m[22m[2m │ gzip:  10.13 kB[22m
+2026-09-10T18:49:57.3576121Z [2mstorybook-static/[22m[2massets/[22m[36mColor-AVL7NMMY-BOtsg_8W.js                              [39m[1m[2m   29.38 kB[22m[1m[22m[2m │ gzip:  11.06 kB[22m
+2026-09-10T18:49:57.3577447Z [2mstorybook-static/[22m[2massets/[22m[36mmatchers-7Z3WT2CE-T3xScrR7.js                           [39m[1m[2m   29.81 kB[22m[1m[22m[2m │ gzip:  10.30 kB[22m
+2026-09-10T18:49:57.3578648Z [2mstorybook-static/[22m[2massets/[22m[36mClassifiable.stories-kZjmeJE3.js                        [39m[1m[2m   30.37 kB[22m[1m[22m[2m │ gzip:   6.95 kB[22m
+2026-09-10T18:49:57.3579856Z [2mstorybook-static/[22m[2massets/[22m[36mbilling-acl.stories-B66LUQBK.js                         [39m[1m[2m   31.17 kB[22m[1m[22m[2m │ gzip:   7.15 kB[22m
+2026-09-10T18:49:57.3581064Z [2mstorybook-static/[22m[2massets/[22m[36mPreferenceable.stories-DoEKf0g8.js                      [39m[1m[2m   32.91 kB[22m[1m[22m[2m │ gzip:   7.61 kB[22m
+2026-09-10T18:49:57.3582226Z [2mstorybook-static/[22m[2massets/[22m[36mview-DJt2DwSt.js                                        [39m[1m[2m   33.47 kB[22m[1m[22m[2m │ gzip:   8.29 kB[22m
+2026-09-10T18:49:57.3583398Z [2mstorybook-static/[22m[2massets/[22m[36mCommunicable.stories-Dn7RpbrZ.js                        [39m[1m[2m   34.19 kB[22m[1m[22m[2m │ gzip:   7.63 kB[22m
+2026-09-10T18:49:57.3584716Z [2mstorybook-static/[22m[2massets/[22m[36mChartDescription-CIzxGlzQ.js                            [39m[1m[2m   42.24 kB[22m[1m[22m[2m │ gzip:  14.53 kB[22m
+2026-09-10T18:49:57.3585883Z [2mstorybook-static/[22m[2massets/[22m[36mschemas-6mf_OlwC.js                                     [39m[1m[2m   54.25 kB[22m[1m[22m[2m │ gzip:  14.44 kB[22m
+2026-09-10T18:49:57.3587065Z [2mstorybook-static/[22m[2massets/[22m[36mAccessibility.ContractA11y--Zo3MSw5.js                  [39m[1m[2m   61.44 kB[22m[1m[22m[2m │ gzip:   5.74 kB[22m
+2026-09-10T18:49:57.3588236Z [2mstorybook-static/[22m[2massets/[22m[36mluxon-CMtWQ10C.js                                       [39m[1m[2m   71.39 kB[22m[1m[22m[2m │ gzip:  22.22 kB[22m
+2026-09-10T18:49:57.3589360Z [2mstorybook-static/[22m[2massets/[22m[36mfields-5s2guRpL.js                                      [39m[1m[2m  126.73 kB[22m[1m[22m[2m │ gzip:  23.28 kB[22m
+2026-09-10T18:49:57.3590537Z [2mstorybook-static/[22m[2massets/[22m[36mtime-grid-heatmap.spec-CbiybTcR.js                      [39m[1m[2m  144.53 kB[22m[1m[22m[2m │ gzip:  27.15 kB[22m
+2026-09-10T18:49:57.3591711Z [2mstorybook-static/[22m[2massets/[22m[36mreact-18-Db5SVzd2.js                                    [39m[1m[2m  181.72 kB[22m[1m[22m[2m │ gzip:  57.19 kB[22m
+2026-09-10T18:49:57.3593002Z [2mstorybook-static/[22m[2massets/[22m[36mPreferencePreview-OvEjffUC.js                           [39m[1m[2m  374.26 kB[22m[1m[22m[2m │ gzip: 120.83 kB[22m
+2026-09-10T18:49:57.3594171Z [2mstorybook-static/[22m[2massets/[22m[36maxe-C45S60kA.js                                         [39m[1m[2m  579.04 kB[22m[1m[22m[2m │ gzip: 159.54 kB[22m
+2026-09-10T18:49:57.3595410Z [2mstorybook-static/[22m[2massets/[22m[36mblocks-BAjnFsLw.js                                      [39m[1m[2m  664.17 kB[22m[1m[22m[2m │ gzip: 218.34 kB[22m
+2026-09-10T18:49:57.3596537Z [2mstorybook-static/[22m[2massets/[22m[36membed-Dp7LL1iq.js                                       [39m[1m[2m  831.21 kB[22m[1m[22m[2m │ gzip: 287.58 kB[22m
+2026-09-10T18:49:57.3597654Z [2mstorybook-static/[22m[2massets/[22m[36mindex-B65wl_ui.js                                       [39m[1m[2m1,047.35 kB[22m[1m[22m[2m │ gzip: 102.96 kB[22m
+2026-09-10T18:49:57.3598776Z [2mstorybook-static/[22m[2massets/[22m[36mindex-DXW7qb_O.js                                       [39m[1m[2m1,128.32 kB[22m[1m[22m[2m │ gzip: 375.18 kB[22m
+2026-09-10T18:49:57.3599900Z [2mstorybook-static/[22m[2massets/[22m[36miframe-B2U7s5oI.js                                      [39m[1m[2m1,284.22 kB[22m[1m[22m[2m │ gzip: 356.09 kB[22m
+2026-09-10T18:49:57.3600549Z [32m✓ built in 42.92s[39m
+2026-09-10T18:49:57.3601168Z info => Output directory: /home/runner/work/OODS-Forge/OODS-Forge/storybook-static
+2026-09-10T18:49:57.8973105Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:49:57.8974421Z ##[group]Run actions/cache@v4
+2026-09-10T18:49:57.8975207Z with:
+2026-09-10T18:49:57.8975430Z   path: ~/.cache/ms-playwright
+2026-09-10T18:49:57.8975901Z   key: Linux-playwright-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-10T18:49:57.8976404Z   restore-keys: Linux-playwright-
+
+2026-09-10T18:49:57.8976687Z   enableCrossOsArchive: false
+2026-09-10T18:49:57.8976940Z   fail-on-cache-miss: false
+2026-09-10T18:49:57.8977175Z   lookup-only: false
+2026-09-10T18:49:57.8977392Z   save-always: false
+2026-09-10T18:49:57.8977605Z env:
+2026-09-10T18:49:57.8977783Z   NODE_VERSION: 24
+2026-09-10T18:49:57.8978080Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:49:57.8978390Z ##[endgroup]
+2026-09-10T18:49:58.0094361Z (node:2458) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-10T18:49:58.0096096Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:49:58.0918433Z Cache hit for: Linux-playwright-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-10T18:49:58.1031406Z (node:2458) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-10T18:49:59.1435959Z Received 171966464 of 279133350 (61.6%), 163.0 MBs/sec
+2026-09-10T18:49:59.6054173Z Received 279133350 of 279133350 (100.0%), 180.8 MBs/sec
+2026-09-10T18:49:59.6057535Z Cache Size: ~266 MB (279133350 B)
+2026-09-10T18:49:59.6234400Z [command]/usr/bin/tar -xf /home/runner/work/_temp/41c524f2-0209-4717-8a65-51b0e18744d0/cache.tzst -P -C /home/runner/work/OODS-Forge/OODS-Forge --use-compress-program unzstd
+2026-09-10T18:50:02.6031354Z Cache restored successfully
+2026-09-10T18:50:03.3964259Z Cache restored from key: Linux-playwright-b67c91f667c5bcffea4719eaa9342dcc5979d32e2fe7ae9409ce9caae98e184d
+2026-09-10T18:50:03.4240358Z ##[group]Run pnpm exec playwright install chromium
+2026-09-10T18:50:03.4241013Z [36;1mpnpm exec playwright install chromium[0m
+2026-09-10T18:50:03.4289842Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:50:03.4290272Z env:
+2026-09-10T18:50:03.4290592Z   NODE_VERSION: 24
+2026-09-10T18:50:03.4291048Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:50:03.4291590Z ##[endgroup]
+2026-09-10T18:50:05.1045312Z ##[group]Run pnpm --filter @oods/component-styles --filter @oods/components-react --filter @oods/components-vue run build
+2026-09-10T18:50:05.1046869Z [36;1mpnpm --filter @oods/component-styles --filter @oods/components-react --filter @oods/components-vue run build[0m
+2026-09-10T18:50:05.1097867Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:50:05.1098297Z env:
+2026-09-10T18:50:05.1098619Z   NODE_VERSION: 24
+2026-09-10T18:50:05.1099081Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:50:05.1099617Z ##[endgroup]
+2026-09-10T18:50:05.6402289Z Scope: 3 of 22 workspace projects
+2026-09-10T18:50:05.6429769Z packages/component-styles build$ rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs
+2026-09-10T18:50:06.0266611Z packages/component-styles build: [34mCLI[39m Building entry: src/index.ts, src/ported.ts
+2026-09-10T18:50:06.0288371Z packages/component-styles build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:50:06.0296420Z packages/component-styles build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:50:06.0298549Z packages/component-styles build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/component-styles/tsup.config.ts
+2026-09-10T18:50:06.0386036Z packages/component-styles build: [34mCLI[39m Target: es2022
+2026-09-10T18:50:06.0413434Z packages/component-styles build: [34mESM[39m Build start
+2026-09-10T18:50:06.0455921Z packages/component-styles build: [34mCJS[39m Build start
+2026-09-10T18:50:06.1906642Z packages/component-styles build: [32mESM[39m [1mdist/index.js          [22m[32m143.00 B[39m
+2026-09-10T18:50:06.1914306Z packages/component-styles build: [32mESM[39m [1mdist/ported.js         [22m[32m513.00 B[39m
+2026-09-10T18:50:06.1966113Z packages/component-styles build: [32mESM[39m [1mdist/chunk-FPEPL7UR.js [22m[32m1.83 KB[39m
+2026-09-10T18:50:06.1985439Z packages/component-styles build: [32mESM[39m ⚡️ Build success in 146ms
+2026-09-10T18:50:06.1986785Z packages/component-styles build: [32mCJS[39m [1mdist/index.cjs  [22m[32m1.97 KB[39m
+2026-09-10T18:50:06.2028562Z packages/component-styles build: [32mCJS[39m [1mdist/ported.cjs [22m[32m1.93 KB[39m
+2026-09-10T18:50:06.2045751Z packages/component-styles build: [32mCJS[39m ⚡️ Build success in 147ms
+2026-09-10T18:50:06.4599035Z packages/component-styles build: [34mDTS[39m Build start
+2026-09-10T18:50:09.4496423Z packages/component-styles build: [32mDTS[39m ⚡️ Build success in 2989ms
+2026-09-10T18:50:09.4499167Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m1.87 KB[39m
+2026-09-10T18:50:09.4529247Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m500.00 B[39m
+2026-09-10T18:50:09.4536157Z packages/component-styles build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m1.87 KB[39m
+2026-09-10T18:50:09.4538182Z packages/component-styles build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m500.00 B[39m
+2026-09-10T18:50:09.5359152Z packages/component-styles build: Done
+2026-09-10T18:50:09.5368596Z packages/components-react build$ rimraf dist && tsup --config tsup.config.ts
+2026-09-10T18:50:09.5371810Z packages/components-vue build$ rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts
+2026-09-10T18:50:10.1152431Z packages/components-react build: [34mCLI[39m Building entry: src/index.ts, src/ported.tsx, src/status.ts, src/table.tsx, src/types.ts
+2026-09-10T18:50:10.1180439Z packages/components-react build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:50:10.1196700Z packages/components-react build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:50:10.1202250Z packages/components-react build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-react/tsup.config.ts
+2026-09-10T18:50:10.1255106Z packages/components-react build: [34mCLI[39m Target: es2022
+2026-09-10T18:50:10.1256529Z packages/components-react build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:50:10.1278570Z packages/components-react build: [34mESM[39m Build start
+2026-09-10T18:50:10.1316134Z packages/components-react build: [34mCJS[39m Build start
+2026-09-10T18:50:10.1476557Z packages/components-vue build: [34mCLI[39m Building entry: src/index.ts
+2026-09-10T18:50:10.1502775Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:50:10.1576925Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:50:10.1614208Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.config.ts
+2026-09-10T18:50:10.1680862Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-10T18:50:10.1758607Z packages/components-vue build: [34mCLI[39m Cleaning output folder
+2026-09-10T18:50:10.1800906Z packages/components-vue build: [34mESM[39m Build start
+2026-09-10T18:50:10.1807510Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-10T18:50:10.6027072Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-10T18:50:11.5355958Z packages/components-react build: Generated an empty chunk: "types".
+2026-09-10T18:50:11.9627106Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-10T18:50:11.9655488Z packages/components-vue build: [32mCJS[39m [1mdist/index.cjs [22m[32m116.53 KB[39m
+2026-09-10T18:50:11.9657506Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 1782ms
+2026-09-10T18:50:11.9659252Z packages/components-vue build: [32mESM[39m [1mdist/index.js [22m[32m112.98 KB[39m
+2026-09-10T18:50:11.9662562Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 1783ms
+2026-09-10T18:50:12.1687760Z packages/components-react build: [34mDTS[39m Build start
+2026-09-10T18:50:12.1746394Z packages/components-react build: [32mESM[39m [1mdist/ported.js         [22m[32m192.00 B[39m
+2026-09-10T18:50:12.1816123Z packages/components-react build: [32mESM[39m [1mdist/status.js         [22m[32m171.00 B[39m
+2026-09-10T18:50:12.1855964Z packages/components-react build: [32mESM[39m [1mdist/table.js          [22m[32m149.00 B[39m
+2026-09-10T18:50:12.1857570Z packages/components-react build: [32mESM[39m [1mdist/chunk-YCI5AEWL.js [22m[32m6.37 KB[39m
+2026-09-10T18:50:12.1859064Z packages/components-react build: [32mESM[39m [1mdist/chunk-G74PKSW3.js [22m[32m10.89 KB[39m
+2026-09-10T18:50:12.1860433Z packages/components-react build: [32mESM[39m [1mdist/types.js          [22m[32m1.00 B[39m
+2026-09-10T18:50:12.1861864Z packages/components-react build: [32mESM[39m [1mdist/chunk-XMIP5ZGO.js [22m[32m40.39 KB[39m
+2026-09-10T18:50:12.1863336Z packages/components-react build: [32mESM[39m [1mdist/index.js          [22m[32m71.77 KB[39m
+2026-09-10T18:50:12.1864950Z packages/components-react build: [32mESM[39m ⚡️ Build success in 2044ms
+2026-09-10T18:50:12.1866404Z packages/components-react build: [32mCJS[39m [1mdist/status.cjs [22m[32m11.08 KB[39m
+2026-09-10T18:50:12.1903637Z packages/components-react build: [32mCJS[39m [1mdist/table.cjs  [22m[32m17.07 KB[39m
+2026-09-10T18:50:12.1975857Z packages/components-react build: [32mCJS[39m [1mdist/types.cjs  [22m[32m15.00 B[39m
+2026-09-10T18:50:12.2015784Z packages/components-react build: [32mCJS[39m [1mdist/ported.cjs [22m[32m52.76 KB[39m
+2026-09-10T18:50:12.2060518Z packages/components-react build: [32mCJS[39m [1mdist/index.cjs  [22m[32m135.60 KB[39m
+2026-09-10T18:50:12.2139471Z packages/components-react build: [32mCJS[39m ⚡️ Build success in 2049ms
+2026-09-10T18:50:21.8330085Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 10246ms
+2026-09-10T18:50:21.8365954Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m105.15 KB[39m
+2026-09-10T18:50:21.8415805Z packages/components-vue build: [32mDTS[39m [1mdist/index.d.cts [22m[32m105.15 KB[39m
+2026-09-10T18:50:22.0166643Z packages/components-react build: [32mDTS[39m ⚡️ Build success in 10282ms
+2026-09-10T18:50:22.0216581Z packages/components-react build: [32mDTS[39m [1mdist/index.d.ts   [22m[32m13.05 KB[39m
+2026-09-10T18:50:22.0218241Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m7.12 KB[39m
+2026-09-10T18:50:22.0235872Z packages/components-react build: [32mDTS[39m [1mdist/status.d.ts  [22m[32m1.39 KB[39m
+2026-09-10T18:50:22.0255868Z packages/components-react build: [32mDTS[39m [1mdist/table.d.ts   [22m[32m1.06 KB[39m
+2026-09-10T18:50:22.0257411Z packages/components-react build: [32mDTS[39m [1mdist/types.d.ts   [22m[32m23.79 KB[39m
+2026-09-10T18:50:22.0275980Z packages/components-react build: [32mDTS[39m [1mdist/index.d.cts  [22m[32m13.05 KB[39m
+2026-09-10T18:50:22.0296852Z packages/components-react build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m7.12 KB[39m
+2026-09-10T18:50:22.0310858Z packages/components-react build: [32mDTS[39m [1mdist/status.d.cts [22m[32m1.39 KB[39m
+2026-09-10T18:50:22.0338695Z packages/components-react build: [32mDTS[39m [1mdist/table.d.cts  [22m[32m1.07 KB[39m
+2026-09-10T18:50:22.0366469Z packages/components-react build: [32mDTS[39m [1mdist/types.d.cts  [22m[32m23.79 KB[39m
+2026-09-10T18:50:22.1315182Z packages/components-react build: Done
+2026-09-10T18:50:22.3517887Z packages/components-vue build: [34mCLI[39m Building entry: src/ported.ts
+2026-09-10T18:50:22.3519169Z packages/components-vue build: [34mCLI[39m Using tsconfig: tsconfig.json
+2026-09-10T18:50:22.3535749Z packages/components-vue build: [34mCLI[39m tsup v8.5.0
+2026-09-10T18:50:22.3546985Z packages/components-vue build: [34mCLI[39m Using tsup config: /home/runner/work/OODS-Forge/OODS-Forge/packages/components-vue/tsup.ported.config.ts
+2026-09-10T18:50:22.3584222Z packages/components-vue build: [34mCLI[39m Target: es2022
+2026-09-10T18:50:22.3625706Z packages/components-vue build: [34mESM[39m Build start
+2026-09-10T18:50:22.3627200Z packages/components-vue build: [34mCJS[39m Build start
+2026-09-10T18:50:22.9094004Z packages/components-vue build: [32mESM[39m [1mdist/ported.js [22m[32m46.06 KB[39m
+2026-09-10T18:50:22.9105952Z packages/components-vue build: [32mESM[39m ⚡️ Build success in 548ms
+2026-09-10T18:50:22.9109611Z packages/components-vue build: [32mCJS[39m [1mdist/ported.cjs [22m[32m46.73 KB[39m
+2026-09-10T18:50:22.9111361Z packages/components-vue build: [32mCJS[39m ⚡️ Build success in 548ms
+2026-09-10T18:50:22.9410629Z packages/components-vue build: [34mDTS[39m Build start
+2026-09-10T18:50:26.8070980Z packages/components-vue build: [32mDTS[39m ⚡️ Build success in 3866ms
+2026-09-10T18:50:26.8072695Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.ts  [22m[32m20.67 KB[39m
+2026-09-10T18:50:26.8074360Z packages/components-vue build: [32mDTS[39m [1mdist/ported.d.cts [22m[32m20.67 KB[39m
+2026-09-10T18:50:26.8776291Z packages/components-vue build: Done
+2026-09-10T18:50:26.8904847Z ##[group]Run pnpm --filter @oods/components-react run test:visual --cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc --output=artifacts/component-proof/react
+2026-09-10T18:50:26.8906783Z [36;1mpnpm --filter @oods/components-react run test:visual --cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc --output=artifacts/component-proof/react[0m
+2026-09-10T18:50:26.8908576Z [36;1mpnpm --filter @oods/components-vue run test:visual --cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc --output=artifacts/component-proof/vue[0m
+2026-09-10T18:50:26.8910108Z [36;1mpnpm --filter @oods/component-styles exec vitest run test/high-contrast.browser.spec.ts[0m
+2026-09-10T18:50:26.8962801Z shell: /usr/bin/bash -e {0}
+2026-09-10T18:50:26.8963264Z env:
+2026-09-10T18:50:26.8963641Z   NODE_VERSION: 24
+2026-09-10T18:50:26.8964116Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:50:26.8965008Z ##[endgroup]
+2026-09-10T18:50:27.4162109Z 
+2026-09-10T18:50:27.4163821Z > @oods/components-react@0.1.0 test:visual /home/runner/work/OODS-Forge/OODS-Forge/packages/components-react
+2026-09-10T18:50:27.4165926Z > node test/visual-evidence.mjs "--cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc" "--output=artifacts/component-proof/react"
+2026-09-10T18:50:27.4166811Z 
+2026-09-10T18:50:28.7077254Z 
+2026-09-10T18:50:28.7096203Z [1m[33mwarn[39m[22m - The `content` option in your Tailwind CSS configuration is missing or empty.
+2026-09-10T18:50:28.7137792Z [1m[33mwarn[39m[22m - Configure your content sources or your generated CSS will be missing styles.
+2026-09-10T18:50:28.7203915Z [1m[33mwarn[39m[22m - https://tailwindcss.com/docs/content-configuration
+2026-09-10T18:50:37.2646468Z react/A-dark: AddressEditor focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2647378Z react: 432 root-cells, 20 failures, 0 skipped
+2026-09-10T18:50:37.2651537Z react/A-dark: CancellationForm focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2652824Z react/A-dark: Checkbox focus-ring: 1.006:1, visible=true
+2026-09-10T18:50:37.2654025Z react/A-dark: ClassificationEditor focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2655396Z react/A-dark: FilterPanel focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2676387Z react/A-dark: PreferenceEditor focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2677687Z react/A-dark: RoleAssignmentForm focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2679068Z react/A-dark: TagInput focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2680205Z react/A-dark: TagManager focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2681233Z react/A-dark: TemplatePicker focus-ring: 1.144:1, visible=true
+2026-09-10T18:50:37.2682228Z react/B-dark: AddressEditor focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.2683216Z react/B-dark: CancellationForm focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.2684128Z react/B-dark: Checkbox focus-ring: 1.034:1, visible=true
+2026-09-10T18:50:37.2685278Z react/B-dark: ClassificationEditor focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.2686238Z react/B-dark: FilterPanel focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.2687161Z react/B-dark: PreferenceEditor focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.2688220Z react/B-dark: RoleAssignmentForm focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.2689141Z react/B-dark: TagInput focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.2690056Z react/B-dark: TagManager focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.2690982Z react/B-dark: TemplatePicker focus-ring: 1.163:1, visible=true
+2026-09-10T18:50:37.3317850Z /home/runner/work/OODS-Forge/OODS-Forge/packages/components-react:
+2026-09-10T18:50:37.3320924Z  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @oods/components-react@0.1.0 test:visual: `node test/visual-evidence.mjs "--cells=A-light,A-dark,A-hc,B-light,B-dark,B-hc" "--output=artifacts/component-proof/react"`
+2026-09-10T18:50:37.3323975Z Exit status 1
+2026-09-10T18:50:37.3550638Z ##[error]Process completed with exit code 1.
+2026-09-10T18:50:37.3620250Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:50:37.3621539Z ##[group]Run actions/upload-artifact@v4
+2026-09-10T18:50:37.3621831Z with:
+2026-09-10T18:50:37.3622045Z   name: component-theme-34516397042
+2026-09-10T18:50:37.3622336Z   path: artifacts/component-proof/
+2026-09-10T18:50:37.3622609Z   if-no-files-found: error
+2026-09-10T18:50:37.3622858Z   compression-level: 6
+2026-09-10T18:50:37.3623079Z   overwrite: false
+2026-09-10T18:50:37.3623302Z   include-hidden-files: false
+2026-09-10T18:50:37.3623596Z env:
+2026-09-10T18:50:37.3637144Z   NODE_VERSION: 24
+2026-09-10T18:50:37.3637597Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:50:37.3638115Z ##[endgroup]
+2026-09-10T18:50:37.5432561Z (node:2845) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-10T18:50:37.5445630Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:50:37.5666117Z With the provided path, there will be 7 files uploaded
+2026-09-10T18:50:37.5705312Z Artifact name is valid!
+2026-09-10T18:50:37.5731414Z Root directory input is valid!
+2026-09-10T18:50:37.7573544Z Beginning upload of artifact content to blob storage
+2026-09-10T18:50:37.9283240Z (node:2845) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-10T18:50:38.0463428Z Uploaded bytes 3438615
+2026-09-10T18:50:38.0816611Z Finished uploading artifact content to blob storage!
+2026-09-10T18:50:38.0818566Z SHA256 digest of uploaded artifact zip is 8ba79bb2040a00479bb661655cc4a35c55e3c7a13d407bfd4d8aeaf82e1d7e38
+2026-09-10T18:50:38.0821394Z Finalizing artifact upload
+2026-09-10T18:50:38.4337664Z Artifact component-theme-34516397042.zip successfully finalized. Artifact ID 10167987573
+2026-09-10T18:50:38.4339613Z Artifact component-theme-34516397042 has been successfully uploaded! Final size is 3438615 bytes. Artifact ID is 10167987573
+2026-09-10T18:50:38.4346715Z Artifact download URL: https://github.com/kneelinghorse/OODS-Forge/actions/runs/34516397042/artifacts/10167987573
+2026-09-10T18:50:38.4510455Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:50:38.4511746Z ##[group]Run actions/upload-artifact@v4
+2026-09-10T18:50:38.4512032Z with:
+2026-09-10T18:50:38.4512248Z   name: a11y-guardrail-34516397042
+2026-09-10T18:50:38.4512525Z   path: tools/a11y/reports/
+2026-09-10T18:50:38.4512784Z   if-no-files-found: warn
+2026-09-10T18:50:38.4513027Z   compression-level: 6
+2026-09-10T18:50:38.4513263Z   overwrite: false
+2026-09-10T18:50:38.4513492Z   include-hidden-files: false
+2026-09-10T18:50:38.4513739Z env:
+2026-09-10T18:50:38.4513925Z   NODE_VERSION: 24
+2026-09-10T18:50:38.4514195Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-09-10T18:50:38.4514763Z ##[endgroup]
+2026-09-10T18:50:38.6285102Z (node:2858) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-10T18:50:38.6286843Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-10T18:50:38.6405481Z With the provided path, there will be 1 file uploaded
+2026-09-10T18:50:38.6445184Z Artifact name is valid!
+2026-09-10T18:50:38.6465105Z Root directory input is valid!
+2026-09-10T18:50:38.8592549Z Beginning upload of artifact content to blob storage
+2026-09-10T18:50:38.8875023Z (node:2858) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-10T18:50:38.9395643Z Uploaded bytes 6237
+2026-09-10T18:50:38.9581643Z Finished uploading artifact content to blob storage!
+2026-09-10T18:50:38.9583495Z SHA256 digest of uploaded artifact zip is fd3e409520b4844acfed662bb1f3da1679081834e13d9c2b482d089392d3dc21
+2026-09-10T18:50:38.9586119Z Finalizing artifact upload
+2026-09-10T18:50:39.1746530Z Artifact a11y-guardrail-34516397042.zip successfully finalized. Artifact ID 10167988114
+2026-09-10T18:50:39.1748535Z Artifact a11y-guardrail-34516397042 has been successfully uploaded! Final size is 6237 bytes. Artifact ID is 10167988114
+2026-09-10T18:50:39.1755760Z Artifact download URL: https://github.com/kneelinghorse/OODS-Forge/actions/runs/34516397042/artifacts/10167988114
+2026-09-10T18:50:39.2799203Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:50:39.2801282Z Post job cleanup.
+2026-09-10T18:50:39.4445087Z Pruning is unnecessary.
+2026-09-10T18:50:39.7754474Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-10T18:50:39.7756855Z Post job cleanup.
+2026-09-10T18:50:39.8905648Z [command]/usr/bin/git version
+2026-09-10T18:50:39.8981798Z git version 2.55.0
+2026-09-10T18:50:39.9037662Z Temporarily overriding HOME='/home/runner/work/_temp/63c0f33f-632a-4b14-aa22-ccd7f55a877c' before making global git config changes
+2026-09-10T18:50:39.9039305Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-10T18:50:39.9040731Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Forge/OODS-Forge
+2026-09-10T18:50:39.9106278Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-10T18:50:39.9159401Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-10T18:50:39.9641906Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-10T18:50:39.9655712Z http.https://github.com/.extraheader
+2026-09-10T18:50:39.9664383Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-10T18:50:39.9766921Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-10T18:50:40.0122536Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-10T18:50:40.0186140Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-10T18:50:40.3353087Z Cleaning up orphan processes
+2026-09-10T18:50:40.3622042Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/cache@v4, actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

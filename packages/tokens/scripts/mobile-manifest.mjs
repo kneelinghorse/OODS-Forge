@@ -15,7 +15,31 @@
  *   spacing       px  → 1:1 — iOS CGFloat · Compose .dp
  */
 
+// Sprint 192: these actual rem-authored web roles use an explicit 16pt/dp mobile
+// reference. Existing px tokens remain 1:1; never infer rem from a px magnitude.
+export const MOBILE_REM_REFERENCE_SIZE = 16;
+
 export const MOBILE_DIMENSION_CLASSES = {
+  spacingRem: [
+    'sys.control-gap',
+    'sys.control-gap-compact',
+    'sys.control-gap-tight',
+    'sys.control-padding-block',
+    'sys.control-padding-inline',
+    'sys.field-padding-inline',
+    'sys.badge-padding-block',
+    'sys.badge-padding-inline',
+    'sys.inset-sm',
+    'sys.inset-md',
+    'sys.stack-xs',
+    'sys.stack-sm',
+    'sys.stack-md',
+    'sys.inline-xs',
+    'sys.inline-sm',
+    'sys.inline-md',
+    'sys.progress-height',
+    'sys.radius-control',
+  ],
   fontSize: [
   'ref.typography.sizes.display-lg',
   'ref.typography.sizes.display-md',

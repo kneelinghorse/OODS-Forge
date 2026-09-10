@@ -139,7 +139,17 @@ function versionedContractNames(sourceFile) {
     for (const declaration of statement.declarationList.declarations) {
       if (!ts.isIdentifier(declaration.name) || declaration.name.text !== "componentContracts") continue;
       if (!declaration.initializer) return new Set();
-      const initializer = unwrapExpression(declaration.initializer);
+      let initializer = unwrapExpression(declaration.initializer);
+      // s192 composes executable semantics onto the authored object without
+      // changing its keys. Follow that specific projection to the physical keys;
+      // do not credit a type assertion or an arbitrary computed object as proof.
+      if (initializer.getText(sourceFile).replace(/\s/g, '').startsWith('Object.fromEntries(Object.entries(authoredContracts).map(')) {
+        const authored = sourceFile.statements.filter(ts.isVariableStatement)
+          .flatMap(statement => [...statement.declarationList.declarations])
+          .find(declaration => ts.isIdentifier(declaration.name) && declaration.name.text === 'authoredContracts');
+        if (!authored?.initializer) return new Set();
+        initializer = unwrapExpression(authored.initializer);
+      }
       if (!ts.isObjectLiteralExpression(initializer)) return new Set();
       return new Set(
         initializer.properties

@@ -56,6 +56,8 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const DIST_CSS = 'packages/tokens/dist/css/tokens.css';
 const DOCUMENT_TS = 'packages/mcp-server/src/render/document.ts';
 const IMMUTABLE_DERIVED_EVIDENCE_CSS: ReadonlySet<string> = new Set([
+  // Byte-retained pre-fix inventory, never a shipped source or build input (#1884).
+  'artifacts/product-reality/sprint-192/m02/token-before/css/tokens.css',
   'artifacts/product-reality/sprint-182/m04/generated-consumers/consumers/react/build/client/assets/index-DhRF-SdH.css',
   'artifacts/product-reality/sprint-182/m04/generated-consumers/consumers/vue/build/client/assets/index-DhRF-SdH.css',
 ]);

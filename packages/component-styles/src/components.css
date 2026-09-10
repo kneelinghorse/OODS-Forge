@@ -158,7 +158,10 @@
   cursor: not-allowed;
 }
 
-:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action):focus-visible {
+/* Native controls in governed forms need the same semantic ring on every OS. */
+:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action,
+  [data-oods-component] input, [data-oods-component] textarea, [data-oods-component] select,
+  [data-oods-component] button, [data-oods-component='Checkbox']):focus-visible {
   outline: var(--cmp-button-focus-width, 2px) solid var(--cmp-button-focus-outer, Highlight);
   outline-offset: 2px;
 }

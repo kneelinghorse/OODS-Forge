@@ -104,14 +104,14 @@ const bytesToHex = (bytes: number[]) =>
 const swiftChannels = (bytes: number[]) => bytes.map((byte) => (byte / 255).toFixed(3));
 
 describe('mobile output — census and shape', () => {
-  // s178 m02: +6 exactly — three base focus colours for each brand. The 18 authored cells
+  // s192 m02: +134 component/system aliases; s178 m02: +6 exactly — three base focus colours for each brand. The 18 authored cells
   // collapse to the two base brand namespaces in the flat/mobile artifact; dark and hc stay
   // scoped web output. The dimension manifest counts (27/24/18/105/174) and the deferral
   // subtraction (54 easings + 14 font stacks) remain unmoved.
-  it('emits exactly 714 constants per file (782 − 54 easing − 14 font stacks), identical name sets', () => {
-    expect(flatEntries.length).toBe(782);
-    expect(swiftConstants.size).toBe(714);
-    expect(kotlinConstants.size).toBe(714);
+  it('emits exactly 848 constants per file (916 − 54 easing − 14 font stacks), identical name sets', () => {
+    expect(flatEntries.length).toBe(916);
+    expect(swiftConstants.size).toBe(848);
+    expect(kotlinConstants.size).toBe(848);
     expect([...swiftConstants.keys()].sort()).toEqual([...kotlinConstants.keys()].sort());
   });
 
@@ -161,6 +161,7 @@ describe('mobile output — the path manifest binding', () => {
     expect(MOBILE_DIMENSION_CLASSES.lineHeight.length).toBe(24);
     expect(MOBILE_DIMENSION_CLASSES.letterSpacing.length).toBe(18);
     expect(MOBILE_DIMENSION_CLASSES.spacing.length).toBe(105);
+    expect(MOBILE_DIMENSION_CLASSES.spacingRem.length).toBe(18);
   });
 
   it('pins one literal member per class, named OUTSIDE the manifest', () => {
@@ -172,7 +173,7 @@ describe('mobile output — the path manifest binding', () => {
 
   it('every manifest path resolves to an emitted constant in both files', () => {
     const allPaths = Object.values(MOBILE_DIMENSION_CLASSES).flat();
-    expect(allPaths.length).toBe(174);
+    expect(allPaths.length).toBe(192);
     for (const tokenPath of allPaths) {
       const name = camelName(tokenPath.split('.'));
       expect(swiftConstants.has(name), `Swift missing ${tokenPath} → ${name}`).toBe(true);
@@ -192,6 +193,9 @@ describe('mobile output — the path manifest binding', () => {
 
 describe('mobile output — magnitude pins, one per value class', () => {
   const pins: Array<[name: string, swift: string, kotlin: string]> = [
+    // Explicit s192 rem reference: 0.5rem becomes 8pt/dp; px remains 1:1.
+    ['sysControlGap', 'CGFloat(8)', '8.dp'],
+    ['cmpBadgeGap', 'CGFloat(4)', '4.dp'],
     // px spacing — 1:1
     ['refSpaceInsetCompact', 'CGFloat(8)', '8.dp'],
     ['refBorderWidthHairline', 'CGFloat(1)', '1.dp'],
@@ -259,7 +263,7 @@ describe('mobile output — anti-gaming, value-position anchored', () => {
 
   it('emits zero quoted-string values for colour-class or duration-class tokens', () => {
     const guarded = [...(byClass.get('color') ?? []), ...(byClass.get('duration') ?? [])];
-    expect(guarded.length).toBe(395 + 108);
+    expect(guarded.length).toBe(476 + 108); // s192 adds 81 semantic colour aliases.
     for (const entry of guarded) {
       const name = camelName(entry.path);
       expect(swiftConstants.get(name)?.startsWith('"'), `Swift ${name} is a quoted string`).toBe(false);

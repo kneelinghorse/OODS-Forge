@@ -12,7 +12,7 @@ import ColorJs from 'colorjs.io';
 
 import { auditAllScopes, resolveScopeFiles } from './collision-guard.mjs';
 import { renderBridgeBlock } from './brand-bridge.mjs';
-import { MOBILE_DEFERRED_TYPES, mobileDimensionClass } from './mobile-manifest.mjs';
+import { MOBILE_DEFERRED_TYPES, MOBILE_REM_REFERENCE_SIZE, mobileDimensionClass } from './mobile-manifest.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -575,7 +575,7 @@ function registerMobileTransformGroups() {
   StyleDictionary.registerTransform({
     name: 'oods/string-literal',
     type: 'value',
-    filter: (token) => ['strokeStyle', 'textCase', 'border'].includes(tokenType(token)),
+    filter: (token) => ['strokeStyle', 'textCase', 'border', 'shadow'].includes(tokenType(token)),
     transform: (token, _, options) => {
       const raw = rawValue(token, options);
       if (typeof raw !== 'string' || raw.startsWith('"')) {
@@ -592,7 +592,7 @@ function registerMobileTransformGroups() {
   // manifest, or a unit outside its class policy, passes through with a warning —
   // the compile gates red rather than the build throwing (CI runs build first).
   const DIMENSION_CANDIDATE_TYPES = ['dimension', 'lineHeight', 'letterSpacing', 'radius'];
-  const NUMBER_RE = /^(-?\d*\.?\d+)(px|%|em|ms)$/;
+  const NUMBER_RE = /^(-?\d*\.?\d+)(px|%|em|rem|ms)$/;
   const fmt = (n) => String(n);
   const parseUnit = (raw, expected) => {
     if (typeof raw !== 'string') return null;
@@ -615,12 +615,12 @@ function registerMobileTransformGroups() {
       if (!cls) {
         return passthrough(name, token, raw, 'path not in mobile-manifest');
       }
-      const expectedUnit = cls === 'lineHeight' ? '%' : cls === 'letterSpacing' ? 'em' : 'px';
+      const expectedUnit = cls === 'lineHeight' ? '%' : cls === 'letterSpacing' ? 'em' : cls === 'spacingRem' ? 'rem' : 'px';
       const value = parseUnit(raw, expectedUnit);
       if (value === null) {
         return passthrough(name, token, raw, `value outside the ${cls} policy (${expectedUnit})`);
       }
-      return emit(cls, cls === 'lineHeight' ? value / 100 : value);
+      return emit(cls, cls === 'lineHeight' ? value / 100 : cls === 'spacingRem' ? value * MOBILE_REM_REFERENCE_SIZE : value);
     },
   });
 
@@ -678,6 +678,8 @@ function registerMobileTransformGroups() {
       '• lineHeight — unitless multiplier on both platforms (160% → 1.6)',
       '• letterSpacing — em number: Compose .em · iOS Double, kerning(pt) = value × fontSize(pt)',
       '• px dimensions — 1:1: iOS CGFloat · Compose .dp; the fontSize class emits Compose .sp',
+      `• explicitly rem-authored component geometry — ${MOBILE_REM_REFERENCE_SIZE}pt/dp per rem; px tokens remain 1:1`,
+      '• CSS shadow strings are preserved as strings, not claimed as native platform shadow objects',
       'DEFERRED from mobile output (exact counts):',
       `• ${MOBILE_DEFERRED_TYPES.cubicBezier} easing curves ($type cubicBezier) — mobile-relevant, with typed targets`,
       '  (Compose CubicBezierEasing, iOS CAMediaTimingFunction); typed emission is a consumer-API',
