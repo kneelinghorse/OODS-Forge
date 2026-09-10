@@ -90,6 +90,31 @@ describe('Sprint 182 shared component-style browser corrections', () => {
     }
   }
 
+  for (const cell of SUPPORTED_COMPONENT_THEME_CELLS) {
+    it(`s192-m05 preserves nested collection row text contrast in ${cell.brand}/${cell.theme}`, async () => {
+      const page = await browser.newPage({ forcedColors: cell.theme === 'hc' ? 'active' : 'none' });
+      try {
+        await page.setContent(`<html data-brand="${cell.brand}" data-theme="${cell.theme}"><head><style>${tokenCss}\n${componentCss}</style></head><body style="background:var(--sys-surface-canvas);color:var(--sys-text-primary)">
+          <button class="oods-button oods-collection-row" data-oods-component="Button" data-intent="neutral"><span data-oods-component="Text">Record label</span><span data-oods-component="LabelCell"><span data-oods-label-cell-description>Record description</span></span></button></body></html>`);
+        const ratios = await page.evaluate(() => {
+          const context = document.createElement('canvas').getContext('2d', { willReadFrequently: true })!;
+          const luminance = (color: string) => {
+            context.fillStyle = color; context.fillRect(0, 0, 1, 1);
+            const rgb = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3).map(value => { const channel = value / 255; return channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4; });
+            return .2126 * rgb[0] + .7152 * rgb[1] + .0722 * rgb[2];
+          };
+          const background = luminance(getComputedStyle(document.querySelector('button')!).backgroundColor);
+          return [...document.querySelectorAll('[data-oods-component="Text"], [data-oods-label-cell-description]')].map(node => {
+            const foreground = luminance(getComputedStyle(node).color);
+            return (Math.max(background, foreground) + .05) / (Math.min(background, foreground) + .05);
+          });
+        });
+        expect(ratios).toHaveLength(2);
+        for (const ratio of ratios) expect(ratio).toBeGreaterThanOrEqual(4.5);
+      } finally { await page.close(); }
+    });
+  }
+
   it('s182-m01b keeps the Brand B light enabled action at or above 4.5:1', async () => {
     const page = await browser.newPage({
       colorScheme: 'light',

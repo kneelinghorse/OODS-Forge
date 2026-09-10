@@ -1254,7 +1254,8 @@
 
 /* Generated collection screens share one row/event presentation in both frameworks. */
 .oods-collection { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 8px; }
-.oods-collection-row { width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
+.oods-collection-row { --oods-button-background: var(--sys-surface-raised); --oods-button-background-hover: var(--sys-surface-subtle); --oods-button-border: var(--sys-border-subtle); --oods-button-text: var(--sys-text-primary); width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; text-align: left; padding: 16px; }
+[data-theme='hc'] .oods-collection-row:not(:disabled) { background: var(--sys-surface-raised); color: var(--sys-text-primary); }
 .oods-collection-row > :first-child { min-width: 0; flex: 1 1 140px; font-weight: 600; }
 .oods-collection-row [data-oods-component="StatusBadge"] { max-width: 100%; text-transform: none; }
 [data-oods-collection="events"] time { display: block; margin-top: 8px; font-size: 13px; }

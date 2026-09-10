@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { h } from 'vue';
+import { h, isProxy } from 'vue';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { AuditSummaryCard, SortIndicator, TimelineEntryLabel, InlineLabel } from '../src/index.js';
@@ -17,6 +17,8 @@ describe('the last three retained component obligations', () => {
       await user.keyboard('{Enter}'); expect(wrapper.get('th').attributes('aria-sort')).toBe('ascending');
       await user.keyboard(' '); expect(wrapper.get('th').attributes('aria-sort')).toBe('descending');
       await user.click(button); expect(wrapper.get('th').attributes('aria-sort')).toBe('none');
+      expect(wrapper.emitted('change')?.some(([state]) => isProxy(state))).toBe(false);
+      expect(() => structuredClone(wrapper.emitted('change'))).not.toThrow();
       expect(wrapper.emitted('change')?.map(([state]) => state)).toEqual([{ field: 'name', direction: 'asc', active: true }, { field: 'name', direction: 'desc', active: true }, { field: 'name', direction: 'asc', active: false }]);
       await wrapper.setProps({ sortField: 'price', sortActive: true, sortDirection: 'desc', triStateSort: false }); await user.click(button); expect(wrapper.get('th').attributes('aria-sort')).toBe('ascending');
     } finally { wrapper.unmount(); }

@@ -20,7 +20,7 @@ export const SortIndicator = defineComponent({
     const state = ref(initialSort(props));
     watch(() => [props.sortField, props.sortDirection, props.sortActive, props.defaultSortField, props.defaultSortDirection], () => { state.value = initialSort(props); });
     return () => h('table', { ...attrs, 'data-oods-action': undefined, id: props.id, class: 'oods-sort-indicator', 'data-oods-component': 'SortIndicator', 'aria-label': props.label }, [h('thead', [h('tr', [h('th', { scope: 'col', 'aria-sort': ariaSort(state.value) }, [
-      h('button', { type: 'button', 'data-oods-action': attrs['data-oods-action'], 'aria-label': `${props.label} ${state.value.field}`, onClick: () => { state.value = nextSort(state.value, props.triStateSort); emit('change', state.value); } }, `${state.value.field}: ${ariaSort(state.value)}`),
+      h('button', { type: 'button', 'data-oods-action': attrs['data-oods-action'], 'aria-label': `${props.label} ${state.value.field}`, onClick: () => { const next = nextSort(state.value, props.triStateSort); state.value = next; emit('change', next); } }, `${state.value.field}: ${ariaSort(state.value)}`),
     ])])])]);
   },
 });
