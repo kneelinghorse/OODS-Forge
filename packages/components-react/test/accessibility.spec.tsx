@@ -3,7 +3,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { afterEach, describe, expect, it } from 'vitest';
-import { sharedScenarios } from '@oods/component-contracts';
+import { NUCLEUS_COMPONENT_IDS, sharedScenarios } from '@oods/component-contracts';
 
 import { renderSharedScenario } from './scenario-fixtures.js';
 
@@ -27,14 +27,12 @@ import {
 afterEach(cleanup);
 
 describe('@oods/components-react accessibility', () => {
-  for (const scenario of sharedScenarios.filter(({ oodsComponentId }) => (
-    ['DetailHeader', 'CardHeader', 'ColorSwatch', 'ColorizedBadge', 'VizAreaPreview',
-      'ClassificationPanel', 'FilterPanel', 'PriceSummary',
-      'AddressCollectionPanel', 'MembershipPanel', 'PreferencePanel', 'TagManager',
-      'AddressSummaryBadge', 'MessageStatusBadge', 'PreferenceSummaryBadge', 'RoleBadgeList', 'TagPills',
-      'AddressValidationTimeline', 'AuditEvent', 'MembershipAuditTimeline', 'MessageEventTimeline', 'PreferenceTimeline',
-      'AddressEditor', 'PreferenceEditor', 'RoleAssignmentForm', 'StatusSelector', 'TagInput', 'TemplatePicker'].includes(oodsComponentId)
-  ))) {
+  const axeScenarios = sharedScenarios;
+  it('runs every governed root through the axe loop exactly once', () => {
+    expect(axeScenarios.map(scenario => scenario.oodsComponentId)).toEqual(NUCLEUS_COMPONENT_IDS);
+    expect(axeScenarios).toHaveLength(72);
+  });
+  for (const scenario of axeScenarios) {
     it(`passes axe for the ${scenario.oodsComponentId} shared scenario with visible text semantics`, async () => {
       const { container } = render(<main>{renderSharedScenario(scenario)}</main>);
       // JSDOM does not compute token contrast; browser theme evidence checks

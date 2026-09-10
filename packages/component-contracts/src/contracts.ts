@@ -1,9 +1,10 @@
 import type { ComponentContract, NucleusComponentId } from './types.js';
+import { componentBehaviors } from './behaviors.js';
 
-export const COMPONENT_CONTRACT_VERSION = '1.0.0' as const;
+export const COMPONENT_CONTRACT_VERSION = '1.1.0' as const;
 export const COMPONENT_CONTRACT_VERSION_1_1 = '1.1.0' as const;
 
-export const componentContracts: Readonly<Record<NucleusComponentId, ComponentContract>> = {
+const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>> = {
   AddressCollectionPanel: {
     id: 'AddressCollectionPanel', version: COMPONENT_CONTRACT_VERSION,
     props: ['title', 'label', 'heading', 'name', 'subtitle', 'description', 'metadata', 'summary', 'text', 'body', 'emptyMessage'], slots: ['default'], events: [],
@@ -550,3 +551,9 @@ export const componentContracts: Readonly<Record<NucleusComponentId, ComponentCo
     compatibility: 'Mirrors renderVizAreaPreview through renderVizPreview with data-viz-preview-type=area and default dimensions 640x360; the placeholder appears only without authored content. With svg, renders a labelled figure preserving static SVG IDs and ARIA; without svg, the placeholder remains unchanged.',
   },
 };
+
+// Preserve the established prose and add executable semantics at v1.1.
+export const componentContracts = Object.fromEntries(Object.entries(authoredContracts).map(([id, contract]) => {
+  const { role, name, keyboard } = componentBehaviors[id as NucleusComponentId];
+  return [id, { ...contract, version: COMPONENT_CONTRACT_VERSION_1_1, role, name, keyboard }];
+})) as Readonly<Record<NucleusComponentId, ComponentContract>>;

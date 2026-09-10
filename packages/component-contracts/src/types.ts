@@ -131,6 +131,9 @@ export type ComponentContract = {
   states: readonly string[];
   tokenRoles: readonly string[];
   accessibility: readonly string[];
+  role?: string;
+  name?: { strategy: 'label' | 'aria-label' | 'heading' | 'none'; target: string };
+  keyboard?: Readonly<Record<string, string>>;
   compatibility: string;
 };
 
@@ -140,7 +143,10 @@ export type SharedScenario = {
   props: Readonly<Record<string, unknown>>;
   slots: Readonly<Record<string, unknown>>;
   initialState: Readonly<Record<string, unknown>>;
-  event: {
+  interaction: 'interactive' | 'none';
+  interactionReason?: string;
+  event: readonly ScenarioTrigger[];
+  renderExpectation: {
     name: string;
     trigger: string;
     expected: string;
@@ -153,4 +159,22 @@ export type EvidenceStatus = 'passed' | 'failed' | 'missing' | 'skipped' | 'envi
 export type EvidenceResult = {
   status: EvidenceStatus;
   refs: readonly string[];
+};
+
+/** Executable actions and outcomes, shared by both framework suites. */
+export type ScenarioTrigger = {
+  trigger: 'keyboard' | 'pointer';
+  target: string;
+  key?: string;
+  action?: 'click' | 'select';
+  value?: string;
+  effect: { kind: 'focus' | 'event' | 'value' | 'selected-tab'; value?: unknown; target?: string };
+};
+export type ComponentBehavior = {
+  role: string;
+  name: NonNullable<ComponentContract['name']>;
+  keyboard: Readonly<Record<string, string>>;
+  interaction: SharedScenario['interaction'];
+  interactionReason?: string;
+  event: readonly ScenarioTrigger[];
 };

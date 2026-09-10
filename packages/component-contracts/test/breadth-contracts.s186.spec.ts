@@ -226,7 +226,7 @@ describe('Sprint 186 m01 component breadth contracts', () => {
       expect(scenario.id).toBe(expected.scenario);
       for (const prop of Object.keys(scenario.props)) expect(contract.props).toContain(prop);
       expect(Object.keys(scenario.props).length).toBeGreaterThan(0);
-      expect(scenario.event.name).toBe(contract.events.length > 0 ? contract.events[0] : 'render');
+      expect(scenario.renderExpectation.name).toBe(contract.events.length > 0 ? contract.events[0] : 'render');
       expect(scenario.assertions.length).toBeGreaterThan(0);
     });
   }
