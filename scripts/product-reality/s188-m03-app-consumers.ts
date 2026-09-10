@@ -129,10 +129,10 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
       assert.deepEqual(options, ['monthly', 'yearly']);
       await amount.fill('-1'); assert.equal(await amount.getAttribute('aria-invalid'), 'true');
       await page.getByRole('button', { name: 'Save', exact: true }).click(); await ready(page, 'form');
-      // Drive the native select's input/change contract without platform-specific key navigation.
-      await amount.fill('19.99'); await interval.selectOption('yearly');
+      // Learning #548: preserve this native keyboard proof and run it on pinned Linux Chromium.
+      await amount.fill('19.99'); await interval.focus(); await interval.press('Home'); await interval.press('ArrowDown');
       assert.equal(await interval.inputValue(), 'yearly');
-      return { options, amount: await amount.inputValue(), interval: await interval.inputValue(), invalidSaveStayedOnForm: true, intervalInput: 'native selectOption input/change' };
+      return { options, amount: await amount.inputValue(), interval: await interval.inputValue(), invalidSaveStayedOnForm: true };
     });
     await observe(rows, titleField === 'plan_name' ? 'save-plan-name' : 'save-record-title', async () => {
       await titleInput().fill('Team annual');

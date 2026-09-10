@@ -4,6 +4,10 @@
 
 Build branch: `codex/sprint-191-paydown`. The implementation and receipts were produced over m01 commit `e7aa31e2` with m02 changes present. Artifact hashes bind the exact generated files; `verify-packed.ts` requires the final packed artifacts to match the fresh census. The m02 commit provides the required BEFORE baseline for m03. No primary checkout, PM2 runtime, saved schema store, or external consumer was changed; no messages were sent.
 
+## Verification correction after 274e0186
+
+The initial m02 completion was premature because the macOS selectOption workaround did not satisfy the preserved keyboard proof. CMOS rejected reopening Completed as a terminal state; its mission notes record this correction, and m03 was returned to Queued before any craft change or BEFORE capture. `run-packed-linux.ts` reuses the exact retained foundation tarballs, requires a Linux user agent, and runs all six cells with the original Home/ArrowDown sequence. The final Linux run passed all 48 gates with the preserved keyboard interaction; `packed-proof.json` validates its 96 states, 84 screenshot hashes and current artifact identities. The follow-up commit becomes the m03 BEFORE baseline.
+
 ## What changed
 
 - The workflow node walk captures collection editors. A missing `handleChange_<field>` action with a record parameter and a declared collection field generates an upsert keyed by the editor's default-role field. The ten existing action implementations remain unchanged; unknown scalar actions still return `OODS-N016`. Tests rename the collection and role field to prove this is not an object-name or `addresses` special-case action map, and verify append, replacement, metadata preservation, unsaved-edit discard, and Save persistence.
@@ -28,7 +32,7 @@ Build branch: `codex/sprint-191-paydown`. The implementation and receipts were p
 
 ## Packed consumer proof
 
-`packed-proof.json` validates the six final receipts, their artifact identities against the latest census, every screenshot hash, the retained navigation mutation/red/restore check for each object, and Subscription's historical gate and flow names. Full reports are under `packed/<Object>/report.json`; `packed-report.json` collects all three.
+`packed-proof.json` validates the six final receipts, their artifact identities against the latest census, every screenshot hash, the retained navigation mutation/red/restore check for each object, and Subscription's historical gate and flow names. Final Linux reports are under `packed-linux/<Object>/report.json`; `packed-report.json` collects all three.
 
 | Object | React | Vue | Flow rows per framework | States | Screenshots |
 |---|---|---|---:|---:|---:|
@@ -38,7 +42,7 @@ Build branch: `codex/sprint-191-paydown`. The implementation and receipts were p
 
 All applicable collection controls also pass: typing through empty search results without losing focus, filtering actual seeded states, sort order, and pagination boundaries. Install isolation, strict compilation, production build, SSR, hydration root retention, shared CSS resolution, mount and interaction evidence are checked separately. Final browser error arrays are empty.
 
-Verification attribution: the original harness selected a globally unique h1 and a named plan_name input. New object views contain their own heading and normal component controls, so the observer now scopes the workspace heading and uses the field's accessible label. The StatusBadge carries an icon in its text, so the collection filter expectation reads its actual `data-status`, not flattened text. Subscription's Home/ArrowDown interval sequence repeatedly left the native select at monthly in this browser; the harness now uses native selectOption input/change events, still requiring invalid-save rejection, yearly selection, and persisted readback. Gate names and counts are unchanged. Initial and repeated failure reports remain in the explicitly named `*-failure`/`*-initial` directories and probe JSON; they are not part of the final green totals.
+Verification attribution: the original harness selected a globally unique h1 and a named plan_name input. New object views contain their own heading and normal component controls, so the observer now scopes the workspace heading and uses the field's accessible label. The StatusBadge carries an icon in its text, so the collection filter expectation reads its actual `data-status`, not flattened text. Subscription's Home/ArrowDown interval sequence repeatedly left the native select at monthly on macOS. Replacing it with selectOption was an incorrect interim workaround: archived learning #548 explicitly requires preserving the keyboard proof under Linux. The keyboard sequence is restored, and the final six-cell proof uses the pinned Linux Playwright image in `linux-browser.json`, with invalid-save rejection, yearly keyboard selection and persisted readback. Gate names and counts are unchanged. The macOS runs remain under `packed/` as interim evidence; only `packed-linux/` contributes to the final packed proof. Initial and repeated failure reports remain in the explicitly named `*-failure`/`*-initial` directories and probe JSON; they are not part of the final green totals.
 
 ## Design-loop proof
 
