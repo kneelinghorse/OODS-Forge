@@ -34,6 +34,7 @@ describe('Sprint 191 bounded closeout',()=>{
       expect(prose).toContain(`contrastPassed light/dark for ${registry.filter((row:any)=>row.contrastPassed.length===2).length} categorical types, [] for ${registry.filter((row:any)=>row.contrastPassed.length===0).length} exempt`);
     }
     const near=read('cmos/foundational-docs/roadmap/near.md');
-    for(const text of ['Increment 10 — Sprint 191: Carry-forward pay-down — BUILT, REVIEW PENDING','77/77 schemas and 154/154','6/6','builderSelfCertified:false','separateReviewRequired:true','`#1315` remains pending']) expect(near).toContain(text);
+    for(const text of ['## Increment 10 — Sprint 191: Carry-forward pay-down — CERTIFIED AND CLOSED','Sprint 191 is **Completed**, independently certified by review `PS-2026-09-10-008` and decision `#1880`.','77/77 schemas and 154/154','6/6','builderSelfCertified:false','separateReviewRequired:true','`#1315` remains pending']) expect(near).toContain(text);
+    expect(near).not.toContain('Carry-forward pay-down — BUILT, REVIEW PENDING');
   });
 });
