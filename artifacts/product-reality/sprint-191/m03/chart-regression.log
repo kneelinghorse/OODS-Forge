@@ -1,0 +1,65 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/payment-chart.s190.spec.ts (10 tests | 2 failed) 4327ms
+   ✓ Subscription payment chart is an actual public render > rejects an active SVG at the html build boundary 13ms
+   ✓ Subscription payment chart is an actual public render > rejects an active SVG at the react build boundary 1ms
+   ✓ Subscription payment chart is an actual public render > rejects an active SVG at the vue build boundary 0ms
+   ✓ Subscription payment chart is an actual public render > declares one read-only detail projection without mark fields or controls in other contexts 126ms
+   × Subscription payment chart is an actual public render > emits repeatable, strictly typed react workflow assets keyed by seed identity 387ms
+     → expected { chartType: 'area', …(7) } to match object { chartType: 'area', …(4) }
+(8 matching properties omitted from actual)
+   × Subscription payment chart is an actual public render > emits repeatable, strictly typed vue workflow assets keyed by seed identity 132ms
+     → expected { chartType: 'area', …(7) } to match object { chartType: 'area', …(4) }
+(8 matching properties omitted from actual)
+   ✓ Subscription payment chart is an actual public render > single detail html has a hashed seed asset and unchanged public SVG bytes 33ms
+   ✓ Subscription payment chart is an actual public render > single detail react has a hashed seed asset and unchanged public SVG bytes  1406ms
+   ✓ Subscription payment chart is an actual public render > single detail vue has a hashed seed asset and unchanged public SVG bytes  2213ms
+   ✓ Subscription payment chart is an actual public render > fails loudly for missing fields or a public renderer failure, without a placeholder artifact 17ms
+ ✓ test/product-reality/theme.s191.spec.ts (3 tests) 7893ms
+   ✓ generated applications own their token scope (s191) > react shell, mount, styles and embedded chart share dark/B  2763ms
+   ✓ generated applications own their token scope (s191) > vue shell, mount, styles and embedded chart share dark/B  5122ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/payment-chart.s190.spec.ts > Subscription payment chart is an actual public render > emits repeatable, strictly typed react workflow assets keyed by seed identity
+ FAIL  test/product-reality/payment-chart.s190.spec.ts > Subscription payment chart is an actual public render > emits repeatable, strictly typed vue workflow assets keyed by seed identity
+AssertionError: expected { chartType: 'area', …(7) } to match object { chartType: 'area', …(4) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+@@ -1,7 +1,7 @@
+  {
+-   "brand": "B",
++   "brand": "A",
+    "chartType": "area",
+    "name": "Payment amounts",
+    "rows": [
+      {
+        "amount": 45.6,
+@@ -18,7 +18,7 @@
+      {
+        "amount": 57,
+        "date": "2026-09-01T12:00:00.000Z",
+      },
+    ],
+-   "theme": "dark",
++   "theme": "light",
+  }
+
+ ❯ test/product-reality/payment-chart.s190.spec.ts:42:25
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 11 passed (13)
+   Start at  00:05:00
+   Duration  14.93s (transform 1.10s, setup 18ms, collect 2.32s, tests 12.22s, environment 0ms, prepare 124ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/product-reality/payment-chart.s190.spec.ts test/product-reality/theme.s191.spec.ts

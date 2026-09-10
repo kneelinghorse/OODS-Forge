@@ -1,0 +1,71 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/mcp-server
+
+ ❯ test/product-reality/payment-chart.s190.spec.ts (10 tests | 2 failed) 2361ms
+   ✓ Subscription payment chart is an actual public render > rejects an active SVG at the html build boundary 15ms
+   ✓ Subscription payment chart is an actual public render > rejects an active SVG at the react build boundary 2ms
+   ✓ Subscription payment chart is an actual public render > rejects an active SVG at the vue build boundary 0ms
+   ✓ Subscription payment chart is an actual public render > declares one read-only detail projection without mark fields or controls in other contexts 126ms
+   × Subscription payment chart is an actual public render > emits repeatable, strictly typed react workflow assets keyed by seed identity 415ms
+     → expected { chartType: 'area', …(7) } to match object { chartType: 'area', …(4) }
+(8 matching properties omitted from actual)
+   × Subscription payment chart is an actual public render > emits repeatable, strictly typed vue workflow assets keyed by seed identity 84ms
+     → expected { chartType: 'area', …(7) } to match object { chartType: 'area', …(4) }
+(8 matching properties omitted from actual)
+   ✓ Subscription payment chart is an actual public render > single detail html has a hashed seed asset and unchanged public SVG bytes 25ms
+   ✓ Subscription payment chart is an actual public render > single detail react has a hashed seed asset and unchanged public SVG bytes  716ms
+   ✓ Subscription payment chart is an actual public render > single detail vue has a hashed seed asset and unchanged public SVG bytes  964ms
+   ✓ Subscription payment chart is an actual public render > fails loudly for missing fields or a public renderer failure, without a placeholder artifact 8ms
+ ✓ test/product-reality/collections.s191.spec.ts (6 tests) 15890ms
+   ✓ workflow collection domain ownership (s191) > Organization/react emits deterministic, strictly typed collection actions  2112ms
+   ✓ workflow collection domain ownership (s191) > Organization/vue emits deterministic, strictly typed collection actions  7573ms
+   ✓ workflow collection domain ownership (s191) > User/react emits deterministic, strictly typed collection actions  1793ms
+   ✓ workflow collection domain ownership (s191) > User/vue emits deterministic, strictly typed collection actions  4170ms
+ ✓ test/codegen/form-detail.s189.spec.ts (8 tests) 6658ms
+   ✓ form and detail reconcile their declared semantics > react workflow compiles its on-demand cancellation and native form  1975ms
+   ✓ form and detail reconcile their declared semantics > vue workflow compiles its on-demand cancellation and native form  4545ms
+ ✓ test/codegen/craft.s191.spec.ts (6 tests) 102ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/payment-chart.s190.spec.ts > Subscription payment chart is an actual public render > emits repeatable, strictly typed react workflow assets keyed by seed identity
+ FAIL  test/product-reality/payment-chart.s190.spec.ts > Subscription payment chart is an actual public render > emits repeatable, strictly typed vue workflow assets keyed by seed identity
+AssertionError: expected { chartType: 'area', …(7) } to match object { chartType: 'area', …(4) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+@@ -1,7 +1,7 @@
+  {
+-   "brand": "B",
++   "brand": "A",
+    "chartType": "area",
+    "name": "Payment amounts",
+    "rows": [
+      {
+        "amount": 45.6,
+@@ -18,7 +18,7 @@
+      {
+        "amount": 57,
+        "date": "2026-09-01T12:00:00.000Z",
+      },
+    ],
+-   "theme": "dark",
++   "theme": "light",
+  }
+
+ ❯ test/product-reality/payment-chart.s190.spec.ts:42:25
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  2 failed | 28 passed (30)
+   Start at  00:03:53
+   Duration  29.95s (transform 1.68s, setup 49ms, collect 4.17s, tests 25.01s, environment 0ms, prepare 197ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s191/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/codegen/craft.s191.spec.ts test/codegen/form-detail.s189.spec.ts test/product-reality/payment-chart.s190.spec.ts test/product-reality/collections.s191.spec.ts
