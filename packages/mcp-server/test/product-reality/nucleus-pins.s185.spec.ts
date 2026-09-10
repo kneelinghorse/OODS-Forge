@@ -124,6 +124,10 @@ describe('Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONE
       // the compatibility alias; the historical inventory stays immutable.
       const currentDerivation = site.id === 'ported-contracts-union-22'
         ? 'expect(new Set([...NUCLEUS_COMPONENT_IDS, ...PORTED_COMPONENT_IDS]).size).toBe(\n      NUCLEUS_COMPONENT_IDS.length,'
+        // s192-m03/m05 version every governed contract at 1.1; the original
+        // inventory remains historical, and current membership still derives.
+        : site.id === 'contract-resolution-entries-14'
+          ? 'expect(Object.keys(componentContracts).sort()).toEqual([...NUCLEUS_COMPONENT_IDS].sort());'
         : site.newSource;
       if (currentDerivation && !text.includes(currentDerivation.trim())) problems.push(`${site.id}: derivation missing`);
     }

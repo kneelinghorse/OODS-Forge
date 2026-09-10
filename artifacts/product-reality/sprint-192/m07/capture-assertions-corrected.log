@@ -1,0 +1,46 @@
+
+ RUN  v3.2.4 /Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/mcp-server
+
+ ✓ test/product-reality/contract-resolution.s184.spec.ts (9 tests) 1910ms
+   ✓ Sprint 184 m03 contract-resolution closeout > preserves the historical readiness manifests while every current nucleus ref resolves  1679ms
+ ✓ src/codegen/binding-utils.s183.test.ts (11 tests) 61ms
+ ❯ test/product-reality/nucleus-pins.s185.spec.ts (5 tests | 1 failed) 628ms
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > the nucleus itself is a non-empty, unique, code-point-sorted id list 2ms
+   × Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > no retired literal from the pin inventory is present in its file, and every derivation is 17ms
+     → expected [ Array(1) ] to deeply equal []
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > no live test or script compares nucleus membership to a literal count  433ms
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > includes source and root tests and rejects indexed readiness counts while allowing derived membership 28ms
+   ✓ Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > the hand-written 14-family list survives only in declared showcase fixtures and history scripts 146ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/product-reality/nucleus-pins.s185.spec.ts > Sprint 185 m01 — every live nucleus pin derives from NUCLEUS_COMPONENT_IDS (#1725) > no retired literal from the pin inventory is present in its file, and every derivation is
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "contract-resolution-entries-14: derivation missing",
++ ]
+
+ ❯ test/product-reality/nucleus-pins.s185.spec.ts:134:22
+    132|       if (currentDerivation && !text.includes(currentDerivation.trim()…
+    133|     }
+    134|     expect(problems).toEqual([]);
+       |                      ^
+    135|   });
+    136| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 24 passed (25)
+   Start at  15:48:23
+   Duration  5.27s (transform 648ms, setup 55ms, collect 1.08s, tests 2.60s, environment 1ms, prepare 537ms)
+
+undefined
+/Users/systemsystems/.codex/worktrees/s192/OODS-Forge/packages/mcp-server:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/codegen/binding-utils.s183.test.ts test/product-reality/nucleus-pins.s185.spec.ts test/product-reality/contract-resolution.s184.spec.ts
